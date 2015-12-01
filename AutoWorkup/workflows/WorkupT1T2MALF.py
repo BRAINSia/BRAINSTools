@@ -13,6 +13,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from utilities.misc import *
 from utilities.distributed import modify_qsub_args
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
+from .WorkupAtlasDustCleanup import CreateDustCleanupWorkflow
 # HACK Remove due to bugs from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
 """
@@ -74,7 +75,7 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None, runFixFusionLabelMap=True):
+def CreateMALFWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True):
     from nipype.interfaces import ants
 
     if onlyT1:
@@ -100,7 +101,8 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
                                                        'MALF_HDAtlas20_2015_CSFVBInjected_label',
                                                        'MALF_HDAtlas20_2015_fs_standard_label',
                                                        'MALF_HDAtlas20_2015_lobar_label',
-                                                       'MALF_extended_snapshot']),
+                                                       'MALF_extended_snapshot',
+                                                       'MALF_HDAtlas20_2015_dustCleaned_label']),
                           run_without_submitting=True,
                           name='outputspec')
 
@@ -379,6 +381,9 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
 
 #    MALFWF.connect(MALF_SNAPSHOT_WRITER,'outputFilename',outputsSpec,'MALF_extended_snapshot')
 
+    myLocalDustCleanup = CreateDustCleanupWorkflow("DUST_CLEANUP", onlyT1, master_config)
+    MALFWF.connect(inputsSpec, 'subj_t1_image', myLocalDustCleanup, 'inputspec.subj_t1_image')
+    MALFWF.connect(inputsSpec, 'subj_t2_image', myLocalDustCleanup, 'inputspec.subj_t2_image')
     if runFixFusionLabelMap:
         ## post processing of jointfusion
         injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
@@ -399,19 +404,34 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
         MALFWF.connect(inputsSpec, 'subj_left_hemisphere', injectSurfaceCSFandVBIntoLabelMap, 'LeftHemisphereFN')
 
         MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',
-                       RecodeToStandardFSWM,'InputFileName')
+                       myLocalDustCleanup, 'inputspec.subj_label_atlas')
 
         MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap,'fixedFusionLabelFN',
                        outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
+
+        MALFWF.connect(myLocalDustCleanup, 'outputspec.MALF_HDAtlas20_2015_dustCleaned_label',
+                       RecodeToStandardFSWM,'InputFileName')
+
+        MALFWF.connect(myLocalDustCleanup, 'outputspec.MALF_HDAtlas20_2015_dustCleaned_label',
+                       outputsSpec, 'MALF_HDAtlas20_2015_dustCleaned_label')
+
 #        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
 #                    (injectSurfaceCSFandVBIntoLabelMap, MALF_SNAPSHOT_WRITER,
 #                      [('fixedFusionLabelFN', 'inputBinaryVolumes')])
 #                   ])
     else:
         MALFWF.connect(jointFusion, 'output_label_image',
-                       RecodeToStandardFSWM,'InputFileName')
+                       myLocalDustCleanup, 'inputspec.subj_label_atlas')
+
         MALFWF.connect(jointFusion, 'output_label_image',
                        outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
+
+        MALFWF.connect(myLocalDustCleanup, 'outputspec.MALF_HDAtlas20_2015_dustCleaned_label',
+                       RecodeToStandardFSWM,'InputFileName')
+
+        MALFWF.connect(myLocalDustCleanup, 'outputspec.MALF_HDAtlas20_2015_dustCleaned_label',
+                       outputsSpec, 'MALF_HDAtlas20_2015_dustCleaned_label')
+
 #        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
 #                    (jointFusion, MALF_SNAPSHOT_WRITER,
 #                      [('output_label_image', 'inputBinaryVolumes')])

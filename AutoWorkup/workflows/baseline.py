@@ -751,13 +751,12 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     if 'malf_2015_wholebrain' in master_config['components']:  ## HACK Do MALF labeling
         ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
-        BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/2012Subscription'
 
         if onlyT1:
             print("T1 only processing in baseline")
         else:
             print("Multimodal processing in baseline")
-        myLocalMALF = CreateMALFWorkflow("MALF", onlyT1, master_config,BASE_DATA_GRABBER_DIR)
+        myLocalMALF = CreateMALFWorkflow("MALF", onlyT1, master_config)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
         baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalMALF,'inputspec.subj_t2_image')
         baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalMALF,'inputspec.subj_fixed_head_labels')
@@ -777,5 +776,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_fs_standard_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_fs_standard_label')
         baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_lobar_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_lobar_label')
         baw201.connect(myLocalMALF,'outputspec.MALF_extended_snapshot',DataSink,'TissueClassify.@MALF_extended_snapshot')
+        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_dustCleaned_label', DataSink, 'TissueClassify.@MALF_HDAtlas20_2015_dustCleaned_label')
+
 
     return baw201

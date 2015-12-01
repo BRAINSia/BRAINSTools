@@ -44,7 +44,7 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
                          run_without_submitting=True,
                          name='inputspec')
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['dustCleanedOutputAtlas_label']),
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['MALF_HDAtlas20_2015_dustCleaned_label']),
                           run_without_submitting=True,
                           name='outputspec')
 
@@ -68,7 +68,7 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
         pass
 
     dustCleanupWF.connect(inputsSpec, 'subj_label_atlas', sessionRunDustCleanupOnSuspicious, 'inAtlas')
-    sessionRunDustCleanupOnSuspicious.inputs.outAtlas = 'dustCleanedLabel_Suspicious_maxIsland6.nii.gz'
+    sessionRunDustCleanupOnSuspicious.inputs.outAtlas = 'MALF_HDAtlas20_2015_dustCleaned_label_suspicious_maxIsland6.nii.gz'
     sessionRunDustCleanupOnSuspicious.inputs.maxIslandCount = 6
     sessionRunDustCleanupOnSuspicious.inputs.useFullyConnected = False
     sessionRunDustCleanupOnSuspicious.inputs.forceLabelChange = True
@@ -97,7 +97,7 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
         pass
 
     dustCleanupWF.connect(sessionRunDustCleanupOnSuspicious, 'cleanedLabelImage', sessionRunDustCleanup, 'inAtlas')
-    sessionRunDustCleanup.inputs.outAtlas = 'dustCleanedLabel_maxIsland5.nii.gz'
+    sessionRunDustCleanup.inputs.outAtlas = 'MALF_HDAtlas20_2015_dustCleaned_label.nii.gz'
     sessionRunDustCleanup.inputs.maxIslandCount = 5
     sessionRunDustCleanup.inputs.useFullyConnected = True
     sessionRunDustCleanup.inputs.forceLabelChange = True
@@ -105,6 +105,6 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
     sessionRunDustCleanup.inputs.includeList = None
     sessionRunDustCleanup.inputs.excludeList = '4,5,14,15,21,24,31,43,44,63,72,85,98,128,219,15000'
 
-    dustCleanupWF.connect(sessionRunDustCleanup, 'cleanedLabelImage', outputsSpec, 'dustCleanedOutputAtlas_label')
+    dustCleanupWF.connect(sessionRunDustCleanup, 'cleanedLabelImage', outputsSpec, 'MALF_HDAtlas20_2015_dustCleaned_label')
 
     return dustCleanupWF

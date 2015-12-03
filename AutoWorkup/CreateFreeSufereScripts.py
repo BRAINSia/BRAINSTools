@@ -275,11 +275,7 @@ def ValidateBaseTPS(base_tps_file,found_sessions,subject,templateID):
         import shutil
         templ_dir=os.path.join(subjects_dir,templateID)
         if os.path.exists(templ_dir):
-<<<<<<< 2e941f75075b76949684a0b24ac43e4ecdb8569e
-            print("REMOVE TEMPLATE: {0}".foramt(templ_dir) )
-=======
             print("REMOVE TEMPLATE: {0}".format(templ_dir) )
->>>>>>> ENH: TrackOn Freesurfer Processing.
             try:
               shutil.rmtree(templ_dir)
             except:

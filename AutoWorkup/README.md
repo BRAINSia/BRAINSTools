@@ -14,24 +14,28 @@ python baw_exp.py -processingLevel 2 -ExperimentConfig Template.config -pe IPL_E
 ```
 
 # BRAINSAutoWorkUp Manual 
-***(Under Construction by Regina EY Kim)***
+
 BRAINSAutoWorkUp is developed for batch processing of brain MRI (T1-weighted or T1- and T2-weighted MRI set).
 The pipeline is constructed based on NIPYPE.
 
 ## Requirements
-### Requires NAMICExternalProjects build (https://github.com/BRAINSia/NAMICExternalProjects) which includes
-* BRAINSTools build
-* SimpleITK build
-* NIPYPE
+
+> Requires NAMICExternalProjects build (https://github.com/BRAINSia/NAMICExternalProjects) which includes
+> * BRAINSTools build
+> * SimpleITK build
+> * NIPYPE
 
 Let's say your NAMICExternalProjects build and located at:
 ```Shell
 % NamicBuild=myNAMIC_build_location
 ```
 ### Python Environment
+> Please see Anaconda Environment setup instruction in https://github.com/BRAINSia/NAMICExternalProjects
+
 ## Preparation
 BRAINSAutoWorkup pipeline, located under `BRAINSTools/AutoWorkup/singleSession.py`, requires a configuration 
 file with a list file for MRI inputs. 
+
 ### A input MRI list file
 A list file specifies where T1- (and T2-)weighted images are in the form of python *dictionary*:
 ```
@@ -142,7 +146,29 @@ in one experiment setup.
       ```
 
 ## Running on Mac OSX
+
+* Simple Usage
+```sh
+Usage:
+  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] [--use-sentinal] [--dry-run] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SESSIONS...
+  singleSession.py -v | --version
+  singleSession.py -h | --help
 ```
+
+* Options
+> Options:
+>  -h, --help            Show this help and exit
+>  -v, --version         Print the version and exit
+>  --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
+>  --use-sentinal        Use the t1_average file as a marker to determine if session needs to be run
+>  --dry-run             Do not submit jobs, but print diagnostics about which jobs would be run
+>  --pe ENV              The processing environment to use from configuration file
+>  --wfrun PLUGIN        The name of the workflow plugin option (default: 'local', 'SGE','SGEGraph', 'local4')
+>  --workphase WORKPHASE The type of processing to be done [atlas-based-reference|subject-based-reference]
+>  --ExperimentConfig FILE   The configuration file
+
+* Running Example 
+```sh
 env="OSX"
 
 NamicBuild="/Shared/sinapse/scratch/eunyokim/src/NamicExternal/build_OSX_20150619/"
@@ -161,9 +187,14 @@ python $NamicBuild/BRAINSTools/AutoWorkup/singleSession.py \
 
 ```
 
-## If BCD Fails, how to start the processing anyway!? 
+## If Brans Constellation Detector (BCD) Fails, how to start the processing anyway!? 
+BCD in BRAINSTools Auto Workup plays critical role to normalize spatial orientations 
+of MRIs. Since BCD happens at the very beginning of the process, if BCD fails, there
+will be no results produced from BRAINSTools Auto Workup. 
 
-In any failure case of BCD, BAW can be proceeded by 1) fix BCD manually and then 2) specify that manaull fixed file as an input.
+In any failure case of BCD, BAW can be proceeded by 
+1) fix BCD manually and then 
+2) specify that manaull fixed file as an input.
 
 - To fix manually, I ran following scripts in order:
 cd /raid0/homes/aghayoor/BCD-test/Jira_cases/kidsFailure_ticket_PREDICTIMG-4209

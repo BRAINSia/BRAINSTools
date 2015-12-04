@@ -100,7 +100,9 @@ MODULES=
 ALL the OS specifications can be given one configuration file. This allows
 developers to test/run/utilize as many computing resources as possible
 in one experiment setup. 
+      
       * OSX Example
+      
       ```INI
       [OSX]
       ## The cluster queue to use for submitting "normal running" jobs.

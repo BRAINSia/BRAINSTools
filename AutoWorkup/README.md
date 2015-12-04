@@ -1,14 +1,17 @@
 BRAINS AutoWorkup Processing pipeline, built on Nipype.
-Currently very rough, use at your own risk!
 
-To use the code, build BRAINSTools with ITKv4 on.
+> We recommend to follow NAMICExternalProjects to build BRAINSTools with AutoWorkup.
+> The very last part 'Additional Package Installation for BRAINS Auto Workup' of the NAMICExternalProject instruction is required.
+> Please refer Readme.md file at the https://github.com/BRAINSia/NAMICExternalProjects
 
-Then install the nipype version in the BRAINSia github account.
-
-The file Template.config should be copied and modified to define the
+The file ```example/bawConfigurationTemplate.ini``` should be copied and modified to define the
 experiment that should be run.
 
+Our goal is to run following command successfully:
+
+```sh
 python baw_exp.py -processingLevel 2 -ExperimentConfig Template.config -pe IPL_ENVIRONMENT
+```
 
 # BRAINSAutoWorkUp Manual 
 ***(Under Construction by Regina EY Kim)***

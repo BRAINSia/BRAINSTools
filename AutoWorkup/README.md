@@ -10,7 +10,7 @@ experiment that should be run.
 Our goal is to run following command successfully:
 
 ```sh
-python baw_exp.py -processingLevel 2 -ExperimentConfig Template.config -pe IPL_ENVIRONMENT
+python baw_exp.py -processingLevel 2 -ExperimentConfig bawConfigurationTemplate.ini -pe OSX
 ```
 
 # BRAINSAutoWorkUp Manual 
@@ -147,7 +147,7 @@ APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_GRAPHVIZ_BIN)s
 ############## end of OSX specification ############## 
 ```
 
-## Running on Mac OSX
+## Running
 
 * Simple Usage
 ```sh
@@ -172,7 +172,7 @@ Usage:
   --ExperimentConfig FILE   The configuration file
 ```
 
-* Running Example 
+* Running Example on OSX
 ```sh
 env="OSX"
 

@@ -21,6 +21,10 @@ make #make -j4 or make -j8 depending on the available cores
 
 OS dependent instruction is given for any dependencies or other issues. Please report any issue you found so that we could update the instruction accordingly. 
 
+>
+> We also recommend to check out NAMICExternalProjects, https://github.com/BRAINSia/NAMICExternalProjects, which provides a set of tools, including ANTs Package, Slicer Modules, and our own BRAINSTools. 
+>
+
 ### Mac OSX
 Building BRAINSTools on mac is the same as any standard out of
 source cmake build. Make a folder for the BRAINSTools project.

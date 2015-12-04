@@ -9,6 +9,18 @@ For more information on the individual BRAINSTools, please see the following lin
 https://github.com/BRAINSia/BRAINSTools/wiki
 
 ## Building
+Linux-based system follows basically similar instruction. 
+
+```sh
+clone https://github.com/BRAINSia/BRAINSTools.git
+mkdir BRAINSTools_build
+cd BRAINSTools_build
+ccmake ../BRAINSTools
+make #make -j4 or make -j8 depending on the available cores
+```
+
+OS dependent instruction is given for any dependencies or other issues. Please report any issue you found so that we could update the instruction accordingly. 
+
 ### Mac OSX
 Building BRAINSTools on mac is the same as any standard out of
 source cmake build. Make a folder for the BRAINSTools project.

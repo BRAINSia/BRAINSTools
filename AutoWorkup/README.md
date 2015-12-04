@@ -101,51 +101,51 @@ ALL the OS specifications can be given one configuration file. This allows
 developers to test/run/utilize as many computing resources as possible
 in one experiment setup. 
       
-      * OSX Example
+*OSX Example*
       
-      ```INI
-      [OSX]
-      ## The cluster queue to use for submitting "normal running" jobs.
-      QUEUE=-q all
-      ## The cluster queue to use for submitting "long running" jobs.
-      QUEUE_LONG=-q all
-      # The QSTAT command for immediate update of values [ use 'qstat' if in doubt ]
-      QSTAT_IMMEDIATE=qstat
-      QSTAT_CACHED=qstat
-      ## Necessary modules to load for jobs
-      MODULES=[]
+```INI
+[OSX]
+## The cluster queue to use for submitting "normal running" jobs.
+QUEUE=-q all
+## The cluster queue to use for submitting "long running" jobs.
+QUEUE_LONG=-q all
+# The QSTAT command for immediate update of values [ use 'qstat' if in doubt ]
+QSTAT_IMMEDIATE=qstat
+QSTAT_CACHED=qstat
+## Necessary modules to load for jobs
+MODULES=[]
 
-      _GRAPHVIZ_BIN=/usr/bin/graphviz
-      VIRTUALENV_DIR=your_virtualEnv_directory/BAWPythonEnv/MacEnv/
-      # NAMICExternalProjects build tree
-      _BUILD_DIR=your_path_to_NAMIC_built
-      ############## -- You may not need to modify below here  ###########
-      ```
+_GRAPHVIZ_BIN=/usr/bin/graphviz
+VIRTUALENV_DIR=your_virtualEnv_directory/BAWPythonEnv/MacEnv/
+# NAMICExternalProjects build tree
+_BUILD_DIR=your_path_to_NAMIC_built
+############## -- You may not need to modify below here  ###########
+```
 
-      and then, you may choose one of the followings (A or B):
+and then, you may choose one of the followings (A or B):
 
-      A.
-      ```INI
-      ############## A -- if you built NAMICExternal without anaconda env (old) ###########
-      _BRAINSTOOLS_BIN_DIR=%(_BUILD_DIR)s/bin
-      _SIMPLEITK_PYTHON_LIB=%(_BUILD_DIR)s/lib
-      _SIMPLEITK_PACKAGE_DIR=%(_BUILD_DIR)s/SimpleITK-build/Wrapping
-      _NIPYPE_PACKAGE_DIR=%(_BUILD_DIR)s/NIPYPE
-      ############## -- You should not need to modify below here. ###########
-      APPEND_PYTHONPATH=%(_NIPYPE_PACKAGE_DIR)s:%(_SIMPLEITK_PYTHON_LIB)s:%(_SIMPLEITK_PACKAGE_DIR)s
-      APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_SIMPLEITK_PYTHON_LIB)s:%(_GRAPHVIZ_BIN)s
-      ############## end of OSX specification ############## 
-      ```
+A.
+```INI
+############## A -- if you built NAMICExternal without anaconda env (old) ###########
+_BRAINSTOOLS_BIN_DIR=%(_BUILD_DIR)s/bin
+_SIMPLEITK_PYTHON_LIB=%(_BUILD_DIR)s/lib
+_SIMPLEITK_PACKAGE_DIR=%(_BUILD_DIR)s/SimpleITK-build/Wrapping
+_NIPYPE_PACKAGE_DIR=%(_BUILD_DIR)s/NIPYPE
+############## -- You should not need to modify below here. ###########
+APPEND_PYTHONPATH=%(_NIPYPE_PACKAGE_DIR)s:%(_SIMPLEITK_PYTHON_LIB)s:%(_SIMPLEITK_PACKAGE_DIR)s
+APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_SIMPLEITK_PYTHON_LIB)s:%(_GRAPHVIZ_BIN)s
+############## end of OSX specification ############## 
+```
 
-      B.
-      ```INI
-      ############## -- -- if you built NAMICExternal with anaconda env (newer)  ###########
-      _BRAINSTOOLS_BIN_DIR=%(_BUILD_DIR)s/bin
-      ############## -- You should not need to modify below here. ###########
-      APPEND_PYTHONPATH=
-      APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_GRAPHVIZ_BIN)s
-      ############## end of OSX specification ############## 
-      ```
+B.
+```INI
+############## -- -- if you built NAMICExternal with anaconda env (newer)  ###########
+_BRAINSTOOLS_BIN_DIR=%(_BUILD_DIR)s/bin
+############## -- You should not need to modify below here. ###########
+APPEND_PYTHONPATH=
+APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_GRAPHVIZ_BIN)s
+############## end of OSX specification ############## 
+```
 
 ## Running on Mac OSX
 

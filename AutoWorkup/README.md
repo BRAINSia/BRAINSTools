@@ -158,16 +158,19 @@ Usage:
 ```
 
 * Options
-> Options:
->  -h, --help            Show this help and exit
->  -v, --version         Print the version and exit
->  --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
->  --use-sentinal        Use the t1_average file as a marker to determine if session needs to be run
->  --dry-run             Do not submit jobs, but print diagnostics about which jobs would be run
->  --pe ENV              The processing environment to use from configuration file
->  --wfrun PLUGIN        The name of the workflow plugin option (default: 'local', 'SGE','SGEGraph', 'local4')
->  --workphase WORKPHASE The type of processing to be done [atlas-based-reference|subject-based-reference]
->  --ExperimentConfig FILE   The configuration file
+
+```sh
+ Options:
+  -h, --help            Show this help and exit
+  -v, --version         Print the version and exit
+  --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
+  --use-sentinal        Use the t1_average file as a marker to determine if session needs to be run
+  --dry-run             Do not submit jobs, but print diagnostics about which jobs would be run
+  --pe ENV              The processing environment to use from configuration file
+  --wfrun PLUGIN        The name of the workflow plugin option (default: 'local', 'SGE','SGEGraph', 'local4')
+  --workphase WORKPHASE The type of processing to be done [atlas-based-reference|subject-based-reference]
+  --ExperimentConfig FILE   The configuration file
+```
 
 * Running Example 
 ```sh

@@ -159,7 +159,7 @@
       <name>transpose</name>
       <longflag>transposeInputBVectors</longflag>
       <label>Transpose Input BVectors</label>
-      <default>false</default>
+      <default>true</default>
       <description><![CDATA[FSL input BVectors are expected to be encoded in the input file as one vector per line. If it is not the case, use this option to transpose the file as it is read]]></description>
     </boolean>
   </parameters>

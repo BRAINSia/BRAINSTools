@@ -33,7 +33,8 @@ public:
                                                        m_SmallGradientThreshold(smallGradientThreshold),
                                                        m_MMosaic(0),
                                                        m_NMosaic(0),
-                                                       m_Stride(0)
+                                                       m_Stride(0),
+                                                       m_HasCSAHeader(false)
     {
     }
   virtual ~SiemensDWIConverter() {}
@@ -272,6 +273,105 @@ public:
         this->SetDirectionsFromSliceOrder();
         }
     }
+
+  double ExtractCSABValue(CSAHeader *csaHeader)
+    {
+    double currentBValue = 0.0;
+
+    // in Siemens, this entry is a 'CSA Header' which is blob
+    // of mixed text & binary data.  Pretty annoying but there you
+    // have it.
+    int nItems(0);
+    std::vector<double> valueArray(0);
+    CSAHeader::const_iterator csaIt;
+    if((csaIt = csaHeader->find("B_value")) != csaHeader->end())
+      {
+      // we got a 'valid' B-value
+      // If we're trusting the gradient directions in the header,
+      // then all we need to do here is save the bValue.
+      valueArray = csaIt->second.AsVector<double>();
+      nItems = valueArray.size();
+      }
+    if (nItems == 1)
+      {
+      currentBValue = valueArray[0];
+      }
+    else
+      {
+      // B_Value is missing -- the punt position is to count this
+      // volume as having a B_value & Gradient Direction of zero
+      std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
+      }
+    std::cout << "---------- BVALUE: " << currentBValue << std::endl;
+    return currentBValue;
+    }
+
+  bool ExtractCSAGradientDirection(CSAHeader *csaHeader, unsigned int volumeNumber,
+                                   vnl_vector_fixed<double, 3> &gradients)
+    {
+      std::vector<double> valueArray;
+      CSAHeader::const_iterator csaIt;
+      if((csaIt = csaHeader->find("DiffusionGradientDirection")) == csaHeader->end() ||
+         (valueArray = csaIt->second.AsVector<double>()).size() != 3)
+        {
+        return false;
+        }
+
+      double DiffusionVector_magnitude = sqrt((valueArray[0] * valueArray[0]) +
+                                              (valueArray[1] * valueArray[1]) +
+                                              (valueArray[2] * valueArray[2]) );
+      if ( DiffusionVector_magnitude > 1.1 )
+        {
+        //Gradient vectors are supposed to be unit vectors!
+        // If coded as [ 1.0001 1.0001 1.0001 ]  then it is really a B0 image.
+        // This is ugly hack but works around a persistent dicom coding problem
+        // on some scanners
+        return true;
+        }
+      else if( DiffusionVector_magnitude <= this->m_SmallGradientThreshold )
+        {
+        std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
+        std::cout << "Gradient #" << volumeNumber << " with magnitude " << DiffusionVector_magnitude << std::endl;
+        std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
+                  << "from the scanner B Matrix to alleviate this problem." << std::endl;
+        throw;
+        }
+
+      std::cout << "Number of Directions : " << valueArray.size() << std::endl;
+      std::cout << "   Directions 0: " << valueArray[0] << std::endl;
+      std::cout << "   Directions 1: " << valueArray[1] << std::endl;
+      std::cout << "   Directions 2: " << valueArray[2] << std::endl;
+      std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
+
+      gradients[0] = valueArray[0]; gradients[1] = valueArray[1]; gradients[2] = valueArray[2];
+      return true;
+    }
+
+  bool ExtractCSABMatrix(CSAHeader *csaHeader,
+                         vnl_matrix_fixed<double, 3, 3> &bMatrix)
+    {
+    std::vector<double> valueArray;
+    CSAHeader::const_iterator csaIt;
+
+    if ( (csaIt = csaHeader->find("B_matrix")) == csaHeader->end()  ||
+         (valueArray = csaIt->second.AsVector<double>()).size() != 6 )
+      {
+      return false;
+      }
+    // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the
+    // DICOM header.
+    bMatrix[0][0] = valueArray[0];
+    bMatrix[0][1] = valueArray[1];
+    bMatrix[0][2] = valueArray[2];
+    bMatrix[1][1] = valueArray[3];
+    bMatrix[1][2] = valueArray[4];
+    bMatrix[2][2] = valueArray[5];
+    bMatrix[1][0] = bMatrix[0][1];
+    bMatrix[2][0] = bMatrix[0][2];
+    bMatrix[2][1] = bMatrix[1][2];
+    return true;
+    }
+
   /** find the bvalues and gradient vectors */
   void ExtractDWIData() ITK_OVERRIDE
     {
@@ -280,158 +380,58 @@ public:
         // in Siemens, this entry is a 'CSA Header' which is blob
         // of mixed text & binary data.  Pretty annoying but there you
         // have it.
-        std::string diffusionInfoString;;
+
+        std::string diffusionInfoString;
         this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString );
 
         CSAHeader csaHeader;
         this->DecodeCSAHeader(csaHeader,diffusionInfoString);
-        // csaHeader.DebugPrint();
 
         // parse B_value from 0029,1010 tag
         std::vector<double> valueArray(0);
         CSAHeader::const_iterator csaIt;
+        vnl_vector_fixed<double, 3> gradients(0.0);
+        vnl_matrix_fixed<double, 3, 3> bMatrix(0.0);
+
         if( !this->m_UseBMatrixGradientDirections )
           {
-          int nItems(0);
-          if((csaIt = csaHeader.find("B_value")) == csaHeader.end())
-            {
-            nItems = 0;
-            }
-          else
-            {
-            // we got a 'valid' B-value
-            // If we're trusting the gradient directions in the header,
-            // then all we need to do here is save the bValue.
-            valueArray = csaIt->second.AsVector<double>();
-            nItems = valueArray.size();
-            }
-          vnl_vector_fixed<double, 3> vect3d;
-          vect3d.fill( 0.0 );
-
-          double currentBValue = 0.0;
-          if( nItems == 1 )
-            {
-            currentBValue = valueArray[0] ;
-            }
-          else
-            {
-            // B_Value is missing -- the punt position is to count this
-            // volume as having a B_value & Gradient Direction of zero
-            std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
-            }
-
-          std::cout << "---------- BVALUE: " << currentBValue << std::endl;
+          double currentBValue = ExtractCSABValue(&csaHeader);
           if ( currentBValue < 1.0 )
-          {
-            this->m_BValues.push_back( 0.0 );
-            this->m_DiffusionVectors.push_back(vect3d);
-            continue;
-          }
-          this->m_BValues.push_back( currentBValue );
-          if((csaIt = csaHeader.find("DiffusionGradientDirection")) == csaHeader.end())
             {
-            nItems = 0;
+            this->m_BValues.push_back( 0.0 );
+            this->m_DiffusionVectors.push_back(vnl_vector_fixed<double, 3>(gradients));
+            continue;
             }
           else
             {
-            valueArray = csaIt->second.AsVector<double>();
-            nItems = valueArray.size();
+            this->m_BValues.push_back( currentBValue );
             }
 
           // parse DiffusionGradientDirection from 0029,1010 tag
-          valueArray.resize(0);
-          nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "DiffusionGradientDirection", valueArray);
-          if( nItems != 3 )  // did not find enough information
+          bool hasGradients = ExtractCSAGradientDirection(&csaHeader, k, gradients);
+
+          if (!hasGradients)
             {
+            // did not find enough information
             std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
                       << std::endl;
-            vect3d.fill( 0 );
-            this->m_DiffusionVectors.push_back(vect3d);
             }
-          else
-            {
-            double DiffusionVector_magnitude = sqrt((valueArray[0] * valueArray[0]) +
-              (valueArray[1] * valueArray[1]) +
-              (valueArray[2] * valueArray[2]) );
-            if ( DiffusionVector_magnitude > 1.1 )
-              {
-              //Gradient vectors are supposed to be unit vectors!
-              // If coded as [ 1.0001 1.0001 1.0001 ]  then it is really a B0 image.
-              // This is ugly hack but works around a persistent dicom coding problem
-              // on some scanners
-              std::fill(valueArray.begin(), valueArray.end(), 0.0);
-              DiffusionVector_magnitude=0.0;
-              }
-            else if( DiffusionVector_magnitude <= this->m_SmallGradientThreshold )
-              {
-              std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
-              std::cout << "Gradient #" << k << " with magnitude " << DiffusionVector_magnitude << std::endl;
-              std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
-                        << "from the scanner B Matrix to alleviate this problem." << std::endl;
-              throw;
-              }
+          this->m_DiffusionVectors.push_back( vnl_vector_fixed<double, 3>(gradients) );
 
-            std::cout << "Number of Directions : " << nItems << std::endl;
-            std::cout << "   Directions 0: " << valueArray[0] << std::endl;
-            std::cout << "   Directions 1: " << valueArray[1] << std::endl;
-            std::cout << "   Directions 2: " << valueArray[2] << std::endl;
-            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
-
-            vect3d[0] = valueArray[0];
-            vect3d[1] = valueArray[1];
-            vect3d[2] = valueArray[2];
-            // vect3d.normalize();
-            this->m_DiffusionVectors.push_back(vect3d);
-            const int p = this->m_BValues.size();
-            std::cout << "Image#: " << k
-                      << " BV: " << this->m_BValues[p - 1] << " GD: "
-                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
-                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
-                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
-                      << std::endl;
-            }
+          /* debug output */
+          std::cout << "Image#: " << k
+          << " BV: " << this->m_BValues.back() << " GD: "
+          << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
+          << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
+          << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
+          << std::endl;
           }
-        else
+        else // this->m_UseBMatrixGradientDirections == true
           {
-          int nItems;
-          // UNC comments: We get the value of the b-value tag in the header.
-          // We won't use it as is, but just to locate the B0 images.
-          // This check must be added, otherwise the bmatrix of the B0 is not
-          // read properly (it's not an actual field in the DICOM header of the B0).
-          std::vector<double> bval_tmp(0);
-          bool                b0_image = false;
-          // UNC comments: Get the bvalue
-          if((csaIt = csaHeader.find("B_value")) == csaHeader.end())
-            {
-            nItems = 0;
-            }
-          else
-            {
-            // we got a 'valid' B-value
-            // If we're trusting the gradient directions in the header,
-            // then all we need to do here is save the bValue.
-            bval_tmp  = csaIt->second.AsVector<double>();
-            }
+          double currentBValue = ExtractCSABValue(&csaHeader);
+          bool hasBMatrix = ExtractCSABMatrix(&csaHeader, bMatrix);
 
-          if( bval_tmp[0] == 0 )
-            {
-            b0_image = true;
-            }
-
-          // JTM - Patch from UNC: fill the nhdr header with the gradient directions and
-          // bvalues computed out of the BMatrix
-          if((csaIt = csaHeader.find("B_matrix")) == csaHeader.end())
-            {
-            nItems = 0;
-            }
-          else
-            {
-            valueArray = csaIt->second.AsVector<double>();
-            nItems = valueArray.size();
-            }
-          vnl_matrix_fixed<double, 3, 3> bMatrix;
-
-          if( nItems == 6 && !b0_image)
+          if( hasBMatrix && (currentBValue != 0) )
             {
             std::cout << "=============================================" << std::endl;
             std::cout << "BMatrix calculations..." << std::endl;
@@ -439,20 +439,8 @@ public:
             // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
             // it's the gradient direction and trace of the matrix is the b-value
 
-            // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the
-            // DICOM header.
-            bMatrix[0][0] = valueArray[0];
-            bMatrix[0][1] = valueArray[1];
-            bMatrix[0][2] = valueArray[2];
-            bMatrix[1][1] = valueArray[3];
-            bMatrix[1][2] = valueArray[4];
-            bMatrix[2][2] = valueArray[5];
-            bMatrix[1][0] = bMatrix[0][1];
-            bMatrix[2][0] = bMatrix[0][2];
-            bMatrix[2][1] = bMatrix[1][2];
-
             // UNC comments: Computing the decomposition
-            vnl_svd<double> svd(bMatrix);
+            vnl_svd<double> svd( bMatrix );
 
             // UNC comments: Extracting the principal eigenvector i.e. the gradient direction
             vnl_vector_fixed<double, 3> vect3d;
@@ -466,13 +454,13 @@ public:
             std::cout << bMatrix[0][2] << "\t" << bMatrix[1][2] << "\t" << bMatrix[2][2] << std::endl;
 
             // UNC comments: The b-value si the trace of the bmatrix
-            const double bvalue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
-            std::cout << bvalue << std::endl;
+            const double realBValue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
+            std::cout << realBValue << std::endl;
             // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
             // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
-            if( (b0_image == true) || (bvalue == 0) )
+            if( realBValue == 0 )
               {
-              std::cout << "B0 image detected: gradient direction and bvalue forced to 0" << std::endl;
+              std::cout << "B0 image detected from bmatrix trace: gradient direction forced to 0" << std::endl;
               vect3d[0] = 0;
               vect3d[1] = 0;
               vect3d[2] = 0;
@@ -486,13 +474,13 @@ public:
               std::cout << "Gradient coordinates: " << this->m_DoubleConvert(vect3d[0])
                         << " " << this->m_DoubleConvert(vect3d[1])
                         << " " << this->m_DoubleConvert(vect3d[2]) << std::endl;
-              this->m_BValues.push_back(bvalue);
+              this->m_BValues.push_back(realBValue);
               }
             this->m_DiffusionVectors.push_back(vect3d);
             }
           else
             {
-            this->m_BValues.push_back( bval_tmp[0] );
+            this->m_BValues.push_back( currentBValue );
             vnl_vector_fixed<double, 3> vect3d;
             vect3d[0] = 0;
             vect3d[1] = 0;
@@ -502,7 +490,6 @@ public:
           }
         }
 
-      //
       // test gradients. It is OK for one or more guide images to have
       // zero gradients, but all gradients == 0 is an error. It means
       // that the gradient data is missing.
@@ -513,7 +500,6 @@ public:
       if(nonZ == this->m_DiffusionVectors.end())
         {
         std::cerr << this->m_InputFileNames[0] << " has no non-zero diffusion vectors" << std::endl;
-        // itkGenericExceptionMacro(<< "" );
         }
     }
 private:
@@ -705,6 +691,19 @@ protected:
         }
       return vm;
     }
+
+  void CheckCSAHeaderAvailable()
+    {
+    std::string diffusionInfoString;
+    for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
+      {
+      // this is stupid, but itkDCMTKFileReader doesn't expose DCMTK::tagExists
+      if (this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString, false ) == EXIT_FAILURE)
+        return;
+      }
+      this->m_HasCSAHeader = true;
+    }
+
   virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // relevant Siemens private tags
@@ -740,6 +739,7 @@ private:
   unsigned int m_MMosaic;
   unsigned int m_NMosaic;
   unsigned int m_Stride;
+  bool m_HasCSAHeader;
 };
 
 #endif // __SiemensDWIConverter_h

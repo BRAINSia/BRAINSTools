@@ -24,6 +24,7 @@
 #include "itkIntensityWindowingImageFilter.h"
 #include "itkThresholdImageFilter.h"
 #include "itkNumericTraits.h"
+#include "BRAINSABCUtilities.h"
 
 #define MAX_IMAGE_OUTPUT_VALUE 4096
 
@@ -83,10 +84,18 @@ typename ImageType::Pointer StandardizeMaskIntensity(
     }
   else
     {
+    // resample input mask to the voxel lattice of the input image
+    // mask and input image are already at the same physical space
+    typename LabelImageType::Pointer resampledMask =
+      ResampleImageWithIdentityTransform<LabelImageType>( "NearestNeighbor",
+                                                         0,
+                                                         mask.GetPointer(),
+                                                         image.GetPointer() );
+
     typename itk::ThresholdImageFilter<LabelImageType>::Pointer thresholdFilter
       = itk::ThresholdImageFilter<LabelImageType>::New();
 
-    thresholdFilter->SetInput(mask);
+    thresholdFilter->SetInput(resampledMask);
     thresholdFilter->ThresholdAbove(1); // Values less than or equal to are set
                                         // to OutsideValue
     thresholdFilter->SetOutsideValue(maskInteriorLabel);

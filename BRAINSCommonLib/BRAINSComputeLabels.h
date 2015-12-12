@@ -46,6 +46,8 @@ void ComputeLabels(
   TFloatingPrecision InclusionThreshold,  //No thresholding = 0.0F
   const size_t minLabelSizeAllowed) //Allow zero sized labels = 0
 {
+  std::cout << "\nComputing labels..." << std::endl;
+
   std::map<size_t,size_t> reverseLabelMap;
   for( size_t i=0; i < PriorLabelCodeVector.size(); ++i)
     {

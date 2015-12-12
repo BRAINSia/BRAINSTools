@@ -90,11 +90,9 @@
     <name>subjectIntermodeTransformType</name>
     <label>Atlas to Subject Transform Type</label>
     <longflag>subjectIntermodeTransformType</longflag>
-    <description> What type of linear transform type do you want to use to register the atlas to the reference subject image.</description>
+    <description> What type of transform type do you want to run intra subject registeration. Only Identity and Rigid are allowed.</description>
     <element>Identity</element>
     <element>Rigid</element>
-    <element>Affine</element>
-    <element>BSpline</element>
     <default>Rigid</default>
   </string-enumeration>
   </parameters>
@@ -243,6 +241,24 @@
       <longflag>useKNN</longflag>
       <default>false</default>
     </boolean>
+
+    <float>
+      <name>purePlugsThreshold</name>
+      <longflag>purePlugsThreshold</longflag>
+      <label>Threshold Value For PurePlugsMask Computation</label>
+      <channel>input</channel>
+      <description>If this threshold value is greater than zero, only pure samples are used to compute the distributions in EM classification, and only pure samples are used for KNN training. The default value is set to 0, that means not using pure plugs. However, a value of 0.2 is suggested if you want to activate using pure plugs option.</description>
+      <default>0.0</default>
+    </float>
+
+    <integer-vector>
+      <name>numberOfSubSamplesInEachPlugArea</name>
+      <longflag>numberOfSubSamplesInEachPlugArea</longflag>
+      <label>Number of sub-samples taken at each direction inside the plug area to decide whether it is a pure plug or not</label>
+      <channel>input</channel>
+      <description>Number of continous index samples taken at each direction of lattice space for each plug volume.</description>
+      <default>0,0,0</default>
+    </integer-vector>
 
     <boolean>
       <name>atlasWarpingOff</name>

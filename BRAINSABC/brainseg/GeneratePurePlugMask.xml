@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Classification</category>
+  <title>Pure Plugs Mask</title>
+  <description>
+    This program gets several modality image files and returns a binary mask that defines the pure plugs.
+  </description>
+  <version>4.5.0</version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <string-vector>
+      <name>inputImageModalities</name>
+      <longflag>inputImageModalities</longflag>
+      <label>Input image file names</label>
+      <channel>input</channel>
+      <description>Input image files names (.nii.gz or .nrrd)</description>
+    </string-vector>
+
+    <float>
+      <name>threshold</name>
+      <longflag>threshold</longflag>
+      <label>Threshold Value</label>
+      <channel>input</channel>
+      <description>threshold value to define class membership.</description>
+      <default>0.2</default>
+    </float>
+
+    <integer-vector>
+      <name>numberOfSubSamples</name>
+      <longflag>numberOfSubSamples</longflag>
+      <label>Number of sub-samples at each direction</label>
+      <channel>input</channel>
+      <description>Number of continous index samples taken at each direction of lattice space for each plug volume.</description>
+      <default>0,0,0</default>
+    </integer-vector>
+
+    <boolean>
+      <name>verbose</name>
+      <flag>v</flag>
+      <longflag>verbose</longflag>
+      <label>verbose</label>
+      <default>false</default>
+      <description>Print out some debugging information.</description>
+    </boolean>
+
+    <image>
+      <name>outputMaskFile</name>
+      <longflag>outputMaskFile</longflag>
+      <label>Output binary mask file name</label>
+      <channel>output</channel>
+      <description>Ouput binary mask that includes the pure plugs (.nrrd)</description>
+      <default>./purePlugsBinaryMask.nrrd</default>
+    </image>
+  </parameters>
+
+</executable>

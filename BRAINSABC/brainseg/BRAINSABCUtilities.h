@@ -75,6 +75,13 @@ typedef itk::Image<float, 3> CorrectIntensityImageType;
 
 typedef std::map<std::string,std::string> ImageByTypeMap;
 
+typedef std::vector<FloatImagePointerType>      FloatImageVector;
+typedef std::map<std::string, FloatImageVector> MapOfFloatImageVectors;
+
+typedef itk::Transform<double, 3, 3>               GenericTransformType;
+typedef std::vector<GenericTransformType::Pointer> TransformList;
+typedef std::map<std::string,TransformList>        MapOfTransformLists;
+
 /** A utiliy class for holding statistical information
  * for all image channels for a given tissue class type
  */
@@ -103,17 +110,28 @@ public:
 #include "BRAINSABCUtilities.hxx"
 
 // External Templates to improve compilation times.
-extern std::vector<CorrectIntensityImageType::Pointer>
-CorrectBias(const unsigned int degree,
-            const unsigned int CurrentEMIteration,
-            const std::vector<ByteImageType::Pointer> & CandidateRegions,
-            const std::vector<CorrectIntensityImageType::Pointer> & inputImages,
-            const ByteImageType::Pointer currentBrainMask,
-            const ByteImageType::Pointer currentForegroundMask,
-            const std::vector<FloatImageType::Pointer> & probImages,
-            const std::vector<bool> & probUseForBias,
-            const FloatingPrecision sampleSpacing, const int DebugLevel,
-            const std::string& OutputDebugDir);
+
+/*
+ * This function gets a map of input images, finds its first key image,
+ * and resamples all images to the first key image lattice using identity
+ * transform and passed interpolation type.
+ * Note that it is assumed that all input intensity images are already aligned
+ * in physical space.
+ */
+extern MapOfFloatImageVectors
+ResampleImageListToFirstKeyImage(const std::string & resamplerInterpolatorType,
+                                 const MapOfFloatImageVectors & inputImageMap);
+
+/*
+ * This function, first, transforms all inputImageMap to the space of the first image of the map
+ * using rigid transforms (intraSubjectTransforms) and Resampling InPlace interoplation.
+ * Then, it resamples all images within one modality to the voxel lattice of the fist image of that modality channel
+ * using resamplerInterpolatorType and Identity transform.
+ */
+extern MapOfFloatImageVectors
+ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
+                         const MapOfFloatImageVectors & inputImageMap,
+                         MapOfTransformLists & intraSubjectTransforms);
 
 extern template std::vector<FloatImagePointerType> DuplicateImageList<FloatImageType>(
   const std::vector<FloatImagePointerType> & );
@@ -132,6 +150,137 @@ extern template void ComputeLabels<FloatImageType,
 extern template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageType::Pointer> & );
 
 extern template void ZeroNegativeValuesInPlace<FloatImageType>(  std::vector<FloatImageType::Pointer> & );
+
+
+template<class ImageType>
+typename ImageType::Pointer
+ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType,
+                                   const typename ImageType::PixelType defaultPixelValue,
+                                   const typename ImageType::ConstPointer & inputImage,
+                                   const typename itk::ImageBase<3>::ConstPointer & referenceImage)
+{
+  typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleType;
+  typedef typename ResampleType::Pointer                 ResamplePointer;
+  ResamplePointer resampler = ResampleType::New();
+  resampler->SetInput( inputImage );
+  //resampler->SetTransform(); // default transform is identity
+
+  if( resamplerInterpolatorType == "BSpline" )
+    {
+    typedef typename itk::BSplineInterpolateImageFunction<ImageType, double, double>
+      SplineInterpolatorType;
+
+      // Spline interpolation, only available for input images, not
+      // atlas
+    typename SplineInterpolatorType::Pointer splineInt
+      = SplineInterpolatorType::New();
+    splineInt->SetSplineOrder(5);
+    resampler->SetInterpolator(splineInt);
+    }
+  else if( resamplerInterpolatorType == "WindowedSinc" )
+    {
+    typedef typename itk::ConstantBoundaryCondition<ImageType>
+      BoundaryConditionType;
+    static const unsigned int WindowedSincHammingWindowRadius = 5;
+    typedef itk::Function::HammingWindowFunction<
+      WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction
+      <ImageType,
+      WindowedSincHammingWindowRadius,
+      WindowFunctionType,
+      BoundaryConditionType,
+      double>    WindowedSincInterpolatorType;
+    typename WindowedSincInterpolatorType::Pointer windowInt
+      = WindowedSincInterpolatorType::New();
+    resampler->SetInterpolator(windowInt);
+    }
+  else if( resamplerInterpolatorType == "NearestNeighbor" )
+    {
+    typedef typename itk::NearestNeighborInterpolateImageFunction<ImageType, double>
+      NearestNeighborInterpolatorType;
+    typename NearestNeighborInterpolatorType::Pointer nearestNeighborInt
+      = NearestNeighborInterpolatorType::New();
+    resampler->SetInterpolator(nearestNeighborInt);
+    }
+  else // Default to m_UseNonLinearInterpolation == "Linear"
+    {
+    typedef typename itk::LinearInterpolateImageFunction<ImageType, double>
+      LinearInterpolatorType;
+    typename LinearInterpolatorType::Pointer linearInt
+      = LinearInterpolatorType::New();
+    resampler->SetInterpolator(linearInt);
+    }
+
+  resampler->SetDefaultPixelValue( defaultPixelValue );
+  resampler->SetOutputParametersFromImage( referenceImage );
+  resampler->Update();
+
+  typename ImageType::Pointer resimg = resampler->GetOutput();
+  return resimg;
+}
+
+template <class ImageType>
+typename ImageType::Pointer
+NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
+{
+  muLogMacro(<< "\nNormalize input intensity images..." << std::endl);
+
+  typedef typename itk::Statistics::ImageToHistogramFilter<ImageType>     HistogramFilterType;
+  typedef typename HistogramFilterType::InputBooleanObjectType            InputBooleanObjectType;
+  typedef typename HistogramFilterType::HistogramSizeType                 HistogramSizeType;
+
+  HistogramSizeType histogramSize( 1 );
+  histogramSize[0] = 256;
+
+  typename InputBooleanObjectType::Pointer autoMinMaxInputObject = InputBooleanObjectType::New();
+  autoMinMaxInputObject->Set( true );
+
+  typename HistogramFilterType::Pointer histogramFilter = HistogramFilterType::New();
+  histogramFilter->SetInput( inputImage );
+  histogramFilter->SetAutoMinimumMaximumInput( autoMinMaxInputObject );
+  histogramFilter->SetHistogramSize( histogramSize );
+  histogramFilter->SetMarginalScale( 10.0 );
+  histogramFilter->Update();
+
+  float lowerValue = histogramFilter->GetOutput()->Quantile( 0, 0 );
+  float upperValue = histogramFilter->GetOutput()->Quantile( 0, 1 );
+
+  typedef typename itk::IntensityWindowingImageFilter<ImageType, ImageType> IntensityWindowingImageFilterType;
+  typename IntensityWindowingImageFilterType::Pointer windowingFilter = IntensityWindowingImageFilterType::New();
+  windowingFilter->SetInput( inputImage );
+  windowingFilter->SetWindowMinimum( lowerValue );
+  windowingFilter->SetWindowMaximum( upperValue );
+  windowingFilter->SetOutputMinimum( 0 );
+  windowingFilter->SetOutputMaximum( 1 );
+  windowingFilter->Update();
+
+  typename ImageType::Pointer outputImage = ITK_NULLPTR;
+  outputImage = windowingFilter->GetOutput();
+  outputImage->Update();
+  outputImage->DisconnectPipeline();
+
+  return outputImage;
+}
+
+// debug output for map of vector structure
+template <class TMap>
+void
+PrintMapOfImageVectors(const TMap &map)
+{
+  muLogMacro(<< "Map size: " << map.size() << std::endl);
+  for(typename TMap::const_iterator mapIt = map.begin();
+      mapIt != map.end(); ++mapIt)
+    {
+    muLogMacro(<< "  " << mapIt->first << "(" << mapIt->second.size() <<"):" << std::endl);
+    for(unsigned i = 0; i < mapIt->second.size(); ++i)
+      {
+      muLogMacro( << "    " << mapIt->second[i].GetPointer()
+                 << mapIt->second[i]->GetLargestPossibleRegion()
+                 << " " << mapIt->second[i]->GetBufferedRegion()
+                 << std::endl );
+      }
+    }
+}
 
 template <class TMap>
 unsigned int TotalMapSize(const TMap &map)

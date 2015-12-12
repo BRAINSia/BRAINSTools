@@ -41,80 +41,167 @@ template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageTyp
 
 template void ZeroNegativeValuesInPlace<FloatImageType>(  std::vector<FloatImageType::Pointer> & );
 
-std::vector<CorrectIntensityImageType::Pointer> CorrectBias(
-  const unsigned int degree,
-  const unsigned int CurrentEMIteration,
-  const std::vector<ByteImageType::Pointer> &
-  CandidateRegions,
-  const std::vector<CorrectIntensityImageType::Pointer> &
-  inputImages,
-  const ByteImageType::Pointer currentBrainMask,
-  const ByteImageType::Pointer currentTissueMask,
-  const std::vector<FloatImageType::Pointer> & probImages,
-  const std::vector<bool> & probUseForBias,
-  const FloatingPrecision sampleSpacing,
-  const int DebugLevel,
-  const std::string& OutputDebugDir
-  )
+MapOfFloatImageVectors
+ResampleImageListToFirstKeyImage(const std::string & resamplerInterpolatorType,
+                                 const MapOfFloatImageVectors & inputImageMap)
 {
-  std::vector<CorrectIntensityImageType::Pointer> correctedImages(inputImages.size() );
+  muLogMacro(<< "Resampling input image map to the first key image." << std::endl);
 
-  if( degree == 0 )
-    {
-    muLogMacro(<< "Skipping Bias correction, polynomial degree = " << degree <<  std::endl);
-    return inputImages;
-    }
-  muLogMacro(<< "Bias correction, polynomial degree = " << degree <<  std::endl);
+  FloatImageType::ConstPointer KeyImageFirstRead =
+    GetMapVectorFirstElement(inputImageMap).GetPointer();
 
-  // Perform bias correction
-  const unsigned int                   numClasses = probImages.size();
-  std::vector<FloatImageType::Pointer> biasPosteriors;
-  std::vector<ByteImageType::Pointer>  biasCandidateRegions;
-  biasPosteriors.clear();
-  biasCandidateRegions.clear();
+  // Clear image list
+  MapOfFloatImageVectors outputImageMap;
+
+  // Resample the other images
+  for(MapOfFloatImageVectors::const_iterator inputImageMapIter = inputImageMap.begin();
+      inputImageMapIter != inputImageMap.end(); ++inputImageMapIter)
     {
-    for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
+    FloatImageVector::const_iterator currImageIter = inputImageMapIter->second.begin();
+    unsigned int i(0);
+    while( currImageIter != inputImageMapIter->second.end() )
       {
-      const unsigned iprior = iclass;
-      if( probUseForBias[iprior] == 1 )
+      FloatImageType::Pointer tmp =
+        ResampleImageWithIdentityTransform<FloatImageType>( resamplerInterpolatorType,
+                                                            0,
+                                                            (*currImageIter).GetPointer(),
+                                                            KeyImageFirstRead.GetPointer() );
+      // Add the image
+      outputImageMap[inputImageMapIter->first].push_back( tmp );
+      ++currImageIter;
+      ++i;
+      }
+    }
+  return outputImageMap;
+}
+
+MapOfFloatImageVectors
+ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
+                         const MapOfFloatImageVectors & inputImageMap,
+                         MapOfTransformLists & intraSubjectTransforms)
+{
+  muLogMacro(<< "ResampleInPlaceImageList..." << std::endl);
+  /*
+   * This function, first, transforms all inputImageMap to the space of the first image of the map
+   * using rigid transforms (intraSubjectTransforms) and Resampling InPlace interoplation.
+   * Then, it resamples all images within one modality to the voxel lattice of the fist image of that modality channel
+   * using resamplerInterpolatorType and Identity transform.
+   */
+
+  MapOfFloatImageVectors resampleInPlaceImageMap;
+  MapOfFloatImageVectors outputImageMap;
+
+  PrintMapOfImageVectors(inputImageMap);
+
+  // ResampleInPlace all images to the physical space of the first image
+  //
+  for(MapOfFloatImageVectors::const_iterator inputImageMapIter = inputImageMap.begin();
+      inputImageMapIter != inputImageMap.end(); ++inputImageMapIter)
+    {
+    FloatImageVector::const_iterator currModalIter = inputImageMapIter->second.begin();
+    unsigned int i(0);
+    TransformList::iterator xfrmIt = intraSubjectTransforms[inputImageMapIter->first].begin();
+    while( currModalIter != inputImageMapIter->second.end() )
+      {
+      muLogMacro(<< "ResamplingInPlace input image " << inputImageMapIter->first << " #" << i
+                 << " to the physical space of the first image." << std::endl);
+      typedef itk::ResampleInPlaceImageFilter<FloatImageType, FloatImageType>  ResampleIPFilterType;
+      typedef ResampleIPFilterType::Pointer                                    ResampleIPFilterPointer;
+
+      typedef itk::VersorRigid3DTransform<double>   VersorRigid3DTransformType;
+      const VersorRigid3DTransformType::ConstPointer tempRigidTransform =
+        dynamic_cast<VersorRigid3DTransformType const *>( (*xfrmIt).GetPointer() );
+      if( tempRigidTransform.IsNull() )
         {
-        // Focus only on FG classes, more accurate if bg classification is bad
-        // but sacrifices accuracy in border regions (tend to overcorrect)
-        biasPosteriors.push_back(probImages[iclass]);
-        biasCandidateRegions.push_back(CandidateRegions[iclass]);
+        std::cerr << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+        std::cerr << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
+        throw;
         }
+
+      ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+      resampleIPFilter->SetInputImage( (*currModalIter) );
+      resampleIPFilter->SetRigidTransform( tempRigidTransform );
+      resampleIPFilter->Update();
+      FloatImageType::Pointer tmp = resampleIPFilter->GetOutput();
+
+      // Add the image
+      resampleInPlaceImageMap[inputImageMapIter->first].push_back(tmp);
+      ++currModalIter;
+      ++xfrmIt;
+      ++i;
       }
     }
 
-  itk::TimeProbe BiasCorrectorTimer;
-  BiasCorrectorTimer.Start();
-  typedef LLSBiasCorrector<CorrectIntensityImageType, FloatImageType> BiasCorrectorType;
-  typedef BiasCorrectorType::Pointer                                  BiasCorrectorPointer;
+  // Resample each intra subject image to the first image of its modality
+  //
+  muLogMacro(<< "Resampling each intra subject image to the first image of its modality using "
+             << resamplerInterpolatorType << " interpolation." << std::endl);
+  const FloatImageType::PixelType outsideFOVCode = vnl_huge_val( static_cast<FloatImageType::PixelType>( 1.0f ) );
 
-  BiasCorrectorPointer biascorr = BiasCorrectorType::New();
-  biascorr->SetMaxDegree(degree);
-  // biascorr->SetMaximumBiasMagnitude(5.0);
-  // biascorr->SetSampleSpacing(2.0*SampleSpacing);
-  biascorr->SetSampleSpacing(1);
-  biascorr->SetWorkingSpacing(sampleSpacing);
-  biascorr->SetForegroundBrainMask(currentBrainMask);
-  biascorr->SetAllTissueMask(currentTissueMask);
-  biascorr->SetProbabilities(biasPosteriors, biasCandidateRegions);
-  biascorr->SetDebugLevel(DebugLevel);
-  biascorr->SetOutputDebugDir(OutputDebugDir);
-
-  if( DebugLevel > 0 )
+  for(MapOfFloatImageVectors::iterator inputRIPImageMapIter = resampleInPlaceImageMap.begin();
+      inputRIPImageMapIter != resampleInPlaceImageMap.end(); ++inputRIPImageMapIter)
     {
-    biascorr->DebugOn();
+    FloatImageVector::iterator currModalIter = inputRIPImageMapIter->second.begin();
+    FloatImageType::Pointer currModalityKeySubjectImage = (*currModalIter).GetPointer(); // the first image of current modality
+
+    while( currModalIter != inputRIPImageMapIter->second.end() )
+      {
+      if( (*currModalIter).GetPointer() == currModalityKeySubjectImage.GetPointer() ) // if the current intra subject image
+          // is the first image in current modality list
+        {
+        outputImageMap[inputRIPImageMapIter->first].push_back( (*currModalIter).GetPointer() );
+        }
+      else // resample the current intra subject image to the first image of the current modality
+        {
+        FloatImageType::Pointer tmp =
+          ResampleImageWithIdentityTransform<FloatImageType>( resamplerInterpolatorType,
+                                                             outsideFOVCode,
+                                                             (*currModalIter).GetPointer(),
+                                                             currModalityKeySubjectImage.GetPointer() );
+
+        // Zero the mask region outside FOV and also the intensities with
+        // outside
+        // FOV code
+        typedef itk::ImageRegionIterator<FloatImageType> InternalIteratorType;
+        InternalIteratorType    tmpIt( tmp, tmp->GetLargestPossibleRegion() );
+
+        //TODO:  This code below with masking does not make sense.
+        //        intraSubjectFOVIntersectionMask does not seem to do anything.
+        // HACK:  We can probably remove the mask generation from here.
+        // The FOV mask, regions where intensities in all channels do not
+        // match FOV code
+        ByteImageType::Pointer intraSubjectFOVIntersectionMask = ByteImageType::New();
+        intraSubjectFOVIntersectionMask->CopyInformation( currModalityKeySubjectImage.GetPointer() );
+        intraSubjectFOVIntersectionMask->SetRegions( currModalityKeySubjectImage.GetPointer()->GetLargestPossibleRegion() );
+        intraSubjectFOVIntersectionMask->Allocate();
+        intraSubjectFOVIntersectionMask->FillBuffer(1);
+
+        typedef itk::ImageRegionIterator<ByteImageType> MaskIteratorType;
+        MaskIteratorType maskIt( intraSubjectFOVIntersectionMask,
+                                intraSubjectFOVIntersectionMask->GetLargestPossibleRegion() );
+        maskIt.GoToBegin();
+        tmpIt.GoToBegin();
+        while( !maskIt.IsAtEnd() )
+          {
+          if( tmpIt.Get() == outsideFOVCode )  // Voxel came from outside
+            // the original FOV during
+            // registration, so
+            // invalidate it.
+            {
+            maskIt.Set(0); // Set it as an invalid voxel in
+            // intraSubjectFOVIntersectionMask
+            tmpIt.Set(0);  // Set image intensity value to zero.
+            }
+          ++maskIt;
+          ++tmpIt;
+          }
+
+        // Add the image
+        outputImageMap[inputRIPImageMapIter->first].push_back(tmp);
+        }
+      ++currModalIter;
+      }
     }
-  BiasCorrectorType::MapOfInputImageVectors bcInput;
-  bcInput["first"] = inputImages;
-  biascorr->SetInputImages(bcInput);
-  correctedImages = biascorr->CorrectImages(CurrentEMIteration)["first"];
 
-  BiasCorrectorTimer.Stop();
-  itk::RealTimeClock::TimeStampType elapsedTime = BiasCorrectorTimer.GetTotal();
-  muLogMacro(<< "Computing BiasCorrection took " << elapsedTime << " " << BiasCorrectorTimer.GetUnit() << std::endl);
-
-  return correctedImages;
+  return outputImageMap;
 }

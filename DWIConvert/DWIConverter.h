@@ -311,7 +311,14 @@ protected:
       // assume volume interleaving, i.e. the second dicom file stores
       // the second slice in the same volume as the first dicom file
       double image1Origin[3];
-      unsigned long nextSlice = this->m_IsInterleaved ? this->m_NVolume : 1;
+
+      unsigned long nextSlice = 0;
+      if (this->m_Headers.size() > 1)
+        {
+        // assuming multiple files is invalid for single-file volume: http://www.na-mic.org/Bug/view.php?id=4105
+        nextSlice = this->m_IsInterleaved ? this->m_NVolume : 1;
+        }
+
       this->m_Headers[nextSlice]->GetOrigin(image1Origin);
       std::cout << "Slice " << nextSlice << ": " << image1Origin[0] << " " << image1Origin[1]
                 << " " << image1Origin[2] << std::endl;

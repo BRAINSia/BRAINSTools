@@ -410,12 +410,14 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print("\ndenoise image filter\n")
         makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
                                                   input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                               'OtherList', 'postfix', 'PrimaryT1'],
+                                                               'OtherList', 'postfix', 'PrimaryT1',
+                                                               'ListOutType'],
                                                   output_names=['inImageList', 'outImageList', 'imageTypeList']),
                                          run_without_submitting=True, name="99_makeDenoiseInImageList")
         baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
         baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
+        makeDenoiseInImageList.inputs.ListOutType= True
         makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
         makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"

@@ -54,7 +54,8 @@ except ImportError:
 
 from nipype.interfaces.semtools.registration.brainsresample import BRAINSResample
 
-from nipype.interfaces.semtools.filtering.denoising import UnbiasedNonLocalMeans
+#from nipype.interfaces.semtools.filtering.denoising import UnbiasedNonLocalMeans
+from nipype.interfaces.ants.segmentation import DenoiseImage
 from nipype.interfaces.semtools.segmentation.specialized import BRAINSCreateLabelMapFromProbabilityMaps
 
 
@@ -409,36 +410,41 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print("\ndenoise image filter\n")
         makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
                                                   input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                               'OtherList', 'postfix', 'PrimaryT1'],
+                                                               'OtherList', 'postfix', 'PrimaryT1',
+                                                               'ListOutType'],
                                                   output_names=['inImageList', 'outImageList', 'imageTypeList']),
                                          run_without_submitting=True, name="99_makeDenoiseInImageList")
         baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
         baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
+        makeDenoiseInImageList.inputs.ListOutType= True
         makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
-        makeDenoiseInImageList.inputs.postfix = "_UNM_denoised.nii.gz"
+        makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"
         # HACK baw201.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
         baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
 
         print("\nDenoise:\n")
-        DenoiseInputImgs = pe.MapNode(interface=UnbiasedNonLocalMeans(),
+        DenoiseInputImgs = pe.MapNode(interface=DenoiseImage(),
                                       name='denoiseInputImgs',
-                                      iterfield=['inputVolume',
-                                                 'outputVolume'])
-        DenoiseInputImgs.inputs.rc = [1, 1, 1]
-        DenoiseInputImgs.inputs.rs = [4, 4, 4]
+                                      iterfield=['input_image',
+                                                 'output_image'])
+        DenoiseInputImgs.synchronize = True
+        DenoiseInputImgs.inputs.dimension = 3
+        DenoiseInputImgs.inputs.noise_model= 'Rician'
+        DenoiseInputImgs.inputs.shrink_factor = 1 # default
         DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], .2, 1, 1),
                                         'overwrite': True}
-        baw201.connect([(makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
-                        (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList', 'outputVolume')])
+        baw201.connect([(makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'input_image')]),
+                        (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList', 'output_image')])
         ])
         print("\nMerge all T1 and T2 List\n")
         makePreprocessingOutList = pe.Node(Function(function=GenerateSeparateImageTypeList,
                                                     input_names=['inFileList', 'inTypeList'],
                                                     output_names=['T1s', 'T2s', 'PDs', 'FLs', 'OtherList']),
-                                           run_without_submitting=True, name="99_makePreprocessingOutList")
-        baw201.connect(DenoiseInputImgs, 'outputVolume', makePreprocessingOutList, 'inFileList')
+                                           run_without_submitting=False,
+                                           name="99_makePreprocessingOutList")
+        baw201.connect(DenoiseInputImgs, 'output_corrected_image', makePreprocessingOutList, 'inFileList')
         baw201.connect(makeDenoiseInImageList, 'imageTypeList', makePreprocessingOutList, 'inTypeList')
 
     else:

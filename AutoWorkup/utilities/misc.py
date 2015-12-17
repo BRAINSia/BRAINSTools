@@ -8,7 +8,7 @@ FS_VARS = ['FREESURFER_HOME',
            'MNI_DIR',
            'FSL_DIR']
 
-def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT1):
+def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT1, ListOutType=False):
     #
     #for BABC: "_corrected.nii.gz"
     #for UNM Denoise: "_UNM_denoised.nii.gz"
@@ -37,7 +37,11 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT
     outImageList = []
     for i in all_files:
         out_name = GetExtBaseName(i) + postfix
-        outImageList.append(out_name)
+        if ListOutType:
+            out_name = [str(out_name)]
+        else:
+            out_name = str(out_name)
+        outImageList.append( out_name )
     #
     #make type list
     imageTypeList = ["T1"] * len(T1List)
@@ -57,7 +61,12 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT
     """ This funciton uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
     if PrimaryT1 is not None:
         inImageList[0]=PrimaryT1
-
+    print ("inImageList:::")
+    print (inImageList)
+    print ("outImageList:::")
+    print (outImageList)
+    print ("imageTypeList:::")
+    print (imageTypeList)
     return inImageList, outImageList, imageTypeList
 
 def GenerateSeparateImageTypeList(inFileList, inTypeList):

@@ -10,6 +10,8 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
+from nipype.interfaces.semtools.registration.brainsresample import BRAINSResample
+
 from utilities.misc import *
 from utilities.distributed import modify_qsub_args
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
@@ -26,7 +28,6 @@ from .WorkupAtlasDustCleanup import CreateDustCleanupWorkflow
     MALFWF.connect(BAtlas,'ExtendedAtlasDefinition.xml',myLocalTCWF,'atlasDefinition')
     MALFWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
-
 def MakeVector(inFN1, inFN2=None):
     #print("inFN1: {0}".format(inFN1))
     #print("inFN2: {0}".format(inFN2))
@@ -123,8 +124,25 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True)
                                                                       output_names=['outFNs']),
                                 run_without_submitting=True, name="sessionMakeMultimodalInput")
     MALFWF.connect(inputsSpec, 'subj_t1_image', sessionMakeMultimodalInput, 'inFN1')
+    """
+    T2 resample to T1 average image
+    :: BRAINSABC changed its behavior to retain image's original spacing & origin
+    :: Since antsJointFusion only works for the identical origin images for targets,
+    :: Resampling is placed at this stage
+    """
+    subjectT2Resample = pe.Node(interface=BRAINSResample(), name="BRAINSResample_T2_forAntsJointFusion")
     if not onlyT1:
-        MALFWF.connect(inputsSpec, 'subj_t2_image', sessionMakeMultimodalInput, 'inFN2')
+        subjectT2Resample.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1),
+                                  'overwrite': True}
+        subjectT2Resample.inputs.pixelType = 'short'
+        subjectT2Resample.inputs.interpolationMode = 'Linear'
+        subjectT2Resample.inputs.outputVolume = "t2_resampled_in_t1.nii.gz"
+        #subjectT2Resample.inputs.warpTransform= "Identity" # Default is "Identity"
+
+        MALFWF.connect(inputsSpec, 'subj_t1_image', subjectT2Resample, 'referenceVolume')
+        MALFWF.connect(inputsSpec, 'subj_t2_image', subjectT2Resample, 'inputVolume')
+
+        MALFWF.connect(subjectT2Resample, 'outputVolume', sessionMakeMultimodalInput, 'inFN2')
     else:
         pass
 
@@ -383,7 +401,8 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True)
 
     myLocalDustCleanup = CreateDustCleanupWorkflow("DUST_CLEANUP", onlyT1, master_config)
     MALFWF.connect(inputsSpec, 'subj_t1_image', myLocalDustCleanup, 'inputspec.subj_t1_image')
-    MALFWF.connect(inputsSpec, 'subj_t2_image', myLocalDustCleanup, 'inputspec.subj_t2_image')
+    if not onlyT1:
+        MALFWF.connect(subjectT2Resample, 'outputVolume', myLocalDustCleanup, 'inputspec.subj_t2_image')
     if runFixFusionLabelMap:
         ## post processing of jointfusion
         injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,

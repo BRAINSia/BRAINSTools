@@ -33,7 +33,6 @@ int main( int argc, char * argv[] )
   typedef FloatImageType::Pointer                                             FloatImagePointer;
   typedef std::vector<FloatImagePointer>                                      InputImageList;
   typedef itk::ImageFileReader<FloatImageType>                                LocalReaderType;
-  typedef itk::RescaleIntensityImageFilter< FloatImageType, FloatImageType >  RescaleFilterType;
   typedef itk::Image<unsigned char, 3>                                        MaskImageType;
 
   std::vector<std::string> inputFileNames;

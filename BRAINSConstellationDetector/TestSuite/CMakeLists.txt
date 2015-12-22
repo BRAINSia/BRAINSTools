@@ -285,7 +285,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_acLowerBound)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -301,7 +301,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_backgroundValue)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -317,7 +317,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_cutOutHeadInOutputResampledVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -365,7 +365,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_mspLevel)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -381,7 +381,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_otsuThreshold)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -445,7 +445,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_rescaleIntensityRange)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -461,7 +461,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_rmpj)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -478,7 +478,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_rpc)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -495,7 +495,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_rVN4)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -511,7 +511,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_rVN4-rpc-rac-rmpj)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -531,7 +531,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_T1_outputResampledVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -561,7 +561,7 @@ set(BCDTestName BCDTest_ForceVN4Point)
   set(BCDTestName BCDTest_trimRescaledIntensities)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5

@@ -102,7 +102,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   # set(${proj}_GIT_REPOSITORY "${git_protocol}://github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
   # set(${proj}_GIT_TAG "ea7cdc4e0b399be244e79392c67fed068c33e454")  # VTK 20141221
   set(${proj}_GIT_REPOSITORY "${git_protocol}://vtk.org/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "4cace97614291d26ecadbf4b78ea4090d9136105")  # VTK 20151029
+  set(${proj}_GIT_TAG "431bd5849cd92fb8b77ac0c60fc6425e514f2fe8")  # VTK 20160113
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -132,6 +132,11 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DModule_vtkIOXMLParser:BOOL=ON
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}
+      # ZLIB
+      -D${proj}_USE_SYSTEM_ZLIB:BOOL=ON
+      -DZLIB_ROOT:PATH=${ZLIB_ROOT}
+      -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
+      -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       INSTALL_COMMAND ""
     )
   ### --- End Project specific additions

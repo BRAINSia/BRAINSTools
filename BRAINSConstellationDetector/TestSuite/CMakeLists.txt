@@ -255,7 +255,7 @@ set(BCDTestName BCDTest_ForcePCPoint)
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTest_ForcePCPoint_InputSpace.fcsv # output of the ForcePCPoint Test
-    --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv},DATA{${TestData_DIR}/${BCDTestName}_standard.1.fcsv}# Baseline file
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv},DATA{${TestData_DIR}/${BCDTestName}_standard.1.fcsv},DATA{${TestData_DIR}/${BCDTestName}_standard.2.fcsv}# Baseline file
     --tolerance 1.875 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
@@ -431,9 +431,9 @@ set(BCDTestName BCDTest_ForceVN4Point)
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd,:}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
-    --compareIntensityTolerance 50
-    --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareIntensityTolerance 75
+    --compareRadiusTolerance 10
+    --compareNumberOfPixelsTolerance 25
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}

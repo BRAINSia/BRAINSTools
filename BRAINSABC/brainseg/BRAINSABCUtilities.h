@@ -38,16 +38,7 @@
 #include <map>
 #include <csignal>
 
-// The 200805 OpenMPv3.0 specificaiton allows unsigned iterators
-#if defined(_OPENMP)
-#define LOCAL_USE_OPEN_MP
-#endif
-
-#if defined(LOCAL_USE_OPEN_MP) && (_OPENMP < 200805)
-typedef int LOOPITERTYPE;
-#else
 typedef unsigned int LOOPITERTYPE;
-#endif
 
 //  vnl_math_isnan(value) || vnl_math_isinf(value) )
 #if 1  // Runtime performance penalty that can be used to find faulty code

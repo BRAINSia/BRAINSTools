@@ -213,16 +213,15 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 template <class TInputImage, class TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
-::Initialize()
-{
+::Initialize() {
   const InputImageSizeType size
-    = m_ForegroundBrainMask->GetLargestPossibleRegion().GetSize();
+      = m_ForegroundBrainMask->GetLargestPossibleRegion().GetSize();
 
   // Compute skips along each dimension
 #ifdef USE_HALF_RESOLUTION // Need to do full scale to prevent checkerboard
   // images from being created
   const InputImageSpacingType spacing = m_ForegroundBrainMask->GetSpacing();
-  unsigned int                skips[3];
+  unsigned int skips[3];
   skips[0] = (unsigned int)( m_SampleSpacing / spacing[0] );
   skips[1] = (unsigned int)( m_SampleSpacing / spacing[1] );
   skips[2] = (unsigned int)( m_SampleSpacing / spacing[2] );
@@ -288,8 +287,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
   m_Basis.set_size(numEquations, numCoefficients);
 
-  {
   typedef typename  std::vector<ProbabilityImageIndexType>::const_iterator IterType ;
+  {
   // Coordinate scaling and offset parameters
   vnl_vector_fixed<unsigned long long int,3> local_XMu =
   tbb::parallel_reduce(
@@ -315,16 +314,24 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 );
 
   {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared) reduction(+:local_XMu_x,local_XMu_y,local_XMu_z)
-#endif
-  for( unsigned int kk = 0; kk < numEquations; kk++ )
-    {
-    const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[kk];
-    local_XMu[0] += currProbIndex[0];
-    local_XMu[1] += currProbIndex[1];
-    local_XMu[2] += currProbIndex[2];
-    }
+      local_XMu += tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(),m_ValidIndicies.end()),
+                           vnl_vector_fixed<unsigned long long int,3>(),
+                           [=](const tbb::blocked_range<IterType> &r,
+                               vnl_vector_fixed<unsigned long long int,3> newLocal_XMu )
+                                            -> vnl_vector_fixed<unsigned long long int,3> {
+
+                             for ( auto currProbIndex = r.begin(); currProbIndex < r.end(); ++currProbIndex) {
+                               newLocal_XMu[0] += (*currProbIndex)[0];
+                               newLocal_XMu[1] += (*currProbIndex)[1];
+                               newLocal_XMu[2] += (*currProbIndex)[2];
+                             }
+                             return newLocal_XMu;
+                           },
+                           [] (  vnl_vector_fixed<unsigned long long int,3> a,
+                                 vnl_vector_fixed<unsigned long long int,3> b ) ->  vnl_vector_fixed<unsigned long long int,3> {
+                             return a+b;
+                           }
+      );
   }
   const double invNumEquations = 1.0 / static_cast<double>(numEquations);
   m_XMu[0] = static_cast<double>(local_XMu[0]) * invNumEquations;
@@ -333,58 +340,56 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   }
 
   {
-  double local_XStd_x = 0.0;
-  double local_XStd_y = 0.0;
-  double local_XStd_z = 0.0;
-  {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared) reduction(+:local_XStd_x,local_XStd_y,local_XStd_z)
-#endif
-  for( unsigned int kk = 0; kk < numEquations; kk++ )
-    {
-    const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[kk];
-    const double                      diff0 = static_cast<double>(currProbIndex[0]) - m_XMu[0];
-    local_XStd_x += diff0 * diff0;
-    const double diff1 = static_cast<double>(currProbIndex[1]) - m_XMu[1];
-    local_XStd_y += diff1 * diff1;
-    const double diff2 = static_cast<double>(currProbIndex[2]) - m_XMu[2];
-    local_XStd_z += diff2 * diff2;
-    }
-  }
-  m_XStd[0] = vcl_sqrt(local_XStd_x / numEquations);
-  m_XStd[1] = vcl_sqrt(local_XStd_y / numEquations);
-  m_XStd[2] = vcl_sqrt(local_XStd_z / numEquations);
+      const vnl_vector_fixed<double, 3> local_XStd_final =
+          tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(), m_ValidIndicies.end()),
+          vnl_vector_fixed<double, 3>(),
+      [=](const tbb::blocked_range<IterType> &rng,
+          vnl_vector_fixed<double, 3> local_XStd) -> vnl_vector_fixed<double, 3> {
+        for (auto currProbIndex = rng.begin(); currProbIndex < rng.end(); ++currProbIndex) {
+          const double diff0 = static_cast<double>((*currProbIndex)[0]) - m_XMu[0];
+          local_XStd[0] += diff0 * diff0;
+          const double diff1 = static_cast<double>((*currProbIndex)[1]) - m_XMu[1];
+          local_XStd[1] += diff1 * diff1;
+          const double diff2 = static_cast<double>((*currProbIndex)[2]) - m_XMu[2];
+          local_XStd[2] += diff2 * diff2;
+        }
+        return local_XStd;
+      },
+      [] (  vnl_vector_fixed<double ,3> a,
+        vnl_vector_fixed<double, 3> b ) ->  vnl_vector_fixed<double ,3> {
+        return a+b;
+      }
+      );
+  m_XStd[0] = vcl_sqrt(local_XStd_final[0] / numEquations);
+  m_XStd[1] = vcl_sqrt(local_XStd_final[1] / numEquations);
+  m_XStd[2] = vcl_sqrt(local_XStd_final[2] / numEquations);
   }
 
   {
   // Row and column indices
   // Fill in polynomial basis values
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared)
-#endif
-  for( unsigned int r = 0; r < numEquations; r++ )
-    {
-    const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[r];
-    unsigned int                      c = 0;
-    for( unsigned int order = 0; order <= m_MaxDegree; order++ )
-      {
-      for( unsigned int xorder = 0; xorder <= order; xorder++ )
-        {
-        for( unsigned int yorder = 0; yorder <= ( order - xorder ); yorder++ )
-          {
-          const int zorder = order - xorder - yorder;
+    tbb::parallel_for(tbb::blocked_range<unsigned int>(0,numEquations),
+                      [=] (tbb::blocked_range<unsigned int> &rng) {
+                        for (unsigned int r = rng.begin(); r < rng.end(); ++r) {
+                          const ProbabilityImageIndexType &currProbIndex = m_ValidIndicies[r];
+                          unsigned int c = 0;
+                          for (unsigned int order = 0; order <= m_MaxDegree; order++) {
+                            for (unsigned int xorder = 0; xorder <= order; xorder++) {
+                              for (unsigned int yorder = 0; yorder <= (order - xorder); yorder++) {
+                                const int zorder = order - xorder - yorder;
 
-          const double xc = ( currProbIndex[0] - m_XMu[0] ) / m_XStd[0];
-          const double yc = ( currProbIndex[1] - m_XMu[1] ) / m_XStd[1];
-          const double zc = ( currProbIndex[2] - m_XMu[2] ) / m_XStd[2];
+                                const double xc = (currProbIndex[0] - m_XMu[0]) / m_XStd[0];
+                                const double yc = (currProbIndex[1] - m_XMu[1]) / m_XStd[1];
+                                const double zc = (currProbIndex[2] - m_XMu[2]) / m_XStd[2];
 
-          m_Basis(r, c)
-            = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
-          c++;
-          }
-        }
-      }
-    }
+                                m_Basis(r, c)
+                                    = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
+                                c++;
+                              }
+                            }
+                          }
+                        }
+                      });
   }
 }
 
@@ -586,45 +591,42 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
       unsigned int numCurModalityImages = mapIt2->second.size();
       for(unsigned int imIndex = 0; imIndex < numCurModalityImages; ++imIndex)
         {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared)
-#endif
         typename InputImageNNInterpolationType::Pointer inputImageInterp =
           InputImageNNInterpolationType::New();
         inputImageInterp->SetInputImage( mapIt2->second[imIndex].GetPointer() );
+        tbb::parallel_for(tbb::blocked_range<unsigned int>(0,numEquations,1),
+            [=,&R_i](const tbb::blocked_range<unsigned int>& r) {
+              for (unsigned int eq = r.begin(); eq < r.end(); eq++) {
+                const ProbabilityImageIndexType &currProbIndex = m_ValidIndicies[eq];
+                // Compute reconstructed intensity, weighted by prob * invCov
+                double sumW = DBL_EPSILON;
+                double recon = 0;
+                for (unsigned int iclass = 0; iclass < numClasses; iclass++) {
+                  const MatrixType &invCov = invCovars[iclass];
 
-        for( unsigned int eq = 0; eq < numEquations; eq++ )
-          {
-          const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[eq];
-          // Compute reconstructed intensity, weighted by prob * invCov
-          double sumW = DBL_EPSILON;
-          double recon = 0;
-          for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
-            {
-            const MatrixType & invCov = invCovars[iclass];
+                  const double w =
+                      m_BiasPosteriors[iclass]->GetPixel(currProbIndex) * invCov(modality1, modality2);
+                  sumW += w;
+                  recon += w * this->m_ListOfClassStatistics[iclass].m_Means[mapIt2->first];
+                }
+                recon /= sumW;
 
-            const double w =
-              m_BiasPosteriors[iclass]->GetPixel(currProbIndex) * invCov(modality1, modality2);
-            sumW += w;
-            recon += w * this->m_ListOfClassStatistics[iclass].m_Means[mapIt2->first];
+                // transform probability image index to physical point
+                typename ProbabilityImageType::PointType currProbPoint;
+                m_BiasPosteriors[0]->TransformIndexToPhysicalPoint(currProbIndex, currProbPoint);
+
+                typename InputImageNNInterpolationType::OutputType inputImageValue = 1; // default value must be 1
+                if (inputImageInterp->IsInsideBuffer(currProbPoint)) {
+                  inputImageValue = inputImageInterp->Evaluate(currProbPoint);
+                }
+
+                const double bias = LOGP(inputImageValue) - recon;
+                //,&R_,&R_,&R_iii divide by # of images of current modality -- in essence
+                // you're averaging them.
+                R_i(eq, 0) += (sumW * bias) / numCurModalityImages;
+              }
             }
-          recon /= sumW;
-
-          // transform probability image index to physical point
-          typename ProbabilityImageType::PointType currProbPoint;
-          m_BiasPosteriors[0]->TransformIndexToPhysicalPoint(currProbIndex, currProbPoint);
-
-          typename InputImageNNInterpolationType::OutputType inputImageValue = 1; // default value must be 1
-          if( inputImageInterp->IsInsideBuffer(currProbPoint) )
-            {
-            inputImageValue = inputImageInterp->Evaluate(currProbPoint);
-            }
-
-          const double bias = LOGP( inputImageValue ) - recon;
-          // divide by # of images of current modality -- in essence
-          // you're averaging them.
-          R_i(eq, 0) += (sumW * bias)/numCurModalityImages;
-          }
+        );
         }
       } // for jchan
 
@@ -647,61 +649,47 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
   // Compute LHS using replicated basis entries, weighted using posterior
   // probability and inverse covariance
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared)
-#endif
-  for(unsigned int ichan = 0; ichan < (LOOPITERTYPE)numModalities; ichan++ )
-    {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared)
-#endif
-    for( LOOPITERTYPE jchan = 0; jchan < (LOOPITERTYPE)numModalities; jchan++ )
-      {
-      MatrixType Wij_A(numEquations, numCoefficients, 0.0);
-      {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for shared(Wij_A) // default(shared)
-#endif
-      for( unsigned int eq = 0; eq < numEquations; eq++ )
-        {
-        const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[eq];
-        double                            sumW = DBL_EPSILON;
-        for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
-          {
-          const MatrixType & invCov = invCovars[iclass];
-          double             w = m_BiasPosteriors[iclass]->GetPixel(currProbIndex)
-            * invCov(ichan, jchan);
-          sumW += w;
-          }
-        for( unsigned int col = 0; col < numCoefficients; col++ )
-          {
-          Wij_A(eq, col) = sumW * m_Basis(eq, col);
-          }
-        }
-      }
-
+  tbb::parallel_for(tbb::blocked_range2d<LOOPITERTYPE >(0,numModalities,0,numModalities),
+                    [=,&lhs] (const tbb::blocked_range2d<LOOPITERTYPE > &r ) {
+                        for (LOOPITERTYPE ichan = r.rows().begin(); ichan < r.rows().end(); ichan++) {
+                          for (LOOPITERTYPE jchan = r.cols().begin(); jchan < r.cols().end(); jchan++) {
+                            MatrixType Wij_A(numEquations, numCoefficients, 0.0);
+                            {
+                              for (LOOPITERTYPE eq = 0; eq < numEquations; eq++) {
+                                const ProbabilityImageIndexType &currProbIndex = m_ValidIndicies[eq];
+                                double sumW = DBL_EPSILON;
+                                for (unsigned int iclass = 0; iclass < numClasses; iclass++) {
+                                  const MatrixType &invCov = invCovars[iclass];
+                                  double w = m_BiasPosteriors[iclass]->GetPixel(currProbIndex)
+                                             * invCov(ichan, jchan);
+                                  sumW += w;
+                                }
+                                for (unsigned int col = 0; col < numCoefficients; col++) {
+                                  Wij_A(eq, col) = sumW * m_Basis(eq, col);
+                                }
+                              }
+                            }
 #if LLSBIAS_USE_NORMAL_EQUATION
-      MatrixType lhs_ij = basisT * Wij_A;
-      for( unsigned int row = 0; row < numCoefficients; row++ )
-        {
-        for( unsigned int col = 0; col < numCoefficients; col++ )
-          {
-          lhs(row + ichan * numCoefficients, col + jchan * numCoefficients)
-            = lhs_ij(row, col);
-          }
-        }
+                            MatrixType lhs_ij = basisT * Wij_A;
+                            for (unsigned int row = 0; row < numCoefficients; row++) {
+                              for (unsigned int col = 0; col < numCoefficients; col++) {
+                                lhs(row + ichan * numCoefficients, col + jchan * numCoefficients)
+                                    = lhs_ij(row, col);
+                              }
+                            }
 #else
-      for( unsigned int row = 0; row < numEquations; row++ )
-        {
-        for( unsigned int col = 0; col < numCoefficients; col++ )
-          {
-          lhs(row + ichan * numEquations, col + jchan * numCoefficients)
-            = Wij_A(row, col);
-          }
-        }
+                            for( unsigned int row = 0; row < numEquations; row++ )
+                              {
+                              for( unsigned int col = 0; col < numCoefficients; col++ )
+                                {
+                                lhs(row + ichan * numEquations, col + jchan * numCoefficients)
+                                  = Wij_A(row, col);
+                                }
+                              }
 #endif
-      } // for jchan
-    }   // for ichan
+                          } // for jchan
+                        }   // for ichan
+                      } );
 
   muLogMacro(<< "Solve " << lhs.rows() << " x " << lhs.columns() << std::endl);
 
@@ -780,133 +768,116 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
       double maxBiasInForegroundMask = vcl_numeric_limits<double>::min();
       double minBiasInForegroundMask = vcl_numeric_limits<double>::max();
 
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for shared(maxBiasInForegroundMask,minBiasInForegroundMask) default(shared)
-#endif
       const InputImageSizeType outsize = curOutput->GetLargestPossibleRegion().GetSize();
+      tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[0],0,outsize[1],0,outsize[2]),
+                        [=,&maxBiasInForegroundMask,&minBiasInForegroundMask] (tbb::blocked_range3d<long> &r) {
+                          for (long kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
+                            for (long jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
+                              for (long ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                                const InternalImageIndexType currOutIndex = {{ii, jj, kk}}; // index of currOutput
+                                // Masks and probability image should be evaluated in physical space, since
+                                // they may not have the same voxel lattice as the current output image.
+                                typename InternalImageType::PointType currOutPoint;
+                                curOutput->TransformIndexToPhysicalPoint(currOutIndex, currOutPoint);
 
-      for( long kk = 0; kk < (long)outsize[2]; kk++ )
-        {
-        for( long jj = 0; jj < (long)outsize[1]; jj++ )
-          {
-          for( long ii = 0; ii < (long)outsize[0]; ii++ )
-            {
-            const InternalImageIndexType currOutIndex = {{ii, jj, kk}}; // index of currOutput
-            // Masks and probability image should be evaluated in physical space, since
-            // they may not have the same voxel lattice as the current output image.
-            typename InternalImageType::PointType currOutPoint;
-            curOutput->TransformIndexToPhysicalPoint(currOutIndex, currOutPoint);
+                                double logFitValue = 0.0;
+                                unsigned int c = ichan * numCoefficients;
+                                for (unsigned int order = 0; order <= m_MaxDegree; order++) {
+                                  for (unsigned int xorder = 0; xorder <= order; xorder++) {
+                                    for (unsigned int yorder = 0; yorder <= (order - xorder); yorder++) {
+                                      const int zorder = order - xorder - yorder;
 
-            double                          logFitValue = 0.0;
-            unsigned int                    c = ichan * numCoefficients;
-            for( unsigned int order = 0; order <= m_MaxDegree; order++ )
-              {
-              for( unsigned int xorder = 0; xorder <= order; xorder++ )
-                {
-                for( unsigned int yorder = 0; yorder <= ( order - xorder ); yorder++ )
-                  {
-                  const int zorder = order - xorder - yorder;
+                                      const double xc = (currOutIndex[0] - m_XMu[0]) / m_XStd[0];
+                                      const double yc = (currOutIndex[1] - m_XMu[1]) / m_XStd[1];
+                                      const double zc = (currOutIndex[2] - m_XMu[2]) / m_XStd[2];
 
-                  const double xc = ( currOutIndex[0] - m_XMu[0] ) / m_XStd[0];
-                  const double yc = ( currOutIndex[1] - m_XMu[1] ) / m_XStd[1];
-                  const double zc = ( currOutIndex[2] - m_XMu[2] ) / m_XStd[2];
+                                      const double poly
+                                          = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
 
-                  const double poly
-                    = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
+                                      // logFitValue += coeffs[c] * poly;
+                                      logFitValue += coeffs(c, 0) * poly;
+                                      c++;
+                                    }
+                                  }
+                                }
 
-                  // logFitValue += coeffs[c] * poly;
-                  logFitValue += coeffs(c, 0) * poly;
-                  c++;
-                  }
-                }
-              }
-
-            ByteImagePixelType maskValue = 0;
-            if( foregroundBrainMaskInterp->IsInsideBuffer(currOutPoint) )
-              {
-              maskValue = foregroundBrainMaskInterp->Evaluate(currOutPoint);
-              }
-            /* NOTE:  For regions listed as background, clamp the outputs[ichan
-              */
-            if( vnl_math_isnan(logFitValue) || vnl_math_isinf(logFitValue) )
-              {
-              std::cout << "WARNING:  Bad Scale Value Computed!" << std::endl;
-              logFitValue = 0.0;
-              }
-            const double multiplicitiveBiasCorrectionFactor = 1.0 / EXPP(logFitValue);
-            if( maskValue != 0 )
-              {
-              if( multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask )
-                {
-                maxBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
-                }
-              if( multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask )
-                {
-                minBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
-                }
-              }
-            biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                               (InternalImagePixelType)multiplicitiveBiasCorrectionFactor);
-            } // for currOutIndex[0]
-          }
-        }
+                                ByteImagePixelType maskValue = 0;
+                                if (foregroundBrainMaskInterp->IsInsideBuffer(currOutPoint)) {
+                                  maskValue = foregroundBrainMaskInterp->Evaluate(currOutPoint);
+                                }
+                                /* NOTE:  For regions listed as background, clamp the outputs[ichan
+                                  */
+                                if (vnl_math_isnan(logFitValue) || vnl_math_isinf(logFitValue)) {
+                                  std::cout << "WARNING:  Bad Scale Value Computed!" << std::endl;
+                                  logFitValue = 0.0;
+                                }
+                                const double multiplicitiveBiasCorrectionFactor = 1.0 / EXPP(logFitValue);
+                                if (maskValue != 0) {
+                                  if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask) {
+                                    maxBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
+                                  }
+                                  if (multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask) {
+                                    minBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
+                                  }
+                                }
+                                biasIntensityScaleFactor->SetPixel(currOutIndex,
+                                                                   (InternalImagePixelType) multiplicitiveBiasCorrectionFactor);
+                              } // for currOutIndex[0]
+                            }
+                          }
+                        });
       std::cout << "Foreground Mask Bias Correction MIN: " << minBiasInForegroundMask << " MAX: "
                 << maxBiasInForegroundMask << std::endl;
       // Correct image using (clamped) bias field)
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared)
-#endif
-      for( long kk = 0; kk < (long)outsize[2]; kk++ )
-        {
-        for( long jj = 0; jj < (long)outsize[1]; jj++ )
-          {
-          for( long ii = 0; ii < (long)outsize[0]; ii++ )
-            {
-            const InternalImageIndexType currOutIndex = {{ii, jj, kk}}; // index of currOutput
-            typename InternalImageType::PointType currOutPoint;
-            curOutput->TransformIndexToPhysicalPoint(currOutIndex, currOutPoint);
+      tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[0],0,outsize[1],0,outsize[2]),
+                        [=] (tbb::blocked_range3d<long> &r) {
+                          for (auto kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
+                            for (auto jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
+                              for (auto ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                                const InternalImageIndexType currOutIndex = {{ii, jj, kk}}; // index of currOutput
+                                typename InternalImageType::PointType currOutPoint;
+                                curOutput->TransformIndexToPhysicalPoint(currOutIndex, currOutPoint);
 
-            double multiplicitiveBiasCorrectionFactor =
-              biasIntensityScaleFactor->GetPixel(currOutIndex);
-            if( multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask )  //
-              //
-              // CLAMP
-              {
-              multiplicitiveBiasCorrectionFactor = maxBiasInForegroundMask;
-              biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                                 (InternalImagePixelType) multiplicitiveBiasCorrectionFactor );
-              }
-            else if( multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask )  //
-              //
-              // CLAMP
-              {
-              multiplicitiveBiasCorrectionFactor = minBiasInForegroundMask;
-              biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                                 (InternalImagePixelType) multiplicitiveBiasCorrectionFactor );
-              }
+                                double multiplicitiveBiasCorrectionFactor =
+                                    biasIntensityScaleFactor->GetPixel(currOutIndex);
+                                if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask)  //
+                                  //
+                                  // CLAMP
+                                {
+                                  multiplicitiveBiasCorrectionFactor = maxBiasInForegroundMask;
+                                  biasIntensityScaleFactor->SetPixel(currOutIndex,
+                                                                     (InternalImagePixelType) multiplicitiveBiasCorrectionFactor);
+                                }
+                                else if (multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask)  //
+                                  //
+                                  // CLAMP
+                                {
+                                  multiplicitiveBiasCorrectionFactor = minBiasInForegroundMask;
+                                  biasIntensityScaleFactor->SetPixel(currOutIndex,
+                                                                     (InternalImagePixelType) multiplicitiveBiasCorrectionFactor);
+                                }
 
-            typename MaskNNInterpolationType::OutputType allTissueMaskValue = 0;
-            if( allTissueMaskInterp->IsInsideBuffer(currOutPoint) )
-              {
-              allTissueMaskValue = allTissueMaskInterp->Evaluate(currOutPoint);
-              }
+                                typename MaskNNInterpolationType::OutputType allTissueMaskValue = 0;
+                                if (allTissueMaskInterp->IsInsideBuffer(currOutPoint)) {
+                                  allTissueMaskValue = allTissueMaskInterp->Evaluate(currOutPoint);
+                                }
 
-            if( allTissueMaskValue == 0 )
-              {
-              // Now clamp intensities outside the probability mask region to
-              // the min and
-              // max of inside the mask region.
-              curOutput->SetPixel(currOutIndex, 0 );
-              }
-            else
-              {
-              const double originalPixelValue = (*imIt)->GetPixel(currOutIndex);
-              const double correctedPixelValue = originalPixelValue * multiplicitiveBiasCorrectionFactor;
-              curOutput->SetPixel(currOutIndex, (InputImagePixelType)correctedPixelValue);
-              }
-            } // for currOutIndex[0]
-          }
-        }
+                                if (allTissueMaskValue == 0) {
+                                  // Now clamp intensities outside the probability mask region to
+                                  // the min and
+                                  // max of inside the mask region.
+                                  curOutput->SetPixel(currOutIndex, 0);
+                                }
+                                else {
+                                  const double originalPixelValue = (*imIt)->GetPixel(currOutIndex);
+                                  const double correctedPixelValue =
+                                      originalPixelValue * multiplicitiveBiasCorrectionFactor;
+                                  curOutput->SetPixel(currOutIndex, (InputImagePixelType) correctedPixelValue);
+                                }
+                              } // for currOutIndex[0]
+                            }
+                          }
+                        });
 
       std::cout << "Standardizing Bias Corrected Intensities: ..." << std::endl;
       curOutput

@@ -255,7 +255,11 @@ int main( int argc, char * *argv )
     }
 
   std::string measurementTime = itksys::SystemTools::GetCurrentDateTime("%Y-%m-%d_%H:%M.%S");
-  std::string user = itksys::SystemTools::GetEnv("USER");
+  std::string user = "User";
+  if( itksys::SystemTools::GetEnv("USER") ) //Null check
+    {
+    user = itksys::SystemTools::GetEnv("USER");
+    }
 
   if( writeCsvFile )
     {

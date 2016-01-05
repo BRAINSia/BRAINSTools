@@ -71,8 +71,8 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine) # BSplin
       --referenceVolume ${TransformTestImage}         # Only needed for DisplacementField transforms
       --displacementVolume ${DisplacementVolumeImage} # Only needed for DisplacementField transforms
       )
-      set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
-      set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvert)
+      set_property(TEST ${TransformConvertTestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
+      set_property(TEST ${TransformConvertTestName} APPEND PROPERTY DEPENDS BRAINSTransformConvert)
 
 
       if(NOT "${SourceTransform}" STREQUAL "${TargetTransform}")
@@ -110,7 +110,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine) # BSplin
         --pixelType short
         --warpTransform ${SourceTransformName})
       set_property(TEST ${ResampleWSourceTestName} APPEND PROPERTY DEPENDS BRAINSResample)
-      set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
+      set_property(TEST ${ResampleWSourceTestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
 
       # resample the test image using BRAINSResample
       # and converted transform

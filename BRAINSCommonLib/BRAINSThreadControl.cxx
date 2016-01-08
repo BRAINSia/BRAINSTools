@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "BRAINSThreadControl.h"
+#include "itksys/SystemInformation.hxx"
 
 namespace BRAINSUtils
 {
@@ -34,7 +35,12 @@ StackPushITKDefaultNumberOfThreads::StackPushITKDefaultNumberOfThreads(const int
   else
     {                                          // If user set desiredCount <= 0, then use evnironmentanl or internal
                                                // ITKv4 values.
-    threadCount = this->m_originalThreadValue; // This is the old default.
+    // OLD ITK default threadCount = this->m_originalThreadValue; // This is the old default.
+    itksys::SystemInformation mySys;
+    mySys.RunCPUCheck();
+    mySys.RunOSCheck();
+    mySys.RunMemoryCheck();
+    threadCount = mySys.GetNumberOfPhysicalCPU(); // Avoid using hyperthreading cores.
       {                                        // Process the NSLOTS environmental varialble set by the SGE batch
                                                // processing system
       int         NSLOTSThreadCount(-1);

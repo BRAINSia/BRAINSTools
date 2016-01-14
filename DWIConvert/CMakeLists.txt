@@ -48,6 +48,6 @@ target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCom
 StandardBRAINSBuildMacro(NAME DWIConvert EXECUTABLE_ONLY
   TARGET_LIBRARIES DWIConvertSupportLib)
 
-if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
+if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   add_subdirectory(TestSuite)
 endif()

@@ -54,6 +54,6 @@ endforeach()
 # Testing is depended on obsolete ITKv3 testing framework.
 # Tests will have to be re-written to build with ITKv4
 #
-# if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
+# if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 #   add_subdirectory(TestSuite)
 # endif()

@@ -133,6 +133,6 @@ install(FILES ${TESTFILES_TO_INSTALL}
 
 ##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
 ##HACK NEED BETTER TESTS add_directory( Test_FindCenterOfBrainFilter )
-if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
+if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   add_subdirectory(TestSuite)
 endif()

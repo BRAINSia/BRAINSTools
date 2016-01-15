@@ -54,12 +54,11 @@ ResampleImageListToFirstKeyImage(const std::string & resamplerInterpolatorType,
   MapOfFloatImageVectors outputImageMap;
 
   // Resample the other images
-  for(MapOfFloatImageVectors::const_iterator inputImageMapIter = inputImageMap.begin();
-      inputImageMapIter != inputImageMap.end(); ++inputImageMapIter)
+  for(const auto & elem : inputImageMap)
     {
-    FloatImageVector::const_iterator currImageIter = inputImageMapIter->second.begin();
+    auto currImageIter = elem.second.begin();
     unsigned int i(0);
-    while( currImageIter != inputImageMapIter->second.end() )
+    while( currImageIter != elem.second.end() )
       {
       FloatImageType::Pointer tmp =
         ResampleImageWithIdentityTransform<FloatImageType>( resamplerInterpolatorType,
@@ -67,7 +66,7 @@ ResampleImageListToFirstKeyImage(const std::string & resamplerInterpolatorType,
                                                             (*currImageIter).GetPointer(),
                                                             KeyImageFirstRead.GetPointer() );
       // Add the image
-      outputImageMap[inputImageMapIter->first].push_back( tmp );
+      outputImageMap[elem.first].push_back( tmp );
       ++currImageIter;
       ++i;
       }
@@ -95,12 +94,12 @@ ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
 
   // ResampleInPlace all images to the physical space of the first image
   //
-  for(MapOfFloatImageVectors::const_iterator inputImageMapIter = inputImageMap.begin();
+  for(auto inputImageMapIter = inputImageMap.begin();
       inputImageMapIter != inputImageMap.end(); ++inputImageMapIter)
     {
-    FloatImageVector::const_iterator currModalIter = inputImageMapIter->second.begin();
+    auto currModalIter = inputImageMapIter->second.begin();
     unsigned int i(0);
-    TransformList::iterator xfrmIt = intraSubjectTransforms[inputImageMapIter->first].begin();
+    auto xfrmIt = intraSubjectTransforms[inputImageMapIter->first].begin();
     while( currModalIter != inputImageMapIter->second.end() )
       {
       muLogMacro(<< "ResamplingInPlace input image " << inputImageMapIter->first << " #" << i
@@ -138,18 +137,17 @@ ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
              << resamplerInterpolatorType << " interpolation." << std::endl);
   const FloatImageType::PixelType outsideFOVCode = vnl_huge_val( static_cast<FloatImageType::PixelType>( 1.0f ) );
 
-  for(MapOfFloatImageVectors::iterator inputRIPImageMapIter = resampleInPlaceImageMap.begin();
-      inputRIPImageMapIter != resampleInPlaceImageMap.end(); ++inputRIPImageMapIter)
+  for(auto & elem : resampleInPlaceImageMap)
     {
-    FloatImageVector::iterator currModalIter = inputRIPImageMapIter->second.begin();
+    auto currModalIter = elem.second.begin();
     FloatImageType::Pointer currModalityKeySubjectImage = (*currModalIter).GetPointer(); // the first image of current modality
 
-    while( currModalIter != inputRIPImageMapIter->second.end() )
+    while( currModalIter != elem.second.end() )
       {
       if( (*currModalIter).GetPointer() == currModalityKeySubjectImage.GetPointer() ) // if the current intra subject image
           // is the first image in current modality list
         {
-        outputImageMap[inputRIPImageMapIter->first].push_back( (*currModalIter).GetPointer() );
+        outputImageMap[elem.first].push_back( (*currModalIter).GetPointer() );
         }
       else // resample the current intra subject image to the first image of the current modality
         {
@@ -197,7 +195,7 @@ ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
           }
 
         // Add the image
-        outputImageMap[inputRIPImageMapIter->first].push_back(tmp);
+        outputImageMap[elem.first].push_back(tmp);
         }
       ++currModalIter;
       }

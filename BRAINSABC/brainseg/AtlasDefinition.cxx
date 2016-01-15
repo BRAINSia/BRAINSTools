@@ -68,7 +68,7 @@ XMLcharhandler(void *data, const char *txt, int txtlen)
   //   std::cerr << txt[i];
   //   }
   // std::cerr << ")" << std::endl;
-  char *buf = new char[txtlen + 1];
+  auto buf = new char[txtlen + 1];
   int   i;
 
   for( i = 0; i < txtlen; i++ )
@@ -272,7 +272,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   XML_SetElementHandler(parser, AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
   XML_SetCharacterDataHandler(parser, AtlasXMLParser::XMLcharhandler);
 
-  char *filebuf = new char[fSize];
+  auto filebuf = new char[fSize];
   if( filebuf == ITK_NULLPTR )
     {
     std::cout << "ERROR:  memory char[" << fSize << "] can not be allocated properly " << std::flush << std::endl;
@@ -312,14 +312,11 @@ AtlasDefinition::DebugPrint()
   itk::NumberToString<double> doubleConvert;
   std::cout << "<Atlas>" << std::endl;
 
-  for( TemplateMap::iterator it
-         = m_TemplateVolumes.begin();
-       it != m_TemplateVolumes.end();
-       ++it )
+  for(auto & elem : m_TemplateVolumes)
     {
     std::cout << "  <AtlasImage>" << std::endl
-              << "    <type>" << it->first << "</type>" << std::endl
-              << "    <filename>" << it->second << "</filename>" << std::endl
+              << "    <type>" << elem.first << "</type>" << std::endl
+              << "    <filename>" << elem.second << "</filename>" << std::endl
               << "  </AtlasImage>" << std::endl;
     }
 
@@ -334,48 +331,42 @@ AtlasDefinition::DebugPrint()
             << m_TemplateHeadRegion
             << "</filename>" << std::endl
             << "  </HeadRegion>" << std::endl;
-  for( PriorMapType::iterator it
-         = m_PriorMap.begin();
-       it != m_PriorMap.end();
-       ++it )
+  for(auto & elem : m_PriorMap)
     {
     std::cout << "  <Prior>" << std::endl
               << "    <type>"
-              << it->first
+              << elem.first
               << "</type>" << std::endl
               << "    <filename>"
-              << it->second.GetFilename()
+              << elem.second.GetFilename()
               << "</filename>" << std::endl
               << "    <Weight>"
-              << doubleConvert(it->second.GetWeight() )
+              << doubleConvert(elem.second.GetWeight() )
               << "</Weight>" << std::endl
               << "    <GaussianClusterCount>"
-              << it->second.GetGaussianClusterCount()
+              << elem.second.GetGaussianClusterCount()
               << "</GaussianClusterCount>" << std::endl
               << "    <LabelCode>"
-              << it->second.GetLabelCode()
+              << elem.second.GetLabelCode()
               << "</LabelCode>" << std::endl
               << "    <UseForBias>"
-              << it->second.GetUseForBias()
+              << elem.second.GetUseForBias()
               << "</UseForBias>" << std::endl
               << "    <IsForegroundPrior>"
-              << it->second.GetIsForegroundPrior()
+              << elem.second.GetIsForegroundPrior()
               << "</IsForegroundPrior>" << std::endl;
-    const BoundsMapType & curBounds = it->second.GetBoundsList();
-    for( BoundsMapType::const_iterator it2
-           = curBounds.begin();
-         it2 != curBounds.end();
-         ++it2 )
+    const BoundsMapType & curBounds = elem.second.GetBoundsList();
+    for(const auto & curBound : curBounds)
       {
       std::cout << "    <bounds>" << std::endl
                 << "      <type>"
-                << it2->first
+                << curBound.first
                 << "</type>" << std::endl
                 << "      <lower>"
-                << doubleConvert(it2->second.GetLower() )
+                << doubleConvert(curBound.second.GetLower() )
                 << "</lower>" << std::endl
                 << "      <upper>"
-                << doubleConvert(it2->second.GetUpper() )
+                << doubleConvert(curBound.second.GetUpper() )
                 << "<upper>" << std::endl
                 << "    </bounds>" << std::endl;
       }

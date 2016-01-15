@@ -245,6 +245,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     atlas_static_directory = master_config['atlascache']
     if master_config['workflow_phase'] == 'atlas-based-reference':
+        PostACPCAlignToAtlas=False
         atlas_warped_directory = master_config['atlascache']
         atlasABCNode_XML = MakeAtlasNode(atlas_warped_directory, 'BABCXMLAtlas_{0}'.format(sessionid),
                                          ['W_BRAINSABCSupport'])
@@ -276,6 +277,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
 
     elif master_config['workflow_phase'] == 'subject-based-reference':
+        PostACPCAlignToAtlas=True # Use this subjects atlas image to align landmarks
         print(master_config['previousresult'])
         atlas_warped_directory = os.path.join(master_config['previousresult'], subjectid, 'Atlas')
 
@@ -454,7 +456,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DoReverseMapping = False  # Set to true for debugging outputs
         if 'auxlmk' in master_config['components']:
             DoReverseMapping = True
-        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, DoReverseMapping)
+        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", PostACPCAlignToAtlas, interpMode, DoReverseMapping)
 
         baw201.connect([(makePreprocessingOutList, myLocalLMIWF,
                          [(('T1s', get_list_element, 0), 'inputspec.inputVolume' )]),

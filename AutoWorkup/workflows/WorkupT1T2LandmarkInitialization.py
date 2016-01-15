@@ -28,7 +28,7 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 """
 
 
-def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=False, debug=False):
+def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, PostACPCAlignToAtlas, DoReverseInit=False, debug=False):
     landmarkInitializeWF = pe.Workflow(name=WFname)
 
     #############
@@ -76,7 +76,10 @@ def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=Fa
     landmarkInitializeWF.connect(inputsSpec, 'inputTemplateModel',   BCD, 'inputTemplateModel')
 
 
-    landmarkInitializeWF.connect(inputsSpec, 'atlasVolume',          BCD, 'atlasVolume')
+    # If the atlas volume is from this subject (i.e. after template building for the longitudinal phase) then set this to True
+    # Otherwise, it is probably best to let the ACPC alignment be fully defined by the landmark points themselves.
+    if PostACPCAlignToAtlas:
+        landmarkInitializeWF.connect(inputsSpec, 'atlasVolume',          BCD, 'atlasVolume')
 
     ########################################################
     # Run BLI atlas_to_subject
@@ -106,7 +109,6 @@ def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=Fa
 
         landmarkInitializeWF.connect(inputsSpec, 'inputVolume', Resample2Atlas, 'inputVolume')
         landmarkInitializeWF.connect(BLI2Atlas, 'outputTransformFilename', Resample2Atlas, 'warpTransform')
-        landmarkInitializeWF.connect(inputsSpec, 'atlasVolume', Resample2Atlas, 'referenceVolume')
 
     if (DoReverseInit == True) and (debug == True):
         ResampleFromAtlas = pe.Node(interface=BRAINSResample(), name="ResampleFromAtlas")

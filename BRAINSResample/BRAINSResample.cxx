@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
           typedef itk::AffineTransform<double, 3>
             LocalAffineTransformType;
           const LocalAffineTransformType::ConstPointer affineTransform =
-            dynamic_cast<LocalAffineTransformType const *>(
+            static_cast<LocalAffineTransformType const *>(
               genericTransform.GetPointer() );
 
           LocalAffineTransformType::Pointer Local_inverseTransform = LocalAffineTransformType::New();
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
           typedef itk::VersorRigid3DTransform<double>
             RigidTransformType;
           const RigidTransformType::ConstPointer rigidTransform =
-            dynamic_cast<RigidTransformType const *>(
+            static_cast<RigidTransformType const *>(
               genericTransform.GetPointer() );
           if( rigidTransform.IsNull() )
             {

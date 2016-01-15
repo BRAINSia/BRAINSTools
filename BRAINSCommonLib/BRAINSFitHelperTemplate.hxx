@@ -835,7 +835,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const itk::VersorRigid3DTransform<double>::ConstPointer tempInitializerITKTransform =
-            dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;

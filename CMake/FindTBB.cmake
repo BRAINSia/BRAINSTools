@@ -77,7 +77,7 @@ macro(findpkg_finish PREFIX)
       set (${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
     else ()
       if (${PREFIX}_FIND_REQUIRED AND NOT ${PREFIX}_FIND_QUIETLY)
-        message(FATAL_ERROR "Required library ${PREFIX} not found.")
+        message(FATAL_ERROR "Required library ${PREFIX} not found. \n Looked in ${TBB_ROOT}")
       endif ()
     endif ()
 

@@ -47,11 +47,10 @@ if(NOT ${CMAKE_CONFIGURATION_TYPES})
   set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE) # setting only two configuration types
 endif()
 
-if(NOT ${CMAKE_CXX_STANDARD})
-   ## For compatibility with Slicer
+## For compatibility with Slicer
+if(NOT CMAKE_CXX_STANDARD)
    set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
 endif()
-
 
 enable_language(C)
 enable_language(CXX)
@@ -73,7 +72,6 @@ include(itkCheckSourceTree)
 #-----------------------------------------------------------------------------
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
   project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
-  set(CMAKE_CXX_STANDARD 98)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 else()

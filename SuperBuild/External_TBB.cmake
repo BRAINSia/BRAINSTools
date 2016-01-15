@@ -1,3 +1,14 @@
+# Internal version not yet supported
+if( NOT TBB_ROOT )
+   message(FATAL_ERROR "-DTBB_ROOT:PATH=${TBB_ROOT} must be set to find TBB, internal building not supported yet.")
+else()
+  find_package(TBB REQUIRED)
+  include_directories(${TBB_INCLUDE_DIRS})
+  if(NOT TBB_FOUND)
+     message(FATAL_ERROR "No valid TBB found")
+  endif()
+endif()
+
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # ExternalProject_Include_Dependencies
@@ -27,6 +38,27 @@ if(NOT ( DEFINED "USE_SYSTEM_${proj}" AND "${USE_SYSTEM_${proj}}" ) )
   set(${proj}_REPOSITORY ${git_protocol}://github.com/intel-tbb/intel-tbb.git)
   set(${proj}_GIT_TAG master)  # BRAINSTools_CompilerCleanup
 
+  ## FROM CMAKE MESSAGE(FATAL_ERROR "PRINT ${CMAKE_CXX11_STANDARD_COMPILE_OPTION}")
+  if("${CMAKE_CXX_STANDARD}" EQUAL "11")
+    set(${proj}_CXXFLAGS "${CMAKE_CXX11_STANDARD_COMPILE_OPTION}")
+  endif()
+  if("${CMAKE_CXX_STANDARD}" EQUAL "14")
+    set(${proj}_CXXFLAGS "${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+  endif()
+
+  ## Determine compiler name
+  include(CMakeDetermineCXXCompiler)
+  if( ("${CMAKE_CXX_COMPILER_ID}" MATCHES AppleClang ) OR  ("${CMAKE_CXX_COMPILER_ID}" MATCHES Clang ) )
+    set(TBB_COMPILER_SETTING "clang")
+    set(TBB_STDLIB_SETTING "libc++")
+  elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    message(FATAL_ERROR "--CMAKE_CXX_COMPILER_ID='${CMAKE_CXX_COMPILER_ID}' is not supported by TBB internal build")
+  else()
+    message(FATAL_ERROR "--CMAKE_CXX_COMPILER_ID='${CMAKE_CXX_COMPILER_ID}' is not supported by TBB internal build")
+  endif()
+  set(TBB_ROOT ${CMAKE_CURRENT_BINARY_DIR}/${proj})
+  set(TBB_BUILD_PREFIX "tbb")
+  set(TBB_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-bld)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -41,7 +73,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${proj}" AND "${USE_SYSTEM_${proj}}" ) )
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND make -C ${CMAKE_CURRENT_BINARY_DIR}/${proj} CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} "CFLAGS=${${proj}_CFLAGS}" "CXXFLAGS=${${proj}_CXXFLAGS}" compiler=clang stdlib=libc++ tbb_root=${CMAKE_CURRENT_BINARY_DIR}/${proj} tbb_build_dir=${CMAKE_CURRENT_BINARY_DIR}/${proj}-bld tbb_build_prefix=tbb
+    BUILD_COMMAND make -C ${CMAKE_CURRENT_BINARY_DIR}/${proj} CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} "CFLAGS=${${proj}_CFLAGS}" "CXXFLAGS=${${proj}_CXXFLAGS}" compiler=${TBB_COMPILER_SETTING} stdlib=${TBB_STDLIB_SETTING} tbb_root=${TBB_ROOT} tbb_build_dir=${TBB_BUILD_DIR} tbb_build_prefix=${TBB_BUILD_PREFIX}
 ## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     INSTALL_COMMAND  cp -R ${CMAKE_CURRENT_BINARY_DIR}/${proj}/include/tbb ${CMAKE_CURRENT_BINARY_DIR}/${proj}-bld/tbb_release
     INSTALL_DIR ""

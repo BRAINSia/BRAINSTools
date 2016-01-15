@@ -179,12 +179,16 @@ CreateTypedMap(const AtlasRegType::StringVector &keys, const AtlasRegType::Strin
   return rval;
 }
 
+//For the BRAINSABC program, we also need to minimize num threads used by TBB
+#include "tbb/task_scheduler_init.h"
 
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  // Construct TBB task scheduler with matching threads to ITK threads
+  tbb::task_scheduler_init init( itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
 
   // TODO:  Need to figure out how to conserve memory better during the running
   // of this application:  itk::DataObject::GlobalReleaseDataFlagOn();

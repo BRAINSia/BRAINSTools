@@ -537,11 +537,16 @@ int main(int argc, char *argv[])
     myHelper->Update();
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
 
-    CompositeTransformType::Pointer outputComposite = dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
-    if( outputComposite.IsNull() )
+    std::string currentGenericTransformFileType;
+    if ( currentGenericTransform.IsNotNull() )
+      {
+      currentGenericTransformFileType = std::string( currentGenericTransform->GetNameOfClass() );
+      }
+    if( currentGenericTransformFileType != "CompositeTransform" )
       {
       itkGenericExceptionMacro(<<"ERROR: Output transform is null.");
       }
+    CompositeTransformType::Pointer outputComposite = static_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
 
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
     if( NormalizeInputImages )

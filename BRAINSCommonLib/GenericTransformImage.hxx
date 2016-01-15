@@ -329,10 +329,15 @@ typename OutputImageType::Pointer GenericTransformImage(
 
       VersorRigid3DTransformType::Pointer tempInitializerITKTransform = VersorRigid3DTransformType::New();
 
-      const CompositeTransformType::ConstPointer genericCompositeTransform =
-        dynamic_cast<const CompositeTransformType *>( genericTransform.GetPointer() );
-      if( genericCompositeTransform.IsNotNull() )
+      std::string genericTransformFileType;
+      if ( genericTransform.IsNotNull() )
         {
+        genericTransformFileType = genericTransform->GetNameOfClass();
+        }
+      if ( genericTransformFileType == "CompositeTransform" )
+        {
+        const CompositeTransformType::ConstPointer genericCompositeTransform =
+          static_cast<const CompositeTransformType *>( genericTransform.GetPointer() );
         if( genericCompositeTransform->GetNumberOfTransforms() > 1 )
           {
           std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
@@ -340,32 +345,52 @@ typename OutputImageType::Pointer GenericTransformImage(
           << "but the input composite transform consists of more than one transfrom." << std::endl;
           }
         // extract the included linear rigid transform from the input composite
-        const VersorRigid3DTransformType::ConstPointer tempTransform =
-          dynamic_cast<VersorRigid3DTransformType const *>( genericCompositeTransform->GetNthTransform(0).GetPointer() );
-        if( tempTransform.IsNull() )
+        CompositeTransformType::TransformType::Pointer genericTempTransform =
+            genericCompositeTransform->GetNthTransform(0).GetPointer();
+        std::string genericTempTransformFileType;
+        if ( genericTempTransform.IsNotNull() )
           {
-          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
-          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
+          genericTempTransformFileType = genericTempTransform->GetNameOfClass();
+          }
+        if (genericTempTransformFileType == "ScaleSkewVersor3DTransform" ||
+            genericTempTransformFileType == "ScaleVersor3DTransform" ||
+            genericTempTransformFileType == "Similarity3DTransform" ||
+            genericTempTransformFileType == "VersorRigid3DTransform"
+            )
+          {
+          const VersorRigid3DTransformType::ConstPointer tempTransform =
+            static_cast<const VersorRigid3DTransformType*>( genericTempTransform.GetPointer() );
+          tempInitializerITKTransform->SetFixedParameters( tempTransform->GetFixedParameters() );
+          tempInitializerITKTransform->SetParameters( tempTransform->GetParameters() );
           }
         else
           {
-          tempInitializerITKTransform->SetFixedParameters( tempTransform->GetFixedParameters() );
-          tempInitializerITKTransform->SetParameters( tempTransform->GetParameters() );
+          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
           }
         }
       else
         {
-        const VersorRigid3DTransformType::ConstPointer tempTransform =
-          dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
-        if( tempTransform.IsNull() )
+        std::string genericTempTransformFileType;
+        if ( genericTransform.IsNotNull() )
           {
-          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
-          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
+          genericTempTransformFileType = genericTransform->GetNameOfClass();
+          }
+        if (genericTempTransformFileType == "ScaleSkewVersor3DTransform" ||
+            genericTempTransformFileType == "ScaleVersor3DTransform" ||
+            genericTempTransformFileType == "Similarity3DTransform" ||
+            genericTempTransformFileType == "VersorRigid3DTransform"
+            )
+          {
+          const VersorRigid3DTransformType::ConstPointer tempTransform =
+            static_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
+          tempInitializerITKTransform->SetFixedParameters( tempTransform->GetFixedParameters() );
+          tempInitializerITKTransform->SetParameters( tempTransform->GetParameters() );
           }
         else
           {
-          tempInitializerITKTransform->SetFixedParameters( tempTransform->GetFixedParameters() );
-          tempInitializerITKTransform->SetParameters( tempTransform->GetParameters() );
+          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
           }
         }
       if( tempInitializerITKTransform.IsNull() )

@@ -4,14 +4,8 @@
 // VTK includes
 #include <vtkImageData.h>
 
-// ITK includes
-#include <itkConfigure.h>
-#include <itkFactoryRegistration.h>
-
 int main(int argc, char *argv[])
 {
-  itk::itkFactoryRegistration();
-
   if (argc < 2)
     {
     std::cout << "ERROR: need to specify a file to try reading on the command line." << std::endl;

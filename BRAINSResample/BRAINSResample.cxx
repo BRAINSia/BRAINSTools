@@ -226,11 +226,6 @@ int main(int argc, char *argv[])
           const RigidTransformType::ConstPointer rigidTransform =
             static_cast<RigidTransformType const *>(
               genericTransform.GetPointer() );
-          if( rigidTransform.IsNull() )
-            {
-            std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
-            return EXIT_FAILURE;
-            }
 
           RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
           rigidTransform->GetInverse( Local_inverseTransform );

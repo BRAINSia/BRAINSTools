@@ -643,10 +643,15 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   this->m_CurrentGenericTransform->ClearTransformQueue();
 
   typename CompositeTransformType::Pointer compToAdd;
-  typename CompositeTransformType::ConstPointer compXfrm =
-                            dynamic_cast<const CompositeTransformType *>( finalTransform.GetPointer() );
-  if( compXfrm.IsNotNull() )
+  std::string transformFileType;
+  if ( finalTransform.IsNotNull() )
     {
+    transformFileType = finalTransform->GetNameOfClass();
+    }
+  if( transformFileType == "CompositeTransform" )
+    {
+    typename CompositeTransformType::ConstPointer compXfrm =
+                              static_cast<const CompositeTransformType *>( finalTransform.GetPointer() );
     compToAdd = compXfrm->Clone();
     this->m_CurrentGenericTransform = compToAdd;
     }
@@ -924,7 +929,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -935,7 +940,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1026,7 +1031,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1037,7 +1042,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1048,7 +1053,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1134,7 +1139,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1145,7 +1150,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1156,7 +1161,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1167,7 +1172,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "AffineTransform" )
             {
             const typename AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+              static_cast<AffineTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1637,18 +1642,39 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             unsigned int numTransforms = internalSyNSavedState->GetNumberOfTransforms();
             // If the last two transforms are displacement field transforms,
             // we add their inverse displacement field to the saved state composite.
-            typedef itk::DisplacementFieldTransform<double, 3>                  DisplacementFieldTransformType;
-            DisplacementFieldTransformType::Pointer oneToEndTransform =
-              dynamic_cast<DisplacementFieldTransformType *>( internalSyNSavedState->GetNthTransform( numTransforms-2 ).GetPointer() );
-            DisplacementFieldTransformType::Pointer endTransform =
-              dynamic_cast<DisplacementFieldTransformType *>( internalSyNSavedState->GetNthTransform( numTransforms-1 ).GetPointer() );
-            if( oneToEndTransform && oneToEndTransform->GetInverseDisplacementField()
-               && endTransform && endTransform->GetInverseDisplacementField() )
+
+            typename CompositeTransformType::TransformType::Pointer oneToEndTransformGeneric =
+                internalSyNSavedState->GetNthTransform( numTransforms-2 ).GetPointer();
+            std::string oneToEndTransformFileType;
+            if ( oneToEndTransformGeneric.IsNotNull() )
               {
-              internalSyNSavedState->RemoveTransform();
-              internalSyNSavedState->AddTransform( oneToEndTransform->GetInverseTransform() );
-              internalSyNSavedState->AddTransform( endTransform );
-              internalSyNSavedState->AddTransform( endTransform->GetInverseTransform() );
+              oneToEndTransformFileType = oneToEndTransformGeneric->GetNameOfClass();
+              }
+
+            typename CompositeTransformType::TransformType::Pointer endTransformGeneric =
+                internalSyNSavedState->GetNthTransform( numTransforms-1 ).GetPointer();
+            std::string endTransformFileType;
+            if ( endTransformGeneric.IsNotNull() )
+              {
+              endTransformFileType = endTransformGeneric->GetNameOfClass();
+              }
+
+            if( oneToEndTransformFileType == "DisplacementFieldTransform"
+               && endTransformFileType == "DisplacementFieldTransform")
+              {
+              typedef itk::DisplacementFieldTransform<double, 3>                  DisplacementFieldTransformType;
+              DisplacementFieldTransformType::Pointer oneToEndTransform =
+                static_cast<DisplacementFieldTransformType *>( oneToEndTransformGeneric.GetPointer() );
+              DisplacementFieldTransformType::Pointer endTransform =
+                static_cast<DisplacementFieldTransformType *>( endTransformGeneric.GetPointer() );
+              if ( oneToEndTransform->GetInverseDisplacementField()
+                  && endTransform->GetInverseDisplacementField() )
+                {
+                internalSyNSavedState->RemoveTransform();
+                internalSyNSavedState->AddTransform( oneToEndTransform->GetInverseTransform() );
+                internalSyNSavedState->AddTransform( endTransform );
+                internalSyNSavedState->AddTransform( endTransform->GetInverseTransform() );
+                }
               }
             std::cout << "Writing the registration state: " << this->m_SaveState << std::endl;
             typedef itk::TransformFileWriterTemplate<double>                TransformWriterType;

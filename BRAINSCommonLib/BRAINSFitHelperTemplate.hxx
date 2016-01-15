@@ -841,10 +841,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const itk::VersorRigid3DTransform<double>::ConstPointer tempInitializerITKTransform =
             static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -930,10 +926,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
               static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -941,10 +933,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
               static_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1032,10 +1020,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
               static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1043,10 +1027,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
               static_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1054,10 +1034,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
               static_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1140,10 +1116,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
               static_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1151,10 +1123,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
               static_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1162,10 +1130,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
               static_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }
@@ -1173,10 +1137,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             const typename AffineTransformType::ConstPointer tempInitializerITKTransform =
               static_cast<AffineTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
             AssignRigid::AssignConvertedTransform(initialITKTransform,
                                                   tempInitializerITKTransform);
             }

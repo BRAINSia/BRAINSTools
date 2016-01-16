@@ -53,6 +53,7 @@ ExternalProject_Add(${proj}
   )
 
 set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
+set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 mark_as_superbuild(
   VARS ${proj}_SOURCE_DIR:PATH

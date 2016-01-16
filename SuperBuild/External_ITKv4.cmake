@@ -2,7 +2,11 @@
 set(proj ITKv4)
 set(ITK_EXTERNAL_NAME ${proj})
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib" VTK)
+if(${PRIMARY_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
+  set(${proj}_DEPENDENCIES "zlib" VTK)
+else()
+  set(${proj}_DEPENDENCIES "zlib")
+endif()
 #if(${CMAKE_PROJECT_NAME}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
@@ -22,7 +26,7 @@ endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  if(BRAINSTools_REQUIRES_VTK) ## QT requires VTK support in ITK
+  if(${PRIMARY_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
     set( ITK_VTK_OPTIONS
       -DVTK_DIR:PATH=${VTK_DIR}
       -DModule_ITKVtkGlue:BOOL=ON  ## If building with GUI, then need ITKVtkGlue
@@ -81,7 +85,6 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DITK_USE_FFTWD:BOOL=ON
       -DITK_USE_FFTWF:BOOL=ON
       ${ITK_VTK_OPTIONS}
-      -DVTK_DIR:PATH=${VTK_DIR}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}

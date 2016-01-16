@@ -43,7 +43,7 @@ else()
   project(${LOCAL_PROJECT_NAME} C CXX)
 endif()
 
-if(NOT ${CMAKE_CONFIGURATION_TYPES})
+if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE) # setting only two configuration types
 endif()
 

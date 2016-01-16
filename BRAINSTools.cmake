@@ -71,14 +71,22 @@ find_package(TBB REQUIRED)
 include_directories(${TBB_INCLUDE_DIRS})
 
 if(USE_ANTS)
+  ## Do a little sanity checking
+  if( NOT (EXISTS "${ANTs_SOURCE_DIR}" AND IS_DIRECTORY "${ANTs_SOURCE_DIR}") )
+    message(FATAL_ERROR "ANTs_SOURCE_DIR: '${ANTs_SOURCE_DIR}' does not exists")
+  endif()
   # find ANTS includes
-  message("ANTs_SOURCE_DIR=${ANTs_SOURCE_DIR}")
   include_directories(${BOOST_INCLUDE_DIR})
   include_directories(${ANTs_SOURCE_DIR}/Temporary)
   include_directories(${ANTs_SOURCE_DIR}/Tensor)
   include_directories(${ANTs_SOURCE_DIR}/Utilities)
   include_directories(${ANTs_SOURCE_DIR}/Examples)
   include_directories(${ANTs_SOURCE_DIR}/ImageRegistration)
+
+  if( NOT (EXISTS "${ANTs_LIBRARY_DIR}" AND IS_DIRECTORY "${ANTs_LIBRARY_DIR}") )
+    message(FATAL_ERROR "ANTs_SOURCE_DIR: '${ANTs_SOURCE_DIR}' does not exists")
+  endif()
+
   link_directories(${BRAINSTools_LIBRARY_PATH} ${BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY} ${ANTs_LIBRARY_DIR})
   set(ANTS_LIBS antsUtilities)
 endif()

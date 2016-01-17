@@ -66,9 +66,11 @@ include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
-find_package(TBB REQUIRED)
-# set(VTK_SMP_IMPLEMENTATION_LIBRARIES ${TBB_LIBRARY})
-include_directories(${TBB_INCLUDE_DIRS})
+if(USE_BRAINSABC)
+  find_package(TBB REQUIRED)
+  # set(VTK_SMP_IMPLEMENTATION_LIBRARIES ${TBB_LIBRARY})
+  include_directories(${TBB_INCLUDE_DIRS})
+endif()
 
 if(USE_ANTS)
   ## Do a little sanity checking

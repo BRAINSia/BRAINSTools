@@ -91,6 +91,8 @@ option(USE_ICCDEF                         "Build ICCDEF     "                   
 option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
+option(USE_TBB "Build TBB as an internal module. This feature is still experimental and unsupported" OFF)
+mark_as_advanced(USE_TBB)
 
 if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
   set(BRAINSTools_REQUIRES_VTK ON)

@@ -53,11 +53,11 @@ void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> &
 
   const typename TProbabilityImage::SizeType size = ProbList[0]->GetLargestPossibleRegion().GetSize();
     {
-    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[0],0,size[1],0,size[2]),
+    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
                       [=] (tbb::blocked_range3d<LOOPITERTYPE> &r) {
-                        for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); kk++) {
-                          for (LOOPITERTYPE jj = r.cols().begin(); jj < r.cols().end(); jj++) {
-                            for (LOOPITERTYPE ii = r.rows().begin(); ii < r.rows().end(); ii++) {
+                        for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
+                          for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                            for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                               const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
                               FloatingPrecision sumPrior = 0.0;
                               for (unsigned int iprior = 0; iprior < numProbs; iprior++) {
@@ -135,11 +135,11 @@ typename ByteImageType::Pointer ComputeForegroundProbMask(
   const typename TProbabilityImage::SizeType size = probList[0]->GetLargestPossibleRegion().GetSize();
   const typename ByteImageType::PixelType insideMaskValue = 1;
     {
-    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[0],0,size[1],0,size[2]),
+    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
                       [=](tbb::blocked_range3d<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
-                          for (LOOPITERTYPE jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                            for (LOOPITERTYPE ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                          for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                            for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                               const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
                               FloatingPrecision tmp = 0.0;
                               for (unsigned int iprior = 0; iprior < numPriors; iprior++) {

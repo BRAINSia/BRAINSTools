@@ -77,12 +77,12 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                             SubjectCandidateRegions[iclass].GetPointer();
                         // NOTE:  vnl_math:eps is too small vnl_math::eps;
                         const double tmp_accum = 1e-20
-                                           + tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[0],0,size[1],0,size[2]),
+                                           + tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],0,size[1],0,size[0]),
                                                0.0,
                                                [=](const tbb::blocked_range3d<long> &rng3d, double tmp) -> double {
                                                  for (long kk = rng3d.pages().begin(); kk < rng3d.pages().end(); ++kk) {
-                                                   for (long jj = rng3d.cols().begin(); jj < rng3d.cols().end(); ++jj) {
-                                                     for (long ii = rng3d.rows().begin(); ii < rng3d.rows().end(); ++ii) {
+                                                   for (long jj = rng3d.rows().begin(); jj < rng3d.rows().end(); ++jj) {
+                                                     for (long ii = rng3d.cols().begin(); ii < rng3d.cols().end(); ++ii) {
                                                        const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
                                                        // Here pure plugs mask implicitly comes in! as CandidateRegions are multiplied by purePlugsMask!
                                                        if (currentCandidateRegion->GetPixel(currIndex)) {
@@ -122,13 +122,13 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                             im1Interp->SetInputImage(im1);
 
                             const double muSumFinal =
-                            tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[0],0,size[1],0,size[2]),
+                            tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],0,size[1],0,size[0]),
                             0.0,
                             [=](const tbb::blocked_range3d<long> &rng, double muSum) -> double {
                               typename TProbabilityImage::PointType currPoint;
                               for (long kk = rng.pages().begin(); kk < rng.pages().end(); ++kk) {
-                                for (long jj = rng.cols().begin(); jj < rng.cols().end(); ++jj) {
-                                  for (long ii = rng.rows().begin(); ii < rng.rows().end(); ++ii) {
+                                for (long jj = rng.rows().begin(); jj < rng.rows().end(); ++jj) {
+                                  for (long ii = rng.cols().begin(); ii < rng.cols().end(); ++ii) {
                                     const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
                                     // transform probability image index to physical point
                                     PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex, currPoint);
@@ -240,12 +240,12 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                                 im2Interp->SetInputImage(im2);
 
                                 double reduced_var = tbb::parallel_reduce
-                                    (tbb::blocked_range3d<long>(0,size[0],0,size[1],0,size[2]),
+                                    (tbb::blocked_range3d<long>(0,size[2],0,size[1],0,size[0]),
                                                      0.0, /*Initial value of reduction */
                                                      [=](const tbb::blocked_range3d<long> &rng, double var ) -> double {
                                                        for (long kk = rng.pages().begin(); kk < rng.pages().end(); ++kk) {
-                                                         for (long jj = rng.cols().begin(); jj < rng.cols().end(); ++jj) {
-                                                           for (long ii = rng.rows().begin(); ii < rng.rows().end(); ++ii) {
+                                                         for (long jj = rng.rows().begin(); jj < rng.rows().end(); ++jj) {
+                                                           for (long ii = rng.cols().begin(); ii < rng.cols().end(); ++ii) {
                                                              const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
                                                              // transform probability image index to physical point
                                                              typename TProbabilityImage::PointType currPoint;

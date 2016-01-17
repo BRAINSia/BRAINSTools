@@ -170,15 +170,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const typename TProbabilityImage::SizeType size = post->GetLargestPossibleRegion().GetSize();
   const LOOPITERTYPE pageSize=size[1]*size[0];
 
-  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[0],0,size[1],0,size[2]),
+  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
                     [=,&post](const tbb::blocked_range3d<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                         const LOOPITERTYPE pageOffset = kk*pageSize;
-                        for (LOOPITERTYPE jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                          const LOOPITERTYPE pageColOffset = pageOffset + jj*size[1];
-                          for (LOOPITERTYPE ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                        for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                          const LOOPITERTYPE pageRowOffset = pageOffset + jj*size[0];
+                          for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                             const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
-                            const LOOPITERTYPE  v_index_offset = pageColOffset+ii;
+                            const LOOPITERTYPE  v_index_offset = pageRowOffset+ii;
                             post->SetPixel(currIndex, vector(v_index_offset));
                           }
                         }
@@ -459,15 +459,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const typename InputImageType::SizeType size = GetMapVectorFirstElement(intensityImages)->GetLargestPossibleRegion().GetSize();
   const LOOPITERTYPE pageSize=size[1]*size[0];
 
-  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[0],0,size[1],0,size[2]),
+  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
                     [=,&testMatrix](const tbb::blocked_range3d<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                         const LOOPITERTYPE pageOffset = kk * pageSize;
-                        for (LOOPITERTYPE jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                          const LOOPITERTYPE pageColOffset = pageOffset + jj * size[1];
-                          for (LOOPITERTYPE ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                        for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                          const LOOPITERTYPE pageRowOffset = pageOffset + jj * size[0];
+                          for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                             const typename InputImageType::IndexType currTestIndex = {{ii, jj, kk}};
-                            const LOOPITERTYPE rowIndex = pageColOffset + ii;
+                            const LOOPITERTYPE rowIndex = pageRowOffset + ii;
                             // Here we find out that the prior, with maximum value at the current index, belongs to background or foreground
                             double maxPriorClassValue = Priors[0]->GetPixel(currTestIndex);
                             unsigned int indexMaxPosteriorClassValue = 0;
@@ -1211,11 +1211,11 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   const typename TProbabilityImage::SizeType size = post->GetLargestPossibleRegion().GetSize();
 
-  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[0],0,size[1],0,size[2]),
+  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
                     [=](const tbb::blocked_range3d<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
-                        for (LOOPITERTYPE jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                          for (LOOPITERTYPE ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                        for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                          for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                             const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
                             // transform posterior image index to physical point
                             typename TProbabilityImage::PointType currPoint;
@@ -1528,13 +1528,13 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const unsigned int computeInitialNumClasses = m_Posteriors.size();
 
   const FloatingPrecision logLikelihoodFinal =
-      tbb::parallel_reduce(tbb::blocked_range3d<LOOPITERTYPE>(0, size[0], 0, size[1], 0, size[2]),
+      tbb::parallel_reduce(tbb::blocked_range3d<LOOPITERTYPE>(0, size[2], 0, size[1], 0, size[0]),
                            0.0,
                            [=](const tbb::blocked_range3d<LOOPITERTYPE> &r,
                                FloatingPrecision logLikelihood) -> FloatingPrecision {
                              for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
-                               for (LOOPITERTYPE jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                                 for (LOOPITERTYPE ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                               for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                                 for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                                    const ProbabilityImageIndexType currIndex = {{ii, jj, kk}};
                                    FloatingPrecision tmp = 1e-20;
                                    for (unsigned int iclass = 0; iclass < computeInitialNumClasses; iclass++) {

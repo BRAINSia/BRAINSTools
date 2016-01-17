@@ -769,11 +769,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
       double minBiasInForegroundMask = vcl_numeric_limits<double>::max();
 
       const InputImageSizeType outsize = curOutput->GetLargestPossibleRegion().GetSize();
-      tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[0],0,outsize[1],0,outsize[2]),
+      tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[2],0,outsize[1],0,outsize[0]),
                         [=,&maxBiasInForegroundMask,&minBiasInForegroundMask] (tbb::blocked_range3d<long> &r) {
                           for (long kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
-                            for (long jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                              for (long ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                            for (long jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                              for (long ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                                 const InternalImageIndexType currOutIndex = {{ii, jj, kk}}; // index of currOutput
                                 // Masks and probability image should be evaluated in physical space, since
                                 // they may not have the same voxel lattice as the current output image.
@@ -829,11 +829,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
       std::cout << "Foreground Mask Bias Correction MIN: " << minBiasInForegroundMask << " MAX: "
                 << maxBiasInForegroundMask << std::endl;
       // Correct image using (clamped) bias field)
-      tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[0],0,outsize[1],0,outsize[2]),
+      tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[2],0,outsize[1],0,outsize[0]),
                         [=] (tbb::blocked_range3d<long> &r) {
                           for (auto kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
-                            for (auto jj = r.cols().begin(); jj < r.cols().end(); ++jj) {
-                              for (auto ii = r.rows().begin(); ii < r.rows().end(); ++ii) {
+                            for (auto jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
+                              for (auto ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                                 const InternalImageIndexType currOutIndex = {{ii, jj, kk}}; // index of currOutput
                                 typename InternalImageType::PointType currOutPoint;
                                 curOutput->TransformIndexToPhysicalPoint(currOutIndex, currOutPoint);

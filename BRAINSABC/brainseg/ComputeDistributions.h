@@ -69,7 +69,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
     = PosteriorsList[0]->GetLargestPossibleRegion().GetSize();
 
   // Compute sum of posteriors for each class
-  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numClasses),
+  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numClasses,1),
                     [=,&ListOfClassStatistics](const tbb::blocked_range<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE iclass = r.begin(); iclass < r.end(); ++iclass) {
                         const typename TProbabilityImage::ConstPointer currentProbImage = PosteriorsList[iclass].GetPointer();
@@ -77,7 +77,9 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                             SubjectCandidateRegions[iclass].GetPointer();
                         // NOTE:  vnl_math:eps is too small vnl_math::eps;
                         const double tmp_accum = 1e-20
-                                           + tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],0,size[1],0,size[0]),
+                                           + tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],1,
+                                                                                             0,size[1],size[1]/2,
+                                                                                             0,size[0],512),
                                                0.0,
                                                [=](const tbb::blocked_range3d<long> &rng3d, double tmp) -> double {
                                                  for (long kk = rng3d.pages().begin(); kk < rng3d.pages().end(); ++kk) {
@@ -100,7 +102,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                       }
                     });
   // Compute the means weighted by the probability of each value.
-  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numClasses),
+  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numClasses,1),
                     [=,&ListOfClassStatistics](const tbb::blocked_range<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE iclass = r.begin(); iclass < r.end(); ++iclass) {
                         const typename TProbabilityImage::ConstPointer currentProbImage = PosteriorsList[iclass].GetPointer();
@@ -122,7 +124,9 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                             im1Interp->SetInputImage(im1);
 
                             const double muSumFinal =
-                            tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],0,size[1],0,size[0]),
+                            tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],1,
+                                                                            0,size[1],size[1]/2,
+                                                                            0,size[0],512),
                             0.0,
                             [=](const tbb::blocked_range3d<long> &rng, double muSum) -> double {
                               typename TProbabilityImage::PointType currPoint;
@@ -191,7 +195,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
       oldCovariances[iclass] = ListOfClassStatistics[iclass].m_Covariance;
       }
     }
-  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numClasses),
+  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numClasses,1),
                     [=,&ListOfClassStatistics](const tbb::blocked_range<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE iclass = r.begin(); iclass < r.end(); ++iclass) {
                         const typename TProbabilityImage::ConstPointer currentProbImage = PosteriorsList[iclass].GetPointer();
@@ -240,7 +244,9 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                                 im2Interp->SetInputImage(im2);
 
                                 double reduced_var = tbb::parallel_reduce
-                                    (tbb::blocked_range3d<long>(0,size[2],0,size[1],0,size[0]),
+                                    (tbb::blocked_range3d<long>(0,size[2],1,
+                                                                0,size[1],size[1]/2,
+                                                                0,size[0],512),
                                                      0.0, /*Initial value of reduction */
                                                      [=](const tbb::blocked_range3d<long> &rng, double var ) -> double {
                                                        for (long kk = rng.pages().begin(); kk < rng.pages().end(); ++kk) {

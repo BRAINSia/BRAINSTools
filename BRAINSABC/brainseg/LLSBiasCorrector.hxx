@@ -293,7 +293,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   vnl_vector_fixed<unsigned long long int,3> local_XMu =
   tbb::parallel_reduce(
      tbb::blocked_range< IterType > (
-                           m_ValidIndicies.begin(), m_ValidIndicies.end()),
+                           m_ValidIndicies.begin(), m_ValidIndicies.end(),1),
 
      vnl_vector_fixed<unsigned long long int,3>(),
 
@@ -314,7 +314,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 );
 
   {
-      local_XMu += tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(),m_ValidIndicies.end()),
+      local_XMu += tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(),m_ValidIndicies.end(),1),
                            vnl_vector_fixed<unsigned long long int,3>(),
                            [=](const tbb::blocked_range<IterType> &r,
                                vnl_vector_fixed<unsigned long long int,3> newLocal_XMu )
@@ -341,7 +341,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
   {
       const vnl_vector_fixed<double, 3> local_XStd_final =
-          tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(), m_ValidIndicies.end()),
+          tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(), m_ValidIndicies.end(),1),
           vnl_vector_fixed<double, 3>(),
       [=](const tbb::blocked_range<IterType> &rng,
           vnl_vector_fixed<double, 3> local_XStd) -> vnl_vector_fixed<double, 3> {
@@ -368,7 +368,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   {
   // Row and column indices
   // Fill in polynomial basis values
-    tbb::parallel_for(tbb::blocked_range<unsigned int>(0,numEquations),
+    tbb::parallel_for(tbb::blocked_range<unsigned int>(0,numEquations,1),
                       [=] (tbb::blocked_range<unsigned int> &rng) {
                         for (unsigned int r = rng.begin(); r < rng.end(); ++r) {
                           const ProbabilityImageIndexType &currProbIndex = m_ValidIndicies[r];

@@ -28,7 +28,7 @@ void ZeroNegativeValuesInPlace(std::vector<typename TProbabilityImage::Pointer> 
   const unsigned int numPriors = priors.size();
 
     {
-    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numPriors),
+    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,numPriors,1),
                       [=](tbb::blocked_range<LOOPITERTYPE> &r) {
                         // First copy value, and set negative values to zero.
                         for (LOOPITERTYPE iprior = r.begin(); iprior < r.end(); iprior++) {
@@ -53,7 +53,7 @@ void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> &
 
   const typename TProbabilityImage::SizeType size = ProbList[0]->GetLargestPossibleRegion().GetSize();
     {
-    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
+    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],1,0,size[1],size[1]/2,0,size[0],512),
                       [=] (tbb::blocked_range3d<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                           for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
@@ -105,7 +105,7 @@ DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)
 {
   std::vector<typename TInputImage::Pointer> outputList(inputList.size() );
     {
-    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,inputList.size()),
+    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,inputList.size(),1),
                       [=,&outputList](const tbb::blocked_range<LOOPITERTYPE> &r) {
                         for (auto i = r.begin(); i < r.end(); i++) {
                           typename itk::ImageDuplicator<TInputImage>::Pointer myDuplicator
@@ -135,7 +135,7 @@ typename ByteImageType::Pointer ComputeForegroundProbMask(
   const typename TProbabilityImage::SizeType size = probList[0]->GetLargestPossibleRegion().GetSize();
   const typename ByteImageType::PixelType insideMaskValue = 1;
     {
-    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
+    tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],1,0,size[1],size[1]/2,0,size[0],512),
                       [=](tbb::blocked_range3d<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                           for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {

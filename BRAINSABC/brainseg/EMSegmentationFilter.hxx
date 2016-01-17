@@ -170,7 +170,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const typename TProbabilityImage::SizeType size = post->GetLargestPossibleRegion().GetSize();
   const LOOPITERTYPE pageSize=size[1]*size[0];
 
-  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
+  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],1,
+                                                       0,size[1],size[1]/2,
+                                                       0,size[0],512),
                     [=,&post](const tbb::blocked_range3d<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                         const LOOPITERTYPE pageOffset = kk*pageSize;
@@ -459,7 +461,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const typename InputImageType::SizeType size = GetMapVectorFirstElement(intensityImages)->GetLargestPossibleRegion().GetSize();
   const LOOPITERTYPE pageSize=size[1]*size[0];
 
-  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
+  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],1,
+                                                       0,size[1],size[1]/2,
+                                                       0,size[0],512),
                     [=,&testMatrix](const tbb::blocked_range3d<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                         const LOOPITERTYPE pageOffset = kk * pageSize;
@@ -1211,7 +1215,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   const typename TProbabilityImage::SizeType size = post->GetLargestPossibleRegion().GetSize();
 
-  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],0,size[1],0,size[0]),
+  tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],1,
+                                                       0,size[1],size[1]/2,
+                                                       0,size[0],512),
                     [=](const tbb::blocked_range3d<LOOPITERTYPE> &r) {
                       for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                         for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
@@ -1528,7 +1534,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const unsigned int computeInitialNumClasses = m_Posteriors.size();
 
   const FloatingPrecision logLikelihoodFinal =
-      tbb::parallel_reduce(tbb::blocked_range3d<LOOPITERTYPE>(0, size[2], 0, size[1], 0, size[0]),
+      tbb::parallel_reduce(tbb::blocked_range3d<LOOPITERTYPE>(0, size[2], 1,
+                                                              0, size[1], size[1]/2,
+                                                              0, size[0], 512),
                            0.0,
                            [=](const tbb::blocked_range3d<LOOPITERTYPE> &r,
                                FloatingPrecision logLikelihood) -> FloatingPrecision {
@@ -1736,7 +1744,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   subjectCandidateRegions.resize(WarpedPriorsList.size() );
 
   { // StartValid Regions Section
-    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,WarpedPriorsList.size()),
+    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,WarpedPriorsList.size(),1),
                       [=,&subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE i = r.begin(); i < r.end(); ++i) {
                           typename ByteImageType::Pointer probThreshImage = ITK_NULLPTR;
@@ -1957,7 +1965,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   subjectCandidateRegions.resize(WarpedPriorsList.size() );
   { // StartValid Regions Section
-    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,WarpedPriorsList.size()),
+    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,WarpedPriorsList.size(),1),
                       [=,&subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE i = r.begin(); i < r.end(); ++i) {
                           subjectCandidateRegions[i] = ByteImageType::New();

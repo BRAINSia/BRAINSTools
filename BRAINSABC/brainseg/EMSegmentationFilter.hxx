@@ -110,47 +110,54 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   TreeType::Pointer tree = treeGenerator->GetOutput();
 
   // Compute Likelihood matrix
-  for( size_t iTest = 0; iTest < numTest; ++iTest ) ///////
-    {
-    // each test case is a query point
-    MeasurementVectorType queryPoint( numFeatures );
-    for( size_t i = 0; i < numFeatures; ++i)
-       {
-       queryPoint[i] = testMatrix(iTest,i);
-       }
+  tbb::parallel_for(tbb::blocked_range<size_t>(0,numTest,1),
+    [=,&liklihoodMatrix](const tbb::blocked_range<size_t> &r) {
 
-    // compute the distances
-    typename TreeType::InstanceIdentifierVectorType neighbors;
-    std::vector<double> distances;
-    tree->Search( queryPoint, K, neighbors, distances );
+      // each test case is a query point
+      MeasurementVectorType queryPoint( numFeatures );
+      // Now we should find K labels correspondence to K neighbors
+      vnl_matrix<FloatingPrecision> neighborLabels( K, numClasses);
+      // Weight vector
+      vnl_matrix<FloatingPrecision> weights(1,K,0);
 
-    // Now we should find K labels correspondence to K neighbors
-    vnl_matrix<FloatingPrecision> neighborLabels( K, numClasses);
-    // Weight vector
-    vnl_matrix<FloatingPrecision> weights(1,K,0);
-    FloatingPrecision sumOfWeights = 0;
+      //likelihoodRow, a 1xC vector
+      vnl_matrix<FloatingPrecision> likelihoodRow;
 
-    for( size_t n = 0; n < K; ++n )
-      {
-      // Labels of the K neighbors
-      neighborLabels.set_row( n, localLabels.get_row( neighbors[n] ) );
-      //  Compute Weights and sum of weights
-      FloatingPrecision distSqr = pow( distances[n], 2);
-      if( distSqr == 0 )
+      for( size_t iTest = r.begin(); iTest < r.end(); ++iTest ) ///////
         {
-        weights(0,n) = 1; // avoids inf weights
-        }
-      else
-        {
-        weights(0,n) = 1/distSqr;
-        }
-      sumOfWeights += weights(0,n);
-      }
-    weights = weights / sumOfWeights;
+        for( size_t i = 0; i < numFeatures; ++i)
+           {
+           queryPoint[i] = testMatrix(iTest,i);
+           }
 
-    vnl_matrix<FloatingPrecision> likelihoodRow = weights * neighborLabels; // a 1xC vector
-    liklihoodMatrix.set_row(iTest, likelihoodRow.get_row(0) );
-    } // end of main loop
+        // compute the distances
+        typename TreeType::InstanceIdentifierVectorType neighbors;
+        std::vector<double> distances;
+        tree->Search( queryPoint, K, neighbors, distances );
+
+        FloatingPrecision sumOfWeights = 0;
+        for( size_t n = 0; n < K; ++n )
+          {
+          // Labels of the K neighbors
+          neighborLabels.set_row( n, localLabels.get_row( neighbors[n] ) );
+          //  Compute Weights and sum of weights
+          const FloatingPrecision distSqr = std::pow( distances[n], 2);
+          if( distSqr == 0 )
+            {
+            weights(0,n) = 1; // avoids inf weights
+            }
+          else
+            {
+            weights(0,n) = 1/distSqr;
+            }
+          sumOfWeights += weights(0,n);
+          }
+        weights = weights / sumOfWeights;
+
+        likelihoodRow = weights * neighborLabels; // a 1xC vector
+        liklihoodMatrix.set_row(iTest, likelihoodRow.get_row(0) );
+        } // end of main loop
+  });
   muLogMacro(<< "\n--------------------------------" << std::endl);
   muLogMacro(<< "LiklihoodMatrix is calculated: [ " << liklihoodMatrix.rows() << " x " << liklihoodMatrix.cols() << " ]" << std::endl);
   muLogMacro(<< "--------------------------------" << std::endl);

@@ -307,8 +307,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
      return init;
      },
 
-     [] (  vnl_vector_fixed<unsigned long long int,3> a,
-           vnl_vector_fixed<unsigned long long int,3> b ) ->  vnl_vector_fixed<unsigned long long int,3> {
+     [] (  const vnl_vector_fixed<unsigned long long int,3> & a,
+           const vnl_vector_fixed<unsigned long long int,3> & b ) ->  vnl_vector_fixed<unsigned long long int,3> {
    return a+b;
 }
 );
@@ -327,8 +327,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
                              }
                              return newLocal_XMu;
                            },
-                           [] (  vnl_vector_fixed<unsigned long long int,3> a,
-                                 vnl_vector_fixed<unsigned long long int,3> b ) ->  vnl_vector_fixed<unsigned long long int,3> {
+                           [] (  const vnl_vector_fixed<unsigned long long int,3> & a,
+                                 const vnl_vector_fixed<unsigned long long int,3> & b ) ->  vnl_vector_fixed<unsigned long long int,3> {
                              return a+b;
                            }
       );
@@ -355,8 +355,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
         }
         return local_XStd;
       },
-      [] (  vnl_vector_fixed<double ,3> a,
-        vnl_vector_fixed<double, 3> b ) ->  vnl_vector_fixed<double ,3> {
+      [] ( const vnl_vector_fixed<double ,3> &a,
+        const vnl_vector_fixed<double, 3> & b ) ->  vnl_vector_fixed<double ,3> {
         return a+b;
       }
       );

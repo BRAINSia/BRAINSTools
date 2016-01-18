@@ -123,8 +123,8 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
     numberOfSubSamples[0] = itk::Math::Round<itk::SizeValueType>( maskSpacing[0]/minimumSpacing[0] );
     numberOfSubSamples[1] = itk::Math::Round<itk::SizeValueType>( maskSpacing[1]/minimumSpacing[1] );
     numberOfSubSamples[2] = itk::Math::Round<itk::SizeValueType>( maskSpacing[2]/minimumSpacing[2] );
-    muLogMacro(<< "\nWARNING: Input number of subsamples in voxel space are invalid." << std::endl
-               << "Number of subsamples per each direction in voxel space are recomputed as: "
+    muLogMacro(<< "\nNumber of subsamples at each plug region cannot be zero!" << std::endl
+               << "Note that number of subsamples are automatically recomputed per each direction in voxel space as: "
                << numberOfSubSamples << std::endl);
     }
   else

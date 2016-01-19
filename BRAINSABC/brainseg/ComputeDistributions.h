@@ -26,6 +26,7 @@
 #define LOGP(x) vcl_log( ( x ) )
 
 typedef  itk::Image<unsigned char, 3> ByteImageType;
+typedef itk::CompensatedSummation<double> CompensatedSummationType;
 
 template <class TInputImage, class TProbabilityImage, class MatrixType>
 void
@@ -75,13 +76,13 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                         const typename TProbabilityImage::ConstPointer currentProbImage = PosteriorsList[iclass].GetPointer();
                         const typename ByteImageType::ConstPointer currentCandidateRegion =
                             SubjectCandidateRegions[iclass].GetPointer();
+
                         // NOTE:  vnl_math:eps is too small vnl_math::eps;
-                        const double tmp_accum = 1e-20
-                                           + tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],1,
-                                                                                             0,size[1],size[1]/2,
-                                                                                             0,size[0],512),
-                                               0.0,
-                                               [=](const tbb::blocked_range3d<long> &rng3d, double tmp) -> double {
+                        CompensatedSummationType tmp_accumC = tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],1,
+                                                                                       0,size[1],size[1]/2,
+                                                                                       0,size[0],512),
+                                               CompensatedSummationType(),
+                                               [=](const tbb::blocked_range3d<long> &rng3d, CompensatedSummationType tmp) -> CompensatedSummationType {
                                                  for (long kk = rng3d.pages().begin(); kk < rng3d.pages().end(); ++kk) {
                                                    for (long jj = rng3d.rows().begin(); jj < rng3d.rows().end(); ++jj) {
                                                      for (long ii = rng3d.cols().begin(); ii < rng3d.cols().end(); ++ii) {
@@ -89,16 +90,21 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                                                        // Here pure plugs mask implicitly comes in! as CandidateRegions are multiplied by purePlugsMask!
                                                        if (currentCandidateRegion->GetPixel(currIndex)) {
                                                          const double currentProbValue = currentProbImage->GetPixel( currIndex);
-                                                         tmp = tmp + currentProbValue;
+                                                         tmp += currentProbValue;
                                                        }
                                                      }
                                                    }
                                                  }
                                                  return tmp;
                                                },
-                                               std::plus<double>()
-                          );
-                        ListOfClassStatistics[iclass].m_Weighting = tmp_accum;
+                                               [] ( CompensatedSummationType a,
+                                                    const CompensatedSummationType & b ) ->  CompensatedSummationType {
+                                                       a += b.GetSum();
+                                                       return a;
+                                               }
+                        );
+                        tmp_accumC += 1e-20;
+                        ListOfClassStatistics[iclass].m_Weighting = tmp_accumC.GetSum();
                       }
                     });
   // Compute the means weighted by the probability of each value.
@@ -123,12 +129,12 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                                 InputImageNNInterpolationType::New();
                             im1Interp->SetInputImage(im1);
 
-                            const double muSumFinal =
+                            const CompensatedSummationType muSumFinal =
                             tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],1,
                                                                             0,size[1],size[1]/2,
                                                                             0,size[0],512),
-                            0.0,
-                            [=](const tbb::blocked_range3d<long> &rng, double muSum) -> double {
+                            CompensatedSummationType(),
+                            [=](const tbb::blocked_range3d<long> &rng, CompensatedSummationType muSum) -> CompensatedSummationType {
                               typename TProbabilityImage::PointType currPoint;
                               for (long kk = rng.pages().begin(); kk < rng.pages().end(); ++kk) {
                                 for (long jj = rng.rows().begin(); jj < rng.rows().end(); ++jj) {
@@ -157,9 +163,13 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                               return muSum;
                             }
                               ,
-                              std::plus<double>()
+                            [] ( CompensatedSummationType a,
+                                 const CompensatedSummationType & b ) ->  CompensatedSummationType {
+                                   a += b.GetSum();
+                                   return a;
+                            }
                               );
-                            const double mymean=(muSumFinal) / ListOfClassStatistics[iclass].m_Weighting;
+                            const double mymean=(muSumFinal.GetSum()) / ListOfClassStatistics[iclass].m_Weighting;
                             ListOfClassStatistics[iclass].m_Means[mapIt->first] += mymean;
                           }
                           // averaging the means of all images of this image modality
@@ -243,12 +253,13 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                                     InputImageNNInterpolationType::New();
                                 im2Interp->SetInputImage(im2);
 
-                                double reduced_var = tbb::parallel_reduce
+                                CompensatedSummationType reduced_varC = tbb::parallel_reduce
                                     (tbb::blocked_range3d<long>(0,size[2],1,
                                                                 0,size[1],size[1]/2,
                                                                 0,size[0],512),
-                                                     0.0, /*Initial value of reduction */
-                                                     [=](const tbb::blocked_range3d<long> &rng, double var ) -> double {
+                                                     CompensatedSummationType(), /*Initial value of reduction */
+                                                     [=](const tbb::blocked_range3d<long> &rng, CompensatedSummationType var )
+                                                                        -> CompensatedSummationType {
                                                        for (long kk = rng.pages().begin(); kk < rng.pages().end(); ++kk) {
                                                          for (long jj = rng.rows().begin(); jj < rng.rows().end(); ++jj) {
                                                            for (long ii = rng.cols().begin(); ii < rng.cols().end(); ++ii) {
@@ -287,10 +298,14 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                                                        }
                                                        return var;
                                                      },
-                                                     /* Reduction Opterator */
-                                                     std::plus<double>()
+                                                     /* Reduction Operator */
+                            [] ( CompensatedSummationType a,
+                                 const CompensatedSummationType & b ) ->  CompensatedSummationType {
+                                   a += b.GetSum();
+                                   return a;
+                            }
                                     );
-                                reduced_var /= ListOfClassStatistics[iclass].m_Weighting;
+                                double reduced_var = reduced_varC.GetSum() / ListOfClassStatistics[iclass].m_Weighting;
 
                                 // Adjust diagonal, to make sure covariance is pos-def
                                 if (mapIt == mapIt2 && i == j) {

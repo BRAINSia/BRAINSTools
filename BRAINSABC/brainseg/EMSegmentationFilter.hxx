@@ -1540,18 +1540,19 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const InputImageSizeType size = m_Posteriors[0]->GetLargestPossibleRegion().GetSize();
   const unsigned int computeInitialNumClasses = m_Posteriors.size();
 
-  const FloatingPrecision logLikelihoodFinal =
+  const CompensatedSummationType logLikelihoodFinal =
       tbb::parallel_reduce(tbb::blocked_range3d<LOOPITERTYPE>(0, size[2], 1,
                                                               0, size[1], size[1]/2,
                                                               0, size[0], 512),
-                           0.0,
+                           CompensatedSummationType(),
                            [=](const tbb::blocked_range3d<LOOPITERTYPE> &r,
-                               FloatingPrecision logLikelihood) -> FloatingPrecision {
+                               CompensatedSummationType logLikelihood) -> CompensatedSummationType {
                              for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk) {
                                for (LOOPITERTYPE jj = r.rows().begin(); jj < r.rows().end(); ++jj) {
                                  for (LOOPITERTYPE ii = r.cols().begin(); ii < r.cols().end(); ++ii) {
                                    const ProbabilityImageIndexType currIndex = {{ii, jj, kk}};
-                                   FloatingPrecision tmp = 1e-20;
+                                   CompensatedSummationType tmp;
+				   tmp += 1e-20;
                                    for (unsigned int iclass = 0; iclass < computeInitialNumClasses; iclass++) {
                                      if (this->m_PriorIsForegroundPriorVector[iclass]) // We should
                                        // probably only
@@ -1561,15 +1562,19 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                        tmp += m_Posteriors[iclass]->GetPixel(currIndex);
                                      }
                                    }
-                                   logLikelihood = logLikelihood + vcl_log(tmp);
+                                   logLikelihood += vcl_log(tmp.GetSum());
                                  }
                                }
                              }
                              return logLikelihood;
                            },
-                           std::plus<FloatingPrecision>()
+                           [] ( CompensatedSummationType a,
+                                const CompensatedSummationType & b ) ->  CompensatedSummationType {
+                                    a += b.GetSum();
+                                    return a;
+                           }
       );
-  return logLikelihoodFinal;
+  return logLikelihoodFinal.GetSum();
 }
 
 /**

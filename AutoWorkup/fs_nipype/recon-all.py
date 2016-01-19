@@ -10,7 +10,7 @@ for better parallel processing for easier experimenting with new and/or
 improved processing steps.
 
 Usage:
-python recon-all.py --T1 <infile1> --subject <name> [--T1 <infile2>... --T2 <inT2> --FLAIR <inFLAIR>]
+python recon-all.py --T1 <infile1> --subject <name> --subjects_dir <dir> [--T1 <infile2>... --T2 <inT2> --FLAIR <inFLAIR>]
 
 Required inputs;
 -i or --T1 <infile1>      Input T1 image. Multiple T1 images may be used as inputs each requiring its own
@@ -37,7 +37,7 @@ Optional inputs:
                           flag causes mri_convert to conform the image to dimensions of 256^3.
 
 --longbase <name>         Set the longitudinal base template. If a longitudinal 
-                          base is set, no input files will be used/required.
+                          base is set, no input files will be used/required. (in development)
 
 --openmp <numthreads>     OpenMP parallelization (CentOS 6 distribution only!) 
                           To enable this feature, add the flag -openmp <numthreads> 

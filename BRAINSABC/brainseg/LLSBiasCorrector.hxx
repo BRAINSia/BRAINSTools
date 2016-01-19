@@ -340,11 +340,12 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   }
 
   {
-      const vnl_vector_fixed<double, 3> local_XStd_final =
+      const std::vector<CompensatedSummationType> local_XStd_final =
           tbb::parallel_reduce(tbb::blocked_range<IterType>(m_ValidIndicies.begin(), m_ValidIndicies.end(),1),
-          vnl_vector_fixed<double, 3>(),
+          std::vector<CompensatedSummationType>(),
       [=](const tbb::blocked_range<IterType> &rng,
-          vnl_vector_fixed<double, 3> local_XStd) -> vnl_vector_fixed<double, 3> {
+          std::vector<CompensatedSummationType> local_XStd) -> std::vector<CompensatedSummationType> {
+        local_XStd.resize(3);
         for (auto currProbIndex = rng.begin(); currProbIndex < rng.end(); ++currProbIndex) {
           const double diff0 = static_cast<double>((*currProbIndex)[0]) - m_XMu[0];
           local_XStd[0] += diff0 * diff0;
@@ -355,14 +356,18 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
         }
         return local_XStd;
       },
-      [] ( const vnl_vector_fixed<double ,3> &a,
-        const vnl_vector_fixed<double, 3> & b ) ->  vnl_vector_fixed<double ,3> {
-        return a+b;
+      [] ( const std::vector<CompensatedSummationType> &a,
+        const std::vector<CompensatedSummationType> &b ) ->  std::vector<CompensatedSummationType> {
+        std::vector<CompensatedSummationType> c(a);
+        c[0] += b[0].GetSum();
+        c[1] += b[1].GetSum();
+        c[2] += b[2].GetSum();
+        return c;
       }
       );
-  m_XStd[0] = vcl_sqrt(local_XStd_final[0] / numEquations);
-  m_XStd[1] = vcl_sqrt(local_XStd_final[1] / numEquations);
-  m_XStd[2] = vcl_sqrt(local_XStd_final[2] / numEquations);
+  m_XStd[0] = vcl_sqrt(local_XStd_final[0].GetSum() / numEquations);
+  m_XStd[1] = vcl_sqrt(local_XStd_final[1].GetSum() / numEquations);
+  m_XStd[2] = vcl_sqrt(local_XStd_final[2].GetSum() / numEquations);
   }
 
   {

@@ -35,14 +35,15 @@ FindITKUtil(BRAINSConstellationDetector_ITK
   ITKTestKernel
   ITKThresholding
   ITKTransform
-  ITKVTK
-  ITKVtkGlue
 )
 
 # Build GUI option, the option is provided in src directory
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
+  FindITKUtil(
+    ITKVTK
+    ITKVtkGlue
+  )
   set(LOCAL_VTKQT vtkGUISupportQt)
-endif()
 
 FindVTKUtil(
   vtkCommonColor
@@ -60,7 +61,8 @@ FindVTKUtil(
   vtkImagingCore
   vtkInteractionStyle
   vtkRenderingCore
-${LOCAL_VTKQT})
+  ${LOCAL_VTKQT})
+endif()
 
 #-----------------------------------------------------------------------------
 # Output directories.

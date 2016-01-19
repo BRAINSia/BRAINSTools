@@ -5,13 +5,14 @@
 FindITKUtil(ConvertBetweenFileFormats_ITK
   ITKImageIntensity
   ITKTestKernel
-  ITKVtkGlue)
+  )
 
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
+  FINDITKUtil(ITKVtkGlue)
   set(LOCAL_VTKQT vtkGUISupportQt)
-endif()
-FindVTKUtil(vtkInteractionStyle
+  FindVTKUtil(vtkInteractionStyle
     vtkRenderingCore  vtkImagingSources ${LOCAL_VTKQT})
+endif()
 
 # This project is intended to be built outside the Insight source tree
 project(ConvertBetweenFileFormats)

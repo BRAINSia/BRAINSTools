@@ -160,7 +160,7 @@ endif()
 if(BRAINS_DEBUG_IMAGE_WRITE
     OR USE_GTRACT
     OR USE_BRAINSTalairach
-    OR USE_ConvertBetweenFileFormats
+#    OR USE_ConvertBetweenFileFormats
     OR USE_DWIConvert
     )
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES VTK)
@@ -174,6 +174,9 @@ if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTs)
 endif()
 
+if( USE_BRAINSSurfaceTools )
+  set(ITK_REQUIRES_VTK TRUE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables
@@ -238,6 +241,7 @@ mark_as_superbuild(
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION:PATH
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION:PATH
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
+    ITK_REQUIRES_VTK:BOOL
   ALL_PROJECTS
   )
 

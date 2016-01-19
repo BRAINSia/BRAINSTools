@@ -160,7 +160,7 @@ endif()
 if(BRAINS_DEBUG_IMAGE_WRITE
     OR USE_GTRACT
     OR USE_BRAINSTalairach
-    OR USE_ConvertBetweenFileFormats
+#    OR USE_ConvertBetweenFileFormats
     OR USE_DWIConvert
     )
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES VTK)
@@ -174,9 +174,7 @@ if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTs)
 endif()
 
-if( USE_BRAINSSurfaceTools OR
-    USE_ConvertBetweenFileFormats
-  )
+if( USE_BRAINSSurfaceTools )
   set(ITK_REQUIRES_VTK TRUE)
 endif()
 

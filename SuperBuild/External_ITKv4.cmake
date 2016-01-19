@@ -2,7 +2,7 @@
 set(proj ITKv4)
 set(ITK_EXTERNAL_NAME ${proj})
 
-  set(_require_vtk ${ITK_REQUIRES_VTK})
+set(_require_vtk ${ITK_REQUIRES_VTK})
 if(${PRIMARY_PROJECT_NAME}_USE_QT ) ## If building with GUI, then need ITKVtkGlue
   set(_require_vtk TRUE)
 endif()

@@ -1,11 +1,20 @@
 
 set(proj ITKv4)
 set(ITK_EXTERNAL_NAME ${proj})
+
+  set(_require_vtk FALSE)
+if(${PRIMARY_PROJECT_NAME}_USE_QT OR ## If building with GUI, then need ITKVtkGlue
+    USE_BRAINSSurfaceTools OR
+    USE_BRAINSConstellationDetector OR
+    USE_ConvertBetweenFileFormats
+    )
+  set(_require_vtk TRUE)
+endif()
+
 # Set dependency list
-if(${PRIMARY_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
-  set(${proj}_DEPENDENCIES "zlib" VTK)
-else()
-  set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib")
+if(_require_vtk)
+  list(APPEND ${proj}_DEPENDENCIES VTK)
 endif()
 #if(${CMAKE_PROJECT_NAME}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
@@ -26,11 +35,13 @@ endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  if(${PRIMARY_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
-    set( ITK_VTK_OPTIONS
+  set(ITK_VTK_OPTIONS )
+
+  if(_require_vtk)
+    list(APPEND ITK_VTK_OPTIONS
+      -DModule_ITKVtkGlue:BOOL=ON
       -DVTK_DIR:PATH=${VTK_DIR}
-      -DModule_ITKVtkGlue:BOOL=ON  ## If building with GUI, then need ITKVtkGlue
-    )
+      )
   endif()
 
   if(NOT DEFINED git_protocol)

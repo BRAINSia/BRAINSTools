@@ -118,7 +118,7 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
   IndexType targetIndex;
   // ContinuousIndex<float, ImageDimension> contindex;
   unsigned int nonZeroGridDirections = 0;
-  for( int q = 0; q < ImageDimension; q++ )
+  for( unsigned int q = 0; q < ImageDimension; q++ )
     {
     if( m_GridPixelSpacing[q] != 0 )
       {

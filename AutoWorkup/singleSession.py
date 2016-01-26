@@ -179,24 +179,24 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "MALF_HDAtlas20_2015_fs_standard_label.nii.gz"
+                    "JointFusion_HDAtlas20_2015_fs_standard_label.nii.gz"
                 ))
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "MALF_HDAtlas20_2015_label.nii.gz"
+                    "JointFusion_HDAtlas20_2015_label.nii.gz"
                 ))
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "MALF_HDAtlas20_2015_lobar_label.nii.gz"
+                    "JointFusion_HDAtlas20_2015_lobar_label.nii.gz"
                 ))
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "MALF_HDAtlas20_2015_CSFVBInjected_label.nii.gz"
+                    "JointFusion_HDAtlas20_2015_CSFVBInjected_label.nii.gz"
                 ))
-            if 'malf_2015_wholebrain' in master_config['components']:
+            if 'jointfusion_2015_wholebrain' in master_config['components']:
                 pass
 
             if master_config['workflow_phase'] == 'atlas-based-reference':

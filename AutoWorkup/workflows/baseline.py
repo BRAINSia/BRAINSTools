@@ -456,7 +456,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DoReverseMapping = False  # Set to true for debugging outputs
         if 'auxlmk' in master_config['components']:
             DoReverseMapping = True
-        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", PostACPCAlignToAtlas, interpMode, DoReverseMapping)
+        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, PostACPCAlignToAtlas, DoReverseMapping)
 
         baw201.connect([(makePreprocessingOutList, myLocalLMIWF,
                          [(('T1s', get_list_element, 0), 'inputspec.inputVolume' )]),

@@ -17,6 +17,7 @@
  *
  *=========================================================================*/
 #include "BRAINSCutApplyModel.h"
+#include "BRAINSCutUtilities.h"
 #include "FeatureInputVector.h"
 #include "TrainingPrameters.h"
 #include "ApplyModel.h"
@@ -803,7 +804,7 @@ BRAINSCutApplyModel
     }
 
   std::cout << "Filename:: " << ANNModelFilename << std::endl;
-  this->m_openCVANN = OpenCVMLPType::load<OpenCVMLPType>( ANNModelFilename );
+  this->m_openCVANN = OpenCVMLPType::load( ANNModelFilename );
   //this->m_openCVANN->load( ANNModelFilename.c_str() );
 }
 

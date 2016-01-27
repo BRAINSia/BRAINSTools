@@ -76,39 +76,40 @@ void ComputeMSP(SImageType::Pointer image,
     SImageType::Pointer           EigthImage = MyPyramid->GetOutput(0);
     SImageType::Pointer           QuarterImage = MyPyramid->GetOutput(1);
     SImageType::Pointer           HalfImage = MyPyramid->GetOutput(2);
-    Rigid3DCenterReflectorFunctor reflectionFunctor;
+    typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
+    reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
 
-    reflectionFunctor.SetCenterOfHeadMass(centerOfHeadMass);
-    reflectionFunctor.Initialize(image);
+    reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass);
+    reflectionFunctor->InitializeImage(image);
     if( qualityLevel >= 0 )
       {
       std::cout << "Level 0 Quality Estimates" << std::endl;
-      reflectionFunctor.SetDownSampledReferenceImage(EigthImage);
-      reflectionFunctor.QuickSampleParameterSpace();
-      reflectionFunctor.Update();
+      reflectionFunctor->SetDownSampledReferenceImage(EigthImage);
+      reflectionFunctor->Initialize();
+      reflectionFunctor->Update();
       }
     if( qualityLevel >= 1 )
       {
       std::cout << "Level 1 Quality Estimates" << std::endl;
-      reflectionFunctor.SetDownSampledReferenceImage(QuarterImage);
-      reflectionFunctor.Update();
+      reflectionFunctor->SetDownSampledReferenceImage(QuarterImage);
+      reflectionFunctor->Update();
       }
     if( qualityLevel >= 2 )
       {
       std::cout << "Level 2 Quality Estimates" << std::endl;
-      reflectionFunctor.SetDownSampledReferenceImage(HalfImage);
-      reflectionFunctor.Update();
+      reflectionFunctor->SetDownSampledReferenceImage(HalfImage);
+      reflectionFunctor->Update();
       }
     if( qualityLevel >= 3 )
       {
       std::cout << "Level 3 Quality Estimates" << std::endl;
-      reflectionFunctor.SetDownSampledReferenceImage(image);
-      reflectionFunctor.Update();
+      reflectionFunctor->SetDownSampledReferenceImage(image);
+      reflectionFunctor->Update();
       }
-    reflectionFunctor.SetDownSampledReferenceImage(image);
-    Tmsp = reflectionFunctor.GetTransformToMSP();
-    transformedImage = reflectionFunctor.GetMSPCenteredImage();
-    cc = reflectionFunctor.GetCC();
+    reflectionFunctor->SetDownSampledReferenceImage(image);
+    Tmsp = reflectionFunctor->GetTransformToMSP();
+    transformedImage = reflectionFunctor->GetMSPCenteredImage();
+    cc = reflectionFunctor->GetCC();
     }
 }
 
@@ -119,36 +120,37 @@ void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, c
   SImageType::Pointer           EigthImage = MyPyramid->GetOutput(0);
   SImageType::Pointer           QuarterImage = MyPyramid->GetOutput(1);
   SImageType::Pointer           HalfImage = MyPyramid->GetOutput(2);
-  Rigid3DCenterReflectorFunctor reflectionFunctor;
+  typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
+  reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
 
-  reflectionFunctor.Initialize(image);
+  reflectionFunctor->InitializeImage(image);
   if( qualityLevel >= 0 )
     {
     std::cout << "Level 0 Quality Estimates" << std::endl;
-    reflectionFunctor.SetDownSampledReferenceImage(EigthImage);
-    reflectionFunctor.QuickSampleParameterSpace();
-    reflectionFunctor.Update();
+    reflectionFunctor->SetDownSampledReferenceImage(EigthImage);
+    reflectionFunctor->Initialize();
+    reflectionFunctor->Update();
     }
   if( qualityLevel >= 1 )
     {
     std::cout << "Level 1 Quality Estimates" << std::endl;
-    reflectionFunctor.SetDownSampledReferenceImage(QuarterImage);
-    reflectionFunctor.Update();
+    reflectionFunctor->SetDownSampledReferenceImage(QuarterImage);
+    reflectionFunctor->Update();
     }
   if( qualityLevel >= 2 )
     {
     std::cout << "Level 2 Quality Estimates" << std::endl;
-    reflectionFunctor.SetDownSampledReferenceImage(HalfImage);
-    reflectionFunctor.Update();
+    reflectionFunctor->SetDownSampledReferenceImage(HalfImage);
+    reflectionFunctor->Update();
     }
   if( qualityLevel >= 3 )
     {
     std::cout << "Level 3 Quality Estimates" << std::endl;
-    reflectionFunctor.SetDownSampledReferenceImage(image);
-    reflectionFunctor.Update();
+    reflectionFunctor->SetDownSampledReferenceImage(image);
+    reflectionFunctor->Update();
     }
-  reflectionFunctor.SetDownSampledReferenceImage(image);
-  Tmsp = reflectionFunctor.GetTransformToMSP();
+  reflectionFunctor->SetDownSampledReferenceImage(image);
+  Tmsp = reflectionFunctor->GetTransformToMSP();
 }
 
 void CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename)

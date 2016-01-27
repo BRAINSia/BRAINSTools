@@ -329,6 +329,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --writeOutputTransformInFloat
+  --removeIntensityOutliers 0.000001 ## Not much of an outlier removal, but exercizes the code.
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidMedianRotationNoMasks)

@@ -28,6 +28,15 @@ set(BRAINSABCCOMMONLIB_SRCS
 ##
 add_library(BRAINSABCCOMMONLIB STATIC ${BRAINSABCCOMMONLIB_SRCS})
 add_dependencies(BRAINSABCCOMMONLIB InstallReferenceAtlas )
+set_property(TARGET BRAINSABCCOMMONLIB PROPERTY CXX_STANDARD 11)
+set_property(TARGET BRAINSABCCOMMONLIB PROPERTY CXX_STANDARD_REQUIRED ON)
+
+set(BABC_CXX11_Required_Features
+      cxx_lambdas
+      cxx_strong_enums
+      cxx_constexpr
+      cxx_auto_type)
+target_compile_features(BRAINSABCCOMMONLIB PRIVATE ${BABC_CXX11_Required_Features})
 
 
 set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES} ${TBB_LIBRARY})

@@ -1,8 +1,9 @@
-if(NOT DEFINED CMAKE_CXX_STANDARD OR ( NOT ${CMAKE_CXX_STANDARD} EQUAL 98 ) )
-  cmake_minimum_required(VERSION 2.8.9) ## Needed for slicer compliance
-else()
+if(DEFINED CMAKE_CXX_STANDARD AND (NOT ${CMAKE_CXX_STANDARD} EQUAL "98" ))
   cmake_minimum_required(VERSION 3.2.0) ## 3.2.0 needed for AppleClang CXX11 finding
+else()
+  cmake_minimum_required(VERSION 2.8.9) ## Needed for slicer compliance
 endif()
+
 if(POLICY CMP0048)
   cmake_policy(SET CMP0048 OLD) #OLD project() behavior for setting VERSION variable
 endif()

@@ -419,7 +419,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
         baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
-        makeDenoiseInImageList.inputs.ListOutType= True
+        makeDenoiseInImageList.inputs.ListOutType= False
         makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
         makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"
@@ -434,6 +434,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DenoiseInputImgs.synchronize = True
         DenoiseInputImgs.inputs.dimension = 3
         DenoiseInputImgs.inputs.noise_model= 'Rician'
+        DenoiseInputImgs.inputs.save_noise=True
         DenoiseInputImgs.inputs.shrink_factor = 1 # default
         DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], .2, 1, 1),
                                         'overwrite': True}
@@ -446,7 +447,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                     output_names=['T1s', 'T2s', 'PDs', 'FLs', 'OtherList']),
                                            run_without_submitting=False,
                                            name="99_makePreprocessingOutList")
-        baw201.connect(DenoiseInputImgs, 'output_corrected_image', makePreprocessingOutList, 'inFileList')
+        baw201.connect(DenoiseInputImgs, 'output_image', makePreprocessingOutList, 'inFileList')
         baw201.connect(makeDenoiseInImageList, 'imageTypeList', makePreprocessingOutList, 'inTypeList')
 
     else:

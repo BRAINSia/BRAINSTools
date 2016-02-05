@@ -101,7 +101,10 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   // load image
   std::cout << "\nLoading image..." << std::endl;
 
-  typedef itk::ImageFileReader<SImageType> AtlasReaderType;
+  // Input image is read as a double image;
+  // then it is rescaled to a specific dynamic range;
+  // Finally it is cast to a Short type image.
+  typedef itk::ImageFileReader<DImageType3D> AtlasReaderType;
   AtlasReaderType::Pointer reader = AtlasReaderType::New();
   reader->SetFileName( this->m_inputVolume );
   try
@@ -115,9 +118,23 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     }
   std::cout << "Processing: " << this->m_inputVolume << std::endl;
 
+  DImageType3D::Pointer rescaledInputVolume =
+    StandardizeMaskIntensity<DImageType3D, ByteImageType>(reader->GetOutput(),
+                                                          ITK_NULLPTR,
+                                                          0.0005, 1.0 - 0.0005,
+                                                          1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
+                                                          0, MAX_IMAGE_OUTPUT_VALUE);
+
+  typedef itk::CastImageFilter<DImageType3D, SImageType> CasterType;
+  CasterType::Pointer caster = CasterType::New();
+  caster->SetInput( rescaledInputVolume );
+  caster->Update();
+
+  SImageType::Pointer inputVolume = caster->GetOutput();
+
     {
     const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
-    itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
+    itk::MetaDataDictionary & dict = inputVolume->GetMetaDataDictionary();
     std::string               ImageMetaDataEMSPFileOverride =  "";
     // if it exists and the string matches what we put in on the image to write, AOK.
     if( itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false )
@@ -140,13 +157,11 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     landmarksEMSP = ReadSlicer3toITKLmk( this->m_inputLandmarksEMSP );
     }
 
-  // std::cout << "original input file : " << reader->GetOutput() << std::endl;  //Added by Ali
-
   // ------------------------------------
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput( reader->GetOutput() );
+  findCenterFilter->SetInput( inputVolume );
   findCenterFilter->SetAxis( 2 );
   findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
   findCenterFilter->SetClosingSize( 7 );
@@ -174,7 +189,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   else
     {
     std::cout << "\nFinding eye centers with BRAINS Hough Eye Detector..." << std::endl;
-    houghEyeDetector->SetInput( reader->GetOutput() );
+    houghEyeDetector->SetInput( inputVolume );
     houghEyeDetector->SetHoughEyeDetectorMode( this->m_houghEyeDetectorMode );
     houghEyeDetector->SetResultsDir( this->m_resultsDir );           // debug output dir
     houghEyeDetector->SetWritedebuggingImagesLevel( this->m_writedebuggingImagesLevel );
@@ -203,7 +218,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   if( ( landmarksEMSP.find( "LE" ) != landmarksEMSP.end() )
     && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
     {
-    constellation2->SetInput( reader->GetOutput() );
+    constellation2->SetInput( inputVolume );
     constellation2->SetLandmarksEMSP( landmarksEMSP );
     constellation2->SetCenterOfHeadMass( centerOfHeadMass );
     }
@@ -227,7 +242,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       }
     else
       {
-      constellation2->SetInput( reader->GetOutput() );
+      constellation2->SetInput( inputVolume );
       constellation2->SetCenterOfHeadMass( centerOfHeadMass );
       }
     }
@@ -260,7 +275,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   constellation2->SetLlsMatrices( llsMatrices );
   constellation2->SetLlsMeans( llsMeans );
   constellation2->SetSearchRadii( searchRadii );
-  constellation2->SetOriginalInputImage( reader->GetOutput() );
+  constellation2->SetOriginalInputImage( inputVolume );
   constellation2->SetatlasVolume( this->m_atlasVolume );
   constellation2->SetatlasLandmarks( this->m_atlasLandmarks );
   constellation2->SetatlasLandmarkWeights( this->m_atlasLandmarkWeights );

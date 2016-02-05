@@ -24,6 +24,7 @@
 #include "itksys/SystemTools.hxx"
 #include "BRAINSThreadControl.h"
 
+#include "StandardizeMaskIntensity.h"
 #include "landmarksConstellationCommon.h"
 #include "itkFindCenterOfBrainFilter.h"
 #include "BRAINSHoughEyeDetector.h"

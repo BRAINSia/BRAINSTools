@@ -109,6 +109,8 @@ typedef itk::Image<float, 3>  FImageType3D;
 typedef itk::Image<double, 2> DImageType2D;
 typedef itk::Image<float, 2>  FImageType2D;
 
+typedef itk::Image<unsigned char, 3> ByteImageType;
+
 typedef SImageType::PointType                   SImagePointType;
 
 typedef itk::RGBPixel<unsigned char> RGBPixelType;

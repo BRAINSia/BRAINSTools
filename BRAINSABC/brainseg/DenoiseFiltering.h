@@ -80,17 +80,26 @@ typename TInputImageType::Pointer DenoiseFiltering(
 
     denoisedImage = cfilt->GetOutput();
     }
-  else if( PrefilteringMethod.compare("MedianFilter") == 0 )
+  else if( PrefilteringMethod.compare("None") == 0 )
     {
-    // TODO:  Kent put a median filter in here, with filter radius equal to 1.
+      denoisedImage = img;
+    }
+  //else if( PrefilteringMethod.compare("MedianFilter") == 0 )
+  //  {
+  //  // TODO:  Kent put a median filter in here, with filter radius equal to 1.
+  //  }
+  else
+    {
+    std::cout << "ERROR Filtering method NOT IMPLEMENTED : " << PrefilteringMethod << std::endl;
+    exit(-1);
     }
 
-  if( denoisedImage.IsNotNull() )
+  if( denoisedImage.IsNull() )
     {
-    return denoisedImage;
+    std::cout << "ERROR Denoising failed " << std::endl;
+    exit(-1);
     }
-  // else No filtering.
-  return img;
+  return denoisedImage;
 }
 
 

@@ -320,6 +320,7 @@ BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 BeginANTS.inputs.save_state = 'SavedBeginANTSSyNState.h5'
 BeginANTS.inputs.float = True
 BeginANTS.inputs.args = "--verbose"
+BeginANTS.inputs.invert_initial_moving_transform = False
 
 minipigWF.connect(chopT2, 'outFN', BeginANTS, "fixed_image")
 minipigWF.connect(fixAtlas, 'outFN', BeginANTS, "moving_image")

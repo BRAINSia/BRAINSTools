@@ -208,9 +208,10 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     BABCext.inputs.maxIterations = 3
     BABCext.inputs.maxBiasDegree = 4
     BABCext.inputs.filterIteration = 3
-    BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion'
+    #BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion' ## If inputs are denoised, we don't need this
+    BABCext.inputs.filterMethod = 'None'
     BABCext.inputs.atlasToSubjectTransformType = 'SyN'
-    BABCext.inputs.gridSize = [10, 10, 10]
+    # Using SyN, so no bsplines here BABCext.inputs.gridSize = [10, 10, 10]
     BABCext.inputs.outputFormat = "NIFTI"
     BABCext.inputs.outputLabels = "brain_label_seg.nii.gz"
     BABCext.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"

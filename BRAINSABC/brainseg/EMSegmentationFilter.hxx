@@ -2432,19 +2432,22 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                           this->m_PurePlugsThreshold,
                                                           numberOfContinuousIndexSubSamples,
                                                           false );
-    if( this->m_PurePlugsMask.IsNotNull() && this->m_DebugLevel > 6 )
-      {
-      const std::string fn = this->m_OutputDebugDir + "/DEBUG_PURE_PLUGS_MASK.nii.gz";
-      typedef typename itk::ImageFileWriter<ByteImageType> MaskWriterType;
-      typename MaskWriterType::Pointer maskwriter = MaskWriterType::New();
-      maskwriter->SetInput( this->m_PurePlugsMask );
-      maskwriter->SetFileName(fn);
-      maskwriter->Update();
-      }
-    else
+    if( this->m_PurePlugsMask.IsNull() )
       {
       itkGenericExceptionMacro( << "Error: Output pure plugs mask is null."
                                 << std::endl );
+      }
+    else
+      {
+      if( this->m_DebugLevel > 6 )
+        {
+        const std::string fn = this->m_OutputDebugDir + "/DEBUG_PURE_PLUGS_MASK.nii.gz";
+        typedef typename itk::ImageFileWriter<ByteImageType> MaskWriterType;
+        typename MaskWriterType::Pointer maskwriter = MaskWriterType::New();
+        maskwriter->SetInput( this->m_PurePlugsMask );
+        maskwriter->SetFileName(fn);
+        maskwriter->Update();
+        }
       }
     }
 

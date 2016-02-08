@@ -282,7 +282,22 @@ copy the run to rawavg and continue."""
     bias_correction = pe.Node(MNIBiasCorrection(), name="Bias_correction")
     bias_correction.inputs.iterations = 1
     bias_correction.inputs.protocol_iterations = 1000
-    bias_correction.inputs.distance = 50
+    if config['field_strength'] == '3T':
+        # 3T params from Zheng, Chee, Zagorodnov 2009 NeuroImage paper
+        # "Improvement of brain segmentation accuracy by optimizing
+        # non-uniformity correction using N3"
+        # namely specifying iterations, proto-iters and distance: 
+        bias_correction.inputs.distance = 50
+    else:
+        # 1.5T default
+        bias_correction.inputs.distance = 200
+    # per c.larsen, decrease convergence threshold (default is 0.001)
+    bias_correction.inputs.stop = 0.0001
+    # per c.larsen, decrease shrink parameter: finer sampling (default is 4)
+    bias_correction.inputs.shrink =  2
+    # add the mask, as per c.larsen, bias-field correction is known to work
+    # much better when the brain area is properly masked, in this case by
+    # brainmask.mgz.
     bias_correction.inputs.no_rescale = True
     bias_correction.inputs.out_file = os.path.join(config['subjects_dir'], 
                                                    config['current_id'], 

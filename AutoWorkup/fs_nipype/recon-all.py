@@ -64,7 +64,8 @@ def procargs(argv):
                'timepoints' : list(),
                'openmp' : None,
                'plugin_args' : None,
-               'field_strength' : '1.5T'}
+               'field_strength' : '1.5T',
+               'custom_atlas' : None}
 
     try:
         opts, args = getopt.getopt(argv, "hi:q:s:", ["help",

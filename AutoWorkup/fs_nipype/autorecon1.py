@@ -317,7 +317,8 @@ copy the run to rawavg and continue."""
         ar1_wf.connect([(inputSpec, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
     else:
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
-        talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
+        if config['custom_atlas'] != None:
+            talairach_avi.inputs.atlas = config['custom_atlas']
         talairach_avi.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 
                                                      'mri', 'transforms', 'talairach.auto.xfm')
         

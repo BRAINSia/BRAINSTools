@@ -64,6 +64,13 @@ def create_AutoRecon2(config):
         MNIBiasCorrection(), name="Intensity_Correction")
     intensity_correction.inputs.iterations = 1
     intensity_correction.inputs.protocol_iterations = 1000
+    intensity_correction.inputs.stop = 0.0001
+    intensity_correction.inputs.shrink = 2
+    if config['field_strength'] == '3T':
+        intensity_correction.inputs.distance = 50
+    else:
+        intensity_correction.inputs.distance = 200
+
     intensity_correction.inputs.out_file = os.path.join(config['subjects_dir'], 
                                                           config['current_id'],
                                                           'mri', 'nu.mgz')

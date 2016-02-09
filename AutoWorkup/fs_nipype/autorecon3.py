@@ -181,7 +181,6 @@ def create_AutoRecon3(config):
     # Pial Surface
 
     ar3_pial = pe.Node(MakeSurfaces(), name="Make_Pial_Surface")
-    ar3_pial.inputs.fix_mtl = True
     ar3_pial.inputs.no_white = True
     ar3_pial.inputs.mgz = True
 

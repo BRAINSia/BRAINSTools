@@ -433,7 +433,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                  'output_image'])
         DenoiseInputImgs.synchronize = True
         DenoiseInputImgs.inputs.dimension = 3
-        DenoiseInputImgs.inputs.noise_model= 'Rician'
+        #Rician has a bug in it as of 2016-02-08 DenoiseInputImgs.inputs.noise_model= 'Rician'
+        DenoiseInputImgs.inputs.noise_model= 'Gaussian'
         DenoiseInputImgs.inputs.save_noise=True
         DenoiseInputImgs.inputs.shrink_factor = 1 # default
         DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], .2, 1, 1),

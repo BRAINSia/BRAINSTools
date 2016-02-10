@@ -35,18 +35,18 @@
   <LabelCode>1</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.50</lower>
+   <lower>0.15</lower>
    <upper>1.0</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.05</lower>
-   <upper>0.70</upper>
+   <lower>0.001</lower>
+   <upper>0.95</upper>
   </bounds>
   <bounds>
    <type>PD</type>
    <lower>0.00</lower>
-   <upper>0.70</upper>
+   <upper>0.95</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
@@ -62,7 +62,7 @@
  <Prior>
   <type>SURFGM</type>
   <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_SURFGM.nii.gz</filename>
-  <Weight>1</Weight>
+  <Weight>2.5</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
   <IsForegroundPrior>1</IsForegroundPrior>
@@ -70,11 +70,11 @@
   <bounds>
    <type>T1</type>
    <lower>0.04</lower>
-   <upper>0.75</upper>
+   <upper>0.95</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.25</lower>
+   <lower>0.05</lower>
    <upper>0.96</upper>
   </bounds>
   <bounds>
@@ -302,7 +302,7 @@
  <Prior>
   <type>CSF</type>
   <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_CSF.nii.gz</filename>
-  <Weight>1</Weight>
+  <Weight>2.5</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
   <IsForegroundPrior>1</IsForegroundPrior>
@@ -310,22 +310,22 @@
   <bounds>
    <type>T1</type>
    <lower>0.00</lower>
-   <upper>0.60</upper>
+   <upper>0.95</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.20</lower>
+   <lower>0.05</lower>
    <upper>1.0</upper>
   </bounds>
   <bounds>
    <type>PD</type>
-   <lower>0.20</lower>
+   <lower>0.05</lower>
    <upper>1.0</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
    <lower>0.0</lower>
-   <upper>0.5</upper>
+   <upper>0.95</upper>
   </bounds>
   <bounds>
    <type>OTHER</type>

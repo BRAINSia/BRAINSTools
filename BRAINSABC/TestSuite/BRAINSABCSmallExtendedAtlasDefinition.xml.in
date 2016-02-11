@@ -1,23 +1,23 @@
 <Atlas>
  <AtlasImage>
   <type>T1</type>
-  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t1.nii.gz</filename>
+  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t1_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>T2</type>
-  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2.nii.gz</filename>
+  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>PD</type>
-  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2.nii.gz</filename>
+  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>FLAIR</type>
-  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2.nii.gz</filename>
+  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>OTHER</type>
-  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t1.nii.gz</filename>
+  <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t1_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <BrainMask>
   <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_brain.nii.gz</filename>

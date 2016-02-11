@@ -60,7 +60,7 @@ If both T1 and T2 images are available, we recommend use both and follow the ste
   ```
   * [Create XML] ReplaceWithBRAINSToolsBuildDir: change this to point your BRAINSTools directory.
   Make sure all the files provided by BRAINSTools exist:
-    * Atlas/Atlas_20131115/template_t1.nii.gz
+    * Atlas/Atlas_20131115/template_t1_denoised_gaussian.nii.gz
     * Atlas/Atlas_20131115/spatialImages/rho.nii.gz
     * Atlas/Atlas_20131115/spatialImages/phi.nii.gz
     * Atlas/Atlas_20131115/spatialImages/theta.nii.gz

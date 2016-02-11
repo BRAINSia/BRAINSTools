@@ -53,7 +53,7 @@ echo "<AutoSegProcessDescription> "                                             
 #
 # template
 echo "  <DataSet Name=\"template\" Type=\"Atlas\" >"                                                  >> ${OutputXMLFile}
-echo "      <Image Type=\"T1\" Filename=\"${TemplateDirectory}/template_t1.nii.gz\" />"               >> ${OutputXMLFile}
+echo "      <Image Type=\"T1\" Filename=\"${TemplateDirectory}/template_t1_denoised_gaussian.nii.gz\" />"               >> ${OutputXMLFile}
 echo "      <Image Type=\"T2\" Filename=\"na\" />"                                                    >> ${OutputXMLFile}
 echo "      <Image Type=\"T1GAD\" Filename=\"na\" />"                                                    >> ${OutputXMLFile}
 echo "      <Image Type=\"T2GAD\" Filename=\"na\" />"                                                    >> ${OutputXMLFile}

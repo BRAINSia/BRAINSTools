@@ -7,7 +7,7 @@ proc Genus0SurfaceGeneration { T1NormalizeBfc TissueClassImage Brain Ventricle L
   if { ![file isdirectory $WorkDir] } {
     file mkdir $WorkDir
     }
-  set BRAINSABCAtlas $BrainsConfig(BRAINSABCAtlasDir) / template_t1.nii.gz
+  set BRAINSABCAtlas $BrainsConfig(BRAINSABCAtlasDir) / template_t1_denoised_gaussian.nii.gz
   set clipT1Filename $WorkDir / $
   {
     ScanId

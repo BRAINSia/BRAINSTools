@@ -22,7 +22,7 @@ python $BCutCMDDir/BRAINSCutCMD.py \
 --inputSubjectSGFilename /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/FeatureImages/GadSG/96294_average_GAD_SG.nii.gz \
 --inputSubjectBrainMaskFilename $subjectDir/11_BABC/brain_label_seg.nii.gz \
 --deformationFromTemplateToSubject $subjectDir/11_BABC/atlas_to_subject.mat \
---inputTemplateT1 $referenceDir/template_t1.nii.gz \
+--inputTemplateT1 $referenceDir/template_t1_denoised_gaussian.nii.gz \
 --inputTemplateBrainMask $referenceDir/template_brain.nii.gz \
 --inputTemplateRhoFilename $referenceDir/spatialImages/rho.nii.gz \
 --inputTemplatePhiFilename $referenceDir/spatialImages/phi.nii.gz \

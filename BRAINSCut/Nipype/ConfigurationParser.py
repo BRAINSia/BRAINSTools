@@ -619,7 +619,7 @@ def CombineInputVectors(inputVectorFilenames,
     return os.path.abspath(outShuffleFileBase), outShuffleFileBase + ".hdr"
 
 configFileTestStr = """[AtlasDescription]
-t1 =       /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/template_t1.nii.gz
+t1 =       /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/template_t1_denoised_gaussian.nii.gz
 rho =      /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/rho.nii.gz
 phi =      /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/phi.nii.gz
 theta =    /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/theta.nii.gz

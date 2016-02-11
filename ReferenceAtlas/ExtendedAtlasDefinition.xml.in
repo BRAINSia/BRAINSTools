@@ -1,23 +1,23 @@
 <Atlas>
  <AtlasImage>
   <type>T1</type>
-  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t1_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>T2</type>
-  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>PD</type>
-  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>FLAIR</type>
-  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>OTHER</type>
-  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t1_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <BrainMask>
   <filename>@ATLAS_INSTALL_DIRECTORY@/template_brain.nii.gz</filename>

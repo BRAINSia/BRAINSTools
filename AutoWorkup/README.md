@@ -211,7 +211,7 @@ cd /raid0/homes/aghayoor/BCD-test/Jira_cases/kidsFailure_ticket_PREDICTIMG-4209
 llsModel='Atlas/20141004_BCD/LLSModel_50Lmks.h5'
 atlasLandmarkWeights='Atlas/20141004_BCD/template_weights_50Lmks.wts'
 atlasLandmarks='Atlas/20141004_BCD/template_landmarks_50Lmks.fcsv'
-atlasVolume='Atlas/template_t1.nii.gz'
+atlasVolume='Atlas/template_t1_denoised_gaussian.nii.gz'
 inputTemplateModel='Atlas/20141004_BCD/T1_50Lmks.mdl'
 inputVolume='input_t1_to_be_fixed.nii.gz'
 
@@ -239,7 +239,7 @@ BRAINSConstellationDetector  \
 llsModel='Atlas/20141004_BCD/LLSModel_50Lmks.h5'
 atlasLandmarkWeights='Atlas/20141004_BCD/template_weights_50Lmks.wts'
 atlasLandmarks='Atlas/20141004_BCD/template_landmarks_50Lmks.fcsv'
-atlasVolume='Atlas/template_t1.nii.gz'
+atlasVolume='Atlas/template_t1_denoised_gaussian.nii.gz'
 inputTemplateModel='Atlas/20141004_BCD/T1_50Lmks.mdl'
 inputVolume='input_t1_to_be_fixed.nii.gz'
 

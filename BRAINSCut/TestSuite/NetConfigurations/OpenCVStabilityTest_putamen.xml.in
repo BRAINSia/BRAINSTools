@@ -22,10 +22,10 @@
         Template Data Scan Description
        ========================================================================== -->
   <DataSet Name="template"  Type="Atlas" >
-    <Image Type="T1" Filename="@Reference_BINARY_DIR@/template_t1.nii.gz"/>
+    <Image Type="T1" Filename="@Reference_BINARY_DIR@/template_t1_denoised_gaussian.nii.gz"/>
     <Image Type="T2" Filename="na" />
     <Image Type="SG" Filename="na" />
-    <Mask Type="RegistrationROI" Filename="@Reference_BINARY_DIR@/template_t1.nii.gz" />
+    <Mask Type="RegistrationROI" Filename="@Reference_BINARY_DIR@/template_t1_denoised_gaussian.nii.gz" />
     <SpatialLocation Type="rho"   Filename="@Reference_BINARY_DIR@/spatialImages/rho.nii.gz" />
     <SpatialLocation Type="phi"   Filename="@Reference_BINARY_DIR@/spatialImages/phi.nii.gz" />
     <SpatialLocation Type="theta" Filename="@Reference_BINARY_DIR@/spatialImages/theta.nii.gz" />

@@ -27,7 +27,7 @@ def WFPerSubjectDef(inputListOfSubjectVolumes,
     #
     from BRAINSFit import BRAINSFit
 
-    inputTemplateT1 = inputTemplateDir + "/template_t1.nii.gz"
+    inputTemplateT1 = inputTemplateDir + "/template_t1_denoised_gaussian.nii.gz"
 
     BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),
                                  name="01_AtlasToSubjectRegistration")

@@ -31,7 +31,7 @@ ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan2T1     DATA{${TestD
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan4T2     DATA{${TestData_DIR}/scan4T2.nii.gz} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData SubjectToAtlasScan1 DATA{${TestData_DIR}/Transforms_h5/SubjectToAtlasScan1.${XFRM_EXT}} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan2T2     DATA{${TestData_DIR}/scan2T2.nii.gz} )
-ExternalData_expand_arguments( ${PROJECT_NAME}FetchData template_t1 DATA{${TestData_DIR}/template_t1.nii.gz} )
+ExternalData_expand_arguments( ${PROJECT_NAME}FetchData template_t1 DATA{${TestData_DIR}/template_t1_denoised_gaussian.nii.gz} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData SubjectToAtlasScan2 DATA{${TestData_DIR}/Transforms_h5/SubjectToAtlasScan2.${XFRM_EXT}} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3Mask1  DATA{${TestData_DIR}/scan3Mask1.nii.gz} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan1Mask1  DATA{${TestData_DIR}/scan1Mask1.nii.gz} )

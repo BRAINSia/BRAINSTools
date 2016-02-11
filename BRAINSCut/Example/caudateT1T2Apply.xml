@@ -1,6 +1,6 @@
 <AutoSegProcessDescription>
   <DataSet Name="template" Type="Atlas" >
-      <Image Type="T1" Filename="[ReplaceWithBRAINSToolsBuildDir]/bin/Atlas/Atlas_20131115/template_t1.nii.gz" />
+      <Image Type="T1" Filename="[ReplaceWithBRAINSToolsBuildDir]/bin/Atlas/Atlas_20131115/template_t1_denoised_gaussian.nii.gz" />
       <Image Type="T2" Filename="" />
       <Image Type="SG" Filename="" />
       <SpatialLocation Type="rho" Filename="[ReplaceWithBRAINSToolsBuildDir]/bin/Atlas/Atlas_20131115/spatialImages/rho.nii.gz" />

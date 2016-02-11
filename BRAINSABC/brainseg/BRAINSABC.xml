@@ -247,7 +247,7 @@
       <longflag>purePlugsThreshold</longflag>
       <label>Threshold Value For PurePlugsMask Computation</label>
       <channel>input</channel>
-      <description>If this threshold value is greater than zero, only pure samples are used to compute the distributions in EM classification, and only pure samples are used for KNN training. The default value is set to 0, that means not using pure plugs. However, a value between 0 and 1 should be set as the threshold if you want to activate using pure plugs option. Empirically a value of 0.2 is suggested for 3.0T MR data, and a value of 0.1 is suggested for 1.5T MR data.</description>
+      <description>If this threshold value is greater than zero, only pure samples are used to compute the distributions in EM classification, and only pure samples are used for KNN training. The default value is set to 0, that means not using pure plugs. However, a value between 0 and 1 should be set as the threshold if you want to activate using pure plugs option. Empirically a value of 0.1 is suggested.</description>
       <default>0.0</default>
     </float>
 

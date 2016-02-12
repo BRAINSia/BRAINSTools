@@ -133,10 +133,10 @@ def parseExperiment(parser, workflow_phase):
     else:
         retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
         retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
-        if 'malf_2015_wholebrain' in retval['components']:
-            print("'malf_2015_wholebrain' will be run with a specified 'malf_atlas_db_base'.")
-            """ HACK: warp_atlas_to_subject is coupled with malf????"""
-            retval['malf_atlas_db_base'] = validatePath(parser.get('EXPERIMENT', 'MALF_ATLAS_DB_BASE'),
+        if 'jointfusion_2015_wholebrain' in retval['components']:
+            print("'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'.")
+            """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""
+            retval['jointfusion_atlas_db_base'] = validatePath(parser.get('EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
                                                        allow_empty=False,
                                                        isDirectory=False)
             retval['relabel2lobes_filename'] = validatePath(parser.get('EXPERIMENT', 'RELABEL2LOBES_FILENAME'),

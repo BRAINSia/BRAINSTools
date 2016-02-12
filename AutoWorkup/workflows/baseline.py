@@ -42,7 +42,7 @@ from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction 
 
 from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
 from .WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
-from .WorkupT1T2MALF import CreateMALFWorkflow
+from .WorkupJointFusion import CreateJointFusionWorkflow
 from .WorkupAddsonBrainStem import CreateBrainstemWorkflow
 
 from utilities.misc import *
@@ -204,8 +204,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
     # NOT TRUE if 'landmark' in master_config['components']:
     #    assert 'denoise' in master_config['components'], "landmark Requires denoise step!"
 
-    if 'malf_2015_wholebrain' in master_config['components']:
-        assert ('warp_atlas_to_subject' in master_config['components'] ), "malf_2015_wholebrain requires warp_atlas_to_subject!"
+    if 'jointfusion_2015_wholebrain' in master_config['components']:
+        assert ('warp_atlas_to_subject' in master_config['components'] ), "jointfusion_2015_wholebrain requires warp_atlas_to_subject!"
 
     from workflows.atlasNode import MakeAtlasNode
 
@@ -759,34 +759,34 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(WhiteMatterHemisphereNode,'WM_LeftHemisphereFileName',DataSink,'WarpedAtlas2Subject.@LeftHemisphereWM')
         baw201.connect(WhiteMatterHemisphereNode,'WM_RightHemisphereFileName',DataSink,'WarpedAtlas2Subject.@RightHemisphereWM')
 
-    if 'malf_2015_wholebrain' in master_config['components']:  ## HACK Do MALF labeling
+    if 'jointfusion_2015_wholebrain' in master_config['components']:  ## HACK Do JointFusion labeling
         ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
 
         if onlyT1:
             print("T1 only processing in baseline")
         else:
             print("Multimodal processing in baseline")
-        myLocalMALF = CreateMALFWorkflow("MALF", onlyT1, master_config)
-        baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
-        baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalMALF,'inputspec.subj_t2_image')
-        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalMALF,'inputspec.subj_fixed_head_labels')
+        myLocalJointFusion = CreateJointFusionWorkflow("JointFusion", onlyT1, master_config)
+        baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalJointFusion,'inputspec.subj_t1_image')
+        baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalJointFusion,'inputspec.subj_t2_image')
+        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalJointFusion,'inputspec.subj_fixed_head_labels')
 
-        baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalMALF,'inputspec.subj_left_hemisphere')
-        baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalMALF,'inputspec.subj_lmks')
-        baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalMALF,'inputspec.atlasWeightFilename')
+        baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalJointFusion,'inputspec.subj_left_hemisphere')
+        baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalJointFusion,'inputspec.subj_lmks')
+        baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalJointFusion,'inputspec.atlasWeightFilename')
 
-        inputLabelFileMALFnameSpec = pe.Node( interface=IdentityInterface( fields=['labelBaseFilename']),
+        inputLabelFileJointFusionnameSpec = pe.Node( interface=IdentityInterface( fields=['labelBaseFilename']),
                                               run_without_submitting = True,
-                                              name="inputLabelFileMALFnameSpec")
-        baw201.connect( inputLabelFileMALFnameSpec, 'labelBaseFilename',
-                        myLocalMALF, 'inputspec.labelBaseFilename')
+                                              name="inputLabelFileJointFusionnameSpec")
+        baw201.connect( inputLabelFileJointFusionnameSpec, 'labelBaseFilename',
+                        myLocalJointFusion, 'inputspec.labelBaseFilename')
 
-        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_label')
-        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_CSFVBInjected_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_CSFVBInjected_label')
-        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_fs_standard_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_fs_standard_label')
-        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_lobar_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_lobar_label')
-        baw201.connect(myLocalMALF,'outputspec.MALF_extended_snapshot',DataSink,'TissueClassify.@MALF_extended_snapshot')
-        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_dustCleaned_label', DataSink, 'TissueClassify.@MALF_HDAtlas20_2015_dustCleaned_label')
+        baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_label',DataSink,'TissueClassify.@JointFusion_HDAtlas20_2015_label')
+        baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_CSFVBInjected_label',DataSink,'TissueClassify.@JointFusion_HDAtlas20_2015_CSFVBInjected_label')
+        baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_fs_standard_label',DataSink,'TissueClassify.@JointFusion_HDAtlas20_2015_fs_standard_label')
+        baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_lobar_label',DataSink,'TissueClassify.@JointFusion_HDAtlas20_2015_lobar_label')
+        baw201.connect(myLocalJointFusion,'outputspec.JointFusion_extended_snapshot',DataSink,'TissueClassify.@JointFusion_extended_snapshot')
+        baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_dustCleaned_label', DataSink, 'TissueClassify.@JointFusion_HDAtlas20_2015_dustCleaned_label')
 
 
     return baw201

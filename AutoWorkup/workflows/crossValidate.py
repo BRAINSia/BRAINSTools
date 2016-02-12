@@ -108,9 +108,9 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
     """
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
-    from .WorkupT1T2MALF import CreateMALFWorkflow
-    CV_MALF_WF = pe.Workflow(name="CV_MALF")
-    CV_MALF_WF.base_dir = master_config['cachedir']
+    from .WorkupJointFusion import CreateJointFusionWorkflow
+    CV_JointFusion_WF = pe.Workflow(name="CV_JointFusion")
+    CV_JointFusion_WF.base_dir = master_config['cachedir']
 
 
     subset_no = 1
@@ -124,8 +124,8 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
         print([ (trainData[i])['id'] for i in range( len(trainData))])
 
         for testSession in testData:
-            MALFWFName = "MALF_Set{0}_{1}".format(subset_no, testSession['id'])
-            myMALF = CreateMALFWorkflow( MALFWFName,
+            JointFusionWFName = "JointFusion_Set{0}_{1}".format(subset_no, testSession['id'])
+            myJointFusion = CreateJointFusionWorkflow( JointFusionWFName,
                                          master_config,
                                          [ (trainData[i])['id'] for i in range( len(trainData))],
                                          BASE_DATA_GRABBER_DIR,
@@ -141,13 +141,13 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
                                     run_without_submitting = True,
                                     name=testSessionName)
 
-            CV_MALF_WF.connect(testSessionSpec,'t1_average', myMALF,'inputspec.subj_t1_image')
-            CV_MALF_WF.connect(testSessionSpec,'tissueLabel',myMALF,'inputspec.subj_fixed_head_labels')
+            CV_JointFusion_WF.connect(testSessionSpec,'t1_average', myJointFusion,'inputspec.subj_t1_image')
+            CV_JointFusion_WF.connect(testSessionSpec,'tissueLabel',myJointFusion,'inputspec.subj_fixed_head_labels')
 
-            CV_MALF_WF.connect(testSessionSpec,'template_leftHemisphere', myMALF,'inputspec.subj_left_hemisphere')
-            CV_MALF_WF.connect(testSessionSpec,'landmarkInACPCAlignedSpace', myMALF,'inputspec.subj_lmks')
-            CV_MALF_WF.connect(testSessionSpec,'template_weights_50Lmks_wts', myMALF,'inputspec.atlasWeightFilename')
-            CV_MALF_WF.connect(testSessionSpec, 'labelFilename', myMALF, 'inputspec.labelBaseFilename')
+            CV_JointFusion_WF.connect(testSessionSpec,'template_leftHemisphere', myJointFusion,'inputspec.subj_left_hemisphere')
+            CV_JointFusion_WF.connect(testSessionSpec,'landmarkInACPCAlignedSpace', myJointFusion,'inputspec.subj_lmks')
+            CV_JointFusion_WF.connect(testSessionSpec,'template_weights_50Lmks_wts', myJointFusion,'inputspec.atlasWeightFilename')
+            CV_JointFusion_WF.connect(testSessionSpec, 'labelFilename', myJointFusion, 'inputspec.labelBaseFilename')
 
             """ set test image information
             """
@@ -168,13 +168,13 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
             DataSink.inputs.container = 'CV_Set{0}/{1}'.format(subset_no, testSession['id'])
             DataSink.inputs.base_directory = master_config['resultdir']
 
-            CV_MALF_WF.connect(myMALF, 'outputspec.MALF_neuro2012_labelmap',
-                               DataSink, 'Segmentation.@MALF_neuro2012_labelmap')
+            CV_JointFusion_WF.connect(myJointFusion, 'outputspec.JointFusion_neuro2012_labelmap',
+                               DataSink, 'Segmentation.@JointFusion_neuro2012_labelmap')
 
             subset_no=subset_no+1
 
-    #CV_MALF_WF.write_graph()
-    CV_MALF_WF.run( plugin=master_config['plugin_name'],
+    #CV_JointFusion_WF.write_graph()
+    CV_JointFusion_WF.run( plugin=master_config['plugin_name'],
                     plugin_args=master_config['plugin_args'])
 
 

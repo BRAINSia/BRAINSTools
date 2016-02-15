@@ -67,6 +67,8 @@ DownloadAndInstallRules(AtlasSurface "${CMAKE_CURRENT_SOURCE_DIR}/SurfaceAtlas/*
 DownloadAndInstallRules(AtlasBCD     "${CMAKE_CURRENT_SOURCE_DIR}/20141004_BCD/*_50Lmks.*.md5" ${ATLAS_INSTALL_DIRECTORY}/20141004_BCD)
 DownloadAndInstallRules(AtlasT1Only  "${CMAKE_CURRENT_SOURCE_DIR}/T1OnlyModels/*.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/T1OnlyModels)
 
-add_custom_target(InstallReferenceAtlas DEPENDS AtlasNIFTI AtlasNRRD AtlasTxt AtlasCtbl AtlasFcsv AtlasCsv AtlasModels AtlasProb AtlasSpatial AtlasSurface AtlasBCD AtlasT1Only)
+add_custom_target(InstallReferenceAtlas
+                  DEPENDS AtlasNIFTI AtlasNRRD AtlasTxt AtlasCtbl AtlasFcsv AtlasCsv AtlasModels AtlasProb AtlasSpatial
+                          AtlasSurface AtlasBCD AtlasT1Only)
 
 ExternalData_add_target( ${PROJECT_NAME}FetchData )  # Name of data management target

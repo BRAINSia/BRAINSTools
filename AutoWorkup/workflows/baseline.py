@@ -435,9 +435,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DenoiseInputImgs.inputs.dimension = 3
         #Rician has a bug in it as of 2016-02-08 DenoiseInputImgs.inputs.noise_model= 'Rician'
         DenoiseInputImgs.inputs.noise_model= 'Gaussian'
-        DenoiseInputImgs.inputs.save_noise=True
+        DenoiseInputImgs.inputs.save_noise=False # we don't need the noise image for BAW
         DenoiseInputImgs.inputs.shrink_factor = 1 # default
-        DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], .2, 1, 1),
+        DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 2, 4, 8),
                                         'overwrite': True}
         baw201.connect([(makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'input_image')]),
                         (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList', 'output_image')])

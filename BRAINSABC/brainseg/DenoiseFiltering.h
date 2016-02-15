@@ -42,56 +42,59 @@ typename TInputImageType::Pointer DenoiseFiltering(
   )
 {
   typename TInputImageType::Pointer denoisedImage = ITK_NULLPTR;
-  if( PrefilteringMethod.compare("GradientAnisotropicDiffusion") == 0 && PrefilteringIterations >  0 )
+  if( PrefilteringIterations >  0 && PrefilteringMethod.compare("None") != 0 )
     {
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "Prefiltering with " << PrefilteringMethod << " (Iters=" << PrefilteringIterations
-              << ",TimeStep=" << PrefilteringTimeStep << ")  gridSize=(" << ")" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    typedef itk::GradientAnisotropicDiffusionImageFilter<TInputImageType, TInputImageType> AnisoFilterType;
-    typename AnisoFilterType::Pointer anisofilt = AnisoFilterType::New();
+    if( PrefilteringMethod.compare("GradientAnisotropicDiffusion") == 0 )
+      {
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "Prefiltering with " << PrefilteringMethod << " (Iters=" << PrefilteringIterations
+      << ",TimeStep=" << PrefilteringTimeStep << ")  gridSize=(" << ")" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      typedef itk::GradientAnisotropicDiffusionImageFilter<TInputImageType, TInputImageType> AnisoFilterType;
+      typename AnisoFilterType::Pointer anisofilt = AnisoFilterType::New();
 
-    anisofilt->SetInput(img);
-    anisofilt->SetConductanceParameter(1);
-    anisofilt->SetNumberOfIterations(PrefilteringIterations);
-    anisofilt->SetTimeStep(PrefilteringTimeStep);
-    anisofilt->Update();
+      anisofilt->SetInput(img);
+      anisofilt->SetConductanceParameter(1);
+      anisofilt->SetNumberOfIterations(PrefilteringIterations);
+      anisofilt->SetTimeStep(PrefilteringTimeStep);
+      anisofilt->Update();
 
-    denoisedImage = anisofilt->GetOutput();
-    }
-  else if( PrefilteringMethod.compare("CurvatureFlow") == 0   && PrefilteringIterations > 0 )
-    {
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "Prefiltering with " << PrefilteringMethod << " (Iters=" << PrefilteringIterations
-              << ",TimeStep=" << PrefilteringTimeStep << ")  gridSize=(" << ")" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-    typedef itk::CurvatureFlowImageFilter<TInputImageType, TInputImageType> CurvatureFilterType;
-    typename CurvatureFilterType::Pointer cfilt = CurvatureFilterType::New();
-    cfilt->SetInput(img);
-    cfilt->SetNumberOfIterations(PrefilteringIterations);
-    cfilt->SetTimeStep(PrefilteringTimeStep);
-    cfilt->Update();
+      denoisedImage = anisofilt->GetOutput();
+      }
+    else if( PrefilteringMethod.compare("CurvatureFlow") == 0 )
+      {
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "Prefiltering with " << PrefilteringMethod << " (Iters=" << PrefilteringIterations
+      << ",TimeStep=" << PrefilteringTimeStep << ")  gridSize=(" << ")" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
+      typedef itk::CurvatureFlowImageFilter<TInputImageType, TInputImageType> CurvatureFilterType;
+      typename CurvatureFilterType::Pointer cfilt = CurvatureFilterType::New();
+      cfilt->SetInput(img);
+      cfilt->SetNumberOfIterations(PrefilteringIterations);
+      cfilt->SetTimeStep(PrefilteringTimeStep);
+      cfilt->Update();
 
-    denoisedImage = cfilt->GetOutput();
+      denoisedImage = cfilt->GetOutput();
+      }
+      //else if( PrefilteringMethod.compare("MedianFilter") == 0 )
+      //  {
+      //  // TODO:  Kent put a median filter in here, with filter radius equal to 1.
+      //  }
+    else
+      {
+      std::cout << "ERROR Filtering method NOT IMPLEMENTED : " << PrefilteringMethod << std::endl;
+      exit(-1);
+      }
     }
-  else if( PrefilteringMethod.compare("None") == 0 )
-    {
-      denoisedImage = img;
-    }
-  //else if( PrefilteringMethod.compare("MedianFilter") == 0 )
-  //  {
-  //  // TODO:  Kent put a median filter in here, with filter radius equal to 1.
-  //  }
   else
     {
-    std::cout << "ERROR Filtering method NOT IMPLEMENTED : " << PrefilteringMethod << std::endl;
-    exit(-1);
+    denoisedImage = img;
     }
 
   if( denoisedImage.IsNull() )

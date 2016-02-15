@@ -234,6 +234,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     # Step7: Run antsRegistration in one direction
     antsReg_B0ToTransformedT2 = pe.Node(interface=ants.Registration(), name="antsReg_B0ToTransformedT2")
+    antsReg_B0ToTransformedT2.inputs.interpolation = "Linear"
     antsReg_B0ToTransformedT2.inputs.dimension = 3
     antsReg_B0ToTransformedT2.inputs.transforms = ["SyN"]
     antsReg_B0ToTransformedT2.inputs.transform_parameters = [(0.25, 3.0, 0.0)]

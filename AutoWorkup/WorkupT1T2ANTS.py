@@ -15,7 +15,7 @@ from nipype.interfaces.semtools import *
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
     myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE)
     ANTSWF.connect( SplitAvgBABC,'avgBABCT1',myLocalAntsWF,"inputspec.fixedVolumesList")
-    ANTSWF.connect( BAtlas,'template_t1',    myLocalAntsWF,"inputspec.movingVolumesList")
+    ANTSWF.connect( BAtlas,'template_t1_denoised_gaussian',    myLocalAntsWF,"inputspec.movingVolumesList")
     ANTSWF.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalAntsWF,'inputspec.initial_moving_transform')
 """
 

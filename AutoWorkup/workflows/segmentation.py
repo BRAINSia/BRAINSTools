@@ -109,6 +109,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
     A2SantsRegistrationPostABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
 
+    A2SantsRegistrationPostABCSyN.inputs.interpolation = "Linear"
     A2SantsRegistrationPostABCSyN.inputs.num_threads   = -1
     A2SantsRegistrationPostABCSyN.inputs.dimension = 3
     A2SantsRegistrationPostABCSyN.inputs.transforms = ["SyN"]

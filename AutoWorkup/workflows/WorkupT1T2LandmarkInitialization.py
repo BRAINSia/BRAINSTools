@@ -23,7 +23,7 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
     landmarkInitializeWF.connect( BAtlas, 'LLSModel_50Lmks_h5', myLocalLMIWF, 'inputspec.LLSModel')
     landmarkInitializeWF.connect( BAtlas, 'T1_50Lmks_mdl', myLocalLMIWF, 'inputspec.inputTemplateModel')
 
-    landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')
+    landmarkInitializeWF.connect(BAtlas,'template_t1_denoised_gaussian',myLocalLMIWF,'inputsSpec.atlasVolume')
 
 """
 

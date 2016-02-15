@@ -98,6 +98,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     many_cpu_ANTsRigid_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
     A2SantsRegistrationPreABCRigid.plugin_args = many_cpu_ANTsRigid_options_dictionary
 
+    A2SantsRegistrationPreABCRigid.inputs.interpolation = "Linear"
     A2SantsRegistrationPreABCRigid.inputs.num_threads   = -1
     A2SantsRegistrationPreABCRigid.inputs.dimension = 3
     A2SantsRegistrationPreABCRigid.inputs.transforms = ["Affine",]
@@ -139,6 +140,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
     A2SantsRegistrationPreABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
 
+    A2SantsRegistrationPreABCSyN.inputs.interpolation = "Linear"
     A2SantsRegistrationPreABCSyN.inputs.num_threads   = -1
     A2SantsRegistrationPreABCSyN.inputs.dimension = 3
     A2SantsRegistrationPreABCSyN.inputs.transforms = ["SyN","SyN"]

@@ -212,7 +212,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
     baw201 = pe.Workflow(name=pipeline_name)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasLandmarkFilename', 'atlasWeightFilename',
-                                                             'LLSModel', 'inputTemplateModel', 'template_t1',
+                                                             'LLSModel', 'inputTemplateModel', 'template_t1_denoised_gaussian',
                                                              'atlasDefinition', 'T1s', 'T2s', 'PDs', 'FLs', 'OTHERs',
                                                              'hncma_atlas',
                                                              'template_rightHemisphere',
@@ -266,7 +266,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         atlasBCDNode_W = MakeAtlasNode(atlas_warped_directory, 'BBCDAtlas_W{0}'.format(sessionid),
                                        ['W_BCDSupport'])
         baw201.connect([(atlasBCDNode_W, inputsSpec,
-                         [('template_t1', 'template_t1'),
+                         [('template_t1_denoised_gaussian', 'template_t1_denoised_gaussian'),
                           ('template_landmarks_50Lmks_fcsv', 'atlasLandmarkFilename'),
                          ]),
         ])
@@ -348,7 +348,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                                    'template_WMPM2_labels',
                                                                    'template_nac_labels',
                                                                    'template_ventricles',
-                                                                   'template_t1',
+                                                                   'template_t1_denoised_gaussian',
                                                                    'template_landmarks_50Lmks_fcsv'
                                                         ]),
                               name='Template_DG')
@@ -361,7 +361,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                              'template_WMPM2_labels': '%s/Atlas/AVG_template_WMPM2_labels.nii.gz',
                                              'template_nac_labels': '%s/Atlas/AVG_template_nac_labels.nii.gz',
                                              'template_ventricles': '%s/Atlas/AVG_template_ventricles.nii.gz',
-                                             'template_t1': '%s/Atlas/AVG_T1.nii.gz',
+                                             'template_t1_denoised_gaussian': '%s/Atlas/AVG_T1.nii.gz',
                                              'template_landmarks_50Lmks_fcsv': '%s/Atlas/AVG_LMKS.fcsv',
         }
         template_DG.inputs.template_args = {'outAtlasXMLFullPath': [['subject', 'subject']],
@@ -371,7 +371,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                             'template_WMPM2_labels': [['subject']],
                                             'template_nac_labels': [['subject']],
                                             'template_ventricles': [['subject']],
-                                            'template_t1': [['subject']],
+                                            'template_t1_denoised_gaussian': [['subject']],
                                             'template_landmarks_50Lmks_fcsv': [['subject']]
         }
         template_DG.inputs.template = '*'
@@ -380,7 +380,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         baw201.connect(template_DG, 'outAtlasXMLFullPath', inputsSpec, 'atlasDefinition')
         baw201.connect([(template_DG, inputsSpec, [
-            ## Already connected ('template_t1','template_t1'),
+            ## Already connected ('template_t1_denoised_gaussian','template_t1_denoised_gaussian'),
             ('hncma_atlas', 'hncma_atlas'),
             ('template_leftHemisphere', 'template_leftHemisphere'),
             ('template_rightHemisphere', 'template_rightHemisphere'),
@@ -391,7 +391,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         )
         ## These landmarks are only relevant for the atlas-based-reference case
         baw201.connect([(template_DG, inputsSpec,
-                         [('template_t1', 'template_t1'),
+                         [('template_t1_denoised_gaussian', 'template_t1_denoised_gaussian'),
                           ('template_landmarks_50Lmks_fcsv', 'atlasLandmarkFilename'),
                          ]),
         ])
@@ -468,7 +468,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                           ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
                           ('LLSModel', 'inputspec.LLSModel'),
                           ('inputTemplateModel', 'inputspec.inputTemplateModel'),
-                          ('template_t1', 'inputspec.atlasVolume')]),
+                          ('template_t1_denoised_gaussian', 'inputspec.atlasVolume')]),
                         (myLocalLMIWF, outputsSpec,
                          [('outputspec.outputResampledCroppedVolume', 'BCD_ACPC_T1_CROPPED'),
                           ('outputspec.outputLandmarksInACPCAlignedSpace',
@@ -497,7 +497,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect([(makePreprocessingOutList, myLocalTCWF, [('T1s', 'inputspec.T1List')]),
                         (makePreprocessingOutList, myLocalTCWF, [('T2s', 'inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
-                                                   ('template_t1', 'inputspec.atlasVolume'),
+                                                   ('template_t1_denoised_gaussian', 'inputspec.atlasVolume'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
                                                    ('PDs', 'inputspec.PDList'),
                                                    ('FLs', 'inputspec.FLList'),
@@ -608,7 +608,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         baw201.connect([(inputsSpec, segWF,
                          [
-                             ('template_t1', 'inputspec.template_t1')
+                             ('template_t1_denoised_gaussian', 'inputspec.template_t1_denoised_gaussian')
                          ])
         ])
         baw201.connect([(atlasBCUTNode_W, segWF,

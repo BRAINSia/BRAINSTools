@@ -167,7 +167,7 @@ def CreateBRAINSCutWorkflow(projectid,
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume', 'T2Volume',
                                                              'posteriorDictionary', 'RegistrationROI',
-                                                             'atlasToSubjectTransform', 'template_t1',
+                                                             'atlasToSubjectTransform', 'template_t1_denoised_gaussian',
                                                              'rho', 'phi', 'theta',
                                                              'l_caudate_ProbabilityMap', 'r_caudate_ProbabilityMap',
                                                              'l_hippocampus_ProbabilityMap', 'r_hippocampus_ProbabilityMap',
@@ -260,7 +260,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(inputsSpec, 'posteriorDictionary', makeCandidateRegionNode, 'posteriorDictionary')
     cutWF.connect(makeCandidateRegionNode, 'outputCandidateRegionFileName', RF12BC, 'candidateRegion')
 
-    cutWF.connect([(inputsSpec, RF12BC, [('template_t1', 'inputTemplateT1'),
+    cutWF.connect([(inputsSpec, RF12BC, [('template_t1_denoised_gaussian', 'inputTemplateT1'),
                                          # ('template_brain', 'inputTemplateRegistrationROIFilename'),
                                          ('rho', 'inputTemplateRhoFilename'),
                                          ('phi', 'inputTemplatePhiFilename'),

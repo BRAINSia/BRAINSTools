@@ -26,6 +26,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <algorithm>
 
 #include "itkAverageImageFilter.h"
 #include "itkSqrtImageFilter.h"
@@ -107,10 +108,17 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   treeGenerator->SetBucketSize( 16 );
   treeGenerator->Update();
 
-  TreeType::Pointer tree = treeGenerator->GetOutput();
+  TreeType::ConstPointer tree = treeGenerator->GetOutput().GetPointer();
 
   // Compute Likelihood matrix
-  tbb::parallel_for(tbb::blocked_range<size_t>(0,numTest,1),
+  // Limit the number of threads to limit memory usage
+  const size_t maxNumThreads = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+  const float baseMemoryNeeded = 11.0; //10GB needed
+  //Assume 2GB per thread is available
+  const signed int threadsToUse = std::max<signed int>( 1, ( maxNumThreads*2.0 - baseMemoryNeeded )/2.0 );
+  // i.e. 10 cores = 20GB available - 10 base requireed= 10/2 = 5 threads can run.
+  const size_t minGrainSize = numTest/threadsToUse;
+  tbb::parallel_for(tbb::blocked_range<size_t>(0,numTest,minGrainSize),
     [=,&liklihoodMatrix](const tbb::blocked_range<size_t> &r) {
 
       // each test case is a query point
@@ -120,6 +128,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       // Weight vector
       vnl_matrix<FloatingPrecision> weights(1,K,0);
 
+      // compute the distances
+      typename TreeType::InstanceIdentifierVectorType neighbors;
+      std::vector<double> distances(K);
       for( size_t iTest = r.begin(); iTest < r.end(); ++iTest ) ///////
         {
         for( size_t i = 0; i < numFeatures; ++i)
@@ -127,9 +138,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
            queryPoint[i] = testMatrix(iTest,i);
            }
 
-        // compute the distances
-        typename TreeType::InstanceIdentifierVectorType neighbors;
-        std::vector<double> distances;
         tree->Search( queryPoint, K, neighbors, distances );
 
         FloatingPrecision sumOfWeights = 0;
@@ -154,7 +162,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         // (weights * neighborLabels) is a 1xC vector
         liklihoodMatrix.set_row(iTest, (weights * neighborLabels).get_row(0) );
         } // end of main loop
-  });
+  });// End parallel_for
+
   muLogMacro(<< "\n--------------------------------" << std::endl);
   muLogMacro(<< "LiklihoodMatrix is calculated: [ " << liklihoodMatrix.rows() << " x " << liklihoodMatrix.cols() << " ]" << std::endl);
   muLogMacro(<< "--------------------------------" << std::endl);

@@ -199,7 +199,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCSyN,'moving_image')
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")
-    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,2,4), 'overwrite': True}
+    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,13,8,16), 'overwrite': True}
     BABCext.plugin_args = many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeOutImageList, 'inImageList', BABCext, 'inputVolumes')
     tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')

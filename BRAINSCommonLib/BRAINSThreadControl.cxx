@@ -40,17 +40,19 @@ StackPushITKDefaultNumberOfThreads::StackPushITKDefaultNumberOfThreads(const int
     mySys.RunCPUCheck();
     mySys.RunOSCheck();
     mySys.RunMemoryCheck();
-    threadCount = mySys.GetNumberOfPhysicalCPU(); // Avoid using hyperthreading cores.
-      {                                        // Process the NSLOTS environmental varialble set by the SGE batch
-                                               // processing system
-      int         NSLOTSThreadCount(-1);
+    threadCount = mySys.GetNumberOfPhysicalCPU();
+      // Avoid using hyperthreading cores.
+      {
+      // Process the NSLOTS environmental varialble set by the SGE batch
+      // processing system
+      int NSLOTSThreadCount(threadCount);
       std::string numThreads;
       if( itksys::SystemTools::GetEnv("NSLOTS", numThreads) )
         {
         std::istringstream s(numThreads, std::istringstream::in);
         s >> NSLOTSThreadCount;
         }
-      if( NSLOTSThreadCount > threadCount )
+      if( NSLOTSThreadCount != threadCount )
         {
         threadCount = NSLOTSThreadCount;
         }

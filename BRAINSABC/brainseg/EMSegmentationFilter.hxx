@@ -119,8 +119,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       vnl_matrix<FloatingPrecision> neighborLabels( K, numClasses);
       // Weight vector
       vnl_matrix<FloatingPrecision> weights(1,K,0);
-      //likelihoodRow, a 1xC vector
-      vnl_matrix<FloatingPrecision> likelihoodRow(1,numClasses,0);
 
       for( size_t iTest = r.begin(); iTest < r.end(); ++iTest ) ///////
         {
@@ -153,8 +151,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           }
         weights = weights / sumOfWeights;
 
-        likelihoodRow = weights * neighborLabels; // a 1xC vector
-        liklihoodMatrix.set_row(iTest, likelihoodRow.get_row(0) );
+        // (weights * neighborLabels) is a 1xC vector
+        liklihoodMatrix.set_row(iTest, (weights * neighborLabels).get_row(0) );
         } // end of main loop
   });
   muLogMacro(<< "\n--------------------------------" << std::endl);

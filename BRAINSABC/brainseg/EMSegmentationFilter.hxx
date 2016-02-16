@@ -119,9 +119,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       vnl_matrix<FloatingPrecision> neighborLabels( K, numClasses);
       // Weight vector
       vnl_matrix<FloatingPrecision> weights(1,K,0);
-
       //likelihoodRow, a 1xC vector
-      vnl_matrix<FloatingPrecision> likelihoodRow;
+      vnl_matrix<FloatingPrecision> likelihoodRow(1,numClasses,0);
 
       for( size_t iTest = r.begin(); iTest < r.end(); ++iTest ) ///////
         {

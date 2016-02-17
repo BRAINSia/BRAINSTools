@@ -1762,129 +1762,131 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   subjectCandidateRegions.resize(WarpedPriorsList.size() );
 
   { // StartValid Regions Section
-    tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,WarpedPriorsList.size(),1),
-                      [=,&subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> &r) {
-                        for (LOOPITERTYPE i = r.begin(); i < r.end(); ++i) {
-                          typename ByteImageType::Pointer probThreshImage = ITK_NULLPTR;
+  for(LOOPITERTYPE i = 0; i < (LOOPITERTYPE)WarpedPriorsList.size(); i++)
+    {
+    typename ByteImageType::Pointer probThreshImage = ITK_NULLPTR;
 
-                          typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
-                          typename ProbThresholdType::Pointer probThresh = ProbThresholdType::New();
-                          probThresh->SetInput(WarpedPriorsList[i]);
-                          probThresh->SetInsideValue(1);
-                          probThresh->SetOutsideValue(0);
-                          probThresh->SetLowerThreshold(0.01);  // Hueristic: Need greater than 1 in 100
-                          // chance of being this structure
-                          // from the spatial probabilities
-                          probThresh->SetUpperThreshold(
-                              vcl_numeric_limits<typename TProbabilityImage::PixelType>::max());
-                          // No upper limit needed, values
-                          // should be between 0 and 1
-                          probThresh->Update();
-                          probThreshImage = probThresh->GetOutput();
-                          if (this->m_DebugLevel > 9) {
-                            std::stringstream CurrentEMIteration_stream("");
-                            CurrentEMIteration_stream << CurrentEMIteration;
-                            // Write the subject candidate regions
+    typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
+    typename ProbThresholdType::Pointer probThresh = ProbThresholdType::New();
+    probThresh->SetInput(WarpedPriorsList[i]);
+    probThresh->SetInsideValue(1);
+    probThresh->SetOutsideValue(0);
+    probThresh->SetLowerThreshold(0.01);  // Hueristic: Need greater than 1 in 100
+    // chance of being this structure
+    // from the spatial probabilities
+    probThresh->SetUpperThreshold(
+        vcl_numeric_limits<typename TProbabilityImage::PixelType>::max());
+    // No upper limit needed, values
+    // should be between 0 and 1
+    probThresh->Update();
+    probThreshImage = probThresh->GetOutput();
+    if(this->m_DebugLevel > 9)
+      {
+      std::stringstream CurrentEMIteration_stream("");
+      CurrentEMIteration_stream << CurrentEMIteration;
+      // Write the subject candidate regions
 
-                            std::ostringstream oss;
-                            oss << this->m_OutputDebugDir << "CANDIDIDATE_PROBTHRESH_" << this->m_PriorNames[i] <<
-                            "_LEVEL_"
-                            << CurrentEMIteration_stream.str() << ".nii.gz" << std::ends;
-                            std::string fn = oss.str();
-                            std::cout << "------------------------" << std::endl;
-                            muLogMacro(<< "Writing Subject Candidate Region: " << fn << std::endl);
-                            muLogMacro(<< std::endl);
+      std::ostringstream oss;
+      oss << this->m_OutputDebugDir << "CANDIDIDATE_PROBTHRESH_" << this->m_PriorNames[i] << "_LEVEL_"
+          << CurrentEMIteration_stream.str() << ".nii.gz" << std::ends;
+      std::string fn = oss.str();
+      std::cout << "------------------------" << std::endl;
+      muLogMacro(<< "Writing Subject Candidate Region: " << fn << std::endl);
+      muLogMacro(<< std::endl);
 
-                            typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
-                            typename ByteWriterType::Pointer writer = ByteWriterType::New();
-                            writer->SetInput(probThreshImage);
-                            writer->SetFileName(fn.c_str());
-                            writer->UseCompressionOn();
-                            writer->Update();
-                          }
+      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      typename ByteWriterType::Pointer writer = ByteWriterType::New();
+      writer->SetInput(probThreshImage);
+      writer->SetFileName(fn.c_str());
+      writer->UseCompressionOn();
+      writer->Update();
+      }
 
-                          // All input images to the MultiModeHistogramThresholdBinaryImageFilter
-                          // need to be at the same voxel space, so all input image map are resampled
-                          // to the lattice of the first key image using identity transform, since
-                          // they are already aligned in physical space.
-                          const MapOfInputImageVectors intensityImagesList =
-                              ResampleImageListToFirstKeyImage("Linear", intensityList);
+    // All input images to the MultiModeHistogramThresholdBinaryImageFilter
+    // need to be at the same voxel space, so all input image map are resampled
+    // to the lattice of the first key image using identity transform, since
+    // they are already aligned in physical space.
+    const MapOfInputImageVectors intensityImagesList =
+        ResampleImageListToFirstKeyImage("Linear", intensityList);
 
-                          const unsigned int numberOfModes = TotalMapSize(intensityImagesList);
+    const unsigned int numberOfModes = TotalMapSize(intensityImagesList);
 
-                          typedef typename itk::MultiModeHistogramThresholdBinaryImageFilter<InputImageType,
-                              ByteImageType> ThresholdRegionFinderType;
-                          typename ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
-                          typename ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
-                          typename ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
-                          // TODO:  Need to define PortionMaskImage from deformed probspace
-                          thresholdRegionFinder->SetBinaryPortionImage(ForegroundBrainRegion);
-                          unsigned int modeIndex = 0;
-                          for (typename MapOfInputImageVectors::const_iterator mapIt = intensityImagesList.begin();
-                               mapIt != intensityImagesList.end(); ++mapIt) {
-                            for (typename InputImageVector::const_iterator imIt = mapIt->second.begin();
-                                 imIt != mapIt->second.end(); ++imIt, ++modeIndex) {
-                              thresholdRegionFinder->SetInput(modeIndex, (*imIt));
-                              const std::string imageType = mapIt->first;
-                              const std::string priorType = this->m_PriorNames[i];
-                              if (m_TissueTypeThresholdMapsRange[priorType].find(imageType) ==
-                                  m_TissueTypeThresholdMapsRange[priorType].end()) {
-                                muLogMacro(<< "NOT FOUND:" << "[" << priorType << "," << imageType
-                                               << "]: [" << 0.00 << "," << 1.00 << "]"
-                                               <<  std::endl);
-                                QuantileLowerThreshold.SetElement(modeIndex, 0.00);
-                                QuantileUpperThreshold.SetElement(modeIndex, 1.00);
-                              }
-                              else {
-                                const float lower = m_TissueTypeThresholdMapsRange[priorType][imageType].GetLower();
-                                const float upper = m_TissueTypeThresholdMapsRange[priorType][imageType].GetUpper();
-                                muLogMacro(
-                                    <<  "[" << priorType << "," << imageType << "]: [" << lower << "," << upper << "]" <<  std::endl);
-                                QuantileLowerThreshold.SetElement(modeIndex, lower);
-                                QuantileUpperThreshold.SetElement(modeIndex, upper);
-                                m_TissueTypeThresholdMapsRange[priorType][imageType].Print();
-                              }
-                            }
-                          }
-                          // Assume upto (2*0.025)% of intensities are noise that corrupts the image
-                          // min/max values
-                          thresholdRegionFinder->SetLinearQuantileThreshold(0.025);
-                          thresholdRegionFinder->SetQuantileLowerThreshold(QuantileLowerThreshold);
-                          thresholdRegionFinder->SetQuantileUpperThreshold(QuantileUpperThreshold);
-                          // thresholdRegionFinder->SetInsideValue(1);
-                          // thresholdRegionFinder->SetOutsideValue(0);//Greatly reduce the value to
-                          // zero.
-                          thresholdRegionFinder->Update();
-                          if (this->m_DebugLevel > 8) {
-                            std::stringstream CurrentEMIteration_stream("");
-                            CurrentEMIteration_stream << CurrentEMIteration;
-                            // Write the subject candidate regions
+    typedef typename itk::MultiModeHistogramThresholdBinaryImageFilter<InputImageType,
+        ByteImageType> ThresholdRegionFinderType;
+    typename ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
+    typename ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
+    typename ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
+    // TODO:  Need to define PortionMaskImage from deformed probspace
+    thresholdRegionFinder->SetBinaryPortionImage(ForegroundBrainRegion);
+    unsigned int modeIndex = 0;
+    for (typename MapOfInputImageVectors::const_iterator mapIt = intensityImagesList.begin();
+         mapIt != intensityImagesList.end(); ++mapIt)
+        {
+        for( typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+             imIt != mapIt->second.end(); ++imIt, ++modeIndex)
+           {
+            thresholdRegionFinder->SetInput(modeIndex, (*imIt));
+            const std::string imageType = mapIt->first;
+            const std::string priorType = this->m_PriorNames[i];
+            if( m_TissueTypeThresholdMapsRange[priorType].find(imageType) ==
+                m_TissueTypeThresholdMapsRange[priorType].end())
+              {
+              muLogMacro(<< "NOT FOUND:" << "[" << priorType << "," << imageType
+                         << "]: [" << 0.00 << "," << 1.00 << "]"
+                         <<  std::endl);
+              QuantileLowerThreshold.SetElement(modeIndex, 0.00);
+              QuantileUpperThreshold.SetElement(modeIndex, 1.00);
+              }
+            else
+              {
+              const float lower = m_TissueTypeThresholdMapsRange[priorType][imageType].GetLower();
+              const float upper = m_TissueTypeThresholdMapsRange[priorType][imageType].GetUpper();
+              muLogMacro(
+                  <<  "[" << priorType << "," << imageType << "]: [" << lower << "," << upper << "]" <<  std::endl);
+              QuantileLowerThreshold.SetElement(modeIndex, lower);
+              QuantileUpperThreshold.SetElement(modeIndex, upper);
+              m_TissueTypeThresholdMapsRange[priorType][imageType].Print();
+              }
+           }
+        }
+    // Assume upto (2*0.025)% of intensities are noise that corrupts the image
+    // min/max values
+    thresholdRegionFinder->SetLinearQuantileThreshold(0.025);
+    thresholdRegionFinder->SetQuantileLowerThreshold(QuantileLowerThreshold);
+    thresholdRegionFinder->SetQuantileUpperThreshold(QuantileUpperThreshold);
+    // thresholdRegionFinder->SetInsideValue(1);
+    // thresholdRegionFinder->SetOutsideValue(0);//Greatly reduce the value to
+    // zero.
+    thresholdRegionFinder->Update();
+    if (this->m_DebugLevel > 8) {
+      std::stringstream CurrentEMIteration_stream("");
+      CurrentEMIteration_stream << CurrentEMIteration;
+      // Write the subject candidate regions
 
-                            std::ostringstream oss;
-                            oss << this->m_OutputDebugDir << "CANDIDIDATE_INTENSITY_REGION_" << this->m_PriorNames[i] <<
-                            "_LEVEL_"
-                            << CurrentEMIteration_stream.str() << ".nii.gz" << std::ends;
-                            std::string fn = oss.str();
-                            muLogMacro(<< "Writing Subject Candidate Region: " << fn << std::endl);
-                            muLogMacro(<< std::endl);
+      std::ostringstream oss;
+      oss << this->m_OutputDebugDir << "CANDIDIDATE_INTENSITY_REGION_" << this->m_PriorNames[i] <<
+      "_LEVEL_"
+      << CurrentEMIteration_stream.str() << ".nii.gz" << std::ends;
+      std::string fn = oss.str();
+      muLogMacro(<< "Writing Subject Candidate Region: " << fn << std::endl);
+      muLogMacro(<< std::endl);
 
-                            typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
-                            typename ByteWriterType::Pointer writer = ByteWriterType::New();
-                            writer->SetInput(thresholdRegionFinder->GetOutput());
-                            writer->SetFileName(fn.c_str());
-                            writer->UseCompressionOn();
-                            writer->Update();
-                          }
+      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      typename ByteWriterType::Pointer writer = ByteWriterType::New();
+      writer->SetInput(thresholdRegionFinder->GetOutput());
+      writer->SetFileName(fn.c_str());
+      writer->UseCompressionOn();
+      writer->Update();
+      }
 
-                          // Now multiply the warped priors by the subject candidate regions.
-                          typename itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType>::Pointer multFilter =
-                              itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType>::New();
-                          multFilter->SetInput1(probThreshImage);
-                          multFilter->SetInput2(thresholdRegionFinder->GetOutput());
-                          multFilter->Update();
-                          subjectCandidateRegions[i] = multFilter->GetOutput();
-                        } // End loop over all warped priors
-                      });
+      // Now multiply the warped priors by the subject candidate regions.
+      typename itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType>::Pointer multFilter =
+          itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType>::New();
+      multFilter->SetInput1(probThreshImage);
+      multFilter->SetInput2(thresholdRegionFinder->GetOutput());
+      multFilter->Update();
+      subjectCandidateRegions[i] = multFilter->GetOutput();
+      } // End loop over all warped priors
 
   { // Ensure that every candidate region has some value
   const unsigned int candiateVectorSize = subjectCandidateRegions.size();

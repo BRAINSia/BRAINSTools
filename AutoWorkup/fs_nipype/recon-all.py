@@ -299,16 +299,17 @@ def main(argv):
         'stop_on_first_rerun': 'false',
         # This stops at first attempt to rerun, before running, and before
         # deleting previous results.
-        'hash_method': 'timestamp',
+        'hash_method': 'content',
         'remove_unnecessary_outputs': 'false',
         'use_relative_paths': 'false',
         'remove_node_directories': 'false',
     }
     reconall.config['logging'] = {
-        'workflow_level': 'DEBUG',
-        'filemanip_level': 'DEBUG',
-        'interface_level': 'DEBUG',
-        'log_directory': ExperimentInfo["Atlas"]["LOG_DIR"]
+        'workflow_level' : 'DEBUG',
+        'filemanip_level' : 'DEBUG',
+        'interface_level' : 'DEBUG',
+        'log_directory' : ExperimentInfo["Atlas"]["LOG_DIR"],
+        'log_to_file' : True
     }
 
     # Run Workflow

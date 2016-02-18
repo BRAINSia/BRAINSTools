@@ -60,7 +60,7 @@ public:
 
   typedef double CoordinateRepType;
 
-  typedef typename std::map<std::string,  std::map<std::string, AtlasDefinition::BoundsType> > RangeDBType;
+  typedef orderedmap<std::string,  orderedmap<std::string, AtlasDefinition::BoundsType> > RangeDBType;
   // Image types
   typedef TInputImage                       InputImageType;
   typedef typename TInputImage::Pointer     InputImagePointer;
@@ -74,7 +74,7 @@ public:
   typedef std::vector<InputImagePixelType> BackgroundValueVector;
 
   typedef std::vector<InputImagePointer> InputImageVector;
-  typedef std::map<std::string, InputImageVector> MapOfInputImageVectors;
+  typedef orderedmap<std::string, InputImageVector> MapOfInputImageVectors;
 
   typedef typename ByteImageType::Pointer    ByteImagePointer;
   typedef typename ByteImageType::IndexType  ByteImageIndexType;
@@ -120,7 +120,7 @@ public:
   typedef itk::NearestNeighborInterpolateImageFunction< ByteImageType, double >  MaskNNInterpolationType;
 
   typedef std::vector<typename InputImageNNInterpolationType::Pointer> InputImageInterpolatorVector;
-  typedef std::map<std::string, InputImageInterpolatorVector>          MapOfInputImageInterpolatorVectors;
+  typedef orderedmap<std::string, InputImageInterpolatorVector>        MapOfInputImageInterpolatorVectors;
 
   itkSetMacro(UseKNN, bool);
   itkGetMacro(UseKNN, bool);

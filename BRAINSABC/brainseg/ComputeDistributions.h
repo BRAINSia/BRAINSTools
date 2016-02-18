@@ -31,7 +31,7 @@ typedef itk::CompensatedSummation<double> CompensatedSummationType;
 template <class TInputImage, class TProbabilityImage, class MatrixType>
 void
 CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer> & SubjectCandidateRegions,
-                              const std::map<std::string,std::vector<typename TInputImage::Pointer> >
+                              const orderedmap<std::string,std::vector<typename TInputImage::Pointer> >
                               &InputImageMap,
                               const std::vector<typename TProbabilityImage::Pointer> & PosteriorsList,
                               std::vector<RegionStats> & ListOfClassStatistics, //
@@ -48,7 +48,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                               )
 {
   typedef std::vector<typename TInputImage::Pointer> InputImageVector;
-  typedef std::map<std::string,InputImageVector> MapOfInputImageVectors;
+  typedef orderedmap<std::string,InputImageVector>   MapOfInputImageVectors;
 
   typedef itk::NearestNeighborInterpolateImageFunction< TInputImage, double > InputImageNNInterpolationType;
 
@@ -214,7 +214,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                         //
                         // this will end up as a vnl_matrix for assignment to
                         // the Class Statistics object after this is computed.
-                        std::map<std::string, std::map<std::string, double> > TypeCovariance;
+                        orderedmap<std::string, orderedmap<std::string, double> > TypeCovariance;
                         // initialize -- no easy way since it is a map of maps
                         for (typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin();
                              mapIt != InputImageMap.end(); ++mapIt) {

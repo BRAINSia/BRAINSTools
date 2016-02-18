@@ -185,13 +185,13 @@ public:
   typedef itk::Array<unsigned char> FlagArrayType;
 
   typedef std::vector<std::string> StringVector;
-  typedef std::map<std::string,StringVector > MapOfStringVectors;
+  typedef orderedmap<std::string,StringVector > MapOfStringVectors;
 
   typedef std::vector<InternalImagePointer> FloatImageVector;
-  typedef std::map<std::string, FloatImageVector> MapOfFloatImageVectors;
+  typedef orderedmap<std::string, FloatImageVector> MapOfFloatImageVectors;
 
   typedef std::vector<GenericTransformType::Pointer> TransformList;
-  typedef std::map<std::string,TransformList>        MapOfTransformLists;
+  typedef orderedmap<std::string,TransformList>        MapOfTransformLists;
 
   void SetSuffix(std::string suffix);
 

@@ -75,6 +75,8 @@
 #include "itkKdTreeGenerator.h"
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
+#include <tbb/mutex.h>
+
 static const FloatingPrecision KNN_InclusionThreshold = 0.85F;
 
 
@@ -1762,9 +1764,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   subjectCandidateRegions.resize(WarpedPriorsList.size() );
 
   { // StartValid Regions Section
+
+    tbb::mutex   stdoutMutex;
     tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0,WarpedPriorsList.size(),1),
-                      [=,&subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> &r) {
+                      [=,&stdoutMutex,&subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE i = r.begin(); i < r.end(); ++i) {
+                          std::ostringstream logMessage("\n*********************************************\n");
                           typename ByteImageType::Pointer probThreshImage = ITK_NULLPTR;
 
                           typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
@@ -1792,8 +1797,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                             << CurrentEMIteration_stream.str() << ".nii.gz" << std::ends;
                             std::string fn = oss.str();
                             std::cout << "------------------------" << std::endl;
-                            muLogMacro(<< "Writing Subject Candidate Region: " << fn << std::endl);
-                            muLogMacro(<< std::endl);
+                            logMessage << "Writing Subject Candidate Region: " << fn << std::endl;
+                            logMessage << std::endl;
 
                             typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
                             typename ByteWriterType::Pointer writer = ByteWriterType::New();
@@ -1829,17 +1834,17 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                               const std::string priorType = this->m_PriorNames[i];
                               if (m_TissueTypeThresholdMapsRange[priorType].find(imageType) ==
                                   m_TissueTypeThresholdMapsRange[priorType].end()) {
-                                muLogMacro(<< "NOT FOUND:" << "[" << priorType << "," << imageType
+                                logMessage << "NOT FOUND:" << "[" << priorType << "," << imageType
                                                << "]: [" << 0.00 << "," << 1.00 << "]"
-                                               <<  std::endl);
+                                               <<  std::endl;
                                 QuantileLowerThreshold.SetElement(modeIndex, 0.00);
                                 QuantileUpperThreshold.SetElement(modeIndex, 1.00);
                               }
                               else {
                                 const float lower = m_TissueTypeThresholdMapsRange[priorType][imageType].GetLower();
                                 const float upper = m_TissueTypeThresholdMapsRange[priorType][imageType].GetUpper();
-                                muLogMacro(
-                                    <<  "[" << priorType << "," << imageType << "]: [" << lower << "," << upper << "]" <<  std::endl);
+                                logMessage <<  "[" << priorType << "," << imageType
+                                           << "]: [" << lower << "," << upper << "]" <<  std::endl;
                                 QuantileLowerThreshold.SetElement(modeIndex, lower);
                                 QuantileUpperThreshold.SetElement(modeIndex, upper);
                                 m_TissueTypeThresholdMapsRange[priorType][imageType].Print();
@@ -1865,8 +1870,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                             "_LEVEL_"
                             << CurrentEMIteration_stream.str() << ".nii.gz" << std::ends;
                             std::string fn = oss.str();
-                            muLogMacro(<< "Writing Subject Candidate Region: " << fn << std::endl);
-                            muLogMacro(<< std::endl);
+                            logMessage << "Writing Subject Candidate Region: " << fn << std::endl;
+                            logMessage << std::endl;
 
                             typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
                             typename ByteWriterType::Pointer writer = ByteWriterType::New();
@@ -1883,6 +1888,11 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                           multFilter->SetInput2(thresholdRegionFinder->GetOutput());
                           multFilter->Update();
                           subjectCandidateRegions[i] = multFilter->GetOutput();
+                          {
+                          tbb::mutex::scoped_lock lock(stdoutMutex);  // Implements locking this entire section to one thread at a time
+                          muLogMacro(<< "\n==" << this->m_PriorNames[i] << "=========================\n" << logMessage.str() << std::endl);
+                          //lock implicity released when it goes out of scope
+                          }
                         } // End loop over all warped priors
                       });
 

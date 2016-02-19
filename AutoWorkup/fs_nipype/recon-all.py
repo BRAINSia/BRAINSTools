@@ -49,6 +49,14 @@ David Ellis
 University of Iowa
     """
 
+# TODOs:
+# * Fix workflow outputs so that the output is not written to the subjects directory
+#   but to the node directory instead
+# * Finish longitudinal workflow.
+# * Write template workflow.
+# * Write option for running a list of sessions instead of a single session.
+# * Create more thorough checking of inputs.
+    
 def procargs(argv):
     config = { 'in_T1s' : list(),
                'subject_id' : None,

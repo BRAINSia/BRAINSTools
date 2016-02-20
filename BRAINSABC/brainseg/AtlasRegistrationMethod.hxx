@@ -145,7 +145,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   muLogMacro(<< "Register Intra subject images" << std::endl);
 
   int i = 0;
-  for(MapOfFloatImageVectors::iterator mapOfModalImageListsIt = this->m_IntraSubjectOriginalImageList.begin();
+  for(auto mapOfModalImageListsIt = this->m_IntraSubjectOriginalImageList.begin();
       mapOfModalImageListsIt != this->m_IntraSubjectOriginalImageList.end();
       ++mapOfModalImageListsIt)
     {

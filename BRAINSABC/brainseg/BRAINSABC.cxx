@@ -425,7 +425,7 @@ int main(int argc, char * *argv)
   currentRow++;
   for( unsigned int pwi = 0; pwi < PriorNames.size(); pwi++ )
     {
-    std::map<std::string, AtlasDefinition::BoundsType> temp_range_List;
+    orderedmap<std::string, AtlasDefinition::BoundsType> temp_range_List;
     for( unsigned int tt = 0; tt < input_VolumeTypes.size(); tt++ )
       {
       AtlasDefTable.add(currentRow + tt * 2 + 0, 0, std::string(input_VolumeTypes[tt]) + std::string(" Lower") );
@@ -562,7 +562,7 @@ int main(int argc, char * *argv)
     for( AtlasRegType::StringVector::const_iterator imIt = typeIt->second.begin();
          imIt != typeIt->second.end(); ++imIt,++i )
       {
-      muLogMacro(<< "Reading image " << ": " << (*imIt) << "...\n");
+      muLogMacro(<< "\n***Reading image " << ": " << (*imIt) << "...\n");
 
       LocalReaderPointer imgreader = LocalReaderType::New();
       imgreader->SetFileName( (*imIt).c_str() );
@@ -659,7 +659,7 @@ int main(int argc, char * *argv)
       mapIt != templateVolumes.end(); ++mapIt)
     {
     const std::string curAtlasName = FindPathFromAtlasXML(*(mapIt->second.begin()),atlasDefinitionPath);
-    muLogMacro(<< "Reading atlas image " << mapIt->first << ": " << curAtlasName << "...\n");
+    muLogMacro(<< "\n***Reading atlas image " << mapIt->first << ": " << curAtlasName << "...\n");
     LocalReaderPointer imgreader = LocalReaderType::New();
     imgreader->SetFileName(curAtlasName.c_str());
     try
@@ -1077,7 +1077,7 @@ int main(int argc, char * *argv)
     SegFilterType::RangeDBType myRanges;
     for(auto & PriorName : PriorNames)
       {
-      std::map<std::string, AtlasDefinition::BoundsType> temp_range_List;
+      orderedmap<std::string, AtlasDefinition::BoundsType> temp_range_List;
       for(auto & input_VolumeType : input_VolumeTypes)
         {
         temp_range_List[input_VolumeType] = atlasDefinitionParser.GetBounds(PriorName, input_VolumeType);

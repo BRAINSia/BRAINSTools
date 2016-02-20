@@ -81,7 +81,7 @@ public:
   typedef typename TInputImage::SpacingType InputImageSpacingType;
 
   typedef std::vector<InputImagePointer> InputImageVector;
-  typedef std::map<std::string,InputImageVector> MapOfInputImageVectors;
+  typedef orderedmap<std::string,InputImageVector> MapOfInputImageVectors;
 
   typedef itk::Image<unsigned char, itkGetStaticConstMacro(ImageDimension)> ByteImageType;
   typedef typename ByteImageType::Pointer                                   ByteImagePointer;

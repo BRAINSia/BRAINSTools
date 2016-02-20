@@ -56,6 +56,61 @@ typedef unsigned int LOOPITERTYPE;
 { }
 #endif
 
+/** A utility class for holding ordered maps */
+
+/**
+ * Make ordered map by choosing less than operator based on order of inputs
+ * This comparitor function will order the maps based on a first in
+ * priority. Elements that are not already in the list of keys
+ * are added at the end.  Elements that show up in the list first are considered
+ * less than elements that show up in the list second.
+ **/
+class firstInOrderingOfStrings
+{
+public:
+  firstInOrderingOfStrings() { }
+  bool operator() (const std::string& lhs, const std::string& rhs) const
+  {
+  for(auto &elem : m_firstInOrdering)
+    {
+    if(elem == lhs && (lhs != rhs ))
+      {
+      return true;
+      }
+    else if(elem == rhs)
+      {
+      return false;
+      }
+    }
+  /* New elements go at the end */
+  if( lhs == rhs )
+    {
+    this->m_firstInOrdering.push_back(lhs);
+    return false;
+    }
+  else
+    {
+    this->m_firstInOrdering.push_back(rhs);
+    this->m_firstInOrdering.push_back(lhs);
+    return false;
+    }
+  }
+private:
+  /* This needs to be mutable. The function signature needs to be
+   * const, but this internal list needs to be mutable for the case
+   * of new elements being added*/
+  mutable std::list<std::string> m_firstInOrdering;
+};
+
+template<class Key, class T>
+class orderedmap: public std::map<Key, T, firstInOrderingOfStrings>
+{
+public:
+  orderedmap():std::map<Key, T, firstInOrderingOfStrings>()
+  {};
+  using std::map<Key, T, firstInOrderingOfStrings>::operator[];
+};
+
 typedef double                          FloatingPrecision;
 typedef itk::Image<unsigned char, 3>    ByteImageType;
 typedef itk::Image<float, 3>            FloatImageType;
@@ -64,14 +119,14 @@ typedef itk::Image<signed short int, 3> ShortImageType;
 
 typedef itk::Image<float, 3> CorrectIntensityImageType;
 
-typedef std::map<std::string,std::string> ImageByTypeMap;
+typedef orderedmap<std::string,std::string> ImageByTypeMap;
 
-typedef std::vector<FloatImagePointerType>      FloatImageVector;
-typedef std::map<std::string, FloatImageVector> MapOfFloatImageVectors;
+typedef std::vector<FloatImagePointerType>        FloatImageVector;
+typedef orderedmap<std::string, FloatImageVector> MapOfFloatImageVectors;
 
 typedef itk::Transform<double, 3, 3>               GenericTransformType;
 typedef std::vector<GenericTransformType::Pointer> TransformList;
-typedef std::map<std::string,TransformList>        MapOfTransformLists;
+typedef orderedmap<std::string,TransformList>      MapOfTransformLists;
 
 /** A utiliy class for holding statistical information
  * for all image channels for a given tissue class type
@@ -81,7 +136,7 @@ class RegionStats
 public:
   typedef vnl_matrix<FloatingPrecision>         MatrixType;
   typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
-  typedef std::map<std::string,double>          MeanMapType;
+  typedef orderedmap<std::string,double>        MeanMapType;
   RegionStats() : m_Means(), m_Covariance(), m_Weighting(0.0)
   {
   }

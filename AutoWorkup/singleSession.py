@@ -96,7 +96,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     sessionWorkflow_inputsspec.inputs.T2s = dataDict['T2s']
     sessionWorkflow_inputsspec.inputs.PDs = dataDict['PDs']
     sessionWorkflow_inputsspec.inputs.FLs = dataDict['FLs']
-    sessionWorkflow_inputsspec.inputs.OTHERs = dataDict['OTs']
+    sessionWorkflow_inputsspec.inputs.OTHERs = dataDict['OTHERs']
     return sessionWorkflow
 
 
@@ -133,7 +133,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             _dict['T2s'] = database.getFilenamesByScantype(session, ['T2-15', 'T2-30'])
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
-            _dict['OTs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
+            _dict['OTHERs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
             sentinal_file_basedir = os.path.join(
                 master_config['resultdir'],
                 _dict['project'],

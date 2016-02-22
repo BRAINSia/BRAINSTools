@@ -8,7 +8,7 @@ FS_VARS = ['FREESURFER_HOME',
            'MNI_DIR',
            'FSL_DIR']
 
-def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT1, ListOutType=False):
+def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, PrimaryT1, ListOutType=False):
     #
     #for BABC: "_corrected.nii.gz"
     #for UNM Denoise: "_UNM_denoised.nii.gz"
@@ -33,7 +33,7 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT
     all_files.extend(T2List)
     all_files.extend(PDList)
     all_files.extend(FLList)
-    all_files.extend(OtherList)
+    all_files.extend(OTHERList)
     outImageList = []
     for i in all_files:
         out_name = GetExtBaseName(i) + postfix
@@ -48,7 +48,7 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT
     imageTypeList.extend(["T2"] * len(T2List))
     imageTypeList.extend(["PD"] * len(PDList))
     imageTypeList.extend(["FL"] * len(FLList))
-    imageTypeList.extend(["OTHER"] * len(OtherList))
+    imageTypeList.extend(["OTHER"] * len(OTHERList))
 
     #make input raw images single list
     inImageList = list()
@@ -56,9 +56,9 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList, postfix, PrimaryT
     inImageList.extend(T2List)
     inImageList.extend(PDList)
     inImageList.extend(FLList)
-    inImageList.extend(OtherList)
+    inImageList.extend(OTHERList)
 
-    """ This funciton uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
+    """ This function uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
     if PrimaryT1 is not None:
         inImageList[0]=PrimaryT1
     print ("inImageList:::")
@@ -75,12 +75,12 @@ def GenerateSeparateImageTypeList(inFileList, inTypeList):
     allListDict["T2"]=list()
     allListDict["PD"]=list()
     allListDict["FL"]=list()
-    allListDict["Other"]=list()
+    allListDict["OTHER"]=list()
     T1List=list()
     for i in range(0,len(inFileList)):
         allListDict[ inTypeList[i] ].append( inFileList[i] )
 
-    return allListDict["T1"], allListDict["T2"], allListDict["PD"], allListDict["FL"], allListDict["Other"]
+    return allListDict["T1"], allListDict["T2"], allListDict["PD"], allListDict["FL"], allListDict["OTHER"]
 
 
 def add_dict(d1, d2, force=False):

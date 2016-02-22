@@ -52,8 +52,8 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
 
     tissueClassifyWF = pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List', 'T2List', 'PDList', 'FLList',
-                                                             'OtherList', 'T1_count', 'PrimaryT1',
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List', 'T2List', 'PDList', 'FLList', 'OTHERList',
+                                                             'T1_count', 'PrimaryT1',
                                                              'atlasDefinition',
                                                              'atlasToSubjectInitialTransform','atlasVolume'
                                                             ]),
@@ -80,17 +80,16 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     ########################################################
     makeOutImageList = pe.Node(Function(function=MakeOutFileList,
                                         input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                     'OtherList','postfix','PrimaryT1'],
+                                                     'OTHERList','postfix','PrimaryT1'],
                                         output_names=['inImageList','outImageList','imageTypeList']),
                                         run_without_submitting=True, name="99_makeOutImageList")
     tissueClassifyWF.connect(inputsSpec, 'T1List', makeOutImageList, 'T1List')
     tissueClassifyWF.connect(inputsSpec, 'T2List', makeOutImageList, 'T2List')
     tissueClassifyWF.connect(inputsSpec, 'PDList', makeOutImageList, 'PDList')
+    tissueClassifyWF.connect(inputsSpec, 'FLList', makeOutImageList, 'FLList' )
+    tissueClassifyWF.connect(inputsSpec, 'OTHERList', makeOutImageList, 'OTHERList')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1', makeOutImageList, 'PrimaryT1')
-    makeOutImageList.inputs.FLList = []  # an emptyList HACK
     makeOutImageList.inputs.postfix = "_corrected.nii.gz"
-    # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeOutImageList, 'FLList' )
-    tissueClassifyWF.connect(inputsSpec, 'OtherList', makeOutImageList, 'OtherList')
 
     ##### Initialize with ANTS Transform For AffineComponentBABC
     currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Rigid'

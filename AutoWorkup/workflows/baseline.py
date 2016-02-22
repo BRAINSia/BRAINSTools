@@ -412,19 +412,19 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print("\ndenoise image filter\n")
         makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
                                                   input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                               'OtherList', 'postfix', 'PrimaryT1',
+                                                               'OTHERList', 'postfix', 'PrimaryT1',
                                                                'ListOutType'],
                                                   output_names=['inImageList', 'outImageList', 'imageTypeList']),
                                          run_without_submitting=True, name="99_makeDenoiseInImageList")
         baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
         baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
+        baw201.connect(inputsSpec, 'FLs', makeDenoiseInImageList, 'FLList' )
+        baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OTHERList')
         makeDenoiseInImageList.inputs.ListOutType= False
         makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
         makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"
-        # HACK baw201.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
-        baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
 
         print("\nDenoise:\n")
         DenoiseInputImgs = pe.MapNode(interface=DenoiseImage(),
@@ -447,7 +447,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print("\nMerge all T1 and T2 List\n")
         makePreprocessingOutList = pe.Node(Function(function=GenerateSeparateImageTypeList,
                                                     input_names=['inFileList', 'inTypeList'],
-                                                    output_names=['T1s', 'T2s', 'PDs', 'FLs', 'OtherList']),
+                                                    output_names=['T1s', 'T2s', 'PDs', 'FLs', 'OTHERs']),
                                            run_without_submitting=False,
                                            name="99_makePreprocessingOutList")
         baw201.connect(DenoiseInputImgs, 'output_image', makePreprocessingOutList, 'inFileList')
@@ -499,7 +499,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                         (makePreprocessingOutList, myLocalTCWF, [('T2s', 'inputspec.T2List')]),
                         (makePreprocessingOutList, myLocalTCWF, [('PDs', 'inputspec.PDList')]),
                         (makePreprocessingOutList, myLocalTCWF, [('FLs', 'inputspec.FLList')]),
-                        (makePreprocessingOutList, myLocalTCWF, [('OTHERs', 'inputspec.OtherList')]),
+                        (makePreprocessingOutList, myLocalTCWF, [('OTHERs', 'inputspec.OTHERList')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('template_t1_denoised_gaussian', 'inputspec.atlasVolume'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count')

@@ -228,7 +228,7 @@ def create_AutoRecon3(config):
 
     # Workflow1 Outputs
     outputs1 = pe.Node(IdentityInterface(fields=['pial']),
-                       name="Outputs")
+                       name="Outputs1")
     ar3_lh_wf.connect([(ar3_pial, outputs1, [('out_pial', 'pial')]),
 
                        ])
@@ -812,5 +812,10 @@ def create_AutoRecon3(config):
                                        (inputSpec, surf2surf,
                                         [('subjects_dir', 'subjects_dir')]),
                                        ])
+
+    #TODO: Add outputs to outputspec
+    outputspec = pe.Node(IdentityInterface(fields=['aseg']),
+                         name="Outputs")
+    ar3_wf.conncet(apas_2_aseg, outputspec, [('out_file', 'aseg')])])
 
     return ar3_wf

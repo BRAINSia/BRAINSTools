@@ -77,7 +77,7 @@ def recodeLabelMap(in_file, out_file, recode_file):
     return out_file
 
 
-def create_wf(in_file, out_file=None):
+def create_recoding_wf(in_file, out_file=None):
     wf = nipype.Workflow(name="RecodeLabels")
 
     inputspec = nipype.pipeline.Node(nipype.IdentityInterface(['labelmap',
@@ -118,12 +118,3 @@ def create_wf(in_file, out_file=None):
     wf.connect([(center_labelmap, outputspec, [('out_file', 'recodedlabelmap')])])
     
     return wf
-
-inputspec = nipype.pipeline.Node(nipype.IdentityInterface(['aseg']), name="Inputs")
-inputspec.inputs.aseg = "/Shared/sinapse/CACHE/20151006_FS_TIMETRIALS/subjects_dir/17893/mri/aseg.presurf.mgz"
-wf = nipype.Workflow(name="example")
-recode_csv = "/scratch/FreeSurfer/apps/BRAINSTools/AutoWorkup/fs_nipype/fs2abc.csv"
-mywf = create_wf(recode_csv)
-wf.connect([(inputspec, mywf, [('aseg', 'Inputs.labelmap')])])
-wf.base_dir = "."
-wf.run()

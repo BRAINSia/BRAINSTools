@@ -206,5 +206,22 @@ def create_reconall(config):
                                         ]),
                       ])
 
+    #TODO: add more outputs to outputspec
+    outputspec = pe.Node(IdentityInterface(fields=['aseg',
+                                                   'recoded_labelmap']),
+                         name="Outputs")
+    
+    reconall.connect([(ar3_wf, outputspec, [('Outputs.aseg', 'aseg')]),
+                      ])
+
+    
+    #### Workflow additions go here
+    if config['recoding_file'] != None:
+        from recoding import create_recoding_wf
+        recode = create_recoding_wf(config['recoding_file'])
+        reconall.connect([(ar3_wf, recode, [('Outputs.aseg', 'Inputs.labelmap')]),
+                          (recode, outputspec, [('Outputs.recodedlabelmap', 'recoded_labelmap')])])
+        
+
     return reconall
 

@@ -44,6 +44,12 @@ Optional inputs:
                           to recon-all, where <numthreads> is the number of threads 
                           you would like to run.
 
+--recoding <file>         Recodes the aseg atlas according to the original and target labels
+                          specified by the csv file given. Original labels should be listed
+                          first followed by the target labels. There must be a csv header.
+                          The csv may either have 2 columns (just integer label values) or
+                          4 columns (including label strings).
+
 Author:
 David Ellis
 University of Iowa
@@ -73,7 +79,8 @@ def procargs(argv):
                'openmp' : None,
                'plugin_args' : None,
                'field_strength' : '1.5T',
-               'custom_atlas' : None}
+               'custom_atlas' : None,
+               'recoding_file' : None}
 
     try:
         opts, args = getopt.getopt(argv, "hi:q:s:", ["help",
@@ -88,7 +95,8 @@ def procargs(argv):
                                                      "cw256",
                                                      "longbase=",
                                                      "tp=",
-                                                     "openmp="])
+                                                     "openmp=",
+                                                     "recoding="])
     except getopt.GetoptError:
         print "Error occured when parsing arguments"
         help()
@@ -139,6 +147,14 @@ def procargs(argv):
             except ValueError:
                 print "ERROR: --openmp flag accepts only integers"
                 sys.exit(2)
+        elif opt in ('--recoding'):
+            recoding_file = os.path.abspath(arg)
+            if os.path.isfile(recoding_file) and '.csv' in recoding_file:
+                config['recoding_file'] = recoding_file
+            else:
+                print("ERROR: the file must be an existing csv file")
+                sys.exit(2)
+                
 
     if config['subject_id'] == None:
         print "ERROR: Must set subject_id using -s flag"

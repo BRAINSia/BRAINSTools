@@ -497,12 +497,12 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config, interpMode,useRegistrationMask)
         baw201.connect([(makePreprocessingOutList, myLocalTCWF, [('T1s', 'inputspec.T1List')]),
                         (makePreprocessingOutList, myLocalTCWF, [('T2s', 'inputspec.T2List')]),
+                        (makePreprocessingOutList, myLocalTCWF, [('PDs', 'inputspec.PDList')]),
+                        (makePreprocessingOutList, myLocalTCWF, [('FLs', 'inputspec.FLList')]),
+                        (makePreprocessingOutList, myLocalTCWF, [('OTHERs', 'inputspec.OtherList')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('template_t1_denoised_gaussian', 'inputspec.atlasVolume'),
-                                                   (('T1s', getAllT1sLength), 'inputspec.T1_count'),
-                                                   ('PDs', 'inputspec.PDList'),
-                                                   ('FLs', 'inputspec.FLList'),
-                                                   ('OTHERs', 'inputspec.OtherList')
+                                                   (('T1s', getAllT1sLength), 'inputspec.T1_count')
                         ]),
                         (myLocalLMIWF, myLocalTCWF, [('outputspec.outputResampledCroppedVolume', 'inputspec.PrimaryT1'),
                                                      ('outputspec.atlasToSubjectTransform',

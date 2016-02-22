@@ -97,8 +97,6 @@ void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> &
     }
 }
 
-#include "BRAINSComputeLabels.h"
-
 template <class TInputImage>
 std::vector<typename TInputImage::Pointer>
 DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)

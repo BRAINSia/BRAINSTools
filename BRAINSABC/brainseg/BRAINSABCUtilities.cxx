@@ -29,14 +29,6 @@ template std::vector<FloatImageType::Pointer> DuplicateImageList<FloatImageType>
 template std::vector<ShortImageType::Pointer> DuplicateImageList<ShortImageType>(
   const std::vector<ShortImageType::Pointer> & );
 
-template void ComputeLabels<FloatImageType,
-                            ByteImageType,
-                            double>( std::vector<FloatImageType::Pointer> &, std::vector<bool> &,
-                                     const vnl_vector<unsigned int> &, ByteImageType::Pointer &,
-                                     ByteImageType::Pointer &,
-                                     ByteImageType::Pointer &,
-                                     FloatingPrecision, const size_t );
-
 template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageType::Pointer> & );
 
 template void ZeroNegativeValuesInPlace<FloatImageType>(  std::vector<FloatImageType::Pointer> & );

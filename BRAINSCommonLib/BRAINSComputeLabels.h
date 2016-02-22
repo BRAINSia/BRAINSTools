@@ -79,17 +79,9 @@ void ComputeLabels(
       }
     DirtyLabels->FillBuffer(0);
     foregroundMask->FillBuffer(0);
-#if defined(LOCAL_USE_OPEN_MP) && (_OPENMP < 200805)
-    typedef int LocalLOOPITERTYPE;
-#else
     typedef unsigned int LocalLOOPITERTYPE;
-#endif
-
     const typename TByteImage::SizeType size = DirtyLabels->GetLargestPossibleRegion().GetSize();
       {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for
-#endif
       for( LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; kk++ )
         {
         for( LocalLOOPITERTYPE jj = 0; jj < (LocalLOOPITERTYPE)size[1]; jj++ )

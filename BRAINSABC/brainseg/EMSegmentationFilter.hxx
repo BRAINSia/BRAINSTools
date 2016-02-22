@@ -53,6 +53,7 @@
 #include "vnl/algo/vnl_determinant.h"
 #include "vnl/vnl_math.h"
 
+#include "BRAINSComputeLabels.h"
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSFitUtils.h"
 #ifdef USE_ANTS

@@ -816,6 +816,6 @@ def create_AutoRecon3(config):
     #TODO: Add outputs to outputspec
     outputspec = pe.Node(IdentityInterface(fields=['aseg']),
                          name="Outputs")
-    ar3_wf.conncet(apas_2_aseg, outputspec, [('out_file', 'aseg')])])
+    ar3_wf.connect([(apas_2_aseg, outputspec, [('out_file', 'aseg')])])
 
     return ar3_wf

@@ -1,7 +1,7 @@
 import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.io import DataGrabber, FreeSurferSource
-from nipype.interfaces.utility import Merge
+from nipype.interfaces.utility import Merge, IdentityInterface
 from autorecon1 import mkdir_p, create_AutoRecon1
 from autorecon2 import create_AutoRecon2
 from autorecon3 import create_AutoRecon3

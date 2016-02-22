@@ -1609,23 +1609,20 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugHeadRegion(const unsigned int CurrentEMIteration) const
 {
-  if( this->m_DebugLevel > 7 )
-    {
-    std::stringstream CurrentEMIteration_stream("");
-    CurrentEMIteration_stream << CurrentEMIteration;
-    { // DEBUG:  This code is for debugging purposes only;
-    typedef itk::ImageFileWriter<ByteImageType> WriterType;
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->UseCompressionOn();
+  std::stringstream CurrentEMIteration_stream("");
+  CurrentEMIteration_stream << CurrentEMIteration;
+  { // DEBUG:  This code is for debugging purposes only;
+  typedef itk::ImageFileWriter<ByteImageType> WriterType;
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->UseCompressionOn();
 
-    const std::string fn = this->m_OutputDebugDir + "/HEAD_REGION_LEVEL_" + CurrentEMIteration_stream.str()
-      + ".nii.gz";
-    writer->SetInput( this->m_NonAirRegion );
-    writer->SetFileName(fn.c_str() );
-    writer->Update();
-    muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
-    }
-    }
+  const std::string fn = this->m_OutputDebugDir + "/HEAD_REGION_LEVEL_" + CurrentEMIteration_stream.str()
+    + ".nii.gz";
+  writer->SetInput( this->m_NonAirRegion );
+  writer->SetFileName(fn.c_str() );
+  writer->Update();
+  muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
+  }
 }
 
 template <class TInputImage, class TProbabilityImage>

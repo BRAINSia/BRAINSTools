@@ -14,19 +14,23 @@ LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage,
 
   for( size_t iclass = 0; iclass < PriorLabelCodeVector.size(); ++iclass )
      {
-     size_t labelValue = static_cast<size_t>( PriorLabelCodeVector[iclass] );
+     const size_t labelValue = static_cast<size_t>( PriorLabelCodeVector[iclass] );
      if( labelStatisticsImageFilter->HasLabel(labelValue) )
        {
        const size_t currentLabelCount = labelStatisticsImageFilter->GetCount( labelValue );
-       std::cout << "label: " << (size_t)labelValue << " count: " << labelStatisticsImageFilter->GetCount( labelValue ) << std::endl;
+       //std::cout << "label: " << (size_t)labelValue << " count: " << currentLabelCount << std::endl;
        labelCountMap[labelValue] = currentLabelCount;
        }
       else
        {
-       std::cout << "label: " << (size_t)labelValue << " count: 0" << std::endl;
+       //std::cout << "label: " << (size_t)labelValue << " count: 0" << std::endl;
        labelCountMap[labelValue] = 0;
        }
      }
-
+  for( LabelCountMapType::const_iterator it=labelCountMap.begin();
+       it != labelCountMap.end(); ++it)
+     {
+       std::cout << "label: " << (size_t)it->first << " count: " << it->second << std::endl;
+     }
   return labelCountMap;
 }

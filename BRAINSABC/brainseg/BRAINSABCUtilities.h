@@ -69,7 +69,15 @@ typedef unsigned int LOOPITERTYPE;
 class firstInOrderingOfStrings
 {
 public:
-  firstInOrderingOfStrings() { }
+  firstInOrderingOfStrings() {
+  //HACK: This is hard coding that should not be here.
+  //      A better insertion ordered map is needed.
+  this->m_firstInOrdering.push_back("T1");
+  this->m_firstInOrdering.push_back("T2");
+  this->m_firstInOrdering.push_back("PD");
+  this->m_firstInOrdering.push_back("FLAIR");
+  this->m_firstInOrdering.push_back("OTHER");
+  }
   bool operator() (const std::string& lhs, const std::string& rhs) const
   {
   add_keys_internally(lhs); //For new items, add lhs first

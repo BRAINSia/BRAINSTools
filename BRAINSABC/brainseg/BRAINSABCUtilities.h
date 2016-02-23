@@ -37,6 +37,7 @@
 #include <vector>
 #include <map>
 #include <csignal>
+#include <algorithm>
 
 typedef unsigned int LOOPITERTYPE;
 
@@ -71,6 +72,8 @@ public:
   firstInOrderingOfStrings() { }
   bool operator() (const std::string& lhs, const std::string& rhs) const
   {
+  add_keys_internally(lhs); //For new items, add lhs first
+  add_keys_internally(rhs); //Also need to add rhs if it is not in list yet
   for(auto &elem : m_firstInOrdering)
     {
     if(elem == lhs && (lhs != rhs ))
@@ -82,20 +85,24 @@ public:
       return false;
       }
     }
-  /* New elements go at the end */
-  if( lhs == rhs )
-    {
-    this->m_firstInOrdering.push_back(lhs);
+    throw std::invalid_argument( "Values need to be added before comparisions" );
     return false;
-    }
-  else
-    {
-    this->m_firstInOrdering.push_back(rhs);
-    this->m_firstInOrdering.push_back(lhs);
-    return false;
-    }
   }
 private:
+  /*
+   *  Need to ensure that items are in list before comparisons.
+   */
+  void add_keys_internally(const std::string & testValue) const
+  {
+      const bool found = (
+              std::find(m_firstInOrdering.begin(), m_firstInOrdering.end(),
+                  testValue) != m_firstInOrdering.end()
+              );
+      if ( ! found )
+      {
+          this->m_firstInOrdering.push_back(testValue);
+      }
+  }
   /* This needs to be mutable. The function signature needs to be
    * const, but this internal list needs to be mutable for the case
    * of new elements being added*/

@@ -288,6 +288,7 @@ class FusionLabelWorkflow(Workflow):
         #intensityImages = Node(interface=Merge(2), name='intensityImages')
 
         jointFusion = Node(interface=JointFusion(), name='jointFusion')
+        jointFusion.inputs.num_threads = -1
         jointFusion.inputs.dimension = 3
         jointFusion.inputs.modalities = 1  #TODO: verify 2 for T1/T2
         jointFusion.inputs.method =  "Joint[0.1,2]" # this does not work

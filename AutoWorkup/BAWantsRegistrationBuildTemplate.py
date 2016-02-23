@@ -15,6 +15,8 @@ from builtins import range
 #################################################################################
 
 from utilities.distributed import modify_qsub_args
+from utilities.misc import CommonANTsRegistrationSettings
+
 
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
@@ -236,34 +238,15 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix,CLUST
 
     ### NOTE MAP NODE! warp each of the original images to the provided fixed_image as the template
     BeginANTS = pe.MapNode(interface=Registration(), name='BeginANTS', iterfield=['moving_image'])
+    # SEE template.py many_cpu_BeginANTS_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
     ## This is set in the template.py file BeginANTS.plugin_args = BeginANTS_cpu_sge_options_dictionary
-    BeginANTS.inputs.dimension = 3
-    """ This is the recommended set of parameters from the ANTS developers """
-    BeginANTS.inputs.output_transform_prefix = str(iterationPhasePrefix) + '_tfm'
-    BeginANTS.inputs.transforms = ["Rigid","Affine","SyN","SyN","SyN"]
-    BeginANTS.inputs.transform_parameters = [[0.1],[0.1],[0.1,3.0,0.0],[0.1,3.0,0.0],[0.1,3.0,0.0]]
-    BeginANTS.inputs.metric = ['MI','MI','CC','CC','CC']
-    BeginANTS.inputs.sampling_strategy = ['Regular','Regular',None,None,None]
-    BeginANTS.inputs.sampling_percentage = [0.27,0.27,1.0,1.0,1.0]
-    BeginANTS.inputs.metric_weight = [1.0,1.0,1.0,1.0,1.0]
-    BeginANTS.inputs.radius_or_number_of_bins = [32,32,4,4,4]
-    BeginANTS.inputs.number_of_iterations = [[1000,1000,1000,1000],[1000,1000,1000,1000],[1000,250],[140],[25]]
-    BeginANTS.inputs.convergence_threshold = [5e-8,5e-8,5e-7,5e-6,5e-5]
-    BeginANTS.inputs.convergence_window_size = [10,10,10,10,10]
-    BeginANTS.inputs.use_histogram_matching = [True,True,True,True,True]
-    BeginANTS.inputs.shrink_factors =   [[8,4,2,1],[8,4,2,1],[8,4],[2],[1]]
-    BeginANTS.inputs.smoothing_sigmas = [[3,2,1,0],[3,2,1,0],[3,2],[1],[0]]
-    BeginANTS.inputs.sigma_units = ["vox","vox","vox","vox","vox"]
-    BeginANTS.inputs.use_estimate_learning_rate_once = [False,False,False,False,False]
-    BeginANTS.inputs.write_composite_transform = True
-    BeginANTS.inputs.collapse_output_transforms = False
-    BeginANTS.inputs.initialize_transforms_per_stage = True
-    BeginANTS.inputs.winsorize_lower_quantile = 0.01
-    BeginANTS.inputs.winsorize_upper_quantile = 0.99
-    BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
-    BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-    BeginANTS.inputs.save_state = 'SavedBeginANTSSyNState.h5'
-    BeginANTS.inputs.float = True
+    CommonANTsRegistrationSettings(
+            antsRegistrationNode=BeginANTS,
+            registrationTypeDescription="5StagesSingleModal",
+            output_transform_prefix=str(iterationPhasePrefix) + '_tfm',
+            output_warped_image='atlas2subject.nii.gz',
+            output_inverse_warped_image='subject2atlas.nii.gz',
+            save_state='SavedantsRegistrationNodeSyNState.h5')
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,
                                                           input_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping'],

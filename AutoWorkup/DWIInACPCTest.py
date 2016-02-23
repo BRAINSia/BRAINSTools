@@ -65,6 +65,8 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.semtools import *
 
+from utilities.misc import CommonANTsRegistrationSettings
+
 
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
     '''This is a wrapper script for running commands on an SGE cluster

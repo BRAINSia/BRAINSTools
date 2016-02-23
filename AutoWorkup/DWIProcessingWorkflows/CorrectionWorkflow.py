@@ -13,6 +13,8 @@ import nipype.interfaces.io as nio   # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
 
+from utilities.misc import CommonANTsRegistrationSettings
+
 def CreateCorrectionWorkflow(WFname):
 
     ###### UTILITY FUNCTIONS #######
@@ -224,6 +226,7 @@ def CreateCorrectionWorkflow(WFname):
     antsReg_B0ToTransformedT2.inputs.winsorize_lower_quantile = 0.01
     antsReg_B0ToTransformedT2.inputs.winsorize_upper_quantile = 0.99
     antsReg_B0ToTransformedT2.inputs.float = True
+    antsReg_B0ToTransformedT2.inputs.num_threads = -1
     antsReg_B0ToTransformedT2.inputs.args = '--restrict-deformation 0x1x0'
     CorrectionWF.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), antsReg_B0ToTransformedT2, 'fixed_image')
     CorrectionWF.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 2), antsReg_B0ToTransformedT2, 'fixed_image_mask')

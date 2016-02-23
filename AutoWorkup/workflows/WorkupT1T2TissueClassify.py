@@ -97,36 +97,16 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     many_cpu_ANTsRigid_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
     A2SantsRegistrationPreABCRigid.plugin_args = many_cpu_ANTsRigid_options_dictionary
 
-    A2SantsRegistrationPreABCRigid.inputs.interpolation = "Linear"
-    A2SantsRegistrationPreABCRigid.inputs.num_threads   = -1
-    A2SantsRegistrationPreABCRigid.inputs.dimension = 3
-    A2SantsRegistrationPreABCRigid.inputs.transforms = ["Affine",]
-    A2SantsRegistrationPreABCRigid.inputs.transform_parameters = [[0.1]]
-    A2SantsRegistrationPreABCRigid.inputs.metric = ['MI']
-    A2SantsRegistrationPreABCRigid.inputs.sampling_strategy = ['Regular']
-    A2SantsRegistrationPreABCRigid.inputs.sampling_percentage = [0.5]
-    A2SantsRegistrationPreABCRigid.inputs.metric_weight = [1.0]
-    A2SantsRegistrationPreABCRigid.inputs.radius_or_number_of_bins = [32]
-    A2SantsRegistrationPreABCRigid.inputs.number_of_iterations = [[1000,1000, 500, 100]]
+    CommonANTsRegistrationSettings(
+                      antsRegistrationNode=A2SantsRegistrationPreABCRigid,
+                      registrationTypeDescription='AtlasToSubjectANTsPreABC_Rigid',
+                      output_transform_prefix='AtlasToSubjectPreBABC_Rigid',
+                      output_warped_image='atlas2subjectRigid.nii.gz',
+                      output_inverse_warped_image = 'subject2atlasRigid.nii.gz',
+                      save_state=None,
+                      invert_initial_moving_transform = False
+                      )
 
-    A2SantsRegistrationPreABCRigid.inputs.convergence_threshold = [1e-8]
-
-    A2SantsRegistrationPreABCRigid.inputs.convergence_window_size = [10]
-    A2SantsRegistrationPreABCRigid.inputs.use_histogram_matching = [True]
-    A2SantsRegistrationPreABCRigid.inputs.shrink_factors = [[8, 4, 2, 1]]
-    A2SantsRegistrationPreABCRigid.inputs.smoothing_sigmas = [[3, 2, 1, 0]]
-    A2SantsRegistrationPreABCRigid.inputs.sigma_units = ["vox"]
-    A2SantsRegistrationPreABCRigid.inputs.use_estimate_learning_rate_once = [False]
-    A2SantsRegistrationPreABCRigid.inputs.write_composite_transform = True  # Required for initialize_transforms_per_stage
-    A2SantsRegistrationPreABCRigid.inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
-    A2SantsRegistrationPreABCRigid.inputs.initialize_transforms_per_stage = True
-    A2SantsRegistrationPreABCRigid.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_Rigid'
-    A2SantsRegistrationPreABCRigid.inputs.winsorize_lower_quantile = 0.01
-    A2SantsRegistrationPreABCRigid.inputs.winsorize_upper_quantile = 0.99
-    A2SantsRegistrationPreABCRigid.inputs.output_warped_image = 'atlas2subjectRigid.nii.gz'
-    A2SantsRegistrationPreABCRigid.inputs.output_inverse_warped_image = 'subject2atlasRigid.nii.gz'
-    A2SantsRegistrationPreABCRigid.inputs.float = True
-    A2SantsRegistrationPreABCRigid.inputs.invert_initial_moving_transform = False
 
     tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform',A2SantsRegistrationPreABCRigid,'initial_moving_transform')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',A2SantsRegistrationPreABCRigid,'fixed_image')
@@ -138,38 +118,15 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     A2SantsRegistrationPreABCSyN = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
     many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
     A2SantsRegistrationPreABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
-
-    A2SantsRegistrationPreABCSyN.inputs.interpolation = "Linear"
-    A2SantsRegistrationPreABCSyN.inputs.num_threads   = -1
-    A2SantsRegistrationPreABCSyN.inputs.dimension = 3
-    A2SantsRegistrationPreABCSyN.inputs.transforms = ["SyN","SyN"]
-    A2SantsRegistrationPreABCSyN.inputs.transform_parameters = [[0.1, 3, 0],[0.1, 3, 0]]
-    A2SantsRegistrationPreABCSyN.inputs.metric = ['CC','CC']
-    A2SantsRegistrationPreABCSyN.inputs.sampling_strategy = [None,None]
-    A2SantsRegistrationPreABCSyN.inputs.sampling_percentage = [1.0,1.0]
-    A2SantsRegistrationPreABCSyN.inputs.metric_weight = [1.0,1.0]
-    A2SantsRegistrationPreABCSyN.inputs.radius_or_number_of_bins = [4,4]
-    A2SantsRegistrationPreABCSyN.inputs.number_of_iterations = [[500, 500], [500, 70]]
-
-    A2SantsRegistrationPreABCSyN.inputs.convergence_threshold = [1e-8,1e-6]
-
-    A2SantsRegistrationPreABCSyN.inputs.convergence_window_size = [12]
-    A2SantsRegistrationPreABCSyN.inputs.use_histogram_matching = [True,True]
-    A2SantsRegistrationPreABCSyN.inputs.shrink_factors = [[8, 4], [2, 1]]
-    A2SantsRegistrationPreABCSyN.inputs.smoothing_sigmas = [[3, 2], [1, 0]]
-    A2SantsRegistrationPreABCSyN.inputs.sigma_units = ["vox","vox"]
-    A2SantsRegistrationPreABCSyN.inputs.use_estimate_learning_rate_once = [False,False]
-    A2SantsRegistrationPreABCSyN.inputs.write_composite_transform = True # Required for initialize_transforms_per_stage
-    A2SantsRegistrationPreABCSyN.inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
-    A2SantsRegistrationPreABCSyN.inputs.initialize_transforms_per_stage = True
-    A2SantsRegistrationPreABCSyN.inputs.save_state = 'SavedInternalSyNState.h5'
-    A2SantsRegistrationPreABCSyN.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_SyN'
-    A2SantsRegistrationPreABCSyN.inputs.winsorize_lower_quantile = 0.01
-    A2SantsRegistrationPreABCSyN.inputs.winsorize_upper_quantile = 0.99
-    A2SantsRegistrationPreABCSyN.inputs.output_warped_image = 'atlas2subject.nii.gz'
-    A2SantsRegistrationPreABCSyN.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-    A2SantsRegistrationPreABCSyN.inputs.float = True
-    A2SantsRegistrationPreABCSyN.inputs.invert_initial_moving_transform = False
+    CommonANTsRegistrationSettings(
+                      antsRegistrationNode=A2SantsRegistrationPreABCSyN,
+                      registrationTypeDescription='AtlasToSubjectANTsPreABC_SyN',
+                      output_transform_prefix='AtlasToSubjectPreBABC_SyN',
+                      output_warped_image='atlas2subject.nii.gz',
+                      output_inverse_warped_image = 'subject2atlas.nii.gz',
+                      save_state='SavedInternalSyNState.h5',
+                      invert_initial_moving_transform = False
+                      )
 
     ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
     if UseRegistrationMasking == True:

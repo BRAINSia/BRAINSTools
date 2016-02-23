@@ -16,6 +16,9 @@ from utilities.misc import *
 from utilities.distributed import modify_qsub_args
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
 from .WorkupAtlasDustCleanup import CreateDustCleanupWorkflow
+
+from utilities.misc import CommonANTsRegistrationSettings
+
 # HACK Remove due to bugs from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
 """
@@ -187,47 +190,18 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject] = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
         many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,4,2,16), 'overwrite': True}
         A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].plugin_args = many_cpu_ANTsSyN_options_dictionary
-
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.interpolation = "Linear"
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.num_threads   = -1
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.dimension = 3
-        #### DEBUGGIN
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.transforms = ["Affine","Affine","SyN","SyN"]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.transform_parameters = [[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0]]
         if onlyT1:
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.metric = ['MI','MI','CC','CC']
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.metric_weight = [1.0,1.0,1.0,1.0]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.sampling_percentage = [.5,.5,1.0,1.0]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.radius_or_number_of_bins = [32,32,4,4]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.sampling_strategy = ['Regular','Regular',None,None]
+            JFregistrationTypeDescription="JointFusionT1Only"
         else:
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.metric = ['MI',['MI','MI'],'CC',['CC','CC']]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.metric_weight = [1.0,[1.0,1.0],1.0,[1.0,1.0]]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.sampling_percentage = [.5,[.5,0.5],1.0,[1.0,1.0]]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.radius_or_number_of_bins = [32,[32,32],4,[4,4]]
-            A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.sampling_strategy = ['Regular',['Regular','Regular'],None,[None,None]]
+            JFregistrationTypeDescription="JointFusionMultiModal"
+        CommonANTsRegistrationSettings(
+                      antsRegistrationNode=A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],
+                      registrationTypeDescription=JFregistrationTypeDescription,
+                      output_transform_prefix=jointFusion_atlas_subject+'_ToSubjectPreJointFusion_SyN',
+                      output_warped_image=jointFusion_atlas_subject + '_2subject.nii.gz',
+                      output_inverse_warped_image=None, #NO NEED FOR THIS
+                      save_state=None)                  #NO NEED FOR THIS
 
-
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.number_of_iterations = [[1000,1000,500],[500,500],[500,500],[500,70]]
-
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.convergence_threshold = [1e-8,1e-6,1e-8,1e-6]
-
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.convergence_window_size = [12]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.use_histogram_matching = [True,True,True,True]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.shrink_factors = [[8, 4, 2],[2, 1],[8, 4],[2, 1]]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.smoothing_sigmas = [[3, 2, 1],[1, 0],[3, 2],[1, 0]]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.sigma_units = ["vox","vox","vox","vox"]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.use_estimate_learning_rate_once = [False,False,False,False]
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.write_composite_transform = True # Required for initialize_transforms_per_stage
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.initialize_transforms_per_stage = True
-        ## NO NEED FOR THIS A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.save_state = 'SavedInternalSyNState.h5'
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.output_transform_prefix = jointFusion_atlas_subject+'_ToSubjectPreJointFusion_SyN'
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.winsorize_lower_quantile = 0.01
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.winsorize_upper_quantile = 0.99
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.output_warped_image = jointFusion_atlas_subject + '_2subject.nii.gz'
-        ## NO NEED FOR THIS A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].inputs.float = True
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         UseRegistrationMasking = True
@@ -276,6 +250,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
             t2Resample[jointFusion_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="resampledT2"+jointFusion_atlas_subject)
             many_cpu_t2Resample_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,1,1,1), 'overwrite': True}
             t2Resample[jointFusion_atlas_subject].plugin_args = many_cpu_t2Resample_options_dictionary
+            t2Resample[jointFusion_atlas_subject].inputs.num_threads=-1
             t2Resample[jointFusion_atlas_subject].inputs.dimension=3
             t2Resample[jointFusion_atlas_subject].inputs.output_image=jointFusion_atlas_subject+'_t2.nii.gz'
             t2Resample[jointFusion_atlas_subject].inputs.interpolation='BSpline'
@@ -297,6 +272,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         labelMapResample[jointFusion_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="resampledLabel"+jointFusion_atlas_subject)
         many_cpu_labelMapResample_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,1,1,1), 'overwrite': True}
         labelMapResample[jointFusion_atlas_subject].plugin_args = many_cpu_labelMapResample_options_dictionary
+        labelMapResample[jointFusion_atlas_subject].inputs.num_threads=-1
         labelMapResample[jointFusion_atlas_subject].inputs.dimension=3
         labelMapResample[jointFusion_atlas_subject].inputs.output_image=jointFusion_atlas_subject+'_2_subj_lbl.nii.gz'
         labelMapResample[jointFusion_atlas_subject].inputs.interpolation='MultiLabel'
@@ -317,6 +293,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         NewlabelMapResample[jointFusion_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="FSWM_WLABEL_"+jointFusion_atlas_subject)
         many_cpu_NewlabelMapResample_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,1,1,1), 'overwrite': True}
         NewlabelMapResample[jointFusion_atlas_subject].plugin_args = many_cpu_NewlabelMapResample_options_dictionary
+        NewlabelMapResample[jointFusion_atlas_subject].inputs.num_threads=-1
         NewlabelMapResample[jointFusion_atlas_subject].inputs.dimension=3
         NewlabelMapResample[jointFusion_atlas_subject].inputs.output_image=jointFusion_atlas_subject+'fswm_2_subj_lbl.nii.gz'
         NewlabelMapResample[jointFusion_atlas_subject].inputs.interpolation='MultiLabel'
@@ -344,6 +321,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     jointFusion = pe.Node(interface=ants.AntsJointFusion(),name="AntsJointFusion")
     many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
     jointFusion.plugin_args = many_cpu_JointFusion_options_dictionary
+    jointFusion.inputs.num_threads = -1
     jointFusion.inputs.dimension=3
     jointFusion.inputs.search_radius=[3]
     #jointFusion.inputs.method='Joint[0.1,2]'

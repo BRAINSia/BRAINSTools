@@ -319,6 +319,7 @@ BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
 BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 BeginANTS.inputs.save_state = 'SavedBeginANTSSyNState.h5'
 BeginANTS.inputs.float = True
+BeginANTS.inputs.num_threads = -1 # Tell nipype to respect qsub envirionmental variable NSLOTS
 BeginANTS.inputs.args = "--verbose"
 BeginANTS.inputs.invert_initial_moving_transform = False
 
@@ -373,6 +374,7 @@ BeginANTS2.inputs.output_warped_image = 'atlas2subjectMultiModal.nii.gz'
 BeginANTS2.inputs.output_inverse_warped_image = 'subject2atlasMultiModal.nii.gz'
 BeginANTS2.inputs.save_state = 'SavedBeginANTSSyNState.h5'
 BeginANTS2.inputs.float = True
+BeginANTS2.inputs.num_threads = -1 # Tell nipype to respect qsub envirionmental variable NSLOTS
 BeginANTS2.inputs.args = "--verbose"
 
 minipigWF.connect(SubjectMakeVector, 'outFNs', BeginANTS2, "fixed_image")

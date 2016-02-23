@@ -325,6 +325,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         myInitAvgWF = pe.Node(interface=ants.AverageImages(), name='Atlas_antsSimpleAverage')  # was 'Phase1_antsSimpleAverage'
         myInitAvgWF.inputs.dimension = 3
         myInitAvgWF.inputs.normalize = True
+        myInitAvgWF.inputs.num_threads = -1
         template.connect(baselineRequiredDG, 't1_average', myInitAvgWF, "images")
         ####################################################################################################
         # TEMPLATE_BUILD_RUN_MODE = 'MULTI_IMAGE'
@@ -352,7 +353,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             for bt in [buildTemplateIteration1, buildTemplateIteration2]:
                 BeginANTS = bt.get_node("BeginANTS")
                 BeginANTS.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
-                                         'qsub_args': modify_qsub_args(cluster['queue'], 6, 4, 16)}
+                                         'qsub_args': modify_qsub_args(cluster['queue'], 7, 4, 16)}
                 wimtdeformed = bt.get_node("wimtdeformed")
                 wimtdeformed.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
                                             'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 2)}

@@ -258,6 +258,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     antsReg_B0ToTransformedT2.inputs.winsorize_lower_quantile = 0.01
     antsReg_B0ToTransformedT2.inputs.winsorize_upper_quantile = 0.99
     antsReg_B0ToTransformedT2.inputs.float = True
+    antsReg_B0ToTransformedT2.inputs.num_threads = -1
     antsReg_B0ToTransformedT2.inputs.args = '--restrict-deformation 0x1x0'
 
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), antsReg_B0ToTransformedT2, 'fixed_image')

@@ -10,6 +10,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 import os
 
 from nipype.interfaces.semtools import *
+from utilities.misc import CommonANTsRegistrationSettings
 
 """
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
@@ -57,29 +58,14 @@ def CreateANTSRegistrationWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Nu
     ComputeAtlasToSubjectTransform = pe.Node(interface=antsRegistration(), name="antsA2S")
     many_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,8,16), 'overwrite': True}
     ComputeAtlasToSubjectTransform.plugin_args = many_cpu_sge_options_dictionary
+    CommonANTsRegistrationSettings(
+            antsRegistrationNode=ComputeAtlasToSubjectTransform,
+            registrationTypeDescription="FromWorkupT1T2ANTS.py",
+            output_transform_prefix='antsRegPrefix_',
+            output_warped_image='moving_to_fixed.nii.gz',
+            output_inverse_warped_image='fixed_to_moving.nii.gz',
+            save_state = None)
 
-    ComputeAtlasToSubjectTransform.inputs.dimension = 3
-    ComputeAtlasToSubjectTransform.inputs.metric = 'CC'  # This is a family of interfaces, CC,MeanSquares,Demons,GC,MI,Mattes
-    ComputeAtlasToSubjectTransform.inputs.transform = 'SyN[0.25,3.0,0.0]'
-    ComputeAtlasToSubjectTransform.inputs.number_of_iterations = [250, 100, 20]
-    ComputeAtlasToSubjectTransform.inputs.convergence_threshold = 1e-7
-    ComputeAtlasToSubjectTransform.inputs.smoothing_sigmas = [0, 0, 0]
-    ComputeAtlasToSubjectTransform.inputs.sigma_units = ["vox"]
-    ComputeAtlasToSubjectTransform.inputs.shrink_factors = [3, 2, 1]
-    ComputeAtlasToSubjectTransform.inputs.use_estimate_learning_rate_once = True
-    ComputeAtlasToSubjectTransform.inputs.use_histogram_matching = True
-    ComputeAtlasToSubjectTransform.inputs.invert_initial_moving_transform = False
-    ComputeAtlasToSubjectTransform.inputs.output_transform_prefix = 'antsRegPrefix_'
-    ComputeAtlasToSubjectTransform.inputs.output_warped_image = 'moving_to_fixed.nii.gz'
-    ComputeAtlasToSubjectTransform.inputs.output_inverse_warped_image = 'fixed_to_moving.nii.gz'
-    ComputeAtlasToSubjectTransform.inputs.float = True
-    # ComputeAtlasToSubjectTransform.inputs.num_threads=-1
-    # if os.environ.has_key('NSLOTS'):
-    #    ComputeAtlasToSubjectTransform.inputs.num_threads=int(os.environ.has_key('NSLOTS'))
-    # else:
-    #    ComputeAtlasToSubjectTransform.inputs.num_threads=NumberOfThreads
-    # ComputeAtlasToSubjectTransform.inputs.fixedMask=SUBJ_A_small_T2_mask.nii.gz
-    # ComputeAtlasToSubjectTransform.inputs.movingMask=SUBJ_B_small_T2_mask.nii.gz
 
     ANTSWF.connect(inputsSpec, 'fixedVolumesList', ComputeAtlasToSubjectTransform, "fixed_image")
     ANTSWF.connect(inputsSpec, 'movingVolumesList', ComputeAtlasToSubjectTransform, "moving_image")

@@ -40,8 +40,6 @@
 #include "itksys/SystemTools.hxx"
 #include "PrettyPrintTable.h"
 #include "DenoiseFiltering.h"
-#include "itkBRAINSROIAutoImageFilter.h"
-
 
 #include "mu.h"
 #include "EMSParameters.h"

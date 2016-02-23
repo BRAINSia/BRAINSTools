@@ -1597,6 +1597,7 @@ ComputeTissueRegion(const typename TInputImage::Pointer referenceImage, const un
   typedef itk::BRAINSROIAutoImageFilter<TInputImage, TByteImage> ROIAutoType;
   typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
   ROIFilter->SetInput(referenceImage);
+  ROIFilter->SetClosingSize(15);
   ROIFilter->SetDilateSize(safetyRegion); // Create a very tight fitting tissue
                                           // region here.
   ROIFilter->Update();
@@ -2223,6 +2224,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*atIt));
+        ROIFilter->SetClosingSize(15);
         ROIFilter->SetDilateSize(10);
         ROIFilter->Update();
         atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
@@ -2230,6 +2232,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
         ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*imIt));
+        ROIFilter->SetClosingSize(15);
         ROIFilter->SetDilateSize(10);
         ROIFilter->Update();
         atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );

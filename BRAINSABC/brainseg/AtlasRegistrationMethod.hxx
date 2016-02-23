@@ -199,14 +199,16 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         intraSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeySubjectImage() );
         // TODO: Find way to turn on histogram equalization for same mode images
         const int dilateSize = 15;
+        const int closingSize = 15;
         intraSubjectRegistrationHelper->SetMovingVolume((*intraImIt).GetPointer());
         muLogMacro( << "Generating MovingImage Mask (Intrasubject  " << i << ")" <<  std::endl );
         typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*intraImIt));
+        ROIFilter->SetClosingSize(closingSize);
         ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
-        // region outside of head during initial
-        // runnings
+                                              // region outside of head during initial
+                                              // runnings
         ROIFilter->Update();
         ByteImageType::Pointer movingMaskImage = ROIFilter->GetOutput();
         intraSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
@@ -233,9 +235,10 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
           ROIFilter = LocalROIAutoType::New();
           ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
+          ROIFilter->SetClosingSize(closingSize);
           ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
-          // region outside of head during
-          // initial runnings
+                                                // region outside of head during
+                                                // initial runnings
           ROIFilter->Update();
           m_InputImageTissueRegion = ROIFilter->GetOutput();
           m_InputSpatialObjectTissueRegion = ROIFilter->GetSpatialObjectROI();
@@ -509,9 +512,11 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         }
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
     const int dilateSize = 10;
+    const int closingSize = 15;
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
     typename LocalROIAutoType::Pointer  ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetFirstAtlasOriginalImage());
+    ROIFilter->SetClosingSize(closingSize);
     ROIFilter->SetDilateSize(dilateSize);
     ROIFilter->Update();
     atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
@@ -536,6 +541,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
     ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
+    ROIFilter->SetClosingSize(closingSize);
     ROIFilter->SetDilateSize(dilateSize);
     ROIFilter->Update();
     atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );

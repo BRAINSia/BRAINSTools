@@ -91,6 +91,23 @@ def copy_files(in_files, out_files):
         shutil.copy(in_file, out_file)
     return out_files
 
+
+def create_orig_dir(in_orig, in_tal):
+    """This function creates a temporary directory that includes the talairach.
+    This way the talairach can be added to the header of the orig image."""
+    import os
+    import shutil
+
+    out_orig = os.path.abspath(os.path.basename(in_orig))
+    shutil.copy(in_orig, out_orig)
+    
+    tal_base = os.path.basename(in_tal)
+    out_tal = os.path.abspath(os.path.join('transforms', tal_base))
+    shutil.copy(in_tal, out_tal)
+
+    return out_orig, out_tal
+
+
 def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
     # Create output filenames
     inputvols = list()
@@ -113,56 +130,52 @@ def create_AutoRecon1(config):
     ar1_wf = pe.Workflow(name='AutoRecon1')
 
     if not config['longitudinal']:
+        # single session processing
         inputSpec = pe.Node(interface=IdentityInterface(
-            fields=['Raw_T1s', 'Raw_T2', 'Raw_FLAIR', 'subject_id', 'subjects_dir']),
+            fields=['in_t1s', 'in_t2', 'in_flair', 'subject_id', 'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon1_Inputs')
         inputSpec.inputs.subject_id = config['current_id']
         inputSpec.inputs.subjects_dir = config['subjects_dir']
-        inputSpec.inputs.Raw_T1s = VerifyInputs(config['in_T1s'])
+        inputSpec.inputs.in_t1s = VerifyInputs(config['in_T1s'])
 
         inputvols, iscaleout, ltaout = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
 
         # T1 image preparation
         # For all T1's mri_convert ${InputVol} ${out_file}
-        T1_image_preparation = pe.MapNode(
-            MRIConvert(), iterfield=['in_file', 'out_file'], name="T1_prep")
+        T1_image_preparation = pe.MapNode(MRIConvert(),
+                                          iterfield=['in_file', 'out_file'],
+                                          name="T1_prep")
         T1_image_preparation.inputs.out_file = inputvols
 
-        ar1_wf.connect([(inputSpec, T1_image_preparation, [('Raw_T1s', 'in_file')]),
+        ar1_wf.connect([(inputSpec, T1_image_preparation, [('in_t1s', 'in_file')]),
                         ])
 
         # T2 image preparation
         if config['in_T2'] != None:
             # Create T2raw.mgz
             # mri_convert
-            inputSpec.inputs.Raw_T2 = config['in_T2']
+            inputSpec.inputs.in_t2 = config['in_T2']
             T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-            T2_convert.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                      config['current_id'], 
-                                                      'mri', 'orig',
-                                                      'T2raw.mgz')
+            T2_convert.inputs.out_file = 'T2raw.mgz'
             T2_convert.inputs.no_scale = True
-            ar1_wf.connect([(inputSpec, T2_convert, [('Raw_T2', 'in_file')]),
+            ar1_wf.connect([(inputSpec, T2_convert, [('in_t2', 'in_file')]),
                             ]) 
 
+        # FLAIR image preparation
         if config['in_FLAIR'] != None:
-            # FLAIR image preparation
             # Create FLAIRraw.mgz
             # mri_convert
-            inputSpec.inputs.Raw_FLAIR = config['in_FLAIR']
+            inputSpec.inputs.in_flair = config['in_FLAIR']
             FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
-            FLAIR_convert.inputs.out_file = os.path.join(config['subjects_dir'],
-                                                         config['current_id'],
-                                                         'mri',
-                                                         'orig',
-                                                         'FLAIRraw.mgz')
+            FLAIR_convert.inputs.out_file = 'FLAIRraw.mgz'
             FLAIR_convert.inputs.no_scale = True
-            ar1_wf.connect([(inputSpec, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
+            ar1_wf.connect([(inputSpec, FLAIR_convert, [('in_flair', 'in_file')]),
                             ])
     else:
+        # longitudinal inputs
         inputSpec = pe.Node(interface=IdentityInterface(
-            fields=['in_T1s',
+            fields=['in_t1s',
                     'iscales',
                     'ltas',
                     'subj_to_template_lta',
@@ -207,37 +220,36 @@ def create_AutoRecon1(config):
     255 cubed char images (1mm isotropic voxels) in mri/orig.mgz.
     """
 
-    # if only one scan is input, just copy the raw scan as input
     if not config['longitudinal'] and len(config['in_T1s']) == 1:
+        # if only one T1 scan is input, just copy the converted scan as the rawavg.mgz
         create_template = pe.Node(Function(['in_file', 'out_file'],
                                            ['out_file'],
                                             copy_file),
                                   name="Robust_Template")
-        create_template.inputs.out_file = os.path.join(
-            config['subjects_dir'], config['subject_id'], 'mri', 'rawavg.mgz')
+        create_template.inputs.out_file = 'rawavg.mgz'
+        
         ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'in_file')]),
                     ])
-        print """
-WARNING: only one run found. This is OK, but motion
-correction cannot be performed on one run, so I'll
-copy the run to rawavg and continue."""
+        
+        print("WARNING: only one run found. This is OK, but motion correction" +
+              "cannot be performed on one run, so I'll copy the run to rawavg" +
+              "and continue.")
         
     else:
         # if multiple T1 scans are given
         create_template = pe.Node(RobustTemplate(), name="Robust_Template")
         create_template.inputs.average_metric = 'median'
-        create_template.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                       config['current_id'], 'mri',
-                                                       'rawavg.mgz')
+        create_template.inputs.out_file = 'rawavg.mgz'
         create_template.inputs.no_iteration = True
             
-        # if running longitudinally
         if config['longitudinal']:
+            # if running longitudinally
             ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
-                            (inputSpec, create_template, [('in_T1s', 'in_files')]),
+                            (inputSpec, create_template, [('in_t1s', 'in_files')]),
                             (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
                         ])
         else:
+            # if running single session
             create_template.inputs.fixed_timepoint = True
             create_template.inputs.auto_detect_sensitivity = True
             create_template.inputs.initial_timepoint = 1
@@ -250,9 +262,7 @@ copy the run to rawavg and continue."""
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
-    conform_template.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                    config['current_id'], 
-                                                    'mri', 'orig.mgz')
+    conform_template.inputs.out_file = 'orig.mgz'
     if config['longitudinal']:
         conform_template.inputs.out_datatype = 'uchar'
     else:
@@ -264,13 +274,18 @@ copy the run to rawavg and continue."""
     ar1_wf.connect(
         [(create_template, conform_template, [('out_file', 'in_file')])])
 
+    # In recon-all the talairach.xfm is added to orig, even though
+    # it does not exist yet. This is a compromise to keep from
+    # having to change the time stamp of the orig volume after talairaching.
+
     add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
     add_to_header.inputs.copy_name = True
-    add_to_header.inputs.transform = os.path.join(
-        config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.xfm')
+    
+    # Giving a relative path to the talairach
+    add_to_header.inputs.transform =  os.path.relpath('transforms', 'talairach.xfm')
+    add_to_header.inputs.out_file = conform_template.inputs.out_file
 
-    ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file'),
-                                                       ('out_file', 'out_file')])])
+    ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file')])])
 
     # Talairach
     """
@@ -307,6 +322,7 @@ copy the run to rawavg and continue."""
                 ])
 
     if config['longitudinal']:
+        # longitudinal processing
         copy_template_xfm = pe.Node(Function(['in_file', 'out_file'],
                                              ['out_file'],
                                              copy_file),
@@ -316,11 +332,14 @@ copy the run to rawavg and continue."""
 
         ar1_wf.connect([(inputSpec, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
     else:
+        # single session processing
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
+        
         if config['custom_atlas'] != None:
+            # allows to specify a custom atlas
             talairach_avi.inputs.atlas = config['custom_atlas']
-        talairach_avi.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 
-                                                     'mri', 'transforms', 'talairach.auto.xfm')
+            
+        talairach_avi.inputs.out_file = 'talairach.auto.xfm'
         
         ar1_wf.connect([(bias_correction, talairach_avi, [('out_file', 'in_file')]),
                     ])
@@ -329,16 +348,27 @@ copy the run to rawavg and continue."""
                                       ['out_file'],
                                       copy_file),
                              name='Copy_Transform')
-    copy_transform.inputs.out_file = os.path.join(
-        config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.xfm')
+    copy_transform.inputs.out_file = 'talairach.xfm'
 
     if config['longitudinal']:
         ar1_wf.connect([(copy_template_xfm, copy_transform, [('out_file', 'in_file')])])
     else:
         ar1_wf.connect([(talairach_avi, copy_transform, [('out_file', 'in_file')])])
 
-    check_alignment = pe.Node(
-        CheckTalairachAlignment(), name="Check_Talairach_Alignment")
+
+    # Create a tempory directory for the orig and talairach files to sit
+    orig_dir = pe.Node(Function(['in_orig', 'in_tal'],
+                                ['out_orig', 'out_tal'],
+                                create_orig_dir),
+                       name="Tempory_Orig_Dir")
+                                
+    ar1_wf.connect([(copy_transform, orig_dir, [('out_file', 'in_tal')]),
+                    (add_to_header, orig_dir, [('out_file' 'in_orig')])])
+
+    # check the alignment of the talairach
+    # TODO: Figure out how to read output from this node.
+    check_alignment = pe.Node(CheckTalairachAlignment(),
+                              name="Check_Talairach_Alignment")
     check_alignment.inputs.threshold = 0.005
     ar1_wf.connect([(copy_transform, check_alignment, [('out_file', 'in_file')]),
                     ])
@@ -447,5 +477,24 @@ copy the run to rawavg and continue."""
         ar1_wf.connect([(mask2, copy_brainmask, [('brain_vol', 'in_file')])])
     else:
         ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')])])
+
+        
+    outputspec = pe.Node(IdentityInterface(fields=['t2_raw',
+                                                   'flair',
+                                                   'rawavg',
+                                                   'orig',
+                                                   'talairach_auto',
+                                                   'talairach',
+                                                   ]),
+                         name="Outputs")
+    
+    ar1_wf.connect([(T2_convert, outputspec, [('out_file', 't2_raw')]),
+                    (FLAIR_convert, outputspec, [('out_file', 'flair')]),
+                    (create_template, outputspec, [('out_file', 'rawavg')]),
+                    (conform_template, outputspec, [('out_file', 'orig')]),
+                    (talairach_avi, outputspec, [('out_file', 'talairach_auto')]),
+                    (copy_transform, outputspec, [('out_file', 'talairach')]),
+                    ])
+                    
         
     return ar1_wf

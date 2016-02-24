@@ -1,6 +1,6 @@
 import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.io import DataGrabber, FreeSurferSource
+from nipype.interfaces.io import DataGrabber, FreeSurferSource, DataSink
 from nipype.interfaces.utility import Merge, IdentityInterface
 from autorecon1 import mkdir_p, create_AutoRecon1
 from autorecon2 import create_AutoRecon2
@@ -207,13 +207,44 @@ def create_reconall(config):
                       ])
 
     #TODO: add more outputs to outputspec
-    outputspec = pe.Node(IdentityInterface(fields=['aseg',
+    outputspec = pe.Node(IdentityInterface(fields=['t2_raw',
+                                                   'flair',
+                                                   'rawavg',
+                                                   'orig',
+                                                   'talairach_auto',
+                                                   'talairach',
+                                                   'aseg',
                                                    'recoded_labelmap']),
                          name="Outputs")
     
-    reconall.connect([(ar3_wf, outputspec, [('Outputs.aseg', 'aseg')]),
+    reconall.connect([(ar1_wf, outputspec, [('Outputs.t2_raw', 't2_raw'),
+                                            ('Outputs.flair', 'flair'),
+                                            ('Outputs.rawavg', 'rawavg'),
+                                            ('Outputs.orig', 'orig'),
+                                            ('Outputs.talairach_auto', 'talairach_auto'),
+                                            ('Outputs.talairach', 'talairach'),
+                                        ]),
+                      (ar3_wf, outputspec, [('Outputs.aseg', 'aseg'),
+                                        ]),
                       ])
 
+    #TODO: Datasink outputs
+    datasink = pe.Node(DataSink(), name="DataSink")
+    datasink.inputs.container = config['current_id']
+    datasink.inputs.base_directory = config['subjects_dir']
+    
+    reconall.connect([(outputspec, datasink, [('t2_raw', 'mri.orig.@t2raw'),
+                                              ('flair', 'mri.orig.@flair'),
+                                              ('rawavg', 'mri.@rawavg'),
+                                              ('orig', 'mri.@orig'),
+                                              ('talairach_auto', 'mri.transforms.@tal_auto'),
+                                              ('talairach', 'mri.transforms.@tal'),
+                                              
+                                          ]),
+                      ])
+
+    #TODO: DataSink from T1_image_prep
+    
     
     #### Workflow additions go here
     if config['recoding_file'] != None:

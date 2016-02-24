@@ -242,7 +242,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix,CLUST
     ## This is set in the template.py file BeginANTS.plugin_args = BeginANTS_cpu_sge_options_dictionary
     CommonANTsRegistrationSettings(
             antsRegistrationNode=BeginANTS,
-            registrationTypeDescription="5StagesSingleModal",
+            registrationTypeDescription="SixStageAntsRegistrationT1Only",
             output_transform_prefix=str(iterationPhasePrefix) + '_tfm',
             output_warped_image='atlas2subject.nii.gz',
             output_inverse_warped_image='subject2atlas.nii.gz',

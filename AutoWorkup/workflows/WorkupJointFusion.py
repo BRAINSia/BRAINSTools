@@ -191,9 +191,9 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,4,2,16), 'overwrite': True}
         A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].plugin_args = many_cpu_ANTsSyN_options_dictionary
         if onlyT1:
-            JFregistrationTypeDescription="JointFusionT1Only"
+            JFregistrationTypeDescription="SixStageAntsRegistrationT1Only"
         else:
-            JFregistrationTypeDescription="JointFusionMultiModal"
+            JFregistrationTypeDescription="SixStageAntsRegistrationMultiModal"
         CommonANTsRegistrationSettings(
                       antsRegistrationNode=A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],
                       registrationTypeDescription=JFregistrationTypeDescription,

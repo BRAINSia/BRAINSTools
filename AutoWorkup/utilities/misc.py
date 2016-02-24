@@ -26,95 +26,61 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     """
     ## TODO: Consider registration masking
 
-    if ( registrationTypeDescription == "5StagesSingleModal" ) or ( "5StagesMultiModal" ):
-        local_num_stages=5
-        if registrationTypeDescription == "5StagesSingleModal":
-            antsRegistrationNode.inputs.metric = ['MI','MI','CC','CC','CC']
-            antsRegistrationNode.inputs.metric_weight = [1.0,1.0,1.0,1.0,1.0]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular','Regular',None,None,None]
-            antsRegistrationNode.inputs.sampling_percentage = [0.27,0.27,1.0,1.0,1.0]
-            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,4,4,4]
+    if ( registrationTypeDescription == "SixStageAntsRegistrationT1Only" ) or ( registrationTypeDescription == "SixStageAntsRegistrationMultiModal" ):
+        local_num_stages=6
+        antsRegistrationNode.inputs.transforms = ["Rigid","Affine","Affine","SyN","SyN","SyN"]
+        if registrationTypeDescription == "SixStageAntsRegistrationT1Only":
+            antsRegistrationNode.inputs.metric = ['MI','MI','MI','CC','CC','CC']
+            antsRegistrationNode.inputs.metric_weight = [1.0,1.0,1.0,1.0,1.0,1.0]
+            antsRegistrationNode.inputs.sampling_strategy = ['Regular','Regular','Regular',None,None,None]
+            antsRegistrationNode.inputs.sampling_percentage = [.27,.5,.5,1.0,1.0,1.0]
+            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,32,4,4,4]
         else:
-            antsRegistrationNode.inputs.metric = ['MI',['MI','MI'],'CC','CC',['CC','CC']]
-            antsRegistrationNode.inputs.metric_weight = [1.0,[1.0,1.0],1.0,1.0,[1.0,1.0]]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular',['Regular','Regular'],None,None,[None,None]]
-            antsRegistrationNode.inputs.sampling_percentage = [0.27,[0.27,0.27],1.0,1.0,[1.0,1.0]]
-            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,[32,32],4,4,[4,4]]
+            antsRegistrationNode.inputs.metric = ['MI','MI',['MI','MI'],'CC',['CC','CC'],['CC','CC']]
+            antsRegistrationNode.inputs.metric_weight = [1.0,1.0,[1.0,1.0],1.0,[1.0,1.0],[1.0,1.0]]
+            antsRegistrationNode.inputs.sampling_strategy = ['Regular''Regular',['Regular','Regular'],None,[None,None],[None,None]]
+            antsRegistrationNode.inputs.sampling_percentage = [.27,0.5,[0.5,0.5],1.0,[1.0,1.0],[1.0,1.0]]
+            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,[32,32],4,[4,4],[4,4]]
 
-        antsRegistrationNode.inputs.transforms = ["Rigid","Affine","SyN","SyN","SyN"]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1,3.0,0.0],[0.1,3.0,0.0],[0.1,3.0,0.0]]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000,1000],[1000,1000,1000,1000],[1000,250],[140],[25]]
-        antsRegistrationNode.inputs.convergence_threshold = [5e-8,5e-8,5e-7,5e-6,5e-5]
-        antsRegistrationNode.inputs.shrink_factors =   [[8,4,2,1],[8,4,2,1],[8,4],[2],[1]]
-        antsRegistrationNode.inputs.smoothing_sigmas = [[3,2,1,0],[3,2,1,0],[3,2],[1],[0]]
-        #
-        antsRegistrationNode.inputs.use_estimate_learning_rate_once = [False]*local_num_stages
-        antsRegistrationNode.inputs.winsorize_lower_quantile = 0.01
-        antsRegistrationNode.inputs.winsorize_upper_quantile = 0.99
+        antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0],[0.1, 3, 0]]
+        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000],[1000,1000,500],[1000,250],[140],[25]]
+        antsRegistrationNode.inputs.convergence_threshold =[5e-8,5e-8,5e-7,5e-7,5e-6,5e-5]
+        antsRegistrationNode.inputs.shrink_factors =       [[8, 4, 2],[8,4,2],[2, 1],[8, 4], [2], [1]]
+        antsRegistrationNode.inputs.smoothing_sigmas =     [[3, 2, 1],[3,2,1],[1, 0],[3, 2], [1], [0]]
 
-    elif ( registrationTypeDescription == "JointFusionT1Only" ) or ( registrationTypeDescription == "JointFusionMultiModal" ):
-        local_num_stages=4
-        if registrationTypeDescription == "JointFusionT1Only":
-            antsRegistrationNode.inputs.metric = ['MI','MI','CC','CC']
-            antsRegistrationNode.inputs.metric_weight = [1.0,1.0,1.0,1.0]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular','Regular',None,None]
-            antsRegistrationNode.inputs.sampling_percentage = [.5,.5,1.0,1.0]
-            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,4,4]
-        else:
-            antsRegistrationNode.inputs.metric = ['MI',['MI','MI'],'CC',['CC','CC']]
-            antsRegistrationNode.inputs.metric_weight = [1.0,[1.0,1.0],1.0,[1.0,1.0]]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular',['Regular','Regular'],None,[None,None]]
-            antsRegistrationNode.inputs.sampling_percentage = [.5,[.5,0.5],1.0,[1.0,1.0]]
-            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,[32,32],4,[4,4]]
+    elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_Affine':
+        local_num_stages=3
+        antsRegistrationNode.inputs.transforms = ["Rigid","Affine","Affine"]
+        antsRegistrationNode.inputs.metric = ['MI']*local_num_stages
+        antsRegistrationNode.inputs.sampling_strategy = ['Regular']*local_num_stages
+        antsRegistrationNode.inputs.sampling_percentage = [0.5]*local_num_stages
+        antsRegistrationNode.inputs.metric_weight = [1.0]*local_num_stages
+        antsRegistrationNode.inputs.radius_or_number_of_bins = [32]*local_num_stages
 
-        antsRegistrationNode.inputs.transforms = ["Affine","Affine","SyN","SyN"]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0]]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,500],[500,500],[500,500],[500,70]]
-        antsRegistrationNode.inputs.convergence_threshold = [1e-8,1e-6,1e-8,1e-6]
-        antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2],[2, 1],[8, 4],[2, 1]]
-        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1],[1, 0],[3, 2],[1, 0]]
+        antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1]]
+        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000],[1000,1000,500],[500,500]]
 
-    #if registrationTypeDescription == "FromWorkupT1T2ANTS.py":
-    #    local_num_stages=1
-    #    ## This is outdated and does not work
-    #    antsRegistrationNode.inputs.metric = 'CC'  # This is a family of interfaces, CC,MeanSquares,Demons,GC,MI,Mattes
-    #    antsRegistrationNode.inputs.transform = 'SyN[0.25,3.0,0.0]'
-    #    antsRegistrationNode.inputs.number_of_iterations = [250, 100, 20]
-    #    antsRegistrationNode.inputs.convergence_threshold = 1e-7
-    #    antsRegistrationNode.inputs.smoothing_sigmas = [0, 0, 0]
-    #    antsRegistrationNode.inputs.shrink_factors = [3, 2, 1]
+        antsRegistrationNode.inputs.convergence_threshold = [5e-8,5e-8,5e-7,5e-7]
 
-    elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_Rigid':
-        local_num_stages=1
-        antsRegistrationNode.inputs.transforms = ["Affine",]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1]]
-        antsRegistrationNode.inputs.metric = ['MI']
-        antsRegistrationNode.inputs.sampling_strategy = ['Regular']
-        antsRegistrationNode.inputs.sampling_percentage = [0.5]
-        antsRegistrationNode.inputs.metric_weight = [1.0]
-        antsRegistrationNode.inputs.radius_or_number_of_bins = [32]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000, 500, 100]]
-
-        antsRegistrationNode.inputs.convergence_threshold = [1e-8]
-
-        antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2, 1]]
-        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1, 0]]
+        antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2],[8,4,2],[2, 1]]
+        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1],[3,2,1],[1, 0]]
 
     elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_SyN':
-        local_num_stages = 2
-        antsRegistrationNode.inputs.transforms = ["SyN","SyN"]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1, 3, 0],[0.1, 3, 0]]
-        antsRegistrationNode.inputs.metric = ['CC','CC']
-        antsRegistrationNode.inputs.sampling_strategy = [None,None]
-        antsRegistrationNode.inputs.sampling_percentage = [1.0,1.0]
-        antsRegistrationNode.inputs.metric_weight = [1.0,1.0]
-        antsRegistrationNode.inputs.radius_or_number_of_bins = [4,4]
-        antsRegistrationNode.inputs.number_of_iterations = [[500, 500], [500, 70]]
+        local_num_stages = 3
+        antsRegistrationNode.inputs.transforms = ["SyN"]*local_num_stages
+        antsRegistrationNode.inputs.metric = ['CC']*local_num_stages
+        antsRegistrationNode.inputs.metric_weight = [1.0]*local_num_stages
+        antsRegistrationNode.inputs.sampling_strategy = [None]*local_num_stages
+        antsRegistrationNode.inputs.sampling_percentage = [1.0]*local_num_stages
+        antsRegistrationNode.inputs.radius_or_number_of_bins = [4]*local_num_stages
 
-        antsRegistrationNode.inputs.convergence_threshold = [1e-8,1e-6]
+        antsRegistrationNode.inputs.transform_parameters = [[0.1, 3, 0],[0.1, 3, 0],[0.1, 3, 0]]
+        antsRegistrationNode.inputs.number_of_iterations = [[1000,250],[140],[25]]
 
-        antsRegistrationNode.inputs.shrink_factors = [[8, 4], [2, 1]]
-        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2], [1, 0]]
+        antsRegistrationNode.inputs.convergence_threshold = [5e-7,5e-6,5e-5]
+
+        antsRegistrationNode.inputs.shrink_factors =   [[8, 4], [2], [1]]
+        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2], [1], [0]]
 
     elif registrationTypeDescription == "antsRegistrationNode":
         local_num_stages = 1
@@ -132,10 +98,11 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
         antsRegistrationNode.inputs.shrink_factors = [[1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[0]]
     else:
-        print("!!"*160 + "ERROR invalid registration description")
+        print("!!"*160 + "\nERROR invalid registration description: {0}".format(registrationTypeDescription))
         raise NameError(registrationTypeDescription)
 
     ## COMMON SETTINGS
+    antsRegistrationNode.inputs.args = "--verbose"
     antsRegistrationNode.inputs.interpolation = "Linear"
     antsRegistrationNode.inputs.dimension = 3
     antsRegistrationNode.inputs.float = True

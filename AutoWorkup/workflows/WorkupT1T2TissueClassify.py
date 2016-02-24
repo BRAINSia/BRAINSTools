@@ -92,14 +92,14 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     makeOutImageList.inputs.postfix = "_corrected.nii.gz"
 
     ##### Initialize with ANTS Transform For AffineComponentBABC
-    currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Rigid'
+    currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Affine'
     A2SantsRegistrationPreABCRigid = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRigidRegistration)
     many_cpu_ANTsRigid_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
     A2SantsRegistrationPreABCRigid.plugin_args = many_cpu_ANTsRigid_options_dictionary
 
     CommonANTsRegistrationSettings(
                       antsRegistrationNode=A2SantsRegistrationPreABCRigid,
-                      registrationTypeDescription='AtlasToSubjectANTsPreABC_Rigid',
+                      registrationTypeDescription='AtlasToSubjectANTsPreABC_Affine',
                       output_transform_prefix='AtlasToSubjectPreBABC_Rigid',
                       output_warped_image='atlas2subjectRigid.nii.gz',
                       output_inverse_warped_image = 'subject2atlasRigid.nii.gz',

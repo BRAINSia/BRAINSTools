@@ -274,19 +274,6 @@ def create_AutoRecon1(config):
     ar1_wf.connect(
         [(create_template, conform_template, [('out_file', 'in_file')])])
 
-    # In recon-all the talairach.xfm is added to orig, even though
-    # it does not exist yet. This is a compromise to keep from
-    # having to change the time stamp of the orig volume after talairaching.
-
-    add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
-    add_to_header.inputs.copy_name = True
-    
-    # Giving a relative path to the talairach
-    add_to_header.inputs.transform =  os.path.relpath('transforms', 'talairach.xfm')
-    add_to_header.inputs.out_file = conform_template.inputs.out_file
-
-    ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file')])])
-
     # Talairach
     """
     This computes the affine transform from the orig volume to the MNI305 atlas using Avi Snyders 4dfp
@@ -314,23 +301,21 @@ def create_AutoRecon1(config):
     # much better when the brain area is properly masked, in this case by
     # brainmask.mgz.
     bias_correction.inputs.no_rescale = True
-    bias_correction.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                   config['current_id'], 
-                                                   'mri', 'orig_nu.mgz')
+    bias_correction.inputs.out_file = 'orig_nu.mgz'
 
-    ar1_wf.connect([(add_to_header, bias_correction, [('out_file', 'in_file')]),
+    ar1_wf.connect([(conform_template, bias_correction, [('out_file', 'in_file')]),
                 ])
 
     if config['longitudinal']:
         # longitudinal processing
-        copy_template_xfm = pe.Node(Function(['in_file', 'out_file'],
+        # Just copy the template xfm
+        talairach_avi = pe.Node(Function(['in_file', 'out_file'],
                                              ['out_file'],
                                              copy_file),
                                     name='Copy_Template_Transform')
-        copy_template_xfm.inputs.out_file = os.path.join(
-            config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.auto.xfm')
+        talairach_avi.inputs.out_file = 'talairach.auto.xfm'
 
-        ar1_wf.connect([(inputSpec, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
+        ar1_wf.connect([(inputSpec, talairach_avi, [('template_talairach_xfm', 'in_file')])])
     else:
         # single session processing
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
@@ -350,21 +335,24 @@ def create_AutoRecon1(config):
                              name='Copy_Transform')
     copy_transform.inputs.out_file = 'talairach.xfm'
 
-    if config['longitudinal']:
-        ar1_wf.connect([(copy_template_xfm, copy_transform, [('out_file', 'in_file')])])
-    else:
-        ar1_wf.connect([(talairach_avi, copy_transform, [('out_file', 'in_file')])])
+    ar1_wf.connect([(talairach_avi, copy_transform, [('out_file', 'in_file')])])
 
 
-    # Create a tempory directory for the orig and talairach files to sit
-    orig_dir = pe.Node(Function(['in_orig', 'in_tal'],
-                                ['out_orig', 'out_tal'],
-                                create_orig_dir),
-                       name="Tempory_Orig_Dir")
-                                
-    ar1_wf.connect([(copy_transform, orig_dir, [('out_file', 'in_tal')]),
-                    (add_to_header, orig_dir, [('out_file' 'in_orig')])])
+    # In recon-all the talairach.xfm is added to orig, even though
+    # it does not exist yet. This is a compromise to keep from
+    # having to change the time stamp of the orig volume after talairaching.
+    # Here we are going to add xfm to the header after the xfm has been created.
+    # This may mess up the timestamp.
 
+    add_xform_to_orig = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
+    add_xform_to_orig.inputs.copy_name = True
+    add_xform_to_orig.inputs.out_file = conform_template.inputs.out_file
+
+    ar1_wf.connect([(conform_template, add_xform_to_orig, [('out_file', 'in_file')]),
+                    (copy_transform, add_xform_to_orig, [('out_file', 'transform')])])
+
+
+        
     # check the alignment of the talairach
     # TODO: Figure out how to read output from this node.
     check_alignment = pe.Node(CheckTalairachAlignment(),
@@ -396,8 +384,7 @@ def create_AutoRecon1(config):
 
     mri_normalize = pe.Node(Normalize(), name="Normalize_T1")
     mri_normalize.inputs.gradient = 1
-    mri_normalize.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                 config['current_id'], 'mri', 'T1.mgz')
+    mri_normalize.inputs.out_file = 'T1.mgz'
     ar1_wf.connect([(bias_correction, mri_normalize, [('out_file', 'in_file')]),
                     (copy_transform, mri_normalize,
                      [('out_file', 'transform')]),
@@ -414,53 +401,50 @@ def create_AutoRecon1(config):
                                                    ['out_file'],
                                                    copy_file),
                                           name='Copy_Template_Brainmask')
-        copy_template_brainmask.inputs.out_file = os.path.join(
-            config['subjects_dir'], config['current_id'], 'mri', 'brainmask_{0}.mgz'.format(config['long_template']))
+        copy_template_brainmask.inputs.out_file = 'brainmask_{0}.mgz'.format(config['long_template'])
+        
         ar1_wf.connect([(inputSpec, copy_template_brainmask, [('template_brainmask', 'in_file')])])
 
         mask1 = pe.Node(ApplyMask(), name="ApplyMask1")
         mask1.inputs.keep_mask_deletion_edits = True
-        mask1.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'brainmask.auto.mgz')
+        mask1.inputs.out_file = 'brainmask.auto.mgz'
         
         ar1_wf.connect([(mri_normalize, mask1, [('out_file', 'in_file')]),
                         (copy_template_brainmask, mask1, [('out_file', 'mask_file')])])
 
-        mask2 = pe.Node(ApplyMask(), name="ApplyMask2")
-        mask2.inputs.keep_mask_deletion_edits = True
-        mask2.inputs.transfer = 255
+        brainmask = pe.Node(ApplyMask(), name="ApplyMask2")
+        brainmask.inputs.keep_mask_deletion_edits = True
+        brainmask.inputs.transfer = 255
+        brainmask.inputs.out_file = mask1.inputs.out_file
 
-        ar1_wf.connect([(mask1, mask2, [('out_file', 'in_file'),
-                                        ('out_file', 'out_file')]),
-                        (copy_template_brainmask, mask2, [('out_file', 'mask_file')])])
+        ar1_wf.connect([(mask1, brainmask, [('out_file', 'in_file')]),
+                        (copy_template_brainmask, brainmask, [('out_file', 'mask_file')])])
                         
     else:    
         mri_em_register = pe.Node(EMRegister(), name="EM_Register")
         mri_em_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                        'average',
                                                        'RB_all_withskull_2014-08-21.gca')
-        mri_em_register.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                       config['current_id'], 
-                                                       'mri', 'transforms',
-                                                       'talairach_with_skull.lta')
+        mri_em_register.inputs.out_file = 'talairach_with_skull.lta'
         mri_em_register.inputs.skull = True
+        
         if config['openmp'] != None:
             mri_em_register.inputs.num_threads = config['openmp']
         if config['plugin_args'] != None:
             mri_em_register.plugin_args = config['plugin_args']
+            
         ar1_wf.connect([(bias_correction, mri_em_register, [('out_file', 'in_file')]),
                     ])
 
-        watershed_skull_strip = pe.Node(
+        brainmask = pe.Node(
             WatershedSkullStrip(), name='Watershed_Skull_Strip')
-        watershed_skull_strip.inputs.t1 = True
-        watershed_skull_strip.inputs.brain_atlas = os.path.join(config['FREESURFER_HOME'],
+        brainmask.inputs.t1 = True
+        brainmask.inputs.brain_atlas = os.path.join(config['FREESURFER_HOME'],
                                                                 'average',
                                                                 'RB_all_withskull_2014-08-21.gca')
-        watershed_skull_strip.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                             config['current_id'], 
-                                                             'mri', 'brainmask.auto.mgz')
-        ar1_wf.connect([(mri_normalize, watershed_skull_strip, [('out_file', 'in_file')]),
-                        (mri_em_register, watershed_skull_strip,
+        brainmask.inputs.out_file = 'brainmask.auto.mgz'
+        ar1_wf.connect([(mri_normalize, brainmask, [('out_file', 'in_file')]),
+                        (mri_em_register, brainmask,
                          [('out_file', 'transform')]),
                     ])
 
@@ -468,33 +452,45 @@ def create_AutoRecon1(config):
                                       ['out_file'],
                                       copy_file),
                              name='Copy_Brainmask')
-    copy_brainmask.inputs.out_file = os.path.join(config['subjects_dir'],
-                                                  config['current_id'],
-                                                  'mri',
-                                                  'brainmask.mgz')
+    copy_brainmask.inputs.out_file = 'brainmask.mgz'
 
-    if config['longitudinal']:
-        ar1_wf.connect([(mask2, copy_brainmask, [('brain_vol', 'in_file')])])
-    else:
-        ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')])])
+    ar1_wf.connect([(brainmask, copy_brainmask, [('brain_vol', 'in_file')])])
 
         
     outputspec = pe.Node(IdentityInterface(fields=['t2_raw',
                                                    'flair',
                                                    'rawavg',
                                                    'orig',
+                                                   'orig_nu',
                                                    'talairach_auto',
                                                    'talairach',
+                                                   't1',
+                                                   'talskull',
+                                                   'brainmask_auto',
+                                                   'brainmask',
+                                                   'braintemplate'
                                                    ]),
                          name="Outputs")
     
     ar1_wf.connect([(T2_convert, outputspec, [('out_file', 't2_raw')]),
                     (FLAIR_convert, outputspec, [('out_file', 'flair')]),
                     (create_template, outputspec, [('out_file', 'rawavg')]),
-                    (conform_template, outputspec, [('out_file', 'orig')]),
+                    (add_xform_to_orig, outputspec, [('out_file', 'orig')]),
+                    (bias_correction, outputspec, [('out_file', 'oirg_nu')]),
                     (talairach_avi, outputspec, [('out_file', 'talairach_auto')]),
                     (copy_transform, outputspec, [('out_file', 'talairach')]),
+                    (mri_normalize, outputspec, [('out_file', 't1')]),
+                    (brainmask, outputspec, [('out_file', 'brainmask_auto')]),
+                    (copy_brainmask, outputspec, [('out_file', 'brainmask')]),                    
                     ])
-                    
-        
+
+    
+    if config['longitudinal']:
+        ar1_wf.connect([(copy_template_brainmask, outputspec, [('out_file', 'braintemplate')]),
+                        ])
+    else:
+        ar1_wf.connect([(mri_em_register, outputspec, [('out_file', 'talskull')]),
+                        ])
+
+    
     return ar1_wf

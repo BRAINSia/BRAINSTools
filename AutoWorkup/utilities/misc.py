@@ -38,7 +38,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
         else:
             antsRegistrationNode.inputs.metric = ['MI','MI',['MI','MI'],'CC',['CC','CC'],['CC','CC']]
             antsRegistrationNode.inputs.metric_weight = [1.0,1.0,[1.0,1.0],1.0,[1.0,1.0],[1.0,1.0]]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular''Regular',['Regular','Regular'],None,[None,None],[None,None]]
+            antsRegistrationNode.inputs.sampling_strategy = ['Regular','Regular',['Regular','Regular'],None,[None,None],[None,None]]
             antsRegistrationNode.inputs.sampling_percentage = [.27,0.5,[0.5,0.5],1.0,[1.0,1.0],[1.0,1.0]]
             antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,[32,32],4,[4,4],[4,4]]
 

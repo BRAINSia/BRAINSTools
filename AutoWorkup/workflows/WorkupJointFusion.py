@@ -320,7 +320,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
 
     ### Original NeuroMorphometrica merged fusion
     jointFusion = pe.Node(interface=ants.AntsJointFusion(),name="AntsJointFusion")
-    many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
+    many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,10,8,16), 'overwrite': True}
     jointFusion.plugin_args = many_cpu_JointFusion_options_dictionary
     jointFusion.inputs.num_threads = -1
     jointFusion.inputs.dimension=3

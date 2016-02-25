@@ -43,7 +43,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
             antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,[32,32],4,[4,4],[4,4]]
 
         antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0],[0.1, 3, 0]]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000],[1000,1000,500],[1000,250],[140],[25]]
+        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000],[1000,1000,500],[500,500],[1000,250],[140],[25]]
         antsRegistrationNode.inputs.convergence_threshold =[5e-8,5e-8,5e-7,5e-7,5e-6,5e-5]
         antsRegistrationNode.inputs.shrink_factors =       [[8, 4, 2],[8,4,2],[2, 1],[8, 4], [2], [1]]
         antsRegistrationNode.inputs.smoothing_sigmas =     [[3, 2, 1],[3,2,1],[1, 0],[3, 2], [1], [0]]
@@ -51,23 +51,23 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_Affine':
         local_num_stages=3
         antsRegistrationNode.inputs.transforms = ["Rigid","Affine","Affine"]
+
         antsRegistrationNode.inputs.metric = ['MI']*local_num_stages
+        antsRegistrationNode.inputs.metric_weight = [1.0]*local_num_stages
         antsRegistrationNode.inputs.sampling_strategy = ['Regular']*local_num_stages
         antsRegistrationNode.inputs.sampling_percentage = [0.5]*local_num_stages
-        antsRegistrationNode.inputs.metric_weight = [1.0]*local_num_stages
         antsRegistrationNode.inputs.radius_or_number_of_bins = [32]*local_num_stages
 
         antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1]]
         antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000],[1000,1000,500],[500,500]]
-
         antsRegistrationNode.inputs.convergence_threshold = [5e-8,5e-8,5e-7,5e-7]
-
         antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2],[8,4,2],[2, 1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1],[3,2,1],[1, 0]]
 
     elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_SyN':
         local_num_stages = 3
         antsRegistrationNode.inputs.transforms = ["SyN"]*local_num_stages
+
         antsRegistrationNode.inputs.metric = ['CC']*local_num_stages
         antsRegistrationNode.inputs.metric_weight = [1.0]*local_num_stages
         antsRegistrationNode.inputs.sampling_strategy = [None]*local_num_stages
@@ -76,25 +76,23 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
 
         antsRegistrationNode.inputs.transform_parameters = [[0.1, 3, 0],[0.1, 3, 0],[0.1, 3, 0]]
         antsRegistrationNode.inputs.number_of_iterations = [[1000,250],[140],[25]]
-
         antsRegistrationNode.inputs.convergence_threshold = [5e-7,5e-6,5e-5]
-
         antsRegistrationNode.inputs.shrink_factors =   [[8, 4], [2], [1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2], [1], [0]]
 
     elif registrationTypeDescription == "antsRegistrationNode":
         local_num_stages = 1
         antsRegistrationNode.inputs.transforms = ["SyN"]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1, 3, 0]]
+
         antsRegistrationNode.inputs.metric = ['CC']
+        antsRegistrationNode.inputs.metric_weight = [1.0]
         antsRegistrationNode.inputs.sampling_strategy = [None]
         antsRegistrationNode.inputs.sampling_percentage = [1.0]
-        antsRegistrationNode.inputs.metric_weight = [1.0]
         antsRegistrationNode.inputs.radius_or_number_of_bins = [4]
+
+        antsRegistrationNode.inputs.transform_parameters = [[0.1, 3, 0]]
         antsRegistrationNode.inputs.number_of_iterations = [[70]]
-
         antsRegistrationNode.inputs.convergence_threshold = [1e-6]
-
         antsRegistrationNode.inputs.shrink_factors = [[1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[0]]
     else:

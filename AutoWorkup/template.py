@@ -148,6 +148,13 @@ def xml_filename(subject):
     return 'AtlasDefinition_{0}.xml'.format(subject)
 
 def getSessionsFromSubjectDictionary(subject_session_dictionary,subject):
+    print("#"+subject+"#"*80+"\n")
+    print(subject_session_dictionary[subject])
+    if len(subject_session_dictionary[subject]) == 0 :
+        import sys
+        print(subject_session_dictionary)
+        print("ERROR:  No sessions for subject {0}".format(subject) )
+        sys.exit(-1)
     return subject_session_dictionary[subject]
 
 
@@ -162,6 +169,13 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             argv['--use-sentinal'], argv['--use-shuffle']
             ) # Build database before parallel section
     useSentinal = argv['--use-sentinal']
+
+    # Quick preliminary sanity check
+    for thisSubject in subjects:
+        if len(subjects_sessions_dictionary[thisSubject]) == 0:
+            print("ERROR: subject {0} has no sessions found.  Did you supply a valid subject id on the command line?".format(thisSubject) )
+            sys.exit(-1)
+
     for thisSubject in subjects:
         print("Processing atlas generation for this subject: {0}".format(thisSubject))
         print("="*80)
@@ -202,12 +216,12 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
 
         baselineOptionalDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
-                                                outfields=[ 't2_average', 'pd_average',
-                                                           'fl_average'],
-                                run_without_submitting=True
-                                ),
-                                run_without_submitting=True,
-                                iterfield=['session'], name='BaselineOptional_DG')
+                                                        outfields=[ 't2_average', 'pd_average',
+                                                                   'fl_average'],
+                                                       run_without_submitting=True
+                                                       ),
+                                        run_without_submitting=True,
+                                        iterfield=['session'], name='BaselineOptional_DG')
 
         baselineOptionalDG.inputs.base_directory = experiment['previousresult']
         baselineOptionalDG.inputs.sort_filelist = True

@@ -56,6 +56,7 @@ from nipype.interfaces.semtools.registration.brainsresample import BRAINSResampl
 
 #from nipype.interfaces.semtools.filtering.denoising import UnbiasedNonLocalMeans
 from nipype.interfaces.ants.segmentation import DenoiseImage
+from nipype.interfaces.ants.segmentation import N4BiasFieldCorrection
 from nipype.interfaces.semtools.segmentation.specialized import BRAINSCreateLabelMapFromProbabilityMaps
 
 
@@ -412,9 +413,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print("\ndenoise image filter\n")
         makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
                                                   input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                               'OTHERList', 'postfix', 'PrimaryT1',
+                                                               'OTHERList', 'postfix', 'postfixBFC', 'PrimaryT1',
                                                                'ListOutType'],
-                                                  output_names=['inImageList', 'outImageList', 'imageTypeList']),
+                                                  output_names=['inImageList', 'outImageList', 'outBFCImageList','imageTypeList']),
                                          run_without_submitting=True, name="99_makeDenoiseInImageList")
         baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
@@ -425,12 +426,16 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
         makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"
+        makeDenoiseInImageList.inputs.postfixBFC = "_N4_BFC.nii.gz"
 
         print("\nDenoise:\n")
         DenoiseInputImgs = pe.MapNode(interface=DenoiseImage(),
                                       name='denoiseInputImgs',
                                       iterfield=['input_image',
                                                  'output_image'])
+        DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 2, 4, 8),
+                                        'overwrite': True}
+        DenoiseInputImgs.inputs.num_threads = -1
         DenoiseInputImgs.synchronize = True
         DenoiseInputImgs.inputs.dimension = 3
 
@@ -440,19 +445,35 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         #DenoiseInputImgs.inputs.save_noise=True # we do need this until NIPYPE is fixed
         DenoiseInputImgs.inputs.save_noise=False # we don't need the noise image for BAW
         DenoiseInputImgs.inputs.shrink_factor = 1 # default
-        DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 2, 4, 8),
-                                        'overwrite': True}
-        DenoiseInputImgs.inputs.num_threads = -1
         baw201.connect([(makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'input_image')]),
                         (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList', 'output_image')])
         ])
+
+        print("\nN4BiasFieldCorrection:\n")
+        N4BFC = pe.MapNode(interface=N4BiasFieldCorrection(),
+                           name='N4BFC',
+                           iterfield=['input_image',
+                                      'output_image'])
+        N4BFC.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 4, 8, 8),
+                                        'overwrite': True}
+        N4BFC.inputs.num_threads = -1
+        N4BFC.inputs.dimension = 3
+        N4BFC.inputs.bspline_fitting_distance = 200
+        N4BFC.inputs.shrink_factor = 3
+        N4BFC.inputs.n_iterations = [50,50,30,20]
+        N4BFC.inputs.convergence_threshold = 1e-6
+
+        baw201.connect([(DenoiseInputImgs, N4BFC, [('output_image', 'input_image')]),
+                        (makeDenoiseInImageList, N4BFC, [('outBFCImageList', 'output_image')])
+        ])
+
         print("\nMerge all T1 and T2 List\n")
         makePreprocessingOutList = pe.Node(Function(function=GenerateSeparateImageTypeList,
                                                     input_names=['inFileList', 'inTypeList'],
                                                     output_names=['T1s', 'T2s', 'PDs', 'FLs', 'OTHERs']),
                                            run_without_submitting=False,
                                            name="99_makePreprocessingOutList")
-        baw201.connect(DenoiseInputImgs, 'output_image', makePreprocessingOutList, 'inFileList')
+        baw201.connect(N4BFC, 'output_image', makePreprocessingOutList, 'inFileList')
         baw201.connect(makeDenoiseInImageList, 'imageTypeList', makePreprocessingOutList, 'inTypeList')
 
     else:

@@ -117,7 +117,8 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                   output_transform_prefix='AtlasToSubjectPostBABC_SyN',
                   output_warped_image='atlas2subjectPostBABC.nii.gz',
                   output_inverse_warped_image='subject2atlasPostBABC.nii.gz',
-                  save_state='SavedInternalSyNStatePostBABC.h5')
+                  save_state='SavedInternalSyNStatePostBABC.h5',
+                  invert_initial_moving_transform=None)
 
     ## TODO: Try multi-modal registration here
     baw200.connect([(inputsSpec, A2SantsRegistrationPostABCSyN, [('atlasToSubjectRegistrationState', 'restore_state'),

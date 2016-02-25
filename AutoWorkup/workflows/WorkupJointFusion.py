@@ -200,7 +200,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                       output_transform_prefix=jointFusion_atlas_subject+'_ToSubjectPreJointFusion_SyN',
                       output_warped_image=jointFusion_atlas_subject + '_2subject.nii.gz',
                       output_inverse_warped_image=None, #NO NEED FOR THIS
-                      save_state=None)                  #NO NEED FOR THIS
+                      save_state=None,                  #NO NEED FOR THIS
+                      invert_initial_moving_transform=False)
 
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons

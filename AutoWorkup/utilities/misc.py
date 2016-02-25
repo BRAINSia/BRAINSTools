@@ -14,7 +14,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
             output_warped_image,
             output_inverse_warped_image,
             save_state,
-            invert_initial_moving_transform = None):
+            invert_initial_moving_transform):
     """ Ants registration settings are difficult
     to get correct all the time.  This utility function
     is designed to assist with getting the common settings

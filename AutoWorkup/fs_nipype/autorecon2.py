@@ -358,8 +358,7 @@ def create_AutoRecon2(config):
     ar2_lh = pe.Workflow("AutoRecon2_Left")
     ar2_rh = pe.Workflow("AutoRecon2_Right")
 
-    # Split by Hemisphere
-    # fuction to define the filenames that are unique to each hemisphere
+    # iterate by hemisphere
     for hemisphere in ['lh', 'rh']:
         if hemisphere == 'lh':
             label = 255

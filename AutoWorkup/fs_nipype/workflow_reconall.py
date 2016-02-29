@@ -58,15 +58,21 @@ def create_reconall(config):
                 seg_noCC=[['tp']],
                 seg_presurf=[['tp']])
                         
-            reconall.connect([(tp_data_source, merge_norms, [('norm', 'in{0}'.format(i))]),
-                              (tp_data_grabber, merge_segs, [('seg_presurf', 'in{0}'.format(i))]),
-                              (tp_data_grabber, merge_segs_noCC, [('seg_noCC', 'in{0}'.format(i))]),
-                              (tp_data_grabber, merge_template_ltas, [('subj_to_template_lta', 'in{0}'.format(i))])])
+            reconall.connect([(tp_data_source, merge_norms, [('norm',
+                                                              'in{0}'.format(i))]),
+                              (tp_data_grabber, merge_segs, [('seg_presurf',
+                                                              'in{0}'.format(i))]),
+                              (tp_data_grabber, merge_segs_noCC, [('seg_noCC',
+                                                                   'in{0}'.format(i))]),
+                              (tp_data_grabber, merge_template_ltas, [('subj_to_template_lta',
+                                                                       'in{0}'.format(i))])])
 
             if tp == config['subject_id']:
                 reconall.connect([(tp_data_source, ar2_wf, [('wm', 'Inputs.init_wm')]),
-                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'Inputs.subj_to_template_lta')]),
-                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'Inputs.subj_to_template_lta')])])
+                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta',
+                                                              'Inputs.subj_to_template_lta')]),
+                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta',
+                                                              'Inputs.subj_to_template_lta')])])
 
         reconall.connect([(merge_norms, ar2_wf, [('out', 'Inputs.alltps_norms')]),
                           (merge_segs, ar2_wf, [('out', 'Inputs.alltps_segs')]),

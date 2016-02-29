@@ -460,20 +460,19 @@ def create_AutoRecon1(config):
 
     ar1_wf.connect([(brainmask, copy_brainmask, [('out_file', 'in_file')])])
 
-        
-    outputspec = pe.Node(IdentityInterface(fields=['t2_raw',
-                                                   'flair',
-                                                   'rawavg',
-                                                   'orig',
-                                                   'orig_nu',
-                                                   'talairach_auto',
-                                                   'talairach',
-                                                   't1',
-                                                   'talskull',
-                                                   'brainmask_auto',
-                                                   'brainmask',
-                                                   'braintemplate'
-                                                   ]),
+    outputs = ['t2_raw',
+               'flair',
+               'rawavg',
+               'orig',
+               'orig_nu',
+               'talairach_auto',
+               'talairach',
+               't1',
+               'talskull',
+               'brainmask_auto',
+               'brainmask',
+               'braintemplate']
+    outputspec = pe.Node(IdentityInterface(fields=outputs),
                          name="Outputs")
     
     ar1_wf.connect([(T2_convert, outputspec, [('out_file', 't2_raw')]),
@@ -497,4 +496,4 @@ def create_AutoRecon1(config):
                         ])
 
     
-    return ar1_wf
+    return ar1_wf, outputs

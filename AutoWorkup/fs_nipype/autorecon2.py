@@ -412,6 +412,7 @@ def create_AutoRecon2(config):
             make_surfaces.inputs.hemisphere = hemisphere
             make_surfaces.inputs.maximum = 3.5
             make_surfaces.inputs.longitudinal = True
+            make_surfaces.inputs.copy_inputs = True
             
             hemi_wf.connect([(copy_template_orig_white, make_surfaces, [('out_file', 'orig_white')]),
                              (copy_template_white, make_surfaces, [('out_file', 'in_orig')])])
@@ -444,8 +445,8 @@ def create_AutoRecon2(config):
             
             extract_main_component = pe.Node(
                 ExtractMainComponent(), name="Extract_Main_Component")
-            hemi_wf.connect([(tesselate, extract_main_component, [('surface', 'in_file'),
-                                                                  ('surface', 'out_file')])])
+            extract_main_component.inputs.out_file = "{0}.orig.nofix".format(hemisphere)
+            hemi_wf.connect([(tesselate, extract_main_component, [('surface', 'in_file')])])
 
             
             copy_orig = pe.Node(Function(['in_file', 'out_file'],
@@ -560,6 +561,7 @@ def create_AutoRecon2(config):
             make_surfaces.inputs.mgz = True
             make_surfaces.inputs.white_only = True
             make_surfaces.inputs.hemisphere = hemisphere
+            make_surfaces.inputs.copy_inputs = True
             hemi_wf.connect([(remove_intersection, make_surfaces, [('out_file', 'in_orig')]),
                              (hemi_inputspec, make_surfaces, [('subject_id', 'subject_id'),
                                                               ('subjects_dir', 'subjects_dir'),
@@ -567,7 +569,6 @@ def create_AutoRecon2(config):
                                                               ('t1', 'in_T1'),
                                                               ('filled', 'in_filled'),
                                                               ('wm', 'in_wm')])])
-
             # end of non-longitudinal specific steps
 
             
@@ -596,8 +597,8 @@ def create_AutoRecon2(config):
         """
         inflate2 = pe.Node(MRIsInflate(), name="inflate2")
         inflate2.inputs.out_sulc = '{0}.sulc'.format(hemisphere)
+        inflate2.inputs.out_file = '{0}.inflated'.format(hemisphere)
         hemi_wf.connect([(smooth2, inflate2, [('surface', 'in_file')]),
-                         (copy_inflate1, inflate2, [('out_file', 'out_file')]),
                      ])
 
         # Compute Curvature
@@ -605,6 +606,7 @@ def create_AutoRecon2(config):
         
         curvature1 = pe.Node(Curvature(), name="Curvature1")
         curvature1.inputs.save = True
+        curvature1.inputs.copy_input = True
         hemi_wf.connect([(make_surfaces, curvature1, [('out_white', 'in_file')]),
                      ])
 
@@ -614,7 +616,7 @@ def create_AutoRecon2(config):
         curvature2.inputs.averages = 5
         curvature2.inputs.save = True
         curvature2.inputs.distances = (10, 10)
-
+        curvature1.inputs.copy_input = True
         hemi_wf.connect([(inflate2, curvature2, [('out_file', 'in_file')]),
                      ])
 
@@ -648,49 +650,72 @@ def create_AutoRecon2(config):
                         (mri_mask, hemi_wf, [('out_file', 'Inputs.t1')]),
                         (pretess, hemi_wf, [('out_file', 'Inputs.wm')])])
 
-        outputspec = pe.Node(IdentityInterface(fields=['nu',
-                                                       'tal_lta',
-                                                       ]),
-                             name="Outputs")
-        
+        # Outputs for hemisphere workflow
+        hemi_outputs=['orig_nofix',
+                      'orig',
+                      'smoothwm_nofix',
+                      'inflated_nofix',
+                      'qsphere_nofix',
+                      'white',
+                      'curv',
+                      'area',
+                      'cortex',
+                      'pial',
+                      'thickness',
+                      'smoothwm',
+                      'sulc',
+                      'inflated',
+                      'white_H',
+                      'white_K',
+                      'inflated_H',
+                      'inflated_K',
+                      'curv_stats']
 
-    outputspec = pe.Node(IdentityInterface(fields=['nu',
-                                                   'tal_lta',
-                                                   'norm',
-                                                   'ctrl_pts',
-                                                   'tal_m3z',
-                                                   'nu_noneck',
-                                                   'talskull2',
-                                                   'aseg_noCC',
-                                                   'cc_up',
-                                                   'aseg_auto',
-                                                   'aseg_presurf',
-                                                   'brain',
-                                                   'brain_finalsurfs',
-                                                   'wm_seg',
-                                                   'wm_aseg',
-                                                   'wm',
-                                                   'ponscc_log',
-                                                   'filled',
-                                                   'lh_orig',
-                                                   'rh_orig',
-                                                   'rh_orig_nofix',
-                                                   'lh_orig_nofix',
-                                                   'lh_smoothwm',
-                                                   'rh_smoothwm',
-                                                   'lh_smoothwm_nofix',
-                                                   'rh_smoothwm_nofix',
-                                                   'lh_inflated',
-                                                   'rh_inflated',
-                                                   'lh_inflated_nofix',
-                                                   'rh_inflated_nofix',
-                                                   'lh_qsphere_nofix',
-                                                   'rh_qsphere_nofix',
-                                                   'lh_sulc',
-                                                   'rh_sulc',
-                                                   'lh_curvstats',
-                                                   'rh_curvstats',
-                                               ]),
+        hemi_outputspec = pe.Node(IdentityInterface(fields=hemi_outputs),
+                                  name="Outputs")
+
+        hemi_wf.connect([(extract_main_component, hemi_outputspec, [('out_file', 'orig_nofix')]),
+                         (inflate1, hemi_outputspec, [('out_file', 'inflated_nofix')]),
+                         (qsphere, hemi_outputspec, [('out_file', 'qsphere_nofix')]),
+                         (remove_intersection, hemi_outputspec, [('out_file', 'orig')]),
+                         (make_surfaces, hemi_outputspec, [('out_white', 'white'),
+                                                           ('out_curv', 'curv'),
+                                                           ('out_area', 'area'),
+                                                           ('out_cortex', 'cortex'),
+                                                           ('out_pial', 'pial')]),
+                         (smooth2, hemi_outputspec, [('surface', 'smoothwm')]),
+                         (inflate2, hemi_outputspec, [('out_sulc', 'sulc'),
+                                                      ('out_file', 'inflated')]),
+                         (curvature1, hemi_outputspec, [('out_mean', 'white_H'),
+                                                        ('out_gauss', 'white_K')]),
+                         (curvature2, hemi_outputspec, [('out_mean', 'inflated_H'),
+                                                        ('out_gauss', 'inflated_K')]),
+                         (curvature_stats, hemi_outputspec, [('out_file', 'curv_stats')])])
+                         
+                         
+        
+    outputs = ['nu',
+               'tal_lta',
+               'norm',
+               'ctrl_pts',
+               'tal_m3z',
+               'nu_noneck',
+               'talskull2',
+               'aseg_noCC',
+               'cc_up',
+               'aseg_auto',
+               'aseg_presurf',
+               'brain',
+               'brain_finalsurfs',
+               'wm_seg',
+               'wm_aseg',
+               'wm',
+               'ponscc_log',
+               'filled']
+    for hemi in ('lh', 'rh'):
+        for field in hemi_outputs:
+            outputs.append("{0}_".format(hemi) + field)
+    outputspec = pe.Node(IdentityInterface(fields=outputs),
                          name="Outputs")
 
     ar2_wf.connect([(intensity_correction, outputspec, [('out_file', 'nu')]),
@@ -712,4 +737,10 @@ def create_AutoRecon2(config):
                     (fill, outputspec, [('out_file', 'filled')]),
                     ])
 
-    return ar2_wf, ar2_lh, ar2_rh
+    for hemi, hemi_wf in [('lh', ar2_lh),  ('rh', ar2_rh)]:
+        for field in hemi_outputs:
+            output = "{0}_".format(hemi) + field
+            ar2_wf.connect([(hemi_wf, outputspec, [("Outputs." + field, output)])])
+
+    
+    return ar2_wf, outputs

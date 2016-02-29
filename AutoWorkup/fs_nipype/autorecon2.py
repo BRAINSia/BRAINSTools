@@ -523,13 +523,14 @@ def create_AutoRecon2(config):
 
             This mris_fix_topology does not take in the {lh,rh}.orig file, but instead takes in the
             subject ID and hemisphere and tries to find it from the subjects
-            directory
+            directory.
             """
             fix_topology = pe.Node(FixTopology(), name="Fix_Topology")
             fix_topology.inputs.mgz = True
             fix_topology.inputs.ga = True
             fix_topology.inputs.seed = 1234
             fix_topology.inputs.hemisphere = hemisphere
+            fix_topology.inputs.copy_inputs = True
             hemi_wf.connect([(copy_orig, fix_topology, [('out_file', 'in_orig')]),
                              (copy_inflate1, fix_topology, [('out_file', 'in_inflated')]),
                              (qsphere, fix_topology, [('out_file', 'sphere')]),
@@ -537,6 +538,7 @@ def create_AutoRecon2(config):
                                                              ('subjects_dir', 'subjects_dir')])])
 
 
+            ## TODO: halt workflow for bad euler number
             euler_number = pe.Node(EulerNumber(), name="Euler_Number")
 
             hemi_wf.connect([(fix_topology, euler_number, [('out_file', 'in_file')]),
@@ -544,12 +546,9 @@ def create_AutoRecon2(config):
 
             remove_intersection = pe.Node(
                 RemoveIntersection(), name="Remove_Intersection")
+            remove_intersection.inputs.out_file = "{0}.orig".format(hemisphere)
 
-            hemi_wf.connect([(euler_number, remove_intersection, [('out_file', 'in_file'),
-                                                                  ('out_file',
-                                                                   'out_file')
-                                                              ]),
-                         ])
+            hemi_wf.connect([(euler_number, remove_intersection, [('out_file', 'in_file')])])
 
             # The inflated file is removed in AutoRecon2 after it is used for the Fix
             # Topology step

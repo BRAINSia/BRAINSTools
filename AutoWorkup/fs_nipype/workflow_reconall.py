@@ -28,9 +28,9 @@ def create_reconall(config):
                                                       iscales=[['subject_id']],
                                                       ltas=[['subject_id']])
 
-        reconall.connect([(grab_inittp_files, ar1_wf, [('inputvols', 'AutoRecon1_Inputs.in_T1s'),
-                                                       ('iscales', 'AutoRecon1_Inputs.iscales'),
-                                                       ('ltas', 'AutoRecon1_Inputs.ltas')])])
+        reconall.connect([(grab_inittp_files, ar1_wf, [('inputvols', 'Inputs.in_T1s'),
+                                                       ('iscales', 'Inputs.iscales'),
+                                                       ('ltas', 'Inputs.ltas')])])
 
         merge_norms = pe.Node(Merge(len(config['timepoints'])), name="Merge_Norms")
         merge_segs = pe.Node(Merge(len(config['timepoints'])), name="Merge_Segmentations")
@@ -64,14 +64,14 @@ def create_reconall(config):
                               (tp_data_grabber, merge_template_ltas, [('subj_to_template_lta', 'in{0}'.format(i))])])
 
             if tp == config['subject_id']:
-                reconall.connect([(tp_data_source, ar2_wf, [('wm', 'AutoRecon2_Inputs.init_wm')]),
-                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'AutoRecon2_Inputs.subj_to_template_lta')]),
-                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'AutoRecon1_Inputs.subj_to_template_lta')])])
+                reconall.connect([(tp_data_source, ar2_wf, [('wm', 'Inputs.init_wm')]),
+                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'Inputs.subj_to_template_lta')]),
+                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'Inputs.subj_to_template_lta')])])
 
-        reconall.connect([(merge_norms, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_norms')]),
-                          (merge_segs, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_segs')]),
-                          (merge_template_ltas, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_to_template_ltas')]),
-                          (merge_segs_noCC, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_segs_noCC')])])
+        reconall.connect([(merge_norms, ar2_wf, [('out', 'Inputs.alltps_norms')]),
+                          (merge_segs, ar2_wf, [('out', 'Inputs.alltps_segs')]),
+                          (merge_template_ltas, ar2_wf, [('out', 'Inputs.alltps_to_template_ltas')]),
+                          (merge_segs_noCC, ar2_wf, [('out', 'Inputs.alltps_segs_noCC')])])
 
                         
 
@@ -80,8 +80,8 @@ def create_reconall(config):
         ds_template_files.inputs.subject_id = config['subject_id']
         ds_template_files.inputs.subjects_dir = config['subjects_dir']
 
-        reconall.connect([(ds_template_files, ar1_wf, [('brainmask', 'AutoRecon1_Inputs.template_brainmask')]),
-                          (ds_template_files, ar2_wf, [('aseg', 'AutoRecon2_Inputs.template_aseg')])])
+        reconall.connect([(ds_template_files, ar1_wf, [('brainmask', 'Inputs.template_brainmask')]),
+                          (ds_template_files, ar2_wf, [('aseg', 'Inputs.template_aseg')])])
 
         # grab files from template run
         grab_template_files = pe.Node(DataGrabber(), name="Grab_Template_Files",
@@ -116,93 +116,70 @@ def create_reconall(config):
             template_rh_white=[['long_template']],
             template_lh_pial=[['long_template']],
             template_rh_pial=[['long_template']])
-        reconall.connect([(grab_template_files, ar1_wf, [('template_talairach_xfm', 'AutoRecon1_Inputs.template_talairach_xfm')]),
-                          (grab_template_files, ar2_wf, [('template_talairach_lta', 'AutoRecon2_Inputs.template_talairach_lta'),
-                                                         ('template_talairach_m3z', 'AutoRecon2_Inputs.template_talairach_m3z'),
-                                                         ('template_label_intensities', 'AutoRecon2_Inputs.template_label_intensities'),
-                                                         ('template_lh_white', 'AutoRecon2_Inputs.template_lh_white'),
-                                                         ('template_rh_white', 'AutoRecon2_Inputs.template_rh_white'),
-                                                         ('template_lh_pial', 'AutoRecon2_Inputs.template_lh_pial'),
-                                                         ('template_rh_pial', 'AutoRecon2_Inputs.template_rh_pial'),])
+        reconall.connect([(grab_template_files, ar1_wf, [('template_talairach_xfm', 'Inputs.template_talairach_xfm')]),
+                          (grab_template_files, ar2_wf, [('template_talairach_lta', 'Inputs.template_talairach_lta'),
+                                                         ('template_talairach_m3z', 'Inputs.template_talairach_m3z'),
+                                                         ('template_label_intensities', 'Inputs.template_label_intensities'),
+                                                         ('template_lh_white', 'Inputs.template_lh_white'),
+                                                         ('template_rh_white', 'Inputs.template_rh_white'),
+                                                         ('template_lh_pial', 'Inputs.template_lh_pial'),
+                                                         ('template_rh_pial', 'Inputs.template_rh_pial'),])
                           ])
         # end longitudinal data collection
 
     # connect autorecon 1 - 3 
-    reconall.connect([(ar1_wf, ar3_wf, [('AutoRecon1_Inputs.subject_id', 'AutoRecon3_Inputs.subject_id'),
-                                        ('AutoRecon1_Inputs.subjects_dir',
-                                         'AutoRecon3_Inputs.subjects_dir'),
-                                        ('Copy_Brainmask.out_file',
-                                         'AutoRecon3_Inputs.brainmask'),
-                                        ('Copy_Transform.out_file',
-                                         'AutoRecon3_Inputs.transform'),
-                                        ('Add_Transform_to_Header.out_file',
-                                         'AutoRecon3_Inputs.orig_mgz'),
-                                        ('Robust_Template.out_file',
-                                         'AutoRecon3_Inputs.rawavg'),
+    reconall.connect([(ar1_wf, ar3_wf, [('Inputs.subject_id', 'Inputs.subject_id'),
+                                        ('Inputs.subjects_dir', 'Inputs.subjects_dir'),
+                                        ('Outputs.brainmask', 'Inputs.brainmask'),
+                                        ('Outputs.talairach', 'Inputs.transform'),
+                                        ('Outputs.orig', 'Inputs.orig_mgz'),
+                                        ('Outputs.rawavg', 'Inputs.rawavg'),
                                         ]),
-                      (ar1_wf, ar2_wf, [('Copy_Brainmask.out_file', 'AutoRecon2_Inputs.brainmask'),
-                                        ('Copy_Transform.out_file',
-                                         'AutoRecon2_Inputs.transform'),
-                                        ('Add_Transform_to_Header.out_file',
-                                         'AutoRecon2_Inputs.orig'),
-                                        ('AutoRecon1_Inputs.subject_id',
-                                         'AutoRecon2_Inputs.subject_id'),
-                                        ('AutoRecon1_Inputs.subjects_dir',
-                                         'AutoRecon2_Inputs.subjects_dir'),
+                      (ar1_wf, ar2_wf, [('Outputs.brainmask', 'Inputs.brainmask'),
+                                        ('Outputs.talairach', 'Inputs.transform'),
+                                        ('Outputs.orig', 'Inputs.orig'),
+                                        ('Inputs.subject_id', 'Inputs.subject_id'),
+                                        ('Inputs.subjects_dir', 'Inputs.subjects_dir'),
                                         ]),
-                      (ar2_lh, ar3_wf, [('inflate2.out_file', 'AutoRecon3_Inputs.lh_inflated'),
+                      (ar2_lh, ar3_wf, [('inflate2.out_file', 'Inputs.lh_inflated'),
                                         ('Smooth2.surface',
-                                         'AutoRecon3_Inputs.lh_smoothwm'),
+                                         'Inputs.lh_smoothwm'),
                                         ('Make_Surfaces.out_white',
-                                         'AutoRecon3_Inputs.lh_white'),
+                                         'Inputs.lh_white'),
                                         ('Make_Surfaces.out_cortex',
-                                         'AutoRecon3_Inputs.lh_cortex_label'),
+                                         'Inputs.lh_cortex_label'),
                                         ('Make_Surfaces.out_area',
-                                         'AutoRecon3_Inputs.lh_area'),
+                                         'Inputs.lh_area'),
                                         ('Make_Surfaces.out_curv',
-                                         'AutoRecon3_Inputs.lh_curv'),
+                                         'Inputs.lh_curv'),
                                         ('inflate2.out_sulc',
-                                         'AutoRecon3_Inputs.lh_sulc'),
+                                         'Inputs.lh_sulc'),
                                         ('Extract_Main_Component.out_file',
-                                         'AutoRecon3_Inputs.lh_orig_nofix'),
+                                         'Inputs.lh_orig_nofix'),
                                         ('Remove_Intersection.out_file',
-                                         'AutoRecon3_Inputs.lh_orig'),
+                                         'Inputs.lh_orig'),
                                         ('Curvature1.out_mean',
-                                         'AutoRecon3_Inputs.lh_white_H'),
+                                         'Inputs.lh_white_H'),
                                         ('Curvature1.out_gauss',
-                                         'AutoRecon3_Inputs.lh_white_K'),
+                                         'Inputs.lh_white_K'),
                                         ]),
-                      (ar2_rh, ar3_wf, [('inflate2.out_file', 'AutoRecon3_Inputs.rh_inflated'),
-                                        ('Smooth2.surface',
-                                         'AutoRecon3_Inputs.rh_smoothwm'),
-                                        ('Make_Surfaces.out_white',
-                                         'AutoRecon3_Inputs.rh_white'),
-                                        ('Make_Surfaces.out_cortex',
-                                         'AutoRecon3_Inputs.rh_cortex_label'),
-                                        ('Make_Surfaces.out_area',
-                                         'AutoRecon3_Inputs.rh_area'),
-                                        ('Make_Surfaces.out_curv',
-                                         'AutoRecon3_Inputs.rh_curv'),
-                                        ('inflate2.out_sulc',
-                                         'AutoRecon3_Inputs.rh_sulc'),
-                                        ('Extract_Main_Component.out_file',
-                                         'AutoRecon3_Inputs.rh_orig_nofix'),
-                                        ('Remove_Intersection.out_file',
-                                         'AutoRecon3_Inputs.rh_orig'),
-                                        ('Curvature1.out_mean',
-                                         'AutoRecon3_Inputs.rh_white_H'),
-                                        ('Curvature1.out_gauss',
-                                         'AutoRecon3_Inputs.rh_white_K'),
+                      (ar2_rh, ar3_wf, [('inflate2.out_file', 'Inputs.rh_inflated'),
+                                        ('Smooth2.surface', 'Inputs.rh_smoothwm'),
+                                        ('Make_Surfaces.out_white', 'Inputs.rh_white'),
+                                        ('Make_Surfaces.out_cortex', 'Inputs.rh_cortex_label'),
+                                        ('Make_Surfaces.out_area', 'Inputs.rh_area'),
+                                        ('Make_Surfaces.out_curv', 'Inputs.rh_curv'),
+                                        ('inflate2.out_sulc', 'Inputs.rh_sulc'),
+                                        ('Extract_Main_Component.out_file', 'Inputs.rh_orig_nofix'),
+                                        ('Remove_Intersection.out_file', 'Inputs.rh_orig'),
+                                        ('Curvature1.out_mean', 'Inputs.rh_white_H'),
+                                        ('Curvature1.out_gauss', 'Inputs.rh_white_K'),
                                         ]),
-                      (ar2_wf, ar3_wf, [('Copy_CCSegmentation.out_file', 'AutoRecon3_Inputs.aseg_presurf'),
-                                        ('Mask_Brain_Final_Surface.out_file',
-                                         'AutoRecon3_Inputs.brain_finalsurfs'),
-                                        ('MRI_Pretess.out_file',
-                                         'AutoRecon3_Inputs.wm'),
-                                        ('Fill.out_file',
-                                         'AutoRecon3_Inputs.filled'),
-                                        ('CA_Normalize.out_file',
-                                         'AutoRecon3_Inputs.norm'),
+                      (ar2_wf, ar3_wf, [('Outputs.aseg_presurf', 'Inputs.aseg_presurf'),
+                                        ('Outputs.brain_finalsurfs', 'Inputs.brain_finalsurfs'),
+                                        ('Outputs.wm', 'Inputs.wm'),
+                                        ('Outputs.filled', 'Inputs.filled'),
+                                        ('Outputs.norm', 'Inputs.norm'),
                                         ]),
                       ])
 

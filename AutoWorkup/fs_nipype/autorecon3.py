@@ -52,7 +52,7 @@ def create_AutoRecon3(config):
                                                    'orig_mgz',
                                                    'rawavg',
                                                    'norm']),
-                         name='AutoRecon3_Inputs')
+                         name='Inputs')
 
     inputSpec.inputs.lh = 'lh'
     inputSpec.inputs.rh = 'rh'

@@ -323,7 +323,7 @@ def main(argv):
         'stop_on_first_rerun': 'false',
         # This stops at first attempt to rerun, before running, and before
         # deleting previous results.
-        'hash_method': 'content',
+        'hash_method': 'timestamp',
         'remove_unnecessary_outputs': 'false',
         'use_relative_paths': 'false',
         'remove_node_directories': 'false',

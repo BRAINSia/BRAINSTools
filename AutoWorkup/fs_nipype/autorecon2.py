@@ -7,11 +7,7 @@ from autorecon1 import mkdir_p, copy_file
 
 def copy_ltas(in_file, subjects_dir, subject_id, long_template):
     import os
-    out_file = copy_file(
-        in_file,
-        os.path.join(
-            subjects_dir, subject_id, 'mri', 'transforms',
-            os.path.basename(in_file).replace(long_template, subject_id)))
+    out_file = copy_file(in_file, os.path.basename(in_file).replace(long_template, subject_id))
     return out_file
 
 def create_AutoRecon2(config):
@@ -42,7 +38,7 @@ def create_AutoRecon2(config):
                                                       'alltps_norms',
                                                       'subjects_dir']),
                             run_without_submitting=True,
-                            name='AutoRecon2_Inputs')
+                            name='Inputs')
         inputSpec.inputs.timepoints = config['timepoints']
         
     else:
@@ -53,7 +49,7 @@ def create_AutoRecon2(config):
                                                       'subject_id',
                                                       'subjects_dir']),
                             run_without_submitting=True,
-                            name='AutoRecon2_Inputs')
+                            name='Inputs')
         
 
     # NU Intensity Correction
@@ -264,9 +260,7 @@ def create_AutoRecon2(config):
     segment_cc = pe.Node(SegmentCC(), name="Segment_CorpusCallosum")
     segment_cc.inputs.out_rotation = 'cc_up.lta'
     segment_cc.inputs.out_file = 'aseg.auto.mgz'
-    ar2_wf.connect([(inputSpec, segment_cc, [('subject_id', 'subject_id'),
-                                              ('subjects_dir', 'subjects_dir')]),
-                    (ca_label, segment_cc, [('out_file', 'in_file')]),
+    ar2_wf.connect([(ca_label, segment_cc, [('out_file', 'in_file')]),
                     (ca_normalize, segment_cc, [('out_file', 'in_norm')]),
                     ])
 
@@ -364,7 +358,6 @@ def create_AutoRecon2(config):
     ar2_lh = pe.Workflow("AutoRecon2_Left")
     ar2_rh = pe.Workflow("AutoRecon2_Right")
 
-
     # Split by Hemisphere
     # fuction to define the filenames that are unique to each hemisphere
     for hemisphere in ['lh', 'rh']:
@@ -375,17 +368,15 @@ def create_AutoRecon2(config):
             label = 127
             hemi_wf = ar2_rh
         
-        # define some output files
-        orig = '{0}.orig'.format(hemisphere)
-        orig_nofix = orig + '.nofix'
-        smoothwm = '{0}.smoothwm'.format(hemisphere)
-        smoothwm_nofix = smoothwm + '.nofix'
-        inflated = '{0}.inflated'.format(hemisphere)
-        inflated_nofix = inflated + '.nofix'
-        qsphere_nofix = '{0}.qsphere.nofix'.format(hemisphere)
-        sulc = '{0}.sulc'.format(hemisphere)
-        stats = '{0}.curv.stats'.format(hemisphere)
-
+        hemi_inputspec = pe.Node(IdentityInterface(fields=['norm',
+                                                           'filled',
+                                                           'aseg',
+                                                           't1',
+                                                           'wm',
+                                                           'subject_id',
+                                                           'subjects_dir']),
+                                 name="Inputs")
+            
         if config['longitudinal']:
             # Make White Surf
             # Copy files from longitudinal base
@@ -426,6 +417,7 @@ def create_AutoRecon2(config):
                              (copy_template_white, make_surfaces, [('out_file', 'in_orig')])])
             
         else:
+            # If running single session
             # Tessellate by hemisphere
             """
             This is the step where the orig surface (ie, surf/?h.orig.nofix) is created.
@@ -440,9 +432,12 @@ def create_AutoRecon2(config):
             pretess2 = pe.Node(MRIPretess(), name='Pretess2')
             pretess2.inputs.out_file = 'filled-pretess{0}.mgz'.format(label)
             pretess2.inputs.label = label
+            
+            hemi_wf.connect([(hemi_inputspec, pretess2, [('norm', 'in_norm'),
+                                                         ('filled', 'in_filled')])])
 
             tesselate = pe.Node(MRITessellate(), name="Tesselation")
-            tesselate.inputs.out_file = orig_nofix
+            tesselate.inputs.out_file = "{0}.orig.nofix".format(hemisphere)
             tesselate.inputs.label_value = label
             hemi_wf.connect([(pretess2, tesselate, [('out_file', 'in_file')])])
 
@@ -457,7 +452,7 @@ def create_AutoRecon2(config):
                                          ['out_file'],
                                          copy_file),
                                 name='Copy_Orig')
-            copy_orig.inputs.out_file = orig
+            copy_orig.inputs.out_file = '{0}.orig'.format(hemisphere)
             hemi_wf.connect([(extract_main_component, copy_orig, [('out_file', 'in_file')])])
 
             # Orig Surface Smoothing 1
@@ -472,7 +467,7 @@ def create_AutoRecon2(config):
             smooth1 = pe.Node(SmoothTessellation(), name="Smooth1")
             smooth1.inputs.disable_estimates = True
             smooth1.inputs.seed = 1234
-            smooth1.inputs.out_file = smoothwm_nofix
+            smooth1.inputs.out_file = '{0}.smoothwm.nofix'.format(hemisphere)
             hemi_wf.connect([(extract_main_component, smooth1,
                               [('out_file', 'in_file')])
                          ])
@@ -488,12 +483,13 @@ def create_AutoRecon2(config):
 
             inflate1 = pe.Node(MRIsInflate(), name="inflate1")
             inflate1.inputs.no_save_sulc = True
-            inflate1.inputs.out_file = inflated_nofix
+            inflate1.inputs.out_file = '{0}.inflated.nofix'.format(hemisphere)
+
             copy_inflate1 = pe.Node(Function(['in_file', 'out_file'],
                                              ['out_file'],
                                              copy_file),
                                     name='Copy_Inflate1')
-            copy_inflate1.inputs.out_file = inflated
+            copy_inflate1.inputs.out_file = '{0}.inflated'.format(hemisphere)
             hemi_wf.connect([(smooth1, inflate1, [('surface', 'in_file')]),
                              (inflate1, copy_inflate1, [('out_file', 'in_file')]),
                          ])
@@ -509,7 +505,7 @@ def create_AutoRecon2(config):
             qsphere = pe.Node(Sphere(), name="Sphere")
             qsphere.inputs.seed = 1234
             qsphere.inputs.magic = True
-            qsphere.inputs.out_file = qsphere_nofix
+            qsphere.inputs.out_file = '{0}.qsphere.nofix'.format(hemisphere)
             if config['openmp'] != None:
                 qsphere.inputs.num_threads = config['openmp']
             if config['plugin_args'] != None:
@@ -535,10 +531,11 @@ def create_AutoRecon2(config):
             fix_topology.inputs.seed = 1234
             fix_topology.inputs.hemisphere = hemisphere
             hemi_wf.connect([(copy_orig, fix_topology, [('out_file', 'in_orig')]),
-                             (copy_inflate1, fix_topology,
-                              [('out_file', 'in_inflated')]),
+                             (copy_inflate1, fix_topology, [('out_file', 'in_inflated')]),
                              (qsphere, fix_topology, [('out_file', 'sphere')]),
-                         ])
+                             (hemi_inputspec, fix_topology, [('subject_id', 'subject_id'),
+                                                             ('subjects_dir', 'subjects_dir')])])
+
 
             euler_number = pe.Node(EulerNumber(), name="Euler_Number")
 
@@ -583,7 +580,13 @@ def create_AutoRecon2(config):
             make_surfaces.inputs.white_only = True
             make_surfaces.inputs.hemisphere = hemisphere
             hemi_wf.connect([(remove_intersection, make_surfaces, [('out_file', 'in_orig')]),
-                             ])
+                             (hemi_inputspec, make_surfaces, [('subject_id', 'subject_id'),
+                                                              ('subjects_dir', 'subjects_dir'),
+                                                              ('aseg', 'in_aseg'),
+                                                              ('t1', 'in_T1'),
+                                                              ('filled', 'in_filled'),
+                                                              ('wm', 'in_wm')])])
+
             # end of non-longitudinal specific steps
 
             
@@ -599,7 +602,7 @@ def create_AutoRecon2(config):
         smooth2.inputs.disable_estimates = True
         smooth2.inputs.smoothing_iterations = 3
         smooth2.inputs.seed = 1234
-        smooth2.inputs.out_file = smoothwm
+        smooth2.inputs.out_file = '{0}.smoothwm'.format(hemisphere)
         hemi_wf.connect([(make_surfaces, smooth2, [('out_white', 'in_file')])])
 
         # Inflation 2
@@ -611,7 +614,7 @@ def create_AutoRecon2(config):
         topology fixing.
         """
         inflate2 = pe.Node(MRIsInflate(), name="inflate2")
-        inflate2.inputs.out_sulc = sulc
+        inflate2.inputs.out_sulc = '{0}.sulc'.format(hemisphere)
         hemi_wf.connect([(smooth2, inflate2, [('surface', 'in_file')]),
                          (remove_inflate1, inflate2, [('out_file', 'out_file')]),
                      ])
@@ -639,12 +642,13 @@ def create_AutoRecon2(config):
         curvature_stats.inputs.write = True
         curvature_stats.inputs.values = True
         curvature_stats.inputs.hemisphere = hemisphere
-        curvature_stats.inputs.out_file = stats
+        curvature_stats.inputs.out_file = '{0}.curv.stats'.format(hemisphere)
         hemi_wf.connect([(smooth2, curvature_stats, [('surface', 'surface')]),
-                         (make_surfaces, curvature_stats,
-                          [('out_curv', 'in_curv')]),
+                         (make_surfaces, curvature_stats, [('out_curv', 'in_curv')]),
                          (inflate2, curvature_stats, [('out_sulc', 'in_sulc')]),
-                     ])
+                         (hemi_inputspec, curvature_stats, [('subject_id', 'subject_id'),
+                                                            ('subjects_dir', 'subjects_dir')]),
+                         ])
 
         if config['longitudinal']:
             ar2_wf.connect([(inputSpec, hemi_wf, [('template_{0}_white'.format(hemisphere),
@@ -655,19 +659,19 @@ def create_AutoRecon2(config):
                                                     'Copy_Template_Pial.in_file')])])
 
         # Connect inputs for the hemisphere workflows
-        ar2_wf.connect([(ca_normalize, hemi_wf, [('out_file', 'Pretess2.in_norm')]),
-                        (fill, hemi_wf, [('out_file', 'Pretess2.in_filled')]),
-                        (inputSpec, hemi_wf, [('subject_id', 'Fix_Topology.subject_id'),
-                                               ('subjects_dir', 'Fix_Topology.subjects_dir')]),
-                        (inputSpec, hemi_wf, [('subject_id', 'Make_Surfaces.subject_id'),
-                                               ('subjects_dir', 'Make_Surfaces.subjects_dir')]),
-                        (inputSpec, hemi_wf, [('subject_id', 'Curvature_Stats.subject_id'),
-                                               ('subjects_dir', 'Curvature_Stats.subjects_dir')]),
-                        (copy_cc, hemi_wf, [('out_file', 'Make_Surfaces.in_aseg')]),
-                        (mri_mask, hemi_wf, [('out_file', 'Make_Surfaces.in_T1')]),
-                        (fill, hemi_wf, [('out_file', 'Make_Surfaces.in_filled')]),
-                        (pretess, hemi_wf, [('out_file', 'Make_Surfaces.in_wm')])])
+        ar2_wf.connect([(ca_normalize, hemi_wf, [('out_file', 'Inputs.norm')]),
+                        (fill, hemi_wf, [('out_file', 'Inputs.filled')]),
+                        (inputSpec, hemi_wf, [('subject_id', 'Inputs.subject_id'),
+                                               ('subjects_dir', 'Inputs.subjects_dir')]),
+                        (copy_cc, hemi_wf, [('out_file', 'Inputs.aseg')]),
+                        (mri_mask, hemi_wf, [('out_file', 'Inputs.t1')]),
+                        (pretess, hemi_wf, [('out_file', 'Inputs.wm')])])
 
+        outputspec = pe.Node(IdentityInterface(fields=['nu',
+                                                       'tal_lta',
+                                                       ]),
+                             name="Outputs")
+        
 
     outputspec = pe.Node(IdentityInterface(fields=['nu',
                                                    'tal_lta',
@@ -687,6 +691,24 @@ def create_AutoRecon2(config):
                                                    'wm',
                                                    'ponscc_log',
                                                    'filled',
+                                                   'lh_orig',
+                                                   'rh_orig',
+                                                   'rh_orig_nofix',
+                                                   'lh_orig_nofix',
+                                                   'lh_smoothwm',
+                                                   'rh_smoothwm',
+                                                   'lh_smoothwm_nofix',
+                                                   'rh_smoothwm_nofix',
+                                                   'lh_inflated',
+                                                   'rh_inflated',
+                                                   'lh_inflated_nofix',
+                                                   'rh_inflated_nofix',
+                                                   'lh_qsphere_nofix',
+                                                   'rh_qsphere_nofix',
+                                                   'lh_sulc',
+                                                   'rh_sulc',
+                                                   'lh_curvstats',
+                                                   'rh_curvstats',
                                                ]),
                          name="Outputs")
 
@@ -706,8 +728,7 @@ def create_AutoRecon2(config):
                     (wm_seg, outputspec, [('out_file', 'wm_seg')]),
                     (edit_wm, outputspec, [('out_file', 'wm_aseg')]),
                     (pretess, outputspec, [('out_file', 'wm')]),
-                    (fill, outputspec, [('out_file', 'filled'),
-                                        ('log_file', 'ponscc_log')]),
+                    (fill, outputspec, [('out_file', 'filled')]),
                     ])
 
-    return ar2_wf
+    return ar2_wf, ar2_lh, ar2_rh

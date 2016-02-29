@@ -57,8 +57,11 @@ def awk(awk_file, log_file):
     script.
     """
     import subprocess
-    command = 'awk'
-    subprocess.call([command, '-f', awk_file, log_file])
+    import os
+    command = ['awk', '-f', awk_file, log_file]
+    print(''.join(command))
+    subprocess.call(command)
+    log_file = os.path.abspath(log_file)
     return log_file
 
 def copy_file(in_file, out_file=None):
@@ -71,6 +74,8 @@ def copy_file(in_file, out_file=None):
         out_file = os.path.join(os.getcwd(), os.path.basename(in_file))
     if type(in_file) is list and len(in_file) == 1:
         in_file = in_file[0]
+    out_file = os.path.abspath(out_file)
+    in_file = os.path.abspath(in_file)
     print "copying %s to %s" % (in_file, out_file)
     shutil.copy(in_file, out_file)
     return out_file
@@ -108,20 +113,19 @@ def create_orig_dir(in_orig, in_tal):
     return out_orig, out_tal
 
 
-def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
+def create_preproc_filenames(in_T1s):
     # Create output filenames
     inputvols = list()
     iscaleout = list()
     ltaout = list()
-    orig_dir = os.path.join(subjects_dir, subject_id, 'mri', 'orig')
 
     for i, T1 in enumerate(in_T1s):
         file_num = str(i + 1)
         while len(file_num) < 3:
             file_num = '0' + file_num
-        iscaleout.append(os.path.join(orig_dir, file_num + '-iscale.txt'))
-        ltaout.append(os.path.join(orig_dir, file_num + '.lta'))
-        inputvols.append(os.path.join(orig_dir, file_num + '.mgz'))
+        iscaleout.append(file_num + '-iscale.txt')
+        ltaout.append(file_num + '.lta')
+        inputvols.append(file_num + '.mgz')
     return inputvols, iscaleout, ltaout
 
 def create_AutoRecon1(config):
@@ -134,12 +138,12 @@ def create_AutoRecon1(config):
         inputSpec = pe.Node(interface=IdentityInterface(
             fields=['in_t1s', 'in_t2', 'in_flair', 'subject_id', 'subjects_dir']),
                              run_without_submitting=True,
-                             name='AutoRecon1_Inputs')
+                             name='Inputs')
         inputSpec.inputs.subject_id = config['current_id']
         inputSpec.inputs.subjects_dir = config['subjects_dir']
         inputSpec.inputs.in_t1s = VerifyInputs(config['in_T1s'])
 
-        inputvols, iscaleout, ltaout = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
+        inputvols, iscaleout, ltaout = create_preproc_filenames(config['in_T1s'])
 
         # T1 image preparation
         # For all T1's mri_convert ${InputVol} ${out_file}
@@ -184,7 +188,7 @@ def create_AutoRecon1(config):
                     'subject_id',
                     'subjects_dir']),
                              run_without_submitting=True,
-                             name='AutoRecon1_Inputs')
+                             name='Inputs')
         inputSpec.inputs.subject_id = config['current_id']
         inputSpec.inputs.subjects_dir = config['subjects_dir']
 
@@ -454,7 +458,7 @@ def create_AutoRecon1(config):
                              name='Copy_Brainmask')
     copy_brainmask.inputs.out_file = 'brainmask.mgz'
 
-    ar1_wf.connect([(brainmask, copy_brainmask, [('brain_vol', 'in_file')])])
+    ar1_wf.connect([(brainmask, copy_brainmask, [('out_file', 'in_file')])])
 
         
     outputspec = pe.Node(IdentityInterface(fields=['t2_raw',

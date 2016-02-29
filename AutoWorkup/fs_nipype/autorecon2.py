@@ -550,24 +550,6 @@ def create_AutoRecon2(config):
 
             hemi_wf.connect([(euler_number, remove_intersection, [('out_file', 'in_file')])])
 
-            # The inflated file is removed in AutoRecon2 after it is used for the Fix
-            # Topology step
-            def rmfile(in_file, dependent):
-                import os
-                os.remove(in_file)
-                out_file = in_file
-                return out_file
-
-            remove_inflate1 = pe.Node(Function(['in_file', 'dependent'],
-                                               ['out_file'],
-                                               rmfile),
-                                      name="Remove_Inflate1")
-
-            hemi_wf.connect([(copy_inflate1, remove_inflate1, [('out_file', 'in_file')]),
-                             (remove_intersection, remove_inflate1,
-                              [('out_file', 'dependent')])
-                             ])
-            
             # White
             
             # This function implicitly calls other inputs based on the subject_id
@@ -615,7 +597,7 @@ def create_AutoRecon2(config):
         inflate2 = pe.Node(MRIsInflate(), name="inflate2")
         inflate2.inputs.out_sulc = '{0}.sulc'.format(hemisphere)
         hemi_wf.connect([(smooth2, inflate2, [('surface', 'in_file')]),
-                         (remove_inflate1, inflate2, [('out_file', 'out_file')]),
+                         (copy_inflate1, inflate2, [('out_file', 'out_file')]),
                      ])
 
         # Compute Curvature

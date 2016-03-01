@@ -138,9 +138,7 @@ def create_reconall(config):
         # end longitudinal data collection
 
     # connect autorecon 1 - 3 
-    reconall.connect([(ar1_wf, ar3_wf, [('Inputs.subject_id', 'Inputs.subject_id'),
-                                        ('Inputs.subjects_dir', 'Inputs.subjects_dir'),
-                                        ('Outputs.brainmask', 'Inputs.brainmask'),
+    reconall.connect([(ar1_wf, ar3_wf, [('Outputs.brainmask', 'Inputs.brainmask'),
                                         ('Outputs.talairach', 'Inputs.transform'),
                                         ('Outputs.orig', 'Inputs.orig_mgz'),
                                         ('Outputs.rawavg', 'Inputs.rawavg'),
@@ -148,8 +146,6 @@ def create_reconall(config):
                       (ar1_wf, ar2_wf, [('Outputs.brainmask', 'Inputs.brainmask'),
                                         ('Outputs.talairach', 'Inputs.transform'),
                                         ('Outputs.orig', 'Inputs.orig'),
-                                        ('Inputs.subject_id', 'Inputs.subject_id'),
-                                        ('Inputs.subjects_dir', 'Inputs.subjects_dir'),
                                         ]),
                       (ar2_wf, ar3_wf, [('Outputs.aseg_presurf', 'Inputs.aseg_presurf'),
                                         ('Outputs.brain_finalsurfs', 'Inputs.brain_finalsurfs'),
@@ -244,7 +240,7 @@ def create_reconall(config):
                                               ('lh_white_K', 'surf.@lh_white_K'),
                                               ('lh_inflated_H', 'surf.@lh_inflated_H'),
                                               ('lh_inflated_K', 'surf.@lh_inflated_K'),
-                                              ('lh_curv_stats', 'surf.@lh_curv_stats')
+                                              ('lh_curv_stats', 'surf.@lh_curv_stats'),
                                               ('rh_orig_nofix', 'surf.@rh_orig_nofix'),
                                               ('rh_orig', 'surf.@rh_orig'),
                                               ('rh_smoothwm_nofix', 'surf.@rh_smoothwm_nofix'),

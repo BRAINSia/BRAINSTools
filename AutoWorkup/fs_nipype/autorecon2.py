@@ -35,8 +35,7 @@ def create_AutoRecon2(config):
                                                       'timepoints',
                                                       'alltps_segs',
                                                       'alltps_segs_noCC',
-                                                      'alltps_norms',
-                                                      'subjects_dir']),
+                                                      'alltps_norms']),
                             run_without_submitting=True,
                             name='Inputs')
         inputSpec.inputs.timepoints = config['timepoints']
@@ -45,9 +44,7 @@ def create_AutoRecon2(config):
         # if running single session
         inputSpec = pe.Node(IdentityInterface(fields=['orig',
                                                       'brainmask',
-                                                      'transform',
-                                                      'subject_id',
-                                                      'subjects_dir']),
+                                                      'transform']),
                             run_without_submitting=True,
                             name='Inputs')
         
@@ -371,9 +368,7 @@ def create_AutoRecon2(config):
                                                            'filled',
                                                            'aseg',
                                                            't1',
-                                                           'wm',
-                                                           'subject_id',
-                                                           'subjects_dir']),
+                                                           'wm']),
                                  name="Inputs")
             
         if config['longitudinal']:
@@ -533,9 +528,7 @@ def create_AutoRecon2(config):
             fix_topology.inputs.copy_inputs = True
             hemi_wf.connect([(copy_orig, fix_topology, [('out_file', 'in_orig')]),
                              (copy_inflate1, fix_topology, [('out_file', 'in_inflated')]),
-                             (qsphere, fix_topology, [('out_file', 'sphere')]),
-                             (hemi_inputspec, fix_topology, [('subject_id', 'subject_id'),
-                                                             ('subjects_dir', 'subjects_dir')])])
+                             (qsphere, fix_topology, [('out_file', 'sphere')])])
 
 
             ## TODO: halt workflow for bad euler number
@@ -562,9 +555,7 @@ def create_AutoRecon2(config):
             make_surfaces.inputs.hemisphere = hemisphere
             make_surfaces.inputs.copy_inputs = True
             hemi_wf.connect([(remove_intersection, make_surfaces, [('out_file', 'in_orig')]),
-                             (hemi_inputspec, make_surfaces, [('subject_id', 'subject_id'),
-                                                              ('subjects_dir', 'subjects_dir'),
-                                                              ('aseg', 'in_aseg'),
+                             (hemi_inputspec, make_surfaces, [('aseg', 'in_aseg'),
                                                               ('t1', 'in_T1'),
                                                               ('filled', 'in_filled'),
                                                               ('wm', 'in_wm')])])
@@ -628,8 +619,6 @@ def create_AutoRecon2(config):
         hemi_wf.connect([(smooth2, curvature_stats, [('surface', 'surface')]),
                          (make_surfaces, curvature_stats, [('out_curv', 'in_curv')]),
                          (inflate2, curvature_stats, [('out_sulc', 'in_sulc')]),
-                         (hemi_inputspec, curvature_stats, [('subject_id', 'subject_id'),
-                                                            ('subjects_dir', 'subjects_dir')]),
                          ])
 
         if config['longitudinal']:
@@ -643,8 +632,6 @@ def create_AutoRecon2(config):
         # Connect inputs for the hemisphere workflows
         ar2_wf.connect([(ca_normalize, hemi_wf, [('out_file', 'Inputs.norm')]),
                         (fill, hemi_wf, [('out_file', 'Inputs.filled')]),
-                        (inputSpec, hemi_wf, [('subject_id', 'Inputs.subject_id'),
-                                               ('subjects_dir', 'Inputs.subjects_dir')]),
                         (copy_cc, hemi_wf, [('out_file', 'Inputs.aseg')]),
                         (mri_mask, hemi_wf, [('out_file', 'Inputs.t1')]),
                         (pretess, hemi_wf, [('out_file', 'Inputs.wm')])])

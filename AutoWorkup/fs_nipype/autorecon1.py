@@ -136,11 +136,9 @@ def create_AutoRecon1(config):
     if not config['longitudinal']:
         # single session processing
         inputSpec = pe.Node(interface=IdentityInterface(
-            fields=['in_t1s', 'in_t2', 'in_flair', 'subject_id', 'subjects_dir']),
+            fields=['in_t1s', 'in_t2', 'in_flair']),
                              run_without_submitting=True,
                              name='Inputs')
-        inputSpec.inputs.subject_id = config['current_id']
-        inputSpec.inputs.subjects_dir = config['subjects_dir']
         inputSpec.inputs.in_t1s = VerifyInputs(config['in_T1s'])
 
         inputvols, iscaleout, ltaout = create_preproc_filenames(config['in_T1s'])
@@ -184,15 +182,11 @@ def create_AutoRecon1(config):
                     'ltas',
                     'subj_to_template_lta',
                     'template_talairach_xfm',
-                    'template_brainmask',
-                    'subject_id',
-                    'subjects_dir']),
+                    'template_brainmask']),
                              run_without_submitting=True,
                              name='Inputs')
-        inputSpec.inputs.subject_id = config['current_id']
-        inputSpec.inputs.subjects_dir = config['subjects_dir']
 
-        _volnames_, in_iscales, in_ltas = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
+        _volnames_, in_iscales, in_ltas = create_preproc_filenames(config['in_T1s'])
 
         copy_ltas = pe.MapNode(Function(['in_file', 'out_file'],
                                         ['out_file'],

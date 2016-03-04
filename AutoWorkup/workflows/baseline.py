@@ -178,6 +178,63 @@ def CreateLeftRightWMHemispheres(BRAINLABELSFile,
     ## TODO Add splitting into hemispheres code here
     return WM_LeftHemisphereFileName, WM_RightHemisphereFileName
 
+def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
+    """ Find optimal image roll in each direction
+    to roll the image with circular boundaries such
+    that the resulting head is not split across the
+    image boundaries"""
+    import SimpleITK as sitk
+    import numpy as np
+    from scipy.signal import savgol_filter
+
+    # ensure that normal strings are used here
+    # via typecasting.  ReadImage requires types
+    # to be strings
+    wrapped_inputfn = [ str(ii) for ii in wrapped_inputfn ]
+    unwrapped_outputbasefn = [ str(ii) for ii in unwrapped_outputbasefn ]
+
+    def one_axis_unwrap(wrapped_image, axis):
+        image_as_np = sitk.GetArrayFromImage(wrapped_image)
+        slice_values = list()
+        sitkAxis = wrapped_image.GetDimension() - 1 - axis;
+
+        for ii in range(0, wrapped_image.GetSize()[sitkAxis]):
+            if axis == 0:
+                slice_values.append(np.average(image_as_np[ii, :, :]))
+            elif axis == 1:
+                slice_values.append(np.average(image_as_np[:, ii, :]))
+            elif axis == 2:
+                slice_values.append(np.average(image_as_np[:, :, ii]))
+            else:
+                print("FATAL ERROR")
+        ## Call smoothing function to remove small noise
+        slice_values = savgol_filter(np.array(slice_values), 51, 2)
+        min_slice = np.argmin(slice_values)
+
+        axis_max = wrapped_image.GetSize()[sitkAxis] - 1
+        if min_slice > axis_max / 2:
+            zRoll = axis_max - min_slice
+        else:
+            zRoll = -min_slice
+        image_as_np = np.roll(image_as_np, zRoll, axis)
+        outim = sitk.GetImageFromArray(image_as_np)
+        outim.CopyInformation(wrapped_image)
+        return outim, zRoll
+
+    unwrapped_outputfn = []
+    for index in range(0,len(wrapped_inputfn)):
+        ii = wrapped_inputfn[index]
+        wrapped_image = sitk.ReadImage(str(ii))
+        unwrapped_image, rotationZ = one_axis_unwrap(wrapped_image, 0)
+        unwrapped_image, rotationY = one_axis_unwrap(unwrapped_image, 1)
+        unwrapped_image, rotationX = one_axis_unwrap(unwrapped_image, 2)
+        new_origin = wrapped_image.TransformContinuousIndexToPhysicalPoint((-rotationX, -rotationY, -rotationZ))
+        unwrapped_image.SetOrigin(new_origin)
+        import os
+        unwrapped_outputfn1=os.path.realpath(unwrapped_outputbasefn[index])
+        sitk.WriteImage(unwrapped_image,unwrapped_outputfn1)
+        unwrapped_outputfn.append(unwrapped_outputfn1)
+    return unwrapped_outputfn
 
 
 def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1, master_config, phase, interpMode,
@@ -413,21 +470,32 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print("\ndenoise image filter\n")
         makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
                                                   input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                               'OTHERList', 'postfix', 'postfixBFC', 'PrimaryT1',
-                                                               'ListOutType'],
-                                                  output_names=['inImageList', 'outImageList', 'outBFCImageList','imageTypeList']),
+                                                               'OTHERList', 'postfix', 'postfixBFC', 'postfixUnwrapped',
+                                                               'PrimaryT1','ListOutType'],
+                                                  output_names=['inImageList', 'outImageList', 'outBFCImageList',
+                                                                'outUnwrappedImageList','imageTypeList']),
                                          run_without_submitting=True, name="99_makeDenoiseInImageList")
         baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
         baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
         baw201.connect(inputsSpec, 'FLs', makeDenoiseInImageList, 'FLList' )
+        #makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OTHERList')
         makeDenoiseInImageList.inputs.ListOutType= False
-        makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
-        makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
         makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"
         makeDenoiseInImageList.inputs.postfixBFC = "_N4_BFC.nii.gz"
+        makeDenoiseInImageList.inputs.postfixUnwrapped = "_unwrapped.nii.gz"
+        makeDenoiseInImageList.inputs.PrimaryT1 = None  # an emptyList HACK
 
+        unwrapImage = pe.Node(interface=Function(function=image_autounwrap,
+                                                   input_names=['wrapped_inputfn','unwrapped_outputbasefn'],
+                                                   output_names=['unwrapped_outputfn']
+                                         ),
+                                 name="unwrap_image")
+
+        baw201.connect([(makeDenoiseInImageList, unwrapImage, [('inImageList', 'wrapped_inputfn')]),
+                        (makeDenoiseInImageList, unwrapImage, [('outUnwrappedImageList', 'unwrapped_outputbasefn')])
+        ])
         print("\nDenoise:\n")
         DenoiseInputImgs = pe.MapNode(interface=DenoiseImage(),
                                       name='denoiseInputImgs',
@@ -445,7 +513,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         #DenoiseInputImgs.inputs.save_noise=True # we do need this until NIPYPE is fixed
         DenoiseInputImgs.inputs.save_noise=False # we don't need the noise image for BAW
         DenoiseInputImgs.inputs.shrink_factor = 1 # default
-        baw201.connect([(makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'input_image')]),
+        baw201.connect([(unwrapImage, DenoiseInputImgs, [('unwrapped_outputfn', 'input_image')]),
                         (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList', 'output_image')])
         ])
 

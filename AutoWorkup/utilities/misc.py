@@ -127,7 +127,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     if output_inverse_warped_image is not None:
         antsRegistrationNode.inputs.output_inverse_warped_image = output_inverse_warped_image
 
-def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixBFC, PrimaryT1, ListOutType=False):
+def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixBFC, postfixUnwrapped, PrimaryT1, ListOutType=False):
     #
     #for BABC: "_corrected.nii.gz"
     #for UNM Denoise: "_UNM_denoised.nii.gz"
@@ -155,17 +155,22 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
     all_files.extend(OTHERList)
     outImageList = []
     outBFCImageList = []
+    outUnwrappedImageList = []
     for i in all_files:
         out_name = GetExtBaseName(i) + postfix
         out_BFC_name = GetExtBaseName(i) + postfixBFC
+        out_unwrap_name = GetExtBaseName(i) + postfixUnwrapped
         if ListOutType:
             out_name = [str(out_name)]
             out_BFC_name = [str(out_BFC_name)]
+            out_unwrap_name = [str(out_unwrap_name)]
         else:
             out_name = str(out_name)
             out_BFC_name = str(out_BFC_name)
+            out_unwrap_name = str(out_unwrap_name)
         outImageList.append( out_name )
         outBFCImageList.append(out_BFC_name)
+        outUnwrappedImageList.append(out_unwrap_name)
     #
     #make type list
     imageTypeList = ["T1"] * len(T1List)
@@ -193,7 +198,7 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
     print (outBFCImageList)
     print ("imageTypeList:::")
     print (imageTypeList)
-    return inImageList, outImageList, outBFCImageList, imageTypeList
+    return inImageList, outImageList, outBFCImageList, outUnwrappedImageList, imageTypeList
 
 def GenerateSeparateImageTypeList(inFileList, inTypeList):
     allListDict = dict()

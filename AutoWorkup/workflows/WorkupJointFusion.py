@@ -346,6 +346,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     jointFusion.inputs.search_radius=[3]
     #jointFusion.inputs.method='Joint[0.1,2]'
     jointFusion.inputs.out_label_fusion='JointFusion_HDAtlas20_2015_label.nii.gz'
+    JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
+                          jointFusion, 'mask_image')
 
     #JointFusionWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'warped_intensity_images')
     #JointFusionWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')

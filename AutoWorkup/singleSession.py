@@ -50,7 +50,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
            'denoise' in master_config['components'] or \
            'landmark' in master_config['components'] or \
            'segmentation' in master_config['components'] or \
-           'malf_2012_neuro' in master_config['components']
+           'jointfusion_2015_wholebrain' in master_config['components']
 
     from nipype import config, logging
 
@@ -175,7 +175,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "left_hemisphere_wm.nii.gz"
                 ))
 
-            if 'malf_2012_neuro' in master_config['components']:
+            if 'jointfusion_2015_wholebrain' in master_config['components']:
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
@@ -196,8 +196,6 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "TissueClassify",
                     "JointFusion_HDAtlas20_2015_CSFVBInjected_label.nii.gz"
                 ))
-            if 'jointfusion_2015_wholebrain' in master_config['components']:
-                pass
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
                 atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')

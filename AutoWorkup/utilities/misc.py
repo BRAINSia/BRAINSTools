@@ -127,7 +127,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     if output_inverse_warped_image is not None:
         antsRegistrationNode.inputs.output_inverse_warped_image = output_inverse_warped_image
 
-def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixBFC, postfixUnwrapped, PrimaryT1, ListOutType=False):
+def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixBFC, postfixUnwrapped, PrimaryT1, ListOutType):
     #
     #for BABC: "_corrected.nii.gz"
     #for UNM Denoise: "_UNM_denoised.nii.gz"

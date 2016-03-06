@@ -479,7 +479,6 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
         baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
         baw201.connect(inputsSpec, 'FLs', makeDenoiseInImageList, 'FLList' )
-        #makeDenoiseInImageList.inputs.FLList = []  # an emptyList HACK
         baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OTHERList')
         makeDenoiseInImageList.inputs.ListOutType= False
         makeDenoiseInImageList.inputs.postfix = "_ants_denoised.nii.gz"

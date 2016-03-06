@@ -79,9 +79,10 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     # Run BABCext on Multi-modal images
     ########################################################
     makeOutImageList = pe.Node(Function(function=MakeOutFileList,
-                                        input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                     'OTHERList','postfix', 'postfixBFC','PrimaryT1'],
-                                        output_names=['inImageList','outImageList','outBFCImageList','imageTypeList']),
+                                                  input_names=['T1List', 'T2List', 'PDList', 'FLList',
+                                                     'OTHERList','postfix', 'postfixBFC','postfixUnwrapped','PrimaryT1','ListOutType'],
+                                                  output_names=['inImageList', 'outImageList', 'outBFCImageList',
+                                                                'outUnwrappedImageList','imageTypeList']),
                                         run_without_submitting=True, name="99_makeOutImageList")
     tissueClassifyWF.connect(inputsSpec, 'T1List', makeOutImageList, 'T1List')
     tissueClassifyWF.connect(inputsSpec, 'T2List', makeOutImageList, 'T2List')
@@ -89,8 +90,10 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     tissueClassifyWF.connect(inputsSpec, 'FLList', makeOutImageList, 'FLList' )
     tissueClassifyWF.connect(inputsSpec, 'OTHERList', makeOutImageList, 'OTHERList')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1', makeOutImageList, 'PrimaryT1')
+    makeOutImageList.inputs.ListOutType= False
     makeOutImageList.inputs.postfix = "_corrected.nii.gz"
     makeOutImageList.inputs.postfixBFC = "_NOT_USED"
+    makeOutImageList.inputs.postfixUnwrapped = "_NOT_USED"
 
     ##### Initialize with ANTS Transform For AffineComponentBABC
     currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Affine'

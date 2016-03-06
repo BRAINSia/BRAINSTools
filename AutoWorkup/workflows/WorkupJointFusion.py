@@ -31,13 +31,23 @@ from utilities.misc import CommonANTsRegistrationSettings
     JointFusionWF.connect(BAtlas,'ExtendedAtlasDefinition.xml',myLocalTCWF,'atlasDefinition')
     JointFusionWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
-def MakeVector(inFN1, inFN2=None):
+def MakeVector(inFN1, inFN2=None, jointFusion =False):
     #print("inFN1: {0}".format(inFN1))
     #print("inFN2: {0}".format(inFN2))
     if inFN2 == None:
-        return [ inFN1 ]
+        returnVector = [ inFN1 ]
     else:
-        return [inFN1, inFN2]
+        returnVector = [inFN1, inFN2]
+
+    if jointFusion:
+        returnVector = [returnVector]
+
+    print ("jointFusion: ")
+    print (str(jointFusion))
+    print (returnVector)
+    print ("============================================")
+    return returnVector
+
 
 def adjustMergeList(allList, n_modality):
     def yieldList(inList, n):
@@ -124,9 +134,10 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     multimodal ants registration if t2 exists
     """
     sessionMakeMultimodalInput = pe.Node(Function(function=MakeVector,
-                                                                      input_names=['inFN1', 'inFN2'],
+                                                                      input_names=['inFN1', 'inFN2', 'jointFusion'],
                                                                       output_names=['outFNs']),
                                 run_without_submitting=True, name="sessionMakeMultimodalInput")
+    sessionMakeMultimodalInput.inputs.jointFusion = False
     JointFusionWF.connect(inputsSpec, 'subj_t1_image', sessionMakeMultimodalInput, 'inFN1')
     """
     T2 resample to T1 average image
@@ -207,21 +218,25 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         UseRegistrationMasking = True
         if UseRegistrationMasking == True:
-            from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
+            #from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 
-            fixedROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="fixedROIAUTOMask_"+jointFusion_atlas_subject)
-            fixedROIAuto[jointFusion_atlas_subject].inputs.ROIAutoDilateSize=10
-            fixedROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
+            #fixedROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="fixedROIAUTOMask_"+jointFusion_atlas_subject)
+            #fixedROIAuto[jointFusion_atlas_subject].inputs.ROIAutoDilateSize=10
+            #fixedROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
 
-            movingROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="movingROIAUTOMask_"+jointFusion_atlas_subject)
-            fixedROIAuto[jointFusion_atlas_subject].inputs.ROIAutoDilateSize=10
-            movingROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
+            #movingROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="movingROIAUTOMask_"+jointFusion_atlas_subject)
+            #fixedROIAuto[jointFusion_atlas_subject].inputs.ROIAutoDilateSize=10
+            #movingROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
 
-            JointFusionWF.connect(inputsSpec, 'subj_t1_image',fixedROIAuto[jointFusion_atlas_subject],'inputVolume')
-            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1', movingROIAuto[jointFusion_atlas_subject],'inputVolume')
+            #JointFusionWF.connect(inputsSpec, 'subj_t1_image',fixedROIAuto[jointFusion_atlas_subject],'inputVolume')
+            #JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1', movingROIAuto[jointFusion_atlas_subject],'inputVolume')
 
-            JointFusionWF.connect(fixedROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
-            JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
+            #JointFusionWF.connect(fixedROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
+            #JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
+            JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
+                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
+            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'label',
+                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
 
         JointFusionWF.connect(BLICreator[jointFusion_atlas_subject],'outputTransformFilename',
                        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'initial_moving_transform')
@@ -229,9 +244,13 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         """
         make multimodal input for atlases
         """
-        atlasMakeMultimodalInput[jointFusion_atlas_subject] = pe.Node(Function(function=MakeVector, input_names=['inFN1', 'inFN2'], output_names=['outFNs']),
+        atlasMakeMultimodalInput[jointFusion_atlas_subject] = pe.Node(Function(function=MakeVector,
+                                                                               input_names=['inFN1', 'inFN2','jointFusion'],
+                                                                               output_names=['outFNs']),
                                   run_without_submitting=True, name="atlasMakeMultimodalInput"+jointFusion_atlas_subject)
-        JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1', atlasMakeMultimodalInput[jointFusion_atlas_subject], 'inFN1')
+        atlasMakeMultimodalInput[jointFusion_atlas_subject].inputs.jointFusion = False
+        JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1',
+                              atlasMakeMultimodalInput[jointFusion_atlas_subject], 'inFN1')
         if not onlyT1:
             JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't2', atlasMakeMultimodalInput[jointFusion_atlas_subject], 'inFN2')
         else:
@@ -327,6 +346,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     jointFusion.inputs.search_radius=[3]
     #jointFusion.inputs.method='Joint[0.1,2]'
     jointFusion.inputs.out_label_fusion='JointFusion_HDAtlas20_2015_label.nii.gz'
+    JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
+                          jointFusion, 'mask_image')
 
     #JointFusionWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'warped_intensity_images')
     #JointFusionWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')

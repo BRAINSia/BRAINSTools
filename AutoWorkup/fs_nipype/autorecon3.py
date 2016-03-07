@@ -287,14 +287,58 @@ def create_AutoRecon3(config):
                     (ar3_rh_wf1, volume_mask, [('Outputs.pial', 'rh_pial')]),
                     ])
 
+    ar3_lh_wf2 = pe.Workflow(name="AutoRecon3_Left_2")
+    ar3_rh_wf2 = pe.Workflow(name="AutoRecon3_Right_2")
 
-    for hemisphere, workflow in [('lh', ar3_lh_wf1),  ('rh', ar3_rh_wf1)]:
+    for hemisphere, hemiwf2 in [('lh', ar3_lh_wf2),  ('rh', ar3_rh_wf2)]:
         if hemisphere == 'lh':
             opp_hemi = 'rh'
-            opp_wf = ar3_rh_wf1
+            opp_wf = ar3_rh_wf2
+            hemiwf1 = ar3_lh_wf1
         else:
             opp_hemi = 'lh'
-            opp_wf = ar3_lh_wf1
+            opp_wf = ar3_lh_wf2
+            hemiwf1 = ar3_rh_wf1
+        
+        hemi_inputs2 = ['wm',
+                        'lh_white',
+                        'rh_white',
+                        'transform',
+                        'brainmask',
+                        'aseg_presurf',
+                        'cortex_label',
+                        'lh_pial',
+                        'rh_pial',
+                        'thickness',
+                        'aparc_annot',
+                        'ribbon',
+                        'smoothwm',
+                        'sphere_reg',
+                        'orig_mgz',
+                        'raw_avg',
+                        ]
+                        
+        hemi_inputspec2 = pe.Node(IdentityInterface(fields=hemi_inputs2),
+                                  name="Inputs")
+        
+        ar3_wf.connect([(inputspec, hemiwf2, [('wm', 'Inputs.wm'),
+                                              ('lh_white', 'Inputs.lh_white'),
+                                              ('rh_white', 'Inputs.rh_white'),
+                                              ('transform', 'Inputs.transform'),
+                                              ('brainmask', 'Inputs.brainmask'),
+                                              ('aseg_presurf', 'Inputs.aseg_presurf'),
+                                              ('{0}_cortex_label'.format(hemisphere), 'Inputs.cortex_label')
+                                              ('{0}_smoothwm'.format(hemisphere), 'Inputs.smoothwm'),
+                                              ('orig_mgz', 'Inputs.orig_mgz'),
+                                              ('raw_avg', 'Inputs.raw_avg'),
+                                               ]),
+                        (ar_lh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.lh_pial')]),
+                        (ar_rh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.rh_pial')]),
+                        (hemiwf1, hemiwf2, [('Outputs.thickness', 'Inputs.thickness'),
+                                            ('Outputs.aparc_annot', 'Inputs.aparc_annot'),
+                                            ('Outputs.sphere_reg', 'Inputs.sphere_reg')]),
+                        (volume_mask, hemiwf2, [('out_ribbon', 'Inputs.ribbon')]),
+                        ])
 
         # Parcellation Statistics
         """
@@ -315,90 +359,49 @@ def create_AutoRecon3(config):
         parcellation_stats_white.inputs.mgz = True
         parcellation_stats_white.inputs.tabular_output = True
         parcellation_stats_white.inputs.surface = 'white'
-        parcellation_stats_white.inputs.out_color = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'label', 'aparc.annot.ctab')
-        parcellation_stats_white.inputs.out_table = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'stats', '{0}.aparc.stats'.format(hemisphere))
+        parcellation_stats_white.inputs.hemisphere = hemisphere
+        parcellation_stats_white.inputs.out_color = 'aparc.annot.ctab'
+        parcellation_stats_white.inputs.out_table = '{0}.aparc.stats'.format(hemisphere)
 
-        ar3_wf.connect([(inputspec, parcellation_stats_white, [('subject_id', 'subject_id'),
-                                                                ('subjects_dir',
-                                                                 'subjects_dir'),
-                                                                ('wm', 'wm'),
-                                                                ('lh_white',
-                                                                 'lh_white'),
-                                                                ('rh_white',
-                                                                 'rh_white'),
-                                                                ('transform',
-                                                                 'transform'),
-                                                                ('brainmask',
-                                                                 'brainmask'),
-                                                                ('aseg_presurf',
-                                                                 'aseg'),
-                                                                ('{0}_cortex_label'.format(hemisphere),
-                                                                 'in_cortex'),
-                                                                ('{0}'.format(hemisphere),
-                                                                 'hemisphere'),
-                                                                ]),
-                        (workflow, parcellation_stats_white, [('Make_Pial_Surface.out_pial',
-                                                               '{0}_pial'.format(hemisphere)),
-                                                              ('Make_Pial_Surface.out_thickness',
-                                                               'thickness'),
-                                                              ('Cortical_Parcellation.out_file',
-                                                               'in_annotation')
-                                                              ]),
-                        (opp_wf, parcellation_stats_white, [('Make_Pial_Surface.out_pial',
-                                                             '{0}_pial'.format(opp_hemi)),
-                                                           ]),
-                        (volume_mask, parcellation_stats_white, [('out_ribbon', 'ribbon')
-                                                             ]),
-                    ])
+        hemiwf2.connect([(hemi_inputspec2, parcellation_stats_white, [('wm', 'wm'),
+                                                                      ('lh_white', 'lh_white'),
+                                                                      ('rh_white', 'rh_white'),
+                                                                      ('transform', 'transform'),
+                                                                      ('brainmask', 'brainmask'),
+                                                                      ('aseg_presurf', 'aseg'),
+                                                                      ('cortex_label', 'in_cortex'),
+                                                                      ('lh_pial', 'lh_pial'),
+                                                                      ('rh_pial', 'rh_pial'),
+                                                                      ('thickness', 'thickness'),
+                                                                      ('aparc_annot', 'in_annotation'),
+                                                                      ('ribbon', 'in_ribbon'),
+                                                                      ]),
+                         ])
         
-        parcellation_stats_pial = pe.Node(
-            ParcellationStats(), name="Parcellation_Stats_{0}_Pial".format(hemisphere) )
+        parcellation_stats_pial = pe.Node(ParcellationStats(),
+                                          name="Parcellation_Stats_{0}_Pial".format(hemisphere))
         parcellation_stats_pial.inputs.mgz = True
         parcellation_stats_pial.inputs.tabular_output = True
         parcellation_stats_pial.inputs.surface = 'pial'
-        parcellation_stats_pial.inputs.out_color = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'label', 'aparc.annot.ctab')
-        parcellation_stats_pial.inputs.out_table = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'stats', '{0}.aparc.pial.stats'.format(hemisphere))
+        parcellation_stats_pial.inputs.hemisphere = hemisphere
+        parcellation_stats_pial.inputs.out_color = 'aparc.annot.ctab'
+        parcellation_stats_pial.inputs.out_table = '{0}.aparc.pial.stats'.format(hemisphere)
 
-        ar3_wf.connect([(inputspec, parcellation_stats_pial, [('subject_id', 'subject_id'),
-                                                             ('subjects_dir',
-                                                              'subjects_dir'),
-                                                             ('wm', 'wm'),
-                                                             ('{0}_white'.format(hemisphere),
-                                                              '{0}_white'.format(hemisphere)),
-                                                             ('{0}_white'.format(opp_hemi),
-                                                              '{0}_white'.format(opp_hemi)),
-                                                             ('transform',
-                                                              'transform'),
-                                                             ('brainmask',
-                                                              'brainmask'),
-                                                             ('aseg_presurf',
-                                                              'aseg'),
-                                                             ('{0}_cortex_label'.format(hemisphere),
-                                                              'in_cortex'),
-                                                             ('{0}'.format(hemisphere),
-                                                              'hemisphere'),
-                                                             ]),
-                    (workflow, parcellation_stats_pial, [('Make_Pial_Surface.out_pial',
-                                                          '{0}_pial'.format(hemisphere)),
-                                                            ('Make_Pial_Surface.out_thickness',
-                                                             'thickness'),
-                                                            ('Cortical_Parcellation.out_file',
-                                                             'in_annotation')
-                                                            ]),
-                    (opp_wf, parcellation_stats_pial, [('Make_Pial_Surface.out_pial',
-                                                        '{0}_pial'.format(opp_hemi)),
-                                                            ]),
-                    (volume_mask, parcellation_stats_pial, [('out_ribbon', 'ribbon')
-                                                              ]),
-                    ])
+
+        hemiwf2.connect([(hemi_inputspec2, parcellation_stats_pial, [('wm', 'wm'),
+                                                                    ('lh_white', 'lh_white'),
+                                                                    ('rh_white', 'rh_white'),
+                                                                    ('transform', 'transform'),
+                                                                    ('brainmask', 'brainmask'),
+                                                                    ('aseg_presurf', 'aseg'),
+                                                                    ('cortex_label', 'in_cortex'),
+                                                                    ('lh_pial', 'lh_pial'),
+                                                                    ('rh_pial', 'rh_pial'),
+                                                                    ('thickness', 'thickness'),
+                                                                    ('aparc_annot', 'in_annotation'),
+                                                                    ('ribbon', 'ribbon'),
+                                                                    ]),
+                        ])
 
         # Cortical Parcellation 2
         cortical_parcellation_2 = pe.Node(MRIsCALabel(),
@@ -408,159 +411,132 @@ def create_AutoRecon3(config):
         else:
             rh_cort_parc2 = cortical_parcellation_2
             
-        cortical_parcellation_2.inputs.classifier = os.path.join(
-            config['FREESURFER_HOME'], 'average', 
-            '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
-        cortical_parcellation_2.inputs.out_file = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'label', '{0}.aparc.a2009s.annot'.format(hemisphere))
+        cortical_parcellation_2.inputs.classifier = os.path.join(config['FREESURFER_HOME'], 
+                                                                 'average', 
+                                                                 '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
+        cortical_parcellation_2.inputs.out_file = '{0}.aparc.a2009s.annot'.format(hemisphere)
         cortical_parcellation_2.inputs.seed = 1234
+        cortical_parcellation_2.inputs.copy_smoothwm = True
+        cortical_parcellation_2.inputs.hemisphere = hemisphere
 
-        ar3_wf.connect([(inputspec, cortical_parcellation_2, [('subject_id', 'subject_id'),
-                                                     ('subjects_dir',
-                                                      'subjects_dir'),
-                                                     ('{0}'.format(hemisphere), 'hemisphere'),
-                                                     ('{0}_smoothwm'.format(hemisphere), 'smoothwm'),
-                                                     ('aseg_presurf', 'aseg'),
-                                                     ('{0}_cortex_label'.format(hemisphere), 'label')]),
-                        (workflow, cortical_parcellation_2, [
-                            ('Surface_Registration.out_file', 'canonsurf')])
-                        ])
+        hemiwf2.connect([(hemi_inputspec2, cortical_parcellation_2, [('smoothwm', 'smoothwm'),
+                                                                     ('aseg_presurf', 'aseg'),
+                                                                     ('cortex_label', 'label'),
+                                                                     ('sphere_reg', 'canonsurf')]),
+                         ])
 
         # Parcellation Statistics 2
         parcellation_stats_white_2 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_2".format(hemisphere))
-        parcellation_stats_white_2.inputs.out_color = os.path.join(
-            config['subjects_dir'], config['current_id'],
-            'label', 'aparc.annot.a2009s.ctab')
-        parcellation_stats_white_2.inputs.out_table = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'stats', '{0}.aparc.a2009s.stats'.format(hemisphere))
-        ar3_wf.connect([(inputspec, parcellation_stats_white_2, [('subject_id', 'subject_id'),
-                                                                  ('subjects_dir',
-                                                                   'subjects_dir'),
-                                                                  ('wm', 'wm'),
-                                                                  ('lh_white',
-                                                                   'lh_white'),
-                                                                  ('rh_white',
-                                                                   'rh_white'),
-                                                                  ('transform',
-                                                                   'transform'),
-                                                                  ('brainmask',
-                                                                   'brainmask'),
-                                                                  ('aseg_presurf',
-                                                                   'aseg'),
-                                                                  ('{0}_cortex_label'.format(hemisphere),
-                                                                    'in_cortex'),
-                                                                  ('{0}'.format(hemisphere),
-                                                                    'hemisphere'),
-                                                              ]),
-                        (workflow, parcellation_stats_white_2, [('Make_Pial_Surface.out_pial',
-                                                                 '{0}_pial'.format(hemisphere)),
-                                                                ('Make_Pial_Surface.out_thickness',
-                                                                 'thickness'),
-                                                            ]),
-                        (opp_wf, parcellation_stats_white_2, [('Make_Pial_Surface.out_pial',
-                                                               '{0}_pial'.format(opp_hemi)),
-                                                          ]),
-                        (volume_mask, parcellation_stats_white_2, [('out_ribbon', 'ribbon')
-                                                               ]),
-                        (cortical_parcellation_2, parcellation_stats_white_2,
-                         [('out_file', 'in_annotation')])
-                    ])
-
+        parcellation_stats_white_2.inputs.hemisphere = hemisphere
+        parcellation_stats_white_2.inputs.out_color = 'aparc.annot.a2009s.ctab'
+        parcellation_stats_white_2.inputs.out_table = '{0}.aparc.a2009s.stats'.format(hemisphere)
+        hemiwf2.connect([(hemi_inputspec2, parcellation_stats_white_2, [('wm', 'wm'),
+                                                                        ('lh_white', 'lh_white'),
+                                                                        ('rh_white', 'rh_white'),
+                                                                        ('transform', 'transform'),
+                                                                        ('brainmask', 'brainmask'),
+                                                                        ('aseg_presurf', 'aseg'),
+                                                                        ('cortex_label', 'in_cortex'),
+                                                                        ('lh_pial', 'lh_pial'),
+                                                                        ('rh_pial', 'rh_pial'),
+                                                                        ('thickness', 'thickness'),
+                                                                        ('aparc_annot', 'in_annotation'),
+                                                                        ('ribbon', 'ribbon'),
+                                                                        ]),
+                         (cortical_parcellation_2, parcellation_stats_white_2, [('out_file', 'in_annotation')])
+                         ])
+        
         # Cortical Parcellation 3
         cortical_parcellation_3 = pe.Node(MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere))
         cortical_parcellation_3.inputs.classifier = os.path.join(
             config['FREESURFER_HOME'], 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
-        cortical_parcellation_3.inputs.out_file = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'label', '{0}.aparc.DKTatlas40.annot'.format(hemisphere))
+        cortical_parcellation_3.inputs.out_file = '{0}.aparc.DKTatlas40.annot'.format(hemisphere)
         cortical_parcellation_3.inputs.seed = 1234
-        ar3_wf.connect([(inputspec, cortical_parcellation_3, [('subject_id', 'subject_id'),
-                                                               ('subjects_dir',
-                                                                'subjects_dir'),
-                                                               ('{0}'.format(hemisphere), 'hemisphere'),
-                                                               ('{0}_smoothwm'.format(hemisphere),
-                                                                'smoothwm'),
-                                                               ('aseg_presurf', 'aseg'),
-                                                               ('{0}_cortex_label'.format(hemisphere),
-                                                                'label')]),
-                        (workflow, cortical_parcellation_3, [
-                            ('Surface_Registration.out_file', 'canonsurf')])
-                    ])
+        cortical_parcellation_3.inputs.hemisphere = hemisphere        
+        hemiwf2.connect([(hemi_inputspec2, cortical_parcellation_3, [('smoothwm'.format(hemisphere), 'smoothwm'),
+                                                                     ('aseg_presurf', 'aseg'),
+                                                                     ('cortex_label', 'label'),
+                                                                     ('sphere_reg', 'canonsurf')]),
+                         ])
 
         # Parcellation Statistics 3
         parcellation_stats_white_3 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_3".format(hemisphere))
-        parcellation_stats_white_3.inputs.out_color = os.path.join(
-            config['subjects_dir'], config['current_id'],
-            'label', 'aparc.annot.DKTatlas40.ctab')
-        parcellation_stats_white_3.inputs.out_table = os.path.join(
-            config['subjects_dir'], config['current_id'], 
-            'stats', '{0}.aparc.DKTatlas40.stats'.format(hemisphere))
+        parcellation_stats_white_3.inputs.out_color = 'aparc.annot.DKTatlas40.ctab'
+        parcellation_stats_white_3.inputs.out_table = '{0}.aparc.DKTatlas40.stats'.format(hemisphere)
+        parcellation_stats_white_3.inputs.hemisphere = hemisphere
 
-        ar3_wf.connect([(inputspec, parcellation_stats_white_3, [('subject_id', 'subject_id'),
-                                                                   ('subjects_dir',
-                                                                    'subjects_dir'),
-                                                                   ('wm', 'wm'),
-                                                                   ('lh_white',
-                                                                    'lh_white'),
-                                                                   ('rh_white',
-                                                                    'rh_white'),
-                                                                   ('transform',
-                                                                    'transform'),
-                                                                   ('brainmask',
-                                                                    'brainmask'),
-                                                                   ('aseg_presurf',
-                                                                    'aseg'),
-                                                                   ('{0}_cortex_label'.format(hemisphere),
-                                                                    'in_cortex'),
-                                                                   ('{0}'.format(hemisphere),
-                                                                    'hemisphere'),
-                                                               ]),
-                        (workflow, parcellation_stats_white_3, [('Make_Pial_Surface.out_pial',
-                                                                 '{0}_pial'.format(hemisphere)),
-                                                                  ('Make_Pial_Surface.out_thickness',
-                                                                   'thickness'),
-                                                              ]),
-                        (opp_wf, parcellation_stats_white_3, [('Make_Pial_Surface.out_pial',
-                                                               '{0}_pial'.format(opp_hemi)),
-                                                              ]),
-                        (volume_mask, parcellation_stats_white_3, [('out_ribbon', 'ribbon')
-                                                                ]),
-                        (cortical_parcellation_3, parcellation_stats_white_3,
-                         [('out_file', 'in_annotation')])
-                    ])
+        hemiwf2.connect([(hemi_inputspec2, parcellation_stats_white_3, [('wm', 'wm'),
+                                                                        ('lh_white', 'lh_white'),
+                                                                        ('rh_white', 'rh_white'),
+                                                                        ('transform', 'transform'),
+                                                                        ('brainmask', 'brainmask'),
+                                                                        ('aseg_presurf', 'aseg'),
+                                                                        ('cortex_label', 'in_cortex'),
+                                                                        ('lh_pial', 'lh_pial'),
+                                                                        ('rh_pial', 'rh_pial'),
+                                                                        ('thickness', 'thickness'),
+                                                                        ('aparc_annot', 'in_annotation'),
+                                                                        ('ribbon', 'ribbon'),
+                                                                        ]),
+                         (cortical_parcellation_3, parcellation_stats_white_3, [('out_file', 'in_annotation')])
+                         ])
+
 
         # WM/GM Contrast
         contrast = pe.Node(Contrast(), name="WM_GM_Contrast_{0}".format(hemisphere))
-        if hemisphere == 'lh':
-            lh_contrast = contrast
-        else:
-            rh_contrast = contrast
+        contrast.inputs.hemisphere = hemisphere
+        contrast.inputs.copy_inputs = True
 
-        ar3_wf.connect([(inputspec, contrast, [('orig_mgz', 'orig'),
-                                               ('rawavg', 'rawavg'),
-                                               ('subject_id', 'subject_id'),
-                                               ('subjects_dir',
-                                                'subjects_dir'),
-                                               ('{0}_white'.format(hemisphere), 'white'),
-                                               ('{0}_cortex_label'.format(hemisphere), 'cortex'),
-                                               ('{0}'.format(hemisphere), 'hemisphere')]),
-                    (workflow, contrast, [('Make_Pial_Surface.out_thickness', 'thickness'),
-                                              ('Cortical_Parcellation.out_file', 'annotation')])
-                    ])
-        #End for
+        hemiwf2.connect([(hemi_inputspec2, contrast, [('orig_mgz', 'orig'),
+                                                      ('rawavg', 'rawavg'),
+                                                      ('{0}_white'.format(hemisphere), 'white'),
+                                                      ('{0}_cortex_label'.format(hemisphere), 'cortex'),
+                                                      ('aparc_annot', 'annotation'),
+                                                      ('thickness', 'thickness'),
+                                                      ]),
+                        ])
+        
+        hemi_outputs2 = ['aparc_annot_ctab',
+                         'aparc_stats',
+                         'aparc_pial_stats',
+                         'aparc_a2009s_annot',
+                         'aparc_a2009s_annot_ctab',
+                         'aparc_a2009s_annot_stats',
+                         'aparc_DKTatlas40_annot',
+                         'aparc_DKTatlas40_annot_ctab',
+                         'aparc_DKTatlas40_annot_stats',
+                         'wg_pct_mgh',
+                         'wg_pct_stats',
+                         'pctsurfcon_log',
+                         ]
+        hemi_outputspec2 = pe.Node(IdentityInterface(fields=hemi_outputs2),
+                              name="Outputs")
+
+        hemiwf2.connect([(contrast, hemi_outputspec2, [('out_contrast', 'wg_pct_mgh'),
+                                                       ('out_stats', 'wg_pct_stats'),
+                                                       ('out_log', 'pctsurfcon_log')]),
+                         (parcellation_stats_white_3, hemi_outputspec2, [('out_color', 'aparc_DKTatlas40_ctab'),
+                                                                         ('out_table', 'aparc_DKTatlas40_stats')]),
+                         (cortical_parcellation_3, hemi_outputspec2, [('out_file', 'aparc_DKTatlas40_annot')]),
+                         (parcellation_stats_white_2, hemi_outputspec2, [('out_color', 'aparc_a2009s_ctab'),
+                                                                         ('out_table', 'aparc_a2009s_stats')]),
+                         (cortical_parcellation_2, hemi_outputspec2, [('out_file', 'aparc_a2009s_annot')]),
+                         (parcellation_stats_white, hemi_outputspec2, [('out_color', 'aparc_annot_ctab'),
+                                                                       ('out_table', 'aparc_stats')]),
+                         (parcellation_stats_pial, hemi_outputspec2, [('out_table', 'aparc_pial_stats')]),
+                         ])
+                                                       
+        #End hemisphere2 workflow
 
 
     # Relabel Hypointensities
-    relabel_hypos = pe.Node(
-        RelabelHypointensities(), name="Relabel_Hypointensities")
+    relabel_hypos = pe.Node(RelabelHypointensities(), name="Relabel_Hypointensities")
     ar3_wf.connect([(inputspec, relabel_hypos, [('aseg_presurf', 'aseg'),
-                                                 ('lh_white', 'lh_white'),
-                                                 ('rh_white', 'rh_white'),
-                                                 ])])
+                                                ('lh_white', 'lh_white'),
+                                                ('rh_white', 'rh_white'),
+                                                ])])
 
     # APARC to ASEG
     # Adds information from the ribbon into the aseg.mgz (volume parcellation).

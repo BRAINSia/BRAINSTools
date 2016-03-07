@@ -75,9 +75,8 @@ def create_AutoRecon2(config):
 
     add_to_header_nu = pe.Node(AddXFormToHeader(), name="Add_XForm_to_NU")
     add_to_header_nu.inputs.copy_name = True
+    add_to_header_nu.inputs.out_file = 'nu.mgz'
     ar2_wf.connect([(intensity_correction, add_to_header_nu, [('out_file', 'in_file'),
-                                                              ('out_file',
-                                                               'out_file')
                                                               ]),
                     (inputSpec, add_to_header_nu,
                      [('transform', 'transform')])
@@ -327,12 +326,11 @@ def create_AutoRecon2(config):
         transfer_init_wm = pe.Node(ApplyMask(), name="Transfer_Initial_WM")
         transfer_init_wm.inputs.transfer = 255
         transfer_init_wm.inputs.keep_mask_deletion_edits = True
-
-        ar2_wf.connect([(pretess, transfer_init_wm, [('out_file', 'in_file'),
-                                                     ('out_file', 'out_file')]),
+        transfer_init_wm.inputs.out_file = 'wm.mgz'
+        ar2_wf.connect([(pretess, transfer_init_wm, [('out_file', 'in_file')]),
                         (inputSpec, transfer_init_wm, [('init_wm', 'mask_file'),
                                                         ('subj_to_template_lta', 'xfm_file')])])
-        """changing the pretess variable so that the rest of the connections still work!!!"""
+        # changing the pretess variable so that the rest of the connections still work!!!
         pretess = transfer_init_wm
         
     # Fill
@@ -704,7 +702,7 @@ def create_AutoRecon2(config):
     outputspec = pe.Node(IdentityInterface(fields=outputs),
                          name="Outputs")
 
-    ar2_wf.connect([(intensity_correction, outputspec, [('out_file', 'nu')]),
+    ar2_wf.connect([(add_to_header_nu, outputspec, [('out_file', 'nu')]),
                     (align_transform, outputspec, [('out_file', 'tal_lta')]),
                     (ca_normalize, outputspec, [('out_file', 'norm')]),
                     (ca_normalize, outputspec, [('control_points', 'ctrl_pts')]),

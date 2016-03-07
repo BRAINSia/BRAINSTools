@@ -259,7 +259,10 @@ def create_reconall(config):
                                               ('rh_white_K', 'surf.@rh_white_K'),
                                               ('rh_inflated_H', 'surf.@rh_inflated_H'),
                                               ('rh_inflated_K', 'surf.@rh_inflated_K'),
-                                              ('rh_curv_stats', 'surf.@rh_curv_stats')
+                                              ('rh_curv_stats', 'surf.@rh_curv_stats').
+                                              ('lh_aparc_annot_ctab', 'label.@aparc_annot_ctab'),
+                                              ('lh_aparc_stats', 'stats.@lh_aparc_stats'),
+                                              ('rh_aparc_stats', 'stats.@rh_aparc_stats'),
                                           ]),
                       ])
 

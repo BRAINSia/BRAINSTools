@@ -256,6 +256,7 @@ def create_AutoRecon2(config):
     segment_cc = pe.Node(SegmentCC(), name="Segment_CorpusCallosum")
     segment_cc.inputs.out_rotation = 'cc_up.lta'
     segment_cc.inputs.out_file = 'aseg.auto.mgz'
+    segment_cc.inputs.copy_inputs = True
     ar2_wf.connect([(ca_label, segment_cc, [('out_file', 'in_file')]),
                     (ca_normalize, segment_cc, [('out_file', 'in_norm')]),
                     ])
@@ -526,6 +527,8 @@ def create_AutoRecon2(config):
             fix_topology.inputs.copy_inputs = True
             hemi_wf.connect([(copy_orig, fix_topology, [('out_file', 'in_orig')]),
                              (copy_inflate1, fix_topology, [('out_file', 'in_inflated')]),
+                             (normalization2, fix_topology, [('out_file', 'in_brain')]),
+                             (pretess, fix_topology, [('out_file', 'in_wm')]),
                              (qsphere, fix_topology, [('out_file', 'sphere')])])
 
 
@@ -644,7 +647,7 @@ def create_AutoRecon2(config):
                       'curv',
                       'area',
                       'cortex',
-                      'pial',
+                      'pial_auto',
                       'thickness',
                       'smoothwm',
                       'sulc',
@@ -666,7 +669,7 @@ def create_AutoRecon2(config):
                                                            ('out_curv', 'curv'),
                                                            ('out_area', 'area'),
                                                            ('out_cortex', 'cortex'),
-                                                           ('out_pial', 'pial')]),
+                                                           ('out_pial', 'pial_auto')]),
                          (smooth2, hemi_outputspec, [('surface', 'smoothwm')]),
                          (inflate2, hemi_outputspec, [('out_sulc', 'sulc'),
                                                       ('out_file', 'inflated')]),

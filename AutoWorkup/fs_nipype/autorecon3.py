@@ -4,7 +4,7 @@ from nipype.interfaces.utility import Function,IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from ba_maps import create_ba_maps_wf
-
+from utils import createsrcsubj
 def create_AutoRecon3(config):
     
     # AutoRecon3
@@ -12,11 +12,7 @@ def create_AutoRecon3(config):
     ar3_wf = pe.Workflow(name="AutoRecon3")
 
     # Input Node
-    inputspec = pe.Node(IdentityInterface(fields=['lh',
-                                                  'rh',
-                                                  'subject_id',
-                                                  'subjects_dir',
-                                                  'lh_inflated',
+    inputspec = pe.Node(IdentityInterface(fields=['lh_inflated',
                                                   'rh_inflated',
                                                   'lh_smoothwm',
                                                   'rh_smoothwm',
@@ -69,9 +65,7 @@ def create_AutoRecon3(config):
     ar3_lh_wf1 = pe.Workflow(name="AutoRecon3_Left_1")
     ar3_rh_wf1 = pe.Workflow(name="AutoRecon3_Right_1")
     for hemisphere, hemi_wf in [('lh', ar3_lh_wf1), ('rh', ar3_rh_wf1)]:
-        hemi_inputspec1 = pe.Node(IdentityInterface(fields=['subject_id',
-                                                            'subjects_dir',
-                                                            'inflated',
+        hemi_inputspec1 = pe.Node(IdentityInterface(fields=['inflated',
                                                             'smoothwm',
                                                             'white',
                                                             'cortex_label',
@@ -222,10 +216,6 @@ def create_AutoRecon3(config):
                                                 ('{0}_orig'.format(hemisphere), 'Inputs.orig'),
                                                 ('{0}_sulc'.format(hemisphere), 'Inputs.sulc'),
                                                 ('{0}_area'.format(hemisphere), 'Inputs.area'),
-                                                ('subject_id',
-                                                 'Inputs.subject_id'),
-                                                ('subjects_dir',
-                                                 'Inputs.subjects_dir'),
                                                 ('aseg_presurf',
                                                  'Inputs.aseg_presurf'),
                                                 ('brain_finalsurfs',
@@ -244,18 +234,18 @@ def create_AutoRecon3(config):
                          'jacobian_white',
                          'avg_curv',
                          'aparc_annot',
-                         'area',
-                         'curv',
+                         'area_pial',
+                         'curv_pial',
                          'pial',
-                         'thickness',
+                         'thickness_pial',
                          'area_mid',
                          'volume']
         hemi_outputspec1 = pe.Node(IdentityInterface(fields=hemi_outputs1),
                               name="Outputs")
         hemi_wf.connect([(ar3_pial, hemi_outputspec1, [('out_pial', 'pial'),
-                                                       ('out_curv', 'curv'),
-                                                       ('out_area', 'area'),
-                                                       ('out_thickness', 'thickness')]),
+                                                       ('out_curv', 'curv_pial'),
+                                                       ('out_area', 'area_pial'),
+                                                       ('out_thickness', 'thickness_pial')]),
                          (ar3_divide, hemi_outputspec1, [('out_file', 'area_mid')]),
                          (ar3_volume, hemi_outputspec1, [('out_file', 'volume')]),
                          (ar3_parcellation, hemi_outputspec1, [('out_file', 'aparc_annot')]),
@@ -315,31 +305,12 @@ def create_AutoRecon3(config):
                         'smoothwm',
                         'sphere_reg',
                         'orig_mgz',
-                        'raw_avg',
+                        'rawavg',
                         ]
                         
         hemi_inputspec2 = pe.Node(IdentityInterface(fields=hemi_inputs2),
                                   name="Inputs")
         
-        ar3_wf.connect([(inputspec, hemiwf2, [('wm', 'Inputs.wm'),
-                                              ('lh_white', 'Inputs.lh_white'),
-                                              ('rh_white', 'Inputs.rh_white'),
-                                              ('transform', 'Inputs.transform'),
-                                              ('brainmask', 'Inputs.brainmask'),
-                                              ('aseg_presurf', 'Inputs.aseg_presurf'),
-                                              ('{0}_cortex_label'.format(hemisphere), 'Inputs.cortex_label')
-                                              ('{0}_smoothwm'.format(hemisphere), 'Inputs.smoothwm'),
-                                              ('orig_mgz', 'Inputs.orig_mgz'),
-                                              ('raw_avg', 'Inputs.raw_avg'),
-                                               ]),
-                        (ar_lh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.lh_pial')]),
-                        (ar_rh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.rh_pial')]),
-                        (hemiwf1, hemiwf2, [('Outputs.thickness', 'Inputs.thickness'),
-                                            ('Outputs.aparc_annot', 'Inputs.aparc_annot'),
-                                            ('Outputs.sphere_reg', 'Inputs.sphere_reg')]),
-                        (volume_mask, hemiwf2, [('out_ribbon', 'Inputs.ribbon')]),
-                        ])
-
         # Parcellation Statistics
         """
         Runs mris_anatomical_stats to create a summary table of cortical parcellation statistics for each structure, including
@@ -374,7 +345,7 @@ def create_AutoRecon3(config):
                                                                       ('rh_pial', 'rh_pial'),
                                                                       ('thickness', 'thickness'),
                                                                       ('aparc_annot', 'in_annotation'),
-                                                                      ('ribbon', 'in_ribbon'),
+                                                                      ('ribbon', 'ribbon'),
                                                                       ]),
                          ])
         
@@ -406,11 +377,6 @@ def create_AutoRecon3(config):
         # Cortical Parcellation 2
         cortical_parcellation_2 = pe.Node(MRIsCALabel(),
                                           name="Cortical_Parcellation_{0}_2".format(hemisphere))
-        if hemisphere == 'lh':
-            lh_cort_parc2 = cortical_parcellation_2
-        else:
-            rh_cort_parc2 = cortical_parcellation_2
-            
         cortical_parcellation_2.inputs.classifier = os.path.join(config['FREESURFER_HOME'], 
                                                                  'average', 
                                                                  '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
@@ -441,7 +407,6 @@ def create_AutoRecon3(config):
                                                                         ('lh_pial', 'lh_pial'),
                                                                         ('rh_pial', 'rh_pial'),
                                                                         ('thickness', 'thickness'),
-                                                                        ('aparc_annot', 'in_annotation'),
                                                                         ('ribbon', 'ribbon'),
                                                                         ]),
                          (cortical_parcellation_2, parcellation_stats_white_2, [('out_file', 'in_annotation')])
@@ -477,7 +442,6 @@ def create_AutoRecon3(config):
                                                                         ('lh_pial', 'lh_pial'),
                                                                         ('rh_pial', 'rh_pial'),
                                                                         ('thickness', 'thickness'),
-                                                                        ('aparc_annot', 'in_annotation'),
                                                                         ('ribbon', 'ribbon'),
                                                                         ]),
                          (cortical_parcellation_3, parcellation_stats_white_3, [('out_file', 'in_annotation')])
@@ -492,7 +456,7 @@ def create_AutoRecon3(config):
         hemiwf2.connect([(hemi_inputspec2, contrast, [('orig_mgz', 'orig'),
                                                       ('rawavg', 'rawavg'),
                                                       ('{0}_white'.format(hemisphere), 'white'),
-                                                      ('{0}_cortex_label'.format(hemisphere), 'cortex'),
+                                                      ('cortex_label'.format(hemisphere), 'cortex'),
                                                       ('aparc_annot', 'annotation'),
                                                       ('thickness', 'thickness'),
                                                       ]),
@@ -527,12 +491,31 @@ def create_AutoRecon3(config):
                                                                        ('out_table', 'aparc_stats')]),
                          (parcellation_stats_pial, hemi_outputspec2, [('out_table', 'aparc_pial_stats')]),
                          ])
-                                                       
+        # connect inputs to hemisphere2 workflow
+        ar3_wf.connect([(inputspec, hemiwf2, [('wm', 'Inputs.wm'),
+                                              ('lh_white', 'Inputs.lh_white'),
+                                              ('rh_white', 'Inputs.rh_white'),
+                                              ('transform', 'Inputs.transform'),
+                                              ('brainmask', 'Inputs.brainmask'),
+                                              ('aseg_presurf', 'Inputs.aseg_presurf'),
+                                              ('{0}_cortex_label'.format(hemisphere), 'Inputs.cortex_label'),
+                                              ('{0}_smoothwm'.format(hemisphere), 'Inputs.smoothwm'),
+                                              ('orig_mgz', 'Inputs.orig_mgz'),
+                                              ('rawavg', 'Inputs.rawavg'),
+                                               ]),
+                        (ar3_lh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.lh_pial')]),
+                        (ar3_rh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.rh_pial')]),
+                        (hemiwf1, hemiwf2, [('Outputs.thickness_pial', 'Inputs.thickness'),
+                                            ('Outputs.aparc_annot', 'Inputs.aparc_annot'),
+                                            ('Outputs.sphere_reg', 'Inputs.sphere_reg')]),
+                        (volume_mask, hemiwf2, [('out_ribbon', 'Inputs.ribbon')]),
+                        ])
         #End hemisphere2 workflow
 
 
     # Relabel Hypointensities
     relabel_hypos = pe.Node(RelabelHypointensities(), name="Relabel_Hypointensities")
+    relabel_hypos.inputs.out_file = 'aseg.presurf.hypos.mgz'
     ar3_wf.connect([(inputspec, relabel_hypos, [('aseg_presurf', 'aseg'),
                                                 ('lh_white', 'lh_white'),
                                                 ('rh_white', 'rh_white'),
@@ -542,18 +525,17 @@ def create_AutoRecon3(config):
     # Adds information from the ribbon into the aseg.mgz (volume parcellation).
     aparc_2_aseg = pe.Node(Aparc2Aseg(), name="Aparc2Aseg")
     aparc_2_aseg.inputs.volmask = True
+    aparc_2_aseg.inputs.copy_inputs = True    
+    aparc_2_aseg.inputs.out_file = "aparc+aseg.mgz"
     ar3_wf.connect([(inputspec, aparc_2_aseg, [('lh_white', 'lh_white'),
                                                 ('rh_white', 'rh_white'),
-                                                ('subject_id', 'subject_id'),
-                                                ('subjects_dir',
-                                                 'subjects_dir'),
                                                 ]),
-                    (ar3_lh_wf1, aparc_2_aseg, [('Make_Pial_Surface.out_pial', 'lh_pial'),
-                                               ('Cortical_Parcellation.out_file',
+                    (ar3_lh_wf1, aparc_2_aseg, [('Outputs.pial', 'lh_pial'),
+                                               ('Outputs.aparc_annot',
                                                 'lh_annotation'),
                                                ]),
-                    (ar3_rh_wf1, aparc_2_aseg, [('Make_Pial_Surface.out_pial', 'rh_pial'),
-                                               ('Cortical_Parcellation.out_file',
+                    (ar3_rh_wf1, aparc_2_aseg, [('Outputs.pial', 'rh_pial'),
+                                               ('Outputs.aparc_annot',
                                                 'rh_annotation'),
                                                ]),
                     (volume_mask, aparc_2_aseg, [('rh_ribbon', 'rh_ribbon'),
@@ -565,20 +547,19 @@ def create_AutoRecon3(config):
 
     aparc_2_aseg_2009 = pe.Node(Aparc2Aseg(), name="Aparc2Aseg_2009")
     aparc_2_aseg_2009.inputs.volmask = True
+    aparc_2_aseg_2009.inputs.a2009s = True
+    aparc_2_aseg_2009.inputs.copy_inputs = True    
+    aparc_2_aseg_2009.inputs.out_file = "aparc.a2009s+aseg.mgz"
     ar3_wf.connect([(inputspec, aparc_2_aseg_2009, [('lh_white', 'lh_white'),
                                                      ('rh_white', 'rh_white'),
-                                                     ('subject_id',
-                                                      'subject_id'),
-                                                     ('subjects_dir',
-                                                      'subjects_dir'),
                                                      ]),
-                    (ar3_lh_wf1, aparc_2_aseg_2009, [('Make_Pial_Surface.out_pial', 'lh_pial'),
+                    (ar3_lh_wf1, aparc_2_aseg_2009, [('Outputs.pial', 'lh_pial'),
                                                     ]),
-                    (lh_cort_parc2, aparc_2_aseg_2009,
-                     [('out_file', 'lh_annotation')]),
-                    (rh_cort_parc2, aparc_2_aseg_2009,
-                     [('out_file', 'rh_annotation')]),
-                    (ar3_rh_wf1, aparc_2_aseg_2009, [('Make_Pial_Surface.out_pial', 'rh_pial'),
+                    (ar3_lh_wf2, aparc_2_aseg_2009, [('Outputs.aparc_a2009s_annot',
+                                                      'lh_annotation')]),
+                    (ar3_rh_wf2, aparc_2_aseg_2009, [('Outputs.aparc_a2009s_annot',
+                                                      'rh_annotation')]),
+                    (ar3_rh_wf1, aparc_2_aseg_2009, [('Outputs.pial', 'rh_pial'),
                                                     ]),
                     (volume_mask, aparc_2_aseg_2009, [('rh_ribbon', 'rh_ribbon'),
                                                       ('lh_ribbon',
@@ -589,6 +570,7 @@ def create_AutoRecon3(config):
                     ])
 
     apas_2_aseg = pe.Node(Apas2Aseg(), name="Apas_2_Aseg")
+    apas_2_aseg.inputs.out_file = "aseg.mgz"
     ar3_wf.connect([(aparc_2_aseg, apas_2_aseg, [('out_file', 'in_file')])])
 
     # Segmentation Stats
@@ -612,24 +594,23 @@ def create_AutoRecon3(config):
     segstats.inputs.euler = True
     segstats.inputs.exclude_id = 0
     segstats.inputs.intensity_units = "MR"
-
+    segstats.inputs.summary_file = 'aseg.stats'
+    
     ar3_wf.connect([(apas_2_aseg, segstats, [('out_file', 'segmentation_file')]),
-                    (inputspec, segstats, [('subject_id', 'subject_id'),
-                                            ('subjects_dir', 'subjects_dir'),
-                                            ('lh_white', 'lh_white'),
-                                            ('rh_white', 'rh_white'),
-                                            ('aseg_presurf', 'presurf_seg'),
-                                            ('transform', 'transform'),
-                                            ('norm', 'in_intensity'),
-                                            ('norm', 'partial_volume_file'),
-                                            ('brainmask', 'brainmask_file'),
-                                            ('lh_orig_nofix', 'lh_orig_nofix'),
-                                            ('rh_orig_nofix', 'rh_orig_nofix'),
-                                            ]),
+                    (inputspec, segstats, [('lh_white', 'lh_white'),
+                                           ('rh_white', 'rh_white'),
+                                           ('aseg_presurf', 'presurf_seg'),
+                                           ('transform', 'transform'),
+                                           ('norm', 'in_intensity'),
+                                           ('norm', 'partial_volume_file'),
+                                           ('brainmask', 'brainmask_file'),
+                                           ('lh_orig_nofix', 'lh_orig_nofix'),
+                                           ('rh_orig_nofix', 'rh_orig_nofix'),
+                                          ]),
                     (volume_mask, segstats, [('out_ribbon', 'ribbon')]),
-                    (ar3_lh_wf1, segstats, [('Make_Pial_Surface.out_pial', 'lh_pial'),
+                    (ar3_lh_wf1, segstats, [('Outputs.pial', 'lh_pial'),
                                            ]),
-                    (ar3_rh_wf1, segstats, [('Make_Pial_Surface.out_pial', 'rh_pial'),
+                    (ar3_rh_wf1, segstats, [('Outputs.pial', 'rh_pial'),
                                            ]),
                     ])
 
@@ -642,20 +623,17 @@ def create_AutoRecon3(config):
     wm_parcellation.inputs.label_wm = True
     wm_parcellation.inputs.hypo_wm = True
     wm_parcellation.inputs.rip_unknown = True
-
+    wm_parcellation.inputs.out_file = "wmparc.mgz"
+    
     ar3_wf.connect([(inputspec, wm_parcellation, [('lh_white', 'lh_white'),
                                                    ('rh_white', 'rh_white'),
-                                                   ('subject_id',
-                                                    'subject_id'),
-                                                   ('subjects_dir',
-                                                    'subjects_dir'),
                                                    ]),
-                    (ar3_lh_wf1, wm_parcellation, [('Make_Pial_Surface.out_pial', 'lh_pial'),
-                                                  ('Cortical_Parcellation.out_file',
+                    (ar3_lh_wf1, wm_parcellation, [('Outputs.pial', 'lh_pial'),
+                                                  ('Outputs.aparc_annot',
                                                    'lh_annotation'),
                                                   ]),
-                    (ar3_rh_wf1, wm_parcellation, [('Make_Pial_Surface.out_pial', 'rh_pial'),
-                                                  ('Cortical_Parcellation.out_file',
+                    (ar3_rh_wf1, wm_parcellation, [('Outputs.pial', 'rh_pial'),
+                                                  ('Outputs.aparc_annot',
                                                    'rh_annotation'),
                                                   ]),
                     (volume_mask, wm_parcellation, [('rh_ribbon', 'rh_ribbon'),
@@ -668,120 +646,84 @@ def create_AutoRecon3(config):
 
     # White Matter Segmentation Stats
 
-    wm_segstats = pe.Node(
-        SegStatsReconAll(), name="WM_Segmentation_Statistics")
-    wm_segstats.inputs.color_table_file = os.path.join(
-        config['FREESURFER_HOME'], 'WMParcStatsLUT.txt')
+    wm_segstats = pe.Node(SegStatsReconAll(), name="WM_Segmentation_Statistics")
+    wm_segstats.inputs.color_table_file = os.path.join(config['FREESURFER_HOME'], 'WMParcStatsLUT.txt')
     wm_segstats.inputs.intensity_units = "MR"
     wm_segstats.inputs.wm_vol_from_surf = True
     wm_segstats.inputs.etiv = True
     wm_segstats.inputs.exclude_id = 0
+    wm_segstats.inputs.summary_file = "wmparc.stats"
 
     ar3_wf.connect([(wm_parcellation, wm_segstats, [('out_file', 'segmentation_file')]),
-                    (inputspec, wm_segstats, [('subject_id', 'subject_id'),
-                                               ('subjects_dir',
-                                                'subjects_dir'),
-                                               ('lh_white', 'lh_white'),
-                                               ('rh_white', 'rh_white'),
-                                               ('aseg_presurf', 'presurf_seg'),
-                                               ('transform', 'transform'),
-                                               ('norm', 'in_intensity'),
-                                               ('norm', 'partial_volume_file'),
-                                               ('brainmask', 'brainmask_file'),
-                                               ('lh_orig_nofix',
-                                                'lh_orig_nofix'),
-                                               ('rh_orig_nofix',
-                                                'rh_orig_nofix'),
-                                               ]),
+                    (inputspec, wm_segstats, [('lh_white', 'lh_white'),
+                                              ('rh_white', 'rh_white'),
+                                              ('aseg_presurf', 'presurf_seg'),
+                                              ('transform', 'transform'),
+                                              ('norm', 'in_intensity'),
+                                              ('norm', 'partial_volume_file'),
+                                              ('brainmask', 'brainmask_file'),
+                                              ('lh_orig_nofix',
+                                               'lh_orig_nofix'),
+                                              ('rh_orig_nofix',
+                                               'rh_orig_nofix'),
+                                             ]),
                     (volume_mask, wm_segstats, [('out_ribbon', 'ribbon')]),
-                    (ar3_lh_wf1, wm_segstats, [('Make_Pial_Surface.out_pial', 'lh_pial'),
+                    (ar3_lh_wf1, wm_segstats, [('Outputs.pial', 'lh_pial'),
                                               ]),
-                    (ar3_rh_wf1, wm_segstats, [('Make_Pial_Surface.out_pial', 'rh_pial'),
+                    (ar3_rh_wf1, wm_segstats, [('Outputs.pial', 'rh_pial'),
                                               ]),
                     ])
 
     # add brodman area maps to the workflow
     ba_WF = create_ba_maps_wf(config)
-
-    ar3_wf.connect([(ar3_lh_wf1, ba_WF, [('Surface_Registration.out_file', 'Inputs.lh_sphere_reg'),
-                                        ('Make_Pial_Surface.out_thickness',
-                                         'Inputs.lh_thickness'),
-                                        ('Make_Pial_Surface.out_pial',
-                                         'Inputs.lh_pial'),
-                                        ]),
-                    (ar3_rh_wf1, ba_WF, [('Surface_Registration.out_file', 'Inputs.rh_sphere_reg'),
-                                        ('Make_Pial_Surface.out_thickness',
-                                         'Inputs.rh_thickness'),
-                                        ('Make_Pial_Surface.out_pial',
-                                         'Inputs.rh_pial'),
-                                        ]),
-                    (inputspec, ba_WF, [('subject_id', 'Inputs.subject_id'),
-                                         ('subjects_dir',
-                                          'Inputs.subjects_dir'),
-                                         ('lh_white',
-                                          'Inputs.lh_white'),
-                                         ('rh_white',
-                                          'Inputs.rh_white'),
-                                         ('transform',
-                                          'Inputs.transform'),
-                                         ('aseg_presurf',
-                                          'Inputs.aseg'),
-                                         ('brainmask',
-                                          'Inputs.brainmask'),
-                                         ('wm', 'Inputs.wm')]),
-                    (volume_mask, ba_WF, [
-                        ('out_ribbon', 'Inputs.ribbon')])
-                    ])
+    
+    ar3_wf.connect([(ar3_lh_wf1, ba_WF, [('Outputs.sphere_reg', 'Inputs.lh_sphere_reg'),
+                                         ('Outputs.thickness_pial', 'Inputs.lh_thickness'),
+                                         ('Outputs.pial', 'Inputs.lh_pial'),
+                                     ]),
+                    (ar3_rh_wf1, ba_WF, [('Outputs.sphere_reg', 'Inputs.rh_sphere_reg'),
+                                         ('Outputs.thickness_pial', 'Inputs.rh_thickness'),
+                                         ('Outputs.pial', 'Inputs.rh_pial'),
+                                     ]),
+                    (inputspec, ba_WF, [('lh_white', 'Inputs.lh_white'),
+                                        ('rh_white', 'Inputs.rh_white'),
+                                        ('transform', 'Inputs.transform'),
+                                        ('aseg_presurf', 'Inputs.aseg'),
+                                        ('brainmask', 'Inputs.brainmask'),
+                                        ('wm', 'Inputs.wm')]),
+                    (volume_mask, ba_WF, [('out_ribbon', 'Inputs.ribbon')])
+                ])
 
     if config['qcache']:
         for hemisphere in ['lh', 'rh']:
             if hemisphere == 'lh':
                 hemi_wf = ar3_lh_wf1
-                hemi_contrast = lh_contrast
+                hemi_wf2 = ar3_lh_wf2
             else:
                 hemi_wf = ar3_rh_wf1
-                hemi_contrast = rh_contrast
-            for connection, meas_file, meas_name in [(hemi_wf,
-                                                      'Make_Pial_Surface.out_thickness',
-                                                      'thickness'),
-                                                     (inputspec, '{0}_area'.format(
-                                                         hemisphere), 'area'),
-                                                     (hemi_wf, 'Make_Pial_Surface.out_area',
-                                                      'area.pial'),
-                                                     (hemi_wf, 'Calculate_Volume.out_file',
-                                                      'volume'),
-                                                     (inputspec, '{0}_curv'.format(
-                                                         hemisphere), 'curv'),
-                                                     (inputspec, '{0}_sulc'.format(
-                                                         hemisphere), 'sulc'),
-                                                     (inputspec, '{0}_white_K'.format(
-                                                         hemisphere), 'white.K'),
-                                                     (inputspec, '{0}_white_H'.format(
-                                                         hemisphere), 'white.H'),
-                                                     (hemi_wf, 'Jacobian.out_file',
-                                                      'jacobian_white'),
-                                                     (hemi_contrast, 'out_contrast', 'w-g.pct.mgh')]:
-                preprocess = pe.Node(MRISPreprocReconAll(), name="QCache_Preproc_{0}_{1}".format(
-                    hemisphere, meas_name.replace('.', '_')))
+                hemi_wf2 = ar3_lh_wf2
+            for connection, meas_file, meas_name in [(hemi_wf, 'Outputs.thickness_pial', 'thickness'),
+                                                     (inputspec, '{0}_area'.format(hemisphere), 'area'),
+                                                     (hemi_wf, 'Outputs.area_pial', 'area.pial'),
+                                                     (hemi_wf, 'Outputs.volume', 'volume'),
+                                                     (inputspec, '{0}_curv'.format(hemisphere), 'curv'),
+                                                     (inputspec, '{0}_sulc'.format(hemisphere), 'sulc'),
+                                                     (inputspec, '{0}_white_K'.format(hemisphere), 'white.K'),
+                                                     (inputspec, '{0}_white_H'.format(hemisphere), 'white.H'),
+                                                     (hemi_wf, 'Outputs.jacobian_white', 'jacobian_white'),
+                                                     (hemi_wf2, 'Outputs.wg_pct_mgh', 'w-g.pct.mgh')]:
+                preprocess = pe.Node(MRISPreprocReconAll(),
+                                     name="QCache_Preproc_{0}_{1}".format(hemisphere,
+                                                                          meas_name.replace('.', '_')))
                 target_id = 'fsaverage'
-                preprocess.inputs.out_file = os.path.join(
-                    config['subjects_dir'], config['current_id'], 
-                    'surf', '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id))
-                target_dir = os.path.join(config['subjects_dir'], target_id)
-                if not os.path.isdir(target_dir):
-                    # link fsaverage if it doesn't exist
-                    target_home = os.path.join(config['FREESURFER_HOME'], 'subjects', target_id)
-                    # Create a symlink
-                    os.symlink(target_home, target_dir)
+                preprocess.inputs.out_file = '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id)
+                target_dir = os.path.join(config['FREESURFER_HOME'], 'subjects', target_id)
                 preprocess.inputs.target = target_id
+                preprocess.inputs.target_dir = target_dir
                 preprocess.inputs.hemi = hemisphere
-                ar3_wf.connect([(inputspec, preprocess, [('subject_id', 'subject_id'),
-                                                          ('subjects_dir',
-                                                           'subjects_dir'),
-                                                          ])])
-                ar3_wf.connect([(hemi_wf, preprocess, [('Surface_Registration.out_file', 'surfreg_file')]),
-                                (connection, preprocess,
-                                 [(meas_file, 'surf_measure_file')])
+
+                ar3_wf.connect([(hemi_wf, preprocess, [('Outputs.sphere_reg', 'surfreg_file')]),
+                                (connection, preprocess, [(meas_file, 'surf_measure_file')])
                                 ])
 
                 for value in range(0, 26, 5):
@@ -791,19 +733,49 @@ def create_AutoRecon3(config):
                     surf2surf.inputs.cortex = True
                     surf2surf.inputs.subject_id = target_id
                     surf2surf.inputs.hemi = hemisphere
-                    tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
-                        hemisphere, meas_name, value)
-                    surf2surf.inputs.out_file = os.path.join(
-                        config['subjects_dir'], config['current_id'], 
-                        'surf', tval_file)
-                    ar3_lh_wf1.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
-                                       (inputspec, surf2surf,
-                                        [('subjects_dir', 'subjects_dir')]),
-                                       ])
+                    tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(hemisphere, meas_name, value)
+                    surf2surf.inputs.out_file = tval_file
+                    ar3_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')])])
 
-    #TODO: Add outputs to outputspec
-    outputspec = pe.Node(IdentityInterface(fields=['aseg']),
+    # Add outputs to outputspec
+    ar3_outputs = ['aseg',
+                   'wmparc',
+                   'wmparc_stats',
+                   'aseg_stats',
+                   'aparc_a2009s_aseg',
+                   'aparc_aseg',
+                   'aseg_presurf_hypos',
+                   'ribbon',
+                   'rh_ribbon',
+                   'lh_ribbon']
+    for output in hemi_outputs1 + hemi_outputs2:
+        for hemi in ('lh_', 'rh_'):
+            ar3_outputs.append(hemi + output)
+    outputspec = pe.Node(IdentityInterface(fields=ar3_outputs),
                          name="Outputs")
-    ar3_wf.connect([(apas_2_aseg, outputspec, [('out_file', 'aseg')])])
+    
+    ar3_wf.connect([(apas_2_aseg, outputspec, [('out_file', 'aseg')]),
+                    (wm_parcellation, outputspec, [('out_file', 'wmparc')]),
+                    (wm_segstats, outputspec, [('summary_file', 'wmparc_stats')]),
+                    (segstats, outputspec, [('summary_file', 'aseg_stats')]),
+                    (aparc_2_aseg_2009, outputspec, [('out_file', 'aparc_a2009s_aseg')]),
+                    (aparc_2_aseg, outputspec, [('out_file', 'aparc_aseg')]),
+                    (relabel_hypos, outputspec, [('out_file', 'aseg_presurf_hypos')]),
+                    (volume_mask, outputspec, [('out_ribbon', 'ribbon'),
+                                               ('lh_ribbon', 'lh_ribbon'),
+                                               ('rh_ribbon', 'rh_ribbon')]),
+                ])
 
-    return ar3_wf
+    for i, outputs in enumerate([hemi_outputs1, hemi_outputs2]):
+        if i == 0:
+            lhwf = ar3_lh_wf1
+            rhwf = ar3_rh_wf1
+        else:
+            lhwf = ar3_lh_wf2
+            rhwf = ar3_rh_wf2
+        for output in outputs:
+            ar3_wf.connect([(lhwf, outputspec, [('Outputs.' + output, 'lh_' + output)]),
+                            (rhwf, outputspec, [('Outputs.' + output, 'rh_' + output)])])
+
+    return ar3_wf, ar3_outputs
+

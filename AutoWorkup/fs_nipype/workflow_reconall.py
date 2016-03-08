@@ -9,7 +9,7 @@ from autorecon3 import create_AutoRecon3
 def create_reconall(config):
     ar1_wf, ar1_outputs = create_AutoRecon1(config)
     ar2_wf, ar2_outputs = create_AutoRecon2(config)
-    ar3_wf = create_AutoRecon3(config)
+    ar3_wf, ar3_outputs = create_AutoRecon3(config)
 
     # Connect workflows 
     reconall = pe.Workflow(name="recon-all")
@@ -179,16 +179,18 @@ def create_reconall(config):
                                              'Inputs.{0}_white_K'.format(hemi))])])
 
 
-    #TODO: add more outputs to outputspec
-    outputs = ar1_outputs + ar2_outputs
+    # Add more outputs to outputspec
+    outputs = ar1_outputs + ar2_outputs + ar3_outputs
     outputspec = pe.Node(IdentityInterface(fields=outputs),
                          name="Outputs")
 
-    for outfields, wf in [(ar1_outputs, ar1_wf), (ar2_outputs, ar2_wf)]:
+    for outfields, wf in [(ar1_outputs, ar1_wf),
+                          (ar2_outputs, ar2_wf),
+                          (ar3_outputs, ar3_wf)]:
         for field in outfields:
             reconall.connect([(wf, outputspec, [('Outputs.' + field, field)])])
 
-    #TODO: Datasink outputs
+    # Datasink outputs
     datasink = pe.Node(DataSink(), name="DataSink")
     datasink.inputs.container = config['current_id']
     datasink.inputs.base_directory = config['subjects_dir']
@@ -231,7 +233,6 @@ def create_reconall(config):
                                               ('lh_curv', 'surf.@lh_curv'),
                                               ('lh_area', 'surf.@lh_area'),
                                               ('lh_cortex', 'surf.@lh_cortex'),
-                                              ('lh_pial', 'surf.@lh_pial'),
                                               ('lh_thickness', 'surf.@lh_thickness'),
                                               ('lh_smoothwm', 'surf.@lh_smoothwm'),
                                               ('lh_sulc', 'surf.@lh_sulc'),
@@ -250,7 +251,6 @@ def create_reconall(config):
                                               ('rh_curv', 'surf.@rh_curv'),
                                               ('rh_area', 'surf.@rh_area'),
                                               ('rh_cortex', 'surf.@rh_cortex'),
-                                              ('rh_pial', 'surf.@rh_pial'),
                                               ('rh_thickness', 'surf.@rh_thickness'),
                                               ('rh_smoothwm', 'surf.@rh_smoothwm'),
                                               ('rh_sulc', 'surf.@rh_sulc'),
@@ -259,19 +259,73 @@ def create_reconall(config):
                                               ('rh_white_K', 'surf.@rh_white_K'),
                                               ('rh_inflated_H', 'surf.@rh_inflated_H'),
                                               ('rh_inflated_K', 'surf.@rh_inflated_K'),
-                                              ('rh_curv_stats', 'surf.@rh_curv_stats').
+                                              ('rh_curv_stats', 'surf.@rh_curv_stats'),
                                               ('lh_aparc_annot_ctab', 'label.@aparc_annot_ctab'),
+                                              ('aseg', 'mri.@aseg'),
+                                              ('wmparc', 'mri.@wmparc'),
+                                              ('wmparc_stats', 'stats.@wmparc_stats'),
+                                              ('aseg_stats', 'stats.@aseg_stats'),
+                                              ('aparc_a2009s_aseg', 'mri.@aparc_a2009s_aseg'),
+                                              ('aparc_aseg', 'mri.@aparc_aseg'),
+                                              ('aseg_presurf_hypos', 'mri.@aseg_presurf_hypos'),
+                                              ('ribbon', 'mri.@ribbon'),
+                                              ('rh_ribbon', 'mri.@rh_ribbon'),
+                                              ('lh_ribbon', 'mri.@lh_ribbon'),
+                                              ('lh_sphere', 'surf.@lh_sphere'),
+                                              ('rh_sphere', 'surf.@rh_sphere'),
+                                              ('lh_sphere_reg', 'surf.@lh_sphere_reg'),
+                                              ('rh_sphere_reg', 'surf.@rh_sphere_reg'),
+                                              ('lh_jacobian_white', 'surf.@lh_jacobian_white'),
+                                              ('rh_jacobian_white', 'surf.@rh_jacobian_white'),
+                                              ('lh_avg_curv', 'surf.@lh_avg_curv'),
+                                              ('rh_avg_curv', 'surf.@rh_avg_curv'),
+                                              ('lh_aparc_annot', 'surf.@lh_aparc_annot'),
+                                              ('rh_aparc_annot', 'surf.@rh_aparc_annot'),
+                                              ('lh_area_pial', 'surf.@lh_area_pial'),
+                                              ('rh_area_pial', 'surf.@rh_area_pial'),
+                                              ('lh_curv_pial', 'surf.@lh_curv_pial'),
+                                              ('rh_curv_pial', 'surf.@rh_curv_pial'),
+                                              ('lh_pial', 'surf.@lh_pial'),
+                                              ('rh_pial', 'surf.@rh_pial'),
+                                              ('lh_thickness_pial', 'surf.@lh_thickness_pial'),
+                                              ('rh_thickness_pial', 'surf.@rh_thickness_pial'),
+                                              ('lh_area_mid', 'surf.@lh_area_mid'),
+                                              ('rh_area_mid', 'surf.@rh_area_mid'),
+                                              ('lh_volume', 'surf.@lh_volume'),
+                                              ('rh_volume', 'surf.@rh_volume'),
+                                              ('lh_aparc_annot_ctab', 'label.@lh_aparc_annot_ctab'),
+                                              ('rh_aparc_annot_ctab', 'label.@rh_aparc_annot_ctab'),
                                               ('lh_aparc_stats', 'stats.@lh_aparc_stats'),
                                               ('rh_aparc_stats', 'stats.@rh_aparc_stats'),
+                                              ('lh_aparc_pial_stats', 'stats.@lh_aparc_pial_stats'),
+                                              ('rh_aparc_pial_stats', 'stats.@rh_aparc_pial_stats'),
+                                              ('lh_aparc_a2009s_annot', 'label.@lh_aparc_a2009s_annot'),
+                                              ('rh_aparc_a2009s_annot', 'label.@rh_aparc_a2009s_annot'),
+                                              ('lh_aparc_a2009s_annot_ctab', 'label.@lh_aparc_a2009s_annot_ctab'),
+                                              ('rh_aparc_a2009s_annot_ctab', 'label.@rh_aparc_a2009s_annot_ctab'),
+                                              ('lh_aparc_a2009s_annot_stats', 'stats.@lh_aparc_a2009s_annot_stats'),
+                                              ('rh_aparc_a2009s_annot_stats', 'stats.@rh_aparc_a2009s_annot_stats'),
+                                              ('lh_aparc_DKTatlas40_annot', 'label.@lh_aparc_DKTatlas40_annot'),
+                                              ('rh_aparc_DKTatlas40_annot', 'label.@rh_aparc_DKTatlas40_annot'),
+                                              ('lh_aparc_DKTatlas40_annot_ctab', 'label.@lh_aparc_DKTatlas40_annot_ctab'),
+                                              ('rh_aparc_DKTatlas40_annot_ctab', 'label.@rh_aparc_DKTatlas40_annot_ctab'),
+                                              ('lh_aparc_DKTatlas40_annot_stats', 'stats.@lh_aparc_DKTatlas40_annot_stats'),
+                                              ('rh_aparc_DKTatlas40_annot_stats', 'stats.@rh_aparc_DKTatlas40_annot_stats'),
+                                              ('lh_wg_pct_mgh', 'surf.@lh_wg_pct_mgh'),
+                                              ('rh_wg_pct_mgh', 'surf.@rh_wg_pct_mgh'),
+                                              ('lh_wg_pct_stats', 'stats.@lh_wg_pct_stats'),
+                                              ('rh_wg_pct_stats', 'stats.@rh_wg_pct_stats'),
+                                              ('lh_pctsurfcon_log', 'log.@lh_pctsurfcon_log'),
+                                              ('rh_pctsurfcon_log', 'log.@rh_pctsurfcon_log'),
                                           ]),
                       ])
 
     #TODO: DataSink from T1_image_prep
-    
+
     
     #### Workflow additions go here
     if config['recoding_file'] != None:
-        from recoding import create_recoding_wf
+        from utils import create_recoding_wf
         recode = create_recoding_wf(config['recoding_file'])
         reconall.connect([(ar3_wf, recode, [('Outputs.aseg', 'Inputs.labelmap')]),
                           (recode, outputspec, [('Outputs.recodedlabelmap', 'recoded_labelmap')])])

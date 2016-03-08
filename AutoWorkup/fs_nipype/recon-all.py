@@ -307,12 +307,6 @@ def main(argv):
     # Create necessary output directories
     for item in ExperimentInfo["Atlas"].iteritems():
         mkdir_p(item[1])
-    for folder in ['bem', 'label', 'mri', 'scripts', 'src', 'stats', 'surf', 'tmp', 'touch', 'trash']:
-        mkdir_p(os.path.join(config['subjects_dir'], config['current_id'], folder))
-        if folder == 'mri':
-            mkdir_p(os.path.join(config['subjects_dir'], config['current_id'], folder, 'orig'))
-            mkdir_p(
-                os.path.join(config['subjects_dir'], config['current_id'], folder, 'transforms'))
 
     # Now that we've defined the args and created the folders, create workflow
     reconall = create_reconall(config)

@@ -238,7 +238,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
 
 
 def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1, master_config, phase, interpMode,
-                                        pipeline_name, doDenoise=True):
+                                        pipeline_name, doDenoise=True, badT2 = False):
     """
     Run autoworkup on a single sessionid
 
@@ -853,11 +853,12 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     if 'jointfusion_2015_wholebrain' in master_config['components']:  ## HACK Do JointFusion labeling
         ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
-
+        if badT2:
+            onlyT1 = True
         if onlyT1:
-            print("T1 only processing in baseline")
+            print("T1 only processing in jointFusion")
         else:
-            print("Multimodal processing in baseline")
+            print("Multimodal processing in jointFusion")
         myLocalJointFusion = CreateJointFusionWorkflow("JointFusion", onlyT1, master_config)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalJointFusion,'inputspec.subj_t1_image')
         baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalJointFusion,'inputspec.subj_t2_image')

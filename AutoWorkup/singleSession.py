@@ -88,7 +88,8 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
                                                           pipeline_name=pipeline_name,
-                                                          doDenoise=doDenoise)
+                                                          doDenoise=doDenoise,
+                                                          badT2=dataDict['BadT2'])
     sessionWorkflow.base_dir = master_config['cachedir']
 
     sessionWorkflow_inputsspec = sessionWorkflow.get_node('inputspec')
@@ -131,6 +132,14 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             _dict['subject'] = subject
             _dict['T1s'] = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
             _dict['T2s'] = database.getFilenamesByScantype(session, ['T2-15', 'T2-30'])
+            _dict['BadT2'] = False
+            if _dict['T2s'] == database.getFilenamesByScantype(session, ['T2-15']):
+                print("This T2 is not going to be used for JointFusion")
+                print("This T2 is not going to be used for JointFusion")
+                print("This T2 is not going to be used for JointFusion")
+                print("This T2 is not going to be used for JointFusion")
+                print(_dict['T2s'])
+                _dict['BadT2'] = True
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
             _dict['OTHERs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])

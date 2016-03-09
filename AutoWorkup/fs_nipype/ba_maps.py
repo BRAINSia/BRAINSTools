@@ -3,6 +3,8 @@ import nipype
 from nipype.interfaces.utility import Function,IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
+from nipype.interfaces.io import DataGrabber
+from nipype.interfaces.utility import Merge
 
 def create_ba_maps_wf(config):
     # Brodmann Area Maps (BA Maps) and Hinds V1 Atlas
@@ -40,38 +42,46 @@ def create_ba_maps_wf(config):
     for hemisphere in ['lh', 'rh']:
         for threshold in [True, False]:
             ## TODO: Create sources subject and merge outputs to a list
-            source_subject = pe.Node(nio.DataGrabber(outfields=labels+['sphere_reg']),
-                                     name="Source_Subject")
-            source_subject.inputs.base_directory = config['source_subject']
-            source_subject.inputs.template = '*'
             field_template = dict(sphere_reg='surf/{0}.sphere.reg'.format(hemisphere))
+
+            out_files = list()
             if threshold:
                 for label in labels:
-                    field_tempalte[label] = 'label/{0}.{1}_exvivo.thresh.label'.format(hemisphere, label)
+                    out_file = '{0}.{1}_exvivo.thresh.label'.format(hemisphere, label)
+                    out_files.append(out_file)
+                    field_template[label] = 'label/' + out_file
                 node_name = 'BA_Maps_' + hemisphere + '_Tresh'
             else:
                 for label in labels:
-                    field_tempalte[label] = 'label/{0}.{1}_exvivo.label'.format(hemisphere, label)
+                    out_file = '{0}.{1}_exvivo.label'.format(hemisphere, label)
+                    out_files.append(out_file)
+                    field_template[label] = 'label/' + out_file
                 node_name = 'BA_Maps_' + hemisphere
+
+            source_subject = pe.Node(DataGrabber(outfields=labels+['sphere_reg']),
+                                     name=node_name + "_srcsubject")
+            source_subject.inputs.base_directory = config['source_subject']
+            source_subject.inputs.template = '*'
+            source_subject.inputs.sort_filelist = False
             source_subject.inputs.field_template = field_template
 
-            merge = pe.Node(merge(len(labels)), name="Merge_SRCLabels")
-
+            merge_labels = pe.Node(Merge(len(labels)),
+                                   name=node_name + "_Merge")
             for i,label in enumerate(labels):
-                ba_WF.connect([(source_subject, merge, [(label, 'in{0}'.format(i))])])
+                ba_WF.connect([(source_subject, merge_labels, [(label, 'in{0}'.format(i))])])
 
-            node = pe.MapNode(
-                Label2Label(), name=node_name, iterfield=['source_label'])
+            node = pe.MapNode(Label2Label(), name=node_name,
+                              iterfield=['source_label', 'out_file'])
             node.inputs.hemisphere = hemisphere
-            node.inputs.threshold = threshold
-
-            ba_WF.connect([(merge, node, [('out', 'source_label')]),
+            node.inputs.out_file = out_files
+            
+            ba_WF.connect([(merge_labels, node, [('out', 'source_label')]),
                            (source_subject, node, [('sphere_reg', 'source_sphere_reg')])])
             
             label2annot = pe.Node(Label2Annot(), name=node_name + '_2_Annot')
             label2annot.inputs.hemisphere = hemisphere
             label2annot.inputs.color_table = os.path.join(
-                config['FREESURFER_HOME'], 'average', 'colortable_BA.txt')
+                config['fs_home'], 'average', 'colortable_BA.txt')
             label2annot.inputs.verbose_off = True
             label2annot.inputs.keep_max = True
 

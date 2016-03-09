@@ -49,18 +49,10 @@ def create_AutoRecon3(config):
                                                   'norm']),
                          name='Inputs')
 
-    inputspec.inputs.lh_atlas = os.path.join(
-        config['FREESURFER_HOME'], 'average', 
-        'lh.average.curvature.filled.buckner40.tif')
-    inputspec.inputs.lh_classifier = os.path.join(
-        config['FREESURFER_HOME'], 'average', 
-        'lh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
-    inputspec.inputs.rh_atlas = os.path.join(
-        config['FREESURFER_HOME'], 'average',
-        'rh.average.curvature.filled.buckner40.tif')
-    inputspec.inputs.rh_classifier = os.path.join(
-        config['FREESURFER_HOME'], 'average',
-        'rh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
+    inputspec.inputs.lh_atlas = config['lh_atlas']
+    inputspec.inputs.lh_classifier = config['lh_classifier']
+    inputspec.inputs.rh_atlas = config['rh_atlas']
+    inputspec.inputs.rh_classifier = config['rh_classifier']
 
     ar3_lh_wf1 = pe.Workflow(name="AutoRecon3_Left_1")
     ar3_rh_wf1 = pe.Workflow(name="AutoRecon3_Right_1")
@@ -377,9 +369,8 @@ def create_AutoRecon3(config):
         # Cortical Parcellation 2
         cortical_parcellation_2 = pe.Node(MRIsCALabel(),
                                           name="Cortical_Parcellation_{0}_2".format(hemisphere))
-        cortical_parcellation_2.inputs.classifier = os.path.join(config['FREESURFER_HOME'], 
-                                                                 'average', 
-                                                                 '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
+        cortical_parcellation_2.inputs.classifier = config['{0}_classifier2'.format(hemisphere)]
+                                                                 
         cortical_parcellation_2.inputs.out_file = '{0}.aparc.a2009s.annot'.format(hemisphere)
         cortical_parcellation_2.inputs.seed = 1234
         cortical_parcellation_2.inputs.copy_smoothwm = True
@@ -409,17 +400,18 @@ def create_AutoRecon3(config):
                                                                         ('thickness', 'thickness'),
                                                                         ('ribbon', 'ribbon'),
                                                                         ]),
-                         (cortical_parcellation_2, parcellation_stats_white_2, [('out_file', 'in_annotation')])
+                         (cortical_parcellation_2, parcellation_stats_white_2,
+                          [('out_file', 'in_annotation')])
                          ])
         
         # Cortical Parcellation 3
-        cortical_parcellation_3 = pe.Node(MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere))
-        cortical_parcellation_3.inputs.classifier = os.path.join(
-            config['FREESURFER_HOME'], 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
+        cortical_parcellation_3 = pe.Node(MRIsCALabel(),
+                                          name="Cortical_Parcellation_{0}_3".format(hemisphere))
+        cortical_parcellation_3.inputs.classifier = config['{0}_classifier3'.format(hemisphere)]
         cortical_parcellation_3.inputs.out_file = '{0}.aparc.DKTatlas40.annot'.format(hemisphere)
         cortical_parcellation_3.inputs.seed = 1234
         cortical_parcellation_3.inputs.hemisphere = hemisphere        
-        hemiwf2.connect([(hemi_inputspec2, cortical_parcellation_3, [('smoothwm'.format(hemisphere), 'smoothwm'),
+        hemiwf2.connect([(hemi_inputspec2, cortical_parcellation_3, [('smoothwm', 'smoothwm'),
                                                                      ('aseg_presurf', 'aseg'),
                                                                      ('cortex_label', 'label'),
                                                                      ('sphere_reg', 'canonsurf')]),
@@ -580,8 +572,7 @@ def create_AutoRecon3(config):
     """
 
     segstats = pe.Node(SegStatsReconAll(), name="Segmentation_Statistics")
-    segstats.inputs.color_table_file = os.path.join(
-        config['FREESURFER_HOME'], 'ASegStatsLUT.txt')
+    segstats.inputs.color_table_file = config['LookUpTable']
     segstats.inputs.empty = True
     segstats.inputs.brain_vol = 'brain-vol-from-seg'
     segstats.inputs.exclude_ctx_gm_wm = True
@@ -647,7 +638,7 @@ def create_AutoRecon3(config):
     # White Matter Segmentation Stats
 
     wm_segstats = pe.Node(SegStatsReconAll(), name="WM_Segmentation_Statistics")
-    wm_segstats.inputs.color_table_file = os.path.join(config['FREESURFER_HOME'], 'WMParcStatsLUT.txt')
+    wm_segstats.inputs.color_table_file = config['WMLookUpTable']
     wm_segstats.inputs.intensity_units = "MR"
     wm_segstats.inputs.wm_vol_from_surf = True
     wm_segstats.inputs.etiv = True
@@ -715,9 +706,9 @@ def create_AutoRecon3(config):
                 preprocess = pe.Node(MRISPreprocReconAll(),
                                      name="QCache_Preproc_{0}_{1}".format(hemisphere,
                                                                           meas_name.replace('.', '_')))
-                target_id = 'fsaverage'
+                target_id = config['src_subject_id']
                 preprocess.inputs.out_file = '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id)
-                target_dir = os.path.join(config['FREESURFER_HOME'], 'subjects', target_id)
+                target_dir = config['source_subject']
                 preprocess.inputs.target = target_id
                 preprocess.inputs.target_dir = target_dir
                 preprocess.inputs.hemi = hemisphere

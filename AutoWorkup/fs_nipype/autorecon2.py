@@ -99,9 +99,7 @@ def create_AutoRecon2(config):
         
     else:
         align_transform = pe.Node(EMRegister(), name="Align_Transform")
-        align_transform.inputs.template = os.path.join(config['FREESURFER_HOME'],
-                                                       'average',
-                                                       'RB_all_2014-08-21.gca')
+        align_transform.inputs.template = config['registration_template']
         align_transform.inputs.out_file = 'talairach.lta'
         align_transform.inputs.nbrspacing = 3
         if config['openmp'] != None:
@@ -121,9 +119,7 @@ def create_AutoRecon2(config):
     """
     ca_normalize = pe.Node(CANormalize(), name='CA_Normalize')
     ca_normalize.inputs.out_file = 'norm.mgz'
-    ca_normalize.inputs.atlas = os.path.join(config['FREESURFER_HOME'],
-                                             'average',
-                                             'RB_all_2014-08-21.gca')
+    ca_normalize.inputs.atlas = config['registration_template']
     if config['longitudinal']:
         copy_template_aseg = pe.Node(Function(['in_file', 'out_file'],
                                               ['out_file'],
@@ -145,9 +141,7 @@ def create_AutoRecon2(config):
     ca_register = pe.Node(CARegister(), name='CA_Register')
     ca_register.inputs.align = 'after'
     ca_register.inputs.no_big_ventricles = True
-    ca_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
-                                               'average',
-                                               'RB_all_2014-08-21.gca')
+    ca_register.inputs.template = config['registration_template']
     ca_register.inputs.out_file = 'talairach.m3z'
     if config['openmp'] != None:
         ca_register.inputs.num_threads = config['openmp']
@@ -173,9 +167,7 @@ def create_AutoRecon2(config):
     remove_neck = pe.Node(RemoveNeck(), name='Remove_Neck')
     remove_neck.inputs.radius = 25
     remove_neck.inputs.out_file = 'nu_noneck.mgz'
-    remove_neck.inputs.template = os.path.join(config['FREESURFER_HOME'],
-                                               'average',
-                                               'RB_all_2014-08-21.gca')
+    remove_neck.inputs.template = config['registration_template']
     
     ar2_wf.connect([(ca_register, remove_neck, [('out_file', 'transform')]),
                     (add_to_header_nu, remove_neck, [('out_file', 'in_file')])
@@ -187,9 +179,8 @@ def create_AutoRecon2(config):
     em_reg_withskull = pe.Node(EMRegister(), name='EM_Register_withSkull')
     em_reg_withskull.inputs.skull = True
     em_reg_withskull.inputs.out_file = 'talairach_with_skull_2.lta'
-    em_reg_withskull.inputs.template = os.path.join(config['FREESURFER_HOME'],
-                                                    'average',
-                                                    'RB_all_withskull_2014-08-21.gca')
+    em_reg_withskull.inputs.template = config['registration_template']
+    
     if config['openmp'] != None:
         em_reg_withskull.inputs.num_threads = config['openmp']
     if config['plugin_args'] != None:
@@ -234,9 +225,7 @@ def create_AutoRecon2(config):
     ca_label.inputs.prior = 0.5
     ca_label.inputs.align = True
     ca_label.inputs.out_file = 'aseg.auto_noCCseg.mgz'
-    ca_label.inputs.template = os.path.join(config['FREESURFER_HOME'],
-                                            'average',
-                                            'RB_all_2014-08-21.gca')
+    ca_label.inputs.template = config['registration_template']
     
     if config['openmp'] != None:
         ca_label.inputs.num_threads = config['openmp']
@@ -367,7 +356,8 @@ def create_AutoRecon2(config):
                                                            'filled',
                                                            'aseg',
                                                            't1',
-                                                           'wm']),
+                                                           'wm',
+                                                           'brain']),
                                  name="Inputs")
             
         if config['longitudinal']:
@@ -527,9 +517,9 @@ def create_AutoRecon2(config):
             fix_topology.inputs.copy_inputs = True
             hemi_wf.connect([(copy_orig, fix_topology, [('out_file', 'in_orig')]),
                              (copy_inflate1, fix_topology, [('out_file', 'in_inflated')]),
-                             (normalization2, fix_topology, [('out_file', 'in_brain')]),
-                             (pretess, fix_topology, [('out_file', 'in_wm')]),
-                             (qsphere, fix_topology, [('out_file', 'sphere')])])
+                             (qsphere, fix_topology, [('out_file', 'sphere')]),
+                             (hemi_inputspec, fix_topology, [('wm', 'in_wm'),
+                                                        ('brain', 'in_brain')])])
 
 
             ## TODO: halt workflow for bad euler number
@@ -618,8 +608,8 @@ def create_AutoRecon2(config):
         curvature_stats.inputs.hemisphere = hemisphere
         curvature_stats.inputs.out_file = '{0}.curv.stats'.format(hemisphere)
         hemi_wf.connect([(smooth2, curvature_stats, [('surface', 'surface')]),
-                         (make_surfaces, curvature_stats, [('out_curv', 'in_curv')]),
-                         (inflate2, curvature_stats, [('out_sulc', 'in_sulc')]),
+                         (make_surfaces, curvature_stats, [('out_curv', 'curvfile1')]),
+                         (inflate2, curvature_stats, [('out_sulc', 'curvfile2')]),
                          ])
 
         if config['longitudinal']:
@@ -635,7 +625,8 @@ def create_AutoRecon2(config):
                         (fill, hemi_wf, [('out_file', 'Inputs.filled')]),
                         (copy_cc, hemi_wf, [('out_file', 'Inputs.aseg')]),
                         (mri_mask, hemi_wf, [('out_file', 'Inputs.t1')]),
-                        (pretess, hemi_wf, [('out_file', 'Inputs.wm')])])
+                        (pretess, hemi_wf, [('out_file', 'Inputs.wm')]),
+                        (normalization2, hemi_wf, [('out_file', 'Inputs.brain')])])
 
         # Outputs for hemisphere workflow
         hemi_outputs=['orig_nofix',

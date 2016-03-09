@@ -2,9 +2,10 @@ import sys
 import getopt
 import os
 from workflow_reconall import create_reconall, mkdir_p
+from utils import getdefaultconfig
 
 def help():
-    print """
+    print("""
 This program runs FreeSurfer's recon-all as a nipype script. This allows 
 for better parallel processing for easier experimenting with new and/or
 improved processing steps.
@@ -53,7 +54,7 @@ Optional inputs:
 Author:
 David Ellis
 University of Iowa
-    """
+    """)
 
 # TODOs:
 # * Fix workflow outputs so that the output is not written to the subjects directory
@@ -63,25 +64,7 @@ University of Iowa
 # * Write option for running a list of sessions instead of a single session.
 # * Create more thorough checking of inputs.
     
-def procargs(argv):
-    config = { 'in_T1s' : list(),
-               'subject_id' : None,
-               'in_T2' : None,
-               'in_FLAIR' : None,
-               'plugin' : 'Linear',
-               'queue' : None,
-               'subjects_dir' : None,
-               'long_base' : None,
-               'qcache' : False,
-               'cw256' : False,
-               'longitudinal' : False,
-               'timepoints' : list(),
-               'openmp' : None,
-               'plugin_args' : None,
-               'field_strength' : '1.5T',
-               'custom_atlas' : None,
-               'recoding_file' : None}
-
+def procargs(argv, config):
     try:
         opts, args = getopt.getopt(argv, "hi:q:s:", ["help",
                                                      "T1=",
@@ -98,7 +81,7 @@ def procargs(argv):
                                                      "openmp=",
                                                      "recoding="])
     except getopt.GetoptError:
-        print "Error occured when parsing arguments"
+        print("Error occured when parsing arguments")
         help()
         sys.exit(2)
     for opt, arg in opts:
@@ -108,22 +91,22 @@ def procargs(argv):
         elif opt in ("-i", "--T1"):
             config['in_T1s'].append(os.path.abspath(arg))
             if not os.path.isfile(arg):
-                print "ERROR: input T1 image must be an existing image file"
-                print "{0} does not exist".format(arg)
+                print("ERROR: input T1 image must be an existing image file")
+                print("{0} does not exist".format(arg))
                 sys.exit(2)
         elif opt in ("-s", "--subject"):
             config['subject_id'] = arg
         elif opt in ("--T2"):
             config['in_T2'] = os.path.abspath(arg)
             if not os.path.isfile(config['in_T2']):
-                print "ERROR: input T2 image must be an existing image file"
-                print "{0} does not exist".format(config['in_T2'])
+                print("ERROR: input T2 image must be an existing image file")
+                print("{0} does not exist".format(config['in_T2']))
                 sys.exit(2)
         elif opt in ("--FLAIR"):
             config['in_FLAIR'] = os.path.abspath(arg)
             if not os.path.isfile(config['in_FLAIR']):
-                print "ERROR: input FLAIR image must be an existing image file"
-                print "{0} does not exist".format(config['in_FLAIR'])
+                print("ERROR: input FLAIR image must be an existing image file")
+                print("{0} does not exist".format(config['in_FLAIR']))
                 sys.exit(2)
         elif opt in ("--plugin"):
             config['plugin'] = arg
@@ -145,7 +128,7 @@ def procargs(argv):
             try:
                 config['openmp'] = int(arg)
             except ValueError:
-                print "ERROR: --openmp flag accepts only integers"
+                print("ERROR: --openmp flag accepts only integers")
                 sys.exit(2)
         elif opt in ('--recoding'):
             recoding_file = os.path.abspath(arg)
@@ -157,38 +140,38 @@ def procargs(argv):
                 
 
     if config['subject_id'] == None:
-        print "ERROR: Must set subject_id using -s flag"
+        print("ERROR: Must set subject_id using -s flag")
         help()
         sys.exit(2)
         
     if not config['longitudinal'] and len(config['in_T1s']) == 0:
-        print "ERROR: Must have at least one input T1 image"
+        print("ERROR: Must have at least one input T1 image")
         help()
         sys.exit(2)
         
     if config['subjects_dir'] == None:
-        print "ERROR: Must set the subjects_dir before running"
+        print("ERROR: Must set the subjects_dir before running")
         help()
         sys.exit(2)
 
     # print the input cofigurations
-    print 'Subject ID: {0}'.format(config['subject_id'])
-    print 'Input T1s: {0}'.format(config['in_T1s'])
+    print('Subject ID: {0}'.format(config['subject_id']))
+    print('Input T1s: {0}'.format(config['in_T1s']))
     
     if config['in_T2'] != None:
-        print 'Input T2: {0}'.format(config['in_T2'])
+        print('Input T2: {0}'.format(config['in_T2']))
 
     if config['in_FLAIR'] != None:
-        print 'Input FLAIR: {0}'.format(config['in_FLAIR'])
+        print('Input FLAIR: {0}'.format(config['in_FLAIR']))
         
-    print 'Plugin: {0}'.format(config['plugin'])
-    print 'Make qcache: {0}'.format(config['qcache'])
-    print 'Conform to 256: {0}'.format(config['cw256'])
+    print('Plugin: {0}'.format(config['plugin']))
+    print('Make qcache: {0}'.format(config['qcache']))
+    print('Conform to 256: {0}'.format(config['cw256']))
     
     if config['queue'] != None:
-        print 'Queue: {0}'.format(config['queue'])
+        print('Queue: {0}'.format(config['queue']))
         if config['plugin'] == 'Linear':
-            print "ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set"
+            print("ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set")
             sys.exit(2)
         if config['openmp'] != None:
             minmemoryGB = 8 # this could be modified in later updates
@@ -197,102 +180,22 @@ def procargs(argv):
                                                                       config['openmp'],
                                                                       config['openmp']), 
                                       'overwrite' : True }
-            print 'plugin_args: {0}'.format(config['plugin_args'])
+            print('plugin_args: {0}'.format(config['plugin_args']))
                 
     if config['openmp'] != None:
-        print 'OpenMP: {0}'.format(config['openmp'])
+        print('OpenMP: {0}'.format(config['openmp']))
         
     if config['longitudinal']:
         # set input requirements for running longitudinally
-        # TODO: print errors when inputs are not set correctly
-        print 'Running longitudinally'
-        print 'Longitudinal Base: {0}'.format(config['long_base'])
+        # TODO: print(errors when inputs are not set correctly
+        print('Running longitudinally')
+        print('Longitudinal Base: {0}'.format(config['long_base']))
     return config
 
 
-def checkenv():
-    """Check for the necessary FS environment variables"""
-    fs_home = os.environ.get('FREESURFER_HOME')
-    path = os.environ.get('PATH')
-    print "FREESURFER_HOME: {0}".format(fs_home)
-    if fs_home == None:
-        print "ERROR: please set FREESURFER_HOME before running the workflow"
-    elif not os.path.isdir(fs_home):
-        print "ERROR: FREESURFER_HOME must be set to a valid directory before \
-running this workflow"
-    elif os.path.join(fs_home, 'bin') not in path.replace('//','/'):
-        print path
-        print "ERROR: Could not find necessary executable in path"
-        setupscript = os.path.join(fs_home, 'SetUpFreeSurfer.sh')
-        if os.path.isfile(setupscript):
-            print "Please source the setup script before running the workflow:\
-\nsource {0}".format(setupscript)
-        else:
-            print "Please ensure that FREESURFER_HOME is set to a valid fs \
-directory and source the necessary SetUpFreeSurfer.sh script before running \
-this workflow"
-    else:
-        return fs_home
-    sys.exit(2)
-
-    
-def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null', stderr='/dev/null'):
-    """
-    Code from BRAINSTools:
-    https://github.com/BRAINSia/BRAINSTools.git
-    BRAINSTools/AutoWorkup/utilities/distributed.py
-
-    Outputs qsub_args string for Nipype nodes
-    queue is the string to specify the queue "-q all.q | -q HJ,ICTS,UI"
-    memoryGB is a numeric in gigabytes to be given (ie 2.1 will result in "-l mem_free=2.1G")
-          if memoryGB = 0, then it is automatically computed.
-    minThreads The fewest number of threads to use (if an algorithm has benifits from more than 1 thread)
-    maxThreads The max number of threads to use (if an algorithm is not multi-threaded, then just use 1)
-    stdout Where to put stdout logs
-    stderr Where to put stderr logs
-
-    >>> modify_qsub_args('test', 2, 5, None)
-    -S /bin/bash -cwd -pe smp 5 -l mem_free=2G -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 2, 5, -1 )
-    -S /bin/bash -cwd -pe smp 5- -l mem_free=2G -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 8, 5, 7)
-    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=8G -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 8, 5, 7, -1)
-    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=8G -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 1, 5, 7, stdout='/my/path', stderr='/my/error')
-    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
-    """
-    import math
-    assert memoryGB <= 48 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
-
-    ## NOTE: At least 1 thread needs to be requested per 2GB needed
-    memoryThreads = int(math.ceil(memoryGB/float(2))) #Ensure that threads are integers
-    minThreads = max(minThreads, memoryThreads)
-    maxThreads = max(maxThreads, memoryThreads)
-    maxThreads=int(maxThreads) # Ensure that threads are integers
-    minThreads=int(minThreads) # Ensure that threads are integers
-
-    if maxThreads is None or minThreads == maxThreads:
-       threadsRangeString =  '{0}'.format(minThreads)
-       maxThreads = minThreads
-    elif maxThreads == -1:
-       threadsRangeString= '{0}-'.format(minThreads)
-       maxThreads = 12345 #HUGE NUMBER!
-    else:
-       threadsRangeString= "{0}-{1}".format(minThreads,maxThreads)
-
-    if maxThreads < minThreads:
-       assert  maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads,maxThreads)
-    format_str = '-q {queue} -S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr}'.format(
-                 mint=minThreads, maxt=threadsRangeString,
-                 totalThreads=threadsRangeString,
-                 mem=memoryGB,
-                 stdout=stdout, stderr=stderr, queue=queue)
-    return format_str
-
 def main(argv):
-    config = procargs(argv)
-    config['FREESURFER_HOME'] = checkenv()
+    defaultconfig = getdefaultconfig()
+    config = procargs(argv, defaultconfig)
     if config['longitudinal']:
         config['long_id'] = "{0}.long.{1}".format(config['subject_id'], config['long_base'])
         config['current_id'] = config['long_id']
@@ -313,7 +216,7 @@ def main(argv):
 
     # Set workflow configurations
     reconall.config['execution'] = {
-        'stop_on_first_crash': 'false',
+        'stop_on_first_crash': 'true',
         'stop_on_first_rerun': 'false',
         # This stops at first attempt to rerun, before running, and before
         # deleting previous results.

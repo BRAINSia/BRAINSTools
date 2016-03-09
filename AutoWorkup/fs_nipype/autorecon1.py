@@ -364,9 +364,8 @@ def create_AutoRecon1(config):
                                        ['log_file'],
                                        awk),
                               name='Awk')
-        awk_logfile.inputs.awk_file = os.path.join(config['FREESURFER_HOME'],
-                                                   'bin',
-                                                   'extract_talairach_avi_QA.awk')
+        awk_logfile.inputs.awk_file = config['awk_file']
+                                       
         ar1_wf.connect([(talairach_avi, awk_logfile, [('out_log', 'log_file')])])
 
         # TODO datasink the output from TalirachQC...not sure how to do this
@@ -420,9 +419,7 @@ def create_AutoRecon1(config):
                         
     else:    
         mri_em_register = pe.Node(EMRegister(), name="EM_Register")
-        mri_em_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
-                                                       'average',
-                                                       'RB_all_withskull_2014-08-21.gca')
+        mri_em_register.inputs.template = config['registration_template']
         mri_em_register.inputs.out_file = 'talairach_with_skull.lta'
         mri_em_register.inputs.skull = True
         
@@ -437,9 +434,7 @@ def create_AutoRecon1(config):
         brainmask = pe.Node(
             WatershedSkullStrip(), name='Watershed_Skull_Strip')
         brainmask.inputs.t1 = True
-        brainmask.inputs.brain_atlas = os.path.join(config['FREESURFER_HOME'],
-                                                                'average',
-                                                                'RB_all_withskull_2014-08-21.gca')
+        brainmask.inputs.brain_atlas = config['registration_template']
         brainmask.inputs.out_file = 'brainmask.auto.mgz'
         ar1_wf.connect([(mri_normalize, brainmask, [('out_file', 'in_file')]),
                         (mri_em_register, brainmask,

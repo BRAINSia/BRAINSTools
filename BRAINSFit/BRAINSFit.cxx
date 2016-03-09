@@ -288,6 +288,8 @@ int main(int argc, char *argv[])
     }
 
   // Need to ensure that the order of transforms is from smallest to largest.
+  if(localInitializeTransformMode == "Off")
+  {
   try
     {
     itk::ValidateTransformRankOrdering(localTransformType);
@@ -298,6 +300,7 @@ int main(int argc, char *argv[])
     std::cout << err << std::endl;
     throw;
     }
+  }
 
   // Extracting a timeIndex cube from the fixed image goes here....
   // Also MedianFilter

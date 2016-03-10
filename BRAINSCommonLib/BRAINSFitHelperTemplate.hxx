@@ -177,12 +177,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
            || initializeTransformMode == "useCenterOfHeadAlign")
     {
 
-    if( movingMask.IsNull() || fixedMask.IsNull() )
-      {
-      itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
-                               << initializeTransformMode);
-      }
-
     typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> CROIImageMaskSpatialObjectType;
     typedef itk::Image<unsigned char, 3>                                         CROIMaskImageType;
     typename MovingImageType::PointType movingCenter;
@@ -190,6 +184,13 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 
     if(initializeTransformMode == "useCenterOfROIAlign")
       {
+
+      if( movingMask.IsNull() || fixedMask.IsNull() )
+        {
+        itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
+                                 << initializeTransformMode);
+        }
+
       typedef itk::StatisticsLabelObject< unsigned char, 3 > LabelObjectType;
       typedef itk::LabelImageToStatisticsLabelMapFilter< MaskImageType, MaskImageType >
         LabelStatisticsFilterType;

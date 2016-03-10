@@ -686,35 +686,82 @@ def create_AutoRecon3(config):
                 ])
 
     if config['qcache']:
+        qcache_inputs = ['lh_curv',
+                         'rh_curv',
+                         'lh_sulc',
+                         'rh_sulc',
+                         'lh_white_K',
+                         'rh_white_K',
+                         'lh_white_H',
+                         'rh_white_H',
+                         'lh_area',
+                         'rh_area',
+                         'lh_thickness_pial',
+                         'lh_area_pial',
+                         'lh_volume',
+                         'lh_jacobian_white',
+                         'lh_wg_pct_mgh',
+                         'rh_thickness_pial',
+                         'rh_area_pial',
+                         'rh_volume',
+                         'rh_jacobian_white',
+                         'rh_wg_pct_mgh',
+                         'lh_sphere_reg',
+                         'rh_sphere_reg']
+
+        qcache_wf = pe.Workflow("QCache")
+
+        qcache_outputspec = pe.Node(IdentityInterface(fields=qcache_outputs),
+                                   name="Inputs")
+
+
+        measurements = ['thickness'
+                        'area',
+                        'area.pial',
+                        'volume',
+                        'curv',
+                        'sulc',
+                        'white.K',
+                        'white.H',
+                        'jacobian_white',
+                        'w-g.pct.mgh']
+
+        qcache_inputs = list()
         for hemisphere in ['lh', 'rh']:
-            if hemisphere == 'lh':
-                hemi_wf = ar3_lh_wf1
-                hemi_wf2 = ar3_lh_wf2
-            else:
-                hemi_wf = ar3_rh_wf1
-                hemi_wf2 = ar3_lh_wf2
-            for connection, meas_file, meas_name in [(hemi_wf, 'Outputs.thickness_pial', 'thickness'),
-                                                     (inputspec, '{0}_area'.format(hemisphere), 'area'),
-                                                     (hemi_wf, 'Outputs.area_pial', 'area.pial'),
-                                                     (hemi_wf, 'Outputs.volume', 'volume'),
-                                                     (inputspec, '{0}_curv'.format(hemisphere), 'curv'),
-                                                     (inputspec, '{0}_sulc'.format(hemisphere), 'sulc'),
-                                                     (inputspec, '{0}_white_K'.format(hemisphere), 'white.K'),
-                                                     (inputspec, '{0}_white_H'.format(hemisphere), 'white.H'),
-                                                     (hemi_wf, 'Outputs.jacobian_white', 'jacobian_white'),
-                                                     (hemi_wf2, 'Outputs.wg_pct_mgh', 'w-g.pct.mgh')]:
+            for meas_name in measurements:
+                if meas_name == 'thickness':
+                    meas_file = hemisphere + '_' + meas_name + '_pial'
+                else:
+                    meas_file = hemisphere + '_' + meas_name.replace('-', '').replace('.', '_')
+                qcache_inputs.append(meas_file)
+            qcache_inputs.append(hemisphere + '_sphere_reg')
+
+        qcache_inputspec = pe.Node(IdentityInterface(fields=qcache_inputs),
+                                   name="Inputs")
+
+
+        
+        for hemisphere in ['lh', 'rh']:
+            for meas_name in measurements:
+                if meas_name == 'thickness':
+                    meas_file = hemisphere + '_' + meas_name + '_pial'
+                else:
+                    meas_file = hemisphere + '_' + meas_name.replace('-', '').replace('.', '_')
                 preprocess = pe.Node(MRISPreprocReconAll(),
-                                     name="QCache_Preproc_{0}_{1}".format(hemisphere,
-                                                                          meas_name.replace('.', '_')))
+                                     name="QCache_Preproc_{0}".format(meas_file))
                 target_id = config['src_subject_id']
-                preprocess.inputs.out_file = '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id)
+                preprocess.inputs.out_file = '{0}.{1}.{2}.mgh'.format(hemisphere,
+                                                                      meas_name,
+                                                                      target_id)
                 target_dir = config['source_subject']
                 preprocess.inputs.target = target_id
                 preprocess.inputs.target_dir = target_dir
                 preprocess.inputs.hemi = hemisphere
+                preprocess.inputs.copy_inputs = True
 
-                ar3_wf.connect([(hemi_wf, preprocess, [('Outputs.sphere_reg', 'surfreg_file')]),
-                                (connection, preprocess, [(meas_file, 'surf_measure_file')])
+                qcache_wf.connect([(qcache_inputspec, preprocess, [(meas_file, 'surf_measure_file'),
+                                                                   (hemisphere + '_sphere_reg',
+                                                                    'surfreg_file')])
                                 ])
 
                 for value in range(0, 26, 5):
@@ -727,6 +774,31 @@ def create_AutoRecon3(config):
                     tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(hemisphere, meas_name, value)
                     surf2surf.inputs.out_file = tval_file
                     ar3_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')])])
+
+        # connect qcache inputs
+        ar3_wf.connect([(inputspec, qcache_wf, [('lh_curv', 'Inputs.lh_curv'),
+                                                ('rh_curv', 'Inputs.rh_curv'),
+                                                ('lh_sulc', 'Inputs.lh_sulc'),
+                                                ('rh_sulc', 'Inputs.rh_sulc'),
+                                                ('lh_white_K', 'Inputs.lh_white_K'),
+                                                ('rh_white_K', 'Inputs.rh_white_K'),
+                                                ('lh_area', 'Inputs.lh_area'),
+                                                ('rh_area', 'Inputs.rh_area')]),
+                        (ar3_lh_wf1, qcache_wf, [('Outputs.thickness_pial', 'Inputs.lh_thickness_pial'),
+                                                ('Outputs.area_pial', 'Inputs.lh_area_pial'),
+                                                ('Outputs.volume', 'Inputs.lh_volume'),
+                                                ('Outputs.jacobian_white', 'Inputs.lh_jacobian_white'),
+                                                ('Outputs.sphere_reg', 'Inputs.lh_sphere_reg')]),
+                        (ar3_lh_wf2, qcache_wf, [('Outputs.wg_pct_mgh', 'Inputs.lh_wg_pct_mgh')]),
+                        (ar3_rh_wf1, qcache_wf, [('Outputs.thickness_pial', 'Inputs.rh_thickness_pial'),
+                                                ('Outputs.area_pial', 'Inputs.rh_area_pial'),
+                                                ('Outputs.volume', 'Inputs.rh_volume'),
+                                                ('Outputs.jacobian_white', 'Inputs.rh_jacobian_white'),
+                                                ('Outputs.sphere_reg', 'Inputs.rh_sphere_reg')]),
+                        (ar3_rh_wf2, qcache_wf, [('Outputs.wg_pct_mgh', 'Inputs.rh_wg_pct_mgh')]),
+                    ])
+        # end qcache workflow
+
 
     # Add outputs to outputspec
     ar3_outputs = ['aseg',

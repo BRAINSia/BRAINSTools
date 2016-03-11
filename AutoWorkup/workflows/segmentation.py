@@ -109,7 +109,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
 
     A2SantsRegistrationPostABCSyN = pe.Node(interface=ants.Registration(), name=currentA2SantsRegistrationPostABCSyN)
 
-    many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
+    many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,16), 'overwrite': True}
     A2SantsRegistrationPostABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
     CommonANTsRegistrationSettings(
                   antsRegistrationNode=A2SantsRegistrationPostABCSyN,

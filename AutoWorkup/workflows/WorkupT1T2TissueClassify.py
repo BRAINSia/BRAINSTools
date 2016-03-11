@@ -120,7 +120,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     ##### Initialize with ANTS Transform For SyN component BABC
     currentAtlasToSubjectantsRegistration = 'AtlasToSubjectANTsPreABC_SyN'
     A2SantsRegistrationPreABCSyN = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
-    many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
+    many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,16), 'overwrite': True}
     A2SantsRegistrationPreABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
     CommonANTsRegistrationSettings(
                       antsRegistrationNode=A2SantsRegistrationPreABCSyN,

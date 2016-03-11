@@ -39,95 +39,90 @@ int main(int, char * *)
   typedef itk::CastImageFilter<ImageType, LocalMaskImageType>       CastType;
   typedef itk::CompositeTransform<double, 3>                        CompositeTransformType;
 
-  // create two empty images
-  ImageType::Pointer image1 = ImageType::New(),
-    image2 = ImageType::New();
-
-  ImageType::RegionType region;
   ImageType::SizeType   size;
-  ImageType::IndexType  origin;
   size.Fill(100);
-  origin.Fill(0);
-  region.SetSize(size);
-  region.SetIndex(origin);
 
-  image1->SetRegions(region);
-  image2->SetRegions(region);
-  image1->Allocate();
-  image2->Allocate();
-
-  image1->FillBuffer(0);
-  image2->FillBuffer(0);
-
-  EllipseSOType::Pointer ellipse = EllipseSOType::New();
   TransformType::Pointer tfm = TransformType::New();
   tfm->SetIdentity();
 
-  TransformType::OutputVectorType rotAxis;
+  EllipseSOType::Pointer ellipse = EllipseSOType::New();
+    {
+    // and two ellipses, one of which is rotated and translated
+    EllipseSOType::ArrayType ePar;
+    ePar[0] = 10;
+    ePar[1] = 20;
+    ePar[2] = 40;
+    ellipse->SetRadius(ePar);
+    }
+
   TransformType::OutputVectorType transVector;
+  ImageType::Pointer eImage;
+    {
+    transVector.Fill(50);
+    tfm->Translate(transVector);
+    ellipse->SetObjectToWorldTransform(tfm);
+    ellipse->Initialize();
+    // convert ellipses to binary images
+    SOToImageFilter::Pointer e2image = SOToImageFilter::New();
+    e2image->SetInput(ellipse);
+    e2image->SetSize(size);
+    e2image->Update();
+    eImage = e2image->GetOutput();
+    }
 
-  // and two ellipses, one of which is rotated and translated
-  EllipseSOType::ArrayType ePar;
-  ePar[0] = 10;
-  ePar[1] = 20;
-  ePar[2] = 40;
+  ImageType::Pointer eTfmImage;
+    {
+    TransformType::OutputVectorType rotAxis;
+    rotAxis.Fill(1.);
+    float rotAngle = 3.14 / 3.;
+    tfm->Rotate3D(rotAxis, rotAngle);
+    transVector[0] = 10;
+    transVector[1] = -5;
+    transVector[2] = 15;
+    tfm->Translate(transVector);
 
-  transVector.Fill(50);
+    // translate the second ellipse by a different tfm and rotate
+    ellipse->SetObjectToWorldTransform(tfm);
+    ellipse->Initialize();
 
-  tfm->Translate(transVector);
-  ellipse->SetRadius(ePar);
-  ellipse->SetObjectToWorldTransform(tfm);
+    SOToImageFilter::Pointer etfm2image = SOToImageFilter::New();
+    etfm2image->SetInput(ellipse);
+    etfm2image->SetSize(size);
+    etfm2image->Update();
+    eTfmImage = etfm2image->GetOutput();
+    }
 
-  // convert ellipses to binary images
-  SOToImageFilter::Pointer e2image = SOToImageFilter::New();
-  SOToImageFilter::Pointer etfm2image = SOToImageFilter::New();
-  e2image->SetInput(ellipse);
-  e2image->SetSize(size);
-  e2image->Update();
-  ImageType::Pointer eImage = e2image->GetOutput();
-
-  rotAxis.Fill(1.);
-  float rotAngle = 3.14 / 3.;
-  tfm->Rotate3D(rotAxis, rotAngle);
-  transVector[0] = 10;
-  transVector[1] = -5;
-  transVector[2] = 15;
-  tfm->Translate(transVector);
-
-  // translate the second ellipse by a different tfm and rotate
-  ellipse->SetObjectToWorldTransform(tfm);
-  ellipse->Initialize();
-
-  etfm2image->SetInput(ellipse);
-  etfm2image->SetSize(size);
-  etfm2image->Update();
-
-  ImageType::Pointer eTfmImage = etfm2image->GetOutput();
+std::cout << eImage->GetSpacing() << std::endl;
+std::cout << eTfmImage->GetSpacing() << std::endl;
 
   typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
   VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
 
   // images and masks passed to helper are identical, but only masks will be used
   CastType::Pointer fixedImageCast = CastType::New();
-  CastType::Pointer movingImageCast = CastType::New();
-
-  ImageMaskSOType::Pointer fixedMask = ImageMaskSOType::New();
-  ImageMaskSOType::Pointer movingMask = ImageMaskSOType::New();
-
   fixedImageCast->SetInput(eImage);
+  CastType::Pointer movingImageCast = CastType::New();
   movingImageCast->SetInput(eTfmImage);
 
+  itkUtil::WriteImage<LocalMaskImageType>(fixedImageCast->GetOutput(), "/tmp/fixed.nii.gz");
+  itkUtil::WriteImage<LocalMaskImageType>(movingImageCast->GetOutput(), "/tmp/moving.nii.gz");
+
   // need to create spatial objects back from binary images
+  ImageMaskSOType::Pointer fixedMask = ImageMaskSOType::New();
   fixedMask->SetImage(fixedImageCast->GetOutput() );
   fixedMask->ComputeObjectToWorldTransform();
+
+  ImageMaskSOType::Pointer movingMask = ImageMaskSOType::New();
   movingMask->SetImage(movingImageCast->GetOutput() );
   movingMask->ComputeObjectToWorldTransform();
 
   std::vector<std::string> transformTypeVector;
+  transformTypeVector.push_back(std::string("Rigid"));
 
   // initialize the helper and run
   HelperType::Pointer myHelper = HelperType::New();
   myHelper->SetFixedVolume(eImage);
+  myHelper->SetCostMetricName("MSE"); // MSE, images are binary, and MMI does not work on binary images!
   myHelper->SetMovingVolume(eTfmImage);
   myHelper->SetFixedBinaryVolume(fixedMask);
   myHelper->SetMovingBinaryVolume(movingMask);
@@ -156,8 +151,16 @@ int main(int, char * *)
   // check translation vector -- should match the difference in the ellipse translation vectors
   TransformType::OutputVectorType recoveredTransVector = versor3D->GetTranslation();
 
-  if( transVector != recoveredTransVector )
+  double error=0.0;
+  for(size_t i=0; i < 3; ++i)
+  {
+    const double e=(transVector[i]-recoveredTransVector[i]);
+    error+=e*e;
+  }
+  const double tolerance = 0.05;
+  if( error > tolerance )
     {
+      std::cout << "ERROR term too big: " << error << " must be less than " << tolerance << std::endl;
     return EXIT_FAILURE;
     }
 

@@ -1,10 +1,12 @@
 import os
 import nipype
-from nipype.interfaces.utility import Function,IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface, Merge
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from ba_maps import create_ba_maps_wf
 from utils import createsrcsubj
+from nipype.interfaces.io import DataGrabber
+
 def create_AutoRecon3(config):
     
     # AutoRecon3
@@ -69,6 +71,7 @@ def create_AutoRecon3(config):
                                                             'sphere',
                                                             'sulc',
                                                             'area',
+                                                            'curv',
                                                             'classifier',
                                                             'atlas']),
                                   name="Inputs")
@@ -139,7 +142,7 @@ def create_AutoRecon3(config):
         ar3_parcellation = pe.Node(MRIsCALabel(), "Cortical_Parcellation")
         ar3_parcellation.inputs.seed = 1234
         ar3_parcellation.inputs.hemisphere = hemisphere
-        ar3_parcellation.inputs.copy_smoothwm = True
+        ar3_parcellation.inputs.copy_inputs = True
         ar3_parcellation.inputs.out_file = "{0}.aparc.annot".format(hemisphere)        
 
         if config['openmp'] != None:
@@ -149,7 +152,11 @@ def create_AutoRecon3(config):
         hemi_wf.connect([(hemi_inputspec1, ar3_parcellation, [('smoothwm', 'smoothwm'),
                                                               ('cortex_label', 'label'),
                                                               ('aseg_presurf',  'aseg'),
-                                                              ('classifier', 'classifier')]),
+                                                              ('classifier', 'classifier'),
+                                                              ('curv', 'curv'),
+                                                              ('sulc', 'sulc'),
+                                                          ]),
+                         
                          (ar3_surfreg, ar3_parcellation, [('out_file', 'canonsurf')])
                                ])
 
@@ -159,6 +166,7 @@ def create_AutoRecon3(config):
         ar3_pial.inputs.no_white = True
         ar3_pial.inputs.mgz = True
         ar3_pial.inputs.hemisphere = hemisphere
+        ar3_pial.inputs.copy_inputs = True
 
         hemi_wf.connect([(hemi_inputspec1, ar3_pial, [('wm', 'in_wm'),
                                                       ('orig', 'in_orig'),
@@ -208,6 +216,7 @@ def create_AutoRecon3(config):
                                                 ('{0}_orig'.format(hemisphere), 'Inputs.orig'),
                                                 ('{0}_sulc'.format(hemisphere), 'Inputs.sulc'),
                                                 ('{0}_area'.format(hemisphere), 'Inputs.area'),
+                                                ('{0}_curv'.format(hemisphere), 'Inputs.curv'),
                                                 ('aseg_presurf',
                                                  'Inputs.aseg_presurf'),
                                                 ('brain_finalsurfs',
@@ -298,6 +307,8 @@ def create_AutoRecon3(config):
                         'sphere_reg',
                         'orig_mgz',
                         'rawavg',
+                        'curv',
+                        'sulc',
                         ]
                         
         hemi_inputspec2 = pe.Node(IdentityInterface(fields=hemi_inputs2),
@@ -373,13 +384,16 @@ def create_AutoRecon3(config):
                                                                  
         cortical_parcellation_2.inputs.out_file = '{0}.aparc.a2009s.annot'.format(hemisphere)
         cortical_parcellation_2.inputs.seed = 1234
-        cortical_parcellation_2.inputs.copy_smoothwm = True
+        cortical_parcellation_2.inputs.copy_inputs = True
         cortical_parcellation_2.inputs.hemisphere = hemisphere
 
         hemiwf2.connect([(hemi_inputspec2, cortical_parcellation_2, [('smoothwm', 'smoothwm'),
                                                                      ('aseg_presurf', 'aseg'),
                                                                      ('cortex_label', 'label'),
-                                                                     ('sphere_reg', 'canonsurf')]),
+                                                                     ('sphere_reg', 'canonsurf'),
+                                                                     ('curv', 'curv'),
+                                                                     ('sulc', 'sulc'),
+                                                                 ]),
                          ])
 
         # Parcellation Statistics 2
@@ -409,12 +423,16 @@ def create_AutoRecon3(config):
                                           name="Cortical_Parcellation_{0}_3".format(hemisphere))
         cortical_parcellation_3.inputs.classifier = config['{0}_classifier3'.format(hemisphere)]
         cortical_parcellation_3.inputs.out_file = '{0}.aparc.DKTatlas40.annot'.format(hemisphere)
+        cortical_parcellation_3.inputs.hemisphere = hemisphere
         cortical_parcellation_3.inputs.seed = 1234
-        cortical_parcellation_3.inputs.hemisphere = hemisphere        
+        cortical_parcellation_3.inputs.copy_inputs = True
         hemiwf2.connect([(hemi_inputspec2, cortical_parcellation_3, [('smoothwm', 'smoothwm'),
                                                                      ('aseg_presurf', 'aseg'),
                                                                      ('cortex_label', 'label'),
-                                                                     ('sphere_reg', 'canonsurf')]),
+                                                                     ('sphere_reg', 'canonsurf'),
+                                                                     ('curv', 'curv'),
+                                                                     ('sulc', 'sulc'),
+                                                                 ])
                          ])
 
         # Parcellation Statistics 3
@@ -494,6 +512,8 @@ def create_AutoRecon3(config):
                                               ('{0}_smoothwm'.format(hemisphere), 'Inputs.smoothwm'),
                                               ('orig_mgz', 'Inputs.orig_mgz'),
                                               ('rawavg', 'Inputs.rawavg'),
+                                              ('{0}_curv'.format(hemisphere), 'Inputs.curv'),
+                                              ('{0}_sulc'.format(hemisphere), 'Inputs.sulc'),
                                                ]),
                         (ar3_lh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.lh_pial')]),
                         (ar3_rh_wf1, hemiwf2, [('Outputs.pial', 'Inputs.rh_pial')]),
@@ -686,36 +706,19 @@ def create_AutoRecon3(config):
                 ])
 
     if config['qcache']:
-        qcache_inputs = ['lh_curv',
-                         'rh_curv',
-                         'lh_sulc',
-                         'rh_sulc',
-                         'lh_white_K',
-                         'rh_white_K',
-                         'lh_white_H',
-                         'rh_white_H',
-                         'lh_area',
-                         'rh_area',
-                         'lh_thickness_pial',
-                         'lh_area_pial',
-                         'lh_volume',
-                         'lh_jacobian_white',
-                         'lh_wg_pct_mgh',
-                         'rh_thickness_pial',
-                         'rh_area_pial',
-                         'rh_volume',
-                         'rh_jacobian_white',
-                         'rh_wg_pct_mgh',
-                         'lh_sphere_reg',
-                         'rh_sphere_reg']
+        source_inputs = ['lh_sphere_reg', 'rh_sphere_reg']
+        source_subject = pe.Node(DataGrabber(outfields=source_inputs),
+                                 name="{0}_srcsubject".format(hemisphere))
+        source_subject.inputs.base_directory = config['source_subject']
+        source_subject.inputs.template = '*'
+        source_subject.inputs.sort_filelist = False
+        source_subject.inputs.field_template = dict(lh_sphere_reg='surf/lh.sphere.reg',
+                                                    rh_sphere_reg='surf/rh.sphere.reg')
+                
 
         qcache_wf = pe.Workflow("QCache")
 
-        qcache_outputspec = pe.Node(IdentityInterface(fields=qcache_outputs),
-                                   name="Inputs")
-
-
-        measurements = ['thickness'
+        measurements = ['thickness',
                         'area',
                         'area.pial',
                         'volume',
@@ -727,53 +730,87 @@ def create_AutoRecon3(config):
                         'w-g.pct.mgh']
 
         qcache_inputs = list()
+        for source_file in source_inputs:
+            qcache_inputs.append('source_' + source_file)
+        qcache_config = dict()
+        qcache_outputs = list()
         for hemisphere in ['lh', 'rh']:
+            qcache_config[hemisphere] = dict()
             for meas_name in measurements:
+                qcache_config[hemisphere][meas_name] = dict()
+                
                 if meas_name == 'thickness':
                     meas_file = hemisphere + '_' + meas_name + '_pial'
                 else:
-                    meas_file = hemisphere + '_' + meas_name.replace('-', '').replace('.', '_')
+                    meas_file = hemisphere + '_' + meas_name.replace('.', '_').replace('-', '')
                 qcache_inputs.append(meas_file)
+
+                preproc_name = "Preproc_{0}".format(meas_file)
+                preproc_out = '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name,
+                                                       config['src_subject_id'])
+                preproc_out_name = preproc_out.replace('.', '_')
+                qcache_config[hemisphere][meas_name]['preproc'] = dict(infile=meas_file,
+                                                                       name=preproc_name,
+                                                                       out=preproc_out,
+                                                                       out_name=preproc_out_name)
+                qcache_outputs.append(preproc_out_name)
+
+                qcache_config[hemisphere][meas_name]['smooth'] = dict()
+                for value in range(0, 26, 5):
+                    smooth_name = "Smooth_{0}_{1}".format(meas_file, value)
+                    smooth_out = "{0}.{1}.fwhm{2}.{3}.mgh".format(hemisphere,
+                                                                  meas_name,
+                                                                  value,
+                                                                  config['src_subject_id'])
+                    smooth_out_name = smooth_out.replace('.', '_')
+                    qcache_config[hemisphere][meas_name]['smooth'][value] = dict(name=smooth_name,
+                                                                                 out=smooth_out,
+                                                                                 out_name=smooth_out_name)
+                    qcache_outputs.append(smooth_out_name)
+                    
             qcache_inputs.append(hemisphere + '_sphere_reg')
 
         qcache_inputspec = pe.Node(IdentityInterface(fields=qcache_inputs),
                                    name="Inputs")
 
-
+        qcache_outputspec = pe.Node(IdentityInterface(fields=qcache_outputs),
+                                   name="Outputs")
         
-        for hemisphere in ['lh', 'rh']:
-            for meas_name in measurements:
-                if meas_name == 'thickness':
-                    meas_file = hemisphere + '_' + meas_name + '_pial'
-                else:
-                    meas_file = hemisphere + '_' + meas_name.replace('-', '').replace('.', '_')
+        for hemi in qcache_config.iterkeys():
+            for meas_config in qcache_config[hemi].itervalues():
                 preprocess = pe.Node(MRISPreprocReconAll(),
-                                     name="QCache_Preproc_{0}".format(meas_file))
+                                     name=meas_config['preproc']['name'])
                 target_id = config['src_subject_id']
-                preprocess.inputs.out_file = '{0}.{1}.{2}.mgh'.format(hemisphere,
-                                                                      meas_name,
-                                                                      target_id)
-                target_dir = config['source_subject']
+                preprocess.inputs.out_file = meas_config['preproc']['out']
                 preprocess.inputs.target = target_id
-                preprocess.inputs.target_dir = target_dir
-                preprocess.inputs.hemi = hemisphere
+                preprocess.inputs.hemi = hemi
                 preprocess.inputs.copy_inputs = True
 
-                qcache_wf.connect([(qcache_inputspec, preprocess, [(meas_file, 'surf_measure_file'),
-                                                                   (hemisphere + '_sphere_reg',
-                                                                    'surfreg_file')])
-                                ])
+                qcache_merge = pe.Node(Merge(2),
+                                       name="Merge{0}".format(meas_config['preproc']['name']))
 
-                for value in range(0, 26, 5):
-                    surf2surf = pe.Node(SurfaceSmooth(), name="Qcache_{0}_{1}_fwhm{2}".format(
-                        hemisphere, meas_name.replace('.', '_'), value))
+                qcache_wf.connect([(qcache_inputspec, qcache_merge,
+                                    [('lh_sphere_reg', 'in1'),
+                                     ('rh_sphere_reg', 'in2')]),
+                                   (qcache_inputspec, preprocess,
+                                    [(meas_config['preproc']['infile'], 'surf_measure_file'),
+                                     ('source_lh_sphere_reg', 'lh_surfreg_target'),
+                                     ('source_rh_sphere_reg', 'rh_surfreg_target')]),
+                                   (qcache_merge, preprocess, [('out', 'surfreg_files')]),
+                                   (preprocess, qcache_outputspec,
+                                    [('out_file', meas_config['preproc']['out_name'])]),
+                                   ])
+
+                for value, val_config in meas_config['smooth'].iteritems():
+                    surf2surf = pe.Node(SurfaceSmooth(), name=val_config['name'])
                     surf2surf.inputs.fwhm = value
                     surf2surf.inputs.cortex = True
                     surf2surf.inputs.subject_id = target_id
                     surf2surf.inputs.hemi = hemisphere
-                    tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(hemisphere, meas_name, value)
-                    surf2surf.inputs.out_file = tval_file
-                    ar3_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')])])
+                    surf2surf.inputs.out_file = val_config['out']
+                    qcache_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
+                                       (surf2surf, qcache_outputspec,
+                                        [('out_file', val_config['out_name'])])])
 
         # connect qcache inputs
         ar3_wf.connect([(inputspec, qcache_wf, [('lh_curv', 'Inputs.lh_curv'),
@@ -797,6 +834,8 @@ def create_AutoRecon3(config):
                                                 ('Outputs.sphere_reg', 'Inputs.rh_sphere_reg')]),
                         (ar3_rh_wf2, qcache_wf, [('Outputs.wg_pct_mgh', 'Inputs.rh_wg_pct_mgh')]),
                     ])
+        for source_file in source_inputs:
+            ar3_wf.connect([(source_subject, qcache_wf, [(source_file, 'Inputs.source_' + source_file)])])
         # end qcache workflow
 
 
@@ -814,6 +853,8 @@ def create_AutoRecon3(config):
     for output in hemi_outputs1 + hemi_outputs2:
         for hemi in ('lh_', 'rh_'):
             ar3_outputs.append(hemi + output)
+
+    ar3_outputs.extend(qcache_outputs)
     outputspec = pe.Node(IdentityInterface(fields=ar3_outputs),
                          name="Outputs")
     
@@ -840,5 +881,8 @@ def create_AutoRecon3(config):
             ar3_wf.connect([(lhwf, outputspec, [('Outputs.' + output, 'lh_' + output)]),
                             (rhwf, outputspec, [('Outputs.' + output, 'rh_' + output)])])
 
+    for output in qcache_outputs:
+        ar3_wf.connect([(qcache_wf, outputspec, [('Outputs.' + output, output)])])
+        
     return ar3_wf, ar3_outputs
 

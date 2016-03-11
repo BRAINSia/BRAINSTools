@@ -14,6 +14,8 @@ def create_ba_maps_wf(config):
               'rh_white',
               'lh_pial',
               'rh_pial',
+              'lh_orig',
+              'rh_orig',
               'transform',
               'lh_thickness',
               'rh_thickness',
@@ -41,8 +43,8 @@ def create_ba_maps_wf(config):
               "BA44", "BA45", "V1", "V2", "MT", "entorhinal", "perirhinal"]
     for hemisphere in ['lh', 'rh']:
         for threshold in [True, False]:
-            ## TODO: Create sources subject and merge outputs to a list
-            field_template = dict(sphere_reg='surf/{0}.sphere.reg'.format(hemisphere))
+            field_template = dict(sphere_reg='surf/{0}.sphere.reg'.format(hemisphere),
+                                  white='surf/{0}.white'.format(hemisphere))
 
             out_files = list()
             if threshold:
@@ -58,7 +60,8 @@ def create_ba_maps_wf(config):
                     field_template[label] = 'label/' + out_file
                 node_name = 'BA_Maps_' + hemisphere
 
-            source_subject = pe.Node(DataGrabber(outfields=labels+['sphere_reg']),
+            source_fields = labels + ['sphere_reg', 'white']
+            source_subject = pe.Node(DataGrabber(outfields=source_fields),
                                      name=node_name + "_srcsubject")
             source_subject.inputs.base_directory = config['source_subject']
             source_subject.inputs.template = '*'
@@ -68,15 +71,18 @@ def create_ba_maps_wf(config):
             merge_labels = pe.Node(Merge(len(labels)),
                                    name=node_name + "_Merge")
             for i,label in enumerate(labels):
-                ba_WF.connect([(source_subject, merge_labels, [(label, 'in{0}'.format(i))])])
+                ba_WF.connect([(source_subject, merge_labels, [(label, 'in{0}'.format(i+1))])])
 
             node = pe.MapNode(Label2Label(), name=node_name,
                               iterfield=['source_label', 'out_file'])
             node.inputs.hemisphere = hemisphere
             node.inputs.out_file = out_files
+            node.inputs.source_subject = config['src_subject_id']
+            node.inputs.copy_inputs = True
             
             ba_WF.connect([(merge_labels, node, [('out', 'source_label')]),
-                           (source_subject, node, [('sphere_reg', 'source_sphere_reg')])])
+                           (source_subject, node, [('sphere_reg', 'source_sphere_reg'),
+                                                   ('white', 'source_white')])])
             
             label2annot = pe.Node(Label2Annot(), name=node_name + '_2_Annot')
             label2annot.inputs.hemisphere = hemisphere
@@ -84,9 +90,9 @@ def create_ba_maps_wf(config):
                 config['fs_home'], 'average', 'colortable_BA.txt')
             label2annot.inputs.verbose_off = True
             label2annot.inputs.keep_max = True
+            label2annot.inputs.copy_inputs = True
 
-            stats_node = pe.Node(
-                ParcellationStats(), name=node_name + '_Stats')
+            stats_node = pe.Node(ParcellationStats(), name=node_name + '_Stats')
             stats_node.inputs.hemisphere = hemisphere
             stats_node.inputs.mgz = True
             stats_node.inputs.surface = 'white'
@@ -108,10 +114,10 @@ def create_ba_maps_wf(config):
 
             ba_WF.connect([(inputSpec, node, [('{0}_sphere_reg'.format(hemisphere),
                                                'sphere_reg'),
-                                              ('{0}_white'.format(
-                                                  hemisphere), 'white'),
+                                              ('{0}_white'.format(hemisphere), 'white'),
                                               ]),
                            (node, label2annot, [('out_file', 'in_labels')]),
+                           (inputSpec, label2annot, [('{0}_orig'.format(hemisphere), 'orig')]),
                            (label2annot, stats_node,
                             [('out_file', 'in_annotation')]),
                            (inputSpec, stats_node, [('{0}_thickness'.format(hemisphere), 

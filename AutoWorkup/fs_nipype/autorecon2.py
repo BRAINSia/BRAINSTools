@@ -606,6 +606,7 @@ def create_AutoRecon2(config):
         curvature_stats.inputs.write = True
         curvature_stats.inputs.values = True
         curvature_stats.inputs.hemisphere = hemisphere
+        curvature_stats.inputs.copy_inputs = True
         curvature_stats.inputs.out_file = '{0}.curv.stats'.format(hemisphere)
         hemi_wf.connect([(smooth2, curvature_stats, [('surface', 'surface')]),
                          (make_surfaces, curvature_stats, [('out_curv', 'curvfile1')]),

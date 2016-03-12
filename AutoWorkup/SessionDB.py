@@ -6,6 +6,7 @@ import os
 import sys
 import sqlite3 as lite
 import csv
+from collections import OrderedDict
 
 class SessionDB(object):
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
@@ -60,6 +61,7 @@ class SessionDB(object):
         missingFiles = open(missingFilesLog, 'w')
         print("Building Subject returnList: " + subject_data_file)
         subjData = csv.reader(open(subject_data_file, 'rb'), delimiter=',', quotechar='"')
+        allEntriesOK = True
         for row in subjData:
             if len(row) < 1:
                 # contine of it is an empty row
@@ -70,14 +72,19 @@ class SessionDB(object):
             if row[0] == 'project':
                 # continue if header line
                 continue
-            currDict = dict()
+            currDict = OrderedDict()
             validEntry = True
             if len(row) == 4:
                 currDict = {'project': row[0],
                             'subj': row[1],
                             'session': row[2]}
-                rawDict = eval(row[3])
-                for imageType in list(rawDict.keys()):
+                rawDict = OrderedDict(eval(row[3]))
+                dictionary_keys = list(rawDict.keys())
+                if not ( ('T1-15' in dictionary_keys)  or ('T1-30' in dictionary_keys) ):
+                    print("ERROR: Skipping session {0} due to missing T1's: {1}".format(currDict, dictionary_keys))
+                    print("REMOVE OR FIX BEFORE CONTINUING")
+                    allEntriesOK =False
+                for imageType in dictionary_keys:
                     currDict['type'] = imageType
                     fullPaths = [mountPrefix + i for i in rawDict[imageType]]
                     if len(fullPaths) < 1:
@@ -102,7 +109,7 @@ class SessionDB(object):
                 print(row)
         sqlCommandList
         self._local_fillDB_AndClose(sqlCommandList)
-        if missingCount > 0:
+        if ( missingCount > 0 ) or ( allEntriesOK == False ):
             if os.path.exists(self.dbName):
                 os.remove(self.dbName)
             missingFiles.close()

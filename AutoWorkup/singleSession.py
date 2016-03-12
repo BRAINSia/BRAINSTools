@@ -104,6 +104,8 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
+    from collections import OrderedDict
+    import sys
 
     from workflows.utils import run_workflow
 
@@ -125,12 +127,17 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
         print("Doing sessions {0}".format(sessions))
         print("!=" * 40)
         for session in sessions:
-            _dict = {}
+            _dict = OrderedDict()
+            t1_list = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
+            if len(t1_list) == 0:
+                print("ERROR: Skipping session {0} for subject {1} due to missing T1's".format(session,subject))
+                print("REMOVE OR FIX BEFORE CONTINUING")
+                continue
             subject = database.getSubjFromSession(session)
             _dict['session'] = session
             _dict['project'] = database.getProjFromSession(session)
             _dict['subject'] = subject
-            _dict['T1s'] = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
+            _dict['T1s'] = t1_list
             _dict['T2s'] = database.getFilenamesByScantype(session, ['T2-15', 'T2-30'])
             _dict['BadT2'] = False
             if _dict['T2s'] == database.getFilenamesByScantype(session, ['T2-15']):

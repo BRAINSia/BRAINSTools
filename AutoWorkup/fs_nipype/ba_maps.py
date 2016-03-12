@@ -97,6 +97,7 @@ def create_ba_maps_wf(config):
             stats_node.inputs.mgz = True
             stats_node.inputs.surface = 'white'
             stats_node.inputs.tabular_output = True
+            stats_node.inputs.copy_inputs = True
 
             if threshold:
                 label2annot.inputs.out_annot = "BA_exvivo.thresh"

@@ -336,6 +336,7 @@ def create_AutoRecon3(config):
         parcellation_stats_white.inputs.hemisphere = hemisphere
         parcellation_stats_white.inputs.out_color = 'aparc.annot.ctab'
         parcellation_stats_white.inputs.out_table = '{0}.aparc.stats'.format(hemisphere)
+        parcellation_stats_white.inputs.copy_inputs = True
 
         hemiwf2.connect([(hemi_inputspec2, parcellation_stats_white, [('wm', 'wm'),
                                                                       ('lh_white', 'lh_white'),
@@ -358,6 +359,7 @@ def create_AutoRecon3(config):
         parcellation_stats_pial.inputs.tabular_output = True
         parcellation_stats_pial.inputs.surface = 'pial'
         parcellation_stats_pial.inputs.hemisphere = hemisphere
+        parcellation_stats_pial.inputs.copy_inputs = True
         parcellation_stats_pial.inputs.out_color = 'aparc.annot.ctab'
         parcellation_stats_pial.inputs.out_table = '{0}.aparc.pial.stats'.format(hemisphere)
 
@@ -606,6 +608,7 @@ def create_AutoRecon3(config):
     segstats.inputs.exclude_id = 0
     segstats.inputs.intensity_units = "MR"
     segstats.inputs.summary_file = 'aseg.stats'
+    segstats.inputs.copy_inputs = True
     
     ar3_wf.connect([(apas_2_aseg, segstats, [('out_file', 'segmentation_file')]),
                     (inputspec, segstats, [('lh_white', 'lh_white'),
@@ -634,6 +637,7 @@ def create_AutoRecon3(config):
     wm_parcellation.inputs.label_wm = True
     wm_parcellation.inputs.hypo_wm = True
     wm_parcellation.inputs.rip_unknown = True
+    wm_parcellation.inputs.copy_inputs = True
     wm_parcellation.inputs.out_file = "wmparc.mgz"
     
     ar3_wf.connect([(inputspec, wm_parcellation, [('lh_white', 'lh_white'),
@@ -662,6 +666,7 @@ def create_AutoRecon3(config):
     wm_segstats.inputs.intensity_units = "MR"
     wm_segstats.inputs.wm_vol_from_surf = True
     wm_segstats.inputs.etiv = True
+    wm_segstats.inputs.copy_inputs = True
     wm_segstats.inputs.exclude_id = 0
     wm_segstats.inputs.summary_file = "wmparc.stats"
 
@@ -701,7 +706,10 @@ def create_AutoRecon3(config):
                                         ('transform', 'Inputs.transform'),
                                         ('aseg_presurf', 'Inputs.aseg'),
                                         ('brainmask', 'Inputs.brainmask'),
-                                        ('wm', 'Inputs.wm')]),
+                                        ('wm', 'Inputs.wm'),
+                                        ('lh_orig', 'Inputs.lh_orig'),
+                                        ('rh_orig', 'Inputs.rh_orig'),
+                                    ]),
                     (volume_mask, ba_WF, [('out_ribbon', 'Inputs.ribbon')])
                 ])
 
@@ -853,8 +861,8 @@ def create_AutoRecon3(config):
     for output in hemi_outputs1 + hemi_outputs2:
         for hemi in ('lh_', 'rh_'):
             ar3_outputs.append(hemi + output)
-
-    ar3_outputs.extend(qcache_outputs)
+    if config['qcache']:
+        ar3_outputs.extend(qcache_outputs)
     outputspec = pe.Node(IdentityInterface(fields=ar3_outputs),
                          name="Outputs")
     
@@ -881,8 +889,9 @@ def create_AutoRecon3(config):
             ar3_wf.connect([(lhwf, outputspec, [('Outputs.' + output, 'lh_' + output)]),
                             (rhwf, outputspec, [('Outputs.' + output, 'rh_' + output)])])
 
-    for output in qcache_outputs:
-        ar3_wf.connect([(qcache_wf, outputspec, [('Outputs.' + output, output)])])
+    if config['qcache']:
+        for output in qcache_outputs:
+            ar3_wf.connect([(qcache_wf, outputspec, [('Outputs.' + output, output)])])
         
     return ar3_wf, ar3_outputs
 

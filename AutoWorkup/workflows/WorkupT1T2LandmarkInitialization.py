@@ -13,6 +13,8 @@ from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitialize
 from nipype.interfaces.semtools.registration.brainsresample import BRAINSResample
 from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 
+from utilities.distributed import modify_qsub_args
+
 """
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
     myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize")
@@ -28,7 +30,9 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 """
 
 
-def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, PostACPCAlignToAtlas, DoReverseInit=False, debug=False):
+def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, PostACPCAlignToAtlas, DoReverseInit, debug):
+    CLUSTER_QUEUE=master_config['queue']
+    CLUSTER_QUEUE_LONG=master_config['long_q']
     landmarkInitializeWF = pe.Workflow(name=WFname)
 
     #############
@@ -55,6 +59,8 @@ def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, PostACPCAlignToA
     # Run ACPC Detect on first T1 Image - Base Image
     ########################################################
     BCD = pe.Node(interface=BRAINSConstellationDetector(), name="BCD")
+    many_cpu_BCD_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,4,2,4), 'overwrite': True}
+    BCD.plugin_args = many_cpu_BCD_options_dictionary
     ##  Use program default BCD.inputs.inputTemplateModel = T1ACPCModelFile
     # BCD.inputs.outputVolume =   "BCD_OUT" + "_ACPC_InPlace.nii.gz"                #$# T1AcpcImageList
     BCD.inputs.outputTransform = "BCD" + "_Original2ACPC_transform.h5"
@@ -120,6 +126,8 @@ def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, PostACPCAlignToA
         landmarkInitializeWF.connect(BCD, 'outputResampledVolume', ResampleFromAtlas, 'referenceVolume')
 
     BROIAUTO = pe.Node(interface=BRAINSROIAuto(), name="BROIAuto_cropped")
+    many_cpu_BROIAUTO_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,4,2,4), 'overwrite': True}
+    BROIAUTO.plugin_args = many_cpu_BROIAUTO_options_dictionary
     BROIAUTO.inputs.outputVolume = "Cropped_BCD_ACPC_Aligned.nii.gz"
     BROIAUTO.inputs.ROIAutoDilateSize = 10
     BROIAUTO.inputs.cropOutput = True

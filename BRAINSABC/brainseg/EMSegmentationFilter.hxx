@@ -1776,7 +1776,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                           probThresh->SetInput(WarpedPriorsList[i]);
                           probThresh->SetInsideValue(1);
                           probThresh->SetOutsideValue(0);
-                          probThresh->SetLowerThreshold(0.01);  // Hueristic: Need greater than 1 in 100
+                          probThresh->SetLowerThreshold(0.1); // Derived empirically based on experiments on BrainWeb data
                           // chance of being this structure
                           // from the spatial probabilities
                           probThresh->SetUpperThreshold(

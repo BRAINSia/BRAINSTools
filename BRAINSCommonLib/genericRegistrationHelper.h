@@ -125,7 +125,7 @@ void MakeDebugJointHistogram(const std::string & debugOutputDirectory, const typ
   origIter.GoToBegin();
   while( !pngIter.IsAtEnd() )
     {
-    const float MAX_VALUE = vcl_numeric_limits<unsigned short>::max();
+    const float MAX_VALUE = std::numeric_limits<unsigned short>::max();
     const float scaleFactor = 0.66 * MAX_VALUE / nonZeroAverage;
     const float currValue = (origIter.Get() ) * scaleFactor;
     if( currValue < 0 )

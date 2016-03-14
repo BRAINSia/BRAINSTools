@@ -123,8 +123,8 @@ void DtiGraphSearchTrackingFilter<
 
   const double inRadians = this->pi / 180.0;
   double       curvatureBranchAngle
-    = vcl_cos(this->m_CurvatureBranchAngle * inRadians);
-  double randomWalkAngle = vcl_cos(this->m_RandomWalkAngle / 2.0 * inRadians);
+    = std::cos(this->m_CurvatureBranchAngle * inRadians);
+  double randomWalkAngle = std::cos(this->m_RandomWalkAngle / 2.0 * inRadians);
 
   // newSeeds.clear();
   // newDirections.clear();
@@ -393,7 +393,7 @@ void DtiGraphSearchTrackingFilter<
               = ( 0.5
                   - this->m_RandomGenerator->
                   GetVariateWithOpenRange() ) * 2.0;
-            double m = vcl_sqrt( ( x * x ) + ( y * y ) + ( z * z ) );
+            double m = std::sqrt( ( x * x ) + ( y * y ) + ( z * z ) );
             x /= m;
             y /= m;
             z /= m;

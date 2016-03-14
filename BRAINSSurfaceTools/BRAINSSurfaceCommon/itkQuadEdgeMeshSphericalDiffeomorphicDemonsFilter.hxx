@@ -789,7 +789,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
       {
       unsigned int iterations =
         static_cast<unsigned int>(
-          vcl_log( this->m_LargestVelocityToEdgeLengthRatio ) / vcl_log( 2.0 ) ) + 2;
+          std::log( this->m_LargestVelocityToEdgeLengthRatio ) / std::log( 2.0 ) ) + 2;
 
       if( iterations < minimumNumberOfIterations )
         {
@@ -810,7 +810,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
     else
       {
       unsigned int iterations =
-        static_cast<unsigned int>( vcl_log( ratio ) / vcl_log( 2.0 ) ) + 2;
+        static_cast<unsigned int>( std::log( ratio ) / std::log( 2.0 ) ) + 2;
 
       if( iterations < minimumNumberOfIterations )
         {
@@ -985,7 +985,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
 
     this->ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio();
 
-    this->m_SigmaX /= vcl_sqrt( this->m_LargestVelocityToEdgeLengthRatio );
+    this->m_SigmaX /= std::sqrt( this->m_LargestVelocityToEdgeLengthRatio );
     this->m_Epsilon =  1.0 / ( this->m_SigmaX * this->m_SigmaX );
     }
 }
@@ -1134,7 +1134,7 @@ template <class TFixedMesh, class TMovingMesh, class TOutputMesh>
 void
 QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::SmoothTangentVectorField()
 {
-  const double weightFactor = vcl_exp( -1.0 / ( 2.0 * this->m_Lambda ) );
+  const double weightFactor = std::exp( -1.0 / ( 2.0 * this->m_Lambda ) );
 
   const FixedPointsContainer * points = this->m_FixedMeshAtInitialDestinationPoints->GetPoints();
 
@@ -1222,7 +1222,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
   const double scaledSinus   = axis.GetNorm();
   const double scaledCosinus = vsrc * vdst;
 
-  double angle = vcl_atan2( scaledSinus, scaledCosinus );
+  double angle = std::atan2( scaledSinus, scaledCosinus );
 
   typedef Versor<double> VersorType;
 
@@ -1263,7 +1263,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
 
     if( sinTheta > normEpsilon )
       {
-      const double theta = vcl_asin( sinTheta );
+      const double theta = std::asin( sinTheta );
 
       const VectorType axis = CrossProduct( vectorToCenter, tangent );
 

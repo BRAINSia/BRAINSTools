@@ -42,7 +42,7 @@
 //
 //
 // //////////////////////////////////////////////////////////////////////////////
-#define mypow(a, b) vcl_pow( ( a ), static_cast<double>(b) )
+#define mypow(a, b) std::pow( ( a ), static_cast<double>(b) )
 //
 //
 // //////////////////////////////////////////////////////////////////////////////
@@ -365,9 +365,9 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
         return c;
       }
       );
-  m_XStd[0] = vcl_sqrt(local_XStd_final[0].GetSum() / numEquations);
-  m_XStd[1] = vcl_sqrt(local_XStd_final[1].GetSum() / numEquations);
-  m_XStd[2] = vcl_sqrt(local_XStd_final[2].GetSum() / numEquations);
+  m_XStd[0] = std::sqrt(local_XStd_final[0].GetSum() / numEquations);
+  m_XStd[1] = std::sqrt(local_XStd_final[1].GetSum() / numEquations);
+  m_XStd[2] = std::sqrt(local_XStd_final[2].GetSum() / numEquations);
   }
 
   {
@@ -453,9 +453,9 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   const InputImageSpacingType spacing = this->GetFirstInputImage()->GetSpacing();
 
   unsigned int sampleofft[3];
-  sampleofft[0] = (unsigned int)vcl_floor(m_SampleSpacing / spacing[0]);
-  sampleofft[1] = (unsigned int)vcl_floor(m_SampleSpacing / spacing[1]);
-  sampleofft[2] = (unsigned int)vcl_floor(m_SampleSpacing / spacing[2]);
+  sampleofft[0] = (unsigned int)std::floor(m_SampleSpacing / spacing[0]);
+  sampleofft[1] = (unsigned int)std::floor(m_SampleSpacing / spacing[1]);
+  sampleofft[2] = (unsigned int)std::floor(m_SampleSpacing / spacing[2]);
 
   if( sampleofft[0] < MIN_SKIP_SIZE )
     {
@@ -481,9 +481,9 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   // bspline registrations were not doing very much
   // because of this.
   unsigned int workingofft[3];
-  workingofft[0] = (unsigned int)vcl_floor(m_WorkingSpacing / spacing[0]);
-  workingofft[1] = (unsigned int)vcl_floor(m_WorkingSpacing / spacing[1]);
-  workingofft[2] = (unsigned int)vcl_floor(m_WorkingSpacing / spacing[2]);
+  workingofft[0] = (unsigned int)std::floor(m_WorkingSpacing / spacing[0]);
+  workingofft[1] = (unsigned int)std::floor(m_WorkingSpacing / spacing[1]);
+  workingofft[2] = (unsigned int)std::floor(m_WorkingSpacing / spacing[2]);
 
   if( workingofft[0] < MIN_SKIP_SIZE )
     {
@@ -763,15 +763,15 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
       curOutput->Allocate();
       curOutput->FillBuffer(0);
 
-      // Compute the vcl_log transformed bias field
+      // Compute the std::log transformed bias field
       InternalImagePointer biasIntensityScaleFactor = InternalImageType::New();
       biasIntensityScaleFactor->CopyInformation(curOutput);
       biasIntensityScaleFactor->SetRegions( curOutput->GetLargestPossibleRegion() );
       biasIntensityScaleFactor->Allocate();
       biasIntensityScaleFactor->FillBuffer(0);
 
-      double maxBiasInForegroundMask = vcl_numeric_limits<double>::min();
-      double minBiasInForegroundMask = vcl_numeric_limits<double>::max();
+      double maxBiasInForegroundMask = std::numeric_limits<double>::min();
+      double minBiasInForegroundMask = std::numeric_limits<double>::max();
 
       const InputImageSizeType outsize = curOutput->GetLargestPossibleRegion().GetSize();
       tbb::parallel_for(tbb::blocked_range3d<long>(0,outsize[2],0,outsize[1],0,outsize[0]),

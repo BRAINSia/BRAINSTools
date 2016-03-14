@@ -30,12 +30,12 @@ itk::Matrix<double, 3, 3> TestCreateRotationMatrixFromAngles(const double alpha,
   // alpha is rotate the X axis -- Attitude
   // beta is rotate the Y axis  -- Bank
   // gamma is rotate the Z axis -- Heading
-  const double ca = vcl_cos(alpha);
-  const double sa = vcl_sin(alpha);
-  const double cb = vcl_cos(beta);
-  const double sb = vcl_sin(beta);
-  const double cg = vcl_cos(gamma);
-  const double sg = vcl_sin(gamma);
+  const double ca = std::cos(alpha);
+  const double sa = std::sin(alpha);
+  const double cb = std::cos(beta);
+  const double sb = std::sin(beta);
+  const double cg = std::cos(gamma);
+  const double sg = std::sin(gamma);
 
   itk::Matrix<double, 3, 3> R;
 
@@ -58,12 +58,12 @@ itk::Versor<double> TestCreateRotationVersorFromAngles(const double alpha, const
   // psi = alpha is rotate the X axis -- Attitude
   // theta= beta is rotate the Y axis  -- Bank
   // phi=  gamma is rotate the Z axis -- Heading
-  const double cha = vcl_cos(alpha * 0.5);
-  const double chb = vcl_cos(beta * 0.5);
-  const double chg = vcl_cos(gamma * 0.5);
-  const double sha = vcl_sin(alpha * 0.5);
-  const double shb = vcl_sin(beta * 0.5);
-  const double shg = vcl_sin(gamma * 0.5);
+  const double cha = std::cos(alpha * 0.5);
+  const double chb = std::cos(beta * 0.5);
+  const double chg = std::cos(gamma * 0.5);
+  const double sha = std::sin(alpha * 0.5);
+  const double shb = std::sin(beta * 0.5);
+  const double shg = std::sin(gamma * 0.5);
 
   vnl_vector_fixed<double, 4> q;
   q[0] = cha * chb * chg + sha * shb * shg;

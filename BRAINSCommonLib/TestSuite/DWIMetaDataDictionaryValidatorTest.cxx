@@ -285,7 +285,7 @@ int main( int argc, char *argv[] )
 
     //Gradient-Directions
     {
-    /* We should apply direction vcl_cosines to gradient directions if requested by
+    /* We should apply direction std::cosines to gradient directions if requested by
      the user */
     DWIMetaDataDictionaryValidator::GradientTableType GradientTable( numOfComponents );
     GradientTable[0][0] =0; //first b0 image

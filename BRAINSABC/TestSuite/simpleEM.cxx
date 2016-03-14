@@ -104,7 +104,7 @@ int simpleRunEMS( std::string t1Volume,
     // Set the upper limit to 4096 in the case of floating point data.
     const inputPixelType outMin = 0;
     const inputPixelType outMax
-      = ( vcl_numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : vcl_numeric_limits<inputPixelType>::max();
+      = ( std::numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : std::numeric_limits<inputPixelType>::max();
     rescalerT1->SetOutputMinimum(outMin);
     rescalerT1->SetOutputMaximum(outMax);
     rescalerT1->SetInput( inputReaderT1->GetOutput() );
@@ -126,7 +126,7 @@ int simpleRunEMS( std::string t1Volume,
     // Set the upper limit to 4096 in the case of floating point data.
     const inputPixelType outMin = 0;
     const inputPixelType outMax
-      = ( vcl_numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : vcl_numeric_limits<inputPixelType>::max();
+      = ( std::numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : std::numeric_limits<inputPixelType>::max();
     rescalerT2->SetOutputMinimum(outMin);
     rescalerT2->SetOutputMaximum(outMax);
     rescalerT2->SetInput( inputReaderT2->GetOutput() );
@@ -148,7 +148,7 @@ int simpleRunEMS( std::string t1Volume,
     // Set the upper limit to 4096 in the case of floating point data.
     const inputPixelType outMin = 0;
     const inputPixelType outMax
-      = ( vcl_numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : vcl_numeric_limits<inputPixelType>::max();
+      = ( std::numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : std::numeric_limits<inputPixelType>::max();
     rescalerPD->SetOutputMinimum(outMin);
     rescalerPD->SetOutputMaximum(outMax);
     rescalerPD->SetInput( inputReaderPD->GetOutput() );

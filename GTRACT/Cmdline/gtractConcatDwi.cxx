@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     else
       {
       double distance =
-        vcl_sqrt(firstOrigin.SquaredEuclideanDistanceTo(currentOrigin) );
+        std::sqrt(firstOrigin.SquaredEuclideanDistanceTo(currentOrigin) );
       if( !ignoreOrigins && distance > 1.0E-3 )
         {
         std::cerr << "Origins differ " << firstOrigin

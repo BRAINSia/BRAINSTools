@@ -560,7 +560,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   IndexType supportIndex;
   for ( j = 0; j < SpaceDimension; j++ )
     {
-    supportIndex[j] = (long)vcl_floor(index[j] );
+    supportIndex[j] = (long)std::floor(index[j] );
     }
   m_LastSupportRegion.SetIndex( supportIndex );
 
@@ -586,7 +586,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     double weight = 1.0;
     for ( j = 0; j < SpaceDimension; j++ )
       {
-      weight = weight * ( 1 - vcl_abs( ind[j] - index[j] ) );
+      weight = weight * ( 1 - std::abs( ind[j] - index[j] ) );
       }
     for ( j = 0; j < SpaceDimension; j++ )
       {
@@ -651,7 +651,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
   for ( dim = 0; dim < SpaceDimension; dim++ )
     {
-    baseIndex[dim] = (long)vcl_floor(index[dim] );
+    baseIndex[dim] = (long)std::floor(index[dim] );
     distance[dim] = index[dim] - double(baseIndex[dim]);
     }
 

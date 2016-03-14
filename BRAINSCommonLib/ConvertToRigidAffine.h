@@ -30,7 +30,9 @@
 #include <vnl/vnl_matrix_fixed.h>
 #include <vnl/vnl_vector.h>
 #include <vnl/algo/vnl_svd.h>
-#include <vcl_cmath.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <cmath>
 
 // TODO:  Need to make return types an input template type.
 namespace AssignRigid

@@ -329,7 +329,7 @@ bool areDirectionsEqual(std::string direction1, std::string direction2, double d
     }
   else
     {
-    const double dist = vcl_sqrt( ( x1 - x2 ) * ( x1 - x2 ) + ( y1 - y2 ) * ( y1 - y2 ) + ( z1 - z2 ) * ( z1 - z2 ) );
+    const double dist = std::sqrt( ( x1 - x2 ) * ( x1 - x2 ) + ( y1 - y2 ) * ( y1 - y2 ) + ( z1 - z2 ) * ( z1 - z2 ) );
     if( dist > directionsTolerance )
       {
       return false;

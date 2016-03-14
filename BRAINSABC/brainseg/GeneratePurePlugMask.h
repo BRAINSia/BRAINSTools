@@ -71,7 +71,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   maskSpacing.Fill(0);
 
   typename ByteImageType::SpacingType minimumSpacing;
-  minimumSpacing.Fill(vcl_numeric_limits<double>::max());
+  minimumSpacing.Fill(std::numeric_limits<double>::max());
 
   size_t index = 0;
   for( size_t i = 0; i < numberOfImageModalities; i++ )

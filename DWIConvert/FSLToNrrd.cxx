@@ -131,7 +131,7 @@ FSLToNrrd(const std::string & inputVolume,
       {
       continue;
       }
-    double scale = vcl_sqrt((*bValIt) / maxBValue);
+    double scale = std::sqrt((*bValIt) / maxBValue);
     std::vector<double> &cur = *bVecIt;
     for(unsigned int i = 0; i < 3; ++i)
       {

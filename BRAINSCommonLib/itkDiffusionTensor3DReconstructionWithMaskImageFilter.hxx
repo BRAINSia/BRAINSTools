@@ -220,7 +220,7 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
             }
           else
             {
-            B[i] = -vcl_log( static_cast<double>(b) / static_cast<double>(b0) ) / this->m_BValue;
+            B[i] = -std::log( static_cast<double>(b) / static_cast<double>(b0) ) / this->m_BValue;
             }
 
           ++(*gradientItContainer[i]);
@@ -331,7 +331,7 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
             }
           else
             {
-            B[i] = -vcl_log( static_cast<double>(b[gradientind[i]]) / static_cast<double>(b0) ) / this->m_BValue;
+            B[i] = -std::log( static_cast<double>(b[gradientind[i]]) / static_cast<double>(b0) ) / this->m_BValue;
             }
           }
 

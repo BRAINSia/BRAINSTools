@@ -24,7 +24,9 @@
 #include "itkImageDuplicator.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
-#include "vcl_algorithm.h"
+#include <vcl_compiler.h>
+#include <iostream>
+#include "algorithm"
 #include "BinaryMaskEditorBasedOnLandmarksCLP.h"
 #include "itkNumberToString.h"
 #include <BRAINSCommonLib.h>
@@ -71,7 +73,7 @@ public:
     normal[1] = -1 * ( ( AB[0] * AC[2] ) - ( AC[0] * AB[2] ) );
     normal[2] = ( AB[0] * AC[1] ) - ( AC[0] * AB[1] );
 
-    double magnitude = vcl_sqrt( normal[0] * normal[0]
+    double magnitude = std::sqrt( normal[0] * normal[0]
                                  + normal[1] * normal[1]
                                  + normal[2] * normal[2] );
 

@@ -140,22 +140,22 @@ public:
   double f(const ParametersType & params) const
   {
     const double        MaxUnpenalizedAllowedDistance = 8.0;
-    const double        DistanceFromCenterOfMass = vcl_abs(params[2]);
+    const double        DistanceFromCenterOfMass = std::abs(params[2]);
     static const double FortyFiveDegreesAsRadians = 45.0 * vnl_math::pi / 180.0;
-    const double        cost_of_HeadingAngle = ( vcl_abs(params[0]) < FortyFiveDegreesAsRadians ) ? 0 :
-      ( ( vcl_abs(params[0]) - FortyFiveDegreesAsRadians ) * 2 );
-    const double cost_of_BankAngle = ( vcl_abs(params[1]) < FortyFiveDegreesAsRadians ) ? 0 :
-      ( ( vcl_abs(params[1]) - FortyFiveDegreesAsRadians ) * 2 );
+    const double        cost_of_HeadingAngle = ( std::abs(params[0]) < FortyFiveDegreesAsRadians ) ? 0 :
+      ( ( std::abs(params[0]) - FortyFiveDegreesAsRadians ) * 2 );
+    const double cost_of_BankAngle = ( std::abs(params[1]) < FortyFiveDegreesAsRadians ) ? 0 :
+      ( ( std::abs(params[1]) - FortyFiveDegreesAsRadians ) * 2 );
 
-    if( ( vcl_abs(params[0]) > FortyFiveDegreesAsRadians ) || ( vcl_abs(params[1]) > FortyFiveDegreesAsRadians ) )
+    if( ( std::abs(params[0]) > FortyFiveDegreesAsRadians ) || ( std::abs(params[1]) > FortyFiveDegreesAsRadians ) )
       {
       std::cout << "WARNING: ESTIMATED ROTATIONS ARE WAY TOO BIG SO GIVING A HIGH COST" << std::endl;
       return 1;
       }
     const double cc = -CenterImageReflection_crossCorrelation(params);
 
-    const double cost_of_motion = ( vcl_abs(DistanceFromCenterOfMass) < MaxUnpenalizedAllowedDistance ) ? 0 :
-      ( vcl_abs(DistanceFromCenterOfMass - MaxUnpenalizedAllowedDistance) * .1 );
+    const double cost_of_motion = ( std::abs(DistanceFromCenterOfMass) < MaxUnpenalizedAllowedDistance ) ? 0 :
+      ( std::abs(DistanceFromCenterOfMass - MaxUnpenalizedAllowedDistance) * .1 );
     const double raw_finalcos_gamma = cc + cost_of_motion + cost_of_BankAngle + cost_of_HeadingAngle;
 
 #ifdef __USE_EXTENSIVE_DEBUGGING__
@@ -322,9 +322,9 @@ public:
         }
 
       // Desire a 95*2 x 130*2 x 160x2 mm voxel lattice that will fit a brain
-      outputImageSize[0] = static_cast<unsigned long int>( 2.0 * vcl_ceil(95.0  / outputImageSpacing[0]) );
-      outputImageSize[1] = static_cast<unsigned long int>( 2.0 * vcl_ceil(130.0 / outputImageSpacing[1]) );
-      outputImageSize[2] = static_cast<unsigned long int>( 2.0 * vcl_ceil(160.0 / outputImageSpacing[2]) );
+      outputImageSize[0] = static_cast<unsigned long int>( 2.0 * std::ceil(95.0  / outputImageSpacing[0]) );
+      outputImageSize[1] = static_cast<unsigned long int>( 2.0 * std::ceil(130.0 / outputImageSpacing[1]) );
+      outputImageSize[2] = static_cast<unsigned long int>( 2.0 * std::ceil(160.0 / outputImageSpacing[2]) );
 
       // The physical center of MSP plane is not determined yet. At the
       // optimizing stage we take COM as physical center
@@ -439,7 +439,7 @@ public:
     const double cc =
       ( ( sumVoxelValuesQR - sumVoxelValuesReflected * sumVoxelValues
           / N )
-        / vcl_sqrt( ( sumSquaredVoxelValues - sumVoxelValues * sumVoxelValues
+        / std::sqrt( ( sumSquaredVoxelValues - sumVoxelValues * sumVoxelValues
                       / N )
                     * ( sumSquaredVoxelValuesReflected - sumVoxelValuesReflected * sumVoxelValuesReflected / N ) ) );
     return cc;

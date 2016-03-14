@@ -67,7 +67,7 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
     itkExceptionMacro("Output Mesh has NULL PointData");
     }
 
-  const double weightFactor = vcl_exp( -1.0 / ( 2.0 * this->m_Lambda ) );
+  const double weightFactor = std::exp( -1.0 / ( 2.0 * this->m_Lambda ) );
 
   ProgressReporter progress(this, 0, this->m_MaximumNumberOfIterations);
 

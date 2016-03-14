@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
   catch( ... )
     {
     std::cout << "Error while writing deformation file." << std::endl;
-    // std::cerr<< vcl_exp <<std::endl;
+    // std::cerr<< std::exp <<std::endl;
     throw;
     }
   return EXIT_SUCCESS;

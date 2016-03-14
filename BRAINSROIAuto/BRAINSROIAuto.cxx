@@ -45,7 +45,9 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkExtractImageFilter.h>
-#include <vcl_algorithm.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <algorithm>
 
 #include <BRAINSCommonLib.h>
 #include "itkIO.h"
@@ -95,8 +97,8 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
     typename VolumeMaskType::IndexType maxIndex;
     for( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
       {
-      minIndex[i] = vcl_numeric_limits<VolumeMaskType::IndexType::IndexValueType>::max();
-      maxIndex[i] = vcl_numeric_limits<VolumeMaskType::IndexType::IndexValueType>::min();
+      minIndex[i] = std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::max();
+      maxIndex[i] = std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::min();
       }
     itk::ImageRegionConstIteratorWithIndex<VolumeMaskType> maskIt(mask, mask->GetLargestPossibleRegion() );
     while( !maskIt.IsAtEnd() )
@@ -106,8 +108,8 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
         const typename VolumeMaskType::IndexType & currIndex = maskIt.GetIndex();
         for( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
           {
-          minIndex[i] = vcl_min(minIndex[i], currIndex[i]);
-          maxIndex[i] = vcl_max(maxIndex[i], currIndex[i]);
+          minIndex[i] = std::min(minIndex[i], currIndex[i]);
+          maxIndex[i] = std::max(maxIndex[i], currIndex[i]);
           }
         }
       ++maskIt;

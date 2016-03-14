@@ -103,8 +103,8 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   int  count = 0;
 
   const double inRadians = this->pi / 180.0;
-  double       curvatureThreshold = vcl_cos( this->m_CurvatureThreshold * inRadians );
-  double       guidedCurvatureThreshold = vcl_cos( this->m_GuidedCurvatureThreshold * inRadians );
+  double       curvatureThreshold = std::cos( this->m_CurvatureThreshold * inRadians );
+  double       guidedCurvatureThreshold = std::cos( this->m_GuidedCurvatureThreshold * inRadians );
 
   // std::cout << "#Seeds = " << this->m_Seeds.size() << std::endl;
 
@@ -144,7 +144,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     /***VAM - MaxDistance is now defined by the user */
     // float MaxDist =
     //
-    // vcl_sqrt(pow((double)(p1[0]-p2[0]),2.0)+pow((double)(p1[1]-p2[1]),2.0)+pow((double)(p1[2]-p2[2]),2.0));
+    // std::sqrt(pow((double)(p1[0]-p2[0]),2.0)+pow((double)(p1[1]-p2[1]),2.0)+pow((double)(p1[2]-p2[2]),2.0));
     // MaxDist *= 1.5;
     double MaxDist = this->m_MaximumGuideDistance;
     // std::cout << "Max Distance: " << MaxDist << std::endl;
@@ -345,9 +345,9 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     typename Self::ContinuousIndexType index1;
     this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p1, index1);
 
-    float dist = vcl_sqrt( vcl_pow( (double)( index1[0] - index[0] ), 2.0 )
-                           + vcl_pow( (double)( index1[1] - index[1] ), 2.0 )
-                           + vcl_pow( (double)( index1[2] - index[2] ), 2.0 ) );
+    float dist = std::sqrt( std::pow( (double)( index1[0] - index[0] ), 2.0 )
+                           + std::pow( (double)( index1[1] - index[1] ), 2.0 )
+                           + std::pow( (double)( index1[2] - index[2] ), 2.0 ) );
     if( dist < minDist )
       {
       minDist = dist;

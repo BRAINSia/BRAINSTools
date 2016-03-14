@@ -72,7 +72,7 @@ void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfIma
   /*Rho*/
 #define _SQR(a) ( ( a ) * ( a ) )
   rhoValue = static_cast<float>
-    ( vcl_sqrt( _SQR(LocationWithOriginAtCenterOfImage[0])
+    ( std::sqrt( _SQR(LocationWithOriginAtCenterOfImage[0])
                 + _SQR(LocationWithOriginAtCenterOfImage[1])
                 + _SQR(LocationWithOriginAtCenterOfImage[2]) ) );
 #undef _SQR
@@ -80,24 +80,24 @@ void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfIma
   phiValue = 0.0F;
   if( LocationWithOriginAtCenterOfImage[0] < 0 )
     {
-    phiValue = vcl_atan2(-LocationWithOriginAtCenterOfImage[0], LocationWithOriginAtCenterOfImage[1]);
+    phiValue = std::atan2(-LocationWithOriginAtCenterOfImage[0], LocationWithOriginAtCenterOfImage[1]);
     }
   else
     {
-    phiValue = vcl_atan2(LocationWithOriginAtCenterOfImage[0], LocationWithOriginAtCenterOfImage[1]);
+    phiValue = std::atan2(LocationWithOriginAtCenterOfImage[0], LocationWithOriginAtCenterOfImage[1]);
     }
   /*Theta*/
   thetaValue = 0.0F;
   if( LocationWithOriginAtCenterOfImage[2] < 0 )
     {
-    thetaValue = vcl_atan2(-LocationWithOriginAtCenterOfImage[2], LocationWithOriginAtCenterOfImage[1]);
+    thetaValue = std::atan2(-LocationWithOriginAtCenterOfImage[2], LocationWithOriginAtCenterOfImage[1]);
     }
   else
     {
-    thetaValue = vcl_atan2(LocationWithOriginAtCenterOfImage[2], LocationWithOriginAtCenterOfImage[1]);
+    thetaValue = std::atan2(LocationWithOriginAtCenterOfImage[2], LocationWithOriginAtCenterOfImage[1]);
     }
 
-  //  thetaValue = vcl_acos(LocationWithOriginAtCenterOfImage[2]/rhoValue);
+  //  thetaValue = std::acos(LocationWithOriginAtCenterOfImage[2]/rhoValue);
 
   rhoValue = rhoValue / 128.0F;  // The largest brain ever will always fit in a sphere
   // with radius of 128MM centered at the AC point

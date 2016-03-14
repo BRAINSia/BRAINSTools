@@ -29,7 +29,9 @@
 #include "itkBSplineTransform.h"
 #include "itkBRAINSROIAutoImageFilter.h"
 
-#include "vcl_algorithm.h"
+#include <vcl_compiler.h>
+#include <iostream>
+#include "algorithm"
 
 /**
   * This file contains utility functions that are common to a few of the
@@ -177,8 +179,8 @@ void ComputeRobustMinMaxMean(
   // This is a more stable way of determining the range of values that the image
   // has.
   // By eliminating possible "bright or dark" noise in the image.
-  minValue = vcl_numeric_limits<float>::max();
-  maxValue = vcl_numeric_limits<float>::min();
+  minValue = std::numeric_limits<float>::max();
+  maxValue = std::numeric_limits<float>::min();
   std::vector<typename TInputImage::PixelType> fixedList(image->GetBufferedRegion().GetNumberOfPixels() );
     {
     itk::ImageRegionConstIteratorWithIndex<TInputImage> fi(image, image->GetBufferedRegion() );
@@ -201,8 +203,8 @@ void ComputeRobustMinMaxMean(
       if( inCaluationRegion )
         {
         const typename TInputImage::PixelType currValue = fi.Get();
-        minValue = vcl_min(minValue, currValue);
-        maxValue = vcl_max(maxValue, currValue);
+        minValue = std::min(minValue, currValue);
+        maxValue = std::max(maxValue, currValue);
         fixedList.push_back(currValue);
         }
       ++fi;
@@ -229,8 +231,8 @@ void ComputeRobustMinMaxMean(
 
   // Now set to the range of values based on linear extrapolation of the
   // quantiles
-  minValue = vcl_max(fixedZeroQy, minValue);
-  maxValue = vcl_min(fixedOneQy, maxValue);
+  minValue = std::max(fixedZeroQy, minValue);
+  maxValue = std::min(fixedOneQy, maxValue);
   std::cout << "PostFix Range: " << minValue   << " " << maxValue << std::endl;
 
     { // For all voxels in valid range, compute the mean.

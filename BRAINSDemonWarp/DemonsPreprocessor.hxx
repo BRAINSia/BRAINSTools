@@ -115,8 +115,8 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       {
       std::cout << "Performing Histogram Matching \n";
       }
-    if( ( vcl_numeric_limits<typename OutputImageType::PixelType>::max()
-          - vcl_numeric_limits<typename OutputImageType::PixelType>::min() ) <
+    if( ( std::numeric_limits<typename OutputImageType::PixelType>::max()
+          - std::numeric_limits<typename OutputImageType::PixelType>::min() ) <
         m_NumberOfHistogramLevels )
       {
       std::cout << "The intensity of range is less than Histogram levels!!"

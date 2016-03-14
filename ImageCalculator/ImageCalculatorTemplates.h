@@ -36,7 +36,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
-#include <vcl_cmath.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <cmath>
 #include "ImageCalculatorUtils.h"
 #include <metaCommand.h>
 

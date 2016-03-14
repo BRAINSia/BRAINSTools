@@ -60,7 +60,7 @@ int main(int, char * *)
        ++it1, ++it2, ++itBlend )
     {
     float blend = (it1.Get() * 0.2) + (it2.Get() * 0.8);
-    if( vcl_fabs(blend - itBlend.Get() ) > 0.0001 )
+    if( std::fabs(blend - itBlend.Get() ) > 0.0001 )
       {
       std::cerr << "Expected " << blend << " found " << itBlend.Get()
                 << std::endl;

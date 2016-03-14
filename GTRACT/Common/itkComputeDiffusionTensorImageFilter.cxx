@@ -161,7 +161,7 @@ ComputeDiffusionTensorImageFilter
             {
             ErrFlg = true;  break;
             }
-          Ln_ADCs(step + 1) = vcl_log(tempflt / ADC0);
+          Ln_ADCs(step + 1) = std::log(tempflt / ADC0);
           }
         if( ErrFlg )
           {

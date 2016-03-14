@@ -21,7 +21,9 @@
 
 #include "itkICCIterativeInverseDisplacementFieldImageFilter.h"
 #include "itkProgressReporter.h"
-#include <vcl_algorithm.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <algorithm>
 
 namespace itk
 {
@@ -140,8 +142,8 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   const float           fEpsilon3 = m_StopValue * spacing[2];
 
   unsigned int OnePercentIncrementOfMaxIterations = m_NumberOfIterations / 110; // NOTE:  We want to do 10% extra effort
-  const float  MinEpsilon = vcl_min(fEpsilon1, vcl_min(fEpsilon2, fEpsilon3) );
-  const float  PerturbationScaleFactor = 0.5 * vcl_pow(MinEpsilon, 0.01F);
+  const float  MinEpsilon = std::min(fEpsilon1, std::min(fEpsilon2, fEpsilon3) );
+  const float  PerturbationScaleFactor = 0.5 * std::pow(MinEpsilon, 0.01F);
 
   InputIt.GoToBegin();
   OutputIt.GoToBegin();
@@ -198,15 +200,15 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
             }
           iIteration++;
           }
-        while( ( (vcl_abs(fDelta1) > fEpsilon1) || (vcl_abs(fDelta2) > fEpsilon2) ||
-                 (vcl_abs(fDelta3) > fEpsilon3) ) && (iIteration < current_check_level) );
+        while( ( (std::abs(fDelta1) > fEpsilon1) || (std::abs(fDelta2) > fEpsilon2) ||
+                 (std::abs(fDelta3) > fEpsilon3) ) && (iIteration < current_check_level) );
 
         perturbation *= PerturbationScaleFactor;  // Reduce stepsize in attemp to get out of local minimum. // 0.5
                                                   // decreases too quickly
         current_check_level = current_check_level + OnePercentIncrementOfMaxIterations;
         }
-      while( ( (vcl_abs(fDelta1) > fEpsilon1) || (vcl_abs(fDelta2) > fEpsilon2) ||
-               (vcl_abs(fDelta3) > fEpsilon3) ) && (iIteration < m_NumberOfIterations) );
+      while( ( (std::abs(fDelta1) > fEpsilon1) || (std::abs(fDelta2) > fEpsilon2) ||
+               (std::abs(fDelta3) > fEpsilon3) ) && (iIteration < m_NumberOfIterations) );
       }
 
     outputValue[0] = -fDispU1;

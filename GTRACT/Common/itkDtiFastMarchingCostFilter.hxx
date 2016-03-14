@@ -562,7 +562,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       // Normalize Speed
       PixelType normOutputSpeedPixel = outputSpeedPixel / m_NormalizationFactor;
 
-      // Calculate vcl_cost (time): neighbor time (of selected Alive point) +
+      // Calculate std::cost (time): neighbor time (of selected Alive point) +
       // distance/speed (of Trial point)
       if( normOutputSpeedPixel > 0.0 )   // not zero
         {
@@ -729,13 +729,13 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   TVector normal = sum.normalize();
 
   /* Find Alive point that is closet to direction "-normal"
-     by computing vector angle: vcl_cos theta= dot product (v1,normal)/|v1|  */
+     by computing vector angle: std::cos theta= dot product (v1,normal)/|v1|  */
 
   TVector rOffset; rOffset.fill(0);  // alive point in direction -normal
   neighOffset.fill(0);
   neighOffset = offsetList.back();
   offsetList.pop_back();
-  float vcl_cosAngle1 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
+  float std::cosAngle1 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
   rOffset = neighOffset;
 
   while( !offsetList.empty() )
@@ -743,11 +743,11 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     neighOffset.fill(0);
     neighOffset = offsetList.back();
     offsetList.pop_back();
-    float vcl_cosAngle2 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
+    float std::cosAngle2 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
 
-    if( vcl_cosAngle2 > vcl_cosAngle1 )
+    if( std::cosAngle2 > std::cosAngle1 )
       {
-      vcl_cosAngle1 = vcl_cosAngle2;
+      std::cosAngle1 = std::cosAngle2;
       rOffset = neighOffset;
       }
     }
@@ -786,7 +786,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     neighSpeedPixel = m_OutputSpeedImage->GetPixel( neighIndex );
     outputSpeedPixel = vnl_math_min( neighSpeedPixel, trialSpeedPixel );
 
-    // Calculate vcl_cost (time): neighbor time (of selected Alive point) +
+    // Calculate std::cost (time): neighbor time (of selected Alive point) +
     // distance/speed (of Trial point)
     double neighTime = output->GetPixel( neighIndex );
     double trialTime = ( ( neighOffset.magnitude() ) / outputSpeedPixel );
@@ -923,7 +923,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     neighSpeedPixel = m_OutputSpeedImage->GetPixel( neighIndex );
     outputSpeedPixel = vnl_math_min( neighSpeedPixel, trialSpeedPixel );
 
-    // Calculate vcl_cost (time): neighbor time (of selected Alive point) +
+    // Calculate std::cost (time): neighbor time (of selected Alive point) +
     // distance/speed (of Trial point)
     double neighTime = output->GetPixel( neighIndex );
     double trialTime = ( ( aliveOffset.magnitude() ) / outputSpeedPixel );

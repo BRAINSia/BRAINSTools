@@ -147,9 +147,9 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
         smallestError = 0;
         for(unsigned int j = 0; j < ImageDimension; j++ )
           {
-          smallestError += vcl_pow(mappedPoint[j] + forwardVector[j]-originalPoint[j],2);
+          smallestError += std::pow(mappedPoint[j] + forwardVector[j]-originalPoint[j],2);
           }
-        smallestError = vcl_sqrt(smallestError);
+        smallestError = std::sqrt(smallestError);
         }
 
       // iteration loop
@@ -171,9 +171,9 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
             tmp = 0;
             for (unsigned int l=0; l<ImageDimension; l++)
               {
-              tmp += vcl_pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
+              tmp += std::pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
               }
-            tmp = vcl_sqrt(tmp);
+            tmp = std::sqrt(tmp);
             if(tmp < smallestError)
               {
               smallestError = tmp;
@@ -191,9 +191,9 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
             tmp = 0;
             for (unsigned int l=0; l<ImageDimension; l++)
               {
-              tmp += vcl_pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
+              tmp += std::pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
               }
-            tmp = vcl_sqrt(tmp);
+            tmp = std::sqrt(tmp);
             if(tmp < smallestError)
               {
               smallestError = tmp;
@@ -340,9 +340,9 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
       smallestError = 0;
       for( unsigned int j = 0; j < ImageDimension; j++ )
         {
-        smallestError += vcl_pow(mappedPoint[j] + forwardVector[j] - originalPoint[j], 2);
+        smallestError += std::pow(mappedPoint[j] + forwardVector[j] - originalPoint[j], 2);
         }
-      smallestError = vcl_sqrt(smallestError);
+      smallestError = std::sqrt(smallestError);
       }
     // iteration loop
     for( unsigned int i = 0; i < m_NumberOfIterations; i++ )
@@ -362,9 +362,9 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
           tmp = 0;
           for( unsigned int l = 0; l < ImageDimension; l++ )
             {
-            tmp += vcl_pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
+            tmp += std::pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
             }
-          tmp = vcl_sqrt(tmp);
+          tmp = std::sqrt(tmp);
           if( tmp < smallestError )
             {
             smallestError = tmp;
@@ -382,9 +382,9 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
           tmp = 0;
           for( unsigned int l = 0; l < ImageDimension; l++ )
             {
-            tmp += vcl_pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
+            tmp += std::pow(mappedPoint[l] + forwardVector[l] - originalPoint[l], 2);
             }
-          tmp = vcl_sqrt(tmp);
+          tmp = std::sqrt(tmp);
           if( tmp < smallestError )
             {
             smallestError = tmp;

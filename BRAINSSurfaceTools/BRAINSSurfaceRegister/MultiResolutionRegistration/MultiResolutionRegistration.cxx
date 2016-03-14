@@ -210,10 +210,10 @@ int main( int argc, char * argv [] )
 
   DoubleArrayType sigmaX(resolutionLevels);
 
-  sigmaX[0] = 1.0 / vcl_sqrt(epsilon[0]);
-  sigmaX[1] = 1.0 / vcl_sqrt(epsilon[1]);
-  sigmaX[2] = 1.0 / vcl_sqrt(epsilon[2]);
-  sigmaX[3] = 1.0 / vcl_sqrt(epsilon[3]);
+  sigmaX[0] = 1.0 / std::sqrt(epsilon[0]);
+  sigmaX[1] = 1.0 / std::sqrt(epsilon[1]);
+  sigmaX[2] = 1.0 / std::sqrt(epsilon[2]);
+  sigmaX[3] = 1.0 / std::sqrt(epsilon[3]);
 
   multiResDemonsFilter->SetSigmaXValues( sigmaX );
 

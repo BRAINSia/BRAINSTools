@@ -173,7 +173,7 @@ void CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string
       const SImageType::IndexType Index = mspIt.GetIndex();
       SImageType::PointType       Location;
       MSPImage->TransformIndexToPhysicalPoint(Index, Location);
-      if( vcl_abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001 )
+      if( std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001 )
         {
         mspIt.Set(high);
         }
@@ -204,7 +204,7 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
       const SImageType::IndexType Index = mspIt.GetIndex();
       SImageType::PointType       Location;
       MSPImage->TransformIndexToPhysicalPoint(Index, Location);
-      if( vcl_abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001 )
+      if( std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001 )
         {
         mspIt.Set(high);
         }
@@ -216,9 +216,9 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
     }
     {
     SImageType::PointType               CrossHairsPoint;
-    SImageType::PointType::CoordRepType radius0 = vcl_abs(3 * imSpacing[0]);
-    SImageType::PointType::CoordRepType radius1 = vcl_abs(3 * imSpacing[1]);
-    SImageType::PointType::CoordRepType radius2 = vcl_abs(3 * imSpacing[2]);
+    SImageType::PointType::CoordRepType radius0 = std::abs(3 * imSpacing[0]);
+    SImageType::PointType::CoordRepType radius1 = std::abs(3 * imSpacing[1]);
+    SImageType::PointType::CoordRepType radius2 = std::abs(3 * imSpacing[2]);
     for( SImageType::PointType::CoordRepType k = CenterOfImage[2] - radius2;
          k < CenterOfImage[2] + radius2;
          k += imSpacing[2] )
@@ -307,20 +307,20 @@ void ComputeEulerAnglesFromRotationMatrix(const itk::Matrix<double, 3, 3> &  m,
   if( m[1][0] > 0.998 )  // singularity at north pole
     {
     initialAttitudeAngle = 0;
-    initialBankAngle = vcl_atan2(m[0][2], m[2][2]);
+    initialBankAngle = std::atan2(m[0][2], m[2][2]);
     initialHeadingAngle = vnl_math::pi_over_2;
     return;
     }
   if( m[1][0] < -0.998 )  // singularity at south pole
     {
     initialAttitudeAngle = 0;
-    initialBankAngle = vcl_atan2(m[0][2], m[2][2]);
+    initialBankAngle = std::atan2(m[0][2], m[2][2]);
     initialHeadingAngle = -vnl_math::pi_over_2;
     return;
     }
-  initialAttitudeAngle = vcl_atan2(-m[1][2], m[1][1]);
-  initialBankAngle = vcl_atan2(-m[2][0], m[0][0]);
-  initialHeadingAngle = vcl_asin(m[1][0]);
+  initialAttitudeAngle = std::atan2(-m[1][2], m[1][1]);
+  initialBankAngle = std::atan2(-m[2][0], m[0][0]);
+  initialHeadingAngle = std::asin(m[1][0]);
 }
 
 
@@ -330,12 +330,12 @@ itk::Versor<double> CreateRotationVersorFromAngles(const double alpha, const dou
   // psi = alpha is rotate the X axis -- Attitude
   // theta= beta is rotate the Y axis  -- Bank
   // phi=  gamma is rotate the Z axis -- Heading
-  const double cha = vcl_cos(alpha * 0.5);
-  const double chb = vcl_cos(beta * 0.5);
-  const double chg = vcl_cos(gamma * 0.5);
-  const double sha = vcl_sin(alpha * 0.5);
-  const double shb = vcl_sin(beta * 0.5);
-  const double shg = vcl_sin(gamma * 0.5);
+  const double cha = std::cos(alpha * 0.5);
+  const double chb = std::cos(beta * 0.5);
+  const double chg = std::cos(gamma * 0.5);
+  const double sha = std::sin(alpha * 0.5);
+  const double shb = std::sin(beta * 0.5);
+  const double shg = std::sin(gamma * 0.5);
 
   vnl_vector_fixed<double, 4> q;
   q[0] = cha * chb * chg + sha * shb * shg;
@@ -434,7 +434,7 @@ PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
   SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
   for( unsigned int c = 0; c < pyramidSchedule.cols(); ++c )
     {
-    pyramidSchedule[0][c] = static_cast<unsigned int>( vcl_floor(4.0 / refImageSpacing[c] + 0.5) );
+    pyramidSchedule[0][c] = static_cast<unsigned int>( std::floor(4.0 / refImageSpacing[c] + 0.5) );
     }
   MyPyramid->SetSchedule(pyramidSchedule);
   MyPyramid->Update();
@@ -502,16 +502,16 @@ RigidTransformType::Pointer computeTmspFromPoints(
   // ACPC << std::endl;
 
   // double
-  // PlaneNormalBank=-vcl_atan2(NormalToMSPPlaneVector[2],NormalToMSPPlaneVector[0]);
+  // PlaneNormalBank=-std::atan2(NormalToMSPPlaneVector[2],NormalToMSPPlaneVector[0]);
   //  //Rotate the "Y" (i.e. Anterior to Posterior Axis)
-  // double PlaneNormalHeading=-vcl_acos(NormalToMSPPlaneVector[0]);
+  // double PlaneNormalHeading=-std::acos(NormalToMSPPlaneVector[0]);
   //               //Rotate the "Z" (i.e. Inferior to Superior Axis)
 
-  double PlaneNormalBank = -vcl_atan2(NormalToMSPPlaneVector[2], NormalToMSPPlaneVector[0]);
+  double PlaneNormalBank = -std::atan2(NormalToMSPPlaneVector[2], NormalToMSPPlaneVector[0]);
   // Rotate the "Y" (i.e. Anterior to Posterior Axis)
-  double PlaneNormalHeading = vcl_sin(NormalToMSPPlaneVector[1]);
+  double PlaneNormalHeading = std::sin(NormalToMSPPlaneVector[1]);
   // Rotate the "Z" (i.e. Inferior to Superior Axis)
-  double PlaneNormalAttitude = vcl_sin(ACPC[2]);
+  double PlaneNormalAttitude = std::sin(ACPC[2]);
 
   SImageType::PointType::VectorType CenterOffset =
     AC.GetVectorFromOrigin()
@@ -573,14 +573,14 @@ void decomposeRPAC(const SImageType::PointType & RP,
                    const SImageType::PointType & AC,
                    float *const RPPC_to_RPAC_angle, float *const RPAC_over_RPPC)
 {
-  const double RPtoPC = vcl_sqrt( ( ( RP[1] - PC[1] ) * ( RP[1] - PC[1] ) + ( RP[2] - PC[2] ) * ( RP[2] - PC[2] ) ) );
-  const double RPtoAC = vcl_sqrt( ( ( RP[1] - AC[1] ) * ( RP[1] - AC[1] ) + ( RP[2] - AC[2] ) * ( RP[2] - AC[2] ) ) );
-  const double PCtoAC = vcl_sqrt( ( ( PC[1] - AC[1] ) * ( PC[1] - AC[1] ) + ( PC[2] - AC[2] ) * ( PC[2] - AC[2] ) ) );
+  const double RPtoPC = std::sqrt( ( ( RP[1] - PC[1] ) * ( RP[1] - PC[1] ) + ( RP[2] - PC[2] ) * ( RP[2] - PC[2] ) ) );
+  const double RPtoAC = std::sqrt( ( ( RP[1] - AC[1] ) * ( RP[1] - AC[1] ) + ( RP[2] - AC[2] ) * ( RP[2] - AC[2] ) ) );
+  const double PCtoAC = std::sqrt( ( ( PC[1] - AC[1] ) * ( PC[1] - AC[1] ) + ( PC[2] - AC[2] ) * ( PC[2] - AC[2] ) ) );
 
   const double cos_gamma = ( RPtoPC * RPtoPC + RPtoAC * RPtoAC - PCtoAC * PCtoAC ) / ( 2.0 * RPtoPC * RPtoAC );
-  const double gamma = vcl_acos(cos_gamma);
+  const double gamma = std::acos(cos_gamma);
 
-  // const double sin_gamma = vcl_sqrt( 1.0 - cos_gamma*cos_gamma );
+  // const double sin_gamma = std::sqrt( 1.0 - cos_gamma*cos_gamma );
 
   *RPPC_to_RPAC_angle = gamma;       // The angle between the RP-PC vector and
                                      // the RP-AC vector
@@ -599,8 +599,8 @@ SImageType::PointType::VectorType initialAC(const SImageType::PointType & RP,  c
   SImageType::PointType::VectorType       GuessAC;
 
   GuessAC[0] = ( RP[0] + RPPCVector[0] * .05 );
-  const double cos_gamma = vcl_cos(RPPC_to_RPAC_angleMean);
-  const double sin_gamma = vcl_sin(RPPC_to_RPAC_angleMean);
+  const double cos_gamma = std::cos(RPPC_to_RPAC_angleMean);
+  const double sin_gamma = std::sin(RPPC_to_RPAC_angleMean);
   // First rotate the RPPC vector in the direction of the AC poinnt
   GuessAC[1] = RP[1] + ( cos_gamma * RPPCVector[1] - sin_gamma * RPPCVector[2] ) * RPAC_over_RPPCMean;
   GuessAC[2] = RP[2] + ( sin_gamma * RPPCVector[1] + cos_gamma * RPPCVector[2] ) * RPAC_over_RPPCMean;

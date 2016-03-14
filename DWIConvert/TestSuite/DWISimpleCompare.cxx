@@ -32,7 +32,9 @@
 #include <itkImageRegionConstIterator.h>
 #include <itkSubtractImageFilter.h>
 #include <itkStatisticsImageFilter.h>
-#include <vcl_algorithm.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <algorithm>
 #include "DWIConvertUtils.h"
 #include "DWISimpleCompareCLP.h"
 #include <BRAINSCommonLib.h>
@@ -100,7 +102,7 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
   typename ImageType::PointType firstOrigin(firstImage->GetOrigin() );
   typename ImageType::PointType secondOrigin(secondImage->GetOrigin() );
   double                        distance =
-    vcl_sqrt(firstOrigin.SquaredEuclideanDistanceTo(secondOrigin) );
+    std::sqrt(firstOrigin.SquaredEuclideanDistanceTo(secondOrigin) );
   if( distance > 1.0E-3 )
     {
     std::cerr << "Origins differ " << firstOrigin
@@ -117,7 +119,7 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
   typename ImageType::SpacingType secondSpacing(secondImage->GetSpacing() );
   for( unsigned int i = 0; i < ImageType::GetImageDimension(); ++i )
     {
-    double diff = vcl_fabs(firstSpacing[i] - secondSpacing[i]);
+    double diff = std::fabs(firstSpacing[i] - secondSpacing[i]);
     if( diff > 1.0e-6 && diff < 1.0e-4 )
       {
       firstSpacing[i] = secondSpacing[i];
@@ -169,8 +171,8 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
               << inputVolume2 << e.GetDescription();
     return EXIT_FAILURE;
     }
-  if( vcl_fabs(static_cast<float>(statisticsFilter->GetMaximum() ) ) > 0.0001 ||
-      vcl_fabs(static_cast<float>(statisticsFilter->GetMinimum() ) ) > 0.0001 )
+  if( std::fabs(static_cast<float>(statisticsFilter->GetMaximum() ) ) > 0.0001 ||
+      std::fabs(static_cast<float>(statisticsFilter->GetMinimum() ) ) > 0.0001 )
     {
     std::cerr << "Image Data Differs -- min diff "
               << statisticsFilter->GetMinimum() << " max diff "

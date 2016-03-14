@@ -126,7 +126,7 @@ protected:
         u[dim] = p_it->Value()[dim] - m_Center[dim];
         norm2 += u[dim] * u[dim];
         }
-      norm2 = m_Radius / vcl_sqrt( norm2 );
+      norm2 = m_Radius / std::sqrt( norm2 );
       for( dim = 0; dim < PointDimension; ++dim )
         {
         u[dim] *= norm2;

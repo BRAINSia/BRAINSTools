@@ -98,8 +98,8 @@ public:
       mag1 += a * a;
       mag2 += b * b;
       }
-    diff /= vcl_sqrt(mag1 * mag2);
-    return vcl_asin(diff);
+    diff /= std::sqrt(mag1 * mag2);
+    return std::asin(diff);
   }
 
   virtual double ComputeDifference(const VectorType & vec2) const
@@ -112,7 +112,7 @@ public:
       const double b = static_cast<double>( vec2[k] );
       diff += ( a - b ) * ( a - b );
       }
-    return vcl_sqrt(diff);
+    return std::sqrt(diff);
   }
 
 protected:

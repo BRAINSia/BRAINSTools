@@ -257,7 +257,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 
   // Use time step if necessary. In many cases
   // the time step is one so this will be skipped
-  if( vcl_fabs(dt - 1.0) > 1.0e-4 )
+  if( std::fabs(dt - 1.0) > 1.0e-4 )
     {
     itkDebugMacro("Using timestep: " << dt);
     m_Multiplier->SetInput2(dt);
@@ -297,7 +297,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
     if( imposedMaxUpStep > 0.0 )
       {
       // max(norm(Phi))/2^N <= 0.25*pixelspacing
-      const double numiterfloat = 2.0 + vcl_log(imposedMaxUpStep) / vnl_math::ln2;
+      const double numiterfloat = 2.0 + std::log(imposedMaxUpStep) / vnl_math::ln2;
       unsigned int numiter = 0;
       if( numiterfloat > 0.0 )
         {

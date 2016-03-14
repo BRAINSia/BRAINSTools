@@ -128,7 +128,7 @@ TVector DD(TVector ADC1, TVector ADC2)
     for( int j = 0; j < 3; j++ )
       {
       temp(0) += V1(i) * V2(j)
-        * vcl_pow(dot_product( eig1.get_eigenvector(i), eig2.get_eigenvector(j) ), 2);
+        * std::pow(dot_product( eig1.get_eigenvector(i), eig2.get_eigenvector(j) ), 2);
       }
     }
 
@@ -152,10 +152,10 @@ float LI(TVector ADC1, TVector ADC2)
   // When two tensor is equal, then the DD operation could be simplified
   vnl_symmetric_eigensystem<float> eig1( Tensor2Matrix(ADC1) );
   const float                      t1 =
-    vcl_pow(eig1.get_eigenvalue(0), 2) + vcl_pow(eig1.get_eigenvalue(1), 2) + vcl_pow( eig1.get_eigenvalue(2), 2);
+    std::pow(eig1.get_eigenvalue(0), 2) + std::pow(eig1.get_eigenvalue(1), 2) + std::pow( eig1.get_eigenvalue(2), 2);
   const vnl_symmetric_eigensystem<float> eig2( Tensor2Matrix(ADC2) );
   float                                  t2 =
-    vcl_pow(eig2.get_eigenvalue(0), 2) + vcl_pow(eig2.get_eigenvalue(1), 2) + vcl_pow( eig2.get_eigenvalue(2), 2);
+    std::pow(eig2.get_eigenvalue(0), 2) + std::pow(eig2.get_eigenvalue(1), 2) + std::pow( eig2.get_eigenvalue(2), 2);
 
   float result;
   if( ( ( t0(0) - t0(1) ) < 0 ) || ( t0(0) < 0 ) )
@@ -164,8 +164,8 @@ float LI(TVector ADC1, TVector ADC2)
     }
   else
     {
-    result = 0.612372 * vcl_sqrt( t0(0) - t0(1) ) / vcl_sqrt( t0(0) )
-      + 0.75 * ( t0(0) - t0(1) ) / ( vcl_sqrt(t1 * t2) );
+    result = 0.612372 * std::sqrt( t0(0) - t0(1) ) / std::sqrt( t0(0) )
+      + 0.75 * ( t0(0) - t0(1) ) / ( std::sqrt(t1 * t2) );
     }
   return result;
 }
@@ -173,11 +173,11 @@ float LI(TVector ADC1, TVector ADC2)
 float FA( TVector eig )
 {
   const float mean = ( eig(0) + eig(1) + eig(2) ) / 3;
-  const float up = vcl_sqrt( vcl_pow(eig(0) - mean, 2) + vcl_pow(eig(1) - mean, 2) + vcl_pow(eig(2) - mean, 2) );
-  // float up = vcl_sqrt( vcl_pow(eig(0)-eig(1), 2) + vcl_pow(eig(1)-eig(2),2) +
-  // vcl_pow(eig(2)-eig(0),2) );
-  const float bottom = vcl_sqrt( vcl_pow(eig(0), 2) + vcl_pow(eig(1), 2) + vcl_pow(eig(2), 2) );
-  float       result = vcl_sqrt(1.5) * up / bottom;
+  const float up = std::sqrt( std::pow(eig(0) - mean, 2) + std::pow(eig(1) - mean, 2) + std::pow(eig(2) - mean, 2) );
+  // float up = std::sqrt( std::pow(eig(0)-eig(1), 2) + std::pow(eig(1)-eig(2),2) +
+  // std::pow(eig(2)-eig(0),2) );
+  const float bottom = std::sqrt( std::pow(eig(0), 2) + std::pow(eig(1), 2) + std::pow(eig(2), 2) );
+  float       result = std::sqrt(1.5) * up / bottom;
 
   if( result > 1.0 )
     {
@@ -189,8 +189,8 @@ float FA( TVector eig )
 float RA( TVector eig )
 {
   const float mean = ( eig(0) + eig(1) + eig(2) ) / 3;
-  const float up = vcl_sqrt( vcl_pow(eig(0) - mean, 2) + vcl_pow(eig(1) - mean, 2) + vcl_pow(eig(2) - mean, 2) );
-  const float bottom = vcl_sqrt( 3.0) * mean;
+  const float up = std::sqrt( std::pow(eig(0) - mean, 2) + std::pow(eig(1) - mean, 2) + std::pow(eig(2) - mean, 2) );
+  const float bottom = std::sqrt( 3.0) * mean;
 
   return up / bottom;
 }
@@ -199,7 +199,7 @@ float VR( TVector eig )
 {
   const float mean = ( eig(0) + eig(1) + eig(2) ) / 3;
   const float up = eig(0) * eig(1) * eig(2);
-  const float bottom = vcl_pow( mean, 3.0F );
+  const float bottom = std::pow( mean, 3.0F );
 
   return up / bottom;
 }

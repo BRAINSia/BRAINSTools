@@ -44,7 +44,7 @@ namespace itk
  * the reference landmarks are the coordinates of the deformed point and the
  * target landmarks are the negative of the displacement vectors. The
  * kernel-base spline is then used for regularly sampling the output space and
- * recover vector values for every vcl_single pixel.
+ * recover vector values for every std::single pixel.
  *
  * The subsampling factor used for the regular grid of the input field will
  * determine the number of landmarks in the KernelBased spline and therefore it
@@ -56,7 +56,7 @@ namespace itk
  * KernelBased spline, therefore a large memory consumption, long computation
  * time and high precision for the inverse estimation.
  *
- * This filter vcl_expects both the input and output images to be of pixel type
+ * This filter std::expects both the input and output images to be of pixel type
  * Vector.
  *
  * \ingroup ImageToImageFilter

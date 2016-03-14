@@ -200,7 +200,7 @@ int main(int argc, char * *argv)
   fiberTrackingFilter->SetSeedThreshold( seedThreshold );
   fiberTrackingFilter->SetAnisotropyThreshold( trackingThreshold );
   fiberTrackingFilter->SetCurvatureThreshold( curvatureThreshold ); /* Convert
-                                                                      to vcl_cos
+                                                                      to std::cos
                                                                       (curvature*pi/180)
                                                                        within
                                                                       method */

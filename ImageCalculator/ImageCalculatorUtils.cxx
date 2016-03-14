@@ -21,7 +21,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <vcl_cmath.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <cmath>
 #include <iostream>
 #include <metaCommand.h>
 #include <iostream>

@@ -22,8 +22,8 @@
 #include <vector>
 #include <list>
 #include <map>
-#define EXPP(x) vcl_exp( ( x ) )
-#define LOGP(x) vcl_log( ( x ) )
+#define EXPP(x) std::exp( ( x ) )
+#define LOGP(x) std::log( ( x ) )
 
 typedef  itk::Image<unsigned char, 3> ByteImageType;
 typedef itk::CompensatedSummation<double> CompensatedSummationType;

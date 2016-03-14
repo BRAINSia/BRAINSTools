@@ -165,7 +165,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     typedef itk::ImageRegionIteratorWithIndex<SImageType> Iterator;
 
     double maxval = 0;
-    double minval = vcl_numeric_limits<double>::max();
+    double minval = std::numeric_limits<double>::max();
     typedef itk::ImageRegionIteratorWithIndex<SImageType> SImageIteratorType;
     SImageIteratorType imIter( foreground, foreground->GetLargestPossibleRegion() );
     while( !imIter.IsAtEnd() )
@@ -226,7 +226,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     //   int numVoxels = imageRegion.GetSize(0) * imageRegion.GetSize(1) *
     // imageRegion.GetSize(2);
     std::cout << "headSizeLimit = " << headSizeLimit << " CCs" << std::endl;
-    double DesiredVolumeToIncludeBeforeClipping = vcl_numeric_limits<double>::max();   //
+    double DesiredVolumeToIncludeBeforeClipping = std::numeric_limits<double>::max();   //
     // headSizeLimit
     // is
     // initialized
@@ -346,7 +346,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         )
         {
         MaxCrossSectionalArea = CurrentCrossSectionalArea;
-        const double estimated_radius = vcl_sqrt(MaxCrossSectionalArea / vnl_math::pi); //
+        const double estimated_radius = std::sqrt(MaxCrossSectionalArea / vnl_math::pi); //
         // Estimate
         // the
         // radis
@@ -371,7 +371,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         }
       const double CurrentCrossSectionalVolume = histoIter.GetFrequency() * voxelSize;
       CummulativeVolume += CurrentCrossSectionalVolume;
-      largestAreaRadius = vcl_pow(0.75 * vnl_math::one_over_pi * CummulativeVolume, 0.33333333333333333); //
+      largestAreaRadius = std::pow(0.75 * vnl_math::one_over_pi * CummulativeVolume, 0.33333333333333333); //
       // Assuming
       // Sphere,
       // what

@@ -25,7 +25,9 @@
 #include "itkMetaDataDictionary.h"
 #include "itkMetaDataObject.h"
 #include "itkVariableLengthVector.h"
-#include "vcl_cmath.h"
+#include <vcl_compiler.h>
+#include <iostream>
+#include "cmath"
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -176,7 +178,7 @@ int RecoverBValues(const TImage *inputVol,
     }
   for( unsigned i = 0; i < bVectors.size(); ++i )
     {
-    double norm = vcl_sqrt( (bVectors[i][0] * bVectors[i][0])
+    double norm = std::sqrt( (bVectors[i][0] * bVectors[i][0])
                             + (bVectors[i][1] * bVectors[i][1])
                             + (bVectors[i][2] * bVectors[i][2]) );
     if( std::abs( 1- norm) < 1e-4 ) // Asssume value very close to 1 are 1
@@ -403,9 +405,9 @@ template <typename TValue>
 bool
 CloseEnough(const TValue & a, const TValue & b, double magdiv = 100000.0)
 {
-  double averageMag = (vcl_fabs(static_cast<double>(a) )
-                       + vcl_fabs(static_cast<double>(b) ) ) / 2.0;
-  double diff = vcl_fabs(static_cast<double>(a) - static_cast<double>(b) );
+  double averageMag = (std::fabs(static_cast<double>(a) )
+                       + std::fabs(static_cast<double>(b) ) ) / 2.0;
+  double diff = std::fabs(static_cast<double>(a) - static_cast<double>(b) );
 
   // case one -- both near zero
   if( averageMag < 0.000001 )

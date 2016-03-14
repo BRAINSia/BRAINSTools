@@ -61,7 +61,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
   const double c = 1.0;
   const double d = 0.61803398;
 
-  const double norm = vcl_sqrt( c * c + d * d );
+  const double norm = std::sqrt( c * c + d * d );
 
   static double IcosaPoints[] =
     {

@@ -593,15 +593,15 @@ int main(int argc, char * *argv)
       if( localFilterTimeStep <= 0 )
         {
         FloatImageType::SpacingType::ValueType minPixelSize =
-          vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::max();
+          std::numeric_limits<FloatImageType::SpacingType::ValueType>::max();
         const FloatImageType::SpacingType & imageSpacing = curImage->GetSpacing();
         for( FloatImageType::ImageDimensionType is = 0; is < FloatImageType::ImageDimension; ++is )
           {
-          minPixelSize = vcl_min( minPixelSize, imageSpacing[is]);
+          minPixelSize = std::min( minPixelSize, imageSpacing[is]);
           }
         localFilterTimeStep =
-          ( (minPixelSize - vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon() )
-            / ( vcl_pow(2.0, static_cast<double>(FloatImageType::ImageDimension + 1) ) )
+          ( (minPixelSize - std::numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon() )
+            / ( std::pow(2.0, static_cast<double>(FloatImageType::ImageDimension + 1) ) )
             );
         }
       FloatImagePointer denoisedImage =

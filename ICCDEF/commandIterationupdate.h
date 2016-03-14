@@ -179,7 +179,7 @@ public:
 
     typename DisplacementFieldType::Pointer deffield = 0;
     typename DisplacementFieldType::Pointer backdeffield = 0;
-    unsigned int iter = vcl_numeric_limits<unsigned int>::max();
+    unsigned int iter = std::numeric_limits<unsigned int>::max();
     double       metricbefore = -1.0;
     double       backmetricbefore = -1.0;
 

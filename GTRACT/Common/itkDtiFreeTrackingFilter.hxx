@@ -97,7 +97,7 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   bool stop;
 
   const float inRadians = this->pi / 180.0;
-  float       curvatureThreshold = vcl_cos( this->m_CurvatureThreshold * inRadians );
+  float       curvatureThreshold = std::cos( this->m_CurvatureThreshold * inRadians );
   /** Initialize Fiber Tracking **/
   this->m_Output = vtkPolyData::New();
   this->m_TrackingDirections.clear();

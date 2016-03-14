@@ -1202,7 +1202,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   // Normalizing constant for the Gaussian
   const FloatingPrecision denom =
-    vcl_pow(2 * vnl_math::pi, numModalities / 2.0) * vcl_sqrt(detcov) + vnl_math::eps;
+    std::pow(2 * vnl_math::pi, numModalities / 2.0) * std::sqrt(detcov) + vnl_math::eps;
   const FloatingPrecision invdenom = 1.0 / denom;
   CHECK_NAN(invdenom, __FILE__, __LINE__, "\n  denom:" << denom );
   const MatrixType invcov = MatrixInverseType(currCovariance);
@@ -1302,7 +1302,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                             // Note:  This is the maximum likelyhood estimate as described in
                             // formula at bottom of
                             //       http://en.wikipedia.org/wiki/Maximum_likelihood_estimation
-                            const FloatingPrecision likelihood = vcl_exp(-0.5 * mahalo) * invdenom;
+                            const FloatingPrecision likelihood = std::exp(-0.5 * mahalo) * invdenom;
 
                             const typename TProbabilityImage::PixelType currentPosterior =
                                 static_cast<typename TProbabilityImage::PixelType>((priorScale * priorValue *
@@ -1571,7 +1571,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                        tmp += m_Posteriors[iclass]->GetPixel(currIndex);
                                      }
                                    }
-                                   logLikelihood += vcl_log(tmp.GetSum());
+                                   logLikelihood += std::log(tmp.GetSum());
                                  }
                                }
                              }
@@ -1780,7 +1780,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                           // chance of being this structure
                           // from the spatial probabilities
                           probThresh->SetUpperThreshold(
-                              vcl_numeric_limits<typename TProbabilityImage::PixelType>::max());
+                              std::numeric_limits<typename TProbabilityImage::PixelType>::max());
                           // No upper limit needed, values
                           // should be between 0 and 1
                           probThresh->Update();
@@ -2633,17 +2633,17 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     logLikelihood = this->ComputeLogLikelihood();
     muLogMacro(<< "log(likelihood) = " << logLikelihood <<  std::endl);
     // TODO: move to before prevL update
-    deltaLogLikelihood = vcl_fabs( (logLikelihood - prevLogLikelihood) / prevLogLikelihood);
-    // (logLikelihood - prevLogLikelihood) / vcl_fabs(prevLogLikelihood);
+    deltaLogLikelihood = std::fabs( (logLikelihood - prevLogLikelihood) / prevLogLikelihood);
+    // (logLikelihood - prevLogLikelihood) / std::fabs(prevLogLikelihood);
     CHECK_NAN(deltaLogLikelihood, __FILE__, __LINE__,
               "\n logLikelihood: " << logLikelihood << "\n prevLogLikelihood: " << prevLogLikelihood );
     muLogMacro(
-      << "delta vcl_log(likelihood) = " << deltaLogLikelihood << "  Convergence Tolerance: "
+      << "delta std::log(likelihood) = " << deltaLogLikelihood << "  Convergence Tolerance: "
       << m_WarpLikelihoodTolerance <<  std::endl);
 
     // Convergence check
     converged = (CurrentEMIteration >= m_MaximumIterations)
-      // Ignore jumps in the vcl_log likelihood
+      // Ignore jumps in the std::log likelihood
       //    ||
       //    (deltaLogLikelihood < 0)
       ||

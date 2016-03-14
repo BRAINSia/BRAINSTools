@@ -1323,7 +1323,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       // fixed image mask.
 
       OptimizerBoundSelectionType boundSelect( bsplineTx->GetNumberOfParameters() );
-      if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
+      if( std::abs(m_MaxBSplineDisplacement) < 1e-12 )
         {
         boundSelect.Fill( LBFGSBOptimizerType::UNBOUNDED );
         }

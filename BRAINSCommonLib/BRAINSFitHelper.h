@@ -368,7 +368,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
     typedef typename MetricSamplePointSetType::PointType SamplePointType;
     const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
 
-    const unsigned long sampleCount = static_cast<unsigned long>(vcl_ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
+    const unsigned long sampleCount = static_cast<unsigned long>(std::ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
 
     typedef typename Statistics::MersenneTwisterRandomVariateGenerator RandomizerType;
     typename RandomizerType::Pointer randomizer = RandomizerType::New();

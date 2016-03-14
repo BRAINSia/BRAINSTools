@@ -397,20 +397,20 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
       2.0F * static_cast<float>(vnl_math::pi * static_cast<float>(HI[2]) ) * delta3;
 
     const float alphaCosOmega2 =
-      2.0F * m_Alpha * (fnx2 * vcl_cos(omega1) + fny2 * vcl_cos(omega2)
-                        + fnz2 * vcl_cos(omega3) );
+      2.0F * m_Alpha * (fnx2 * std::cos(omega1) + fny2 * std::cos(omega2)
+                        + fnz2 * std::cos(omega3) );
     const float b11 =
       ( sumsqdims2alpha + 2.0F * fnx2 * m_Beta + m_Gamma - alphaCosOmega2
-        - 2.0F * fnx2 * m_Beta * vcl_cos(omega1) ) / (spx * spx);
+        - 2.0F * fnx2 * m_Beta * std::cos(omega1) ) / (spx * spx);
     const float b22 =
       (sumsqdims2alpha + 2.0F * fny2 * m_Beta + m_Gamma - alphaCosOmega2
-       - 2.0F * fny2 * m_Beta * vcl_cos(omega2) ) / (spy * spy);
+       - 2.0F * fny2 * m_Beta * std::cos(omega2) ) / (spy * spy);
     const float b33 =
       (sumsqdims2alpha + 2.0F * fnz2 * m_Beta + m_Gamma - alphaCosOmega2
-       - 2.0F * fnz2 * m_Beta * vcl_cos(omega3) ) / (spz * spz);
-    const float b12 = (fnx * fny * m_Beta * vcl_sin(omega1) * vcl_sin(omega2) ) / (spx * spy);
-    const float b13 = (fnx * fnz * m_Beta * vcl_sin(omega1) * vcl_sin(omega3) ) / (spx * spz);
-    const float b23 = (fny * fnz * m_Beta * vcl_sin(omega2) * vcl_cos(omega3) ) / (spy * spz);
+       - 2.0F * fnz2 * m_Beta * std::cos(omega3) ) / (spz * spz);
+    const float b12 = (fnx * fny * m_Beta * std::sin(omega1) * std::sin(omega2) ) / (spx * spy);
+    const float b13 = (fnx * fnz * m_Beta * std::sin(omega1) * std::sin(omega3) ) / (spx * spz);
+    const float b23 = (fny * fnz * m_Beta * std::sin(omega2) * std::cos(omega3) ) / (spy * spz);
 
     // Square the matrix A=BB (i.e., B'B=BB because B'=B)
     this->m_sqr11->SetPixel(HI,
@@ -458,8 +458,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
       }
 
     const float inv_radius = 1.0 / radius;
-    const float distFromOrigin = vcl_sqrt(static_cast<float>(u * u + v * v + w * w) );
-    float       ftemp = 1.0 / ( 1.0 + vcl_pow( (distFromOrigin * inv_radius), 4 ) );;
+    const float distFromOrigin = std::sqrt(static_cast<float>(u * u + v * v + w * w) );
+    float       ftemp = 1.0 / ( 1.0 + std::pow( (distFromOrigin * inv_radius), 4 ) );;
     ftemp = (ftemp < 0.01 ) ? 0.0 : ftemp;
     const std::complex<float> cmpxtemp(ftemp, 0.0F);
     myIterator.Set(cmpxtemp);
@@ -1176,8 +1176,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 
   // determine the actual number of pieces that will be generated
   typename TFixedImage::SizeType::SizeValueType range = requestedRegionSize[splitAxis];
-  const unsigned int valuesPerThread = (unsigned int)::vcl_ceil(range / (double)num);
-  const unsigned int maxThreadIdUsed = (unsigned int)::vcl_ceil(range / (double)valuesPerThread) - 1;
+  const unsigned int valuesPerThread = (unsigned int)::std::ceil(range / (double)num);
+  const unsigned int maxThreadIdUsed = (unsigned int)::std::ceil(range / (double)valuesPerThread) - 1;
 
   // Split the region
   if( i < maxThreadIdUsed )

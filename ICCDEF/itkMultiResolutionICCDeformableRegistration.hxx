@@ -369,10 +369,10 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
       std::stringstream ss;
       std::string       str;
       int               level = m_NumberOfLevels - m_CurrentLevel - 1;
-      //  int resolution = 10000*(vcl_pow(0.5, level ));
+      //  int resolution = 10000*(std::pow(0.5, level ));
       //  std::cout<<level<<std::endl;
       //  std::cout<<"r:"<<resolution<<std::endl;
-      ss << 10000 * (vcl_pow(0.5, level ) );
+      ss << 10000 * (std::pow(0.5, level ) );
       ss >> str;
       name = name + "resolution" + str;
 

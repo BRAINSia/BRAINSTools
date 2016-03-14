@@ -438,7 +438,7 @@ landmarksConstellationDetector::FindCandidatePoints
           const SImageType::PointType::VectorType temp =
                                           currentPointLocation.GetVectorFromOrigin() - CenterOfSearchArea;
           const double inclusionDistance = temp.GetNorm();
-          if( ( inclusionDistance < (SI_restrictions+radii) ) && ( vcl_abs( temp[1] ) < (PA_restrictions+radii) ) )
+          if( ( inclusionDistance < (SI_restrictions+radii) ) && ( std::abs( temp[1] ) < (PA_restrictions+radii) ) )
             {
             SImageType::IndexType index3D;
             roiImage->TransformPhysicalPointToIndex( currentPointLocation, index3D );
@@ -487,11 +487,11 @@ landmarksConstellationDetector::FindCandidatePoints
   subtractConstantFromImageFilter->SetConstant2( ROImean );
   subtractConstantFromImageFilter->Update();
 
-  if( vcl_sqrt( ROIcount * ROIvar ) < vcl_numeric_limits<double>::epsilon() )
+  if( std::sqrt( ROIcount * ROIvar ) < std::numeric_limits<double>::epsilon() )
     {
     itkGenericExceptionMacro(<< "Zero norm for bounding area.");
     }
-  const double normInv = 1 / (vcl_sqrt( ROIcount * ROIvar ));
+  const double normInv = 1 / (std::sqrt( ROIcount * ROIvar ));
 
   typedef itk::MultiplyImageFilter<FImageType3D, FImageType3D, FImageType3D> MultiplyImageFilterType;
   MultiplyImageFilterType::Pointer multiplyImageFilter = MultiplyImageFilterType::New();
@@ -909,7 +909,7 @@ void landmarksConstellationDetector::Compute( void )
 
       // Local search radius in LR direction is affected by the
       // estimated MSP error in LR direction
-      const double err_MSP = vcl_abs( CandidateRPPoint[0]
+      const double err_MSP = std::abs( CandidateRPPoint[0]
                                       - this->m_CenterOfHeadMassEMSP[0] );
       std::cout << "The estimated MSP error in LR direction: "
                 << err_MSP << " mm" << std::endl;

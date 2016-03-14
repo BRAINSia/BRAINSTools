@@ -33,7 +33,9 @@
 #include <itkImageRegionConstIterator.h>
 
 #include<itkMath.h>
-#include <vcl_algorithm.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <algorithm>
 
 #include "DWICompareCLP.h"
 #include <BRAINSCommonLib.h>
@@ -215,9 +217,9 @@ int DoIt( int argc, char * argv[], PixelType )
           sendToArcCos = ( sendToArcCos < -1 ) ? -1 : sendToArcCos;
           // Avoid numerical precision problems
 
-          const double gradientAngle = vcl_abs( vcl_acos(sendToArcCos) * 180.0 * vnl_math::one_over_pi);
+          const double gradientAngle = std::abs( std::acos(sendToArcCos) * 180.0 * vnl_math::one_over_pi);
 
-          double gradientMinAngle = vcl_min( gradientAngle, vcl_abs(180.0 - gradientAngle) );
+          double gradientMinAngle = std::min( gradientAngle, std::abs(180.0 - gradientAngle) );
           if( gradientMinAngle > gradientToleranceForSameness )
             {
             std::cout << "GradientValueStrings don't match! " << firstGradientValueString

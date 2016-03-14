@@ -72,7 +72,9 @@
 #include "itkExtractImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkFlipImageFilter.h"
-#include "vcl_algorithm.h"
+#include <vcl_compiler.h>
+#include <iostream>
+#include "algorithm"
 #include "itkImageDuplicator.h"
 #include "itkEuler3DTransform.h"
 #include <vnl/vnl_cross.h>
@@ -212,7 +214,7 @@ ValuesType vectorNorm(const std::vector<ValuesType> & x)
     const ValuesType value = *it;
     norm += value * value;
     }
-  return vcl_sqrt(norm);
+  return std::sqrt(norm);
 }
 
 /*
@@ -241,7 +243,7 @@ void normalizeVector(std::vector<ValuesType> & x)
 {
   const ValuesType norm = vectorNorm(x);
 
-  if( norm < vcl_numeric_limits<ValuesType>::epsilon() )
+  if( norm < std::numeric_limits<ValuesType>::epsilon() )
     {
     std::cout << "WARNING:  ZERO NORM VECTOR." << __FILE__ << __LINE__ << std::endl;
     return;
@@ -475,7 +477,7 @@ double standardDeviation(DType *x, int n)
   sd = ( sxx - sx * sx / n ) / n;
   if( sd > 0.0 )
     {
-    sd = vcl_sqrt(sd);
+    sd = std::sqrt(sd);
     }
   else
     {
@@ -507,7 +509,7 @@ double pearsonCorrelation(DTypeX *x, DTypeY *y, int n)
   Sxy = n * sxy - sx * sy;
   if( Sxx * Syy > 0.0 )
     {
-    dum = vcl_sqrt(Sxx * Syy);
+    dum = std::sqrt(Sxx * Syy);
     }
   if( dum != 0.0 )
     {
@@ -533,7 +535,7 @@ void partialCorrelation(DTypeY *Y, DTypeX *X1, DTypeX *X2, int n, double *pr1, d
   dum2 = ( 1.0 - rY1 * rY1 ) * ( 1 - r12 * r12 );
   if( dum1 > 0.0 )
     {
-    *pr1 = ( rY1 - rY2 * r12 ) / vcl_sqrt(dum1);
+    *pr1 = ( rY1 - rY2 * r12 ) / std::sqrt(dum1);
     }
   else
     {
@@ -541,7 +543,7 @@ void partialCorrelation(DTypeY *Y, DTypeX *X1, DTypeX *X2, int n, double *pr1, d
     }
   if( dum2 > 0.0 )
     {
-    *pr2 = ( rY2 - rY1 * r12 ) / vcl_sqrt(dum2);
+    *pr2 = ( rY2 - rY1 * r12 ) / std::sqrt(dum2);
     }
   else
     {
@@ -616,7 +618,7 @@ independent_samples_t(DType *x1, int n1, DType *x2, int n2, int *df, double *mea
   var1 = sample_variance<DType>(x1, n1, &mean1);
   var2 = sample_variance<DType>(x2, n2, &mean2);
   var = ( ( ( n1 - 1 ) * var1 + ( n2 - 1 ) * var2 ) / ( n1 + n2 - 2.0 ) ) * ( 1.0 / n1 + 1.0 / n2 );
-  sd = vcl_sqrt(var);
+  sd = std::sqrt(var);
   if( sd == 0.0 )
     {
     return 0.0;
@@ -645,7 +647,7 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
     x1[i] -= x2[i];
     }
   var = sample_variance<double>(x1, n, &mean) / n;
-  sd = vcl_sqrt(var);
+  sd = std::sqrt(var);
   if( sd == 0.0 )
     {
     return 0.0;

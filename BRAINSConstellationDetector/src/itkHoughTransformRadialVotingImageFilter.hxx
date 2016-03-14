@@ -221,7 +221,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
           // Normalization
           if( norm2 != 0 )
             {
-            const typename DoGVectorType::ValueType inv_norm = 1.0 / vcl_sqrt(norm2);
+            const typename DoGVectorType::ValueType inv_norm = 1.0 / std::sqrt(norm2);
             for( unsigned int i = 0; i < ImageDimension; i++ )
               {
               grad[i] *= inv_norm;
@@ -275,8 +275,8 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
                 distance += vnl_math_sqr(
                     static_cast<InputCoordType>( indexAtVote[i] - index[i] ) * spacing[i]);
                 }
-              d = vcl_sqrt(d);
-              distance = vcl_sqrt(distance);
+              d = std::sqrt(d);
+              distance = std::sqrt(distance);
 
               // Apply a normal distribution weight;
               const double weight = GaussianFunction->EvaluatePDF(d, 0, averageRadius2);

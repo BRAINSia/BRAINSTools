@@ -94,7 +94,7 @@ double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledSta
               double edge = testPoint[p] - standardPoint[p];
               sumSquares += edge * edge;
               }
-            sumDist += vcl_sqrt(sumSquares);
+            sumDist += std::sqrt(sumSquares);
             }
 
           double dist = ( sumDist / numberOfPoints );

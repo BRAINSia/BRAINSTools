@@ -298,14 +298,14 @@ typename OutputImageType::Pointer GenericTransformImage(
     // distance image. This is an easy enough proof of a lower bound on
     // the image min, since it works even if the mask is a single voxel in
     // the image field corner. suggestedDefaultValue=
-    // vcl_sqrt( diagonalLength );
+    // std::sqrt( diagonalLength );
     // In most cases, a heuristic fraction of the diagonal value is an
     // even better lower bound: if the midpoint of the image is inside the
     // mask, 1/2 is a lower bound as well, and the background is unlikely
     // to drive the upper limit of the intensity range when we visualize
     // the intermediate image for debugging.
 
-    suggestedDefaultValue = -vcl_sqrt(diagonalLength) * 0.5;
+    suggestedDefaultValue = -std::sqrt(diagonalLength) * 0.5;
     }
   else // other than if (pixelType == "binary")
     {
@@ -447,7 +447,7 @@ typename OutputImageType::Pointer GenericTransformImage(
     //  std::cerr << "Lower Threshold == " << lowerThreshold << std::endl;
 
     const typename BinaryThresholdFilterType::InputPixelType upperThreshold =
-      vcl_numeric_limits<typename BinaryThresholdFilterType::InputPixelType>::max();
+      std::numeric_limits<typename BinaryThresholdFilterType::InputPixelType>::max();
     finalFilter->SetLowerThreshold(lowerThreshold);
     finalFilter->SetUpperThreshold(upperThreshold);
 

@@ -517,7 +517,7 @@ FeatureInputVector
   WorkingPixelType deltaY = m_gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
   WorkingPixelType deltaZ = m_gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
 
-  const scalarType Length = vcl_sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+  const scalarType Length = std::sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
   const scalarType inverseLength =  ( Length > 0.0F ) ? 1.0 / Length : 1;
 
   std::map<std::string, scalarType> unitGradient;

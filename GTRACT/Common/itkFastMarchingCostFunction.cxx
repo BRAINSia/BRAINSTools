@@ -99,7 +99,7 @@ FastMarchingCostFunction
 ::GetValue(const ParametersType & parameters) const
 {
   /* Cost Function = |gradient(T)| = |T(r)-T(n)| = |r-n|/F(r):
-    where "T" is the vcl_cost, "r" is initial point,"n" is neighbor.
+    where "T" is the std::cost, "r" is initial point,"n" is neighbor.
     F(r) is speed of initial point, and |r-n| is distance between the points*/
 
   float initialCost;
@@ -221,7 +221,7 @@ FastMarchingCostFunction // < TCostImage>
   if( !pass )
     {
     normal = newSum.normalize(); // when normal neighborhood is 0, take least
-                                 // vcl_cost direction
+                                 // std::cost direction
     // std::cout << "normal is 0 " << normal << std::endl;
     }
   else
@@ -230,7 +230,7 @@ FastMarchingCostFunction // < TCostImage>
     }
 
   /* DerivativeCostFunction = n(r)*CostValue,
-      where "n(r)" is the direction of the initial point towards the lowest vcl_cost neighbor */
+      where "n(r)" is the direction of the initial point towards the lowest std::cost neighbor */
 
   derivative = DerivativeType( CostImageDimension);
   for( unsigned int i = 0; i < CostImageDimension; i++ )

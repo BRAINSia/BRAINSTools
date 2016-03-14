@@ -31,7 +31,9 @@
 #include "itkSubtractImageFilter.h"
 #include "itkDivideImageFilter.h"
 #include "itkMultiplyImageFilter.h"
-#include <vcl_cmath.h>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <cmath>
 
 /* Iadd adds 2 images at every pixel location and outputs the resulting image.*/
 

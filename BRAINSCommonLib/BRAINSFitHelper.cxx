@@ -246,7 +246,7 @@ void
 BRAINSFitHelper::Update(void)
 {
   // Do remove intensity outliers if requested
-  if(  m_RemoveIntensityOutliers > vcl_numeric_limits<float>::epsilon() )
+  if(  m_RemoveIntensityOutliers > std::numeric_limits<float>::epsilon() )
     {
     this->m_FixedVolume = ClampNoisyTailsOfImage<FixedImageType, FixedBinaryVolumeType>(
                                                                                         m_RemoveIntensityOutliers,

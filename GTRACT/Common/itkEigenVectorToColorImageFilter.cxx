@@ -112,9 +112,9 @@ EigenVectorToColorImageFilter
         Green: Anterior-Posterior - z axis in Image
         Blue: Superior - Inferior - y axis in Image
       **************************************************************/
-      currentVoxel.SetRed( static_cast<unsigned char>( 255 * vcl_sqrt( vcl_fabs( e(0) ) ) ) );
-      currentVoxel.SetGreen( static_cast<unsigned char>( 255 * vcl_sqrt( vcl_fabs( e(2) ) ) ) );
-      currentVoxel.SetBlue( static_cast<unsigned char>( 255 * vcl_sqrt( vcl_fabs( e(1) ) ) ) );
+      currentVoxel.SetRed( static_cast<unsigned char>( 255 * std::sqrt( std::fabs( e(0) ) ) ) );
+      currentVoxel.SetGreen( static_cast<unsigned char>( 255 * std::sqrt( std::fabs( e(2) ) ) ) );
+      currentVoxel.SetBlue( static_cast<unsigned char>( 255 * std::sqrt( std::fabs( e(1) ) ) ) );
       currentVoxel.SetAlpha(255);
       }
     it.Set(currentVoxel);

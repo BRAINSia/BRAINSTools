@@ -96,7 +96,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
   InputImageOffsetType padding;
   for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    padding[i] = (unsigned int)vcl_floor(m_Padding / spacing[i] + 0.5);
+    padding[i] = (unsigned int)std::floor(m_Padding / spacing[i] + 0.5);
     }
   // Make sure padding is sensible
   for( unsigned int i = 0; i < ImageDimension; i++ )

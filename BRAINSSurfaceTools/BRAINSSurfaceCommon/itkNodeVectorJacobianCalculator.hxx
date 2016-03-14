@@ -345,7 +345,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
   const double scaledSinus   = axis.GetNorm();
   const double scaledCosinus = vsrc * vdst;
 
-  double angle = vcl_atan2( scaledSinus, scaledCosinus );
+  double angle = std::atan2( scaledSinus, scaledCosinus );
 
   typedef Versor<double> VersorType;
 

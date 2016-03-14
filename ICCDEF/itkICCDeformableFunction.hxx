@@ -370,9 +370,9 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
           difference[j] = fixedPoint[j] - warpedMovingPoint[j];
           }
 #if 1
-        if( vcl_abs(difference[0]) > lmk_error_allowed ||
-            vcl_abs(difference[1]) > lmk_error_allowed ||
-            vcl_abs(difference[2]) > lmk_error_allowed )
+        if( std::abs(difference[0]) > lmk_error_allowed ||
+            std::abs(difference[1]) > lmk_error_allowed ||
+            std::abs(difference[2]) > lmk_error_allowed )
           {
           for( unsigned int j = 0; j < ImageDimension; j++ )
             {
@@ -572,7 +572,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     {
     m_Metric = m_SumOfSquaredDifference
       / static_cast<double>( m_NumberOfPixelsProcessed );
-    m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
+    m_RMSChange = std::sqrt( m_SumOfSquaredChange
                             / static_cast<double>( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();

@@ -287,7 +287,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
       {
       this->m_Ipd += vnl_math_sqr( this->m_LE[i] - this->m_RE[i] );
       }
-    this->m_Ipd = vcl_sqrt( this->m_Ipd );
+    this->m_Ipd = std::sqrt( this->m_Ipd );
     std::cout << "The resulted interpupilary distance is " << this->m_Ipd << " mm" << std::endl;
 
     if( this->m_Ipd < 40 or this->m_Ipd > 85 )
@@ -346,10 +346,10 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     this->m_RotAngle[0] = 0;
 
     // about +P-axis
-    this->m_RotAngle[1] = vcl_atan( ( this->m_LE[2] - this->m_RE[2] )
+    this->m_RotAngle[1] = std::atan( ( this->m_LE[2] - this->m_RE[2] )
                                     / ( this->m_LE[0] - this->m_RE[0] ) );
     // about +S-axis
-    this->m_RotAngle[2] = -vcl_atan( ( this->m_LE[1] - this->m_RE[1] )
+    this->m_RotAngle[2] = -std::atan( ( this->m_LE[1] - this->m_RE[1] )
                                      / ( this->m_LE[0] - this->m_RE[0] ) );
 
     // Set affine tranformation

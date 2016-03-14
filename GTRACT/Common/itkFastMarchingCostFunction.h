@@ -97,10 +97,10 @@ public:
   /*  A position in the optimization space. */
   typedef Superclass::ParametersType ParametersType;
 
-  /*  vcl_cost function derivative (gradient). */
+  /*  std::cost function derivative (gradient). */
   typedef Superclass::DerivativeType DerivativeType;
 
-  /*  vcl_cost function value. */
+  /*  std::cost function value. */
   typedef Superclass::MeasureType MeasureType;
 
   /** Set/Get input Cost Image  */
@@ -110,11 +110,11 @@ public:
   // Returns dimension of image
   unsigned int GetNumberOfParameters() const ITK_OVERRIDE;
 
-  /** This method returns the value of the vcl_cost function for
+  /** This method returns the value of the std::cost function for
     * the specified parameters, or position. */
   MeasureType GetValue( const ParametersType & parameters ) const ITK_OVERRIDE;
 
-  /** This method returns the derivative of the vcl_cost function corresponding
+  /** This method returns the derivative of the std::cost function corresponding
     * to the specified parameters.   */
   void GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const ITK_OVERRIDE;
 

@@ -81,7 +81,7 @@ public:
       for( int k = 1; k < 5; k++ )
         {
         sim *=
-          ( 1.0 - vcl_fabs( static_cast<double>( this->operator[](k) ) - static_cast<double>( vec2[k] ) ) / 255.0 );
+          ( 1.0 - std::fabs( static_cast<double>( this->operator[](k) ) - static_cast<double>( vec2[k] ) ) / 255.0 );
         }
       return sim;
       }

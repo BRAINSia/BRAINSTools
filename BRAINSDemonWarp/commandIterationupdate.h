@@ -137,7 +137,7 @@ public:
       }
 
     typename DisplacementFieldType::Pointer deffield = ITK_NULLPTR;
-    unsigned int iter = vcl_numeric_limits<unsigned int>::max();
+    unsigned int iter = std::numeric_limits<unsigned int>::max();
     double       metricbefore = -1.0;
 
     if( const DiffeomorphicDemonsRegistrationFilterType * DDfilter =

@@ -299,7 +299,7 @@ protected:
           norm += p[dim] * p[dim];
           }
 
-        norm = m_Radius / vcl_sqrt( norm );
+        norm = m_Radius / std::sqrt( norm );
         for( dim = 0; dim < PointDimension; ++dim )
           {
           p[dim] *= norm;

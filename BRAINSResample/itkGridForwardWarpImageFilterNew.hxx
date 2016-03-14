@@ -133,7 +133,7 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
     for( unsigned int dim = 0; dim < ImageDimension; dim++ )
       {
       numGridIntersect +=
-        ( ( m_GridPixelSpacing[dim] != 0 ) && ( ( index[dim] % vcl_abs(m_GridPixelSpacing[dim]) ) == 0 ) );
+        ( ( m_GridPixelSpacing[dim] != 0 ) && ( ( index[dim] % std::abs(m_GridPixelSpacing[dim]) ) == 0 ) );
       }
     if( numGridIntersect == nonZeroGridDirections )  // else do nothing!
       {

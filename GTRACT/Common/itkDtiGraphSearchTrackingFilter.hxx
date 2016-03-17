@@ -322,7 +322,7 @@ void DtiGraphSearchTrackingFilter<
         TMatrix fullTensorPixel(3, 3);
 
         fullTensorPixel = Tensor2Matrix(tensorPixel);
-        fiberTensors->InsertNextTupleValue( fullTensorPixel.data_block() );
+        fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
 
         tensorPixel.ComputeEigenAnalysis(eigenValues, eigenVectors);
 

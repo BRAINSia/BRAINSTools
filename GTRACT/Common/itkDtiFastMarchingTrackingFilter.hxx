@@ -235,7 +235,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
 
   TMatrix fullTensorPixel(3, 3); fullTensorPixel = Tensor2Matrix( tensorPixel );
-  fiberTensors->InsertNextTupleValue( fullTensorPixel.data_block() );
+  fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
 
   m_GradientOP->SetInitialPosition( initialPosition );
 
@@ -289,7 +289,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
         // Add the Tensor to the Scalar Data
         tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
         fullTensorPixel = Tensor2Matrix( tensorPixel );
-        fiberTensors->InsertNextTupleValue( fullTensorPixel.data_block() );
+        fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
 
         // Reset gradient optimizer with current point as starting point
         m_GradientOP->SetInitialPosition( currentPosition );

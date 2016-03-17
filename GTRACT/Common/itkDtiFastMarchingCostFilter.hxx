@@ -735,7 +735,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   neighOffset.fill(0);
   neighOffset = offsetList.back();
   offsetList.pop_back();
-  float std::cosAngle1 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
+  float cosAngle1 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
   rOffset = neighOffset;
 
   while( !offsetList.empty() )
@@ -743,11 +743,11 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     neighOffset.fill(0);
     neighOffset = offsetList.back();
     offsetList.pop_back();
-    float std::cosAngle2 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
+    const float cosAngle2 = ( dot_product(normal, neighOffset) ) / ( neighOffset.magnitude() );
 
-    if( std::cosAngle2 > std::cosAngle1 )
+    if( cosAngle2 > cosAngle1 )
       {
-      std::cosAngle1 = std::cosAngle2;
+      cosAngle1 = cosAngle2;
       rOffset = neighOffset;
       }
     }

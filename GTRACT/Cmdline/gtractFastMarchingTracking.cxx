@@ -160,12 +160,12 @@ int main(int argc, char *argv[])
   typedef float                               PixelType;
   typedef itk::Image<PixelType, 3>            CostImageType;
   typedef itk::ImageFileReader<CostImageType> CostImageReaderType;
-  CostImageReaderType::Pointer std::costImageReader = CostImageReaderType::New();
-  std::costImageReader->SetFileName( inputCostVolume );
+  CostImageReaderType::Pointer costImageReader = CostImageReaderType::New();
+  costImageReader->SetFileName( inputCostVolume );
 
   try
     {
-    std::costImageReader->Update();
+    costImageReader->Update();
     }
   catch( itk::ExceptionObject & ex )
     {
@@ -173,8 +173,8 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  CostImageType::Pointer std::costImage = std::costImageReader->GetOutput();
-  AdaptOriginAndDirection<CostImageType>( std::costImage );
+  CostImageType::Pointer costImage = costImageReader->GetOutput();
+  AdaptOriginAndDirection<CostImageType>( costImage );
 
   /* Read Anisotropy Image */
   typedef itk::Image<PixelType, 3>                  AnisotropyImageType;
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
                                              MaskImageType> TrackingFilterType;
   TrackingFilterType::Pointer trackFilter = TrackingFilterType::New();
 
-  trackFilter->SetCostImage( std::costImage );
+  trackFilter->SetCostImage( costImage );
   trackFilter->SetAnisotropyImage( anisotropyImage );
   trackFilter->SetTensorImage( tensorImage );
   trackFilter->SetStartingRegion( startingSeedMask );

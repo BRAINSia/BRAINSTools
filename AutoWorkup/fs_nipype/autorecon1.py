@@ -141,14 +141,14 @@ def create_AutoRecon1(config):
                              name='Inputs')
         inputSpec.inputs.in_t1s = VerifyInputs(config['in_T1s'])
 
-        inputvols, iscaleout, ltaout = create_preproc_filenames(config['in_T1s'])
+        origvols, iscaleout, ltaout = create_preproc_filenames(config['in_T1s'])
 
         # T1 image preparation
         # For all T1's mri_convert ${InputVol} ${out_file}
         T1_image_preparation = pe.MapNode(MRIConvert(),
                                           iterfield=['in_file', 'out_file'],
                                           name="T1_prep")
-        T1_image_preparation.inputs.out_file = inputvols
+        T1_image_preparation.inputs.out_file = origvols
 
         ar1_wf.connect([(inputSpec, T1_image_preparation, [('in_t1s', 'in_file')]),
                         ])
@@ -449,11 +449,12 @@ def create_AutoRecon1(config):
 
     ar1_wf.connect([(brainmask, copy_brainmask, [('out_file', 'in_file')])])
 
-    outputs = ['t2_raw',
+    outputs = ['origvols',
+               't2_raw',
                'flair',
                'rawavg',
-               'orig',
                'orig_nu',
+               'orig',
                'talairach_auto',
                'talairach',
                't1',
@@ -464,7 +465,8 @@ def create_AutoRecon1(config):
     outputspec = pe.Node(IdentityInterface(fields=outputs),
                          name="Outputs")
     
-    ar1_wf.connect([(T2_convert, outputspec, [('out_file', 't2_raw')]),
+    ar1_wf.connect([(T1_image_preparation, outputspec, [('out_file', 'origvols')]),
+                    (T2_convert, outputspec, [('out_file', 't2_raw')]),
                     (FLAIR_convert, outputspec, [('out_file', 'flair')]),
                     (create_template, outputspec, [('out_file', 'rawavg')]),
                     (add_xform_to_orig, outputspec, [('out_file', 'orig')]),

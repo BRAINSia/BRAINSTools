@@ -195,7 +195,8 @@ def create_reconall(config):
     datasink.inputs.container = config['current_id']
     datasink.inputs.base_directory = config['subjects_dir']
     
-    reconall.connect([(outputspec, datasink, [('t2_raw', 'mri.orig.@t2raw'),
+    reconall.connect([(outputspec, datasink, [('orig_vols', 'mri.orig'),
+                                              ('t2_raw', 'mri.orig.@t2raw'),
                                               ('flair', 'mri.orig.@flair'),
                                               ('rawavg', 'mri.@rawavg'),
                                               ('orig', 'mri.@orig'),

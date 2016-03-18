@@ -85,10 +85,10 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     minThreads=int(minThreads) # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
-       threadsRangeString =  '{0}'.format(minThreads)
+       threadsRangeString = '{0}'.format(minThreads)
        maxThreads = minThreads
     elif maxThreads == -1:
-       threadsRangeString= '{0}-'.format(minThreasds)
+       threadsRangeString= '{0}-'.format(minThreads)
        maxThreads = 12345 #HUGE NUMBER!
     else:
        threadsRangeString= "{0}-{1}".format(minThreads,maxThreads)

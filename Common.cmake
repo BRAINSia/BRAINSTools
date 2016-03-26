@@ -8,11 +8,20 @@ include(ExternalProjectDependency)
 
 include(CMakeDependentOption)
 
+#if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
+
+## VTK is not easy to build on all platforms
+if(Slicer_BUILD_BRAINSTOOLS)
+  option(BRAINSTools_REQUIRES_VTK "Determine if tools depending on VTK need to be built." ON)
+else()
+  option(BRAINSTools_REQUIRES_VTK "Determine if tools depending on VTK need to be built." OFF)
+endif()
+mark_as_advanced(BRAINSTools_REQUIRES_VTK)
+
 option(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
 mark_as_advanced(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT)
 
-option(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)
-mark_as_advanced(${LOCAL_PROJECT_NAME}_USE_QT)
+CMAKE_DEPENDENT_OPTION(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF "BRAINSTools_REQUIRES_VTK" OFF)
 
 set(USE_ITKv4 ON)
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS only version 4 allowed.")
@@ -48,8 +57,9 @@ endif()
 # Build option(s)
 #-----------------------------------------------------------------------------
 option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
-option(USE_ANTS                           "Build ANTS"                           ON)
 option(USE_ReferenceAtlas                 "Build the Reference Atlas"            ON)
+
+option(USE_ANTS                           "Build ANTS"                           ON)
 
 option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
 option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
@@ -59,6 +69,7 @@ option(USE_BRAINSLabelStats               "Build BRAINSLabelStats"              
 option(USE_BRAINSStripRotation            "Build BRAINSStripRotation"            ON)
 option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
 option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
+CMAKE_DEPENDENT_OPTION(USE_BRAINSConstellationDetectorGUI "Build BRAINSConstellationDetectorGUI" OFF "BRAINSTools_REQUIRES_VTK" OFF)
 option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)
 option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
@@ -66,10 +77,11 @@ option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"     
 option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
-if(${CMAKE_CXX_STANDARD} STREQUAL "11" OR ${CMAKE_CXX_STANDARD} STREQUAL "14")
-  option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
-else()
+
+if(CMAKE_CXX_STANDARD LESS 11)
   option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
+else()
+  option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
 endif()
 
 
@@ -79,26 +91,22 @@ if(NOT BUILD_FOR_DASHBOARD)
 endif()
 option(USE_BRAINSCut                      "Build BRAINSCut"                      ${BUILD_FOR_DASHBOARD})
 option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
-option(USE_BRAINSDemonWarp                "Build BRAINSDemonWarp "               ${BUILD_FOR_DASHBOARD})
-option(USE_GTRACT                         "Build GTRACT"                         ${BUILD_FOR_DASHBOARD})
+CMAKE_DEPENDENT_OPTION(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "BRAINSTools_REQUIRES_VTK" OFF)
+CMAKE_DEPENDENT_OPTION(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "BRAINSTools_REQUIRES_VTK" OFF)
 option(USE_BRAINSMush                     "Build BRAINSMush"                     ${BUILD_FOR_DASHBOARD})
 option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
-option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
 
 ## These are not yet ready for prime time.
-option(USE_BRAINSTalairach                "Build BRAINSTalairach"                ${BUILD_FOR_DASHBOARD})
-option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "         OFF)
-option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "        ${BUILD_FOR_DASHBOARD})
+CMAKE_DEPENDENT_OPTION(USE_BRAINSTalairach "Build BRAINSTalairach" ${BUILD_FOR_DASHBOARD} "BRAINSTools_REQUIRES_VTK" OFF)
+CMAKE_DEPENDENT_OPTION(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "BRAINSTools_REQUIRES_VTK" OFF)
+option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass"         OFF)
 option(USE_ICCDEF                         "Build ICCDEF     "                    OFF)
 option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
-option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
+CMAKE_DEPENDENT_OPTION(USE_DebugImageViewer "Build DebugImageViewer" OFF "BRAINSTools_REQUIRES_VTK" OFF)
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
+
 option(USE_TBB "Build TBB as an internal module. This feature is still experimental and unsupported" OFF)
 mark_as_advanced(USE_TBB)
-
-if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
-  set(BRAINSTools_REQUIRES_VTK ON)
-endif()
 
 if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
   set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)

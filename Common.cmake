@@ -62,7 +62,7 @@ option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"   
 option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)
 option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
-option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      OFF)
+option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      ON)
 option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)

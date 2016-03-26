@@ -2,10 +2,10 @@
 # find and incorporate the VTK library
 macro(FindVTKUtil)
   set(VTK_VERSION_MIN 7.0)
-  if(NOT BRAINSTools_REQUIRES_VTK)
+  if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
     message( FATAL_ERROR "You have requested the FindVTKUtil macro, but "
                          "the requesting module is not listed as requiring vtk "
-                         "under Common.cmake as \"set(BRAINSTools_REQUIRES_VTK ON)\" "
+                         "under Common.cmake as \"set(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK ON)\" "
                          "please add the requesting module to the list in Common.cmake" )
   endif()
 

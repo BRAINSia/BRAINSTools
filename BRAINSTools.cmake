@@ -49,7 +49,7 @@ message(STATUS "Building ${PROJECT_NAME} version \"${${PROJECT_NAME}_VERSION}\""
 include(FindITKUtil)
 include(FindVTKUtil)
 # #-----------------------------------------------------------------------------
-# if(BRAINSTools_REQUIRES_VTK)
+# if(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
 # #  message("VTK_DIR:${VTK_DIR}")
 #   find_package(VTK REQUIRED)
 #   if(VTK_FOUND)

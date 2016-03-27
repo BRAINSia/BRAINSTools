@@ -20,6 +20,21 @@ foreach(p
   endif()
 endforeach()
 
+#-----------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
+include(ExternalProject)
+include(ExternalProjectDependency)
+#-----------------------------------------------------------------------------
+if(APPLE)
+  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+  #       we ensure that the bitness, and C++ standard library will be properly detected.
+  include(BlockSetCMakeOSXVariables)
+  mark_as_superbuild(
+    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+    ALL_PROJECTS
+    )
+endif()
+
 set(LOCAL_PROJECT_NAME BRAINSTools)
 set(PRIMARY_PROJECT_NAME ${LOCAL_PROJECT_NAME})
 
@@ -48,9 +63,9 @@ else()
   project(${LOCAL_PROJECT_NAME} C CXX)
 endif()
 
-if(DEFINED CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE) # setting only two configuration types
-endif()
+#if(DEFINED CMAKE_CONFIGURATION_TYPES)
+#  set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE) # setting only two configuration types
+#endif()
 
 ## For compatibility with Slicer
 if(NOT CMAKE_CXX_STANDARD)

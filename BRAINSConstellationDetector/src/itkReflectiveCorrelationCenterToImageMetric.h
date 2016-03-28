@@ -83,7 +83,7 @@ public:
 
   ////////////////////////
   // Mandatory metric functions
-  virtual void Initialize(void) throw ( itk::ExceptionObject )
+  virtual void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE
   {
     ParametersType params;
     params.set_size(SpaceDimension);
@@ -124,7 +124,7 @@ public:
         }
       }
     // DEBUGGING INFORMATION
-    if( LMC::globalverboseFlag == true )
+    if( LMC::globalverboseFlag )
       {
       itk::NumberToString<double> doubleToString;
       std::cout << "quick search 15 deg "
@@ -170,43 +170,43 @@ public:
     return raw_finalcos_gamma;
   }
 
-  virtual MeasureType GetValue() const
+  virtual MeasureType GetValue() const ITK_OVERRIDE
   {
     return f(this->m_params);
   }
 
-  virtual void GetDerivative( DerivativeType & ) const
+  virtual void GetDerivative( DerivativeType & ) const ITK_OVERRIDE
   {
   }
 
   void GetValueAndDerivative( MeasureType & value,
-                              DerivativeType & derivative ) const
+                              DerivativeType & derivative ) const ITK_OVERRIDE
   {
     value = GetValue();
     GetDerivative( derivative );
   }
 
-  virtual unsigned int GetNumberOfLocalParameters() const
+  virtual unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
-  virtual unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
-  virtual void SetParameters( ParametersType & parameters )
+  virtual void SetParameters( ParametersType & parameters ) ITK_OVERRIDE
   {
     m_params = parameters;
   }
 
-  virtual const ParametersType & GetParameters() const
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE
   {
     return m_params;
   }
 
-  virtual bool HasLocalSupport() const
+  virtual bool HasLocalSupport() const ITK_OVERRIDE
   {
     return m_HasLocalSupport;
   }
@@ -216,7 +216,7 @@ public:
     m_HasLocalSupport = hls;
   }
 
-  virtual void UpdateTransformParameters( const DerivativeType &, ParametersValueType )
+  virtual void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) ITK_OVERRIDE
   {
   }
   ////////////////////////
@@ -268,7 +268,7 @@ public:
     this->CreateResamplerReferenceImage();
 
     this->m_Translation = this->m_CenterOfHeadMass.GetVectorFromOrigin() - m_CenterOfImagePoint.GetVectorFromOrigin();
-    if( LMC::globalverboseFlag == true )
+    if( LMC::globalverboseFlag )
       {
       std::cout << "Center Of Physical Point: " << this->m_CenterOfImagePoint << std::endl;
       std::cout << "Center Of Mass Point:" << this->m_CenterOfHeadMass << std::endl;

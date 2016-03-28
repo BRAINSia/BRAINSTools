@@ -29,7 +29,7 @@
 #define __landmarksConstellationCommon_h
 
 // Use linear interpolation to keep the processing quick.
-#define __QUICK_RUNS_APPROXIMATION__
+//RM #define __QUICK_RUNS_APPROXIMATION__
 
 #include <cstdio>      // TODO: This include file should be removed, prefer constructs
                        // from the std library
@@ -85,12 +85,14 @@
 
 #include "Slicer3LandmarkIO.h"
 
+#if 0 //RM
 extern const unsigned int MAX_ROTATIONS_TESTED;
 extern const unsigned int MAXITER;
 extern const unsigned int DEL;
 extern const unsigned int YES;
-extern const unsigned int NO;
 extern const unsigned int SMAX;
+#endif
+extern const unsigned int NO;
 namespace LMC
 {
 extern bool debug;
@@ -103,13 +105,13 @@ extern bool globalverboseFlag;
 
 namespace // avoid 'shadows declaration' warnings.
 {
-typedef float                 vertexType[4][3];
+//RM typedef float                 vertexType[4][3];
 typedef itk::Image<short, 3>  SImageType;
 typedef itk::Image<double, 3> DImageType3D;
 typedef itk::Image<float, 3>  FImageType3D;
-// typedef itk::Image<short,2> SImageType2D;
-typedef itk::Image<double, 2> DImageType2D;
-typedef itk::Image<float, 2>  FImageType2D;
+//RM typedef itk::Image<short,2> SImageType2D;
+//RM typedef itk::Image<double, 2> DImageType2D;
+//RM typedef itk::Image<float, 2>  FImageType2D;
 
 typedef itk::Image<unsigned char, 3> ByteImageType;
 
@@ -128,13 +130,13 @@ typedef itk::LinearInterpolateImageFunction<SImageType, double>        LinearInt
 
 #include "landmarksConstellationModelIO.h"
 
-extern VersorTransformType::Pointer ConvertToVersorRigid3D(RigidTransformType::Pointer RT);
+//RM extern VersorTransformType::Pointer ConvertToVersorRigid3D(RigidTransformType::Pointer RT);
 
 extern std::string globalResultsDir;
 extern int         globalImagedebugLevel;
 extern PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage);
 
-extern PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage);
+//RM extern PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage);
 
 extern SImageType::PointType GetImageCenterPhysicalPoint(SImageType::Pointer & image);
 
@@ -148,6 +150,7 @@ extern SImageType::Pointer CreateTestCenteredRotatedImage2(const RigidTransformT
                                                            /*const*/ SImageType::Pointer & image,
                                                            const RigidTransformType::Pointer & Point_Rotate);
 
+#if 0 //RM
 extern itk::Matrix<double, 3, 3> GetMatrixInverse(const itk::Matrix<double, 3, 3> & input);
 
 // extern itk::Matrix<double,3,3> CreateRotationMatrixFromAngles(const double
@@ -164,30 +167,33 @@ extern void defineTemplateIndexLocations(const int r, const int h,
 
 extern int computeTemplateSize(const int r, const int h);
 
+#endif
 extern void decomposeRPAC(const SImageType::PointType & RP, const SImageType::PointType & PC,
-                          const SImageType::PointType & AC, float *const RPPC_to_RPAC_angle,
-                          float *const RPAC_over_RPPC);
+                          const SImageType::PointType & AC, double *const RPPC_to_RPAC_angle,
+                          double *const RPAC_over_RPPC);
 
 extern void MakeLabelImage(SImageType::Pointer in, const SImageType::PointType & RP, const SImageType::PointType & AC,
                            const SImageType::PointType & PC, const SImageType::PointType & VN4,
                            const std::string & fname);
 
+#if 0 //RM
 extern SImageType::PointType::VectorType initialAC(const SImageType::PointType & RP, const SImageType::PointType & PC,
                                                    const double RPPC_to_RPAC_angleMean,
                                                    const double RPAC_over_RPPCMean);
+#endif
 
-typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
-typedef RandomGeneratorType::Pointer                           RandomGeneratorPointer;
-extern RandomGeneratorPointer _RandomGenerator;
-extern double GetRandomZeroOneDouble(void);
+//RM typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
+//RM typedef RandomGeneratorType::Pointer                           RandomGeneratorPointer;
+//RM extern RandomGeneratorPointer _RandomGenerator;
+//RM extern double GetRandomZeroOneDouble(void);
 
-extern void InitializeRandomZeroOneDouble(RandomGeneratorType::IntegerType rseed);
+//RM extern void InitializeRandomZeroOneDouble(RandomGeneratorType::IntegerType rseed);
 
 extern void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp,
                        SImageType::Pointer & transformedImage, const SImageType::PointType & centerOfHeadMass,
                        const int qualityLevel, double & cc);
 
-extern void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel);
+extern void ComputeMSP_Easy(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel);
 
 extern SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
                                                  const RigidTransformType::Pointer MSPTransform,
@@ -324,6 +330,7 @@ void extractArray(
   const landmarksConstellationModelIO::IndexLocationVectorType & model,
   std::vector<float> & result_array);
 
+#if 0 //RM
 inline
 static std::string
 PrefixName(const char *prefix, const std::string & name)
@@ -340,6 +347,7 @@ PrefixName(const char *prefix, const std::string & name)
   rval += itksys::SystemTools::GetFilenameName(name);
   return rval;
 }
+#endif
 
 #include <itkMinimumMaximumImageFilter.h>
 #include <itkScalarImageToHistogramGenerator.h>
@@ -657,7 +665,9 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
   return t;
 }
 #endif
-
+#if 0
 template<class TScalarType>
 extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  );
+#endif
+
 #endif

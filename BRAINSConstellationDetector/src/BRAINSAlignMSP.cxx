@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     }
 
   RigidTransformType::Pointer Tmsp = RigidTransformType::New();
-  ComputeMSP(image, Tmsp, mspQualityLevel);
+  ComputeMSP_Easy(image, Tmsp, mspQualityLevel);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;

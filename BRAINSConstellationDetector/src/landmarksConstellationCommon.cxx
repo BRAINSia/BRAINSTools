@@ -30,16 +30,16 @@
 #include "TrimForegroundInDirection.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 
-typedef itk::ImageMomentsCalculator<SImageType> momentsCalculatorType;
+//RM typedef itk::ImageMomentsCalculator<SImageType> momentsCalculatorType;
 
 // TODO:  This should really be a singleton.
-RandomGeneratorPointer _RandomGenerator;
-const unsigned int     MAX_ROTATIONS_TESTED = 90;
-const unsigned int     MAXITER = 5000;
-const unsigned int     DEL = 3;
-const unsigned int     YES = 1;
+//RM RandomGeneratorPointer _RandomGenerator;
+//RM const unsigned int     MAX_ROTATIONS_TESTED = 90;
+//RM const unsigned int     MAXITER = 5000;
+//RM const unsigned int     DEL = 3;
+//RM const unsigned int     YES = 1;
 const unsigned int     NO = 0;
-const unsigned int     SMAX = 50;
+//RM const unsigned int     SMAX = 50;
 namespace LMC
 {
 bool debug(false);
@@ -50,6 +50,47 @@ std::string globalResultsDir(".");       // A global variable to define where
                                          // output images are to be placed
 int globalImagedebugLevel(1000);         // A global variable to determine the
                                          // level of debugging to perform.
+
+typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
+
+void DoMultiQualityReflection(SImageType::Pointer &image,
+                              RigidTransformType::Pointer &Tmsp,
+                              const int qualityLevel,
+                              const reflectionFunctorType::Pointer &reflectionFunctor) {
+  reflectionFunctor->InitializeImage(image);
+  // itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
+  PyramidFilterType::Pointer    MyPyramid = MakeThreeLevelPyramid(image.GetPointer() );
+  SImageType::Pointer           EigthImage = MyPyramid->GetOutput(0);
+  SImageType::Pointer           QuarterImage = MyPyramid->GetOutput(1);
+  SImageType::Pointer           HalfImage = MyPyramid->GetOutput(2);
+  if( qualityLevel >= 0 )
+      {
+        std::__1::cout << "Level 0 Quality Estimates" << std::__1::endl;
+      reflectionFunctor->SetDownSampledReferenceImage(EigthImage);
+      reflectionFunctor->Initialize();
+      reflectionFunctor->Update();
+      }
+  if( qualityLevel >= 1 )
+      {
+        std::__1::cout << "Level 1 Quality Estimates" << std::__1::endl;
+      reflectionFunctor->SetDownSampledReferenceImage(QuarterImage);
+      reflectionFunctor->Update();
+      }
+  if( qualityLevel >= 2 )
+      {
+        std::__1::cout << "Level 2 Quality Estimates" << std::__1::endl;
+      reflectionFunctor->SetDownSampledReferenceImage(HalfImage);
+      reflectionFunctor->Update();
+      }
+  if( qualityLevel >= 3 )
+      {
+        std::__1::cout << "Level 3 Quality Estimates" << std::__1::endl;
+      reflectionFunctor->SetDownSampledReferenceImage(image);
+      reflectionFunctor->Update();
+      }
+  reflectionFunctor->SetDownSampledReferenceImage(image);
+  Tmsp = reflectionFunctor->GetTransformToMSP();
+}
 
 void ComputeMSP(SImageType::Pointer image,
                 RigidTransformType::Pointer & Tmsp,
@@ -71,86 +112,23 @@ void ComputeMSP(SImageType::Pointer image,
     }
   else
     {
-    // itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
-    PyramidFilterType::Pointer    MyPyramid = MakeThreeLevelPyramid(image.GetPointer() );
-    SImageType::Pointer           EigthImage = MyPyramid->GetOutput(0);
-    SImageType::Pointer           QuarterImage = MyPyramid->GetOutput(1);
-    SImageType::Pointer           HalfImage = MyPyramid->GetOutput(2);
-    typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
     reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
-
     reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass);
-    reflectionFunctor->InitializeImage(image);
-    if( qualityLevel >= 0 )
-      {
-      std::cout << "Level 0 Quality Estimates" << std::endl;
-      reflectionFunctor->SetDownSampledReferenceImage(EigthImage);
-      reflectionFunctor->Initialize();
-      reflectionFunctor->Update();
-      }
-    if( qualityLevel >= 1 )
-      {
-      std::cout << "Level 1 Quality Estimates" << std::endl;
-      reflectionFunctor->SetDownSampledReferenceImage(QuarterImage);
-      reflectionFunctor->Update();
-      }
-    if( qualityLevel >= 2 )
-      {
-      std::cout << "Level 2 Quality Estimates" << std::endl;
-      reflectionFunctor->SetDownSampledReferenceImage(HalfImage);
-      reflectionFunctor->Update();
-      }
-    if( qualityLevel >= 3 )
-      {
-      std::cout << "Level 3 Quality Estimates" << std::endl;
-      reflectionFunctor->SetDownSampledReferenceImage(image);
-      reflectionFunctor->Update();
-      }
-    reflectionFunctor->SetDownSampledReferenceImage(image);
-    Tmsp = reflectionFunctor->GetTransformToMSP();
+
+    DoMultiQualityReflection(image, Tmsp, qualityLevel, reflectionFunctor);
+
     transformedImage = reflectionFunctor->GetMSPCenteredImage();
     cc = reflectionFunctor->GetCC();
     }
 }
 
-void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel)
+void ComputeMSP_Easy(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel)
 {
-  // itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
-  PyramidFilterType::Pointer    MyPyramid = MakeThreeLevelPyramid(image);
-  SImageType::Pointer           EigthImage = MyPyramid->GetOutput(0);
-  SImageType::Pointer           QuarterImage = MyPyramid->GetOutput(1);
-  SImageType::Pointer           HalfImage = MyPyramid->GetOutput(2);
   typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
   reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
 
   reflectionFunctor->InitializeImage(image);
-  if( qualityLevel >= 0 )
-    {
-    std::cout << "Level 0 Quality Estimates" << std::endl;
-    reflectionFunctor->SetDownSampledReferenceImage(EigthImage);
-    reflectionFunctor->Initialize();
-    reflectionFunctor->Update();
-    }
-  if( qualityLevel >= 1 )
-    {
-    std::cout << "Level 1 Quality Estimates" << std::endl;
-    reflectionFunctor->SetDownSampledReferenceImage(QuarterImage);
-    reflectionFunctor->Update();
-    }
-  if( qualityLevel >= 2 )
-    {
-    std::cout << "Level 2 Quality Estimates" << std::endl;
-    reflectionFunctor->SetDownSampledReferenceImage(HalfImage);
-    reflectionFunctor->Update();
-    }
-  if( qualityLevel >= 3 )
-    {
-    std::cout << "Level 3 Quality Estimates" << std::endl;
-    reflectionFunctor->SetDownSampledReferenceImage(image);
-    reflectionFunctor->Update();
-    }
-  reflectionFunctor->SetDownSampledReferenceImage(image);
-  Tmsp = reflectionFunctor->GetTransformToMSP();
+  DoMultiQualityReflection(image, Tmsp, qualityLevel, reflectionFunctor);
 }
 
 void CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename)
@@ -274,7 +252,8 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
   return RasterImage;
 }
 
-vnl_vector<double> convertToReadable(const vnl_vector<double> & input)
+#if 0 //RM
+static vnl_vector<double> convertToReadable(const vnl_vector<double> & input)
 {
   vnl_vector<double> temp;
   temp.set_size(3);
@@ -283,7 +262,9 @@ vnl_vector<double> convertToReadable(const vnl_vector<double> & input)
   temp[2] = input[2];
   return temp;
 }
+#endif
 
+#if 0 //RM
 /** this conversion uses conventions as described on page:
  *   http://www.euclideanspace.com/maths/geometry/rotations/euler/index.htm
  *   Coordinate System: right hand
@@ -387,6 +368,7 @@ itk::Matrix<double, 3, 3> GetMatrixInverse(const itk::Matrix<double, 3, 3> & inp
     }
   return output;
 }
+#endif
 
 PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage)
 {
@@ -417,6 +399,7 @@ PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage)
   return MyPyramid;
 }
 
+#if 0 //RM
 PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
 {
   PyramidFilterType::ScheduleType pyramidSchedule;
@@ -440,6 +423,7 @@ PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
   MyPyramid->Update();
   return MyPyramid;
 }
+#endif
 
 // ////////////////////////////////////////////////////////////////////////
 //  This is a lightweight wrapper for FindCenterOfBrainBasedOnTopOfHead, which
@@ -536,6 +520,7 @@ RigidTransformType::Pointer computeTmspFromPoints(
   return AlignMSPTransform;
 }
 
+#if 0 //RM
 // //
 //
 //
@@ -561,6 +546,7 @@ int computeTemplateSize(const int r, const int h)
     }
   return size;
 }
+#endif
 
 //
 //
@@ -571,7 +557,7 @@ int computeTemplateSize(const int r, const int h)
 void decomposeRPAC(const SImageType::PointType & RP,
                    const SImageType::PointType & PC,
                    const SImageType::PointType & AC,
-                   float *const RPPC_to_RPAC_angle, float *const RPAC_over_RPPC)
+                   double *const RPPC_to_RPAC_angle, double *const RPAC_over_RPPC)
 {
   const double RPtoPC = std::sqrt( ( ( RP[1] - PC[1] ) * ( RP[1] - PC[1] ) + ( RP[2] - PC[2] ) * ( RP[2] - PC[2] ) ) );
   const double RPtoAC = std::sqrt( ( ( RP[1] - AC[1] ) * ( RP[1] - AC[1] ) + ( RP[2] - AC[2] ) * ( RP[2] - AC[2] ) ) );
@@ -592,6 +578,7 @@ void decomposeRPAC(const SImageType::PointType & RP,
                                      // std::endl;
 }
 
+#if 0 //RM
 SImageType::PointType::VectorType initialAC(const SImageType::PointType & RP,  const SImageType::PointType & PC,
                                             const double RPPC_to_RPAC_angleMean, const double RPAC_over_RPPCMean)
 {
@@ -606,6 +593,7 @@ SImageType::PointType::VectorType initialAC(const SImageType::PointType & RP,  c
   GuessAC[2] = RP[2] + ( sin_gamma * RPPCVector[1] + cos_gamma * RPPCVector[2] ) * RPAC_over_RPPCMean;
   return GuessAC;
 }
+#endif
 
 void
 extractArray(LinearInterpolatorType::Pointer imInterp,
@@ -620,11 +608,11 @@ extractArray(LinearInterpolatorType::Pointer imInterp,
     const SImageType::PointType & point = CenterPoint + *it;
     if( imInterp->IsInsideBuffer(point) )
       {
-      result_array[q] = imInterp->Evaluate(point);
+      result_array[q] = static_cast<float>(imInterp->Evaluate(point));
       }
     else
       {
-      result_array[q] = 0.0;
+      result_array[q] = 0.0F;
       }
     }
 }
@@ -743,6 +731,7 @@ SImageType::Pointer MakeIsoTropicReferenceImage(void)
   return isotropicReferenceVolume;
 }
 
+#if 0 //RM
 template<class TScalarType>
 void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  )
 {
@@ -762,3 +751,4 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , con
 }
 
 template void WriteTransformToDisk<double>( itk::Transform<double, 3, 3> * myTransform , const std::string & filename );
+#endif

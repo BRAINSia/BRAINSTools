@@ -514,8 +514,8 @@ int main(int argc, char *argv[])
   for( unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++ )
     {
     // JOB1: RPPC_to_RPAC_angle and RPAC_over_RPPC
-    float curr_RPPC_to_RPAC_angle;
-    float curr_RPAC_over_RPPC;
+    double curr_RPPC_to_RPAC_angle;
+    double curr_RPAC_over_RPPC;
     decomposeRPAC(rp_InMSPAlignedSpace[currentDataset],
                   pc_InMSPAlignedSpace[currentDataset],
                   ac_InMSPAlignedSpace[currentDataset],

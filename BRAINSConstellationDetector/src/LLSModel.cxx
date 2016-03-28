@@ -17,7 +17,6 @@
  *
  *=========================================================================*/
 #include "LLSModel.h"
-#include <iostream>
 
 #include "BRAINSConstellationDetectorVersion.h"
 

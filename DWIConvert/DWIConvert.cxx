@@ -212,13 +212,13 @@ int main(int argc, char *argv[])
   if( conversionMode == "FSLToNrrd" )
     {
     return FSLToNrrd(inputVolume, outputVolume,fslNIFTIFile,
-                     inputBValues, inputBVectors,transpose);
+                     inputBValues, inputBVectors, transpose, allowLossyConversion);
     }
   // make FSL file set from a NRRD file.
   if( conversionMode == "NrrdToFSL" )
     {
     return NrrdToFSL(inputVolume, outputVolume,
-                     outputBValues, outputBVectors);
+                     outputBValues, outputBVectors, allowLossyConversion);
     }
 
   bool nrrdFormat(true);

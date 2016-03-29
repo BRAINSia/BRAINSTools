@@ -72,9 +72,17 @@ WriteVolume( const TImage *img, const std::string & fname )
   return EXIT_SUCCESS;
 }
 
+namespace itk {
+  // helper specialization to figure out the component type of a VectorImage.
+  template <typename TPixel> struct itk::ImageIOBase::MapPixelType< itk::VariableLengthVector<TPixel> >
+  {
+    static const IOComponentType CType = itk::ImageIOBase::MapPixelType<TPixel>::CType;
+  };
+}
+
 template <typename TImage>
 int
-ReadVolume( typename TImage::Pointer & img, const std::string & fname )
+ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion = false )
 {
   typename itk::ImageFileReader<TImage>::Pointer imgReader =
     itk::ImageFileReader<TImage>::New();
@@ -91,6 +99,25 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname )
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
     }
+
+  if (!allowLossyConversion)
+    {
+    itk::ImageIOBase *imageIO = imgReader->GetImageIO();
+    itk::ImageIOBase::IOComponentType ioType =
+      itk::ImageIOBase::MapPixelType< typename TImage::PixelType >::CType;
+
+    if (imageIO->GetComponentType() != ioType)
+      {
+      // TODO: factor this out. this check should be done in the caller.
+      std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
+                << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
+                << std::endl
+                << "  Output volume: " << imageIO->GetComponentTypeAsString(ioType)
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
   img = imgReader->GetOutput();
   return EXIT_SUCCESS;
 }
@@ -494,10 +521,12 @@ extern int FSLToNrrd(const std::string & inputVolume,
                      const std::string & fslNIFTIFile,
                      const std::string & inputBValues,
                      const std::string & inputBVectors,
-                     bool transpose);
+                     bool transpose,
+                     bool allowLossyConversion);
 
     extern int NrrdToFSL(const std::string & inputVolume,
                          const std::string & outputVolume,
                          const std::string & outputBValues,
-                         const std::string & outputBVectors);
+                         const std::string & outputBVectors,
+                         bool allowLossyConversion);
 #endif // DWIConvertUtils_h

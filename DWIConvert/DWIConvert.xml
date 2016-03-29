@@ -162,5 +162,12 @@
       <default>true</default>
       <description><![CDATA[FSL input BVectors are expected to be encoded in the input file as one vector per line. If it is not the case, use this option to transpose the file as it is read]]></description>
     </boolean>
+    <boolean>
+      <name>allowLossyConversion</name>
+      <longflag>allowLossyConversion</longflag>
+      <label>Allow lossy image conversion</label>
+      <default>false</default>
+      <description><![CDATA[The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!"]]></description>
+    </boolean>
   </parameters>
 </executable>

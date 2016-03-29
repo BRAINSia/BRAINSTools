@@ -88,7 +88,8 @@ StripNIfTIName(const std::string &niftiName)
 int NrrdToFSL(const std::string & inputVolume,
               const std::string & outputVolume,
               const std::string & outputBValues,
-              const std::string & outputBVectors)
+              const std::string & outputBVectors,
+              bool allowLossyConversion)
 {
   if( CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE ||
       CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE)
@@ -115,7 +116,7 @@ int NrrdToFSL(const std::string & inputVolume,
     }
 
   VectorVolumeType::Pointer inputVol;
-  if( ReadVolume<VectorVolumeType>( inputVol, inputVolume ) != EXIT_SUCCESS )
+  if( ReadVolume<VectorVolumeType>( inputVol, inputVolume, allowLossyConversion ) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }

@@ -1,5 +1,5 @@
 /*
- * Author: Hans J. Johnson, Wei Lu
+ * Author: Hans J. Johnson, Wei Lu, Ali Ghayoor
  * at Psychiatry Imaging Lab,
  * University of Iowa Health Care 2010
  */

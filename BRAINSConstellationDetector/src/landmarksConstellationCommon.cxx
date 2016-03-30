@@ -17,13 +17,14 @@
  *
  *=========================================================================*/
 /*
- * Author: Han J. Johnson, Wei Lu
+ * Author: Han J. Johnson, Wei Lu, Ali Ghayoor
  * at Psychiatry Imaging Lab,
  * University of Iowa Health Care 2010
  */
 
 #include "itkIO.h"
 #include <itkImageMomentsCalculator.h>
+#include "itkRecursiveGaussianImageFilter.h"
 
 #include "itkReflectiveCorrelationCenterToImageMetric.h"
 #include "landmarksConstellationCommon.h"
@@ -53,16 +54,31 @@ int globalImagedebugLevel(1000);         // A global variable to determine the
 
 typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
 
+typedef itk::RecursiveGaussianImageFilter<SImageType, SImageType>  GaussianFilterType;
+
+SImageType::Pointer GaussianSmoothing(const SImageType::Pointer image,
+                                      const double sigma)
+{
+  typename GaussianFilterType::Pointer gaussianFilter = GaussianFilterType::New();
+  gaussianFilter->SetInput( image );
+  gaussianFilter->SetSigma( sigma );
+  gaussianFilter->Update();
+  return gaussianFilter->GetOutput();
+}
+
 void DoMultiQualityReflection(SImageType::Pointer &image,
                               RigidTransformType::Pointer &Tmsp,
                               const int qualityLevel,
-                              const reflectionFunctorType::Pointer &reflectionFunctor) {
+                              const reflectionFunctorType::Pointer &reflectionFunctor)
+{
   reflectionFunctor->InitializeImage(image);
   // itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
   PyramidFilterType::Pointer    MyPyramid = MakeThreeLevelPyramid(image.GetPointer() );
-  SImageType::Pointer           EigthImage = MyPyramid->GetOutput(0);
-  SImageType::Pointer           QuarterImage = MyPyramid->GetOutput(1);
-  SImageType::Pointer           HalfImage = MyPyramid->GetOutput(2);
+
+  SImageType::Pointer EigthImage = GaussianSmoothing( MyPyramid->GetOutput(0), 8.0 );
+  SImageType::Pointer QuarterImage = GaussianSmoothing( MyPyramid->GetOutput(1), 4.0 );
+  SImageType::Pointer HalfImage = GaussianSmoothing( MyPyramid->GetOutput(2), 2.0 );
+
   if( qualityLevel >= 0 )
       {
         std::__1::cout << "Level 0 Quality Estimates" << std::__1::endl;

@@ -719,10 +719,10 @@ void landmarksConstellationDetector::Compute( void )
       unsigned int maxNumberOfIterations = 5;
       std::cout << "\n============================================================="
                 << "\nBad Estimation for MSP Plane.\n"
-                << "Repeat the Estimation Process up to " << maxNumberOfIterations
+                << "Repeat the Estimation Process up to " << maxNumberOfIterations+1
                 << " More Times to Find a Better Estimation..." << std::endl;
 
-      for (unsigned int i = 1; i<maxNumberOfIterations; i++)
+      for (unsigned int i = 1; i<maxNumberOfIterations+1; i++)
         {
         std::cout << "\nTry " << i << "..." << std::endl;
 
@@ -777,12 +777,13 @@ void landmarksConstellationDetector::Compute( void )
                                                                     GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
                                                                     this->GetTransformToMSP().GetPointer() );
 
-        std::cout << "\n=============================================================" << std::endl;
-        if( c_c > -0.7 )
-          {
-          std::cout << "Too large MSP estimation error at the final try!\n"
-          << "The estimation result is probably not reliable.\n" << std::endl;
-          }
+      std::cout << "\n=============================================================" << std::endl;
+      if( c_c > -0.64 )
+        {
+        std::cout << "Too large MSP estimation error at the final try!\n"
+        << "The estimation result will not be reliable.\n" << std::endl;
+        throw;
+        }
     }
 
   // In case hough eye detector failed

@@ -40,7 +40,8 @@ FSLToNrrd(const std::string & inputVolume,
           const std::string & fslNIFTIFile,
           const std::string & inputBValues,
           const std::string & inputBVectors,
-          bool transpose
+          bool transpose,
+          bool allowLossyConversion
          )
 {
   if( (CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE &&
@@ -56,13 +57,13 @@ FSLToNrrd(const std::string & inputVolume,
   std::string inputVolumeNameTemplate = inputVolume;
   if(fslNIFTIFile.size() > 0)
     {
-    if( ReadVolume<Volume4DType>(inputVol, fslNIFTIFile) != EXIT_SUCCESS )
+    if( ReadVolume<Volume4DType>(inputVol, fslNIFTIFile, allowLossyConversion) != EXIT_SUCCESS )
       {
       return EXIT_FAILURE;
       }
     inputVolumeNameTemplate = fslNIFTIFile;
     }
-  else if( inputVolume.size() == 0 || ReadVolume<Volume4DType>(inputVol, inputVolume) != EXIT_SUCCESS )
+  else if( inputVolume.size() == 0 || ReadVolume<Volume4DType>(inputVol, inputVolume, allowLossyConversion) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }

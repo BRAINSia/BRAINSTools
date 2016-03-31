@@ -59,7 +59,7 @@ typedef itk::RecursiveGaussianImageFilter<SImageType, SImageType>  GaussianFilte
 SImageType::Pointer GaussianSmoothing(const SImageType::Pointer image,
                                       const double sigma)
 {
-  typename GaussianFilterType::Pointer gaussianFilter = GaussianFilterType::New();
+  GaussianFilterType::Pointer gaussianFilter = GaussianFilterType::New();
   gaussianFilter->SetInput( image );
   gaussianFilter->SetSigma( sigma );
   gaussianFilter->Update();
@@ -72,12 +72,17 @@ void DoMultiQualityReflection(SImageType::Pointer &image,
                               const reflectionFunctorType::Pointer &reflectionFunctor)
 {
   reflectionFunctor->InitializeImage(image);
-  // itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
+  itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
   PyramidFilterType::Pointer    MyPyramid = MakeThreeLevelPyramid(image.GetPointer() );
 
+/*
   SImageType::Pointer EigthImage = GaussianSmoothing( MyPyramid->GetOutput(0), 8.0 );
   SImageType::Pointer QuarterImage = GaussianSmoothing( MyPyramid->GetOutput(1), 4.0 );
   SImageType::Pointer HalfImage = GaussianSmoothing( MyPyramid->GetOutput(2), 2.0 );
+*/
+  SImageType::Pointer EigthImage = MyPyramid->GetOutput(0);
+  SImageType::Pointer QuarterImage = MyPyramid->GetOutput(1);
+  SImageType::Pointer HalfImage = MyPyramid->GetOutput(2);
 
   if( qualityLevel >= 0 )
       {
@@ -415,7 +420,6 @@ PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage)
   return MyPyramid;
 }
 
-#if 0 //RM
 PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
 {
   PyramidFilterType::ScheduleType pyramidSchedule;
@@ -425,21 +429,17 @@ PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
   MyPyramid->SetInput(refImage);
   MyPyramid->SetNumberOfLevels(1);
   pyramidSchedule.SetSize(1, 3);
-  // Attempt to set a schedule so that the top of the pyramid
-  // has images of about 8mm, and the next level has resolutions about 4mm
-  // isotropic voxels
-  // these are sizes found to work well for estimating MSP without making the
-  // image too small.
+
   SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
   for( unsigned int c = 0; c < pyramidSchedule.cols(); ++c )
     {
-    pyramidSchedule[0][c] = static_cast<unsigned int>( std::floor(4.0 / refImageSpacing[c] + 0.5) );
+    //pyramidSchedule[0][c] = static_cast<unsigned int>( std::floor(4.0 / refImageSpacing[c] + 0.5) );
+    pyramidSchedule[0][c] = static_cast<unsigned int>( 2 * round(4.0 / refImageSpacing[c]) );
     }
   MyPyramid->SetSchedule(pyramidSchedule);
   MyPyramid->Update();
   return MyPyramid;
 }
-#endif
 
 // ////////////////////////////////////////////////////////////////////////
 //  This is a lightweight wrapper for FindCenterOfBrainBasedOnTopOfHead, which

@@ -64,6 +64,7 @@ public:
   m_BackgroundValue(0),
   m_CenterOfImagePoint(),
   m_Translation(),
+  m_DoPowell(true),
   m_imInterp(ITK_NULLPTR),
   m_cc(0.0),
   m_HasLocalSupport(false)
@@ -96,33 +97,20 @@ public:
     double max_cc = this->GetValue();
     const double HARange = 25.0;
     const double BARange = 15.0;
+    const double LRRange = 0.0; // don't loop over LR distance
 
     // rough search in neighborhood.
-    const double one_degree = 1.0F * vnl_math::pi / 180.0F;
-    const double HAStepSize = HARange * one_degree * .1;
-    const double BAStepSize = BARange * one_degree * .1;
-    // Let the powell optimizer do all the work for determining the proper
-    // offset
-    // Quick search just needs to get an approximate angle correct.
-      {
-      for( double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize )
-        {
-        for( double BA = -BARange * one_degree; BA <= BARange * one_degree; BA += BAStepSize )
-          {
-          const double Offset = 0.0;
-          params[0] = HA;
-          params[1] = BA;
-          params[2] = Offset;
+    const double HAStepSize = 5;
+    const double BAStepSize = 5;
+    const double LRStepSize = 1;
 
-          const double current_cc = this->f(params);
-          if( current_cc < max_cc )
-            {
-            this->m_params = params;
-            max_cc = current_cc;
-            }
-          }
-        }
-      }
+    // Let the powell optimizer do all the work for determining the proper
+    // offset (LR distance)
+    // Quick search just needs to get an approximate angle correct.
+    this->DoExhaustiveSearch(this->m_params, max_cc,
+                             HARange, BARange, LRRange,
+                             HAStepSize, BAStepSize, LRStepSize);
+
     // DEBUGGING INFORMATION
     if( LMC::globalverboseFlag )
       {
@@ -135,39 +123,6 @@ public:
                 << " iterations=" << this->m_Optimizer->GetCurrentIteration()
                 << std::endl;
       }
-  }
-
-  double f(const ParametersType & params) const
-  {
-    const double        MaxUnpenalizedAllowedDistance = 8.0;
-    const double        DistanceFromCenterOfMass = std::abs(params[2]);
-    static const double FortyFiveDegreesAsRadians = 45.0 * vnl_math::pi / 180.0;
-    const double        cost_of_HeadingAngle = ( std::abs(params[0]) < FortyFiveDegreesAsRadians ) ? 0 :
-      ( ( std::abs(params[0]) - FortyFiveDegreesAsRadians ) * 2 );
-    const double cost_of_BankAngle = ( std::abs(params[1]) < FortyFiveDegreesAsRadians ) ? 0 :
-      ( ( std::abs(params[1]) - FortyFiveDegreesAsRadians ) * 2 );
-
-    if( ( std::abs(params[0]) > FortyFiveDegreesAsRadians ) || ( std::abs(params[1]) > FortyFiveDegreesAsRadians ) )
-      {
-      std::cout << "WARNING: ESTIMATED ROTATIONS ARE WAY TOO BIG SO GIVING A HIGH COST" << std::endl;
-      return 1;
-      }
-    const double cc = -CenterImageReflection_crossCorrelation(params);
-
-    const double cost_of_motion = ( std::abs(DistanceFromCenterOfMass) < MaxUnpenalizedAllowedDistance ) ? 0 :
-      ( std::abs(DistanceFromCenterOfMass - MaxUnpenalizedAllowedDistance) * .1 );
-    const double raw_finalcos_gamma = cc + cost_of_motion + cost_of_BankAngle + cost_of_HeadingAngle;
-
-#ifdef __USE_EXTENSIVE_DEBUGGING__
-    if( !vnl_math_isfinite(raw_finalcos_gamma) )
-      {
-      std::cout << __FILE__ << " " << __LINE__ << " "
-                << params << " : " << cc << " " << cost_of_HeadingAngle << " " << cost_of_BankAngle << " "
-                << cost_of_motion << std::endl;
-      return EXIT_FAILURE;
-      }
-#endif
-    return raw_finalcos_gamma;
   }
 
   virtual MeasureType GetValue() const ITK_OVERRIDE
@@ -198,28 +153,119 @@ public:
 
   virtual void SetParameters( ParametersType & parameters ) ITK_OVERRIDE
   {
-    m_params = parameters;
+    this->m_params = parameters;
   }
 
   virtual const ParametersType & GetParameters() const ITK_OVERRIDE
   {
-    return m_params;
+    return this->m_params;
   }
 
   virtual bool HasLocalSupport() const ITK_OVERRIDE
   {
-    return m_HasLocalSupport;
+    return this->m_HasLocalSupport;
   }
 
   void SetHasLocalSupport(bool hls)
   {
-    m_HasLocalSupport = hls;
+    this->m_HasLocalSupport = hls;
   }
 
   virtual void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) ITK_OVERRIDE
   {
   }
   ////////////////////////
+
+  void DoExhaustiveSearch(ParametersType & opt_params,
+                          double & opt_cc,
+                          const double HARange,
+                          const double BARange,
+                          const double LRRange,
+                          const double HAStepSize,
+                          const double BAStepSize,
+                          const double LRStepSize,
+                          std::string CSVFileName = "")
+  {
+  // search parameters
+  ParametersType current_params;
+  current_params.set_size(SpaceDimension);
+  current_params.fill(0.0);
+
+  std::stringstream csvFileOfMetricValues;
+
+  const double degree_to_rad = 1.0F * vnl_math::pi / 180.0F;
+
+  for( double LR = -LRRange; LR <= LRRange; LR += LRStepSize)
+    {
+    for( double HA = -HARange; HA <= HARange; HA += HAStepSize )
+      {
+      for( double BA = -BARange; BA <= BARange; BA += BAStepSize )
+        {
+        current_params[0] = HA * degree_to_rad;
+        current_params[1] = BA * degree_to_rad;
+        current_params[2] = LR;
+
+        const double current_cc = this->f(current_params);
+
+        if( current_cc < opt_cc )
+          {
+          opt_params = current_params;
+          opt_cc = current_cc;
+          }
+
+#ifdef WRITE_CSV_FILE
+        csvFileOfMetricValues << HA << "," << BA << "," << LR << "," << current_cc << std::endl;
+#endif
+        }
+      }
+    }
+
+  if( CSVFileName != "" )
+    {
+    std::cout << "\nWriting out metric values in a csv file..." << std::endl;
+    std::ofstream csvFile;
+    csvFile.open( CSVFileName.c_str() );
+    if( !csvFile.is_open() )
+      {
+      itkGenericExceptionMacro( << "Error: Can't write oputput csv file!" << std::endl );
+      }
+    csvFile << csvFileOfMetricValues.str();
+    csvFile.close();
+    }
+  }
+
+  double f(const ParametersType & params) const
+  {
+  const double        MaxUnpenalizedAllowedDistance = 8.0;
+  const double        DistanceFromCenterOfMass = std::abs(params[2]);
+  static const double FortyFiveDegreesAsRadians = 45.0 * vnl_math::pi / 180.0;
+  const double        cost_of_HeadingAngle = ( std::abs(params[0]) < FortyFiveDegreesAsRadians ) ? 0 :
+  ( ( std::abs(params[0]) - FortyFiveDegreesAsRadians ) * 2 );
+  const double cost_of_BankAngle = ( std::abs(params[1]) < FortyFiveDegreesAsRadians ) ? 0 :
+  ( ( std::abs(params[1]) - FortyFiveDegreesAsRadians ) * 2 );
+
+  if( ( std::abs(params[0]) > FortyFiveDegreesAsRadians ) || ( std::abs(params[1]) > FortyFiveDegreesAsRadians ) )
+    {
+    std::cout << "WARNING: ESTIMATED ROTATIONS ARE WAY TOO BIG SO GIVING A HIGH COST" << std::endl;
+    return 1;
+    }
+  const double cc = -CenterImageReflection_crossCorrelation(params);
+
+  const double cost_of_motion = ( std::abs(DistanceFromCenterOfMass) < MaxUnpenalizedAllowedDistance ) ? 0 :
+  ( std::abs(DistanceFromCenterOfMass - MaxUnpenalizedAllowedDistance) * .1 );
+  const double raw_finalcos_gamma = cc + cost_of_motion + cost_of_BankAngle + cost_of_HeadingAngle;
+
+#ifdef __USE_EXTENSIVE_DEBUGGING__
+  if( !vnl_math_isfinite(raw_finalcos_gamma) )
+    {
+    std::cout << __FILE__ << " " << __LINE__ << " "
+    << params << " : " << cc << " " << cost_of_HeadingAngle << " " << cost_of_BankAngle << " "
+    << cost_of_motion << std::endl;
+    return EXIT_FAILURE;
+    }
+#endif
+  return raw_finalcos_gamma;
+  }
 
   void SetCenterOfHeadMass(SImageType::PointType centerOfHeadMass)
   {
@@ -474,24 +520,26 @@ public:
     return this->m_cc;
   }
 
-  void Update(void)
+  void Update()
   {
     itk::NumberToString<double> doubleToString;
 
-    try
+    if (this->m_DoPowell)
+    {
+      try
       {
-      this->m_Optimizer->StartOptimization();
+        this->m_Optimizer->StartOptimization();
       }
-    catch( itk::ExceptionObject & e )
+      catch (itk::ExceptionObject &e)
       {
-      std::cout << "Exception thrown ! " << std::endl;
-      std::cout << "An error occurred during Optimization" << std::endl;
-      std::cout << "Location    = " << e.GetLocation()    << std::endl;
-      std::cout << "Description = " << e.GetDescription() << std::endl;
-      //return EXIT_FAILURE;
+        std::cout << "Exception thrown ! " << std::endl;
+        std::cout << "An error occurred during Optimization" << std::endl;
+        std::cout << "Location    = " << e.GetLocation() << std::endl;
+        std::cout << "Description = " << e.GetDescription() << std::endl;
+        //return EXIT_FAILURE;
       }
-
-    this->m_params = this->m_Optimizer->GetCurrentPosition();
+      this->m_params = this->m_Optimizer->GetCurrentPosition();
+    }
     this->m_cc = this->GetValue();
 
     std::cout << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi) << " "
@@ -500,6 +548,9 @@ public:
               << doubleToString(m_cc) << " iters= " << this->m_Optimizer->GetCurrentIteration()
               << std::endl;
   }
+
+  itkSetMacro(DoPowell,bool);
+  itkGetConstMacro(DoPowell,bool);
 
 private:
   typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
@@ -512,6 +563,7 @@ private:
   SImageType::PointType             m_CenterOfImagePoint;
   SImageType::PointType::VectorType m_Translation;
   OptimizerPointer                  m_Optimizer;
+  bool                              m_DoPowell;
   LinearInterpolatorType::Pointer   m_imInterp;
   double                            m_cc;
   bool                              m_HasLocalSupport;

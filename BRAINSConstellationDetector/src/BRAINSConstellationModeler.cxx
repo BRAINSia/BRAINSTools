@@ -285,6 +285,7 @@ int main(int argc, char *argv[])
     RigidTransformType::Pointer Tmsp = RigidTransformType::New();
     SImageType::Pointer         volumeMSP;
     double                      c_c = 0;
+
     ComputeMSP(image, Tmsp, volumeMSP, centerOfHeadMass, mspQualityLevel, c_c);
 
     if( globalImagedebugLevel > 2 )

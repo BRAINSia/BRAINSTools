@@ -87,18 +87,20 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
+  void ImageMinMax(InputPixelType & min, InputPixelType & max);
+
   InputImagePointer m_Image;
   typename TMaskImage::Pointer m_BinaryPortionImage;
-  void ImageMinMax(InputPixelType & min, InputPixelType & max);
 
   double m_QuantileLowerThreshold;
   double m_QuantileUpperThreshold;
+  unsigned int m_NumberOfValidHistogramsEntries;
+
   typename TInputImage::PixelType m_ImageMin;
   typename TInputImage::PixelType m_ImageMax;
 
   typename InputImageType::PixelType m_LowerIntensityThresholdValue;
   typename InputImageType::PixelType m_UpperIntensityThresholdValue;
-  unsigned int m_NumberOfValidHistogramsEntries;
 };
 } // end namespace itk
 

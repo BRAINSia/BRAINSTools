@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Testing</category>
+  <title>Compute RC metric values in exhausive search</title>
+  <description>
+  </description>
+  <version>4.6.0</version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+  <acknowledgements>
+  </acknowledgements>
+
+  <parameters>
+
+  <image>
+    <name>inputVolume</name>
+    <longflag>inputVolume</longflag>
+    <label>Input Image Volume</label>
+    <description>Input image.</description>
+    <channel>input</channel>
+    <default></default>
+  </image>
+
+  <file>
+    <name>outputCSVFile</name>
+    <longflag>outputCSVFile</longflag>
+    <label>Output CSV File</label>
+    <description>A file to write out final information report in CSV file: HA,BA,LR,MetricValue(cc)</description>
+    <channel>output</channel>
+  </file>
+
+  </parameters>
+
+</executable>

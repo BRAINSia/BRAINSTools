@@ -719,12 +719,12 @@ void landmarksConstellationDetector::Compute( void )
       unsigned int maxNumberOfIterations = 5;
       std::cout << "\n============================================================="
                 << "\nBad Estimation for MSP Plane.\n"
-                << "Repeat the Estimation Process up to " << maxNumberOfIterations+1
+                << "Repeat the Estimation Process up to " << maxNumberOfIterations
                 << " More Times to Find a Better Estimation..." << std::endl;
 
-      for (unsigned int i = 1; i<maxNumberOfIterations+1; i++)
+      for (unsigned int i = 0; i<maxNumberOfIterations; i++)
         {
-        std::cout << "\nTry " << i << "..." << std::endl;
+        std::cout << "\nTry " << i+1 << "..." << std::endl;
 
         // Rotate VolumeRoughAlignedWithHoughEye by finalTmsp again.
         SImageType::Pointer localRoughAlignedInput;

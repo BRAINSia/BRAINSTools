@@ -34,7 +34,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
   m_DifferenceThreshold(NumericTraits<OutputPixelType>::ZeroValue()),
   m_MeanDifference(NumericTraits<RealType>::ZeroValue()),
   m_TotalDifference(NumericTraits<AccumulateType>::ZeroValue()),
-  m_NumberOfPixelsWithDifferences(0),
+  m_NumberOfPixelsWithDifferences(0L),
   m_ToleranceRadius(0),
   m_IgnoreBoundaryPixels(false)
 {

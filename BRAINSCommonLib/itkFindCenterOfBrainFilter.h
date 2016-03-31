@@ -88,12 +88,12 @@ public:
   // DEBUGGING STUFF
   itkSetMacro(GenerateDebugImages, bool);
   itkGetMacro(GenerateDebugImages, bool);
-  DistanceImagePointer GetDebugDistanceImage()
+  DistanceImagePointer GetDebugDistanceImage() const
   {
     return m_DebugDistanceImage;
   }
 
-  InputImagePointer GetDebugGridImage()
+  InputImagePointer GetDebugGridImage() const
   {
     return m_DebugGridImage;
   }
@@ -108,7 +108,7 @@ public:
     return m_DebugClippedImageMask;
   }
 
-  InputImagePointer GetDebugTrimmedImage()
+  InputImagePointer GetDebugTrimmedImage() const
   {
     return m_DebugTrimmedImage;
   }

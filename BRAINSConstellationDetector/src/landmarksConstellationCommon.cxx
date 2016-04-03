@@ -86,26 +86,26 @@ void DoMultiQualityReflection(SImageType::Pointer &image,
 
   if( qualityLevel >= 0 )
       {
-        std::__1::cout << "Level 0 Quality Estimates" << std::__1::endl;
+      std::cout << "Level 0 Quality Estimates" << std::endl;
       reflectionFunctor->SetDownSampledReferenceImage(EigthImage);
       reflectionFunctor->Initialize();
       reflectionFunctor->Update();
       }
   if( qualityLevel >= 1 )
       {
-        std::__1::cout << "Level 1 Quality Estimates" << std::__1::endl;
+      std::cout << "Level 1 Quality Estimates" << std::endl;
       reflectionFunctor->SetDownSampledReferenceImage(QuarterImage);
       reflectionFunctor->Update();
       }
   if( qualityLevel >= 2 )
       {
-        std::__1::cout << "Level 2 Quality Estimates" << std::__1::endl;
+      std::cout << "Level 2 Quality Estimates" << std::endl;
       reflectionFunctor->SetDownSampledReferenceImage(HalfImage);
       reflectionFunctor->Update();
       }
   if( qualityLevel >= 3 )
       {
-        std::__1::cout << "Level 3 Quality Estimates" << std::__1::endl;
+      std::cout << "Level 3 Quality Estimates" << std::endl;
       reflectionFunctor->SetDownSampledReferenceImage(image);
       reflectionFunctor->Update();
       }

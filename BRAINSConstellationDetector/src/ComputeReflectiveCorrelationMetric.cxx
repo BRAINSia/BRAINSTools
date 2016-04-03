@@ -41,8 +41,7 @@ typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > Reflecti
 typedef ReflectionFunctorType::ParametersType                           ParametersType;
 typedef itk::CastImageFilter<DImageType3D, SImageType>                  CasterType;
 
-int main( int argc, char * argv[] )
-{
+int main( int argc, char * argv[] ) {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
@@ -53,39 +52,37 @@ int main( int argc, char * argv[] )
   // Finally it is cast to a Short type image.
   typedef itk::ImageFileReader<DImageType3D> ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputVolume );
-  try
-    {
+  reader->SetFileName(inputVolume);
+  try {
     reader->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch (itk::ExceptionObject &err) {
     std::cerr << " Error while reading image file( s ) with ITK:\n "
-              << err << std::endl;
-    }
+    << err << std::endl;
+  }
 
   DImageType3D::Pointer rescaledInputVolume =
-    StandardizeMaskIntensity<DImageType3D, ByteImageType>(reader->GetOutput(),
-                                                          ITK_NULLPTR,
-                                                          0.0005, 1.0 - 0.0005,
-                                                          1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
-                                                          0, MAX_IMAGE_OUTPUT_VALUE);
+      StandardizeMaskIntensity<DImageType3D, ByteImageType>(reader->GetOutput(),
+                                                            ITK_NULLPTR,
+                                                            0.0005, 1.0 - 0.0005,
+                                                            1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
+                                                            0, MAX_IMAGE_OUTPUT_VALUE);
 
   CasterType::Pointer caster = CasterType::New();
-  caster->SetInput( rescaledInputVolume );
+  caster->SetInput(rescaledInputVolume);
   caster->Update();
   SImageType::Pointer originalImage = caster->GetOutput();
 
-#if 0 //HACK removed for speed testing.
+#if 1 //HACK removed for speed testing.
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput( originalImage );
-  findCenterFilter->SetAxis( 2 );
-  findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
-  findCenterFilter->SetClosingSize( 7 );
-  findCenterFilter->SetHeadSizeLimit( 700 );
-  findCenterFilter->SetBackgroundValue( 0 );
+  findCenterFilter->SetInput(originalImage);
+  findCenterFilter->SetAxis(2);
+  findCenterFilter->SetOtsuPercentileThreshold(0.01);
+  findCenterFilter->SetClosingSize(7);
+  findCenterFilter->SetHeadSizeLimit(700);
+  findCenterFilter->SetBackgroundValue(0);
   findCenterFilter->Update();
   SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
 #else
@@ -95,11 +92,11 @@ int main( int argc, char * argv[] )
   centerOfHeadMass[2] = 32.393109592514605;
 #endif
 
-  PyramidFilterType::Pointer MyPyramid = MakeOneLevelPyramid( originalImage );
+  PyramidFilterType::Pointer MyPyramid = MakeOneLevelPyramid(originalImage);
   SImageType::Pointer inputImage = MyPyramid->GetOutput(0); // one-eighth image
 
   ReflectionFunctorType::Pointer reflectionFunctor = ReflectionFunctorType::New();
-  reflectionFunctor->InitializeImage( originalImage ); // Initialize from the high-res image
+  reflectionFunctor->InitializeImage(originalImage); // Initialize from the high-res image
   reflectionFunctor->SetDownSampledReferenceImage(inputImage);
   reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass); // center of head mass must be passed
 
@@ -112,14 +109,18 @@ int main( int argc, char * argv[] )
   reflectionFunctor->Update();
   double opt_cc = reflectionFunctor->GetValue();
 
-#if 1
-  const double HA_range = 45.0;
-  const double BA_range = 45.0;
-  const double LR_range = 5.0;
 
-  const double HA_stepsize = 5.0; // degree
-  const double BA_stepsize = 5.0; // degree
-  const double LR_stepsize = 1.0; // mm
+  for (double divisor = 1.0; divisor <= 3.0; divisor += 1.0)
+  {
+#if 1
+    const double HA_stepsize = 4.5/divisor ; // degree
+    const double BA_stepsize = 4.5/divisor ; // degree
+    const double LR_stepsize = 1.0/divisor ; // mm
+
+  const double HA_range =  HA_stepsize*10.0;
+  const double BA_range =  BA_stepsize*10.0;
+  const double LR_range =  LR_stepsize*10;
+
 #else
   const double HA_range = 10.0;
   const double BA_range = 25.0;
@@ -129,7 +130,7 @@ int main( int argc, char * argv[] )
   const double BA_stepsize = 5.0; // degree
   const double LR_stepsize = 2.0; // mm
 #endif
-
+    std::cout << "RANGE: " << HA_range << " at " << HA_stepsize << std::endl;
   itk::TimeProbe clock;
   clock.Start();
   reflectionFunctor->DoExhaustiveSearch(opt_params, opt_cc,
@@ -142,6 +143,7 @@ int main( int argc, char * argv[] )
 
   std::cout << "Optimize parameters by exhaustive search: [" << opt_params[0] << "," << opt_params[1] << "," << opt_params[2] << "]" << std::endl;
   std::cout << "Optimize metric value by exhaustive search: " << opt_cc << std::endl;
+  }
 
 /*
   // Now compare find the optimal parameters using Powell Optimizer

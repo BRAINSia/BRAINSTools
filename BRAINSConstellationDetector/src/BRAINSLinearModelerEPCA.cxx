@@ -280,7 +280,7 @@ ComputeSVector( const MatrixType & X_i )
 }
 
 MatrixType
-ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const VectorType s_i )
+ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const VectorType & s_i )
 {
   const unsigned int numDataset( columns );
 

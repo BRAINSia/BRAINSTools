@@ -99,7 +99,7 @@ public:
               << std::endl;
   }
 
-  double GetRelativeLocationToPlane( LandmarkPointType x )
+  double GetRelativeLocationToPlane( LandmarkPointType x ) const
   {
     double answer =
       normal[0] * ( A[0] - x[0] )
@@ -109,7 +109,7 @@ public:
     return answer;
   }
 
-  VectorType GetNormal()
+  VectorType GetNormal() const
   {
     return normal;
   }
@@ -151,7 +151,7 @@ CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume
 template <class TImageType>
 void
 CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume,
-                                     const LandmarkPointType _landmark,
+                                     const LandmarkPointType & _landmark,
                                      const std::string & _direction )
 {
   // set directional constant for convenient programming

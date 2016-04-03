@@ -145,7 +145,6 @@ void ComputeMSP(SImageType::Pointer image,
 
 void ComputeMSP_Easy(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel)
 {
-  typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
   reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
 
   reflectionFunctor->InitializeImage(image);

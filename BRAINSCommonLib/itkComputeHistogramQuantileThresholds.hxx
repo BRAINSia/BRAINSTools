@@ -34,8 +34,15 @@ namespace itk
 template <class TInputImage, class TMaskImage>
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::ComputeHistogramQuantileThresholds() :
+  m_Image(ITK_NULLPTR),
+  m_BinaryPortionImage(ITK_NULLPTR),
   m_QuantileLowerThreshold(0.0),
-  m_QuantileUpperThreshold(1.0)
+  m_QuantileUpperThreshold(1.0),
+  m_NumberOfValidHistogramsEntries(0),
+  m_ImageMin(0),
+  m_ImageMax(0),
+  m_LowerIntensityThresholdValue(0),
+  m_UpperIntensityThresholdValue(0)
 {
 }
 

@@ -74,6 +74,7 @@ int main( int argc, char * argv[] )
   caster->Update();
   SImageType::Pointer originalImage = caster->GetOutput();
 
+#if 0 //HACK removed for speed testing.
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
@@ -85,6 +86,12 @@ int main( int argc, char * argv[] )
   findCenterFilter->SetBackgroundValue( 0 );
   findCenterFilter->Update();
   SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+#else
+  SImagePointType centerOfHeadMass;
+  centerOfHeadMass[0] = -1.7824640167960075;
+  centerOfHeadMass[1] = -11.914627390460533;
+  centerOfHeadMass[2] = 32.393109592514605;
+#endif
 
   PyramidFilterType::Pointer MyPyramid = MakeOneLevelPyramid( originalImage );
   SImageType::Pointer inputImage = MyPyramid->GetOutput(0); // one-eighth image
@@ -103,13 +110,24 @@ int main( int argc, char * argv[] )
   reflectionFunctor->Update();
   double opt_cc = reflectionFunctor->GetValue();
 
+#if 0
   const double HA_range = 45.0;
   const double BA_range = 45.0;
-  const double LR_range = 5;
+  const double LR_range = 5.0;
 
-  const double HA_stepsize = 5; // degree
-  const double BA_stepsize = 5; // degree
-  const double LR_stepsize = 1; // mm
+  const double HA_stepsize = 5.0; // degree
+  const double BA_stepsize = 5.0; // degree
+  const double LR_stepsize = 1.0; // mm
+#else
+  const double HA_range = 10.0;
+  const double BA_range = 25.0;
+  const double LR_range = 5.0;
+
+  const double HA_stepsize = 5.0; // degree
+  const double BA_stepsize = 5.0; // degree
+  const double LR_stepsize = 2.0; // mm
+#endif
+
 
   reflectionFunctor->DoExhaustiveSearch(opt_params, opt_cc,
                                         HA_range, BA_range, LR_range,

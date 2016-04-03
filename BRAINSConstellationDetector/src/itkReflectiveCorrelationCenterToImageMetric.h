@@ -193,7 +193,7 @@ public:
 
   std::stringstream csvFileOfMetricValues;
 
-  const double degree_to_rad = 1.0F * vnl_math::pi / 180.0F;
+  const double degree_to_rad = vnl_math::pi / 180.0;
 
   for( double LR = -LRRange; LR <= LRRange; LR += LRStepSize)
     {
@@ -214,7 +214,7 @@ public:
           }
 
 #ifdef WRITE_CSV_FILE
-        csvFileOfMetricValues << HA << "," << BA << "," << LR << "," << current_cc << std::endl;
+        csvFileOfMetricValues << HA << "," << BA << "," << LR << "," << current_cc << "," << opt_cc << std::endl;
 #endif
         }
       }

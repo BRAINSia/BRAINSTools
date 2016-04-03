@@ -219,7 +219,7 @@ public:
         }
       }
     }
-
+#ifdef WRITE_CSV_FILE
   if( CSVFileName != "" )
     {
     std::cout << "\nWriting out metric values in a csv file..." << std::endl;
@@ -232,6 +232,7 @@ public:
     csvFile << csvFileOfMetricValues.str();
     csvFile.close();
     }
+#endif
   }
 
   double f(const ParametersType & params) const

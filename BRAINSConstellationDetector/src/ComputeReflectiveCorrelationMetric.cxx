@@ -27,6 +27,8 @@
 #include "StandardizeMaskIntensity.h"
 #include "itkFindCenterOfBrainFilter.h"
 
+#include "itkTimeProbe.h"
+
 #define WRITE_CSV_FILE
 #include "itkReflectiveCorrelationCenterToImageMetric.h"
 #undef WRITE_CSV_FILE
@@ -110,7 +112,7 @@ int main( int argc, char * argv[] )
   reflectionFunctor->Update();
   double opt_cc = reflectionFunctor->GetValue();
 
-#if 0
+#if 1
   const double HA_range = 45.0;
   const double BA_range = 45.0;
   const double LR_range = 5.0;
@@ -128,11 +130,15 @@ int main( int argc, char * argv[] )
   const double LR_stepsize = 2.0; // mm
 #endif
 
-
+  itk::TimeProbe clock;
+  clock.Start();
   reflectionFunctor->DoExhaustiveSearch(opt_params, opt_cc,
                                         HA_range, BA_range, LR_range,
                                         HA_stepsize, BA_stepsize, LR_stepsize,
                                         outputCSVFile);
+  clock.Stop();
+  std::cout << "Mean: " << clock.GetMean() << std::endl;
+  std::cout << "Total: " << clock.GetTotal() << std::endl;
 
   std::cout << "Optimize parameters by exhaustive search: [" << opt_params[0] << "," << opt_params[1] << "," << opt_params[2] << "]" << std::endl;
   std::cout << "Optimize metric value by exhaustive search: " << opt_cc << std::endl;

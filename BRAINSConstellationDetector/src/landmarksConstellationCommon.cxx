@@ -135,7 +135,7 @@ void ComputeMSP(SImageType::Pointer image,
     {
     reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
     reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass);
-
+    reflectionFunctor->InitializeImage(image);
     DoMultiQualityReflection(image, Tmsp, qualityLevel, reflectionFunctor);
 
     transformedImage = reflectionFunctor->GetMSPCenteredImage();

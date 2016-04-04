@@ -25,7 +25,7 @@
 
 #include "landmarksConstellationCommon.h"
 #include "StandardizeMaskIntensity.h"
-#include "itkFindCenterOfBrainFilter.h"
+
 
 #include "itkTimeProbe.h"
 
@@ -36,10 +36,6 @@
 #include "ComputeReflectiveCorrelationMetricCLP.h"
 
 
-typedef itk::FindCenterOfBrainFilter<SImageType>                        FindCenterFilter;
-typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > ReflectionFunctorType;
-typedef ReflectionFunctorType::ParametersType                           ParametersType;
-typedef itk::CastImageFilter<DImageType3D, SImageType>                  CasterType;
 
 int main( int argc, char * argv[] ) {
   PARSE_ARGS;
@@ -68,37 +64,20 @@ int main( int argc, char * argv[] ) {
                                                             1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                                                             0, MAX_IMAGE_OUTPUT_VALUE);
 
+  typedef itk::CastImageFilter<DImageType3D, SImageType>                  CasterType;
   CasterType::Pointer caster = CasterType::New();
   caster->SetInput(rescaledInputVolume);
   caster->Update();
   SImageType::Pointer originalImage = caster->GetOutput();
 
-#if 1 //HACK removed for speed testing.
-  // Find center of head mass
-  std::cout << "\nFinding center of head mass..." << std::endl;
-  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput(originalImage);
-  findCenterFilter->SetAxis(2);
-  findCenterFilter->SetOtsuPercentileThreshold(0.01);
-  findCenterFilter->SetClosingSize(7);
-  findCenterFilter->SetHeadSizeLimit(700);
-  findCenterFilter->SetBackgroundValue(0);
-  findCenterFilter->Update();
-  SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
-#else
-  SImagePointType centerOfHeadMass;
-  centerOfHeadMass[0] = -1.7824640167960075;
-  centerOfHeadMass[1] = -11.914627390460533;
-  centerOfHeadMass[2] = 32.393109592514605;
-#endif
-
   PyramidFilterType::Pointer MyPyramid = MakeOneLevelPyramid(originalImage);
   SImageType::Pointer inputImage = MyPyramid->GetOutput(0); // one-eighth image
 
+  typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > ReflectionFunctorType;
+  typedef ReflectionFunctorType::ParametersType                           ParametersType;
+
   ReflectionFunctorType::Pointer reflectionFunctor = ReflectionFunctorType::New();
-  reflectionFunctor->InitializeImage(originalImage); // Initialize from the high-res image
-  reflectionFunctor->SetDownSampledReferenceImage(inputImage);
-  reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass); // center of head mass must be passed
+  reflectionFunctor->InitializeImage(inputImage);
 
   // optimal parameters
   ParametersType opt_params;
@@ -110,39 +89,58 @@ int main( int argc, char * argv[] ) {
   double opt_cc = reflectionFunctor->GetValue();
 
 
-  for (double divisor = 1.0; divisor <= 3.0; divisor += 1.0)
+  std::vector<std::string> suffix(4);
+  suffix[0]="1";
+  suffix[1]="2";
+  suffix[2]="3";
+
+  std::vector<double> Angle_Range(3);
+  Angle_Range[0]=45.0;
+  Angle_Range[1]=2.5;
+  Angle_Range[2]=0.25;
+
+  std::vector<double> Angle_Stepsizes(3);
+  Angle_Stepsizes[0] = 5.0;
+  Angle_Stepsizes[1] = 0.5;
+  Angle_Stepsizes[2] = 0.25;
+
+  std::vector<double> Offset_Range(3);
+  Offset_Range[0]=10.0;
+  Offset_Range[1]=0.5;
+  Offset_Range[2]=0.20;
+
+  std::vector<double> Offset_Stepsizes(3);
+  Offset_Stepsizes[0] = 2.0;
+  Offset_Stepsizes[1] = 0.5;
+  Offset_Stepsizes[2] = .10;
+
+  for (unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter )
   {
-#if 1
-    const double HA_stepsize = 4.5/divisor ; // degree
-    const double BA_stepsize = 4.5/divisor ; // degree
-    const double LR_stepsize = 1.0/divisor ; // mm
+    const double HA_range =  Angle_Range[resolutionIter];
+    const double BA_range =  Angle_Range[resolutionIter];
+    const double LR_range =  Offset_Range[resolutionIter];
 
-  const double HA_range =  HA_stepsize*10.0;
-  const double BA_range =  BA_stepsize*10.0;
-  const double LR_range =  LR_stepsize*10;
+    const double HA_stepsize = Angle_Stepsizes[resolutionIter]; // degree
+    const double BA_stepsize = Angle_Stepsizes[resolutionIter]; // degree
+    const double LR_stepsize = Offset_Stepsizes[resolutionIter]; // mm
 
-#else
-  const double HA_range = 10.0;
-  const double BA_range = 25.0;
-  const double LR_range = 5.0;
-
-  const double HA_stepsize = 5.0; // degree
-  const double BA_stepsize = 5.0; // degree
-  const double LR_stepsize = 2.0; // mm
-#endif
     std::cout << "RANGE: " << HA_range << " at " << HA_stepsize << std::endl;
-  itk::TimeProbe clock;
-  clock.Start();
-  reflectionFunctor->DoExhaustiveSearch(opt_params, opt_cc,
+    std::cout << "LR: " << LR_range << " at " << LR_stepsize << std::endl;
+    itk::TimeProbe clock;
+    clock.Start();
+    reflectionFunctor->DoExhaustiveSearch(opt_params, opt_cc,
                                         HA_range, BA_range, LR_range,
                                         HA_stepsize, BA_stepsize, LR_stepsize,
-                                        outputCSVFile);
-  clock.Stop();
-  std::cout << "Mean: " << clock.GetMean() << std::endl;
-  std::cout << "Total: " << clock.GetTotal() << std::endl;
+                                        outputCSVFile+suffix[resolutionIter]);
+    clock.Stop();
+    std::cout << "Mean: " << clock.GetMean() << std::endl;
+    std::cout << "Total: " << clock.GetTotal() << std::endl;
 
-  std::cout << "Optimize parameters by exhaustive search: [" << opt_params[0] << "," << opt_params[1] << "," << opt_params[2] << "]" << std::endl;
-  std::cout << "Optimize metric value by exhaustive search: " << opt_cc << std::endl;
+    const double degree_to_rad = vnl_math::pi / 180.0;
+
+    std::cout << "Optimize parameters by exhaustive search: [" << opt_params[0]/degree_to_rad << "," <<
+      opt_params[1]/degree_to_rad << "," << opt_params[2] << "]" << std::endl;
+    std::cout << "Optimize metric value by exhaustive search: " << opt_cc << std::endl;
   }
 
 /*

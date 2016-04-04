@@ -34,6 +34,7 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkNumberToString.h"
 #include "itkCompensatedSummation.h"
+#include "itkFindCenterOfBrainFilter.h"
 
 // Optimize the A,B,C vector
 template<typename TOptimizerType>
@@ -61,6 +62,7 @@ public:
   m_OriginalImage(ITK_NULLPTR),
   m_ResamplerReferenceImage(ITK_NULLPTR),
   m_CenterOfHeadMass(),
+  m_CenterOfHeadMassIsSet(false),
   m_BackgroundValue(0),
   m_CenterOfImagePoint(),
   m_Translation(),
@@ -109,7 +111,11 @@ public:
     // Quick search just needs to get an approximate angle correct.
     this->DoExhaustiveSearch(this->m_params, max_cc,
                              HARange, BARange, LRRange,
-                             HAStepSize, BAStepSize, LRStepSize);
+                             HAStepSize, BAStepSize, LRStepSize
+#ifdef WRITE_CSV_FILE
+                             ,std::string("")
+#endif
+    );
 
     // DEBUGGING INFORMATION
     if( LMC::globalverboseFlag )
@@ -183,13 +189,17 @@ public:
                           const double LRRange,
                           const double HAStepSize,
                           const double BAStepSize,
-                          const double LRStepSize,
-                          std::string CSVFileName = "")
+                          const double LRStepSize
+#ifdef WRITE_CSV_FILE
+                          ,std::string CSVFileName)
+#else
+  )
+#endif
   {
+  const ParametersType starting_params (opt_params);
   // search parameters
   ParametersType current_params;
   current_params.set_size(SpaceDimension);
-  current_params.fill(0.0);
 
   std::stringstream csvFileOfMetricValues;
 
@@ -201,12 +211,11 @@ public:
       {
       for( double BA = -BARange; BA <= BARange; BA += BAStepSize )
         {
-        current_params[0] = HA * degree_to_rad;
-        current_params[1] = BA * degree_to_rad;
-        current_params[2] = LR;
+        current_params[0] = starting_params[0]+HA * degree_to_rad;
+        current_params[1] = starting_params[1]+BA * degree_to_rad;
+        current_params[2] = starting_params[2]+LR;
 
         const double current_cc = this->f(current_params);
-
         if( current_cc < opt_cc )
           {
           opt_params = current_params;
@@ -214,9 +223,11 @@ public:
           }
 
 #ifdef WRITE_CSV_FILE
-        csvFileOfMetricValues << HA << "," << BA << "," << LR << "," << current_cc << "," << opt_cc << std::endl;
+        csvFileOfMetricValues << current_params[0] << "," << current_params[1] << "," << current_params[2] << "," <<
+        current_cc << "," << opt_cc << std::endl;
 #endif
         }
+        //std::cout << current_params << std::endl;
       }
     }
 #ifdef WRITE_CSV_FILE
@@ -268,10 +279,6 @@ public:
   return raw_finalcos_gamma;
   }
 
-  void SetCenterOfHeadMass(SImageType::PointType centerOfHeadMass)
-  {
-    m_CenterOfHeadMass = centerOfHeadMass;
-  }
 
   RigidTransformType::Pointer GetTransformToMSP(void) const
   {
@@ -292,10 +299,26 @@ public:
 
   void InitializeImage(SImageType::Pointer & RefImage)
   {
+    if (!m_CenterOfHeadMassIsSet) {
+      // Find center of head mass
+      std::cout << "\nFinding center of head mass..." << std::endl;
+      typedef itk::FindCenterOfBrainFilter<SImageType>                        FindCenterFilter;
+      FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+      findCenterFilter->SetInput(RefImage);
+      findCenterFilter->SetAxis(2);
+      findCenterFilter->SetOtsuPercentileThreshold(0.01);
+      findCenterFilter->SetClosingSize(7);
+      findCenterFilter->SetHeadSizeLimit(700);
+      findCenterFilter->SetBackgroundValue(0);
+      findCenterFilter->Update();
+      SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+      this->SetCenterOfHeadMass(centerOfHeadMass);
+    }
       {
-      SImageType::PixelType dummy;
+      SImageType::PixelType dummyLow;
+      SImageType::PixelType dummyHigh;
       // Find threshold below which image is considered background.
-      m_BackgroundValue = setLowHigh<SImageType>(RefImage, dummy, dummy, 0.1F);
+      m_BackgroundValue = setLowHigh<SImageType>(RefImage, dummyLow, dummyHigh, 0.1F);
       }
 
     this->m_CenterOfImagePoint = GetImageCenterPhysicalPoint(RefImage);
@@ -310,15 +333,13 @@ public:
       }
 #endif
 
-    this->m_OriginalImage = RefImage;
-    // Update the output reference image for the resampler every time the OriginalImage is updated
-    this->CreateResamplerReferenceImage();
-
-    this->m_Translation = this->m_CenterOfHeadMass.GetVectorFromOrigin() - m_CenterOfImagePoint.GetVectorFromOrigin();
+    this->SetDownSampledReferenceImage(RefImage);
+    this->m_Translation = this->GetCenterOfHeadMass().GetVectorFromOrigin() - m_CenterOfImagePoint
+                                                                                  .GetVectorFromOrigin();
     if( LMC::globalverboseFlag )
       {
       std::cout << "Center Of Physical Point: " << this->m_CenterOfImagePoint << std::endl;
-      std::cout << "Center Of Mass Point:" << this->m_CenterOfHeadMass << std::endl;
+      std::cout << "Center Of Mass Point:" << this->GetCenterOfHeadMass() << std::endl;
       std::cout << "InitialTranslation: " << this->m_Translation << std::endl;
       }
   }
@@ -375,9 +396,9 @@ public:
 
       // The physical center of MSP plane is not determined yet. At the
       // optimizing stage we take COM as physical center
-      outputImageOrigin[0] = m_CenterOfHeadMass[0] - .5 * ( outputImageSize[0] - 1 ) * outputImageSpacing[0];
-      outputImageOrigin[1] = m_CenterOfHeadMass[1] - .5 * ( outputImageSize[1] - 1 ) * outputImageSpacing[1];
-      outputImageOrigin[2] = m_CenterOfHeadMass[2] - .5 * ( outputImageSize[2] - 1 ) * outputImageSpacing[2];
+      outputImageOrigin[0] = this->GetCenterOfHeadMass()[0] - .5 * ( outputImageSize[0] - 1 ) * outputImageSpacing[0];
+      outputImageOrigin[1] = this->GetCenterOfHeadMass()[1] - .5 * ( outputImageSize[1] - 1 ) * outputImageSpacing[1];
+      outputImageOrigin[2] = this->GetCenterOfHeadMass()[2] - .5 * ( outputImageSize[2] - 1 ) * outputImageSpacing[2];
       }
 
     // Define start index
@@ -553,13 +574,28 @@ public:
   itkSetMacro(DoPowell,bool);
   itkGetConstMacro(DoPowell,bool);
 
+  void SetCenterOfHeadMass(const SImageType::PointType & centerOfHeadMass)
+  {
+    m_CenterOfHeadMass = centerOfHeadMass;
+    m_CenterOfHeadMassIsSet = true;
+  }
+
 private:
+
+  const SImageType::PointType & GetCenterOfHeadMass() const {
+    if (!m_CenterOfHeadMassIsSet) {
+      std::cout << "ERROR: m_CenterOfHeadMass is not set!" << std::endl;
+      exit(-1);
+    }
+    return this->m_CenterOfHeadMass;
+  }
   typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
 
   ParametersType                    m_params;
   SImageType::Pointer               m_OriginalImage;
   SImageType::Pointer               m_ResamplerReferenceImage;
   SImageType::PointType             m_CenterOfHeadMass;
+  bool                              m_CenterOfHeadMassIsSet;
   SImageType::PixelType             m_BackgroundValue;
   SImageType::PointType             m_CenterOfImagePoint;
   SImageType::PointType::VectorType m_Translation;

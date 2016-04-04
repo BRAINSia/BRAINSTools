@@ -90,14 +90,14 @@ int main( int argc, char * argv[] ) {
 
 
   std::vector<std::string> suffix(4);
-  suffix[0]="1";
-  suffix[1]="2";
-  suffix[2]="3";
+  suffix[0]="0";
+  suffix[1]="1";
+  suffix[2]="2";
 
   std::vector<double> Angle_Range(3);
   Angle_Range[0]=45.0;
   Angle_Range[1]=2.5;
-  Angle_Range[2]=0.25;
+  Angle_Range[2]=0.5;
 
   std::vector<double> Angle_Stepsizes(3);
   Angle_Stepsizes[0] = 5.0;
@@ -105,14 +105,14 @@ int main( int argc, char * argv[] ) {
   Angle_Stepsizes[2] = 0.25;
 
   std::vector<double> Offset_Range(3);
-  Offset_Range[0]=10.0;
-  Offset_Range[1]=0.5;
-  Offset_Range[2]=0.20;
+  Offset_Range[0]=15.0;
+  Offset_Range[1]=1.5;
+  Offset_Range[2]=0.25;
 
   std::vector<double> Offset_Stepsizes(3);
-  Offset_Stepsizes[0] = 2.0;
+  Offset_Stepsizes[0] = 3.0;
   Offset_Stepsizes[1] = 0.5;
-  Offset_Stepsizes[2] = .10;
+  Offset_Stepsizes[2] = .25;
 
   for (unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter )
   {

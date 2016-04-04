@@ -97,25 +97,47 @@ public:
     // Initialize with current guess;
     this->m_params = params;
     double max_cc = this->GetValue();
-    const double HARange = 25.0;
-    const double BARange = 15.0;
-    const double LRRange = 0.0; // don't loop over LR distance
 
-    // rough search in neighborhood.
-    const double HAStepSize = 5;
-    const double BAStepSize = 5;
-    const double LRStepSize = 1;
+    std::vector<double> Angle_Range(3);
+    Angle_Range[0]=45.0;
+    Angle_Range[1]=2.5;
+    Angle_Range[2]=0.5;
 
-    // Let the powell optimizer do all the work for determining the proper
-    // offset (LR distance)
-    // Quick search just needs to get an approximate angle correct.
-    this->DoExhaustiveSearch(this->m_params, max_cc,
-                             HARange, BARange, LRRange,
-                             HAStepSize, BAStepSize, LRStepSize
+    std::vector<double> Angle_Stepsizes(3);
+    Angle_Stepsizes[0] = 5.0;
+    Angle_Stepsizes[1] = 0.5;
+    Angle_Stepsizes[2] = 0.25;
+
+    std::vector<double> Offset_Range(3);
+    Offset_Range[0]=15.0;
+    Offset_Range[1]=1.5;
+    Offset_Range[2]=0.25;
+
+    std::vector<double> Offset_Stepsizes(3);
+    Offset_Stepsizes[0] = 3.0;
+    Offset_Stepsizes[1] = 0.5;
+    Offset_Stepsizes[2] = .25;
+
+    for (unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter ) {
+      const double HA_range = Angle_Range[resolutionIter];
+      const double BA_range = Angle_Range[resolutionIter];
+      const double LR_range = Offset_Range[resolutionIter];
+
+      const double HA_stepsize = Angle_Stepsizes[resolutionIter]; // degree
+      const double BA_stepsize = Angle_Stepsizes[resolutionIter]; // degree
+      const double LR_stepsize = Offset_Stepsizes[resolutionIter]; // mm
+
+      // Let the powell optimizer do all the work for determining the proper
+      // offset (LR distance)
+      // Quick search just needs to get an approximate angle correct.
+      this->DoExhaustiveSearch(this->m_params, max_cc,
+                               HA_range, BA_range, LR_range,
+                               HA_stepsize, BA_stepsize, LR_stepsize
 #ifdef WRITE_CSV_FILE
-                             ,std::string("")
+          ,std::string("")
 #endif
-    );
+      );
+    }
 
     // DEBUGGING INFORMATION
     if( LMC::globalverboseFlag )
@@ -223,7 +245,8 @@ public:
           }
 
 #ifdef WRITE_CSV_FILE
-        csvFileOfMetricValues << current_params[0] << "," << current_params[1] << "," << current_params[2] << "," <<
+        csvFileOfMetricValues << current_params[0]/degree_to_rad << "," << current_params[1]/degree_to_rad << "," <<
+        current_params[2]/degree_to_rad << "," <<
         current_cc << "," << opt_cc << std::endl;
 #endif
         }

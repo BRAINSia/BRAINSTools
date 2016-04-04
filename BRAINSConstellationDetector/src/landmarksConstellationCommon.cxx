@@ -39,7 +39,7 @@
 //RM const unsigned int     MAXITER = 5000;
 //RM const unsigned int     DEL = 3;
 //RM const unsigned int     YES = 1;
-const unsigned int     NO = 0;
+//RM const unsigned int     NO = 0;
 //RM const unsigned int     SMAX = 50;
 namespace LMC
 {
@@ -56,30 +56,15 @@ typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflecti
 
 typedef itk::RecursiveGaussianImageFilter<SImageType, SImageType>  GaussianFilterType;
 
-SImageType::Pointer GaussianSmoothing(const SImageType::Pointer image,
-                                      const double sigma)
-{
-  GaussianFilterType::Pointer gaussianFilter = GaussianFilterType::New();
-  gaussianFilter->SetInput( image );
-  gaussianFilter->SetSigma( sigma );
-  gaussianFilter->Update();
-  return gaussianFilter->GetOutput();
-}
-
 void DoMultiQualityReflection(SImageType::Pointer &image,
                               RigidTransformType::Pointer &Tmsp,
                               const int qualityLevel,
                               const reflectionFunctorType::Pointer &reflectionFunctor)
 {
+  //itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
   reflectionFunctor->InitializeImage(image);
-  itkUtil::WriteImage<SImageType>(image,"PRE_PYRAMID.nii.gz");
   PyramidFilterType::Pointer    MyPyramid = MakeThreeLevelPyramid(image.GetPointer() );
 
-/*
-  SImageType::Pointer EigthImage = GaussianSmoothing( MyPyramid->GetOutput(0), 8.0 );
-  SImageType::Pointer QuarterImage = GaussianSmoothing( MyPyramid->GetOutput(1), 4.0 );
-  SImageType::Pointer HalfImage = GaussianSmoothing( MyPyramid->GetOutput(2), 2.0 );
-*/
   SImageType::Pointer EigthImage = MyPyramid->GetOutput(0);
   SImageType::Pointer QuarterImage = MyPyramid->GetOutput(1);
   SImageType::Pointer HalfImage = MyPyramid->GetOutput(2);
@@ -135,7 +120,7 @@ void ComputeMSP(SImageType::Pointer image,
     {
     reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
     reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass);
-    reflectionFunctor->InitializeImage(image);
+
     DoMultiQualityReflection(image, Tmsp, qualityLevel, reflectionFunctor);
 
     transformedImage = reflectionFunctor->GetMSPCenteredImage();
@@ -146,8 +131,6 @@ void ComputeMSP(SImageType::Pointer image,
 void ComputeMSP_Easy(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel)
 {
   reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
-
-  reflectionFunctor->InitializeImage(image);
   DoMultiQualityReflection(image, Tmsp, qualityLevel, reflectionFunctor);
 }
 
@@ -432,7 +415,7 @@ PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
   SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
   for( unsigned int c = 0; c < pyramidSchedule.cols(); ++c )
     {
-    //pyramidSchedule[0][c] = static_cast<unsigned int>( std::floor(4.0 / refImageSpacing[c] + 0.5) );
+    // about 8mm
     pyramidSchedule[0][c] = static_cast<unsigned int>( 2 * round(4.0 / refImageSpacing[c]) );
     }
   MyPyramid->SetSchedule(pyramidSchedule);

@@ -32,6 +32,7 @@
 #include "itkImageRegionIterator.h"
 #include "itkVersorRigid3DTransform.h"
 
+#include "itkResampleInPlaceImageFilter.h"
 #include "itkHoughTransformRadialVotingImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkImageFileWriter.h"

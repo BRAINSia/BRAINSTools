@@ -64,8 +64,6 @@ public:
   m_CenterOfHeadMass(),
   m_CenterOfHeadMassIsSet(false),
   m_BackgroundValue(0),
-  m_CenterOfImagePoint(),
-  m_Translation(),
   m_DoPowell(true),
   m_imInterp(ITK_NULLPTR),
   m_cc(0.0),
@@ -73,9 +71,9 @@ public:
   {
     this->m_Optimizer = OptimizerType::New();
     this->m_Optimizer->SetMetric( &( *this ) );
-    this->m_Optimizer->SetStepLength( 0.075 );
-    this->m_Optimizer->SetStepTolerance( 1e-8 );
-    this->m_Optimizer->SetValueTolerance( 1e-8 );
+    this->m_Optimizer->SetStepLength( 0.025 );
+    this->m_Optimizer->SetStepTolerance( 1e-12 );
+    this->m_Optimizer->SetValueTolerance( 1e-12 );
     this->m_Optimizer->SetMaximumIteration( 50 );
 
     this->m_params.set_size(SpaceDimension);
@@ -98,10 +96,12 @@ public:
     this->m_params = params;
     double max_cc = this->GetValue();
 
+    // Run a multi-level exhaustive search to find the approximate parameters.
+    // The Powell optimizer will then tune the exhaustive search parameters.
     std::vector<double> Angle_Range(3);
-    Angle_Range[0]=45.0;
-    Angle_Range[1]=2.5;
-    Angle_Range[2]=0.5;
+    Angle_Range[0] = 45.0;
+    Angle_Range[1] = 2.5;
+    Angle_Range[2] = 0.5;
 
     std::vector<double> Angle_Stepsizes(3);
     Angle_Stepsizes[0] = 5.0;
@@ -109,16 +109,17 @@ public:
     Angle_Stepsizes[2] = 0.25;
 
     std::vector<double> Offset_Range(3);
-    Offset_Range[0]=15.0;
-    Offset_Range[1]=1.5;
-    Offset_Range[2]=0.25;
+    Offset_Range[0] = 15.0;
+    Offset_Range[1] = 1.5;
+    Offset_Range[2] = 0.5;
 
     std::vector<double> Offset_Stepsizes(3);
     Offset_Stepsizes[0] = 3.0;
     Offset_Stepsizes[1] = 0.5;
-    Offset_Stepsizes[2] = .25;
+    Offset_Stepsizes[2] = 0.25;
 
-    for (unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter ) {
+    for( unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter )
+      {
       const double HA_range = Angle_Range[resolutionIter];
       const double BA_range = Angle_Range[resolutionIter];
       const double LR_range = Offset_Range[resolutionIter];
@@ -127,28 +128,26 @@ public:
       const double BA_stepsize = Angle_Stepsizes[resolutionIter]; // degree
       const double LR_stepsize = Offset_Stepsizes[resolutionIter]; // mm
 
-      // Let the powell optimizer do all the work for determining the proper
-      // offset (LR distance)
-      // Quick search just needs to get an approximate angle correct.
       this->DoExhaustiveSearch(this->m_params, max_cc,
                                HA_range, BA_range, LR_range,
                                HA_stepsize, BA_stepsize, LR_stepsize
 #ifdef WRITE_CSV_FILE
-          ,std::string("")
+                               ,std::string("")
 #endif
-      );
-    }
+                               );
+      }
+
+    this->m_cc = max_cc;
 
     // DEBUGGING INFORMATION
     if( LMC::globalverboseFlag )
       {
       itk::NumberToString<double> doubleToString;
-      std::cout << "quick search 15 deg "
+      std::cout << "Initialize exhaustive search: "
                 << " HA= " << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi)
                 << " BA= " << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi)
                 << " XO= " << doubleToString(this->m_params[2])
-                << " cc="  <<  doubleToString(this->GetValue())
-                << " iterations=" << this->m_Optimizer->GetCurrentIteration()
+                << " cc="  <<  doubleToString(this->m_cc)
                 << std::endl;
       }
   }
@@ -213,18 +212,18 @@ public:
                           const double BAStepSize,
                           const double LRStepSize
 #ifdef WRITE_CSV_FILE
-                          ,std::string CSVFileName)
-#else
-  )
+                          ,std::string CSVFileName
 #endif
+                          )
   {
+  // starting parameters are optimal parameters from previous level
   const ParametersType starting_params (opt_params);
-  // search parameters
+  // new search parameters
   ParametersType current_params;
   current_params.set_size(SpaceDimension);
-
+#ifdef WRITE_CSV_FILE
   std::stringstream csvFileOfMetricValues;
-
+#endif
   const double degree_to_rad = vnl_math::pi / 180.0;
 
   for( double LR = -LRRange; LR <= LRRange; LR += LRStepSize)
@@ -245,12 +244,13 @@ public:
           }
 
 #ifdef WRITE_CSV_FILE
-        csvFileOfMetricValues << current_params[0]/degree_to_rad << "," << current_params[1]/degree_to_rad << "," <<
-        current_params[2]/degree_to_rad << "," <<
-        current_cc << "," << opt_cc << std::endl;
+        csvFileOfMetricValues << current_params[0]/degree_to_rad
+                              << "," << current_params[1]/degree_to_rad
+                              << "," << current_params[2]
+                              << "," << current_cc
+                              << std::endl;
 #endif
         }
-        //std::cout << current_params << std::endl;
       }
     }
 #ifdef WRITE_CSV_FILE
@@ -261,7 +261,7 @@ public:
     csvFile.open( CSVFileName.c_str() );
     if( !csvFile.is_open() )
       {
-      itkGenericExceptionMacro( << "Error: Can't write oputput csv file!" << std::endl );
+      itkGenericExceptionMacro( << "Error: Can't write oputput csv file: " << CSVFileName << "!" << std::endl );
       }
     csvFile << csvFileOfMetricValues.str();
     csvFile.close();
@@ -305,46 +305,28 @@ public:
 
   RigidTransformType::Pointer GetTransformToMSP(void) const
   {
-    // Compute and store the new output image origin
-    SImageType::Pointer image = GetResampledImageToOutputBox(this->m_params);
-
-    // it is also the msp location
-    SImageType::PointType physCenter = GetImageCenterPhysicalPoint(image);
-
-    // Move the physical origin to the center of the image
-    RigidTransformType::Pointer tempEulerAngles3DT = RigidTransformType::New();
-    tempEulerAngles3DT->Compose( this->GetTransformFromParams(this->m_params) );
-    RigidTransformType::TranslationType tnsl = tempEulerAngles3DT->GetTranslation();
-
-    tempEulerAngles3DT->Translate(physCenter.GetVectorFromOrigin() - tnsl);
-    return tempEulerAngles3DT;
+    return this->GetTransformFromParams(this->m_params);
   }
 
   void InitializeImage(SImageType::Pointer & RefImage)
   {
-    if (!m_CenterOfHeadMassIsSet) {
-      // Find center of head mass
-      std::cout << "\nFinding center of head mass..." << std::endl;
-      typedef itk::FindCenterOfBrainFilter<SImageType>                        FindCenterFilter;
-      FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-      findCenterFilter->SetInput(RefImage);
-      findCenterFilter->SetAxis(2);
-      findCenterFilter->SetOtsuPercentileThreshold(0.01);
-      findCenterFilter->SetClosingSize(7);
-      findCenterFilter->SetHeadSizeLimit(700);
-      findCenterFilter->SetBackgroundValue(0);
-      findCenterFilter->Update();
-      SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
-      this->SetCenterOfHeadMass(centerOfHeadMass);
-    }
+    if( !m_CenterOfHeadMassIsSet )
+      {
+      std::cout << "ERROR: m_CenterOfHeadMass is not set!" << std::endl;
+      exit(-1);
+      }
+    else
+      {
+      std::cout << "Center of Head Mass: [" << this->m_CenterOfHeadMass[0] << "," << this->m_CenterOfHeadMass[1] << ","
+        << this->m_CenterOfHeadMass[2] << "]" << std::endl;
+      }
+
       {
       SImageType::PixelType dummyLow;
       SImageType::PixelType dummyHigh;
       // Find threshold below which image is considered background.
       m_BackgroundValue = setLowHigh<SImageType>(RefImage, dummyLow, dummyHigh, 0.1F);
       }
-
-    this->m_CenterOfImagePoint = GetImageCenterPhysicalPoint(RefImage);
 
 #ifdef USE_DEBUGGIN_IMAGES
       {
@@ -357,13 +339,10 @@ public:
 #endif
 
     this->SetDownSampledReferenceImage(RefImage);
-    this->m_Translation = this->GetCenterOfHeadMass().GetVectorFromOrigin() - m_CenterOfImagePoint
-                                                                                  .GetVectorFromOrigin();
+
     if( LMC::globalverboseFlag )
       {
-      std::cout << "Center Of Physical Point: " << this->m_CenterOfImagePoint << std::endl;
       std::cout << "Center Of Mass Point:" << this->GetCenterOfHeadMass() << std::endl;
-      std::cout << "InitialTranslation: " << this->m_Translation << std::endl;
       }
   }
 
@@ -386,11 +365,14 @@ public:
   {
     RigidTransformType::Pointer tempEulerAngles3DT = RigidTransformType::New();
 
-    tempEulerAngles3DT->SetCenter(this->m_CenterOfImagePoint);
+    tempEulerAngles3DT->SetCenter(this->GetCenterOfHeadMass());
     tempEulerAngles3DT->SetRotation(0, params[1], params[0]);
-    SImageType::PointType::VectorType tnsl = this->m_Translation;
-    tnsl[0] += params[2];
+    SImageType::PointType::VectorType tnsl;
+    tnsl[0] = params[2];
+    tnsl[1] = 0;
+    tnsl[2] = 0;
     tempEulerAngles3DT->SetTranslation(tnsl);
+
     return tempEulerAngles3DT;
   }
 
@@ -538,14 +520,6 @@ public:
 
   SImageType::Pointer GetMSPCenteredImage(void)
   {
-    // Note GetTransformToMSP() aligns physical origin to the center of MSP.
-    // SimpleResampleImage() further aligns physical center of image to physical
-    // origin.
-
-    // RigidTransformType::Pointer tempEulerAngles3DT = GetTransformToMSP();
-    // return SimpleResampleImage( this->m_OriginalImage, tempEulerAngles3DT );
-
-    // create a colormap lookup table
     typedef itk::StatisticsImageFilter<SImageType> StatisticsFilterType;
     StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
     statisticsFilter->SetInput(this->m_OriginalImage);
@@ -569,28 +543,28 @@ public:
   {
     itk::NumberToString<double> doubleToString;
 
-    if (this->m_DoPowell)
-    {
+    if( this->m_DoPowell )
+      {
       try
-      {
+        {
         this->m_Optimizer->StartOptimization();
-      }
+        }
       catch (itk::ExceptionObject &e)
-      {
+        {
         std::cout << "Exception thrown ! " << std::endl;
         std::cout << "An error occurred during Optimization" << std::endl;
         std::cout << "Location    = " << e.GetLocation() << std::endl;
         std::cout << "Description = " << e.GetDescription() << std::endl;
         //return EXIT_FAILURE;
-      }
+        }
       this->m_params = this->m_Optimizer->GetCurrentPosition();
-    }
+      }
     this->m_cc = this->GetValue();
 
     std::cout << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi) << " "
               << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi) << " "
               << this->m_params[2] << " cc= "
-              << doubleToString(m_cc) << " iters= " << this->m_Optimizer->GetCurrentIteration()
+              << doubleToString(this->m_cc) << " iters= " << this->m_Optimizer->GetCurrentIteration()
               << std::endl;
   }
 
@@ -599,19 +573,22 @@ public:
 
   void SetCenterOfHeadMass(const SImageType::PointType & centerOfHeadMass)
   {
-    m_CenterOfHeadMass = centerOfHeadMass;
-    m_CenterOfHeadMassIsSet = true;
+    this->m_CenterOfHeadMass = centerOfHeadMass;
+    this->m_CenterOfHeadMassIsSet = true;
   }
 
 private:
 
-  const SImageType::PointType & GetCenterOfHeadMass() const {
-    if (!m_CenterOfHeadMassIsSet) {
+  const SImageType::PointType & GetCenterOfHeadMass() const
+  {
+    if( !m_CenterOfHeadMassIsSet )
+      {
       std::cout << "ERROR: m_CenterOfHeadMass is not set!" << std::endl;
       exit(-1);
-    }
+      }
     return this->m_CenterOfHeadMass;
   }
+
   typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
 
   ParametersType                    m_params;
@@ -620,8 +597,6 @@ private:
   SImageType::PointType             m_CenterOfHeadMass;
   bool                              m_CenterOfHeadMassIsSet;
   SImageType::PixelType             m_BackgroundValue;
-  SImageType::PointType             m_CenterOfImagePoint;
-  SImageType::PointType::VectorType m_Translation;
   OptimizerPointer                  m_Optimizer;
   bool                              m_DoPowell;
   LinearInterpolatorType::Pointer   m_imInterp;

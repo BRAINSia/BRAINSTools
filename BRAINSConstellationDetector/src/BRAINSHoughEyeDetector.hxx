@@ -367,29 +367,14 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     /** The output image will have exact the same index contents
      but with modified image info so that the index-to-physical mapping
      makes the image in the physical space aligned */
-    this->m_OutputImage->CopyInformation( image );
-    this->m_OutputImage->SetRegions( region );
+    typedef itk::ResampleInPlaceImageFilter<TInputImage, TOutputImage> ResampleIPFilterType;
 
-    this->m_OutputImage->SetOrigin( this->m_InvVersorTransform->GetMatrix()
-                                    * image->GetOrigin() + this->m_InvVersorTransform->GetOffset() );
+    typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
+    resampleIPFilter->SetInputImage( image );
+    resampleIPFilter->SetRigidTransform( this->m_VersorTransform.GetPointer() );
+    resampleIPFilter->Update();
+    this->m_OutputImage = resampleIPFilter->GetOutput();
 
-    this->m_OutputImage->SetDirection( this->m_InvVersorTransform->GetMatrix()
-                                       * image->GetDirection() );
-
-    this->m_OutputImage->Allocate();
-
-      {
-      InputImageConstIterator It0( image, region );
-      It0.GoToBegin();
-      OutputImageIterator It1( this->m_OutputImage, region );
-      It1.GoToBegin();
-      while( !It0.IsAtEnd()  && !It1.IsAtEnd() )
-        {
-        It1.Set( It0.Get() );
-        ++It0;
-        ++It1;
-        }
-      }
     this->GraftOutput( this->m_OutputImage );
     }
 }

@@ -396,16 +396,16 @@ public:
 
   void CreateResamplerReferenceImage(void)
   {
-    SImageType::SpacingType           outputImageSpacing;
     SImageType::SizeType              outputImageSize;
     SImageType::PointType             outputImageOrigin;
+
+    SImageType::SpacingType outputImageSpacing = m_OriginalImage->GetSpacing();
       {
       // Get output spacing
-      const SImageType::SpacingType &inputImageSpacing = m_OriginalImage->GetSpacing();
-      SImageType::SpacingType::ValueType minSpacing=inputImageSpacing[0];
+      SImageType::SpacingType::ValueType minSpacing=outputImageSpacing[0];
       for( unsigned int i = 1; i < 3; ++i )
         {
-        minSpacing = std::min(minSpacing,inputImageSpacing[i]);
+        minSpacing = std::min(minSpacing,outputImageSpacing[i]);
         }
       for( unsigned int i = 0; i < 3; ++i )
         {
@@ -413,9 +413,9 @@ public:
         }
 
       // Desire a 95*2 x 130*2 x 160x2 mm voxel lattice that will fit a brain
-      outputImageSize[0] = static_cast<unsigned long int>( 2.0 * std::ceil(95.0  / outputImageSpacing[0]) );
-      outputImageSize[1] = static_cast<unsigned long int>( 2.0 * std::ceil(130.0 / outputImageSpacing[1]) );
-      outputImageSize[2] = static_cast<unsigned long int>( 2.0 * std::ceil(160.0 / outputImageSpacing[2]) );
+      outputImageSize[0] = static_cast<SImageType::SpacingType::ValueType>( 2.0 * std::ceil(95.0  / outputImageSpacing[0]) );
+      outputImageSize[1] = static_cast<SImageType::SpacingType::ValueType>( 2.0 * std::ceil(130.0 / outputImageSpacing[1]) );
+      outputImageSize[2] = static_cast<SImageType::SpacingType::ValueType>( 2.0 * std::ceil(160.0 / outputImageSpacing[2]) );
 
       // The physical center of MSP plane is not determined yet. At the
       // optimizing stage we take COM as physical center

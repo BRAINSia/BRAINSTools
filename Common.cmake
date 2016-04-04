@@ -81,7 +81,7 @@ option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"          
 if(CMAKE_CXX_STANDARD LESS 11)
   option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
 else()
-  option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
+  option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
 endif()
 
 

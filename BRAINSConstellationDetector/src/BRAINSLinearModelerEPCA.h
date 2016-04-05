@@ -82,6 +82,6 @@ VectorType ComputeSVector( const MatrixType & X_i );
 /*
  * Compute the I_si matrix from X_i and s_i
  */
-MatrixType ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const VectorType s_i );
+MatrixType ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const VectorType & s_i );
 
 #endif

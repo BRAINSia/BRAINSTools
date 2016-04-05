@@ -41,6 +41,7 @@ set(ALL_PROGS_LIST
   landmarksConstellationWeights
   BinaryMaskEditorBasedOnLandmarks
   BRAINSConstellationLandmarksTransform
+  ComputeReflectiveCorrelationMetric
   )
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB ${VTK_LIBRARIES} )

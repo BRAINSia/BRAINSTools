@@ -47,7 +47,7 @@ public:
   {
   }
 
-  landmarksConstellationTrainingDefinitionIO(const std::string & filename)
+  explicit landmarksConstellationTrainingDefinitionIO(const std::string & filename)
   {
     this->ReadFile(filename);
   }

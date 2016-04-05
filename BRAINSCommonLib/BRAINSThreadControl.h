@@ -45,7 +45,7 @@ namespace BRAINSUtils
 class StackPushITKDefaultNumberOfThreads
 {
 public:
-  StackPushITKDefaultNumberOfThreads(const int desiredCount);
+  explicit StackPushITKDefaultNumberOfThreads(const int desiredCount);
   ~StackPushITKDefaultNumberOfThreads();
 protected:
   StackPushITKDefaultNumberOfThreads();                                                 // Purposefully not implemented

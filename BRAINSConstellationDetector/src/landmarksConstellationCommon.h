@@ -136,7 +136,7 @@ extern std::string globalResultsDir;
 extern int         globalImagedebugLevel;
 extern PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage);
 
-//RM extern PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage);
+extern PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage);
 
 extern SImageType::PointType GetImageCenterPhysicalPoint(SImageType::Pointer & image);
 

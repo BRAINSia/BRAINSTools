@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-// Author: Hans J. Johnson
+// Author: Hans J. Johnson, Ali Ghayoor
 
 #include "LandmarksCompareCLP.h"
 #include "Slicer3LandmarkIO.h"

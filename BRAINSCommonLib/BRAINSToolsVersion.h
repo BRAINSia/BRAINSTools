@@ -40,7 +40,7 @@ namespace BRAINSTools
     static const std::string &BuildDate();
 
     static const std::string &ExtendedVersionString();
-    std::string ToString() { return Version::ExtendedVersionString(); }
+    static std::string ToString() { return Version::ExtendedVersionString(); }
     };
 }
 

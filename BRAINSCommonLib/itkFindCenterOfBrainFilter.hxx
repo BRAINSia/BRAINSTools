@@ -188,7 +188,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
     }
 
   double inferiorCutOff = -1000000;
-  std::cout << "Computing Sampled Distance Computations" << std::endl;
+  std::cout << "Computing Sampled Distance Computations\n" << std::endl;
   const double samplingDistanceMM = 3.0;
   // Only look in 3mm regions
   const double samplingDistanceCM = samplingDistanceMM * 0.1;

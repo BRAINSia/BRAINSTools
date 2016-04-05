@@ -48,15 +48,15 @@ public:
 
   void SetLLSMeans(const LLSMeansType & llsMeans);
 
-  const LLSMeansType & GetLLSMeans();
+  const LLSMeansType & GetLLSMeans() const ;
 
   void SetLLSMatrices(const LLSMatricesType & llsMatrices);
 
-  const LLSMatricesType & GetLLSMatrices();
+  const LLSMatricesType & GetLLSMatrices() const ;
 
   void SetSearchRadii(const LLSSearchRadiiType & llsSearchRadii);
 
-  const LLSSearchRadiiType & GetSearchRadii();
+  const LLSSearchRadiiType & GetSearchRadii() const;
 
 private:
   // private methods

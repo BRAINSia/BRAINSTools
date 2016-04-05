@@ -121,7 +121,6 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
   myMult1->SetInput2( Mask );
   myMult1->Update();
 
-  typedef itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType> multFilter;
   multFilter::Pointer myMult2 = multFilter::New();
   myMult2->SetInput1( myMult1->GetOutput() );
   myMult2->SetInput2(inputLabelImage);

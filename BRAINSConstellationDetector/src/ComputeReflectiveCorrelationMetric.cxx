@@ -17,6 +17,28 @@
  *
  *=========================================================================*/
 // Authors: Ali Ghayoor, Hans J Johnson
+/*
+ The purpose of this program is debugging the computation of reflective correlation metric
+ through an multi-resolution exhaustive search.
+ This program generates a csv file with 4 columns as:
+ #Head_angle, Bank_angle, LR_offset, reflective_correlation_metric
+
+ The sample command line is:
+ ${BUILD_DIR}/bin/ComputeReflectiveCorrelationMetric \
+ --inputVolume input_test.nii.gz \
+ --outputCSVFile cc_metric.csv
+
+ Then, the created csv file can be loaded in a companion MATLAB code that creates a surface
+ plot from scatter data. The companion MATLAB code can be found here:
+
+ ${BRAINSia_Source_DIR}/BRAINSConstellationDetector/src/rc_metric_plots.m
+
+ If itkReflectiveCorrelationCenterToImageMetric works correctly, the generated surface should
+ look like a cone with a sharp minimum around the optimal parameters set.
+
+ NOTE: This program does not compile by default. If you want to use that, please modify the CMakeLists.txt
+       file. Currently "ComputeReflectiveCorrelationMetric" is commented out to not be compiled.
+*/
 
 #include <iostream>
 #include "itkIO.h"
@@ -175,25 +197,5 @@ int main( int argc, char * argv[] ) {
     << powell_params[1]/degree_to_rad << "," << powell_params[2] << "]" << std::endl;
   std::cout << "Optimize metric value by Powell search: " << powell_cc << std::endl;
 
-  bool resultsAreClose = true;
-  const double tolerance = 1.0;
-  for( unsigned int i = 0; i < 3; ++i )
-    {
-    const double error_term = std::abs(opt_params[i] - powell_params[i]);
-    if( error_term > tolerance )
-      {
-      resultsAreClose = false;
-      }
-    }
-
-  if( resultsAreClose )
-    {
-    std::cout << "PASSED!" << std::endl;
-    return EXIT_SUCCESS;
-    }
-  else
-    {
-    std::cout << "FAILED!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  return EXIT_SUCCESS;
 }

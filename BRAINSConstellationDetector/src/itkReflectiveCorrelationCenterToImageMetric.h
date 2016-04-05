@@ -317,8 +317,11 @@ public:
       }
     else
       {
-      std::cout << "Center of Head Mass: [" << this->m_CenterOfHeadMass[0] << "," << this->m_CenterOfHeadMass[1] << ","
-        << this->m_CenterOfHeadMass[2] << "]" << std::endl;
+      if( LMC::globalverboseFlag )
+        {
+        std::cout << "Center of Head Mass: [" << this->m_CenterOfHeadMass[0] << "," << this->m_CenterOfHeadMass[1] << ","
+          << this->m_CenterOfHeadMass[2] << "]" << std::endl;
+        }
       }
 
       {
@@ -339,11 +342,6 @@ public:
 #endif
 
     this->SetDownSampledReferenceImage(RefImage);
-
-    if( LMC::globalverboseFlag )
-      {
-      std::cout << "Center Of Mass Point:" << this->GetCenterOfHeadMass() << std::endl;
-      }
   }
 
   /* -- */

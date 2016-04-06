@@ -151,6 +151,20 @@ int main( int argc, char *argv[] )
   catch( itk::ExceptionObject & err )
     {
     std::cerr << "Exception Object caught:\n" << err << std::endl;
+
+    // Write a log script to the disk to report failure
+    std::stringstream failureLogFileStream;
+    failureLogFileStream << err;
+    std::ofstream failureLogScript;
+    failureLogScript.open("BCD_FAILED.txt");
+    if( !failureLogScript.is_open() )
+      {
+      std::cerr << "Error: Can't write failure log file: BCD_FAILED.txt " << std::endl;
+      std::cerr.flush();
+      }
+    failureLogScript << failureLogFileStream.str();
+    failureLogScript.close();
+
     return EXIT_FAILURE;
     }
 

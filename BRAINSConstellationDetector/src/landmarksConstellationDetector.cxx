@@ -864,6 +864,26 @@ void landmarksConstellationDetector::Compute( void )
       m_NamedPointEMSP["RE"] =
         InvFinalTmsp->TransformPoint( this->m_NamedPointEMSP["RE"] );
       }
+
+    // Following is a mechanism to force BCD report failure if
+    // transformed LE and RE are not in expected ranges.
+    std::vector<double> eyes_LR_range(2);
+    eyes_LR_range[0] = 25.0;
+    eyes_LR_range[1] = 40.0;
+
+    if( this->m_NamedPointEMSP["LE"][0] < eyes_LR_range[0] || this->m_NamedPointEMSP["LE"][0] > eyes_LR_range[1]
+       || this->m_NamedPointEMSP["RE"][0] > -eyes_LR_range[0] || this->m_NamedPointEMSP["RE"][0] < -eyes_LR_range[1])
+      {
+      itkGenericExceptionMacro(<< "Eyes are out of range in MSP aligned space." << std::endl
+                               << "Normally in left-right direction, 25<LE<40 and -40<RE<-25." << std::endl);
+      }
+    if( this->m_NamedPointEMSP["LE"][2] > 0 || this->m_NamedPointEMSP["RE"][2] >0 )
+      {
+      itkGenericExceptionMacro(<< "Eyes are normally lower than AC point in Superior-Inferior direction "
+                               << "in MSP aligned space." << std::endl);
+      }
+    //
+
     mspSpaceCEC.SetToMidPoint( this->m_NamedPointEMSP["LE"],
                                this->m_NamedPointEMSP["RE"] );
     mspSpaceCEC[0] = 0; // Search starts on the estimated MSP

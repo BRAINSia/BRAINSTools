@@ -865,6 +865,9 @@ void landmarksConstellationDetector::Compute( void )
         InvFinalTmsp->TransformPoint( this->m_NamedPointEMSP["RE"] );
       }
 
+    /*
+    TODO: This block of code should be moved to proper place
+
     // Following is a mechanism to force BCD report failure if
     // transformed LE and RE are not in expected ranges.
     std::vector<double> eyes_LR_range(2);
@@ -883,6 +886,7 @@ void landmarksConstellationDetector::Compute( void )
                                << "in MSP aligned space." << std::endl);
       }
     //
+    */
 
     mspSpaceCEC.SetToMidPoint( this->m_NamedPointEMSP["LE"],
                                this->m_NamedPointEMSP["RE"] );

@@ -30,7 +30,7 @@ from utilities.distributed import modify_qsub_args
 """
 
 
-def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, PostACPCAlignToAtlas, DoReverseInit, debug):
+def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, PostACPCAlignToAtlas, DoReverseInit, useEMSP=False, Debug=False):
     CLUSTER_QUEUE=master_config['queue']
     CLUSTER_QUEUE_LONG=master_config['long_q']
     landmarkInitializeWF = pe.Workflow(name=WFname)
@@ -41,7 +41,8 @@ def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, P
                                                              'atlasWeightFilename',
                                                              'LLSModel',
                                                              'inputTemplateModel',
-                                                             'atlasVolume']),
+                                                             'atlasVolume',
+                                                             'EMSP']),
                          run_without_submitting=True,
                          name='inputspec')
 
@@ -81,6 +82,11 @@ def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, P
     landmarkInitializeWF.connect(inputsSpec, 'LLSModel',             BCD, 'LLSModel')
     landmarkInitializeWF.connect(inputsSpec, 'inputTemplateModel',   BCD, 'inputTemplateModel')
 
+    # If EMSP, pre-selected landmarks are given, force to use.
+    if useEMSP:
+        print("*** Use pre-selected landmark file for Landmark Detection")
+        landmarkInitializeWF.connect(inputsSpec, 'EMSP', BCD, 'inputLandmarksEMSP')
+
 
     # If the atlas volume is from this subject (i.e. after template building for the longitudinal phase) then set this to True
     # Otherwise, it is probably best to let the ACPC alignment be fully defined by the landmark points themselves.
@@ -116,7 +122,7 @@ def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, P
         landmarkInitializeWF.connect(inputsSpec, 'inputVolume', Resample2Atlas, 'inputVolume')
         landmarkInitializeWF.connect(BLI2Atlas, 'outputTransformFilename', Resample2Atlas, 'warpTransform')
 
-    if (DoReverseInit == True) and (debug == True):
+    if (DoReverseInit == True) and (Debug == True):
         ResampleFromAtlas = pe.Node(interface=BRAINSResample(), name="ResampleFromAtlas")
         ResampleFromAtlas.inputs.interpolationMode = "Linear"
         ResampleFromAtlas.inputs.outputVolume = "atlas2subject.nii.gz"

@@ -84,12 +84,16 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
             doDenoise = False
         else:
             doDenoise = True
+    useEMSP=False
+    if dataDict['EMSP'] > 0:
+        useEMSP =True
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
                                                           pipeline_name=pipeline_name,
                                                           doDenoise=doDenoise,
-                                                          badT2=dataDict['BadT2'])
+                                                          badT2=dataDict['BadT2'],
+                                                          useEMSP=useEMSP)
     sessionWorkflow.base_dir = master_config['cachedir']
 
     sessionWorkflow_inputsspec = sessionWorkflow.get_node('inputspec')
@@ -97,6 +101,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     sessionWorkflow_inputsspec.inputs.T2s = dataDict['T2s']
     sessionWorkflow_inputsspec.inputs.PDs = dataDict['PDs']
     sessionWorkflow_inputsspec.inputs.FLs = dataDict['FLs']
+    sessionWorkflow_inputsspec.inputs.EMSP = dataDict['EMSP'][0]
     sessionWorkflow_inputsspec.inputs.OTHERs = dataDict['OTHERs']
     return sessionWorkflow
 
@@ -149,6 +154,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 _dict['BadT2'] = True
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
+            _dict['EMSP'] = database.getFilenamesByScantype(session, ['EMSP'])
             _dict['OTHERs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
             sentinal_file_basedir = os.path.join(
                 master_config['resultdir'],

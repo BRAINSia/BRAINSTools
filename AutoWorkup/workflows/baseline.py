@@ -238,7 +238,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
 
 
 def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1, master_config, phase, interpMode,
-                                        pipeline_name, doDenoise=True, badT2 = False):
+                                        pipeline_name, doDenoise=True, badT2 = False, useEMSP=False):
     """
     Run autoworkup on a single sessionid
 
@@ -272,6 +272,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasLandmarkFilename', 'atlasWeightFilename',
                                                              'LLSModel', 'inputTemplateModel', 'template_t1_denoised_gaussian',
                                                              'atlasDefinition', 'T1s', 'T2s', 'PDs', 'FLs', 'OTHERs',
+                                                             'EMSP',
                                                              'hncma_atlas',
                                                              'template_rightHemisphere',
                                                              'template_leftHemisphere',
@@ -550,7 +551,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DoReverseMapping = False  # Set to true for debugging outputs
         if 'auxlmk' in master_config['components']:
             DoReverseMapping = True
-        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", master_config, interpMode, PostACPCAlignToAtlas, DoReverseMapping, False)
+        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", master_config, interpMode, PostACPCAlignToAtlas, DoReverseMapping, useEMSP, Debug=False)
 
         baw201.connect([(makePreprocessingOutList, myLocalLMIWF,
                          [(('T1s', get_list_element, 0), 'inputspec.inputVolume' )]),
@@ -559,7 +560,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                           ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
                           ('LLSModel', 'inputspec.LLSModel'),
                           ('inputTemplateModel', 'inputspec.inputTemplateModel'),
-                          ('template_t1_denoised_gaussian', 'inputspec.atlasVolume')]),
+                          ('template_t1_denoised_gaussian', 'inputspec.atlasVolume'),
+                          ('EMSP','inputspec.EMSP')]),
                         (myLocalLMIWF, outputsSpec,
                          [('outputspec.outputResampledCroppedVolume', 'BCD_ACPC_T1_CROPPED'),
                           ('outputspec.outputLandmarksInACPCAlignedSpace',

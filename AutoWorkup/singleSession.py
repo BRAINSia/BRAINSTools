@@ -85,7 +85,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         else:
             doDenoise = True
     useEMSP=False
-    if dataDict['EMSP'] > 0:
+    if len( dataDict['EMSP']) >0:
         useEMSP =True
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
@@ -101,7 +101,8 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     sessionWorkflow_inputsspec.inputs.T2s = dataDict['T2s']
     sessionWorkflow_inputsspec.inputs.PDs = dataDict['PDs']
     sessionWorkflow_inputsspec.inputs.FLs = dataDict['FLs']
-    sessionWorkflow_inputsspec.inputs.EMSP = dataDict['EMSP'][0]
+    if useEMSP:
+        sessionWorkflow_inputsspec.inputs.EMSP = dataDict['EMSP'][0]
     sessionWorkflow_inputsspec.inputs.OTHERs = dataDict['OTHERs']
     return sessionWorkflow
 

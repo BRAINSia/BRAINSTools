@@ -33,8 +33,9 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
-  set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
-  set(${proj}_GIT_TAG "DCMTK-3.6.1_20160216") # 20160314
+  # DCMTK-3.6.1_20160216 + patch to avoid unneeded recompilation
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK)
+  set(${proj}_GIT_TAG "023b8deab3b64bdcf4e40544b40bdbdbbd05e7a3")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -66,7 +67,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
   )
   set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(DCMTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

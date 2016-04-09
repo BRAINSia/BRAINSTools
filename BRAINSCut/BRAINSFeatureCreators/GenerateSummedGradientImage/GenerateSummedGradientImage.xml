@@ -3,7 +3,7 @@
   <category>Filtering.FeatureDetection</category>
   <title>GenerateSummedGradient</title>
   <description>Automatic FeatureImages using neural networks</description>
-  <version>4.6.0</version>
+  <version>4.7.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Greg Harris, Eun Young Kim</contributor>

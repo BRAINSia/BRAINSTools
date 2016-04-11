@@ -134,7 +134,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 
     {
     const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
-    itk::MetaDataDictionary & dict = inputVolume->GetMetaDataDictionary();
+    itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
     std::string               ImageMetaDataEMSPFileOverride =  "";
     // if it exists and the string matches what we put in on the image to write, AOK.
     if( itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false )

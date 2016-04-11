@@ -371,14 +371,15 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
    // Following is a mechanism to force BCD report failure if
    // transformed LE and RE are not in expected ranges with respect to AC point (0,0,0).
    std::vector<double> eyes_LR_range(2);
-   eyes_LR_range[0] = 25.0;
+   eyes_LR_range[0] = 15.0;
    eyes_LR_range[1] = 45.0;
 
    if( this->m_AlignedPoints["LE"][0] < eyes_LR_range[0] || this->m_AlignedPoints["LE"][0] > eyes_LR_range[1]
    || this->m_AlignedPoints["RE"][0] > -eyes_LR_range[0] || this->m_AlignedPoints["RE"][0] < -eyes_LR_range[1])
    {
    itkGenericExceptionMacro(<< "Eyes are out of range in MSP aligned space." << std::endl
-                            << "Normally in left-right direction, 25<LE<45 and -45<RE<-25." << std::endl);
+                            << "Normally in left-right direction, 15<LE<45 and -45<RE<-15." << std::endl
+                            << "LE[0] = " << this->m_AlignedPoints["LE"][0] << ", RE[0] = " << this->m_AlignedPoints["RE"][0] << std::endl);
    }
    if( this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] >0 )
    {

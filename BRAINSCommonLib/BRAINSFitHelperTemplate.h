@@ -276,7 +276,7 @@ protected:
   /** instantiate and call the Registration Helper */
   template <class TransformType,
             class OptimizerType,
-            class MetricType>
+            class FitCommonCodeMetricType>
   void FitCommonCode(int numberOfIterations,
                      double minimumStepLength,
                      typename CompositeTransformType::Pointer & initialITKTransform);

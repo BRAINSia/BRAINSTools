@@ -33,7 +33,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
-    GIT_TAG "112076be4f7ee59cc67099f12f2c4c16719070da" #2015-04-13
+    GIT_TAG "b2c78c74868a1bf8e3abfae831ab31e9d4908c14" #2015-04-18 remove cppcheck warnings
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli

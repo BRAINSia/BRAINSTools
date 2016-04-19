@@ -774,7 +774,17 @@ void landmarksConstellationDetector::Compute( void )
                                                                     this->GetTransformToMSP().GetPointer() );
 
       std::cout << "\n=============================================================" << std::endl;
+
+      // Generate a warning if reflective correlation similarity measure is low.
+      // It may be normal in some very diseased subjects, so don't throw an exception here.
       if( c_c > -0.64 )
+        {
+        std::cout << "WARNING: Low reflective correlation between left/right hemispheres." << std::endl
+                  << "The estimated landmarks may not be reliable.\n" << std::endl;
+        }
+
+      // Throw an exception and stop BCD if RC metric is too low (less than 0.5) because results will not be reliable.
+      if( c_c > -0.50 )
         {
         itkGenericExceptionMacro(<< "Too large MSP estimation error at the final try!" << std::endl
                                  << "The estimation result will not be reliable.\n" << std::endl);

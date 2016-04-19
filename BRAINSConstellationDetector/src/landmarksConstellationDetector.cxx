@@ -59,25 +59,26 @@ VersorTransformType::Pointer
 landmarksConstellationDetector::ComputeACPCAlignedZeroCenteredTransform(void)
 {
   SImageType::PointType ZeroCenter;
-
   ZeroCenter.Fill(0.0);
-  RigidTransformType::Pointer
-    landmarkDefinedACPCAlignedToZeroTransform =
+
+  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
     computeTmspFromPoints(GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"RP"),
-      GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"AC"),
-      GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"PC"),
-      ZeroCenter);
+                          GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"AC"),
+                          GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"PC"),
+                          ZeroCenter);
 
   VersorTransformType::Pointer ACPCAlignedZeroCenteredTransform = VersorTransformType::New();
   ACPCAlignedZeroCenteredTransform->SetFixedParameters( landmarkDefinedACPCAlignedToZeroTransform->GetFixedParameters() );
+
   itk::Versor<double>               versorRotation;
-  const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix( landmarkDefinedACPCAlignedToZeroTransform->GetMatrix() );
+  const itk::Matrix<double, 3, 3> & CleanedOrthogonalized =
+    itk::Orthogonalize3DRotationMatrix( landmarkDefinedACPCAlignedToZeroTransform->GetMatrix() );
   versorRotation.Set( CleanedOrthogonalized );
-  ACPCAlignedZeroCenteredTransform->SetRotation(versorRotation);
+
+  ACPCAlignedZeroCenteredTransform->SetRotation( versorRotation );
   ACPCAlignedZeroCenteredTransform->SetTranslation( landmarkDefinedACPCAlignedToZeroTransform->GetTranslation() );
   return ACPCAlignedZeroCenteredTransform;
 }
-
 
 void
 landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
@@ -149,10 +150,9 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
       }
     else
       {
-      std::cout << "Could not find " << fixedIt->first << " in originalSpaceLandmarksPreBRAINSFit " << std::endl;
-      std::cout << "MIS MATCHED MOVING AND FIXED LANDMARKS!" << std::endl;
-      exit(-1);
-      //TODO:  Throw exception
+      itkGenericExceptionMacro(<< "Could not find " << fixedIt->first
+                               << " in originalSpaceLandmarksPreBRAINSFit " << std::endl
+                               << "MIS MATCHED MOVING AND FIXED LANDMARKS!" << std::endl);
       }
     }
 

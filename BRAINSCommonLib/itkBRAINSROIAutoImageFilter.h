@@ -42,12 +42,9 @@
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
 
-#include "itkImageMaskSpatialObject.h"
+#include "BRAINSTypes.h"
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 #include "itkCastImageFilter.h"
-
-typedef itk::SpatialObject<3>      SpatialObjectType;
-typedef SpatialObjectType::Pointer ImageMaskPointer;
 
 namespace itk
 {

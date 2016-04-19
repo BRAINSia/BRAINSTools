@@ -139,7 +139,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
 }
 
 template <class FixedImageType, class MovingImageType, class TransformType,
-          class SpecificInitializerType, typename MetricType>
+          class SpecificInitializerType, typename DoCenteredInitializationMetricType>
 typename TransformType::Pointer
 DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume,
                           typename MovingImageType::Pointer & orientedMovingVolume,
@@ -150,7 +150,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                                                                     // variable,  the Mask is updated by
                                                                     // this function
                           std::string & initializeTransformMode,
-                          typename MetricType::Pointer & CostMetricObject )
+                          typename DoCenteredInitializationMetricType::Pointer & CostMetricObject )
 {
   typedef itk::Image<unsigned char, 3>                               MaskImageType;
   typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
@@ -317,7 +317,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     bestEulerAngles3D->SetCenter(rotationCenter);
     bestEulerAngles3D->SetTranslation(translationVector);
 
-    typedef itk::Euler3DTransform<double> EulerAngle3DTransformType;
     typename EulerAngle3DTransformType::Pointer currentEulerAngles3D = EulerAngle3DTransformType::New();
 
     currentEulerAngles3D->SetCenter(rotationCenter);
@@ -575,7 +574,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
 }
 
 template <class FixedImageType, class MovingImageType>
-template <class TransformType, class OptimizerType, class MetricType>
+template <class TransformType, class OptimizerType, class FitCommonCodeMetricType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   int numberOfIterations,
@@ -588,7 +587,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
      OptimizerType,
      FixedImageType,
      MovingImageType,
-     MetricType> MultiModal3DMutualRegistrationHelperType;
+     FitCommonCodeMetricType> MultiModal3DMutualRegistrationHelperType;
 
   typename MultiModal3DMutualRegistrationHelperType::Pointer
   appMutualRegistration = MultiModal3DMutualRegistrationHelperType::New();

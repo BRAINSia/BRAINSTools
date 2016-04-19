@@ -128,6 +128,7 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
   return myMult2->GetOutput();
 }
 
+#if 0
 itk::Image<unsigned char, 3>::Pointer
 ExtractSingleLargestRegion(const unsigned char threshold_low, const unsigned char threshold_high,
                            const int openingSize, const int closingSize, const int safetySize,
@@ -146,3 +147,4 @@ ExtractSingleLargestRegion(const unsigned char threshold_low, const unsigned cha
   return ExtractSingleLargestRegionFromMask(
     threshold->GetOutput(), openingSize, closingSize, safetySize, inputLabelImage);
 }
+#endif

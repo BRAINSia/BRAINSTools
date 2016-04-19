@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
     // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
     TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
-    typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
     ReaderType::Pointer refImageReader = ReaderType::New();
     if( referenceVolume.size() > 0 )
       {

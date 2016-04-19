@@ -38,6 +38,7 @@
 #include "itkImageToImageFilter.h"
 #include "itkHistogram.h"
 #include "BRAINSFitUtils.h"
+#include "BRAINSTypes.h"
 #include "vnl/vnl_matrix.h"
 
 namespace itk
@@ -112,8 +113,6 @@ public:
   /** Pixel related typedefs. */
   typedef typename InputImageType::PixelType  InputPixelType;
   typedef typename OutputImageType::PixelType OutputPixelType;
-
-  typedef itk::SpatialObject<3> SpatialObjectType;
 
   /** Histogram related typedefs. */
   typedef Statistics::Histogram<THistogramMeasurement> HistogramType;

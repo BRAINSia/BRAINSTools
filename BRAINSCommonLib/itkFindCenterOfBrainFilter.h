@@ -98,12 +98,12 @@ public:
     return m_DebugGridImage;
   }
 
-  MaskImagePointer GetDebugAfterGridComputationsForegroundImage()
+  MaskImagePointer GetDebugAfterGridComputationsForegroundImage() const
   {
     return m_DebugAfterGridComputationsForegroundImage;
   }
 
-  MaskImagePointer GetDebugClippedImageMask()
+  MaskImagePointer GetDebugClippedImageMask() const
   {
     return m_DebugClippedImageMask;
   }

@@ -194,11 +194,11 @@ ProcessArgs(int argc, char * *argv,
 
 template <typename PixelType, unsigned dim>
 int MakeImage(const std::string & filename,
-              unsigned xdim,
-              unsigned ydim,
-              unsigned zdim,
-              unsigned tdim,
-              PixelType value)
+              const unsigned xdim,
+              const unsigned ydim,
+              const unsigned zdim,
+              const unsigned tdim,
+              const PixelType value)
 {
   typedef typename itk::Image<PixelType, dim>          ImageType;
   typedef typename ImageType::Pointer                  ImagePointerType;

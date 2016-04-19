@@ -32,12 +32,12 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <BRAINSTypes.h>
 
 /*
  * This IO utility program write and read the ITK landmarks weight.
  */
 
-typedef std::map<std::string, double> LandmarksWeightMapType;
 
 /*
  * Write ITK landmark weights to a Slicer3 landmark list file (.wts)

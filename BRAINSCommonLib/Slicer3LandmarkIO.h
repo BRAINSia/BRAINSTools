@@ -32,15 +32,13 @@
 #include <map>
 #include <string>
 
+#include <BRAINSTypes.h>
+
 /*
  * This IO utility program transforms between ITK landmarks (in LPS coordinate
  * system) to Slicer3 landmarks (in RAS coordinate system).
  */
 
-typedef itk::Point<double, 3>                    LandmarkPointType;
-typedef std::map<std::string, LandmarkPointType> LandmarksMapType;
-typedef std::map<std::string, float>             LandmarkWeightMapType;
-typedef std::map<std::string, double>            LandmarksWeightMapType;
 
 /*
  * Read lmk weights

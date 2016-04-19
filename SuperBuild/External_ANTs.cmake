@@ -10,6 +10,8 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 ### --- Project specific additions here
+# cmake -DANTS_SUPERBUILD:BOOL=OFF -DBUILD_ALL_ANTS_APPS:BOOL=OFF\
+#          -DANTS_BUILD_StackSlices=ON ../ANTs
 set(${proj}_CMAKE_OPTIONS
   -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -21,17 +23,21 @@ set(${proj}_CMAKE_OPTIONS
   -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
   -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
   -DITK_DIR:PATH=${ITK_DIR}
+  -DUSE_VTK:BOOL=OFF
   -DBUILD_EXAMPLES:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
   -DANTS_SUPERBUILD:BOOL=OFF
-  -DUSE_VTK:BOOL=OFF
+  -DBUILD_ALL_ANTS_APPS:BOOL=ON #Perhaps turn this to OFF
+  #  -DANTS_BUILD_DenoiseImage=ON
+  #  -DANTS_BUILD_antsRegistration=ON
+  #  -DANTS_BUILD_antsJointFusion=ON
   )
 if(${PRIMARY_PROJECT_NAME}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG 1511e29e734ad36c412d0c2e87354665af4eaaf0) # 20160409
+set(${proj}_GIT_TAG 705348d9ea6ba88f53f8473e25cce4e30ced3082) # 20160418
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

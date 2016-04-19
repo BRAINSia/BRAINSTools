@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef itk::Image<unsigned char, 3> ByteImageType;
   typedef itk::Image<float, 3>         ProbabilityImageType;
   typedef double                       FloatingPointPrecision;
 

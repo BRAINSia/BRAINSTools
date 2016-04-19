@@ -454,7 +454,6 @@ int main(int argc, char * *argv)
   muLogMacro(<< std::endl );
   muLogMacro(<< "=== Start Registration ===\n");
 
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer atlasToSubjectPreSegmentationTransform = ITK_NULLPTR;
 
   AtlasRegType::MapOfFloatImageVectors atlasOriginalImageList;

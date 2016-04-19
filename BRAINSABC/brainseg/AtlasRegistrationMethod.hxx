@@ -45,7 +45,6 @@
 
 itk::Transform<double, 3, 3>::Pointer MakeRigidIdentity(void)
 {
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
   // Also append identity matrix for each image
   itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
 

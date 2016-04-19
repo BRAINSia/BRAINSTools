@@ -150,6 +150,12 @@ def parseNIPYPE(parser):
     """ Parse the nipype section and return a dictionary """
     retval = dict()
     retval['ds_overwrite'] = parser.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE')
+
+    if parser.has_option('NIPYPE', 'CRASHDUMP_DIR'):
+        retval['CRASHDUMP_DIR'] = parser.get('NIPYPE', 'CRASHDUMP_DIR')
+    else:
+        retval['CRASHDUMP_DIR'] = None
+
     return retval
 
 
@@ -241,7 +247,7 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
     return plugin_name, plugin_args
 
 
-def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False):
+def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False, crashdumpTempDirName=None):
     stop_crash = 'false'
     stop_rerun = 'false'
     if stop_on_first_crash:
@@ -250,8 +256,9 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
         # This stops at first attempt to rerun, before running, and before deleting previous results
         stop_rerun = 'true'
 
-    import tempfile
-    crashdumpTempDirName=tempfile.gettempdir()
+    if crashdumpTempDirName is None:
+        import tempfile
+        crashdumpTempDirName=tempfile.gettempdir()
     print( "*** Note")
     print( "    Crash file will be written to '{0}'".format(crashdumpTempDirName))
     return {
@@ -293,7 +300,7 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     retval['plugin_name'] = plugin_name
     retval['plugin_args'] = plugin_args
     retval['ds_overwrite'] = pipeline['ds_overwrite']  # resolveDataSinkOption(args, pipeline)
-    retval['execution'] = _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False)
+    retval['execution'] = _nipype_execution_config(stop_on_first_crash=True, stop_on_first_rerun=False, crashdumpTempDirName=pipeline['CRASHDUMP_DIR'])
     retval['logging'] = _nipype_logging_config(experiment['cachedir'])
     return retval
 

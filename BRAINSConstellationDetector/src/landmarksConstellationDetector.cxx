@@ -252,11 +252,9 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
   this->m_ImageOrigToACPCVersorTransform = itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform()->GetNthTransform(0).GetPointer() );
   if( this->m_ImageOrigToACPCVersorTransform.IsNull() )
     {
-    // Fail if something weird happens.  TODO: This should throw an exception.
-    std::cout << "this->m_ImageOrigToACPCVersorTransform is null. It means we're not registering to the atlas, after all."
-      << std::endl;
-    std::cout << "FAILIING" << std::endl;
-    exit(-1);
+    // Fail if something weird happens.
+    itkGenericExceptionMacro(<< "this->m_ImageOrigToACPCVersorTransform is null. "
+                             << "It means we're not registering to the atlas, after all." << std::endl);
     }
 
     {
@@ -632,10 +630,8 @@ landmarksConstellationDetector::EulerToVersorRigid( VersorTransformType::Pointer
     }
   else
     {
-    std::cout << "Error missing Pointer data, assigning "
-    << "Euler3DTransformPointer to VersorRigid3DTransformPointer."
-    << std::endl;
-    throw;
+    itkGenericExceptionMacro(<< "Error missing Pointer data, assigning "
+                             << "Euler3DTransformPointer to VersorRigid3DTransformPointer." << std::endl);
     }
 }
 
@@ -780,9 +776,8 @@ void landmarksConstellationDetector::Compute( void )
       std::cout << "\n=============================================================" << std::endl;
       if( c_c > -0.64 )
         {
-        std::cout << "Too large MSP estimation error at the final try!\n"
-        << "The estimation result will not be reliable.\n" << std::endl;
-        throw;
+        itkGenericExceptionMacro(<< "Too large MSP estimation error at the final try!" << std::endl
+                                 << "The estimation result will not be reliable.\n" << std::endl);
         }
     }
 

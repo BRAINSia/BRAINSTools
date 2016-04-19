@@ -58,11 +58,6 @@ class LargestForegroundFilledMaskImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  /** Extract dimension from input and output image. */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
 
   /** Convenient typedefs for simplifying declarations. */
   typedef TInputImage                           InputImageType;
@@ -138,7 +133,7 @@ private:
     * Low and High are set to the ?????? */
   unsigned int SetLowHigh(InputPixelType & low, InputPixelType & high);
 
-  void ImageMinMax(InputPixelType & min, InputPixelType & max);
+  void ImageMinMax(InputPixelType & min, InputPixelType & max) const;
 
   // No longer used  double m_OtsuPercentileThreshold;
   double           m_OtsuPercentileLowerThreshold;

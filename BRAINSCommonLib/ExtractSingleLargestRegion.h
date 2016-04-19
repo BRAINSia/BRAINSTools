@@ -27,11 +27,13 @@ itk::Image<unsigned char, 3>::Pointer ExtractSingleLargestRegionFromMask(itk::Im
                                                                          const int safetySize, itk::Image<unsigned char,
                                                                                                           3>::Pointer inputLabelImage);
 
+#if 0
 extern
 itk::Image<unsigned char, 3>::Pointer ExtractSingleLargestRegion(const unsigned char threshold_low,
                                                                  const unsigned char threshold_high,
                                                                  const int openingSize, const int closingSize,
                                                                  const int safetySize, itk::Image<unsigned char,
                                                                                                   3>::Pointer inputLabelImage);
+#endif
 
 #endif // ExtractSingleLargestRegion_h

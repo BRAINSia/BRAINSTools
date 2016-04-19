@@ -317,7 +317,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     bestEulerAngles3D->SetCenter(rotationCenter);
     bestEulerAngles3D->SetTranslation(translationVector);
 
-    typedef itk::Euler3DTransform<double> EulerAngle3DTransformType;
     typename EulerAngle3DTransformType::Pointer currentEulerAngles3D = EulerAngle3DTransformType::New();
 
     currentEulerAngles3D->SetCenter(rotationCenter);

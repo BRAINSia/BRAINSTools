@@ -55,10 +55,6 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::OneValue()),
   m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::ZeroValue())
 {
-  //   this->m_InsideValue =
-  //     NumericTraits<typename IntegerImageType::PixelType>::OneValue();
-  //   this->m_OutsideValue =
-  //     NumericTraits<typename IntegerImageType::PixelType>::ZeroValue();
 }
 
 template <class TInputImage, class TOutputImage>
@@ -90,7 +86,7 @@ template <class TInputImage, class TOutputImage>
 void
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 ::ImageMinMax(typename TInputImage::PixelType & imageMin,
-              typename TInputImage::PixelType & imageMax)
+              typename TInputImage::PixelType & imageMax) const
 {
   typename MinimumMaximumImageFilter<TInputImage>::Pointer minmaxFilter =
     MinimumMaximumImageFilter<TInputImage>::New();

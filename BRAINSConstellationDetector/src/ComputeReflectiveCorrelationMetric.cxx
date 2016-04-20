@@ -48,6 +48,7 @@
 
 #include "landmarksConstellationCommon.h"
 #include "StandardizeMaskIntensity.h"
+#include "itkFindCenterOfBrainFilter.h"
 
 #define WRITE_CSV_FILE
 #include "itkReflectiveCorrelationCenterToImageMetric.h"

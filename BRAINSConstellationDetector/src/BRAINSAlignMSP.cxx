@@ -50,6 +50,7 @@
 #include <itkIntensityWindowingImageFilter.h>
 #include "BRAINSThreadControl.h"
 #include "landmarksConstellationCommon.h"
+#include "itkFindCenterOfBrainFilter.h"
 #include "itkIO.h"
 #include "BRAINSAlignMSPCLP.h"
 #include "GenericTransformImage.h"
@@ -137,8 +138,21 @@ int main(int argc, char *argv[])
     image = volOrig;
     }
 
+  // Find center of head mass
+  std::cout << "\nFinding center of head mass..." << std::endl;
+  typedef itk::FindCenterOfBrainFilter<SImageType>                        FindCenterFilter;
+  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  findCenterFilter->SetInput(image);
+  findCenterFilter->SetAxis(2);
+  findCenterFilter->SetOtsuPercentileThreshold(0.01);
+  findCenterFilter->SetClosingSize(7);
+  findCenterFilter->SetHeadSizeLimit(700);
+  findCenterFilter->SetBackgroundValue(0);
+  findCenterFilter->Update();
+  SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+
   RigidTransformType::Pointer Tmsp = RigidTransformType::New();
-  ComputeMSP_Easy(image, Tmsp, mspQualityLevel);
+  ComputeMSP_Easy(image, Tmsp, centerOfHeadMass, mspQualityLevel);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;

@@ -34,7 +34,6 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkNumberToString.h"
 #include "itkCompensatedSummation.h"
-#include "itkFindCenterOfBrainFilter.h"
 
 // Optimize the A,B,C vector
 template<typename TOptimizerType>

@@ -193,7 +193,8 @@ extern void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & 
                        SImageType::Pointer & transformedImage, const SImageType::PointType & centerOfHeadMass,
                        const int qualityLevel, double & cc);
 
-extern void ComputeMSP_Easy(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel);
+extern void ComputeMSP_Easy(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp,
+                            const SImageType::PointType & centerOfHeadMass, const int qualityLevel);
 
 extern SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
                                                  const RigidTransformType::Pointer MSPTransform,

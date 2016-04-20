@@ -323,8 +323,7 @@ public:
   {
     if( !m_CenterOfHeadMassIsSet )
       {
-      std::cout << "ERROR: m_CenterOfHeadMass is not set!" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "ERROR: m_CenterOfHeadMass is not set!" << std::endl);
       }
     else
       {
@@ -592,8 +591,7 @@ private:
   {
     if( !m_CenterOfHeadMassIsSet )
       {
-      std::cout << "ERROR: m_CenterOfHeadMass is not set!" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "ERROR: m_CenterOfHeadMass is not set!" << std::endl);
       }
     return this->m_CenterOfHeadMass;
   }

@@ -602,8 +602,9 @@ set(BCDTestName BCDTest_ForceVN4Point)
     --compareNumberOfPixelsTolerance 0
 
     BRAINSConstellationDetectorTest
-    --inputVolume DATA{${TestData_DIR}/2.nii.gz}
+    --inputVolume DATA{${TestData_DIR}/2_EMSP.nrrd}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
+    --outputLandmarksInACPCAlignedSpace ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_lmk_acpc.fcsv
     --inputTemplateModel DATA{${TestData_DIR}/T1_50Lmks.mdl}
     --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}}
     --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv})

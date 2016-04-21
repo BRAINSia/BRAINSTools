@@ -28,6 +28,7 @@ from builtins import object
 from configparser import ConfigParser
 import os
 import sys
+import copy
 
 from .pathHandling import *
 from .distributed import modify_qsub_args
@@ -291,7 +292,7 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     # for key, value in kwds.items():
     #     retval['execution'][key] = value
     """
-    retval = {}
+    retval = copy.deepcopy(pipeline)
     from .distributed import create_global_sge_script
     template = create_global_sge_script(cluster, environment)
     #else:
@@ -299,7 +300,6 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     plugin_name, plugin_args = _nipype_plugin_config(args['--wfrun'], cluster, template)
     retval['plugin_name'] = plugin_name
     retval['plugin_args'] = plugin_args
-    retval['ds_overwrite'] = pipeline['ds_overwrite']  # resolveDataSinkOption(args, pipeline)
     retval['execution'] = _nipype_execution_config(stop_on_first_crash=True, stop_on_first_rerun=False, crashdumpTempDirName=pipeline['CRASHDUMP_DIR'])
     retval['logging'] = _nipype_logging_config(experiment['cachedir'])
     return retval

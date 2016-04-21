@@ -180,13 +180,13 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         print("Processing atlas generation for this subject: {0}".format(thisSubject))
         print("="*80)
         print("Copying Atlas directory and determining appropriate Nipype options...")
-        pipeline_options = nipype_options(argv, pipeline_options, cluster, experiment, environment)  # Generate Nipype options
+        subj_pipeline_options = nipype_options(argv, pipeline_options, cluster, experiment, environment)  # Generate Nipype options
         print("Dispatching jobs to the system...")
         ######
         ###### Now start workflow construction
         ######
         # Set universal pipeline options
-        nipype_config.update_config(pipeline_options)
+        nipype_config.update_config(subj_pipeline_options)
 
         ready_for_template_building = True
         for thisSession in subjects_sessions_dictionary[thisSubject]:
@@ -200,7 +200,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             print("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject))
             continue
 
-        base_output_directory = os.path.join(pipeline_options['logging']['log_directory'],thisSubject)
+        base_output_directory = os.path.join(subj_pipeline_options['logging']['log_directory'],thisSubject)
         template = pe.Workflow(name='SubjectAtlas_Template_'+thisSubject)
         template.base_dir = base_output_directory
 
@@ -359,25 +359,25 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                            run_without_submitting=True,  # HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
                                            name='99_CreateAtlasXMLAndCleanedDeformedAverages')
 
-        if pipeline_options['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
+        if subj_pipeline_options['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
 
-            CreateAtlasXMLAndCleanedDeformedAveragesNode.plugin_args = {'template': pipeline_options['plugin_args']['template'],
+            CreateAtlasXMLAndCleanedDeformedAveragesNode.plugin_args = {'template': subj_pipeline_options['plugin_args']['template'],
                                                     'qsub_args': modify_qsub_args(cluster['queue'], 1, 1, 1),
                                                     'overwrite': True}
             for bt in [buildTemplateIteration1, buildTemplateIteration2]:
                 BeginANTS = bt.get_node("BeginANTS")
-                BeginANTS.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
+                BeginANTS.plugin_args = {'template': subj_pipeline_options['plugin_args']['template'], 'overwrite': True,
                                          'qsub_args': modify_qsub_args(cluster['queue'], 7, 4, 16)}
                 wimtdeformed = bt.get_node("wimtdeformed")
-                wimtdeformed.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
+                wimtdeformed.plugin_args = {'template': subj_pipeline_options['plugin_args']['template'], 'overwrite': True,
                                             'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 2)}
 
                 #AvgAffineTransform = bt.get_node("AvgAffineTransform")
-                #AvgAffineTransform.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
+                #AvgAffineTransform.plugin_args = {'template': subj_pipeline_options['plugin_args']['template'], 'overwrite': True,
                 #                                  'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 1)}
 
                 wimtPassivedeformed = bt.get_node("wimtPassivedeformed")
-                wimtPassivedeformed.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
+                wimtPassivedeformed.plugin_args = {'template': subj_pipeline_options['plugin_args']['template'], 'overwrite': True,
                                                     'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 4)}
 
         # Running off previous baseline experiment
@@ -405,7 +405,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
         # Create DataSinks
         SubjectAtlas_DataSink = pe.Node(nio.DataSink(), name="Subject_DS")
-        SubjectAtlas_DataSink.overwrite = pipeline_options['ds_overwrite']
+        SubjectAtlas_DataSink.overwrite = subj_pipeline_options['ds_overwrite']
         SubjectAtlas_DataSink.inputs.base_directory = experiment['resultdir']
 
         template.connect([(subjectNode, SubjectAtlas_DataSink, [('subject', 'container')]),
@@ -420,9 +420,9 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         dotfilename = argv['--dotfilename']
         if dotfilename is not None:
             print("WARNING: Printing workflow, but not running pipeline")
-            print_workflow(template, plugin=pipeline_options['plugin_name'], dotfilename=dotfilename)
+            print_workflow(template, plugin=subj_pipeline_options['plugin_name'], dotfilename=dotfilename)
         else:
-            run_workflow(template, plugin=pipeline_options['plugin_name'], plugin_args=pipeline_options['plugin_args'])
+            run_workflow(template, plugin=subj_pipeline_options['plugin_name'], plugin_args=subj_pipeline_options['plugin_args'])
 
 if __name__ == '__main__':
     import sys

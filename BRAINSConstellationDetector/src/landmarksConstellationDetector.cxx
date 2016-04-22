@@ -785,11 +785,12 @@ void landmarksConstellationDetector::Compute( void )
     << "The estimated landmarks may not be reliable.\n" << std::endl;
     }
 
-  // Throw an exception and stop BCD if RC metric is too low (less than 0.45) because results will not be reliable.
-  if( c_c > -0.45 )
+  // Throw an exception and stop BCD if RC metric is too low (less than 0.4) because results will not be reliable.
+  if( c_c > -0.4 )
     {
-    itkGenericExceptionMacro(<< "Too large MSP estimation error at the final try!" << std::endl
-                             << "The estimation result will not be reliable.\n" << std::endl);
+    itkGenericExceptionMacro(<< "Too large MSP estimation error! reflective correlation metric is: "
+                             << c_c << std::endl
+                             << "Estimation of landmarks will not be reliable.\n" << std::endl);
     }
 
   // In case hough eye detector failed

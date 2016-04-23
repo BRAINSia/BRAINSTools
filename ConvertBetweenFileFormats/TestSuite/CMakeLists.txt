@@ -12,8 +12,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_to_bmp_unsigned_char 
           $<TARGET_FILE:ConvertBetweenFileFormats> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_out.bmp unsigned_char)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_to_nrrd_float COMMAND
           $<TARGET_FILE:ConvertBetweenFileFormats> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_out.nrrd float)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_to_vtk_long COMMAND
-          $<TARGET_FILE:ConvertBetweenFileFormats> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_out.vtk long)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_to_gipl COMMAND
           $<TARGET_FILE:ConvertBetweenFileFormats> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_out.gipl)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_to_nifti COMMAND
@@ -45,10 +43,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_from_nrrd_float COMMA
           $<TARGET_FILE:ConvertBetweenFileFormats> ${IMAGE_PATH_OUTPUTS}/image_out.nrrd   ${IMAGE_PATH_OUTPUTS}/image_in6.mhd unsigned_short)
 set_tests_properties(ccvnt_from_nrrd_float PROPERTIES DEPENDS ccvnt_to_nrrd_float)
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_from_vtk_long COMMAND
-          $<TARGET_FILE:ConvertBetweenFileFormats> ${IMAGE_PATH_OUTPUTS}/image_out.vtk    ${IMAGE_PATH_OUTPUTS}/image_in7.mhd unsigned_short)
-set_tests_properties(ccvnt_from_vtk_long PROPERTIES DEPENDS ccvnt_to_vtk_long)
-
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_from_gipl COMMAND
           $<TARGET_FILE:ConvertBetweenFileFormats> ${IMAGE_PATH_OUTPUTS}/image_out.gipl   ${IMAGE_PATH_OUTPUTS}/image_in8.mhd)
 set_tests_properties(ccvnt_from_gipl PROPERTIES DEPENDS ccvnt_to_gipl)
@@ -62,8 +56,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_png COMMAND
           $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in1.mhd Dummy)
 set_tests_properties(compare_png PROPERTIES DEPENDS ccvnt_from_png)
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_jpg_unsigned_int COMMAND
-          $<TARGET_FILE:ImageCompareTests> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in2.mhd)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_tiff COMMAND
           $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in3.mhd Dummy)
 set_tests_properties(compare_tiff PROPERTIES DEPENDS ccvnt_from_tiff)
@@ -81,10 +73,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_nrrd_float COMMAND
           $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in6.mhd Dummy)
 set_tests_properties(compare_nrrd_float PROPERTIES DEPENDS ccvnt_from_nrrd_float)
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_vtk_long COMMAND
-          $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in7.mhd Dummy)
-set_tests_properties(compare_vtk_long PROPERTIES DEPENDS ccvnt_from_vtk_long)
-
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_gipl COMMAND
           $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in8.mhd Dummy)
 set_tests_properties(compare_gipl PROPERTIES DEPENDS ccvnt_from_gipl)
@@ -94,7 +82,21 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_nifti COMMAND
 set_tests_properties(compare_nifti PROPERTIES DEPENDS ccvnt_from_nifti)
 
 add_executable(ImageCompareTests ImageCompareTests.cxx)
-target_link_libraries(ImageCompareTests ${ConvertBetweenFileFormats_ITK_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(ImageCompareTests ${ConvertBetweenFileFormats_ITK_LIBRARIES})
+
+if(VTK_FOUND)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_jpg_unsigned_int COMMAND
+          $<TARGET_FILE:ImageCompareTests> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in2.mhd)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_to_vtk_long COMMAND
+          $<TARGET_FILE:ConvertBetweenFileFormats> DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_out.vtk long)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ccvnt_from_vtk_long COMMAND
+          $<TARGET_FILE:ConvertBetweenFileFormats> ${IMAGE_PATH_OUTPUTS}/image_out.vtk    ${IMAGE_PATH_OUTPUTS}/image_in7.mhd unsigned_short)
+set_tests_properties(ccvnt_from_vtk_long PROPERTIES DEPENDS ccvnt_to_vtk_long)
+
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_vtk_long COMMAND
+          $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in7.mhd Dummy)
+set_tests_properties(compare_vtk_long PROPERTIES DEPENDS ccvnt_from_vtk_long)
+endif()
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 

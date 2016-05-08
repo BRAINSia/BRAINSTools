@@ -64,6 +64,7 @@ def CreateEstimationWorkflow(WFname):
     DTIEstim = pe.Node(interface=dtiestim(), name="DTIEstim")
     DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.threshold = 0
+    DTIEstim.inputs.correctionType = 'nearest'
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
     DTIEstim.inputs.idwi = 'IDWI_Output.nrrd'
     EstimationWF.connect(inputsSpec, 'inputDWIImage', DTIEstim, 'dwi_image')

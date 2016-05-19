@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title>BRAINSDeface</title>
+  <description>Deidentify head images without destroying useful facial information</description>
+  <contributor>
+    Alexander Leinoff (alexander-elinoff -at- uiowa.edu) </contributor>
+  <acknowledgements>
+    <![CDATA[Hans Johnson(1,2,3); Alexander Leinoff(3); Yue Pan(3); Wei Shao(3)  1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Biomedical Engineering, 3=University of Iowa Department of Electrical and Computer Engineering]]>
+  </acknowledgements>
+  <version>4.7.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <parameters>
+    <label>Input/Output</label>
+    <description>Input/output parameters</description>
+    <image>
+      <label>Input Volume</label>
+      <name>inputVolume</name>
+      <channel>input</channel>
+      <longflag> inputVolume </longflag>
+      <description>Input Image of a head</description>
+      <default>None</default>
+    </image>
+    <description>Input/output parameters</description>
+    <image>
+       <label>LabelMap</label>
+       <name>LabelMap</name>
+       <channel>input</channel>
+       <longflag>labelmap</longflag>
+       <description>A Label Map for the head</description>
+       <default>None</default>
+    </image>
+    <file fileExtensions=".fcsv">
+       <label>Landmarks File</label>
+       <channel>input</channel>
+       <longflag>landmarks</longflag>
+       <description>The landmarks file</description>
+       <default>None</default>
+    </file>
+  </parameters>
+</executable>

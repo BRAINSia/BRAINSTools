@@ -209,6 +209,8 @@ def MasterProcessingController(argv=None):
     import SimpleITK as sitk
     from nipype import config  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     config.enable_debug_mode()  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    config.enable_provenance()
+
     ##############################################################################
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
     from nipype.interfaces.base import traits, isdefined, BaseInterface

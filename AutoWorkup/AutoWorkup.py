@@ -55,6 +55,8 @@ def setup_environment(argv):
 
     from nipype import config
     config.enable_debug_mode()
+    config.enable_provenance()
+
     from utilities.package_check import verify_packages
     verify_packages()
     if 'FREESURFER' in experiment['components']:  # FREESURFER MODS

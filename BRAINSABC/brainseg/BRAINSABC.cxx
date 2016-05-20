@@ -1175,8 +1175,8 @@ int main(int argc, char * *argv)
           {
           // typedef itk::RescaleIntensityImageFilter<FloatImageType,
           // ShortImageType> ShortRescaleType;
-          typedef itk::CastImageFilter<FloatImageType, ShortImageType> CasterType;
-          CasterType::Pointer caster = CasterType::New();
+          typedef itk::CastImageFilter<FloatImageType, ShortImageType> RescaleType;
+          RescaleType::Pointer caster = RescaleType::New();
 
           caster->SetInput(mapIt->second[i]);
           caster->Update();
@@ -1209,11 +1209,12 @@ int main(int argc, char * *argv)
 
       FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second);
       // Write out average image.
-      typedef itk::CastImageFilter<FloatImageType, ShortImageType> CasterType;
-      CasterType::Pointer caster = CasterType::New();
-
-      caster->SetInput(avgImage);
-      caster->Update();
+      typedef itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType> RescaleType;
+      RescaleType::Pointer rescaleInstensityFilter = RescaleType::New();
+      rescaleInstensityFilter->SetOutputMinimum(0);
+      rescaleInstensityFilter->SetOutputMaximum(4096);
+      rescaleInstensityFilter->SetInput(avgImage);
+      rescaleInstensityFilter->Update();
 
       std::string avgFileName = outputDir + volumeType + std::string("_average") + suffstr;
 
@@ -1222,7 +1223,7 @@ int main(int argc, char * *argv)
       typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
       ShortWriterType::Pointer writer = ShortWriterType::New();
 
-      writer->SetInput( caster->GetOutput() );
+      writer->SetInput( rescaleInstensityFilter->GetOutput() );
       writer->SetFileName(avgFileName);
       writer->UseCompressionOn();
       writer->Update();

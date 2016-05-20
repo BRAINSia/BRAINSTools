@@ -117,12 +117,14 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
   typedef itk::AverageImageFilter<TImage,TImage> AvgFilterType;
   typename AvgFilterType::Pointer filter = AvgFilterType::New();
   typename TImage::Pointer referenceScaleImg = inputImageList[0];
-  for(unsigned int i = 0; i < inputImageList.size(); ++i)
+  filter->SetInput(0,referenceScaleImg);
+  for(unsigned int i = 1; i < inputImageList.size(); ++i)
     {
-    //filter->SetInput(i,inputImageList[i]);
-    filter->SetInput(i, ( LinearRegressionIntensityMatching<TImage,TImage>(referenceScaleImg,
-                                                          averageMask,
-                                                          inputImageList[i])));
+      //Modify inputImageList in place.
+      typename TImage::Pointer temp=LinearRegressionIntensityMatching<TImage,TImage>(referenceScaleImg.GetPointer(),
+                                                          averageMask.GetPointer(),
+                                                          inputImageList[i].GetPointer());
+      filter->SetInput(i,  temp);
     }
   filter->Update();
   typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();

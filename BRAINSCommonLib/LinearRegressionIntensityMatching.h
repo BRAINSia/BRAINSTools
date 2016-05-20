@@ -33,7 +33,7 @@
 // AveFilter->SetInput1(ReferenceImage)
 // AVeFilter->SetInput2(  LinearRegressionIntensityMatching(ReferenceImage, MaskImage, RescaleToReferenceDynamicRange) )
 //
-// For this to work, it is requiered that ReferenceImage, MaskImage, RescaleToReferenceDynamicRange all have the same
+// For this to work, it is required that ReferenceImage, MaskImage, RescaleToReferenceDynamicRange all have the same
 // physical space definitions and voxel space layout.
 //
 // The following code does a simple linear regression of the
@@ -47,66 +47,84 @@
 #include <itkImage.h>
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
+#include "itkImageDuplicator.h"
 
 template <typename TRealImage,
           typename TBinaryImage>
 typename TRealImage::Pointer LinearRegressionIntensityMatching(
-    const typename TRealImage::Pointer & ReferenceImage,
-    typename TBinaryImage::Pointer & MaskImage,
-    const typename TRealImage::Pointer & RescaleToReferenceDynamicRange)
+    const typename TRealImage::ConstPointer ReferenceImage,
+    const typename TBinaryImage::ConstPointer MaskImage,
+    typename TRealImage::ConstPointer RescaleToReferenceDynamicRange)
 {
+  typename itk::ImageDuplicator<TRealImage>::Pointer duplicator = itk::ImageDuplicator<TRealImage>::New();
+  duplicator->SetInputImage(RescaleToReferenceDynamicRange);
+  duplicator->Update();
+  typename TRealImage::Pointer outImage = duplicator->GetOutput();
+  if ( ReferenceImage.GetPointer() == RescaleToReferenceDynamicRange.GetPointer() )
+  {
+    return outImage;
+  }
   const bool doEntireImage = MaskImage.IsNull();  // If the mask image is null, assume entire image
   //Get average of values in Rescale Image
 
   if( ReferenceImage->GetOrigin() != RescaleToReferenceDynamicRange->GetOrigin() ||
       ReferenceImage->GetOrigin() != MaskImage->GetOrigin() )
     {
-    std::cout<< "Image data spacing mismatch ::\n"
+    std::cout<< "Image data origin mismatch ::\n"
              << " - ReferenceImage:: " << ReferenceImage->GetOrigin() << std::endl
              << " - RescaleToReferenceDynamicRange:: " << RescaleToReferenceDynamicRange->GetOrigin() << std::endl
              << " - MaskImage:: " << MaskImage->GetOrigin() << std::endl;
     }
-  itk::ImageRegionIterator<TRealImage> ItRescaledImage( RescaleToReferenceDynamicRange,
+  if( ReferenceImage->GetSpacing() != RescaleToReferenceDynamicRange->GetSpacing() ||
+      ReferenceImage->GetSpacing() != MaskImage->GetSpacing() )
+  {
+    std::cout<< "Image data spacing mismatch ::\n"
+    << " - ReferenceImage:: " << ReferenceImage->GetSpacing() << std::endl
+    << " - RescaleToReferenceDynamicRange:: " << RescaleToReferenceDynamicRange->GetSpacing() << std::endl
+    << " - MaskImage:: " << MaskImage->GetSpacing() << std::endl;
+  }
+  if( ReferenceImage->GetDirection() != RescaleToReferenceDynamicRange->GetDirection() ||
+      ReferenceImage->GetDirection() != MaskImage->GetDirection() )
+  {
+    std::cout<< "Image data Direction mismatch ::\n"
+    << " - ReferenceImage:: " << ReferenceImage->GetDirection() << std::endl
+    << " - RescaleToReferenceDynamicRange:: " << RescaleToReferenceDynamicRange->GetDirection() << std::endl
+    << " - MaskImage:: " << MaskImage->GetDirection() << std::endl;
+  }
+  itk::ImageRegionConstIterator<TRealImage> ItRescaledImage( RescaleToReferenceDynamicRange,
     RescaleToReferenceDynamicRange->GetRequestedRegion() );
   typedef typename TRealImage::PixelType RescaleRealType;
+  //Get average of values in Reference image
+  itk::ImageRegionConstIterator<TRealImage> ItRefImg( ReferenceImage, ReferenceImage->GetRequestedRegion() );
   RescaleRealType avgOut = 0.0;
-  size_t nOut = 0;
-  for( ItRescaledImage.GoToBegin(); !ItRescaledImage.IsAtEnd(); ++ItRescaledImage )
+  RescaleRealType avgIn = 0.0;
+  {
+  size_t maskVoxelCount = 0;
+  for( ItRescaledImage.GoToBegin(), ItRefImg.GoToBegin();
+       !ItRescaledImage.IsAtEnd() &&  !ItRefImg.IsAtEnd();
+       ++ItRescaledImage, ++ItRefImg )
     {
     if( doEntireImage ||  ( MaskImage->GetPixel(ItRescaledImage.GetIndex()) != 0 ) )
       {
       avgOut += ItRescaledImage.Get();
-      ++nOut;
-      }
-    }
-  avgOut /= static_cast<RescaleRealType>(nOut);
-
-  //Get average of values in Reference image
-  itk::ImageRegionConstIterator<TRealImage> ItRefImg( ReferenceImage,
-    ReferenceImage->GetRequestedRegion() );
-  RescaleRealType avgIn = 0.0;
-  size_t nIn = 0;
-  for( ItRefImg.GoToBegin(); !ItRefImg.IsAtEnd(); ++ItRefImg )
-    {
-    // If in mask
-      {
+      ++maskVoxelCount;
       avgIn += ItRefImg.Get();
-      ++nIn;
+      ++maskVoxelCount;
       }
     }
-  avgIn /= static_cast<RescaleRealType>(nIn);
-
-  assert(nIn == nOut);
+  avgOut /= static_cast<RescaleRealType>(maskVoxelCount);
+  avgIn /= static_cast<RescaleRealType>(maskVoxelCount);
+  }
 
   RescaleRealType numerator = 0.0;
   RescaleRealType denominator = 0.0;
   for( ItRefImg.GoToBegin(), ItRescaledImage.GoToBegin(); !ItRefImg.IsAtEnd() &&
        !ItRescaledImage.IsAtEnd(); ++ItRefImg,++ItRescaledImage )
     {
-    // If in mask
+      if( doEntireImage ||  ( MaskImage->GetPixel(ItRescaledImage.GetIndex()) != 0 ) )
       {
       const RescaleRealType out_sub_avg = ItRescaledImage.Get() - avgOut;
-      const RescaleRealType in_sub_avg  = ItRefImg.Get() -avgIn;
+      const RescaleRealType in_sub_avg  = ItRefImg.Get() - avgIn;
       numerator += out_sub_avg*in_sub_avg;
       denominator += out_sub_avg*out_sub_avg;
       }
@@ -115,16 +133,14 @@ typename TRealImage::Pointer LinearRegressionIntensityMatching(
     {
     denominator = 1.0;
     }
+  typename itk::ImageRegionIterator<TRealImage> itOutImg(outImage,outImage->GetRequestedRegion() );
   const RescaleRealType slope = numerator/denominator;
   const RescaleRealType intercept = avgIn - slope*avgOut;
-  //std::cout << "Slope = " << slope << " Intercept= " << intercept << std::endl;
-  for(ItRescaledImage.GoToBegin(); !ItRescaledImage.IsAtEnd(); ++ItRescaledImage)
+  for(itOutImg.GoToBegin(); !itOutImg.IsAtEnd(); ++itOutImg)
     {
-    ItRescaledImage.Set( ItRescaledImage.Get()*slope + intercept);
+    itOutImg.Set( itOutImg.Get()*slope + intercept);
     }
-
-  return RescaleToReferenceDynamicRange;
-
+  return outImage;
 }
 
 #endif // LinearRegressionIntensityMatching_h

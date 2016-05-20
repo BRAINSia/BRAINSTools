@@ -113,6 +113,12 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
                 << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
                 << std::endl
                 << "  Output volume: " << imageIO->GetComponentTypeAsString(ioType)
+                << std::endl
+                << "The only supported output type is <short>. "
+                << "You may consider using allowLossyConversion option."
+                << std::endl
+                << "However, use this option with caution! "
+                << "Conversion from images of a different type may cause data loss due to rounding or truncation."
                 << std::endl;
       return EXIT_FAILURE;
       }

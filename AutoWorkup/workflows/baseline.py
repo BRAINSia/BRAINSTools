@@ -21,7 +21,7 @@ import os
 # config.set_log_dir(os.getcwd())
 #--config.set('logging', 'workflow_level', 'DEBUG')
 #--config.set('logging', 'interface_level', 'DEBUG')
-#--config.set('execution','remove_unnecessary_outputs','false')
+#--config.set('execution','remove_unnecessary_outputs','true')
 
 import nipype.pipeline.engine as pe
 import nipype.interfaces.io as nio

@@ -190,7 +190,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         self.csv_file = File(value=os.path.abspath(csv_file), exists=True)
         self.hasHeader = traits.Bool(hasHeader)
         self.sample_size = traits.Int(size)
-        self.config['execution'] = {'remove_unnecessary_outputs': 'false'}
+        self.config['execution'] = {'remove_unnecessary_outputs': 'true'}
 
     def create(self):  #, **kwargs):
         """ Create the nodes and connections for the workflow """
@@ -230,7 +230,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
             'stop_on_first_rerun': 'false',  # This stops at first attempt to rerun, before running, and before deleting previous results.
             'hash_method': 'timestamp',
             'single_thread_matlab': 'true',  # Multi-core 2011a  multi-core for matrix multiplication.
-            'remove_unnecessary_outputs': 'false',
+            'remove_unnecessary_outputs': 'true',
             'use_relative_paths': 'false',  # relative paths should be on, require hash update when changed.
             'remove_node_directories': 'false',  # Experimental
             'local_hash_check': 'false'

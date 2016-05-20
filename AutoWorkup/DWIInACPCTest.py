@@ -224,7 +224,7 @@ MasterDWIWorkflow.config['execution'] = {
     'stop_on_first_rerun': 'false',  # This stops at first attempt to rerun, before running, and before deleting previous results.
     'hash_method': 'timestamp',
     'single_thread_matlab': 'true',  # Multi-core 2011a  multi-core for matrix multiplication.
-    'remove_unnecessary_outputs': 'false',
+    'remove_unnecessary_outputs': 'true', #remove any interface outputs not needed by the workflow
     'use_relative_paths': 'false',  # relative paths should be on, require hash update when changed.
     'remove_node_directories': 'false',  # Experimental
     'local_hash_check': 'true',

@@ -270,7 +270,7 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
         # default # relative paths should be on, require hash update when changed.
         'use_relative_paths': 'false',
         'remove_node_directories': 'false',  # default
-        'remove_unnecessary_outputs': 'false',
+        'remove_unnecessary_outputs': 'true', #remove any interface outputs not needed by the workflow
         'local_hash_check': 'true',          # default
         'job_finished_timeout': 25,
         'crashdump_dir':crashdumpTempDirName}

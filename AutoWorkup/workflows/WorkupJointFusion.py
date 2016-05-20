@@ -18,6 +18,7 @@ from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitialize
 from .WorkupAtlasDustCleanup import CreateDustCleanupWorkflow
 
 from utilities.misc import CommonANTsRegistrationSettings
+from .WorkupComputeLabelVolume import *
 
 # HACK Remove due to bugs from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
@@ -115,9 +116,13 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['JointFusion_HDAtlas20_2015_label',
                                                        'JointFusion_HDAtlas20_2015_CSFVBInjected_label',
                                                        'JointFusion_HDAtlas20_2015_fs_standard_label',
-                                                       'JointFusion_HDAtlas20_2015_lobar_label',
+                                                       'JointFusion_HDAtlas20_2015_lobe_label',
                                                        'JointFusion_extended_snapshot',
-                                                       'JointFusion_HDAtlas20_2015_dustCleaned_label']),
+                                                       'JointFusion_HDAtlas20_2015_dustCleaned_label',
+                                                       'JointFusion_volumes_csv',
+                                                       'JointFusion_volumes_json',
+                                                       'JointFusion_lobe_volumes_csv',
+                                                       'JointFusion_lobe_volumes_json']),
                           run_without_submitting=True,
                           name='outputspec')
 
@@ -134,8 +139,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     multimodal ants registration if t2 exists
     """
     sessionMakeMultimodalInput = pe.Node(Function(function=MakeVector,
-                                                                      input_names=['inFN1', 'inFN2', 'jointFusion'],
-                                                                      output_names=['outFNs']),
+                                         input_names=['inFN1', 'inFN2', 'jointFusion'],
+                                         output_names=['outFNs']),
                                 run_without_submitting=True, name="sessionMakeMultimodalInput")
     sessionMakeMultimodalInput.inputs.jointFusion = False
     JointFusionWF.connect(inputsSpec, 'subj_t1_image', sessionMakeMultimodalInput, 'inFN1')
@@ -462,18 +467,44 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
 #                      [('output_label_image', 'inputBinaryVolumes')])
 #                   ])
 
-    ## Lobar Pacellation by recoding
+    """
+    Compute label volumes
+    """
+    computeLabelVolumes = CreateVolumeMeasureWorkflow("LabelVolume", master_config)
+    JointFusionWF.connect( inputsSpec, 'subj_t1_image',
+                           computeLabelVolumes, 'inputspec.subj_t1_image')
+    JointFusionWF.connect( myLocalDustCleanup, 'outputspec.JointFusion_HDAtlas20_2015_dustCleaned_label',
+                           computeLabelVolumes, 'inputspec.subj_label_image')
+    JointFusionWF.connect( computeLabelVolumes, 'outputspec.csvFilename',
+                           outputsSpec, 'JointFusion_volumes_csv')
+    JointFusionWF.connect( computeLabelVolumes, 'outputspec.jsonFilename',
+                           outputsSpec, 'JointFusion_volumes_json')
+
+    ## Lobe Pacellation by recoding
     if master_config['relabel2lobes_filename'] != None:
         #print("Generate relabeled version based on {0}".format(master_config['relabel2lobes_filename']))
 
-        RECODE_LABELS_2_LobarPacellation = readRecodingList( master_config['relabel2lobes_filename'] )
+        RECODE_LABELS_2_LobePacellation = readRecodingList( master_config['relabel2lobes_filename'] )
         RecordToFSLobes = pe.Node(Function(function=RecodeLabelMap,
                                                     input_names=['InputFileName','OutputFileName','RECODE_TABLE'],
                                                     output_names=['OutputFileName']),
                                                     name="RecordToFSLobes")
-        RecordToFSLobes.inputs.RECODE_TABLE = RECODE_LABELS_2_LobarPacellation
-        RecordToFSLobes.inputs.OutputFileName = 'JointFusion_HDAtlas20_2015_lobar_label.nii.gz'
+        RecordToFSLobes.inputs.RECODE_TABLE = RECODE_LABELS_2_LobePacellation
+        RecordToFSLobes.inputs.OutputFileName = 'JointFusion_HDAtlas20_2015_lobe_label.nii.gz'
         JointFusionWF.connect(RecodeToStandardFSWM, 'OutputFileName',RecordToFSLobes,'InputFileName')
-        JointFusionWF.connect(RecordToFSLobes,'OutputFileName',outputsSpec,'JointFusion_HDAtlas20_2015_lobar_label')
+        JointFusionWF.connect(RecordToFSLobes,'OutputFileName',outputsSpec,'JointFusion_HDAtlas20_2015_lobe_label')
+
+        """
+        Compute lobe volumes
+        """
+        computeLobeVolumes = CreateVolumeMeasureWorkflow("LobeVolume", master_config)
+        JointFusionWF.connect( inputsSpec, 'subj_t1_image',
+                               computeLobeVolumes, 'inputspec.subj_t1_image')
+        JointFusionWF.connect( RecordToFSLobes, 'OutputFileName',
+                               computeLobeVolumes, 'inputspec.subj_label_image')
+        JointFusionWF.connect( computeLobeVolumes, 'outputspec.csvFilename',
+                               outputsSpec, 'JointFusion_lobe_volumes_csv')
+        JointFusionWF.connect( computeLobeVolumes, 'outputspec.jsonFilename',
+                               outputsSpec, 'JointFusion_lobe_volumes_json')
 
     return JointFusionWF

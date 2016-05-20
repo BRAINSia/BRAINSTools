@@ -140,6 +140,9 @@ def parseExperiment(parser, workflow_phase):
             retval['jointfusion_atlas_db_base'] = validatePath(parser.get('EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
                                                        allow_empty=False,
                                                        isDirectory=False)
+            retval['labelmap_colorlookup_table'] = validatePath(parser.get('EXPERIMENT', 'LABELMAP_COLORLOOKUP_TABLE'),
+                                                       allow_empty=False,
+                                                       isDirectory=False)
             retval['relabel2lobes_filename'] = validatePath(parser.get('EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
                                                        allow_empty=True,
                                                        isDirectory=False)

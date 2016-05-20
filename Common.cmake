@@ -94,8 +94,7 @@ endif()
 option(USE_BRAINSCut                      "Build BRAINSCut"                      ${BUILD_FOR_DASHBOARD})
 option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
 CMAKE_DEPENDENT_OPTION(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-#CMAKE_DEPENDENT_OPTION(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-option(USE_GTRACT                         "Build GTRACT"                         OFF)
+CMAKE_DEPENDENT_OPTION(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
 option(USE_BRAINSMush                     "Build BRAINSMush"                     ${BUILD_FOR_DASHBOARD})
 option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
 
@@ -110,6 +109,17 @@ option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" 
 
 option(USE_TBB "Build TBB as an internal module. This feature is still experimental and unsupported" OFF)
 mark_as_advanced(USE_TBB)
+
+if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
+  message("NOTE: Following toolkits are dependent to VTK:
+      -GTRACT
+      -BRAINSDemonWarp
+      -BRAINSTalairach
+      -BRAINSSurfaceTools
+      -DebugImageViewer
+      -BRAINSConstellationDetectorGUI
+      First you need to set ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK to ON to be able to choose above application for build.")
+endif()
 
 if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
   set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)

@@ -226,7 +226,7 @@ int  main(  int  argc,  char *argv[] )
     if( !isVTI )
       {
       /** Generate all information. */
-      testReader->GenerateOutputInformation();
+      testReader->Update();
 
       /** Extract the ImageIO from the testReader. */
       ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();

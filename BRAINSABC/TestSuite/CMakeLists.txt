@@ -9,8 +9,8 @@ configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
                 @ONLY IMMEDIATE)
 
 
-add_executable(TestLinearRegressionTesting TestLinearRegresionInstensityMatching.cxx)
-target_link_libraries(TestLinearRegressionTesting BRAINSCommonLib )
+#add_executable(TestLinearRegressionTesting TestLinearRegresionInstensityMatching.cxx)
+#target_link_libraries(TestLinearRegressionTesting BRAINSCommonLib )
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 

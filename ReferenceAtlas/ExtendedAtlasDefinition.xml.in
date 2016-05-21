@@ -35,18 +35,18 @@
   <LabelCode>1</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.15</lower>
+   <lower>0.10</lower>
    <upper>1.0</upper>
   </bounds>
   <bounds>
    <type>T2</type>
    <lower>0.001</lower>
-   <upper>0.95</upper>
+   <upper>0.98</upper>
   </bounds>
   <bounds>
    <type>PD</type>
    <lower>0.00</lower>
-   <upper>0.95</upper>
+   <upper>0.98</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
@@ -70,17 +70,17 @@
   <bounds>
    <type>T1</type>
    <lower>0.04</lower>
-   <upper>0.95</upper>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.05</lower>
-   <upper>0.96</upper>
+   <lower>0.01</lower>
+   <upper>0.98</upper>
   </bounds>
   <bounds>
    <type>PD</type>
    <lower>0.01</lower>
-   <upper>0.98</upper>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
@@ -104,18 +104,18 @@
   <LabelCode>19</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.05</lower>
-   <upper>0.95</upper>
+   <lower>0.01</lower>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.15</lower>
-   <upper>0.97</upper>
+   <lower>0.02</lower>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>PD</type>
    <lower>0.01</lower>
-   <upper>0.98</upper>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
@@ -138,18 +138,18 @@
   <LabelCode>23</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.05</lower>
-   <upper>0.95</upper>
+   <lower>0.01</lower>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.15</lower>
-   <upper>0.97</upper>
+   <lower>0.01</lower>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>PD</type>
    <lower>0.01</lower>
-   <upper>0.98</upper>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
@@ -172,18 +172,18 @@
   <LabelCode>24</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.05</lower>
-   <upper>0.95</upper>
+   <lower>0.01</lower>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.15</lower>
-   <upper>0.97</upper>
+   <lower>0.05</lower>
+   <upper>0.98</upper>
   </bounds>
   <bounds>
    <type>PD</type>
    <lower>0.01</lower>
-   <upper>0.98</upper>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>FLAIR</type>
@@ -207,11 +207,11 @@
   <bounds>
    <type>T1</type>
    <lower>0.05</lower>
-   <upper>0.95</upper>
+   <upper>0.98</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.15</lower>
+   <lower>0.05</lower>
    <upper>0.97</upper>
   </bounds>
   <bounds>
@@ -241,12 +241,12 @@
   <LabelCode>11</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.03</lower>
-   <upper>0.90</upper>
+   <lower>0.01</lower>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>T2</type>
-   <lower>0.02</lower>
+   <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
   <bounds>
@@ -275,13 +275,13 @@
   <LabelCode>12</LabelCode>
   <bounds>
    <type>T1</type>
-   <lower>0.10</lower>
+   <lower>0.05</lower>
    <upper>1.0</upper>
   </bounds>
   <bounds>
    <type>T2</type>
    <lower>0.03</lower>
-   <upper>0.90</upper>
+   <upper>0.99</upper>
   </bounds>
   <bounds>
    <type>PD</type>

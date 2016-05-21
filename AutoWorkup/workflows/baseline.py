@@ -273,13 +273,16 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
         wrapped_image = sitk.ReadImage(str(ii))
         identdc_wrapped_image=FlipPermuteToIdentity(wrapped_image)
         del wrapped_image
-        unwrapped_image, rotationZ, zslicevalues = one_axis_unwrap(identdc_wrapped_image, 0)
-        unwrapped_image, rotationY, yslicevalues = one_axis_unwrap(unwrapped_image, 1)
-        unwrapped_image, rotationX, xslicevalues = one_axis_unwrap(unwrapped_image, 2)
+        if 0 == 1: # THIS DOES NOT WORK ROBUSTLY YET
+            unwrapped_image, rotationZ, zslicevalues = one_axis_unwrap(identdc_wrapped_image, 0)
+            unwrapped_image, rotationY, yslicevalues = one_axis_unwrap(unwrapped_image, 1)
+            unwrapped_image, rotationX, xslicevalues = one_axis_unwrap(unwrapped_image, 2)
 
-        new_origin = identdc_wrapped_image.TransformContinuousIndexToPhysicalPoint((-rotationX, -rotationY, -rotationZ))
-        del identdc_wrapped_image
-        unwrapped_image.SetOrigin(new_origin)
+            new_origin = identdc_wrapped_image.TransformContinuousIndexToPhysicalPoint((-rotationX, -rotationY, -rotationZ))
+            del identdc_wrapped_image
+            unwrapped_image.SetOrigin(new_origin)
+        else:
+            unwrapped_image = identdc_wrapped_image
         import os
         unwrapped_outputfn1=os.path.realpath(unwrapped_outputbasefn[index])
         sitk.WriteImage(unwrapped_image,unwrapped_outputfn1)

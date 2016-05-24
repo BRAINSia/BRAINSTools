@@ -195,7 +195,6 @@ TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t
       ChangeOrientOfImage<OutImageType>(image, flipAxes);
     if (i > 0)
     {
-#if 0  //Need to debug why this is not working
       typename ResampleType::Pointer resampler = ResampleType::New();
       resampler->SetTransform(myIdentityTransform);
 
@@ -215,6 +214,7 @@ TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t
       //std::cout << orientedImage << std::endl;
       //std::cout << "XXXXXXXXXXXXXXX" << std::endl;
       //std::cout << imageVector[0] << std::endl;
+#if 0  //Need to debug why this is not working
       try {/
 
       resampler->Update();
@@ -225,8 +225,9 @@ TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t
         exit(EXIT_FAILURE);
       }
       imageVector.push_back(resampler->GetOutput());
-  #endif
+#else
       imageVector.push_back(orientedImage);
+#endif
     }
     else
     {

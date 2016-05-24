@@ -2,22 +2,15 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
-from builtins import str
-from builtins import range
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/o
+from nipype.interfaces.base import CommandLineInputSpec, TraitedSpec, File, Directory
+from nipype.interfaces.base import traits, isdefined
+from nipype.interfaces.utility import Merge, Function, Rename, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 
 from utilities.measureVolumes import *
 from utilities.misc import *
-from utilities.distributed import modify_qsub_args
 
 def CreateVolumeMeasureWorkflow( WFname, master_config):
-    CLUSTER_QUEUE = master_config['queue']
-    CLUSTER_QUEUE_LONG = master_config['long_q']
-
     volumeMeasureWF = pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_t1_image', #Input T1 image

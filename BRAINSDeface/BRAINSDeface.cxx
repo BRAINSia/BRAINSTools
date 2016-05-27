@@ -31,8 +31,9 @@ inline double myRandom()
   return static_cast< double >( rand() % range +1 - max )*0.05;
 }
 
+//Convienience function to write images
 template< typename TImageType >
-void writeAnImage(std::string filename, TImageType* image)
+void WriteImage(std::string filename, TImageType *image)
 {
 
   typedef itk::ImageFileWriter<TImageType> FileWriterType;
@@ -42,26 +43,33 @@ void writeAnImage(std::string filename, TImageType* image)
   fileWriter->Update();
 }
 
+//Convienience function to write transforms
+template< typename TTransformType >
+void WriteTransform(std::string transformFileName, TTransformType transform )
+{
+  typedef itk::TransformFileWriter TransformWriterType;
+  TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+  transformWriter->SetInput(transform);
+  transformWriter->SetFileName(transformFileName);
+  transformWriter->Update();
+}
+
+
 int main(int argc, char **argv)
 {
   PARSE_ARGS;
 
-  //Read in the imagefile. Right now assumed to be t1 weighted image
-
+  //Basic typedef's
   typedef  double PixelType;
-  //TODO: how to activate cpp11 in BRAINSTools so I can use constexpr???
   const unsigned int Dimension = 3;
-
   typedef itk::Image<PixelType, Dimension> ImageType;
+
+  //Read in subject image
   typedef itk::ImageFileReader<ImageType> ImageReaderType;
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName(inputImage);
-
-  //Extract subject image from reader
   ImageType::Pointer subject = imageReader->GetOutput();
   imageReader->Update();
-  //
-
 
   //Read in the atlas label file
   typedef itk::Image<PixelType, Dimension> LabelAtlasType;
@@ -74,6 +82,7 @@ int main(int argc, char **argv)
 
 
   //Turn Label map into binary image. Use a threshold Image filter?? or brainscut?
+  //Write a new filter for this??
   typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
   typedef itk::BinaryThresholdImageFilter< LabelAtlasType, MaskAtlasType>  MaskFilterType;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
@@ -85,18 +94,15 @@ int main(int argc, char **argv)
   maskFilter->SetUpperThreshold(1);
 
   //Write to a file
-  writeAnImage(outputMask, maskFilter->GetOutput());
-
+  WriteImage(outputMask, maskFilter->GetOutput());
   //Get a distance map to the Brain region:
-  //TODO: This should be changed to the other kind of distance map that is faster(Mauer I think it is called???)
   typedef itk::DanielssonDistanceMapImageFilter<MaskAtlasType, ImageType, ImageType> DistanceMapFilter;
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
   distanceMapFilter->SetInput(maskFilter->GetOutput());
   distanceMapFilter->InputIsBinaryOn();
 
-
   //Write the distance map to a file so we can see what it did:
-  writeAnImage(distanceMapFileName, distanceMapFilter->GetOutput());
+  WriteImage(distanceMapFileName, distanceMapFilter->GetOutput());
 
 
 /*
@@ -195,13 +201,7 @@ int main(int argc, char **argv)
 
   bSpline->SetParameters(bSplineParams);
 
-//Write the bspline transform
-  typedef itk::TransformFileWriter TransformWriterType;
-  TransformWriterType::Pointer transformWriter = TransformWriterType::New();
-  transformWriter->SetInput(bSpline);
-  transformWriter->SetFileName(bSplineFileName);
-  transformWriter->Update();
-
+  WriteTransform(bSplineFileName, bSpline);
   std::cout << "Printing bSpline paramaters" << std::endl;
   std::cout << bSpline->GetParameters() << std::endl;
   std::cout <<"Printing bSpline info" << std::endl;
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
   bSplineDisplacementFieldGenerator->SetTransform(bSpline);
   //bSplineDisplacementFieldGenerator->Print(std::cout,0);
 
-  writeAnImage(bSplineDisplacementFileName, bSplineDisplacementFieldGenerator->GetOutput());
+  WriteImage(bSplineDisplacementFileName, bSplineDisplacementFieldGenerator->GetOutput());
 
   std::cout<<"done writing initial bSpline displacmentField"<<std::endl;
 
@@ -289,7 +289,7 @@ int main(int argc, char **argv)
   composeDisplacements->SetInput(2, zMult->GetOutput());
 
   //write the new displacement image
-  writeAnImage(smoothDisplacementName, composeDisplacements->GetOutput());
+  WriteImage(smoothDisplacementName, composeDisplacements->GetOutput());
 
   DisplacementFieldImageType::Pointer composedDisplacementField = composeDisplacements->GetOutput();
   composedDisplacementField->Update();
@@ -327,8 +327,7 @@ int main(int argc, char **argv)
   resampler->SetTransform(finalTransform);
 
 
-
-  writeAnImage(deformedImageName,resampler->GetOutput());
+  WriteImage(deformedImageName, resampler->GetOutput());
 
   //Get the difference image
   typedef itk::SubtractImageFilter<ImageType, ImageType> SubtractFilter;
@@ -337,15 +336,8 @@ int main(int argc, char **argv)
   subtractFilter->SetInput2(resampler->GetOutput());
 
   //write the difference Image
-  writeAnImage("/scratch/aleinoff/defaceOutput/diffImage.nii.gz", subtractFilter->GetOutput());
+  WriteImage("/scratch/aleinoff/defaceOutput/diffImage.nii.gz", subtractFilter->GetOutput());
 
-  /*
-  typedef itk::ImageFileWriter<ImageType> DeformedSubjectFileWriterType;
-  DeformedSubjectFileWriterType::Pointer deformedWriter = DeformedSubjectFileWriterType::New();
-  deformedWriter->SetFileName(deformedImageName);
-  deformedWriter->SetInput(resampler->GetOutput());
-  deformedWriter->Update();
-   */
   std::cout << "Finished writing file " << std::endl;
   std::cout << "done" << std::endl;
 

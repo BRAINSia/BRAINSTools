@@ -908,17 +908,13 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     if 'jointfusion_2015_wholebrain' in master_config['components']:  ## HACK Do JointFusion labeling
         ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
-        #if badT2:
-        #    onlyT1 = True
-        #if onlyT1:
-        #    print("T1 only processing in jointFusion")
-        #else:
-        #    print("Multimodal processing in jointFusion")
-        ###HACK, JointFusion is unstable with T2
-        ###HACK, JointFusion is unstable with T2
-        ###HACK, JointFusion is unstable with T2
-        ###HACK, JointFusion is unstable with T2
-        onlyT1 = True
+        if badT2:
+            onlyT1 = True
+        if onlyT1:
+            print("T1 only processing in jointFusion")
+        else:
+            print("Multimodal processing in jointFusion")
+
         myLocalJointFusion = CreateJointFusionWorkflow("JointFusion", onlyT1, master_config)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalJointFusion,'inputspec.subj_t1_image')
         baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalJointFusion,'inputspec.subj_t2_image')

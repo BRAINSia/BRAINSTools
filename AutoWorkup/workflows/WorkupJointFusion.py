@@ -179,7 +179,10 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     t2Resample = dict()
     warpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="LblMergeAtlas")
     NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="fswmLblMergeAtlas")
-    warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*n_modality),name="MergeAtlases")
+
+    ###warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*n_modality),name="MergeAtlases")
+    "HACK NOT to use T2 for JointFusion only"
+    warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*1),name="MergeAtlases")
 
     for jointFusion_atlas_subject in list(jointFusionAtlasDict.keys()):
         ## Need DataGrabber Here For the Atlas
@@ -256,6 +259,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         atlasMakeMultimodalInput[jointFusion_atlas_subject].inputs.jointFusion = False
         JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1',
                               atlasMakeMultimodalInput[jointFusion_atlas_subject], 'inFN1')
+
         if not onlyT1:
             JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't2', atlasMakeMultimodalInput[jointFusion_atlas_subject], 'inFN2')
         else:
@@ -265,8 +269,11 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image')
         JointFusionWF.connect(atlasMakeMultimodalInput[jointFusion_atlas_subject], 'outFNs',
                        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image')
+        "HACK NOT to use T2 for JointFusion"
+        #JointFusionWF.connect(A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'warped_image',
+        #               warpedAtlasesMergeNode,'in'+str(merge_input_offset + jointFusion_atlas_mergeindex*n_modality) )
         JointFusionWF.connect(A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'warped_image',
-                       warpedAtlasesMergeNode,'in'+str(merge_input_offset + jointFusion_atlas_mergeindex*n_modality) )
+                       warpedAtlasesMergeNode,'in'+str(merge_input_offset + jointFusion_atlas_mergeindex*1) )
 
         """
         Original t2 resampling
@@ -288,8 +295,9 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                             t2Resample[jointFusion_atlas_subject],'reference_image')
             JointFusionWF.connect( jointFusionAtlases[jointFusion_atlas_subject], 't2',
                             t2Resample[jointFusion_atlas_subject],'input_image')
-            JointFusionWF.connect(t2Resample[jointFusion_atlas_subject],'output_image',
-                           warpedAtlasesMergeNode,'in'+str(merge_input_offset + jointFusion_atlas_mergeindex*n_modality+modality_index) )
+            "HACK NOT to use T2 for JointFusion only"
+            #JointFusionWF.connect(t2Resample[jointFusion_atlas_subject],'output_image',
+            #               warpedAtlasesMergeNode,'in'+str(merge_input_offset + jointFusion_atlas_mergeindex*n_modality+modality_index) )
 
         """
         Original labelmap resampling
@@ -354,32 +362,39 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
                           jointFusion, 'mask_image')
 
-    #JointFusionWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'warped_intensity_images')
-    #JointFusionWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
+    JointFusionWF.connect(warpedAtlasLblMergeNode,'out',
+                          jointFusion,'atlas_segmentation_image')
+
     AdjustMergeListNode = pe.Node(Function(function=adjustMergeList,
                                                    input_names=['allList','n_modality'],
                                                    output_names=['out']),
                                                    name="AdjustMergeListNode")
-    AdjustMergeListNode.inputs.n_modality = n_modality
+    "*** HACK JointFusion only uses T1"
+    #AdjustMergeListNode.inputs.n_modality = n_modality
+    AdjustMergeListNode.inputs.n_modality = 1
+
     JointFusionWF.connect(warpedAtlasesMergeNode,'out',AdjustMergeListNode,'allList')
     JointFusionWF.connect(AdjustMergeListNode,'out',jointFusion,'atlas_image')
-    JointFusionWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'atlas_segmentation_image')
-    #JointFusionWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
-    #AdjustTargetImageListNode = pe.Node(Function(function=adjustMergeList,
-    #                                               input_names=['allList','n_modality'],
-    #                                               output_names=['out']),
-    #                                               name="AdjustTargetImageListNode")
-    #AdjustTargetImageListNode.inputs.n_modality = n_modality
-    #JointFusionWF.connect(sessionMakeMultimodalInput, 'outFNs',AdjustTargetImageListNode,'allList')
-    #JointFusionWF.connect(AdjustTargetImageListNode, 'out',jointFusion,'target_image')
-    JointFusionWF.connect(sessionMakeMultimodalInput, 'outFNs', jointFusion,'target_image')
+
+    AdjustTargetImageListNode = pe.Node(Function(function=adjustMergeList,
+                                                   input_names=['allList','n_modality'],
+                                                   output_names=['out']),
+                                                   name="AdjustTargetImageListNode")
+    AdjustTargetImageListNode.inputs.n_modality = n_modality
+
+    "*** HACK JointFusion only uses T1"
+    """ Once JointFusion works with T2 properly,
+        delete sessionMakeListSingleModalInput and use sessionMakeMultimodalInput instead
+    """
+    sessionMakeListSingleModalInput = pe.Node(Function(function=MakeVector,
+                                         input_names=['inFN1', 'inFN2', 'jointFusion'],
+                                         output_names=['outFNs']),
+                                run_without_submitting=True, name="sessionMakeListSingleModalInput")
+    sessionMakeListSingleModalInput.inputs.jointFusion = False
+    JointFusionWF.connect(inputsSpec, 'subj_t1_image', sessionMakeListSingleModalInput, 'inFN1')
+    JointFusionWF.connect(sessionMakeListSingleModalInput, 'outFNs', jointFusion,'target_image')
+
     JointFusionWF.connect(jointFusion, 'out_label_fusion', outputsSpec,'JointFusion_HDAtlas20_2015_label')
-
-    #if onlyT1:
-    #    jointFusion.inputs.modalities=1
-    #else:
-    #    jointFusion.inputs.modalities=2
-
 
     ## We need to recode values to ensure that the labels match FreeSurer as close as possible by merging
     ## some labels together to standard FreeSurfer confenventions (i.e. for WMQL)

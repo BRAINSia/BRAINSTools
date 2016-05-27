@@ -914,15 +914,12 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         #    print("T1 only processing in jointFusion")
         #else:
         #    print("Multimodal processing in jointFusion")
-        ###HACK, JointFusion is unstable with T2
-        ###HACK, JointFusion is unstable with T2
-        ###HACK, JointFusion is unstable with T2
-        ###HACK, JointFusion is unstable with T2
-        onlyT1 = True
         myLocalJointFusion = CreateJointFusionWorkflow("JointFusion", onlyT1, master_config)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalJointFusion,'inputspec.subj_t1_image')
         baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalJointFusion,'inputspec.subj_t2_image')
-        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalJointFusion,'inputspec.subj_fixed_head_labels')
+        baw201.connect(myLocalTCWF, 'outputspec.outputHeadLabels',myLocalJointFusion,'inputspec.subj_fixed_head_labels')
+        #baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalJointFusion,'inputspec.subj_fixed_head_labels')
+        #baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalJointFusion,'inputspec.subj_fixed_head_labels')
 
         baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalJointFusion,'inputspec.subj_left_hemisphere')
         baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalJointFusion,'inputspec.subj_lmks')

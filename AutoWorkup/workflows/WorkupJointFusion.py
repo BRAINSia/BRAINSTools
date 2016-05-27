@@ -151,6 +151,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     :: Resampling is placed at this stage
     """
     subjectT2Resample = pe.Node(interface=BRAINSResample(), name="BRAINSResample_T2_forAntsJointFusion")
+     HACK: NEED TO FIX onlyT1 that was removed from other location.
     if not onlyT1:
         subjectT2Resample.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1),
                                   'overwrite': True}
@@ -184,12 +185,13 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     for jointFusion_atlas_subject in list(jointFusionAtlasDict.keys()):
         ## Need DataGrabber Here For the Atlas
         jointFusionAtlases[jointFusion_atlas_subject] = pe.Node(interface = IdentityInterface(
-                                                                  fields=['t1', 't2', 'label', 'lmks']),
+                                                                  fields=['t1', 't2', 'label', 'lmks',"head_lbl"]),
                                                                   name='jointFusionAtlasInput'+jointFusion_atlas_subject)
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t1 = jointFusionAtlasDict[jointFusion_atlas_subject]['t1']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t2 = jointFusionAtlasDict[jointFusion_atlas_subject]['t2']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.label = jointFusionAtlasDict[jointFusion_atlas_subject]['label']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.lmks = jointFusionAtlasDict[jointFusion_atlas_subject]['lmks']
+        jointFusionAtlases[jointFusion_atlas_subject].inputs.head_lbl = jointFusionAtlasDict[jointFusion_atlas_subject]['head_lbl']
         ## Create BLI first
         ########################################################
         # Run BLI atlas_to_subject
@@ -207,9 +209,9 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,4,2,16), 'overwrite': True}
         A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].plugin_args = many_cpu_ANTsSyN_options_dictionary
         if onlyT1:
-            JFregistrationTypeDescription="SixStageAntsRegistrationT1Only"
+            JFregistrationTypeDescription="FiveStageAntsRegistrationT1Only"
         else:
-            JFregistrationTypeDescription="SixStageAntsRegistrationMultiModal"
+            JFregistrationTypeDescription="FiveStageAntsRegistrationMultiModal"
         CommonANTsRegistrationSettings(
                       antsRegistrationNode=A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],
                       registrationTypeDescription=JFregistrationTypeDescription,
@@ -218,7 +220,6 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                       output_inverse_warped_image=None, #NO NEED FOR THIS
                       save_state=None,                  #NO NEED FOR THIS
                       invert_initial_moving_transform=False)
-
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         UseRegistrationMasking = True
@@ -240,7 +241,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
             #JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
             JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
                                   A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
-            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'label',
+            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'head_lbl',
                                   A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
 
         JointFusionWF.connect(BLICreator[jointFusion_atlas_subject],'outputTransformFilename',

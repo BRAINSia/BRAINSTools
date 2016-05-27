@@ -23,21 +23,16 @@
 #include <itkDisplacementFieldTransform.h>
 #include <itkSubtractImageFilter.h>
 
-inline double myRandom()
-{
-  const int min = -5;
-  const int max = 5;
-  const int range = max - min;
-  return static_cast< double >( rand() % range +1 - max )*0.05;
-}
+#include "CreateRandomBSpline.h"
+#include "CombineBSplineWithDisplacement.h"
 
 //Convienience function to write images
 template< typename TImageType >
 void WriteImage(std::string filename, TImageType *image)
 {
-
   typedef itk::ImageFileWriter<TImageType> FileWriterType;
   typename FileWriterType::Pointer fileWriter = FileWriterType::New();
+
   fileWriter->SetInput(image);
   fileWriter->SetFileName(filename);
   fileWriter->Update();
@@ -49,11 +44,11 @@ void WriteTransform(std::string transformFileName, TTransformType transform )
 {
   typedef itk::TransformFileWriter TransformWriterType;
   TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+
   transformWriter->SetInput(transform);
   transformWriter->SetFileName(transformFileName);
   transformWriter->Update();
 }
-
 
 int main(int argc, char **argv)
 {
@@ -125,90 +120,43 @@ int main(int argc, char **argv)
 
 
   //Perform some kind of BSpline on Image
+  const int BSplineOrder = 3;
+  const int BSplineControlPoints = 8;
 
-  //Setup BSpline
-  const unsigned int BSplineOrder = 3;
-  typedef itk::BSplineTransform<PixelType, Dimension, BSplineOrder> BSplineTransform;
+  //TODO: call function
 
-  BSplineTransform::Pointer bSpline = BSplineTransform::New();
-#if 0 //Set this up later
-  typedef itk::BSplineTransformInitializer<BSplineTransform> BSplineInitType;
+  /*
+   * template<typename TImageType, typename TBSplineType>
+TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const int BSplineOrder, const int BSplineControlPoints)
+{
+   */
+  typedef itk::BSplineTransform<PixelType, Dimension, BSplineOrder> BSTransformType;
 
+  //BSTransformType::Pointer bSpline = createRandomBSpline2<ImageType, BSTransformType>(subject, Dimension, BSplineOrder, BSplineControlPoints );
+  typedef CreateRandomBSpline<ImageType, PixelType, 3, 3> Test; //, BSTransformType> Test;
+  Test::Pointer myTest = Test::New();
+  myTest->SetInput(subject);
+  myTest->SetBSplineControlPoints(8);
 
-  BSplineInitType::Pointer bsi = BSplineInitType::New();
-  bsi->SetImage(subject);
-  bsi->SetTransform(bSpline);
-  bsi->Update();
-#endif
-  //Set BSpline basic parameters
-  const unsigned int BSplineControlPoints = 8;
-  BSplineTransform::MeshSizeType meshSize;                  //Setup a mesh that contains the number of controlpoints
-  meshSize.Fill(BSplineControlPoints-BSplineOrder);         //Inspired from itk example "BSplineWarping2.cxx"
+  myTest->Update();
+  BSTransformType::Pointer bSpline = myTest->GetBSplineOutput();
 
-  bSpline->SetTransformDomainMeshSize(meshSize);            //TODO: ask if it is possible to have "uneven" control points.
-  // EG. 8 on LR axis 7 on SI 6 on AP. We did this in simple itk
-  //so it should be possible in cpp itk
+  myTest->Print(std::cerr,5);
 
-
-#if 1 // we should change this so we sue BSplineTransform initializer instead
-  typedef ImageType::RegionType ImageRegionType;
-//  ImageRegionType subjectRegion = subject->GetLargestPossibleRegion();
-  ImageRegionType subjectRegion = subject->GetBufferedRegion();
-
-  bSpline->SetTransformDomainOrigin(subject->GetOrigin());           //Origin
-  bSpline->SetTransformDomainDirection(subject->GetDirection());     //Direction
-  bSpline->SetTransformDomainPhysicalDimensions((                    //PhysicalDimensions
-    subject->GetSpacing()[0]*(subjectRegion.GetSize()[0]-1),         //Should all be set to the same as the subject Image
-    subject->GetSpacing()[1]*(subjectRegion.GetSize()[1]-1),
-    subject->GetSpacing()[2]*(subjectRegion.GetSize()[2]-1)
-    ));
-#endif
-
-  //Get the number of paramaters/nodes required for this BSpline
-  const unsigned int numberOfParameters = bSpline->GetNumberOfParameters();
-  const unsigned int numberOfNodes = numberOfParameters/Dimension;
-
-  //print out
-  std::cout << "Number of params: " << numberOfParameters << std::endl;
-  std::cout << "Number of nodes:  " << numberOfNodes << std::endl;
-
-  //Setup a paramaters variable for the bspline
-  BSplineTransform::ParametersType bSplineParams( numberOfParameters );
-
-  //  From ITK Example "BSplineWarping2"
-  //  The B-spline grid should now be fed with coeficients at each node. Since
-  //  this is a two dimensional grid, each node should receive two coefficients.
-  //  Each coefficient pair is representing a displacement vector at this node.
-  //  The coefficients can be passed to the B-spline in the form of an array where
-  //  the first set of elements are the first component of the displacements for
-  //  all the nodes, and the second set of elemets is formed by the second
-  //  component of the displacements for all the nodes.
-
-  //  In the ITK Example, the read the points in from a file. Here, they will be
-  //  generated randomly. This should put the xyz coordinates in the correct space
-  //  a better way would probably be to use the image coefficient array of the bspline,
-  //  but for now I will use the method from the ITK example
-
-  std::srand(time(nullptr));
-
-  for( unsigned int n = 0; n < numberOfNodes; ++ n)
-    {
-    bSplineParams[n] = myRandom();
-    bSplineParams[n + numberOfNodes] = myRandom();      // "y" coord;
-    bSplineParams[n + numberOfNodes * 2] = myRandom();  // "z" coord;
-                                                                  // TODO: x,y,z seem like they are the wrong coordinate system. Get a better model
-    }
-
-  bSpline->SetParameters(bSplineParams);
 
   WriteTransform(bSplineFileName, bSpline);
   std::cout << "Printing bSpline paramaters" << std::endl;
   std::cout << bSpline->GetParameters() << std::endl;
+
+
   std::cout <<"Printing bSpline info" << std::endl;
+
+
   bSpline->Print(std::cout,0);
+  std::cout<<   "printed bspline info"<<std::endl;
   std::cout << std::endl <<std::endl<<std::endl;
 
-
+  //return 0;
   //Get the displacement field from the bspline transform
 
 
@@ -315,6 +263,8 @@ int main(int argc, char **argv)
   typedef itk::LinearInterpolateImageFunction<ImageType, PixelType > InterpolatorType;
   InterpolatorType::Pointer interpolater = InterpolatorType::New();
 
+  ImageType::RegionType subjectRegion = subject->GetBufferedRegion();
+
   resampler->SetInterpolator(interpolater);
   resampler->SetOutputSpacing(subject->GetSpacing());
   resampler->SetOutputOrigin(subject->GetOrigin());
@@ -336,7 +286,7 @@ int main(int argc, char **argv)
   subtractFilter->SetInput2(resampler->GetOutput());
 
   //write the difference Image
-  WriteImage("/scratch/aleinoff/defaceOutput/diffImage.nii.gz", subtractFilter->GetOutput());
+  WriteImage( diffImageName , subtractFilter->GetOutput());
 
   std::cout << "Finished writing file " << std::endl;
   std::cout << "done" << std::endl;

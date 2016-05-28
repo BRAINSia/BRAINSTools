@@ -25,8 +25,23 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     entire pipeline in one spot.
     """
     ## TODO: Consider registration masking
+    if ( registrationTypeDescription == "FiveStageAntsRegistrationT1Only" ) or ( registrationTypeDescription == "FiveStageAntsRegistrationMultiModal" ):
+        local_num_stages=5 # Assumes BLI landmark initialization
+        antsRegistrationNode.inputs.transforms = ["Affine","Affine","SyN","SyN","SyN"]
+        if registrationTypeDescription == "FiveStageAntsRegistrationT1Only":
+           antsRegistrationNode.inputs.metric = ['MI','MI','CC','CC','CC']
+           antsRegistrationNode.inputs.metric_weight = [1.0,1.0,1.0,1.0,1.0]
+           antsRegistrationNode.inputs.sampling_strategy = ['Regular','Regular',None,None,None]
+           antsRegistrationNode.inputs.sampling_percentage = [.5,.5,1.0,1.0,1.0]
+           antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,4,4,4]
+        else:
+           antsRegistrationNode.inputs.metric = ['MI',['MI','MI'],'CC',['CC','CC'],['CC','CC']]
+           antsRegistrationNode.inputs.metric_weight = [1.0,[1.0,1.0],1.0,[1.0,1.0],[1.0,1.0]]
+           antsRegistrationNode.inputs.sampling_strategy = ['Regular',['Regular','Regular'],None,[None,None],[None,None]]
+           antsRegistrationNode.inputs.sampling_percentage = [0.5,[0.5,0.5],1.0,[1.0,1.0],[1.0,1.0]]
+           antsRegistrationNode.inputs.radius_or_number_of_bins = [32,[32,32],4,[4,4],[4,4]]
 
-    if ( registrationTypeDescription == "SixStageAntsRegistrationT1Only" ) or ( registrationTypeDescription == "SixStageAntsRegistrationMultiModal" ):
+    elif ( registrationTypeDescription == "SixStageAntsRegistrationT1Only" ) or ( registrationTypeDescription == "SixStageAntsRegistrationMultiModal" ):
         local_num_stages=6
         antsRegistrationNode.inputs.transforms = ["Rigid","Affine","Affine","SyN","SyN","SyN"]
         if registrationTypeDescription == "SixStageAntsRegistrationT1Only":

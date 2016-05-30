@@ -40,6 +40,11 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
            antsRegistrationNode.inputs.sampling_strategy = ['Regular',['Regular','Regular'],None,[None,None],[None,None]]
            antsRegistrationNode.inputs.sampling_percentage = [0.5,[0.5,0.5],1.0,[1.0,1.0],[1.0,1.0]]
            antsRegistrationNode.inputs.radius_or_number_of_bins = [32,[32,32],4,[4,4],[4,4]]
+        antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0],[0.1, 3, 0]]
+        antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,500],[500,500],[1000,250],[140],[25]]
+        antsRegistrationNode.inputs.convergence_threshold =[5e-8,5e-7,5e-7,5e-6,5e-5]
+        antsRegistrationNode.inputs.shrink_factors =       [[8,4,2],[2, 1],[8, 4], [2], [1]]
+        antsRegistrationNode.inputs.smoothing_sigmas =     [[3,2,1],[1, 0],[3, 2], [1], [0]]
 
     elif ( registrationTypeDescription == "SixStageAntsRegistrationT1Only" ) or ( registrationTypeDescription == "SixStageAntsRegistrationMultiModal" ):
         local_num_stages=6
@@ -56,7 +61,6 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
             antsRegistrationNode.inputs.sampling_strategy = ['Regular','Regular',['Regular','Regular'],None,[None,None],[None,None]]
             antsRegistrationNode.inputs.sampling_percentage = [.27,0.5,[0.5,0.5],1.0,[1.0,1.0],[1.0,1.0]]
             antsRegistrationNode.inputs.radius_or_number_of_bins = [32,32,[32,32],4,[4,4],[4,4]]
-
         antsRegistrationNode.inputs.transform_parameters = [[0.1],[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0],[0.1, 3, 0]]
         antsRegistrationNode.inputs.number_of_iterations = [[1000,1000,1000],[1000,1000,500],[500,500],[1000,250],[140],[25]]
         antsRegistrationNode.inputs.convergence_threshold =[5e-8,5e-8,5e-7,5e-7,5e-6,5e-5]

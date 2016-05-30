@@ -3,7 +3,7 @@
 ## various different sources.
 ##
 
-def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,outFN, OUT_DICT):
+def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,posterior_dict,LeftHemisphereFN,outFN, OUT_DICT):
     import SimpleITK as sitk
     import os
 
@@ -59,19 +59,36 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,
     fusionIm=sitk.Cast(sitk.ReadImage(fusionFN),sitk.sitkUInt32)
     FixedHead=sitk.Cast(sitk.ReadImage(FixedHeadFN),sitk.sitkUInt32)
 
-
     BRAINSABC_DICT = { 'BRAINSTEM': 30, 'CSF': 4 , 'BLOOD': 5 }
 
     ## Intialize by cloning
     outlabels = sitk.Image(fusionIm)
+    lbl_orig_mask = ( outlabels > 0 )
+    lbl_outter_ring = sitk.BinaryDilate(lbl_orig_mask,2) - lbl_orig_mask
+    # DEBUG sitk.WriteImage(lbl_outter_ring,"/tmp/lbl_outter_ring.nii.gz")
 
+
+    vb_post = sitk.ReadImage(posterior_dict["VB"])
+    ring_vb = lbl_outter_ring * (vb_post > 0.5) # just outside mask
+    # DEBUG sitk.WriteImage(ring_vb,"/tmp/ring_vb.nii.gz")
+    inner_vb = lbl_orig_mask * (vb_post > 0.85) # inside mask, but very high probability
+    # DEBUG sitk.WriteImage(inner_vb,"/tmp/inner_vb.nii.gz")
+    # background = 0 , suspicous = 999
     ## Add blood from BRAINSABC to mask as as value OUT_DICT['BLOOD']
-    blood_labels=(FixedHead == BRAINSABC_DICT['BLOOD']) * (outlabels == 0)
+    blood_labels=(FixedHead == BRAINSABC_DICT['BLOOD']) * (outlabels == 0 | outlabels == 999) | ring_vb | inner_vb
+    # DEBUG sitk.WriteImage(blood_labels,"/tmp/blood_labels.nii.gz")
     outlabels = ForceMaskInsert(outlabels,blood_labels,OUT_DICT['BLOOD'])
 
+    csf_post = sitk.ReadImage(posterior_dict["CSF"])
+    ring_csf = lbl_outter_ring * (csf_post > 0.5) # just outside mask
+    # DEBUG sitk.WriteImage(ring_csf,"/tmp/ring_csf.nii.gz")
+    inner_csf = lbl_orig_mask * (csf_post > 0.85) # inside mask, but very high probability
+    # DEBUG sitk.WriteImage(inner_csf,"/tmp/inner_csf.nii.gz")
     ## Add CSF from BRAINSABC to mask as as value OUT_DICT['RH_CSF']
-    csf_labels=(FixedHead == BRAINSABC_DICT['CSF'] ) * (outlabels == 0)
+    csf_labels=(FixedHead == BRAINSABC_DICT['CSF'] ) * (outlabels == 0 | outlabels == 999) | ring_csf | inner_csf
+    # DEBUG sitk.WriteImage(csf_labels,"/tmp/csf_labels.nii.gz")
     outlabels= ForceMaskInsert(outlabels,csf_labels,OUT_DICT['RH_CSF'])
+    # DEBUG sitk.WriteImage(outlabels,"/tmp/outlabels.nii.gz")
 
     ## Now split CSF based on LeftHemisphereMask
     if LeftHemisphereFN != None:
@@ -88,8 +105,8 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,
         brain_stem = (FixedHead == BRAINSABC_DICT['BRAINSTEM']) * ( outlabels == misLabelDict[misLabel])
         outlabels = ForceMaskInsert(outlabels,brain_stem,OUT_DICT['BRAINSTEM'])  ## Make all CSF Right hemisphere
 
-    BRAIN_MASK=sitk.Cast( (FixedHead > 0),sitk.sitkUInt32)
-    outlabels = outlabels * BRAIN_MASK
+    VALID_REGION = sitk.Cast( (FixedHead > 0) | ring_csf | inner_csf | ring_vb | inner_vb ,sitk.sitkUInt32)
+    outlabels = outlabels * VALID_REGION
     ## Caudate = 36 37
     ## Putamen = 57 58
     ## Pallidus = 55,56
@@ -102,7 +119,7 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,
         outlabels = RecodeNonLargest(outlabels,keepCode,UNKNOWN_LABEL_CODE)
 
     ## FILL IN HOLES
-    unkown_holes = ( BRAIN_MASK > 0 ) * ( outlabels == 0 )
+    unkown_holes = ( VALID_REGION > 0 ) * ( outlabels == 0 )
     outlabels = ForceMaskInsert(outlabels,unkown_holes,UNKNOWN_LABEL_CODE)  ## Fill unkown regions with unkown code
     outlabels = MinimizeSizeOfImage(outlabels)
 

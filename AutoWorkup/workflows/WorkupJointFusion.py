@@ -107,6 +107,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                                                              'subj_t2_image', #Desired image to create label map for
                                                              'subj_lmks', #The landmarks corresponding to t1_image
                                                              'subj_fixed_head_labels', #The fixed head labels from BABC
+                                                             'subj_posteriors', #The BABC posteriors
                                                              'subj_left_hemisphere', #The warped left hemisphere mask
                                                              'atlasWeightFilename',  #The static weights file name
                                                              'labelBaseFilename' #Atlas label base name ex) neuro_lbls.nii.gz
@@ -128,7 +129,6 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
 
     BLICreator = dict()
     A2SantsRegistrationPreJointFusion_SyN = dict()
-    fixedROIAuto = dict()
     movingROIAuto = dict()
     labelMapResample = dict()
     NewlabelMapResample = dict()
@@ -179,20 +179,31 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     t2Resample = dict()
     warpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="LblMergeAtlas")
     NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="fswmLblMergeAtlas")
-
-    ###warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*n_modality),name="MergeAtlases")
-    "HACK NOT to use T2 for JointFusion only"
+    # "HACK NOT to use T2 for JointFusion only"
+    #warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*n_modality),name="MergeAtlases")
     warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*1),name="MergeAtlases")
+
+    ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
+    UseRegistrationMasking = True
+    if UseRegistrationMasking == True:
+       from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
+
+       fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedROIAUTOMask")
+       fixedROIAuto.inputs.ROIAutoDilateSize=10
+       fixedROIAuto.inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
+       JointFusionWF.connect(inputsSpec, 'subj_t1_image',fixedROIAuto,'inputVolume')
+
 
     for jointFusion_atlas_subject in list(jointFusionAtlasDict.keys()):
         ## Need DataGrabber Here For the Atlas
         jointFusionAtlases[jointFusion_atlas_subject] = pe.Node(interface = IdentityInterface(
-                                                                  fields=['t1', 't2', 'label', 'lmks']),
+                                                                  fields=['t1','t2','label','lmks','regisration_mask']),
                                                                   name='jointFusionAtlasInput'+jointFusion_atlas_subject)
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t1 = jointFusionAtlasDict[jointFusion_atlas_subject]['t1']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t2 = jointFusionAtlasDict[jointFusion_atlas_subject]['t2']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.label = jointFusionAtlasDict[jointFusion_atlas_subject]['label']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.lmks = jointFusionAtlasDict[jointFusion_atlas_subject]['lmks']
+        jointFusionAtlases[jointFusion_atlas_subject].inputs.regisration_mask = jointFusionAtlasDict[jointFusion_atlas_subject]['regisration_mask']
         ## Create BLI first
         ########################################################
         # Run BLI atlas_to_subject
@@ -222,28 +233,20 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                       save_state=None,                  #NO NEED FOR THIS
                       invert_initial_moving_transform=False)
 
-
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
-        UseRegistrationMasking = True
         if UseRegistrationMasking == True:
-            #from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
+            from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
+            JointFusionWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
+            # JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
+            #                       A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
 
-            #fixedROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="fixedROIAUTOMask_"+jointFusion_atlas_subject)
-            #fixedROIAuto[jointFusion_atlas_subject].inputs.ROIAutoDilateSize=10
-            #fixedROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
-
+            # NOTE: Moving image mask can be taken from Atlas directly so that it does not need to be read in
             #movingROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="movingROIAUTOMask_"+jointFusion_atlas_subject)
-            #fixedROIAuto[jointFusion_atlas_subject].inputs.ROIAutoDilateSize=10
+            #movingROIAuto.inputs.ROIAutoDilateSize=10
             #movingROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
-
-            #JointFusionWF.connect(inputsSpec, 'subj_t1_image',fixedROIAuto[jointFusion_atlas_subject],'inputVolume')
             #JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1', movingROIAuto[jointFusion_atlas_subject],'inputVolume')
-
-            #JointFusionWF.connect(fixedROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
             #JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
-            JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
-                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
-            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'label',
+            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'regisration_mask',
                                   A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
 
         JointFusionWF.connect(BLICreator[jointFusion_atlas_subject],'outputTransformFilename',
@@ -359,8 +362,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     jointFusion.inputs.search_radius=[3]
     #jointFusion.inputs.method='Joint[0.1,2]'
     jointFusion.inputs.out_label_fusion='JointFusion_HDAtlas20_2015_label.nii.gz'
-    JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
-                          jointFusion, 'mask_image')
+    #JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels', jointFusion, 'mask_image')
+    JointFusionWF.connect(fixedROIAuto, 'outputROIMaskVolume', jointFusion, 'mask_image')
 
     JointFusionWF.connect(warpedAtlasLblMergeNode,'out',
                           jointFusion,'atlas_segmentation_image')
@@ -434,6 +437,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
                                                       input_names=['fusionFN',
                                                         'FixedHeadFN',
+                                                        'posterior_dict',
                                                         'LeftHemisphereFN',
                                                         'outFN',
                                                         'OUT_DICT'],
@@ -446,6 +450,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         injectSurfaceCSFandVBIntoLabelMap.inputs.OUT_DICT = FREESURFER_DICT
         JointFusionWF.connect(jointFusion, 'out_label_fusion', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
         JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels', injectSurfaceCSFandVBIntoLabelMap, 'FixedHeadFN')
+        JointFusionWF.connect(inputsSpec, 'subj_posteriors', injectSurfaceCSFandVBIntoLabelMap, 'posterior_dict')
         JointFusionWF.connect(inputsSpec, 'subj_left_hemisphere', injectSurfaceCSFandVBIntoLabelMap, 'LeftHemisphereFN')
 
         JointFusionWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',

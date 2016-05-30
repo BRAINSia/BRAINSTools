@@ -54,7 +54,8 @@ class DustCleanup():
       try:
         labelsList.remove(val)
       except ValueError:
-        print "WARNING: Label value", val, "is NOT a valid label in the input atlas:", self.inputAtlasPath
+        #print "WARNING: Can not remove Label value", val, "is NOT a valid label in the input atlas:", self.inputAtlasPath
+        pass
     return labelsList
 
   def verifyIncludeLabelsList(self, labelsList, includeList):
@@ -63,7 +64,8 @@ class DustCleanup():
       if val in labelsList:
         verifiedList.append(val)
       else:
-        print "WARNING: Label value", val, "is NOT a valid label in the input atlas:", self.inputAtlasPath
+        #print "WARNING: Can not validate Label value", val, "is NOT a valid label in the input atlas:", self.inputAtlasPath
+        pass
     return verifiedList
 
   def printIslandStatistics(self):

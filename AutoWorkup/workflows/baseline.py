@@ -919,6 +919,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalJointFusion,'inputspec.subj_t1_image')
         baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalJointFusion,'inputspec.subj_t2_image')
         baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalJointFusion,'inputspec.subj_fixed_head_labels')
+        baw201.connect(myLocalTCWF, 'outputspec.posteriorImages',myLocalJointFusion,'inputspec.subj_posteriors')
 
         baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalJointFusion,'inputspec.subj_left_hemisphere')
         baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalJointFusion,'inputspec.subj_lmks')

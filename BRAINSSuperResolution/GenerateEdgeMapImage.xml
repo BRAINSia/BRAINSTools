@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>SuperResolution</category>
+  <title>GenerateEdgeMapImage</title>
+  <description>Inverse of Maximum Gradient Image</description>
+  <version>4.7.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Ali Ghayoor</contributor>
+  <acknowledgements></acknowledgements>
+  <parameters>
+    <image multiple="true">
+      <name>inputMRVolumes</name>
+      <longflag>inputMRVolumes</longflag>
+      <label>Input structural MR volumes to create the maximum edgemap</label>
+      <channel>input</channel>
+      <description>Input image files names</description>
+    </image>
+    <image>
+      <name>inputMask</name>
+      <longflag>inputMask</longflag>
+      <description>Input mask file name. If set, image histogram percentiles will be calculated within the mask</description>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii.gz,.nrrd">
+      <name>outputMaximumGradientImage</name>
+      <longflag>outputMaximumGradientImage</longflag>
+      <description>output gradient image file name</description>
+      <channel>output</channel>
+    </image>
+    <image fileExtensions=".nii.gz,.nrrd">
+      <name>outputEdgeMap</name>
+      <longflag>outputEdgeMap</longflag>
+      <description>output edgemap file name</description>
+      <channel>output</channel>
+    </image>
+    <double>
+      <name>lowerPercentileMatching</name>
+      <longflag>lowerPercentileMatching</longflag>
+      <label>Lower percentile</label>
+      <description>Map lower quantile and below to minOutputRange. It should be a value between zero and one.</description>
+      <default>0.5</default>
+    </double>
+    <double>
+      <name>upperPercentileMatching</name>
+      <longflag>upperPercentileMatching</longflag>
+      <label>Upper percentile</label>
+      <description>Map upper quantile and above to maxOutputRange. It should be a value between zero and one.</description>
+      <default>0.95</default>
+    </double>
+    <integer>
+      <name>minimumOutputRange</name>
+      <longflag>minimumOutputRange</longflag>
+      <label>Minimum Output Range</label>
+      <description>Map lower quantile and below to minimum output range. It should be an epsilon number greater than zero. Default is 1.</description>
+      <default>1</default>
+    </integer>
+    <integer>
+      <name>maximumOutputRange</name>
+      <longflag>maximumOutputRange</longflag>
+      <label>Maximum Output Range</label>
+      <description>Map upper quantile and above to maximum output range. Default is 255 that is the maximum range of unsigned char.</description>
+      <default>255</default>
+    </integer>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

@@ -50,6 +50,8 @@ void WriteTransform(std::string transformFileName, TTransformType transform )
   transformWriter->Update();
 }
 
+
+
 int main(int argc, char **argv)
 {
   PARSE_ARGS;
@@ -159,94 +161,43 @@ TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const 
   //return 0;
   //Get the displacement field from the bspline transform
 
-
-
-  //The displacement field is in a vector image
   typedef itk::Vector<PixelType, Dimension > VectorPixelType;
   typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldImageType;
 
-  typedef itk::TransformToDisplacementFieldFilter< DisplacementFieldImageType, PixelType> TransformToDisplacementFilterType;
-  TransformToDisplacementFilterType::Pointer bSplineDisplacementFieldGenerator = TransformToDisplacementFilterType::New();
-  bSplineDisplacementFieldGenerator->UseReferenceImageOn();
-  bSplineDisplacementFieldGenerator->SetReferenceImage(subject);
-  bSplineDisplacementFieldGenerator->SetTransform(bSpline);
-  //bSplineDisplacementFieldGenerator->Print(std::cout,0);
+ // DisplacementFieldImageType::Pointer bSplineDistanceCombo = BSplineDisplacementMultiplier<ImageType, 3>(subject, bSpline, distanceMapFilter->GetOutput());
+ // DisplacementFieldImageType * bSplineDistanceCombo_Rawptr = bSplineDistanceCombo;
 
-  WriteImage(bSplineDisplacementFileName, bSplineDisplacementFieldGenerator->GetOutput());
+  typedef CombineBSplineWithDisplacement<ImageType, DisplacementFieldImageType, PixelType, 3,3> CombinerType;
+  CombinerType::Pointer combiner = CombinerType::New();
+  combiner->SetBSplineInput(bSpline);
+  combiner->SetInput(subject);
+  combiner->SetDistanceMap(distanceMapFilter->GetOutput());
+  combiner->Update();
 
-  std::cout<<"done writing initial bSpline displacmentField"<<std::endl;
-
-  std::cout<<"Extracting component images from displacement field"<<std::endl;
-  //multiply the displacement field by the distance map to get the "smooth displacement that doesn't affect the brain
-  //first extrace scalar elemnts from vector image
-  typedef itk::VectorIndexSelectionCastImageFilter<DisplacementFieldImageType, ImageType> ImageExtractionFilterType;
-  ImageExtractionFilterType::Pointer xTractDisplacementFilter = ImageExtractionFilterType::New();
-  ImageExtractionFilterType::Pointer yTractDisplacementFilter = ImageExtractionFilterType::New();
-  ImageExtractionFilterType::Pointer zTractDisplacementFilter = ImageExtractionFilterType::New();
-
-  xTractDisplacementFilter->SetInput(bSplineDisplacementFieldGenerator->GetOutput());
-  xTractDisplacementFilter->SetIndex(0);
-  ImageType::Pointer   xDisplacement = xTractDisplacementFilter->GetOutput();
+  DisplacementFieldImageType* dispCombo = combiner->GetComposedImage();
+ // WriteImage("/scratch/aleinoff/defaceOutput/test.nii.gz", dispCombo);
 
 
-  //writeAnImage("/scratch/aleinoff/defaceOutput/testImageVectorIndexSelectionCastFilterOutput.nii.gz", xTractDisplacementFilter->GetOutput());
-  //std::cout<<"done writing test image"<<std::endl;
-  //return 0;
 
-
-  yTractDisplacementFilter->SetInput(bSplineDisplacementFieldGenerator->GetOutput());
-  yTractDisplacementFilter->SetIndex(1);
-  ImageType::Pointer  yDisplacement = yTractDisplacementFilter->GetOutput();
-
-  zTractDisplacementFilter->SetInput(bSplineDisplacementFieldGenerator->GetOutput());
-  zTractDisplacementFilter->SetIndex(2);
-  ImageType::Pointer  zDisplacement = zTractDisplacementFilter->GetOutput();
-
-  //multiply by distancemap
-
-  std::cout<<"Multiplying bSplineDisplacement by Distance map"<<std::endl;
-
-  typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyFilterType;
-  MultiplyFilterType::Pointer xMult = MultiplyFilterType::New();
-  MultiplyFilterType::Pointer yMult = MultiplyFilterType::New();
-  MultiplyFilterType::Pointer zMult = MultiplyFilterType::New();
-
-  xMult->SetInput1(xDisplacement);
-  xMult->SetInput2(distanceMapFilter->GetOutput());
-  ImageType::Pointer xMultImage = xMult->GetOutput();
-  xMult->Update();
-
-
-  yMult->SetInput1(yDisplacement);
-  yMult->SetInput2(distanceMapFilter->GetOutput());
-  ImageType::Pointer yMultImage = yMult->GetOutput();
-  yMult->Update();
-
-
-  zMult->SetInput1(zDisplacement);
-  zMult->SetInput2(distanceMapFilter->GetOutput());
-  ImageType::Pointer zMultImage = zMult->GetOutput();
-  zMult->Update();
-
-  std::cout<<"Composing new image from displacement and bSpline product components"<<std::endl;
-
-  typedef itk::ComposeImageFilter<ImageType, DisplacementFieldImageType> ComposeFilterType;
-  ComposeFilterType::Pointer composeDisplacements = ComposeFilterType::New();
-  composeDisplacements->SetInput(0, xMult->GetOutput());
-  composeDisplacements->SetInput(1, yMult->GetOutput());
-  composeDisplacements->SetInput(2, zMult->GetOutput());
+//refactoring took place here
 
   //write the new displacement image
-  WriteImage(smoothDisplacementName, composeDisplacements->GetOutput());
 
-  DisplacementFieldImageType::Pointer composedDisplacementField = composeDisplacements->GetOutput();
-  composedDisplacementField->Update();
+  DisplacementFieldImageType* composedDisplacementField_rawPtr = combiner->GetComposedImage();
+  WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
+  //composedDisplacementField->Update();
+
+
+
+
+ // DisplacementFieldImageType::Pointer composedDisplacementField = composeDisplacements->GetOutput();
+ // composedDisplacementField->Update();
 
   //write composed displacement field into a displacement transform
 
   typedef itk::DisplacementFieldTransform<PixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
-  finalTransform->SetDisplacementField(composedDisplacementField);
+  finalTransform->SetDisplacementField(combiner->GetComposedImage());
 
 
 

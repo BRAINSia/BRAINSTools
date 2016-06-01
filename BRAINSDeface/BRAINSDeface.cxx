@@ -2,7 +2,6 @@
 // Created by Leinoff, Alexander on 5/20/16.
 //
 
-
 #include <itkTransformToDisplacementFieldFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -10,8 +9,6 @@
 #include <Slicer3LandmarkIO.h>
 #include <itkBinaryThresholdImageFilter.h>
 #include <itkBSplineTransform.h>
-#include <stdlib.h>
-#include <time.h>
 #include <itkResampleImageFilter.h>
 #include <itkDanielssonDistanceMapImageFilter.h>
 #include <itkDivideImageFilter.h>
@@ -77,7 +74,6 @@ int main(int argc, char **argv)
   //Read in the landmarks file
   LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
 
-
   //Turn Label map into binary image. Use a threshold Image filter?? or brainscut?
   //Write a new filter for this??
   typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
@@ -101,37 +97,10 @@ int main(int argc, char **argv)
   //Write the distance map to a file so we can see what it did:
   WriteImage(distanceMapFileName, distanceMapFilter->GetOutput());
 
-
-/*
-  //scale the distance map to reduce displacement:
-  typedef itk::DivideImageFilter<ImageType, ImageType, ImageType> ScaledDistanceMapFilter;
-  ScaledDistanceMapFilter::Pointer scaledDistanceMapFilter = ScaledDistanceMapFilter::New();
-  scaledDistanceMapFilter->SetConstant1(10);
-  scaledDistanceMapFilter->SetInput(distanceMapFilter->GetOutput());
-  //write it to a file:
-  DistanceMapWriterType::Pointer scaledDistanceMapWriter = DistanceMapWriterType::New();
-  scaledDistanceMapWriter->SetInput(scaledDistanceMapFilter->GetOutput());
-  scaledDistanceMapWriter->SetFileName(distanceMapFileName);
-  scaledDistanceMapWriter->Update();
-
-
-  //Get the new scaled distance map as an Image:
-  ImageType::Pointer distanceMap = scaledDistanceMapFilter->GetOutput();
-  scaledDistanceMapFilter->Update();
-*/
-
-
   //Perform some kind of BSpline on Image
   const int BSplineOrder = 3;
   const int BSplineControlPoints = 8;
 
-  //TODO: call function
-
-  /*
-   * template<typename TImageType, typename TBSplineType>
-TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const int BSplineOrder, const int BSplineControlPoints)
-{
-   */
   typedef itk::BSplineTransform<PixelType, Dimension, BSplineOrder> BSTransformType;
 
   //BSTransformType::Pointer bSpline = createRandomBSpline2<ImageType, BSTransformType>(subject, Dimension, BSplineOrder, BSplineControlPoints );
@@ -145,29 +114,21 @@ TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const 
 
   myTest->Print(std::cerr,5);
 
-
   WriteTransform(bSplineFileName, bSpline);
   std::cout << "Printing bSpline paramaters" << std::endl;
   std::cout << bSpline->GetParameters() << std::endl;
 
-
   std::cout <<"Printing bSpline info" << std::endl;
-
 
   bSpline->Print(std::cout,0);
   std::cout<<   "printed bspline info"<<std::endl;
   std::cout << std::endl <<std::endl<<std::endl;
 
-  //return 0;
-  //Get the displacement field from the bspline transform
-
   typedef itk::Vector<PixelType, Dimension > VectorPixelType;
   typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldImageType;
 
- // DisplacementFieldImageType::Pointer bSplineDistanceCombo = BSplineDisplacementMultiplier<ImageType, 3>(subject, bSpline, distanceMapFilter->GetOutput());
- // DisplacementFieldImageType * bSplineDistanceCombo_Rawptr = bSplineDistanceCombo;
-
   typedef CombineBSplineWithDisplacement<ImageType, DisplacementFieldImageType, PixelType, 3,3> CombinerType;
+
   CombinerType::Pointer combiner = CombinerType::New();
   combiner->SetBSplineInput(bSpline);
   combiner->SetInput(subject);
@@ -175,37 +136,16 @@ TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const 
   combiner->Update();
 
   DisplacementFieldImageType* dispCombo = combiner->GetComposedImage();
- // WriteImage("/scratch/aleinoff/defaceOutput/test.nii.gz", dispCombo);
-
-
-
-//refactoring took place here
 
   //write the new displacement image
-
   DisplacementFieldImageType* composedDisplacementField_rawPtr = combiner->GetComposedImage();
   WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
-  //composedDisplacementField->Update();
-
-
-
-
- // DisplacementFieldImageType::Pointer composedDisplacementField = composeDisplacements->GetOutput();
- // composedDisplacementField->Update();
 
   //write composed displacement field into a displacement transform
 
   typedef itk::DisplacementFieldTransform<PixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
   finalTransform->SetDisplacementField(combiner->GetComposedImage());
-
-
-
-
-  //DisplacementFieldImageType::Pointer bSplineDisplacementField = bSplineDisplacementFieldGenerator->GetOutput();
-
-  //write the displacement field
-
 
   // Apply transform to image with resampler:
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
@@ -224,9 +164,7 @@ TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const 
   resampler->SetOutputStartIndex(subjectRegion.GetIndex());
 
   resampler->SetInput(imageReader->GetOutput());
-  //resampler->SetTransform(bSpline);
   resampler->SetTransform(finalTransform);
-
 
   WriteImage(deformedImageName, resampler->GetOutput());
 
@@ -241,7 +179,6 @@ TBSplineType createRandomBSpline(TImageType subject, const int Dimension, const 
 
   std::cout << "Finished writing file " << std::endl;
   std::cout << "done" << std::endl;
-
 
   return EXIT_SUCCESS;
 }

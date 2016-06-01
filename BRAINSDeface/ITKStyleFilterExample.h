@@ -49,5 +49,4 @@ protected:
   }
 };
 
-
 #endif //BRAINSTOOLS_ITKSTYLEFILTEREXAMPLE_H

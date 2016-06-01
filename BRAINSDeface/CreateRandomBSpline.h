@@ -1,12 +1,10 @@
 //
 // Created by Jeffrey Obadal, Alexander Leinoff on 5/31/16.
 //
-
-#include <itkBSplineTransform.h>
-
 #ifndef BRAINSTOOLS_CREATERANDOMBSPLINE_H
 #define BRAINSTOOLS_CREATERANDOMBSPLINE_H
 
+#include <itkBSplineTransform.h>
 
 template<typename TInputImage,
   typename TPixelType,
@@ -26,8 +24,6 @@ public:
   itkTypeMacro(Self, ImageToImageFilter);
 
   itkGetMacro(BSplineOutput, BSplinePointer)
-  //itkGetMacro(BSplineOutput, BSplinePointer)
-
 
   itkSetMacro(BSplineControlPoints, unsigned int)
   itkGetMacro(BSplineControlPoints,  unsigned int)
@@ -40,12 +36,10 @@ protected:
     m_BSplineOutput=BSplineType::New();
   };
   ~CreateRandomBSpline(){};
-  //void PrintSelf( std::ostream & os, itk::Indent indent ) const ITK_OVERRIDE;
 
   void GenerateData() ITK_OVERRIDE
   {
-    std::cout << "Hello From ctreateRandomBSpline!!!" << std::endl;
-    //BSplinePointer myBSpline = BSplineType::New();
+    std::cout << "Hello From CreateRandomBSpline!!!" << std::endl;
 
     typename BSplineType::MeshSizeType meshSize;                  //Setup a mesh that contains the number of controlpoints
     meshSize.Fill(m_BSplineControlPoints - NBSplineOrder);         //Inspired from itk example "BSplineWarping2.cxx"
@@ -55,7 +49,6 @@ protected:
                                                                 //so it should be possible in cpp itk
 
     typedef typename ImageType::RegionType ImageRegionType;
-//  ImageRegionType subjectRegion = subject->GetLargestPossibleRegion();
     ImageRegionType subjectRegion = this->GetInput()->GetBufferedRegion();
 
     this->GetBSplineOutput()->SetTransformDomainOrigin(this->GetInput()->GetOrigin());           //Origin
@@ -66,31 +59,12 @@ protected:
                                                       this->GetInput()->GetSpacing()[2]*(subjectRegion.GetSize()[2]-1)
                                                   ));
 
-
     //Get the number of paramaters/nodes required for this BSpline
     const unsigned int numberOfParameters = this->GetBSplineOutput()->GetNumberOfParameters();
     const unsigned int numberOfNodes = numberOfParameters / NDimension;
 
-    //print out
-   // std::cout << "Number of params: " << numberOfParameters << std::endl;
-   // std::cout << "Number of nodes:  " << numberOfNodes << std::endl;
-
     //Setup a paramaters variable for the bspline
     typename BSplineType::ParametersType bSplineParams( numberOfParameters );
-
-    //  From ITK Example "BSplineWarping2"
-    //  The B-spline grid should now be fed with coeficients at each node. Since
-    //  this is a two dimensional grid, each node should receive two coefficients.
-    //  Each coefficient pair is representing a displacement vector at this node.
-    //  The coefficients can be passed to the B-spline in the form of an array where
-    //  the first set of elements are the first component of the displacements for
-    //  all the nodes, and the second set of elemets is formed by the second
-    //  component of the displacements for all the nodes.
-
-    //  In the ITK Example, the read the points in from a file. Here, they will be
-    //  generated randomly. This should put the xyz coordinates in the correct space
-    //  a better way would probably be to use the image coefficient array of the bspline,
-    //  but for now I will use the method from the ITK example
 
     std::srand(time(nullptr));
 
@@ -103,10 +77,6 @@ protected:
       }
 
     this->GetBSplineOutput()->SetParameters(bSplineParams);
-
-    //myBSpline->Print(std::cout,3);
-
-    //this->GetBSplineOutput()=myBSpline;
   }
 
 private:

@@ -99,8 +99,6 @@ int main(int argc, char **argv)
 
   //Perform some kind of BSpline on Image
   const int BSplineOrder = 3;
-  const int BSplineControlPoints = 8;
-
 
   typedef CreateRandomBSpline<ImageType, PixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
   BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();
@@ -126,8 +124,6 @@ int main(int argc, char **argv)
   combiner->SetInput(subject);
   combiner->SetDistanceMap(distanceMapFilter->GetOutput());
   combiner->Update();
-
-  DisplacementFieldImageType* dispCombo = combiner->GetComposedImage();
 
   //write the new displacement image
   DisplacementFieldImageType* composedDisplacementField_rawPtr = combiner->GetComposedImage();
@@ -167,7 +163,7 @@ int main(int argc, char **argv)
   subtractFilter->SetInput2(resampler->GetOutput());
 
   //write the difference Image
-  WriteImage( diffImageName , subtractFilter->GetOutput());
+  WriteImage( diffImageName, subtractFilter->GetOutput());
 
   std::cout << "Finished writing file " << std::endl;
   std::cout << "done" << std::endl;

@@ -27,24 +27,28 @@
 template< typename TImageType >
 void WriteImage(std::string filename, TImageType *image)
 {
+  std::cout << "Writing Image: " << filename << std::endl;
   typedef itk::ImageFileWriter<TImageType> FileWriterType;
   typename FileWriterType::Pointer fileWriter = FileWriterType::New();
 
   fileWriter->SetInput(image);
   fileWriter->SetFileName(filename);
   fileWriter->Update();
+  std::cout << "\tdone writing Image: " << filename << std::endl;
 }
 
 //Convienience function to write transforms
 template< typename TTransformType >
 void WriteTransform(std::string transformFileName, TTransformType transform )
 {
+  std::cout << "Writing Transform: " << transformFileName << std::endl;
   typedef itk::TransformFileWriter TransformWriterType;
   TransformWriterType::Pointer transformWriter = TransformWriterType::New();
 
   transformWriter->SetInput(transform);
   transformWriter->SetFileName(transformFileName);
   transformWriter->Update();
+  std::cout << "\t done writing Transform: " << transformFileName << std::endl;
 }
 
 
@@ -165,7 +169,6 @@ int main(int argc, char **argv)
   //write the difference Image
   WriteImage( diffImageName, subtractFilter->GetOutput());
 
-  std::cout << "Finished writing file " << std::endl;
   std::cout << "done" << std::endl;
 
   return EXIT_SUCCESS;

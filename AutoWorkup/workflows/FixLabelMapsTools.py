@@ -69,9 +69,9 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,posterior_dict,Le
 
 
     vb_post = sitk.ReadImage(posterior_dict["VB"])
-    ring_vb = lbl_outter_ring * (vb_post > 0.5) # just outside mask
+    ring_vb = lbl_outter_ring * sitk.BinaryThreshold(vb_post, 0.5,1.01,1,0) # just outside mask
     # DEBUG sitk.WriteImage(ring_vb,"/tmp/ring_vb.nii.gz")
-    inner_vb = lbl_orig_mask * (vb_post > 0.85) # inside mask, but very high probability
+    inner_vb = lbl_orig_mask * sitk.BinaryThreshold(vb_post , 0.85, 1.01, 1, 0) # inside mask, but very high probability
     # DEBUG sitk.WriteImage(inner_vb,"/tmp/inner_vb.nii.gz")
     # background = 0 , suspicous = 999
     ## Add blood from BRAINSABC to mask as as value OUT_DICT['BLOOD']
@@ -80,9 +80,9 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,posterior_dict,Le
     outlabels = ForceMaskInsert(outlabels,blood_labels,OUT_DICT['BLOOD'])
 
     csf_post = sitk.ReadImage(posterior_dict["CSF"])
-    ring_csf = lbl_outter_ring * (csf_post > 0.5) # just outside mask
+    ring_csf = lbl_outter_ring * sitk.BinaryThreshold(csf_post, 0.5, 1.01, 1, 0) # just outside mask
     # DEBUG sitk.WriteImage(ring_csf,"/tmp/ring_csf.nii.gz")
-    inner_csf = lbl_orig_mask * (csf_post > 0.85) # inside mask, but very high probability
+    inner_csf = lbl_orig_mask * sitk.BinaryThreshold(csf_post, 0.85, 1.01, 1, 0) # inside mask, but very high probability
     # DEBUG sitk.WriteImage(inner_csf,"/tmp/inner_csf.nii.gz")
     ## Add CSF from BRAINSABC to mask as as value OUT_DICT['RH_CSF']
     csf_labels=(FixedHead == BRAINSABC_DICT['CSF'] ) * (outlabels == 0 | outlabels == 999) | ring_csf | inner_csf

@@ -101,28 +101,20 @@ int main(int argc, char **argv)
   const int BSplineOrder = 3;
   const int BSplineControlPoints = 8;
 
+
+  typedef CreateRandomBSpline<ImageType, PixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
+  BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();
+  bSplineCreator->SetInput(subject);
+  bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
+  bSplineCreator->SetRandMax(maxRandom);
+  bSplineCreator->SetRandMin(minRandom);
+  bSplineCreator->SetRandScale(scaleRandom);
+  bSplineCreator->Update();
+
   typedef itk::BSplineTransform<PixelType, Dimension, BSplineOrder> BSTransformType;
-
-  //BSTransformType::Pointer bSpline = createRandomBSpline2<ImageType, BSTransformType>(subject, Dimension, BSplineOrder, BSplineControlPoints );
-  typedef CreateRandomBSpline<ImageType, PixelType, 3, 3> Test; //, BSTransformType> Test;
-  Test::Pointer myTest = Test::New();
-  myTest->SetInput(subject);
-  myTest->SetBSplineControlPoints(8);
-
-  myTest->Update();
-  BSTransformType::Pointer bSpline = myTest->GetBSplineOutput();
-
-  myTest->Print(std::cerr,5);
+  BSTransformType::Pointer bSpline = bSplineCreator->GetBSplineOutput();
 
   WriteTransform(bSplineFileName, bSpline);
-  std::cout << "Printing bSpline paramaters" << std::endl;
-  std::cout << bSpline->GetParameters() << std::endl;
-
-  std::cout <<"Printing bSpline info" << std::endl;
-
-  bSpline->Print(std::cout,0);
-  std::cout<<   "printed bspline info"<<std::endl;
-  std::cout << std::endl <<std::endl<<std::endl;
 
   typedef itk::Vector<PixelType, Dimension > VectorPixelType;
   typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldImageType;

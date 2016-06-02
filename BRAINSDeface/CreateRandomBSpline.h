@@ -26,7 +26,16 @@ public:
   itkGetMacro(BSplineOutput, BSplinePointer)
 
   itkSetMacro(BSplineControlPoints, unsigned int)
-  itkGetMacro(BSplineControlPoints,  unsigned int)
+  itkGetMacro(BSplineControlPoints, unsigned int)
+
+  itkSetMacro(RandMin, int)
+  itkGetMacro(RandMin, int)
+
+  itkSetMacro(RandMax, int)
+  itkGetMacro(RandMax, int)
+
+  itkSetMacro(RandScale, double)
+  itkGetMacro(RandScale, double)
 
   typedef TInputImage ImageType;
 
@@ -34,6 +43,9 @@ protected:
   CreateRandomBSpline()
   {
     m_BSplineOutput=BSplineType::New();
+    m_BSplineControlPoints = 8; //default value
+    m_RandMax = 5; //default value
+    m_RandMin = -5; //default value
   };
   ~CreateRandomBSpline(){};
 
@@ -55,8 +67,8 @@ protected:
     this->GetBSplineOutput()->SetTransformDomainDirection(this->GetInput()->GetDirection());     //Direction
     this->GetBSplineOutput()->SetTransformDomainPhysicalDimensions((                    //PhysicalDimensions
                                                     this->GetInput()->GetSpacing()[0]*(subjectRegion.GetSize()[0]-1),         //Should all be set to the same as the subject Image
-                                                      this->GetInput()->GetSpacing()[1]*(subjectRegion.GetSize()[1]-1),
-                                                      this->GetInput()->GetSpacing()[2]*(subjectRegion.GetSize()[2]-1)
+                                                    this->GetInput()->GetSpacing()[1]*(subjectRegion.GetSize()[1]-1),
+                                                    this->GetInput()->GetSpacing()[2]*(subjectRegion.GetSize()[2]-1)
                                                   ));
 
     //Get the number of paramaters/nodes required for this BSpline
@@ -82,12 +94,16 @@ protected:
 private:
   inline double myRandom()
   {
-    const int min = -5;
-    const int max = 5;
+    const int min = this->GetRandMin();
+    const int max = this->GetRandMax();
     const int range = max - min;
-    return static_cast< double >( rand() % range +1 - max )*0.05;
+    return static_cast< double >( rand() % range +1 - max ) * this->GetRandScale();
   }
+
   BSplinePointer m_BSplineOutput;
   unsigned int m_BSplineControlPoints;
+  int m_RandMin;
+  int m_RandMax;
+  double m_RandScale = 0.05;
 };
 #endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H

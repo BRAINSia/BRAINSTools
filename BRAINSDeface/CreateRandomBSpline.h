@@ -5,6 +5,7 @@
 #define BRAINSTOOLS_CREATERANDOMBSPLINE_H
 
 #include <itkBSplineTransform.h>
+#include <itkImageRegionIteratorWithIndex.h>
 
 template<typename TInputImage,
   typename TPixelType,
@@ -38,6 +39,8 @@ public:
   itkGetMacro(RandScale, double)
 
   typedef TInputImage ImageType;
+  typedef typename ImageType::Pointer ImagePointer;
+  typedef typename ImageType::PointType ImagePointType;
 
 protected:
   CreateRandomBSpline()
@@ -46,6 +49,7 @@ protected:
     m_BSplineControlPoints = 8; //default value
     m_RandMax = 5; //default value
     m_RandMin = -5; //default value
+    m_RandScale = 5;
   };
   ~CreateRandomBSpline(){};
 
@@ -80,6 +84,109 @@ protected:
 
     std::srand(time(nullptr));
 
+#if 1
+    ImagePointer coefficientImgLR = this->GetBSplineOutput()->GetCoefficientImages()[0];
+    ImagePointer coefficientImgPA = this->GetBSplineOutput()->GetCoefficientImages()[1];
+    ImagePointer coefficientImgSI = this->GetBSplineOutput()->GetCoefficientImages()[2];
+
+    typedef typename itk::ImageRegionIteratorWithIndex<ImageType> IteratorType;
+    IteratorType LRit(coefficientImgLR, coefficientImgLR->GetLargestPossibleRegion());
+    IteratorType PAit(coefficientImgPA, coefficientImgPA->GetLargestPossibleRegion());
+    IteratorType SIit(coefficientImgSI, coefficientImgSI->GetLargestPossibleRegion());
+
+    LRit.GoToBegin();
+    PAit.GoToBegin();
+    SIit.GoToBegin();
+
+    std::cout<<"LR"<<std::endl;
+    coefficientImgLR->Print(std::cerr,0);
+    std::cout<<std::endl<<"doneLR"<<std::endl;
+
+    std::cout<<"PA"<<std::endl;
+    coefficientImgPA->Print(std::cerr,0);
+    std::cout<<std::endl<<"donePA"<<std::endl;
+
+    std::cout<<std::endl<<"SI"<<std::endl;
+    coefficientImgSI->Print(std::cerr,0);
+    std::cout<<std::endl<<"doneSI"<<std::endl;
+
+    // assume spacing, origin, IndexToPointMatrix, PointToIndexMatrix
+    // is the same between all coefficient images
+
+    ///std::cout<<"-------------------" << LRit.GetIndex() << std::endl;
+
+
+
+    LRit.GoToBegin();
+    PAit.GoToBegin();
+    SIit.GoToBegin();
+    for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
+      {
+      ImagePointType point;
+      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), point);
+
+      double x = point[0];
+      double y = point[1];
+      double z = point[2];
+
+
+      //if( y > 0 ) continue; //only front half of skull
+      if( x > 0 )
+        {
+        LRit.Set( myRandom() );
+        PAit.Set( myRandom() );//might have to do these seperateley(different loop) for each one if there is no guarentee of order
+        SIit.Set( myRandom() );
+        }
+
+      }
+
+
+    LRit.GoToBegin();
+    PAit.GoToBegin();
+    SIit.GoToBegin();
+    for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
+      {
+
+      ImagePointType point;
+      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), point);
+
+      double x = point[0];
+      double y = point[1];
+      double z = point[2];
+      //if( y > 0 ) continue; //Only front half of skull
+      if( x <= 0 )
+        {
+
+        ImagePointType pos;
+        pos[0] = x * -1;
+        pos[1] = y;
+        pos[2] = z;
+        typename ImageType::IndexType idx;
+        coefficientImgLR->TransformPhysicalPointToIndex(pos, idx);
+        //set the weight along LR direction to be anti symmetric and other direction symmetric
+        LRit.Set( coefficientImgLR->GetPixel(idx) * -1 );
+        PAit.Set( coefficientImgPA->GetPixel(idx) ); //might have to do these seperateley for each one if there is no guarentee of order
+        SIit.Set( coefficientImgSI->GetPixel(idx) );
+
+        }
+      }
+    //We shouldn't need to set the parameters since we set the coefficient images
+    typedef typename BSplineType::CoefficientImageArray CoefficeintImages;
+    CoefficeintImages images;
+    images[0] = coefficientImgLR;
+    images[1] = coefficientImgPA;
+    images[2] = coefficientImgSI;
+    this->GetBSplineOutput()->SetCoefficientImages(images);
+
+    //std::cout << this->GetBSplineOutput()->GetParameters() <<std::endl;
+
+    //There should be a better way to do this:
+
+#endif
+
+
+    //Old method below
+#if 0
     for( unsigned int n = 0; n < numberOfNodes; ++ n)
       {
       bSplineParams[n] = myRandom();
@@ -88,15 +195,18 @@ protected:
       // TODO: x,y,z seem like they are the wrong coordinate system. Get a better model
       }
 
+
     this->GetBSplineOutput()->SetParameters(bSplineParams);
+    std::cout << this->GetBSplineOutput()->GetParameters() <<std::endl;
+#endif
   }
 
 private:
   inline double myRandom()
   {
-    const int min = this->GetRandMin();
-    const int max = this->GetRandMax();
-    const int range = max - min;
+    int min = this->GetRandMin();
+    int max = this->GetRandMax();
+    int range = max - min;
     return static_cast< double >( rand() % range +1 - max ) * this->GetRandScale();
   }
 
@@ -104,6 +214,6 @@ private:
   unsigned int m_BSplineControlPoints;
   int m_RandMin;
   int m_RandMax;
-  double m_RandScale = 0.05;
+  double m_RandScale;
 };
 #endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H

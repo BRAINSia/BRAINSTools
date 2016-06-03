@@ -4,9 +4,9 @@
   <title>BRAINSDeface</title>
   <description>Deidentify head images without destroying useful facial information</description>
   <contributor>
-    Alexander Leinoff (alexander-leinoff -at- uiowa.edu) </contributor>
+    Alexander Leinoff (alexander-leinoff -at- uiowa.edu), Jeffrey Obadal (jeffrey-obadal -at- uiowa.edu) </contributor>
   <acknowledgements>
-    <![CDATA[Hans Johnson(1,2,3); Alexander Leinoff(3); Yue Pan(3); Wei Shao(3)  1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Biomedical Engineering, 3=University of Iowa Department of Electrical and Computer Engineering]]>
+    <![CDATA[Hans Johnson(1,2,3); Alexander Leinoff(3); Yue Pan(3); Wei Shao(3); Jeffrey Obadal(3)  1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Biomedical Engineering, 3=University of Iowa Department of Electrical and Computer Engineering]]>
   </acknowledgements>
   <version>4.7.0</version>
   <documentation-url></documentation-url>

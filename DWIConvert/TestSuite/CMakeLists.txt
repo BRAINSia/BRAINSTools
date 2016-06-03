@@ -280,6 +280,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBMa
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
 AddDataDependency(DWIConvertPhilipsAchievaBMatrixTest)
+set_tests_properties(DWIConvertPhilipsAchievaBMatrixTest PROPERTIES DEPENDS DWIConvertPhilipsAchievaTest)
 
 ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
@@ -301,6 +302,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2BM
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
 AddDataDependency(DWIConvertPhilipsAchieva2BMatrixTest)
+set_tests_properties(DWIConvertPhilipsAchieva2BMatrixTest PROPERTIES DEPENDS DWIConvertPhilipsAchieva2Test)
 
 ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva3Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>

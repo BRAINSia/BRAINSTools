@@ -24,6 +24,8 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     review all antsRegistration settings for the
     entire pipeline in one spot.
     """
+    if save_state:
+        antsRegistrationNode.inputs.save_state = save_state
     ## TODO: Consider registration masking
     if ( registrationTypeDescription == "FiveStageAntsRegistrationT1Only" ) or ( registrationTypeDescription == "FiveStageAntsRegistrationMultiModal" ):
         local_num_stages=5 # Assumes BLI landmark initialization

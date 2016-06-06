@@ -146,6 +146,7 @@ int main(int argc, char **argv)
   typedef itk::DisplacementFieldTransform<PixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
   finalTransform->SetDisplacementField(combiner->GetComposedImage());
+  WriteTransform(finalTransformFileName, finalTransform);
 
   // Apply transform to image with resampler:
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;

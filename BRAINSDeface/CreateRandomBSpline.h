@@ -57,6 +57,7 @@ protected:
   {
     std::cout << "Hello From CreateRandomBSpline!!!" << std::endl;
 
+#if 0 //old way of initializing BSpline
     typename BSplineType::MeshSizeType meshSize;                  //Setup a mesh that contains the number of controlpoints
     meshSize.Fill(m_BSplineControlPoints - NBSplineOrder);         //Inspired from itk example "BSplineWarping2.cxx"
 
@@ -65,7 +66,8 @@ protected:
                                                                 //so it should be possible in cpp itk
 
     typedef typename ImageType::RegionType ImageRegionType;
-    ImageRegionType subjectRegion = this->GetInput()->GetBufferedRegion();
+    ImageRegionType subjectRegion = this->GetInput()->GetLargestPossibleRegion();
+
 
     this->GetBSplineOutput()->SetTransformDomainOrigin(this->GetInput()->GetOrigin());           //Origin
     this->GetBSplineOutput()->SetTransformDomainDirection(this->GetInput()->GetDirection());     //Direction
@@ -74,6 +76,30 @@ protected:
                                                     this->GetInput()->GetSpacing()[1]*(subjectRegion.GetSize()[1]-1),
                                                     this->GetInput()->GetSpacing()[2]*(subjectRegion.GetSize()[2]-1)
                                                   ));
+#endif
+    typedef typename ImageType::RegionType ImageRegionType;
+    ImageRegionType subjectRegion = this->GetInput()->GetLargestPossibleRegion();
+
+    //one new way of initializing bSPline
+    //this method was inspired by itk example for deformable registration15
+    typename BSplineType::PhysicalDimensionsType fixedBSplinePhysicalDimensions;
+    typename BSplineType::MeshSizeType meshSize;
+    typename BSplineType::OriginType  fixedOrigin;
+
+    for( size_t i = 0; i < NDimension; ++i)
+      {
+      fixedOrigin[i] = this->GetInput()->GetOrigin()[i];
+      fixedBSplinePhysicalDimensions[i] = this->GetInput()->GetSpacing()[i] *
+        static_cast<double>(subjectRegion.GetSize()[i]-1);
+
+      }
+
+    meshSize.Fill(this->GetBSplineControlPoints() - NBSplineOrder);
+    this->GetBSplineOutput()->SetTransformDomainOrigin(fixedOrigin);
+    this->GetBSplineOutput()->SetTransformDomainPhysicalDimensions(fixedBSplinePhysicalDimensions);
+    this->GetBSplineOutput()->SetTransformDomainMeshSize(meshSize);
+    this->GetBSplineOutput()->SetTransformDomainDirection(this->GetInput()->GetDirection() );
+
 
     //Get the number of paramaters/nodes required for this BSpline
     const unsigned int numberOfParameters = this->GetBSplineOutput()->GetNumberOfParameters();
@@ -98,16 +124,20 @@ protected:
     PAit.GoToBegin();
     SIit.GoToBegin();
 
+    std::cout<< "inputToBSpline" <<std::endl;
+    this->GetInput()->Print(std::cout,0);
+    std::cout<<"done Input" << std::endl;
+
     std::cout<<"LR"<<std::endl;
-    coefficientImgLR->Print(std::cerr,0);
+    coefficientImgLR->Print(std::cout,0);
     std::cout<<std::endl<<"doneLR"<<std::endl;
 
     std::cout<<"PA"<<std::endl;
-    coefficientImgPA->Print(std::cerr,0);
+    coefficientImgPA->Print(std::cout,0);
     std::cout<<std::endl<<"donePA"<<std::endl;
 
     std::cout<<std::endl<<"SI"<<std::endl;
-    coefficientImgSI->Print(std::cerr,0);
+    coefficientImgSI->Print(std::cout,0);
     std::cout<<std::endl<<"doneSI"<<std::endl;
 
     // assume spacing, origin, IndexToPointMatrix, PointToIndexMatrix
@@ -122,12 +152,20 @@ protected:
     SIit.GoToBegin();
     for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
       {
+#if 0 //old method
       ImagePointType point;
       coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), point);
+#endif
+      ImagePointType pointLR;
+      ImagePointType pointPA;
+      ImagePointType pointSI;
+      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), pointLR);
+      coefficientImgPA->TransformIndexToPhysicalPoint(PAit.GetIndex(), pointPA);
+      coefficientImgSI->TransformIndexToPhysicalPoint(SIit.GetIndex(), pointSI);
 
-      double x = point[0];
-      double y = point[1];
-      double z = point[2];
+      double x = pointLR[0];
+      double y = pointPA[1];
+      double z = pointSI[2];
 
 
       //if( y > 0 ) continue; //only front half of skull
@@ -147,12 +185,25 @@ protected:
     for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
       {
 
+      ImagePointType pointLR;
+      ImagePointType pointPA;
+      ImagePointType pointSI;
+      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), pointLR);
+      coefficientImgPA->TransformIndexToPhysicalPoint(PAit.GetIndex(), pointPA);
+      coefficientImgSI->TransformIndexToPhysicalPoint(SIit.GetIndex(), pointSI);
+
+      double x = pointLR[0];
+      double y = pointPA[1];
+      double z = pointSI[2];
+
+#if 0
       ImagePointType point;
       coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), point);
 
       double x = point[0];
       double y = point[1];
       double z = point[2];
+#endif
       //if( y > 0 ) continue; //Only front half of skull
       if( x <= 0 )
         {

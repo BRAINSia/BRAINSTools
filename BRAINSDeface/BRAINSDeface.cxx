@@ -141,11 +141,22 @@ int main(int argc, char **argv)
   WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
 
 
+#if 0
   //write composed displacement field into a displacement transform
+  std::cout<<"printing composed image info" <<std::endl;
+  combiner->GetComposedImage()->Print(std::cerr,5);
+  std::cout<<"done printing composed image" <<std::endl;
+
+  std::cout<<"printing distance map info" <<std::endl;
+  combiner->GetDistanceMap()->Print(std::cerr, 0);
+  std::cout<<"done printing distance map" <<std::endl;
+#endif
 
   typedef itk::DisplacementFieldTransform<PixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
-  finalTransform->SetDisplacementField(combiner->GetComposedImage());
+  finalTransform->SetDisplacementField(composedDisplacementField_rawPtr);
+  finalTransform->Print(std::cerr,5);
+
   WriteTransform(finalTransformFileName, finalTransform);
 
   // Apply transform to image with resampler:

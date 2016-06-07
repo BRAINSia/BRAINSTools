@@ -117,6 +117,7 @@ protected:
     composeDisplacements->SetInput(1, yMult->GetOutput());
     composeDisplacements->SetInput(2, zMult->GetOutput());
 
+
     this->SetComposedImage(composeDisplacements->GetOutput());
     //typename DisplacementFieldImageType::Pointer bSplineDistanceMapCombination = composeDisplacements->GetOutput();
     composeDisplacements->Update();

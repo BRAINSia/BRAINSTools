@@ -2709,6 +2709,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                   this->m_SampleSpacing, this->m_DebugLevel,
                   this->m_OutputDebugDir);
     }
+  else
+    {
+    this->m_RawCorrectedImages = this->m_RawInputImages;
+    }
   this->WritePartitionTable(0 + 100);
 }
 

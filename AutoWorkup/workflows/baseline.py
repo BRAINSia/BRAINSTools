@@ -331,7 +331,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                              'template_leftHemisphere',
                                                              'template_WMPM2_labels',
                                                              'template_nac_labels',
-                                                             'template_ventricles']),
+                                                             'template_ventricles',
+                                                             'template_headregion']),
                          run_without_submitting=True, name='inputspec')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average', 't2_average', 'pd_average', 'fl_average',
@@ -367,6 +368,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                        ['W_BRAINSABCSupport', 'W_LabelMapsSupport'])
         baw201.connect([( atlasABCNode_W, inputsSpec, [
             ('hncma_atlas', 'hncma_atlas'),
+            ('template_headregion','template_headregion'),
             ('template_leftHemisphere', 'template_leftHemisphere'),
             ('template_rightHemisphere', 'template_rightHemisphere'),
             ('template_WMPM2_labels', 'template_WMPM2_labels'),
@@ -461,7 +463,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                                    'template_nac_labels',
                                                                    'template_ventricles',
                                                                    'template_t1_denoised_gaussian',
-                                                                   'template_landmarks_50Lmks_fcsv'
+                                                                   'template_landmarks_50Lmks_fcsv',
+                                                                   'template_headregion'
                                                         ]),
                               name='Template_DG')
         template_DG.inputs.base_directory = master_config['previousresult']
@@ -475,6 +478,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                              'template_ventricles': '%s/Atlas/AVG_template_ventricles.nii.gz',
                                              'template_t1_denoised_gaussian': '%s/Atlas/AVG_T1.nii.gz',
                                              'template_landmarks_50Lmks_fcsv': '%s/Atlas/AVG_LMKS.fcsv',
+                                             'template_headregion': '%s/Atlas/AVG_template_headregion'
         }
         template_DG.inputs.template_args = {'outAtlasXMLFullPath': [['subject', 'subject']],
                                             'hncma_atlas': [['subject']],
@@ -484,7 +488,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                             'template_nac_labels': [['subject']],
                                             'template_ventricles': [['subject']],
                                             'template_t1_denoised_gaussian': [['subject']],
-                                            'template_landmarks_50Lmks_fcsv': [['subject']]
+                                            'template_landmarks_50Lmks_fcsv': [['subject']],
+                                            'template_headregion': [['subject']]
         }
         template_DG.inputs.template = '*'
         template_DG.inputs.sort_filelist = True
@@ -498,13 +503,15 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             ('template_rightHemisphere', 'template_rightHemisphere'),
             ('template_WMPM2_labels', 'template_WMPM2_labels'),
             ('template_nac_labels', 'template_nac_labels'),
-            ('template_ventricles', 'template_ventricles')]
+            ('template_ventricles', 'template_ventricles'),
+            ]
                         )]
         )
         ## These landmarks are only relevant for the atlas-based-reference case
         baw201.connect([(template_DG, inputsSpec,
                          [('template_t1_denoised_gaussian', 'template_t1_denoised_gaussian'),
                           ('template_landmarks_50Lmks_fcsv', 'atlasLandmarkFilename'),
+                          ('template_headregion', 'template_headregion'),
                          ]),
         ])
 
@@ -647,6 +654,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                         (makePreprocessingOutList, myLocalTCWF, [('OTHERs', 'inputspec.OTHERList')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('template_t1_denoised_gaussian', 'inputspec.atlasVolume'),
+                                                   ('template_headregion', 'inputspec.atlasheadregion'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count')
                         ]),
                         (myLocalLMIWF, myLocalTCWF, [('outputspec.outputResampledCroppedVolume', 'inputspec.PrimaryT1'),

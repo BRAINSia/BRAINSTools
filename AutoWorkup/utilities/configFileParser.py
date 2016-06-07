@@ -34,6 +34,14 @@ from .pathHandling import *
 from .distributed import modify_qsub_args
 from . import misc
 
+# http://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
+def str2bool(v):
+  if str(v).lower() in ("yes", "true", "t", "1"):
+      return True
+  elif str(v).lower() in ("no", "false", "f", "0"):
+      return False
+  raise ValueError( "ERROR: INVALID String to bool conversion for '{0}'".format(v) )
+
 
 def parseEnvironment(parser, environment):
     """ Parse the environment environment given by 'section' and return a dictionary
@@ -117,11 +125,10 @@ def parseExperiment(parser, workflow_phase):
         previous = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT')
         retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
 
-    useRegistrationMasking = False
+    useRegistrationMasking = True
     try:
         regMasking = parser.get('EXPERIMENT', 'USE_REGISTRATION_MASKING')
-        if regMasking == "True":
-            useRegistrationMasking = True
+        useRegistrationMasking = str2bool(regMasking)
     except:
         pass
     retval['use_registration_masking'] = useRegistrationMasking

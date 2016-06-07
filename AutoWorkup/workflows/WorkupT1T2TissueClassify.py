@@ -98,12 +98,12 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
 
     ##### Initialize with ANTS Transform For AffineComponentBABC
     currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Affine'
-    A2SantsRegistrationPreABCRigid = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRigidRegistration)
+    A2SantsRegistrationPreABCAffine = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRigidRegistration)
     many_cpu_ANTsRigid_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
-    A2SantsRegistrationPreABCRigid.plugin_args = many_cpu_ANTsRigid_options_dictionary
+    A2SantsRegistrationPreABCAffine.plugin_args = many_cpu_ANTsRigid_options_dictionary
 
     CommonANTsRegistrationSettings(
-                      antsRegistrationNode=A2SantsRegistrationPreABCRigid,
+                      antsRegistrationNode=A2SantsRegistrationPreABCAffine,
                       registrationTypeDescription='AtlasToSubjectANTsPreABC_Affine',
                       output_transform_prefix='AtlasToSubjectPreBABC_Rigid',
                       output_warped_image='atlas2subjectRigid.nii.gz',
@@ -113,9 +113,9 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
                       )
 
 
-    tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform',A2SantsRegistrationPreABCRigid,'initial_moving_transform')
-    tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',A2SantsRegistrationPreABCRigid,'fixed_image')
-    tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCRigid,'moving_image')
+    tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform',A2SantsRegistrationPreABCAffine,'initial_moving_transform')
+    tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',A2SantsRegistrationPreABCAffine,'fixed_image')
+    tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCAffine,'moving_image')
 
 
     ##### Initialize with ANTS Transform For SyN component BABC
@@ -142,14 +142,14 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
         fixedROIAuto.inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
 
         tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',fixedROIAuto,'inputVolume')
-        tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid,'fixed_image_mask')
+        tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCAffine,'fixed_image_mask')
         tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'fixed_image_mask')
 
     ## NOTE: Always use atlas head region to avoid computing this every time.
-    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion',A2SantsRegistrationPreABCRigid,'moving_image_mask')
+    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion',A2SantsRegistrationPreABCAffine,'moving_image_mask')
     tissueClassifyWF.connect(inputsSpec, 'atlasheadregion',A2SantsRegistrationPreABCSyN,'moving_image_mask')
 
-    tissueClassifyWF.connect(A2SantsRegistrationPreABCRigid, 'composite_transform',
+    tissueClassifyWF.connect(A2SantsRegistrationPreABCAffine, 'composite_transform',
                              A2SantsRegistrationPreABCSyN,'initial_moving_transform')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',A2SantsRegistrationPreABCSyN,'fixed_image')
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCSyN,'moving_image')

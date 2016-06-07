@@ -48,6 +48,7 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
         ])
     if 'W_BRAINSABCSupport' in atlasParts:
         atlas_file_names.extend([
+            "template_headregion.nii.gz",
             "ExtendedAtlasDefinition.xml"
         ])
     if 'S_BRAINSCutSupport' in atlasParts:

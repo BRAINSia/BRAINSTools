@@ -55,7 +55,8 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List', 'T2List', 'PDList', 'FLList', 'OTHERList',
                                                              'T1_count', 'PrimaryT1',
                                                              'atlasDefinition',
-                                                             'atlasToSubjectInitialTransform','atlasVolume'
+                                                             'atlasToSubjectInitialTransform','atlasVolume',
+                                                             'atlasheadregion'
                                                             ]),
                          run_without_submitting=True,
                          name='inputspec')
@@ -137,21 +138,16 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
         from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 
         fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedImageROIAUTOMask")
-        fixedROIAuto.inputs.ROIAutoDilateSize=10
+        fixedROIAuto.inputs.ROIAutoDilateSize=15 ## NOTE Very large to include some skull in bad cases of bias where back of head is very dark
         fixedROIAuto.inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
 
-        movingROIAuto = pe.Node(interface=BRAINSROIAuto(), name="movingImageROIAUTOMask")
-        fixedROIAuto.inputs.ROIAutoDilateSize=10
-        movingROIAuto.inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
-
         tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',fixedROIAuto,'inputVolume')
-        tissueClassifyWF.connect(inputsSpec, 'atlasVolume',movingROIAuto,'inputVolume')
-
         tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid,'fixed_image_mask')
-        tissueClassifyWF.connect(movingROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid,'moving_image_mask')
-
         tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'fixed_image_mask')
-        tissueClassifyWF.connect(movingROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'moving_image_mask')
+
+    ## NOTE: Always use atlas head region to avoid computing this every time.
+    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion',A2SantsRegistrationPreABCRigid,'moving_image_mask')
+    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion',A2SantsRegistrationPreABCSyN,'moving_image_mask')
 
     tissueClassifyWF.connect(A2SantsRegistrationPreABCRigid, 'composite_transform',
                              A2SantsRegistrationPreABCSyN,'initial_moving_transform')

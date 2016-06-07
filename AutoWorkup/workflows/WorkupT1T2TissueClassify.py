@@ -163,8 +163,8 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     BABCext.inputs.debuglevel = 0
     BABCext.inputs.useKNN = True
     BABCext.inputs.purePlugsThreshold = 0.1  #New feature to allow for pure plug processing and improvements.
-    BABCext.inputs.maxIterations = 3
-    BABCext.inputs.maxBiasDegree = 4
+    BABCext.inputs.maxIterations = 2
+    BABCext.inputs.maxBiasDegree = 0
     BABCext.inputs.filterIteration = 3
     #BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion' ## If inputs are denoised, we don't need this
     BABCext.inputs.filterMethod = 'None'

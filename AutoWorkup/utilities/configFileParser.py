@@ -42,7 +42,6 @@ def str2bool(v):
       return False
   raise ValueError( "ERROR: INVALID String to bool conversion for '{0}'".format(v) )
 
-
 def parseEnvironment(parser, environment):
     """ Parse the environment environment given by 'section' and return a dictionary
         Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string

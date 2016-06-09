@@ -88,7 +88,7 @@ int main(int argc, char **argv)
   maskFilter->SetOutsideValue(1);
   maskFilter->SetInsideValue(0);
   maskFilter->SetLowerThreshold(0);
-  maskFilter->SetUpperThreshold(1);
+  maskFilter->SetUpperThreshold(0);
 
   //Write to a file
   WriteImage(outputMask, maskFilter->GetOutput());

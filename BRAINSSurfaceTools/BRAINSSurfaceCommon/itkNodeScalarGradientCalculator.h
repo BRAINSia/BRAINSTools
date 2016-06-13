@@ -172,8 +172,7 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  NodeScalarGradientCalculator( const Self & ); // purposely not implemented
-  void operator=( const Self & );               // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(NodeScalarGradientCalculator);
 
   typename InputMeshType::ConstPointer                 m_InputMesh;
   typename TPointDataContainer::ConstPointer           m_DataContainer;

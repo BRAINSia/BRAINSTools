@@ -178,8 +178,7 @@ protected:
   mutable FixedMaskPointer  m_FixedMask;
   mutable MovingMaskPointer m_MovingMask;
 private:
-  MeshToMeshMetric(const Self &); // purposely not implemented
-  void operator=(const Self &);   // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshMetric);
 };
 } // end namespace itk
 

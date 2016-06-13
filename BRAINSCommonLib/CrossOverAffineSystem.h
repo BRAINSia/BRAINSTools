@@ -143,8 +143,7 @@ protected:
   mutable AffineTransformPointer m_ExhaleEncodeConversion;
   mutable AffineTransformPointer m_ExhaleDecodeConversion;
 private:
-  CrossOverAffineSystem(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(CrossOverAffineSystem);
 };
 
 #ifndef ITK_MANUAL_INSTANTIATION

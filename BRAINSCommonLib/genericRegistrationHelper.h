@@ -517,8 +517,7 @@ protected:
   void  GenerateData() ITK_OVERRIDE;
 
 private:
-  MultiModal3DMutualRegistrationHelper(const Self &);             // purposely not implemented
-  void operator=(const Self &);                                   // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MultiModal3DMutualRegistrationHelper);
 
   FixedImagePointer  m_FixedImage;
   MovingImagePointer m_MovingImage;

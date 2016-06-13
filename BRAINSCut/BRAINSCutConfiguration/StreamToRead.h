@@ -42,8 +42,8 @@ public:
   StreamToRead(const std::string & name, const std::string & filename);
   virtual ~StreamToRead();
 protected:
-  StreamToRead();                   // purposefully not implemented : m_F(0) { }
-  StreamToRead & operator=(Self &); // purposefully not implemented
+  StreamToRead() ITK_DELETED_FUNCTION;
+  ITK_DISALLOW_COPY_AND_ASSIGN(StreamToRead);
 
 private:
   OutputType m_F;

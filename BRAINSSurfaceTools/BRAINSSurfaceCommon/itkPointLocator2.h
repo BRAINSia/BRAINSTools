@@ -99,8 +99,7 @@ protected:
   virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  PointLocator2(const Self &);  // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(PointLocator2);
 
   PointSetConstPointer m_PointSet;
   SampleAdaptorPointer m_SampleAdaptor;

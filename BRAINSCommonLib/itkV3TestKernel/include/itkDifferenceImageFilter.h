@@ -67,8 +67,7 @@ public:
 
 protected:
 private:
-  DifferenceImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DifferenceImageFilter);
 };
 } // end namespace itk
 #else

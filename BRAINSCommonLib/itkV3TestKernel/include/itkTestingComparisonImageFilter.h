@@ -135,8 +135,7 @@ protected:
   Array<AccumulateType> m_ThreadDifferenceSum;
   Array<SizeValueType>  m_ThreadNumberOfPixels;
 private:
-  ComparisonImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ComparisonImageFilter);
 
   bool m_IgnoreBoundaryPixels;
 };

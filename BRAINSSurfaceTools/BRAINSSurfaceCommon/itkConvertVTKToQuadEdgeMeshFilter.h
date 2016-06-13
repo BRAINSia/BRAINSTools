@@ -93,8 +93,7 @@ protected:
   void GenerateData() ITK_OVERRIDE;
 
 private:
-  ConvertVTKToQuadEdgeMeshFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                 // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ConvertVTKToQuadEdgeMeshFilter);
 
   vtkPolyData * m_inputPolyData;
 };

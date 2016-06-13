@@ -107,8 +107,7 @@ protected:
   {
   };
 private:
-  AnalyticalMeshToMeshMetric(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(AnalyticalMeshToMeshMetric);
 
   mutable unsigned int m_NumberOfPixelsCounted;
 };

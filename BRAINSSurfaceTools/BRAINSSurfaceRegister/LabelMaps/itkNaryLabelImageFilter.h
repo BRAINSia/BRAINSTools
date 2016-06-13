@@ -170,8 +170,7 @@ protected:
   }
 
 private:
-  NaryLabelImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);       // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(NaryLabelImageFilter);
 
   InputImagePixelType  m_BackgroundValue;
   OutputImagePixelType m_Shift;

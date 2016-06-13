@@ -172,8 +172,7 @@ protected:
   void  GenerateData() ITK_OVERRIDE;
 
 private:
-  MeshToMeshRegistrationMethod(const Self &); // purposely not implemented
-  void operator=(const Self &);               // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);
 
   MetricPointer          m_Metric;
   OptimizerType::Pointer m_Optimizer;

@@ -305,8 +305,7 @@ protected:
     float normalizer_Regularization;
     };
 private:
-  ICCDeformableRegistrationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                  // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableRegistrationFilter);
 
   /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
     * this method will throw an exception if the function is not of the expected type. */

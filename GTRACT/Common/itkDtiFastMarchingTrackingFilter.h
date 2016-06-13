@@ -137,8 +137,7 @@ protected:
   }
 
 private:
-  DtiFastMarchingTrackingFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
 
   void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 

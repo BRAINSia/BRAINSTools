@@ -389,8 +389,7 @@ protected:
     double m_SumOfSquaredChange;
     };
 private:
-  ICCDeformableFunction(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableFunction);
 
   /** Cache fixed image information. */
   MovingPointType m_FixedImageOrigin;

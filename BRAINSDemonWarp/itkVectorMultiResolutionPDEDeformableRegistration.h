@@ -283,9 +283,7 @@ protected:
   virtual bool Halt();
 
 private:
-  // purposefully not implemented
-  VectorMultiResolutionPDEDeformableRegistration(const Self &);
-  void operator=(const Self &);
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorMultiResolutionPDEDeformableRegistration);
 
   RegistrationPointer                    m_RegistrationFilter;
   FixedImagePyramidPointer               m_FixedImagePyramid;

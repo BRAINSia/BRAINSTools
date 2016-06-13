@@ -121,7 +121,7 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
 private:
-  HammerAttributeVector(const Self &);   // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(HammerAttributeVector);
 };
 
 template <typename TValueType, unsigned int VLength>

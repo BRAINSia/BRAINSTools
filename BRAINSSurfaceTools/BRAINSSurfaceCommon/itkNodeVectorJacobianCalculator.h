@@ -179,8 +179,7 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  NodeVectorJacobianCalculator( const Self & ); // purposely not implemented
-  void operator=( const Self & );               // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(NodeVectorJacobianCalculator);
 
   typename InputMeshType::ConstPointer                         m_InputMesh;
   typename TVectorContainer::ConstPointer                      m_VectorContainer;

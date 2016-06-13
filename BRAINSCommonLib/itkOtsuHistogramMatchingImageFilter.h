@@ -209,8 +209,7 @@ protected:
                           const THistogramMeasurement maxValue);
 
 private:
-  OtsuHistogramMatchingImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                   // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(OtsuHistogramMatchingImageFilter);
 
   unsigned long m_NumberOfHistogramLevels;
   unsigned long m_NumberOfMatchPoints;

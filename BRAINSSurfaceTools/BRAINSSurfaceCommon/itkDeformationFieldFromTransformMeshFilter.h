@@ -91,8 +91,7 @@ protected:
 
 private:
 
-  DeformationFieldFromTransformMeshFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                          // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DeformationFieldFromTransformMeshFilter);
 
   TransformPointerType m_Transform;             // Coordinate transform to use
 };

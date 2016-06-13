@@ -205,8 +205,7 @@ protected:
   }
 
 private:
-  DtiTrackingFilterBase(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiTrackingFilterBase);
 
 protected:
   bool IsLoop(vtkPoints *fiber, double tolerance = 0.001);

@@ -99,8 +99,7 @@ protected:
   /** Filename to read */
   std::string m_FileName;
 private:
-  QuadEdgeMeshVTKPolyDataReader(const Self &); // purposely not implemented
-  void operator=(const Self &);                // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshVTKPolyDataReader);
 
 };
 

@@ -348,8 +348,7 @@ protected:
   itkGetConstReferenceMacro( StartIndex, LevelSetIndexType );
   itkGetConstReferenceMacro( LastIndex, LevelSetIndexType );
 private:
-  DtiFastMarchingCostFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);            // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingCostFilter);
 
   NodeContainerPointer m_AlivePoints;
   NodeContainerPointer m_TrialPoints;

@@ -92,8 +92,7 @@ protected:
 
 private:
 
-  QuadEdgeMeshClampScalarsFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                 // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshClampScalarsFilter);
 
   bool m_ClampMin;
   bool m_ClampMax;

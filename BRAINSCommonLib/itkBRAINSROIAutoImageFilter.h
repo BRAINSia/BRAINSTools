@@ -175,8 +175,7 @@ protected:
   void GenerateData() ITK_OVERRIDE;
 
 private:
-  BRAINSROIAutoImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);           // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSROIAutoImageFilter);
 
   double           m_OtsuPercentileThreshold;
   double           m_ThresholdCorrectionFactor;

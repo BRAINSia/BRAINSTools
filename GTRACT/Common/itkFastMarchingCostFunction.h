@@ -134,8 +134,7 @@ protected:
   CostIPTypePointer   m_CostIP;
 private:
 
-  FastMarchingCostFunction(const Self &); // purposely not implemented
-  void operator=(const Self &);           // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(FastMarchingCostFunction);
 };                                        // end of class
 } // end of namespace itk
 

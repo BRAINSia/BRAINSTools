@@ -276,8 +276,7 @@ protected:
     double m_SumOfSquaredChange;
     };
 private:
-  ESMDemonsRegistrationWithMaskFunction(const Self &); // purposely not implemented
-  void operator=(const Self &);                        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ESMDemonsRegistrationWithMaskFunction);
 
   /** Cache fixed image information. */
   PointType     m_FixedImageOrigin;

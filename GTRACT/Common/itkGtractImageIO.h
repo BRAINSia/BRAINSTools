@@ -134,8 +134,7 @@ protected:
   }
 
 private:
-  GtractImageIO( const Self & );        // purposely not implemented
-  void operator=( const Self & );       // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(GtractImageIO);
 
   Short3dImageType::Pointer m_Short3dImage;
   Short4dImageType::Pointer m_Short4dImage;

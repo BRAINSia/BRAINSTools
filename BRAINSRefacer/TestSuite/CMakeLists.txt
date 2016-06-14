@@ -39,8 +39,118 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest
   )
 
 set(PARENT_TEST BRAINSRefacerTest_RunTest)
-set(RefacerTestName BRAINSRefacerBrainDataTest})
+set(RefacerTestName BRAINSRefacerBrainDataTest)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
         COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerBrainDataTest>
-        )
+        --inputOriginal ${RefacerTestData_DIR}/t1_average_BRAINSABC.nii.gz
+        --inputRefaced ${RefacerTestData_DIR}/defacedSubject.nii.gz
+        --brainLabelMap ${RefacerTestData_DIR}/JointFusion_HDAtlas20_2015_dustCleaned_label.nii.gz
+  )
 set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+#try running with different sets of data
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest2
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
+  BRAINSRefacerTest
+  --inputImage
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/t1_average_BRAINSABC.nii.gz
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/complete_brainlabels_seg.nii.gz
+  --landmarks
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/BCD_ACPC_Landmarks.fcsv
+  --deformedImageName
+  ${RefacerTestData_DIR}/RunTest2_defacedSubject.nii.gz
+  --outputMask
+  ${RefacerTestData_DIR}/RunTest2_outputMask.nii.gz
+  --distanceMapFileName
+  ${RefacerTestData_DIR}/RunTest2_distanceMap.nii.gz
+  --bSplineFileName
+  ${RefacerTestData_DIR}/RunTest2_bSpline.h5
+  --smoothDisplacementName
+  ${RefacerTestData_DIR}/RunTest2_bSplineTimesDistanceMap.nii.gz
+  --diffImageName
+  ${RefacerTestData_DIR}/RunTest2_diffImage.nii.gz
+  --finalTransformFileName
+  ${RefacerTestData_DIR}/RunTest2_finalTransform.h5
+  )
+
+
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest3
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
+  BRAINSRefacerTest
+  --inputImage
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/t2_average_BRAINSABC.nii.gz
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/complete_brainlabels_seg.nii.gz
+  --landmarks
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/BCD_ACPC_Landmarks.fcsv
+  --deformedImageName
+  ${RefacerTestData_DIR}/RunTest3_defacedSubject.nii.gz
+  --outputMask
+  ${RefacerTestData_DIR}/RunTest3_outputMask.nii.gz
+  --distanceMapFileName
+  ${RefacerTestData_DIR}/RunTest3_distanceMap.nii.gz
+  --bSplineFileName
+  ${RefacerTestData_DIR}/RunTest3_bSpline.h5
+  --smoothDisplacementName
+  ${RefacerTestData_DIR}/RunTest3_bSplineTimesDistanceMap.nii.gz
+  --diffImageName
+  ${RefacerTestData_DIR}/RunTest3_diffImage.nii.gz
+  --finalTransformFileName
+  ${RefacerTestData_DIR}/RunTest3_finalTransform.h5
+  )
+
+
+#try running with different sets of data
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest4
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
+  BRAINSRefacerTest
+  --inputImage
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/t1_average_BRAINSABC.nii.gz
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/complete_brainlabels_seg.nii.gz
+  --landmarks
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/BCD_ACPC_Landmarks.fcsv
+  --deformedImageName
+  ${RefacerTestData_DIR}/RunTest4_defacedSubject.nii.gz
+  --outputMask
+  ${RefacerTestData_DIR}/RunTest4_outputMask.nii.gz
+  --distanceMapFileName
+  ${RefacerTestData_DIR}/RunTest4_distanceMap.nii.gz
+  --bSplineFileName
+  ${RefacerTestData_DIR}/RunTest4_bSpline.h5
+  --smoothDisplacementName
+  ${RefacerTestData_DIR}/RunTest4_bSplineTimesDistanceMap.nii.gz
+  --diffImageName
+  ${RefacerTestData_DIR}/RunTest4_diffImage.nii.gz
+  --finalTransformFileName
+  ${RefacerTestData_DIR}/RunTest4_finalTransform.h5
+  )
+
+
+
+#try running with different sets of data
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest5
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
+  BRAINSRefacerTest
+  --inputImage
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/t2_average_BRAINSABC.nii.gz
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/complete_brainlabels_seg.nii.gz
+  --landmarks
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/BCD_ACPC_Landmarks.fcsv
+  --deformedImageName
+  ${RefacerTestData_DIR}/RunTest5_defacedSubject.nii.gz
+  --outputMask
+  ${RefacerTestData_DIR}/RunTest5_outputMask.nii.gz
+  --distanceMapFileName
+  ${RefacerTestData_DIR}/RunTest5_distanceMap.nii.gz
+  --bSplineFileName
+  ${RefacerTestData_DIR}/RunTest5_bSpline.h5
+  --smoothDisplacementName
+  ${RefacerTestData_DIR}/RunTest5_bSplineTimesDistanceMap.nii.gz
+  --diffImageName
+  ${RefacerTestData_DIR}/RunTest5_diffImage.nii.gz
+  --finalTransformFileName
+  ${RefacerTestData_DIR}/RunTest5_finalTransform.h5
+  )

@@ -7,6 +7,6 @@
 
 int main()
 {
-  std::cout << "First BRAINSDeface Test!!!" << std::endl;
+  std::cout << "First BRAINSRefacer Test!!!" << std::endl;
   return 0;
 }

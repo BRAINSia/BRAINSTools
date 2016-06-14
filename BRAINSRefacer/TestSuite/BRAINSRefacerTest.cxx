@@ -10,7 +10,7 @@
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
-int BRAINSDefaceTest(int argc, char* argv[])
+int BRAINSRefacerTest(int argc, char* argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

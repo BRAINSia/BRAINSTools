@@ -2,7 +2,7 @@
 // Author: Jeffrey Obadal
 
 
-#include "BRAINSDefaceBrainDataTestCLP.h"
+#include "BRAINSRefacerBrainDataTestCLP.h"
 #include <itkLabelImageToLabelMapFilter.h>
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   originalReader->SetFileName(inputOriginal);
 
   ReaderType::Pointer defacedReader = ReaderType::New();
-  defacedReader->SetFileName(inputDefaced);
+  defacedReader->SetFileName(inputRefaced);
 
   ReaderType::Pointer labelmapReader = ReaderType::New();
   labelmapReader->SetFileName(brainLabelMap);

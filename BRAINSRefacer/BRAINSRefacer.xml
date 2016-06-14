@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utilities.BRAINS</category>
-  <title>BRAINSDeface</title>
+  <title>BRAINSRefacer</title>
   <description>Deidentify head images without destroying useful facial information</description>
   <contributor>
     Alexander Leinoff (alexander-leinoff -at- uiowa.edu), Jeffrey Obadal (jeffrey-obadal -at- uiowa.edu) </contributor>

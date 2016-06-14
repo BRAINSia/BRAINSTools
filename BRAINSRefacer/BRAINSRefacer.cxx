@@ -5,7 +5,7 @@
 #include <itkTransformToDisplacementFieldFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
-#include <BRAINSDefaceCLP.h>
+#include <BRAINSRefacerCLP.h>
 #include <Slicer3LandmarkIO.h>
 #include <itkBinaryThresholdImageFilter.h>
 #include <itkBSplineTransform.h>

@@ -1,5 +1,5 @@
 
-##- project(BRAINSDeface)
+##- project(BRAINSRefacer)
 
 #-----------------------------------------------------------------------------
 # Dependencies.
@@ -9,7 +9,7 @@
 # ITK
 #
 
-FindITKUtil(BRAINSDeface_ITK
+FindITKUtil(BRAINSRefacer_ITK
   ITKTransform
   ITKDistanceMap
   ITKThresholding
@@ -23,7 +23,7 @@ FindITKUtil(BRAINSDeface_ITK
 
 ###
 set(ALL_PROGS_LIST
-  BRAINSDeface
+  BRAINSRefacer
   )
 
 foreach(prog ${ALL_PROGS_LIST})

@@ -25,9 +25,9 @@
       <default>NONE</default>
     </image>
     <image>
-      <longflag>--inputDefaced</longflag>
+      <longflag>--inputRefaced</longflag>
       <label>Input Volume Two</label>
-      <name>inputDefaced</name>
+      <name>inputRefaced</name>
       <channel>input</channel>
       <default>NONE</default>
       <description>Input Volume Two</description>

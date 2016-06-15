@@ -19,9 +19,12 @@
 #include <itkComposeImageFilter.h>
 #include <itkDisplacementFieldTransform.h>
 #include <itkSubtractImageFilter.h>
+#include <map>
+#include <string>
 
 #include "CreateRandomBSpline.h"
 #include "CombineBSplineWithDisplacement.h"
+#include "MaskFromLandmarks.h"
 
 //Convienience function to write images
 template< typename TImageType >
@@ -36,6 +39,21 @@ void WriteImage(std::string filename, TImageType *image)
   fileWriter->Update();
   std::cout << "\tdone writing Image: " << filename << std::endl;
 }
+
+//Convienience function to write images
+template< typename TImageType >
+void WriteSmartImage(std::string filename, typename TImageType::Pointer image)
+{
+  std::cout << "Writing Image: " << filename << std::endl;
+  typedef itk::ImageFileWriter<TImageType> FileWriterType;
+  typename FileWriterType::Pointer fileWriter = FileWriterType::New();
+
+  fileWriter->SetInput(image);
+  fileWriter->SetFileName(filename);
+  fileWriter->Update();
+  std::cout << "\tdone writing Image: " << filename << std::endl;
+}
+
 
 //Convienience function to write transforms
 template< typename TTransformType >
@@ -70,17 +88,33 @@ int main(int argc, char **argv)
   imageReader->Update();
 
   //Read in the atlas label file
-  typedef itk::Image<PixelType, Dimension> LabelAtlasType;
-  typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
-  LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
-  labelAtlasReader->SetFileName(labelmap);
+  //typedef itk::Image<PixelType, Dimension> LabelAtlasType;
+  //typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
+  //LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
+  //labelAtlasReader->SetFileName(labelmap);
+
+  typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
 
   //Read in the landmarks file
   LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
 
+  typedef MaskFromLandmarks<ImageType> MaskFromLandmarks;
+  MaskFromLandmarks::Pointer masker = MaskFromLandmarks::New();
+
+  masker->printHello();
+
+  masker->SetInput(subject);
+  masker->SetLandmarksFileName(landmarks);
+
+  //WriteSmartImage<MaskAtlasType>("/scratch/aleinoff/temp/maskTest1.nii.gz", masker->GetOutput());
+
+
+
   //Turn Label map into binary image. Use a threshold Image filter?? or brainscut?
   //Write a new filter for this??
-  typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
+  //typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
+
+  /*use landmark mask
   typedef itk::BinaryThresholdImageFilter< LabelAtlasType, MaskAtlasType>  MaskFilterType;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
@@ -89,13 +123,17 @@ int main(int argc, char **argv)
   maskFilter->SetInsideValue(0);
   maskFilter->SetLowerThreshold(0);
   maskFilter->SetUpperThreshold(0);
+   */
+
 
   //Write to a file
-  WriteImage(outputMask, maskFilter->GetOutput());
+  MaskAtlasType::Pointer maskAtlas = masker->GetOutput();
+  masker->Update();
+  WriteImage<MaskAtlasType>(outputMask, maskAtlas);
   //Get a distance map to the Brain region:
   typedef itk::DanielssonDistanceMapImageFilter<MaskAtlasType, ImageType, ImageType> DistanceMapFilter;
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
-  distanceMapFilter->SetInput(maskFilter->GetOutput());
+  distanceMapFilter->SetInput(maskAtlas);
   distanceMapFilter->InputIsBinaryOn();
   distanceMapFilter->SetSquaredDistance(false);
 

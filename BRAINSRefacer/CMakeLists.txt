@@ -22,6 +22,8 @@ FindITKUtil(BRAINSRefacer_ITK
 #
 
 ###
+set(CMAKE_CXX_STANDARD 11)
+
 set(ALL_PROGS_LIST
   BRAINSRefacer
   )

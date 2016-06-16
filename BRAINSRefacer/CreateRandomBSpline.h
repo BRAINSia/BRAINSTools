@@ -6,6 +6,7 @@
 
 #include <itkBSplineTransform.h>
 #include <itkImageRegionIteratorWithIndex.h>
+#include <ctime>
 
 template<typename TInputImage,
   typename TPixelType,

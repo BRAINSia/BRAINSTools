@@ -133,10 +133,6 @@ if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
       First you need to set ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK to ON to be able to choose above application for build.")
 endif()
 
-if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
-  set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)
-endif()
-
 if(${LOCAL_PROJECT_NAME}_USE_QT)
   if(NOT QT4_FOUND)
     find_package(Qt4 4.8 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)

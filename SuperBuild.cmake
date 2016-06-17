@@ -264,8 +264,6 @@ set(proj        ${LOCAL_PROJECT_NAME})
 set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
-ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
-
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project
 #-----------------------------------------------------------------------------
@@ -350,8 +348,11 @@ ALL_PROJECTS
 # list after it's built than try and conditionally change just the build type in the macro.
 
 
-
-
+#------------------------------------------------------------------------------
+# Calling this macro last will ensure all prior calls to 'mark_as_superbuild' are
+# considered when updating the variable '${proj}_EP_ARGS' passed to the main project
+# below.
+ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
 
 #------------------------------------------------------------------------------
 # Configure and build

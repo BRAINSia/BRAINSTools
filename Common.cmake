@@ -3,11 +3,11 @@
 #------------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
-
 include(ExternalProjectDependency)
-
 include(CMakeDependentOption)
+include(CMakeParseArguments)
 
+#------------------------------------------------------------------------------
 #if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
 
 ## VTK is not easy to build on all platforms
@@ -130,15 +130,6 @@ if(${LOCAL_PROJECT_NAME}_USE_QT)
     find_package(Qt4 4.8 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
     include(${QT_USE_FILE})
   endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s)
-#-----------------------------------------------------------------------------
-if(CMAKE_VERSION VERSION_LESS 2.8.3)
-  include(Pre283CMakeParseArguments)
-else()
-  include(CMakeParseArguments)
 endif()
 
 #-----------------------------------------------------------------------------

@@ -45,9 +45,12 @@ endif()
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-  set(CTEST_CONFIGURATION_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of test." FORCE)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
+endif()
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
 endif()
 
 if(${ITK_VERSION_MAJOR} STREQUAL "3")

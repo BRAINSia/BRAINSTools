@@ -104,7 +104,6 @@ protected:
 
     //Get the number of paramaters/nodes required for this BSpline
     const unsigned int numberOfParameters = this->GetBSplineOutput()->GetNumberOfParameters();
-    const unsigned int numberOfNodes = numberOfParameters / NDimension;
 
     //Setup a paramaters variable for the bspline
     typename BSplineType::ParametersType bSplineParams( numberOfParameters );
@@ -165,9 +164,6 @@ protected:
       coefficientImgSI->TransformIndexToPhysicalPoint(SIit.GetIndex(), pointSI);
 
       double x = pointLR[0];
-      double y = pointPA[1];
-      double z = pointSI[2];
-
 
       //if( y > 0 ) continue; //only front half of skull
       if( x > 0 )

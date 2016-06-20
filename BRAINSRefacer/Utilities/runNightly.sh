@@ -17,7 +17,7 @@ fi
 echo "updating source repo"
 if [[ ! -d ${SOURCE_DIR} ]]; then
   echo "source directory doesn't exist. Cloning.";
-  git clone http://github.com/BRAINSIa/BRAINSTools.git;
+  git clone https://github.com/BRAINSia/BRAINSTools.git;
   cd ${SOURCE_DIR}
   git checkout BRAINSRefacer
 else

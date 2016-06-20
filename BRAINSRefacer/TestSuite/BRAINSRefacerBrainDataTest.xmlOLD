@@ -33,27 +33,11 @@
       <description>Input Volume Two</description>
     </image>
     <image>
-      <longflag>--labelmap</longflag>
+      <longflag>--brainLabelMap</longflag>
       <label>Brain Label Map</label>
       <name>brainLabelMap</name>
       <default>NONE</default>
       <description>Label map of the brain, will be used to create a mask</description>
     </image>
-    <file>
-      <longflag>--landmarks</longflag>
-      <label>Brain Landmarks File</label>
-      <name>brainLandmarksFile</name>
-      <default>NONE</default>
-      <description>LandMark File of the brain, will be used to create a mask</description>
-    </file>
-  </parameters>
-  <parameters>
-    <label>LabelMap or landmarks based mask</label>
-    <boolean>
-      <name>labelmapSwitch</name>
-      <label>Use labelmap-based mask</label>
-      <longflag>--labelmapMask</longflag>
-      <default>false</default>
-    </boolean>
   </parameters>
 </executable>

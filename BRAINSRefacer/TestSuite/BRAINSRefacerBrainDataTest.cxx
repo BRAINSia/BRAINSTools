@@ -4,12 +4,14 @@
 
 #include "BRAINSRefacerBrainDataTestCLP.h"
 #include <itkLabelImageToLabelMapFilter.h>
+#include <itkMultiplyImageFilter.h>
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkAbsoluteValueDifferenceImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkLabelMapMaskImageFilter.h"
+#include "../MaskFromLandmarks.h"
 
 void outputError(itk::ExceptionObject &err)
 {
@@ -25,6 +27,7 @@ int main(int argc, char *argv[])
   const int                                                                         Dimension = 3;
 
   typedef itk::Image<InputPixelType, Dimension>                                     ImageType;
+  typedef itk::Image<unsigned char, Dimension >                                     MaskImageType;
 
   typedef itk::ImageFileReader<ImageType>                                           ReaderType;
   typedef itk::ImageFileWriter<ImageType>                                           WriterType;
@@ -34,6 +37,7 @@ int main(int argc, char *argv[])
   typedef itk::LabelImageToLabelMapFilter<ImageType, LabelMapType>                  ImageToMapType;
 
   typedef itk::LabelMapMaskImageFilter<LabelMapType, ImageType>                        LabelMaskFilterType;
+
   typedef itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>  AbsValDiffFilterType;
   typedef itk::StatisticsImageFilter<ImageType>                                     StatisticsFilterType;
 
@@ -43,32 +47,72 @@ int main(int argc, char *argv[])
   ReaderType::Pointer defacedReader = ReaderType::New();
   defacedReader->SetFileName(inputRefaced);
 
-  ReaderType::Pointer labelmapReader = ReaderType::New();
-  labelmapReader->SetFileName(brainLabelMap);
+  typedef MaskFromLandmarks<ImageType> MaskImageFromLandmarks;
+  MaskImageFromLandmarks::Pointer landmarkReaderOriginal = MaskImageFromLandmarks::New();
+  landmarkReaderOriginal->SetLandmarksFileName(brainLandmarksFile);
+  landmarkReaderOriginal->SetInput(originalReader->GetOutput());
 
-  // Create labelmap from label image
-  ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
-  imageToMapFilter->SetInput(labelmapReader->GetOutput());
+  //labelmapSwitch = true;
 
-  //Mask the images leaving only the brain
+  typedef MaskFromLandmarks<ImageType> MaskImageFromLandmarks;
+  MaskImageFromLandmarks::Pointer landmarkReaderDefaced = MaskImageFromLandmarks::New();
+  landmarkReaderDefaced->SetLandmarksFileName(brainLandmarksFile);
+  landmarkReaderDefaced->SetInput(defacedReader->GetOutput());
+
+  //These: \/\/ are only used if using a labelmap Mask.
   LabelMaskFilterType::Pointer originalMaskFilter = LabelMaskFilterType::New();
-  originalMaskFilter->SetInput(imageToMapFilter->GetOutput());
-  originalMaskFilter->SetFeatureImage(originalReader->GetOutput());
-  originalMaskFilter->SetLabel(0);
-  originalMaskFilter->SetNegated( true );
-  originalMaskFilter->SetBackgroundValue(0);
-
-  //Mask the images leaving only the brain
   LabelMaskFilterType::Pointer defacedMaskFilter = LabelMaskFilterType::New();
-  defacedMaskFilter->SetInput(imageToMapFilter->GetOutput());
-  defacedMaskFilter->SetFeatureImage(defacedReader->GetOutput());
-  defacedMaskFilter->SetLabel(0);
-  defacedMaskFilter->SetNegated( true );
-  defacedMaskFilter->SetBackgroundValue(0);
+  if( labelmapSwitch == true )
+    {
+    std::cout << "Using LabelMap based mask" << std::endl;
+    ReaderType::Pointer labelmapReader = ReaderType::New();
+    labelmapReader->SetFileName(brainLabelMap);
+
+    // Create labelmap from label image
+    ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
+    imageToMapFilter->SetInput(labelmapReader->GetOutput());
+
+    //Mask the images leaving only the brain
+    originalMaskFilter->SetInput(imageToMapFilter->GetOutput());
+    originalMaskFilter->SetFeatureImage(originalReader->GetOutput());
+    originalMaskFilter->SetLabel(0);
+    originalMaskFilter->SetNegated(true);
+    originalMaskFilter->SetBackgroundValue(0);
+
+
+
+    //Mask the images leaving only the brain
+    defacedMaskFilter->SetInput(imageToMapFilter->GetOutput());
+    defacedMaskFilter->SetFeatureImage(defacedReader->GetOutput());
+    defacedMaskFilter->SetLabel(0);
+    defacedMaskFilter->SetNegated(true);
+    defacedMaskFilter->SetBackgroundValue(0);
+    }
+
+  //multiply the images by the mask
+  typedef itk::MultiplyImageFilter<MaskImageType, ImageType, ImageType > MaskMultiplyerType;
+  MaskMultiplyerType::Pointer defacedMaskMultiplier = MaskMultiplyerType::New();
+  defacedMaskMultiplier->SetInput1(landmarkReaderDefaced->GetOutput());
+  defacedMaskMultiplier->SetInput2(defacedReader->GetOutput());
+
+  MaskMultiplyerType::Pointer originalMaskMultiplier = MaskMultiplyerType::New();
+  originalMaskMultiplier->SetInput1(landmarkReaderOriginal->GetOutput());
+  originalMaskMultiplier->SetInput2(originalReader->GetOutput());
 
   AbsValDiffFilterType::Pointer absDiffFilter = AbsValDiffFilterType::New();
-  absDiffFilter->SetInput1(defacedMaskFilter->GetOutput());
-  absDiffFilter->SetInput2(originalMaskFilter->GetOutput());
+
+  if( labelmapSwitch == false )
+    {
+    std::cout << "Using landmarks based mask" << std::endl;
+    absDiffFilter->SetInput1(defacedMaskMultiplier->GetOutput());
+    absDiffFilter->SetInput2(originalMaskMultiplier->GetOutput());
+    }
+  else
+    {
+    absDiffFilter->SetInput1(defacedMaskFilter->GetOutput());
+    absDiffFilter->SetInput2(originalMaskFilter->GetOutput());
+    }
+
 
   StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
   statsFilter->SetInput(absDiffFilter->GetOutput());

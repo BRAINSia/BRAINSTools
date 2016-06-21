@@ -279,7 +279,8 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             'template_nac_labels.nii.gz',
             'template_leftHemisphere.nii.gz',
             'template_rightHemisphere.nii.gz',
-            'template_ventricles.nii.gz'
+            'template_ventricles.nii.gz',
+            'template_headregion.nii.gz'
             ]
 
         baselineRequiredDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',

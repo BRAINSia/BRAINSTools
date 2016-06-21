@@ -478,7 +478,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                              'template_ventricles': '%s/Atlas/AVG_template_ventricles.nii.gz',
                                              'template_t1_denoised_gaussian': '%s/Atlas/AVG_T1.nii.gz',
                                              'template_landmarks_50Lmks_fcsv': '%s/Atlas/AVG_LMKS.fcsv',
-                                             'template_headregion': '%s/Atlas/AVG_template_headregion'
+                                             'template_headregion': '%s/Atlas/AVG_template_headregion.nii.gz'
         }
         template_DG.inputs.template_args = {'outAtlasXMLFullPath': [['subject', 'subject']],
                                             'hncma_atlas': [['subject']],
@@ -503,7 +503,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             ('template_rightHemisphere', 'template_rightHemisphere'),
             ('template_WMPM2_labels', 'template_WMPM2_labels'),
             ('template_nac_labels', 'template_nac_labels'),
-            ('template_ventricles', 'template_ventricles'),
+            ('template_ventricles', 'template_ventricles')
             ]
                         )]
         )
@@ -511,7 +511,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect([(template_DG, inputsSpec,
                          [('template_t1_denoised_gaussian', 'template_t1_denoised_gaussian'),
                           ('template_landmarks_50Lmks_fcsv', 'atlasLandmarkFilename'),
-                          ('template_headregion', 'template_headregion'),
+                          ('template_headregion', 'template_headregion')
                          ]),
         ])
 
@@ -845,7 +845,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         AtlasBinaryMapsToResample = [
             'template_rightHemisphere',
             'template_leftHemisphere',
-            'template_ventricles']
+            'template_ventricles',
+            'template_headregion']
 
         for atlasImage in AtlasBinaryMapsToResample:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_" + atlasImage)

@@ -96,7 +96,8 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
             "template_WMPM2_labels.txt",
             "template_nac_labels.nii.gz",
             "template_nac_labels.txt",
-            "template_ventricles.nii.gz"
+            "template_ventricles.nii.gz",
+            "template_headregion.nii.gz"
         ])
     if 'W_ExtraSupport' in atlasParts:
         atlas_file_names.extend([
@@ -176,6 +177,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         'AVG_l_thalamus_ProbabilityMap.nii.gz': 'IGNORED',
         'AVG_l_globus_ProbabilityMap.nii.gz': 'IGNORED',
         'AVG_template_ventricles.nii.gz': 'IGNORED',
+        'AVG_template_headregion.nii.gz': 'IGNORED',
         'AVG_r_thalamus_ProbabilityMap.nii.gz': 'IGNORED',
         'AVG_l_putamen_ProbabilityMap.nii.gz': 'IGNORED',
         'AVG_rho.nii.gz': 'IGNORED',
@@ -243,6 +245,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         'AVG_l_thalamus_ProbabilityMap.nii.gz',
         'AVG_l_globus_ProbabilityMap.nii.gz',
         'AVG_template_ventricles.nii.gz',
+        'AVG_template_headregion.nii.gz',
         'AVG_r_thalamus_ProbabilityMap.nii.gz',
         'AVG_l_putamen_ProbabilityMap.nii.gz',
         'AVG_rho.nii.gz',

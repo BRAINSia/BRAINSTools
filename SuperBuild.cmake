@@ -264,8 +264,6 @@ set(proj        ${LOCAL_PROJECT_NAME})
 set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
-ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
-
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project
 #-----------------------------------------------------------------------------
@@ -283,6 +281,7 @@ set(${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_DESTINATION  lib)
 set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION  bin)
 set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION  lib)
 set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
+
 #-----------------------------------------------------------------------------
 # Add external project CMake args
 #-----------------------------------------------------------------------------
@@ -301,31 +300,6 @@ mark_as_superbuild(
   ${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
   ${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION:PATH
 
-  USE_AutoWorkup:BOOL
-  USE_GTRACT:BOOL
-  USE_BRAINSFit:BOOL
-  USE_BRAINSTalairach:BOOL
-  USE_BRAINSABC:BOOL
-  USE_BRAINSCut:BOOL
-  USE_BRAINSLandmarkInitializer:BOOL
-  USE_BRAINSMush:BOOL
-  USE_BRAINSROIAuto:BOOL
-  USE_BRAINSResample:BOOL
-  USE_BRAINSConstellationDetector:BOOL
-  USE_BRAINSDemonWarp:BOOL
-  USE_BRAINSMultiModeSegment:BOOL
-  USE_BRAINSInitializedControlPoints:BOOL
-  USE_BRAINSTransformConvert:BOOL
-  USE_ConvertBetweenFileFormats:BOOL
-  USE_ImageCalculator:BOOL
-  USE_BRAINSSnapShotWriter:BOOL
-  USE_DebugImageViewer:BOOL
-  USE_BRAINSSurfaceTools:BOOL
-  USE_BRAINSContinuousClass:BOOL
-  USE_BRAINSPosteriorToContinuousClass:BOOL
-  USE_DWIConvert:BOOL
-  USE_ICCDEF:BOOL
-  USE_ANTS:BOOL
   BOOST_INCLUDE_DIR:PATH
   BRAINS_DEBUG_IMAGE_WRITE:BOOL
   INSTALL_RUNTIME_DESTINATION:STRING
@@ -350,8 +324,11 @@ ALL_PROJECTS
 # list after it's built than try and conditionally change just the build type in the macro.
 
 
-
-
+#------------------------------------------------------------------------------
+# Calling this macro last will ensure all prior calls to 'mark_as_superbuild' are
+# considered when updating the variable '${proj}_EP_ARGS' passed to the main project
+# below.
+ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
 
 #------------------------------------------------------------------------------
 # Configure and build
@@ -395,37 +372,6 @@ ExternalProject_Add(${proj}
     -DSuperBuild_BRAINSTools_BUILD_DICOM_SUPPORT:BOOL=${SuperBuild_BRAINSTools_BUILD_DICOM_SUPPORT}
     -DSuperBuild_BRAINSTools_USE_CTKAPPLAUNCHER:BOOL=${SuperBuild_BRAINSTools_USE_CTKAPPLAUNCHER}
     -DSuperBuild_BRAINSTools_USE_GIT_PROTOCOL:BOOL=${SuperBuild_BRAINSTools_USE_GIT_PROTOCOL}
-    -DUSE_ANTS:BOOL=${USE_ANTS}
-    -DUSE_AutoWorkup:BOOL=${USE_AutoWorkup}
-    -DUSE_BRAINSABC:BOOL=${USE_BRAINSABC}
-    -DUSE_BRAINSConstellationDetector:BOOL=${USE_BRAINSConstellationDetector}
-    -DUSE_BRAINSContinuousClass:BOOL=${USE_BRAINSContinuousClass}
-    -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=${USE_BRAINSCreateLabelMapFromProbabilityMaps}
-    -DUSE_BRAINSCut:BOOL=${USE_BRAINSCut}
-    -DUSE_BRAINSDWICleanup:BOOL=${USE_BRAINSDWICleanup}
-    -DUSE_BRAINSDemonWarp:BOOL=${USE_BRAINSDemonWarp}
-    -DUSE_BRAINSFit:BOOL=${USE_BRAINSFit}
-    -DUSE_BRAINSInitializedControlPoints:BOOL=${USE_BRAINSInitializedControlPoints}
-    -DUSE_BRAINSLabelStats:BOOL=${USE_BRAINSLabelStats}
-    -DUSE_BRAINSLandmarkInitializer:BOOL=${USE_BRAINSLandmarkInitializer}
-    -DUSE_BRAINSMultiModeSegment:BOOL=${USE_BRAINSMultiModeSegment}
-    -DUSE_BRAINSMultiSTAPLE:BOOL=${USE_BRAINSMultiSTAPLE}
-    -DUSE_BRAINSMush:BOOL=${USE_BRAINSMush}
-    -DUSE_BRAINSPosteriorToContinuousClass:BOOL=${USE_BRAINSPosteriorToContinuousClass}
-    -DUSE_BRAINSROIAuto:BOOL=${USE_BRAINSROIAuto}
-    -DUSE_BRAINSResample:BOOL=${USE_BRAINSResample}
-    -DUSE_BRAINSSnapShotWriter:BOOL=${USE_BRAINSSnapShotWriter}
-    -DUSE_BRAINSStripRotation:BOOL=${USE_BRAINSStripRotation}
-    -DUSE_BRAINSSurfaceTools:BOOL=${USE_BRAINSSurfaceTools}
-    -DUSE_BRAINSTalairach:BOOL=${USE_BRAINSTalairach}
-    -DUSE_BRAINSTransformConvert:BOOL=${USE_BRAINSTransformConvert}
-    -DUSE_ConvertBetweenFileFormats:BOOL=${USE_ConvertBetweenFileFormats}
-    -DUSE_DWIConvert:BOOL=${USE_DWIConvert}
-    -DUSE_DebugImageViewer:BOOL=${USE_DebugImageViewer}
-    -DUSE_GTRACT:BOOL=${USE_GTRACT}
-    -DUSE_ICCDEF:BOOL=${USE_ICCDEF}
-    -DUSE_ImageCalculator:BOOL=${USE_ImageCalculator}
-    -DUSE_ReferenceAtlas:BOOL=${USE_ReferenceAtlas}
     -DUSE_SYSTEM_DCMTK:BOOL=${USE_SYSTEM_DCMTK}
     -DUSE_SYSTEM_ITK:BOOL=${USE_SYSTEM_ITK}
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=${USE_SYSTEM_SlicerExecutionModel}

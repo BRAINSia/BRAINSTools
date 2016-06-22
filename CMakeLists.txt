@@ -64,10 +64,6 @@ else()
   project(${LOCAL_PROJECT_NAME} C CXX)
 endif()
 
-#if(DEFINED CMAKE_CONFIGURATION_TYPES)
-#  set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE) # setting only two configuration types
-#endif()
-
 ## For compatibility with Slicer
 if(NOT CMAKE_CXX_STANDARD)
    set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.

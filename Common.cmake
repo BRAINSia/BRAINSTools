@@ -3,11 +3,11 @@
 #------------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
-
 include(ExternalProjectDependency)
-
 include(CMakeDependentOption)
+include(CMakeParseArguments)
 
+#------------------------------------------------------------------------------
 #if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
 
 ## VTK is not easy to build on all platforms
@@ -45,10 +45,12 @@ endif()
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-  set(CTEST_CONFIGURATION_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of test." FORCE)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
-  #  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
 endif()
 
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
@@ -58,32 +60,45 @@ endif()
 #-----------------------------------------------------------------------------
 # Build option(s)
 #-----------------------------------------------------------------------------
-option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
-option(USE_ReferenceAtlas                 "Build the Reference Atlas"            ON)
 
-option(USE_ANTS                           "Build ANTS"                           ON)
+# bt_option: Convenience macro allowing to set an option and call mark_as_superbuild.
+macro(bt_option name)
+  option(${name} ${ARGN})
+  mark_as_superbuild(${name})
+endmacro()
 
-option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
-option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
-option(USE_BRAINSROIAuto                  "Build BRAINSROIAuto"                  ON)
-option(USE_DWIConvert                     "Build DWIConvert"                     ON)
-option(USE_BRAINSLabelStats               "Build BRAINSLabelStats"               ON)
-option(USE_BRAINSStripRotation            "Build BRAINSStripRotation"            ON)
-option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
-option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
-CMAKE_DEPENDENT_OPTION(USE_BRAINSConstellationDetectorGUI "Build BRAINSConstellationDetectorGUI" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)
-option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
-option(USE_ImageCalculator                "Build ImageCalculator"                ON)
-option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      ON)
-option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
-option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
-option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
+# bt_dependent_option: Convenience macro allowing to set a dependent option and mark_as_superbuild.
+macro(bt_dependent_option name)
+  CMAKE_DEPENDENT_OPTION(${name} ${ARGN})
+  mark_as_superbuild(${name})
+endmacro()
+
+bt_option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
+bt_option(USE_ReferenceAtlas                 "Build the Reference Atlas"            ON)
+
+bt_option(USE_ANTS                           "Build ANTS"                           ON)
+
+bt_option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
+bt_option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
+bt_option(USE_BRAINSROIAuto                  "Build BRAINSROIAuto"                  ON)
+bt_option(USE_DWIConvert                     "Build DWIConvert"                     ON)
+bt_option(USE_BRAINSLabelStats               "Build BRAINSLabelStats"               ON)
+bt_option(USE_BRAINSStripRotation            "Build BRAINSStripRotation"            ON)
+bt_option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
+bt_option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
+bt_dependent_option(USE_BRAINSConstellationDetectorGUI "Build BRAINSConstellationDetectorGUI" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
+bt_option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)
+bt_option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
+bt_option(USE_ImageCalculator                "Build ImageCalculator"                ON)
+bt_option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      ON)
+bt_option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
+bt_option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
+bt_option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
 
 if(CMAKE_CXX_STANDARD LESS 11)
-  option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
+  bt_option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
 else()
-  option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
+  bt_option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
 endif()
 
 
@@ -91,23 +106,23 @@ endif()
 if(NOT BUILD_FOR_DASHBOARD)
   set(BUILD_FOR_DASHBOARD OFF)
 endif()
-option(USE_BRAINSCut                      "Build BRAINSCut"                      ${BUILD_FOR_DASHBOARD})
-option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
-CMAKE_DEPENDENT_OPTION(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-CMAKE_DEPENDENT_OPTION(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-option(USE_BRAINSMush                     "Build BRAINSMush"                     ${BUILD_FOR_DASHBOARD})
-option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
+bt_option(USE_BRAINSCut                      "Build BRAINSCut"                      ${BUILD_FOR_DASHBOARD})
+bt_option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
+bt_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
+bt_dependent_option(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
+bt_option(USE_BRAINSMush                     "Build BRAINSMush"                     ${BUILD_FOR_DASHBOARD})
+bt_option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
 
 ## These are not yet ready for prime time.
-CMAKE_DEPENDENT_OPTION(USE_BRAINSTalairach "Build BRAINSTalairach" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-CMAKE_DEPENDENT_OPTION(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass"         OFF)
-option(USE_ICCDEF                         "Build ICCDEF     "                    OFF)
-option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
-CMAKE_DEPENDENT_OPTION(USE_DebugImageViewer "Build DebugImageViewer" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
+bt_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
+bt_dependent_option(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
+bt_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass"         OFF)
+bt_option(USE_ICCDEF                         "Build ICCDEF     "                    OFF)
+bt_option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
+bt_dependent_option(USE_DebugImageViewer "Build DebugImageViewer" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
+bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
-option(USE_TBB "Build TBB as an internal module. This feature is still experimental and unsupported" OFF)
+bt_option(USE_TBB "Build TBB as an internal module. This feature is still experimental and unsupported" OFF)
 mark_as_advanced(USE_TBB)
 
 if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
@@ -121,24 +136,11 @@ if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
       First you need to set ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK to ON to be able to choose above application for build.")
 endif()
 
-if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
-  set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)
-endif()
-
 if(${LOCAL_PROJECT_NAME}_USE_QT)
   if(NOT QT4_FOUND)
     find_package(Qt4 4.8 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
     include(${QT_USE_FILE})
   endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s)
-#-----------------------------------------------------------------------------
-if(CMAKE_VERSION VERSION_LESS 2.8.3)
-  include(Pre283CMakeParseArguments)
-else()
-  include(CMakeParseArguments)
 endif()
 
 #-----------------------------------------------------------------------------

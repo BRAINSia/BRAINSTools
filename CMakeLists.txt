@@ -59,7 +59,7 @@ option(${LOCAL_PROJECT_NAME}_SUPERBUILD "Build ${LOCAL_PROJECT_NAME} and the pro
 mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
 
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
+  project(${PRIMARY_PROJECT_NAME} C CXX)
 else()
   project(${LOCAL_PROJECT_NAME} C CXX)
 endif()

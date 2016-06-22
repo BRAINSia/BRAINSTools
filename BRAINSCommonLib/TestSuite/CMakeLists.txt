@@ -14,11 +14,20 @@ add_executable(DWIMetaDataDictionaryValidatorTests DWIMetaDataDictionaryValidato
 target_link_libraries(DWIMetaDataDictionaryValidatorTests BRAINSCommonLib)
 set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
+add_executable(Slicer3LandmarkIOExceptionTest Slicer3LandmarkIOTest.cxx)
+target_link_libraries(Slicer3LandmarkIOExceptionTest BRAINSCommonLib)
+set_target_properties(Slicer3LandmarkIOExceptionTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
 
 ExternalData_add_test(FindCenterOfBrainFetchData
   NAME PrettyPrintTableTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>
+  ## No arguments
+  )
+
+ExternalData_add_test(FindCenterOfBrainFetchData
+  NAME Slicer3LandmarkIOExceptionTest
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Slicer3LandmarkIOExceptionTest>
   ## No arguments
   )
 

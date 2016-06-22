@@ -24,6 +24,7 @@
 
 #include "Slicer3LandmarkIO.h"
 #include "itkNumberToString.h"
+#include "itkImageFileReaderException.h"
 
 LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename )
 {
@@ -32,7 +33,7 @@ LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename )
   if( !weightFileStream.is_open() )
     {
     std::cerr << "Fail to open weight file " << std::endl;
-    exit(EXIT_FAILURE);
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, "Couldn't open landmark weight file for reading", ITK_LOCATION);
     }
 
   std::string           line;
@@ -97,7 +98,7 @@ WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
     std::cerr << "Error: Can't write Slicer3 landmark file "
               << fullPathLandmarksFileName << std::endl;
     std::cerr.flush();
-    return;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, "Couldn't open landmarks file for writing", ITK_LOCATION);
     }
   myfile << lmksStream.str();
   myfile.close();
@@ -114,7 +115,8 @@ ReadSlicer3toITKLmk( const std::string & landmarksFilename )
     {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    return landmarks; // return empty landmarks
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, "Couldn't open landmarks file for reading", ITK_LOCATION);
+    // do not return empty landmarks
     }
   std::string line;
   while( getline( myfile, line ) )

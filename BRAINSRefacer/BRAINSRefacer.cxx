@@ -21,6 +21,8 @@
 #include <itkSubtractImageFilter.h>
 #include <map>
 #include <string>
+#include <itkSignedMaurerDistanceMapImageFilter.h>
+#include <itkThresholdImageFilter.h>
 
 #include "CreateRandomBSpline.h"
 #include "CombineBSplineWithDisplacement.h"
@@ -131,19 +133,29 @@ int main(int argc, char **argv)
   masker->Update();
   WriteImage<MaskAtlasType>(outputMask, maskAtlas);
   //Get a distance map to the Brain region:
-  typedef itk::DanielssonDistanceMapImageFilter<MaskAtlasType, ImageType, ImageType> DistanceMapFilter;
+  //typedef itk::DanielssonDistanceMapImageFilter<MaskAtlasType, ImageType, ImageType> DistanceMapFilter;
+  typedef itk::SignedMaurerDistanceMapImageFilter<MaskAtlasType, ImageType> DistanceMapFilter;
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
   distanceMapFilter->SetInput(maskAtlas);
-  distanceMapFilter->InputIsBinaryOn();
   distanceMapFilter->SetSquaredDistance(false);
 
+  //make the distance map unsigned:
+  typedef itk::ThresholdImageFilter<ImageType> ThresholdFilterType;
+  ThresholdFilterType::Pointer distanceThreshold = ThresholdFilterType::New();
+  distanceThreshold->SetInput(distanceMapFilter->GetOutput());
+  distanceThreshold->SetLower(0.0);
+  distanceThreshold->SetUpper(4096);  //TODO: This should be changed to the max pixel value for the image type??? or will we always be using double for calculations??
+  distanceThreshold->SetOutsideValue(0.0);
+
+
+
   //Write the distance map to a file so we can see what it did:
-  WriteImage(distanceMapFileName, distanceMapFilter->GetOutput());
+  WriteImage(distanceMapFileName, distanceThreshold->GetOutput());
 
   //Try to scale distance map
   typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> ScalingFilterType;
   ScalingFilterType::Pointer distanceMapScaler = ScalingFilterType::New();
-  distanceMapScaler->SetInput(distanceMapFilter->GetOutput());
+  distanceMapScaler->SetInput(distanceThreshold->GetOutput());
   distanceMapScaler->SetConstant(scaleDistanceMap);
 
   //Perform some kind of BSpline on Image

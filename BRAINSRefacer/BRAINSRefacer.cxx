@@ -61,7 +61,7 @@ void WriteSmartImage(std::string filename, typename TImageType::Pointer image)
 }
 // One ugly function
 template< typename TInputImageType, int TDimension>
-int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType IOCompenentType);
+int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType InputComponentType);
 
 
 
@@ -213,8 +213,8 @@ int main(int argc, char **argv)
   resampler->SetInput(imageReader->GetOutput());
   resampler->SetTransform(finalTransform);
 
-  WriteImage(deformedImageName, resampler->GetOutput());
-  ConvertAndSave<ProcessImageType, Dimension>( "deformedOriginalType.nii.gz", resampler->GetOutput(), originalComponentType_ENUM);
+  //WriteImage(deformedImageName, resampler->GetOutput());
+  ConvertAndSave<ProcessImageType, Dimension>( deformedImageName, resampler->GetOutput(), originalComponentType_ENUM);
 
   //Get the difference image
   typedef itk::SubtractImageFilter<ProcessImageType, ProcessImageType> SubtractFilter;
@@ -247,9 +247,9 @@ void CastAndWriteImage( std::string fileName, typename TInputImageType::Pointer 
 }
 
 template< typename TInputImageType, int TDimension>
-int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType IOCompenentType)
+int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType OutputComponentType_ENUM)
 {
-  switch( IOCompenentType )
+  switch( OutputComponentType_ENUM )
     {
 
     //INTEGER like types  --- round and write
@@ -335,7 +335,7 @@ int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image
 
     default:
       {
-      std::cerr << "Unprocessed Case: " << itk::ImageIOBase::GetComponentTypeAsString(IOCompenentType) << std::endl;
+      std::cerr << "Unprocessed Case: " << itk::ImageIOBase::GetComponentTypeAsString(OutputComponentType_ENUM) << std::endl;
       return EXIT_FAILURE;
       }
     }

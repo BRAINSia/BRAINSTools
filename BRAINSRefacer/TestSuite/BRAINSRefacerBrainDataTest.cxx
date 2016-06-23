@@ -62,14 +62,14 @@ int main(int argc, char *argv[])
   //These: \/\/ are only used if using a labelmap Mask.
   LabelMaskFilterType::Pointer originalMaskFilter = LabelMaskFilterType::New();
   LabelMaskFilterType::Pointer defacedMaskFilter = LabelMaskFilterType::New();
+  ReaderType::Pointer labelmapReader = ReaderType::New();
+  ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
   if( labelmapSwitch == true )
     {
     std::cout << "Using LabelMap based mask" << std::endl;
-    ReaderType::Pointer labelmapReader = ReaderType::New();
     labelmapReader->SetFileName(brainLabelMap);
 
     // Create labelmap from label image
-    ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
     imageToMapFilter->SetInput(labelmapReader->GetOutput());
 
     //Mask the images leaving only the brain

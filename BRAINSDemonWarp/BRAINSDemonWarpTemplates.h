@@ -39,6 +39,7 @@
 #include "itkArray.h"
 
 #include "BRAINSCommonLib.h"
+#include "BRAINSTypes.h"
 
 #include "BRAINSDemonWarpCommonLibWin32Header.h"
 #include "GenericTransformImage.h"

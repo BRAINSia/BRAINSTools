@@ -28,7 +28,11 @@
 #include "CombineBSplineWithDisplacement.h"
 #include "MaskFromLandmarks.h"
 
-//Convienience function to write images
+
+#include "itkCastImageFilter.h"
+#include "itkRoundImageFilter.h"
+
+//Convenience function to write images
 template< typename TImageType >
 void WriteImage(std::string filename, TImageType *image)
 {
@@ -42,7 +46,7 @@ void WriteImage(std::string filename, TImageType *image)
   std::cout << "\tdone writing Image: " << filename << std::endl;
 }
 
-//Convienience function to write images
+//Convenience function to write images
 template< typename TImageType >
 void WriteSmartImage(std::string filename, typename TImageType::Pointer image)
 {
@@ -55,6 +59,10 @@ void WriteSmartImage(std::string filename, typename TImageType::Pointer image)
   fileWriter->Update();
   std::cout << "\tdone writing Image: " << filename << std::endl;
 }
+// One ugly function
+template< typename TInputImageType, int TDimension>
+int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType IOCompenentType);
+
 
 
 //Convienience function to write transforms
@@ -78,19 +86,28 @@ int main(int argc, char **argv)
   PARSE_ARGS;
 
   //Basic typedef's
-  typedef  double PixelType;
-  const unsigned int Dimension = 3;
-  typedef itk::Image<PixelType, Dimension> ImageType;
+  typedef  double                                                                 ProcessPixelType;
+  const unsigned int                                                              Dimension = 3;
+  typedef itk::Image<ProcessPixelType, Dimension>                                 ProcessImageType;
 
   //Read in subject image
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  typedef itk::ImageFileReader<ProcessImageType> ImageReaderType;
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName(inputImage);
-  ImageType::Pointer subject = imageReader->GetOutput();
+  ProcessImageType::Pointer subject = imageReader->GetOutput();
   imageReader->Update();
 
+  //Read the original image format
+
+  itk::ImageIOBase::Pointer imageReaderIOBase = imageReader->GetImageIO();
+  imageReaderIOBase->ReadImageInformation();
+  // Note that in ImageIOBase pixel type refers to vector/scalar
+  // component type refers to INT, LONG, FLOAT, etc.
+  typedef itk::ImageIOBase::IOComponentType                                       IOComponentType;
+  const IOComponentType originalComponentType_ENUM = imageReaderIOBase->GetComponentType();
+
   //Read in the atlas label file
-  //typedef itk::Image<PixelType, Dimension> LabelAtlasType;
+  //typedef itk::Image<ProcessPixelType, Dimension> LabelAtlasType;
   //typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
   //LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
   //labelAtlasReader->SetFileName(labelmap);
@@ -100,7 +117,7 @@ int main(int argc, char **argv)
   //Read in the landmarks file
   LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
 
-  typedef MaskFromLandmarks<ImageType> MaskFromLandmarks;
+  typedef MaskFromLandmarks<ProcessImageType> MaskFromLandmarks;
   MaskFromLandmarks::Pointer masker = MaskFromLandmarks::New();
 
   masker->printHello();
@@ -108,39 +125,19 @@ int main(int argc, char **argv)
   masker->SetInput(subject);
   masker->SetLandmarksFileName(landmarks);
 
-  //WriteSmartImage<MaskAtlasType>("/scratch/aleinoff/temp/maskTest1.nii.gz", masker->GetOutput());
-
-
-
-  //Turn Label map into binary image. Use a threshold Image filter?? or brainscut?
-  //Write a new filter for this??
-  //typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
-
-  /*use landmark mask
-  typedef itk::BinaryThresholdImageFilter< LabelAtlasType, MaskAtlasType>  MaskFilterType;
-  MaskFilterType::Pointer maskFilter = MaskFilterType::New();
-
-  maskFilter->SetInput( labelAtlasReader->GetOutput() );
-  maskFilter->SetOutsideValue(1);
-  maskFilter->SetInsideValue(0);
-  maskFilter->SetLowerThreshold(0);
-  maskFilter->SetUpperThreshold(0);
-   */
-
-
   //Write to a file
   MaskAtlasType::Pointer maskAtlas = masker->GetOutput();
   masker->Update();
   WriteImage<MaskAtlasType>(outputMask, maskAtlas);
   //Get a distance map to the Brain region:
-  //typedef itk::DanielssonDistanceMapImageFilter<MaskAtlasType, ImageType, ImageType> DistanceMapFilter;
-  typedef itk::SignedMaurerDistanceMapImageFilter<MaskAtlasType, ImageType> DistanceMapFilter;
+  typedef itk::SignedMaurerDistanceMapImageFilter<MaskAtlasType, ProcessImageType> DistanceMapFilter;
+
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
   distanceMapFilter->SetInput(maskAtlas);
   distanceMapFilter->SetSquaredDistance(false);
 
   //make the distance map unsigned:
-  typedef itk::ThresholdImageFilter<ImageType> ThresholdFilterType;
+  typedef itk::ThresholdImageFilter<ProcessImageType> ThresholdFilterType;
   ThresholdFilterType::Pointer distanceThreshold = ThresholdFilterType::New();
   distanceThreshold->SetInput(distanceMapFilter->GetOutput());
   distanceThreshold->SetLower(0.0);
@@ -153,7 +150,7 @@ int main(int argc, char **argv)
   WriteImage(distanceMapFileName, distanceThreshold->GetOutput());
 
   //Try to scale distance map
-  typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> ScalingFilterType;
+  typedef itk::MultiplyImageFilter<ProcessImageType, ProcessImageType, ProcessImageType> ScalingFilterType;
   ScalingFilterType::Pointer distanceMapScaler = ScalingFilterType::New();
   distanceMapScaler->SetInput(distanceThreshold->GetOutput());
   distanceMapScaler->SetConstant(scaleDistanceMap);
@@ -161,7 +158,7 @@ int main(int argc, char **argv)
   //Perform some kind of BSpline on Image
   const int BSplineOrder = 3;
 
-  typedef CreateRandomBSpline<ImageType, PixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
+  typedef CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
   BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();
   bSplineCreator->SetInput(subject);
   bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
@@ -170,15 +167,15 @@ int main(int argc, char **argv)
   bSplineCreator->SetRandScale(scaleRandom);
   bSplineCreator->Update();
 
-  typedef itk::BSplineTransform<PixelType, Dimension, BSplineOrder> BSTransformType;
+  typedef itk::BSplineTransform<ProcessPixelType, Dimension, BSplineOrder> BSTransformType;
   BSTransformType::Pointer bSpline = bSplineCreator->GetBSplineOutput();
 
   WriteTransform(bSplineFileName, bSpline);
-//return 0;
-  typedef itk::Vector<PixelType, Dimension > VectorPixelType;
-  typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldImageType;
 
-  typedef CombineBSplineWithDisplacement<ImageType, DisplacementFieldImageType, PixelType, 3,3> CombinerType;
+  typedef itk::Vector<ProcessPixelType, Dimension > VectorPixelType;
+  typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldProcessImageType;
+
+  typedef CombineBSplineWithDisplacement<ProcessImageType, DisplacementFieldProcessImageType, ProcessPixelType, 3,3> CombinerType;
 
   CombinerType::Pointer combiner = CombinerType::New();
   combiner->SetBSplineInput(bSpline);
@@ -187,22 +184,10 @@ int main(int argc, char **argv)
   combiner->Update();
 
   //write the new displacement image
-  DisplacementFieldImageType* composedDisplacementField_rawPtr = combiner->GetComposedImage();
+  DisplacementFieldProcessImageType* composedDisplacementField_rawPtr = combiner->GetComposedImage();
   WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
 
-
-#if 0
-  //write composed displacement field into a displacement transform
-  std::cout<<"printing composed image info" <<std::endl;
-  combiner->GetComposedImage()->Print(std::cerr,5);
-  std::cout<<"done printing composed image" <<std::endl;
-
-  std::cout<<"printing distance map info" <<std::endl;
-  combiner->GetDistanceMap()->Print(std::cerr, 0);
-  std::cout<<"done printing distance map" <<std::endl;
-#endif
-
-  typedef itk::DisplacementFieldTransform<PixelType, Dimension> FinalTransformType;
+  typedef itk::DisplacementFieldTransform<ProcessPixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
   finalTransform->SetDisplacementField(composedDisplacementField_rawPtr);
   finalTransform->Print(std::cerr,5);
@@ -210,13 +195,13 @@ int main(int argc, char **argv)
   WriteTransform(finalTransformFileName, finalTransform);
 
   // Apply transform to image with resampler:
-  typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
+  typedef itk::ResampleImageFilter<ProcessImageType, ProcessImageType> ResampleFilterType;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
-  typedef itk::LinearInterpolateImageFunction<ImageType, PixelType > InterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<ProcessImageType, ProcessPixelType > InterpolatorType;
   InterpolatorType::Pointer interpolater = InterpolatorType::New();
 
-  ImageType::RegionType subjectRegion = subject->GetBufferedRegion();
+  ProcessImageType::RegionType subjectRegion = subject->GetBufferedRegion();
 
   resampler->SetInterpolator(interpolater);
   resampler->SetOutputSpacing(subject->GetSpacing());
@@ -229,9 +214,10 @@ int main(int argc, char **argv)
   resampler->SetTransform(finalTransform);
 
   WriteImage(deformedImageName, resampler->GetOutput());
+  ConvertAndSave<ProcessImageType, Dimension>( "deformedOriginalType.nii.gz", resampler->GetOutput(), originalComponentType_ENUM);
 
   //Get the difference image
-  typedef itk::SubtractImageFilter<ImageType, ImageType> SubtractFilter;
+  typedef itk::SubtractImageFilter<ProcessImageType, ProcessImageType> SubtractFilter;
   SubtractFilter::Pointer subtractFilter = SubtractFilter::New();
   subtractFilter->SetInput1(subject);
   subtractFilter->SetInput2(resampler->GetOutput());
@@ -240,6 +226,119 @@ int main(int argc, char **argv)
   WriteImage( diffImageName, subtractFilter->GetOutput());
 
   std::cout << "done" << std::endl;
+
+  return EXIT_SUCCESS;
+}
+
+template<typename TInputImageType, typename TOutputImageType>
+void RoundAndWriteImage( std::string fileName, typename TInputImageType::Pointer image)
+{
+  auto rounder = itk::RoundImageFilter<TInputImageType, TOutputImageType>::New();
+  rounder->SetInput(image);
+  WriteSmartImage<TOutputImageType>(fileName, rounder->GetOutput());
+}
+
+template<typename TInputImageType, typename TOutputImageType>
+void CastAndWriteImage( std::string fileName, typename TInputImageType::Pointer image)
+{
+  auto caster = itk::CastImageFilter<TInputImageType, TOutputImageType>::New();
+  caster->SetInput(image);
+  WriteSmartImage<TOutputImageType>(fileName, caster->GetOutput());
+}
+
+template< typename TInputImageType, int TDimension>
+int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType IOCompenentType)
+{
+  switch( IOCompenentType )
+    {
+
+    //INTEGER like types  --- round and write
+    case itk::ImageIOBase::SHORT:
+      {
+      typedef itk::Image<short, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::UCHAR:
+      {
+      typedef itk::Image<unsigned char, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::CHAR:
+      {
+      typedef itk::Image<char, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::USHORT:
+      {
+      typedef itk::Image<unsigned short, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::UINT:
+      {
+      typedef itk::Image<unsigned int, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType> (fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::INT:
+      {
+      typedef itk::Image<int, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType> (fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::ULONG:
+      {
+      typedef itk::Image<unsigned long, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType> (fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::LONG:
+      {
+      typedef itk::Image<long, TDimension> OutputType;
+      RoundAndWriteImage<TInputImageType, OutputType> (fileName, image);
+      break;
+      }
+
+
+    //FLOAT LIKE TYPES --- cast and write
+    case itk::ImageIOBase::FLOAT:
+      {
+      typedef itk::Image<float, TDimension> OutputType;
+      CastAndWriteImage<TInputImageType, OutputType> (fileName, image);
+      break;
+      }
+
+    case itk::ImageIOBase::DOUBLE:
+      {
+      typedef itk::Image<double, TDimension> OutputType;
+      CastAndWriteImage<TInputImageType, OutputType> (fileName, image);
+      break;
+      }
+
+
+    //ERROR producing cases
+    case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      {
+      std::cerr << "Unknown component type: ..." << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    default:
+      {
+      std::cerr << "Unprocessed Case: " << itk::ImageIOBase::GetComponentTypeAsString(IOCompenentType) << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
 
   return EXIT_SUCCESS;
 }

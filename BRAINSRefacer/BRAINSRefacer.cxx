@@ -19,8 +19,6 @@
 #include <itkComposeImageFilter.h>
 #include <itkDisplacementFieldTransform.h>
 #include <itkSubtractImageFilter.h>
-#include <map>
-#include <string>
 #include <itkSignedMaurerDistanceMapImageFilter.h>
 #include <itkThresholdImageFilter.h>
 
@@ -29,18 +27,7 @@
 #include "MaskFromLandmarks.h"
 #include "BRAINSRefacerUtilityFunctions.hxx"
 
-
-#include "itkCastImageFilter.h"
-#include "itkRoundImageFilter.h"
-//#include "BRAINSRefacerUtilityFunctions.hxx"  //Why does this not need to be included??
-
-
-
-
-// One ugly function
-template< typename TInputImageType, int TDimension>
-int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image, itk::ImageIOBase::IOComponentType InputComponentType);
-
+#include "BRAINSRefacerUtilityFunctions.hxx"  //Why does this not need to be included??
 
 
 int main(int argc, char **argv)
@@ -79,11 +66,8 @@ int main(int argc, char **argv)
   //Read in the landmarks file
   LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
 
-  typedef MaskFromLandmarks<ProcessImageType> MaskFromLandmarks;
-  MaskFromLandmarks::Pointer masker = MaskFromLandmarks::New();
-
-  masker->printHello();
-
+  typedef MaskFromLandmarks<ProcessImageType> MaskFromLandmarksType;
+  MaskFromLandmarksType::Pointer masker = MaskFromLandmarksType::New();
   masker->SetInput(subject);
   masker->SetLandmarksFileName(landmarks);
 
@@ -152,7 +136,6 @@ int main(int argc, char **argv)
   typedef itk::DisplacementFieldTransform<ProcessPixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
   finalTransform->SetDisplacementField(composedDisplacementField_rawPtr);
-  finalTransform->Print(std::cerr,5);
 
   WriteTransform(finalTransformFileName, finalTransform);
 

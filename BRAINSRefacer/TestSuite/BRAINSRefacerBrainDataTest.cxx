@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
   typedef itk::Image<unsigned char, Dimension >                                     MaskImageType;
 
   typedef itk::ImageFileReader<ImageType>                                           ReaderType;
-  typedef itk::ImageFileWriter<ImageType>                                           WriterType;
 
   typedef itk::LabelObject< InputPixelType, Dimension >                             LabelObjectType;
   typedef itk::LabelMap< LabelObjectType >                                          LabelMapType;

@@ -174,4 +174,13 @@
       </constraints>
     </integer>
   </parameters>
+  <parameters>
+    <label>LabelMap or landmarks based mask</label>
+    <boolean>
+      <name>labelmapSwitch</name>
+      <label>Use labelmap-based mask</label>
+      <longflag>--labelmapMask</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
 </executable>

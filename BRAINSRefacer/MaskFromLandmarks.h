@@ -130,12 +130,6 @@ protected:
       }
   }
 
-
-public:
-  void printHello()
-  {
-    std::cout << "hello from MaskFromLandmarks" << std::endl;
-  }
 private:
   std::string      m_LandmarksFileName;
 

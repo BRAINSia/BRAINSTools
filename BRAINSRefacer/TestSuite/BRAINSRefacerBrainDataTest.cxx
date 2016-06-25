@@ -46,16 +46,40 @@ int main(int argc, char *argv[])
   ReaderType::Pointer defacedReader = ReaderType::New();
   defacedReader->SetFileName(inputRefaced);
 
-  typedef MaskFromLandmarksFilter<ImageType, MaskImageType> MaskImageFromLandmarks;
-  MaskImageFromLandmarks::Pointer landmarkReaderOriginal = MaskImageFromLandmarks::New();
-  landmarkReaderOriginal->SetLandmarksFileName(brainLandmarksFile);
-  landmarkReaderOriginal->SetInput(originalReader->GetOutput());
 
-  //labelmapSwitch = true;
+  typedef MaskFromLandmarksFilter<ImageType, MaskImageType> MaskImageFromLandmarksFilterType;
+  typedef itk::MultiplyImageFilter<MaskImageType, ImageType, ImageType> MaskMultiplyerType;
 
-  MaskImageFromLandmarks::Pointer landmarkReaderDefaced = MaskImageFromLandmarks::New();
-  landmarkReaderDefaced->SetLandmarksFileName(brainLandmarksFile);
-  landmarkReaderDefaced->SetInput(defacedReader->GetOutput());
+  MaskImageFromLandmarksFilterType::Pointer landmarkReaderOriginal = MaskImageFromLandmarksFilterType::New();
+  MaskImageFromLandmarksFilterType::Pointer landmarkReaderDefaced = MaskImageFromLandmarksFilterType::New();
+  MaskMultiplyerType::Pointer defacedMaskMultiplier = MaskMultiplyerType::New();
+  MaskMultiplyerType::Pointer originalMaskMultiplier = MaskMultiplyerType::New();
+
+  if( labelmapSwitch == false )
+    {
+    landmarkReaderOriginal->SetLandmarksFileName(brainLandmarksFile);
+    landmarkReaderOriginal->SetInput(originalReader->GetOutput());
+    if( checkNonBrainData == true )
+      {
+      landmarkReaderOriginal->SetReverseMask(true);
+      }
+
+    //labelmapSwitch = true;
+
+    landmarkReaderDefaced->SetLandmarksFileName(brainLandmarksFile);
+    landmarkReaderDefaced->SetInput(defacedReader->GetOutput());
+    if( checkNonBrainData == true )
+      {
+      landmarkReaderDefaced->SetReverseMask(true);
+      }
+
+    //multiply the images by the mask
+    defacedMaskMultiplier->SetInput1(landmarkReaderDefaced->GetOutput());
+    defacedMaskMultiplier->SetInput2(defacedReader->GetOutput());
+
+    originalMaskMultiplier->SetInput1(landmarkReaderOriginal->GetOutput());
+    originalMaskMultiplier->SetInput2(originalReader->GetOutput());
+    }
 
   //These: \/\/ are only used if using a labelmap Mask.
   LabelMaskFilterType::Pointer originalMaskFilter = LabelMaskFilterType::New();
@@ -64,6 +88,10 @@ int main(int argc, char *argv[])
   ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
   if( labelmapSwitch == true )
     {
+    if( checkNonBrainData )
+      {
+      std::cerr << "ERR: checkNonBrainData is not yet implemented when checking using labelMaps." << std::endl;
+      }
     std::cout << "Using LabelMap based mask" << std::endl;
     labelmapReader->SetFileName(brainLabelMap);
 
@@ -86,16 +114,6 @@ int main(int argc, char *argv[])
     defacedMaskFilter->SetNegated(true);
     defacedMaskFilter->SetBackgroundValue(0);
     }
-
-  //multiply the images by the mask
-  typedef itk::MultiplyImageFilter<MaskImageType, ImageType, ImageType > MaskMultiplyerType;
-  MaskMultiplyerType::Pointer defacedMaskMultiplier = MaskMultiplyerType::New();
-  defacedMaskMultiplier->SetInput1(landmarkReaderDefaced->GetOutput());
-  defacedMaskMultiplier->SetInput2(defacedReader->GetOutput());
-
-  MaskMultiplyerType::Pointer originalMaskMultiplier = MaskMultiplyerType::New();
-  originalMaskMultiplier->SetInput1(landmarkReaderOriginal->GetOutput());
-  originalMaskMultiplier->SetInput2(originalReader->GetOutput());
 
   AbsValDiffFilterType::Pointer absDiffFilter = AbsValDiffFilterType::New();
 
@@ -123,10 +141,18 @@ int main(int argc, char *argv[])
 
     if( absDiffSum == 0 )
       {
+      if( checkNonBrainData )
+        {
+        return EXIT_FAILURE;  //We want the non brain difference to be > 0
+        }
       return EXIT_SUCCESS;
       }
     else
       {
+      if( checkNonBrainData )
+        {
+        return EXIT_SUCCESS;
+        }
       return EXIT_FAILURE;
       }
 

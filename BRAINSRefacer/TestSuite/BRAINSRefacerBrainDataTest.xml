@@ -56,4 +56,14 @@
       <default>false</default>
     </boolean>
   </parameters>
+  <parameters>
+    <label>Check to see if non-brain data has changed</label>
+    <boolean>
+      <name>checkNonBrainData</name>
+      <label>checkNonBrainData</label>
+      <longflag>--checkNonBrainData</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+
 </executable>

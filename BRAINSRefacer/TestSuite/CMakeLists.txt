@@ -36,12 +36,35 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest
     ${RefacerTestData_DIR}/finalTransform.h5
   )
 
-set(PARENT_TEST BRAINSRefacerTest_RunTest)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest_Labelmap
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
+  BRAINSRefacerTest
+  --inputImage
+    ${RefacerTestData_DIR}/t1_average_BRAINSABC.nii.gz
+  --labelmap
+    ${RefacerTestData_DIR}/JointFusion_HDAtlas20_2015_dustCleaned_label.nii
+  --deformedImageName
+    ${RefacerTestData_DIR}/LabelMap_defacedSubject.nii.gz
+  --outputMask
+    ${RefacerTestData_DIR}/LabelMap_outputMask.nii.gz
+  --distanceMapFileName
+    ${RefacerTestData_DIR}/LabelMap_distanceMap.nii.gz
+  --bSplineFileName
+    ${RefacerTestData_DIR}/LabelMap_bSpline.h5
+  --smoothDisplacementName
+    ${RefacerTestData_DIR}/LabelMap_bSplineTimesDistanceMap.nii.gz
+  --diffImageName
+    ${RefacerTestData_DIR}/LabelMap_diffImage.nii.gz
+  --finalTransformFileName
+    ${RefacerTestData_DIR}/LabelMap_finalTransform.h5
+  --labelmapMask
+  )
+set(PARENT_TEST BRAINSRefacerTest_RunTest_Labelmap)
 set(RefacerTestName BRAINSRefacerBrainDataTest_LabelMapMask)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
         COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerBrainDataTest>
         --inputOriginal ${RefacerTestData_DIR}/t1_average_BRAINSABC.nii.gz
-        --inputRefaced ${RefacerTestData_DIR}/defacedSubject.nii.gz
+        --inputRefaced ${RefacerTestData_DIR}/LabelMap_defacedSubject.nii.gz
         --labelmap ${RefacerTestData_DIR}/JointFusion_HDAtlas20_2015_dustCleaned_label.nii.gz
         --labelmapMask
   )
@@ -57,14 +80,30 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
   )
 set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
+# check to see that non brain data changed
+set(PARENT_TEST BRAINSRefacerTest_RunTest)
+set(RefacerTestName BRAINSRefacerBrainDataTest_didFaceChange)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
+        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerBrainDataTest>
+        --inputOriginal ${RefacerTestData_DIR}/t1_average_BRAINSABC.nii.gz
+        --inputRefaced ${RefacerTestData_DIR}/defacedSubject.nii.gz
+        --landmarks ${RefacerTestData_DIR}/BCD_ACPC_Landmarks.fcsv
+        --checkNonBrainData
+        )
+set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+
 #try running with different sets of data
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest2
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
   BRAINSRefacerTest
   --inputImage
-  ${RefacerTestData_DIR}/DONOTSHARE/0006/t1_average_BRAINSABC.nii.gz
+  ${RefacerTestData_DIR}/DONOTSHARE/0005/t1_average_BRAINSABC.nii.gz
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0005/complete_brainlabels_seg.nii.gz
   --landmarks
-  ${RefacerTestData_DIR}/DONOTSHARE/0006/BCD_ACPC_Landmarks.fcsv
+
+  ${RefacerTestData_DIR}/DONOTSHARE/0005/BCD_ACPC_Landmarks.fcsv
   --deformedImageName
   ${RefacerTestData_DIR}/RunTest2_defacedSubject.nii.gz
   --outputMask
@@ -79,10 +118,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest2
   ${RefacerTestData_DIR}/RunTest2_diffImage.nii.gz
   --finalTransformFileName
   ${RefacerTestData_DIR}/RunTest2_finalTransform.h5
+  --labelmapMask
   )
 
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest3
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest3_labelmap
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
   BRAINSRefacerTest
   --inputImage
@@ -103,8 +143,34 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest3
   ${RefacerTestData_DIR}/RunTest3_diffImage.nii.gz
   --finalTransformFileName
   ${RefacerTestData_DIR}/RunTest3_finalTransform.h5
+  --labelmapMask
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/complete_brainlabels_seg.nii.gz
   )
 
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest3_landmark
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
+  BRAINSRefacerTest
+  --inputImage
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/t2_average_BRAINSABC.nii.gz
+  --landmarks
+  ${RefacerTestData_DIR}/DONOTSHARE/0006/BCD_ACPC_Landmarks.fcsv
+  --deformedImageName
+  ${RefacerTestData_DIR}/RunTest3_landmark_defacedSubject.nii.gz
+  --outputMask
+  ${RefacerTestData_DIR}/RunTest3_landmark_outputMask.nii.gz
+  --distanceMapFileName
+  ${RefacerTestData_DIR}/RunTest3_landmark_distanceMap.nii.gz
+  --bSplineFileName
+  ${RefacerTestData_DIR}/RunTest3_landmark_bSpline.h5
+  --smoothDisplacementName
+  ${RefacerTestData_DIR}/RunTest3_landmark_bSplineTimesDistanceMap.nii.gz
+  --diffImageName
+  ${RefacerTestData_DIR}/RunTest3_landmark_diffImage.nii.gz
+  --finalTransformFileName
+  ${RefacerTestData_DIR}/RunTest3_landmark_finalTransform.h5
+
+  )
 
 #try running with different sets of data
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest4
@@ -128,6 +194,9 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest4
   ${RefacerTestData_DIR}/RunTest4_diffImage.nii.gz
   --finalTransformFileName
   ${RefacerTestData_DIR}/RunTest4_finalTransform.h5
+  --labelmapMask
+  --labelmap
+  ${RefacerTestData_DIR}/DONOTSHARE/0007/complete_brainlabels_seg.nii.gz
   )
 
 

@@ -21,6 +21,9 @@
 #include <itkSubtractImageFilter.h>
 #include <itkSignedMaurerDistanceMapImageFilter.h>
 #include <itkThresholdImageFilter.h>
+#include <itkTransformFileReader.h>
+#include <itkCompositeTransform.h>
+#include <itkTransformFactory.h>
 
 #include "CreateRandomBSpline.h"
 #include "CombineBSplineWithDisplacement.h"
@@ -55,25 +58,68 @@ int main(int argc, char **argv)
   typedef itk::ImageIOBase::IOComponentType                                       IOComponentType;
   const IOComponentType originalComponentType_ENUM = imageReaderIOBase->GetComponentType();
 
-  //Read in the atlas label file
-  //typedef itk::Image<ProcessPixelType, Dimension> LabelAtlasType;
-  //typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
-  //LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
-  //labelAtlasReader->SetFileName(labelmap);
 
   typedef itk::Image<unsigned char, Dimension> ImageMaskType;
+  ImageMaskType::Pointer brainMask = ImageMaskType::New();
 
-  //Read in the landmarks file
-  LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
+  //Read in the atlas label file
+  typedef itk::Image<ProcessPixelType, Dimension> LabelAtlasType;
+  typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
+  LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
+  typedef itk::BinaryThresholdImageFilter< LabelAtlasType, ImageMaskType>  MaskFilterType;
+  MaskFilterType::Pointer maskFilter = MaskFilterType::New();
+  LabelAtlasType::Pointer labelAtlasReaderOutput = LabelAtlasType::New();
 
-  typedef MaskFromLandmarksFilter<ProcessImageType, ImageMaskType> MaskFromLandmarksFilterType;
-  MaskFromLandmarksFilterType::Pointer masker = MaskFromLandmarksFilterType::New();
-  masker->SetInput(subject);
-  masker->SetLandmarksFileName(landmarks);
+  if( labelmapSwitch == false )
+    {
 
-  //Write to a file
-  ImageMaskType::Pointer brainMask = masker->GetOutput();
-  masker->Update();
+    //Read in the landmarks file
+    LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
+
+    typedef MaskFromLandmarksFilter<ProcessImageType, ImageMaskType> MaskFromLandmarksFilterType;
+    MaskFromLandmarksFilterType::Pointer masker = MaskFromLandmarksFilterType::New();
+    masker->SetInput(subject);
+    masker->SetLandmarksFileName(landmarks);
+
+    //Write to a file
+    brainMask = masker->GetOutput();
+    masker->Update();
+    }
+  else
+    {
+
+
+    labelAtlasReader->SetFileName(labelmap);
+    labelAtlasReaderOutput = labelAtlasReader->GetOutput();
+    labelAtlasReader->Update();
+
+    //resample LabelImage
+    typedef itk::NearestNeighborInterpolateImageFunction<LabelAtlasType, double>    NN_InterpolatorType;
+    NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
+
+    typedef itk::IdentityTransform<double, Dimension>                               IdentityTransformType;
+    IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
+
+
+    typedef itk::ResampleImageFilter<LabelAtlasType, LabelAtlasType>      maskResamplerType;
+    maskResamplerType::Pointer maskResampler = maskResamplerType::New();
+    maskResampler->SetInput(labelAtlasReader->GetOutput());
+    maskResampler->SetInterpolator(NN_interpolator);
+    maskResampler->SetTransform(identityTransform);
+    maskResampler->SetReferenceImage(subject);
+    maskResampler->UseReferenceImageOn();
+    maskResampler->Update();
+
+    maskFilter->SetInput( maskResampler->GetOutput() );
+    maskFilter->SetOutsideValue(1);
+    maskFilter->SetInsideValue(0);
+    maskFilter->SetLowerThreshold(0);
+    maskFilter->SetUpperThreshold(0);
+
+
+    brainMask = maskFilter->GetOutput();
+    brainMask->Update();
+    }
   WriteImage<ImageMaskType>(outputMask, brainMask);
   //Get a distance map to the Brain region:
   typedef itk::SignedMaurerDistanceMapImageFilter<ImageMaskType, ProcessImageType> DistanceMapFilter;
@@ -81,6 +127,8 @@ int main(int argc, char **argv)
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
   distanceMapFilter->SetInput(brainMask);
   distanceMapFilter->SetSquaredDistance(false);
+  ProcessImageType::Pointer myDistanceMapFilterImage = distanceMapFilter->GetOutput();
+  distanceMapFilter->Update();
 
   //make the distance map unsigned:
   typedef itk::ThresholdImageFilter<ProcessImageType> ThresholdFilterType;
@@ -90,33 +138,80 @@ int main(int argc, char **argv)
   distanceThreshold->SetUpper(4096);  //TODO: This should be changed to the max pixel value for the image type??? or will we always be using double for calculations??
   distanceThreshold->SetOutsideValue(0.0);
 
-
-
   //Write the distance map to a file so we can see what it did:
   WriteImage(distanceMapFileName, distanceThreshold->GetOutput());
+  ProcessImageType::Pointer myDistanceMapPreScaled = distanceThreshold->GetOutput();
+  distanceThreshold->Update();
 
   //Try to scale distance map
   typedef itk::MultiplyImageFilter<ProcessImageType, ProcessImageType, ProcessImageType> ScalingFilterType;
   ScalingFilterType::Pointer distanceMapScaler = ScalingFilterType::New();
-  distanceMapScaler->SetInput(distanceThreshold->GetOutput());
+  distanceMapScaler->SetInput(myDistanceMapPreScaled);
   distanceMapScaler->SetConstant(scaleDistanceMap);
+
+  ProcessImageType::Pointer scaledDistanceMap = distanceMapScaler->GetOutput();
+  distanceMapScaler->Update();
 
   //Perform some kind of BSpline on Image
   const int BSplineOrder = 3;
 
   typedef CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
   BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();
-  bSplineCreator->SetInput(subject);
-  bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
-  bSplineCreator->SetRandMax(maxRandom);
-  bSplineCreator->SetRandMin(minRandom);
-  bSplineCreator->SetRandScale(scaleRandom);
-  bSplineCreator->Update();
-
   typedef itk::BSplineTransform<ProcessPixelType, Dimension, BSplineOrder> BSTransformType;
-  BSTransformType::Pointer bSpline = bSplineCreator->GetBSplineOutput();
+  BSTransformType::Pointer bSpline = BSTransformType::New();
 
-  WriteTransform(bSplineFileName, bSpline);
+  //Stuff for reading in bspline transform
+  typedef itk::TransformFileReaderTemplate< double > TransformReaderType;
+  TransformReaderType::Pointer transformReader = TransformReaderType::New();
+
+
+  if(!reuseBSplineSwitch)
+    {
+    std::cout << "Generating brand new BSPline" << std::endl;
+    bSplineCreator->SetInput(subject);
+    bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
+    bSplineCreator->SetRandMax(maxRandom);
+    bSplineCreator->SetRandMin(minRandom);
+    bSplineCreator->SetRandScale(scaleRandom);
+    bSplineCreator->Update();
+    bSpline = bSplineCreator->GetBSplineOutput();
+    WriteTransform(bSplineFileName, bSpline);
+    }
+  else if (reuseBSplineSwitch)
+    {
+    std::cout << "Reusing BSpline" << std::endl;
+    transformReader->SetFileName(previousBSplineFileName);
+
+    //try catch for ioreader
+    try
+      {
+      transformReader->Update();
+      }
+    catch(itk::ExceptionObject & exception)
+      {
+      std::cerr << "Error while reading the transform file" << std::endl;
+      std::cerr << exception <<std::endl;
+      return EXIT_FAILURE;
+      }
+    const TransformReaderType::TransformListType * transforms = transformReader->GetTransformList();
+    typedef itk::CompositeTransform<double, 3> ReadCompositeTransformType;
+    TransformReaderType::TransformListType::const_iterator comp_it = transforms->begin();
+    if( strcmp((*comp_it)->GetNameOfClass(), "BSplineTransform") != 0 )
+      {
+      std::cerr << "Invalid transform given" << std::endl;
+      std::cerr << "Transform type given was: " << std::endl;
+      std::cerr << (*comp_it)->GetNameOfClass() << std::endl;
+      std::cerr << "You should only supply BSplineTransforms" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    ReadCompositeTransformType::Pointer compositeRead = static_cast<ReadCompositeTransformType *> ( (*comp_it).GetPointer() );
+
+    // create a new bspline with the params from the composite that we read in.
+    bSpline->SetFixedParameters(compositeRead->GetFixedParameters());
+    bSpline->SetParameters(compositeRead->GetParameters());
+    }
+
 
   typedef itk::Vector<ProcessPixelType, Dimension > VectorPixelType;
   typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldProcessImageType;

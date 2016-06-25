@@ -15,13 +15,10 @@ class MaskFromLandmarksFilter
   : public itk::ImageToImageFilter< TInputImage, TInputMask>
 {
 public:
-
-
   typedef MaskFromLandmarksFilter Self;
   typedef itk::SmartPointer<Self> Pointer;
 
  // const unsigned int Dimension = 3;
-
 
   itkNewMacro(Self);
   itkTypeMacro(Self, ImageToImageFilter)
@@ -29,12 +26,14 @@ public:
   //this doesn't work?? why not ?? \/\/
   //itkSetMacro(Landmarks, LandmarksMapType)
   itkSetMacro(LandmarksFileName, std::string)
-
+  itkSetMacro(ReverseMask, bool)
 
 protected:
-  MaskFromLandmarksFilter() {};
+  MaskFromLandmarksFilter()
+  {
+    this->m_ReverseMask = false;
+  }
   ~MaskFromLandmarksFilter() {};
-
 
   void GenerateData() ITK_OVERRIDE
   {
@@ -104,7 +103,8 @@ protected:
     outputIterator.GoToBegin();
 
     // go through image to see if pixel is in mask or not??
-
+    unsigned char maskVal = this->m_ReverseMask ? 0 : 1;
+    unsigned char unMaskVal = this->m_ReverseMask ? 1 : 0;
     while(!inputIterator.IsAtEnd())
       {
       PointType currentPoint;
@@ -118,13 +118,12 @@ protected:
 
       if( d > cross * currentVector )
         {
-        outputIterator.Set(1);
+        outputIterator.Set( maskVal ); // normally 1
         }
       else
         {
-        outputIterator.Set(0);
+        outputIterator.Set( unMaskVal ); //normally 0
         }
-
       ++outputIterator;
       ++inputIterator;
       }
@@ -132,7 +131,7 @@ protected:
 
 private:
   std::string      m_LandmarksFileName;
-
+  bool             m_ReverseMask;
 };
 
 

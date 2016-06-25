@@ -37,6 +37,14 @@
      <description>The landmarks file</description>
      <default>landmarks.fcsv</default>
   </file>
+    <file>
+      <label>premade BSpline</label>
+      <name>previousBSplineFileName</name>
+      <channel>input</channel>
+      <longflag>--previousBSpline</longflag>
+      <description>Re use a previously generated BSpline instead of generating a new random one.</description>
+      <default>reusedBSplineFileName.h5</default>
+    </file>
   </parameters>
   <parameters advanced="true">
     <label>Outputs of intermediary steps</label>
@@ -180,6 +188,12 @@
       <name>labelmapSwitch</name>
       <label>Use labelmap-based mask</label>
       <longflag>--labelmapMask</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>reuseBSplineSwitch</name>
+      <label>ReUse a previously generated BSpline</label>
+      <longflag>--reusebspline</longflag>
       <default>false</default>
     </boolean>
   </parameters>

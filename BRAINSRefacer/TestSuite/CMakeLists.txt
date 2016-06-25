@@ -18,8 +18,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest
   BRAINSRefacerTest
   --inputImage
     ${RefacerTestData_DIR}/t1_average_BRAINSABC.nii.gz
-  --labelmap
-    ${RefacerTestData_DIR}/JointFusion_HDAtlas20_2015_dustCleaned_label.nii.gz
   --landmarks
     ${RefacerTestData_DIR}/BCD_ACPC_Landmarks.fcsv
   --deformedImageName
@@ -65,8 +63,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest2
   BRAINSRefacerTest
   --inputImage
   ${RefacerTestData_DIR}/DONOTSHARE/0006/t1_average_BRAINSABC.nii.gz
-  --labelmap
-  ${RefacerTestData_DIR}/DONOTSHARE/0006/complete_brainlabels_seg.nii.gz
   --landmarks
   ${RefacerTestData_DIR}/DONOTSHARE/0006/BCD_ACPC_Landmarks.fcsv
   --deformedImageName
@@ -91,8 +87,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest3
   BRAINSRefacerTest
   --inputImage
   ${RefacerTestData_DIR}/DONOTSHARE/0006/t2_average_BRAINSABC.nii.gz
-  --labelmap
-  ${RefacerTestData_DIR}/DONOTSHARE/0006/complete_brainlabels_seg.nii.gz
   --landmarks
   ${RefacerTestData_DIR}/DONOTSHARE/0006/BCD_ACPC_Landmarks.fcsv
   --deformedImageName
@@ -118,8 +112,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest4
   BRAINSRefacerTest
   --inputImage
   ${RefacerTestData_DIR}/DONOTSHARE/0007/t1_average_BRAINSABC.nii.gz
-  --labelmap
-  ${RefacerTestData_DIR}/DONOTSHARE/0007/complete_brainlabels_seg.nii.gz
   --landmarks
   ${RefacerTestData_DIR}/DONOTSHARE/0007/BCD_ACPC_Landmarks.fcsv
   --deformedImageName
@@ -146,8 +138,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_RunTest5
   BRAINSRefacerTest
   --inputImage
   ${RefacerTestData_DIR}/DONOTSHARE/0007/t2_average_BRAINSABC.nii.gz
-  --labelmap
-  ${RefacerTestData_DIR}/DONOTSHARE/0007/complete_brainlabels_seg.nii.gz
   --landmarks
   ${RefacerTestData_DIR}/DONOTSHARE/0007/BCD_ACPC_Landmarks.fcsv
   --deformedImageName

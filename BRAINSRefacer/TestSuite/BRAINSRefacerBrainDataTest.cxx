@@ -11,7 +11,7 @@
 #include "itkAbsoluteValueDifferenceImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkLabelMapMaskImageFilter.h"
-#include "../MaskFromLandmarks.h"
+#include "../MaskFromLandmarksFilter.h"
 
 void outputError(itk::ExceptionObject &err)
 {
@@ -46,14 +46,13 @@ int main(int argc, char *argv[])
   ReaderType::Pointer defacedReader = ReaderType::New();
   defacedReader->SetFileName(inputRefaced);
 
-  typedef MaskFromLandmarks<ImageType> MaskImageFromLandmarks;
+  typedef MaskFromLandmarksFilter<ImageType, MaskImageType> MaskImageFromLandmarks;
   MaskImageFromLandmarks::Pointer landmarkReaderOriginal = MaskImageFromLandmarks::New();
   landmarkReaderOriginal->SetLandmarksFileName(brainLandmarksFile);
   landmarkReaderOriginal->SetInput(originalReader->GetOutput());
 
   //labelmapSwitch = true;
 
-  typedef MaskFromLandmarks<ImageType> MaskImageFromLandmarks;
   MaskImageFromLandmarks::Pointer landmarkReaderDefaced = MaskImageFromLandmarks::New();
   landmarkReaderDefaced->SetLandmarksFileName(brainLandmarksFile);
   landmarkReaderDefaced->SetInput(defacedReader->GetOutput());

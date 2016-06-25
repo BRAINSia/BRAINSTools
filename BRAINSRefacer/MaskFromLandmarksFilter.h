@@ -10,14 +10,14 @@
 #include <itkImageToImageFilter.h>
 #include <itkPoint.h>
 
-template <typename TInputImage>
-class MaskFromLandmarks
-  : public itk::ImageToImageFilter< TInputImage, itk::Image<unsigned char, 3> >
+template <typename TInputImage, typename TInputMask>
+class MaskFromLandmarksFilter
+  : public itk::ImageToImageFilter< TInputImage, TInputMask>
 {
 public:
 
 
-  typedef MaskFromLandmarks Self;
+  typedef MaskFromLandmarksFilter Self;
   typedef itk::SmartPointer<Self> Pointer;
 
  // const unsigned int Dimension = 3;
@@ -32,14 +32,14 @@ public:
 
 
 protected:
-  MaskFromLandmarks() {};
-  ~MaskFromLandmarks() {};
+  MaskFromLandmarksFilter() {};
+  ~MaskFromLandmarksFilter() {};
 
 
   void GenerateData() ITK_OVERRIDE
   {
-    typedef itk::Image<unsigned char, 3> MaskAtlasType;
-    typedef MaskAtlasType OutputImageType;
+    typedef TInputMask ImageMaskType;
+    typedef ImageMaskType OutputImageType;
 
     typedef typename OutputImageType::Pointer      ImagePointer;
     typedef typename TInputImage::ConstPointer ImageConstPointer;
@@ -83,7 +83,7 @@ protected:
     // make a mask based on the plane:
 
     // first create mask image
-//    MaskAtlasType::Pointer maskImageLM = MaskAtlasType::New();
+//    ImageMaskType::Pointer maskImageLM = ImageMaskType::New();
     ImageConstPointer inputImage = this->GetInput();
     ImagePointer      outputImage = this->GetOutput();
 
@@ -97,7 +97,7 @@ protected:
     typedef itk::ImageRegionConstIterator<TInputImage> ImageConstIterator;
     ImageConstIterator inputIterator(inputImage, inputImage->GetLargestPossibleRegion());
 
-    typedef itk::ImageRegionIterator<MaskAtlasType> MaskIteratorType;
+    typedef itk::ImageRegionIterator<ImageMaskType> MaskIteratorType;
     MaskIteratorType outputIterator(outputImage, outputImage->GetLargestPossibleRegion());
 
     inputIterator.GoToBegin();

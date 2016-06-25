@@ -24,7 +24,7 @@
 
 #include "CreateRandomBSpline.h"
 #include "CombineBSplineWithDisplacement.h"
-#include "MaskFromLandmarks.h"
+#include "MaskFromLandmarksFilter.h"
 #include "BRAINSRefacerUtilityFunctions.hxx"
 
 #include "BRAINSRefacerUtilityFunctions.hxx"  //Why does this not need to be included??
@@ -61,25 +61,25 @@ int main(int argc, char **argv)
   //LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
   //labelAtlasReader->SetFileName(labelmap);
 
-  typedef itk::Image<unsigned char, Dimension> MaskAtlasType;
+  typedef itk::Image<unsigned char, Dimension> ImageMaskType;
 
   //Read in the landmarks file
   LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
 
-  typedef MaskFromLandmarks<ProcessImageType> MaskFromLandmarksType;
-  MaskFromLandmarksType::Pointer masker = MaskFromLandmarksType::New();
+  typedef MaskFromLandmarksFilter<ProcessImageType, ImageMaskType> MaskFromLandmarksFilterType;
+  MaskFromLandmarksFilterType::Pointer masker = MaskFromLandmarksFilterType::New();
   masker->SetInput(subject);
   masker->SetLandmarksFileName(landmarks);
 
   //Write to a file
-  MaskAtlasType::Pointer maskAtlas = masker->GetOutput();
+  ImageMaskType::Pointer brainMask = masker->GetOutput();
   masker->Update();
-  WriteImage<MaskAtlasType>(outputMask, maskAtlas);
+  WriteImage<ImageMaskType>(outputMask, brainMask);
   //Get a distance map to the Brain region:
-  typedef itk::SignedMaurerDistanceMapImageFilter<MaskAtlasType, ProcessImageType> DistanceMapFilter;
+  typedef itk::SignedMaurerDistanceMapImageFilter<ImageMaskType, ProcessImageType> DistanceMapFilter;
 
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
-  distanceMapFilter->SetInput(maskAtlas);
+  distanceMapFilter->SetInput(brainMask);
   distanceMapFilter->SetSquaredDistance(false);
 
   //make the distance map unsigned:

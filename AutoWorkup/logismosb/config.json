@@ -1,0 +1,34 @@
+{
+  "hemisphere_names": ["lh", "rh"],
+  "copy_BAW": false,
+  "Results_Directory": null,
+  "Cache_Directory": null,
+  "atlas_info": "fswm_label_info.xml",
+  "WMMasking": {
+    "dilation": 0 ,
+    "csf_threshold": 0.9
+
+  },
+  "GenusZeroImageFilter": {
+    "connectivity": 6,
+    "biggestComponent" : true,
+    "connectedComponent": true
+
+  },
+  "BRAINSSurfaceGeneration": {
+    "smoothSurface": true,
+    "numIterations" : 20
+
+  },
+  "LOGISMOSB": {
+    "smoothnessConstraint": 1,
+    "nColumns": 120000,
+    "columnChoice": "GVF",
+    "columnHeight": 120,
+    "nodeSpacing": 0.1,
+    "w": 0.75,
+    "a": 2.5,
+    "nPropagate": 10,
+    "thickRegions": null
+  }
+}

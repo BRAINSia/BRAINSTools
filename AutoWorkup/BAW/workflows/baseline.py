@@ -1026,4 +1026,229 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_lobe_volumes_json', DataSinkSegmentation,
                        'JointFusion.lobeVol.@JointFusion_lobe_volumesJSON')
 
+        if 'logismosb' in master_config['components']:
+            print("LOGISMOSB Workflow")
+            from logismosb import create_logb_workflow
+
+            # connect LOGISMOSB inputs
+            myLocalLOGISMOSBWF = create_logb_workflow(master_config=master_config,
+                                                      plugin_args={'qsub_args': modify_qsub_args(
+                                                          queue=master_config['queue'],
+                                                          memoryGB=8,
+                                                          minThreads=16,
+                                                          maxThreads=16),
+                                                          'overwrite': True})
+
+            # In order to allow comparisons with FreeSurfer, the input files to LOGISMOSB need to be resampled
+            resample_logb_inputs = True
+            if resample_logb_inputs:
+                def select_first_file(file_list):
+                    first_file = file_list[0]
+                    return first_file
+
+                select_t1_node = pe.Node(Function(['file_list'], ['first_file'], select_first_file),
+                                         "SelectSingleT14LOGB")
+                baw201.connect(inputsSpec, 'T1s', select_t1_node, 'file_list')
+
+                resample_brain_labels = pe.Node(BRAINSResample(), name="ResampleBrainLabels4LOGB")
+
+                baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',
+                               resample_brain_labels, 'inputVolume')
+                baw201.connect(myLocalLMIWF, 'outputspec.outputTransform', resample_brain_labels, 'warpTransform')
+                baw201.connect(select_t1_node, 'first_file', resample_brain_labels, 'referenceVolume')
+                resample_brain_labels.inputs.outputVolume = "brain_labels_in_original_space.nii.gz"
+                resample_brain_labels.inputs.pixelType = "short"
+                resample_brain_labels.inputs.interpolationMode = "NearestNeighbor"
+                resample_brain_labels.inputs.inverseTransform = True
+                baw201.connect(resample_brain_labels, 'outputVolume',
+                               myLocalLOGISMOSBWF, 'inputspec.brainlabels_file')
+
+                resample_hncma = pe.Node(BRAINSResample(), name="ResampleHNCMA4LOGB")
+                baw201.connect(BResample['hncma_atlas'], 'outputVolume', resample_hncma, 'inputVolume')
+                baw201.connect(myLocalLMIWF, 'outputspec.outputTransform', resample_hncma, 'warpTransform')
+                baw201.connect(select_t1_node, 'first_file', resample_hncma, 'referenceVolume')
+                resample_hncma.inputs.outputVolume = "hncma_in_original_space.nii.gz"
+                resample_hncma.inputs.pixelType = "short"
+                resample_hncma.inputs.interpolationMode = "NearestNeighbor"
+                resample_hncma.inputs.inverseTransform = True
+                baw201.connect(resample_hncma, 'outputVolume', myLocalLOGISMOSBWF, 'inputspec.hncma_atlas')
+
+                for struct in ("t1", "t2"):
+                    resample_struct = pe.Node(BRAINSResample(), name="Resample{0}".format(struct.upper()))
+                    resample_struct.inputs.outputVolume = "{0}_in_original_space.nii.gz".format(struct)
+                    resample_struct.inputs.pixelType = "short"
+                    resample_struct.inputs.interpolationMode = "Linear"
+                    resample_struct.inputs.inverseTransform = True
+                    baw201.connect(select_t1_node, 'first_file', resample_struct, 'referenceVolume')
+                    baw201.connect(myLocalLMIWF, 'outputspec.outputTransform', resample_struct, 'warpTransform')
+                    baw201.connect(myLocalTCWF, 'outputspec.{0}_average'.format(struct),
+                                   resample_struct, 'inputVolume')
+                    baw201.connect(resample_struct, 'outputVolume',
+                                   myLocalLOGISMOSBWF, 'inputspec.{0}_file'.format(struct))
+
+                resample_joint_fusion = pe.Node(BRAINSResample(), "ResampleJointFusion")
+                resample_joint_fusion.inputs.outputVolume = "malf_resampled.nii.gz"
+                resample_joint_fusion.inputs.pixelType = "short"
+                resample_joint_fusion.inputs.interpolationMode = "NearestNeighbor"
+                resample_joint_fusion.inputs.inverseTransform = True
+                baw201.connect(select_t1_node, 'first_file', resample_joint_fusion, 'referenceVolume')
+                baw201.connect(myLocalLMIWF, 'outputspec.outputTransform', resample_joint_fusion, 'warpTransform')
+                baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_fs_standard_label',
+                               resample_joint_fusion, 'inputVolume')
+                baw201.connect(resample_joint_fusion, 'outputVolume',
+                               myLocalLOGISMOSBWF, 'inputspec.joint_fusion_file')
+
+                def select_posterior(posterior_files, key="CSF"):
+                    out_file = posterior_files[key]
+                    return out_file
+
+                def to_dict(string, key="CSF"):
+                    out_dict = {key: string}
+                    return out_dict
+
+                select_csf = pe.Node(Function(['posterior_files'], ['out_file'], select_posterior), "SelectCSF")
+                baw201.connect(myLocalTCWF, 'outputspec.posteriorImages',
+                               select_csf, 'posterior_files')
+
+                resample_CSF = pe.Node(BRAINSResample(), "ResampleCSF")
+                resample_CSF.inputs.outputVolume = "CSF_resampled.nii.gz"
+                resample_CSF.inputs.pixelType = "float"
+                resample_CSF.inputs.interpolationMode = "Linear"
+                resample_CSF.inputs.inverseTransform = True
+                baw201.connect(select_t1_node, 'first_file', resample_CSF, 'referenceVolume')
+                baw201.connect(myLocalLMIWF, 'outputspec.outputTransform', resample_CSF, 'warpTransform')
+                baw201.connect(select_csf, 'out_file', resample_CSF, 'inputVolume')
+
+                csf_to_dict = pe.Node(Function(['string'], ['out_dict'], to_dict), "CSFDict")
+                baw201.connect(resample_CSF, 'outputVolume',
+                               csf_to_dict, 'string')
+                baw201.connect(csf_to_dict, 'out_dict',
+                               myLocalLOGISMOSBWF, 'inputspec.posterior_files')
+
+            else:
+                baw201.connect(myLocalTCWF, 'outputspec.t1_average', myLocalLOGISMOSBWF, 'inputspec.t1_file')
+                baw201.connect(myLocalTCWF, 'outputspec.t2_average', myLocalLOGISMOSBWF, 'inputspec.t2_file')
+                baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_fs_standard_label',
+                               myLocalLOGISMOSBWF, 'inputspec.joint_fusion_file')
+                baw201.connect(BResample['hncma_atlas'], 'outputVolume', myLocalLOGISMOSBWF, 'inputspec.hncma_atlas')
+                baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename', myLocalLOGISMOSBWF,
+                               'inputspec.brainlabels_file')
+                baw201.connect(myLocalTCWF, 'outputspec.posteriorImages',
+                               myLocalLOGISMOSBWF, 'inputspec.posterior_files')
+
+            # connect LOGISMOSB outputs to the data sink
+            baw201.connect(myLocalLOGISMOSBWF, 'outputspec.lh_gmsurface_file', DataSink, 'LOGISMOSB.@lh_gm_surf')
+            baw201.connect(myLocalLOGISMOSBWF, 'outputspec.lh_wmsurface_file', DataSink, 'LOGISMOSB.@lh_wm_surf')
+            baw201.connect(myLocalLOGISMOSBWF, 'outputspec.rh_wmsurface_file', DataSink, 'LOGISMOSB.@rh_wm_surf')
+            baw201.connect(myLocalLOGISMOSBWF, 'outputspec.rh_gmsurface_file', DataSink, 'LOGISMOSB.@rh_gm_surf')
+
+    if 'fs_nipype' in master_config['components']:
+        from nipype.workflows.smri.freesurfer import create_reconall_workflow
+        num_threads = 12
+        # HACK to convert subject_dir to supported string type
+        old_str = type("")
+        subject_dir = old_str(os.path.join(master_config['resultdir'], projectid, subjectid, sessionid))
+
+        # HACK: Select first T2 from the list of input T2s
+        def select_first_file(file_list):
+            first_file = file_list[0]
+            return first_file
+
+        select_t2_node = pe.Node(Function(['file_list'], ['first_file'], select_first_file), "SelectSingleT2")
+        baw201.connect(inputsSpec, 'T2s', select_t2_node, 'file_list')
+
+        reconall = create_reconall_workflow(plugin_args={'qsub_args': modify_qsub_args(queue=master_config['queue'],
+                                                                                       memoryGB=8,
+                                                                                       minThreads=num_threads,
+                                                                                       maxThreads=num_threads),
+                                                         'overwrite': True})
+
+        baw201.connect([(inputsSpec, reconall, [('T1s', 'inputspec.T1_files')]),
+                        (select_t2_node, reconall, [('first_file', 'inputspec.T2_file')])])
+        if not os.path.exists(subject_dir):
+            os.makedirs(subject_dir)
+        reconall.inputs.inputspec.subjects_dir = subject_dir
+        reconall.inputs.inputspec.num_threads = num_threads
+        reconall.inputs.inputspec.subject_id = "FreeSurfer"
+
+        if 'edge_prediction' in master_config['components']:
+            from logismosb.maclearn.workflows import create_logismosb_machine_learning_workflow
+
+            gm_classifier_file = master_config['gm_edge_classifier']
+            wm_classifier_file = master_config['wm_edge_classifier']
+
+            edge_prediction_workflow = create_logismosb_machine_learning_workflow(
+                plugin_args={'qsub_args': modify_qsub_args(queue=master_config['queue'],
+                                                           memoryGB=8,
+                                                           minThreads=16,
+                                                           maxThreads=16),
+                             'overwrite': True})
+            edge_prediction_workflow.inputs.input_spec.gm_classifier_file = gm_classifier_file
+            edge_prediction_workflow.inputs.input_spec.wm_classifier_file = wm_classifier_file
+
+            select_t1_node = pe.Node(Function(['file_list'], ['first_file'], select_first_file),
+                                     "SelectSingleT1MacLearn")
+            baw201.connect(inputsSpec, 'T1s', select_t1_node, 'file_list')
+
+            baw201.connect([(atlasBCUTNode_W, edge_prediction_workflow, [("rho", "input_spec.rho"),
+                                                                         ("theta", "input_spec.theta"),
+                                                                         ("phi", "input_spec.phi")]),
+                            (myLocalTCWF, edge_prediction_workflow, [('outputspec.posteriorImages',
+                                                                      "input_spec.posteriors"),
+                                                                     ('outputspec.t1_average', 'input_spec.t1_file'),
+                                                                     ('outputspec.t2_average', 'input_spec.t2_file')]),
+                            (myLocalBrainStemWF, edge_prediction_workflow, [('outputspec.ouputTissuelLabelFilename',
+                                                                             'input_spec.abc_file')]),
+                            (select_t1_node, edge_prediction_workflow, [('first_file', 'input_spec.orig_t1')]),
+                            (BResample['hncma_atlas'], edge_prediction_workflow, [('outputVolume',
+                                                                                   'input_spec.hncma_file')]),
+                            (myLocalLMIWF, edge_prediction_workflow, [('outputspec.outputTransform',
+                                                                       'input_spec.acpc_transform')]),
+                            (reconall, edge_prediction_workflow, [('outputspec.lh_white',
+                                                                   'input_spec.lh_white_surface_file'),
+                                                                  ('outputspec.rh_white',
+                                                                   'input_spec.rh_white_surface_file')])])
+            baw201.connect([(edge_prediction_workflow, DataSink,
+                             [('output_spec.lh_gmsurface_file', 'EdgePrediction.@lh_gm_surface_file'),
+                              ('output_spec.lh_wmsurface_file', 'EdgePrediction.@lh_wm_surface_file'),
+                              ('output_spec.rh_gmsurface_file', 'EdgePrediction.@rh_gm_surface_file'),
+                              ('output_spec.rh_wmsurface_file', 'EdgePrediction.@rh_wm_surface_file')])])
+
+        if 'logismosb' in master_config['components']:
+            # this workflow assumes that the input t1 and t2 files are in the same space!!!
+            from logismosb import create_fs_logb_workflow_for_both_hemispheres
+            myLocalFSLOGISMOSBWF = create_fs_logb_workflow_for_both_hemispheres(
+                plugin_args={'qsub_args': modify_qsub_args(queue=master_config['queue'],
+                                                           memoryGB=8,
+                                                           minThreads=16,
+                                                           maxThreads=16),
+                             'overwrite': True})
+            baw201.connect([(reconall, myLocalFSLOGISMOSBWF, [('outputspec.aseg_presurf', 'inputspec.aseg_presurf'),
+                                                              ('outputspec.rawavg', 'inputspec.rawavg'),
+                                                              ('outputspec.t2_raw', 'inputspec.t2_raw'),
+                                                              ('outputspec.lh_white', 'inputspec.lh_white'),
+                                                              ('outputspec.rh_white', 'inputspec.rh_white')])
+                            ])
+            # before connecting to the fs_logb workflow, the hncma needs to be resampled to the original space
+            select_t1_node = pe.Node(Function(['file_list'], ['first_file'], select_first_file), "SelectSingleT1")
+            baw201.connect(inputsSpec, 'T1s', select_t1_node, 'file_list')
+
+            resample_hncma = pe.Node(BRAINSResample(), name="ResampleHNCMA")
+
+            baw201.connect(BResample['hncma_atlas'], 'outputVolume', resample_hncma, 'inputVolume')
+            baw201.connect(myLocalLMIWF, 'outputspec.outputTransform', resample_hncma, 'warpTransform')
+            baw201.connect(select_t1_node, 'first_file', resample_hncma, 'referenceVolume')
+            resample_hncma.inputs.outputVolume = "hncma_in_original_space.nii.gz"
+            resample_hncma.inputs.pixelType = "short"
+            resample_hncma.inputs.interpolationMode = "NearestNeighbor"
+            resample_hncma.inputs.inverseTransform = True
+
+            baw201.connect(resample_hncma, 'outputVolume', myLocalFSLOGISMOSBWF, 'inputspec.hncma_atlas')
+
+            baw201.connect([(myLocalFSLOGISMOSBWF, DataSink,
+                             [('outputspec.lh_gm_surf_file', 'LOGISMOSB.FreeSurfer.@lh_gm_surface_file'),
+                              ('outputspec.lh_wm_surf_file', 'LOGISMOSB.FreeSurfer.@lh_wm_surface_file'),
+                              ('outputspec.rh_gm_surf_file', 'LOGISMOSB.FreeSurfer.@rh_gm_surface_file'),
+                              ('outputspec.rh_wm_surf_file', 'LOGISMOSB.FreeSurfer.@rh_wm_surface_file')])])
+
     return baw201

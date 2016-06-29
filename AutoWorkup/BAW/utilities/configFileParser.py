@@ -180,6 +180,15 @@ def parseExperiment(parser, workflow_phase):
                 getASCIIFromParser(parser, 'EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
                 allow_empty=True,
                 isDirectory=False)
+        if 'edge_prediction' in retval['components']:
+            retval['gm_edge_classifier'] = validatePath(
+                getASCIIFromParser(parser, 'EXPERIMENT', 'GM_EDGE_CLASSIFIER'),
+                allow_empty=True,
+                isDirectory=False)
+            retval['wm_edge_classifier'] = validatePath(
+                getASCIIFromParser(parser, 'EXPERIMENT', 'WM_EDGE_CLASSIFIER'),
+                allow_empty=True,
+                isDirectory=False)
         retval['workflow_phase'] = workflow_phase
     return retval
 

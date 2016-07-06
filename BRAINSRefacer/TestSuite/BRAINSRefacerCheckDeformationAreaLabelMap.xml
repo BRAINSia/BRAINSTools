@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>CTest</category>
-  <title>
-    </title>
+  <category>Ctest</category>
+  <title>    </title>
   <description>
     </description>
   <version>
@@ -39,5 +38,11 @@
       <default>NONE</default>
       <description>Label map of the brain, will be used to create a mask</description>
     </image>
+    <boolean>
+      <name>checkNonDeformedArea</name>
+      <label>checkNonDeformedArea</label>
+      <longflag>--checkNonDeformedArea</longflag>
+      <default>false</default>
+    </boolean>
   </parameters>
 </executable>

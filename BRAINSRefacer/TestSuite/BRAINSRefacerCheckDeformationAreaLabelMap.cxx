@@ -1,25 +1,13 @@
-
 // Author: Jeffrey Obadal
-/*
-   * TODO: Refactor code into new paths
-   * Path 1: check brain data -- use labelmap as reference, do safety check that no brain data has changed
-   * Path 2: (new file?) check deformation -- subpath1: labelmap - similar to path 1, but check non-brain data has changed
-   *                                          subpath2: landmark - use landmark mask and check face area has changed
-   *                                                    and non face area hasn't changed.
-*/
 
-
-
-#include "BRAINSRefacerBrainDataTestCLP.h"
+#include "BRAINSRefacerCheckDeformationAreaLabelMapCLP.h"
 #include <itkLabelImageToLabelMapFilter.h>
-#include <itkMultiplyImageFilter.h>
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkAbsoluteValueDifferenceImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkLabelMapMaskImageFilter.h"
-#include "../MaskFromLandmarksFilter.h"
 
 void outputError(itk::ExceptionObject &err)
 {
@@ -31,7 +19,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-  typedef double                                                                    InputPixelType;
+  typedef float                                                                     InputPixelType;
   const int                                                                         Dimension = 3;
 
   typedef itk::Image<InputPixelType, Dimension>                                     ImageType;
@@ -55,30 +43,38 @@ int main(int argc, char *argv[])
 
   LabelMaskFilterType::Pointer originalMaskFilter = LabelMaskFilterType::New();
   LabelMaskFilterType::Pointer defacedMaskFilter = LabelMaskFilterType::New();
-  ReaderType::Pointer labelmapReader = ReaderType::New();
+
+  ReaderType::Pointer labelMapReader = ReaderType::New();
   ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
 
-  labelmapReader->SetFileName(brainLabelMap);
+  labelMapReader->SetFileName(brainLabelMap);
 
-  // Create labelmap from label image
-  imageToMapFilter->SetInput(labelmapReader->GetOutput());
+  // Create label map from label image
+  imageToMapFilter->SetInput(labelMapReader->GetOutput());
 
-  //Mask the images leaving only the brain
+  //Mask the images
+  //Note that this actually masks the non-brain data
+  //which is the deformation area
+
   originalMaskFilter->SetInput(imageToMapFilter->GetOutput());
   originalMaskFilter->SetFeatureImage(originalReader->GetOutput());
   originalMaskFilter->SetLabel(0);
-  originalMaskFilter->SetNegated(true);
   originalMaskFilter->SetBackgroundValue(0);
 
-  //Mask the images leaving only the brain
   defacedMaskFilter->SetInput(imageToMapFilter->GetOutput());
   defacedMaskFilter->SetFeatureImage(defacedReader->GetOutput());
   defacedMaskFilter->SetLabel(0);
-  defacedMaskFilter->SetNegated(true);
   defacedMaskFilter->SetBackgroundValue(0);
 
-  AbsValDiffFilterType::Pointer absDiffFilter = AbsValDiffFilterType::New();
+  // reverse the mask for checking the brain data
+  if( checkNonDeformedArea )
+    {
+    originalMaskFilter->SetNegated(true);
+    defacedMaskFilter->SetNegated(true);
+    }
 
+
+  AbsValDiffFilterType::Pointer absDiffFilter = AbsValDiffFilterType::New();
   absDiffFilter->SetInput1(defacedMaskFilter->GetOutput());
   absDiffFilter->SetInput2(originalMaskFilter->GetOutput());
 
@@ -91,14 +87,18 @@ int main(int argc, char *argv[])
 
     std::cout << "Sum of Absolute Difference: " << absDiffSum << std::endl;
 
-    if (absDiffSum == 0)
+
+    if( checkNonDeformedArea )
       {
-      return EXIT_SUCCESS;
+      //NonDeformedArea includes the brain, so there should be zero differences
+      return (absDiffSum == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
       }
-    else
+    else //check deformed area
       {
-      return EXIT_FAILURE;
+      // We want some deformation here, so if it's doing something it should be > 0
+      return ( absDiffSum > 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
       }
+
     }
   catch (itk::ExceptionObject &err)
     {
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-// should never get here
+  // should never get here
   std::cerr << "ERROR: Should never get to this point!!!" << std::endl;
 
   return EXIT_FAILURE;

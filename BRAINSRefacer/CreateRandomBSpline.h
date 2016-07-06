@@ -39,6 +39,9 @@ public:
   itkSetMacro(RandScale, double)
   itkGetMacro(RandScale, double)
 
+  itkSetMacro(Verbose, bool)
+  itkSetMacro(Debug, bool)
+
   typedef TInputImage ImageType;
   typedef typename ImageType::Pointer ImagePointer;
   typedef typename ImageType::PointType ImagePointType;
@@ -51,12 +54,20 @@ protected:
     m_RandMax = 5; //default value
     m_RandMin = -5; //default value
     m_RandScale = 5;
+
+    this->m_Verbose = false;
+    this->m_Debug = false;
   };
   ~CreateRandomBSpline(){};
 
   void GenerateData() ITK_OVERRIDE
   {
-    std::cout << "Hello From CreateRandomBSpline!!!" << std::endl;
+    if( m_Debug )
+      {
+      std::cout << "File:  " << __FILE__ << std::endl;
+      std::cout << "Line:  " << __LINE__ << std::endl;
+      std::cout << "In function GenerateData()" << std::endl;
+      }
 
 #if 0 //old way of initializing BSpline
     typename BSplineType::MeshSizeType meshSize;                  //Setup a mesh that contains the number of controlpoints
@@ -124,28 +135,28 @@ protected:
     PAit.GoToBegin();
     SIit.GoToBegin();
 
-    std::cout<< "inputToBSpline" <<std::endl;
-    this->GetInput()->Print(std::cout,0);
-    std::cout<<"done Input" << std::endl;
+    if( m_Debug )
+      {
+      std::cout << "File:  " << __FILE__ << std::endl;
+      std::cout << "Line:  " << __LINE__ << std::endl;
+      std::cout << "In function GenerateData()" << std::endl;
 
-    std::cout<<"LR"<<std::endl;
-    coefficientImgLR->Print(std::cout,0);
-    std::cout<<std::endl<<"doneLR"<<std::endl;
+      std::cout << "inputToBSpline" << std::endl;
+      this->GetInput()->Print(std::cout, 0);
+      std::cout << "done Input" << std::endl;
 
-    std::cout<<"PA"<<std::endl;
-    coefficientImgPA->Print(std::cout,0);
-    std::cout<<std::endl<<"donePA"<<std::endl;
+      std::cout << "LR coefficient image" << std::endl;
+      coefficientImgLR->Print(std::cout, 0);
+      std::cout << std::endl << "doneLR" << std::endl;
 
-    std::cout<<std::endl<<"SI"<<std::endl;
-    coefficientImgSI->Print(std::cout,0);
-    std::cout<<std::endl<<"doneSI"<<std::endl;
+      std::cout << "PA coefficient image" << std::endl;
+      coefficientImgPA->Print(std::cout, 0);
+      std::cout << std::endl << "donePA" << std::endl;
 
-    // assume spacing, origin, IndexToPointMatrix, PointToIndexMatrix
-    // is the same between all coefficient images
-
-    ///std::cout<<"-------------------" << LRit.GetIndex() << std::endl;
-
-
+      std::cout << std::endl << "SI coefficient image" << std::endl;
+      coefficientImgSI->Print(std::cout, 0);
+      std::cout << std::endl << "doneSI" << std::endl;
+      }
 
     LRit.GoToBegin();
     PAit.GoToBegin();
@@ -263,5 +274,7 @@ private:
   int m_RandMin;
   int m_RandMax;
   double m_RandScale;
+  bool             m_Verbose;
+  bool             m_Debug;
 };
 #endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H

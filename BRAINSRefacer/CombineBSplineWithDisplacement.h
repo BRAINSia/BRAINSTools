@@ -34,7 +34,8 @@ public:
   typedef itk::Image< VectorPixelType, NDimension> DisplacementFieldImageType;
   typedef typename DisplacementFieldImageType::Pointer DisplacementFieldPointer;
 
-
+  itkSetMacro(Verbose, bool)
+  itkSetMacro(Debug, bool)
 
   itkSetMacro(BSplineInput, BSplinePointer)
   itkGetMacro(BSplineInput, BSplinePointer)
@@ -45,14 +46,22 @@ public:
   itkSetMacro(ComposedImage, DisplacementFieldPointer)
   itkGetMacro(ComposedImage, DisplacementFieldPointer)
 
-
 protected:
-  CombineBSplineWithDisplacement(){};
+  CombineBSplineWithDisplacement()
+  {
+    this->m_Verbose = false;
+    this->m_Debug = false;
+  }
   ~CombineBSplineWithDisplacement(){};
 
   void GenerateData() ITK_OVERRIDE
   {
-    std::cout << "In Generate data method of CombineRandomBSplineWithDisplacement" << std::endl;
+    if( m_Debug )
+      {
+        std::cout << "File:  " << __FILE__ << std::endl;
+        std::cout << "Line:  " << __LINE__ << std::endl;
+        std::cout << "In Generate data method of CombineRandomBSplineWithDisplacement" << std::endl;
+      }
 
     const TReferenceImageType * subject = this->GetInput();
     BSplinePointer bSpline = this->GetBSplineInput();
@@ -63,7 +72,14 @@ protected:
     bSplineDisplacementFieldGenerator->SetReferenceImage(subject);
     bSplineDisplacementFieldGenerator->SetTransform(bSpline);
 
-    std::cout<<"Extracting component images from displacement field"<<std::endl;
+    if( m_Debug )
+      {
+      std::cout << "File:  " << __FILE__ << std::endl;
+      std::cout << "Line:  " << __LINE__ << std::endl;
+      std::cout << "In function GenerateData()" << std::endl;
+
+      std::cout << "Extracting component images from displacement field" << std::endl;
+      }
     //multiply the displacement field by the distance map to get the "smooth displacement that doesn't affect the brain
     //first extrace scalar elemnts from vector image
     typedef typename itk::VectorIndexSelectionCastImageFilter<DisplacementFieldImageType, ImageType> ImageExtractionFilterType;
@@ -85,7 +101,10 @@ protected:
 
     //multiply by distancemap
 
-    std::cout<<"Multiplying bSplineDisplacement by Distance map"<<std::endl;
+    if( m_Verbose || m_Debug)
+      {
+      std::cout<<"Multiplying bSplineDisplacement by Distance map"<<std::endl;
+      }
 
     typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyFilterType;
     typename MultiplyFilterType::Pointer xMult = MultiplyFilterType::New();
@@ -109,7 +128,10 @@ protected:
     typename ImageType::Pointer zMultImage = zMult->GetOutput();
     zMult->Update();
 
-    std::cout<<"Composing new image from displacement and bSpline product components"<<std::endl;
+    if( m_Debug || m_Verbose )
+      {
+      std::cout<<"Composing new image from displacement and bSpline product components"<<std::endl;
+      }
 
     typedef itk::ComposeImageFilter<ImageType, DisplacementFieldImageType> ComposeFilterType;
     typename ComposeFilterType::Pointer composeDisplacements = ComposeFilterType::New();
@@ -156,6 +178,9 @@ private:
   BSplinePointer m_BSplineInput;
   ImageTypePointer m_DistanceMap;
   DisplacementFieldPointer m_ComposedImage;
+
+  bool             m_Verbose;
+  bool             m_Debug;
 
 };
 #endif //BRAINSTOOLS_COMBINEBSPLINEWITHDISPLACEMENT_H

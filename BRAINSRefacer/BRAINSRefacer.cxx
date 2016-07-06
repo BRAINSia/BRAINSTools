@@ -37,10 +37,12 @@ int main(int argc, char **argv)
 {
   PARSE_ARGS;
 
+  if(debug_Refacer) verbose_Refacer = true;  //debug should always be verbose
+
   //Basic typedef's
-  typedef  double                                                                 ProcessPixelType;
-  const unsigned int                                                              Dimension = 3;
-  typedef itk::Image<ProcessPixelType, Dimension>                                 ProcessImageType;
+  typedef double ProcessPixelType;
+  const unsigned int Dimension = 3;
+  typedef itk::Image<ProcessPixelType, Dimension> ProcessImageType;
 
   //Read in subject image
   typedef itk::ImageFileReader<ProcessImageType> ImageReaderType;
@@ -55,7 +57,7 @@ int main(int argc, char **argv)
   imageReaderIOBase->ReadImageInformation();
   // Note that in ImageIOBase pixel type refers to vector/scalar
   // component type refers to INT, LONG, FLOAT, etc.
-  typedef itk::ImageIOBase::IOComponentType                                       IOComponentType;
+  typedef itk::ImageIOBase::IOComponentType IOComponentType;
   const IOComponentType originalComponentType_ENUM = imageReaderIOBase->GetComponentType();
 
 
@@ -66,11 +68,11 @@ int main(int argc, char **argv)
   typedef itk::Image<ProcessPixelType, Dimension> LabelAtlasType;
   typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
   LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
-  typedef itk::BinaryThresholdImageFilter< LabelAtlasType, ImageMaskType>  MaskFilterType;
+  typedef itk::BinaryThresholdImageFilter<LabelAtlasType, ImageMaskType> MaskFilterType;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
   LabelAtlasType::Pointer labelAtlasReaderOutput = LabelAtlasType::New();
 
-  if( labelmapSwitch == false )
+  if (labelmapSwitch == false)
     {
 
     //Read in the landmarks file
@@ -78,7 +80,10 @@ int main(int argc, char **argv)
 
     typedef MaskFromLandmarksFilter<ProcessImageType, ImageMaskType> MaskFromLandmarksFilterType;
     MaskFromLandmarksFilterType::Pointer masker = MaskFromLandmarksFilterType::New();
+    std::cout << "Generating mask from landmarks ..." <<std::endl;
     masker->SetInput(subject);
+    masker->SetDebug(debug_Refacer);
+    masker->SetVerbose(verbose_Refacer);
     masker->SetLandmarksFileName(landmarks);
 
     //Write to a file
@@ -88,21 +93,23 @@ int main(int argc, char **argv)
   else
     {
 
-
+    std::cout << "Generating mask from labelmap" << std::endl;
     labelAtlasReader->SetFileName(labelmap);
     labelAtlasReaderOutput = labelAtlasReader->GetOutput();
     labelAtlasReader->Update();
 
     //resample LabelImage
-    typedef itk::NearestNeighborInterpolateImageFunction<LabelAtlasType, double>    NN_InterpolatorType;
+    typedef itk::NearestNeighborInterpolateImageFunction<LabelAtlasType, double> NN_InterpolatorType;
     NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
 
-    typedef itk::IdentityTransform<double, Dimension>                               IdentityTransformType;
+    typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
     IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
 
 
-    typedef itk::ResampleImageFilter<LabelAtlasType, LabelAtlasType>      maskResamplerType;
+    typedef itk::ResampleImageFilter<LabelAtlasType, LabelAtlasType> maskResamplerType;
     maskResamplerType::Pointer maskResampler = maskResamplerType::New();
+
+    std::cout << "Resampling atlas map:" << std::endl;
     maskResampler->SetInput(labelAtlasReader->GetOutput());
     maskResampler->SetInterpolator(NN_interpolator);
     maskResampler->SetTransform(identityTransform);
@@ -110,7 +117,7 @@ int main(int argc, char **argv)
     maskResampler->UseReferenceImageOn();
     maskResampler->Update();
 
-    maskFilter->SetInput( maskResampler->GetOutput() );
+    maskFilter->SetInput(maskResampler->GetOutput());
     maskFilter->SetOutsideValue(1);
     maskFilter->SetInsideValue(0);
     maskFilter->SetLowerThreshold(0);
@@ -120,11 +127,15 @@ int main(int argc, char **argv)
     brainMask = maskFilter->GetOutput();
     brainMask->Update();
     }
-  WriteImage<ImageMaskType>(outputMask, brainMask);
+  if (debug_Refacer)
+    {
+    WriteImage<ImageMaskType>(outputMask, brainMask);
+    }
   //Get a distance map to the Brain region:
   typedef itk::SignedMaurerDistanceMapImageFilter<ImageMaskType, ProcessImageType> DistanceMapFilter;
 
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
+  std::cout << "Calculating distance map ..." << std::endl;
   distanceMapFilter->SetInput(brainMask);
   distanceMapFilter->SetSquaredDistance(false);
   ProcessImageType::Pointer myDistanceMapFilterImage = distanceMapFilter->GetOutput();
@@ -139,13 +150,17 @@ int main(int argc, char **argv)
   distanceThreshold->SetOutsideValue(0.0);
 
   //Write the distance map to a file so we can see what it did:
-  WriteImage(distanceMapFileName, distanceThreshold->GetOutput());
+  if(debug_Refacer)
+    {
+    WriteImage(distanceMapFileName, distanceThreshold->GetOutput());
+    }
   ProcessImageType::Pointer myDistanceMapPreScaled = distanceThreshold->GetOutput();
   distanceThreshold->Update();
 
   //Try to scale distance map
   typedef itk::MultiplyImageFilter<ProcessImageType, ProcessImageType, ProcessImageType> ScalingFilterType;
   ScalingFilterType::Pointer distanceMapScaler = ScalingFilterType::New();
+  std::cout << "Scaling distance map ..." <<std::endl;
   distanceMapScaler->SetInput(myDistanceMapPreScaled);
   distanceMapScaler->SetConstant(scaleDistanceMap);
 
@@ -167,7 +182,9 @@ int main(int argc, char **argv)
 
   if(!reuseBSplineSwitch)
     {
-    std::cout << "Generating brand new BSPline" << std::endl;
+    std::cout << "Generating brand new random BSPline" << std::endl;
+    bSplineCreator->SetDebug(debug_Refacer);
+    bSplineCreator->SetVerbose(verbose_Refacer);
     bSplineCreator->SetInput(subject);
     bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
     bSplineCreator->SetRandMax(maxRandom);
@@ -175,11 +192,15 @@ int main(int argc, char **argv)
     bSplineCreator->SetRandScale(scaleRandom);
     bSplineCreator->Update();
     bSpline = bSplineCreator->GetBSplineOutput();
-    WriteTransform(bSplineFileName, bSpline);
+    if(debug_Refacer || saveTransform )
+      {
+      WriteTransform(bSplineFileName, bSpline);
+      }
     }
   else if (reuseBSplineSwitch)
     {
     std::cout << "Reusing BSpline" << std::endl;
+
     transformReader->SetFileName(previousBSplineFileName);
 
     //try catch for ioreader
@@ -219,6 +240,11 @@ int main(int argc, char **argv)
   typedef CombineBSplineWithDisplacement<ProcessImageType, DisplacementFieldProcessImageType, ProcessPixelType, 3,3> CombinerType;
 
   CombinerType::Pointer combiner = CombinerType::New();
+
+  std::cout << "Combining bspline with displacement ..." << std::endl;
+
+  combiner->SetDebug(debug_Refacer);
+  combiner->SetVerbose(verbose_Refacer);
   combiner->SetBSplineInput(bSpline);
   combiner->SetInput(subject);
   combiner->SetDistanceMap(distanceMapScaler->GetOutput());
@@ -226,13 +252,18 @@ int main(int argc, char **argv)
 
   //write the new displacement image
   DisplacementFieldProcessImageType* composedDisplacementField_rawPtr = combiner->GetComposedImage();
-  WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
-
+  if( debug_Refacer )
+    {
+    WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
+    }
   typedef itk::DisplacementFieldTransform<ProcessPixelType, Dimension> FinalTransformType;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
   finalTransform->SetDisplacementField(composedDisplacementField_rawPtr);
 
-  WriteTransform(finalTransformFileName, finalTransform);
+  if( debug_Refacer )
+    {
+    WriteTransform(finalTransformFileName, finalTransform);
+    }
 
   // Apply transform to image with resampler:
   typedef itk::ResampleImageFilter<ProcessImageType, ProcessImageType> ResampleFilterType;
@@ -242,6 +273,8 @@ int main(int argc, char **argv)
   InterpolatorType::Pointer interpolater = InterpolatorType::New();
 
   ProcessImageType::RegionType subjectRegion = subject->GetBufferedRegion();
+
+  std::cout << "Refacing image ..." << std::endl;
 
   resampler->SetInterpolator(interpolater);
   resampler->SetOutputSpacing(subject->GetSpacing());
@@ -256,14 +289,16 @@ int main(int argc, char **argv)
   //WriteImage(deformedImageName, resampler->GetOutput());
   ConvertAndSave<ProcessImageType, Dimension>( deformedImageName, resampler->GetOutput(), originalComponentType_ENUM);
 
-  //Get the difference image
-  typedef itk::SubtractImageFilter<ProcessImageType, ProcessImageType> SubtractFilter;
-  SubtractFilter::Pointer subtractFilter = SubtractFilter::New();
-  subtractFilter->SetInput1(subject);
-  subtractFilter->SetInput2(resampler->GetOutput());
-
   //write the difference Image
-  WriteImage( diffImageName, subtractFilter->GetOutput());
+  if( debug_Refacer )
+    {
+    //Get the difference image
+    typedef itk::SubtractImageFilter<ProcessImageType, ProcessImageType> SubtractFilter;
+    SubtractFilter::Pointer subtractFilter = SubtractFilter::New();
+    subtractFilter->SetInput1(subject);
+    subtractFilter->SetInput2(resampler->GetOutput());
+    WriteImage( diffImageName, subtractFilter->GetOutput());
+    }
 
   std::cout << "done" << std::endl;
 

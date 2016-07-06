@@ -196,5 +196,21 @@
       <longflag>--reusebspline</longflag>
       <default>false</default>
     </boolean>
+    <boolean>
+      <name>verbose_Refacer</name>
+      <label> Verbose output</label>
+      <longflag>--verbose</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>debug_Refacer</name>
+      <longflag>--debug</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>saveTransform</name>
+      <longflag>--saveTransform</longflag>
+      <default>false</default>
+    </boolean>
   </parameters>
 </executable>

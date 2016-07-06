@@ -27,11 +27,15 @@ public:
   //itkSetMacro(Landmarks, LandmarksMapType)
   itkSetMacro(LandmarksFileName, std::string)
   itkSetMacro(ReverseMask, bool)
+  itkSetMacro(Verbose, bool)
+  itkSetMacro(Debug, bool)
 
 protected:
   MaskFromLandmarksFilter()
   {
     this->m_ReverseMask = false;
+    this->m_Verbose = false;
+    this->m_Debug = false;
   }
   ~MaskFromLandmarksFilter() {};
 
@@ -50,22 +54,51 @@ protected:
     PointType leftEye    = myLandmarks.find("LE")->second;
     PointType dens_axis  = myLandmarks.find("dens_axis")->second;
 
-    std::cout << "rightEye:\t" << rightEye << std::endl;
-    std::cout << "leftEye:\t" << leftEye << std::endl;
-    std::cout << "dens_axis:\t" << dens_axis << std::endl;
 
+    if(m_Debug || m_Verbose)
+      {
 
+      if(m_Debug)
+        {
+        std::cout << "In GenerateData of MaskFromLandmarksFilter.h" << std::endl;
+        std::cout << "Line:  " << __LINE__ << std::endl;
+        std::cout << "File:  " << __FILE__ << std::endl;
+        }
+      std::cout << "rightEye:\t" << rightEye << std::endl;
+      std::cout << "leftEye:\t" << leftEye << std::endl;
+      std::cout << "dens_axis:\t" << dens_axis << std::endl;
+
+      }
     // find the a,b,c for the plane equation ax + by + c = 0
     // first get two vectors in the plane u and v
     typedef itk::Vector<double,3> VectorType;
     VectorType u = rightEye - leftEye;
     VectorType v = dens_axis - leftEye;
+    if(m_Debug || m_Verbose)
+      {
+      if(m_Debug)
+        {
+        std::cout << "In GenerateData of MaskFromLandmarksFilter.h" << std::endl;
+        std::cout << "Line:  " << __LINE__ << std::endl;
+        std::cout << "File:  " << __FILE__ << std::endl;
+        }
+      std::cout << "vector u: \t" << u << std::endl;
+      std::cout << "vector v: \t" << v << std::endl;
+      }
 
-    std::cout << "vector u: \t" << u << std::endl;
-    std::cout << "vector v: \t" << v << std::endl;
 
     VectorType cross = itk::CrossProduct(u, v);
-    std::cout << "vector cross: \t" << cross <<std::endl;
+    if(m_Debug || m_Verbose)
+      {
+      if(m_Debug)
+        {
+        std::cout << "In GenerateData of MaskFromLandmarksFilter.h" << std::endl;
+        std::cout << "Line:  " << __LINE__ << std::endl;
+        std::cout << "File:  " << __FILE__ << std::endl;
+        }
+
+      std::cout << "vector cross: \t" << cross << std::endl;
+      }
 
     //for ax + by + cz = d plug in cross for abc and one of the points (dens_axis) for xyz
     VectorType leftEyeVector;
@@ -74,11 +107,20 @@ protected:
     leftEyeVector[2] = leftEye[2];
 
     VectorType::ComponentType d = cross * leftEyeVector;
-    std::cout << "d:\t" << d << std::endl;
+    if(m_Debug || m_Verbose)
+      {
+      if(m_Debug)
+        {
+        std::cout << "In GenerateData of MaskFromLandmarksFilter.h" << std::endl;
+        std::cout << "Line:  " << __LINE__ << std::endl;
+        std::cout << "File:  " << __FILE__ << std::endl;
+        }
 
-    std::cout << "equation of plane is:" << std::endl;
-    std::cout << cross[0] << "x + " << cross[1] << "y + " << cross[2] << "z = " << d << std::endl;
+      std::cout << "d:\t" << d << std::endl;
 
+      std::cout << "equation of plane is:" << std::endl;
+      std::cout << cross[0] << "x + " << cross[1] << "y + " << cross[2] << "z = " << d << std::endl;
+      }
     // make a mask based on the plane:
 
     // first create mask image
@@ -132,6 +174,8 @@ protected:
 private:
   std::string      m_LandmarksFileName;
   bool             m_ReverseMask;
+  bool             m_Verbose;
+  bool             m_Debug;
 };
 
 

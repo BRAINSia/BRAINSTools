@@ -69,49 +69,51 @@ protected:
       std::cout << "In function GenerateData()" << std::endl;
       }
 
-#if 0 //old way of initializing BSpline
-    typename BSplineType::MeshSizeType meshSize;                  //Setup a mesh that contains the number of controlpoints
-    meshSize.Fill(m_BSplineControlPoints - NBSplineOrder);         //Inspired from itk example "BSplineWarping2.cxx"
-
-    this->GetBSplineOutput()->SetTransformDomainMeshSize(meshSize);            //TODO: ask if it is possible to have "uneven" control points.
-                                                                // EG. 8 on LR axis 7 on SI 6 on AP. We did this in simple itk
-                                                                //so it should be possible in cpp itk
-
     typedef typename ImageType::RegionType ImageRegionType;
-    ImageRegionType subjectRegion = this->GetInput()->GetLargestPossibleRegion();
 
+    const unsigned int sizeVal = 400; // The image should be large enough to contain most heads, 40 cm^3 should do it
+    if(sizeVal % 2 != 0)
+      {
+      std::cerr << "File: " << __FILE__ << std::endl;
+      std::cerr << "Line: " << __LINE__ << std::endl;
+      std::cerr << "BSpline size must be divisible by 0" << std::endl;
+      }
+    double originVal = sizeVal * -0.5;  //automatically determine origin based on size
 
-    this->GetBSplineOutput()->SetTransformDomainOrigin(this->GetInput()->GetOrigin());           //Origin
-    this->GetBSplineOutput()->SetTransformDomainDirection(this->GetInput()->GetDirection());     //Direction
-    this->GetBSplineOutput()->SetTransformDomainPhysicalDimensions((                    //PhysicalDimensions
-                                                    this->GetInput()->GetSpacing()[0]*(subjectRegion.GetSize()[0]-1),         //Should all be set to the same as the subject Image
-                                                    this->GetInput()->GetSpacing()[1]*(subjectRegion.GetSize()[1]-1),
-                                                    this->GetInput()->GetSpacing()[2]*(subjectRegion.GetSize()[2]-1)
-                                                  ));
-#endif
-    typedef typename ImageType::RegionType ImageRegionType;
-    ImageRegionType subjectRegion = this->GetInput()->GetLargestPossibleRegion();
+    typename ImageType::IndexType start;
+    start[0] = 0;
+    start[1] = 0;
+    start[2] = 0;
 
-    //one new way of initializing bSPline
-    //this method was inspired by itk example for deformable registration15
-    typename BSplineType::PhysicalDimensionsType fixedBSplinePhysicalDimensions;
-    typename BSplineType::MeshSizeType meshSize;
+    typename ImageType::SizeType size;
+    size[0] = sizeVal;
+    size[1] = sizeVal;
+    size[2] = sizeVal;
+
+    ImageRegionType subjectRegion(start, size);
+
     typename BSplineType::OriginType  fixedOrigin;
+    fixedOrigin[0] = originVal;
+    fixedOrigin[1] = originVal;
+    fixedOrigin[2] = originVal;
+
+    this->GetBSplineOutput()->SetTransformDomainOrigin(fixedOrigin);
+
+    typename BSplineType::MeshSizeType meshSize;
+    meshSize.Fill(this->GetBSplineControlPoints() - NBSplineOrder);
+    this->GetBSplineOutput()->SetTransformDomainMeshSize(meshSize);
+
+    typename BSplineType::PhysicalDimensionsType fixedBSplinePhysicalDimensions;
+    typename ImageType::SpacingType  spacing;
+    spacing[0] = 1;
+    spacing[1] = 1;
+    spacing[2] = 1;
 
     for( size_t i = 0; i < NDimension; ++i)
       {
-      fixedOrigin[i] = this->GetInput()->GetOrigin()[i];
-      fixedBSplinePhysicalDimensions[i] = this->GetInput()->GetSpacing()[i] *
-        static_cast<double>(subjectRegion.GetSize()[i]-1);
-
+      fixedBSplinePhysicalDimensions[i] = spacing[i] * size[i];
       }
-
-    meshSize.Fill(this->GetBSplineControlPoints() - NBSplineOrder);
-    this->GetBSplineOutput()->SetTransformDomainOrigin(fixedOrigin);
     this->GetBSplineOutput()->SetTransformDomainPhysicalDimensions(fixedBSplinePhysicalDimensions);
-    this->GetBSplineOutput()->SetTransformDomainMeshSize(meshSize);
-    this->GetBSplineOutput()->SetTransformDomainDirection(this->GetInput()->GetDirection() );
-
 
     //Get the number of paramaters/nodes required for this BSpline
     const unsigned int numberOfParameters = this->GetBSplineOutput()->GetNumberOfParameters();
@@ -119,9 +121,9 @@ protected:
     //Setup a paramaters variable for the bspline
     typename BSplineType::ParametersType bSplineParams( numberOfParameters );
 
-    std::srand(time(nullptr));
+    //set up random control point creation
+    std::srand(std::time(nullptr));
 
-#if 1
     ImagePointer coefficientImgLR = this->GetBSplineOutput()->GetCoefficientImages()[0];
     ImagePointer coefficientImgPA = this->GetBSplineOutput()->GetCoefficientImages()[1];
     ImagePointer coefficientImgSI = this->GetBSplineOutput()->GetCoefficientImages()[2];
@@ -163,10 +165,6 @@ protected:
     SIit.GoToBegin();
     for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
       {
-#if 0 //old method
-      ImagePointType point;
-      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), point);
-#endif
       ImagePointType pointLR;
       ImagePointType pointPA;
       ImagePointType pointSI;
@@ -183,7 +181,6 @@ protected:
         PAit.Set( myRandom() );//might have to do these seperateley(different loop) for each one if there is no guarentee of order
         SIit.Set( myRandom() );
         }
-
       }
 
 
@@ -204,18 +201,9 @@ protected:
       double y = pointPA[1];
       double z = pointSI[2];
 
-#if 0
-      ImagePointType point;
-      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), point);
-
-      double x = point[0];
-      double y = point[1];
-      double z = point[2];
-#endif
       //if( y > 0 ) continue; //Only front half of skull
       if( x <= 0 )
         {
-
         ImagePointType pos;
         pos[0] = x * -1;
         pos[1] = y;
@@ -226,9 +214,9 @@ protected:
         LRit.Set( coefficientImgLR->GetPixel(idx) * -1 );
         PAit.Set( coefficientImgPA->GetPixel(idx) ); //might have to do these seperateley for each one if there is no guarentee of order
         SIit.Set( coefficientImgSI->GetPixel(idx) );
-
         }
       }
+
     //We shouldn't need to set the parameters since we set the coefficient images
     typedef typename BSplineType::CoefficientImageArray CoefficeintImages;
     CoefficeintImages images;
@@ -236,28 +224,6 @@ protected:
     images[1] = coefficientImgPA;
     images[2] = coefficientImgSI;
     this->GetBSplineOutput()->SetCoefficientImages(images);
-
-    //std::cout << this->GetBSplineOutput()->GetParameters() <<std::endl;
-
-    //There should be a better way to do this:
-
-#endif
-
-
-    //Old method below
-#if 0
-    for( unsigned int n = 0; n < numberOfNodes; ++ n)
-      {
-      bSplineParams[n] = myRandom();
-      bSplineParams[n + numberOfNodes] = myRandom();      // "y" coord;
-      bSplineParams[n + numberOfNodes * 2] = myRandom();  // "z" coord;
-      // TODO: x,y,z seem like they are the wrong coordinate system. Get a better model
-      }
-
-
-    this->GetBSplineOutput()->SetParameters(bSplineParams);
-    std::cout << this->GetBSplineOutput()->GetParameters() <<std::endl;
-#endif
   }
 
 private:

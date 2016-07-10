@@ -277,10 +277,8 @@ int main(int argc, char **argv)
   std::cout << "Refacing image ..." << std::endl;
 
   resampler->SetInterpolator(interpolater);
-  resampler->SetOutputSpacing(subject->GetSpacing());
-  resampler->SetOutputOrigin(subject->GetOrigin());
-  resampler->SetOutputDirection(subject->GetDirection());
-  resampler->SetSize(subjectRegion.GetSize());
+  resampler->SetReferenceImage(imageReader->GetOutput());
+  resampler->UseReferenceImageOn();
   resampler->SetOutputStartIndex(subjectRegion.GetIndex());
 
   resampler->SetInput(imageReader->GetOutput());

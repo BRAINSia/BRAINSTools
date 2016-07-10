@@ -7,9 +7,6 @@
    *                                          subpath2: landmark - use landmark mask and check face area has changed
    *                                                    and non face area hasn't changed.
 */
-
-
-
 #include "BRAINSRefacerBrainDataTestCLP.h"
 #include <itkLabelImageToLabelMapFilter.h>
 #include <itkMultiplyImageFilter.h>
@@ -19,7 +16,8 @@
 #include "itkAbsoluteValueDifferenceImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkLabelMapMaskImageFilter.h"
-#include "../MaskFromLandmarksFilter.h"
+#include <itkResampleImageFilter.h>
+#include <itkNearestNeighborInterpolateImageFunction.h>
 
 void outputError(itk::ExceptionObject &err)
 {
@@ -47,6 +45,12 @@ int main(int argc, char *argv[])
   typedef itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>  AbsValDiffFilterType;
   typedef itk::StatisticsImageFilter<ImageType>                                     StatisticsFilterType;
 
+  typedef itk::NearestNeighborInterpolateImageFunction<ImageType, double>           NN_InterpolatorType;
+  typedef itk::IdentityTransform<double, Dimension>                                 IdentityTransformType;
+  typedef itk::ResampleImageFilter<ImageType, ImageType>                            labelResamplerType;
+
+
+    // load in images
   ReaderType::Pointer originalReader = ReaderType::New();
   originalReader->SetFileName(inputOriginal);
 
@@ -60,8 +64,21 @@ int main(int argc, char *argv[])
 
   labelmapReader->SetFileName(brainLabelMap);
 
+    //resample label map to original subject image
+
+  NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
+  IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
+  labelResamplerType::Pointer labelResampler = labelResamplerType::New();
+
+  labelResampler->SetInput(labelmapReader->GetOutput());
+  labelResampler->SetInterpolator(NN_interpolator);
+  labelResampler->SetTransform(identityTransform);
+  labelResampler->SetReferenceImage(originalReader->GetOutput());
+  labelResampler->UseReferenceImageOn();
+  labelResampler->Update();
+
   // Create labelmap from label image
-  imageToMapFilter->SetInput(labelmapReader->GetOutput());
+  imageToMapFilter->SetInput(labelResampler->GetOutput());
 
   //Mask the images leaving only the brain
   originalMaskFilter->SetInput(imageToMapFilter->GetOutput());

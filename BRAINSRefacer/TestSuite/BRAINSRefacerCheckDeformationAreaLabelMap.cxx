@@ -8,6 +8,8 @@
 #include "itkAbsoluteValueDifferenceImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkLabelMapMaskImageFilter.h"
+#include <itkResampleImageFilter.h>
+#include <itkNearestNeighborInterpolateImageFunction.h>
 
 void outputError(itk::ExceptionObject &err)
 {
@@ -19,7 +21,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-  typedef float                                                                     InputPixelType;
+  typedef double                                                                    InputPixelType;
   const int                                                                         Dimension = 3;
 
   typedef itk::Image<InputPixelType, Dimension>                                     ImageType;
@@ -35,6 +37,12 @@ int main(int argc, char *argv[])
   typedef itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>  AbsValDiffFilterType;
   typedef itk::StatisticsImageFilter<ImageType>                                     StatisticsFilterType;
 
+  typedef itk::NearestNeighborInterpolateImageFunction<ImageType, double>           NN_InterpolatorType;
+  typedef itk::IdentityTransform<double, Dimension>                                 IdentityTransformType;
+  typedef itk::ResampleImageFilter<ImageType, ImageType>                            labelResamplerType;
+
+
+  // load in images
   ReaderType::Pointer originalReader = ReaderType::New();
   originalReader->SetFileName(inputOriginal);
 
@@ -43,70 +51,88 @@ int main(int argc, char *argv[])
 
   LabelMaskFilterType::Pointer originalMaskFilter = LabelMaskFilterType::New();
   LabelMaskFilterType::Pointer defacedMaskFilter = LabelMaskFilterType::New();
-
   ReaderType::Pointer labelMapReader = ReaderType::New();
   ImageToMapType::Pointer imageToMapFilter = ImageToMapType::New();
 
   labelMapReader->SetFileName(brainLabelMap);
 
-  // Create label map from label image
-  imageToMapFilter->SetInput(labelMapReader->GetOutput());
+  //resample label map to original subject image
 
-  //Mask the images
-  //Note that this actually masks the non-brain data
-  //which is the deformation area
+  NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
+  IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
+  labelResamplerType::Pointer labelResampler = labelResamplerType::New();
 
+  labelResampler->SetInput(labelMapReader->GetOutput());
+  labelResampler->SetInterpolator(NN_interpolator);
+  labelResampler->SetTransform(identityTransform);
+  labelResampler->SetReferenceImage(originalReader->GetOutput());
+  labelResampler->UseReferenceImageOn();
+  labelResampler->Update();
+
+  // Create labelmap from label image
+  imageToMapFilter->SetInput(labelResampler->GetOutput());
+
+  //Mask the images leaving only the brain
   originalMaskFilter->SetInput(imageToMapFilter->GetOutput());
   originalMaskFilter->SetFeatureImage(originalReader->GetOutput());
   originalMaskFilter->SetLabel(0);
+  if( checkNonDeformedArea )
+  {
+    originalMaskFilter->SetNegated(true);
+  }
   originalMaskFilter->SetBackgroundValue(0);
 
+  //Mask the images leaving only the brain
   defacedMaskFilter->SetInput(imageToMapFilter->GetOutput());
   defacedMaskFilter->SetFeatureImage(defacedReader->GetOutput());
   defacedMaskFilter->SetLabel(0);
+  if( checkNonDeformedArea )
+  {
+    defacedMaskFilter->SetNegated(true);
+  }
   defacedMaskFilter->SetBackgroundValue(0);
 
-  // reverse the mask for checking the brain data
-  if( checkNonDeformedArea )
-    {
-    originalMaskFilter->SetNegated(true);
-    defacedMaskFilter->SetNegated(true);
-    }
-
-
   AbsValDiffFilterType::Pointer absDiffFilter = AbsValDiffFilterType::New();
+
   absDiffFilter->SetInput1(defacedMaskFilter->GetOutput());
   absDiffFilter->SetInput2(originalMaskFilter->GetOutput());
 
   StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
   statsFilter->SetInput(absDiffFilter->GetOutput());
-  try
-    {
+  try {
     statsFilter->Update();
     double absDiffSum = statsFilter->GetSum();
 
     std::cout << "Sum of Absolute Difference: " << absDiffSum << std::endl;
 
-
-    if( checkNonDeformedArea )
-      {
-      //NonDeformedArea includes the brain, so there should be zero differences
-      return (absDiffSum == 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
-      }
-    else //check deformed area
-      {
-      // We want some deformation here, so if it's doing something it should be > 0
-      return ( absDiffSum > 0 ) ? EXIT_SUCCESS : EXIT_FAILURE;
-      }
-
-    }
-  catch (itk::ExceptionObject &err)
+    if (checkNonDeformedArea)
     {
+      if (absDiffSum == 0)
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+      {
+        return EXIT_FAILURE;
+      }
+    }
+    else
+    {
+      if( absDiffSum > 0 )
+      {
+        return EXIT_SUCCESS;
+      }
+      else
+        return EXIT_FAILURE;
+    }
+  }
+  catch (itk::ExceptionObject &err)
+  {
     outputError(err);
     return EXIT_FAILURE;
-    }
+  }
 
-  // should never get here
+// should never get here
   std::cerr << "ERROR: Should never get to this point!!!" << std::endl;
 
   return EXIT_FAILURE;

@@ -203,11 +203,13 @@
       <default>false</default>
     </boolean>
     <boolean>
+      <label>Debug flag</label>
       <name>debug_Refacer</name>
       <longflag>--debug</longflag>
       <default>false</default>
     </boolean>
     <boolean>
+      <label>save transform flag</label>
       <name>saveTransform</name>
       <longflag>--saveTransform</longflag>
       <default>false</default>

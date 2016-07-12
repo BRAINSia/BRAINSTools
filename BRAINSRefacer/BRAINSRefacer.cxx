@@ -39,6 +39,52 @@ int main(int argc, char **argv)
 
   if(debug_Refacer) verbose_Refacer = true;  //debug should always be verbose
 
+  //check for multiple preset switches
+  int sumOptions = static_cast<int>(defaultface) + static_cast<int>(birdface) + static_cast<int>(babyface) +
+    static_cast<int>(reusebspline);
+  if( sumOptions >1)
+    {
+    std::cerr << "Too many presets specified. using default preset." << std::endl;
+    reusebspline = false;
+    birdface = false;
+    babyface = false;
+    defaultface = true;
+    }
+
+  if(defaultface)
+    {
+    if(verbose_Refacer)
+      {
+      std::cout << "Using \"DefaultFace\" parameters, explicitly given controls options will be ignored" << std::endl;
+      }
+    maxRandom = 5;
+    minRandom = -5;
+    bsplineControlPoints = 25;
+    scaleDistanceMap = 0.05;
+    }
+  if(birdface) // default parameters
+    {
+    if(verbose_Refacer)
+      {
+      std::cout << "Using \"BirdFace\" parameters, explicitly given controls options will be ignored" << std::endl;
+      }
+    maxRandom = 3;
+    minRandom = -5;
+    bsplineControlPoints = 24;
+    scaleDistanceMap = 0.05;
+    }
+  if(babyface) // default parameters
+    {
+    if(verbose_Refacer)
+      {
+      std::cout << "Using \"BabyFace\" parameters, explicitly given controls options will be ignored" << std::endl;
+      }
+    maxRandom = 8;
+    minRandom = 0;
+    bsplineControlPoints = 22;
+    scaleDistanceMap = 0.05;
+    }
+
   //Basic typedef's
   typedef double ProcessPixelType;
   const unsigned int Dimension = 3;

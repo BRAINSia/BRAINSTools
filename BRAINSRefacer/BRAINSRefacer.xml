@@ -110,7 +110,7 @@
       <default>deformedImageName.nii.gz</default>
     </image>
   </parameters>
-  <parameters>
+  <parameters advanced="true">
     <label>Control Options</label>
     <description>These parameters control the various options</description>
     <integer>
@@ -148,8 +148,8 @@
       <default>0.05</default>
       <constraints>
         <maximum>1</maximum>
-        <minimum>0.001</minimum>
-        <step>0.001</step>
+        <minimum>0.01</minimum>
+        <step>0.01</step>
       </constraints>
     </double>
     <integer>
@@ -158,7 +158,7 @@
       <channel>input</channel>
       <longflag>bsplineControlPoints</longflag>
       <description>The number of bspline control points in each direction</description>
-      <default>8</default>
+      <default>25</default>
       <constraints>
         <!-- what should the contraits actually be??
              what would make sense and why?? -->
@@ -169,7 +169,7 @@
     </integer>
   </parameters>
   <parameters>
-    <label>LabelMap or landmarks based mask</label>
+    <label>Some options</label>
     <boolean>
       <name>labelmapSwitch</name>
       <label>Use labelmap-based mask</label>
@@ -198,6 +198,30 @@
       <label>save transform flag</label>
       <name>saveTransform</name>
       <longflag>--saveTransform</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters>
+    <label> Preset face type parameter options </label>
+    <boolean>
+     <name>babyface</name>
+      <label>BabyFace</label>
+      <longflag>babyface</longflag>
+      <default>false</default>
+      <description>Produces a Squished, baby like face</description>
+    </boolean>
+    <boolean>
+      <name>birdface</name>
+      <label>BirdFace</label>
+      <longflag>birdface</longflag>
+      <default>false</default>
+      <description>Typically produces a narrow, birdlike face with an extended nose</description>
+    </boolean>
+    <boolean>
+      <name>defaultface</name>
+      <label>DefaultFace</label>
+      <longflag>defaultface</longflag>
+      <description>Uses the default parameters to produce a randomly deformed face</description>
       <default>false</default>
     </boolean>
   </parameters>

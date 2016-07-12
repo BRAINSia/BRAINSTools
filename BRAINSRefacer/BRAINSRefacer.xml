@@ -140,20 +140,6 @@
       </constraints>
     </integer>
     <double>
-      <label>Random Scale</label>
-      <name>scaleRandom</name>
-      <channel>input</channel>
-      <longflag>scaleRandom</longflag>
-      <description>The amount the randomness is scaled by</description>
-      <!-- this should be bigger, and then we can scale down the distance map? -->
-      <default>1</default>
-      <constraints>
-        <maximum>10.00</maximum>
-        <minimum>0.005</minimum>
-        <step>0.005</step>
-      </constraints>
-    </double>
-    <double>
       <label>Distance Map Scale</label>
       <name>scaleDistanceMap</name>
       <channel>input</channel>
@@ -161,7 +147,7 @@
       <description>The amount the Distance Map is scaled by</description>
       <default>0.05</default>
       <constraints>
-        <maximum>10</maximum>
+        <maximum>1</maximum>
         <minimum>0.001</minimum>
         <step>0.001</step>
       </constraints>

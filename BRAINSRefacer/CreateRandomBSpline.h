@@ -36,9 +36,6 @@ public:
   itkSetMacro(RandMax, int)
   itkGetMacro(RandMax, int)
 
-  itkSetMacro(RandScale, double)
-  itkGetMacro(RandScale, double)
-
   itkSetMacro(Verbose, bool)
   itkSetMacro(Debug, bool)
 
@@ -53,7 +50,6 @@ protected:
     m_BSplineControlPoints = 8; //default value
     m_RandMax = 5; //default value
     m_RandMin = -5; //default value
-    m_RandScale = 5;
 
     this->m_Verbose = false;
     this->m_Debug = false;
@@ -232,14 +228,13 @@ private:
     int min = this->GetRandMin();
     int max = this->GetRandMax();
     int range = max - min;
-    return static_cast< double >( rand() % range +1 - max ) * this->GetRandScale();
+    return static_cast< double >( rand() % range +1 - max );
   }
 
   BSplinePointer m_BSplineOutput;
   unsigned int m_BSplineControlPoints;
   int m_RandMin;
   int m_RandMax;
-  double m_RandScale;
   bool             m_Verbose;
   bool             m_Debug;
 };

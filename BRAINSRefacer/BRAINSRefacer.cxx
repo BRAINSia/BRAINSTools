@@ -189,7 +189,6 @@ int main(int argc, char **argv)
     bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
     bSplineCreator->SetRandMax(maxRandom);
     bSplineCreator->SetRandMin(minRandom);
-    bSplineCreator->SetRandScale(scaleRandom);
     bSplineCreator->Update();
     bSpline = bSplineCreator->GetBSplineOutput();
     if(debug_Refacer || saveTransform )

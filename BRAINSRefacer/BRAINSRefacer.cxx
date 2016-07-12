@@ -226,7 +226,7 @@ int main(int argc, char **argv)
   TransformReaderType::Pointer transformReader = TransformReaderType::New();
 
 
-  if(!reuseBSplineSwitch)
+  if(!reusebspline)
     {
     std::cout << "Generating brand new random BSPline" << std::endl;
     bSplineCreator->SetDebug(debug_Refacer);
@@ -242,7 +242,7 @@ int main(int argc, char **argv)
       WriteTransform(bSplineFileName, bSpline);
       }
     }
-  else if (reuseBSplineSwitch)
+  else if (reusebspline)
     {
     std::cout << "Reusing BSpline" << std::endl;
 

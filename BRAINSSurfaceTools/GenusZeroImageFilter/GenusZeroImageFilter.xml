@@ -5,7 +5,7 @@
   <description>
     Adjusts a labelmap such that marching cubes will produce a genus zero surface.
   </description>
-  <version>4.7.0</version>
+  <version>4.7.1</version>
   <documentation-url/>
   <license/>
   <contributor>Steven Haker and Marc Niethammer</contributor>

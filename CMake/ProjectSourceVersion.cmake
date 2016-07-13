@@ -114,4 +114,4 @@ endif()
 
 # save variable in a configuration file in case we have no git directory
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMake/ProjectSourceVersionVars.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/ProjectSourceVersionVars.cmake"  @ONLY)
+  "${CMAKE_CURRENT_LIST_DIR}/ProjectSourceVersionVars.cmake"  @ONLY)

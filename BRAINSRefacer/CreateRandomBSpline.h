@@ -7,6 +7,7 @@
 #include <itkBSplineTransform.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <ctime>
+#include <itkMersenneTwisterRandomVariateGenerator.h>
 
 template<typename TInputImage,
   typename TPixelType,
@@ -43,6 +44,9 @@ public:
   typedef typename ImageType::Pointer ImagePointer;
   typedef typename ImageType::PointType ImagePointType;
 
+  //set up random control point creation
+  typedef itk::Statistics::MersenneTwisterRandomVariateGenerator GeneratorType;
+
 protected:
   CreateRandomBSpline()
   {
@@ -53,6 +57,11 @@ protected:
 
     this->m_Verbose = false;
     this->m_Debug = false;
+
+
+    //set up random control point creation
+    this->m_Generator = GeneratorType::New();
+    this->m_Generator->Initialize();
   };
   ~CreateRandomBSpline(){};
 
@@ -116,9 +125,6 @@ protected:
 
     //Setup a paramaters variable for the bspline
     typename BSplineType::ParametersType bSplineParams( numberOfParameters );
-
-    //set up random control point creation
-    std::srand(std::time(nullptr));
 
     ImagePointer coefficientImgLR = this->GetBSplineOutput()->GetCoefficientImages()[0];
     ImagePointer coefficientImgPA = this->GetBSplineOutput()->GetCoefficientImages()[1];
@@ -192,7 +198,6 @@ protected:
       coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), pointLR);
       coefficientImgPA->TransformIndexToPhysicalPoint(PAit.GetIndex(), pointPA);
       coefficientImgSI->TransformIndexToPhysicalPoint(SIit.GetIndex(), pointSI);
-
       double x = pointLR[0];
       double y = pointPA[1];
       double z = pointSI[2];
@@ -227,9 +232,10 @@ private:
   {
     int min = this->GetRandMin();
     int max = this->GetRandMax();
-    int range = max - min;
-    return static_cast< double >( rand() % range +1 - max );
+    int val = itk::Math::Round<int, double>( this->m_Generator->GetUniformVariate(min, max) );
+    return val;
   }
+
 
   BSplinePointer m_BSplineOutput;
   unsigned int m_BSplineControlPoints;
@@ -237,5 +243,8 @@ private:
   int m_RandMax;
   bool             m_Verbose;
   bool             m_Debug;
+
+  GeneratorType::Pointer m_Generator;
+
 };
 #endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H

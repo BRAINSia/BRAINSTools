@@ -28,6 +28,7 @@
 #include "CreateRandomBSpline.h"
 #include "CombineBSplineWithDisplacement.h"
 #include "MaskFromLandmarksFilter.h"
+#include "MaskFromLabelMapFilter.h"
 #include "BRAINSRefacerUtilityFunctions.hxx"
 
 #include "BRAINSRefacerUtilityFunctions.hxx"  //Why does this not need to be included??
@@ -128,9 +129,10 @@ int main(int argc, char **argv)
   typedef itk::Image<ProcessPixelType, Dimension> LabelAtlasType;
   typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
   LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
-  typedef itk::BinaryThresholdImageFilter<LabelAtlasType, ImageMaskType> MaskFilterType;
-  MaskFilterType::Pointer maskFilter = MaskFilterType::New();
+//  typedef itk::BinaryThresholdImageFilter<LabelAtlasType, ImageMaskType> MaskFilterType;
+ // MaskFilterType::Pointer maskFilter = MaskFilterType::New();
   LabelAtlasType::Pointer labelAtlasReaderOutput = LabelAtlasType::New();
+
 
   if (labelmapSwitch == false)
     {
@@ -152,37 +154,15 @@ int main(int argc, char **argv)
     }
   else
     {
-
     std::cout << "Generating mask from labelmap" << std::endl;
+
     labelAtlasReader->SetFileName(labelmap);
     labelAtlasReaderOutput = labelAtlasReader->GetOutput();
-    labelAtlasReader->Update();
 
-    //resample LabelImage
-    typedef itk::NearestNeighborInterpolateImageFunction<LabelAtlasType, double> NN_InterpolatorType;
-    NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
-
-    typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
-    IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
-
-
-    typedef itk::ResampleImageFilter<LabelAtlasType, LabelAtlasType> maskResamplerType;
-    maskResamplerType::Pointer maskResampler = maskResamplerType::New();
-
-    std::cout << "Resampling atlas map:" << std::endl;
-    maskResampler->SetInput(labelAtlasReader->GetOutput());
-    maskResampler->SetInterpolator(NN_interpolator);
-    maskResampler->SetTransform(identityTransform);
-    maskResampler->SetReferenceImage(subject);
-    maskResampler->UseReferenceImageOn();
-    maskResampler->Update();
-
-    maskFilter->SetInput(maskResampler->GetOutput());
-    maskFilter->SetOutsideValue(1);
-    maskFilter->SetInsideValue(0);
-    maskFilter->SetLowerThreshold(0);
-    maskFilter->SetUpperThreshold(0);
-
+    typedef MaskFromLabelMapFilter<ProcessImageType, LabelAtlasType, ImageMaskType> MaskFromLabelMapFilterType;
+    MaskFromLabelMapFilterType::Pointer maskFilter = MaskFromLabelMapFilterType::New();
+    maskFilter->SetReferenceImage(subject);
+    maskFilter->SetInputAtlas(labelAtlasReader->GetOutput());
 
     brainMask = maskFilter->GetOutput();
     brainMask->Update();

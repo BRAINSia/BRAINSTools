@@ -132,8 +132,7 @@ protected:
   }
 
 private:
-  InvertBSplineFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);      // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(InvertBSplineFilter);
 
   /*** Input and Output Objects ***/
   BsplineTransformTypePointer m_Input;

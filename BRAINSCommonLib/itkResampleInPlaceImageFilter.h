@@ -157,8 +157,7 @@ protected:
   void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  ResampleInPlaceImageFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleInPlaceImageFilter);
 
   OutputImagePointer         m_OutputImage;
   RigidTransformConstPointer m_RigidTransform;

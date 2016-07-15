@@ -134,8 +134,7 @@ protected:
   const RealType & GetInterpolationWeight( unsigned int ) const;
 
 private:
-  LinearInterpolateMeshFunction( const Self & ); // purposely not implemented
-  void operator=( const Self & );                // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateMeshFunction);
 
   mutable VectorType m_V12;
   mutable VectorType m_V32;

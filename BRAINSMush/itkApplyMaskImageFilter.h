@@ -84,8 +84,7 @@ private:  /* define methods available only to this class */
 
   bool m_InvertMask;
 
-  ApplyMaskImageFilter(const Self &);   // purposely not implemented
-  void operator=(const Self &);         // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ApplyMaskImageFilter);
 };
 }   // end namespace itk
 

@@ -85,8 +85,7 @@ protected:
   VTKImageToImageFilter();
   virtual ~VTKImageToImageFilter();
 private:
-  VTKImageToImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(VTKImageToImageFilter);
 
   ImporterFilterPointer m_Importer;
   vtkImageExport *      m_Exporter;

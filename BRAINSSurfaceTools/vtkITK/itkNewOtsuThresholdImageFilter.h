@@ -112,8 +112,7 @@ protected:
   void GenerateData () ITK_OVERRIDE;
 
 private:
-  NewOtsuThresholdImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageFilter);
 
   InputPixelType      m_Threshold;
   OutputPixelType     m_InsideValue;

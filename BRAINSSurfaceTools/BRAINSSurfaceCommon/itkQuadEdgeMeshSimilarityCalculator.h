@@ -121,8 +121,7 @@ protected:
   ~QuadEdgeMeshSimilarityCalculator();
 private:
 
-  QuadEdgeMeshSimilarityCalculator( const Self & ); // purposely not implemented
-  void operator=( const Self & );                   // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshSimilarityCalculator);
 
   InputPixelType1 m_LabelValue;
 

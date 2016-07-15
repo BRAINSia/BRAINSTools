@@ -130,8 +130,7 @@ protected:
   virtual void GenerateOutputInformation();
 
 private:
-  RandomImageSource(const RandomImageSource &); // purposely not implemented
-  void operator=(const RandomImageSource &);    // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(RandomImageSource);
 
   SizeType    m_Size;       // size of the output image
   SpacingType m_Spacing;    // spacing

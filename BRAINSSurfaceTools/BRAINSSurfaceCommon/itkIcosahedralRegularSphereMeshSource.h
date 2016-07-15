@@ -114,8 +114,7 @@ protected:
   /** model scales */
   VectorType m_Scale;
 private:
-  IcosahedralRegularSphereMeshSource(const Self &); // purposely not implemented
-  void operator=(const Self &);                     // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(IcosahedralRegularSphereMeshSource);
 };
 } // end namespace itk
 

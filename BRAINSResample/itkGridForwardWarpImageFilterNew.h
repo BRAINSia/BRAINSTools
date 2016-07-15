@@ -159,8 +159,7 @@ protected:
   void GenerateData() ITK_OVERRIDE;
 
 private:
-  GridForwardWarpImageFilterNew(const Self &); // purposely not implemented
-  void operator=(const Self &);                // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(GridForwardWarpImageFilterNew);
 
   PixelType       m_BackgroundValue;
   PixelType       m_ForegroundValue;

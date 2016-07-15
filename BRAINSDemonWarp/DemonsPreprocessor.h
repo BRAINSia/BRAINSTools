@@ -171,8 +171,7 @@ protected:
   }
 
 private:
-  DemonsPreprocessor(const Self &);      // purposely not implemented
-  void operator=(const Self &);          // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsPreprocessor);
 
   typename InputImageType::Pointer m_InputFixedImage;
   typename InputImageType::Pointer m_InputMovingImage;

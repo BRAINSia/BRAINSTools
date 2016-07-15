@@ -101,8 +101,7 @@ protected:
 
 private:
 
-  QuadEdgeMeshGenerateDeformationFieldFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshGenerateDeformationFieldFilter);
 
   /** Center of spherical mesh. We assume that both the Fixed and
    * Moving meshes have spherical geometry and that they share the same

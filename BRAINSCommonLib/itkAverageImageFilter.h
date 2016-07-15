@@ -99,8 +99,7 @@ protected:
   void PrintSelf(std::ostream&, Indent) const ITK_OVERRIDE;
 
 private:
-  AverageImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(AverageImageFilter);
 };
 
 } // end namespace itk

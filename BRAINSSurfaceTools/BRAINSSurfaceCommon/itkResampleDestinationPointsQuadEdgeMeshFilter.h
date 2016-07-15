@@ -145,8 +145,7 @@ protected:
 
 private:
 
-  ResampleDestinationPointsQuadEdgeMeshFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                              // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleDestinationPointsQuadEdgeMeshFilter);
 
   void ProjectPointToSphereSurface( OutputPointType & point ) const;
 

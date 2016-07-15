@@ -74,9 +74,9 @@ class MyArrayWrapper: public std::vector<Type>
 public:
   MyArrayWrapper(): std::vector<Type>(MySize) {}
 
-protected:
-  void resize(size_t) {}       // purposely not implemented
-  void resize(size_t, Type) {} // purposely not implemented
+private:
+  void resize(size_t) ITK_DELETED_FUNCTION;
+  void resize(size_t, Type) ITK_DELETED_FUNCTION;
 };
 
 class DWIMetaDataDictionaryValidator

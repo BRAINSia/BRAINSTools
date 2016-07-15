@@ -230,8 +230,7 @@ protected:
 
 private:
 
-  DisplacementFieldTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DisplacementFieldTransform);
 
   /** Typedefs for specifying the extend to the grid. */
   typedef ImageRegion<itkGetStaticConstMacro(SpaceDimension)> RegionType;

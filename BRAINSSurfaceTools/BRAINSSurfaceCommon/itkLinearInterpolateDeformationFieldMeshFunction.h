@@ -98,8 +98,7 @@ protected:
 
   typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
 private:
-  LinearInterpolateDeformationFieldMeshFunction( const Self & ); // purposely not implemented
-  void operator=( const Self & );                                // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateDeformationFieldMeshFunction);
 };
 } // end namespace itk
 

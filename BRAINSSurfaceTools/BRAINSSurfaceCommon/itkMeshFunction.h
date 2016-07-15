@@ -107,8 +107,7 @@ protected:
   /** Const pointer to the input image. */
   InputMeshConstPointer m_Mesh;
 private:
-  MeshFunction(const Self &);   // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeshFunction);
 };
 } // end namespace itk
 

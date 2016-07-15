@@ -311,9 +311,7 @@ protected:
     double m_SumOfSquaredChange;
     };
 private:
-  // purposefully not implemented
-  VectorESMDemonsRegistrationFunction(const Self &);
-  void operator=(const Self &);
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorESMDemonsRegistrationFunction);
 
   VectorFixedImagePointer  m_FixedImage;
   VectorMovingImagePointer m_MovingImage;

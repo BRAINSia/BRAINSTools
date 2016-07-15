@@ -132,8 +132,7 @@ protected:
 
 private:
 
-  QuadEdgeMeshScalarPixelValuesSmoothingFilter( const Self & ); // purposely not implemented
-  void operator=( const Self & );                               // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshScalarPixelValuesSmoothingFilter);
 
   unsigned long m_MaximumNumberOfIterations;
   double        m_Lambda;

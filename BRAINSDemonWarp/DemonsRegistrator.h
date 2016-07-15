@@ -224,8 +224,7 @@ protected:
   DemonsRegistrator();
   ~DemonsRegistrator();
 private:
-  DemonsRegistrator(const Self &);                // purposely not implemented
-  void operator=(const Self &);                   // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsRegistrator);
 
   void WriteDisplacementComponents();
 

@@ -99,8 +99,7 @@ protected:
   virtual bool FullMatrix();
 
 private:
-  VectorFFTWRealToHalfHermitianForwardFFTImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                                     // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorFFTWRealToHalfHermitianForwardFFTImageFilter);
 
   bool         m_PlanComputed;
   fftwf_plan   m_Plan;

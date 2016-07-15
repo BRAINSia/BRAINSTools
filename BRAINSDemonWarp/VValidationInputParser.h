@@ -180,8 +180,7 @@ protected:
   }
 
 private:
-  VValidationInputParser(const Self &);      // purposely not implemented
-  void operator=(const Self &);              // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(VValidationInputParser);
 
   std::vector<std::string> m_TheMovingImageFilename;
   std::vector<std::string> m_TheFixedImageFilename;

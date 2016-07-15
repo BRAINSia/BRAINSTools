@@ -269,8 +269,7 @@ protected:
 
   OutputImageRegionType m_OutputImageRegion;
 private:
-  ExtractSliceImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);          // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(ExtractSliceImageFilter);
 
   DIRECTIONCOLLAPSESTRATEGY m_DirectionCollaspeStrategy;
 };

@@ -196,8 +196,7 @@ protected:
   }
 
 private:
-  VDemonsPreprocessor(const Self &);      // purposely not implemented
-  void operator=(const Self &);           // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsPreprocessor);
 
   std::vector<InputImagePointer>  m_InputFixedImage;
   std::vector<InputImagePointer>  m_InputMovingImage;

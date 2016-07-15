@@ -93,8 +93,7 @@ protected:
   }
 
 private:
-  DtiStreamlineTrackingFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);              // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiStreamlineTrackingFilter);
 
   double m_CurvatureThreshold;
 };  // end of class

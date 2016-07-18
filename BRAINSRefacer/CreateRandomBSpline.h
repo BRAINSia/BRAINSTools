@@ -40,6 +40,19 @@ public:
   itkSetMacro(Verbose, bool)
   itkSetMacro(Debug, bool)
 
+
+  virtual void SetMersenneSeed(const unsigned long seed)
+  {
+    itkDebugMacro("seting  MersenneSeed to " << seed );
+    if (this->m_MersenneSeed != seed )
+      {
+      this->m_MersenneSeed = seed;
+      this->m_Generator->SetSeed(this->m_MersenneSeed);
+      this->Modified();
+      }
+  }
+  itkGetMacro(MersenneSeed, unsigned long)
+
   typedef TInputImage ImageType;
   typedef typename ImageType::Pointer ImagePointer;
   typedef typename ImageType::PointType ImagePointType;
@@ -245,6 +258,7 @@ private:
   bool             m_Debug;
 
   GeneratorType::Pointer m_Generator;
+  unsigned long    m_MersenneSeed;
 
 };
 #endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H

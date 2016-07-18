@@ -226,5 +226,18 @@
       <description>Uses the default parameters to produce a randomly deformed face</description>
       <default>false</default>
     </boolean>
+    <boolean>
+      <name>setMersenneSeed</name>
+      <label>Set Mersenne Seed</label>
+      <longflag>setMersenneSeed</longflag>
+      <description>Use a predetermined value for the mersenne seed</description>
+      <default>false</default>
+    </boolean>
+    <integer>
+      <name>mersenneSeed</name>
+      <label>The Mersenne Seed></label>
+      <longflag>mersenneSeed</longflag>
+      <description>The predetermined value for the Mersenne seed</description>
+    </integer>
   </parameters>
 </executable>

@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
   //check for multiple preset switches
   int sumOptions = static_cast<int>(defaultface) + static_cast<int>(birdface) + static_cast<int>(babyface) +
-    static_cast<int>(reusebspline);
+    static_cast<int>(reusebspline) + static_cast<int>(setMersenneSeed);
   if( sumOptions >1)
     {
     std::cerr << "Too many presets specified. using default preset." << std::endl;
@@ -82,6 +82,20 @@ int main(int argc, char **argv)
     maxRandom = 8;
     minRandom = 0;
     bsplineControlPoints = 22;
+    scaleDistanceMap = 0.05;
+    }
+  if(setMersenneSeed) // default parameters
+    {
+    if(verbose_Refacer)
+      {
+      std::cout << "Using predetermined mersenne seed parameters, the default range and number of control points will ";
+      std::cout << "be used, and any other explicitly given control options will be ignored" << std::endl;
+      }
+    //these are (and should be) the default parameters. If different parameters are used with the same seed, then you'll
+    // get a different result.
+    maxRandom = 5;
+    minRandom = -5;
+    bsplineControlPoints = 25;
     scaleDistanceMap = 0.05;
     }
 
@@ -235,6 +249,10 @@ int main(int argc, char **argv)
     bSplineCreator->SetBSplineControlPoints(bsplineControlPoints);
     bSplineCreator->SetRandMax(maxRandom);
     bSplineCreator->SetRandMin(minRandom);
+    if(setMersenneSeed)
+      {
+      bSplineCreator->SetMersenneSeed(mersenneSeed);
+      }
     bSplineCreator->Update();
     bSpline = bSplineCreator->GetBSplineOutput();
     if(debug_Refacer || saveTransform )

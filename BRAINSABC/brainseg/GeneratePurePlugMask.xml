@@ -16,13 +16,13 @@
     <label>IO</label>
     <description>Input/output parameters</description>
 
-    <string-vector>
+    <image multiple="true">
       <name>inputImageModalities</name>
       <longflag>inputImageModalities</longflag>
       <label>Input image file names</label>
       <channel>input</channel>
       <description>Input image files names (.nii.gz or .nrrd)</description>
-    </string-vector>
+    </image>
 
     <float>
       <name>threshold</name>

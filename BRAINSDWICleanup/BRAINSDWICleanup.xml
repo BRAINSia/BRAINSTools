@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Diffusion Weighted Images</category>
+  <category>Diffusion.Utilities</category>
   <title>BRAINSDWICleanup</title>
 
   <description>Remove bad gradients/volumes from DWI NRRD file.</description>

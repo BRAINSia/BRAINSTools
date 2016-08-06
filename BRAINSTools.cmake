@@ -203,6 +203,7 @@ set(brains_modulenames
   AutoWorkup
   BRAINSDWICleanup
   ReferenceAtlas
+  BRAINSSuperResolution
   )
 
 if(USE_DebugImageViewer)

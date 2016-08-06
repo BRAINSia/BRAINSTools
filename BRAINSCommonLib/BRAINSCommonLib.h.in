@@ -25,4 +25,6 @@
 
 extern void BRAINSRegisterAlternateIO(void);
 
+extern void FFTWInit(const std::string path_for_wisdom);
+
 #endif // __BRAINSCommonLib_h

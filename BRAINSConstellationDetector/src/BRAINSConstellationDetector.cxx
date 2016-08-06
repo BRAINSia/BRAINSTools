@@ -30,6 +30,7 @@
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  FFTWInit(""); //Initialize for FFTW in order to improve performance of subsequent runs
   BRAINSRegisterAlternateIO();
 
   const std::string Version(BCDVersionString);

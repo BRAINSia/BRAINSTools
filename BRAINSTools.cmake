@@ -230,4 +230,8 @@ foreach(modulename ${brains_modulenames})
   endif()
 endforeach()
 
+if(USE_ITKMatlabIO)
+  add_subdirectory(ITKMatlabIO)
+endif()
+
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

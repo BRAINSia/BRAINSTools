@@ -6,6 +6,7 @@
 #define __BRAINSCommonLib_h
 
 #include <itkConfigure.h>
+#include <string>
 
 #if defined(WIN32) && !defined(BRAINSCommonLib_STATIC)
 #pragma warning ( disable : 4275 )

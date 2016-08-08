@@ -10,6 +10,6 @@ _set_if_not_empty( _GIT_VERSION_PATCH "1" )
 _set_if_not_empty( _GIT_VERSION_TWEAK "" )
 _set_if_not_empty( _GIT_VERSION_RC "" )
 _set_if_not_empty( _GIT_VERSION_POST "" )
-_set_if_not_empty( _GIT_VERSION_DEV "117" )
+_set_if_not_empty( _GIT_VERSION_DEV "121" )
 ## DO NOT SET THE CONSTANTLY CHANGING HASH FOR DISTRIBUTION RELEASES
 _set_if_not_empty( _GIT_VERSION_HASH "DIST" )

@@ -37,7 +37,7 @@ if(${PRIMARY_PROJECT_NAME}_USE_QT)
 endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG 705348d9ea6ba88f53f8473e25cce4e30ced3082) # 20160418
+set(${proj}_GIT_TAG bc74c4cec36a40e88018c58ae41dc0c5574a4312) # 20160810
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

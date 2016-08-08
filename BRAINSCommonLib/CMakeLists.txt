@@ -20,6 +20,7 @@ FindITKUtil( BRAINSCommonLib_ITK
   ITKSmoothing
   ITKRegistrationCommon
   ITKRegistrationMethodsv4
+  ITKFFT
   ITKMetricsv4
   ITKOptimizersv4
   ITKRegionGrowing

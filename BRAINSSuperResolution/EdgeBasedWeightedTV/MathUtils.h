@@ -63,7 +63,7 @@ class AddScaledVersions:
 
 //If image types don't match, always return false!
 template<typename TPInputImage1, typename TPInputImage2>
-bool isSameImage(TPInputImage1 inImg1, TPInputImage2 inImg2) {
+bool isSameImage(TPInputImage1 , TPInputImage2 ) {
   return false;
 }
 

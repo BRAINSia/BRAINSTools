@@ -90,16 +90,6 @@ void Duplicate(ImageTypePointer & Y, ImageTypePointer &YminusL)
   std::copy(firstInput,lastInput,firstOutput);
 }
 
-//HACK!!!
-static void MultiplyCVByScalar(CVImageType::Pointer inout, const CVImageType::PixelType::ValueType scalar)
-{
-  itk::ImageRegionIterator<CVImageType> it(inout,inout->GetLargestPossibleRegion());
-  while(! it.IsAtEnd())
-  {
-    it.Value() *= scalar;
-    ++it;
-  }
-}
 
 #include <itkVectorMagnitudeImageFilter.h>
 
@@ -212,7 +202,7 @@ FloatImageType::Pointer OpWeightedL2(FloatImageType::Pointer norm01_lowres, Floa
 
   const PrecisionType gam = 1.0F ;
 
-  typedef itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType> GMType;
+  //typedef itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType> GMType;
 
   //The optimal filter for modeling the measurement operator is low pass filter in this case
   // NOTE: That the A operator is a projection operator, so A^{T}A = A, That is to say that applying

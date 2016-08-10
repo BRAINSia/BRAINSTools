@@ -80,7 +80,7 @@ sitk::Image A_fhp(sitk::Image inHRRealImage,
   //==========================
   // NEED ITK HERE
   // Transfer FFT coeficients to new space
-  typedef itk::ImageRegionIterator<HalfHermetianImageType> cmplxHHIteratorType;
+  //typedef itk::ImageRegionIterator<HalfHermetianImageType> cmplxHHIteratorType;
   sitk::Image outputFreqCoeffs = ReshapeFFT(desiredOutputRef, inputImage_cmplHH, inputFirstDimIsOdd);
   return outputFreqCoeffs;
 }
@@ -211,25 +211,6 @@ static sitk::Image ComputeInvTwoMuPlusGamma(sitk::Image edgemask, const Precisio
   return mu;
 }
 
-static sitk::Image MultiplyVectorByConstant(sitk::Image in, const PrecisionType scale) {
-#if 0
-  typedef itk::VectorImage<PrecisionType , 3> VIType;
-  VIType::Pointer vi = dynamic_cast<VIType *>(out.GetITKBase());
-  itk::ImageRegionIterator< VIType > viIter( vi.GetPointer(), vi->GetLargestPossibleRegion());
-  while(! viIter.IsAtEnd())
-  {
-    viIter.Set(viIter.Get()*scale);
-    ++viIter;
-  }
-#else
-  sitk::Image out = sitk::Image(in);
-  PrecisionType *start = out.GetBufferAsFloat();
-  const size_t N = out.GetNumberOfPixels() * out.GetNumberOfComponentsPerPixel();
-  PrecisionType *end = start + N;
-  std::for_each(start, end, [&](float &x) { x *= scale; });
-#endif
-  return out;
-}
 
 sitk::Image MultiplyVectorByScalarImage(sitk::Image viSITK, sitk::Image siSITK) {
   sitk::Image outSITK(viSITK);

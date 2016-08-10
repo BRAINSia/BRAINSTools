@@ -24,19 +24,19 @@ macro(FindVTKUtil)
   ## Paradigm specified by http://www.vtk.org/Wiki/VTK/Build_System_Migration#How_Implementation_Modules_Are_Initialized
   include_directories(${VTK_INCLUDE_DIRS})
 
-  if(TARGET vtkRenderingVolumeOpenGL)
-    message(STATUS "Building optional volume rendering component")
-    find_package(VTK ${VTK_VERSION_MIN} COMPONENTS ${VTK_COMMON_COMPONENTS} vtkRenderingVolumeOpenGL)
-  endif()
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
+#  if(TARGET vtkRenderingVolumeOpenGL)
+#    message(STATUS "Building optional volume rendering component")
+#    find_package(VTK ${VTK_VERSION_MIN} COMPONENTS ${VTK_COMMON_COMPONENTS} vtkRenderingVolumeOpenGL)
+##  endif()
+#  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
 
   ## Paradigm specified by http://www.vtk.org/Wiki/VTK/Build_System_Migration#How_Implementation_Modules_Are_Initialized
-  include_directories(${VTK_INCLUDE_DIRS})
-  if(TARGET vtkRenderingVolumeOpenGL2)
-    message(STATUS "Building optional volume rendering component")
-    find_package(VTK ${VTK_VERSION_MIN} COMPONENTS ${VTK_COMMON_COMPONENTS} vtkRenderingVolumeOpenGL2)
-  endif()
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
+#  include_directories(${VTK_INCLUDE_DIRS})
+#  if(TARGET vtkRenderingVolumeOpenGL2)
+#    message(STATUS "Building optional volume rendering component")
+#    find_package(VTK ${VTK_VERSION_MIN} COMPONENTS ${VTK_COMMON_COMPONENTS} vtkRenderingVolumeOpenGL2)
+#  endif()
+#  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
 
   find_package(VTK ${VTK_VERSION_MIN} REQUIRED) ## HACK: VTK should be minimized.  This is maximizing it's use to all modules.
   include(${VTK_USE_FILE})

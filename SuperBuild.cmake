@@ -168,6 +168,17 @@ if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTs)
 endif()
 
+if(USE_BRAINSSuperResolution)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES RTK)
+endif()
+
+if(USE_BRAINSSuperResolution)
+mark_as_superbuild(
+  VARS
+  RTK_DIR:PATH
+ALL_PROJECTS
+)
+endif()
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables
 #-----------------------------------------------------------------------------
@@ -385,6 +396,7 @@ ExternalProject_Add(${proj}
     -DTBB_ROOT:PATH=${TBB_ROOT}
     -DTBB_BUILD_PREFIX:STRING=${TBB_BUILD_PREFIX}
     -DTBB_BUILD_DIR:PATH=${TBB_BUILD_DIR}
+    -DRTK_DIR:PATH=${RTK_DIR}
   INSTALL_COMMAND ""
   )
 

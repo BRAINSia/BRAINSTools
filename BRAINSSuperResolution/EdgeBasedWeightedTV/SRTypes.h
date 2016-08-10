@@ -17,13 +17,18 @@
 #include <rtkForwardDifferenceGradientImageFilter.h>
 #include <rtkBackwardDifferenceDivergenceImageFilter.h>
 
+
+#ifdef USE_SIMPLEITK
 #include <SimpleITK.h>
+#include <sitkImageOperators.h>
 
 namespace sitk = itk::simple;
 
 //TODO, perhaps this should be part of SITK proper?
 inline sitk::Image ImageFill( sitk::Image &img1, double s) { return sitk::Add(sitk::Multiply(img1, 0.0),s); }
+extern sitk::Image SimpleOpWeightedL2(sitk::Image & norm01_lowres, sitk::Image & edgemask);
 
+#endif
 
 
 //typedef double PrecisionType;

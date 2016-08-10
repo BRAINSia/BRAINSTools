@@ -4,7 +4,6 @@
 #include "FFTWUpsample.h"
 #include <itkTimeProbe.h>
 
-#include <sitkImageOperators.h>
 
 
 static sitk::Image GetDiracDeltaImage(sitk::Image edgemask) {

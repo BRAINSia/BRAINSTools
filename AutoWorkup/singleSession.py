@@ -187,16 +187,38 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     ))
 
             if 'warp_atlas_to_subject' in master_config['components']:
-                sentinal_file_list.append(os.path.join(
-                    sentinal_file_basedir,
-                    "WarpedAtlas2Subject",
-                    "rho.nii.gz"
-                ))
-                sentinal_file_list.append(os.path.join(
-                    sentinal_file_basedir,
-                    "WarpedAtlas2Subject",
-                    "left_hemisphere_wm.nii.gz"
-                ))
+                warp_atlas_file_list = [
+"hncma_atlas.nii.gz",
+"l_accumben_ProbabilityMap.nii.gz",
+"l_caudate_ProbabilityMap.nii.gz",
+"l_globus_ProbabilityMap.nii.gz",
+"l_hippocampus_ProbabilityMap.nii.gz",
+"l_putamen_ProbabilityMap.nii.gz",
+"l_thalamus_ProbabilityMap.nii.gz",
+"left_hemisphere_wm.nii.gz",
+"phi.nii.gz",
+"r_accumben_ProbabilityMap.nii.gz",
+"r_caudate_ProbabilityMap.nii.gz",
+"r_globus_ProbabilityMap.nii.gz",
+"r_hippocampus_ProbabilityMap.nii.gz",
+"r_putamen_ProbabilityMap.nii.gz",
+"r_thalamus_ProbabilityMap.nii.gz",
+"rho.nii.gz",
+"right_hemisphere_wm.nii.gz",
+"template_WMPM2_labels.nii.gz",
+"template_headregion.nii.gz",
+"template_leftHemisphere.nii.gz",
+"template_nac_labels.nii.gz",
+"template_rightHemisphere.nii.gz",
+"template_ventricles.nii.gz",
+"theta.nii.gz"
+]
+                for ff in warp_atlas_file_list:
+                  sentinal_file_list.append(os.path.join(
+                      sentinal_file_basedir,
+                      "WarpedAtlas2Subject",
+                      ff
+                  ))
 
             if 'jointfusion_2015_wholebrain' in master_config['components']:
                 sentinal_file_list.append(os.path.join(
@@ -214,6 +236,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')
             else:
                 atlasDirectory = os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_rho.nii.gz')
+                atlasDirectory.append(os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_template_headregion.nii.gz') )
 
             if os.path.exists(atlasDirectory):
                 print("LOOKING FOR DIRECTORY {0}".format(atlasDirectory))

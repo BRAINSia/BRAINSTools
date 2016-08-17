@@ -6,7 +6,6 @@
 
 #include <itkBSplineTransform.h>
 #include <itkImageRegionIteratorWithIndex.h>
-#include <ctime>
 #include <itkMersenneTwisterRandomVariateGenerator.h>
 
 template<typename TInputImage,
@@ -39,7 +38,6 @@ public:
 
   itkSetMacro(Verbose, bool)
   itkSetMacro(Debug, bool)
-
 
   virtual void SetMersenneSeed(const unsigned long seed)
   {
@@ -245,10 +243,10 @@ private:
   {
     int min = this->GetRandMin();
     int max = this->GetRandMax();
-    int val = itk::Math::Round<int, double>( this->m_Generator->GetUniformVariate(min, max) );
-    return val;
+    int range = max - min;
+    int val =  this->m_Generator->GetIntegerVariate(range) + min;
+    return static_cast<double >(val);
   }
-
 
   BSplinePointer m_BSplineOutput;
   unsigned int m_BSplineControlPoints;
@@ -259,6 +257,5 @@ private:
 
   GeneratorType::Pointer m_Generator;
   unsigned long    m_MersenneSeed;
-
 };
 #endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H

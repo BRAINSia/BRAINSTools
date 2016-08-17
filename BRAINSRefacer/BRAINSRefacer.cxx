@@ -69,8 +69,8 @@ int main(int argc, char **argv)
       {
       std::cout << "Using \"BirdFace\" parameters, explicitly given controls options will be ignored" << std::endl;
       }
-    maxRandom = 3;
-    minRandom = -5;
+    maxRandom = 5;
+    minRandom = -3;
     bsplineControlPoints = 24;
     scaleDistanceMap = 0.05;
     }
@@ -80,8 +80,8 @@ int main(int argc, char **argv)
       {
       std::cout << "Using \"BabyFace\" parameters, explicitly given controls options will be ignored" << std::endl;
       }
-    maxRandom = 8;
-    minRandom = 0;
+    maxRandom = 0;
+    minRandom = -8;
     bsplineControlPoints = 22;
     scaleDistanceMap = 0.05;
     }

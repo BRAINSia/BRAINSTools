@@ -233,6 +233,10 @@ int main(int argc, char **argv)
       {
       bSplineCreator->SetMersenneSeed(mersenneSeed);
       }
+    if( printMersenneSeed )
+      {
+      bSplineCreator->SetPrintMersenneSeed(true);
+      }
     bSplineCreator->Update();
     bSpline = bSplineCreator->GetBSplineOutput();
     if(debug_Refacer || saveTransform )

@@ -239,5 +239,12 @@
       <longflag>mersenneSeed</longflag>
       <description>The predetermined value for the Mersenne seed</description>
     </integer>
+    <boolean>
+      <name>printMersenneSeed</name>
+      <label>Print the Mersenne Seed</label>
+      <longflag>printMersenneSeed</longflag>
+      <description>You can print the Mersenne Seed in the console to use it again later</description>
+      <default>false</default>
+    </boolean>
   </parameters>
 </executable>

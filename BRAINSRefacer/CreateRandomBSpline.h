@@ -39,6 +39,8 @@ public:
   itkSetMacro(Verbose, bool)
   itkSetMacro(Debug, bool)
 
+  itkSetMacro(PrintMersenneSeed, bool)
+
   virtual void SetMersenneSeed(const unsigned long seed)
   {
     itkDebugMacro("seting  MersenneSeed to " << seed );
@@ -68,6 +70,7 @@ protected:
 
     this->m_Verbose = false;
     this->m_Debug = false;
+    this->m_PrintMersenneSeed = false;
 
 
     //set up random control point creation
@@ -236,6 +239,13 @@ protected:
     images[1] = coefficientImgPA;
     images[2] = coefficientImgSI;
     this->GetBSplineOutput()->SetCoefficientImages(images);
+
+    // Print the mersenne seed if requested
+    if(this->m_PrintMersenneSeed || this->m_Debug || this->m_Verbose)
+    {
+      std::cout << "BSpline Creation is done!! " << std::endl;
+      std::cout << "Mersenne Seed was: " << GetMersenneSeed() << std::endl;
+    }
   }
 
 private:
@@ -254,6 +264,7 @@ private:
   int m_RandMax;
   bool             m_Verbose;
   bool             m_Debug;
+  bool             m_PrintMersenneSeed;
 
   GeneratorType::Pointer m_Generator;
   unsigned long    m_MersenneSeed;

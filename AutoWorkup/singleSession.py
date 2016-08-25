@@ -234,9 +234,11 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
                 atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')
+                sentinal_file_list.append(atlasDirectory)
             else:
                 atlasDirectory = os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_rho.nii.gz')
-                atlasDirectory.append(os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_template_headregion.nii.gz') )
+                sentinal_file_list.append(atlasDirectory)
+                sentinal_file_list.append(os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_template_headregion.nii.gz'))
 
             if os.path.exists(atlasDirectory):
                 print("LOOKING FOR DIRECTORY {0}".format(atlasDirectory))

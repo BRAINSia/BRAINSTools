@@ -10,8 +10,6 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 ### --- Project specific additions here
-# cmake -DANTS_SUPERBUILD:BOOL=OFF -DBUILD_ALL_ANTS_APPS:BOOL=OFF\
-#          -DANTS_BUILD_StackSlices=ON ../ANTs
 set(${proj}_CMAKE_OPTIONS
   -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -37,7 +35,7 @@ if(${PRIMARY_PROJECT_NAME}_USE_QT)
 endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG bc74c4cec36a40e88018c58ae41dc0c5574a4312) # 20160810
+set(${proj}_GIT_TAG bd9a952048a23c21f3a28d8ba2b9e81a96a4496f) # 20160824
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

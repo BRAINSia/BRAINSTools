@@ -32,7 +32,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
       )
   endif()
-  if(NOT ( ${CMAKE_CXX_STANDARD} LESS 11 ) )
+  if( (NOT (${CMAKE_CXX_STANDARD} EQUAL 98)) AND (NOT ( ${CMAKE_CXX_STANDARD} LESS 11 )) )
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DDCMTK_USE_CXX11_STL:BOOL=ON
     )

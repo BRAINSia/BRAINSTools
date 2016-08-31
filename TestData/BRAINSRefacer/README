@@ -1,0 +1,4 @@
+Currently all the files are different versions of the same subject.
+The float_Landmarks and short_Landmarks are the same file as they both represent the same subject.
+The fload_BrainLabels and short_BrainLabels are the same file as the both represent the same subject.
+This could be changed so that the float and short versions are of different subjects.

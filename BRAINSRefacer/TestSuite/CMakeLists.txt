@@ -1,10 +1,5 @@
-#TODO: ADD overview of tests
-
-
-#TODO: create test data that can be shared
-set(RefacerTestData_Input_DIR "$ENV{HOME}/testDataNEW/BRAINSRefacerData")
-set(RefacerTestData_Output_DIR "$ENV{HOME}/testDataNEW/Output")
-message(WARNING "TestData should be placed into directory ${RefacerTestData_DIR}")
+# Tests for BRAINSRefacer
+# Authors: Jeffrey Obadal, Alexander Leinoff
 
 #
 ##
@@ -42,7 +37,7 @@ set(PIXEL_LIST_BRAINSREFACER
     #int
     #unsigned_long
     #long
-    #float
+    float
     #double
   )
 
@@ -52,11 +47,11 @@ set(PIXEL_LIST_BRAINSREFACER
 ##
 #
 
+set(BRR_inPrefix  "${TestData_DIR}/BRAINSRefacer")
+set(BRR_outPrefix "${CMAKE_CURRENT_BINARY_DIR}/Output")
+file(MAKE_DIRECTORY ${BRR_outPrefix})
 # Loop through all pixel types for each test
 foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
-  set(BRR_inPrefix "${RefacerTestData_Input_DIR}/${PIXELTYPE}/${PIXELTYPE}_")
-  set(BRR_outPrefix "${RefacerTestData_Output_DIR}/${PIXELTYPE}_")
-
   #
   ##
   ### Sanity checks on unit tests and testing data
@@ -67,19 +62,22 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSRefacer_${PIXELTYPE}_CheckSubjectImagePixelType
       COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckPixelType>
       --inputImage
-      ${BRR_inPrefix}Subject.nii.gz
+      DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
       --pixelType
       ${PIXELTYPE}
       )
 
   # basic test to make sure the input subject image is the pixel type it's supposed to be
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSRefacer_${PIXELTYPE}_CheckSubjectNewImagePixelType
+  set(PARENT_TEST BRAINSRefacer_${PIXELTYPE}_CheckSubjectImagePixelType)
+  set(RefacerTestName BRAINSRefacer_${PIXELTYPE}_CheckSubjectNewImagePixelType)
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${RefacerTestName}
       COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckPixelType>
       --inputImage
-      ${BRR_inPrefix}SubjectNewImage.nii.gz
+      DATA{${BRR_inPrefix}/${PIXELTYPE}_SubjectNewImage.nii.gz}
       --pixelType
       ${PIXELTYPE}
       )
+  set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
   #
   ##
@@ -88,26 +86,30 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   #
 
   # basic test to make sure landmarks based deformation will run
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSRefacerTest_${PIXELTYPE}_RunTest_Landmarks
+  set(PARENT_TEST BRAINSRefacer_${PIXELTYPE}_CheckSubjectNewImagePixelType)
+  set(RefacerTestName BRAINSRefacerTest_${PIXELTYPE}_RunTest_Landmarks)
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
     BRAINSRefacerTest
     --inputImage
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --landmarks
-    ${BRR_inPrefix}Landmarks.fcsv
+    DATA{${BRR_inPrefix}/Landmarks.fcsv}
     --deformedImageName
-    ${BRR_outPrefix}LandmarksRefaced_Subject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LandmarksRefaced_Subject.nii.gz
     --saveTransform
     --bSplineFileName
-    ${BRR_outPrefix}Landmarks_bSpline.h5
+    ${BRR_outPrefix}/${PIXELTYPE}_Landmarks_bSpline.h5
     )
+  set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
   # Test that landmarks refacing output image type matches input image type
   set(PARENT_TEST BRAINSRefacerTest_${PIXELTYPE}_RunTest_Landmarks)
   set(RefacerTestName BRAINSRefacerBrainDataTest_${PIXELTYPE}_Landmarks_CheckOutputPixelType)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${RefacerTestName}
       COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckPixelType>
       --inputImage
-      ${BRR_outPrefix}LandmarksRefaced_Subject.nii.gz
+      ${BRR_outPrefix}/${PIXELTYPE}_LandmarksRefaced_Subject.nii.gz
       --pixelType
       ${PIXELTYPE}
       )
@@ -119,21 +121,21 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
     --compare
-    ${BRR_outPrefix}LandmarksRefaced_Subject.nii.gz
-    ${BRR_outPrefix}ReloadBSplineOriginal_Landmarks_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LandmarksRefaced_Subject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_ReloadBSplineOriginal_Landmarks_RefacedSubject.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 0
     BRAINSRefacerTest
     --inputImage
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --deformedImageName
-    ${BRR_outPrefix}ReloadBSplineOriginal_Landmarks_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_ReloadBSplineOriginal_Landmarks_RefacedSubject.nii.gz
     --reusebspline
     --previousBSpline
-    ${BRR_outPrefix}Landmarks_bSpline.h5
+    ${BRR_outPrefix}/${PIXELTYPE}_Landmarks_bSpline.h5
     ## Previous landmarks?
     --landmarks
-    ${BRR_inPrefix}Landmarks.fcsv
+    DATA{${BRR_inPrefix}/Landmarks.fcsv}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -144,15 +146,15 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
     BRAINSRefacerTest
     --inputImage
-    ${BRR_inPrefix}SubjectNewImage.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_SubjectNewImage.nii.gz}
     --deformedImageName
-    ${BRR_outPrefix}ReloadBSplineOriginal_Landmarks_RefacedSubjectNewImage.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_ReloadBSplineOriginal_Landmarks_RefacedSubjectNewImage.nii.gz
     --reusebspline
     --previousBSpline
-    ${BRR_outPrefix}Landmarks_bSpline.h5
+    ${BRR_outPrefix}/${PIXELTYPE}_Landmarks_bSpline.h5
     ## Previous landmarks?
     --landmarks
-    ${BRR_inPrefix}Landmarks.fcsv
+    DATA{${BRR_inPrefix}/Landmarks.fcsv}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -163,11 +165,11 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerBrainDataTest>
     --inputOriginal
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --inputRefaced
-    ${BRR_outPrefix}LandmarksRefaced_Subject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LandmarksRefaced_Subject.nii.gz
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -177,11 +179,11 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckDeformationAreaLandmarks>
     --inputOriginal
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --inputRefaced
-    ${BRR_outPrefix}LandmarksRefaced_Subject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LandmarksRefaced_Subject.nii.gz
     --landmarks
-    ${BRR_inPrefix}Landmarks.fcsv
+    DATA{${BRR_inPrefix}/Landmarks.fcsv}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -190,11 +192,11 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckDeformationAreaLandmarks>
     --inputOriginal
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --inputRefaced
-    ${BRR_outPrefix}LandmarksRefaced_Subject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LandmarksRefaced_Subject.nii.gz
     --landmarks
-    ${BRR_inPrefix}Landmarks.fcsv
+    DATA{${BRR_inPrefix}/Landmarks.fcsv}
     --checkNonDeformedArea
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
@@ -210,15 +212,15 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
     BRAINSRefacerTest
     --inputImage
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     --deformedImageName
-    ${BRR_outPrefix}LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedSubject.nii.gz
     --labelmapMask
     --saveTransform
     --bSplineFileName
-    ${BRR_outPrefix}LabelMap_bSpline.h5
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_bSpline.h5
     )
 
   # Test that landmarks refacing output image type matches input image type
@@ -227,7 +229,7 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${RefacerTestName}
       COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckPixelType>
       --inputImage
-      ${BRR_outPrefix}LabelMap_RefacedSubject.nii.gz
+      ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedSubject.nii.gz
       --pixelType
       ${PIXELTYPE}
       )
@@ -240,15 +242,15 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
     BRAINSRefacerTest
     --inputImage
-    ${BRR_inPrefix}SubjectNewImage.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_SubjectNewImage.nii.gz}
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     --deformedImageName
-    ${BRR_outPrefix}LabelMap_RefacedNSubjectNewImage.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedNSubjectNewImage.nii.gz
     --labelmapMask
     --reusebspline
     --previousBSpline
-    ${BRR_outPrefix}LabelMap_bSpline.h5
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_bSpline.h5
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -259,11 +261,11 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerBrainDataTest>
     --inputOriginal
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --inputRefaced
-    ${BRR_outPrefix}LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedSubject.nii.gz
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -273,22 +275,22 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerTestDriver>
     --compare
-    ${BRR_outPrefix}LabelMap_RefacedSubject.nii.gz
-    ${BRR_outPrefix}ReloadBSplineOriginal_LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_ReloadBSplineOriginal_LabelMap_RefacedSubject.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 0
     BRAINSRefacerTest
     --inputImage
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --deformedImageName
-    ${BRR_outPrefix}ReloadBSplineOriginal_LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_ReloadBSplineOriginal_LabelMap_RefacedSubject.nii.gz
     --reusebspline
     --previousBSpline
-    ${BRR_outPrefix}LabelMap_bSpline.h5
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_bSpline.h5
     --labelmapMask
     ## Previous label map
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -298,11 +300,11 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckDeformationAreaLabelMap>
     --inputOriginal
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --inputRefaced
-    ${BRR_outPrefix}LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedSubject.nii.gz
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
@@ -311,17 +313,17 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${RefacerTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSRefacerCheckDeformationAreaLabelMap>
     --inputOriginal
-    ${BRR_inPrefix}Subject.nii.gz
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_Subject.nii.gz}
     --inputRefaced
-    ${BRR_outPrefix}LabelMap_RefacedSubject.nii.gz
+    ${BRR_outPrefix}/${PIXELTYPE}_LabelMap_RefacedSubject.nii.gz
     --labelmap
-    ${BRR_inPrefix}BrainLabels.nii
+    DATA{${BRR_inPrefix}/${PIXELTYPE}_BrainLabels.nii.gz}
     --checkNonDeformedArea
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
-  #TODO: Test that the output pixel type is the same as the input
+# #TODO: Test that the output pixel type is the same as the input
 
-  #TODO: Test that the deformation field is symmetrical
+# #TODO: Test that the deformation field is symmetrical
 
 endforeach()

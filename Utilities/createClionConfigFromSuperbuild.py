@@ -8,6 +8,7 @@
 #
 import sys
 import os
+import shlex
 
 def usage():
     print("ERROR: First argument must be a cmake generated cache file")
@@ -29,9 +30,14 @@ with open(input_cache_file_from_superbuild,'r') as fid:
 options_dict =dict()
 for line in lines:
     ll = line.replace("set(","").replace(")","")
-    elems=ll.split(' ')
+    elems=shlex.split(ll)
     if len(elems) > 5:
         options_dict[elems[0]] = (elems[3],elems[1])
 
+## A few items should be under the control of CLion
+skip_cmake_directives_list=["CMAKE_BUILD_TYPE"];
 for k,v in options_dict.items():
-    print("-D{0}:{1}={2}".format(k,v[0],v[1]))
+  if k in skip_cmake_directives_list:
+    continue
+  if len(v[1]) > 0 and v[1] != '""':
+     print("-D{0}:{1}=\"{2}\"".format(k,v[0],v[1]))

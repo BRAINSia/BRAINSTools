@@ -24,8 +24,14 @@ else:
 with open(input_cache_file_from_superbuild,'r') as fid:
     lines=fid.readlines()
 
+
+## By placing all values into a dictionary, only the last processed value is stored
+options_dict =dict()
 for line in lines:
     ll = line.replace("set(","").replace(")","")
     elems=ll.split(' ')
     if len(elems) > 5:
-        print("-D{0}:{1}={2}".format(elems[0],elems[3],elems[1]))
+        options_dict[elems[0]] = (elems[3],elems[1])
+
+for k,v in options_dict.items():
+    print("-D{0}:{1}={2}".format(k,v[0],v[1]))

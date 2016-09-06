@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
   ByteImageType::Pointer myCleanRegion
     = ExtractSingleLargestRegion(low, high, openingSize, closingSize, safetySize, myDirtyRegion);
 
-  if( preserveOutside == true )  // For values outside the specified range,
+  if( static_cast<int>(preserveOutside) == true )  // For values outside the specified range,
                                  // preserve those values.
     {
     std::cout << "PRESERVING OUTSIDE VALUES" << std::endl;

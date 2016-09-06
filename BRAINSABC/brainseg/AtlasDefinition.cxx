@@ -90,8 +90,8 @@ AtlasDefinition::AtlasDefinition() :
   m_LastUpper(0.0),
   m_LastGaussianClusterCount(0),
   m_LastLabelCode(0),
-  m_LastUseForBias(0),
-  m_LastIsForegroundPrior(0)
+  m_LastUseForBias(false),
+  m_LastIsForegroundPrior(false)
 {
   this->m_TissueTypes.resize(0);
 }
@@ -208,11 +208,11 @@ AtlasDefinition::XMLEnd(const char *el)
     }
   else if( El == "UseForBias" )
     {
-    this->m_LastUseForBias = this->StrToL(start, "Bad UseForBias");
+    this->m_LastUseForBias = (this->StrToL(start, "Bad UseForBias") != 0);
     }
   else if( El == "IsForegroundPrior" )
     {
-    this->m_LastIsForegroundPrior = this->StrToL(start, "Bad IsForegroundPrior");
+    this->m_LastIsForegroundPrior = (this->StrToL(start, "Bad IsForegroundPrior") != 0);
     }
   else if( El == "BrainMask" )
     {
@@ -297,7 +297,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
     {
     parserReturn = 0;
     }
-  if( !parserReturn )
+  if( parserReturn == 0 )
     {
     delete[] filebuf;
     std::cerr << "XML File parsing error" << std::endl;

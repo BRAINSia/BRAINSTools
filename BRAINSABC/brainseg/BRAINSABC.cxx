@@ -236,7 +236,7 @@ int main(int argc, char * *argv)
                 << "outputDir must be specified" << std::endl );
     AllSimpleParameterChecksValid = false;
     }
-  if( AllSimpleParameterChecksValid == false )
+  if( static_cast<int>(AllSimpleParameterChecksValid) == false )
     {
     muLogMacro( << "ERROR:  Commanline arguments are not valid." << std::endl );
     GENERATE_ECHOARGS;
@@ -392,7 +392,7 @@ int main(int argc, char * *argv)
   for( unsigned int pwi = 0; pwi < PriorNames.size(); pwi++ )
     {
     priorIsForegroundPriorVector[pwi] = atlasDefinitionParser.GetIsForegroundPrior(PriorNames[pwi]);
-    AtlasDefTable.add(currentRow, 2 + pwi, priorIsForegroundPriorVector[pwi], "%d");
+    AtlasDefTable.add(currentRow, 2 + pwi, static_cast<int>(priorIsForegroundPriorVector[pwi]), "%d");
     }
 
   currentRow++;
@@ -415,8 +415,8 @@ int main(int argc, char * *argv)
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
   for( unsigned int pwi = 0; pwi < PriorNames.size(); pwi++ )
     {
-    priorUseForBiasVector[pwi] = atlasDefinitionParser.GetUseForBias(PriorNames[pwi]);
-    AtlasDefTable.add(currentRow, 2 + pwi, priorUseForBiasVector[pwi], "%d");
+    priorUseForBiasVector[pwi] = (atlasDefinitionParser.GetUseForBias(PriorNames[pwi]) != 0);
+    AtlasDefTable.add(currentRow, 2 + pwi, static_cast<int>(priorUseForBiasVector[pwi]), "%d");
     }
 
   { // Print out the ranges.

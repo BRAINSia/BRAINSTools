@@ -1,0 +1,10 @@
+#Fiducial List file /scratch/johnsonhj/src/BRAINSTools/BRAINSConstellationDetector/docs/EMSP.fcsv
+#numPoints = 2
+#symbolScale = 5
+#visibility = 1
+#textScale = 4.5
+#color = 0.4,1,1
+#selectedColor = 1,0.5,0.5
+#label,x,y,z,sel,vis
+LE,0,0,0,1,1
+RE,0,0,0,1,1

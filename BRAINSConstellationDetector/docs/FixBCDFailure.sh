@@ -34,11 +34,18 @@ source ${CONFIG_FILE}
 MANUAL_NOT_DONE_SENTINAL=MANUAL_LANDMARKS_NOT_SET.txt
 
 mkdir -p ${OUTPUT_DIR}
+if [[ ! -d ${OUTPUT_DIR} ]];then
+  echo "COULD NOT CREATE DIRECTORY ${OUTPUT_DIR}"
+  exit -1
+fi
 cp $0 ${OUTPUT_DIR}
 cp ${CONFIG_FILE} ${OUTPUT_DIR}
 pushd ${OUTPUT_DIR}
 
 
+if [[ ${PHASE_TO_RUN} -eq 0 ]]; then
+  echo "OUTPUT_DIR: ${OUTPUT_DIR}"
+fi
 
 ##
 #

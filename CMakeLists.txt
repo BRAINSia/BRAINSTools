@@ -68,6 +68,12 @@ endif()
 if(NOT CMAKE_CXX_STANDARD)
    set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
 endif()
+## Now set boolean to determine if a modern C++ is being used
+if( CMAKE_CXX_STANDARD LESS 11 OR CMAKE_CXX_STANDARD GREATER 80)
+  set(USING_MODERN_CXX OFF)
+else()
+  set(USING_MODERN_CXX ON)
+endif()
 
 enable_language(C)
 enable_language(CXX)

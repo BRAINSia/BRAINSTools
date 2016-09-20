@@ -28,6 +28,6 @@ set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 #-----------------------------------------------------------------------------
 add_subdirectory(mexFiles)
 
-add_subdirectory(HuiTest)
+add_subdirectory(readItkImage)
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

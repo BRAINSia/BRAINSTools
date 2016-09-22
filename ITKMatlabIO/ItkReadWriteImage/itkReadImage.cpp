@@ -5,7 +5,7 @@
 
 
 #include "mex.h"
-#include "convertItkImageToMxArray.h"
+#include "itkImageToMxArray.h"
 
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[] )

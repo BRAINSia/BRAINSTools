@@ -5,7 +5,7 @@
 
 #include <itkImage.h>
 #include <itkImageFileReader.h>
-#include "convertItkImageToMxArray.h"
+#include "itkImageToMxArray.h"
 
 void itkImage2MxArray(const std::string filename, mxArray* plhs[])
 {
@@ -25,6 +25,7 @@ void itkImage2MxArray(const std::string filename, mxArray* plhs[])
     {
         std::cerr << "Exception thrown while reading the image file: " << filename <<std::endl;
         std::cerr << excep << std::endl;
+        return;
     }
 
     ImageType::Pointer image = reader->GetOutput();

@@ -28,6 +28,6 @@ set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 #-----------------------------------------------------------------------------
 add_subdirectory(mexFiles)
 
-add_subdirectory(readItkImage)
+add_subdirectory(ItkReadWriteImage)
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

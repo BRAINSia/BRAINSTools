@@ -5,12 +5,12 @@
 
 #include <itkImage.h>
 #include <itkImageFileReader.h>
-#include "itkImageToMxArray.h"
+#include "itk3DImageToMxArray.h"
 
-void itkImage2MxArray(const std::string filename, mxArray* plhs[])
+void itk3DImage2MxArray(const std::string filename, mxArray* plhs[])
 {
     //read image
-    typedef itk::RGBPixel<double>  PixelType;
+    typedef double  PixelType;
     typedef itk::Image< PixelType, 3>  ImageType;
     typedef itk::ImageFileReader<ImageType>  ReaderType;
 
@@ -23,8 +23,10 @@ void itkImage2MxArray(const std::string filename, mxArray* plhs[])
     }
     catch( itk::ExceptionObject & excep )
     {
+        std::cerr << "Usage: outputImageArray = itkRead3DImage('Scalar3DImageFilename') " <<std::endl;
+        std::cerr << "This program only supports ITK scalar 3D image." << std::endl;
         std::cerr << "Exception thrown while reading the image file: " << filename <<std::endl;
-        std::cerr << excep << std::endl;
+        std::cerr << excep.GetDescription() << std::endl;
         return;
     }
 
@@ -32,17 +34,16 @@ void itkImage2MxArray(const std::string filename, mxArray* plhs[])
 
     ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
     if (3 != size.Dimension){
-        printf("image dimension = %d, incorrect.\n", size.Dimension);
+        std::cerr << "image dimension = %d, incorrect." <<size.Dimension << std::endl;
         return;
     }
 
     //create Mex array
-    mwSize ndim =  size.Dimension+1;
+    mwSize ndim =  size.Dimension;
     mwSize *dims = new mwSize[ndim];
     dims[0] = size[1]; //row
     dims[1] = size[0]; //column
-    dims[2] = 3 ;      //RGB channel;
-    dims[3] = size[2]; //slice
+    dims[2] = size[2]; //slice
     plhs[0] =  mxCreateNumericArray(ndim,dims,mxDOUBLE_CLASS,mxREAL);
     delete[] dims;
     double* mxPointer = mxGetPr(plhs[0]);
@@ -54,13 +55,9 @@ void itkImage2MxArray(const std::string filename, mxArray* plhs[])
           for (unsigned long col=0; col<size[0]; ++col)  //column
     {
         itkIndex[0] = col;  itkIndex[1] = row;  itkIndex[2] = slice;
-        unsigned long mxRIndex = slice*size[0]*size[1]*3 +        0          + col*size[1] + row;
-        unsigned long mxGIndex = slice*size[0]*size[1]*3 + size[0]*size[1]*1 + col*size[1] + row;
-        unsigned long mxBIndex = slice*size[0]*size[1]*3 + size[0]*size[1]*2 + col*size[1] + row;
-        mxPointer[mxRIndex] =  image->GetPixel(itkIndex).GetRed();
-        mxPointer[mxGIndex] =  image->GetPixel(itkIndex).GetGreen();
-        mxPointer[mxBIndex] =  image->GetPixel(itkIndex).GetBlue();
-    }
+        unsigned long mxIndex = slice*size[0]*size[1] + col*size[1] + row;
+        mxPointer[mxIndex] =  image->GetPixel(itkIndex);
+     }
 
     return;
 }

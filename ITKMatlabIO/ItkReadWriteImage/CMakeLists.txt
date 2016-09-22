@@ -43,8 +43,8 @@ macro(BuildMex)
 endmacro(BuildMex)
 
 matlab_add_mex(
-        NAME itkReadImage
-        SRC itkReadImage.cpp itkImageToMxArray.cpp
+        NAME itkRead3DImage
+        SRC itkRead3DImage.cpp itk3DImageToMxArray.cpp
         #--      [DOCUMENTATION file.txt]
         LINK_TO ${ITK_LIBRARIES} ${VTK_LIBRARIES}
 )

@@ -6,12 +6,15 @@
 
 #include "mex.h"
 #include "itkImageToMxArray.h"
+#include <iostream>
 
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[] )
 {
     if (1 != nlhs || 1 != nrhs || !mxIsChar(prhs[0])) {
-        mexErrMsgIdAndTxt("MATLAB::itkReadImage:ErrorParameter", "Usage: imageArray = itkReadImage(imageFilename) \n");
+        std::cerr<<  "Using Parameters error." << std::endl;
+        std::cerr << "Usage: outputImageArray = itkReadImage('imageFilename') " <<std::endl;
+        mexErrMsgIdAndTxt("MATLAB::itkReadImage:ErrorParameter", "Usage: imageArray = itkReadImage('imageFilename') \n");
         // it returns control to the MATLAB prompt.
     }
     else {

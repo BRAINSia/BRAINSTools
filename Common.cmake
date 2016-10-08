@@ -126,8 +126,8 @@ cmake_dependent_option(USE_DebugImageViewer "Build DebugImageViewer" OFF "${PRIM
 mark_as_superbuild(USE_DebugImageViewer)
 bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
-bt_option(USE_TBB "Build TBB as an internal module. This feature is still experimental and unsupported" OFF)
-mark_as_advanced(USE_TBB)
+cmake_dependent_option(USE_tbb "Build tbb as an internal module. This feature is still experimental and unsupported" ON "USE_BRAINSABC" ON)
+mark_as_advanced(USE_tbb)
 
 if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
   message("NOTE: Following toolkits are dependent to VTK:

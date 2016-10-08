@@ -689,6 +689,7 @@ void mexFunction(int nhls, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         //Use the above to debug! Prints to MatLab
         itkLoadWithMetadata(nhls, plhs, nrhs, prhs);
     }
+
     catch (itk::ImageFileReaderException &e) {
         std::cerr << e.GetDescription() << std::endl;
     }
@@ -699,4 +700,5 @@ void mexFunction(int nhls, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         printf("Exception in itkLoadWithMetaData\n");
         mexErrMsgTxt("Exception in itkLoadWithMetaData");
     }
+
 }

@@ -23,6 +23,9 @@ void BRAINSRegisterAlternateIO(void)
 {
 }
 
+//If ITK was built with FFTWD and FFTWF, then use wisdom files
+#if ITK_USE_FFTWF && ITK_USE_FFTWD
+
 //This is intended to be called one time
 void FFTWInit(const std::string path_for_wisdom)
 {
@@ -64,3 +67,10 @@ void FFTWInit(const std::string path_for_wisdom)
   std::cout << itk::FFTWGlobalConfiguration::GetWisdomCacheBase() << std::endl;
   std::cout << itk::FFTWGlobalConfiguration::GetWisdomFileDefaultBaseName() << std::endl;
 }
+#else
+void FFTWInit(const std::string /* Not used in the stub file : path_for_wisdom */)
+{
+  std::cout << "ITK was not built with ITK_USE_FFTWF:BOOL=ON && ITK_USE_FFTWD:BOOL=ON,"
+  << "so performance of tools that depend on fft's (like this one) will be substantially slower" << std::endl;
+}
+#endif

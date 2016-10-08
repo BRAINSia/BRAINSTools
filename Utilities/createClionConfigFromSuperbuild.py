@@ -35,7 +35,7 @@ for line in lines:
         options_dict[elems[0]] = (elems[3],elems[1])
 
 ## A few items should be under the control of CLion
-skip_cmake_directives_list=["CMAKE_BUILD_TYPE"];
+skip_cmake_directives_list=["CMAKE_BUILD_TYPE","CMAKE_GENERATOR","MAKECOMMAND","EXTERNAL_PROJECT_BUILD_TYPE"];
 for k,v in options_dict.items():
   if k in skip_cmake_directives_list:
     continue

@@ -150,7 +150,7 @@ int NrrdToFSL(const std::string & inputVolume,
     {
     return EXIT_FAILURE;
     }
-  std::vector<std::vector<double> > bVectors;
+  DWIMetaDataDictionaryValidator::GradientTableType bVectors;
   if( RecoverBVectors<VectorVolumeType>(inputVol, bVectors) != EXIT_SUCCESS )
     {
     std::cerr << "No gradient vectors found in "

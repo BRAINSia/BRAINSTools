@@ -64,21 +64,6 @@
     - gradient_xxxx
  */
 
-
-// This class is wrapper for std::vector to make sure it is defined with a fixed size.
-// An easy alternative was using std::array<Type, Size>
-// However, std::array is only available in c++ 11. We need to build with c++03, since Slicer does not complie with c++11.
-template<class Type, int MySize>
-class MyArrayWrapper: public std::vector<Type>
-{
-public:
-  MyArrayWrapper(): std::vector<Type>(MySize) {}
-
-private:
-  void resize(size_t) ITK_DELETED_FUNCTION;
-  void resize(size_t, Type) ITK_DELETED_FUNCTION;
-};
-
 class DWIMetaDataDictionaryValidator
 {
  private:
@@ -101,19 +86,22 @@ class DWIMetaDataDictionaryValidator
                                              const double defaultValue) const;
  public:
   // 3D
-  typedef MyArrayWrapper<int, 3>                   Integer3x1ArrayType;
-  typedef MyArrayWrapper<double, 3>                Double3x1ArrayType;
-  typedef MyArrayWrapper<std::string, 3>           String3x1ArrayType;
+  typedef vnl_vector_fixed<int, 3>                   Integer3x1ArrayType;
+  typedef vnl_vector_fixed<double, 3>                Double3x1ArrayType;
+  typedef vnl_vector_fixed<std::string, 3>           String3x1ArrayType;
   // 4D
-  typedef MyArrayWrapper<int, 4>                   Integer4x1ArrayType;
-  typedef MyArrayWrapper<double, 4>                Double4ArrayType;
-  typedef MyArrayWrapper<std::string, 4>           String4x1ArrayType;
+  typedef vnl_vector_fixed<int, 4>                   Integer4x1ArrayType;
+  typedef vnl_vector_fixed<double, 4>                Double4ArrayType;
+  typedef vnl_vector_fixed<std::string, 4>           String4x1ArrayType;
 
   typedef std::vector<double>                      DoubleVectorType;
   typedef std::vector<std::string>                 StringVectorType;
-  typedef std::vector<MyArrayWrapper<double, 3> >  GradientTableType;
-  typedef std::vector<std::vector<double> >        MeasurementFrameType;
-  typedef MyArrayWrapper<DoubleVectorType, 3>      SpaceDirectionType;
+  typedef vnl_vector_fixed<double, 3>                GradientDirectionType;
+  typedef std::vector<GradientDirectionType>       GradientTableType;
+  //typedef std::vector<std::vector<double> >        MeasurementFrameType;
+
+  typedef itk::Matrix<double, 3, 3>                  RotationMatrixType;
+  typedef vnl_vector_fixed<DoubleVectorType, 3>      SpaceDirectionType;
 
   typedef itk::MetaDataDictionary &            MetaDataDictionaryType;
   typedef const itk::MetaDataDictionary &      ConstMetaDataDictionaryType;
@@ -125,8 +113,8 @@ class DWIMetaDataDictionaryValidator
   void SetMetaDataDictionary( ConstMetaDataDictionaryType );
 
   // measurement frame
-  std::vector<std::vector<double> > GetMeasurementFrame() const;
-  void SetMeasurementFrame(const std::vector<std::vector<double> > & );
+  RotationMatrixType GetMeasurementFrame() const;
+  void SetMeasurementFrame(const RotationMatrixType & );
 
   // gradients
   Double3x1ArrayType GetGradient(int) const;

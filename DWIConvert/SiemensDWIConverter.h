@@ -521,7 +521,7 @@ public:
       // test gradients. It is OK for one or more guide images to have
       // zero gradients, but all gradients == 0 is an error. It means
       // that the gradient data is missing.
-      DiffusionVecVectorType::iterator nonZ =
+      DWIMetaDataDictionaryValidator::GradientTableType::iterator nonZ =
         std::find_if(this->m_DiffusionVectors.begin(),
                      this->m_DiffusionVectors.end(),
                      SiemensDWIConverter::IsZeroMag);
@@ -531,7 +531,7 @@ public:
         }
     }
 private:
-  static bool IsZeroMag(DiffusionVectorType vec)
+  static bool IsZeroMag(DWIMetaDataDictionaryValidator::GradientDirectionType vec)
     {
       return vec.magnitude() != 0.0;
     }

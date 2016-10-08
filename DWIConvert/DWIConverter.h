@@ -28,6 +28,8 @@
 #include "itkDCMTKImageIO.h"
 #include "StringContains.h"
 #include <algorithm>
+#include "DWIMetaDataDictionaryValidator.h"
+
 /** the DWIConverter is a base class for all scanner-specific
  *  converters.  It handles the tasks that are required for all
  *  scanners. In particular it loads the DICOM directory, and fills
@@ -45,8 +47,6 @@ public:
   typedef itk::ImageFileReader<VolumeType>    SingleFileReaderType;
   typedef itk::DCMTKSeriesFileNames           InputNamesGeneratorType;
   typedef std::vector<itk::DCMTKFileReader *> DCMTKFileVector;
-  typedef vnl_vector_fixed<double,3>          DiffusionVectorType;
-  typedef std::vector<DiffusionVectorType>    DiffusionVecVectorType;
   typedef itk::Matrix<double, 3, 3>           RotationMatrixType;
   typedef itk::Vector<double, 3>              PointType;
   DWIConverter(const DCMTKFileVector &allHeaders,
@@ -257,9 +257,9 @@ public:
   virtual void ExtractDWIData() = 0;
 
   /** access methods for image data */
-  const DiffusionVecVectorType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
+  const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
 
-  const std::vector<float> &GetBValues() const { return this->m_BValues; }
+  const std::vector<double> &GetBValues() const { return this->m_BValues; }
 
   VolumeType::Pointer GetDiffusionVolume() const { return this->m_Volume; }
 
@@ -445,9 +445,9 @@ protected:
   unsigned int        m_NVolume;
 
   /** list of B Values for each volume */
-  std::vector<float>  m_BValues;
+  std::vector<double>  m_BValues;
   /** list of gradient vectors */
-  DiffusionVecVectorType      m_DiffusionVectors;
+  DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
   /** double conversion instance, for optimal printing of numbers as
    *  text
    */

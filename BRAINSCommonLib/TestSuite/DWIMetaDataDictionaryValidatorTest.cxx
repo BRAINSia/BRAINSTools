@@ -230,27 +230,26 @@ int main( int argc, char *argv[] )
 
     // Measurement Frame
     {
-    std::vector<std::vector<double> > msrFrame(3);
+    DWIMetaDataDictionaryValidator::RotationMatrixType msrFrame;
     for( unsigned int saxi = 0; saxi < 3; saxi++ )
       {
-      msrFrame[saxi].resize(3);
       for( unsigned int saxj = 0; saxj < 3; saxj++ )
         {
-        msrFrame[saxi][saxj] = 0.0;
+        msrFrame(saxi,saxj) = 0.0;
         }
       }
-    msrFrame[0][0] = 1.0; msrFrame[1][1] = 1.0; msrFrame[2][2] = 1.0;
+    msrFrame(0,0) = 1.0; msrFrame(1,1) = 1.0; msrFrame(2,2) = 1.0;
     bldValidator.SetMeasurementFrame(msrFrame);
 
-    const std::vector<std::vector<double> > outMsr = bldValidator.GetMeasurementFrame();
+    const DWIMetaDataDictionaryValidator::RotationMatrixType outMsr = bldValidator.GetMeasurementFrame();
     if(msrFrame != outMsr)
       {
       std::cout << "ERROR: outMsr not preserved" << std::endl;
-      for(size_t i = 0 ; i< outMsr.size(); ++i)
+      for(size_t i = 0 ; i< outMsr.RowDimensions; ++i)
         {
-        for(size_t j=0; j< outMsr[i].size(); ++j)
+        for(size_t j=0; j< outMsr.ColumnDimensions; ++j)
            {
-           std::cout << "Out outMsr " << i << " " << j << " " << outMsr[i][j] << std::endl;
+           std::cout << "Out outMsr " << i << " " << j << " " << outMsr(i,j) << std::endl;
            }
         }
       allTestPass=false;

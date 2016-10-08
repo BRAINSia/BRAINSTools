@@ -60,24 +60,43 @@ void DWIMetaDataDictionaryValidator::SetMetaDataDictionary(DWIMetaDataDictionary
   m_dict = rhs;
 }
 
-std::vector<std::vector<double> > DWIMetaDataDictionaryValidator::GetMeasurementFrame() const
+DWIMetaDataDictionaryValidator::RotationMatrixType DWIMetaDataDictionaryValidator::GetMeasurementFrame() const
 {
+  RotationMatrixType myRM;
   std::vector<std::vector<double> > retval;
   itk::ExposeMetaData<std::vector<std::vector<double> > >(m_dict, "NRRD_measurement frame", retval);
   if (retval.size() != 0)
     {
-    return retval;
+      for (size_t r = 0; myRM.RowDimensions; ++r)
+      {
+        for(size_t c=0; myRM.ColumnDimensions; ++c)
+        {
+          myRM(r, c) = retval[r][c];
+        }
+      }
     }
   else
     {
     itkGenericExceptionMacro("Measurement frame not found in metadata");
     }
+  return myRM;
 }
 
-void DWIMetaDataDictionaryValidator::SetMeasurementFrame(const std::vector<std::vector<double> > & input)
+void DWIMetaDataDictionaryValidator::SetMeasurementFrame(const RotationMatrixType & input)
 {
   std::string       key = "NRRD_measurement frame";
-  itk::EncapsulateMetaData<DWIMetaDataDictionaryValidator::MeasurementFrameType>(m_dict, key, input);
+  typedef std::vector<std::vector<double> > MFTYPE;
+  MFTYPE dictInput;
+  dictInput.resize(input.RowDimensions);
+  for(size_t r=0; r < input.RowDimensions; ++r)
+  {
+    dictInput[r].resize(input.ColumnDimensions);
+    for(size_t c=0; c < input.ColumnDimensions; ++c)
+    {
+      dictInput[r][c] = input(r,c);
+    }
+  }
+itk::EncapsulateMetaData<MFTYPE>(m_dict, key, dictInput);
 }
 
 DWIMetaDataDictionaryValidator::Double3x1ArrayType DWIMetaDataDictionaryValidator::GetGradient(int index) const

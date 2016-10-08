@@ -24,7 +24,7 @@ void BRAINSRegisterAlternateIO(void)
 }
 
 //If ITK was built with FFTWD and FFTWF, then use wisdom files
-#if ITK_USE_FFTWF && ITK_USE_FFTWD
+#if defined(ITK_USE_FFTWF) && defined(ITK_USE_FFTWD)
 
 //This is intended to be called one time
 void FFTWInit(const std::string path_for_wisdom)

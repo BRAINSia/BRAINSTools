@@ -11,27 +11,27 @@
 bool debug = false;
 
 void myMexPrintf(std::string msg) {
-    if (debug) mexPrintf(msg.c_str());
+  if (debug) mexPrintf(msg.c_str());
 }
 
 void myMexPrintf(std::string msg, int value) {
-    if (debug) mexPrintf(msg.c_str(), value);
+  if (debug) mexPrintf(msg.c_str(), value);
 }
 
 void myMexPrintf(std::string msg, std::string value) {
-    if (debug) mexPrintf(msg.c_str(), value.c_str());
+  if (debug) mexPrintf(msg.c_str(), value.c_str());
 }
 
 void myMexPrintf(std::string msg, double value) {
-    if (debug) mexPrintf(msg.c_str(), value);
+  if (debug) mexPrintf(msg.c_str(), value);
 }
 
 void myMexPrintf(std::string msg, unsigned int value) {
-    if (debug) mexPrintf(msg.c_str(), value);
+  if (debug) mexPrintf(msg.c_str(), value);
 }
 
 void myMexPrintf(std::string msg, int value, int value2, int value3) {
-    if (debug) mexPrintf(msg.c_str(), value, value2, value3);
+  if (debug) mexPrintf(msg.c_str(), value, value2, value3);
 }
 
 #endif //BRAINSTOOLS_MYMEXPRINTF_H

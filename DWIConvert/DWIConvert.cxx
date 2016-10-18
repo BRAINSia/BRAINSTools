@@ -128,6 +128,7 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
   img4D->SetOrigin(origin4D);
 
   img4D->Allocate();
+  img4D->SetMetaDataDictionary(img->GetMetaDataDictionary());
   size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels();
   bytecount *= sizeof(DWIConverter::PixelValueType);
   memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
@@ -160,7 +161,7 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
 }
 
 double
-ComputeMaxBvalue(const std::vector<float> &bValues)
+ComputeMaxBvalue(const std::vector<double> &bValues)
 {
   double maxBvalue(0.0);
   for( unsigned int k = 0; k < bValues.size(); ++k )
@@ -173,12 +174,12 @@ ComputeMaxBvalue(const std::vector<float> &bValues)
   return maxBvalue;
 }
 
-DWIConverter::DiffusionVecVectorType
-computeScaledDiffusionVectors( const DWIConverter::DiffusionVecVectorType &UnitNormDiffusionVectors,
-                               const std::vector<float> &bValues,
+DWIMetaDataDictionaryValidator::GradientTableType
+computeScaledDiffusionVectors( const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors,
+                               const std::vector<double> &bValues,
                                const double maxBvalue)
 {
-  DWIConverter::DiffusionVecVectorType BvalueScaledDiffusionVectors;
+  DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors;
   for( unsigned int k = 0; k < UnitNormDiffusionVectors.size(); ++k )
     {
     vnl_vector_fixed<double,3> vec(3);
@@ -351,10 +352,10 @@ int main(int argc, char *argv[])
     }
 
   DWIConverter::VolumeType::Pointer dmImage = converter->GetDiffusionVolume();
-  const DWIConverter::DiffusionVecVectorType &UnitNormDiffusionVectors = converter->GetDiffusionVectors();
-  const std::vector<float> &bValues = converter->GetBValues();
+  const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors = converter->GetDiffusionVectors();
+  const std::vector<double> &bValues = converter->GetBValues();
   const double maxBvalue = ComputeMaxBvalue(bValues);
-  const DWIConverter::DiffusionVecVectorType &BvalueScaledDiffusionVectors =
+  const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
     computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
 
   if( conversionMode != "DicomToFSL" && !fMRIOutput)
@@ -417,7 +418,7 @@ int main(int argc, char *argv[])
     converter->GetMeasurementFrame().GetInverse();
 
   // construct vector of gradients
-  std::vector<std::vector<double> > gradientVectors;
+  DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
   if( gradientVectorFile != "" )
     {
     // override gradients embedded in file with an external file.
@@ -436,7 +437,7 @@ int main(int argc, char *argv[])
       }
     for( unsigned int imageCount = 0; !gradientFile.eof(); ++imageCount )
       {
-      std::vector<double> vec(3);
+      DWIMetaDataDictionaryValidator::GradientDirectionType vec;
       for( unsigned i = 0; !gradientFile.eof() &&  i < 3; ++i )
         {
         gradientFile >> vec[i];
@@ -449,7 +450,7 @@ int main(int argc, char *argv[])
     // grab the diffusion vectors.
     for( unsigned int k = 0; k < BvalueScaledDiffusionVectors.size(); ++k )
       {
-      std::vector<double> vec(3);
+      DWIMetaDataDictionaryValidator::GradientDirectionType vec;
       if( useIdentityMeaseurementFrame )
         {
         vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors =
@@ -476,6 +477,24 @@ int main(int argc, char *argv[])
   // There should be a better way using itkNRRDImageIO.
   if( conversionMode != "DicomToFSL" )
     {
+#if 0 // Can not write ITK images directly for DWI images, meta data is lost.
+#if 1
+
+    Write4DVolume(dmImage,BvalueScaledDiffusionVectors.size(),outputVolumeHeaderName);
+#else
+      DWIMetaDataDictionaryValidator myDict;
+      myDict.SetMeasurementFrame(converter->GetMeasurementFrame());
+      myDict.SetBValue(maxBvalue);
+      myDict.SetGradientTable(gradientVectors);
+      dmImage->SetMetaDataDictionary(myDict.GetMetaDataDictionary());
+
+      itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer writer = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
+      writer->SetFileName( outputVolumeHeaderName );
+      writer->SetInput( dmImage );
+      writer->Update();
+#endif
+
+#else
     std::ofstream header;
     // std::string headerFileName = outputDir + "/" + outputFileName;
 
@@ -630,17 +649,18 @@ int main(int argc, char *argv[])
                     nVoxels * sizeof(short) );
       }
     header.close();
+  #endif
     }
   else
     {
     // write out in FSL format
-    if( WriteBValues<float>(bValues, outputFSLBValFilename) != EXIT_SUCCESS )
+    if( WriteBValues<double>(bValues, outputFSLBValFilename) != EXIT_SUCCESS )
       {
       std::cerr << "Failed to write " << outputFSLBValFilename
                 << std::endl;
       return EXIT_FAILURE;
       }
-    if( WriteBVectors<double>(gradientVectors, outputFSLBVecFilename) != EXIT_SUCCESS )
+    if( WriteBVectors(gradientVectors, outputFSLBVecFilename) != EXIT_SUCCESS )
       {
       std::cerr << "Failed to write " << outputFSLBVecFilename
                 << std::endl;

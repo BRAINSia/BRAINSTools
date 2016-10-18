@@ -24,6 +24,9 @@
 
 #cmakedefine USE_ANTS
 
+#cmakedefine ITK_USE_FFTWF
+#cmakedefine ITK_USE_FFTWD
+
 extern void BRAINSRegisterAlternateIO(void);
 
 extern void FFTWInit(const std::string path_for_wisdom);

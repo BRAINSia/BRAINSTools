@@ -78,7 +78,7 @@ public:
       for( unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume )
         {
         // parsing bvalue and gradient directions
-        DWIConverter::DiffusionVectorType vect3d;
+        DWIMetaDataDictionaryValidator::GradientDirectionType vect3d;
         vect3d.fill( 0 );
         // for some weird reason this item in the GE dicom
         // header is stored as an IS (Integer String) element.

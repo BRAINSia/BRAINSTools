@@ -33,14 +33,14 @@ int main(int argc, char *argv[])
   std::string bvalfile2(argv[4]);
 
   unsigned int                      bVecCount1;
-  std::vector<std::vector<double> > bvecs1;
+  DWIMetaDataDictionaryValidator::GradientTableType bvecs1;
   if( ReadBVecs(bvecs1, bVecCount1, bvecfile1, false) != EXIT_SUCCESS )
     {
     std::cerr << "Can't read " << bvecfile1 << std::endl;
     return EXIT_FAILURE;
     }
   unsigned int                      bVecCount2;
-  std::vector<std::vector<double> > bvecs2;
+  DWIMetaDataDictionaryValidator::GradientTableType bvecs2;
   if( ReadBVecs(bvecs2, bVecCount2, bvecfile2, false) != EXIT_SUCCESS )
     {
     std::cerr << "Can't read " << bvecfile2 << std::endl;

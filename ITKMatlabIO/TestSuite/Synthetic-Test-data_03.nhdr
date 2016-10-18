@@ -1,0 +1,39 @@
+NRRD0005
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: float
+dimension: 4
+space: left-posterior-superior
+sizes: 70 20 21 2
+space directions: (1.6667,0,0) (0,1.6667,0) (0,0,-1.7) none
+centerings: cell cell cell ???
+kinds: space space list space
+endian: little
+encoding: gzip
+space origin: (-119.169,-119.169,71.4)
+measurement frame: (-1,0,0) (0,-1,0) (0,0,1)
+space units: "mm" "mm" "mm"
+data file: Synthetic-Test-data_03.raw.gz
+modality:=DWMRI
+DWMRI_b-value:=1000
+DWMRI_gradient_0000:= 0.000000 0.000000 0.000000
+DWMRI_gradient_0001:= 0.222205 0.000000 0.975000
+DWMRI_gradient_0002:= -0.280176 0.256664 0.925000
+DWMRI_gradient_0003:= 0.042325 -0.482269 0.875000
+DWMRI_gradient_0004:= 0.343849 0.448490 0.825000
+DWMRI_gradient_0005:= -0.622301 -0.110076 0.775000
+DWMRI_gradient_0006:= 0.581136 -0.369671 0.725000
+DWMRI_gradient_0007:= -0.191541 0.712522 0.675000
+DWMRI_gradient_0008:= -0.359795 -0.692764 0.625000
+DWMRI_gradient_0009:= 0.768509 0.280658 0.575000
+DWMRI_gradient_0010:= -0.786713 0.324744 0.525000
+DWMRI_gradient_0011:= 0.372978 -0.797033 0.475000
+DWMRI_gradient_0012:= 0.270910 0.863703 0.425000
+DWMRI_gradient_0013:= -0.802072 -0.464817 0.375000
+DWMRI_gradient_0014:= 0.923656 -0.203063 0.325000
+DWMRI_gradient_0015:= -0.552955 0.786521 0.275000
+DWMRI_gradient_0016:= -0.125216 -0.966280 0.225000
+DWMRI_gradient_0017:= 0.752849 0.634502 0.175000
+DWMRI_gradient_0018:= -0.991309 0.040994 0.125000
+DWMRI_gradient_0019:= 0.706833 -0.703393 0.075000
+DWMRI_gradient_0020:= -0.046177 0.998620 0.025000

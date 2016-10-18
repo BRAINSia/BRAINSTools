@@ -134,7 +134,7 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
   for( firstIt.GoToBegin(), secondIt.GoToBegin(); !firstIt.IsAtEnd() && !secondIt.IsAtEnd();
        ++firstIt, ++secondIt, ++count )
     {
-    if( !CloseEnough<PixelType>(firstIt.Get(), secondIt.Get() ) )
+    if( !CloseEnough(firstIt.Get(), secondIt.Get() ) )
       {
       std::cerr << "Images don't match at voxel " << count << std::endl
                 << firstIt.Get() << std::endl
@@ -215,9 +215,9 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
     rval = EXIT_FAILURE;
     }
 
-  std::vector<std::vector<double> > firstGVector, secondGVector;
-
+  DWIMetaDataDictionaryValidator::GradientTableType firstGVector;
   RecoverBVectors<ImageType>(firstImage, firstGVector);
+  DWIMetaDataDictionaryValidator::GradientTableType secondGVector;
   RecoverBVectors<ImageType>(secondImage, secondGVector);
   if( firstGVector.size() != secondGVector.size() )
     {
@@ -231,9 +231,9 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
     {
     std::cerr << "Gradient vectors don't match" << std::endl;
     std::cerr << "First Vector ";
-    PrintVec<std::vector<double> >(firstGVector);
+    PrintVec(firstGVector);
     std::cerr << "Second Vector ";
-    PrintVec<std::vector<double> >(secondGVector);
+    PrintVec(secondGVector);
 
     rval = EXIT_FAILURE;
     }

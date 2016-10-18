@@ -34,6 +34,7 @@
 #include <iomanip>
 #include <string>
 #include "itkNumberToString.h"
+#include "DWIMetaDataDictionaryValidator.h"
 
 #include <cmath>
 
@@ -130,41 +131,13 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
 
 template <typename TImage>
 int
-RecoverBVectors(const TImage *img, std::vector<std::vector<double> > & bVecs)
+RecoverBVectors(const TImage *img, DWIMetaDataDictionaryValidator::GradientTableType & bVecs)
 {
   bVecs.clear();
 
-  const itk::MetaDataDictionary & dict = img->GetMetaDataDictionary();
-  for( unsigned curGradientVec = 0; ; ++curGradientVec )
-    {
-    std::stringstream labelSS;
-    labelSS << "DWMRI_gradient_"
-            << std::setw(4)
-            << std::setfill('0')
-            << curGradientVec;
-    std::string valString;
-    // look for gradients in metadata until none by current name exists
-    if( !itk::ExposeMetaData<std::string>(dict, labelSS.str(), valString) )
-      {
-      break;
-      }
-    std::stringstream   valSS(valString);
-    std::vector<double> vec;
-    for( ; ; )
-      {
-      double curVal;
-      valSS >> curVal;
-      if( !valSS.fail() )
-        {
-        vec.push_back(curVal);
-        }
-      else
-        {
-        break;
-        }
-      }
-    bVecs.push_back(vec);
-    }
+  DWIMetaDataDictionaryValidator myDWIValidator;
+  myDWIValidator.SetMetaDataDictionary(img->GetMetaDataDictionary() );
+  bVecs = myDWIValidator.GetGradientTable();
   if( bVecs.empty() )
     {
     return EXIT_FAILURE;
@@ -176,30 +149,15 @@ template <typename TImage>
 int
 RecoverBValue(const TImage *img, double & val)
 {
-  std::string valString;
-
-  const itk::MetaDataDictionary & dict = img->GetMetaDataDictionary();
-
-  if( !itk::ExposeMetaData<std::string>(dict, "DWMRI_b-value", valString) )
-    {
-    return EXIT_FAILURE;
-    }
-
-  std::stringstream valSS(valString);
-
-  valSS >> val;
-
-  if( valSS.fail() )
-    {
-    return EXIT_FAILURE;
-    }
-
+  DWIMetaDataDictionaryValidator myDWIValidator;
+  myDWIValidator.SetMetaDataDictionary(img->GetMetaDataDictionary() );
+  val = myDWIValidator.GetBValue();
   return EXIT_SUCCESS;
 }
 
 template <typename TImage>
 int RecoverBValues(const TImage *inputVol,
-                   const std::vector<std::vector<double> > & bVectors,
+                   const DWIMetaDataDictionaryValidator::GradientTableType & bVectors,
                    std::vector<double> & bValues)
 {
   bValues.clear();
@@ -250,188 +208,21 @@ WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
       }
     bValFile << bValues[k] << std::endl;
     }
-
   bValFile.close();
 
   return EXIT_SUCCESS;
 }
 
-template <typename TScalar>
-inline void
-normalize(const std::vector<TScalar> &vec,double *normedVec)
-{
-  double norm = 0.0;
-  for(unsigned j = 0; j < 3; ++j)
-    {
-    normedVec[j] = vec[j];
-    norm += vec[j] * vec[j];
-    }
-  norm = std::sqrt(norm);
-  if( norm < 0.00001) //Only norm if not equal to zero
-    {
-    for(unsigned j = 0; j < 3; ++j)
-      {
-      normedVec[j] = 0.0;
-      }
-    }
-  else if( std::abs(1.0 - norm) > 1e-4 ) //Only normalize if not very close to 1
-    {
-    for(unsigned j = 0; j < 3; ++j)
-      {
-      normedVec[j] /= norm;
-      }
-    }
-}
+extern void normalize(const DWIMetaDataDictionaryValidator::GradientDirectionType &vec,double *normedVec);
+extern int WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors,
+              const std::string & filename);
 
-template <typename TScalar>
-inline int
-WriteBVectors(const std::vector<std::vector<TScalar> > & bVectors,
-              const std::string & filename)
-{
-  itk::NumberToString<double> DoubleConvert;
-  std::ofstream  bVecFile;
+extern int ReadBVals(std::vector<double> & bVals, unsigned int & bValCount,
+                     const std::string & bValFilename, double & maxBValue);
 
-  bVecFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-  bVecFile.precision(17);
-  if( !bVecFile.is_open() || !bVecFile.good() )
-    {
-    return EXIT_FAILURE;
-    }
-  for( unsigned int k = 0; k < bVectors.size(); ++k )
-    {
-    if( !bVecFile.good() )
-      {
-      return EXIT_FAILURE;
-      }
+extern int ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount,
+                     const std::string & bVecFilename , bool transpose );
 
-    double normedVec[3];
-    normalize(bVectors[k],normedVec);
-    bVecFile << DoubleConvert(normedVec[0]) << " "
-             << DoubleConvert(normedVec[1]) << " "
-             << DoubleConvert(normedVec[2])
-             << std::endl;
-    }
-  bVecFile.close();
-  return EXIT_SUCCESS;
-}
-
-inline
-int
-ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::string & bValFilename, double & maxBValue)
-{
-  std::ifstream bValFile(bValFilename.c_str(), std::ifstream::in);
-
-  if( !bValFile.good() )
-    {
-    std::cerr << "Failed to open " << bValFilename
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  bVals.clear();
-  bValCount = 0;
-  while( !bValFile.eof() )
-    {
-    double x;
-    bValFile >> x;
-    if( bValFile.fail() )
-      {
-      break;
-      }
-    if( x > maxBValue )
-      {
-      maxBValue = x;
-      }
-    bValCount++;
-    bVals.push_back(x);
-    }
-
-  return EXIT_SUCCESS;
-}
-
-inline
-int
-ReadBVecs(std::vector<std::vector<double> > & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool transpose )
-{
-  std::ifstream bVecFile(bVecFilename.c_str(), std::ifstream::in);
-
-  if( !bVecFile.good() )
-    {
-    std::cerr << "Failed to open " << bVecFilename
-              << std::endl;
-    return EXIT_FAILURE;
-  }
-  bVecs.clear();
-  bVecCount = 0;
-  if( transpose )
-  {
-    std::vector<std::vector<double> > bVecst( 3 ) ;
-      for( unsigned i = 0 ; i < 3 ; i++ )
-      {
-          std::string bvect;
-          std::getline(bVecFile, bvect);
-          bool error = false ;
-          if( bVecFile.fail() )
-          {
-              return EXIT_FAILURE ;
-          }
-          std::istringstream issLineToString(bvect);
-          for( std::istream_iterator<std::string> it = std::istream_iterator<std::string>(issLineToString); it != std::istream_iterator<std::string>(); it++ )
-          {
-              std::istringstream iss( *it ) ;
-              double val ;
-              iss >> val ;
-              if( iss.fail() )
-              {
-                  error = true ;
-                  break;
-              }
-              bVecst[ i ].push_back( val ) ;
-          }
-          if( error )
-          {
-              break ;
-          }
-      }
-      for( unsigned int i = 1 ; i < 3 ; i++ )
-      {
-          if( bVecst[ i ].size() !=  bVecst[ 0 ].size() )
-          {
-              return EXIT_FAILURE ;
-          }
-      }
-      bVecCount = bVecst[ 0 ].size() ;
-      for( unsigned int i = 0 ; i < bVecCount ; i++ )
-      {
-          double list[] = {bVecst[0][i],bVecst[1][i],bVecst[2][i]} ;
-          std::vector<double> x( list , list + 3 ) ;
-          bVecs.push_back(x);
-      }
-  }
-  else
-  {
-      while( !bVecFile.eof() )
-      {
-          std::vector<double> x;
-          for( unsigned i = 0; i < 3; ++i )
-          {
-              double val;
-              bVecFile >> val;
-              if( bVecFile.fail() )
-              {
-                  break;
-              }
-              x.push_back(val);
-          }
-          if( bVecFile.fail() )
-          {
-              break;
-          }
-          bVecCount++;
-          bVecs.push_back(x);
-      }
-  }
-  return EXIT_SUCCESS;
-}
 
 
 template <typename TValue>
@@ -477,6 +268,8 @@ CloseEnough(const std::vector<TVal> & a, const std::vector<TVal> & b, double mag
   return true;
 }
 
+extern bool CloseEnough(const vnl_vector_fixed<double,3> & a, const vnl_vector_fixed<double,3> & b, double magdiv = 100000.0);
+
 template <typename TVal>
 bool
 CloseEnough(const itk::VariableLengthVector<TVal> & a,
@@ -500,6 +293,7 @@ CloseEnough(const itk::VariableLengthVector<TVal> & a,
   return true;
 }
 
+
 template <typename TVal>
 void PrintVec(const TVal & a)
 {
@@ -521,6 +315,9 @@ void PrintVec(const std::vector<TVal> & vec)
     }
   std::cerr << "]" << std::endl;
 }
+
+extern void PrintVec(const vnl_vector_fixed<double,3> & vec);
+extern void PrintVec(const DWIMetaDataDictionaryValidator::GradientTableType & vec);
 
 extern int FSLToNrrd(const std::string & inputVolume,
                      const std::string & outputVolume,

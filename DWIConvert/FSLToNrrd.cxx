@@ -82,7 +82,7 @@ FSLToNrrd(const std::string & inputVolume,
     }
 
   std::vector<double>               BVals;
-  std::vector<std::vector<double> > BVecs;
+  DWIMetaDataDictionaryValidator::GradientTableType BVecs;
   unsigned int                      bValCount = 0;
   unsigned int                      bVecCount = 0;
   double                            maxBValue(0.0);
@@ -123,7 +123,7 @@ FSLToNrrd(const std::string & inputVolume,
   // b-vector by sqrt(this-b-value/max-b-value).
   std::vector<double>::const_iterator bValIt = BVals.begin(),
     bValsEnd = BVals.end();
-  std::vector<std::vector<double> >::iterator bVecIt = BVecs.begin(),
+  DWIMetaDataDictionaryValidator::GradientTableType::iterator bVecIt = BVecs.begin(),
     bVecsEnd = BVecs.end();
 
   for(; bVecIt != bVecsEnd && bValIt != bValsEnd; ++bVecIt, ++bValIt)
@@ -133,7 +133,7 @@ FSLToNrrd(const std::string & inputVolume,
       continue;
       }
     double scale = std::sqrt((*bValIt) / maxBValue);
-    std::vector<double> &cur = *bVecIt;
+    DWIMetaDataDictionaryValidator::GradientDirectionType &cur = *bVecIt;
     for(unsigned int i = 0; i < 3; ++i)
       {
       cur[i] *= scale;
@@ -227,16 +227,15 @@ FSLToNrrd(const std::string & inputVolume,
   nrrdVolumeValidator.SetModality(tempModality);
 
   // measurement frame -> it is identity
-  std::vector<std::vector<double> > msrFrame(3);
+  DWIMetaDataDictionaryValidator::RotationMatrixType msrFrame;
   for( unsigned int saxi = 0; saxi < 3; saxi++ )
     {
-    msrFrame[saxi].resize(3);
     for( unsigned int saxj = 0; saxj < 3; saxj++ )
       {
-      msrFrame[saxi][saxj] = 0.0;
+      msrFrame(saxi,saxj) = 0.0;
       }
     }
-  msrFrame[0][0] = 1.0; msrFrame[1][1] = 1.0; msrFrame[2][2] = 1.0;
+  msrFrame(0,0) = 1.0; msrFrame(1,1) = 1.0; msrFrame(2,2) = 1.0;
   nrrdVolumeValidator.SetMeasurementFrame(msrFrame);
 
   // b-value
@@ -244,7 +243,7 @@ FSLToNrrd(const std::string & inputVolume,
 
   // Gradient directions
   DWIMetaDataDictionaryValidator::GradientTableType gradientTable( bVecCount );
-  MyArrayWrapper<double, 3> BVec_fixedSize;
+  DWIMetaDataDictionaryValidator::GradientDirectionType BVec_fixedSize;
   for( unsigned int i = 0; i < bVecCount; ++i )
     {
     // convert std::vector to MyArrayWrapper that is a vector with fixed size

@@ -63,7 +63,6 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "itksys/Base64.h"
 #undef HAVE_SSTREAM
 #include "itkDCMTKFileReader.h"
-#include "djdecode.h"
 #include "StringContains.h"
 #include "DWIConvertUtils.h"
 #include "itkNumberToString.h"
@@ -74,8 +73,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "DWIConverterFactory.h"
 #include <BRAINSCommonLib.h>
 
-#include "helpers/loglog.h"
-#include "helpers/lloguser.h"
+#include "dcmtk/oflog/helpers/loglog.h"
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.

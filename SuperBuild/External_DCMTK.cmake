@@ -42,6 +42,10 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
   set(${proj}_GIT_TAG "efe1a177eac040b6d41aae0db7714cd970e12bc5") ##2016-10-12
 
+  if("${CMAKE_CXX_STANDARD}" STREQUAL "11")
+    set( DCMTK_USE_CXX11_STL_FLAG "-DDCMTK_USE_CXX11_STL:BOOL=ON")
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${DCMTK_REPOSITORY}
@@ -66,6 +70,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
       -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
+      ${DCMTK_USE_CXX11_STL_FLAG}
+      -DDCMTK_MODULES:STRING=ofstd;oflog;dcmdata;dcmimgle;dcmimage;dcmjpeg;dcmjpls;dcmtls;dcmnet;dcmsr;dcmsign;dcmwlm;dcmqrdb;dcmpstat;dcmrt
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS

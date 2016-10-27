@@ -40,7 +40,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   # DCMTK-3.6.1_20160630
   set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
-  set(${proj}_GIT_TAG "efe1a177eac040b6d41aae0db7714cd970e12bc5") ##2016-10-12
+  set(${proj}_GIT_TAG "18e2abbd930f00fb41c1cea42cec04ccf0cf8637") ##2016-10-12 --Reverted for C++11
 
   if("${CMAKE_CXX_STANDARD}" STREQUAL "11")
     set( DCMTK_USE_CXX11_STL_FLAG "-DDCMTK_USE_CXX11_STL:BOOL=ON")

@@ -3,17 +3,8 @@
 #include "itkMetaDataObject.h"
 #include "itkImageFileReader.h"
 #include "itkNrrdImageIOFactory.h"
-#include "itkImageIOFactoryRegisterManager.h"
-#include "itkVectorImage.h"
-#include "itkVariableLengthVector.h"
 #include <iomanip>
-#include <sstream>
-#include <list>
-#include <vector>
-#include <algorithm>
 #include "nrrdCommon.h"
-#include <typeinfo>
-#include "Debug.h"
 #include "myMexPrintf.h"  //add by HuiXie
 
 
@@ -203,7 +194,7 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
     ss >> bValue;
 
     std::stringstream gradTag;
-    unsigned int gradCount(0);;
+    unsigned int gradCount(0);
     gradTag << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << gradCount;
     gradCount++;
     std::string gradString;

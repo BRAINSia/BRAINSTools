@@ -175,6 +175,7 @@ void CopyImageData<itk::VectorImage<short, 3> >(itk::VectorImage<short, 3>::Poin
 }
 
 
+
 //build the matlab DWI image structure. This should work as well for non-DWI images
 template<typename TImage>
 void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
@@ -349,25 +350,21 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
   // the nrrd space variable into account.
   // For now, just have to assume that the ITK directions are OK as is.
   // Working for NRRD so nothing to do here.
-
-  if (false) {// use for something that is not nrrd or default
-    myMexPrintf("SPECIAL case space directions\n");
-  } else {// DEFAULT
-    mxArray *spacedirections = mxCreateNumericMatrix(mxNrrdDim,
+  mxArray *spacedirections = mxCreateNumericMatrix(mxNrrdDim,
                                                      mxNrrdDim, mxDOUBLE_CLASS, mxREAL);
-    double *spacedirections_temp = (double *) mxGetData(spacedirections);
-    const typename ImageType::DirectionType directions = im->GetDirection();
-    typename ImageType::SpacingType itkSpacing = im->GetSpacing();
+  double *spacedirections_temp = (double *) mxGetData(spacedirections);
+  const typename ImageType::DirectionType directions = im->GetDirection();
+  typename ImageType::SpacingType itkSpacing = im->GetSpacing();
 
-    for (unsigned int axIdx = 0, count = 0; axIdx < ImageType::ImageDimension; ++axIdx) {
-      for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx) {
-        spacedirections_temp[count] = directions[sdIdx][axIdx] * itkSpacing[axIdx];
-        count++;
-      }//end for
+  for (unsigned int axIdx = 0, count = 0; axIdx < ImageType::ImageDimension; ++axIdx) {
+    for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx) {
+      spacedirections_temp[count] = directions[sdIdx][axIdx] * itkSpacing[axIdx];
+      count++;
     }//end for
-    mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_spacedirections, spacedirections);
-    myMexPrintf("DEFAULT space directions\n");
-  }//end else DEFAULT case
+  }//end for
+  mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_spacedirections, spacedirections);
+  myMexPrintf("DEFAULT space directions\n");
+
 
   /** spaceunits **/
   // Never enters NRRD case, nothing to do for NRRD

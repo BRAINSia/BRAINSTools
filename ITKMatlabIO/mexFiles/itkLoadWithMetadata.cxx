@@ -3,50 +3,9 @@
 #include "itkMetaDataObject.h"
 #include "itkImageFileReader.h"
 #include "itkNrrdImageIOFactory.h"
-#include "itkImageIOFactoryRegisterManager.h"
-#include "itkVectorImage.h"
-#include "itkVariableLengthVector.h"
 #include <iomanip>
-#include <sstream>
-#include <list>
-#include <vector>
-#include <algorithm>
 #include "nrrdCommon.h"
-#include <typeinfo>
-#include "Debug.h"
-
-bool debug = false;
-
-void myMexPrintf(std::string msg) {
-    if (debug)
-        mexPrintf(msg.c_str());
-}
-
-void myMexPrintf(std::string msg, int value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value);
-}
-
-void myMexPrintf(std::string msg, std::string value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value.c_str());
-}
-
-void myMexPrintf(std::string msg, double value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value);
-}
-
-void myMexPrintf(std::string msg, unsigned int value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value);
-}
-
-void myMexPrintf(std::string msg, int value, int value2, int value3) {
-    if (debug)
-        mexPrintf(msg.c_str(), value, value2, value3);
-}
-
+#include "myMexPrintf.h"  //add by HuiXie
 
 /** ITKToMType -- use template function to map ITK/native scalar types
 * to Matlab scalar types.
@@ -233,7 +192,7 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
     ss >> bValue;
 
     std::stringstream gradTag;
-    unsigned int gradCount(0);;
+    unsigned int gradCount(0);
     gradTag << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << gradCount;
     gradCount++;
     std::string gradString;

@@ -521,6 +521,7 @@ void LoadDWIImage(const std::string &filename, mxArray *&structMx) {
   catch (itk::ExceptionObject &e) {
     std::string msg = "Error: itk::ImageFileReader can't read " + filename + " : " + e.what();
     mexErrMsgTxt(msg.c_str());
+    return;  //add by Hui Xie on Nov 3th, 2016
   }
   typename ImageType::Pointer im = reader->GetOutput();
   BuildMatlabStruct<ImageType>(structMx, im);

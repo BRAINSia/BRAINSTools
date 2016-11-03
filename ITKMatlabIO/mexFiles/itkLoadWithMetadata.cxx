@@ -7,9 +7,6 @@
 #include "nrrdCommon.h"
 #include "myMexPrintf.h"  //add by HuiXie
 
-/** ITKToMType -- use template function to map ITK/native scalar types
-* to Matlab scalar types.
-*/
 template<typename PixelType>
 mxClassID ITKToMType() {
   itkGenericExceptionMacro(<< "Unhandled image type");

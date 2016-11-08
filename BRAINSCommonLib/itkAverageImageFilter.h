@@ -1,7 +1,6 @@
 /*=========================================================================
  *
- *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
- *            The University of Iowa
+ *  Copyright Insight Software Consortium
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +28,7 @@ namespace itk
  * \brief This filter performs pixelwise averaging among an arbitrary number
  * of input images.
  *
+ * \ingroup ITKBRAINSFilterPack
  * \par INPUTS
  * Input volumes must all contain the same size RequestedRegions. All input
  * images must have the same pixel type. All pixel types are supported that
@@ -93,8 +93,7 @@ protected:
   AverageImageFilter() {}
   virtual ~AverageImageFilter() {}
 
-  void ThreadedGenerateData
-  ( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
+  void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
   void PrintSelf(std::ostream&, Indent) const ITK_OVERRIDE;
 

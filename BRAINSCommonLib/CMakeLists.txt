@@ -25,6 +25,7 @@ FindITKUtil( BRAINSCommonLib_ITK
   ITKOptimizersv4
   ITKRegionGrowing
   ITKNrrdIO
+  ITKTestKernel
 )
 
 #-----------------------------------------------------------------------------

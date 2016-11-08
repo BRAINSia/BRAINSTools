@@ -19,6 +19,16 @@ target_link_libraries(Slicer3LandmarkIOExceptionTest BRAINSCommonLib)
 set_target_properties(Slicer3LandmarkIOExceptionTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
 
+add_executable(AverageImageFilterTest AverageImageFilterTest.cxx)
+target_link_libraries(AverageImageFilterTest BRAINSCommonLib)
+set_target_properties(AverageImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+
+ExternalData_add_test(FindCenterOfBrainFetchData
+  NAME AverageImageFilterTest
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:AverageImageFilterTest>
+  ## No arguments
+  )
+
 ExternalData_add_test(FindCenterOfBrainFetchData
   NAME PrettyPrintTableTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>

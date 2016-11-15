@@ -65,8 +65,6 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
 
   const unsigned int numDims = msm.GetNumberOfDimensions("data");
   const mwSize *const mSize = msm.GetDimensions("data");
-  myMexPrintf(" size =\n");
-
   typename ImageType::SizeType itkSize;
   size_t numPixels = 1;
   {
@@ -74,32 +72,32 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
     for (axIdx = 0; axIdx < ImageType::ImageDimension; axIdx++) {
       itkSize[axIdx] = mSize[axIdx];
       numPixels *= itkSize[axIdx];
-      myMexPrintf("%d, %d, %d\n", (int) itkSize[axIdx], (int) axIdx, (int) ImageType::ImageDimension);
-    }//end for
+    }
+
+    //???? this code has problem, it should never be executed. by Hui Xie
     if (axIdx < numDims) {
       numPixels *= mSize[axIdx];
-    }//end if
+    }
   }
 
   /** spaceorigin **/
   typename ImageType::PointType itkOrigin;
   itkOrigin.Fill(0.0);
   const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
-  // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
-  const unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
-  myMexPrintf("Space Origin =\n");
+
+  //TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
+  const unsigned int spatialDims = 3; //numDims;
   for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++) {
     if (sdIdx < spatialDims) {
       itkOrigin[sdIdx] = spaceorigin_temp[sdIdx];
     } else {
       itkOrigin[sdIdx] = 0.0;
-    }//end else
-    myMexPrintf("%d, %d, %d\n", (int) itkOrigin[sdIdx], (int) sdIdx, (int) ImageType::ImageDimension);
-  }//end for
+    }
+  }
 
   typename ImageType::SpacingType itkSpacing;
   typename ImageType::DirectionType itkDirection;
-  //
+
   // fill out extra dimension for (usually) 4 D -- add zero to 4th
   // entry in direction vector, except for the last vector, which
   // needs to be 0 0 0 1
@@ -107,23 +105,30 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   /** spacedirections **/
   const double *spacedirections_temp = (double *) mxGetData(msm.GetField("spacedirections"));
   for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
+    /*switch (spatialDims){
+      case 2:
+        vnl_vector_fixed<double, 2> vec;
+        break;
+      case 3:
+        vnl_vector_fixed<double, 3> vec;
+        break;
+      case 4:
+        vnl_vector_fixed<double, 4> vec;
+      default:
+        break;
+    }*/
+
     vnl_vector_fixed<double, spatialDims> vec;
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       const unsigned int sdir_offset = axIdx * spatialDims + sdIdx;
       vec[sdIdx] = spacedirections_temp[sdir_offset];
-    }//end for
+    }
     itkSpacing[axIdx] = vec.magnitude();
     vec.normalize();
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       itkDirection[sdIdx][axIdx] = vec[sdIdx];
-    }//end for
-  }//end for
-  myMexPrintf("directions =\n");
-  for (unsigned int axIdx = 0; axIdx < ImageType::ImageDimension; ++axIdx) {
-    for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx) {
-      myMexPrintf("%lf, %d, %d\n", itkDirection[sdIdx][axIdx], sdIdx, ImageType::ImageDimension);
-    }//end for
-  }//end for
+    }
+  }
 
   double flipFactors[4] = {1.0, 1.0, 1.0, 1.0};
   const int *nrrdSpaceDefinition = (int *) mxGetData(msm.GetField("space"));
@@ -138,21 +143,21 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
         for (unsigned int i = 0; i < ImageType::ImageDimension; ++i) {
           itkDirection[i][0] *= -1;
           itkDirection[i][1] *= -1;
-        }//end for
+        }
         flipFactors[0] = -1.0;
         flipFactors[1] = -1.0;
         break;
       case nrrdSpaceLeftAnteriorSuperior:
         for (unsigned int i = 0; i < ImageType::ImageDimension; ++i) {
           itkDirection[i][0] *= -1;
-        }//end for
+        }
         flipFactors[0] = -1.0;
         break;
       default:
         myMexPrintf("nrrdSpaceDefinition failed into any preset case in WriteITKImageFromMatlabStructure function.");
         break;
-    }//end switch
-  }//end if
+    }
+  }
 
   typename ImageType::Pointer im = ImageType::New();
   im->SetDirection(itkDirection);
@@ -160,12 +165,12 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   im->SetSpacing(itkSpacing);
   im->SetRegions(itkSize);
   size_t ComponentsPerPixel = 1;
-  //
+
   // if we have a vector image
   if (numDims > ImageType::ImageDimension) {
     ComponentsPerPixel = mSize[ImageType::ImageDimension];
     SetNumberOfComponentsPerPixel<ImageType>(im, ComponentsPerPixel);
-  }//end if
+  }
   im->Allocate();
   const mxArray *const dataMx = msm.GetField("data");
   //Note: Matlab returns the internal value types, not a vector of those types.
@@ -176,14 +181,13 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   }
 
   itk::MetaDataDictionary &thisDic = im->GetMetaDataDictionary();
-  //
+
   // space direction
   std::string spaceDirKey("NRRD_");
   spaceDirKey += airEnumStr(nrrdSpace, nrrdField_space);
   itk::EncapsulateMetaData<std::string>(thisDic, spaceDirKey,
                                         std::string(airEnumStr(nrrdSpace, nrrdSpaceLeftPosteriorSuperior)));
 
-  //
   // fill out metadata
   // Measurement Frame
   mxArray *mxMeasurementFrame = msm.GetField("measurementframe");
@@ -216,15 +220,15 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
               tmp.push_back(1.0);
             } else {
               tmp.push_back(0.0);
-            }//end else
-          }//end for
-        }//end else
+            }
+          }
+        }
         measurementFrame.push_back(tmp);
-      }//end for
+      }
       itk::EncapsulateMetaData<MeasurementMatType>(thisDic, measurementFrameFieldName, measurementFrame);
-    }//end if
-  }//end if
-  //
+    }
+  }
+
   // centerings.
   const mxArray *const centerings_temp_MxArray = msm.GetField("centerings");
   if (centerings_temp_MxArray) {
@@ -234,8 +238,9 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
       attName << "NRRD_centerings[" << i << "]";
       std::string val = airEnumStr(nrrdCenter, centerings_temp[i]);
       itk::EncapsulateMetaData<std::string>(thisDic, attName.str(), val);
-    }//end for
-  }//end if
+    }
+  }
+
   // kinds
   const mxArray *const kinds_temp_MxArray = msm.GetField("kinds");
   if (kinds_temp_MxArray) {
@@ -282,7 +287,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
       }
       // OK
     }
-  }//end if msm.isDWIdata
+  }
 
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(filename);

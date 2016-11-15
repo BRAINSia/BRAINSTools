@@ -269,7 +269,7 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
 
   myMexPrintf("mxNrrdDimension = %lf\n", (double) mxNrrdDim);
   for (unsigned i = 0; i < numMxDimensions; ++i) {
-    myMexPrintf("sizeI = %d, i = %d, numMxDimensions = %d\n", sizeI[i], i, numMxDimensions);
+    myMexPrintf("sizeI = %d, i = %d, numMxDimensions = %d\n", (int)sizeI[i], i, numMxDimensions);
   }//end for
 
   // create voxel data array for matlab

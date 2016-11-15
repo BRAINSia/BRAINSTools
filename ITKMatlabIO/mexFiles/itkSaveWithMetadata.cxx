@@ -3,52 +3,9 @@
 #include "itkMetaDataObject.h"
 #include "itkVectorImage.h"
 #include "itkImageFileWriter.h"
-#include "itkImageIOFactoryRegisterManager.h"
 #include "nrrdCommon.h"
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include "vnl/vnl_vector_fixed.h"
-#include "Debug.h"
 #include "itkNumberToString.h"
-
-bool debug = false;
-
-static void myMexPrintf(std::string msg) {
-    if (debug)
-        mexPrintf(msg.c_str());
-}
-
-void myMexPrintf(std::string msg, int value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value);
-}
-
-void myMexPrintf(std::string msg, std::string value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value.c_str());
-}
-
-void myMexPrintf(std::string msg, double value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value);
-}
-
-void myMexPrintf(std::string msg, unsigned int value) {
-    if (debug)
-        mexPrintf(msg.c_str(), value);
-}
-
-void myMexPrintf(std::string msg, int value, int value2, int value3) {
-    if (debug)
-        mexPrintf(msg.c_str(), value, value2, value3);
-}
-
-void myMexPrintf(std::string msg, double value, int value2, int value3) {
-    if (debug)
-        mexPrintf(msg.c_str(), value, value2, value3);
-}
+#include "myMexPrintf.h" //add by HuiXie Nov 15th, 2016
 
 inline
 itk::ImageIOBase::IOComponentType typeMtoITK(const mxClassID mtype) {
@@ -135,10 +92,6 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
     const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
     // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
     const unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
-    if (spatialDims != 3) {
-        myMexPrintf("ERROR: ONLY 3D images (3D+gradients OK) supported.\n");
-        return;
-    }//end if
     myMexPrintf("Space Origin =\n");
     for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++) {
         if (sdIdx < spatialDims) {
@@ -199,6 +152,9 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
                     itkDirection[i][0] *= -1;
                 }//end for
                 flipFactors[0] = -1.0;
+                break;
+            default:
+                myMexPrintf("nrrdSpaceDefinition failed into any preset case in WriteITKImageFromMatlabStructure function.");
                 break;
         }//end switch
     }//end if
@@ -350,6 +306,8 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
     }
 }// end WriteITKImageFromMatlabStructure
 
+//comment by Hui Xie on Nov 15th, 2016 as unused code
+/*
 template<typename TImage>
 void
 WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
@@ -374,7 +332,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
         }
     }
 
-    /** spaceorigin **/
+    *//** spaceorigin **//*
     typename ImageType::PointType itkOrigin;
     itkOrigin.Fill(0.0);
     const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
@@ -401,7 +359,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
     // entry in direction vector, except for the last vector, which
     // needs to be 0 0 0 1
     itkDirection.SetIdentity();
-    /** spacedirections **/
+    *//** spacedirections **//*
     const double *spacedirections_temp = (double *) mxGetData(msm.GetField("spacedirections"));
     for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
         vnl_vector_fixed<double, spatialDims> vec;
@@ -488,7 +446,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
     // fill out metadata
     // Measurement Frame
     mxArray *mxMeasurementFrame = msm.GetField("measurementframe");
-    /** measurementframe **/
+    *//** measurementframe **//*
     if (mxMeasurementFrame) {
         const double *const mxMeasurementFrame_temp = (double *) mxGetData(mxMeasurementFrame);
         const mwSize *const measurementFrameSize = msm.GetDimensions("data");
@@ -600,7 +558,8 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
         snprintf(errBuff, NRRD_MAX_ERROR_MSG_SIZE, "%s: at line %d", msg.c_str(), __LINE__);
         mexErrMsgTxt(errBuff);
     }
-}// end WriteDWIFile
+}// end WriteDWIFile*/
+
 
 
 template<typename TScalar>
@@ -644,10 +603,6 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
     const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
     // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
     const unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
-    if (spatialDims != 3) {
-        myMexPrintf("ERROR: ONLY 3D images (3D+gradients OK) supported.\n");
-        return;
-    }
     myMexPrintf("Space Origin =\n");
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; sdIdx++) {
         if (sdIdx < spatialDims) {
@@ -706,6 +661,9 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
                     itkDirection[i][0] *= -1;
                 }
                 flipFactors[0] = -1.0;
+                break;
+            default:
+                myMexPrintf("nrrdSpaceDefinition failed into any preset case in WriteDWINrrd function.");
                 break;
         }
     }

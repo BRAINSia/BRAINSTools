@@ -76,6 +76,7 @@ BuildMex(MEXNAME itkLoadWithMetadata
   TARGETDIR "${${PRIMARY_PROJECT_NAME}_SOURCE_DIR}/MATLAB_SCRIPTS"
   SOURCE itkLoadWithMetadata.cxx nrrdCommon.cxx
   LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+
 BuildMex(MEXNAME itkSaveWithMetadata
   TARGETDIR "${${PRIMARY_PROJECT_NAME}_SOURCE_DIR}/MATLAB_SCRIPTS"
   SOURCE itkSaveWithMetadata.cxx nrrdCommon.cxx

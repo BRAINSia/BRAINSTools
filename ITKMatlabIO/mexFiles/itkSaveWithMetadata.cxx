@@ -57,11 +57,6 @@ void SetNumberOfComponentsPerPixel<DWIImage>(DWIImage::Pointer im, unsigned numC
 }
 #endif
 
-/**
- *
- * @param msm
- * @param filename
- */
 template<typename TImage>
 void
 WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *filename) {
@@ -843,7 +838,6 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
   const itk::ImageIOBase::IOComponentType ntype =
           typeMtoITK(mxGetClassID(msm.GetField("data")));
 
-  //myMexPrintf( "type index =\n");  myMexPrintf( ntype.toString());
   if (itk::ImageIOBase::UNKNOWNCOMPONENTTYPE == ntype) {
     snprintf(errBuff, NRRD_MAX_ERROR_MSG_SIZE, "%s: sorry, can't handle type %s",
              me, mxGetClassName(msm.GetField("data")));
@@ -856,14 +850,10 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
              me, dim, 4);
     mexErrMsgTxt(errBuff);
   }
-  myMexPrintf("dim = %d\n", dim);
-  myMexPrintf("===============================================================\n");
-  //myMexPrintf( ntype.toString());
   switch (dim) {
-#if 0 // NOT SUPPORTING WRITING OF 2D yet, not tested
+    //WriteFile has not been defined, and this case needs further test
     case 2:
-
-      switch( ntype )
+      /*switch( ntype )
         {
         case itk::ImageIOBase::CHAR:
           WriteFile<itk::Image<char, 2> >(msm, filename);
@@ -897,50 +887,41 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
           break;
         default:
           break;
-        }
+        }*/
+      std::cerr << "Current itkSaveWithMetadata does not support 2D data image. Program exits." << std::endl;
+      std::cerr<<std::endl;
       break;
-#endif
-    case 3:
 
+    case 3:
       switch (ntype) {
         case itk::ImageIOBase::CHAR:
-          myMexPrintf(" Writing 3D char\n");
           WriteITKImageFromMatlabStructure<itk::Image<char, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::UCHAR:
-          myMexPrintf(" Writing 3D uchar\n");
           WriteITKImageFromMatlabStructure<itk::Image<unsigned char, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::SHORT:
-          myMexPrintf(" Writing 3D short\n");
           WriteITKImageFromMatlabStructure<itk::Image<short, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::USHORT:
-          myMexPrintf(" Writing 3D ushort\n");
           WriteITKImageFromMatlabStructure<itk::Image<unsigned short, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::INT:
-          myMexPrintf(" Writing 3D int\n");
           WriteITKImageFromMatlabStructure<itk::Image<int, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::UINT:
-          myMexPrintf(" Writing 3D uint\n");
           WriteITKImageFromMatlabStructure<itk::Image<unsigned int, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::LONG:
-          myMexPrintf(" Writing 3D long\n");
           WriteITKImageFromMatlabStructure<itk::Image<long, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::ULONG:
-          myMexPrintf(" Writing 3D ulong\n");
           WriteITKImageFromMatlabStructure<itk::Image<unsigned long, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::FLOAT:
-          myMexPrintf(" Writing 3D float\n");
           WriteITKImageFromMatlabStructure<itk::Image<float, 3> >(msm, filename);
           break;
         case itk::ImageIOBase::DOUBLE:
-          myMexPrintf(" Writing 3D double\n");
           WriteITKImageFromMatlabStructure<itk::Image<double, 3> >(msm, filename);
           break;
         default:
@@ -948,102 +929,85 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
           break;
       }
       break;
+
     case 4: {
       const mxArray *const gradientdirections = msm.GetField("gradientdirections");
-      if (!gradientdirections || mxGetNumberOfElements(gradientdirections) < 1) {
+      if (!gradientdirections || mxGetNumberOfElements(gradientdirections) < 1)
+      {
         switch (ntype) {
           case itk::ImageIOBase::CHAR:
-            myMexPrintf(" Writing 4D char\n");
             WriteITKImageFromMatlabStructure<itk::Image<char, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::UCHAR:
-            myMexPrintf(" Writing 4D uchar\n");
             WriteITKImageFromMatlabStructure<itk::Image<unsigned char, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::SHORT:
-            myMexPrintf(" Writing 4D short\n");
             WriteITKImageFromMatlabStructure<itk::Image<short, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::USHORT:
-            myMexPrintf(" Writing 4D ushort\n");
             WriteITKImageFromMatlabStructure<itk::Image<unsigned short, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::INT:
-            myMexPrintf(" Writing 4D int\n");
             WriteITKImageFromMatlabStructure<itk::Image<int, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::UINT:
-            myMexPrintf(" Writing 4D uint\n");
             WriteITKImageFromMatlabStructure<itk::Image<unsigned int, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::LONG:
-            myMexPrintf(" Writing 4D long\n");
             WriteITKImageFromMatlabStructure<itk::Image<long, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::ULONG:
-            myMexPrintf(" Writing 4D ulong\n");
             WriteITKImageFromMatlabStructure<itk::Image<unsigned long, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::FLOAT:
-            myMexPrintf(" Writing 4D float\n");
             WriteITKImageFromMatlabStructure<itk::Image<float, 4> >(msm, filename);
             break;
           case itk::ImageIOBase::DOUBLE:
-            myMexPrintf(" Writing 4D double\n");
             WriteITKImageFromMatlabStructure<itk::Image<double, 4> >(msm, filename);
             break;
           default:
             myMexPrintf(" INVALID 4D TYPE SPECIFIED\n");
             break;
         }
-      } else {
-        myMexPrintf("WRITE DWI DATA");
-        // WriteITKImageFromMatlabStructure<itk::VectorImage<double,3> >(msm,filename);
-        switch (ntype) {
+      }
+      else //WRITE DWI DATA
+      {
+         switch (ntype) {
           case itk::ImageIOBase::CHAR:
-            myMexPrintf(" Writing 4D char\n");
             WriteDWINrrd<char>(msm, filename, "int8");
             break;
           case itk::ImageIOBase::UCHAR:
-            myMexPrintf(" Writing 4D uchar\n");
             WriteDWINrrd<unsigned char>(msm, filename, "uchar");
             break;
           case itk::ImageIOBase::SHORT:
-            myMexPrintf(" Writing 4D short\n");
             WriteDWINrrd<short>(msm, filename, "short");
             break;
           case itk::ImageIOBase::USHORT:
-            myMexPrintf(" Writing 4D ushort\n");
             WriteDWINrrd<unsigned short>(msm, filename, "ushort");
             break;
           case itk::ImageIOBase::INT:
-            myMexPrintf(" Writing 4D int\n");
             WriteDWINrrd<int>(msm, filename, "int");
             break;
           case itk::ImageIOBase::UINT:
-            myMexPrintf(" Writing 4D uint\n");
             WriteDWINrrd<unsigned int>(msm, filename, "uint");
             break;
           case itk::ImageIOBase::FLOAT:
-            myMexPrintf(" Writing 4D float\n");
             WriteDWINrrd<float>(msm, filename, "float");
             break;
           case itk::ImageIOBase::DOUBLE:
-            myMexPrintf(" Writing 4D double\n");
             WriteDWINrrd<double>(msm, filename, "double");
             break;
           default:
-            myMexPrintf(" INVALID 4D TYPE SPECIFIED\n");
+            myMexPrintf(" INVALID 4D DWI Nrrd TYPE SPECIFIED\n");
             break;
         }
       }
     }
       break;
+
     default:
       break;
   }
-  myMexPrintf("===============================================================");
-  myMexPrintf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 }// end itkSaveWithMetaData
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {

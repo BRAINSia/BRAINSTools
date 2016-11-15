@@ -820,17 +820,12 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
 }//end WriteDWINrrd
 
 // itkSaveWithMetaData is called from matlab
-void itkSaveWithMetaData(int, mxArray *[],
-                         int nrhs, const mxArray *prhs[]) {
-    const char me[] = "itkSaveWithMetadata";
-    char errBuff[NRRD_MAX_ERROR_MSG_SIZE] = {'\0'};
-    const mxArray *const filenameMx = prhs[0];
+void itkSaveWithMetaData(int nrhs, const mxArray *prhs[])
+{
 
-    if (!(2 == nrhs && mxIsChar(filenameMx))) {
-        snprintf(errBuff, NRRD_MAX_ERROR_MSG_SIZE, "%s: requires two args: one string, one struct", me);
-        mexErrMsgTxt(errBuff);
-        return;
-    }
+  const char me[] = "itkSaveWithMetadata";
+  char errBuff[NRRD_MAX_ERROR_MSG_SIZE] = {'\0'};
+    const mxArray *const filenameMx = prhs[0];
     const mxArray *const structMx = prhs[1];
     const MatlabStructManager msm(structMx);
 
@@ -1053,17 +1048,17 @@ void itkSaveWithMetaData(int, mxArray *[],
 }// end itkSaveWithMetaData
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-    try {
-        itkSaveWithMetaData(nlhs, plhs, nrhs, prhs);
-    }
-    catch (itk::ExceptionObject &excp) {
-        std::string msg = excp.what();
-        char errBuff[NRRD_MAX_ERROR_MSG_SIZE] = {'\0'};
-        snprintf(errBuff, NRRD_MAX_ERROR_MSG_SIZE, "%s: at line %d", msg.c_str(), __LINE__);
-        mexErrMsgTxt(errBuff);
-    }
-    catch (...) {
-        printf("Exception in itkSaveWithMetaData\n");
-        mexErrMsgTxt("Exception in itkSaveWithMetaData");
-    }
+  // check input parameters
+  if (0 != nlhs || 2 != nrhs || NULL == mxGetData(prhs[0]) || !mxIsChar(prhs[0])) {
+    std::cerr << "Parameters Error in using itkSaveWithMetadata" << std::endl;
+    std::cerr << "Usage: itkSaveWithMetadata('outputFilename', matlabDataStruct)" << std::endl;
+    return;
+  }
+
+  try {
+     itkSaveWithMetaData(nrhs, prhs);
+  }
+  catch (std::exception &e) {
+      mexErrMsgTxt(e.what());
+  }
 } // end mexFunction

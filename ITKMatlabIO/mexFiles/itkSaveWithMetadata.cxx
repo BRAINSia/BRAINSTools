@@ -821,7 +821,7 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
 
 // itkSaveWithMetaData is called from matlab
 void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
-
+  assert(2 == nrhs);
   const char me[] = "itkSaveWithMetadata";
   char errBuff[NRRD_MAX_ERROR_MSG_SIZE] = {'\0'};
   const mxArray *const filenameMx = prhs[0];

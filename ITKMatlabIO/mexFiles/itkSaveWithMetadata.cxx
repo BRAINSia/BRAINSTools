@@ -7,6 +7,35 @@
 #include "itkNumberToString.h"
 #include "myMexPrintf.h" //add by HuiXie Nov 15th, 2016
 
+
+//add these 2 function to replace the use of vnl_vector_fixed, by HuiXie Nov 15th, 2016
+double getVecMagnitude(const std::vector<double> vec){
+  double sum = 0.0;
+  int const size = vec.size();
+  for (int i=0; i<size; ++i){
+     sum += vec[i]*vec[i];
+  }
+  return sqrt(sum);
+}
+
+void normalizeVec(std::vector<double>& vec){
+  double magnitude = getVecMagnitude(vec);
+  int const size = vec.size();
+  for (int i=0; i<size; ++i){
+    vec[i] = vec[i]/magnitude;
+    if (vec[i] < 1e-10) vec[i] = 0;
+  }
+}
+
+void printVecValue(const std::vector<double> vec){
+  int const size = vec.size();
+  for (int i=0; i<size; ++i){
+    std::cerr <<"i= "<<i <<"  vec[i]= "<<vec[i]<<std::endl;
+  }
+  std::cout<<std::endl;
+}
+
+
 inline
 itk::ImageIOBase::IOComponentType typeMtoITK(const mxClassID mtype) {
 
@@ -86,7 +115,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
 
   //TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
-  const unsigned int spatialDims = 3; //numDims;
+  const unsigned int spatialDims = numDims; //instead of 3
   for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++) {
     if (sdIdx < spatialDims) {
       itkOrigin[sdIdx] = spaceorigin_temp[sdIdx];
@@ -105,26 +134,17 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   /** spacedirections **/
   const double *spacedirections_temp = (double *) mxGetData(msm.GetField("spacedirections"));
   for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
-    /*switch (spatialDims){
-      case 2:
-        vnl_vector_fixed<double, 2> vec;
-        break;
-      case 3:
-        vnl_vector_fixed<double, 3> vec;
-        break;
-      case 4:
-        vnl_vector_fixed<double, 4> vec;
-      default:
-        break;
-    }*/
-
-    vnl_vector_fixed<double, spatialDims> vec;
+    //vnl_vector_fixed<double, spatialDims> vec;
+    std::vector<double> vec;
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       const unsigned int sdir_offset = axIdx * spatialDims + sdIdx;
-      vec[sdIdx] = spacedirections_temp[sdir_offset];
+      //vec[sdIdx] = spacedirections_temp[sdir_offset];
+      vec.push_back(spacedirections_temp[sdir_offset]);
     }
-    itkSpacing[axIdx] = vec.magnitude();
-    vec.normalize();
+    //itkSpacing[axIdx] = vec.magnitude();
+    itkSpacing[axIdx] = getVecMagnitude(vec);
+    //vec.normalize();
+    normalizeVec(vec);
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       itkDirection[sdIdx][axIdx] = vec[sdIdx];
     }
@@ -602,7 +622,7 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
   itkOrigin.Fill(0.0);
   const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
   // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
-  const unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
+  const unsigned int spatialDims = numDims; // instead of fixed 3;
   myMexPrintf("Space Origin =\n");
   for (unsigned int sdIdx = 0; sdIdx < spatialDims; sdIdx++) {
     if (sdIdx < spatialDims) {
@@ -621,13 +641,23 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
   /** spacedirections **/
   const double *spacedirections_temp = (double *) mxGetData(msm.GetField("spacedirections"));
   for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
-    vnl_vector_fixed<double, spatialDims> vec;
+    //vnl_vector_fixed<double, spatialDims> vec;
+    std::vector<double> vec;
+    vec.clear();
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       const unsigned int sdir_offset = axIdx * spatialDims + sdIdx;
-      vec[sdIdx] = spacedirections_temp[sdir_offset];
+      //vec[sdIdx] = spacedirections_temp[sdir_offset];
+      vec.push_back(spacedirections_temp[sdir_offset]);
     }
-    itkSpacing[axIdx] = vec.magnitude();
-    vec.normalize();
+    //itkSpacing[axIdx] = vec.magnitude();
+    std::cout<<"Before normalize"<<std::endl;
+    printVecValue(vec);
+    itkSpacing[axIdx] = getVecMagnitude(vec);
+    //vec.normalize();
+    normalizeVec(vec);
+    std::cout<<"after normalize"<<std::endl;
+    printVecValue(vec);
+
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       itkDirection[sdIdx][axIdx] = vec[sdIdx];
     }
@@ -856,45 +886,44 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
     mexErrMsgTxt(errBuff);
   }
   switch (dim) {
-    //WriteFile has not been defined, and this case needs further test
     case 2:
-      /*switch( ntype )
+      switch( ntype )
         {
         case itk::ImageIOBase::CHAR:
-          WriteFile<itk::Image<char, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<char, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::UCHAR:
-          WriteFile<itk::Image<unsigned char, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<unsigned char, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::SHORT:
-          WriteFile<itk::Image<short, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<short, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::USHORT:
-          WriteFile<itk::Image<unsigned short, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<unsigned short, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::INT:
-          WriteFile<itk::Image<int, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<int, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::UINT:
-          WriteFile<itk::Image<unsigned int, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<unsigned int, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::LONG:
-          WriteFile<itk::Image<long, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<long, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::ULONG:
           WriteITKImageFromMatlabStructure<itk::Image<unsigned long, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::FLOAT:
-          WriteFile<itk::Image<float, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<float, 2> >(msm, filename);
           break;
         case itk::ImageIOBase::DOUBLE:
-          WriteFile<itk::Image<double, 2> >(msm, filename);
+          WriteITKImageFromMatlabStructure<itk::Image<double, 2> >(msm, filename);
           break;
         default:
           break;
-        }*/
-      std::cerr << "Current itkSaveWithMetadata does not support 2D data image. Program exits." << std::endl;
-      std::cerr<<std::endl;
+        }
+      //std::cerr << "Current itkSaveWithMetadata does not support 2D data image. Program exits." << std::endl;
+      //std::cerr<<std::endl;
       break;
 
     case 3:

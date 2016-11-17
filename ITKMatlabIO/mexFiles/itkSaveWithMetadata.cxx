@@ -581,7 +581,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
 }// end WriteDWIFile*/
 
 
-
+//Only used in 4D image.
 template<typename TScalar>
 void
 WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *voxelTypeName) {
@@ -603,16 +603,11 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
 
   const unsigned int numDims = msm.GetNumberOfDimensions("data");
   const mwSize *const mSize = msm.GetDimensions("data");
-  myMexPrintf(" size =\n");
 
   size_t numPixels = 1;
   {
     unsigned int axIdx;
     for (axIdx = 0; axIdx < numDims; axIdx++) {
-      numPixels *= mSize[axIdx];
-      myMexPrintf("%d, %d, %d\n", (int) mSize[axIdx], (int) axIdx, (int) numDims);
-    }
-    if (axIdx < numDims) {
       numPixels *= mSize[axIdx];
     }
   }
@@ -621,19 +616,17 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
   typename ImageType::PointType itkOrigin;
   itkOrigin.Fill(0.0);
   const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
-  // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
-  const unsigned int spatialDims = numDims; // instead of fixed 3;
-  myMexPrintf("Space Origin =\n");
+  // WriteDWINrrd only work for 4D image.
+  const unsigned int spatialDims = 3; //spatialDims is different with numDims
   for (unsigned int sdIdx = 0; sdIdx < spatialDims; sdIdx++) {
     if (sdIdx < spatialDims) {
       itkOrigin[sdIdx] = spaceorigin_temp[sdIdx];
     }
-    myMexPrintf("%d, %d, %d\n", (int) itkOrigin[sdIdx], (int) sdIdx, (int) ImageType::ImageDimension);
   }
 
   typename ImageType::SpacingType itkSpacing;
   typename ImageType::DirectionType itkDirection;
-  //
+
   // fill out extra dimension for (usually) 4 D -- add zero to 4th
   // entry in direction vector, except for the last vector, which
   // needs to be 0 0 0 1
@@ -641,31 +634,20 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
   /** spacedirections **/
   const double *spacedirections_temp = (double *) mxGetData(msm.GetField("spacedirections"));
   for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
-    //vnl_vector_fixed<double, spatialDims> vec;
-    std::vector<double> vec;
-    vec.clear();
+    vnl_vector_fixed<double, spatialDims> vec;
+    //std::vector<double> vec;
+    //vec.clear();
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       const unsigned int sdir_offset = axIdx * spatialDims + sdIdx;
-      //vec[sdIdx] = spacedirections_temp[sdir_offset];
-      vec.push_back(spacedirections_temp[sdir_offset]);
+      vec[sdIdx] = spacedirections_temp[sdir_offset];
+      //vec.push_back(spacedirections_temp[sdir_offset]);
     }
-    //itkSpacing[axIdx] = vec.magnitude();
-    std::cout<<"Before normalize"<<std::endl;
-    printVecValue(vec);
-    itkSpacing[axIdx] = getVecMagnitude(vec);
+    itkSpacing[axIdx] = vec.magnitude();
+    //itkSpacing[axIdx] = getVecMagnitude(vec);
     //vec.normalize();
-    normalizeVec(vec);
-    std::cout<<"after normalize"<<std::endl;
-    printVecValue(vec);
-
+    //normalizeVec(vec);
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       itkDirection[sdIdx][axIdx] = vec[sdIdx];
-    }
-  }
-  myMexPrintf("directions =\n");
-  for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
-    for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
-      myMexPrintf("%lf, %d, %d\n", itkDirection[sdIdx][axIdx], sdIdx, spatialDims);
     }
   }
 

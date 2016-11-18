@@ -136,6 +136,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   for (unsigned int axIdx = 0; axIdx < spatialDims; ++axIdx) {
     //vnl_vector_fixed<double, spatialDims> vec;
     std::vector<double> vec;
+    vec.reserve(spatialDims);
     for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx) {
       const unsigned int sdir_offset = axIdx * spatialDims + sdIdx;
       //vec[sdIdx] = spacedirections_temp[sdir_offset];

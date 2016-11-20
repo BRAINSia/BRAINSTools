@@ -413,44 +413,32 @@ public:
   void ExtractDWIData() ITK_OVERRIDE
     {
       for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
-        {
+      {
 
         vnl_vector_fixed<double, 3> gradient(0.0);
         vnl_matrix_fixed<double, 3, 3> bMatrix(0.0);
-        double bValue = 0.0;
 
         /* get info from CSA, if applicable */
         std::string diffusionInfoString;
         CSAHeader csaHeader;
         if (this->m_HasCSAHeader)
-          {
+        {
           this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString );
           this->DecodeCSAHeader(csaHeader,diffusionInfoString);
-          }
+        }
 
         /* check b value for current stride */
-        bValue = ExtractBValue(&csaHeader, k);
+        double bValue = -123;
 
-        if( this->m_UseBMatrixGradientDirections == false )
-          /* determine gradient direction from tag (0029,1010) */
-          {
-          bool hasGradients = ExtractGradientDirection(&csaHeader, k, gradient);
 
-          if (!hasGradients)
-            {
-            // did not find enough information
-            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
-                      << std::endl;
-            }
-          //this->m_DiffusionVectors.push_back( vnl_vector_fixed<double, 3>(gradient) );
-          }
-        else // this->m_UseBMatrixGradientDirections == true
+        if( this->m_UseBMatrixGradientDirections == true )
+        {
+          // this->m_UseBMatrixGradientDirections == true
           /* calculate gradient direction from b-matrix */
-          {
           bool hasBMatrix = ExtractBMatrix(&csaHeader, k, bMatrix);
 
           if( hasBMatrix && (bValue != 0) )
-            {
+          {
             std::cout << "=============================================" << std::endl;
             std::cout << "BMatrix calculations..." << std::endl;
 
@@ -476,47 +464,53 @@ public:
             std::cout << bmatrixCalculatedBValue << std::endl;
             // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
             // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
-            if( bmatrixCalculatedBValue == 0 )
-              {
+            if( bmatrixCalculatedBValue < 1e-2 )
+            {
               std::cout << "B0 image detected from bmatrix trace: gradient direction forced to 0" << std::endl;
               std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0])
-                                             << " " << this->m_DoubleConvert(gradient[1])
-                                             << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
+                        << " " << this->m_DoubleConvert(gradient[1])
+                        << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
               //this->m_BValues.push_back(0);
               bValue = 0;
-              }
+            }
             else
-              {
+            {
               std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0])
-                                             << " " << this->m_DoubleConvert(gradient[1])
-                                             << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
+                        << " " << this->m_DoubleConvert(gradient[1])
+                        << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
               bValue = bmatrixCalculatedBValue;
-              }
             }
           }
-
-        if ( bValue < 1.0 )
-          {
-          this->m_BValues.push_back( 0.0 );
-          //this->m_DiffusionVectors.push_back(gradient);
-          //continue; // break out of loop, process next stride
-          }
+        }
         else
-          {
-          this->m_BValues.push_back( bValue );
-          }
+        {
+          bValue = ExtractBValue(&csaHeader, k);
+          if( bValue < 1e-2 ) {
+            gradient.fill(0.0);
+          } else {
+            /* determine gradient direction from tag (0029,1010) */
+            bool hasGradients = ExtractGradientDirection(&csaHeader, k, gradient);
 
+            if (!hasGradients) {
+              // did not find enough information
+              std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
+                        << std::endl;
+            }
+          }
+        }
+
+        this->m_BValues.push_back( (bValue < 1e-2) ? 0.0 : bValue );
         this->m_DiffusionVectors.push_back(gradient);
 
         /* debug output */
         std::cout << "Image#: " << k
-        << " BV: " << this->m_BValues.back() << " GD: "
-        << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
-        << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
-        << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
-        << std::endl;
+                  << " BV: " << this->m_BValues.back() << " GD: "
+                  << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
+                  << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
+                  << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
+                  << std::endl;
 
-        } // end giant for loop
+      } // end giant for loop
 
       // test gradients. It is OK for one or more guide images to have
       // zero gradients, but all gradients == 0 is an error. It means
@@ -720,21 +714,53 @@ protected:
       return vm;
     }
 
-  void CheckCSAHeaderAvailable()
-    {
-    std::string diffusionInfoString;
-    for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
-      {
-      // this is stupid, but itkDCMTKFileReader doesn't expose DCMTK::tagExists
-      if (this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString, false ) == EXIT_FAILURE)
-        return;
+      void CheckCSAHeaderAvailable() {
+        std::string diffusionInfoString;
+        for (unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride) {
+          bool foundBadDWIConformance = false;
+          {
+            std::string softwareVersion;
+            this->m_Headers[k]->GetElementLO(0x0018, 0x1020, softwareVersion);
+            std::vector<std::string> badSiemensVersionsRequiringCSAHeader = {{"B01", "B02", "B03", "B04", "B05",
+                                                                         "B06", "B07", "B08", "B09", "B10",
+                                                                         "B11", "B12", "B13", "B14", "B15"}};
+            for (std::vector<std::string>::const_iterator it = badSiemensVersionsRequiringCSAHeader.begin();
+                 it != badSiemensVersionsRequiringCSAHeader.end(); ++it) {
+              if (softwareVersion.find(*it) != std::string::npos ) {
+                std::cout << "Found a known non-compliant Siemens scan version " << *it << " so using private "
+                    "CSAHeader" << std::endl;
+                foundBadDWIConformance = true;
+              }
+            }
+          }
+
+          std::int32_t tempBValue = -123;  // Initialize to a negative number as sentinal for failed read of 0019,100c
+          if (!foundBadDWIConformance &&
+              this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false) == EXIT_FAILURE && tempBValue >= 0 ) {
+            // If Siemens has a 0x0019
+            this->m_HasCSAHeader = false;
+          } else {
+            this->m_HasCSAHeader = true;
+
+          }
+        }
       }
-      this->m_HasCSAHeader = true;
-    }
 
   virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // relevant Siemens private tags
+      /* https://nmrimaging.wordpress.com/tag/dicom/
+      For SIEMENS MRI:
+      The software version at least B15V (0018; 1020), follow tag value would be useful
+      0019; 100A;  Number Of Images In Mosaic
+      0019; 100B;  Slice Measurement Duration
+      0019; 100C;  B_value
+      0019; 100D; Diffusion Directionality
+      0019; 100E; Diffusion Gradient Direction
+      0019; 100F;  Gradient Mode
+      0019; 1027;  B_matrix
+      0019; 1028;  Bandwidth Per Pixel Phase Encode
+       */
       DcmDictEntry *SiemensMosiacParameters = new DcmDictEntry(0x0051, 0x100b, DcmVR(EVR_IS),
                                                                "Mosiac Matrix Size", 1, 1, ITK_NULLPTR, true,
                                                                "dicomtonrrd");

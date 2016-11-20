@@ -94,20 +94,22 @@ WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors
   {
     return EXIT_FAILURE;
   }
-  for( unsigned int k = 0; k < bVectors.size(); ++k )
+  //Matching formatting from dcm2niix that seems to be gaining acceptance as
+  //the format for these files
+  //
+  // The lines [1,2,3] is the [x,y,z]component of the gradient vector for each gradient image
+  for( unsigned int index=0; index < 3; ++index)
   {
-    if( !bVecFile.good() )
+    for( unsigned int k = 0; k < bVectors.size(); ++k )
     {
-      return EXIT_FAILURE;
+      const char * const spacer = (  k==bVectors.size()-1 ) ? "" : " ";
+      double normedVec[3];
+      normalize(bVectors[k],normedVec);
+      bVecFile << DoubleConvert(normedVec[index]) << spacer;
     }
-
-    double normedVec[3];
-    normalize(bVectors[k],normedVec);
-    bVecFile << DoubleConvert(normedVec[0]) << " "
-             << DoubleConvert(normedVec[1]) << " "
-             << DoubleConvert(normedVec[2])
-             << std::endl;
+    bVecFile << std::endl;
   }
+
   bVecFile.close();
   return EXIT_SUCCESS;
 }

@@ -200,14 +200,13 @@ WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
     {
     return EXIT_FAILURE;
     }
+
   for( unsigned int k = 0; k < bValues.size(); ++k )
-    {
-    if( !bValFile.good() )
-      {
-      return EXIT_FAILURE;
-      }
-    bValFile << bValues[k] << std::endl;
-    }
+  {
+    const char * const spacer = (  k==bValues.size()-1 ) ? "" : " ";
+    bValFile << bValues[k] << spacer;
+  }
+  bValFile << std::endl;
   bValFile.close();
 
   return EXIT_SUCCESS;

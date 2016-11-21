@@ -534,20 +534,36 @@ protected:
   void DeMosaic()
     {
       // de-mosaic
+      PointType mosaicSize;
+      mosaicSize[0]=this->m_Cols;
+      mosaicSize[1]=this->m_Rows;
+      mosaicSize[2]=0;
       this->m_Cols /= this->m_MMosaic;
       this->m_Rows /= this->m_NMosaic;
 
       // center the volume since the image position patient given in the
       // dicom header was useless
-      this->m_Origin[0] = -(this->m_Cols * (this->m_NRRDSpaceDirection[0][0])
-                         + this->m_Rows * (this->m_NRRDSpaceDirection[0][1])
-                         + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[0][2]) ) / 2.0;
-      this->m_Origin[1] = -(this->m_Cols * (this->m_NRRDSpaceDirection[1][0])
-                         + this->m_Rows * (this->m_NRRDSpaceDirection[1][1])
-                         + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[1][2]) ) / 2.0;
-      this->m_Origin[2] = -(this->m_Cols * (this->m_NRRDSpaceDirection[2][0])
-                         + this->m_Rows * (this->m_NRRDSpaceDirection[2][1])
-                         + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[2][2]) ) / 2.0;
+      //Adjust origin based on mosaic settings
+      //The origin of a mosaic is presented as if the entire region were one image capture.
+      //What we really need is the center image origin.
+      /* https://mail.nmr.mgh.harvard.edu/pipermail/freesurfer/2010-March/013821.html
+       * Mosaics - DICOM (20,32) is incorrect for mosaics. The value in
+       * this field gives where the origin of an image the size of the
+       * mosaic would have been had such an image been collected. This puts
+       * the origin outside of the scanner.  However, the center of a slice
+       * can be obtained from the ASCII header from lines of the form
+       * "sSliceArray.asSlice[N].sPosition.dAAA", where N is the slice
+       * number and AAA is Sag (x), Cor (y), and Tra (z). This may be off by half a voxel.
+       * Given this information, the direction cosines, the
+       * voxel size, and dimension, the origin can be computed.
+       */
+      PointType sliceSize;
+      sliceSize[0] = this->m_Cols;
+      sliceSize[1] = this->m_Rows;
+      sliceSize[2] = 0;
+
+      // http://nipy.org/nibabel/dicom/dicom_mosaic.html
+      this->m_Origin = this->m_Origin + this->m_NRRDSpaceDirection * ( ( mosaicSize - sliceSize) / 2 );
 
       VolumeType::Pointer img = this->m_Volume;
 

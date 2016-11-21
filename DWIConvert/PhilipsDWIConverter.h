@@ -314,8 +314,6 @@ public:
         std::cout << "Image resolution: " << this->m_XRes << ", " << this->m_YRes << ", "
                   << this->m_SliceSpacing << std::endl;
 
-        this->m_NRRDSpaceDirection = this->m_LPSDirCos * this->m_SpacingMatrix;
-
         this->m_MeasurementFrame = this->m_LPSDirCos;
 
         this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;

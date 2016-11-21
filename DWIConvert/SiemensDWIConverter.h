@@ -563,7 +563,7 @@ protected:
       sliceSize[2] = 0;
 
       // http://nipy.org/nibabel/dicom/dicom_mosaic.html
-      this->m_Origin = this->m_Origin + this->m_NRRDSpaceDirection * ( ( mosaicSize - sliceSize) / 2 );
+      this->m_Origin = this->m_Origin + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 );
 
       VolumeType::Pointer img = this->m_Volume;
 

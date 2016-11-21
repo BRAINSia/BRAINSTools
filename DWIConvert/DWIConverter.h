@@ -76,7 +76,6 @@ public:
       }
 
       this->m_NRRDSpaceDefinition = "left-posterior-superior";;
-      this->m_NRRDSpaceDirection.SetIdentity();
       this->m_MeasurementFrame.SetIdentity();
       this->m_LPSDirCos.SetIdentity();
       this->m_SpacingMatrix.SetIdentity();
@@ -242,10 +241,8 @@ public:
     std::cout << "this->m_SpacingMatrix" << std::endl;
     std::cout << this->m_SpacingMatrix << std::endl;
 
-    this->m_NRRDSpaceDirection = this->m_LPSDirCos * this->m_SpacingMatrix;
-
     std::cout << "NRRDSpaceDirection" << std::endl;
-    std::cout << this->m_NRRDSpaceDirection << std::endl;
+    std::cout << this->GetNRRDSpaceDirection() << std::endl;
 
     }
   /** extract dwi data -- vendor specific so must happen in subclass
@@ -282,7 +279,7 @@ public:
 
   RotationMatrixType GetMeasurementFrame() const { return this->m_MeasurementFrame; }
 
-  RotationMatrixType GetNRRDSpaceDirection() const { return  m_NRRDSpaceDirection; }
+  RotationMatrixType GetNRRDSpaceDirection() const { return  this->m_LPSDirCos * this->m_SpacingMatrix; }
 
   unsigned int GetNVolume() const { return this->m_NVolume; }
 
@@ -323,9 +320,10 @@ protected:
       image1Origin[0] -= image0Origin[0];
       image1Origin[1] -= image0Origin[1];
       image1Origin[2] -= image0Origin[2];
-      double x1 = image1Origin[0] * (this->m_NRRDSpaceDirection[0][2])
-        + image1Origin[1] * (this->m_NRRDSpaceDirection[1][2])
-        + image1Origin[2] * (this->m_NRRDSpaceDirection[2][2]);
+      const DWIConverter::RotationMatrixType & NRRDSpaceDirection = this->GetNRRDSpaceDirection();
+      double x1 = image1Origin[0] * (NRRDSpaceDirection[0][2])
+        + image1Origin[1] * (NRRDSpaceDirection[1][2])
+        + image1Origin[2] * (NRRDSpaceDirection[2][2]);
       if( x1 < 0 )
         {
         this->m_SliceOrderIS = false;
@@ -333,7 +331,7 @@ protected:
     }
   /** the SliceOrderIS flag can be computed (as above) but if it's
    *  invariant, the derived classes can just set the flag. This method
-   *  fixes up the NRRDSpaceDirection after the flag is set.
+   *  fixes up the m_LPDirCos after the flag is set.
    */
   void SetDirectionsFromSliceOrder()
     {
@@ -344,9 +342,9 @@ protected:
       else
         {
         std::cout << "Slice order is SI" << std::endl;
-        this->m_NRRDSpaceDirection[0][2] = -this->m_NRRDSpaceDirection[0][2];
-        this->m_NRRDSpaceDirection[1][2] = -this->m_NRRDSpaceDirection[1][2];
-        this->m_NRRDSpaceDirection[2][2] = -this->m_NRRDSpaceDirection[2][2];
+        this->m_LPSDirCos[0][2] = -this->m_LPSDirCos[0][2];
+        this->m_LPSDirCos[1][2] = -this->m_LPSDirCos[1][2];
+        this->m_LPSDirCos[2][2] = -this->m_LPSDirCos[2][2];
         }
     }
 
@@ -416,8 +414,6 @@ protected:
   /** image origin */
   PointType            m_Origin;
 
-  /** rotation matrix for image data */
-  RotationMatrixType   m_NRRDSpaceDirection;
   /** measurement from for gradients if different than patient
    *  reference frame.
    */

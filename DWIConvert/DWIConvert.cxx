@@ -136,6 +136,12 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
   memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
 #if DEBUG_WRITE4DVOLUME
     {
+   {
+      //Set the qform and sfrom codes for the MetaDataDictionary.
+      itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
+      itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
+   }
     itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer writer = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
     writer->SetFileName( "dwi3dconvert.nii.gz");
     writer->SetInput( img );
@@ -143,6 +149,12 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
     }
 #endif
 
+   {
+      //Set the qform and sfrom codes for the MetaDataDictionary.
+      itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
+      itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
+   }
   itk::ImageFileWriter<Volume4DType>::Pointer imgWriter =
     itk::ImageFileWriter<Volume4DType>::New();
 

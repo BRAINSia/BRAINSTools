@@ -255,7 +255,7 @@ public:
 
   const std::vector<double> &GetBValues() const { return this->m_BValues; }
 
-  VolumeType::Pointer GetDiffusionVolume() const { return this->m_Volume; }
+  VolumeType::Pointer GetDiffusionVolume() { return this->m_Volume; }
 
   SpacingType GetSpacing()
     {

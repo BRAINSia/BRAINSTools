@@ -62,6 +62,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "itksys/SystemTools.hxx"
 #include "itksys/Base64.h"
 #undef HAVE_SSTREAM
+
 #include "itkDCMTKFileReader.h"
 #include "StringContains.h"
 #include "DWIConvertUtils.h"
@@ -78,6 +79,192 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
+
+std::string
+MakeFileComment(bool useBMatrixGradientDirections, bool useIdentityMeaseurementFrame, double smallGradientThreshold,
+  const std::string& version)
+{
+  std::__1::stringstream commentSection;
+  {
+
+  commentSection << "#" << std::__1::endl << "#" << std::__1::endl;
+  commentSection << "# This file was created by DWIConvert version " << version << std::__1::endl
+         << "# https://github.com/BRAINSia/BRAINSTools" << std::__1::endl
+         << "# part of the BRAINSTools package." << std::__1::endl
+         << "# Command line options:" << std::__1::endl
+         << "# --smallGradientThreshold " << smallGradientThreshold << std::__1::endl;
+  if (useIdentityMeaseurementFrame) {
+    commentSection << "# --useIdentityMeasurementFrame" << std::__1::endl;
+  }
+  if (useBMatrixGradientDirections) {
+    commentSection << "# --useBMatrixGradientDirections" << std::__1::endl;
+  }
+  }
+  return commentSection.str();
+}
+
+static void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useIdentityMeaseurementFrame,
+  bool nrrdSingleFileFormat, const std::string& outputVolumeHeaderName, const std::string& outputVolumeDataName, DWIConverter* converter,
+  itk::Image<short, 3>::Pointer& dmImage, const double maxBvalue,
+  const DWIMetaDataDictionaryValidator::GradientTableType& gradientVectors, const std::string commentSection)
+{
+  itk::NumberToString<double> DoubleConvert;
+  std::__1::ofstream header;
+  // std::string headerFileName = outputDir + "/" + outputFileName;
+
+  header.open(outputVolumeHeaderName.c_str(), std::__1::ios_base::out | std::__1::ios_base::binary);
+  header << "NRRD0005" << std::__1::endl
+         << std::__1::setprecision(17) << std::__1::scientific;
+
+
+  header << commentSection;
+
+
+  // stamp with DWIConvert branding
+
+  if (!nrrdSingleFileFormat) {
+    header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)"
+           << std::__1::endl;
+  }
+  header << "type: short" << std::__1::endl;
+  header << "dimension: 4" << std::__1::endl;
+  header << "space: " << converter->GetNRRDSpaceDefinition() << "" << std::__1::endl;
+
+  const DWIConverter::RotationMatrixType& NRRDSpaceDirection = converter->GetNRRDSpaceDirection();
+  header << "sizes: " << converter->GetCols()
+         << " " << converter->GetRows()
+         << " " << converter->GetSlicesPerVolume()
+         << " " << converter->GetNVolume() << std::__1::endl;
+  header << "thicknesses:  NaN  NaN " << DoubleConvert(converter->GetSpacing()[2]) << " NaN" << std::__1::endl;
+  // need to check
+  header << "space directions: "
+         << "("
+         << DoubleConvert(NRRDSpaceDirection[0][0]) << ","
+         << DoubleConvert(NRRDSpaceDirection[1][0]) << ","
+         << DoubleConvert(NRRDSpaceDirection[2][0])
+         << ") "
+         << "("
+         << DoubleConvert(NRRDSpaceDirection[0][1]) << ","
+         << DoubleConvert(NRRDSpaceDirection[1][1]) << ","
+         << DoubleConvert(NRRDSpaceDirection[2][1]) << ") "
+         << "("
+         << DoubleConvert(NRRDSpaceDirection[0][2]) << ","
+         << DoubleConvert(NRRDSpaceDirection[1][2]) << ","
+         << DoubleConvert(NRRDSpaceDirection[2][2])
+         << ") none" << std::__1::endl;
+  header << "centerings: cell cell cell ???" << std::__1::endl;
+  header << "kinds: space space space list" << std::__1::endl;
+
+  header << "endian: little" << std::__1::endl;
+  header << "encoding: raw" << std::__1::endl;
+  header << "space units: \"mm\" \"mm\" \"mm\"" << std::__1::endl;
+
+  const DWIConverter::VolumeType::PointType ImageOrigin = converter->GetOrigin();
+  header << "space origin: "
+         << "(" << DoubleConvert(ImageOrigin[0])
+         << "," << DoubleConvert(ImageOrigin[1])
+         << "," << DoubleConvert(ImageOrigin[2]) << ") " << std::__1::endl;
+  if (!nrrdSingleFileFormat) {
+    header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::__1::endl;
+  }
+
+  // For scanners, the measurement frame for the gradient directions is the same as the
+  // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
+  // There is also the possibility that a measurement frame
+  // should be recorded for an image even though it is storing
+  // only scalar values (e.g., a sequence of diffusion-weighted MR
+  // images has a measurement frame for the coefficients of
+  // the diffusion-sensitizing gradient directions, and
+  // the measurement frame field is the logical store
+  // this information).
+  // It was noticed on oblique Philips DTI scans that the prescribed protocol directions were
+  // rotated by the ImageOrientationPatient amount and recorded in the DICOM header.
+  // In order to compare two different scans to determine if the same protocol was prosribed,
+  // it is necessary to multiply each of the recorded diffusion gradient directions by
+  // the inverse of the LPSDirCos.
+  if (useIdentityMeaseurementFrame) {
+    header << "measurement frame: "
+           << "(" << 1 << "," << 0 << "," << 0 << ") "
+           << "(" << 0 << "," << 1 << "," << 0 << ") "
+           << "(" << 0 << "," << 0 << "," << 1 << ")"
+           << std::__1::endl;
+  }
+  else {
+    DWIConverter::RotationMatrixType MeasurementFrame =
+      converter->GetMeasurementFrame();
+    header << "measurement frame: "
+           << "(" << DoubleConvert(MeasurementFrame[0][0]) << ","
+           << DoubleConvert(MeasurementFrame[1][0]) << ","
+           << DoubleConvert(MeasurementFrame[2][0]) << ") "
+           << "(" << DoubleConvert(MeasurementFrame[0][1]) << ","
+           << DoubleConvert(MeasurementFrame[1][1]) << ","
+           << DoubleConvert(MeasurementFrame[2][1]) << ") "
+           << "(" << DoubleConvert(MeasurementFrame[0][2]) << ","
+           << DoubleConvert(MeasurementFrame[1][2]) << ","
+           << DoubleConvert(MeasurementFrame[2][2]) << ")"
+           << std::__1::endl;
+  }
+
+  header << "modality:=DWMRI" << std::__1::endl;
+  // this is the norminal BValue, i.e. the largest one.
+  header << "DWMRI_b-value:=" << DoubleConvert(maxBvalue) << std::__1::endl;
+
+  //  the following three lines are for older NRRD format, where
+  //  baseline images are always in the begining.
+  //  header << "DWMRI_gradient_0000:=0  0  0" << std::endl;
+  //  header << "DWMRI_NEX_0000:=" << nBaseline << std::endl;
+  //  need to check
+  if (gradientVectorFile!="") {
+    for (unsigned int imageCount = 0; imageCount<converter->GetNVolume(); ++imageCount) {
+      header << "DWMRI_gradient_" << std::__1::setw(4) << std::__1::setfill('0') << imageCount << ":="
+             << DoubleConvert(gradientVectors[imageCount][0]) << "   "
+             << DoubleConvert(gradientVectors[imageCount][1]) << "   "
+             << DoubleConvert(gradientVectors[imageCount][2])
+             << std::__1::endl;
+    }
+  }
+  else {
+    unsigned int gradientVecIndex = 0;
+    for (unsigned int k = 0; k<gradientVectors.size(); ++k) {
+      header << "DWMRI_gradient_" << std::__1::setw(4) << std::__1::setfill('0') << k << ":="
+             << DoubleConvert(gradientVectors[gradientVecIndex][0]) << "   "
+             << DoubleConvert(gradientVectors[gradientVecIndex][1]) << "   "
+             << DoubleConvert(gradientVectors[gradientVecIndex][2])
+             << std::__1::endl;
+      ++gradientVecIndex;
+    }
+  }
+  // write data in the same file is .nrrd was chosen
+  header << std::__1::endl;;
+  if (nrrdSingleFileFormat) {
+    unsigned long nVoxels = dmImage->GetBufferedRegion().GetNumberOfPixels();
+    header.write(reinterpret_cast<char*>(dmImage->GetBufferPointer()),
+      nVoxels*sizeof(short));
+  }
+  else {
+    // if we're writing out NRRD, and the split header/data NRRD
+    // format is used, write out the image as a raw volume.
+    itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer
+      rawWriter = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
+    itk::RawImageIO<DWIConverter::PixelValueType,3>::Pointer rawIO
+      = itk::RawImageIO<DWIConverter::PixelValueType,3>::New();
+    rawWriter->SetImageIO(rawIO);
+    rawIO->SetByteOrderToLittleEndian();
+    rawWriter->SetFileName(outputVolumeDataName.c_str());
+    rawWriter->SetInput(dmImage);
+    try {
+      rawWriter->Update();
+    }
+    catch (itk::ExceptionObject& excp) {
+      std::__1::cerr << "Exception thrown while writing the series to"
+                     << outputVolumeDataName << " " << excp << std::__1::endl;
+      std::__1::cerr << excp << std::__1::endl;
+      delete converter;
+    }
+  }
+  header.close();
+}
+
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
@@ -494,183 +681,12 @@ int main(int argc, char *argv[])
 #endif
 
 #else
-    std::ofstream header;
-    // std::string headerFileName = outputDir + "/" + outputFileName;
+    const std::string commentSection = MakeFileComment(useBMatrixGradientDirections, useIdentityMeaseurementFrame,
+      smallGradientThreshold, version);
 
-    header.open(outputVolumeHeaderName.c_str(), std::ios::out | std::ios::binary);
-    header << "NRRD0005" << std::endl
-           << std::setprecision(17) << std::scientific;
-
-    // stamp with DWIConvert branding
-    header << "# This file was created by DWIConvert version " << version << std::endl
-           << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
-           << "# part of the BRAINSTools package." << std::endl
-           << "# Command line options:" << std::endl
-           << "# --smallGradientThreshold " << smallGradientThreshold << std::endl;
-    if(useIdentityMeaseurementFrame)
-      {
-      header << "# --useIdentityMeasurementFrame" << std::endl;
-      }
-    if(useBMatrixGradientDirections)
-      {
-      header << "# --useBMatrixGradientDirections" << std::endl;
-      }
-    header << "#" << std::endl << "#" << std::endl;
-
-    if( !nrrdSingleFileFormat )
-      {
-      header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)"
-             << std::endl;
-      }
-    header << "type: short" << std::endl;
-    header << "dimension: 4" << std::endl;
-    header << "space: " << converter->GetNRRDSpaceDefinition() << "" << std::endl;
-
-    const DWIConverter::RotationMatrixType & NRRDSpaceDirection = converter->GetNRRDSpaceDirection();
-    header << "sizes: " << converter->GetCols()
-           << " " << converter->GetRows()
-           << " " << converter->GetSlicesPerVolume()
-           << " " << converter->GetNVolume() << std::endl;
-    header << "thicknesses:  NaN  NaN " << DoubleConvert(converter->GetSpacing()[2]) << " NaN" << std::endl;
-    // need to check
-    header << "space directions: "
-           << "("
-           << DoubleConvert(NRRDSpaceDirection[0][0]) << ","
-           << DoubleConvert(NRRDSpaceDirection[1][0]) << ","
-           << DoubleConvert(NRRDSpaceDirection[2][0])
-           << ") "
-           << "("
-           << DoubleConvert(NRRDSpaceDirection[0][1]) << ","
-           << DoubleConvert(NRRDSpaceDirection[1][1]) << ","
-           << DoubleConvert(NRRDSpaceDirection[2][1]) << ") "
-           << "("
-           << DoubleConvert(NRRDSpaceDirection[0][2]) << ","
-           << DoubleConvert(NRRDSpaceDirection[1][2]) << ","
-           << DoubleConvert(NRRDSpaceDirection[2][2])
-           << ") none" << std::endl;
-    header << "centerings: cell cell cell ???" << std::endl;
-    header << "kinds: space space space list" << std::endl;
-
-    header << "endian: little" << std::endl;
-    header << "encoding: raw" << std::endl;
-    header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
-
-    DWIConverter::VolumeType::PointType
-      ImageOrigin = converter->GetOrigin();
-    header << "space origin: "
-           << "(" << DoubleConvert(ImageOrigin[0])
-           << "," << DoubleConvert(ImageOrigin[1])
-           << "," << DoubleConvert(ImageOrigin[2]) << ") " << std::endl;
-    if( !nrrdSingleFileFormat )
-      {
-      header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::endl;
-      }
-
-    // For scanners, the measurement frame for the gradient directions is the same as the
-    // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
-    // There is also the possibility that a measurement frame
-    // should be recorded for an image even though it is storing
-    // only scalar values (e.g., a sequence of diffusion-weighted MR
-    // images has a measurement frame for the coefficients of
-    // the diffusion-sensitizing gradient directions, and
-    // the measurement frame field is the logical store
-    // this information).
-    // It was noticed on oblique Philips DTI scans that the prescribed protocol directions were
-    // rotated by the ImageOrientationPatient amount and recorded in the DICOM header.
-    // In order to compare two different scans to determine if the same protocol was prosribed,
-    // it is necessary to multiply each of the recorded diffusion gradient directions by
-    // the inverse of the LPSDirCos.
-    if( useIdentityMeaseurementFrame )
-      {
-      header << "measurement frame: "
-             << "(" << 1 << "," << 0 << "," << 0 << ") "
-             << "(" << 0 << "," << 1 << "," << 0 << ") "
-             << "(" << 0 << "," << 0 << "," << 1 << ")"
-             << std::endl;
-      }
-    else
-      {
-      DWIConverter::RotationMatrixType MeasurementFrame =
-        converter->GetMeasurementFrame();
-      header << "measurement frame: "
-             << "(" << DoubleConvert(MeasurementFrame[0][0]) << ","
-             << DoubleConvert(MeasurementFrame[1][0]) << ","
-             << DoubleConvert(MeasurementFrame[2][0]) << ") "
-             << "(" << DoubleConvert(MeasurementFrame[0][1]) << ","
-             << DoubleConvert(MeasurementFrame[1][1]) << ","
-             << DoubleConvert(MeasurementFrame[2][1]) << ") "
-             << "(" << DoubleConvert(MeasurementFrame[0][2]) << ","
-             << DoubleConvert(MeasurementFrame[1][2]) << ","
-             << DoubleConvert(MeasurementFrame[2][2]) << ")"
-             << std::endl;
-      }
-
-    header << "modality:=DWMRI" << std::endl;
-    // this is the norminal BValue, i.e. the largest one.
-    header << "DWMRI_b-value:=" << DoubleConvert(maxBvalue) << std::endl;
-
-    //  the following three lines are for older NRRD format, where
-    //  baseline images are always in the begining.
-    //  header << "DWMRI_gradient_0000:=0  0  0" << std::endl;
-    //  header << "DWMRI_NEX_0000:=" << nBaseline << std::endl;
-    //  need to check
-    if( gradientVectorFile != "" )
-      {
-      for( unsigned int imageCount = 0; imageCount < converter->GetNVolume(); ++imageCount )
-        {
-        header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << imageCount << ":="
-               << DoubleConvert(gradientVectors[imageCount][0]) << "   "
-               << DoubleConvert(gradientVectors[imageCount][1]) << "   "
-               << DoubleConvert(gradientVectors[imageCount][2])
-               << std::endl;
-        }
-      }
-    else
-      {
-      unsigned int gradientVecIndex = 0;
-      for( unsigned int k = 0; k < gradientVectors.size(); ++k )
-        {
-        header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
-               << DoubleConvert(gradientVectors[gradientVecIndex][0] ) << "   "
-               << DoubleConvert(gradientVectors[gradientVecIndex][1] ) << "   "
-               << DoubleConvert(gradientVectors[gradientVecIndex][2] )
-               << std::endl;
-        ++gradientVecIndex;
-        }
-      }
-    // write data in the same file is .nrrd was chosen
-    header << std::endl;;
-    if( nrrdSingleFileFormat )
-      {
-      unsigned long nVoxels = dmImage->GetBufferedRegion().GetNumberOfPixels();
-      header.write( reinterpret_cast<char *>(dmImage->GetBufferPointer() ),
-                    nVoxels * sizeof(short) );
-      }
-    else{
-      // if we're writing out NRRD, and the split header/data NRRD
-      // format is used, write out the image as a raw volume.
-        itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer
-          rawWriter = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
-        itk::RawImageIO<DWIConverter::PixelValueType, 3>::Pointer rawIO
-          = itk::RawImageIO<DWIConverter::PixelValueType, 3>::New();
-        rawWriter->SetImageIO( rawIO );
-        rawIO->SetByteOrderToLittleEndian();
-        rawWriter->SetFileName( outputVolumeDataName.c_str() );
-        rawWriter->SetInput( dmImage );
-        try
-        {
-          rawWriter->Update();
-        }
-        catch( itk::ExceptionObject & excp )
-        {
-          std::cerr << "Exception thrown while writing the series to"
-                    << outputVolumeDataName << " " << excp << std::endl;
-          std::cerr << excp << std::endl;
-          delete converter;
-          return EXIT_FAILURE;
-        }
-    }
-    header.close();
+      ManualWriteNRRDFile(gradientVectorFile, useIdentityMeaseurementFrame, nrrdSingleFileFormat,
+        outputVolumeHeaderName,
+        outputVolumeDataName, converter, dmImage, maxBvalue, gradientVectors, commentSection);
   #endif
     }
   else
@@ -691,6 +707,7 @@ int main(int argc, char *argv[])
     }
 
 
+  itk::NumberToString<double> DoubleConvert;
   if( writeProtocolGradientsFile == true )
     {
     //////////////////////////////////////////////

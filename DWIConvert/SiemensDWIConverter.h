@@ -733,7 +733,8 @@ protected:
       void CheckCSAHeaderAvailable() {
         std::string diffusionInfoString;
         for (unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride) {
-          bool foundBadDWIConformance = false;
+          //If this->m_UseBMatrixGradientDirections = true, then force non-compliant interpretation
+          bool dwiIsConformant = (this->m_UseBMatrixGradientDirections) ? false : true;
           {
             std::string softwareVersion;
             this->m_Headers[k]->GetElementLO(0x0018, 0x1020, softwareVersion);
@@ -745,19 +746,19 @@ protected:
               if (softwareVersion.find(*it) != std::string::npos ) {
                 std::cout << "Found a known non-compliant Siemens scan version " << *it << " so using private "
                     "CSAHeader" << std::endl;
-                foundBadDWIConformance = true;
+                dwiIsConformant = false;
               }
             }
           }
 
           std::int32_t tempBValue = -123;  // Initialize to a negative number as sentinal for failed read of 0019,100c
-          if (!foundBadDWIConformance &&
-              this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false) == EXIT_FAILURE && tempBValue >= 0 ) {
+          const bool has0019_100c = ( this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false)
+            == EXIT_SUCCESS ) ;
+          if ( dwiIsConformant && has0019_100c && tempBValue >= 0 ) {
             // If Siemens has a 0x0019
             this->m_HasCSAHeader = false;
           } else {
             this->m_HasCSAHeader = true;
-
           }
         }
       }

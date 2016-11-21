@@ -80,7 +80,6 @@ public:
       this->m_MeasurementFrame.SetIdentity();
       this->m_LPSDirCos.SetIdentity();
       this->m_SpacingMatrix.SetIdentity();
-      this->m_OrientationMatrix.SetIdentity();
     }
 
   virtual ~DWIConverter() {}
@@ -243,9 +242,7 @@ public:
     std::cout << "this->m_SpacingMatrix" << std::endl;
     std::cout << this->m_SpacingMatrix << std::endl;
 
-    this->m_OrientationMatrix.SetIdentity();
-
-    this->m_NRRDSpaceDirection = this->m_LPSDirCos * this->m_OrientationMatrix * this->m_SpacingMatrix;
+    this->m_NRRDSpaceDirection = this->m_LPSDirCos * this->m_SpacingMatrix;
 
     std::cout << "NRRDSpaceDirection" << std::endl;
     std::cout << this->m_NRRDSpaceDirection << std::endl;
@@ -429,10 +426,6 @@ protected:
   RotationMatrixType   m_LPSDirCos;
   /** matrix with just spacing information, used a couple places */
   RotationMatrixType   m_SpacingMatrix;
-  /** this is always identity, could be eliminated but
-   *  someone thought it was necessary at some point.
-   */
-  RotationMatrixType   m_OrientationMatrix;
   /** the current dataset is represented in a single file */
   bool                m_MultiSliceVolume;
   /** slice order is inferior/superior? */

@@ -526,8 +526,7 @@ int main(int argc, char *argv[])
     header << "dimension: 4" << std::endl;
     header << "space: " << converter->GetNRRDSpaceDefinition() << "" << std::endl;
 
-    DWIConverter::RotationMatrixType NRRDSpaceDirection =
-      converter->GetNRRDSpaceDirection();
+    const DWIConverter::RotationMatrixType & NRRDSpaceDirection = converter->GetNRRDSpaceDirection();
     header << "sizes: " << converter->GetCols()
            << " " << converter->GetRows()
            << " " << converter->GetSlicesPerVolume()

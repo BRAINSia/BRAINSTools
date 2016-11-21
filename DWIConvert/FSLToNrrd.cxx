@@ -69,16 +69,25 @@ FSLToNrrd(const std::string & inputVolume,
     }
 
   std::string _inputBValues = inputBValues;
+  std::string baseDirectory = itksys::SystemTools::GetParentDirectory(inputVolumeNameTemplate);
   if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
     {
-    _inputBValues = itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) +
-      ".bval";
+    std::vector<std::string> pathElements;
+    pathElements.push_back(baseDirectory);
+    pathElements.push_back("/");
+    pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension (inputVolumeNameTemplate) + ".bval");
+    _inputBValues = itksys::SystemTools::JoinPath(pathElements);
+    std::cout << "   defaulting to: " << _inputBValues << std::endl;
     }
   std::string _inputBVectors = inputBVectors;
   if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
     {
-    _inputBVectors = itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) +
-      ".bvec";
+      std::vector<std::string> pathElements;
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
+      pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec" );
+    _inputBVectors = itksys::SystemTools::JoinPath(pathElements);
+    std::cout << "   defaulting to: " << _inputBVectors << std::endl;
     }
 
   std::vector<double>               BVals;

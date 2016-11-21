@@ -426,7 +426,13 @@ int main(int argc, char *argv[])
   // for gradients and b values plus a NIfTI file for the gradient volumes.
   if( conversionMode == "FSLToNrrd" )
     {
-    return FSLToNrrd(inputVolume, outputVolume,fslNIFTIFile,
+    std::vector<std::string> pathElements;
+    pathElements.push_back(outputDirectory);
+    pathElements.push_back("/");
+    pathElements.push_back( outputVolume );
+    std::string fullPathOutputVolume = itksys::SystemTools::JoinPath(pathElements);
+
+    return FSLToNrrd(inputVolume, fullPathOutputVolume,fslNIFTIFile,
                      inputBValues, inputBVectors, transpose, allowLossyConversion);
     }
   // make FSL file set from a NRRD file.

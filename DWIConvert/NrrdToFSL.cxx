@@ -129,16 +129,13 @@ int NrrdToFSL(const std::string & inputVolume,
   // convert from vector image to 4D volume image
   for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
     {
-    for( volIndex[2] = 0; volIndex[2] < static_cast<VolumeType::IndexType::IndexValueType>( inputSize[2] );
-         ++volIndex[2] )
+    for( volIndex[2] = 0; volIndex[2] < static_cast<VolumeType::IndexType::IndexValueType>( inputSize[2] ); ++volIndex[2] )
       {
       vecIndex[2] = volIndex[2];
-      for( volIndex[1] = 0; volIndex[1] < static_cast<VolumeType::IndexType::IndexValueType>( inputSize[1] );
-           ++volIndex[1] )
+      for( volIndex[1] = 0; volIndex[1] < static_cast<VolumeType::IndexType::IndexValueType>( inputSize[1] ); ++volIndex[1] )
         {
         vecIndex[1] = volIndex[1];
-        for( volIndex[0] = 0; volIndex[0] < static_cast<VolumeType::IndexType::IndexValueType>( inputSize[0] );
-             ++volIndex[0] )
+        for( volIndex[0] = 0; volIndex[0] < static_cast<VolumeType::IndexType::IndexValueType>( inputSize[0] ); ++volIndex[0] )
           {
           vecIndex[0] = volIndex[0];
           niftiVolume->SetPixel(volIndex, inputVol->GetPixel(vecIndex)[volIndex[3]]);

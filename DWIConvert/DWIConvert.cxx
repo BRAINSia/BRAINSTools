@@ -134,7 +134,8 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
   size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels();
   bytecount *= sizeof(DWIConverter::PixelValueType);
   memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
-#if DEBUG_WRITE4DVOLUME
+//#define DEBUG_WRITE4DVOLUME
+#ifdef DEBUG_WRITE4DVOLUME
     {
    {
       //Set the qform and sfrom codes for the MetaDataDictionary.
@@ -143,7 +144,7 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
       itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
    }
     itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer writer = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
-    writer->SetFileName( "dwi3dconvert.nii.gz");
+    writer->SetFileName( "/tmp/dwi3dconvert.nii.gz");
     writer->SetInput( img );
     writer->Update();
     }
@@ -155,8 +156,7 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
       itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
       itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
    }
-  itk::ImageFileWriter<Volume4DType>::Pointer imgWriter =
-    itk::ImageFileWriter<Volume4DType>::New();
+  itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
 
   imgWriter->SetInput( img4D );
   imgWriter->SetFileName( fname.c_str() );
@@ -229,6 +229,12 @@ int main(int argc, char *argv[])
   // just need one instance to do double to string conversions
   itk::NumberToString<double> DoubleConvert;
 
+  if( outputVolume == "" )
+  {
+    std::cerr << "Missing output volume name" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // build a NRRD file out of FSL output, which is two text files
   // for gradients and b values plus a NIfTI file for the gradient volumes.
   if( conversionMode == "FSLToNrrd" )
@@ -237,23 +243,18 @@ int main(int argc, char *argv[])
                      inputBValues, inputBVectors, transpose, allowLossyConversion);
     }
   // make FSL file set from a NRRD file.
-  if( conversionMode == "NrrdToFSL" )
+  else if( conversionMode == "NrrdToFSL" )
     {
     return NrrdToFSL(inputVolume, outputVolume,
                      outputBValues, outputBVectors, allowLossyConversion);
     }
+  //else //DicomToNrrd OR DicomToFSL
 
-  bool nrrdFormat(true);
+  bool nrrdSingleFileFormat(true);
   // check for required parameters
   if( inputDicomDirectory == "" )
     {
     std::cerr << "Missing DICOM input directory path" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  if( outputVolume == "" )
-    {
-    std::cerr << "Missing DICOM output volume name" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -281,7 +282,7 @@ int main(int argc, char *argv[])
       {
       outputVolumeDataName = outputVolumeHeaderName.substr(0, extensionPos);
       outputVolumeDataName += ".raw";
-      nrrdFormat = false;
+      nrrdSingleFileFormat = false;
       }
     }
   else
@@ -381,42 +382,19 @@ int main(int argc, char *argv[])
 
   if( conversionMode != "DicomToFSL" && !fMRIOutput)
     {
-    // if we're writing out NRRD, and the split header/data NRRD
-    // format is used, write out the image as a raw volume.
-    if( !nrrdFormat )
-      {
-      itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer
-        rawWriter = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
-      itk::RawImageIO<DWIConverter::PixelValueType, 3>::Pointer rawIO
-        = itk::RawImageIO<DWIConverter::PixelValueType, 3>::New();
-      rawWriter->SetImageIO( rawIO );
-      rawIO->SetByteOrderToLittleEndian();
-      rawWriter->SetFileName( outputVolumeDataName.c_str() );
-      rawWriter->SetInput( dmImage );
-      try
-        {
-        rawWriter->Update();
-        }
-      catch( itk::ExceptionObject & excp )
-        {
-        std::cerr << "Exception thrown while writing the series to"
-                  << outputVolumeDataName << " " << excp << std::endl;
-        std::cerr << excp << std::endl;
-        delete converter;
-        return EXIT_FAILURE;
-        }
-      }
     }
   else
     {
-    // FSLOutput requires a NIfT file
+    // FSLOutput requires a NIfTI file
     // copy the computed reference frame to the image so that ITK
     // writes the correct stuff out.
-    itk::Matrix<double, 3, 3> NIfTIDirCos = converter->GetLPSDirCos();
+    const itk::Matrix<double, 3, 3> NIfTIDirCos = converter->GetLPSDirCos();
+        /* // HACK
     for( unsigned i = 0; i < 3; ++i )
       {
       NIfTIDirCos[i][2] *= -1.0;
       }
+         */
     dmImage->SetDirection(NIfTIDirCos);
     dmImage->SetSpacing(converter->GetSpacing());
 
@@ -539,7 +517,7 @@ int main(int argc, char *argv[])
       }
     header << "#" << std::endl << "#" << std::endl;
 
-    if( !nrrdFormat )
+    if( !nrrdSingleFileFormat )
       {
       header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)"
              << std::endl;
@@ -584,7 +562,7 @@ int main(int argc, char *argv[])
            << "(" << DoubleConvert(ImageOrigin[0])
            << "," << DoubleConvert(ImageOrigin[1])
            << "," << DoubleConvert(ImageOrigin[2]) << ") " << std::endl;
-    if( !nrrdFormat )
+    if( !nrrdSingleFileFormat )
       {
       header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::endl;
       }
@@ -663,12 +641,36 @@ int main(int argc, char *argv[])
       }
     // write data in the same file is .nrrd was chosen
     header << std::endl;;
-    if( nrrdFormat )
+    if( nrrdSingleFileFormat )
       {
       unsigned long nVoxels = dmImage->GetBufferedRegion().GetNumberOfPixels();
       header.write( reinterpret_cast<char *>(dmImage->GetBufferPointer() ),
                     nVoxels * sizeof(short) );
       }
+    else{
+      // if we're writing out NRRD, and the split header/data NRRD
+      // format is used, write out the image as a raw volume.
+        itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer
+          rawWriter = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
+        itk::RawImageIO<DWIConverter::PixelValueType, 3>::Pointer rawIO
+          = itk::RawImageIO<DWIConverter::PixelValueType, 3>::New();
+        rawWriter->SetImageIO( rawIO );
+        rawIO->SetByteOrderToLittleEndian();
+        rawWriter->SetFileName( outputVolumeDataName.c_str() );
+        rawWriter->SetInput( dmImage );
+        try
+        {
+          rawWriter->Update();
+        }
+        catch( itk::ExceptionObject & excp )
+        {
+          std::cerr << "Exception thrown while writing the series to"
+                    << outputVolumeDataName << " " << excp << std::endl;
+          std::cerr << excp << std::endl;
+          delete converter;
+          return EXIT_FAILURE;
+        }
+    }
     header.close();
   #endif
     }

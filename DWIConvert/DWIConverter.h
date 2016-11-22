@@ -253,7 +253,13 @@ public:
   /** access methods for image data */
   const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
 
+
   const std::vector<double> &GetBValues() const { return this->m_BValues; }
+  double GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
+  void SetMeasurementFrameIdentity()
+  {
+    this->m_MeasurementFrame.SetIdentity();
+  }
 
   VolumeType::Pointer GetDiffusionVolume() { return this->m_Volume; }
 
@@ -392,6 +398,20 @@ protected:
           }
         }
     }
+
+  double ComputeMaxBvalue(const std::vector<double> &bValues) const
+  {
+    double maxBvalue(0.0);
+    for( unsigned int k = 0; k < bValues.size(); ++k )
+    {
+      if( bValues[k] > maxBvalue )
+      {
+        maxBvalue = bValues[k];
+      }
+    }
+    return maxBvalue;
+  }
+
   /** add vendor-specific flags; */
   virtual void AddFlagsToDictionary() = 0;
   /** one file reader per DICOM file in dataset */

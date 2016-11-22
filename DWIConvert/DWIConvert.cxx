@@ -104,14 +104,15 @@ MakeFileComment(bool useBMatrixGradientDirections, bool useIdentityMeaseurementF
 }
 
 static void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useIdentityMeaseurementFrame,
-  bool nrrdSingleFileFormat, const std::string& outputVolumeHeaderName, const std::string& outputVolumeDataName, DWIConverter* converter,
-  itk::Image<short, 3>::Pointer& dmImage, const double maxBvalue,
-  const DWIMetaDataDictionaryValidator::GradientTableType& gradientVectors, const std::string commentSection)
+  bool nrrdSingleFileFormat, const std::string& outputVolumeHeaderName, const std::string& outputVolumeDataName,
+  DWIConverter* converter, const DWIMetaDataDictionaryValidator::GradientTableType& gradientVectors,
+  const std::string commentSection)
 {
   itk::NumberToString<double> DoubleConvert;
   std::__1::ofstream header;
   // std::string headerFileName = outputDir + "/" + outputFileName;
 
+  const double maxBvalue = converter->GetMaxBValue();
   header.open(outputVolumeHeaderName.c_str(), std::__1::ios_base::out | std::__1::ios_base::binary);
   header << "NRRD0005" << std::__1::endl
          << std::__1::setprecision(17) << std::__1::scientific;
@@ -168,30 +169,11 @@ static void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useI
     header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::__1::endl;
   }
 
-  // For scanners, the measurement frame for the gradient directions is the same as the
-  // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
-  // There is also the possibility that a measurement frame
-  // should be recorded for an image even though it is storing
-  // only scalar values (e.g., a sequence of diffusion-weighted MR
-  // images has a measurement frame for the coefficients of
-  // the diffusion-sensitizing gradient directions, and
-  // the measurement frame field is the logical store
-  // this information).
-  // It was noticed on oblique Philips DTI scans that the prescribed protocol directions were
-  // rotated by the ImageOrientationPatient amount and recorded in the DICOM header.
-  // In order to compare two different scans to determine if the same protocol was prosribed,
-  // it is necessary to multiply each of the recorded diffusion gradient directions by
-  // the inverse of the LPSDirCos.
+  DWIConverter::RotationMatrixType MeasurementFrame = converter->GetMeasurementFrame();
   if (useIdentityMeaseurementFrame) {
-    header << "measurement frame: "
-           << "(" << 1 << "," << 0 << "," << 0 << ") "
-           << "(" << 0 << "," << 1 << "," << 0 << ") "
-           << "(" << 0 << "," << 0 << "," << 1 << ")"
-           << std::__1::endl;
+    MeasurementFrame.SetIdentity();
   }
-  else {
-    DWIConverter::RotationMatrixType MeasurementFrame =
-      converter->GetMeasurementFrame();
+  {
     header << "measurement frame: "
            << "(" << DoubleConvert(MeasurementFrame[0][0]) << ","
            << DoubleConvert(MeasurementFrame[1][0]) << ","
@@ -237,8 +219,8 @@ static void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useI
   // write data in the same file is .nrrd was chosen
   header << std::__1::endl;;
   if (nrrdSingleFileFormat) {
-    unsigned long nVoxels = dmImage->GetBufferedRegion().GetNumberOfPixels();
-    header.write(reinterpret_cast<char*>(dmImage->GetBufferPointer()),
+    unsigned long nVoxels = converter->GetDiffusionVolume()->GetBufferedRegion().GetNumberOfPixels();
+    header.write(reinterpret_cast<char*>(converter->GetDiffusionVolume()->GetBufferPointer()),
       nVoxels*sizeof(short));
   }
   else {
@@ -251,7 +233,7 @@ static void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useI
     rawWriter->SetImageIO(rawIO);
     rawIO->SetByteOrderToLittleEndian();
     rawWriter->SetFileName(outputVolumeDataName.c_str());
-    rawWriter->SetInput(dmImage);
+    rawWriter->SetInput(converter->GetDiffusionVolume());
     try {
       rawWriter->Update();
     }
@@ -270,7 +252,7 @@ static void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useI
  *  written as 4D volumes for image types other than NRRD.
  */
 int
-Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std::string & fname )
+Write4DVolume( DWIConverter::VolumeType::Pointer img, int nVolumes, const std::string & fname )
 {
   typedef itk::Image<DWIConverter::PixelValueType, 4> Volume4DType;
 
@@ -361,19 +343,6 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
   return EXIT_SUCCESS;
 }
 
-double
-ComputeMaxBvalue(const std::vector<double> &bValues)
-{
-  double maxBvalue(0.0);
-  for( unsigned int k = 0; k < bValues.size(); ++k )
-    {
-    if( bValues[k] > maxBvalue )
-      {
-      maxBvalue = bValues[k];
-      }
-    }
-  return maxBvalue;
-}
 
 DWIMetaDataDictionaryValidator::GradientTableType
 computeScaledDiffusionVectors( const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors,
@@ -566,17 +535,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  DWIConverter::VolumeType::Pointer dmImage = converter->GetDiffusionVolume();
-  const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors = converter->GetDiffusionVectors();
-  const std::vector<double> &bValues = converter->GetBValues();
-  const double maxBvalue = ComputeMaxBvalue(bValues);
-  const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
-    computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
-
-  if( conversionMode != "DicomToFSL" && !fMRIOutput)
-    {
-    }
-  else
+  if( conversionMode == "DicomToFSL" || fMRIOutput)
     {
     // FSLOutput requires a NIfTI file
     // copy the computed reference frame to the image so that ITK
@@ -588,13 +547,13 @@ int main(int argc, char *argv[])
       NIfTIDirCos[i][2] *= -1.0;
       }
          */
-    dmImage->SetDirection(NIfTIDirCos);
-    dmImage->SetSpacing(converter->GetSpacing());
+    converter->GetDiffusionVolume()->SetDirection(NIfTIDirCos);
+    converter->GetDiffusionVolume()->SetSpacing(converter->GetSpacing());
 
     DWIConverter::VolumeType::PointType origin = converter->GetOrigin();
-    dmImage->SetOrigin(origin);
+    converter->GetDiffusionVolume()->SetOrigin(origin);
     // write the image */
-    if( Write4DVolume(dmImage, converter->GetNVolume(), outputVolumeHeaderName) != EXIT_SUCCESS )
+    if( Write4DVolume(converter->GetDiffusionVolume(), converter->GetNVolume(), outputVolumeHeaderName) != EXIT_SUCCESS )
       {
       delete converter;
       return EXIT_FAILURE;
@@ -606,8 +565,12 @@ int main(int argc, char *argv[])
       }
     }
 
-  const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame =
-    converter->GetMeasurementFrame().GetInverse();
+
+  const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors = converter->GetDiffusionVectors();
+  const std::vector<double> &bValues = converter->GetBValues();
+  const double maxBvalue = converter->GetMaxBValue();
+  const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
+    computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
 
   // construct vector of gradients
   DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
@@ -639,12 +602,28 @@ int main(int argc, char *argv[])
     }
   else
     {
+    const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame = converter->GetMeasurementFrame().GetInverse();
     // grab the diffusion vectors.
     for( unsigned int k = 0; k < BvalueScaledDiffusionVectors.size(); ++k )
       {
       DWIMetaDataDictionaryValidator::GradientDirectionType vec;
+      //TODO: Move all of this to converter code
       if( useIdentityMeaseurementFrame )
         {
+        // For scanners, the measurement frame for the gradient directions is the same as the
+        // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
+        // There is also the possibility that a measurement frame
+        // should be recorded for an image even though it is storing
+        // only scalar values (e.g., a sequence of diffusion-weighted MR
+        // images has a measurement frame for the coefficients of
+        // the diffusion-sensitizing gradient directions, and
+        // the measurement frame field is the logical store
+        // this information).
+        // It was noticed on oblique Philips DTI scans that the prescribed protocol directions were
+        // rotated by the ImageOrientationPatient amount and recorded in the DICOM header.
+        // In order to compare two different scans to determine if the same protocol was prosribed,
+        // it is necessary to multiply each of the recorded diffusion gradient directions by
+        // the inverse of the LPSDirCos.
         vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors =
           InverseMeasurementFrame * (BvalueScaledDiffusionVectors[k]);
         for( unsigned ind = 0; ind < 3; ++ind )
@@ -672,17 +651,17 @@ int main(int argc, char *argv[])
 #if 0 // Can not write ITK images directly for DWI images, meta data is lost.
 #if 1
 
-    Write4DVolume(dmImage,BvalueScaledDiffusionVectors.size(),outputVolumeHeaderName);
+    Write4DVolume(converter->GetDiffusionVolume(),BvalueScaledDiffusionVectors.size(),outputVolumeHeaderName);
 #else
       DWIMetaDataDictionaryValidator myDict;
       myDict.SetMeasurementFrame(converter->GetMeasurementFrame());
       myDict.SetBValue(maxBvalue);
       myDict.SetGradientTable(gradientVectors);
-      dmImage->SetMetaDataDictionary(myDict.GetMetaDataDictionary());
+      converter->GetDiffusionVolume()->SetMetaDataDictionary(myDict.GetMetaDataDictionary());
 
       itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer writer = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
       writer->SetFileName( outputVolumeHeaderName );
-      writer->SetInput( dmImage );
+      writer->SetInput( converter->GetDiffusionVolume() );
       writer->Update();
 #endif
 
@@ -692,7 +671,7 @@ int main(int argc, char *argv[])
 
       ManualWriteNRRDFile(gradientVectorFile, useIdentityMeaseurementFrame, nrrdSingleFileFormat,
         outputVolumeHeaderName,
-        outputVolumeDataName, converter, dmImage, maxBvalue, gradientVectors, commentSection);
+        outputVolumeDataName, converter, gradientVectors, commentSection);
   #endif
     }
   else
@@ -712,10 +691,12 @@ int main(int argc, char *argv[])
       }
     }
 
-
-  itk::NumberToString<double> DoubleConvert;
   if( writeProtocolGradientsFile == true )
     {
+      std::cerr << "ERROR: DEPRECATED IMPLEMENTED" << std::endl;
+      return EXIT_FAILURE;
+#if 0
+    itk::NumberToString<double> DoubleConvert;
     //////////////////////////////////////////////
     // writeProtocolGradientsFile write protocolGradientsFile file
     // This part follows a DWI NRRD file in NRRD format 5.
@@ -760,6 +741,7 @@ int main(int argc, char *argv[])
       }
     protocolGradientsFile << "==================================" << std::endl;
     protocolGradientsFile.close();
+#endif
     }
   return EXIT_SUCCESS;
 }

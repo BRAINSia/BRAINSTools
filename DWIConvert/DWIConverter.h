@@ -554,8 +554,13 @@ public:
  *  written as 4D volumes for image types other than NRRD.
  */
   int
-  Write4DVolume( DWIConverter::VolumeType::Pointer img, int nVolumes, const std::string & fname )
+  WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
+    const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors,
+    const std::string outputBValues, const std::string
+  outputBVectors) const
   {
+    DWIConverter::VolumeType::Pointer img = this->GetDiffusionVolume();
+    const int nVolumes = this->GetNVolume();
     typedef itk::Image<DWIConverter::PixelValueType, 4> Volume4DType;
 
     DWIConverter::VolumeType::SizeType      size3D(img->GetLargestPossibleRegion().GetSize() );
@@ -630,7 +635,7 @@ public:
     itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
 
     imgWriter->SetInput( img4D );
-    imgWriter->SetFileName( fname.c_str() );
+    imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
     try
     {
       imgWriter->Update();
@@ -638,8 +643,43 @@ public:
     catch( itk::ExceptionObject & excp )
     {
       std::cerr << "Exception thrown while writing "
-                << fname << std::endl;
+                << outputVolumeHeaderName << std::endl;
       std::cerr << excp << std::endl;
+      return EXIT_FAILURE;
+    }
+    // FSL output of gradients & BValues
+    std::string outputFSLBValFilename;
+    const size_t extensionPos = this->has_valid_nifti_extension(outputVolumeHeaderName);
+    if( outputBValues == "" )
+    {
+      outputFSLBValFilename = outputVolumeHeaderName.substr(0, extensionPos);
+      outputFSLBValFilename += ".bval";
+    }
+    else
+    {
+      outputFSLBValFilename = outputBValues;
+    }
+    std::string outputFSLBVecFilename;
+    if( outputBVectors == "" )
+    {
+      outputFSLBVecFilename = outputVolumeHeaderName.substr(0, extensionPos);
+      outputFSLBVecFilename += ".bvec";
+    }
+    else
+    {
+      outputFSLBVecFilename = outputBVectors;
+    }
+    // write out in FSL format
+    if( WriteBValues<double>(this->GetBValues(), outputFSLBValFilename) != EXIT_SUCCESS )
+    {
+      std::cerr << "Failed to write " << outputFSLBValFilename
+                << std::endl;
+      return EXIT_FAILURE;
+    }
+    if( WriteBVectors(gradientVectors, outputFSLBVecFilename) != EXIT_SUCCESS )
+    {
+      std::cerr << "Failed to write " << outputFSLBVecFilename
+                << std::endl;
       return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
@@ -758,6 +798,28 @@ protected:
       }
     }
     return maxBvalue;
+  }
+
+  size_t has_valid_nifti_extension( std::string outputVolumeHeaderName ) const
+  {
+    const size_t NUMEXT=2;
+    const char * const extList [NUMEXT] = {".nii.gz", ".nii"};
+    for(size_t i = 0 ; i < NUMEXT; ++i)
+    {
+      const size_t extensionPos = outputVolumeHeaderName.find(extList[i]);
+      if( extensionPos != std::string::npos )
+      {
+        return extensionPos;
+      }
+    }
+    {
+      std::cerr << "FSL Format output chosen, "
+                << "but output Volume not a recognized "
+                << "NIfTI filename " << outputVolumeHeaderName
+                << std::endl;
+      exit(1);
+    }
+    return std::string::npos;
   }
 
   DWIMetaDataDictionaryValidator::GradientTableType

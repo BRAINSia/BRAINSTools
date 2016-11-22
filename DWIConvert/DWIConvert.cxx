@@ -81,27 +81,6 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "dcmtk/dcmdata/dcrledrg.h"
 
 
-static bool has_valid_nifti_extension( std::string outputVolumeHeaderName )
-{
-  const size_t NUMEXT=2;
-  const char * const extList [NUMEXT] = {".nii.gz", ".nii"};
-  for(size_t i = 0 ; i < NUMEXT; ++i)
-  {
-    const size_t extensionPos = outputVolumeHeaderName.find(extList[i]);
-    if( extensionPos != std::string::npos )
-    {
-      return true;
-    }
-  }
-  {
-    std::cerr << "FSL Format output chosen, "
-              << "but output Volume not a recognized "
-              << "NIfTI filename " << outputVolumeHeaderName
-              << std::endl;
-    exit(1);
-  }
-  return false;
-}
 
 static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
@@ -185,6 +164,12 @@ int main(int argc, char *argv[])
   // just need one instance to do double to string conversions
   itk::NumberToString<double> DoubleConvert;
 
+  if(fMRIOutput)
+  {
+    std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   if( outputVolume == "" )
   {
     std::cerr << "Missing output volume name" << std::endl;
@@ -194,8 +179,6 @@ int main(int argc, char *argv[])
   // decide whether the output is a single file or
   // header/raw pair
   std::string outputVolumeDataName;
-  std::string outputFSLBValFilename;
-  std::string outputFSLBVecFilename;
 
   std::string outputVolumeHeaderName(outputVolume);
   if( outputVolume.find("/") == std::string::npos &&
@@ -244,26 +227,6 @@ int main(int argc, char *argv[])
     }
     else if (conversionMode == "DicomToFSL")
     {
-      // FSL output of gradients & BValues
-      has_valid_nifti_extension(outputVolumeHeaderName);
-      if( outputBValues == "" )
-      {
-        outputFSLBValFilename = outputVolumeHeaderName.substr(0, extensionPos);
-        outputFSLBValFilename += ".bval";
-      }
-      else
-      {
-        outputFSLBValFilename = outputBValues;
-      }
-      if( outputBVectors == "" )
-      {
-        outputFSLBVecFilename = outputVolumeHeaderName.substr(0, extensionPos);
-        outputFSLBVecFilename += ".bvec";
-      }
-      else
-      {
-        outputFSLBVecFilename = outputBVectors;
-      }
     }
     converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections,smallGradientThreshold);
   }
@@ -289,7 +252,7 @@ int main(int argc, char *argv[])
   }
 
 
-  if( conversionMode == "DicomToFSL" || fMRIOutput)
+  if( conversionMode == "DicomToFSL" )
   {
     // FSLOutput requires a NIfTI file
     // copy the computed reference frame to the image so that ITK
@@ -307,29 +270,12 @@ for( unsigned i = 0; i < 3; ++i )
     DWIConverter::VolumeType::PointType origin = converter->GetOrigin();
     converter->GetDiffusionVolume()->SetOrigin(origin);
     // write the image */
-    //TODO:  Refactor Write4DVolume with only outputVolumeHeaderName
-    if( converter->Write4DVolume(converter->GetDiffusionVolume(), converter->GetNVolume(), outputVolumeHeaderName) !=
-      EXIT_SUCCESS )
+    //TODO:  Refactor WriteFSLFormattedFileSet with only outputVolumeHeaderName
+    //TODO: Remove gradientVectors from here
+    if(converter->WriteFSLFormattedFileSet(outputVolumeHeaderName,gradientVectors,
+      outputBValues, outputBVectors) != EXIT_SUCCESS )
     {
       delete converter;
-      return EXIT_FAILURE;
-    }
-    else if(fMRIOutput) // skip writing out GVec/BValue files
-    {
-      delete converter;
-      return EXIT_SUCCESS;
-    }
-    // write out in FSL format
-    if( WriteBValues<double>(converter->GetBValues(), outputFSLBValFilename) != EXIT_SUCCESS )
-    {
-      std::cerr << "Failed to write " << outputFSLBValFilename
-                << std::endl;
-      return EXIT_FAILURE;
-    }
-    if( WriteBVectors(gradientVectors, outputFSLBVecFilename) != EXIT_SUCCESS )
-    {
-      std::cerr << "Failed to write " << outputFSLBVecFilename
-                << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -339,23 +285,6 @@ for( unsigned i = 0; i < 3; ++i )
   // write header file
   // This part follows a DWI NRRD file in NRRD format 5.
   // There should be a better way using itkNRRDImageIO.
-#if 0 // Can not write ITK images directly for DWI images, meta data is lost.
-#if 1
-    Write4DVolume(converter->GetDiffusionVolume(),BvalueScaledDiffusionVectors.size(),outputVolumeHeaderName);
-#else
-      DWIMetaDataDictionaryValidator myDict;
-      myDict.SetMeasurementFrame(converter->GetMeasurementFrame());
-      myDict.SetBValue(maxBvalue);
-      myDict.SetGradientTable(gradientVectors);
-      converter->GetDiffusionVolume()->SetMetaDataDictionary(myDict.GetMetaDataDictionary());
-
-      itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer writer = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
-      writer->SetFileName( outputVolumeHeaderName );
-      writer->SetInput( converter->GetDiffusionVolume() );
-      writer->Update();
-#endif
-
-#else
     //TODO: Move this internal to converter class
     const std::string commentSection = converter->MakeFileComment(useBMatrixGradientDirections,
       useIdentityMeaseurementFrame, smallGradientThreshold, version);
@@ -363,7 +292,6 @@ for( unsigned i = 0; i < 3; ++i )
     converter->ManualWriteNRRDFile(gradientVectorFile, useIdentityMeaseurementFrame, nrrdSingleFileFormat,
       outputVolumeHeaderName,
       outputVolumeDataName, gradientVectors, commentSection);
-  #endif
     }
 
   return EXIT_SUCCESS;

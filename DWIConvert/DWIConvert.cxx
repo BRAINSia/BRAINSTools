@@ -544,75 +544,18 @@ int main(int argc, char *argv[])
 
 
 
-  const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
-    converter->computeScaledDiffusionVectors();
   // construct vector of gradients
   DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
+  //TODO:  This should modify the gradient table IMMEDIATELY AFTER initialization.
+  //       It should probably be part of the converter construction process!
   if( gradientVectorFile != "" )
     {
-    // override gradients embedded in file with an external file.
-    // FORMAT:
-    // <num_gradients>
-    // x y z
-    // x y z
-    // etc
-    std::ifstream gradientFile(gradientVectorFile.c_str(), std::ifstream::in);
-    unsigned int  numGradients;
-    gradientFile >> numGradients;
-    if( numGradients != converter->GetNVolume() )
-      {
-      std::cerr << "number of Gradients doesn't match number of volumes" << std::endl;
-      return EXIT_FAILURE;
-      }
-    for( unsigned int imageCount = 0; !gradientFile.eof(); ++imageCount )
-      {
-      DWIMetaDataDictionaryValidator::GradientDirectionType vec;
-      for( unsigned i = 0; !gradientFile.eof() &&  i < 3; ++i )
-        {
-        gradientFile >> vec[i];
-        }
-      gradientVectors.push_back(vec);
-      }
+      gradientVectors= converter->readOverwriteGradientVectorFile(gradientVectorFile);
     }
   else
     {
-    const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame = converter->GetMeasurementFrame().GetInverse();
-    // grab the diffusion vectors.
-    for( unsigned int k = 0; k < BvalueScaledDiffusionVectors.size(); ++k )
-      {
-      DWIMetaDataDictionaryValidator::GradientDirectionType vec;
-      //TODO: Move all of this to converter code
-      if( useIdentityMeaseurementFrame )
-        {
-        // For scanners, the measurement frame for the gradient directions is the same as the
-        // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
-        // There is also the possibility that a measurement frame
-        // should be recorded for an image even though it is storing
-        // only scalar values (e.g., a sequence of diffusion-weighted MR
-        // images has a measurement frame for the coefficients of
-        // the diffusion-sensitizing gradient directions, and
-        // the measurement frame field is the logical store
-        // this information).
-        // It was noticed on oblique Philips DTI scans that the prescribed protocol directions were
-        // rotated by the ImageOrientationPatient amount and recorded in the DICOM header.
-        // In order to compare two different scans to determine if the same protocol was prosribed,
-        // it is necessary to multiply each of the recorded diffusion gradient directions by
-        // the inverse of the LPSDirCos.
-        vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors = InverseMeasurementFrame * (BvalueScaledDiffusionVectors[k]);
-        for( unsigned ind = 0; ind < 3; ++ind )
-          {
-          vec[ind] = RotatedScaledDiffusionVectors[ind];
-          }
-        }
-      else
-        {
-        for( unsigned ind = 0; ind < 3; ++ind )
-          {
-          vec[ind] = BvalueScaledDiffusionVectors[k][ind];
-          }
-        }
-      gradientVectors.push_back(vec);
-      }
+      //TODO:  useIdentityMeasurementFrame should be part of the converter construction process as well
+      gradientVectors = converter->computeBvalueScaledDiffusionTensors(useIdentityMeaseurementFrame);
     }
 
   //////////////////////////////////////////////

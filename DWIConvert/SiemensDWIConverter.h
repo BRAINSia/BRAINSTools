@@ -414,7 +414,6 @@ public:
     {
       for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
       {
-
         vnl_vector_fixed<double, 3> gradient(0.0);
         vnl_matrix_fixed<double, 3, 3> bMatrix(0.0);
 

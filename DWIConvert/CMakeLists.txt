@@ -28,6 +28,14 @@ set(DWIConvertSupportLib_SRCS
   FSLToNrrd.cxx
   NrrdToFSL.cxx
   DWIConvertUtils.cxx
+  DWIConverterFactory.h
+  DWIConverter.h
+  GEDWIConverter.h
+  GenericDWIConverter.h
+  HitachiDWIConverter.h
+  PhilipsDWIConverter.h
+  SiemensDWIConverter.h
+  StringContains.h
   )
 
 set(DWIConvertTest_SRC)

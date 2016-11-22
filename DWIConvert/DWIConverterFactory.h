@@ -129,6 +129,7 @@ public:
         std::cerr << "Can't get vendor name from DICOM file" << excp << std::endl;
         return ITK_NULLPTR;
         }
+
       DWIConverter *converter(ITK_NULLPTR);
       if(StringContains(this->m_Vendor,"PHILIPS"))
         {

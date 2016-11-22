@@ -37,9 +37,12 @@ class DWIConverterFactory
 public:
   DWIConverterFactory(const std::string DicomDirectory,
                       bool UseBMatrixGradientDirections,
-                      double smallGradientThreshold) : m_DicomDirectory(DicomDirectory),
-                                                       m_UseBMatrixGradientDirections(UseBMatrixGradientDirections),
-                                                       m_SmallGradientThreshold(smallGradientThreshold)
+                      double smallGradientThreshold,
+                      bool useIdentityMeaseurementFrame)
+    : m_DicomDirectory(DicomDirectory)
+    , m_UseBMatrixGradientDirections(UseBMatrixGradientDirections)
+    , m_SmallGradientThreshold(smallGradientThreshold)
+    , m_useIdentityMeaseurementFrame(useIdentityMeaseurementFrame)
     {
     }
   ~DWIConverterFactory()
@@ -160,6 +163,7 @@ public:
                                             m_UseBMatrixGradientDirections);
         this->m_Vendor = "GENERIC";
         }
+      converter->SetUseIdentityMeaseurementFrame(this->m_useIdentityMeaseurementFrame);
       return converter;
     }
   std::string GetVendor() { return m_Vendor; }
@@ -168,6 +172,7 @@ private:
   std::string m_Vendor;
   bool        m_UseBMatrixGradientDirections;
   double      m_SmallGradientThreshold;
+  bool        m_useIdentityMeaseurementFrame;
 
   DWIConverter::DCMTKFileVector m_Headers;
   DWIConverter::FileNamesContainer m_InputFileNames;

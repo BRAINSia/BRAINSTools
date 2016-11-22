@@ -308,16 +308,18 @@ public:
   unsigned int GetSlicesPerVolume() const { return m_SlicesPerVolume; }
 
 
-  //TODO:  This should just be a set function!
-  DWIMetaDataDictionaryValidator::GradientTableType
-  readOverwriteGradientVectorFile(const std::string& gradientVectorFile)
+
+  /**
+   * @brief Force overwriting the gradient directions by inserting values read from specified file
+   * @param gradientVectorFile The file with gradients specified for overwriting
+   * FORMAT:
+   * <num_gradients>
+   * x y z
+   * x y z
+   * etc
+   */
+  void readOverwriteGradientVectorFile(const std::string& gradientVectorFile)
   {// override gradients embedded in file with an external file.
-    DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
-    // FORMAT:
-    // <num_gradients>
-    // x y z
-    // x y z
-    // etc
     std::__1::ifstream gradientFile(gradientVectorFile.c_str(), std::__1::ios_base::in);
     unsigned int  numGradients;
     gradientFile >> numGradients;
@@ -325,6 +327,7 @@ public:
     {
       itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes" << std::endl);
     }
+    this->m_DiffusionVectors.clear();
     for( unsigned int imageCount = 0; !gradientFile.eof(); ++imageCount )
     {
       DWIMetaDataDictionaryValidator::GradientDirectionType vec;
@@ -332,15 +335,15 @@ public:
       {
         gradientFile >> vec[i];
       }
-      gradientVectors.push_back(vec);
+      this->m_DiffusionVectors.push_back(vec);
     }
-    return gradientVectors;
   }
 
 
   DWIMetaDataDictionaryValidator::GradientTableType
-  computeBvalueScaledDiffusionTensors(bool useIdentityMeaseurementFrame ) const
+  computeBvalueScaledDiffusionTensors() const
   {
+
     const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
       this->computeScaledDiffusionVectors();
     DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
@@ -349,7 +352,7 @@ public:
     for( unsigned int k = 0; k < BvalueScaledDiffusionVectors.size(); ++k )
     {
       DWIMetaDataDictionaryValidator::GradientDirectionType vec;
-      if( useIdentityMeaseurementFrame )
+      if( this->m_useIdentityMeaseurementFrame )
       {
         // For scanners, the measurement frame for the gradient directions is the same as the
         // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
@@ -385,12 +388,14 @@ public:
 
 
   std::string
-  MakeFileComment(bool useBMatrixGradientDirections, bool useIdentityMeaseurementFrame, double smallGradientThreshold,
-    const std::string& version) const //TODO: Make private
+  MakeFileComment(
+    const std::string& version,
+    bool useBMatrixGradientDirections,
+    bool useIdentityMeaseurementFrame,
+    double smallGradientThreshold ) const
   {
     std::__1::stringstream commentSection;
     {
-
       commentSection << "#" << std::__1::endl << "#" << std::__1::endl;
       commentSection << "# This file was created by DWIConvert version " << version << std::__1::endl
                      << "# https://github.com/BRAINSia/BRAINSTools" << std::__1::endl
@@ -407,11 +412,20 @@ public:
     return commentSection.str();
   }
 
-  void ManualWriteNRRDFile(const std::string& gradientVectorFile, bool useIdentityMeaseurementFrame,
-    bool nrrdSingleFileFormat, const std::string& outputVolumeHeaderName, const std::string& outputVolumeDataName,
-    const DWIMetaDataDictionaryValidator::GradientTableType& gradientVectors,
-    const std::string commentSection) const
+  void ManualWriteNRRDFile(
+    const std::string& outputVolumeHeaderName,
+    const std::string commentstring) const
   {
+    const size_t extensionPos = outputVolumeHeaderName.find(".nhdr");
+    const bool nrrdSingleFileFormat = ( extensionPos != std::string::npos ) ? false : true;
+
+    std::string outputVolumeDataName;
+    if( extensionPos != std::string::npos )
+    {
+      outputVolumeDataName = outputVolumeHeaderName.substr(0, extensionPos);
+      outputVolumeDataName += ".raw";
+    }
+
     itk::NumberToString<double> DoubleConvert;
     std::__1::ofstream header;
     // std::string headerFileName = outputDir + "/" + outputFileName;
@@ -421,8 +435,7 @@ public:
     header << "NRRD0005" << std::__1::endl
            << std::__1::setprecision(17) << std::__1::scientific;
 
-
-    header << commentSection;
+    header << commentstring;
 
     // stamp with DWIConvert branding
 
@@ -473,7 +486,7 @@ public:
     }
 
     DWIConverter::RotationMatrixType MeasurementFrame = this->GetMeasurementFrame();
-    if (useIdentityMeaseurementFrame) {
+    if (this->m_useIdentityMeaseurementFrame) {
       MeasurementFrame.SetIdentity();
     }
     {
@@ -499,16 +512,9 @@ public:
     //  header << "DWMRI_gradient_0000:=0  0  0" << std::endl;
     //  header << "DWMRI_NEX_0000:=" << nBaseline << std::endl;
     //  need to check
-    if (gradientVectorFile!="") {
-      for (unsigned int imageCount = 0; imageCount<this->GetNVolume(); ++imageCount) {
-        header << "DWMRI_gradient_" << std::__1::setw(4) << std::__1::setfill('0') << imageCount << ":="
-               << DoubleConvert(gradientVectors[imageCount][0]) << "   "
-               << DoubleConvert(gradientVectors[imageCount][1]) << "   "
-               << DoubleConvert(gradientVectors[imageCount][2])
-               << std::__1::endl;
-      }
-    }
-    else {
+    const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors =
+      this->computeBvalueScaledDiffusionTensors();
+    {
       unsigned int gradientVecIndex = 0;
       for (unsigned int k = 0; k<gradientVectors.size(); ++k) {
         header << "DWMRI_gradient_" << std::__1::setw(4) << std::__1::setfill('0') << k << ":="
@@ -549,13 +555,16 @@ public:
     header.close();
   }
 
+  void SetUseIdentityMeaseurementFrame(const bool value)
+  {
+    this->m_useIdentityMeaseurementFrame = value;
+  }
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
  */
   int
   WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-    const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors,
     const std::string outputBValues, const std::string
   outputBVectors) const
   {
@@ -676,7 +685,7 @@ public:
                 << std::endl;
       return EXIT_FAILURE;
     }
-    if( WriteBVectors(gradientVectors, outputFSLBVecFilename) != EXIT_SUCCESS )
+    if( WriteBVectors(this->computeBvalueScaledDiffusionTensors(), outputFSLBVecFilename) != EXIT_SUCCESS )
     {
       std::cerr << "Failed to write " << outputFSLBVecFilename
                 << std::endl;
@@ -899,7 +908,9 @@ protected:
   /** use the BMatrix to compute gradients in Siemens data instead of
    *  the reported graients. which are in many cases bogus.
    */
-  const bool                  m_UseBMatrixGradientDirections;
+  const bool m_UseBMatrixGradientDirections;
+  bool       m_useIdentityMeaseurementFrame;
+
   /** track if images is interleaved */
   bool                        m_IsInterleaved;
   /** again this is always the same (so far) but someone thought

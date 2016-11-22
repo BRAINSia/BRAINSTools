@@ -85,7 +85,8 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
   const bool useBMatrixGradientDirections,
-  const double smallGradientThreshold)
+  const double smallGradientThreshold,
+  const bool useIdentityMeaseurementFrame)
 {
 // check for required parameters
   if( inputDicomDirectory == "" )
@@ -97,7 +98,7 @@ static DWIConverter * CreateDicomConverter(
 // use the factor to instantiate a converter object based on the vender.
   DWIConverterFactory converterFactory(inputDicomDirectory,
     useBMatrixGradientDirections,
-    smallGradientThreshold);
+    smallGradientThreshold, useIdentityMeaseurementFrame);
   DWIConverter * converter;
   try
   {
@@ -138,10 +139,6 @@ static DWIConverter * CreateDicomConverter(
   {
     std::cerr << "Can't extract DWI data from files created by vendor "
               << converterFactory.GetVendor() << std::endl;
-#if 0  //I don't know why this is useful
-    DWIConverter::VolumeType::Pointer vol = converter->GetDiffusionVolume();
-    WriteVolume<DWIConverter::VolumeType>( vol, outputVolumeHeaderName );
-#endif
     delete converter;
     exit(EXIT_SUCCESS);
   }
@@ -176,25 +173,6 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  // decide whether the output is a single file or
-  // header/raw pair
-  std::string outputVolumeDataName;
-
-  std::string outputVolumeHeaderName(outputVolume);
-  if( outputVolume.find("/") == std::string::npos &&
-    outputVolume.find("\\") == std::string::npos )
-  {
-    if( outputVolumeHeaderName.size() != 0 )
-    {
-      outputVolumeHeaderName = outputDirectory;
-      outputVolumeHeaderName += "/";
-      outputVolumeHeaderName += outputVolume;
-    }
-  }
-
-  const size_t extensionPos = outputVolumeHeaderName.find(".nhdr");
-  const bool nrrdSingleFileFormat = ( extensionPos != std::string::npos ) ? false : true;
-
   DWIConverter *converter;
   // build a NRRD file out of FSL output, which is two text files
   // for gradients and b values plus a NIfTI file for the gradient volumes.
@@ -219,16 +197,12 @@ int main(int argc, char *argv[])
   {
     if (conversionMode == "DicomToNrrd")
     {
-      if( extensionPos != std::string::npos )
-      {
-        outputVolumeDataName = outputVolumeHeaderName.substr(0, extensionPos);
-        outputVolumeDataName += ".raw";
-      }
     }
     else if (conversionMode == "DicomToFSL")
     {
     }
-    converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections,smallGradientThreshold);
+    converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections,
+      smallGradientThreshold,useIdentityMeaseurementFrame);
   }
   else
   {
@@ -236,21 +210,29 @@ int main(int argc, char *argv[])
     exit(-1);
   }
 
+  // ^^^^^^^^^^^^^^^^^^^^^^^ Done Reading Above this line
   //Overwrite gradient directions
-  // construct vector of gradients
-  DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
-  //TODO:  This should modify the gradient table IMMEDIATELY AFTER initialization.
-  //       It should probably be part of the converter construction process!
   if( gradientVectorFile != "" )
   {
-    gradientVectors= converter->readOverwriteGradientVectorFile(gradientVectorFile);
+    converter->readOverwriteGradientVectorFile(gradientVectorFile);
   }
-  else
-  {
-    //TODO:  useIdentityMeasurementFrame should be part of the converter construction process as well
-    gradientVectors = converter->computeBvalueScaledDiffusionTensors(useIdentityMeaseurementFrame);
-  }
+  //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
 
+
+
+  std::string outputVolumeHeaderName(outputVolume);
+  { // concatenate with outputDirectory
+    if( outputVolume.find("/") == std::string::npos &&
+      outputVolume.find("\\") == std::string::npos )
+    {
+      if( outputVolumeHeaderName.size() != 0 )
+      {
+        outputVolumeHeaderName = outputDirectory;
+        outputVolumeHeaderName += "/";
+        outputVolumeHeaderName += outputVolume;
+      }
+    }
+  }
 
   if( conversionMode == "DicomToFSL" )
   {
@@ -270,9 +252,7 @@ for( unsigned i = 0; i < 3; ++i )
     DWIConverter::VolumeType::PointType origin = converter->GetOrigin();
     converter->GetDiffusionVolume()->SetOrigin(origin);
     // write the image */
-    //TODO:  Refactor WriteFSLFormattedFileSet with only outputVolumeHeaderName
-    //TODO: Remove gradientVectors from here
-    if(converter->WriteFSLFormattedFileSet(outputVolumeHeaderName,gradientVectors,
+    if(converter->WriteFSLFormattedFileSet(outputVolumeHeaderName,
       outputBValues, outputBVectors) != EXIT_SUCCESS )
     {
       delete converter;
@@ -286,12 +266,10 @@ for( unsigned i = 0; i < 3; ++i )
   // This part follows a DWI NRRD file in NRRD format 5.
   // There should be a better way using itkNRRDImageIO.
     //TODO: Move this internal to converter class
-    const std::string commentSection = converter->MakeFileComment(useBMatrixGradientDirections,
-      useIdentityMeaseurementFrame, smallGradientThreshold, version);
+    const std::string commentSection = converter->MakeFileComment(version,useBMatrixGradientDirections,
+      useIdentityMeaseurementFrame, smallGradientThreshold);
 
-    converter->ManualWriteNRRDFile(gradientVectorFile, useIdentityMeaseurementFrame, nrrdSingleFileFormat,
-      outputVolumeHeaderName,
-      outputVolumeDataName, gradientVectors, commentSection);
+    converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
     }
 
   return EXIT_SUCCESS;

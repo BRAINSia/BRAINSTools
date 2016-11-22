@@ -253,6 +253,16 @@ public:
   /** access methods for image data */
   const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
 
+  const DWIMetaDataDictionaryValidator::GradientTableType computeScaledDiffusionVectors() const
+  {
+    //TODO: This can be further simplified.  Move private computeScaled(...) into this logic
+    const DWIMetaDataDictionaryValidator::GradientTableType& UnitNormDiffusionVectors = this->GetDiffusionVectors();
+    const std::vector<double>& bValues = this->GetBValues();
+    const double maxBvalue = this->GetMaxBValue();
+    const DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors =
+      this->computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
+    return BvalueScaledDiffusionVectors;
+  }
 
   const std::vector<double> &GetBValues() const { return this->m_BValues; }
   double GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
@@ -410,6 +420,31 @@ protected:
       }
     }
     return maxBvalue;
+  }
+
+  DWIMetaDataDictionaryValidator::GradientTableType
+  computeScaledDiffusionVectors( const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors,
+    const std::vector<double> &bValues,
+    const double maxBvalue) const
+  {
+    DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors;
+    for( unsigned int k = 0; k < UnitNormDiffusionVectors.size(); ++k )
+    {
+      vnl_vector_fixed<double,3> vec(3);
+      float scaleFactor = 0;
+      if( maxBvalue > 0 )
+      {
+        scaleFactor = sqrt( bValues[k] / maxBvalue );
+      }
+      std::cout << "Scale Factor for Multiple BValues: " << k << " -- sqrt( " << bValues[k] << " / " << maxBvalue << " ) = "
+                << scaleFactor << std::endl;
+      for( unsigned ind = 0; ind < 3; ++ind )
+      {
+        vec[ind] = UnitNormDiffusionVectors[k][ind] * scaleFactor;
+      }
+      BvalueScaledDiffusionVectors.push_back(vec);
+    }
+    return BvalueScaledDiffusionVectors;
   }
 
   /** add vendor-specific flags; */

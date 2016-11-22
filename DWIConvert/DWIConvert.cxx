@@ -344,30 +344,6 @@ Write4DVolume( DWIConverter::VolumeType::Pointer img, int nVolumes, const std::s
 }
 
 
-DWIMetaDataDictionaryValidator::GradientTableType
-computeScaledDiffusionVectors( const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors,
-                               const std::vector<double> &bValues,
-                               const double maxBvalue)
-{
-  DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors;
-  for( unsigned int k = 0; k < UnitNormDiffusionVectors.size(); ++k )
-    {
-    vnl_vector_fixed<double,3> vec(3);
-    float scaleFactor = 0;
-    if( maxBvalue > 0 )
-      {
-      scaleFactor = sqrt( bValues[k] / maxBvalue );
-      }
-    std::cout << "Scale Factor for Multiple BValues: " << k << " -- sqrt( " << bValues[k] << " / " << maxBvalue << " ) = "
-    << scaleFactor << std::endl;
-    for( unsigned ind = 0; ind < 3; ++ind )
-      {
-      vec[ind] = UnitNormDiffusionVectors[k][ind] * scaleFactor;
-      }
-    BvalueScaledDiffusionVectors.push_back(vec);
-    }
-  return BvalueScaledDiffusionVectors;
-}
 
 int main(int argc, char *argv[])
 {
@@ -566,12 +542,10 @@ int main(int argc, char *argv[])
     }
 
 
-  const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors = converter->GetDiffusionVectors();
-  const std::vector<double> &bValues = converter->GetBValues();
-  const double maxBvalue = converter->GetMaxBValue();
-  const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
-    computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
 
+
+  const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
+    converter->computeScaledDiffusionVectors();
   // construct vector of gradients
   DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
   if( gradientVectorFile != "" )
@@ -624,8 +598,7 @@ int main(int argc, char *argv[])
         // In order to compare two different scans to determine if the same protocol was prosribed,
         // it is necessary to multiply each of the recorded diffusion gradient directions by
         // the inverse of the LPSDirCos.
-        vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors =
-          InverseMeasurementFrame * (BvalueScaledDiffusionVectors[k]);
+        vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors = InverseMeasurementFrame * (BvalueScaledDiffusionVectors[k]);
         for( unsigned ind = 0; ind < 3; ++ind )
           {
           vec[ind] = RotatedScaledDiffusionVectors[ind];
@@ -677,7 +650,7 @@ int main(int argc, char *argv[])
   else
     {
     // write out in FSL format
-    if( WriteBValues<double>(bValues, outputFSLBValFilename) != EXIT_SUCCESS )
+    if( WriteBValues<double>(converter->GetBValues(), outputFSLBValFilename) != EXIT_SUCCESS )
       {
       std::cerr << "Failed to write " << outputFSLBValFilename
                 << std::endl;

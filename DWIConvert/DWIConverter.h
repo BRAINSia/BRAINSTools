@@ -67,7 +67,6 @@ public:
 
       this->m_NRRDSpaceDefinition = "left-posterior-superior";;
       this->m_MeasurementFrame.SetIdentity();
-      this->m_LPSDirCos.SetIdentity();
     }
 
   virtual ~DWIConverter() {}
@@ -210,6 +209,10 @@ public:
           }
         }
 
+    {
+    VolumeType::DirectionType LPSDirCos;
+    LPSDirCos.SetIdentity();
+
     // check ImageOrientationPatient and figure out slice direction in
     // L-P-I (right-handed) system.
     // In Dicom, the coordinate frame is L-P by default. Look at
@@ -222,21 +225,20 @@ public:
       {
       for( unsigned j = 0; j < 3; ++j, ++dirCosArrayP )
         {
-        this->m_LPSDirCos[j][i] = *dirCosArrayP;
+        LPSDirCos[j][i] = *dirCosArrayP;
         }
       }
 
     // Cross product, this gives I-axis direction
-    this->m_LPSDirCos[0][2] = this->m_LPSDirCos[1][0] * this->m_LPSDirCos[2][1] -
-      this->m_LPSDirCos[2][0] * this->m_LPSDirCos[1][1];
-    this->m_LPSDirCos[1][2] = this->m_LPSDirCos[2][0] * this->m_LPSDirCos[0][1] -
-      this->m_LPSDirCos[0][0] * this->m_LPSDirCos[2][1];
-    this->m_LPSDirCos[2][2] = this->m_LPSDirCos[0][0] * this->m_LPSDirCos[1][1] -
-      this->m_LPSDirCos[1][0] * this->m_LPSDirCos[0][1];
+    LPSDirCos[0][2] = LPSDirCos[1][0] * LPSDirCos[2][1] - LPSDirCos[2][0] * LPSDirCos[1][1];
+    LPSDirCos[1][2] = LPSDirCos[2][0] * LPSDirCos[0][1] - LPSDirCos[0][0] * LPSDirCos[2][1];
+    LPSDirCos[2][2] = LPSDirCos[0][0] * LPSDirCos[1][1] - LPSDirCos[1][0] * LPSDirCos[0][1];
 
+    this->m_Volume->SetDirection(LPSDirCos);
+    }
     std::cout << "ImageOrientationPatient (0020:0037): ";
     std::cout << "LPS Orientation Matrix" << std::endl;
-    std::cout << this->m_LPSDirCos << std::endl;
+    std::cout << this->m_Volume->GetDirection() << std::endl;
 
 
     std::cout << "this->m_SpacingMatrix" << std::endl;
@@ -294,11 +296,11 @@ public:
       return this->m_Volume->GetOrigin();
     }
 
-  RotationMatrixType   GetLPSDirCos() const { return this->m_LPSDirCos; }
+  RotationMatrixType   GetLPSDirCos() const { return this->m_Volume->GetDirection(); }
 
   RotationMatrixType GetMeasurementFrame() const { return this->m_MeasurementFrame; }
 
-  RotationMatrixType GetNRRDSpaceDirection() const { return  this->m_LPSDirCos * this->GetSpacingMatrix(); }
+  RotationMatrixType GetNRRDSpaceDirection() const { return  this->m_Volume->GetDirection() * this->GetSpacingMatrix(); }
 
   unsigned int GetNVolume() const { return this->m_NVolume; }
 
@@ -737,7 +739,7 @@ protected:
     }
   /** the SliceOrderIS flag can be computed (as above) but if it's
    *  invariant, the derived classes can just set the flag. This method
-   *  fixes up the m_LPDirCos after the flag is set.
+   *  fixes up the VolumeDirectionCos after the flag is set.
    */
   void SetDirectionsFromSliceOrder()
     {
@@ -746,12 +748,14 @@ protected:
         std::cout << "Slice order is IS" << std::endl;
         }
       else
-        {
+      {
         std::cout << "Slice order is SI" << std::endl;
-        this->m_LPSDirCos[0][2] = -this->m_LPSDirCos[0][2];
-        this->m_LPSDirCos[1][2] = -this->m_LPSDirCos[1][2];
-        this->m_LPSDirCos[2][2] = -this->m_LPSDirCos[2][2];
-        }
+        VolumeType::DirectionType LPSDirCos = this->m_Volume->GetDirection();
+        LPSDirCos[0][2] = -LPSDirCos[0][2];
+        LPSDirCos[1][2] = -LPSDirCos[1][2];
+        LPSDirCos[2][2] = -LPSDirCos[2][2];
+        this->m_Volume->SetDirection(LPSDirCos);
+      }
     }
 
   /* given a sequence of dicom files where all the slices for location
@@ -881,7 +885,6 @@ protected:
   bool                m_SliceOrderIS;
   /** the image read from the DICOM dataset */
   VolumeType::Pointer m_Volume;
-  RotationMatrixType   m_LPSDirCos; //TODO:  This needs to be removed next
 
   /** dimensions */
   unsigned short      m_Rows;

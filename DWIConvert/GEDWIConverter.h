@@ -34,7 +34,7 @@ public:
   virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
       this->DWIConverter::LoadDicomDirectory();
-      this->m_MeasurementFrame = this->m_LPSDirCos;
+      this->m_MeasurementFrame = this->m_Volume->GetDirection();
       this->DetermineSliceOrderIS();
       this->SetDirectionsFromSliceOrder();
       this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;

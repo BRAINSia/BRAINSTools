@@ -104,13 +104,6 @@
 
   <parameters advanced="true">
     <label>Advanced Conversion Parameters</label>
-    <boolean>
-      <name>fMRIOutput</name>
-      <longflag>--fMRI</longflag>
-      <label>Output fMRI file</label>
-      <description>Output a NRRD file, but without gradients</description>
-      <!-- booleans default to false -->
-    </boolean>
     <description><![CDATA[Options to control the output.]]></description>
     <boolean>
       <name>writeProtocolGradientsFile</name>
@@ -141,13 +134,6 @@
       <description><![CDATA[Directory holding the output NRRD file]]></description>
       <default>.</default>
     </directory>
-    <file>
-      <name>gradientVectorFile</name>
-      <longflag>--gradientVectorFile</longflag>
-      <label>Gradient Vector File</label>
-      <channel>output</channel>
-      <description><![CDATA[Text file giving gradient vectors]]></description>
-    </file>
     <double>
       <name>smallGradientThreshold</name>
       <longflag>--smallGradientThreshold</longflag>
@@ -168,6 +154,23 @@
       <label>Allow lossy image conversion</label>
       <default>false</default>
       <description><![CDATA[The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!"]]></description>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>DEPRECATED THESE DO NOT WORK</label>
+  <file>
+    <name>gradientVectorFile</name>
+    <longflag>--gradientVectorFile</longflag>
+    <label>Gradient Vector File</label>
+    <channel>output</channel>
+    <description><![CDATA[DEPRECATED:  Use --inputBVector --inputBValue files Text file giving gradient vectors]]></description>
+  </file>
+    <boolean>
+      <name>fMRIOutput</name>
+      <longflag>--fMRI</longflag>
+      <label>Output fMRI file</label>
+      <description>DEPRECATED:  No support or testing.  Output a NRRD file, but without gradients</description>
+      <!-- booleans default to false -->
     </boolean>
   </parameters>
 </executable>

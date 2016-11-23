@@ -307,8 +307,7 @@ public:
 
 
         std::cout << "LPS Matrix: " << std::endl << this->m_LPSDirCos << std::endl;
-        std::cout << "Volume Origin: " << std::endl << this->m_Origin[0] << ","
-                  << this->m_Origin[1] << ","  << this->m_Origin[2] << "," << std::endl;
+        std::cout << "Volume Origin: " << std::endl << this->m_Volume->GetOrigin() << std::endl;
         std::cout << "Number of slices per volume: " << this->m_SlicesPerVolume << std::endl;
         std::cout << "Slice matrix size: " << this->m_Rows << " X " << this->m_Cols << std::endl;
         std::cout << "Image resolution: " << this->m_Volume->GetSpacing() << std::endl;

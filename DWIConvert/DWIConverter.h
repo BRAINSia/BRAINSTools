@@ -64,14 +64,6 @@ public:
                                                     m_useIdentityMeaseurementFrame(false),
                                                     m_IsInterleaved(false)
     {
-      { // Set the m_Origin only 1 time, and then use it every time
-      // origin
-      double origin[3];
-      m_Headers[0]->GetOrigin(origin);
-      this->m_Origin[0] = origin[0];
-      this->m_Origin[1] = origin[1];
-      this->m_Origin[2] = origin[2];
-      }
 
       this->m_NRRDSpaceDefinition = "left-posterior-superior";;
       this->m_MeasurementFrame.SetIdentity();
@@ -133,6 +125,16 @@ public:
       m_Headers[0]->GetElementUS(0x0028, 0x0010, this->m_Rows);
       m_Headers[0]->GetElementUS(0x0028, 0x0011, this->m_Cols);
 
+      {
+      // origin
+      double origin[3];
+      m_Headers[0]->GetOrigin(origin);
+      VolumeType::PointType imOrigin;
+      imOrigin[0] = origin[0];
+      imOrigin[1] = origin[1];
+      imOrigin[2] = origin[2];
+        this->m_Volume->SetOrigin(imOrigin);
+      }
       // spacing
       {
 
@@ -289,11 +291,7 @@ public:
 
   VolumeType::PointType GetOrigin() const
     {
-      VolumeType::PointType rval;
-      rval[0] = this->m_Origin[0];
-      rval[1] = this->m_Origin[1];
-      rval[2] = this->m_Origin[2];
-      return rval;
+      return this->m_Volume->GetOrigin();
     }
 
   RotationMatrixType   GetLPSDirCos() const { return this->m_LPSDirCos; }
@@ -704,9 +702,9 @@ protected:
   void DetermineSliceOrderIS()
     {
       double image0Origin[3];
-      image0Origin[0]=m_Origin[0];
-      image0Origin[1]=m_Origin[1];
-      image0Origin[2]=m_Origin[2];
+      image0Origin[0]=this->m_Volume->GetOrigin()[0];
+      image0Origin[1]=this->m_Volume->GetOrigin()[1];
+      image0Origin[2]=this->m_Volume->GetOrigin()[2];
       std::cout << "Slice 0: " << image0Origin[0] << " "
                 << image0Origin[1] << " " << image0Origin[2] << std::endl;
 
@@ -883,16 +881,7 @@ protected:
   bool                m_SliceOrderIS;
   /** the image read from the DICOM dataset */
   VolumeType::Pointer m_Volume;
-  PointType            m_Origin; /** image origin */
-  RotationMatrixType   m_LPSDirCos;
-#if 0
-  /** spacing */
-  RotationMatrixType   m_SpacingMatrix;
-  double              m_XRes;
-  double              m_YRes;
-  double              m_SliceSpacing;
-#endif
-
+  RotationMatrixType   m_LPSDirCos; //TODO:  This needs to be removed next
 
   /** dimensions */
   unsigned short      m_Rows;

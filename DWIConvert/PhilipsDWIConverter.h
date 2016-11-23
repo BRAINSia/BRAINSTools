@@ -311,8 +311,7 @@ public:
                   << this->m_Origin[1] << ","  << this->m_Origin[2] << "," << std::endl;
         std::cout << "Number of slices per volume: " << this->m_SlicesPerVolume << std::endl;
         std::cout << "Slice matrix size: " << this->m_Rows << " X " << this->m_Cols << std::endl;
-        std::cout << "Image resolution: " << this->m_XRes << ", " << this->m_YRes << ", "
-                  << this->m_SliceSpacing << std::endl;
+        std::cout << "Image resolution: " << this->m_Volume->GetSpacing() << std::endl;
 
         this->m_MeasurementFrame = this->m_LPSDirCos;
 

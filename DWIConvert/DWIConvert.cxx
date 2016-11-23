@@ -265,7 +265,6 @@ for( unsigned i = 0; i < 3; ++i )
   // write header file
   // This part follows a DWI NRRD file in NRRD format 5.
   // There should be a better way using itkNRRDImageIO.
-    //TODO: Move this internal to converter class
     const std::string commentSection = converter->MakeFileComment(version,useBMatrixGradientDirections,
       useIdentityMeaseurementFrame, smallGradientThreshold);
 

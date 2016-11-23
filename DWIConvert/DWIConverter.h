@@ -53,17 +53,15 @@ public:
                const FileNamesContainer &inputFileNames,
                const bool useBMatrixGradientDirections) : m_Headers(allHeaders),
                                                     m_InputFileNames(inputFileNames),
+                                                    m_MultiSliceVolume(false),
+                                                    m_SliceOrderIS(true),
                                                     m_Rows(0),
                                                     m_Cols(0),
                                                     m_SlicesPerVolume(0),
-                                                    m_XRes(0.0),
-                                                    m_YRes(0.0),
-                                                    m_SliceSpacing(0.0),
-                                                    m_MultiSliceVolume(false),
-                                                    m_SliceOrderIS(true),
                                                     m_NSlice(0),
                                                     m_NVolume(0),
                                                     m_UseBMatrixGradientDirections(useBMatrixGradientDirections),
+                                                    m_useIdentityMeaseurementFrame(false),
                                                     m_IsInterleaved(false)
     {
       { // Set the m_Origin only 1 time, and then use it every time
@@ -78,7 +76,6 @@ public:
       this->m_NRRDSpaceDefinition = "left-posterior-superior";;
       this->m_MeasurementFrame.SetIdentity();
       this->m_LPSDirCos.SetIdentity();
-      this->m_SpacingMatrix.SetIdentity();
     }
 
   virtual ~DWIConverter() {}
@@ -137,11 +134,16 @@ public:
       m_Headers[0]->GetElementUS(0x0028, 0x0011, this->m_Cols);
 
       // spacing
+      {
+
       double spacing[3];
       m_Headers[0]->GetSpacing(spacing);
-      m_YRes = spacing[1];
-      m_XRes = spacing[0];
-      m_SliceSpacing = spacing[2];
+      SpacingType imSpacing;
+      imSpacing[0] = spacing[0];
+      imSpacing[1] = spacing[1];
+      imSpacing[2] = spacing[2];
+      m_Volume->SetSpacing(imSpacing);
+      }
 
       // a map of ints keyed by the slice location string
       // reported in the dicom file.  The number of slices per
@@ -234,17 +236,24 @@ public:
     std::cout << "LPS Orientation Matrix" << std::endl;
     std::cout << this->m_LPSDirCos << std::endl;
 
-    this->m_SpacingMatrix.Fill(0.0);
-    this->m_SpacingMatrix[0][0] = this->m_XRes;
-    this->m_SpacingMatrix[1][1] = this->m_YRes;
-    this->m_SpacingMatrix[2][2] = this->m_SliceSpacing;
+
     std::cout << "this->m_SpacingMatrix" << std::endl;
-    std::cout << this->m_SpacingMatrix << std::endl;
+    std::cout << this->GetSpacingMatrix() << std::endl;
 
     std::cout << "NRRDSpaceDirection" << std::endl;
     std::cout << this->GetNRRDSpaceDirection() << std::endl;
 
     }
+
+  RotationMatrixType GetSpacingMatrix() const
+  {
+    RotationMatrixType SpacingMatrix;
+    SpacingMatrix.Fill(0.0);
+    SpacingMatrix[0][0] = this->m_Volume->GetSpacing()[0];
+    SpacingMatrix[1][1] = this->m_Volume->GetSpacing()[1];
+    SpacingMatrix[2][2] = this->m_Volume->GetSpacing()[2];
+    return SpacingMatrix;
+  }
   /** extract dwi data -- vendor specific so must happen in subclass
    *  implementing this method.
    */
@@ -275,11 +284,7 @@ public:
 
   SpacingType GetSpacing() const
     {
-      SpacingType spacing;
-      spacing[0] = this->m_XRes;
-      spacing[1] = this->m_YRes;
-      spacing[2] = this->m_SliceSpacing;
-      return spacing;
+      return this->m_Volume->GetSpacing();
     }
 
   VolumeType::PointType GetOrigin() const
@@ -295,7 +300,7 @@ public:
 
   RotationMatrixType GetMeasurementFrame() const { return this->m_MeasurementFrame; }
 
-  RotationMatrixType GetNRRDSpaceDirection() const { return  this->m_LPSDirCos * this->m_SpacingMatrix; }
+  RotationMatrixType GetNRRDSpaceDirection() const { return  this->m_LPSDirCos * this->GetSpacingMatrix(); }
 
   unsigned int GetNVolume() const { return this->m_NVolume; }
 
@@ -865,37 +870,39 @@ protected:
    */
   const FileNamesContainer  m_InputFileNames;
 
-  /** dimensions */
-  unsigned short      m_Rows;
-  unsigned short      m_Cols;
-  unsigned int        m_SlicesPerVolume;
-
-  /** spacing */
-  double              m_XRes;
-  double              m_YRes;
-  double              m_SliceSpacing;
-
-  /** image origin */
-  PointType            m_Origin;
 
   /** measurement from for gradients if different than patient
    *  reference frame.
    */
   RotationMatrixType   m_MeasurementFrame;
   /** potentially the measurement frame */
-  RotationMatrixType   m_LPSDirCos;
   /** matrix with just spacing information, used a couple places */
-  RotationMatrixType   m_SpacingMatrix;
   /** the current dataset is represented in a single file */
   bool                m_MultiSliceVolume;
   /** slice order is inferior/superior? */
   bool                m_SliceOrderIS;
   /** the image read from the DICOM dataset */
   VolumeType::Pointer m_Volume;
+  PointType            m_Origin; /** image origin */
+  RotationMatrixType   m_LPSDirCos;
+#if 0
+  /** spacing */
+  RotationMatrixType   m_SpacingMatrix;
+  double              m_XRes;
+  double              m_YRes;
+  double              m_SliceSpacing;
+#endif
+
+
+  /** dimensions */
+  unsigned short      m_Rows;
+  unsigned short      m_Cols;
+  unsigned int        m_SlicesPerVolume;
   /** number of total slices */
   unsigned int        m_NSlice;
   /** number of gradient volumes */
   unsigned int        m_NVolume;
+
 
   /** list of B Values for each volume */
   std::vector<double>  m_BValues;

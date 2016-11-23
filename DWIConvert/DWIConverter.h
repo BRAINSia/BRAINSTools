@@ -62,10 +62,9 @@ public:
                                                     m_NVolume(0),
                                                     m_UseBMatrixGradientDirections(useBMatrixGradientDirections),
                                                     m_useIdentityMeaseurementFrame(false),
-                                                    m_IsInterleaved(false)
+                                                    m_IsInterleaved(false),
+                                                    m_NRRDSpaceDefinition("left-posterior-superior")
     {
-
-      this->m_NRRDSpaceDefinition = "left-posterior-superior";;
       this->m_MeasurementFrame.SetIdentity();
     }
 
@@ -900,11 +899,9 @@ protected:
   std::vector<double>  m_BValues;
   /** list of gradient vectors */
   DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
-  /** double conversion instance, for optimal printing of numbers as
-   *  text
-   */
+  /** double conversion instance, for optimal printing of numbers as  text */
   itk::NumberToString<double> m_DoubleConvert;
-  /** use the BMatrix to compute gradients in Siemens data instead of
+  /** force use of the BMatrix to compute gradients in Siemens data instead of
    *  the reported graients. which are in many cases bogus.
    */
   const bool m_UseBMatrixGradientDirections;
@@ -912,10 +909,8 @@ protected:
 
   /** track if images is interleaved */
   bool                        m_IsInterleaved;
-  /** again this is always the same (so far) but someone thought
-   *  it might be important to change it.
-   */
-  std::string                 m_NRRDSpaceDefinition;
+  // this is always "left-posterior-superior" in all cases that we currently support
+  const std::string           m_NRRDSpaceDefinition;
 };
 
 #endif // __DWIConverter_h

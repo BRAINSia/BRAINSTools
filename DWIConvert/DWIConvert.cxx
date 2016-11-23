@@ -166,6 +166,10 @@ int main(int argc, char *argv[])
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
     return EXIT_FAILURE;
   }
+  if( gradientVectorFile != "" ) {
+    std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   if( outputVolume == "" )
   {
@@ -210,12 +214,16 @@ int main(int argc, char *argv[])
     exit(-1);
   }
 
+#if 0 //This should use the bvec and bval file formats
+  // NEED TO ADD --forceGradientOverwrite, and then read bvec and bval files
+  // A test needs to be written for this case
   // ^^^^^^^^^^^^^^^^^^^^^^^ Done Reading Above this line
   //Overwrite gradient directions
   if( gradientVectorFile != "" )
   {
     converter->readOverwriteGradientVectorFile(gradientVectorFile);
   }
+#endif
   //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
 
 

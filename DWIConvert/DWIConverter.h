@@ -55,8 +55,6 @@ public:
                                                     m_InputFileNames(inputFileNames),
                                                     m_MultiSliceVolume(false),
                                                     m_SliceOrderIS(true),
-                                                    m_Rows(0),
-                                                    m_Cols(0),
                                                     m_SlicesPerVolume(0),
                                                     m_NSlice(0),
                                                     m_NVolume(0),
@@ -120,8 +118,27 @@ public:
         }
 
       // figure out image dimensions
-      m_Headers[0]->GetElementUS(0x0028, 0x0010, this->m_Rows);
-      m_Headers[0]->GetElementUS(0x0028, 0x0011, this->m_Cols);
+      {
+        //TODO:  Remove this redundant code.
+        unsigned short rows, cols;
+        m_Headers[0]->GetElementUS(0x0028, 0x0010, rows);
+        m_Headers[0]->GetElementUS(0x0028, 0x0011, cols);
+
+
+        if(cols != this->GetCols() )
+        {
+          itkGenericExceptionMacro(<< "ERROR:  Cols do not match what was read by image " << cols <<  " != " <<
+            this->m_Volume->GetLargestPossibleRegion().GetSize()[1] << std::endl
+          )
+        }
+
+        if(rows != this->GetRows() )
+        {
+          itkGenericExceptionMacro(<< "ERROR:  Rows do not match what was read by image " << rows << " != " <<
+            this->m_Volume->GetLargestPossibleRegion().GetSize()[0] << std::endl
+          )
+        }
+      }
 
       {
       // origin
@@ -131,7 +148,7 @@ public:
       imOrigin[0] = origin[0];
       imOrigin[1] = origin[1];
       imOrigin[2] = origin[2];
-        this->m_Volume->SetOrigin(imOrigin);
+      this->m_Volume->SetOrigin(imOrigin);
       }
       // spacing
       {
@@ -305,9 +322,9 @@ public:
 
   std::string GetNRRDSpaceDefinition() const { return this->m_NRRDSpaceDefinition; }
 
-  unsigned short GetRows() const { return m_Rows; }
+  unsigned short GetRows() const { return this->m_Volume->GetLargestPossibleRegion().GetSize()[0]; }
 
-  unsigned short GetCols() const { return m_Cols; }
+  unsigned short GetCols() const { return this->m_Volume->GetLargestPossibleRegion().GetSize()[1]; }
 
   unsigned int GetSlicesPerVolume() const { return m_SlicesPerVolume; }
 
@@ -886,8 +903,6 @@ protected:
   VolumeType::Pointer m_Volume;
 
   /** dimensions */
-  unsigned short      m_Rows;
-  unsigned short      m_Cols;
   unsigned int        m_SlicesPerVolume;
   /** number of total slices */
   unsigned int        m_NSlice;

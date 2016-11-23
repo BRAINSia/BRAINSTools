@@ -531,90 +531,92 @@ private:
 protected:
   /** turn a mosaic image back into a sequential volume image */
   void DeMosaic()
+  {
+    // center the volume since the image position patient given in the
+    // dicom header was useless
+    //Adjust origin based on mosaic settings
+    //The origin of a mosaic is presented as if the entire region were one image capture.
+    //What we really need is the center image origin.
+    /* https://mail.nmr.mgh.harvard.edu/pipermail/freesurfer/2010-March/013821.html
+     * Mosaics - DICOM (20,32) is incorrect for mosaics. The value in
+     * this field gives where the origin of an image the size of the
+     * mosaic would have been had such an image been collected. This puts
+     * the origin outside of the scanner.  However, the center of a slice
+     * can be obtained from the ASCII header from lines of the form
+     * "sSliceArray.asSlice[N].sPosition.dAAA", where N is the slice
+     * number and AAA is Sag (x), Cor (y), and Tra (z). This may be off by half a voxel.
+     * Given this information, the direction cosines, the
+     * voxel size, and dimension, the origin can be computed.
+     */
+
+    VolumeType::Pointer previousImage = this->m_Volume;
+
+    VolumeType::RegionType region = previousImage->GetLargestPossibleRegion();
+    VolumeType::SizeType   size = region.GetSize();
+
+    // de-mosaic
+    PointType mosaicSize;
+    mosaicSize[0]=size[0];
+    mosaicSize[1]=size[1];
+    mosaicSize[2]=0;
+
+    VolumeType::SizeType dmSize = size;
+    unsigned int         original_slice_number = dmSize[2] * m_SlicesPerVolume;
+    dmSize[0] /= this->m_MMosaic;
+    dmSize[1] /= this->m_NMosaic;
+    dmSize[2] = this->m_NVolume * this->m_SlicesPerVolume;
+
+    PointType sliceSize;
+    sliceSize[0] = dmSize[0];
+    sliceSize[1] = dmSize[1];
+    sliceSize[2] = 0;
+
+    region.SetSize( dmSize );
+    this->m_Volume = VolumeType::New();
+    this->m_Volume->CopyInformation( previousImage );
+    this->m_Volume->SetRegions( region );
+    this->m_Volume->Allocate();
+
+    //Fix Origin
+    // http://nipy.org/nibabel/dicom/dicom_mosaic.html
+    this->m_Volume->SetOrigin(
+      previousImage->GetOrigin()
+        + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 )
+    );
+
+
+    VolumeType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
+    dmRegion.SetSize(2, 1);
+    region.SetSize(0, dmSize[0]);
+    region.SetSize(1, dmSize[1]);
+    region.SetSize(2, 1);
+
+    for( unsigned int k = 0; k < original_slice_number; ++k )
     {
-      // de-mosaic
-      PointType mosaicSize;
-      mosaicSize[0]=this->m_Cols;
-      mosaicSize[1]=this->m_Rows;
-      mosaicSize[2]=0;
-      this->m_Cols /= this->m_MMosaic;
-      this->m_Rows /= this->m_NMosaic;
+      unsigned int new_k = k /* - bad_slice_counter */;
 
-      // center the volume since the image position patient given in the
-      // dicom header was useless
-      //Adjust origin based on mosaic settings
-      //The origin of a mosaic is presented as if the entire region were one image capture.
-      //What we really need is the center image origin.
-      /* https://mail.nmr.mgh.harvard.edu/pipermail/freesurfer/2010-March/013821.html
-       * Mosaics - DICOM (20,32) is incorrect for mosaics. The value in
-       * this field gives where the origin of an image the size of the
-       * mosaic would have been had such an image been collected. This puts
-       * the origin outside of the scanner.  However, the center of a slice
-       * can be obtained from the ASCII header from lines of the form
-       * "sSliceArray.asSlice[N].sPosition.dAAA", where N is the slice
-       * number and AAA is Sag (x), Cor (y), and Tra (z). This may be off by half a voxel.
-       * Given this information, the direction cosines, the
-       * voxel size, and dimension, the origin can be computed.
-       */
-      PointType sliceSize;
-      sliceSize[0] = this->m_Cols;
-      sliceSize[1] = this->m_Rows;
-      sliceSize[2] = 0;
+      dmRegion.SetIndex(2, new_k);
+      itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( this->m_Volume, dmRegion );
 
-      // http://nipy.org/nibabel/dicom/dicom_mosaic.html
-      this->m_Volume->SetOrigin(
-        this->m_Volume->GetOrigin() + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 )
-      );
+      // figure out the mosaic region for this slice
+      int sliceIndex = k;
 
-      VolumeType::Pointer img = this->m_Volume;
+      // int nBlockPerSlice = this->m_Mosaic*this->m_NMosaic;
+      int slcMosaic = sliceIndex / (m_SlicesPerVolume);
+      sliceIndex -= slcMosaic * m_SlicesPerVolume;
+      int colMosaic = sliceIndex / this->m_MMosaic;
+      int rawMosaic = sliceIndex - this->m_MMosaic * colMosaic;
+      region.SetIndex( 0, rawMosaic * dmSize[0] );
+      region.SetIndex( 1, colMosaic * dmSize[1] );
+      region.SetIndex( 2, slcMosaic );
 
-      VolumeType::RegionType region = img->GetLargestPossibleRegion();
-      VolumeType::SizeType   size = region.GetSize();
-
-      VolumeType::SizeType dmSize = size;
-      unsigned int         original_slice_number = dmSize[2] * m_SlicesPerVolume;
-      dmSize[0] /= this->m_MMosaic;
-      dmSize[1] /= this->m_NMosaic;
-      dmSize[2] = this->m_NVolume * this->m_SlicesPerVolume;
-
-      region.SetSize( dmSize );
-      this->m_Volume = VolumeType::New();
-      this->m_Volume->CopyInformation( img );
-      this->m_Volume->SetRegions( region );
-      this->m_Volume->Allocate();
-
-      VolumeType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
-      dmRegion.SetSize(2, 1);
-      region.SetSize(0, dmSize[0]);
-      region.SetSize(1, dmSize[1]);
-      region.SetSize(2, 1);
-
-      for( unsigned int k = 0; k < original_slice_number; ++k )
-        {
-        unsigned int new_k = k /* - bad_slice_counter */;
-
-        dmRegion.SetIndex(2, new_k);
-        itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( this->m_Volume, dmRegion );
-
-        // figure out the mosaic region for this slice
-        int sliceIndex = k;
-
-        // int nBlockPerSlice = this->m_Mosaic*this->m_NMosaic;
-        int slcMosaic = sliceIndex / (m_SlicesPerVolume);
-        sliceIndex -= slcMosaic * m_SlicesPerVolume;
-        int colMosaic = sliceIndex / this->m_MMosaic;
-        int rawMosaic = sliceIndex - this->m_MMosaic * colMosaic;
-        region.SetIndex( 0, rawMosaic * dmSize[0] );
-        region.SetIndex( 1, colMosaic * dmSize[1] );
-        region.SetIndex( 2, slcMosaic );
-
-        itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
-        for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
-          {
-          dmIt.Set( imIt.Get() );
-          }
-        }
+      itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( previousImage, region );
+      for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
+      {
+        dmIt.Set( imIt.Get() );
+      }
     }
+  }
 
   unsigned int ConvertFromCharPtr(const char *s)
     {

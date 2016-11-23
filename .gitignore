@@ -32,6 +32,7 @@
 .clang_complete
 .emacs.desktop
 .idea
+cmake-build-debug
 .svn
 CMakeCache.txt
 CMakeFiles/*

@@ -409,7 +409,9 @@ public:
     return true;
     }
 
-  /** find the bvalues and gradient vectors */
+   /**
+    * @brief  find the bvalues and gradient vectors
+    */
   void ExtractDWIData() ITK_OVERRIDE
     {
       for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )

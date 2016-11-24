@@ -39,8 +39,11 @@
 class DWIConverter
 {
 public:
-  typedef short                               PixelValueType;
-  typedef itk::Image<PixelValueType, 3>       VolumeType;
+  typedef short                                       PixelValueType;
+  //TODO: Rename VolumeType to VolumeType3D
+  typedef itk::Image<PixelValueType, 3>               VolumeType;
+  typedef itk::Image<DWIConverter::PixelValueType, 4> Volume4DType;
+
   typedef VolumeType::SpacingType             SpacingType;
   typedef itk::ImageSeriesReader<VolumeType>  ReaderType;
   typedef ReaderType::FileNamesContainer      FileNamesContainer;
@@ -358,6 +361,7 @@ public:
       }
       this->m_DiffusionVectors.push_back(vec);
     }
+    return;
   }
 
 
@@ -574,100 +578,187 @@ public:
       }
     }
     header.close();
+    return;
   }
 
   void SetUseIdentityMeaseurementFrame(const bool value)
   {
     this->m_useIdentityMeaseurementFrame = value;
+    return;
   }
 
-/** the DICOM datasets are read as 3D volumes, but they need to be
- *  written as 4D volumes for image types other than NRRD.
- */
-  int
-  WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-    const std::string outputBValues, const std::string
-  outputBVectors) const
+  Volume4DType::Pointer ThreeDToFourDImage(VolumeType::Pointer img) const
   {
-    DWIConverter::VolumeType::Pointer img = this->GetDiffusionVolume();
+    // FSLOutput requires a NIfTI file
+    // copy the computed reference frame to the image so that ITK
+    // writes the correct stuff out.
+    /* // HACK
+    const itk::Matrix<double, 3, 3> NIfTIDirCos = this->GetLPSDirCos();
+     for( unsigned i = 0; i < 3; ++i )
+     {
+     NIfTIDirCos[i][2] *= -1.0;
+     }
+    this->GetDiffusionVolume()->SetDirection(NIfTIDirCos);
+    this->GetDiffusionVolume()->SetSpacing(this->GetSpacing());
+
+    DWIConverter::VolumeType::PointType origin = this->GetOrigin();
+    this->GetDiffusionVolume()->SetOrigin(origin);
+    */
+
     const int nVolumes = this->GetNVolume();
-    typedef itk::Image<DWIConverter::PixelValueType, 4> Volume4DType;
 
-    DWIConverter::VolumeType::SizeType      size3D(img->GetLargestPossibleRegion().GetSize() );
-    DWIConverter::VolumeType::DirectionType direction3D(img->GetDirection() );
-    DWIConverter::VolumeType::SpacingType   spacing3D(img->GetSpacing() );
-    DWIConverter::VolumeType::PointType     origin3D(img->GetOrigin() );
+    DWIConverter::VolumeType::SizeType size3D(img->GetLargestPossibleRegion().GetSize());
+    DWIConverter::VolumeType::DirectionType direction3D(img->GetDirection());
+    DWIConverter::VolumeType::SpacingType spacing3D(img->GetSpacing());
+    DWIConverter::VolumeType::PointType origin3D(img->GetOrigin());
 
-    Volume4DType::SizeType size4D;
-    size4D[0] = size3D[0];
-    size4D[1] = size3D[1];
-    size4D[2] = size3D[2] / nVolumes;
-    size4D[3] = nVolumes;
-
-    if( (size4D[2] * nVolumes) != size3D[2] )
+    Volume4DType::RegionType region4D;
     {
-      std::cerr << "#of slices in volume not evenly divisible by"
-                << " the number of volumes: slices = " << size3D[2]
-                << " volumes = " << nVolumes << " left-over slices = "
-                << size3D[2] % nVolumes << std::endl;
+      Volume4DType::SizeType size4D;
+      size4D[0] = size3D[0];
+      size4D[1] = size3D[1];
+      size4D[2] = size3D[2]/nVolumes;
+      size4D[3] = nVolumes;
+      Volume4DType::IndexType index4D;
+      index4D.Fill(0);
+      region4D.SetIndex(index4D);
+      region4D.SetSize(size4D);
+
+      if ((size4D[2]*nVolumes)!=size3D[2]) {
+        itkGenericExceptionMacro(
+          << "#of slices in volume not evenly divisible by"
+          << " the number of volumes: slices = " << size3D[2]
+          << " volumes = " << nVolumes << " left-over slices = "
+          << size3D[2] % nVolumes << std::endl);
+      }
     }
     Volume4DType::DirectionType direction4D;
+    direction4D.SetIdentity();
     Volume4DType::SpacingType   spacing4D;
+    spacing4D.Fill(1.0);
     Volume4DType::PointType     origin4D;
+    origin4D.Fill(0.0);
     for( unsigned i = 0; i < 3; ++i )
     {
       for( unsigned j = 0; j < 3; ++j )
       {
         direction4D[i][j] = direction3D[i][j];
       }
-      direction4D[3][i] = 0.0;
-      direction4D[i][3] = 0.0;
       spacing4D[i] = spacing3D[i];
       origin4D[i] = origin3D[i];
     }
-    direction4D[3][3] = 1.0;
-    spacing4D[3] = 1.0;
-    origin4D[3] = 0.0;
+
 
     Volume4DType::Pointer img4D = Volume4DType::New();
-    img4D->SetRegions(size4D);
+    img4D->SetRegions(region4D);
     img4D->SetDirection(direction4D);
     img4D->SetSpacing(spacing4D);
     img4D->SetOrigin(origin4D);
-
     img4D->Allocate();
-    img4D->SetMetaDataDictionary(img->GetMetaDataDictionary());
-    size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels();
-    bytecount *= sizeof(DWIConverter::PixelValueType);
-    memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
-//#define DEBUG_WRITE4DVOLUME
-#ifdef DEBUG_WRITE4DVOLUME
-    {
-   {
-      //Set the qform and sfrom codes for the MetaDataDictionary.
-      itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
-      itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
-   }
-    itk::ImageFileWriter<DWIConverter::VolumeType>::Pointer writer = itk::ImageFileWriter<DWIConverter::VolumeType>::New();
-    writer->SetFileName( "/tmp/dwi3dconvert.nii.gz");
-    writer->SetInput( img );
-    writer->Update();
-    }
-#endif
 
     {
+      img4D->SetMetaDataDictionary(img->GetMetaDataDictionary());
       //Set the qform and sfrom codes for the MetaDataDictionary.
       itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
       itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
       itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
     }
-    itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
 
+    const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels()
+      * sizeof(DWIConverter::PixelValueType);
+
+    memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
+    return img4D;
+  }
+
+
+  VolumeType::Pointer FourDToThreeDImage(Volume4DType::Pointer img4D) const
+  {
+
+
+    DWIConverter::Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize() );
+    DWIConverter::Volume4DType::DirectionType direction4D(img4D->GetDirection() );
+    DWIConverter::Volume4DType::SpacingType   spacing4D(img4D->GetSpacing() );
+    DWIConverter::Volume4DType::PointType     origin4D(img4D->GetOrigin() );
+
+    VolumeType::RegionType region3D;
+    {
+      VolumeType::SizeType size3D;
+      size3D[0] = size4D[0];
+      size3D[1] = size4D[1];
+      const int nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
+      size3D[2] = size4D[2] * nVolumes;
+
+      VolumeType::IndexType index3D;
+      index3D.Fill(0);
+      region3D.SetIndex(index3D);
+      region3D.SetSize(size3D);
+
+      if( (size4D[2] * nVolumes) != size3D[2] )
+      {
+        itkGenericExceptionMacro(
+          << "#of slices in volume not evenly divisible by"
+          << " the number of volumes: slices = " << size3D[2]
+          << " volumes = " << nVolumes << " left-over slices = "
+          << size3D[2] % nVolumes << std::endl);
+      }
+    }
+    VolumeType::DirectionType direction3D;
+    direction3D.SetIdentity();
+    VolumeType::SpacingType   spacing3D;
+    spacing3D.Fill(1.0);
+    VolumeType::PointType     origin3D;
+    origin3D.Fill(0.0);
+    for( unsigned i = 0; i < 3; ++i )
+    {
+      for( unsigned j = 0; j < 3; ++j )
+      {
+        direction3D[i][j] = direction4D[i][j];
+      }
+      spacing3D[i] = spacing4D[i];
+      origin3D[i] = origin4D[i];
+    }
+
+    VolumeType::Pointer img = VolumeType::New();
+    img->SetRegions(region3D);
+    img->SetDirection(direction3D);
+    img->SetSpacing(spacing3D);
+    img->SetOrigin(origin3D);
+    img->Allocate();
+
+    {
+      img->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
+      //Set the qform and sfrom codes for the MetaDataDictionary.
+      itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
+      itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
+    }
+
+    const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels()
+      * sizeof(DWIConverter::PixelValueType);
+
+    memcpy(img->GetBufferPointer(), img4D->GetBufferPointer(), bytecount);
+    return img;
+  }
+
+/** the DICOM datasets are read as 3D volumes, but they need to be
+ *  written as 4D volumes for image types other than NRRD.
+ */
+  void
+  WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
+    const std::string outputBValues, const std::string
+  outputBVectors) const
+  {
+
+    Volume4DType::Pointer img4D = ThreeDToFourDImage(this->GetDiffusionVolume());
+    itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
     imgWriter->SetInput( img4D );
-    imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
+    imgWriter->SetFileName( outputVolumeHeaderName );
     try
     {
+      imgWriter->Update();
+      //HACK
+      imgWriter->SetFileName( outputVolumeHeaderName + ".nhdr" );
       imgWriter->Update();
     }
     catch( itk::ExceptionObject & excp )
@@ -675,7 +766,7 @@ public:
       std::cerr << "Exception thrown while writing "
                 << outputVolumeHeaderName << std::endl;
       std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
+      throw;
     }
     // FSL output of gradients & BValues
     std::string outputFSLBValFilename;
@@ -702,17 +793,12 @@ public:
     // write out in FSL format
     if( WriteBValues<double>(this->GetBValues(), outputFSLBValFilename) != EXIT_SUCCESS )
     {
-      std::cerr << "Failed to write " << outputFSLBValFilename
-                << std::endl;
-      return EXIT_FAILURE;
+      itkGenericExceptionMacro(<< "Failed to write FSL BVal File: " << outputFSLBValFilename << std::endl;);
     }
     if( WriteBVectors(this->computeBvalueScaledDiffusionTensors(), outputFSLBVecFilename) != EXIT_SUCCESS )
     {
-      std::cerr << "Failed to write " << outputFSLBVecFilename
-                << std::endl;
-      return EXIT_FAILURE;
+      itkGenericExceptionMacro(<< "Failed to write FSL BVec File: " << outputFSLBVecFilename << std::endl;);
     }
-    return EXIT_SUCCESS;
   }
 
 protected:
@@ -917,7 +1003,7 @@ protected:
   /** double conversion instance, for optimal printing of numbers as  text */
   itk::NumberToString<double> m_DoubleConvert;
   /** force use of the BMatrix to compute gradients in Siemens data instead of
-   *  the reported graients. which are in many cases bogus.
+   *  the reported gradients. which are in many cases bogus.
    */
   const bool m_UseBMatrixGradientDirections;
   bool       m_useIdentityMeaseurementFrame;

@@ -244,28 +244,8 @@ int main(int argc, char *argv[])
 
   if( conversionMode == "DicomToFSL" )
   {
-    // FSLOutput requires a NIfTI file
-    // copy the computed reference frame to the image so that ITK
-    // writes the correct stuff out.
-    const itk::Matrix<double, 3, 3> NIfTIDirCos = converter->GetLPSDirCos();
-    /* // HACK
-for( unsigned i = 0; i < 3; ++i )
-  {
-  NIfTIDirCos[i][2] *= -1.0;
-  }
-     */
-    converter->GetDiffusionVolume()->SetDirection(NIfTIDirCos);
-    converter->GetDiffusionVolume()->SetSpacing(converter->GetSpacing());
-
-    DWIConverter::VolumeType::PointType origin = converter->GetOrigin();
-    converter->GetDiffusionVolume()->SetOrigin(origin);
     // write the image */
-    if(converter->WriteFSLFormattedFileSet(outputVolumeHeaderName,
-      outputBValues, outputBVectors) != EXIT_SUCCESS )
-    {
-      delete converter;
-      return EXIT_FAILURE;
-    }
+    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, outputBValues, outputBVectors);
   }
   else
   {

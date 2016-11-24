@@ -18,16 +18,17 @@
  *=========================================================================*/
 #ifndef __PhilipsDWIConverter_h
 #define __PhilipsDWIConverter_h
-#include "DWIConverter.h"
+
+#include "DWIDICOMConverterBase.h"
 #include "itkExtractImageFilter.h"
 
 /** specific converter for Philips scanners */
-class PhilipsDWIConverter : public DWIConverter
+class PhilipsDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  PhilipsDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
+  PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      bool useBMatrixGradientDirections) : DWIConverter(allHeaders,inputFileNames,
+                      bool useBMatrixGradientDirections) : DWIDICOMConverterBase(allHeaders,inputFileNames,
                                                                         useBMatrixGradientDirections)
     {
     }
@@ -36,7 +37,7 @@ public:
 
   virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
-      this->DWIConverter::LoadDicomDirectory();
+      this->DWIDICOMConverterBase::LoadDicomDirectory();
       if(!this->m_MultiSliceVolume)
         {
         this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;

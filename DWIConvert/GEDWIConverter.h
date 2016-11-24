@@ -18,22 +18,22 @@
  *=========================================================================*/
 #ifndef __GEDWIConverter_h
 #define __GEDWIConverter_h
-#include "DWIConverter.h"
+#include "DWIDICOMConverterBase.h"
 
 /** Specific converter for GE Scanners */
-class GEDWIConverter : public DWIConverter
+class GEDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  GEDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
+  GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                  DWIConverter::FileNamesContainer &inputFileNames,
-                 bool useBMatrixGradientDirections) : DWIConverter(allHeaders,inputFileNames,
+                 bool useBMatrixGradientDirections) : DWIDICOMConverterBase(allHeaders,inputFileNames,
                                                                    useBMatrixGradientDirections)
     {
     }
   virtual ~GEDWIConverter() {}
   virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
-      this->DWIConverter::LoadDicomDirectory();
+      this->DWIDICOMConverterBase::LoadDicomDirectory();
       this->m_MeasurementFrame = this->m_Volume->GetDirection();
       this->DetermineSliceOrderIS();
       this->SetDirectionsFromSliceOrder();

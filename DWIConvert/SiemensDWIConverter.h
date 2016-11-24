@@ -22,13 +22,13 @@
 #include "StringContains.h"
 
 /** specific converter for Siemens scanners*/
-class SiemensDWIConverter : public DWIConverter
+class SiemensDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  SiemensDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
+  SiemensDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
                       bool useBMatrixGradientDirections,
-                      double smallGradientThreshold) : DWIConverter(allHeaders,inputFileNames,
+                      double smallGradientThreshold) : DWIDICOMConverterBase(allHeaders,inputFileNames,
                                                                     useBMatrixGradientDirections),
                                                        m_SmallGradientThreshold(smallGradientThreshold),
                                                        m_MMosaic(0),
@@ -213,7 +213,7 @@ public:
    */
   virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
-      this->DWIConverter::LoadDicomDirectory();
+      this->DWIDICOMConverterBase::LoadDicomDirectory();
       std::string ImageType;
       this->m_MeasurementFrame.SetIdentity();
       this->m_Headers[0]->GetElementCS(0x0008, 0x0008, ImageType);

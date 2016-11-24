@@ -25,10 +25,8 @@
 class FSLDWIConverter : public DWIConverter
 {
 public:
-  FSLDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
-                      DWIConverter::FileNamesContainer &inputFileNames,
-                      bool useBMatrixGradientDirections
-                      ) : DWIConverter(allHeaders,inputFileNames, useBMatrixGradientDirections)
+  FSLDWIConverter( DWIConverter::FileNamesContainer &inputFileNames )
+    : DWIConverter(inputFileNames)
     {
     }
   virtual ~FSLDWIConverter() {}
@@ -41,7 +39,7 @@ public:
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
    */
-  virtual void LoadDicomDirectory() ITK_OVERRIDE
+   virtual void LoadFromDisk() ITK_OVERRIDE
     {
     }
 

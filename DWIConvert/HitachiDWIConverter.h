@@ -22,12 +22,12 @@
 #include "DWIConverter.h"
 
 /** specific converter for Hitachi scanners */
-class HitachiDWIConverter : public DWIConverter
+class HitachiDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  HitachiDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
+  HitachiDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      bool useBMatrixGradientDirections) : DWIConverter(allHeaders,inputFileNames,
+                      bool useBMatrixGradientDirections) : DWIDICOMConverterBase(allHeaders,inputFileNames,
                                                                         useBMatrixGradientDirections)
     {
     }

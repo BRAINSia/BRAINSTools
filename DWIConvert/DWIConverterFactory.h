@@ -75,8 +75,8 @@ public:
       // Directory of DICOM slices?
       if(itksys::SystemTools::FileIsDirectory(m_DicomDirectory.c_str()))
         {
-        DWIConverter::InputNamesGeneratorType::Pointer inputNames =
-          DWIConverter::InputNamesGeneratorType::New();
+        DWIDICOMConverterBase::InputNamesGeneratorType::Pointer inputNames =
+          DWIDICOMConverterBase::InputNamesGeneratorType::New();
         inputNames->SetUseSeriesDetails( true);
         inputNames->SetLoadSequences( true );
         inputNames->SetLoadPrivateTags( true );
@@ -99,8 +99,7 @@ public:
         }
       else if( m_InputFileNames.size() == 1 &&  isNIIorNIFTI( m_InputFileNames[0])) // FSL Reader or NRRD Reader
       {
-        converter = new FSLDWIConverter(m_Headers,m_InputFileNames,
-          m_UseBMatrixGradientDirections );
+        converter = new FSLDWIConverter(m_InputFileNames);
       }
       else  // Assume multi file dicom file reading
       {
@@ -183,8 +182,7 @@ public:
         {
           // generic converter can't do anything except load a DICOM
           // directory
-          converter = new GenericDWIConverter(m_Headers,m_InputFileNames,
-            m_UseBMatrixGradientDirections);
+          converter = new GenericDWIConverter(m_InputFileNames);
           this->m_Vendor = "GENERIC";
         }
         converter->SetUseIdentityMeaseurementFrame(this->m_useIdentityMeaseurementFrame);
@@ -199,7 +197,7 @@ private:
   double      m_SmallGradientThreshold;
   bool        m_useIdentityMeaseurementFrame;
 
-  DWIConverter::DCMTKFileVector m_Headers;
+  DWIDICOMConverterBase::DCMTKFileVector m_Headers;
   DWIConverter::FileNamesContainer m_InputFileNames;
 
 };

@@ -38,35 +38,9 @@ gradient directions is the same as the ImageOrientationPatient
 Reference materials:
 DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 =========================================================================*/
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <algorithm>
-#include <ctype.h>
-#include "DWIConvertCLP.h"
 
-#include "itkMacro.h"
-#include "itkIntTypes.h"
-#include "itkDCMTKSeriesFileNames.h"
-#undef HAVE_SSTREAM
-#include "itkDCMTKImageIO.h"
-#include "itkRawImageIO.h"
-#include "itkImage.h"
-#include "itkImageRegionConstIterator.h"
-#include "itkImageRegionIterator.h"
-#include "itkImageRegionIteratorWithIndex.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageSeriesReader.h"
-#include "itksys/Directory.hxx"
-#include "itksys/SystemTools.hxx"
-#include "itksys/Base64.h"
-#undef HAVE_SSTREAM
 
-#include "itkDCMTKFileReader.h"
-#include "StringContains.h"
-#include "DWIConvertUtils.h"
-#include "itkNumberToString.h"
+#include "DWIConverter.h"
 
 /** the real computation goes on in DWIConverter classes, of which
  * there is one for each manufacturer we encounter.
@@ -80,7 +54,10 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
 
+#include "BRAINSCommonLib.h"
 
+#undef HAVE_SSTREAM
+#include "DWIConvertCLP.h"
 
 static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
@@ -114,7 +91,7 @@ static DWIConverter * CreateDicomConverter(
 // read Dicom directory
   try
   {
-    converter->LoadDicomDirectory();
+    converter->LoadFromDisk();
   }
   catch( itk::ExceptionObject &excp)
   {

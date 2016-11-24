@@ -27,13 +27,16 @@ class FSLDWIConverter : public DWIConverter
 public:
   FSLDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      bool useBMatrixGradientDirections,
-                      double smallGradientThreshold) : DWIConverter(allHeaders,inputFileNames,
-                                                                    useBMatrixGradientDirections),
-                                                       m_SmallGradientThreshold(smallGradientThreshold)
+                      bool useBMatrixGradientDirections
+                      ) : DWIConverter(allHeaders,inputFileNames, useBMatrixGradientDirections)
     {
     }
   virtual ~FSLDWIConverter() {}
+
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE
+  {
+    //TODO:  Move the QFORM/SFORM codes here
+  }
 
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
@@ -43,7 +46,7 @@ public:
     }
 
    /**
-    * @brief  find the bvalues and gradient vectors */
+    * @brief  find the bvalues and gradient vectors
     */
   void ExtractDWIData() ITK_OVERRIDE
     {

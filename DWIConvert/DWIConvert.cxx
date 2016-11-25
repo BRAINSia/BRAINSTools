@@ -62,6 +62,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
   const bool useBMatrixGradientDirections,
+  const bool transpose,
   const double smallGradientThreshold,
   const bool useIdentityMeaseurementFrame)
 {
@@ -75,6 +76,7 @@ static DWIConverter * CreateDicomConverter(
 // use the factor to instantiate a converter object based on the vender.
   DWIConverterFactory converterFactory(inputDicomDirectory,
     useBMatrixGradientDirections,
+    transpose,
     smallGradientThreshold, useIdentityMeaseurementFrame);
   DWIConverter * converter;
   try
@@ -158,21 +160,38 @@ int main(int argc, char *argv[])
   // build a NRRD file out of FSL output, which is two text files
   // for gradients and b values plus a NIfTI file for the gradient volumes.
   if( conversionMode == "FSLToNrrd" )
-    {
+  {
     std::vector<std::string> pathElements;
     pathElements.push_back(outputDirectory);
     pathElements.push_back("/");
     pathElements.push_back( outputVolume );
     std::string fullPathOutputVolume = itksys::SystemTools::JoinPath(pathElements);
 
-    return FSLToNrrd(inputVolume, fullPathOutputVolume,fslNIFTIFile,
-                     inputBValues, inputBVectors, transpose, allowLossyConversion);
+    DWIConverter::FileNamesContainer filesList;
+    filesList.clear();
+    filesList.push_back(inputVolume);
+
+    std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
+    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, inputBValues, inputBVectors,transpose);
+    try
+    {
+      FSLconverter->LoadFromDisk();
+      FSLconverter->ExtractDWIData();
     }
+    catch( itk::ExceptionObject &excp)
+    {
+      itkGenericExceptionMacro( << "Exception creating converter " << excp << std::endl);
+      delete FSLconverter;
+    }
+    converter = FSLconverter;
+  }
   // make FSL file set from a NRRD file.
   else if( conversionMode == "NrrdToFSL" )
     {
+#if 0
     return NrrdToFSL(inputVolume, outputVolume,
                      outputBValues, outputBVectors, allowLossyConversion);
+#endif
     }
   else if( conversionMode == "DicomToNrrd" || conversionMode == "DicomToFSL")
   {
@@ -182,7 +201,7 @@ int main(int argc, char *argv[])
     else if (conversionMode == "DicomToFSL")
     {
     }
-    converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections,
+    converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections, transpose,
       smallGradientThreshold,useIdentityMeaseurementFrame);
   }
   else
@@ -234,7 +253,8 @@ int main(int argc, char *argv[])
       useIdentityMeaseurementFrame, smallGradientThreshold);
 
     converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
-    }
+    std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
+  }
 
   return EXIT_SUCCESS;
 }

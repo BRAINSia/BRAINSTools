@@ -220,7 +220,7 @@ extern int ReadBVals(std::vector<double> & bVals, unsigned int & bValCount,
                      const std::string & bValFilename, double & maxBValue);
 
 extern int ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount,
-                     const std::string & bVecFilename , bool transpose );
+                     const std::string & bVecFilename , bool horizontalBy3Rows );
 
 
 
@@ -323,7 +323,7 @@ extern int FSLToNrrd(const std::string & inputVolume,
                      const std::string & fslNIFTIFile,
                      const std::string & inputBValues,
                      const std::string & inputBVectors,
-                     bool transpose,
+                     bool horizontalBy3Rows,
                      bool allowLossyConversion);
 
     extern int NrrdToFSL(const std::string & inputVolume,

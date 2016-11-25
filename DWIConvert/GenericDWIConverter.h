@@ -23,8 +23,8 @@
 class GenericDWIConverter : public DWIConverter
 {
 public:
-  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames )
-    :  DWIConverter( inputFileNames)
+  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames , const bool FSLFileFormatHorizontalBy3Rows)
+    :  DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows)
     {
     }
 

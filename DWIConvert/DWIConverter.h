@@ -82,7 +82,7 @@ public:
   typedef itk::Matrix<double, 3, 3>           RotationMatrixType;
   typedef itk::Vector<double, 3>              PointType;
 
-  DWIConverter( const FileNamesContainer &inputFileNames)
+  DWIConverter( const FileNamesContainer &inputFileNames, const bool FSLFileFormatHorizontalBy3Rows )
     :
     m_InputFileNames(inputFileNames),
     m_MultiSliceVolume(false),
@@ -91,6 +91,7 @@ public:
     m_NSlice(0),
     m_NVolume(0),
     m_useIdentityMeaseurementFrame(false),
+    m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
     m_IsInterleaved(false),
     m_NRRDSpaceDefinition("left-posterior-superior")
   {
@@ -130,6 +131,7 @@ public:
   }
 
   const std::vector<double> &GetBValues() const { return this->m_BValues; }
+  void SetBValues( const std::vector<double> & inBValues ) { this->m_BValues = inBValues; }
   double GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
   void SetMeasurementFrameIdentity()
   {
@@ -169,31 +171,60 @@ public:
   /**
    * @brief Force overwriting the gradient directions by inserting values read from specified file
    * @param gradientVectorFile The file with gradients specified for overwriting
-   * FORMAT:
-   * <num_gradients>
-   * x y z
-   * x y z
-   * etc
    */
-  void readOverwriteGradientVectorFile(const std::string& gradientVectorFile)
-  {// override gradients embedded in file with an external file.
-    std::__1::ifstream gradientFile(gradientVectorFile.c_str(), std::__1::ios_base::in);
-    unsigned int  numGradients;
-    gradientFile >> numGradients;
+  void ReadGradientInformation(const std::string& inputBValues, const std::string &inputBVectors, const std::string &inputVolumeNameTemplate)
+  {// override gradients embedded in file with an external FSL Formatted files
+    std::string _inputBValues = inputBValues;
+    std::string baseDirectory = itksys::SystemTools::GetParentDirectory(inputVolumeNameTemplate);
+    if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
+    {
+      std::vector<std::string> pathElements;
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
+      pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension (inputVolumeNameTemplate) + ".bval");
+      _inputBValues = itksys::SystemTools::JoinPath(pathElements);
+      std::cout << "   defaulting to: " << _inputBValues << std::endl;
+    }
+    std::string _inputBVectors = inputBVectors;
+    if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
+    {
+      std::vector<std::string> pathElements;
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
+      pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec" );
+      _inputBVectors = itksys::SystemTools::JoinPath(pathElements);
+      std::cout << "   defaulting to: " << _inputBVectors << std::endl;
+    }
+
+    unsigned int                      bValCount = 0;
+    std::vector<double>               BVals;
+
+    double                            UnusedmaxBValue(0.0); //TODO: Remove this:
+    if( ReadBVals(BVals, bValCount, _inputBValues, UnusedmaxBValue) != EXIT_SUCCESS )
+    {
+      itkGenericExceptionMacro(<< "ERROR reading Bvals " << _inputBValues);
+    }
+    DWIMetaDataDictionaryValidator::GradientTableType BVecs;
+    unsigned int                      bVecCount = 0;
+    if( ReadBVecs(BVecs, bVecCount, _inputBVectors,true) != EXIT_SUCCESS )
+    {
+      itkGenericExceptionMacro(<< "ERROR reading Bvals " << _inputBVectors);
+    }
+    if( bValCount != bVecCount )
+    {
+      itkGenericExceptionMacro( << "Mismatch between count of B Vectors ("
+                << bVecCount << ") and B Values ("
+                << bValCount << ")" << std::endl);
+    }
+
+    size_t numGradients = BVals.size();
     if( numGradients != this->GetNVolume() )
     {
-      itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes" << std::endl);
+      itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes:"
+        << numGradients << " != " << this->GetNVolume() << std::endl);
     }
-    this->m_DiffusionVectors.clear();
-    for( unsigned int imageCount = 0; !gradientFile.eof(); ++imageCount )
-    {
-      DWIMetaDataDictionaryValidator::GradientDirectionType vec;
-      for( unsigned i = 0; !gradientFile.eof() &&  i < 3; ++i )
-      {
-        gradientFile >> vec[i];
-      }
-      this->m_DiffusionVectors.push_back(vec);
-    }
+    this->m_DiffusionVectors = BVecs;
+    this->m_BValues = BVals;
     return;
   }
 
@@ -796,6 +827,7 @@ protected:
   /** double conversion instance, for optimal printing of numbers as  text */
   itk::NumberToString<double> m_DoubleConvert;
   bool       m_useIdentityMeaseurementFrame;
+  bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
   /** track if images is interleaved */
   bool                        m_IsInterleaved;

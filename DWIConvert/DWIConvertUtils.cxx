@@ -147,7 +147,7 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
 }
 
 int
-ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool transpose )
+ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool horizontalBy3Rows )
 {
   std::ifstream bVecFile(bVecFilename.c_str(), std::ifstream::in);
 
@@ -159,7 +159,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
   }
   bVecs.clear();
   bVecCount = 0;
-  if( transpose )
+  if( horizontalBy3Rows )
   {
     std::vector<std::vector<double> > bVecst( 3 ) ;
     for( unsigned i = 0 ; i < 3 ; i++ )

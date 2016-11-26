@@ -65,8 +65,7 @@ static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
   const bool useBMatrixGradientDirections,
   const bool transpose,
-  const double smallGradientThreshold,
-  const bool useIdentityMeaseurementFrame)
+  const double smallGradientThreshold)
 {
 // check for required parameters
   if( inputDicomDirectory == "" )
@@ -79,7 +78,7 @@ static DWIConverter * CreateDicomConverter(
   DWIConverterFactory converterFactory(inputDicomDirectory,
     useBMatrixGradientDirections,
     transpose,
-    smallGradientThreshold, useIdentityMeaseurementFrame);
+    smallGradientThreshold);
   DWIConverter * converter;
   try
   {
@@ -90,7 +89,6 @@ static DWIConverter * CreateDicomConverter(
     std::cerr << "Exception creating converter " << excp << std::endl;
     return nullptr;
   }
-
 
 // read Dicom directory
   try
@@ -202,6 +200,8 @@ int main(int argc, char *argv[])
 
       std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
       NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, transpose);
+      useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
+      NRRDconverter->SetUseIdentityMeaseurementFrame(useIdentityMeaseurementFrame);
       try
       {
         NRRDconverter->LoadFromDisk();
@@ -216,14 +216,13 @@ int main(int argc, char *argv[])
     }
   else if( conversionMode == "DicomToNrrd" || conversionMode == "DicomToFSL")
   {
-    if (conversionMode == "DicomToNrrd")
-    {
-    }
-    else if (conversionMode == "DicomToFSL")
-    {
-    }
     converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections, transpose,
-      smallGradientThreshold,useIdentityMeaseurementFrame);
+      smallGradientThreshold);
+    if (conversionMode == "DicomToFSL")
+    {
+      useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
+    }
+    converter->SetUseIdentityMeaseurementFrame(useIdentityMeaseurementFrame);
   }
   else
   {
@@ -261,6 +260,8 @@ int main(int argc, char *argv[])
 
   if( conversionMode == "DicomToFSL"  || conversionMode == "NrrdToFSL" )
   {
+    useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
+    converter->SetUseIdentityMeaseurementFrame(useIdentityMeaseurementFrame);
     // write the image */
     converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, outputBValues, outputBVectors);
   }

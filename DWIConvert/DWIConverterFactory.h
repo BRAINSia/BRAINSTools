@@ -39,13 +39,11 @@ public:
   DWIConverterFactory(const std::string DicomDirectory,
                       const bool UseBMatrixGradientDirections,
                       const bool FSLFileFormatHorizontalBy3Rows,
-                      const double smallGradientThreshold,
-                      const bool useIdentityMeaseurementFrame)
+                      const double smallGradientThreshold)
     : m_DicomDirectory(DicomDirectory)
     , m_UseBMatrixGradientDirections(UseBMatrixGradientDirections)
     , m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows)
     , m_SmallGradientThreshold(smallGradientThreshold)
-    , m_useIdentityMeaseurementFrame(useIdentityMeaseurementFrame)
     {
     }
   ~DWIConverterFactory()
@@ -188,7 +186,6 @@ public:
           converter = new GenericDWIConverter(m_InputFileNames, m_FSLFileFormatHorizontalBy3Rows);
           this->m_Vendor = "GENERIC";
         }
-        converter->SetUseIdentityMeaseurementFrame(this->m_useIdentityMeaseurementFrame);
       }
       return converter;
     }
@@ -199,7 +196,6 @@ private:
   bool        m_UseBMatrixGradientDirections;
   bool        m_FSLFileFormatHorizontalBy3Rows;
   double      m_SmallGradientThreshold;
-  bool        m_useIdentityMeaseurementFrame;
 
   DWIDICOMConverterBase::DCMTKFileVector m_Headers;
   DWIConverter::FileNamesContainer m_InputFileNames;

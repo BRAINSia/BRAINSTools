@@ -131,6 +131,17 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
 
 template <typename TImage>
 int
+RecoverMeasurementFrame(const TImage *img, DWIMetaDataDictionaryValidator::RotationMatrixType & MeasurementFrame)
+{
+
+  DWIMetaDataDictionaryValidator myDWIValidator;
+  myDWIValidator.SetMetaDataDictionary(img->GetMetaDataDictionary() );
+  MeasurementFrame = myDWIValidator.GetMeasurementFrame();
+  return EXIT_SUCCESS;
+}
+
+template <typename TImage>
+int
 RecoverBVectors(const TImage *img, DWIMetaDataDictionaryValidator::GradientTableType & bVecs)
 {
   bVecs.clear();
@@ -139,9 +150,9 @@ RecoverBVectors(const TImage *img, DWIMetaDataDictionaryValidator::GradientTable
   myDWIValidator.SetMetaDataDictionary(img->GetMetaDataDictionary() );
   bVecs = myDWIValidator.GetGradientTable();
   if( bVecs.empty() )
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }
 

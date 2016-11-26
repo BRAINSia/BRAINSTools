@@ -627,6 +627,13 @@ public:
     const std::string outputBValues, const std::string
   outputBVectors) const
   {
+    const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] *
+      this->m_MeasurementFrame[2][2];
+    if( std::abs( trace - 1.0 ) > 1e-4 )
+    {
+       itkGenericExceptionMacro( << "ERROR:  Only identity measurement frame allow for writing FSL formatted files "
+       << std::endl);
+    }
 
     Volume4DType::Pointer img4D = ThreeDToFourDImage(this->GetDiffusionVolume());
     itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();

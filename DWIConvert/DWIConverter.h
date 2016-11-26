@@ -190,6 +190,7 @@ public:
       pathElements.push_back("/");
       pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension (inputVolumeNameTemplate) + ".bval");
       _inputBValues = itksys::SystemTools::JoinPath(pathElements);
+      std::cout << "   From template " << inputVolumeNameTemplate << std::endl;
       std::cout << "   defaulting to: " << _inputBValues << std::endl;
     }
     std::string _inputBVectors = inputBVectors;
@@ -200,6 +201,7 @@ public:
       pathElements.push_back("/");
       pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec" );
       _inputBVectors = itksys::SystemTools::JoinPath(pathElements);
+      std::cout << "   From template " << inputVolumeNameTemplate << std::endl;
       std::cout << "   defaulting to: " << _inputBVectors << std::endl;
     }
 
@@ -632,9 +634,6 @@ public:
     imgWriter->SetFileName( outputVolumeHeaderName );
     try
     {
-      imgWriter->Update();
-      //HACK
-      imgWriter->SetFileName( outputVolumeHeaderName + ".nhdr" );
       imgWriter->Update();
     }
     catch( itk::ExceptionObject & excp )

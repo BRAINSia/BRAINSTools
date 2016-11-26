@@ -553,10 +553,10 @@ protected:
      * voxel size, and dimension, the origin can be computed.
      */
 
-    VolumeType::Pointer previousImage = this->m_Volume;
+    Volume3DUnwrappedType::Pointer previousImage = this->m_Volume;
 
-    VolumeType::RegionType region = previousImage->GetLargestPossibleRegion();
-    VolumeType::SizeType   size = region.GetSize();
+    Volume3DUnwrappedType::RegionType region = previousImage->GetLargestPossibleRegion();
+    Volume3DUnwrappedType::SizeType   size = region.GetSize();
 
     // de-mosaic
     PointType mosaicSize;
@@ -564,7 +564,7 @@ protected:
     mosaicSize[1]=size[1];
     mosaicSize[2]=0;
 
-    VolumeType::SizeType dmSize = size;
+    Volume3DUnwrappedType::SizeType dmSize = size;
     unsigned int         original_slice_number = dmSize[2] * m_SlicesPerVolume;
     dmSize[0] /= this->m_MMosaic;
     dmSize[1] /= this->m_NMosaic;
@@ -576,7 +576,7 @@ protected:
     sliceSize[2] = 0;
 
     region.SetSize( dmSize );
-    this->m_Volume = VolumeType::New();
+    this->m_Volume = Volume3DUnwrappedType::New();
     this->m_Volume->CopyInformation( previousImage );
     this->m_Volume->SetRegions( region );
     this->m_Volume->Allocate();
@@ -589,7 +589,7 @@ protected:
     );
 
 
-    VolumeType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
+    Volume3DUnwrappedType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
     dmRegion.SetSize(2, 1);
     region.SetSize(0, dmSize[0]);
     region.SetSize(1, dmSize[1]);
@@ -600,7 +600,7 @@ protected:
       unsigned int new_k = k /* - bad_slice_counter */;
 
       dmRegion.SetIndex(2, new_k);
-      itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( this->m_Volume, dmRegion );
+      itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> dmIt( this->m_Volume, dmRegion );
 
       // figure out the mosaic region for this slice
       int sliceIndex = k;
@@ -614,7 +614,7 @@ protected:
       region.SetIndex( 1, colMosaic * dmSize[1] );
       region.SetIndex( 2, slcMosaic );
 
-      itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( previousImage, region );
+      itk::ImageRegionConstIteratorWithIndex<Volume3DUnwrappedType> imIt( previousImage, region );
       for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
       {
         dmIt.Set( imIt.Get() );

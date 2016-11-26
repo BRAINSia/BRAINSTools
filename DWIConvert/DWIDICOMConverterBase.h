@@ -67,8 +67,8 @@ class DWIDICOMConverterBase : public DWIConverter {
         }
       else
         {
-        itk::ImageFileReader<VolumeType>::Pointer reader =
-          itk::ImageFileReader<VolumeType>::New();
+        itk::ImageFileReader<Volume3DUnwrappedType>::Pointer reader =
+          itk::ImageFileReader<Volume3DUnwrappedType>::New();
         reader->SetImageIO( dcmtkIO );
         reader->SetFileName( this->m_InputFileNames[0] );
         m_NSlice = this->m_InputFileNames.size();
@@ -113,7 +113,7 @@ class DWIDICOMConverterBase : public DWIConverter {
       // origin
       double origin[3];
       m_Headers[0]->GetOrigin(origin);
-      VolumeType::PointType imOrigin;
+      Volume3DUnwrappedType::PointType imOrigin;
       imOrigin[0] = origin[0];
       imOrigin[1] = origin[1];
       imOrigin[2] = origin[2];
@@ -195,7 +195,7 @@ class DWIDICOMConverterBase : public DWIConverter {
         }
 
     {
-    VolumeType::DirectionType LPSDirCos;
+    Volume3DUnwrappedType::DirectionType LPSDirCos;
     LPSDirCos.SetIdentity();
 
     // check ImageOrientationPatient and figure out slice direction in

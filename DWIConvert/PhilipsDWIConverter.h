@@ -340,11 +340,11 @@ public:
         std::cout << "# of Volumes " << this->m_NVolume << " # of Diffusion Vectors "
                   << this->m_DiffusionVectors.size() << " Removing "
                   << trailingVolumes << " Isotropic volumes." << std::endl;
-        typedef itk::ExtractImageFilter<VolumeType,VolumeType> ExtractImageFilterType;
+        typedef itk::ExtractImageFilter<Volume3DUnwrappedType,Volume3DUnwrappedType> ExtractImageFilterType;
         ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
 
-        VolumeType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
-        VolumeType::SizeType desiredSize = desiredRegion.GetSize();
+        Volume3DUnwrappedType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
+        Volume3DUnwrappedType::SizeType desiredSize = desiredRegion.GetSize();
         desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
         desiredRegion.SetSize(desiredSize);
         extractImageFilter->SetExtractionRegion(desiredRegion);

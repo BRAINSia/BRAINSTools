@@ -106,6 +106,6 @@ NRRDDWIConverter::LoadFromDisk()
 void
 NRRDDWIConverter::ExtractDWIData()
 {
-  RecoverBVectors<VolumeType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors);
-  RecoverBValues<VolumeType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
+  RecoverBVectors<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors);
+  RecoverBValues<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
 }

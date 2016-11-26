@@ -46,6 +46,9 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
  * there is one for each manufacturer we encounter.
  */
 #include "DWIConverterFactory.h"
+#include "FSLDWIConverter.h"
+#include "NRRDDWIConverter.h"
+
 #include <BRAINSCommonLib.h>
 
 #include "dcmtk/oflog/helpers/loglog.h"
@@ -54,7 +57,6 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
 
-#include "BRAINSCommonLib.h"
 
 #undef HAVE_SSTREAM
 #include "DWIConvertCLP.h"
@@ -188,10 +190,29 @@ int main(int argc, char *argv[])
   // make FSL file set from a NRRD file.
   else if( conversionMode == "NrrdToFSL" )
     {
-#if 0
-    return NrrdToFSL(inputVolume, outputVolume,
-                     outputBValues, outputBVectors, allowLossyConversion);
-#endif
+      std::vector<std::string> pathElements;
+      pathElements.push_back(outputDirectory);
+      pathElements.push_back("/");
+      pathElements.push_back( outputVolume );
+      std::string fullPathOutputVolume = itksys::SystemTools::JoinPath(pathElements);
+
+      DWIConverter::FileNamesContainer filesList;
+      filesList.clear();
+      filesList.push_back(inputVolume);
+
+      std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
+      NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, transpose);
+      try
+      {
+        NRRDconverter->LoadFromDisk();
+        NRRDconverter->ExtractDWIData();
+      }
+      catch( itk::ExceptionObject &excp)
+      {
+        itkGenericExceptionMacro( << "Exception creating converter " << excp << std::endl);
+        delete NRRDconverter;
+      }
+      converter = NRRDconverter;
     }
   else if( conversionMode == "DicomToNrrd" || conversionMode == "DicomToFSL")
   {
@@ -238,7 +259,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  if( conversionMode == "DicomToFSL" )
+  if( conversionMode == "DicomToFSL"  || conversionMode == "NrrdToFSL" )
   {
     // write the image */
     converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, outputBValues, outputBVectors);
@@ -250,7 +271,7 @@ int main(int argc, char *argv[])
   // This part follows a DWI NRRD file in NRRD format 5.
   // There should be a better way using itkNRRDImageIO.
     const std::string commentSection = converter->MakeFileComment(version,useBMatrixGradientDirections,
-      useIdentityMeaseurementFrame, smallGradientThreshold);
+      useIdentityMeaseurementFrame, smallGradientThreshold, conversionMode );
 
     converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
     std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;

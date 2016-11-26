@@ -73,7 +73,7 @@ public:
   typedef short                                       PixelValueType;
   //TODO: Rename VolumeType to VolumeType3D
   typedef itk::Image<PixelValueType, 3>               VolumeType;
-  typedef itk::Image<DWIConverter::PixelValueType, 4> Volume4DType;
+  typedef itk::Image<PixelValueType, 4>               Volume4DType;
 
   typedef VolumeType::SpacingType             SpacingType;
   typedef itk::ImageSeriesReader<VolumeType>  ReaderType;
@@ -281,7 +281,8 @@ public:
     const std::string& version,
     bool useBMatrixGradientDirections,
     bool useIdentityMeaseurementFrame,
-    double smallGradientThreshold ) const
+    double smallGradientThreshold,
+  const std::string conversionMode) const
   {
     std::__1::stringstream commentSection;
     {
@@ -290,7 +291,11 @@ public:
                      << "# https://github.com/BRAINSia/BRAINSTools" << std::__1::endl
                      << "# part of the BRAINSTools package." << std::__1::endl
                      << "# Command line options:" << std::__1::endl
-                     << "# --smallGradientThreshold " << smallGradientThreshold << std::__1::endl;
+                     << "# --conversionMode " << conversionMode << std::__1::endl;
+      if( std::abs( smallGradientThreshold- 0.2 ) > 1e-4 )
+      {
+        commentSection << "# --smallGradientThreshold " << smallGradientThreshold << std::__1::endl;
+      }
       if (useIdentityMeaseurementFrame) {
         commentSection << "# --useIdentityMeasurementFrame" << std::__1::endl;
       }

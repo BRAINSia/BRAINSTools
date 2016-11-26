@@ -237,21 +237,14 @@ public:
     return;
   }
 
-
-  DWIMetaDataDictionaryValidator::GradientTableType
-  computeBvalueScaledDiffusionTensors() const
+  void UpdateBVectorOrientation()
   {
-
-    const DWIMetaDataDictionaryValidator::GradientTableType &BvalueScaledDiffusionVectors =
-      this->computeScaledDiffusionVectors();
-    DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
-    const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame = this->GetMeasurementFrame().GetInverse();
-    // grab the diffusion vectors.
-    for( unsigned int k = 0; k < BvalueScaledDiffusionVectors.size(); ++k )
-    {
-      DWIMetaDataDictionaryValidator::GradientDirectionType vec;
-      if( this->m_useIdentityMeaseurementFrame )
-      {
+    if (this->m_useIdentityMeaseurementFrame == true) {
+      DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
+      const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame = this->GetMeasurementFrame().GetInverse();
+      // grab the diffusion vectors.
+      for (unsigned int k = 0; k<this->m_DiffusionVectors.size(); ++k) {
+        DWIMetaDataDictionaryValidator::GradientDirectionType vec;
         // For scanners, the measurement frame for the gradient directions is the same as the
         // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
         // There is also the possibility that a measurement frame
@@ -266,24 +259,17 @@ public:
         // In order to compare two different scans to determine if the same protocol was prosribed,
         // it is necessary to multiply each of the recorded diffusion gradient directions by
         // the inverse of the LPSDirCos.
-        vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors = InverseMeasurementFrame * (BvalueScaledDiffusionVectors[k]);
-        for( unsigned ind = 0; ind < 3; ++ind )
-        {
+        vnl_vector_fixed<double, 3> RotatedScaledDiffusionVectors =
+          InverseMeasurementFrame*(this->m_DiffusionVectors[k]);
+        for (unsigned ind = 0; ind<3; ++ind) {
           vec[ind] = RotatedScaledDiffusionVectors[ind];
         }
+        gradientVectors.push_back(vec);
       }
-      else
-      {
-        for( unsigned ind = 0; ind < 3; ++ind )
-        {
-          vec[ind] = BvalueScaledDiffusionVectors[k][ind];
-        }
-      }
-      gradientVectors.push_back(vec);
+      this->m_DiffusionVectors = gradientVectors;
+      this->m_MeasurementFrame.SetIdentity();
     }
-    return gradientVectors;
   }
-
 
   std::string
   MakeFileComment(
@@ -388,11 +374,8 @@ public:
       header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::__1::endl;
     }
 
-    DWIConverter::RotationMatrixType MeasurementFrame = this->GetMeasurementFrame();
-    if (this->m_useIdentityMeaseurementFrame) {
-      MeasurementFrame.SetIdentity();
-    }
     {
+      DWIConverter::RotationMatrixType MeasurementFrame = this->GetMeasurementFrame();
       header << "measurement frame: "
              << "(" << DoubleConvert(MeasurementFrame[0][0]) << ","
              << DoubleConvert(MeasurementFrame[1][0]) << ","
@@ -416,7 +399,7 @@ public:
     //  header << "DWMRI_NEX_0000:=" << nBaseline << std::endl;
     //  need to check
     const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors =
-      this->computeBvalueScaledDiffusionTensors();
+      this->computeScaledDiffusionVectors();
     {
       unsigned int gradientVecIndex = 0;
       for (unsigned int k = 0; k<gradientVectors.size(); ++k) {
@@ -677,7 +660,7 @@ public:
     {
       itkGenericExceptionMacro(<< "Failed to write FSL BVal File: " << outputFSLBValFilename << std::endl;);
     }
-    if( WriteBVectors(this->computeBvalueScaledDiffusionTensors(), outputFSLBVecFilename) != EXIT_SUCCESS )
+    if( WriteBVectors(this->computeScaledDiffusionVectors(), outputFSLBVecFilename) != EXIT_SUCCESS )
     {
       itkGenericExceptionMacro(<< "Failed to write FSL BVec File: " << outputFSLBVecFilename << std::endl;);
     }

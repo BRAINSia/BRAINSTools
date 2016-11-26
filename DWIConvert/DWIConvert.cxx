@@ -241,6 +241,7 @@ int main(int argc, char *argv[])
   }
 #endif
   //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
+  converter->UpdateBVectorOrientation();
 
 
 

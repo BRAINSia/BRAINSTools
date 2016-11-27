@@ -181,7 +181,7 @@ else()
   if( 0 ) ## These NHDR images are oriented differently, and would need a new BASELINE_NHDR ##TODO:
   #------------------------------------------------------------------------------------------
   set(Test_Compare_Command_Line_NHDR_OUTPUT
-    ${TEST_COMPARE_PROGRAM} --inputVolume2 ${TEST_INITIAL_NHDR_OUTPUT} --inputVolume1 ${TEST_BASELINE_NHDR}
+    ${TEST_COMPARE_PROGRAM} --useIdentityMeasurementFrame --inputVolume2 ${TEST_INITIAL_NHDR_OUTPUT} --inputVolume1 ${TEST_BASELINE_NHDR}
     )
   message("Test_Compare_Command_Line_NHDR_OUTPUT=${Test_Compare_Command_Line_NHDR_OUTPUT}")
   # now compare the output with the reference

@@ -25,5 +25,13 @@
       <channel>input</channel>
       <description><![CDATA[Second input volume (.nhdr or .nrrd)]]></description>
     </image>
+    <boolean>
+      <name>useIdentityMeasurementFrame</name>
+      <longflag>--useIdentityMeasurementFrame</longflag>
+      <label>Compare with identity Measurement Frame</label>
+      <default>false</default>
+      <channel>input</channel>
+      <description><![CDATA[Do comparisons with identity mesasurement frames]]></description>
+    </boolean>
   </parameters>
 </executable>

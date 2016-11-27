@@ -39,6 +39,7 @@
 
 #include "DWICompareCLP.h"
 #include <BRAINSCommonLib.h>
+#include "DWIMetaDataDictionaryValidator.h"
 
 #define DIMENSION 3
 
@@ -126,148 +127,68 @@ int DoIt( int argc, char * argv[], PixelType )
 
   bool failure = TestIfInformationIsDifferent<DiffusionImageType>(firstImage, secondImage);
 
-  typedef itk::MetaDataDictionary DictionaryType;
-  const DictionaryType & firstDictionary = firstReader->GetMetaDataDictionary();
-  const DictionaryType & secondDictionary = secondReader->GetMetaDataDictionary();
-
-  DictionaryType::ConstIterator itr = firstDictionary.Begin();
-  DictionaryType::ConstIterator end = firstDictionary.End();
-
-
   // If the angle between two gradients differs more than this value they are
   // considered to be non-colinear
-  double gradientToleranceForSameness = 1;
-  float  bValueTolerance = 0.5;
+  //const double gradientToleranceForSameness = 1;
+  const float  bValueTolerance = .05;
 
-  while( itr != end )
+  typedef itk::MetaDataDictionary DictionaryType;
+  const DictionaryType & firstDictionary = firstReader->GetMetaDataDictionary();
+  DWIMetaDataDictionaryValidator firstValidator;
+  firstValidator.SetMetaDataDictionary(firstDictionary);
+  const DictionaryType & secondDictionary = secondReader->GetMetaDataDictionary();
+  DWIMetaDataDictionaryValidator secondValidator;
+  secondValidator.SetMetaDataDictionary(secondDictionary);
+
+  {
+    if( std::abs(firstValidator.GetBValue() - secondValidator.GetBValue() ) / secondValidator.GetBValue() >
+      bValueTolerance )
     {
-    if( itr->first == "DWMRI_b-value" )
-      {
-      std::string firstBValueString;
-      std::string secondBValueString;
-      itk::ExposeMetaData<std::string>(firstDictionary, itr->first, firstBValueString);
-      if( !secondDictionary.HasKey(itr->first) )
-        {
-        std::cout << "Key " << itr->first << " doesn't exist in 2nd image" << std::endl;
-        return EXIT_FAILURE;
-        }
-
-      itk::ExposeMetaData<std::string>(secondDictionary, itr->first, secondBValueString);
-
-      std::istringstream iss(secondBValueString);
-      int                firstBValue;
-      int                secondBValue;
-      iss >> firstBValue;
-      iss.str(secondBValueString);
-      iss.clear();
-      iss >> secondBValue;
-
-      if( abs(firstBValue - secondBValue) / firstBValue > bValueTolerance )
-        {
-        std::cout << "firstBValue String != secondBValueString! "
-                  << firstBValueString << "!=" << secondBValueString << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
-    else if( itr->first.find("DWMRI_gradient") != std::string::npos )
-      {
-      std::string firstGradientValueString;
-      itk::ExposeMetaData<std::string>(firstDictionary, itr->first, firstGradientValueString);
-
-      vnl_vector_fixed<double, 3> firstGradientVector;
-      std::istringstream          iss(firstGradientValueString);
-      iss >> firstGradientVector[0] >> firstGradientVector[1] >> firstGradientVector[2];
-      firstGradientVector.normalize();
-
-      if( !secondDictionary.HasKey(itr->first) )
-        {
-        std::cout << "Key " << itr->first << " doesn't exist in 2nd image" << std::endl;
-        return EXIT_FAILURE;
-        }
-
-      std::string secondGradientValueString;
-      itk::ExposeMetaData<std::string>(secondDictionary, itr->first, secondGradientValueString);
-
-      vnl_vector_fixed<double, 3> secondGradientVector;
-      iss.str(secondGradientValueString);
-      iss.clear();
-      iss >> secondGradientVector[0] >> secondGradientVector[1] >> secondGradientVector[2];
-      secondGradientVector.normalize();
-
-      // Check to see if two gradient vectors are equal within a tolerance
-      const float coordinateTolerance = 1e-3;
-      if( !firstGradientVector.as_ref().is_equal(secondGradientVector, coordinateTolerance) )
-        {
-        // If not, check to see if gradients are colinear within tolerance
-        double gradientDot = dot_product(firstGradientVector, secondGradientVector);
-
-        double magnitudesProduct = secondGradientVector.magnitude() * firstGradientVector.magnitude();
-        if(vnl_math_abs(magnitudesProduct) <= vnl_math::eps)
-          {
-          std::cout << "GradientValueStrings don't match! " << firstGradientValueString
-                    << " != " << secondGradientValueString << std::endl;
-          failure = true;
-          }
-        else
-          {
-          double sendToArcCos = gradientDot / magnitudesProduct;
-
-          sendToArcCos = ( sendToArcCos > 1 ) ? 1 : sendToArcCos;
-          // Avoid numerical precision problems
-          sendToArcCos = ( sendToArcCos < -1 ) ? -1 : sendToArcCos;
-          // Avoid numerical precision problems
-
-          const double gradientAngle = std::abs( std::acos(sendToArcCos) * 180.0 * vnl_math::one_over_pi);
-
-          double gradientMinAngle = std::min( gradientAngle, std::abs(180.0 - gradientAngle) );
-          if( gradientMinAngle > gradientToleranceForSameness )
-            {
-            std::cout << "GradientValueStrings don't match! " << firstGradientValueString
-                      << " != " << secondGradientValueString << std::endl;
-            failure = true;
-            }
-          }
-        }
-      }
-    else if( itr->first.find("NRRD_measurement frame") != std::string::npos )
-      {
-      std::vector<std::vector<double> > firstMeasurementFrameValue(3);
-      for( unsigned int i = 0; i < 3; i++ )
-        {
-        firstMeasurementFrameValue[i].resize(3);
-        }
-
-      itk::ExposeMetaData<std::vector<std::vector<double> > >(firstDictionary, itr->first, firstMeasurementFrameValue);
-
-      if( !secondDictionary.HasKey(itr->first) )
-        {
-        std::cout << "Key " << itr->first << " doesn't exist in 2nd image" << std::endl;
-        return EXIT_FAILURE;
-        }
-
-      std::vector<std::vector<double> > secondMeasurementFrameValue(3);
-      for( unsigned int i = 0; i < 3; i++ )
-        {
-        secondMeasurementFrameValue[i].resize(3);
-        }
-
-      itk::ExposeMetaData<std::vector<std::vector<double> > >(secondDictionary, itr->first,
-                                                              secondMeasurementFrameValue);
-      for( unsigned int i = 0; i < 3; i++ )
-        {
-        for( unsigned int j = 0; j < 3; j++ )
-          {
-          if( firstMeasurementFrameValue[i][j] != secondMeasurementFrameValue[i][j] )
-            {
-            std::cout << "Measurement frames do not match!" << std::endl;
-            return EXIT_FAILURE;
-            }
-          }
-        }
-      }
-
-    ++itr;
+      std::cerr << "firstBValue String != secondBValueString! "
+                << firstValidator.GetBValue() << "!=" << secondValidator.GetBValue() << std::endl;
+      return EXIT_FAILURE;
     }
+  }
+  DWIMetaDataDictionaryValidator::RotationMatrixType fMF = firstValidator.GetMeasurementFrame();
+  DWIMetaDataDictionaryValidator::RotationMatrixType sMF = secondValidator.GetMeasurementFrame();
+  if( ! useIdentityMeasurementFrame )
+  {
+    for(size_t j=0; j< 3; ++j)
+    {
+      for(size_t i=0; i< 3; ++i)
+      {
+        if( std::abs(fMF[i][j] - sMF[i][j] ) > 1e-5 )
+        {
+          std::cerr << "Measurement Frames do not match:\n"
+                    << fMF << "\n != \n"
+                    << sMF << "\n" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+  }
+
+  DWIMetaDataDictionaryValidator::GradientTableType fGD = firstValidator.GetGradientTable();
+  DWIMetaDataDictionaryValidator::GradientTableType sGD = secondValidator.GetGradientTable();
+  for(size_t idx = 0; idx < fGD.size() ; ++idx)
+  {
+    DWIMetaDataDictionaryValidator::GradientTableType::value_type ufVec = fGD[idx];
+    DWIMetaDataDictionaryValidator::GradientTableType::value_type usVec = sGD[idx];
+    DWIMetaDataDictionaryValidator::GradientTableType::value_type fVec = fGD[idx];
+    DWIMetaDataDictionaryValidator::GradientTableType::value_type sVec = sGD[idx];
+    if( useIdentityMeasurementFrame )
+    {
+      fVec = fMF.GetInverse()*ufVec;
+      sVec = sMF.GetInverse()*usVec;
+    }
+    const double mag = (sVec - fVec).squared_magnitude();
+    if( mag > 1e-5 )
+      {
+        std::cerr << "Gradient Vector at index " << idx << " mismatch"
+                  << fVec << " != " << sVec << std::endl;
+        return EXIT_FAILURE;
+      }
+  }
 
   if( failure )
     {

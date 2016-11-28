@@ -74,6 +74,10 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include <BRAINSCommonLib.h>
 
 #include "dcmtk/oflog/helpers/loglog.h"
+#include "dcmtk/dcmimgle/dcmimage.h"
+#include "dcmtk/dcmjpeg/djdecode.h"
+#include "dcmtk/dcmjpls/djdecode.h"
+#include "dcmtk/dcmdata/dcrledrg.h"
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
@@ -203,6 +207,13 @@ int main(int argc, char *argv[])
   const std::string version = commandLine.getVersion();
   BRAINSRegisterAlternateIO();
   dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
+
+  // register DCMTK codecs, otherwise they will not be available when
+  // `itkDCMTKSeriesFileNames` is used to build a list of filenames,
+  // so reading series with JPEG transfer syntax will fail.
+  DJDecoderRegistration::registerCodecs();
+  DcmRLEDecoderRegistration::registerCodecs();
+
   // just need one instance to do double to string conversions
   itk::NumberToString<double> DoubleConvert;
 

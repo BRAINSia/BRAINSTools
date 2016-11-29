@@ -137,9 +137,6 @@ int main(int argc, char *argv[])
   DJDecoderRegistration::registerCodecs();
   DcmRLEDecoderRegistration::registerCodecs();
 
-  // just need one instance to do double to string conversions
-  itk::NumberToString<double> DoubleConvert;
-
   if(fMRIOutput)
   {
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;

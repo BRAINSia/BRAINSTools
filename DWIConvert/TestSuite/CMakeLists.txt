@@ -94,8 +94,8 @@ foreach(CLP DWICompare DWISimpleCompare)
 endforeach()
 
 ## Tool for comparing if BVec and BVal files are the same.
-add_executable(BFileCompare BFileCompare.cpp)
-target_link_libraries(BFileCompare DWIConvertSupportLib BRAINSCommonLib )
+add_executable(BFileCompareTool BFileCompareTool.cpp)
+target_link_libraries(BFileCompareTool DWIConvertSupportLib BRAINSCommonLib )
 
 #
 # build FSL test program

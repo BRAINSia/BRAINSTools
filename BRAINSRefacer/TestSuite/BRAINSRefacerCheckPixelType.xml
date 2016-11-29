@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Ctest</category>
+  <title>    </title>
+  <description>
+  </description>
+  <version>
+    1.0</version>
+  <documentation-url>none</documentation-url>
+  <license>none</license>
+  <contributor>
+  </contributor>
+  <acknowledgements>
+  </acknowledgements>
+  <parameters>
+    <image>
+      <longflag>--inputImage</longflag>
+      <label>Input Volume</label>
+      <name>inputImageName</name>
+      <channel>input</channel>
+      <default>NONE</default>
+    </image>
+    <string-enumeration>
+      <name>pixelType</name>
+      <label>Pixel Type</label>
+      <longflag>--pixelType</longflag>
+      <channel>input</channel>
+      <element>unsigned_char</element>
+      <element>char</element>
+      <element>unsigned_short</element>
+      <element>short</element>
+      <element>unsigned_int</element>
+      <element>int</element>
+      <element>unsigned_long</element>
+      <element>long</element>
+      <element>float</element>
+      <element>double</element>
+    </string-enumeration>
+  </parameters>
+</executable>

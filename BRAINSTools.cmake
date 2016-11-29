@@ -207,6 +207,7 @@ set(brains_modulenames
   BRAINSDWICleanup
   ReferenceAtlas
   BRAINSSuperResolution
+  BRAINSRefacer
   )
 
 if(USE_DebugImageViewer)

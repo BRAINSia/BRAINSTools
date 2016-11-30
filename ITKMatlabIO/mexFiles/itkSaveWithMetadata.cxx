@@ -35,6 +35,50 @@ void printVecValue(const std::vector<double> vec){
   std::cout<<std::endl;
 }
 
+void write2DNonNrrdFile(mxArray* data, const char *filename){
+
+  typedef unsigned char     PixelType;
+  const   unsigned int      Dimension = 2;
+  typedef itk::Image< PixelType, Dimension >  ImageType;
+
+  ImageType::RegionType region;
+  ImageType::IndexType start;
+  start[0] = 0;
+  start[1] = 0;
+
+  const mwSize* mxSize = mxGetDimensions(data);
+  ImageType::SizeType size;
+  size[0] = *mxSize;
+  size[1] = *(mxSize+1);
+
+  region.SetSize(size);
+  region.SetIndex(start);
+
+  ImageType::Pointer image = ImageType::New();
+  image->SetRegions(region);
+  image->Allocate();
+
+  ImageType::IndexType ind;
+  ind[0] = 0;
+  ind[1] = 0;
+
+  //for (int i=0; i< size[0];)
+
+  typedef itk::ImageFileWriter< ImageType  > WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName(filename);
+  writer->SetInput(image);
+
+  try
+  {
+    writer->Update();
+  }
+  catch (std::exception &e) {
+    mexErrMsgTxt(e.what());
+  }
+
+}
+
 
 inline
 itk::ImageIOBase::IOComponentType typeMtoITK(const mxClassID mtype) {
@@ -114,7 +158,6 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   itkOrigin.Fill(0.0);
   const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
 
-  //TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
   const unsigned int spatialDims = numDims; //instead of 3
   for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++) {
     if (sdIdx < spatialDims) {
@@ -213,7 +256,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
   // Measurement Frame
   mxArray *mxMeasurementFrame = msm.GetField("measurementframe");
   /** measurementframe **/
-  if (mxMeasurementFrame) {
+  if (msm.isDWIdata() && mxMeasurementFrame) {
     const double *const mxMeasurementFrame_temp = (double *) mxGetData(mxMeasurementFrame);
     const mwSize *const measurementFrameSize = msm.GetDimensions("data");
     if (mxMeasurementFrame != 0) {
@@ -264,8 +307,8 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
 
   // kinds
   const mxArray *const kinds_temp_MxArray = msm.GetField("kinds");
+  const int *const kinds_temp = (int *) mxGetData(kinds_temp_MxArray);
   if (kinds_temp_MxArray) {
-    const int *const kinds_temp = (int *) mxGetData(kinds_temp_MxArray);
     for (unsigned int axIdx = 0; axIdx < numDims; ++axIdx) {
       std::stringstream attName;
       attName << "NRRD_kinds[" << axIdx << "]";
@@ -274,9 +317,15 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
     }
   }
 
-  // space units
-  itk::EncapsulateMetaData<std::string>(thisDic, std::string("space units"),
-                                        std::string("\"mm\" \"mm\" \"mm\""));
+// space units is not necessary
+//  std::string spaceUnitString;
+//  for (unsigned int i = 0; i < numDims; ++i)
+//  {
+//    if (2 == kinds_temp[i]) //space
+//      spaceUnitString.append("\"mm\" ");
+//  }
+//
+//  itk::EncapsulateMetaData<std::string>(thisDic, std::string("space units"), spaceUnitString);
 
   if (msm.isDWIdata()) {
     // One of the directions is the gradient list instead of a spaceDim
@@ -868,6 +917,15 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
              me, dim, 4);
     mexErrMsgTxt(errBuff);
   }
+
+  //for non-Nrrd and 2D file,directly save
+//  std::string ext = itksys::SystemTools::GetFilenameLastExtension(std::string(filename));
+//  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+//  if (2 == dim && 0 != ext.compare(".nrrd") && 0 != ext.compare(".nhdr") ){
+//    write2DNonNrrdFile(msm.GetField("data"), filename);
+//    return;
+//  }
+
   switch (dim) {
     case 2:
       switch( ntype )

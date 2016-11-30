@@ -322,14 +322,21 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
   for (unsigned int axIdx = 0; axIdx < numMxDimensions; axIdx++) {
     std::string val;
     std::stringstream ss;
+
     ss << "NRRD_kinds[" << axIdx << "]";
     if (itk::ExposeMetaData<std::string>(thisDic, ss.str(), val)) {//nrrd case
       int kind = airEnumVal(nrrdKind, val.c_str());
       kinds_temp[axIdx] = kind;
       myMexPrintf("NRRD kind %d\n", kinds_temp[axIdx]);
-    } else {//default case
+    }
+    else if( gradients.size() > 0 ) // i.e. We are a DWI image
+    {
       kinds_temp[axIdx] = axIdx < numMxDimensions - 1 ?
                           nrrdKindSpace : nrrdKindList;
+      myMexPrintf("DEFAULT DWI kind %d\n", kinds_temp[axIdx]);
+    }
+    else {//default case//debug
+      kinds_temp[axIdx] = nrrdKindSpace;
       myMexPrintf("DEFAULT kind %d\n", kinds_temp[axIdx]);
     }//end default case
   }//end for

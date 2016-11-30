@@ -35,51 +35,6 @@ void printVecValue(const std::vector<double> vec){
   std::cout<<std::endl;
 }
 
-void write2DNonNrrdFile(mxArray* data, const char *filename){
-
-  typedef unsigned char     PixelType;
-  const   unsigned int      Dimension = 2;
-  typedef itk::Image< PixelType, Dimension >  ImageType;
-
-  ImageType::RegionType region;
-  ImageType::IndexType start;
-  start[0] = 0;
-  start[1] = 0;
-
-  const mwSize* mxSize = mxGetDimensions(data);
-  ImageType::SizeType size;
-  size[0] = *mxSize;
-  size[1] = *(mxSize+1);
-
-  region.SetSize(size);
-  region.SetIndex(start);
-
-  ImageType::Pointer image = ImageType::New();
-  image->SetRegions(region);
-  image->Allocate();
-
-  ImageType::IndexType ind;
-  ind[0] = 0;
-  ind[1] = 0;
-
-  //for (int i=0; i< size[0];)
-
-  typedef itk::ImageFileWriter< ImageType  > WriterType;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName(filename);
-  writer->SetInput(image);
-
-  try
-  {
-    writer->Update();
-  }
-  catch (std::exception &e) {
-    mexErrMsgTxt(e.what());
-  }
-
-}
-
-
 inline
 itk::ImageIOBase::IOComponentType typeMtoITK(const mxClassID mtype) {
 
@@ -918,14 +873,6 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
     mexErrMsgTxt(errBuff);
   }
 
-  //for non-Nrrd and 2D file,directly save
-//  std::string ext = itksys::SystemTools::GetFilenameLastExtension(std::string(filename));
-//  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-//  if (2 == dim && 0 != ext.compare(".nrrd") && 0 != ext.compare(".nhdr") ){
-//    write2DNonNrrdFile(msm.GetField("data"), filename);
-//    return;
-//  }
-
   switch (dim) {
     case 2:
       switch( ntype )
@@ -963,8 +910,6 @@ void itkSaveWithMetaData(int nrhs, const mxArray *prhs[]) {
         default:
           break;
         }
-      //std::cerr << "Current itkSaveWithMetadata does not support 2D data image. Program exits." << std::endl;
-      //std::cerr<<std::endl;
       break;
 
     case 3:

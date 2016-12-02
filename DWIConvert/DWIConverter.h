@@ -123,7 +123,6 @@ public:
 
   const DWIMetaDataDictionaryValidator::GradientTableType computeScaledDiffusionVectors() const
   {
-    //TODO: This can be further simplified.  Move private computeScaled(...) into this logic
     const DWIMetaDataDictionaryValidator::GradientTableType& UnitNormDiffusionVectors = this->GetDiffusionVectors();
     const std::vector<double>& bValues = this->GetBValues();
     const double maxBvalue = this->GetMaxBValue();

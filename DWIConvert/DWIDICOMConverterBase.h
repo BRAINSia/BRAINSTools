@@ -85,30 +85,6 @@ class DWIDICOMConverterBase : public DWIConverter {
         m_Volume = reader->GetOutput();
         m_MultiSliceVolume = true;
         }
-
-      // figure out image dimensions
-      {
-        //TODO:  Remove this redundant code.
-        unsigned short rows, cols;
-        m_Headers[0]->GetElementUS(0x0028, 0x0010, rows);
-        m_Headers[0]->GetElementUS(0x0028, 0x0011, cols);
-
-
-        if(cols != this->GetCols() )
-        {
-          itkGenericExceptionMacro(<< "ERROR:  Cols do not match what was read by image " << cols <<  " != " <<
-            this->m_Volume->GetLargestPossibleRegion().GetSize()[1] << std::endl
-          )
-        }
-
-        if(rows != this->GetRows() )
-        {
-          itkGenericExceptionMacro(<< "ERROR:  Rows do not match what was read by image " << rows << " != " <<
-            this->m_Volume->GetLargestPossibleRegion().GetSize()[0] << std::endl
-          )
-        }
-      }
-
       {
       // origin
       double origin[3];

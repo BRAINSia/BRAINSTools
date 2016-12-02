@@ -251,7 +251,7 @@ extern int WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType
               const std::string & filename);
 
 extern int ReadBVals(std::vector<double> & bVals, unsigned int & bValCount,
-                     const std::string & bValFilename, double & maxBValue);
+                     const std::string & bValFilename);
 
 extern int ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount,
                      const std::string & bVecFilename , bool horizontalBy3Rows );

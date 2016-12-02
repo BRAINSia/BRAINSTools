@@ -203,8 +203,7 @@ public:
     unsigned int                      bValCount = 0;
     std::vector<double>               BVals;
 
-    double                            UnusedmaxBValue(0.0); //TODO: Remove this:
-    if( ReadBVals(BVals, bValCount, _inputBValues, UnusedmaxBValue) != EXIT_SUCCESS )
+    if( ReadBVals(BVals, bValCount, _inputBValues) != EXIT_SUCCESS )
     {
       itkGenericExceptionMacro(<< "ERROR reading Bvals " << _inputBValues);
     }

@@ -55,17 +55,15 @@ int main(int argc, char *argv[])
     }
 
   unsigned int        bValCount1;
-  double              maxBValue1(0.0);
   std::vector<double> bvals1;
-  if( ReadBVals(bvals1, bValCount1, bvalfile1, maxBValue1) != EXIT_SUCCESS )
+  if( ReadBVals(bvals1, bValCount1, bvalfile1) != EXIT_SUCCESS )
     {
     std::cerr << "Can't read " << bvalfile1 << std::endl;
     return EXIT_FAILURE;
     }
   unsigned int        bValCount2;
-  double              maxBValue2(0.0);
   std::vector<double> bvals2;
-  if( ReadBVals(bvals2, bValCount2, bvalfile2, maxBValue2) != EXIT_SUCCESS )
+  if( ReadBVals(bvals2, bValCount2, bvalfile2) != EXIT_SUCCESS )
     {
     std::cerr << "Can't read " << bvalfile2 << std::endl;
     return EXIT_FAILURE;

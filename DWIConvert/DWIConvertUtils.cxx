@@ -149,7 +149,7 @@ WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors
 }
 
 int
-ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::string & bValFilename, double & maxBValue)
+ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::string & bValFilename)
 {
   std::ifstream bValFile(bValFilename.c_str(), std::ifstream::in);
 
@@ -168,10 +168,6 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
     if( bValFile.fail() )
     {
       break;
-    }
-    if( x > maxBValue )
-    {
-      maxBValue = x;
     }
     bValCount++;
     bVals.push_back(x);

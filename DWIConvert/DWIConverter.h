@@ -70,17 +70,12 @@
 class DWIConverter
 {
 public:
-  typedef short                          PixelValueType;
   /* The internal format is an unwrapped 3D scalar image that is x,y,slices
    * where slices is all the slices in both 3D and 4d directions.
    * If each volume is 3DSlices, and their are NumGradients, then
    * the last direction of the unwrapped direction is (3DSlices*NumGradients).
    */
   typedef itk::Image<PixelValueType, 3>  Volume3DUnwrappedType;
-  /*
-   * The Volume4DType is a scalar image with diemensions cols,rows,3Dslices,NumGradients
-   */
-  typedef itk::Image<PixelValueType, 4>  Volume4DType;
 
   typedef Volume3DUnwrappedType::SpacingType            SpacingType;
   typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
@@ -423,8 +418,8 @@ public:
       // format is used, write out the image as a raw volume.
       itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::Pointer
         rawWriter = itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::New();
-      itk::RawImageIO<DWIConverter::PixelValueType,3>::Pointer rawIO
-        = itk::RawImageIO<DWIConverter::PixelValueType,3>::New();
+      itk::RawImageIO<PixelValueType,3>::Pointer rawIO
+        = itk::RawImageIO<PixelValueType,3>::New();
       rawWriter->SetImageIO(rawIO);
       rawIO->SetByteOrderToLittleEndian();
       rawWriter->SetFileName(outputVolumeDataName.c_str());
@@ -450,22 +445,6 @@ public:
 
   Volume4DType::Pointer ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const
   {
-    // FSLOutput requires a NIfTI file
-    // copy the computed reference frame to the image so that ITK
-    // writes the correct stuff out.
-    /* // HACK
-    const itk::Matrix<double, 3, 3> NIfTIDirCos = this->GetLPSDirCos();
-     for( unsigned i = 0; i < 3; ++i )
-     {
-     NIfTIDirCos[i][2] *= -1.0;
-     }
-    this->GetDiffusionVolume()->SetDirection(NIfTIDirCos);
-    this->GetDiffusionVolume()->SetSpacing(this->GetSpacing());
-
-    DWIConverter::Volume3DUnwrappedType::PointType origin = this->GetOrigin();
-    this->GetDiffusionVolume()->SetOrigin(origin);
-    */
-
     const int nVolumes = this->GetNVolume();
 
     DWIConverter::Volume3DUnwrappedType::SizeType size3D(img->GetLargestPossibleRegion().GetSize());
@@ -522,11 +501,11 @@ public:
       //Set the qform and sfrom codes for the MetaDataDictionary.
       itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
       itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
+      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     }
 
     const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels()
-      * sizeof(DWIConverter::PixelValueType);
+      * sizeof(PixelValueType);
 
     memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
     return img4D;
@@ -535,12 +514,10 @@ public:
 
   Volume3DUnwrappedType::Pointer FourDToThreeDImage(Volume4DType::Pointer img4D) const
   {
-
-
-    DWIConverter::Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize() );
-    DWIConverter::Volume4DType::DirectionType direction4D(img4D->GetDirection() );
-    DWIConverter::Volume4DType::SpacingType   spacing4D(img4D->GetSpacing() );
-    DWIConverter::Volume4DType::PointType     origin4D(img4D->GetOrigin() );
+    Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize() );
+    Volume4DType::DirectionType direction4D(img4D->GetDirection() );
+    Volume4DType::SpacingType   spacing4D(img4D->GetSpacing() );
+    Volume4DType::PointType     origin4D(img4D->GetOrigin() );
 
     Volume3DUnwrappedType::RegionType region3D;
     {
@@ -592,11 +569,11 @@ public:
       //Set the qform and sfrom codes for the MetaDataDictionary.
       itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
       itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_UNKNOWN" );
+      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     }
 
     const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels()
-      * sizeof(DWIConverter::PixelValueType);
+      * sizeof(PixelValueType);
 
     memcpy(img->GetBufferPointer(), img4D->GetBufferPointer(), bytecount);
     return img;
@@ -618,10 +595,21 @@ public:
        << std::endl);
     }
 
-    Volume4DType::Pointer img4D = ThreeDToFourDImage(this->GetDiffusionVolume());
+
+
+
+    Volume4DType::Pointer img4D = DicomToFSLOrientationImageConverter(
+      ThreeDToFourDImage(this->GetDiffusionVolume()));
+    {
+      img4D->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
+      //Set the qform and sfrom codes for the MetaDataDictionary.
+      itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
+      itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+      itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    }
     itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
     imgWriter->SetInput( img4D );
-    imgWriter->SetFileName( outputVolumeHeaderName );
+    imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
     try
     {
       imgWriter->Update();
@@ -635,6 +623,7 @@ public:
     }
     // FSL output of gradients & BValues
     std::string outputFSLBValFilename;
+    //
     const size_t extensionPos = this->has_valid_nifti_extension(outputVolumeHeaderName);
     if( outputBValues == "" )
     {
@@ -655,12 +644,18 @@ public:
     {
       outputFSLBVecFilename = outputBVectors;
     }
+
+
+
+
     // write out in FSL format
     if( WriteBValues<double>(this->GetBValues(), outputFSLBValFilename) != EXIT_SUCCESS )
     {
       itkGenericExceptionMacro(<< "Failed to write FSL BVal File: " << outputFSLBValFilename << std::endl;);
     }
-    if( WriteBVectors(this->computeScaledDiffusionVectors(), outputFSLBVecFilename) != EXIT_SUCCESS )
+    if( WriteBVectors(DicomToFSLOrientationGradientTableConverter(
+      this->computeScaledDiffusionVectors())
+      , outputFSLBVecFilename) != EXIT_SUCCESS )
     {
       itkGenericExceptionMacro(<< "Failed to write FSL BVec File: " << outputFSLBVecFilename << std::endl;);
     }

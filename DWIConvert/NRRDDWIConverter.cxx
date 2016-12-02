@@ -18,7 +18,7 @@ NRRDDWIConverter::AddFlagsToDictionary()
 }
 
 
-DWIConverter::Volume4DType::Pointer
+Volume4DType::Pointer
 NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
 {
   VectorVolumeType::SizeType      inputSize = vector3DVolume->GetLargestPossibleRegion().GetSize();

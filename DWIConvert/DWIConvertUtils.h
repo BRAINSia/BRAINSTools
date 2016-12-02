@@ -132,7 +132,6 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
 
     if (imageIO->GetComponentType() != ioType)
       {
-      // TODO: factor this out. this check should be done in the caller.
       std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
                 << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
                 << std::endl

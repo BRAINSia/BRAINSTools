@@ -16,13 +16,11 @@ FSLDWIConverter::FSLDWIConverter( const DWIConverter::FileNamesContainer & input
 void
 FSLDWIConverter::AddFlagsToDictionary()
 {
-  //TODO:  Move the QFORM/SFORM codes here
 }
 
 void
 FSLDWIConverter::LoadFromDisk()
 {
-  //HACK: TODO:
   const bool allowLossyConversion=false;
 
   const std::string fslNIFTIFile = m_InputFileNames[0];

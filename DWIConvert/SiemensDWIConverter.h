@@ -348,7 +348,7 @@ public:
         {
         //Gradient vectors are supposed to be unit vectors!
         // If coded as [ 1.0001 1.0001 1.0001 ]  then it is really a B0 image.
-        // This is ugly hack but works around a persistent dicom coding problem
+        // This is ugly but works around a persistent dicom coding problem
         // on some scanners
         return false;
         }
@@ -684,7 +684,7 @@ protected:
       // std::cout << "\tVM: " << vm << std::endl;
       // std::cout << "Local String: " << infoAsString.substr(0,80) << std::endl;
 
-      /* This hack is required for some Siemens VB15 Data */
+      /* This work around is required for some Siemens VB15 Data */
       if( ( nameString == "DiffusionGradientDirection" ) && (vr != "FD") )
         {
         bool loop = true;

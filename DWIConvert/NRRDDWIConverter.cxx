@@ -14,7 +14,6 @@ NRRDDWIConverter::NRRDDWIConverter( const DWIConverter::FileNamesContainer & inp
 void
 NRRDDWIConverter::AddFlagsToDictionary()
 {
-  //TODO:  Move the QFORM/SFORM codes here
 }
 
 
@@ -84,7 +83,6 @@ NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
 void
 NRRDDWIConverter::LoadFromDisk()
 {
-  //HACK: TODO:
   const bool allowLossyConversion=false;
 
   const std::string nrrdNRRDFile = m_InputFileNames[0];

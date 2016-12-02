@@ -51,23 +51,25 @@ template <class ImageType>
 bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
                                   typename ImageType::ConstPointer second)
 {
-  const float coordinateTolerance = 1e-3;
   bool failureStatus = false;
-  if( !first->GetSpacing().GetVnlVector().is_equal( second->GetSpacing().GetVnlVector(), coordinateTolerance ) )
+  const float spacingTolerance = 1e-3;
+  if( !first->GetSpacing().GetVnlVector().is_equal( second->GetSpacing().GetVnlVector(), spacingTolerance ) )
     {
     std::cout << "The first image Spacing does not match second image Information" << std::endl;
     std::cout << "First Spacing: " << first->GetSpacing() << std::endl;
     std::cout << "Second Spacing: " << second->GetSpacing() << std::endl;
     failureStatus = true;
     }
-  if( !first->GetOrigin().GetVnlVector().is_equal( second->GetOrigin().GetVnlVector(), coordinateTolerance ) )
+  const float originTolerance = 1e-2;
+  if( !first->GetOrigin().GetVnlVector().is_equal( second->GetOrigin().GetVnlVector(), originTolerance ) )
     {
     std::cout << "The first image Origin does not match second image Information"<< std::endl;
     std::cout << "First Origin: " << first->GetOrigin() << std::endl;
     std::cout << "Second Origin: " << second->GetOrigin() << std::endl;
     failureStatus = true;
     }
-  if( !first->GetDirection().GetVnlMatrix().as_ref().is_equal( second->GetDirection().GetVnlMatrix(), coordinateTolerance ) )
+  const float directionTolerance = 1e-3;
+  if( !first->GetDirection().GetVnlMatrix().as_ref().is_equal( second->GetDirection().GetVnlMatrix(), directionTolerance  ) )
     {
     std::cout << "The first image Direction does not match second image Information"<< std::endl;
     std::cout << "First Direction: " << first->GetDirection() << std::endl;

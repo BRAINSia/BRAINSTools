@@ -29,7 +29,16 @@ public:
   /**
    * @brief  find the bvalues and gradient vectors
    */
-  void ExtractDWIData() ITK_OVERRIDE;
+  virtual void ExtractDWIData() ITK_OVERRIDE;
+
+  /**
+   * @brief Return common fields.  Does nothing for FSL
+   * @return empty map
+   */
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE
+  {
+    return CommonDicomFieldMapType();
+  }
 
 private:
   Volume4DType::Pointer CreateVolume(VectorVolumeType::Pointer & inputVol);

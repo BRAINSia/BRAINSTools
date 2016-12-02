@@ -21,6 +21,7 @@ class DWIDICOMConverterBase : public DWIConverter {
   typedef itk::DCMTKSeriesFileNames           InputNamesGeneratorType;
   typedef std::vector<itk::DCMTKFileReader *> DCMTKFileVector;
 
+
   DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
                const FileNamesContainer &inputFileNames,
                const bool useBMatrixGradientDirections,
@@ -33,7 +34,14 @@ class DWIDICOMConverterBase : public DWIConverter {
 
     }
 
-  virtual void LoadFromDisk(){
+
+  /**
+   * @brief Return common fields.  Does nothing for FSL
+   * @return empty map
+   */
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
+
+  virtual void LoadFromDisk() ITK_OVERRIDE {
     this->LoadDicomDirectory();
   }
 
@@ -202,15 +210,96 @@ class DWIDICOMConverterBase : public DWIConverter {
     std::__1::cout << this->m_Volume->GetDirection() << std::__1::endl;
 
 
+    //TODO: Remove __1
     std::__1::cout << "this->m_SpacingMatrix" << std::__1::endl;
     std::__1::cout << this->GetSpacingMatrix() << std::__1::endl;
 
     std::__1::cout << "NRRDSpaceDirection" << std::__1::endl;
     std::__1::cout << this->GetNRRDSpaceDirection() << std::__1::endl;
-
+      //TODO: Add metadata to the DWI images
+      {
+        //<element tag="0008,0060" vr="CS" vm="1" len="2" name="Modality">MR</element>
+        this->_addToStringDictionary("0008","0060","Modality",DCM_CS);
+        //<element tag="0008,0070" vr="LO" vm="1" len="18" name="Manufacturer">GE MEDICAL SYSTEMS</element>
+        this->_addToStringDictionary("0008","0070","Manufacturer",DCM_LO);
+        //<element tag="0008,1090" vr="LO" vm="1" len="10" name="ManufacturerModelName">SIGNA HDx</element>
+        this->_addToStringDictionary("0008","1090","ManufacturerModelName",DCM_LO);
+        //<element tag="0018,0087" vr="DS" vm="1" len="2" name="MagneticFieldStrength">3</element>
+        this->_addToStringDictionary("0018","0087","MagneticFieldStrength",DCM_DS);
+        //<element tag="0018,1020" vr="LO" vm="3" len="42" name="SoftwareVersions">14\LX\MR Software release:14.0_M5A_0828.b</element>
+        this->_addToStringDictionary("0018","1020","SoftwareVersions",DCM_LO);
+        //<element tag="0018,0022" vr="CS" vm="2" len="12" name="ScanOptions">EPI_GEMS\PFF</element>
+        this->_addToStringDictionary("0018","0022","ScanOptions",DCM_CS);
+        //<element tag="0018,0023" vr="CS" vm="1" len="2" name="MRAcquisitionType">2D</element>
+        this->_addToStringDictionary("0018","0023","MRAcquisitionType",DCM_CS);
+        //<element tag="0018,0080" vr="DS" vm="1" len="6" name="RepetitionTime">12000</element>
+        this->_addToStringDictionary("0018","0080","RepetitionTime",DCM_DS);
+        //<element tag="0018,0081" vr="DS" vm="1" len="4" name="EchoTime">74.7</element>
+        this->_addToStringDictionary("0018","0081","EchoTime",DCM_DS);
+        //<element tag="0018,0083" vr="DS" vm="1" len="2" name="NumberOfAverages">1</element>
+        this->_addToStringDictionary("0018","0083","NumberOfAverages",DCM_DS);
+        //<element tag="0018,1314" vr="DS" vm="1" len="2" name="FlipAngle">90</element>
+        this->_addToStringDictionary("0018","1314","FlipAngle",DCM_DS);
+      }
     }
 
+
 protected:
+  enum VRType{
+    DCM_CS,
+    DCM_LO,
+    DCM_SH,
+    DCM_DS,
+  };
+
+  /**
+   * @brief Create a dictionary of dicom extracted information about the scans
+   *   using dcmtk dcm2xml tool, identify the information desired to be kept
+   *   <element tag="0018,1314" vr="DS" vm="1" len="2" name="FlipAngle">90</element>
+   * @param dcm_primary_name "0018" in example above
+   * @param dcm_seconary_name "1314" in example above
+   * @param dcm_human_readable_name "FlipAngle" in example above
+   * @param vr "DCM_DS" for enumeration as indicated by vr in example above
+   */
+  void _addToStringDictionary(const std::string dcm_primary_name,
+    const std::string dcm_seconary_name,
+    const std::string dcm_human_readable_name, const enum VRType vr)
+  {
+    int dcm_primary_code;
+    {
+      std::istringstream iss(dcm_primary_name);
+      iss >> std::hex >> dcm_primary_code;
+    }
+    int dcm_secondary_code;
+    {
+      std::istringstream iss(dcm_seconary_name);
+      iss >> std::hex >> dcm_secondary_code;
+    }
+    std::string stringValue="UNKNOWN";
+    const bool throwException=false;
+    switch(vr)
+    {
+    case DCM_CS:
+      this->m_Headers[0]->GetElementCS(dcm_primary_code, dcm_secondary_code, stringValue, throwException );
+      break;
+    case DCM_LO:
+      this->m_Headers[0]->GetElementLO(dcm_primary_code, dcm_secondary_code, stringValue, throwException );
+      break;
+    case DCM_SH:
+      this->m_Headers[0]->GetElementLO(dcm_primary_code, dcm_secondary_code, stringValue, throwException );
+      break;
+    case DCM_DS:
+      this->m_Headers[0]->GetElementDS(dcm_primary_code, dcm_secondary_code, stringValue, throwException );
+      break;
+    default:
+      stringValue="INVALIDDR";
+    }
+    // in NRRD key name DICOM_0008_0060_Modality:=MR
+    std::string map_name("DICOM_");
+    map_name+=dcm_primary_name+"_"+dcm_seconary_name+"_"+dcm_human_readable_name;
+    this->m_CommonDicomFieldsMap[map_name] = stringValue;
+  }
+
   /* determine if slice order is inferior to superior */
   void DetermineSliceOrderIS()
     {
@@ -254,7 +343,7 @@ protected:
    */
   const bool m_UseBMatrixGradientDirections;
   /** one file reader per DICOM file in dataset */
-  const DCMTKFileVector     m_Headers;
+  const DCMTKFileVector    m_Headers;
 };
 
 #endif //BRAINSTOOLS_DWIDICOMCONVERTERBASE_H

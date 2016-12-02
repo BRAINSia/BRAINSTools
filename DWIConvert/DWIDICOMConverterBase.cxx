@@ -4,7 +4,12 @@
 
 #include "DWIDICOMConverterBase.h"
 
-int BLAHBLAHBLAH()
+/**
+ * @brief Return common fields.  Does nothing for FSL
+ * @return empty map
+ */
+DWIDICOMConverterBase::CommonDicomFieldMapType
+DWIDICOMConverterBase::GetCommonDicomFieldsMap() const
 {
-   return 7;
+return this->m_CommonDicomFieldsMap;
 }

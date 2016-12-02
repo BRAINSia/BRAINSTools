@@ -43,6 +43,15 @@ protected:
     {
         itkGenericExceptionMacro(<< " AddFlagsToDictionary not relevant" << std::endl);
     }
+
+  /**
+ * @brief Return common fields.  Does nothing for FSL
+ * @return empty map
+ */
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE
+  {
+    return CommonDicomFieldMapType();
+  }
 };
 
 #endif // __GenericDWIConverter_h

@@ -84,6 +84,8 @@ public:
   typedef itk::Matrix<double, 3, 3>                     RotationMatrixType;
   typedef itk::Vector<double, 3>                        PointType;
 
+  typedef std::map<std::string,std::string> CommonDicomFieldMapType;
+
   DWIConverter( const FileNamesContainer &inputFileNames, const bool FSLFileFormatHorizontalBy3Rows )
     :
     m_InputFileNames(inputFileNames),
@@ -117,6 +119,7 @@ public:
    *  implementing this method.
    */
   virtual void ExtractDWIData() = 0;
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const =0;
 
   /** access methods for image data */
   const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
@@ -380,6 +383,12 @@ public:
              << DoubleConvert(MeasurementFrame[1][2]) << ","
              << DoubleConvert(MeasurementFrame[2][2]) << ")"
              << std::__1::endl;
+    }
+
+    for(std::map<std::string,std::string>::const_iterator it=this->m_CommonDicomFieldsMap.cbegin();
+      it != this->m_CommonDicomFieldsMap.cend(); ++it)
+    {
+       header << it->first << ":=" << it->second << std::endl;
     }
 
     header << "modality:=DWMRI" << std::__1::endl;
@@ -827,6 +836,9 @@ protected:
   bool                        m_IsInterleaved;
   // this is always "left-posterior-superior" in all cases that we currently support
   const std::string           m_NRRDSpaceDefinition;
+
+  // A map of common dicom fields to be propagated to image
+  std::map<std::string,std::string> m_CommonDicomFieldsMap;
 };
 
 #endif // __DWIConverter_h

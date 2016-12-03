@@ -3,40 +3,8 @@
 //
 #include "DWIConvertUtils.h"
 
-#include "itkFlipImageFilter.h"
-
-Volume4DType::Pointer DicomToFSLOrientationImageConverter(Volume4DType::Pointer image4D)
-{
-  //LPS to RAI as FSL desires images to be formatted for viewing purposes.
-  // This conversion makes FSLView display the images in
-  // a way that is most easily interpretable.
-  typedef itk::FlipImageFilter<Volume4DType> FlipperType;
-  FlipperType::Pointer myFlipper = FlipperType::New();
-  myFlipper->SetInput( image4D ) ;
-  FlipperType::FlipAxesArrayType arrayAxisFlip;
-  arrayAxisFlip[0]=false;    //
-  arrayAxisFlip[1]=true;    // FSL wants the second and third dimensions flipped with regards to LPS orientation
-  arrayAxisFlip[2]=true;    // FSL wants the second and third dimeinsions flipped with regards to LPS orientation
-  arrayAxisFlip[3]=false;
-  myFlipper->SetFlipAxes(arrayAxisFlip);
-  myFlipper->FlipAboutOriginOff();  //Flip the image and direction cosignes
-  // this is similar to a transform of [1 0 0; 0 -1 0; 0 0 -1]
-  myFlipper->Update();
-  return myFlipper->GetOutput();
-}
 
 
-//This is necesssary to ensure that the BVEC file is consistent with FSL orientation assumptions
-DWIMetaDataDictionaryValidator::GradientTableType
-DicomToFSLOrientationGradientTableConverter(
-  DWIMetaDataDictionaryValidator::GradientTableType FSL_GradientTable)
-{
-  for(size_t i =0 ; i < FSL_GradientTable.size(); ++i)
-  {
-    FSL_GradientTable[i][1]  *= -1 ;
-  }
-  return FSL_GradientTable;
-}
 
 void PrintVec(const vnl_vector_fixed<double,3> & vec)
 {

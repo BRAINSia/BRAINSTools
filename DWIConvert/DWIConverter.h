@@ -94,7 +94,6 @@ public:
     m_SlicesPerVolume(0),
     m_NSlice(0),
     m_NVolume(0),
-    m_useIdentityMeaseurementFrame(false),
     m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
     m_IsInterleaved(false),
     m_NRRDSpaceDefinition("left-posterior-superior")
@@ -124,23 +123,66 @@ public:
   /** access methods for image data */
   const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
 
-  const DWIMetaDataDictionaryValidator::GradientTableType computeScaledDiffusionVectors() const
+  /**
+   * @brief NRRD file format stores a single BValue, and sets all the BVectors to scaled version that represents
+   *                  the magnitude of the BValue offset.
+   */
+  void ConvertToSingleBValueScaledDiffusionVectors()
   {
-    const DWIMetaDataDictionaryValidator::GradientTableType& UnitNormDiffusionVectors = this->GetDiffusionVectors();
-    const std::vector<double>& bValues = this->GetBValues();
     const double maxBvalue = this->GetMaxBValue();
-    const DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors =
-      this->computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
-    return BvalueScaledDiffusionVectors;
+    {
+      DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors(0);
+      BvalueScaledDiffusionVectors.reserve(m_DiffusionVectors.size());
+      for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
+      {
+        vnl_vector_fixed<double,3> vec(3);
+        float scaleFactor = 0;
+        if( maxBvalue > 0 )
+        {
+          scaleFactor = sqrt( this->m_BValues[k] / maxBvalue );
+        }
+        std::cout << "Scale Factor for Multiple BValues: " << k
+                  << " -- sqrt( " << this->m_BValues[k] << " / " << maxBvalue << " ) = "
+                  << scaleFactor << std::endl;
+        for( unsigned ind = 0; ind < 3; ++ind )
+        {
+          vec[ind] = this->m_DiffusionVectors[k][ind] * scaleFactor;
+        }
+        BvalueScaledDiffusionVectors.push_back(vec);
+        this->m_BValues[k] = maxBvalue;
+      }
+      this->m_DiffusionVectors = BvalueScaledDiffusionVectors;
+    }
   }
+  /**
+   * @brief FSL Format requires unit gradient directions and separate
+   *        BValues for each gradient direction
+   */
+  void ConvertToMutipleBValuesUnitScaledBVectors()
+  {
+    const double maxBvalue = this->GetMaxBValue();
+    {
+      for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
+      {
+        const double mag = m_DiffusionVectors[k].magnitude();
+        const double scaleFactor = maxBvalue * mag*mag;
+        m_DiffusionVectors[k].normalize();
+        this->m_BValues[k] = maxBvalue*scaleFactor;
+      }
+    }
+  }
+
+
+ /**
+  * @brief FSL orientation to allow for convenient display of images and
+  *        conformance with conventions used by dcm2niix & fslview
+  * @return Returns a 4D image pointer properly formatted
+  */
+  Volume4DType::Pointer OrientForFSLConventions ();
 
   const std::vector<double> &GetBValues() const { return this->m_BValues; }
   void SetBValues( const std::vector<double> & inBValues ) { this->m_BValues = inBValues; }
   double GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
-  void SetMeasurementFrameIdentity()
-  {
-    this->m_MeasurementFrame.SetIdentity();
-  }
 
   Volume3DUnwrappedType::Pointer GetDiffusionVolume() const { return this->m_Volume; }
 
@@ -233,9 +275,12 @@ public:
     return;
   }
 
-  void UpdateBVectorOrientation()
+  /**
+   * @brief ConvertBVectorsToIdentityMeasurementFrame, Convert the values of the gradients to
+   * use an identity measurement frame. This is required by FSL outputs.
+   */
+  void ConvertBVectorsToIdentityMeasurementFrame()
   {
-    if (this->m_useIdentityMeaseurementFrame == true) {
       DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
       const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame = this->GetMeasurementFrame().GetInverse();
       // grab the diffusion vectors.
@@ -264,7 +309,6 @@ public:
       }
       this->m_DiffusionVectors = gradientVectors;
       this->m_MeasurementFrame.SetIdentity();
-    }
   }
 
   std::string
@@ -400,9 +444,8 @@ public:
     //  header << "DWMRI_gradient_0000:=0  0  0" << std::endl;
     //  header << "DWMRI_NEX_0000:=" << nBaseline << std::endl;
     //  need to check
-    const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors =
-      this->computeScaledDiffusionVectors();
     {
+      const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors = this->m_DiffusionVectors;
       unsigned int gradientVecIndex = 0;
       for (unsigned int k = 0; k<gradientVectors.size(); ++k) {
         header << "DWMRI_gradient_" << std::__1::setw(4) << std::__1::setfill('0') << k << ":="
@@ -441,12 +484,6 @@ public:
       }
     }
     header.close();
-    return;
-  }
-
-  void SetUseIdentityMeaseurementFrame(const bool value)
-  {
-    this->m_useIdentityMeaseurementFrame = value;
     return;
   }
 
@@ -586,13 +623,13 @@ public:
     return img;
   }
 
+
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
  */
   void
   WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-    const std::string outputBValues, const std::string
-  outputBVectors) const
+    const std::string outputBValues, const std::string outputBVectors, Volume4DType::Pointer img4D) const
   {
     const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] *
       this->m_MeasurementFrame[2][2];
@@ -602,13 +639,7 @@ public:
        << std::endl);
     }
 
-
-
-
-    Volume4DType::Pointer img4D = DicomToFSLOrientationImageConverter(
-      ThreeDToFourDImage(this->GetDiffusionVolume()));
     {
-      img4D->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
       //Set the qform and sfrom codes for the MetaDataDictionary.
       itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
       itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
@@ -652,17 +683,12 @@ public:
       outputFSLBVecFilename = outputBVectors;
     }
 
-
-
-
     // write out in FSL format
-    if( WriteBValues<double>(this->GetBValues(), outputFSLBValFilename) != EXIT_SUCCESS )
+    if( WriteBValues<double>(this->m_BValues, outputFSLBValFilename) != EXIT_SUCCESS )
     {
       itkGenericExceptionMacro(<< "Failed to write FSL BVal File: " << outputFSLBValFilename << std::endl;);
     }
-    if( WriteBVectors(DicomToFSLOrientationGradientTableConverter(
-      this->computeScaledDiffusionVectors())
-      , outputFSLBVecFilename) != EXIT_SUCCESS )
+    if( WriteBVectors( this->m_DiffusionVectors , outputFSLBVecFilename) != EXIT_SUCCESS )
     {
       itkGenericExceptionMacro(<< "Failed to write FSL BVec File: " << outputFSLBVecFilename << std::endl;);
     }
@@ -770,31 +796,6 @@ protected:
     return std::string::npos;
   }
 
-  DWIMetaDataDictionaryValidator::GradientTableType
-  computeScaledDiffusionVectors( const DWIMetaDataDictionaryValidator::GradientTableType &UnitNormDiffusionVectors,
-    const std::vector<double> &bValues,
-    const double maxBvalue) const
-  {
-    DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors;
-    for( unsigned int k = 0; k < UnitNormDiffusionVectors.size(); ++k )
-    {
-      vnl_vector_fixed<double,3> vec(3);
-      float scaleFactor = 0;
-      if( maxBvalue > 0 )
-      {
-        scaleFactor = sqrt( bValues[k] / maxBvalue );
-      }
-      std::cout << "Scale Factor for Multiple BValues: " << k << " -- sqrt( " << bValues[k] << " / " << maxBvalue << " ) = "
-                << scaleFactor << std::endl;
-      for( unsigned ind = 0; ind < 3; ++ind )
-      {
-        vec[ind] = UnitNormDiffusionVectors[k][ind] * scaleFactor;
-      }
-      BvalueScaledDiffusionVectors.push_back(vec);
-    }
-    return BvalueScaledDiffusionVectors;
-  }
-
   /** add vendor-specific flags; */
   virtual void AddFlagsToDictionary() = 0;
 
@@ -803,18 +804,11 @@ protected:
    */
   const FileNamesContainer  m_InputFileNames;
 
-  /** measurement from for gradients if different than patient
-   *  reference frame.
-   */
-  RotationMatrixType   m_MeasurementFrame;
-  /** potentially the measurement frame */
   /** matrix with just spacing information, used a couple places */
   /** the current dataset is represented in a single file */
   bool                m_MultiSliceVolume;
   /** slice order is inferior/superior? */
   bool                m_SliceOrderIS;
-  /** the image read from the DICOM dataset */
-  Volume3DUnwrappedType::Pointer m_Volume;
 
   /** dimensions */
   unsigned int        m_SlicesPerVolume;
@@ -823,13 +817,8 @@ protected:
   /** number of gradient volumes */
   unsigned int        m_NVolume;
 
-  /** list of B Values for each volume */
-  std::vector<double>  m_BValues;
-  /** list of gradient vectors */
-  DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
   /** double conversion instance, for optimal printing of numbers as  text */
   itk::NumberToString<double> m_DoubleConvert;
-  bool       m_useIdentityMeaseurementFrame;
   bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
   /** track if images is interleaved */
@@ -837,8 +826,26 @@ protected:
   // this is always "left-posterior-superior" in all cases that we currently support
   const std::string           m_NRRDSpaceDefinition;
 
+
+
   // A map of common dicom fields to be propagated to image
   std::map<std::string,std::string> m_CommonDicomFieldsMap;
+
+   /* The following variables make up the primary data model for diffusion weighted images
+    * in the most generic sense.  These variables all need to be manipulated together in
+    * order to maintain a consistent data model.
+    */
+  /** the image read from the DICOM dataset */
+  Volume3DUnwrappedType::Pointer m_Volume;
+  /** measurement from for gradients if different than patient
+   *  reference frame.
+   */
+  RotationMatrixType   m_MeasurementFrame;
+  /** list of B Values for each volume */
+  std::vector<double>  m_BValues;
+  /** list of gradient vectors */
+  DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
+
 };
 
 #endif // __DWIConverter_h

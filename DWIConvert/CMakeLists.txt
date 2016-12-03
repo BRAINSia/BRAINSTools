@@ -34,6 +34,7 @@ set(DWIConvertSupportLib_SRCS
   DWIConvertUtils.cxx
   DWIConverterFactory.h
   DWIConverter.h
+  DWIConverter.cxx
   DWIDICOMConverterBase.h
   DWIDICOMConverterBase.cxx
   GEDWIConverter.h

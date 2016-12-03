@@ -198,7 +198,6 @@ int main(int argc, char *argv[])
       std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
       NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, transpose);
       useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
-      NRRDconverter->SetUseIdentityMeaseurementFrame(useIdentityMeaseurementFrame);
       try
       {
         NRRDconverter->LoadFromDisk();
@@ -219,7 +218,6 @@ int main(int argc, char *argv[])
     {
       useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
     }
-    converter->SetUseIdentityMeaseurementFrame(useIdentityMeaseurementFrame);
   }
   else
   {
@@ -238,7 +236,10 @@ int main(int argc, char *argv[])
   }
 #endif
   //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
-  converter->UpdateBVectorOrientation();
+  if (useIdentityMeaseurementFrame == true)
+  {
+    converter->ConvertBVectorsToIdentityMeasurementFrame();
+  }
 
 
 
@@ -258,13 +259,15 @@ int main(int argc, char *argv[])
 
   if( conversionMode == "DicomToFSL"  || conversionMode == "NrrdToFSL" )
   {
-    useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
-    converter->SetUseIdentityMeaseurementFrame(useIdentityMeaseurementFrame);
+
+    Volume4DType::Pointer img4D = converter->OrientForFSLConventions();
     // write the image */
-    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, outputBValues, outputBVectors);
+    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, outputBValues, outputBVectors, img4D);
   }
   else
   {
+    //NRRD requires scaledDiffusionVectors, so find max BValue
+  converter->ConvertToSingleBValueScaledDiffusionVectors();
   //////////////////////////////////////////////
   // write header file
   // This part follows a DWI NRRD file in NRRD format 5.

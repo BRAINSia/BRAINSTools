@@ -44,22 +44,7 @@ typedef short                          PixelValueType;
  */
 typedef itk::Image<PixelValueType, 4>  Volume4DType;
 
-/**
- * @brief FSL orientation to allow for convenient display of images and
- *        conformance
- * @param image4D
- * @return
- */
-Volume4DType::Pointer DicomToFSLOrientationImageConverter(Volume4DType::Pointer image4D);
 
-/**
- * @brief This is necesssary to ensure that the BVEC file is consistent with FSL
- * orientation assumptions
- * @param FSL_GradientTable
- * @return
- */
-DWIMetaDataDictionaryValidator::GradientTableType
-DicomToFSLOrientationGradientTableConverter(DWIMetaDataDictionaryValidator::GradientTableType FSL_GradientTable);
 
 template <typename TArg>
 int

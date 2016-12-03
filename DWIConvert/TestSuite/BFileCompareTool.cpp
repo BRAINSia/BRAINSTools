@@ -65,35 +65,46 @@ DataVector convertBufferIntoVector(char* buffer){
 
 //return: 0: all comparing data are close to each other
 int compareRowColumn(const DataVector& data1, const DataVector& data2, const size_t linesToCompare, const double tolerance){
+  int failure_found=EXIT_SUCCESS;
+
   if (data1.size() != data2.size() && linesToCompare > std::min(data1.size(),data2.size())){
     std::cout<< "two files have different numbers of lines needing comparing." <<std::endl;
-    return VALUE_TOLERANCE_FAILURE_CODE;
+    failure_found = VALUE_TOLERANCE_FAILURE_CODE;
   }
 
-  if ( linesToCompare > std::min(data1.size(),data2.size()) ) {
+  if ( ! failure_found && linesToCompare > std::min(data1.size(),data2.size()) ) {
     std::cout<< "linesToCompare is greater than the number of data lines." <<std::endl;
-    return VALUE_TOLERANCE_FAILURE_CODE;
+    failure_found = VALUE_TOLERANCE_FAILURE_CODE;
   }
 
-  for(size_t i=0; i< linesToCompare; ++i){
-    std::vector< double > row1 = data1[i];
-    std::vector< double > row2 = data2[i];
-    const size_t column = row1.size();
-    if (column != row2.size()){
-      printf("In the line %zu, 2 data has different column.\n", i);
-      return VALUE_TOLERANCE_FAILURE_CODE;
-    }
-    for (size_t j=0; j< column; ++j){
-      if (std::abs(row1[j] - row2[j]) > tolerance){
-        printf("In the line %zu, column %zu:\ndata1 has value: %.8f;\ndata2 has value: %.8f.\n", i+1,j+1,row1[j],row2[j]);
-        printf("The difference is greater than the tolerance %g. \nSo data in two files are not close within specific tolerance.\nProgram exits.\n", tolerance);
-        return VALUE_TOLERANCE_FAILURE_CODE;
+  if( ! failure_found )
+  {
+    for(size_t i=0; i< linesToCompare; ++i){
+      std::vector< double > row1 = data1[i];
+      std::vector< double > row2 = data2[i];
+      const size_t column = row1.size();
+      if (column != row2.size()){
+        printf("In the line %zu, 2 data has different column.\n", i);
+        failure_found = VALUE_TOLERANCE_FAILURE_CODE;
+      }
+      for (size_t j=0; j< column; ++j){
+        if (std::abs(row1[j] - row2[j]) > tolerance){
+          printf("In the line %zu, column %zu:\ndata1 has value: %.8f;\ndata2 has value: %.8f.\n", i+1,j+1,row1[j],row2[j]);
+          printf("The difference is greater than the tolerance %g. \nSo data in two files are not close within specific tolerance.\nProgram exits.\n", tolerance);
+          failure_found = VALUE_TOLERANCE_FAILURE_CODE;
+        }
       }
     }
   }
-  printf("Two files are close within the specific tolerance %g \n", tolerance);
-  printf("Program exits successfully.\n");
-  return EXIT_SUCCESS;
+  if ( ! failure_found )
+  {
+    printf("Two files are close within the specific tolerance %g \n", tolerance);
+    printf("Program exits successfully.\n");
+  }
+  else{
+    std::cout << "ERROR! ERROR! ERROR! The files do not match." << std::endl;
+  }
+  return failure_found;
 }
 
 

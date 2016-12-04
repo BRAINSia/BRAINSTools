@@ -190,12 +190,12 @@ int RecoverBValues(const TImage *inputVol,
     double norm = std::sqrt( (bVectors[i][0] * bVectors[i][0])
                             + (bVectors[i][1] * bVectors[i][1])
                             + (bVectors[i][2] * bVectors[i][2]) );
-    if( std::abs( 1- norm) < 1e-4 ) // Asssume value very close to 1 are 1
+    if( std::abs( 1.0 - norm) < 1e-4 ) // Asssume value very close to 1 are 1
       {
       norm = 1.0;
       }
     // bval_i = (G_norm)^2 * bval_max
-    double bval = norm*norm*BValue;
+    double bval = norm*BValue;
     if( std::abs( bval - itk::Math::Round<double>(bval) ) < 1e-2 )
       {
       bval = itk::Math::Round<double>(bval);

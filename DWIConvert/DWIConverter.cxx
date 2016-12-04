@@ -31,12 +31,20 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions ()
   {
     arrayAxisFlip[i] =  DirectionNeedsFlipping(direction,i);
     //This is necesssary to ensure that the BVEC file is consistent with FSL orientation assumptions
-    const double second_dir_modifier = (i==2)? -1 : 1;
     for(size_t g =0 ; g < this->m_DiffusionVectors.size(); ++g)
     {
-      this->m_DiffusionVectors[g][i]  *= arrayAxisFlip[i] ? second_dir_modifier * -1 : second_dir_modifier * 1 ;
+      this->m_DiffusionVectors[g][i]  *= ( arrayAxisFlip[i] ? -1 : 1 );
     }
   }
+  /* Debugging information for identifying orientation!
+  std::cout << "arrayAxisFlip" << std::endl;
+  for(int i =0; i < 11; ++i)
+  {
+    std::cout << arrayAxisFlip << std::endl;
+    std::cout << m_IsInterleaved << std::endl;
+    std::cout << m_SliceOrderIS << std::endl;
+  }
+   */
   //
   // FSL wants the second and third dimensions flipped with regards to LPS orientation
   // FSL wants the second and third dimeinsions flipped with regards to LPS orientation

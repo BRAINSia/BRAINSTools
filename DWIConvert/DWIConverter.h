@@ -164,10 +164,14 @@ public:
     {
       for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
       {
-        const double mag = m_DiffusionVectors[k].magnitude();
-        const double scaleFactor = maxBvalue * mag*mag;
+        double mag = m_DiffusionVectors[k].magnitude();
+        if( std::abs( mag*mag - 1.0 ) < 0.01 ) //if less than 1% differnece
+        {
+          mag = 1.0;  //If less than 1% difference, then assume 100%
+          //This is to avoid numerical instability with computing magnitudes of gradients
+        }
         m_DiffusionVectors[k].normalize();
-        this->m_BValues[k] = maxBvalue*scaleFactor;
+        this->m_BValues[k] = itk::Math::Round<double>( maxBvalue*mag*mag );
       }
     }
   }
@@ -709,10 +713,14 @@ protected:
       {
         std::cout << "Slice order is SI" << std::endl;
         Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_Volume->GetDirection();
-        LPSDirCos[0][2] = -LPSDirCos[0][2];
-        LPSDirCos[1][2] = -LPSDirCos[1][2];
-        LPSDirCos[2][2] = -LPSDirCos[2][2];
+        LPSDirCos[0][2] *= -1;
+        LPSDirCos[1][2] *= -1;
+        LPSDirCos[2][2] *= -1;
         this->m_Volume->SetDirection(LPSDirCos);
+        //Need to update the measurement frame too!
+        this->m_MeasurementFrame[0][2] *= -1;
+        this->m_MeasurementFrame[1][2] *= -1;
+        this->m_MeasurementFrame[2][2] *= -1;
       }
     }
 

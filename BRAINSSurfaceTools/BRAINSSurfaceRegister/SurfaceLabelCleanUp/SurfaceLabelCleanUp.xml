@@ -9,7 +9,7 @@
   <description>
       This program cleans up surface labels iteratively. There are four steps which are realized in four functions to do the work. After cleaning up, it helps to get rid of extra label patches, isolated label dots (points), and sharp triangles on the borders. ASSUME: labels are associated with the input surface as point data scalars using the name of "LabelValue".
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Vincent Magnotta</contributor>

@@ -4,7 +4,7 @@
   <title>HAMMER Feature Vectors</title>
 
   <description>Create the feature vectors used by HAMMER.</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This was extracted from the Hammer Registration source code, and wrapped up by Hans J. Johnson.</contributor>

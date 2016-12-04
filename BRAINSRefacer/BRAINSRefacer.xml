@@ -8,7 +8,7 @@
   <acknowledgements>
     <![CDATA[Hans Johnson(1,2,3); Alexander Leinoff(3); Yue Pan(3); Wei Shao(3); Jeffrey Obadal(3)  1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Biomedical Engineering, 3=University of Iowa Department of Electrical and Computer Engineering]]>
   </acknowledgements>
-  <version>4.7.0</version>
+  <version>4.8.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <parameters>

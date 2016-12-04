@@ -5,7 +5,7 @@
     <description>This program will read the inputVolume as a short int image, write the BackgroundFillValue everywhere inferior to the lower bound, and write the resulting clipped short int image in the outputVolume.
     </description>
 
-    <version>4.7.1</version>
+    <version>4.8.0</version>
     <parameters>
         <image>
             <name>inputVolume</name>

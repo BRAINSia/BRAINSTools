@@ -7,7 +7,7 @@
     BRAINS Surface Statistics
   </title>
   <description> This program allows the user to perform statistics on a surface using the R statistical language</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>NEED to ADD</documentation-url>
   <license>NEED to ADD</license>
   <contributor>Wen Li, Vincent A. Magnotta, and Jeff Long</contributor>

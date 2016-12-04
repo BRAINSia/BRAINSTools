@@ -5,7 +5,7 @@
 
   <description> This program create fiber tracts in a tensor image using a basic streamlines algorithm.  The algorithm requires a starting and ending region to be be defined for the fiber tracts. Only those that reach the ending region without terminating are kept. Criteria for termination include length, anisotropy, and curvature. These can be controlled by user. In addition, the TEND method as proposed by Lazar et al Human Brain Mapping 18:306-321(2003) has been instrumented.  </description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
   <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>

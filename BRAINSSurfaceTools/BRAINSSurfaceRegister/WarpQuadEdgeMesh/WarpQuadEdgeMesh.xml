@@ -9,7 +9,7 @@
   <description>
       This program warps scalar values from the moving mesh to the fixed mesh using a deformation field (deformed fixed). The output mesh has points from the fixed mesh with scalar values from the moving mesh. So it should "look" like the moving mesh, as the result of registration.
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>

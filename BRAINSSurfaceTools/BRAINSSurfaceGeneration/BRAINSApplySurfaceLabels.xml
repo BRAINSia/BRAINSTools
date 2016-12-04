@@ -7,7 +7,7 @@
     BRAINS Surface Label Map
   </title>
   <description>This program takes in a label map and a surface and labels the surface. The images as defined in ITK is in an LPS coordinate system while the surface is expected to be in an RAS coordinate system to support integration with the 3D Slicer program. Currently the cells (i.e. triangles) of the surface based on a voting rule. If all three points have a different labels then the cell is arbitrarily assigned to one of the labels. </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSApplySurfaceLabels</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Steven A. Dunn and Vincent A. Magnotta</contributor>

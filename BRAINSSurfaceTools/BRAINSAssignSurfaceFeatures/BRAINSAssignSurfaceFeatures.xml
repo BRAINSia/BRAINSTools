@@ -9,7 +9,7 @@
   <description>
     Ths program calculate several types of geometry features (distanceFromPC, depth to a hull, cortical thickness, and mean_curvature) on the input surface. The geometry features will be added as arrays of the vtkPolyData of the output surface. If cortical thickness needs to be calculated, the input surface should be the inner surface.
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMarchingCubes</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Vincent A. Magnotta</contributor>

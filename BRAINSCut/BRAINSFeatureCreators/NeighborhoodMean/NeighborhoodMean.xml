@@ -4,7 +4,7 @@
   <title>Neighborhood Mean</title>
 
   <description>Calculates the mean, for the given neighborhood size, at each voxel of the T1, T2, and FLAIR.</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Mark Scully and Jeremy Bockholt.</contributor>

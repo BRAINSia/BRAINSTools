@@ -9,7 +9,7 @@
   <description>
       This program rearranges surface labels after removing tiny labels and combining labels. The left labels are renumbered using continuous numbers and the full name of each label is given in the field data with the name of "LabelName".
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Vincent Magnotta</contributor>

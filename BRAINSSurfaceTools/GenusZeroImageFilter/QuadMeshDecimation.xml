@@ -4,7 +4,7 @@
   <title>Surface Decimation</title>
   <description>
 Surface decimation function based on ITK Quad Edge mesh filters. This is used to remove extra triangles for the resulting surface  </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url/>
   <license/>
   <contributor>Wen Li and Vincent Magnotta</contributor>

@@ -3,7 +3,7 @@
   <category>Segmentation.Specialized</category>
   <title>BRAINSCut (BRAINS)</title>
   <description>Automatic Segmentation using neural networks</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Vince Magnotta, Hans Johnson, Greg Harris, Kent Williams, Eunyoung Regina Kim</contributor>

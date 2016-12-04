@@ -4,7 +4,7 @@
   <title>Flip Image</title>
 
   <description>Difference between an image and the axially flipped version of that image.</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Mark Scully and Jeremy Bockholt.</contributor>

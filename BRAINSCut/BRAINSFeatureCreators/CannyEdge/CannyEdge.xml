@@ -4,7 +4,7 @@
   <title>Canny Edge Detection</title>
 
   <description>Get the distance from a voxel to the nearest voxel of a given tissue type.</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was written by Hans J. Johnson.</contributor>

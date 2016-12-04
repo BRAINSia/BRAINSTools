@@ -3,7 +3,7 @@
   <category>Utilities.BRAINS</category>
   <title>ShuffleVectors</title>
   <description>Automatic Segmentation using neural networks</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Hans Johnson</contributor>

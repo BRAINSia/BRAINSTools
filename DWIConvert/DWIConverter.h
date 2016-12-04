@@ -89,13 +89,10 @@ public:
   DWIConverter( const FileNamesContainer &inputFileNames, const bool FSLFileFormatHorizontalBy3Rows )
     :
     m_InputFileNames(inputFileNames),
-    m_MultiSliceVolume(false),
-    m_SliceOrderIS(true),
+    m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
     m_SlicesPerVolume(0),
     m_NSlice(0),
     m_NVolume(0),
-    m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
-    m_IsInterleaved(false),
     m_NRRDSpaceDefinition("left-posterior-superior")
   {
     this->m_MeasurementFrame.SetIdentity();
@@ -206,15 +203,14 @@ public:
 
   RotationMatrixType GetNRRDSpaceDirection() const { return  this->m_Volume->GetDirection() * this->GetSpacingMatrix(); }
 
+  unsigned int GetSlicesPerVolume() const { return m_SlicesPerVolume; }
   unsigned int GetNVolume() const { return this->m_NVolume; }
-
   std::string GetNRRDSpaceDefinition() const { return this->m_NRRDSpaceDefinition; }
 
   unsigned short GetRows() const { return this->m_Volume->GetLargestPossibleRegion().GetSize()[0]; }
 
   unsigned short GetCols() const { return this->m_Volume->GetLargestPossibleRegion().GetSize()[1]; }
 
-  unsigned int GetSlicesPerVolume() const { return m_SlicesPerVolume; }
 
 
 
@@ -699,75 +695,7 @@ public:
   }
 
 protected:
-  /** the SliceOrderIS flag can be computed (as above) but if it's
-   *  invariant, the derived classes can just set the flag. This method
-   *  fixes up the VolumeDirectionCos after the flag is set.
-   */
-  void SetDirectionsFromSliceOrder()
-    {
-      if(this->m_SliceOrderIS)
-        {
-        std::cout << "Slice order is IS" << std::endl;
-        }
-      else
-      {
-        std::cout << "Slice order is SI" << std::endl;
-        Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_Volume->GetDirection();
-        LPSDirCos[0][2] *= -1;
-        LPSDirCos[1][2] *= -1;
-        LPSDirCos[2][2] *= -1;
-        this->m_Volume->SetDirection(LPSDirCos);
-        //Need to update the measurement frame too!
-        this->m_MeasurementFrame[0][2] *= -1;
-        this->m_MeasurementFrame[1][2] *= -1;
-        this->m_MeasurementFrame[2][2] *= -1;
-      }
-    }
 
-  /* given a sequence of dicom files where all the slices for location
-   * 0 are folled by all the slices for location 1, etc. This method
-   * transforms it into a sequence of volumes
-   */
-  void
-  DeInterleaveVolume()
-    {
-      size_t NVolumes = this->m_NSlice / this->m_SlicesPerVolume;
-
-      Volume3DUnwrappedType::RegionType R = this->m_Volume->GetLargestPossibleRegion();
-
-      R.SetSize(2, 1);
-      std::vector<Volume3DUnwrappedType::PixelType> v(this->m_NSlice);
-      std::vector<Volume3DUnwrappedType::PixelType> w(this->m_NSlice);
-
-      itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_Volume, R );
-      // permute the slices by extracting the 1D array of voxels for
-      // a particular {x,y} position, then re-ordering the voxels such
-      // that all the voxels for a particular volume are adjacent
-      for( I.GoToBegin(); !I.IsAtEnd(); ++I )
-        {
-        Volume3DUnwrappedType::IndexType idx = I.GetIndex();
-        // extract all values in one "column"
-        for( unsigned int k = 0; k < this->m_NSlice; ++k )
-          {
-          idx[2] = k;
-          v[k] = this->m_Volume->GetPixel( idx );
-          }
-        // permute
-        for( unsigned int k = 0; k < NVolumes; ++k )
-          {
-          for( unsigned int m = 0; m < this->m_SlicesPerVolume; ++m )
-            {
-            w[(k * this->m_SlicesPerVolume) + m] = v[(m * NVolumes) + k];
-            }
-          }
-        // put things back in order
-        for( unsigned int k = 0; k < this->m_NSlice; ++k )
-          {
-          idx[2] = k;
-          this->m_Volume->SetPixel( idx, w[k] );
-          }
-        }
-    }
 
   double ComputeMaxBvalue(const std::vector<double> &bValues) const
   {
@@ -812,11 +740,10 @@ protected:
    */
   const FileNamesContainer  m_InputFileNames;
 
-  /** matrix with just spacing information, used a couple places */
-  /** the current dataset is represented in a single file */
-  bool                m_MultiSliceVolume;
-  /** slice order is inferior/superior? */
-  bool                m_SliceOrderIS;
+
+  /** double conversion instance, for optimal printing of numbers as  text */
+  itk::NumberToString<double> m_DoubleConvert;
+  bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
   /** dimensions */
   unsigned int        m_SlicesPerVolume;
@@ -825,19 +752,8 @@ protected:
   /** number of gradient volumes */
   unsigned int        m_NVolume;
 
-  /** double conversion instance, for optimal printing of numbers as  text */
-  itk::NumberToString<double> m_DoubleConvert;
-  bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
-
-  /** track if images is interleaved */
-  bool                        m_IsInterleaved;
   // this is always "left-posterior-superior" in all cases that we currently support
   const std::string           m_NRRDSpaceDefinition;
-
-
-
-  // A map of common dicom fields to be propagated to image
-  std::map<std::string,std::string> m_CommonDicomFieldsMap;
 
    /* The following variables make up the primary data model for diffusion weighted images
     * in the most generic sense.  These variables all need to be manipulated together in
@@ -853,6 +769,8 @@ protected:
   std::vector<double>  m_BValues;
   /** list of gradient vectors */
   DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
+  // A map of common dicom fields to be propagated to image
+  std::map<std::string,std::string> m_CommonDicomFieldsMap;
 
 };
 

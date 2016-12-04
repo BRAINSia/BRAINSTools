@@ -28,8 +28,10 @@ class DWIDICOMConverterBase : public DWIConverter {
                const bool FSLFileFormatHorizontalBy3Rows) :
                                                     DWIConverter(inputFileNames, FSLFileFormatHorizontalBy3Rows),
                                                     m_UseBMatrixGradientDirections(useBMatrixGradientDirections),
-                                                    m_Headers(allHeaders)
-
+                                                    m_Headers(allHeaders),
+                                                    m_MultiSliceVolume(false),
+                                                    m_SliceOrderIS(true),
+                                                    m_IsInterleaved(false)
     {
 
     }
@@ -299,7 +301,75 @@ protected:
     map_name+=dcm_primary_name+"_"+dcm_seconary_name+"_"+dcm_human_readable_name;
     this->m_CommonDicomFieldsMap[map_name] = stringValue;
   }
+  /** the SliceOrderIS flag can be computed (as above) but if it's
+   *  invariant, the derived classes can just set the flag. This method
+   *  fixes up the VolumeDirectionCos after the flag is set.
+   */
+  void SetDirectionsFromSliceOrder()
+  {
+    if(this->m_SliceOrderIS)
+    {
+      std::cout << "Slice order is IS" << std::endl;
+    }
+    else
+    {
+      std::cout << "Slice order is SI" << std::endl;
+      Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_Volume->GetDirection();
+      LPSDirCos[0][2] *= -1;
+      LPSDirCos[1][2] *= -1;
+      LPSDirCos[2][2] *= -1;
+      this->m_Volume->SetDirection(LPSDirCos);
+      //Need to update the measurement frame too!
+      this->m_MeasurementFrame[0][2] *= -1;
+      this->m_MeasurementFrame[1][2] *= -1;
+      this->m_MeasurementFrame[2][2] *= -1;
+    }
+  }
 
+  /* given a sequence of dicom files where all the slices for location
+   * 0 are folled by all the slices for location 1, etc. This method
+   * transforms it into a sequence of volumes
+   */
+  void
+  DeInterleaveVolume()
+  {
+    size_t NVolumes = this->m_NSlice / this->m_SlicesPerVolume;
+
+    Volume3DUnwrappedType::RegionType R = this->m_Volume->GetLargestPossibleRegion();
+
+    R.SetSize(2, 1);
+    std::vector<Volume3DUnwrappedType::PixelType> v(this->m_NSlice);
+    std::vector<Volume3DUnwrappedType::PixelType> w(this->m_NSlice);
+
+    itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_Volume, R );
+    // permute the slices by extracting the 1D array of voxels for
+    // a particular {x,y} position, then re-ordering the voxels such
+    // that all the voxels for a particular volume are adjacent
+    for( I.GoToBegin(); !I.IsAtEnd(); ++I )
+    {
+      Volume3DUnwrappedType::IndexType idx = I.GetIndex();
+      // extract all values in one "column"
+      for( unsigned int k = 0; k < this->m_NSlice; ++k )
+      {
+        idx[2] = k;
+        v[k] = this->m_Volume->GetPixel( idx );
+      }
+      // permute
+      for( unsigned int k = 0; k < NVolumes; ++k )
+      {
+        for( unsigned int m = 0; m < this->m_SlicesPerVolume; ++m )
+        {
+          w[(k * this->m_SlicesPerVolume) + m] = v[(m * NVolumes) + k];
+        }
+      }
+      // put things back in order
+      for( unsigned int k = 0; k < this->m_NSlice; ++k )
+      {
+        idx[2] = k;
+        this->m_Volume->SetPixel( idx, w[k] );
+      }
+    }
+  }
   /* determine if slice order is inferior to superior */
   void DetermineSliceOrderIS()
     {
@@ -344,6 +414,21 @@ protected:
   const bool m_UseBMatrixGradientDirections;
   /** one file reader per DICOM file in dataset */
   const DCMTKFileVector    m_Headers;
+
+  /** matrix with just spacing information, used a couple places */
+  /** the current dataset is represented in a single file */
+  bool                m_MultiSliceVolume;
+  /** slice order is inferior/superior? */
+  bool                m_SliceOrderIS;
+
+
+
+
+  /** track if images is interleaved */
+  bool                        m_IsInterleaved;
+
+
+
 };
 
 #endif //BRAINSTOOLS_DWIDICOMCONVERTERBASE_H

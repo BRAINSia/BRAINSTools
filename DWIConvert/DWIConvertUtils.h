@@ -190,7 +190,8 @@ int RecoverBValues(const TImage *inputVol,
     double norm = std::sqrt( (bVectors[i][0] * bVectors[i][0])
                             + (bVectors[i][1] * bVectors[i][1])
                             + (bVectors[i][2] * bVectors[i][2]) );
-    if( std::abs( 1.0 - norm) < 1e-4 ) // Asssume value very close to 1 are 1
+    if( std::abs( 1.0 - norm) < 0.05 ) // Asssume norm is 1 if with 5% of 1 to stablize NRRD->FSL->NRRD numerical
+      // stability.
       {
       norm = 1.0;
       }

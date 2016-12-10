@@ -431,8 +431,8 @@ public:
              << std::endl;
     }
 
-    for(std::map<std::string,std::string>::const_iterator it=this->m_CommonDicomFieldsMap.cbegin();
-      it != this->m_CommonDicomFieldsMap.cend(); ++it)
+    for(std::map<std::string,std::string>::const_iterator it=this->m_CommonDicomFieldsMap.begin();
+      it != this->m_CommonDicomFieldsMap.end(); ++it)
     {
        header << it->first << ":=" << it->second << std::endl;
     }

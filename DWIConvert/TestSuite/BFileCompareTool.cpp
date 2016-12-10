@@ -1,7 +1,10 @@
-#include "stdio.h"
+#include <stdio.h>
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <cstring>
+#include <cstdlib>
+using namespace std;
 
 typedef std::vector< std::vector< double > > DataVector;
 
@@ -24,7 +27,7 @@ int readFileIntoBuffer(const char* filename, char** buffer){
   long readSize = fread(*buffer, sizeof(char), (std::size_t) nFileSize, pFile);
   fclose(pFile);
   *(*buffer + readSize) = '\0';
-  return EXIT_SUCCESS; //success
+  return 0; //success
 }
 
 char* nextNoneSpacePointer(char* p){

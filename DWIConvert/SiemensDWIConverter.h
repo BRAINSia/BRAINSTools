@@ -745,9 +745,10 @@ protected:
           {
             std::string softwareVersion;
             this->m_Headers[k]->GetElementLO(0x0018, 0x1020, softwareVersion);
-            std::vector<std::string> badSiemensVersionsRequiringCSAHeader = {{"B01", "B02", "B03", "B04", "B05",
-                                                                         "B06", "B07", "B08", "B09", "B10",
-                                                                         "B11", "B12", "B13", "B14", "B15"}};
+            static const std::string list_temp[] = {"B01", "B02", "B03", "B04", "B05",
+                                    "B06", "B07", "B08", "B09", "B10",
+                                    "B11", "B12", "B13", "B14", "B15"};
+            std::vector<std::string> badSiemensVersionsRequiringCSAHeader(list_temp, list_temp+12);
             for (std::vector<std::string>::const_iterator it = badSiemensVersionsRequiringCSAHeader.begin();
                  it != badSiemensVersionsRequiringCSAHeader.end(); ++it) {
               if (softwareVersion.find(*it) != std::string::npos ) {
@@ -758,7 +759,7 @@ protected:
             }
           }
 
-          std::int32_t tempBValue = -123;  // Initialize to a negative number as sentinal for failed read of 0019,100c
+          int tempBValue = -123;  // Initialize to a negative number as sentinal for failed read of 0019,100c
           const bool has0019_100c = ( this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false)
             == EXIT_SUCCESS ) ;
           if ( dwiIsConformant && has0019_100c && tempBValue >= 0 ) {

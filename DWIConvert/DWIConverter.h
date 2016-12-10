@@ -321,23 +321,23 @@ public:
     double smallGradientThreshold,
   const std::string conversionMode) const
   {
-    std::__1::stringstream commentSection;
+    std::stringstream commentSection;
     {
-      commentSection << "#" << std::__1::endl << "#" << std::__1::endl;
-      commentSection << "# This file was created by DWIConvert version " << version << std::__1::endl
-                     << "# https://github.com/BRAINSia/BRAINSTools" << std::__1::endl
-                     << "# part of the BRAINSTools package." << std::__1::endl
-                     << "# Command line options:" << std::__1::endl
-                     << "# --conversionMode " << conversionMode << std::__1::endl;
+      commentSection << "#" << std::endl << "#" << std::endl;
+      commentSection << "# This file was created by DWIConvert version " << version << std::endl
+                     << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
+                     << "# part of the BRAINSTools package." << std::endl
+                     << "# Command line options:" << std::endl
+                     << "# --conversionMode " << conversionMode << std::endl;
       if( std::abs( smallGradientThreshold- 0.2 ) > 1e-4 )
       {
-        commentSection << "# --smallGradientThreshold " << smallGradientThreshold << std::__1::endl;
+        commentSection << "# --smallGradientThreshold " << smallGradientThreshold << std::endl;
       }
       if (useIdentityMeaseurementFrame) {
-        commentSection << "# --useIdentityMeasurementFrame" << std::__1::endl;
+        commentSection << "# --useIdentityMeasurementFrame" << std::endl;
       }
       if (useBMatrixGradientDirections) {
-        commentSection << "# --useBMatrixGradientDirections" << std::__1::endl;
+        commentSection << "# --useBMatrixGradientDirections" << std::endl;
       }
     }
     return commentSection.str();
@@ -358,13 +358,13 @@ public:
     }
 
     itk::NumberToString<double> DoubleConvert;
-    std::__1::ofstream header;
+    std::ofstream header;
     // std::string headerFileName = outputDir + "/" + outputFileName;
 
     const double maxBvalue = this->GetMaxBValue();
-    header.open(outputVolumeHeaderName.c_str(), std::__1::ios_base::out | std::__1::ios_base::binary);
-    header << "NRRD0005" << std::__1::endl
-           << std::__1::setprecision(17) << std::__1::scientific;
+    header.open(outputVolumeHeaderName.c_str(), std::ios_base::out | std::ios_base::binary);
+    header << "NRRD0005" << std::endl
+           << std::setprecision(17) << std::scientific;
 
     header << commentstring;
 
@@ -372,18 +372,18 @@ public:
 
     if (!nrrdSingleFileFormat) {
       header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)"
-             << std::__1::endl;
+             << std::endl;
     }
-    header << "type: short" << std::__1::endl;
-    header << "dimension: 4" << std::__1::endl;
-    header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::__1::endl;
+    header << "type: short" << std::endl;
+    header << "dimension: 4" << std::endl;
+    header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
     const DWIConverter::RotationMatrixType& NRRDSpaceDirection = this->GetNRRDSpaceDirection();
     header << "sizes: " << this->GetCols()
            << " " << this->GetRows()
            << " " << this->GetSlicesPerVolume()
-           << " " << this->GetNVolume() << std::__1::endl;
-    header << "thicknesses:  NaN  NaN " << DoubleConvert(this->GetSpacing()[2]) << " NaN" << std::__1::endl;
+           << " " << this->GetNVolume() << std::endl;
+    header << "thicknesses:  NaN  NaN " << DoubleConvert(this->GetSpacing()[2]) << " NaN" << std::endl;
     // need to check
     header << "space directions: "
            << "("
@@ -399,21 +399,21 @@ public:
            << DoubleConvert(NRRDSpaceDirection[0][2]) << ","
            << DoubleConvert(NRRDSpaceDirection[1][2]) << ","
            << DoubleConvert(NRRDSpaceDirection[2][2])
-           << ") none" << std::__1::endl;
-    header << "centerings: cell cell cell ???" << std::__1::endl;
-    header << "kinds: space space space list" << std::__1::endl;
+           << ") none" << std::endl;
+    header << "centerings: cell cell cell ???" << std::endl;
+    header << "kinds: space space space list" << std::endl;
 
-    header << "endian: little" << std::__1::endl;
-    header << "encoding: raw" << std::__1::endl;
-    header << "space units: \"mm\" \"mm\" \"mm\"" << std::__1::endl;
+    header << "endian: little" << std::endl;
+    header << "encoding: raw" << std::endl;
+    header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
 
     const DWIConverter::Volume3DUnwrappedType::PointType ImageOrigin = this->GetOrigin();
     header << "space origin: "
            << "(" << DoubleConvert(ImageOrigin[0])
            << "," << DoubleConvert(ImageOrigin[1])
-           << "," << DoubleConvert(ImageOrigin[2]) << ") " << std::__1::endl;
+           << "," << DoubleConvert(ImageOrigin[2]) << ") " << std::endl;
     if (!nrrdSingleFileFormat) {
-      header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::__1::endl;
+      header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::endl;
     }
 
     {
@@ -428,7 +428,7 @@ public:
              << "(" << DoubleConvert(MeasurementFrame[0][2]) << ","
              << DoubleConvert(MeasurementFrame[1][2]) << ","
              << DoubleConvert(MeasurementFrame[2][2]) << ")"
-             << std::__1::endl;
+             << std::endl;
     }
 
     for(std::map<std::string,std::string>::const_iterator it=this->m_CommonDicomFieldsMap.cbegin();
@@ -437,9 +437,9 @@ public:
        header << it->first << ":=" << it->second << std::endl;
     }
 
-    header << "modality:=DWMRI" << std::__1::endl;
+    header << "modality:=DWMRI" << std::endl;
     // this is the norminal BValue, i.e. the largest one.
-    header << "DWMRI_b-value:=" << DoubleConvert(maxBvalue) << std::__1::endl;
+    header << "DWMRI_b-value:=" << DoubleConvert(maxBvalue) << std::endl;
 
     //  the following three lines are for older NRRD format, where
     //  baseline images are always in the begining.
@@ -450,16 +450,16 @@ public:
       const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors = this->m_DiffusionVectors;
       unsigned int gradientVecIndex = 0;
       for (unsigned int k = 0; k<gradientVectors.size(); ++k) {
-        header << "DWMRI_gradient_" << std::__1::setw(4) << std::__1::setfill('0') << k << ":="
+        header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
                << DoubleConvert(gradientVectors[gradientVecIndex][0]) << "   "
                << DoubleConvert(gradientVectors[gradientVecIndex][1]) << "   "
                << DoubleConvert(gradientVectors[gradientVecIndex][2])
-               << std::__1::endl;
+               << std::endl;
         ++gradientVecIndex;
       }
     }
     // write data in the same file is .nrrd was chosen
-    header << std::__1::endl;;
+    header << std::endl;;
     if (nrrdSingleFileFormat) {
       unsigned long nVoxels = this->GetDiffusionVolume()->GetBufferedRegion().GetNumberOfPixels();
       header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
@@ -480,9 +480,9 @@ public:
         rawWriter->Update();
       }
       catch (itk::ExceptionObject& excp) {
-        std::__1::cerr << "Exception thrown while writing the series to"
-                       << outputVolumeDataName << " " << excp << std::__1::endl;
-        std::__1::cerr << excp << std::__1::endl;
+        std::cerr << "Exception thrown while writing the series to"
+                       << outputVolumeDataName << " " << excp << std::endl;
+        std::cerr << excp << std::endl;
       }
     }
     header.close();

@@ -67,9 +67,9 @@ class DWIDICOMConverterBase : public DWIConverter {
           }
         catch( itk::ExceptionObject & excp )
           {
-          std::__1::cerr << "Exception thrown while reading DICOM volume"
-                         << std::__1::endl;
-          std::__1::cerr << excp << std::__1::endl;
+          std::cerr << "Exception thrown while reading DICOM volume"
+                         << std::endl;
+          std::cerr << excp << std::endl;
           throw;
           }
         m_Volume = reader->GetOutput();
@@ -88,8 +88,8 @@ class DWIDICOMConverterBase : public DWIConverter {
           }
         catch( itk::ExceptionObject & excp )
           {
-          std::__1::cerr << "Exception thrown while reading the series" << std::__1::endl;
-          std::__1::cerr << excp << std::__1::endl;
+          std::cerr << "Exception thrown while reading the series" << std::endl;
+          std::cerr << excp << std::endl;
           throw;
           }
         m_Volume = reader->GetOutput();
@@ -120,20 +120,20 @@ class DWIDICOMConverterBase : public DWIConverter {
       // a map of ints keyed by the slice location string
       // reported in the dicom file.  The number of slices per
       // volume is the same as the number of unique slice locations
-      std::__1::map<std::__1::string, int> sliceLocations;
+      std::map<std::string, int> sliceLocations;
       //
       // check for interleave
       if( !this->m_MultiSliceVolume )
         {
         // Make a hash of the sliceLocations in order to get the correct
         // count.  This is more reliable since SliceLocation may not be available.
-        std::__1::vector<int>         sliceLocationIndicator;
-        std::__1::vector<std::__1::string> sliceLocationStrings;
+        std::vector<int>         sliceLocationIndicator;
+        std::vector<std::string> sliceLocationStrings;
 
         sliceLocationIndicator.resize( this->m_NSlice );
         for( unsigned int k = 0; k < this->m_NSlice; ++k )
           {
-          std::__1::string originString;
+          std::string originString;
           this->m_Headers[k]->GetElementDS(0x0020, 0x0032, originString );
           sliceLocationStrings.push_back( originString );
           sliceLocations[originString]++;
@@ -159,7 +159,7 @@ class DWIDICOMConverterBase : public DWIConverter {
           }
 
         this->m_SlicesPerVolume = sliceLocations.size();
-        std::__1::cout << "=================== this->m_SlicesPerVolume:" << this->m_SlicesPerVolume << std::__1::endl;
+        std::cout << "=================== this->m_SlicesPerVolume:" << this->m_SlicesPerVolume << std::endl;
 
 
         // if the this->m_SlicesPerVolume == 1, de-interleaving won't do
@@ -168,11 +168,11 @@ class DWIDICOMConverterBase : public DWIConverter {
           {
           if( sliceLocationIndicator[0] != sliceLocationIndicator[1] )
             {
-            std::__1::cout << "Dicom images are ordered in a volume interleaving way." << std::__1::endl;
+            std::cout << "Dicom images are ordered in a volume interleaving way." << std::endl;
             }
           else
             {
-            std::__1::cout << "Dicom images are ordered in a slice interleaving way." << std::__1::endl;
+            std::cout << "Dicom images are ordered in a slice interleaving way." << std::endl;
             this->m_IsInterleaved = true;
             // reorder slices into a volume interleaving manner
             DeInterleaveVolume();
@@ -207,17 +207,17 @@ class DWIDICOMConverterBase : public DWIConverter {
 
     this->m_Volume->SetDirection(LPSDirCos);
     }
-    std::__1::cout << "ImageOrientationPatient (0020:0037): ";
-    std::__1::cout << "LPS Orientation Matrix" << std::__1::endl;
-    std::__1::cout << this->m_Volume->GetDirection() << std::__1::endl;
+    std::cout << "ImageOrientationPatient (0020:0037): ";
+    std::cout << "LPS Orientation Matrix" << std::endl;
+    std::cout << this->m_Volume->GetDirection() << std::endl;
 
 
     //TODO: Remove __1
-    std::__1::cout << "this->m_SpacingMatrix" << std::__1::endl;
-    std::__1::cout << this->GetSpacingMatrix() << std::__1::endl;
+    std::cout << "this->m_SpacingMatrix" << std::endl;
+    std::cout << this->GetSpacingMatrix() << std::endl;
 
-    std::__1::cout << "NRRDSpaceDirection" << std::__1::endl;
-    std::__1::cout << this->GetNRRDSpaceDirection() << std::__1::endl;
+    std::cout << "NRRDSpaceDirection" << std::endl;
+    std::cout << this->GetNRRDSpaceDirection() << std::endl;
       //TODO: Add metadata to the DWI images
       {
         //<element tag="0008,0060" vr="CS" vm="1" len="2" name="Modality">MR</element>
@@ -377,8 +377,8 @@ protected:
       image0Origin[0]=this->m_Volume->GetOrigin()[0];
       image0Origin[1]=this->m_Volume->GetOrigin()[1];
       image0Origin[2]=this->m_Volume->GetOrigin()[2];
-      std::__1::cout << "Slice 0: " << image0Origin[0] << " "
-                     << image0Origin[1] << " " << image0Origin[2] << std::__1::endl;
+      std::cout << "Slice 0: " << image0Origin[0] << " "
+                     << image0Origin[1] << " " << image0Origin[2] << std::endl;
 
       // assume volume interleaving, i.e. the second dicom file stores
       // the second slice in the same volume as the first dicom file
@@ -392,8 +392,8 @@ protected:
         }
 
       this->m_Headers[nextSlice]->GetOrigin(image1Origin);
-      std::__1::cout << "Slice " << nextSlice << ": " << image1Origin[0] << " " << image1Origin[1]
-                     << " " << image1Origin[2] << std::__1::endl;
+      std::cout << "Slice " << nextSlice << ": " << image1Origin[0] << " " << image1Origin[1]
+                     << " " << image1Origin[2] << std::endl;
 
       image1Origin[0] -= image0Origin[0];
       image1Origin[1] -= image0Origin[1];

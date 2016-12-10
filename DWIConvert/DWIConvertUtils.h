@@ -231,6 +231,9 @@ WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
   return EXIT_SUCCESS;
 }
 
+
+extern void ConvertBvecsToFromFSL(DWIMetaDataDictionaryValidator::GradientTableType& bVecs);
+
 extern void normalize(const DWIMetaDataDictionaryValidator::GradientDirectionType &vec,double *normedVec);
 extern int WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors,
               const std::string & filename);

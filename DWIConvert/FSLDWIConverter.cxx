@@ -41,4 +41,5 @@ FSLDWIConverter::ExtractDWIData()
 {
   const std::string fslNIFTIFile = m_InputFileNames[0];
   this->ReadGradientInformation(m_inputBValues,m_inputBVectors,fslNIFTIFile);
+  this->OrientForFSLConventions(false); //Orient for Dicom data layout
 }

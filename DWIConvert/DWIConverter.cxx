@@ -5,14 +5,10 @@
 #include "DWIConverter.h"
 #include "itkFlipImageFilter.h"
 
-static bool DirectionNeedsFlipping(const Volume4DType::DirectionType & dir, const size_t ind)
+Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
 {
   static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1,-1,1,1};
-  return ( FSLDesiredDirectionFlipsWRTLPS[ind]*dir(ind,ind) < -0.5 ); // i.e. a negative magnitude greater than 0.5
-}
-
-Volume4DType::Pointer DWIConverter::OrientForFSLConventions ()
-{
+  static const double DicomDesiredDirectionFlipsWRTLPS[4] = {1,1,1,1};
   this->ConvertBVectorsToIdentityMeasurementFrame();
   this->ConvertToMutipleBValuesUnitScaledBVectors();
 
@@ -29,7 +25,14 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions ()
   FlipperType::FlipAxesArrayType arrayAxisFlip;
   for(size_t i=0; i< Volume4DType::ImageDimension; ++i)
   {
-    arrayAxisFlip[i] =  DirectionNeedsFlipping(direction,i);
+    if( toFSL )
+    {
+    arrayAxisFlip[i] = ( FSLDesiredDirectionFlipsWRTLPS[i]*direction(i,i) < -0.5 ); // i.e. a negative magnitude greater than 0.5
+    }
+    else
+    {
+    arrayAxisFlip[i] = ( DicomDesiredDirectionFlipsWRTLPS[i]*direction(i,i) < -0.5 ); // i.e. a negative magnitude greater than 0.5
+    }
     //This is necesssary to ensure that the BVEC file is consistent with FSL orientation assumptions
     for(size_t g =0 ; g < this->m_DiffusionVectors.size(); ++g)
     {

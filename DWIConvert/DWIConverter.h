@@ -177,9 +177,11 @@ public:
  /**
   * @brief FSL orientation to allow for convenient display of images and
   *        conformance with conventions used by dcm2niix & fslview
+  * @param toFSL prefers FSL's internal data format layout, if false, prefer Dicom natural data layout
+  *         FSL [1 0 0; 0 -1 0; 0 0 1]    Dicom [1 0 0; 0 1 0; 0 0 1]
   * @return Returns a 4D image pointer properly formatted
   */
-  Volume4DType::Pointer OrientForFSLConventions ();
+  Volume4DType::Pointer OrientForFSLConventions (const bool toFSL=true );
 
   const std::vector<double> &GetBValues() const { return this->m_BValues; }
   void SetBValues( const std::vector<double> & inBValues ) { this->m_BValues = inBValues; }

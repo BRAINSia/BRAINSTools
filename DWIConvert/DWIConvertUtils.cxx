@@ -5,6 +5,20 @@
 
 
 
+#if 0
+//NOT USED!
+void ConvertBvecsToFromFSL(DWIMetaDataDictionaryValidator::GradientTableType& bVecs)
+{
+  static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1, -1, 1, 1};
+  for(DWIMetaDataDictionaryValidator::GradientTableType::iterator it = bVecs.begin(); it != bVecs.end(); ++it)
+  {
+    for(size_t i=0; i < 3; ++i)
+    {
+      (*it)[i] *= FSLDesiredDirectionFlipsWRTLPS[i];
+    }
+  }
+}
+#endif
 
 void PrintVec(const vnl_vector_fixed<double,3> & vec)
 {
@@ -91,7 +105,7 @@ WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors
   std::ofstream  bVecFile;
 
   bVecFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-  bVecFile.precision(17);
+  bVecFile.precision(17); //Max double precision
   if( !bVecFile.is_open() || !bVecFile.good() )
   {
     return EXIT_FAILURE;
@@ -195,6 +209,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
       }
     }
     bVecCount = bVecst[ 0 ].size() ;
+    //Needed to convert to/from FSL to Dicom internal conventions
     for( unsigned int i = 0 ; i < bVecCount ; i++ )
     {
       double list[] = {bVecst[0][i],bVecst[1][i],bVecst[2][i]} ;

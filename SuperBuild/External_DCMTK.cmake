@@ -40,7 +40,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   # DCMTK-3.6.1_20160630
   set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
-  set(${proj}_GIT_TAG "18e2abbd930f00fb41c1cea42cec04ccf0cf8637") ##2016-10-12 --Reverted for C++11
+  set(${proj}_GIT_TAG "DCMTK-3.6.1_20161102") ##2016-12-10 Match with Slicer
 
   if("${CMAKE_CXX_STANDARD}" STREQUAL "11")
     set( DCMTK_USE_CXX11_STL_FLAG "-DDCMTK_USE_CXX11_STL:BOOL=ON")
@@ -71,7 +71,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
       -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
       ${DCMTK_USE_CXX11_STL_FLAG}
-      -DDCMTK_MODULES:STRING=ofstd;oflog;dcmdata;dcmimgle;dcmimage;dcmjpeg;dcmjpls;dcmtls;dcmnet;dcmsr;dcmsign;dcmwlm;dcmqrdb;dcmpstat;dcmrt
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS

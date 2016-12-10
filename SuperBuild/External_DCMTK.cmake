@@ -40,7 +40,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   # DCMTK-3.6.1_20160630
   set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
-  set(${proj}_GIT_TAG "DCMTK-3.6.1_20161102") ##2016-12-10 Match with Slicer
+  set(${proj}_GIT_TAG "a8cf5d114ff318ae75387452f4042fc0a708094c") ##2016-12-10 Need latest to catch C++11 clang fixes
 
   if("${CMAKE_CXX_STANDARD}" STREQUAL "11")
     set( DCMTK_USE_CXX11_STL_FLAG "-DDCMTK_USE_CXX11_STL:BOOL=ON")

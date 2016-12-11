@@ -83,12 +83,10 @@ NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
 void
 NRRDDWIConverter::LoadFromDisk()
 {
-  const bool allowLossyConversion=false;
-
   const std::string nrrdNRRDFile = m_InputFileNames[0];
 
   VectorVolumeType::Pointer vector3DVolume;
-  if( ReadVolume<VectorVolumeType>( vector3DVolume, nrrdNRRDFile, allowLossyConversion ) != EXIT_SUCCESS )
+  if( ReadVolume<VectorVolumeType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
   {
     itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
   }

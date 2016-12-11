@@ -696,6 +696,13 @@ public:
     }
   }
 
+  /**
+   * @brief Choose if we are going to allow for lossy conversion by typecasting
+   * to the only internally supported format of short int
+   * @param allowLossyConvertsion (true = automatically convert to short int)
+   */
+  void SetAllowLossyConversion(const bool newValue) { this->m_allowLossyConversion = newValue; }
+
 protected:
 
 
@@ -741,6 +748,7 @@ protected:
    *  itk::ImageSeriesReader
    */
   const FileNamesContainer  m_InputFileNames;
+  bool m_allowLossyConversion; // Allow type-cast conversion from float to short storage format
 
 
   /** double conversion instance, for optimal printing of numbers as  text */

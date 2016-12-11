@@ -65,7 +65,8 @@ static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
   const bool useBMatrixGradientDirections,
   const bool transpose,
-  const double smallGradientThreshold)
+  const double smallGradientThreshold,
+const bool allowLossyConversion)
 {
 // check for required parameters
   if( inputDicomDirectory == "" )
@@ -93,6 +94,7 @@ static DWIConverter * CreateDicomConverter(
 // read Dicom directory
   try
   {
+    converter->SetAllowLossyConversion(allowLossyConversion);
     converter->LoadFromDisk();
   }
   catch( itk::ExceptionObject &excp)
@@ -172,6 +174,7 @@ int main(int argc, char *argv[])
     FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, inputBValues, inputBVectors,transpose);
     try
     {
+      FSLconverter->SetAllowLossyConversion(allowLossyConversion);
       FSLconverter->LoadFromDisk();
       FSLconverter->ExtractDWIData();
     }
@@ -200,6 +203,7 @@ int main(int argc, char *argv[])
       useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
       try
       {
+        NRRDconverter->SetAllowLossyConversion(allowLossyConversion);
         NRRDconverter->LoadFromDisk();
         NRRDconverter->ExtractDWIData();
       }
@@ -213,7 +217,7 @@ int main(int argc, char *argv[])
   else if( conversionMode == "DicomToNrrd" || conversionMode == "DicomToFSL")
   {
     converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections, transpose,
-      smallGradientThreshold);
+      smallGradientThreshold,allowLossyConversion);
     if (conversionMode == "DicomToFSL")
     {
       useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL

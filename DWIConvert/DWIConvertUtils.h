@@ -91,10 +91,9 @@ namespace itk {
 
 template <typename TImage>
 int
-ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion = false )
+ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion )
 {
-  typename itk::ImageFileReader<TImage>::Pointer imgReader =
-    itk::ImageFileReader<TImage>::New();
+  typename itk::ImageFileReader<TImage>::Pointer imgReader = itk::ImageFileReader<TImage>::New();
 
   imgReader->SetFileName( fname.c_str() );
   try
@@ -108,15 +107,14 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
     }
-
   if (!allowLossyConversion)
-    {
+  {
     itk::ImageIOBase *imageIO = imgReader->GetImageIO();
     itk::ImageIOBase::IOComponentType ioType =
       itk::ImageIOBase::MapPixelType< typename TImage::PixelType >::CType;
 
     if (imageIO->GetComponentType() != ioType)
-      {
+    {
       std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
                 << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
                 << std::endl
@@ -129,8 +127,11 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
                 << "Conversion from images of a different type may cause data loss due to rounding or truncation."
                 << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
+  //TODO: If the storage type does not match the internal type, and allowLossyConversion is true,
+  //      then do something more intelligent than typecast,
+  //      like read into double precision, and then scale to max range of (0,<short int>::max)
 
   img = imgReader->GetOutput();
   return EXIT_SUCCESS;

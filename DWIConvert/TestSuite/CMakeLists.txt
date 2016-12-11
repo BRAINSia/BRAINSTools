@@ -248,7 +248,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtBMatri
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDxt.nrrd}
   -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDxt
-  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxtTest.nrrd
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxtBMatrixTest.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )

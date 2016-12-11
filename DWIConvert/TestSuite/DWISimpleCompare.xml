@@ -3,7 +3,7 @@
   <category>Converters</category>
   <title>Nrrd DWI comparison</title>
   <description><![CDATA[Compares two nrrd format DWI images and verifies that gradient magnitudes, gradient directions, measurement frame, and max B0 value are identicle.  Used for testing DWIConvert.]]></description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/DWIConvert</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Mark Scully (UIowa)</contributor>

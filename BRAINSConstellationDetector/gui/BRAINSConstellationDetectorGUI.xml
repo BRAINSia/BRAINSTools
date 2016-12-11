@@ -6,7 +6,7 @@
       This program provides the user with a GUI tool to view/manipulate landmarks for an input volume.
     </description>
 
-    <version>4.7.1</version>
+    <version>4.8.0</version>
     <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
     <parameters>
         <image>

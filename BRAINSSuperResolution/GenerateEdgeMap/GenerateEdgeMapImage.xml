@@ -3,7 +3,7 @@
   <category>SuperResolution</category>
   <title>GenerateEdgeMapImage</title>
   <description>Inverse of Maximum Gradient Image</description>
-  <version>4.7.0</version>
+  <version>4.8.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Ali Ghayoor</contributor>

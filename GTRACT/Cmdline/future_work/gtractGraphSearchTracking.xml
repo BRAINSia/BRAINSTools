@@ -5,7 +5,7 @@
 
   <description> This program implements the Graph Serach Tracking method proposed by Cheng et al. in NeuroImage Volume 31, Issue 3, 1 July 2006, Pages 1075-1085 for finding the tracks in a tensor image.  This method to generate fibers in a Tensor representation where crossing fibers occur.  This is defined by low anisotropy and high curvature. Both of these values are controlled by the user. In these regions, three directions for tracking are considered. This includes the primary eigenvector, secondary eigenvector, and a vector with random pertubations added pointing towards the ending region.  </description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
   <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>

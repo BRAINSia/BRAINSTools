@@ -5,7 +5,7 @@
 
   <description>This program will compute forward deformation from the given Transform. The size of the DF is equal to MNI space</description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
   <contributor>This tool was developed by Vincent Magnotta, Madhura Ingalhalikar, and Greg Harris</contributor>

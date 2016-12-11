@@ -9,7 +9,7 @@
   <description>
       This program resamples the scalar values on the input mesh using points on the reference mesh. The interpolation type is either "Linear" or "Nearest".
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>

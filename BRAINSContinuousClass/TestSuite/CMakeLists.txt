@@ -11,9 +11,9 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSContinuousCla
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 0
   BRAINSContinuousClassTest
-  --inputT1Volume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_t1_denoised_gaussian.nii.gz
-  --inputT2Volume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_t2_denoised_gaussian.nii.gz
-  --inputDiscreteVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_ABC_labels.nii.gz
+  --inputT1Volume ${ATLAS_INSTALL_DIRECTORY}/template_t1_denoised_gaussian.nii.gz
+  --inputT2Volume ${ATLAS_INSTALL_DIRECTORY}/template_t2_denoised_gaussian.nii.gz
+  --inputDiscreteVolume ${ATLAS_INSTALL_DIRECTORY}/template_ABC_labels.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/BRAINSContinuousClassTest_test.nii.gz
   )
 

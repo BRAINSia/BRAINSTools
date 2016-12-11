@@ -1,3 +1,6 @@
+add_executable(DumpImageInfo DumpImageInfo.cxx)
+target_link_libraries(DumpImageInfo BRAINSCommonLib)
+set_target_properties(DumpImageInfo PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
 add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
 target_link_libraries(PrettyPrintTableTest BRAINSCommonLib)

@@ -5,7 +5,7 @@
 
   <description> This program will use a fast marching fiber tracking algorithm to identify fiber tracts from a tensor image. This program is the second portion of the algorithm. The user must first run gtractCostFastMarching to generate the vcl_cost image. The second step of the algorithm implemented here is a gradient descent soplution from the defined ending region back to the seed points specified in gtractCostFastMarching. This algorithm is roughly based on the work by G. Parker et al. from IEEE Transactions On Medical Imaging, 21(5): 505-512, 2002. An additional feature of including anisotropy into the vcl_cost function calculation is included.  </description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
   <contributor>This tool was developed by Vincent Magnotta and Greg Harris. The original code here was developed by Daisy Espino.</contributor>

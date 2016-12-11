@@ -93,6 +93,10 @@ foreach(CLP DWICompare DWISimpleCompare)
   target_link_libraries (${CLP} DWIConvertSupportLib BRAINSCommonLib )
 endforeach()
 
+## Tool for comparing if BVec and BVal files are the same.
+add_executable(BFileCompareTool BFileCompareTool.cpp)
+target_link_libraries(BFileCompareTool DWIConvertSupportLib BRAINSCommonLib )
+
 #
 # build FSL test program
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
@@ -244,7 +248,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtBMatri
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDxt.nrrd}
   -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDxt
-  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxtTest.nrrd
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxtBMatrixTest.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )

@@ -5,7 +5,7 @@
 
   <description> This program will halt with a status code indicating whether a test tract is nearly enough included in a standard tract in the sense that every fiber in the test tract has a low enough sum of squares distance to some fiber in the standard tract modulo spline resampling of every fiber to a fixed number of points.  </description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
   <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>

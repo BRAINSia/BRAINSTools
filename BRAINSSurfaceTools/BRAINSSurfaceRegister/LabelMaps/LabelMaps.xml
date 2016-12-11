@@ -8,7 +8,7 @@
   </title>
   <description>
     This program generates a labelmap (.nii) through a list of label files (.mask). We assume that each label is given by an individual file. An integer is assigned to the label and value of it is decided by the order of the label file occurred in the labelFileList.  </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Vincent Magnotta</contributor>

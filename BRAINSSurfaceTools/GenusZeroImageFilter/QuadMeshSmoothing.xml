@@ -4,7 +4,7 @@
   <title>Surface Smoothing</title>
   <description>
 Surface smoothing function based on ITK Quad Edge mesh filters. This is used to remove stair step artifacts from the resulting surface  </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url/>
   <license/>
   <contributor>Wen Li and Vincent Magnotta</contributor>

@@ -9,7 +9,7 @@
   <description>
     This program generates surfaces from itk images with an iso-contour value. It can also take a surface as input. The surface decimation and smoothing will be applied on the generated surface. The primary purpose of this program is to generate the cortical surface of the brain.
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMarchingCubes</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Vincent A. Magnotta</contributor>

@@ -3,7 +3,7 @@
   <category>Diffusion.Import and Export</category>
   <title>Diffusion-weighted DICOM Import (DWIConvert)</title>
   <description><![CDATA[Converts diffusion weighted MR images in DICOM series into NRRD format for analysis in Slicer. This program has been tested on only a limited subset of DTI DICOM formats available from Siemens, GE, and Philips scanners. Work in progress to support DICOM multi-frame data. The program parses DICOM header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a NRRD image. For non-diffusion weighted DICOM images, it loads in an entire DICOM series and writes out a single dicom volume in a .nhdr/.raw pair.]]></description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.5/Modules/DWIConverter</documentation-url>
   <license>Apache License Version 2.0</license>
   <contributor>Hans Johnson (UIowa), Vince Magnotta (UIowa) Joy Matsui (UIowa), Kent Williams (UIowa), Mark Scully (Uiowa), Xiaodong Tao (GE)</contributor>
@@ -104,13 +104,6 @@
 
   <parameters advanced="true">
     <label>Advanced Conversion Parameters</label>
-    <boolean>
-      <name>fMRIOutput</name>
-      <longflag>--fMRI</longflag>
-      <label>Output fMRI file</label>
-      <description>Output a NRRD file, but without gradients</description>
-      <!-- booleans default to false -->
-    </boolean>
     <description><![CDATA[Options to control the output.]]></description>
     <boolean>
       <name>writeProtocolGradientsFile</name>
@@ -141,13 +134,6 @@
       <description><![CDATA[Directory holding the output NRRD file]]></description>
       <default>.</default>
     </directory>
-    <file>
-      <name>gradientVectorFile</name>
-      <longflag>--gradientVectorFile</longflag>
-      <label>Gradient Vector File</label>
-      <channel>output</channel>
-      <description><![CDATA[Text file giving gradient vectors]]></description>
-    </file>
     <double>
       <name>smallGradientThreshold</name>
       <longflag>--smallGradientThreshold</longflag>
@@ -168,6 +154,23 @@
       <label>Allow lossy image conversion</label>
       <default>false</default>
       <description><![CDATA[The only supported output type is 'short'. Conversion from images of a different type may cause data loss due to rounding or truncation. Use with caution!"]]></description>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>DEPRECATED THESE DO NOT WORK</label>
+  <file>
+    <name>gradientVectorFile</name>
+    <longflag>--gradientVectorFile</longflag>
+    <label>Gradient Vector File</label>
+    <channel>output</channel>
+    <description><![CDATA[DEPRECATED:  Use --inputBVector --inputBValue files Text file giving gradient vectors]]></description>
+  </file>
+    <boolean>
+      <name>fMRIOutput</name>
+      <longflag>--fMRI</longflag>
+      <label>Output fMRI file</label>
+      <description>DEPRECATED:  No support or testing.  Output a NRRD file, but without gradients</description>
+      <!-- booleans default to false -->
     </boolean>
   </parameters>
 </executable>

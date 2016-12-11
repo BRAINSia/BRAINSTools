@@ -18,17 +18,19 @@
  *=========================================================================*/
 #ifndef __PhilipsDWIConverter_h
 #define __PhilipsDWIConverter_h
-#include "DWIConverter.h"
+
+#include "DWIDICOMConverterBase.h"
 #include "itkExtractImageFilter.h"
 
 /** specific converter for Philips scanners */
-class PhilipsDWIConverter : public DWIConverter
+class PhilipsDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  PhilipsDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
+  PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      bool useBMatrixGradientDirections) : DWIConverter(allHeaders,inputFileNames,
-                                                                        useBMatrixGradientDirections)
+                      const bool useBMatrixGradientDirections,
+                      const bool FSLFileFormatHorizontalBy3Rows) : DWIDICOMConverterBase(allHeaders,inputFileNames,
+                                                                        useBMatrixGradientDirections, FSLFileFormatHorizontalBy3Rows)
     {
     }
 
@@ -36,11 +38,11 @@ public:
 
   virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
-      this->DWIConverter::LoadDicomDirectory();
+      this->DWIDICOMConverterBase::LoadDicomDirectory();
       if(!this->m_MultiSliceVolume)
         {
         this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
-        this->m_MeasurementFrame = this->m_LPSDirCos;
+        this->m_MeasurementFrame = this->m_Volume->GetDirection();
         this->DetermineSliceOrderIS();
         this->SetDirectionsFromSliceOrder();
         }
@@ -306,17 +308,13 @@ public:
         this->m_SlicesPerVolume = sliceLocations.size();
 
 
-        std::cout << "LPS Matrix: " << std::endl << this->m_LPSDirCos << std::endl;
-        std::cout << "Volume Origin: " << std::endl << this->m_Origin[0] << ","
-                  << this->m_Origin[1] << ","  << this->m_Origin[2] << "," << std::endl;
+        std::cout << "LPS Matrix: " << std::endl << this->m_Volume->GetDirection() << std::endl;
+        std::cout << "Volume Origin: " << std::endl << this->m_Volume->GetOrigin() << std::endl;
         std::cout << "Number of slices per volume: " << this->m_SlicesPerVolume << std::endl;
-        std::cout << "Slice matrix size: " << this->m_Rows << " X " << this->m_Cols << std::endl;
-        std::cout << "Image resolution: " << this->m_XRes << ", " << this->m_YRes << ", "
-                  << this->m_SliceSpacing << std::endl;
+        std::cout << "Slice matrix size: " << this->GetRows() << " X " << this->GetCols() << std::endl;
+        std::cout << "Image resolution: " << this->m_Volume->GetSpacing() << std::endl;
 
-        this->m_NRRDSpaceDirection = this->m_LPSDirCos * this->m_OrientationMatrix * this->m_SpacingMatrix;
-
-        this->m_MeasurementFrame = this->m_LPSDirCos;
+        this->m_MeasurementFrame = this->m_Volume->GetDirection();
 
         this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
         for( unsigned int k2 = 0; k2 < this->m_BValues.size(); ++k2 )
@@ -342,11 +340,11 @@ public:
         std::cout << "# of Volumes " << this->m_NVolume << " # of Diffusion Vectors "
                   << this->m_DiffusionVectors.size() << " Removing "
                   << trailingVolumes << " Isotropic volumes." << std::endl;
-        typedef itk::ExtractImageFilter<VolumeType,VolumeType> ExtractImageFilterType;
+        typedef itk::ExtractImageFilter<Volume3DUnwrappedType,Volume3DUnwrappedType> ExtractImageFilterType;
         ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
 
-        VolumeType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
-        VolumeType::SizeType desiredSize = desiredRegion.GetSize();
+        Volume3DUnwrappedType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
+        Volume3DUnwrappedType::SizeType desiredSize = desiredRegion.GetSize();
         desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
         desiredRegion.SetSize(desiredSize);
         extractImageFilter->SetExtractionRegion(desiredRegion);

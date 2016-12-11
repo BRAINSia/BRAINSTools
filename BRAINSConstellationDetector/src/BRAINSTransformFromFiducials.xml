@@ -3,7 +3,7 @@
   <category>Registration.Specialized</category>
   <title>Fiducial Registration (BRAINS)</title>
   <description>Computes a rigid, similarity or affine transform from a matched list of fiducials</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:TransformFromFiducials-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Casey B Goodlett</contributor>

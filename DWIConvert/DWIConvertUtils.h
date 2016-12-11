@@ -38,6 +38,14 @@
 
 #include <cmath>
 
+typedef short                          PixelValueType;
+/*
+ * The Volume4DType is a scalar image with diemensions cols,rows,3Dslices,NumGradients
+ */
+typedef itk::Image<PixelValueType, 4>  Volume4DType;
+
+
+
 template <typename TArg>
 int
 CheckArg(const char *argName, const TArg & argVal, const TArg & emptyVal)
@@ -83,10 +91,9 @@ namespace itk {
 
 template <typename TImage>
 int
-ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion = false )
+ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion )
 {
-  typename itk::ImageFileReader<TImage>::Pointer imgReader =
-    itk::ImageFileReader<TImage>::New();
+  typename itk::ImageFileReader<TImage>::Pointer imgReader = itk::ImageFileReader<TImage>::New();
 
   imgReader->SetFileName( fname.c_str() );
   try
@@ -100,16 +107,14 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
     }
-
   if (!allowLossyConversion)
-    {
+  {
     itk::ImageIOBase *imageIO = imgReader->GetImageIO();
     itk::ImageIOBase::IOComponentType ioType =
       itk::ImageIOBase::MapPixelType< typename TImage::PixelType >::CType;
 
     if (imageIO->GetComponentType() != ioType)
-      {
-      // TODO: factor this out. this check should be done in the caller.
+    {
       std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
                 << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
                 << std::endl
@@ -122,10 +127,24 @@ ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allo
                 << "Conversion from images of a different type may cause data loss due to rounding or truncation."
                 << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
+  //TODO: If the storage type does not match the internal type, and allowLossyConversion is true,
+  //      then do something more intelligent than typecast,
+  //      like read into double precision, and then scale to max range of (0,<short int>::max)
 
   img = imgReader->GetOutput();
+  return EXIT_SUCCESS;
+}
+
+template <typename TImage>
+int
+RecoverMeasurementFrame(const TImage *img, DWIMetaDataDictionaryValidator::RotationMatrixType & MeasurementFrame)
+{
+
+  DWIMetaDataDictionaryValidator myDWIValidator;
+  myDWIValidator.SetMetaDataDictionary(img->GetMetaDataDictionary() );
+  MeasurementFrame = myDWIValidator.GetMeasurementFrame();
   return EXIT_SUCCESS;
 }
 
@@ -139,9 +158,9 @@ RecoverBVectors(const TImage *img, DWIMetaDataDictionaryValidator::GradientTable
   myDWIValidator.SetMetaDataDictionary(img->GetMetaDataDictionary() );
   bVecs = myDWIValidator.GetGradientTable();
   if( bVecs.empty() )
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -172,12 +191,13 @@ int RecoverBValues(const TImage *inputVol,
     double norm = std::sqrt( (bVectors[i][0] * bVectors[i][0])
                             + (bVectors[i][1] * bVectors[i][1])
                             + (bVectors[i][2] * bVectors[i][2]) );
-    if( std::abs( 1- norm) < 1e-4 ) // Asssume value very close to 1 are 1
+    if( std::abs( 1.0 - norm) < 0.05 ) // Asssume norm is 1 if with 5% of 1 to stablize NRRD->FSL->NRRD numerical
+      // stability.
       {
       norm = 1.0;
       }
     // bval_i = (G_norm)^2 * bval_max
-    double bval = norm*norm*BValue;
+    double bval = norm*BValue;
     if( std::abs( bval - itk::Math::Round<double>(bval) ) < 1e-2 )
       {
       bval = itk::Math::Round<double>(bval);
@@ -200,28 +220,30 @@ WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
     {
     return EXIT_FAILURE;
     }
+
   for( unsigned int k = 0; k < bValues.size(); ++k )
-    {
-    if( !bValFile.good() )
-      {
-      return EXIT_FAILURE;
-      }
-    bValFile << bValues[k] << std::endl;
-    }
+  {
+    const char * const spacer = (  k==bValues.size()-1 ) ? "" : " ";
+    bValFile << bValues[k] << spacer;
+  }
+  bValFile << std::endl;
   bValFile.close();
 
   return EXIT_SUCCESS;
 }
+
+
+extern void ConvertBvecsToFromFSL(DWIMetaDataDictionaryValidator::GradientTableType& bVecs);
 
 extern void normalize(const DWIMetaDataDictionaryValidator::GradientDirectionType &vec,double *normedVec);
 extern int WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors,
               const std::string & filename);
 
 extern int ReadBVals(std::vector<double> & bVals, unsigned int & bValCount,
-                     const std::string & bValFilename, double & maxBValue);
+                     const std::string & bValFilename);
 
 extern int ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount,
-                     const std::string & bVecFilename , bool transpose );
+                     const std::string & bVecFilename , bool horizontalBy3Rows );
 
 
 
@@ -324,7 +346,7 @@ extern int FSLToNrrd(const std::string & inputVolume,
                      const std::string & fslNIFTIFile,
                      const std::string & inputBValues,
                      const std::string & inputBVectors,
-                     bool transpose,
+                     bool horizontalBy3Rows,
                      bool allowLossyConversion);
 
     extern int NrrdToFSL(const std::string & inputVolume,

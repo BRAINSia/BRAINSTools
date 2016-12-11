@@ -7,7 +7,7 @@
   </description>
   <contributor>Hans J. Johnson (hans-johnson -at- uiowa.edu), Ali Ghayoor</contributor>
   <acknowledgements><![CDATA[Hans Johnson(1,2,3); Ali Ghayoor(3); Wei Lu(3) 1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Biomedical Engineering, 3=University of Iowa Department of Electrical and Computer Engineering]]>  </acknowledgements>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
 

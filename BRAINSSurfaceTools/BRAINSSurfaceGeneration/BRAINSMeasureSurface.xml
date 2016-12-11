@@ -9,7 +9,7 @@
   <description>
     This program generates measures regional statistics of a surface based on the scalars associated with the triangles. Regional measures for surface area, cortical thickness, and curvature are written to either a CSV or XML file. You must have a labeled VTK surface to work with this program. The user specifies the label name to be used in the measurements. It is assumed that the surface also contains the following data arrays: Mean_Curvature (Curvature measures) and Depth (Depth measurements). In the future the names of these arrays will be added to the command line for flexibility. Currently only the CSV output is supported. We are currently working to add the XML format. The program also supports input of expected values that can be used for testing purposes.
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMeasureSurface</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Vincent A. Magnotta</contributor>

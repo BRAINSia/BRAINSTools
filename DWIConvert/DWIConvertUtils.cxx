@@ -4,6 +4,22 @@
 #include "DWIConvertUtils.h"
 
 
+
+#if 0
+//NOT USED!
+void ConvertBvecsToFromFSL(DWIMetaDataDictionaryValidator::GradientTableType& bVecs)
+{
+  static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1, -1, 1, 1};
+  for(DWIMetaDataDictionaryValidator::GradientTableType::iterator it = bVecs.begin(); it != bVecs.end(); ++it)
+  {
+    for(size_t i=0; i < 3; ++i)
+    {
+      (*it)[i] *= FSLDesiredDirectionFlipsWRTLPS[i];
+    }
+  }
+}
+#endif
+
 void PrintVec(const vnl_vector_fixed<double,3> & vec)
 {
   std::cerr << "[";
@@ -89,31 +105,33 @@ WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors
   std::ofstream  bVecFile;
 
   bVecFile.open(filename.c_str(), std::ios::out | std::ios::binary);
-  bVecFile.precision(17);
+  bVecFile.precision(17); //Max double precision
   if( !bVecFile.is_open() || !bVecFile.good() )
   {
     return EXIT_FAILURE;
   }
-  for( unsigned int k = 0; k < bVectors.size(); ++k )
+  //Matching formatting from dcm2niix that seems to be gaining acceptance as
+  //the format for these files
+  //
+  // The lines [1,2,3] is the [x,y,z]component of the gradient vector for each gradient image
+  for( unsigned int index=0; index < 3; ++index)
   {
-    if( !bVecFile.good() )
+    for( unsigned int k = 0; k < bVectors.size(); ++k )
     {
-      return EXIT_FAILURE;
+      const char * const spacer = (  k==bVectors.size()-1 ) ? "" : " ";
+      double normedVec[3];
+      normalize(bVectors[k],normedVec);
+      bVecFile << DoubleConvert(normedVec[index]) << spacer;
     }
-
-    double normedVec[3];
-    normalize(bVectors[k],normedVec);
-    bVecFile << DoubleConvert(normedVec[0]) << " "
-             << DoubleConvert(normedVec[1]) << " "
-             << DoubleConvert(normedVec[2])
-             << std::endl;
+    bVecFile << std::endl;
   }
+
   bVecFile.close();
   return EXIT_SUCCESS;
 }
 
 int
-ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::string & bValFilename, double & maxBValue)
+ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::string & bValFilename)
 {
   std::ifstream bValFile(bValFilename.c_str(), std::ifstream::in);
 
@@ -133,10 +151,6 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
     {
       break;
     }
-    if( x > maxBValue )
-    {
-      maxBValue = x;
-    }
     bValCount++;
     bVals.push_back(x);
   }
@@ -145,7 +159,7 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
 }
 
 int
-ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool transpose )
+ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool horizontalBy3Rows )
 {
   std::ifstream bVecFile(bVecFilename.c_str(), std::ifstream::in);
 
@@ -157,7 +171,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
   }
   bVecs.clear();
   bVecCount = 0;
-  if( transpose )
+  if( horizontalBy3Rows )
   {
     std::vector<std::vector<double> > bVecst( 3 ) ;
     for( unsigned i = 0 ; i < 3 ; i++ )
@@ -195,6 +209,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
       }
     }
     bVecCount = bVecst[ 0 ].size() ;
+    //Needed to convert to/from FSL to Dicom internal conventions
     for( unsigned int i = 0 ; i < bVecCount ; i++ )
     {
       double list[] = {bVecst[0][i],bVecst[1][i],bVecst[2][i]} ;

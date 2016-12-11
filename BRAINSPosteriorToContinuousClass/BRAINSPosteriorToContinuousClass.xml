@@ -3,7 +3,7 @@
   <category>BRAINS.Classify</category>
   <title>Tissue Classification</title>
   <description>This program will generate an 8-bit continuous tissue classified image based on BRAINSABC posterior images. </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSClassify</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Vincent A. Magnotta</contributor>

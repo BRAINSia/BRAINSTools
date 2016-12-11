@@ -25,16 +25,25 @@ enable_testing()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
 set(DWIConvertSupportLib_SRCS
-  FSLToNrrd.cxx
-  NrrdToFSL.cxx
+#  FSLToNrrd.cxx
+#  NrrdToFSL.cxx
+  NRRDDWIConverter.h
+  NRRDDWIConverter.cxx
+  FSLDWIConverter.h
+  FSLDWIConverter.cxx
   DWIConvertUtils.cxx
+  DWIConverterFactory.h
+  DWIConverter.h
+  DWIConverter.cxx
+  DWIDICOMConverterBase.h
+  DWIDICOMConverterBase.cxx
+  GEDWIConverter.h
+  GenericDWIConverter.h
+  HitachiDWIConverter.h
+  PhilipsDWIConverter.h
+  SiemensDWIConverter.h
+  StringContains.h
   )
-
-set(DWIConvertTest_SRC)
-foreach(f ${DWIConvertSupportLib_SRCS})
-  list(APPEND DWIConvertTest_SRC
-    ${CMAKE_CURRENT_LIST_DIR}/${f})
-endforeach()
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
 target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)
@@ -44,7 +53,7 @@ set(PROGS_LIST_1
   )
 foreach(prog ${PROGS_LIST_1})
   add_executable(${prog} ${prog}.cxx)
-  target_link_libraries(${prog} BRAINSCommonLib ${DWIConvert_ITK_LIBRARIES})
+  target_link_libraries(${prog} DWIConvertSupportLib)
 endforeach()
 
 #-----------------------------------------------------------------------------
@@ -57,6 +66,12 @@ endforeach()
 # several files needed down in ExtenededTesting
 StandardBRAINSBuildMacro(NAME DWIConvert EXECUTABLE_ONLY
   TARGET_LIBRARIES DWIConvertSupportLib)
+
+set(DWIConvertTest_SRC)
+foreach(f ${DWIConvertSupportLib_SRCS})
+  list(APPEND DWIConvertTest_SRC
+          ${CMAKE_CURRENT_LIST_DIR}/${f})
+endforeach()
 
 if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   add_subdirectory(TestSuite)

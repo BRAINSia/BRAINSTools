@@ -4,7 +4,7 @@
   <title> Predict Lesions</title>
 
   <description>Creates a continuous classified image.</description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
   <license>NEED TO ADD</license>
   <contributor>This tool was developed by Mark Scully.</contributor>

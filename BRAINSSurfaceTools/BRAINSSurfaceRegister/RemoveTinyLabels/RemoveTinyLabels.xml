@@ -9,7 +9,7 @@
   <description>
       This program removes each label in LabelList and replaces it with the label that has maximum points around the removal label patch. It is used to clean up labels that only associated with few vertices on the surface. ASSUME: inputSurfaceFile does not have more than 50 labels on it.
   </description>
-  <version>4.7.1</version>
+  <version>4.8.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Wen Li and Vincent Magnotta</contributor>

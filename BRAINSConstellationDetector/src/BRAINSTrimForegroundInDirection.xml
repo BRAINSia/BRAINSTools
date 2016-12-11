@@ -3,7 +3,7 @@
     <category>Utilities.BRAINS</category>
     <title>Trim Foreground In Direction (BRAINS)</title>
     <description>This program will trim off the neck and also air-filling noise from the inputImage.</description>
-    <version>4.7.1</version>
+    <version>4.8.0</version>
     <documentation-url>http://www.nitrc.org/projects/art/</documentation-url>
     <parameters>
         <image>

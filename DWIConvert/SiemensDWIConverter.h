@@ -22,14 +22,16 @@
 #include "StringContains.h"
 
 /** specific converter for Siemens scanners*/
-class SiemensDWIConverter : public DWIConverter
+class SiemensDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  SiemensDWIConverter(DWIConverter::DCMTKFileVector &allHeaders,
+  SiemensDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      bool useBMatrixGradientDirections,
-                      double smallGradientThreshold) : DWIConverter(allHeaders,inputFileNames,
-                                                                    useBMatrixGradientDirections),
+                      const bool useBMatrixGradientDirections,
+                      const bool FSLFileFormatHorizontalBy3Rows,
+                      const double smallGradientThreshold) : DWIDICOMConverterBase(allHeaders,inputFileNames,
+                                                                    useBMatrixGradientDirections,
+                                                                    FSLFileFormatHorizontalBy3Rows),
                                                        m_SmallGradientThreshold(smallGradientThreshold),
                                                        m_MMosaic(0),
                                                        m_NMosaic(0),
@@ -213,7 +215,7 @@ public:
    */
   virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
-      this->DWIConverter::LoadDicomDirectory();
+      this->DWIDICOMConverterBase::LoadDicomDirectory();
       std::string ImageType;
       this->m_MeasurementFrame.SetIdentity();
       this->m_Headers[0]->GetElementCS(0x0008, 0x0008, ImageType);
@@ -346,7 +348,7 @@ public:
         {
         //Gradient vectors are supposed to be unit vectors!
         // If coded as [ 1.0001 1.0001 1.0001 ]  then it is really a B0 image.
-        // This is ugly hack but works around a persistent dicom coding problem
+        // This is ugly but works around a persistent dicom coding problem
         // on some scanners
         return false;
         }
@@ -409,48 +411,37 @@ public:
     return true;
     }
 
-  /** find the bvalues and gradient vectors */
+   /**
+    * @brief  find the bvalues and gradient vectors
+    */
   void ExtractDWIData() ITK_OVERRIDE
     {
       for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
-        {
-
+      {
         vnl_vector_fixed<double, 3> gradient(0.0);
         vnl_matrix_fixed<double, 3, 3> bMatrix(0.0);
-        double bValue = 0.0;
 
         /* get info from CSA, if applicable */
         std::string diffusionInfoString;
         CSAHeader csaHeader;
         if (this->m_HasCSAHeader)
-          {
+        {
           this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString );
           this->DecodeCSAHeader(csaHeader,diffusionInfoString);
-          }
+        }
 
         /* check b value for current stride */
-        bValue = ExtractBValue(&csaHeader, k);
+        double bValue = -123;
 
-        if( this->m_UseBMatrixGradientDirections == false )
-          /* determine gradient direction from tag (0029,1010) */
-          {
-          bool hasGradients = ExtractGradientDirection(&csaHeader, k, gradient);
 
-          if (!hasGradients)
-            {
-            // did not find enough information
-            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
-                      << std::endl;
-            }
-          //this->m_DiffusionVectors.push_back( vnl_vector_fixed<double, 3>(gradient) );
-          }
-        else // this->m_UseBMatrixGradientDirections == true
+        if( this->m_UseBMatrixGradientDirections == true )
+        {
+          // this->m_UseBMatrixGradientDirections == true
           /* calculate gradient direction from b-matrix */
-          {
           bool hasBMatrix = ExtractBMatrix(&csaHeader, k, bMatrix);
 
           if( hasBMatrix && (bValue != 0) )
-            {
+          {
             std::cout << "=============================================" << std::endl;
             std::cout << "BMatrix calculations..." << std::endl;
 
@@ -476,47 +467,53 @@ public:
             std::cout << bmatrixCalculatedBValue << std::endl;
             // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
             // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
-            if( bmatrixCalculatedBValue == 0 )
-              {
+            if( bmatrixCalculatedBValue < 1e-2 )
+            {
               std::cout << "B0 image detected from bmatrix trace: gradient direction forced to 0" << std::endl;
               std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0])
-                                             << " " << this->m_DoubleConvert(gradient[1])
-                                             << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
+                        << " " << this->m_DoubleConvert(gradient[1])
+                        << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
               //this->m_BValues.push_back(0);
               bValue = 0;
-              }
+            }
             else
-              {
+            {
               std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0])
-                                             << " " << this->m_DoubleConvert(gradient[1])
-                                             << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
+                        << " " << this->m_DoubleConvert(gradient[1])
+                        << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
               bValue = bmatrixCalculatedBValue;
-              }
             }
           }
-
-        if ( bValue < 1.0 )
-          {
-          this->m_BValues.push_back( 0.0 );
-          //this->m_DiffusionVectors.push_back(gradient);
-          //continue; // break out of loop, process next stride
-          }
+        }
         else
-          {
-          this->m_BValues.push_back( bValue );
-          }
+        {
+          bValue = ExtractBValue(&csaHeader, k);
+          if( bValue < 1e-2 ) {
+            gradient.fill(0.0);
+          } else {
+            /* determine gradient direction from tag (0029,1010) */
+            bool hasGradients = ExtractGradientDirection(&csaHeader, k, gradient);
 
+            if (!hasGradients) {
+              // did not find enough information
+              std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
+                        << std::endl;
+            }
+          }
+        }
+
+        this->m_BValues.push_back( (bValue < 1e-2) ? 0.0 : bValue );
         this->m_DiffusionVectors.push_back(gradient);
 
         /* debug output */
         std::cout << "Image#: " << k
-        << " BV: " << this->m_BValues.back() << " GD: "
-        << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
-        << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
-        << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
-        << std::endl;
+                  << " BV: " << this->m_BValues.back() << " GD: "
+                  << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
+                  << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
+                  << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
+                  << std::endl;
 
-        } // end giant for loop
+      } // end giant for loop
 
       // test gradients. It is OK for one or more guide images to have
       // zero gradients, but all gradients == 0 is an error. It means
@@ -538,72 +535,92 @@ private:
 protected:
   /** turn a mosaic image back into a sequential volume image */
   void DeMosaic()
+  {
+    // center the volume since the image position patient given in the
+    // dicom header was useless
+    //Adjust origin based on mosaic settings
+    //The origin of a mosaic is presented as if the entire region were one image capture.
+    //What we really need is the center image origin.
+    /* https://mail.nmr.mgh.harvard.edu/pipermail/freesurfer/2010-March/013821.html
+     * Mosaics - DICOM (20,32) is incorrect for mosaics. The value in
+     * this field gives where the origin of an image the size of the
+     * mosaic would have been had such an image been collected. This puts
+     * the origin outside of the scanner.  However, the center of a slice
+     * can be obtained from the ASCII header from lines of the form
+     * "sSliceArray.asSlice[N].sPosition.dAAA", where N is the slice
+     * number and AAA is Sag (x), Cor (y), and Tra (z). This may be off by half a voxel.
+     * Given this information, the direction cosines, the
+     * voxel size, and dimension, the origin can be computed.
+     */
+
+    Volume3DUnwrappedType::Pointer previousImage = this->m_Volume;
+
+    Volume3DUnwrappedType::RegionType region = previousImage->GetLargestPossibleRegion();
+    Volume3DUnwrappedType::SizeType   size = region.GetSize();
+
+    // de-mosaic
+    PointType mosaicSize;
+    mosaicSize[0]=size[0];
+    mosaicSize[1]=size[1];
+    mosaicSize[2]=0;
+
+    Volume3DUnwrappedType::SizeType dmSize = size;
+    unsigned int         original_slice_number = dmSize[2] * m_SlicesPerVolume;
+    dmSize[0] /= this->m_MMosaic;
+    dmSize[1] /= this->m_NMosaic;
+    dmSize[2] = this->m_NVolume * this->m_SlicesPerVolume;
+
+    PointType sliceSize;
+    sliceSize[0] = dmSize[0];
+    sliceSize[1] = dmSize[1];
+    sliceSize[2] = 0;
+
+    region.SetSize( dmSize );
+    this->m_Volume = Volume3DUnwrappedType::New();
+    this->m_Volume->CopyInformation( previousImage );
+    this->m_Volume->SetRegions( region );
+    this->m_Volume->Allocate();
+
+    //Fix Origin
+    // http://nipy.org/nibabel/dicom/dicom_mosaic.html
+    this->m_Volume->SetOrigin(
+      previousImage->GetOrigin()
+        + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 )
+    );
+
+
+    Volume3DUnwrappedType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
+    dmRegion.SetSize(2, 1);
+    region.SetSize(0, dmSize[0]);
+    region.SetSize(1, dmSize[1]);
+    region.SetSize(2, 1);
+
+    for( unsigned int k = 0; k < original_slice_number; ++k )
     {
-      // de-mosaic
-      this->m_Cols /= this->m_MMosaic;
-      this->m_Rows /= this->m_NMosaic;
+      unsigned int new_k = k /* - bad_slice_counter */;
 
-      // center the volume since the image position patient given in the
-      // dicom header was useless
-      this->m_Origin[0] = -(this->m_Cols * (this->m_NRRDSpaceDirection[0][0])
-                         + this->m_Rows * (this->m_NRRDSpaceDirection[0][1])
-                         + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[0][2]) ) / 2.0;
-      this->m_Origin[1] = -(this->m_Cols * (this->m_NRRDSpaceDirection[1][0])
-                         + this->m_Rows * (this->m_NRRDSpaceDirection[1][1])
-                         + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[1][2]) ) / 2.0;
-      this->m_Origin[2] = -(this->m_Cols * (this->m_NRRDSpaceDirection[2][0])
-                         + this->m_Rows * (this->m_NRRDSpaceDirection[2][1])
-                         + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[2][2]) ) / 2.0;
+      dmRegion.SetIndex(2, new_k);
+      itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> dmIt( this->m_Volume, dmRegion );
 
-      VolumeType::Pointer img = this->m_Volume;
+      // figure out the mosaic region for this slice
+      int sliceIndex = k;
 
-      VolumeType::RegionType region = img->GetLargestPossibleRegion();
-      VolumeType::SizeType   size = region.GetSize();
+      // int nBlockPerSlice = this->m_Mosaic*this->m_NMosaic;
+      int slcMosaic = sliceIndex / (m_SlicesPerVolume);
+      sliceIndex -= slcMosaic * m_SlicesPerVolume;
+      int colMosaic = sliceIndex / this->m_MMosaic;
+      int rawMosaic = sliceIndex - this->m_MMosaic * colMosaic;
+      region.SetIndex( 0, rawMosaic * dmSize[0] );
+      region.SetIndex( 1, colMosaic * dmSize[1] );
+      region.SetIndex( 2, slcMosaic );
 
-      VolumeType::SizeType dmSize = size;
-      unsigned int         original_slice_number = dmSize[2] * m_SlicesPerVolume;
-      dmSize[0] /= this->m_MMosaic;
-      dmSize[1] /= this->m_NMosaic;
-      dmSize[2] = this->m_NVolume * this->m_SlicesPerVolume;
-
-      region.SetSize( dmSize );
-      this->m_Volume = VolumeType::New();
-      this->m_Volume->CopyInformation( img );
-      this->m_Volume->SetRegions( region );
-      this->m_Volume->Allocate();
-
-      VolumeType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
-      dmRegion.SetSize(2, 1);
-      region.SetSize(0, dmSize[0]);
-      region.SetSize(1, dmSize[1]);
-      region.SetSize(2, 1);
-
-      for( unsigned int k = 0; k < original_slice_number; ++k )
-        {
-        unsigned int new_k = k /* - bad_slice_counter */;
-
-        dmRegion.SetIndex(2, new_k);
-        itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( this->m_Volume, dmRegion );
-
-        // figure out the mosaic region for this slice
-        int sliceIndex = k;
-
-        // int nBlockPerSlice = this->m_Mosaic*this->m_NMosaic;
-        int slcMosaic = sliceIndex / (m_SlicesPerVolume);
-        sliceIndex -= slcMosaic * m_SlicesPerVolume;
-        int colMosaic = sliceIndex / this->m_MMosaic;
-        int rawMosaic = sliceIndex - this->m_MMosaic * colMosaic;
-        region.SetIndex( 0, rawMosaic * dmSize[0] );
-        region.SetIndex( 1, colMosaic * dmSize[1] );
-        region.SetIndex( 2, slcMosaic );
-
-        itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
-        for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
-          {
-          dmIt.Set( imIt.Get() );
-          }
-        }
+      itk::ImageRegionConstIteratorWithIndex<Volume3DUnwrappedType> imIt( previousImage, region );
+      for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
+      {
+        dmIt.Set( imIt.Get() );
+      }
     }
+  }
 
   unsigned int ConvertFromCharPtr(const char *s)
     {
@@ -667,7 +684,7 @@ protected:
       // std::cout << "\tVM: " << vm << std::endl;
       // std::cout << "Local String: " << infoAsString.substr(0,80) << std::endl;
 
-      /* This hack is required for some Siemens VB15 Data */
+      /* This work around is required for some Siemens VB15 Data */
       if( ( nameString == "DiffusionGradientDirection" ) && (vr != "FD") )
         {
         bool loop = true;
@@ -720,21 +737,55 @@ protected:
       return vm;
     }
 
-  void CheckCSAHeaderAvailable()
-    {
-    std::string diffusionInfoString;
-    for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
-      {
-      // this is stupid, but itkDCMTKFileReader doesn't expose DCMTK::tagExists
-      if (this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString, false ) == EXIT_FAILURE)
-        return;
+      void CheckCSAHeaderAvailable() {
+        std::string diffusionInfoString;
+        for (unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride) {
+          //If this->m_UseBMatrixGradientDirections = true, then force non-compliant interpretation
+          bool dwiIsConformant = (this->m_UseBMatrixGradientDirections) ? false : true;
+          {
+            std::string softwareVersion;
+            this->m_Headers[k]->GetElementLO(0x0018, 0x1020, softwareVersion);
+            static const std::string list_temp[] = {"B01", "B02", "B03", "B04", "B05",
+                                    "B06", "B07", "B08", "B09", "B10",
+                                    "B11", "B12", "B13", "B14", "B15"};
+            std::vector<std::string> badSiemensVersionsRequiringCSAHeader(list_temp, list_temp+12);
+            for (std::vector<std::string>::const_iterator it = badSiemensVersionsRequiringCSAHeader.begin();
+                 it != badSiemensVersionsRequiringCSAHeader.end(); ++it) {
+              if (softwareVersion.find(*it) != std::string::npos ) {
+                std::cout << "Found a known non-compliant Siemens scan version " << *it << " so using private "
+                    "CSAHeader" << std::endl;
+                dwiIsConformant = false;
+              }
+            }
+          }
+
+          int tempBValue = -123;  // Initialize to a negative number as sentinal for failed read of 0019,100c
+          const bool has0019_100c = ( this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false)
+            == EXIT_SUCCESS ) ;
+          if ( dwiIsConformant && has0019_100c && tempBValue >= 0 ) {
+            // If Siemens has a 0x0019
+            this->m_HasCSAHeader = false;
+          } else {
+            this->m_HasCSAHeader = true;
+          }
+        }
       }
-      this->m_HasCSAHeader = true;
-    }
 
   virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // relevant Siemens private tags
+      /* https://nmrimaging.wordpress.com/tag/dicom/
+      For SIEMENS MRI:
+      The software version at least B15V (0018; 1020), follow tag value would be useful
+      0019; 100A;  Number Of Images In Mosaic
+      0019; 100B;  Slice Measurement Duration
+      0019; 100C;  B_value
+      0019; 100D; Diffusion Directionality
+      0019; 100E; Diffusion Gradient Direction
+      0019; 100F;  Gradient Mode
+      0019; 1027;  B_matrix
+      0019; 1028;  Bandwidth Per Pixel Phase Encode
+       */
       DcmDictEntry *SiemensMosiacParameters = new DcmDictEntry(0x0051, 0x100b, DcmVR(EVR_IS),
                                                                "Mosiac Matrix Size", 1, 1, ITK_NULLPTR, true,
                                                                "dicomtonrrd");

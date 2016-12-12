@@ -361,6 +361,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DTIEstim = pe.Node(interface=dtiestim(), name="DTIEstim")
     DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
+    DTIEstim.inputs.threshold = 0
     DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx, 'outputVolume', DTIEstim, 'dwi_image')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', DTIEstim, 'brain_mask')
     DWIWorkflow.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')

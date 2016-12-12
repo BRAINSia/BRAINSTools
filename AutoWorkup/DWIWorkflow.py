@@ -98,6 +98,8 @@ def ForceDCtoID(inputVolume):
     return outputVolume
 
 def pickCompositeTransfromFromList(composite_transform_as_list):
+    if isinstance(composite_transform_as_list, basestring):
+        return composite_transform_as_list;
     return composite_transform_as_list[0]
 
 def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
@@ -489,7 +491,6 @@ if __name__ == '__main__':
   from nipype.interfaces.freesurfer import ReconAll
   from nipype.interfaces.semtools import *
   #####################################################################################
-
   exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR)
 
   sys.exit(exit)

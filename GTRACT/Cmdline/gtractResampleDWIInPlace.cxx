@@ -203,28 +203,10 @@ int main(int argc, char *argv[])
   resampleImageValidator.SetMetaDataDictionary(resampleImage->GetMetaDataDictionary());
 
   // Get measurement frame and its inverse from DWI scan
-  std::vector<std::vector<double> > msrFrame;
-  msrFrame = resampleImageValidator.GetMeasurementFrame();
-  vnl_matrix_fixed<double, 3, 3> DWIMeasurementFrame;
-  if( msrFrame.size() != 0 )
-    {
-    for( unsigned int i = 0; i < 3; i++ )
-      {
-      for( unsigned int j = 0; j < 3; j++ )
-        {
-        DWIMeasurementFrame[i][j] = msrFrame[i][j];
-        }
-      }
-    }
-  else
-    {
-    std::cout << "File does not have NRRD measurement frame metadata!"
-              << std::endl
-              << "If this is not a DWI NRRD file (e.g. fMRI NIFTI, etc.), you can safely ignore this"
-              << std::endl;
-    DWIMeasurementFrame.set_identity();
-    }
-  vnl_matrix_fixed<double, 3, 3> DWIInverseMeasurementFrame = vnl_inverse( DWIMeasurementFrame );
+  DWIMetaDataDictionaryValidator::RotationMatrixType msrFrame = resampleImageValidator.GetMeasurementFrame();
+  DWIMetaDataDictionaryValidator::RotationMatrixType DWIMeasurementFrame= msrFrame;
+  DWIMetaDataDictionaryValidator::RotationMatrixType DWIInverseMeasurementFrame;
+  DWIInverseMeasurementFrame = DWIMeasurementFrame.GetInverse();
 
   // Resample DWI in place
   resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);
@@ -244,7 +226,7 @@ int main(int argc, char *argv[])
   for( unsigned int i = 0; i < gradTable.size(); i++ )
     {
     // Get Current Gradient Direction
-    vnl_vector<double> curGradientDirection(3);
+    DWIMetaDataDictionaryValidator::GradientTableType::value_type curGradientDirection(3);
     curGradientDirection[0] = gradTable[i][0];
     curGradientDirection[1] = gradTable[i][1];
     curGradientDirection[2] = gradTable[i][2];
@@ -256,8 +238,8 @@ int main(int argc, char *argv[])
     inverseRigidTransform->SetIdentity();
     rigidTransform->GetInverse(inverseRigidTransform);
 
-    curGradientDirection = inverseRigidTransform->GetMatrix().GetVnlMatrix() * DWIInverseMeasurementFrame
-      * curGradientDirection;
+    curGradientDirection =
+      inverseRigidTransform->GetMatrix() * DWIInverseMeasurementFrame * curGradientDirection;
 
     newGradTable[i][0] = curGradientDirection[0];
     newGradTable[i][1] = curGradientDirection[1];
@@ -268,30 +250,30 @@ int main(int argc, char *argv[])
     sprintf(tmpStr, "DWMRI_gradient_%04u", i);
     std::string KeyString(tmpStr);
     outputGradDirMetaDataStream << KeyString << ","
-                                << curGradientDirection[0] << ","
-                                << curGradientDirection[1] << ","
-                                << curGradientDirection[2] << std::endl;
+                                << doubleConvert( curGradientDirection[0] ) << ","
+                                << doubleConvert( curGradientDirection[1] ) << ","
+                                << doubleConvert( curGradientDirection[2] ) << std::endl;
     }
 
   resampleImageValidator.SetGradientTable( newGradTable );
 
+  std::stringstream outputMFMetaDataStream; // This is only for writeOutputMetaData
+  {
   // Set DWI measurement frame to identity by multiplying by its inverse
   // Update Image MetaData Dictionary with new measurement frame
-  vnl_matrix_fixed<double, 3, 3>    newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
-  std::vector<std::vector<double> > newMf(3);
-  std::stringstream outputMFMetaDataStream; // This is only for writeOutputMetaData
+  const DWIMetaDataDictionaryValidator::RotationMatrixType newMeasurementFrame =
+    DWIInverseMeasurementFrame * DWIMeasurementFrame;
   outputMFMetaDataStream << "measurement frame";
   for( unsigned int i = 0; i < 3; i++ )
     {
-    newMf[i].resize(3);
     for( unsigned int j = 0; j < 3; j++ )
       {
-      newMf[i][j] = newMeasurementFrame[i][j];
-      outputMFMetaDataStream << "," << newMf[i][j];
+      outputMFMetaDataStream << "," << newMeasurementFrame[i][j];
       }
     }
   outputMFMetaDataStream << std::endl;
-  resampleImageValidator.SetMeasurementFrame( newMf );
+  resampleImageValidator.SetMeasurementFrame( newMeasurementFrame );
+  }
 
   // Update the metaDataDictionary of resampleImage after that gradient table and measurement frame are updated.
   resampleImage->SetMetaDataDictionary( resampleImageValidator.GetMetaDataDictionary() );

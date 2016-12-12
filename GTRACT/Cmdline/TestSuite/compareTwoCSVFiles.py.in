@@ -12,7 +12,15 @@ USAGE:
 
 import sys, getopt
 import os.path
+import math
 import csv
+
+def CmpErr(a,b):
+  sum=0.0
+  for idx in range(0,len(a)):
+     sum+= (a[idx] - b[idx]) * (a[idx] - b[idx])
+  return math.sqrt(sum)
+
 
 def csv_file_reader(filename):
   import csv
@@ -47,11 +55,25 @@ def main(argv):
   refDataList = csv_file_reader(referenceFile)
   inputDataList = csv_file_reader(inputFile)
 
-  if refDataList != inputDataList:
-    print ('Input csv files do not match!!!')
+  if len(refDataList) != len(inputDataList):
+    print('Input csv files do not have the same content')
     sys.exit(1)
-  else:
-    print ('Input csv files are the same!')
+  for idx in range(0,len(refDataList)):
+    stringListRef=refDataList[idx]
+    stringListNew=inputDataList[idx]
+    if stringListRef[0] != stringListNew[0]:
+      print("Error: keys don't match")
+      sys.exit(1)
+    numListRef=[float(x) for x in stringListRef[1:] ]
+    numListNew=[float(x) for x in stringListNew[1:] ]
+    error = CmpErr(numListRef,numListNew)
+    if error > 1e-6:
+        print("ERROR: ({0})  {1} != {2}".format(error,numListRef,numListNew))
+        sys.exit(1)
+  #  print("error: {0} {1} {2}".format(error,numListRef,numListNew))
+
+
+  print ('Input csv files are the same!')
 
 if __name__ == "__main__":
   main(sys.argv[1:])

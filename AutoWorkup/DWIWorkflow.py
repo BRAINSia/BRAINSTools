@@ -34,8 +34,14 @@ def ExtractBRAINFromHead(RawScan, BrainLabels):
     assert os.path.exists(BrainLabels), "File not found: %s" % BrainLabels
     headImage = sitk.ReadImage(RawScan)
     labelsMap = sitk.ReadImage(BrainLabels)
+    rs = sitk.ResampleImageFilter()
+    rs.SetInterpolator(sitk.sitkLinear)
+    rs.SetTransform(sitk.Transform(3, sitk.sitkIdentity))
+    rs.SetReferenceImage(labelsMap)
+    resampledHead = rs.Execute(headImage)
+
     label_mask = labelsMap>0
-    brainImage = sitk.Cast(headImage,sitk.sitkInt16) * sitk.Cast(label_mask,sitk.sitkInt16)
+    brainImage = sitk.Cast(resampledHead,sitk.sitkInt16) * sitk.Cast(label_mask,sitk.sitkInt16)
     outputVolume = os.path.realpath('T2Stripped.nrrd')
     sitk.WriteImage(brainImage, outputVolume)
     return outputVolume

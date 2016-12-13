@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
   std::string              inputName(argv[1]), outputName(argv[2]),
   outputName3D(argv[3]);
 
-  ReadVolume<VectorImageType>(img, inputName, false);
+  ReadVectorVolume<VectorImageType>(img, inputName, false);
   std::cout << "input directions" << std::endl
             << img->GetDirection() << std::endl;
 
@@ -118,14 +118,14 @@ int main(int argc, char *argv[])
   ConvertVectorImageTo4DImage(img, img4D);
   WriteVolume<Image4DType>(img4D, outputName);
 
-  ReadVolume<Image3DType>(img3D, inputName, false);
+  ReadScalarVolume<Image3DType>(img3D, inputName, false);
   WriteVolume<Image3DType>(img3D, outputName3D);
 
-  ReadVolume<Image4DType>(img4D, outputName, false);
+  ReadScalarVolume<Image4DType>(img4D, outputName, false);
   std::cout << "output directions" << std::endl
             << img4D->GetDirection() << std::endl;
 
-  ReadVolume<Image3DType>(img3D, outputName3D,false);
+  ReadScalarVolume<Image3DType>(img3D, outputName3D,false);
   std::cout << "output directions" << std::endl
             << img3D->GetDirection() << std::endl;
 

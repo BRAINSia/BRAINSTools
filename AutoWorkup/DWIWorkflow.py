@@ -385,7 +385,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIWorkflow.connect(DTIProcess, 'lambda1_output', outputsSpec, 'Lambda1Image')
     DWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
     DWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
-
+    """
     # Step13: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
     UKFNode.inputs.tracts = "ukfTracts.vtk"
@@ -404,6 +404,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', UKFNode, 'maskFile')
     DWIWorkflow.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
     #DWIWorkflow.connect(UKFNode,'tractsWithSecondTensor',outputsSpec,'ukf2ndTracks')
+    """
 
     ## Write all outputs with DataSink
     DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')

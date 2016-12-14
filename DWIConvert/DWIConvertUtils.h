@@ -19,6 +19,8 @@
 #ifndef DWIConvertUtils_h
 #define DWIConvertUtils_h
 #include "itkImage.h"
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkVectorRescaleIntensityImageFilter.h"
 #include "itkVectorImage.h"
 #include "itkImageFileWriter.h"
 #include "itkImageFileReader.h"
@@ -88,54 +90,177 @@ namespace itk {
     static const IOComponentType CType = itk::ImageIOBase::MapPixelType<TPixel>::CType;
   };
 }
-
 template <typename TImage>
 int
-ReadVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion )
+ReadScalarVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion )
 {
   typename itk::ImageFileReader<TImage>::Pointer imgReader = itk::ImageFileReader<TImage>::New();
 
   imgReader->SetFileName( fname.c_str() );
   try
-    {
+  {
     imgReader->Update();
-    }
+  }
   catch( itk::ExceptionObject & excp )
-    {
+  {
     std::cerr << "Exception thrown while reading "
               << fname << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
-    }
-  if (!allowLossyConversion)
+  }
+  img = imgReader->GetOutput();
+
   {
     itk::ImageIOBase *imageIO = imgReader->GetImageIO();
     itk::ImageIOBase::IOComponentType ioType =
       itk::ImageIOBase::MapPixelType< typename TImage::PixelType >::CType;
-
+    if (!allowLossyConversion)
+    {
+      if (imageIO->GetComponentType() != ioType)
+      {
+        std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
+                  << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
+                  << std::endl
+                  << "  Output volume: " << imageIO->GetComponentTypeAsString(ioType)
+                  << std::endl
+                  << "The only supported output type is <short>. "
+                  << "You may consider using allowLossyConversion option."
+                  << std::endl
+                  << "However, use this option with caution! "
+                  << "Conversion from images of a different type may cause data loss due to rounding or truncation."
+                  << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
     if (imageIO->GetComponentType() != ioType)
     {
-      std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
-                << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
-                << std::endl
-                << "  Output volume: " << imageIO->GetComponentTypeAsString(ioType)
-                << std::endl
-                << "The only supported output type is <short>. "
-                << "You may consider using allowLossyConversion option."
-                << std::endl
-                << "However, use this option with caution! "
-                << "Conversion from images of a different type may cause data loss due to rounding or truncation."
-                << std::endl;
-      return EXIT_FAILURE;
+      typedef itk::Image<double, TImage::ImageDimension> DoubleImageType;
+      typedef itk::ImageFileReader<DoubleImageType> DoubleImageReaderType;
+      typename DoubleImageReaderType::Pointer doubleReader = DoubleImageReaderType::New();
+      doubleReader->SetFileName( fname.c_str());
+      try
+      {
+        imgReader = ITK_NULLPTR;  //Throw away existing reader (save memory)
+        img = ITK_NULLPTR;        //Throw away existing version of image (save memory)
+        doubleReader->Update();
+      }
+      catch( itk::ExceptionObject & excp )
+      {
+        std::cerr << "Exception thrown while reading "
+                  << fname << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+      }
+      typedef itk::RescaleIntensityImageFilter<DoubleImageType,TImage> RescaleIntensityType;
+      typename RescaleIntensityType::Pointer rescaler = RescaleIntensityType::New();
+      rescaler->SetInput(doubleReader->GetOutput());
+      rescaler->SetOutputMinimum( itk::NumericTraits< typename TImage::PixelType >::Zero );
+      rescaler->SetOutputMaximum( itk::NumericTraits< typename TImage::PixelType >::max() );
+      rescaler->Update();
+      img = rescaler->GetOutput();
     }
   }
-  //TODO: If the storage type does not match the internal type, and allowLossyConversion is true,
-  //      then do something more intelligent than typecast,
-  //      like read into double precision, and then scale to max range of (0,<short int>::max)
-
-  img = imgReader->GetOutput();
   return EXIT_SUCCESS;
 }
+
+template <typename TImage>
+int
+ReadVectorVolume( typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion )
+{
+  typename itk::ImageFileReader<TImage>::Pointer imgReader = itk::ImageFileReader<TImage>::New();
+
+  imgReader->SetFileName( fname.c_str() );
+  try
+  {
+    imgReader->Update();
+  }
+  catch( itk::ExceptionObject & excp )
+  {
+    std::cerr << "Exception thrown while reading "
+              << fname << std::endl;
+    std::cerr << excp << std::endl;
+    return EXIT_FAILURE;
+  }
+  img = imgReader->GetOutput();
+
+  {
+    itk::ImageIOBase *imageIO = imgReader->GetImageIO();
+    itk::ImageIOBase::IOComponentType ioType =
+      itk::ImageIOBase::MapPixelType< typename TImage::PixelType >::CType;
+    if (!allowLossyConversion)
+    {
+      if (imageIO->GetComponentType() != ioType)
+      {
+        std::cerr << "Error: ReadVolume: Unsupported source pixel type." << std:: endl
+                  << "  Input volume:  " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType())
+                  << std::endl
+                  << "  Output volume: " << imageIO->GetComponentTypeAsString(ioType)
+                  << std::endl
+                  << "The only supported output type is <short>. "
+                  << "You may consider using allowLossyConversion option."
+                  << std::endl
+                  << "However, use this option with caution! "
+                  << "Conversion from images of a different type may cause data loss due to rounding or truncation."
+                  << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    if (imageIO->GetComponentType() != ioType)
+    {
+      typedef itk::VectorImage<double, TImage::ImageDimension> DoubleImageType;
+      typedef itk::ImageFileReader<DoubleImageType> DoubleImageReaderType;
+      typename DoubleImageReaderType::Pointer doubleReader = DoubleImageReaderType::New();
+      doubleReader->SetFileName( fname.c_str());
+      try
+      {
+        imgReader = ITK_NULLPTR;  //Throw away existing reader (save memory)
+        img = ITK_NULLPTR;        //Throw away existing version of image (save memory)
+        doubleReader->Update();
+      }
+      catch( itk::ExceptionObject & excp )
+      {
+        std::cerr << "Exception thrown while reading "
+                  << fname << std::endl;
+        std::cerr << excp << std::endl;
+        return EXIT_FAILURE;
+      }
+      typename DoubleImageType::Pointer dimg= doubleReader->GetOutput();
+      double dmin=itk::NumericTraits<double>::max();
+      double dmax=itk::NumericTraits<double>::min();
+      const size_t vectorSize=dimg->GetVectorLength();
+      {
+        itk::ImageRegionConstIterator<DoubleImageType> it(dimg,dimg->GetLargestPossibleRegion());
+        for(it.GoToBegin();it.IsAtEnd();++it)
+        {
+          const typename DoubleImageType::PixelType & tmp = it.Get();
+          for(size_t i=0; i < vectorSize; ++i)
+          {
+            const double & value = tmp[i];
+            dmin = std::min(dmin,value);
+            dmax = std::max(dmax,value);
+          }
+        }
+      }
+      const double scale=(itk::NumericTraits<typename TImage::PixelType::ValueType>::max()-1)/(dmax-dmin);
+
+      itk::ImageRegionIterator<DoubleImageType> it(dimg,dimg->GetLargestPossibleRegion());
+      itk::ImageRegionIterator<TImage>          outit(img,img->GetLargestPossibleRegion());
+      for(it.GoToBegin(),outit.GoToBegin();it.IsAtEnd();++it,++outit)
+      {
+        typename DoubleImageType::PixelType tmp = it.Get();
+        typename TImage::PixelType outtmp = outit.Get();
+        for(size_t i=0; i < vectorSize; ++i)
+        {
+          const double & value = tmp[i];
+          outtmp[i] = (value - dmin)*scale;
+        }
+        outit.Set(outtmp);
+      }
+    }
+  }
+  return EXIT_SUCCESS;
+}
+
 
 template <typename TImage>
 int

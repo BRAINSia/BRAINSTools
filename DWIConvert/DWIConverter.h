@@ -272,6 +272,20 @@ public:
       itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes:"
         << numGradients << " != " << this->GetNVolume() << std::endl);
     }
+    //We need to zero out BVecs for Zero BVals
+    for(size_t i = 0; i < bValCount; ++i)
+    {
+      if ( BVals[i] < 1 )
+      {
+        BVecs[i][0] = 0;
+        BVecs[i][1] = 0;
+        BVecs[i][2] = 0;
+      }
+      else
+      {
+        BVecs[i].normalize();  //Ensure that they are unit vectors as required FSL.
+      }
+    }
     this->m_DiffusionVectors = BVecs;
     this->m_BValues = BVals;
     return;

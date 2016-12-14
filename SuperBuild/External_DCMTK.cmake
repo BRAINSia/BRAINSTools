@@ -42,7 +42,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
   set(${proj}_GIT_TAG "a8cf5d114ff318ae75387452f4042fc0a708094c") ##2016-12-10 Need latest to catch C++11 clang fixes
 
-  if("${CMAKE_CXX_STANDARD}" STREQUAL "11")
+  if( USING_MODERN_CXX ) # CXX11 or greater
     set( DCMTK_USE_CXX11_STL_FLAG "-DDCMTK_USE_CXX11_STL:BOOL=ON")
   endif()
 

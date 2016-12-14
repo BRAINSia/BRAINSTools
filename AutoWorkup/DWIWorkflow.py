@@ -34,8 +34,14 @@ def ExtractBRAINFromHead(RawScan, BrainLabels):
     assert os.path.exists(BrainLabels), "File not found: %s" % BrainLabels
     headImage = sitk.ReadImage(RawScan)
     labelsMap = sitk.ReadImage(BrainLabels)
+    rs = sitk.ResampleImageFilter()
+    rs.SetInterpolator(sitk.sitkLinear)
+    rs.SetTransform(sitk.Transform(3, sitk.sitkIdentity))
+    rs.SetReferenceImage(labelsMap)
+    resampledHead = rs.Execute(headImage)
+
     label_mask = labelsMap>0
-    brainImage = sitk.Cast(headImage,sitk.sitkInt16) * sitk.Cast(label_mask,sitk.sitkInt16)
+    brainImage = sitk.Cast(resampledHead,sitk.sitkInt16) * sitk.Cast(label_mask,sitk.sitkInt16)
     outputVolume = os.path.realpath('T2Stripped.nrrd')
     sitk.WriteImage(brainImage, outputVolume)
     return outputVolume
@@ -92,6 +98,8 @@ def ForceDCtoID(inputVolume):
     return outputVolume
 
 def pickCompositeTransfromFromList(composite_transform_as_list):
+    if isinstance(composite_transform_as_list, basestring):
+        return composite_transform_as_list;
     return composite_transform_as_list[0]
 
 def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
@@ -353,6 +361,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DTIEstim = pe.Node(interface=dtiestim(), name="DTIEstim")
     DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
+    DTIEstim.inputs.threshold = 0
     DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx, 'outputVolume', DTIEstim, 'dwi_image')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', DTIEstim, 'brain_mask')
     DWIWorkflow.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')
@@ -376,7 +385,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIWorkflow.connect(DTIProcess, 'lambda1_output', outputsSpec, 'Lambda1Image')
     DWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
     DWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
-
+    """
     # Step13: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
     UKFNode.inputs.tracts = "ukfTracts.vtk"
@@ -395,6 +404,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', UKFNode, 'maskFile')
     DWIWorkflow.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
     #DWIWorkflow.connect(UKFNode,'tractsWithSecondTensor',outputsSpec,'ukf2ndTracks')
+    """
 
     ## Write all outputs with DataSink
     DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
@@ -483,7 +493,6 @@ if __name__ == '__main__':
   from nipype.interfaces.freesurfer import ReconAll
   from nipype.interfaces.semtools import *
   #####################################################################################
-
   exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR)
 
   sys.exit(exit)

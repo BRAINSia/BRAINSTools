@@ -40,11 +40,10 @@ import traceback
 
 from baw_exp import OpenSubjectDatabase
 
-def get_processed_subjects( resultdir ):
+def get_processed_subjects( resultdir, input_subjects_list ):
     import glob
 
     required_files = [ "AVG_template_headregion.nii.gz",
-            "AtlasDefinition_000517510.xml",
             "AVG_hncma_atlas.nii.gz",
             "AVG_l_accumben_ProbabilityMap.nii.gz",
             "AVG_l_caudate_ProbabilityMap.nii.gz",
@@ -88,23 +87,26 @@ def get_processed_subjects( resultdir ):
             "CLIPPED_AVG_WM.nii.gz"
             ]
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
-    sential_file_pattern = "*/Atlas/AVG_template_rightHemisphere.nii.gz"
-    processedSubjectsPaths = glob.glob( os.path.join(resultdir, sential_file_pattern) )
-    processedSubjects = list()
-    partial_done = list()
-    processedDirectories = [ os.path.dirname(s) for s in processedSubjectsPaths ]
-    for testDirectory in processedDirectories:
-        all_files_exists = True
-        for testFile in required_files:
-            if not os.path.exists( os.path.join(testDirectory, testFile) ):
-                all_files_exists = False
-        if all_files_exists:
-            processedSubjects.append( os.path.basename(os.path.dirname(testDirectory)) )
-        else:
-            partial_done.append( os.path.basename(os.path.dirname(testDirectory)) )
-    print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
-    print("Finishing Incomplete SUBJECTS: {0}".format(partial_done))
-    return processedSubjects
+    for subject in input_subjects_list:
+        sential_file_pattern = "*{0}/Atlas/AVG_template_rightHemisphere.nii.gz".format(subject)
+        glob_search_pattern = os.path.join(resultdir, sential_file_pattern)
+        processedSubjectsPaths = glob.glob( glob_search_pattern )
+        processedSubjects = list()
+        partial_done = list()
+        processedDirectories = [ os.path.dirname(s) for s in processedSubjectsPaths ]
+        for testDirectory in processedDirectories:
+            all_files_exists = True
+            for testFile in required_files:
+                if not os.path.exists( os.path.join(testDirectory, testFile) ):
+                    all_files_exists = False
+                    print("MISSING FILE: {0}: ".format(os.path.join(testDirectory,testFile) ) )
+            if all_files_exists:
+                processedSubjects.append( os.path.basename(os.path.dirname(testDirectory)) )
+            else:
+                partial_done.append( os.path.basename(os.path.dirname(testDirectory)) )
+        print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
+        print("Finishing Incomplete SUBJECTS: {0}".format(partial_done))
+        return processedSubjects
 
 def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
     import random
@@ -115,7 +117,7 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
         print("="*80)
         print("Using Sentinal Files to Limit Jobs Run")
         _all_subjects = set(input_subjects )
-        _processed_subjects = set( get_processed_subjects( resultdir ) )
+        _processed_subjects = set( get_processed_subjects( resultdir, input_subjects ) )
         subjects = list( _all_subjects - _processed_subjects ) #NOTE - in set operation notation removes values
     else:
         subjects = input_subjects

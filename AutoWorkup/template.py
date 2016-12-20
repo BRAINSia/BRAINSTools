@@ -40,14 +40,73 @@ import traceback
 
 from baw_exp import OpenSubjectDatabase
 
-def get_processed_subjects( resultdir ):
+def get_processed_subjects( resultdir, input_subjects_list ):
     import glob
+
+    required_files = [ "AVG_template_headregion.nii.gz",
+            "AVG_hncma_atlas.nii.gz",
+            "AVG_l_accumben_ProbabilityMap.nii.gz",
+            "AVG_l_caudate_ProbabilityMap.nii.gz",
+            "AVG_l_globus_ProbabilityMap.nii.gz",
+            "AVG_l_hippocampus_ProbabilityMap.nii.gz",
+            "AVG_LMKS.fcsv",
+            "AVG_l_putamen_ProbabilityMap.nii.gz",
+            "AVG_l_thalamus_ProbabilityMap.nii.gz",
+            "AVG_phi.nii.gz",
+            "AVG_r_accumben_ProbabilityMap.nii.gz",
+            "AVG_r_caudate_ProbabilityMap.nii.gz",
+            "AVG_r_globus_ProbabilityMap.nii.gz",
+            "AVG_r_hippocampus_ProbabilityMap.nii.gz",
+            "AVG_rho.nii.gz",
+            "AVG_r_putamen_ProbabilityMap.nii.gz",
+            "AVG_r_thalamus_ProbabilityMap.nii.gz",
+            "AVG_T1.nii.gz",
+            "AVG_T2.nii.gz",
+            "AVG_template_headregion.nii.gz",
+            "AVG_template_leftHemisphere.nii.gz",
+            "AVG_template_nac_labels.nii.gz",
+            "AVG_template_rightHemisphere.nii.gz",
+            "AVG_template_ventricles.nii.gz",
+            "AVG_template_WMPM2_labels.nii.gz",
+            "AVG_theta.nii.gz",
+            "CLIPPED_AVG_AIR.nii.gz",
+            "CLIPPED_AVG_BASAL.nii.gz",
+            "CLIPPED_AVG_BRAINMASK.nii.gz",
+            "CLIPPED_AVG_CRBLGM.nii.gz",
+            "CLIPPED_AVG_CRBLWM.nii.gz",
+            "CLIPPED_AVG_CSF.nii.gz",
+            "CLIPPED_AVG_GLOBUS.nii.gz",
+            "CLIPPED_AVG_HIPPOCAMPUS.nii.gz",
+            "CLIPPED_AVG_NOTCSF.nii.gz",
+            "CLIPPED_AVG_NOTGM.nii.gz",
+            "CLIPPED_AVG_NOTVB.nii.gz",
+            "CLIPPED_AVG_NOTWM.nii.gz",
+            "CLIPPED_AVG_SURFGM.nii.gz",
+            "CLIPPED_AVG_THALAMUS.nii.gz",
+            "CLIPPED_AVG_VB.nii.gz",
+            "CLIPPED_AVG_WM.nii.gz"
+            ]
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
-    sential_file_pattern = "*/Atlas/AVG_template_rightHemisphere.nii.gz"
-    processedSubjectsPaths = glob.glob( os.path.join(resultdir, sential_file_pattern) )
-    processedSubjects = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedSubjectsPaths ]
-    print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
-    return processedSubjects
+    for subject in input_subjects_list:
+        sential_file_pattern = "*{0}/Atlas/AVG_template_rightHemisphere.nii.gz".format(subject)
+        glob_search_pattern = os.path.join(resultdir, sential_file_pattern)
+        processedSubjectsPaths = glob.glob( glob_search_pattern )
+        processedSubjects = list()
+        partial_done = list()
+        processedDirectories = [ os.path.dirname(s) for s in processedSubjectsPaths ]
+        for testDirectory in processedDirectories:
+            all_files_exists = True
+            for testFile in required_files:
+                if not os.path.exists( os.path.join(testDirectory, testFile) ):
+                    all_files_exists = False
+                    print("MISSING FILE: {0}: ".format(os.path.join(testDirectory,testFile) ) )
+            if all_files_exists:
+                processedSubjects.append( os.path.basename(os.path.dirname(testDirectory)) )
+            else:
+                partial_done.append( os.path.basename(os.path.dirname(testDirectory)) )
+        print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
+        print("Finishing Incomplete SUBJECTS: {0}".format(partial_done))
+        return processedSubjects
 
 def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
     import random
@@ -58,7 +117,7 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
         print("="*80)
         print("Using Sentinal Files to Limit Jobs Run")
         _all_subjects = set(input_subjects )
-        _processed_subjects = set( get_processed_subjects( resultdir ) )
+        _processed_subjects = set( get_processed_subjects( resultdir, input_subjects ) )
         subjects = list( _all_subjects - _processed_subjects ) #NOTE - in set operation notation removes values
     else:
         subjects = input_subjects

@@ -13,6 +13,11 @@ FSLDWIConverter::FSLDWIConverter( const DWIConverter::FileNamesContainer & input
 {
 }
 
+FSLDWIConverter::CommonDicomFieldMapType FSLDWIConverter::GetCommonDicomFieldsMap() const ITK_OVERRIDE
+{
+  return CommonDicomFieldMapType();
+}
+
 void
 FSLDWIConverter::AddFlagsToDictionary()
 {

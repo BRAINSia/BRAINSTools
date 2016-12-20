@@ -23,35 +23,23 @@
 class GenericDWIConverter : public DWIConverter
 {
 public:
-  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames , const bool FSLFileFormatHorizontalBy3Rows)
-    :  DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows)
-    {
-    }
+  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames , const bool FSLFileFormatHorizontalBy3Rows);
 
-  virtual void LoadFromDisk() ITK_OVERRIDE
-  {
-    itkGenericExceptionMacro(<< " LoadFromDisk not relevant" << std::endl);
-  }
+  virtual void LoadFromDisk() ITK_OVERRIDE;
 
-  virtual ~GenericDWIConverter() {}
+
+  virtual ~GenericDWIConverter();
+
 protected:
-  virtual void ExtractDWIData() ITK_OVERRIDE
-    {
-        itkGenericExceptionMacro(<< " ExtractDWIData not relevant" << std::endl);
-    }
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE
-    {
-        itkGenericExceptionMacro(<< " AddFlagsToDictionary not relevant" << std::endl);
-    }
+  virtual void ExtractDWIData() ITK_OVERRIDE;
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
 
   /**
  * @brief Return common fields.  Does nothing for FSL
  * @return empty map
  */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE
-  {
-    return CommonDicomFieldMapType();
-  }
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
+
 };
 
 #endif // __GenericDWIConverter_h

@@ -47,10 +47,8 @@ public:
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE
-  {
-    return CommonDicomFieldMapType();
-  }
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
+
 
 private:
   std::string m_inputBValues;

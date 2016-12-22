@@ -107,7 +107,7 @@ NRRDDWIConverter::ExtractDWIData()
   RecoverBValues<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
 }
 
-DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const ITK_OVERRIDE
+DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const
 {
   return CommonDicomFieldMapType();
 }

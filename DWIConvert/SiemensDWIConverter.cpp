@@ -101,7 +101,7 @@ void  SiemensDWIConverter::DecodeCSAHeader(CSAHeader &header, const std::string 
  *  a collection of 2D slices arranged in a single
  *  mosaic slice.
  */
-void SiemensDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
+void SiemensDWIConverter::LoadDicomDirectory()
 {
   this->DWIDICOMConverterBase::LoadDicomDirectory();
   std::string ImageType;
@@ -302,7 +302,7 @@ bool SiemensDWIConverter::ExtractBMatrix(CSAHeader *csaHeader, unsigned int stri
 /**
  * @brief  find the bvalues and gradient vectors
  */
-void SiemensDWIConverter::ExtractDWIData() ITK_OVERRIDE
+void SiemensDWIConverter::ExtractDWIData()
 {
   for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
   {
@@ -658,7 +658,7 @@ void SiemensDWIConverter::CheckCSAHeaderAvailable() {
   }
 }
 
-void SiemensDWIConverter::AddFlagsToDictionary() ITK_OVERRIDE
+void SiemensDWIConverter::AddFlagsToDictionary()
 {
   // relevant Siemens private tags
   /* https://nmrimaging.wordpress.com/tag/dicom/

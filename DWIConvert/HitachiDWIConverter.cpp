@@ -17,7 +17,7 @@ HitachiDWIConverter::~HitachiDWIConverter() {}
   /* load dicom directory -- no postprocessing necessary after letting
    * superclass do its thing.
    */
-void HitachiDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
+void HitachiDWIConverter::LoadDicomDirectory()
 {
       this->m_SliceOrderIS = false;
       this->SetDirectionsFromSliceOrder();
@@ -28,7 +28,7 @@ void HitachiDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
    *  for Diffusion data.-- see page 94 of the Supplement 49 document:
    *  ftp://medical.nema.org/medical/dicom/final/sup49_ft.pdf
    */
-void HitachiDWIConverter::ExtractDWIData() ITK_OVERRIDE
+void HitachiDWIConverter::ExtractDWIData()
 {
       for(unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume)
         {
@@ -48,6 +48,6 @@ void HitachiDWIConverter::ExtractDWIData() ITK_OVERRIDE
         }
     }
 
-void HitachiDWIConverter::AddFlagsToDictionary() ITK_OVERRIDE
+void HitachiDWIConverter::AddFlagsToDictionary()
 {
     }

@@ -226,7 +226,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
   }
 }
 
-void DWIDICOMConverterBase::LoadFromDisk() ITK_OVERRIDE
+void DWIDICOMConverterBase::LoadFromDisk()
 {
   this->LoadDicomDirectory();
 }

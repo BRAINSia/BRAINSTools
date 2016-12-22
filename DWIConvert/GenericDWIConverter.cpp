@@ -8,19 +8,19 @@ GenericDWIConverter::GenericDWIConverter( DWIConverter::FileNamesContainer &inpu
 {
 }
 
-void GenericDWIConverter::LoadFromDisk() ITK_OVERRIDE
+void GenericDWIConverter::LoadFromDisk()
 {
   itkGenericExceptionMacro(<< " LoadFromDisk not relevant" << std::endl);
 }
 
 GenericDWIConverter::~GenericDWIConverter() {}
 
-void GenericDWIConverter::ExtractDWIData() ITK_OVERRIDE
+void GenericDWIConverter::ExtractDWIData()
 {
   itkGenericExceptionMacro(<< " ExtractDWIData not relevant" << std::endl);
 }
 
-void GenericDWIConverter::AddFlagsToDictionary() ITK_OVERRIDE
+void GenericDWIConverter::AddFlagsToDictionary()
 {
   itkGenericExceptionMacro(<< " AddFlagsToDictionary not relevant" << std::endl);
 }
@@ -29,7 +29,7 @@ void GenericDWIConverter::AddFlagsToDictionary() ITK_OVERRIDE
 * @brief Return common fields.  Does nothing for FSL
 * @return empty map
 */
-DWIConverter::CommonDicomFieldMapType GenericDWIConverter::GetCommonDicomFieldsMap() const ITK_OVERRIDE
+DWIConverter::CommonDicomFieldMapType GenericDWIConverter::GetCommonDicomFieldsMap() const
 {
   return CommonDicomFieldMapType();
 }

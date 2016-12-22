@@ -14,7 +14,7 @@ PhilipsDWIConverter::PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector 
 
 PhilipsDWIConverter::~PhilipsDWIConverter() {}
 
-void PhilipsDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
+void PhilipsDWIConverter::LoadDicomDirectory()
 {
   this->DWIDICOMConverterBase::LoadDicomDirectory();
   if(!this->m_MultiSliceVolume)
@@ -27,7 +27,7 @@ void PhilipsDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
   // single-frame file handled specially
 }
 
-void PhilipsDWIConverter::ExtractDWIData() ITK_OVERRIDE
+void PhilipsDWIConverter::ExtractDWIData()
 {
   if( !this->m_MultiSliceVolume )
   {
@@ -334,7 +334,7 @@ void PhilipsDWIConverter::ExtractDWIData() ITK_OVERRIDE
   }
 }
 
-void PhilipsDWIConverter::AddFlagsToDictionary() ITK_OVERRIDE
+void PhilipsDWIConverter::AddFlagsToDictionary()
 {
   // relevant Philips private tags
   DcmDictEntry *PhilipsDictBValue  = new DcmDictEntry(0x2001, 0x1003, DcmVR(EVR_FL),

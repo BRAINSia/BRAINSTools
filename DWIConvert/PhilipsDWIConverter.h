@@ -33,13 +33,11 @@ public:
   virtual ~PhilipsDWIConverter();
 
   virtual void LoadDicomDirectory() ITK_OVERRIDE;
-  void ExtractDWIData() ITK_OVERRIDE;
+  virtual void ExtractDWIData() ITK_OVERRIDE;
 protected:
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
   /** # of trailing images to ignore */
   unsigned int        m_NTrailingImagesToIgnore;
-
-  virtual void AddFlagsToDictionary();
-
 };
 
 #endif // __PhilipsDWIConverter_h

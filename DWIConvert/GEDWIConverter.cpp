@@ -12,7 +12,7 @@ GEDWIConverter::GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeader
 {
 }
 GEDWIConverter::~GEDWIConverter() {}
-void GEDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
+void GEDWIConverter::LoadDicomDirectory()
 {
       this->DWIDICOMConverterBase::LoadDicomDirectory();
       this->m_MeasurementFrame = this->m_Volume->GetDirection();
@@ -21,7 +21,7 @@ void GEDWIConverter::LoadDicomDirectory() ITK_OVERRIDE
       this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
     }
 
-void GEDWIConverter::ExtractDWIData() ITK_OVERRIDE
+void GEDWIConverter::ExtractDWIData()
 {
       std::string ModelName;
       // OK, so there is an accomdation made on the basis of one site
@@ -138,7 +138,7 @@ void GEDWIConverter::ExtractDWIData() ITK_OVERRIDE
         }
     }
 
-void GEDWIConverter::AddFlagsToDictionary() ITK_OVERRIDE
+void GEDWIConverter::AddFlagsToDictionary()
 {
       // these have to be dynamically allocated because otherwise there's
       // a malloc error after main exits.

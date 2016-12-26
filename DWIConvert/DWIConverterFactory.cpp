@@ -24,7 +24,7 @@ DWIConverterFactory::~DWIConverterFactory()
   }
 }
 
-bool DWIConverterFactory::isNIIorNIFTI( const std::string & filename )
+bool DWIConverterFactory::isNIIorNrrd( const std::string & filename )
 {
   const size_t NUMEXT=4;
   const char * extensions [NUMEXT] = { ".nii", ".nii.gz", ".nhdr", ".nrrd"};
@@ -66,7 +66,7 @@ DWIConverter* DWIConverterFactory::New()
               << std::endl;
     return ITK_NULLPTR;
   }
-  else if( m_InputFileNames.size() == 1 &&  isNIIorNIFTI( m_InputFileNames[0])) // FSL Reader or NRRD Reader
+  else if( m_InputFileNames.size() == 1 &&  isNIIorNrrd( m_InputFileNames[0])) // FSL Reader or NRRD Reader
   {
     itkGenericExceptionMacro(<< "INVALID PATH, create FSLDWIConverter in main program" << std::endl);
     converter = new FSLDWIConverter(m_InputFileNames,"","", this->m_FSLFileFormatHorizontalBy3Rows);

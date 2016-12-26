@@ -29,6 +29,7 @@
 #include "HitachiDWIConverter.h"
 #include "GenericDWIConverter.h"
 #include "FSLDWIConverter.h"
+#include "NRRDDWIConverter.h"
 
 /** 'factory' object. Does initial scanning of the DICOM directory and
 * then it can instantiate the correct DWIConverter class
@@ -43,7 +44,7 @@ public:
 
   ~DWIConverterFactory();
 
-  static bool isNIIorNIFTI( const std::string & filename );
+  static bool isNIIorNrrd( const std::string & filename );
   DWIConverter* New();
   std::string GetVendor();
 

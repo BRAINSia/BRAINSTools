@@ -61,6 +61,13 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #undef HAVE_SSTREAM
 #include "DWIConvertCLP.h"
 
+//For DWIConvertLib Ctest
+#define DWIConvertLib_CTest
+
+#ifdef DWIConvertLib_CTest
+   #include "DWIConvertLib.h"
+#endif
+
 static DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
   const bool useBMatrixGradientDirections,
@@ -138,6 +145,33 @@ int main(int argc, char *argv[])
   // so reading series with JPEG transfer syntax will fail.
   DJDecoderRegistration::registerCodecs();
   DcmRLEDecoderRegistration::registerCodecs();
+
+#ifdef DWIConvertLib_CTest
+    std::cout << "=======DWI Convert Lib Ctest=========" << std::endl;
+    DWIConvertParameters params;
+
+    params.inputVolume = inputVolume;
+    params.inputDicomDirectory = inputDicomDirectory;
+    params.inputBValues = inputBValues;
+    params.inputBVectors = inputBVectors;
+    params.gradientVectorFile = gradientVectorFile;
+    params.smallGradientThreshold = smallGradientThreshold;
+
+    params.conversionMode = conversionMode;
+    params.fMRIOutput = fMRIOutput;
+    params.transpose = transpose;
+    params.allowLossyConversion = allowLossyConversion;
+    params.useIdentityMeasurementFrame = useIdentityMeaseurementFrame;
+    params.useBMatrixGradientDirections = useBMatrixGradientDirections;
+
+    params.outputVolume = outputVolume;
+    params.outputDirectory = outputDirectory;
+    params.outputBValues = outputBValues;
+    params.outputBVectors = outputBVectors;
+
+    return  DWIConvert(params);
+#endif
+
 
   if(fMRIOutput)
   {

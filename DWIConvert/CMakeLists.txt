@@ -45,7 +45,14 @@ set(DWIConvertSupportLib_SRCS
   PhilipsDWIConverter.h
   SiemensDWIConverter.h
   StringContains.h
-        GEDWIConverter.cpp GenericDWIConverter.cpp HitachiDWIConverter.cpp PhilipsDWIConverter.cpp SiemensDWIConverter.cpp SiemensDWIConverter.hxx DWIConvertLib.cpp DWIConvertLib.h)
+  GEDWIConverter.cpp
+  GenericDWIConverter.cpp
+  HitachiDWIConverter.cpp
+  PhilipsDWIConverter.cpp
+  SiemensDWIConverter.cpp
+  SiemensDWIConverter.hxx
+  DWIConvertLib.cpp
+  DWIConvertLib.h)
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
 target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)

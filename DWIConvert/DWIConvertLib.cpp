@@ -5,7 +5,7 @@
 #include "DWIConvertLib.h"
 
 int DWIConvert(const DWIConvertParameters &params) {
-  const std::string version = "Jan 2017";
+  const std::string version = "4.8.0";
   std::vector<std::string> convertModeVector;
   convertModeVector.reserve(4);
   convertModeVector.push_back("DicomToNrrd");
@@ -69,15 +69,31 @@ int DWIConvert(const DWIConvertParameters &params) {
                                            params.transpose,
                                            params.smallGradientThreshold);
       converter = converterFactory.New();
-    }
 
+      // this is a punt, it will still write out the volume image
+      // even if we don't know how to extract gradients.
+      if(converterFactory.GetVendor() == "GENERIC")
+      {
+        std::cerr << "Can't extract DWI data from files created by vendor "
+                  << converterFactory.GetVendor() << std::endl;
+        delete converter;
+        return EXIT_SUCCESS;
+      }
+    }
+  }
+  catch (std::exception &e) {
+    std::cerr << "Exception in creating converter: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  try{
     //extract DWI data
     converter->SetAllowLossyConversion(params.allowLossyConversion);
     converter->LoadFromDisk();
     converter->ExtractDWIData();
   }
   catch (std::exception &e) {
-    std::cerr << "Exception extracting DWI data" << e.what() << std::endl;
+    std::cerr << "Exception in extracting DWI data: " << e.what() << std::endl;
     delete converter;
     return EXIT_FAILURE;
   }

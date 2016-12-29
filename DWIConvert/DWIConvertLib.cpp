@@ -348,7 +348,7 @@ int DWIConvert2(const DWIConvertParameters& params)
     converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
     std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
   }
-
+  delete converter;
   return EXIT_SUCCESS;
 
 

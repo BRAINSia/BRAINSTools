@@ -51,35 +51,19 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 
 #include <BRAINSCommonLib.h>
 
-#include "dcmtk/oflog/helpers/loglog.h"
-#include "dcmtk/dcmimgle/dcmimage.h"
-#include "dcmtk/dcmjpeg/djdecode.h"
-#include "dcmtk/dcmjpls/djdecode.h"
-#include "dcmtk/dcmdata/dcrledrg.h"
+
 
 
 #undef HAVE_SSTREAM
 #include "DWIConvertCLP.h"
 #include "DWIConvertLib.h"
 
-//For DWIConvertLib Ctest
-#define DWIConvertLib_CTest
-
-
 int main(int argc, char *argv[])
 {
-  PARSE_ARGS;
-  const std::string version = commandLine.getVersion();
-  BRAINSRegisterAlternateIO();
-  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
+    PARSE_ARGS;
+    const std::string version = commandLine.getVersion();
+    BRAINSRegisterAlternateIO();
 
-  // register DCMTK codecs, otherwise they will not be available when
-  // `itkDCMTKSeriesFileNames` is used to build a list of filenames,
-  // so reading series with JPEG transfer syntax will fail.
-  DJDecoderRegistration::registerCodecs();
-  DcmRLEDecoderRegistration::registerCodecs();
-
-#ifdef DWIConvertLib_CTest
     std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
     DWIConvertParameters params;
 
@@ -105,153 +89,4 @@ int main(int argc, char *argv[])
     //return  DWIConvert1(params);
     return DWIConvert2(params);
 
-#else
-
-  if(fMRIOutput)
-  {
-    std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
-    return EXIT_FAILURE;
-  }
-  if( gradientVectorFile != "" ) {
-    std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  if( outputVolume == "" )
-  {
-    std::cerr << "Missing output volume name" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  DWIConverter *converter;
-  // build a NRRD file out of FSL output, which is two text files
-  // for gradients and b values plus a NIfTI file for the gradient volumes.
-  if( conversionMode == "FSLToNrrd" )
-  {
-    std::vector<std::string> pathElements;
-    pathElements.push_back(outputDirectory);
-    pathElements.push_back("/");
-    pathElements.push_back( outputVolume );
-    std::string fullPathOutputVolume = itksys::SystemTools::JoinPath(pathElements);
-
-    DWIConverter::FileNamesContainer filesList;
-    filesList.clear();
-    filesList.push_back(inputVolume);
-
-    std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, inputBValues, inputBVectors,transpose);
-    try
-    {
-      FSLconverter->SetAllowLossyConversion(allowLossyConversion);
-      FSLconverter->LoadFromDisk();
-      FSLconverter->ExtractDWIData();
-    }
-    catch( itk::ExceptionObject &excp)
-    {
-      itkGenericExceptionMacro( << "Exception creating converter " << excp << std::endl);
-      delete FSLconverter;
-    }
-    converter = FSLconverter;
-  }
-  // make FSL file set from a NRRD file.
-  else if( conversionMode == "NrrdToFSL" )
-    {
-      std::vector<std::string> pathElements;
-      pathElements.push_back(outputDirectory);
-      pathElements.push_back("/");
-      pathElements.push_back( outputVolume );
-      std::string fullPathOutputVolume = itksys::SystemTools::JoinPath(pathElements);
-
-      DWIConverter::FileNamesContainer filesList;
-      filesList.clear();
-      filesList.push_back(inputVolume);
-
-      std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-      NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, transpose);
-      useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
-      try
-      {
-        NRRDconverter->SetAllowLossyConversion(allowLossyConversion);
-        NRRDconverter->LoadFromDisk();
-        NRRDconverter->ExtractDWIData();
-      }
-      catch( itk::ExceptionObject &excp)
-      {
-        itkGenericExceptionMacro( << "Exception creating converter " << excp << std::endl);
-        delete NRRDconverter;
-      }
-      converter = NRRDconverter;
-    }
-  else if( conversionMode == "DicomToNrrd" || conversionMode == "DicomToFSL")
-  {
-    converter = CreateDicomConverter(inputDicomDirectory,useBMatrixGradientDirections, transpose,
-      smallGradientThreshold,allowLossyConversion);
-    if (conversionMode == "DicomToFSL")
-    {
-      useIdentityMeaseurementFrame = true; //Only true is valid for writing FSL
-    }
-  }
-  else
-  {
-    std::cerr << "Invalid conversion mode" << std::endl;
-    exit(-1);
-  }
-
-//#if 0 //This should use the bvec and bval file formats
-//  // NEED TO ADD --forceGradientOverwrite, and then read bvec and bval files
-//  // A test needs to be written for this case
-//  // ^^^^^^^^^^^^^^^^^^^^^^^ Done Reading Above this line
-//  //Overwrite gradient directions
-//  if( gradientVectorFile != "" )
-//  {
-//    converter->readOverwriteGradientVectorFile(gradientVectorFile);
-//  }
-//#endif
-  //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
-  if (useIdentityMeaseurementFrame == true)
-  {
-    converter->ConvertBVectorsToIdentityMeasurementFrame();
-  }
-
-
-
-  std::string outputVolumeHeaderName(outputVolume);
-  { // concatenate with outputDirectory
-    if( outputVolume.find("/") == std::string::npos &&
-      outputVolume.find("\\") == std::string::npos )
-    {
-      if( outputVolumeHeaderName.size() != 0 )
-      {
-        outputVolumeHeaderName = outputDirectory;
-        outputVolumeHeaderName += "/";
-        outputVolumeHeaderName += outputVolume;
-      }
-    }
-  }
-
-  if( conversionMode == "DicomToFSL"  || conversionMode == "NrrdToFSL" )
-  {
-
-    Volume4DType::Pointer img4D = converter->OrientForFSLConventions();
-    // write the image */
-    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, outputBValues, outputBVectors, img4D);
-  }
-  else
-  {
-    //NRRD requires scaledDiffusionVectors, so find max BValue
-  converter->ConvertToSingleBValueScaledDiffusionVectors();
-  //////////////////////////////////////////////
-  // write header file
-  // This part follows a DWI NRRD file in NRRD format 5.
-  // There should be a better way using itkNRRDImageIO.
-    const std::string commentSection = converter->MakeFileComment(version,useBMatrixGradientDirections,
-      useIdentityMeaseurementFrame, smallGradientThreshold, conversionMode );
-
-    converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
-    std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
-  }
-
-  return EXIT_SUCCESS;
-
-#endif
 }

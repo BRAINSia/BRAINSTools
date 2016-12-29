@@ -4,6 +4,12 @@
 
 #include "DWIConvertLib.h"
 
+#include "dcmtk/oflog/helpers/loglog.h"
+#include "dcmtk/dcmimgle/dcmimage.h"
+#include "dcmtk/dcmjpeg/djdecode.h"
+#include "dcmtk/dcmjpls/djdecode.h"
+#include "dcmtk/dcmdata/dcrledrg.h"
+
 DWIConverter * CreateDicomConverter(
         const std::string inputDicomDirectory,
         const bool useBMatrixGradientDirections,
@@ -216,6 +222,15 @@ int DWIConvert1(const DWIConvertParameters &params) {
 int DWIConvert2(const DWIConvertParameters& params)
 {
   const std::string version = "4.8.0";
+  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
+
+  // register DCMTK codecs, otherwise they will not be available when
+  // `itkDCMTKSeriesFileNames` is used to build a list of filenames,
+  // so reading series with JPEG transfer syntax will fail.
+  DJDecoderRegistration::registerCodecs();
+  DcmRLEDecoderRegistration::registerCodecs();
+
+
   bool useIdentityMeasurementFrame = params.useIdentityMeasurementFrame;
   if(params.fMRIOutput)
   {

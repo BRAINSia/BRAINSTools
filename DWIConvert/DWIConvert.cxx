@@ -60,78 +60,11 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 
 #undef HAVE_SSTREAM
 #include "DWIConvertCLP.h"
+#include "DWIConvertLib.h"
 
 //For DWIConvertLib Ctest
 #define DWIConvertLib_CTest
 
-#ifdef DWIConvertLib_CTest
-   #include "DWIConvertLib.h"
-#endif
-
-DWIConverter * CreateDicomConverter(
-  const std::string inputDicomDirectory,
-  const bool useBMatrixGradientDirections,
-  const bool transpose,
-  const double smallGradientThreshold,
-const bool allowLossyConversion)
-{
-// check for required parameters
-  if( inputDicomDirectory == "" )
-  {
-    std::cerr << "Missing DICOM input directory path" << std::endl;
-    return ITK_NULLPTR;
-  }
-
-// use the factor to instantiate a converter object based on the vender.
-  DWIConverterFactory converterFactory(inputDicomDirectory,
-    useBMatrixGradientDirections,
-    transpose,
-    smallGradientThreshold);
-  DWIConverter * converter;
-  try
-  {
-    converter = converterFactory.New();
-  }
-  catch( itk::ExceptionObject &excp)
-  {
-    std::cerr << "Exception creating converter " << excp << std::endl;
-    return ITK_NULLPTR;
-  }
-
-// read Dicom directory
-  try
-  {
-    converter->SetAllowLossyConversion(allowLossyConversion);
-    converter->LoadFromDisk();
-  }
-  catch( itk::ExceptionObject &excp)
-  {
-    std::cerr << "Exception creating converter " << excp << std::endl;
-    delete converter;
-    return ITK_NULLPTR;
-  }
-  // extract the DWI data
-  try
-  {
-    converter->ExtractDWIData();
-  }
-  catch( itk::ExceptionObject &excp)
-  {
-    std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
-    delete converter;
-    return ITK_NULLPTR;
-  }
-// this is a punt, it will still write out the volume image
-// even if we don't know how to extract gradients.
-  if(converterFactory.GetVendor() == "GENERIC")
-  {
-    std::cerr << "Can't extract DWI data from files created by vendor "
-              << converterFactory.GetVendor() << std::endl;
-    delete converter;
-    exit(EXIT_SUCCESS);
-  }
-  return converter;
-}
 
 int main(int argc, char *argv[])
 {
@@ -154,7 +87,7 @@ int main(int argc, char *argv[])
     params.inputDicomDirectory = inputDicomDirectory;
     params.inputBValues = inputBValues;
     params.inputBVectors = inputBVectors;
-    //params.gradientVectorFile = gradientVectorFile;
+    params.gradientVectorFile = gradientVectorFile;
     params.smallGradientThreshold = smallGradientThreshold;
 
     params.conversionMode = conversionMode;
@@ -169,7 +102,8 @@ int main(int argc, char *argv[])
     params.outputBValues = outputBValues;
     params.outputBVectors = outputBVectors;
 
-    return  DWIConvert(params);
+    //return  DWIConvert1(params);
+    return DWIConvert2(params);
 
 #else
 

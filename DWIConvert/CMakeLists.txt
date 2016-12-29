@@ -34,7 +34,7 @@ set(DWIConvertSupportLib_SRCS
   DWIConvertUtils.h
   DWIConvertUtils.cxx
   DWIConverterFactory.h
-  DWIConverterFactory.cpp
+        DWIConverterFactory.cxx
   DWIConverter.h
   DWIConverter.cxx
   DWIDICOMConverterBase.h
@@ -45,13 +45,13 @@ set(DWIConvertSupportLib_SRCS
   PhilipsDWIConverter.h
   SiemensDWIConverter.h
   StringContains.h
-  GEDWIConverter.cpp
-  GenericDWIConverter.cpp
-  HitachiDWIConverter.cpp
-  PhilipsDWIConverter.cpp
-  SiemensDWIConverter.cpp
+        GEDWIConverter.cxx
+        GenericDWIConverter.cxx
+        HitachiDWIConverter.cxx
+        PhilipsDWIConverter.cxx
+        SiemensDWIConverter.cxx
   SiemensDWIConverter.hxx
-  DWIConvertLib.cpp
+        DWIConvertLib.cxx
   DWIConvertLib.h)
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})

@@ -44,7 +44,7 @@ public:
 
   ~DWIConverterFactory();
 
-  static bool isNIIorNrrd( const std::string & filename );
+  bool isNIIorNrrd( const std::string & filename );
   DWIConverter* New();
   std::string GetVendor();
 

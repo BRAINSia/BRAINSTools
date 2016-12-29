@@ -66,6 +66,8 @@ DWIConverter* DWIConverterFactory::New()
               << std::endl;
     return ITK_NULLPTR;
   }
+
+  // there is a logic error below --huixie
   else if( m_InputFileNames.size() == 1 &&  isNIIorNrrd( m_InputFileNames[0])) // FSL Reader or NRRD Reader
   {
     itkGenericExceptionMacro(<< "INVALID PATH, create FSLDWIConverter in main program" << std::endl);
@@ -73,7 +75,11 @@ DWIConverter* DWIConverterFactory::New()
   }
   else  // Assume multi file dicom file reading
   {
-    m_Headers.resize(m_InputFileNames.size());
+
+    // below code has logic error, it has empty hole in the tail of m_Headers when HasPixelData == false;
+    /*
+     *
+     * m_Headers.resize(m_InputFileNames.size());
     int                                 headerCount = 0;
     for( unsigned i = 0; i < m_Headers.size(); ++i )
     {
@@ -102,7 +108,42 @@ DWIConverter* DWIConverterFactory::New()
           headerCount++;
         }
       }
+    }*/
+
+    //modified by HuiXie
+    m_Headers.clear();
+    int  headerCount = 0;
+    for( unsigned i = 0; i < m_InputFileNames.size(); ++i )
+    {
+      itk::DCMTKFileReader *curReader = new itk::DCMTKFileReader;
+      curReader->SetFileName(m_InputFileNames[i]);
+      try
+      {
+        curReader->LoadFile();
+      }
+      catch( ... )
+      {
+        std::cerr << "Error reading slice" << m_InputFileNames[i] << std::endl;
+        delete curReader;
+        curReader = ITK_NULLPTR;
+      }
+      // check for pixel data.
+      if(curReader)
+      {
+        if(!curReader->HasPixelData() )
+        {
+          delete curReader;
+        }
+        else
+        {
+          m_Headers.push_back(curReader);
+          headerCount++;
+        }
+      }
     }
+    //end of modified by HuiXie
+
+
     // no headers found, nothing to do.
     if( headerCount == 0 )
     {

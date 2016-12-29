@@ -19,10 +19,10 @@ int DWIConvert(const DWIConvertParameters &params) {
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
     return EXIT_FAILURE;
   }
-  if (params.gradientVectorFile != "") {
-    std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
-    return EXIT_FAILURE;
-  }
+//  if (params.gradientVectorFile != "") {
+//    std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
+//    return EXIT_FAILURE;
+//  }
 
   if (params.outputVolume == "") {
     std::cerr << "Missing output volume name" << std::endl;
@@ -70,32 +70,48 @@ int DWIConvert(const DWIConvertParameters &params) {
                                            params.smallGradientThreshold);
       converter = converterFactory.New();
 
-      // this is a punt, it will still write out the volume image
-      // even if we don't know how to extract gradients.
-      if(converterFactory.GetVendor() == "GENERIC")
-      {
-        std::cerr << "Can't extract DWI data from files created by vendor "
-                  << converterFactory.GetVendor() << std::endl;
-        delete converter;
-        return EXIT_SUCCESS;
-      }
+//      // this is a punt, it will still write out the volume image
+//      // even if we don't know how to extract gradients.
+//      if(converterFactory.GetVendor() == "GENERIC")
+//      {
+//        std::cerr << "Can't extract DWI data from files created by vendor Generic"<< std::endl;
+//        delete converter;
+//        return EXIT_SUCCESS;
+//      }
     }
   }
   catch (std::exception &e) {
     std::cerr << "Exception in creating converter: " << e.what() << std::endl;
+    if (NULL != converter) delete converter;
     return EXIT_FAILURE;
   }
 
-  try{
-    //extract DWI data
-    converter->SetAllowLossyConversion(params.allowLossyConversion);
-    converter->LoadFromDisk();
-    converter->ExtractDWIData();
+  try {
+      //extract DWI data
+      converter->SetAllowLossyConversion(params.allowLossyConversion);
   }
   catch (std::exception &e) {
-    std::cerr << "Exception in extracting DWI data: " << e.what() << std::endl;
-    delete converter;
-    return EXIT_FAILURE;
+      std::cerr << "Exception in SetAllowLossyConversion: " << e.what() << std::endl;
+      if (NULL != converter) delete converter;
+      return EXIT_FAILURE;
+  }
+
+  try {
+    converter->LoadFromDisk();
+  }
+  catch (std::exception &e) {
+      std::cerr << "Exception in LoadFromDisk: " << e.what() << std::endl;
+      if (NULL != converter) delete converter;
+      return EXIT_FAILURE;
+  }
+
+  try {
+      converter->ExtractDWIData();
+  }
+  catch (std::exception &e) {
+      std::cerr << "Exception in extracting DWI data: " << e.what() << std::endl;
+      if (NULL != converter) delete converter;
+      return EXIT_FAILURE;
   }
 
   //Write output
@@ -127,5 +143,6 @@ int DWIConvert(const DWIConvertParameters &params) {
     converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
     std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
   }
+  if (NULL != converter) delete converter;
   return EXIT_SUCCESS;
 }

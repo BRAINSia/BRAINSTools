@@ -14,7 +14,7 @@ struct DWIConvertParameters {
   std::string inputDicomDirectory;
   std::string inputBValues;
   std::string inputBVectors;
-  std::string gradientVectorFile;
+  //std::string gradientVectorFile; //deprecated
   double smallGradientThreshold;
 
   std::string conversionMode; // only one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd"]

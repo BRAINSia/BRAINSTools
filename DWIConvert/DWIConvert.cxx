@@ -68,7 +68,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
    #include "DWIConvertLib.h"
 #endif
 
-static DWIConverter * CreateDicomConverter(
+DWIConverter * CreateDicomConverter(
   const std::string inputDicomDirectory,
   const bool useBMatrixGradientDirections,
   const bool transpose,
@@ -147,14 +147,14 @@ int main(int argc, char *argv[])
   DcmRLEDecoderRegistration::registerCodecs();
 
 #ifdef DWIConvertLib_CTest
-    std::cout << "=======DWI Convert Lib Ctest=========" << std::endl;
+    std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
     DWIConvertParameters params;
 
     params.inputVolume = inputVolume;
     params.inputDicomDirectory = inputDicomDirectory;
     params.inputBValues = inputBValues;
     params.inputBVectors = inputBVectors;
-    params.gradientVectorFile = gradientVectorFile;
+    //params.gradientVectorFile = gradientVectorFile;
     params.smallGradientThreshold = smallGradientThreshold;
 
     params.conversionMode = conversionMode;

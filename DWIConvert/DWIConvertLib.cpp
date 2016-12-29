@@ -306,7 +306,7 @@ int DWIConvert2(const DWIConvertParameters& params)
 //  }
 //#endif
   //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
-  if (useIdentityMeasurementFrame == true)
+  if (useIdentityMeasurementFrame)
   {
     converter->ConvertBVectorsToIdentityMeasurementFrame();
   }

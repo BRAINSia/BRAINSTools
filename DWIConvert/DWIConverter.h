@@ -185,6 +185,10 @@ public:
    */
   void SetAllowLossyConversion(const bool newValue);
 
+  //add by Hui Xie
+  Volume3DUnwrappedType::Pointer getVolumePointer();
+
+
 protected:
   double ComputeMaxBvalue(const std::vector<double> &bValues) const;
   size_t has_valid_nifti_extension( std::string outputVolumeHeaderName ) const;

@@ -61,11 +61,11 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 int main(int argc, char *argv[])
 {
     PARSE_ARGS;
-    const std::string version = commandLine.getVersion();
-    BRAINSRegisterAlternateIO();
+    //const std::string version = commandLine.getVersion();
+    //BRAINSRegisterAlternateIO();
 
     std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
-    DWIConvertParameters params;
+    DWIConvert params;
 
     params.inputVolume = inputVolume;
     params.inputDicomDirectory = inputDicomDirectory;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     params.gradientVectorFile = gradientVectorFile;
     params.smallGradientThreshold = smallGradientThreshold;
 
-    params.conversionMode = conversionMode;
+    params.setConversionMode(conversionMode);
     params.fMRIOutput = fMRIOutput;
     params.transpose = transpose;
     params.allowLossyConversion = allowLossyConversion;
@@ -87,6 +87,6 @@ int main(int argc, char *argv[])
     params.outputBVectors = outputBVectors;
 
     //return  DWIConvert1(params);
-    return DWIConvert2(params);
+    return params.DWIConvert2();
 
 }

@@ -166,7 +166,7 @@ unsigned short DWIConverter::GetCols() const { return this->m_Volume->GetLargest
 void DWIConverter::ReadGradientInformation(const std::string& inputBValues, const std::string &inputBVectors, const std::string &inputVolumeNameTemplate)
 {// override gradients embedded in file with an external FSL Formatted files
   std::string _inputBValues = inputBValues;
-  std::string baseDirectory = itksys::SystemTools::GetParentDirectory(inputVolumeNameTemplate);
+  std::string baseDcirectory = itksys::SystemTools::GetParentDirectory(inputVolumeNameTemplate);
   if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
   {
     std::vector<std::string> pathElements;
@@ -677,4 +677,8 @@ size_t DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderNa
     exit(1);
   }
   return std::string::npos;
+}
+
+DWIConverter::Volume3DUnwrappedType::Pointer DWIConverter::getVolumePointer(){
+  return m_Volume;
 }

@@ -10,7 +10,7 @@
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
 
-DWIConverter * CreateDicomConverter(
+DWIConverter * DWIConvert::CreateDicomConverter(
         const std::string inputDicomDirectory,
         const bool useBMatrixGradientDirections,
         const bool transpose,
@@ -75,7 +75,33 @@ DWIConverter * CreateDicomConverter(
   return converter;
 }
 
-int DWIConvert1(const DWIConvertParameters &params) {
+DWIConvert::DWIConvert()
+{
+    m_inputVolume = "";
+    m_inputDicomDirectory = "";
+    m_inputBValues = "";  //default: ""
+    m_inputBVectors = ""; //default: ""
+    m_gradientVectorFile = ""; //deprecated
+    m_smallGradientThreshold = 0.2; //default = 0.2
+
+    //only one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd",
+    //                                          "NrrdToNrrd", "FSLToFSL"]
+    m_conversionMode = "";
+
+    m_fMRIOutput = false; //default: false
+    m_transpose = false; //default:false
+    m_allowLossyConversion = false; //defualt: false
+    m_useIdentityMeasurementFrame = false; //default: false
+    m_useBMatrixGradientDirections = false; //default: false
+
+    m_outputVolume = "";
+    m_outputDirectory = ".";  //default: "."
+    m_outputBValues = ""; //default: ""
+    m_outputBVectors = "";//default: ""
+
+}
+
+int DWIConvert::DWIConvert1() {
   const std::string version = "4.8.0";
   std::vector<std::string> convertModeVector;
   convertModeVector.reserve(4);
@@ -83,19 +109,19 @@ int DWIConvert1(const DWIConvertParameters &params) {
   convertModeVector.push_back("DicomToFSL");
   convertModeVector.push_back("NrrdToFSL");
   convertModeVector.push_back("FSLToNrrd");
-  bool useIdentityMeasurementFrame = params.useIdentityMeasurementFrame;
+  bool useIdentityMeasurementFrame = m_useIdentityMeasurementFrame;
 
   //check parameters
-  if (params.fMRIOutput) {
+  if (m_fMRIOutput) {
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
     return EXIT_FAILURE;
   }
-  if (params.gradientVectorFile != "") {
+  if (m_gradientVectorFile != "") {
     std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
     return EXIT_FAILURE;
   }
 
-  if (params.outputVolume == "") {
+  if (m_outputVolume == "") {
     std::cerr << "Missing output volume name" << std::endl;
     return EXIT_FAILURE;
   }
@@ -103,7 +129,7 @@ int DWIConvert1(const DWIConvertParameters &params) {
   //check conversion mode
   bool correctConvertMode = false;
   for (int i = 0; i < 4; ++i) {
-    if (0 == convertModeVector[i].compare(params.conversionMode)) {
+    if (0 == convertModeVector[i].compare(getConversionMode())) {
       correctConvertMode = true;
       break;
     }
@@ -117,28 +143,28 @@ int DWIConvert1(const DWIConvertParameters &params) {
   DWIConverter *converter = NULL;
   DWIConverter::FileNamesContainer filesList;
   filesList.clear();
-  filesList.push_back(params.inputVolume);
+  filesList.push_back(m_inputVolume);
 
   try {
-    if (0 == params.conversionMode.compare("FSLToNrrd")) {
-      converter = new FSLDWIConverter(filesList, params.inputBValues, params.inputBVectors, params.transpose);
-    } else if (0 == params.conversionMode.compare("NrrdToFSL")) {
-      converter = new NRRDDWIConverter(filesList, params.transpose);
+    if (0 == getConversionMode().compare("FSLToNrrd")) {
+      converter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors, m_transpose);
+    } else if (0 == getConversionMode().compare("NrrdToFSL")) {
+      converter = new NRRDDWIConverter(filesList, m_transpose);
       useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
     } else  // "DicomToNrrd" or "DicomToFSL"
     {
-      if (params.inputDicomDirectory == "") {
+      if (m_inputDicomDirectory == "") {
         std::cerr << "Missing Dicom input directory path" << std::endl;
         return EXIT_FAILURE;
       }
-      if (params.conversionMode == "DicomToFSL") {
+      if (getConversionMode() == "DicomToFSL") {
         useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
       }
 
-      DWIConverterFactory converterFactory(params.inputDicomDirectory,
-                                           params.useBMatrixGradientDirections,
-                                           params.transpose,
-                                           params.smallGradientThreshold);
+      DWIConverterFactory converterFactory(m_inputDicomDirectory,
+                                           m_useBMatrixGradientDirections,
+                                           m_transpose,
+                                           m_smallGradientThreshold);
       converter = converterFactory.New();
 
       // this is a punt, it will still write out the volume image
@@ -159,7 +185,7 @@ int DWIConvert1(const DWIConvertParameters &params) {
 
   try {
       //extract DWI data
-      converter->SetAllowLossyConversion(params.allowLossyConversion);
+      converter->SetAllowLossyConversion(m_allowLossyConversion);
   }
   catch (std::exception &e) {
       std::cerr << "Exception in SetAllowLossyConversion: " << e.what() << std::endl;
@@ -189,27 +215,27 @@ int DWIConvert1(const DWIConvertParameters &params) {
   if (useIdentityMeasurementFrame) {
     converter->ConvertBVectorsToIdentityMeasurementFrame();
   }
-  std::string outputVolumeHeaderName(params.outputVolume);
+  std::string outputVolumeHeaderName(m_outputVolume);
   // concatenate with outputDirectory
-  if (params.outputVolume.find("/") == std::string::npos
-      && params.outputVolume.find("\\") == std::string::npos
+  if (m_outputVolume.find("/") == std::string::npos
+      && m_outputVolume.find("\\") == std::string::npos
       && outputVolumeHeaderName.size() != 0) {
-    outputVolumeHeaderName = params.outputDirectory;
+    outputVolumeHeaderName = m_outputDirectory;
     outputVolumeHeaderName += "/";
-    outputVolumeHeaderName += params.outputVolume;
+    outputVolumeHeaderName += m_outputVolume;
   }
 
-  if (params.conversionMode == "DicomToFSL" || params.conversionMode == "NrrdToFSL") {
+  if (getConversionMode() == "DicomToFSL" || getConversionMode() == "NrrdToFSL") {
 
     Volume4DType::Pointer img4D = converter->OrientForFSLConventions();
     // write the image */
-    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, params.outputBValues, params.outputBVectors, img4D);
+    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
   } else {
     //NRRD requires scaledDiffusionVectors, so find max BValue
     converter->ConvertToSingleBValueScaledDiffusionVectors();
-    const std::string commentSection = converter->MakeFileComment(version, params.useBMatrixGradientDirections,
+    const std::string commentSection = converter->MakeFileComment(version, m_useBMatrixGradientDirections,
                                                                   useIdentityMeasurementFrame,
-                                                                  params.smallGradientThreshold, params.conversionMode);
+                                                                  m_smallGradientThreshold,getConversionMode());
 
     converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
     std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
@@ -219,7 +245,7 @@ int DWIConvert1(const DWIConvertParameters &params) {
 }
 
 
-int DWIConvert2(const DWIConvertParameters& params)
+int DWIConvert::DWIConvert2()
 {
   const std::string version = "4.8.0";
   dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
@@ -231,18 +257,18 @@ int DWIConvert2(const DWIConvertParameters& params)
   DcmRLEDecoderRegistration::registerCodecs();
 
 
-  bool useIdentityMeasurementFrame = params.useIdentityMeasurementFrame;
-  if(params.fMRIOutput)
+  bool useIdentityMeasurementFrame = m_useIdentityMeasurementFrame;
+  if(m_fMRIOutput)
   {
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
     return EXIT_FAILURE;
   }
-  if( params.gradientVectorFile != "" ) {
+  if( m_gradientVectorFile != "" ) {
     std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
     return EXIT_FAILURE;
   }
 
-  if( params.outputVolume == "" )
+  if( m_outputVolume == "" )
   {
     std::cerr << "Missing output volume name" << std::endl;
     return EXIT_FAILURE;
@@ -251,17 +277,17 @@ int DWIConvert2(const DWIConvertParameters& params)
   DWIConverter *converter;
   // build a NRRD file out of FSL output, which is two text files
   // for gradients and b values plus a NIfTI file for the gradient volumes.
-  if( params.conversionMode == "FSLToNrrd" )
+  if( getConversionMode() == "FSLToNrrd" )
   {
     DWIConverter::FileNamesContainer filesList;
     filesList.clear();
-    filesList.push_back(params.inputVolume);
+    filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, params.inputBValues, params.inputBVectors,params.transpose);
+    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors,m_transpose);
     try
     {
-      FSLconverter->SetAllowLossyConversion(params.allowLossyConversion);
+      FSLconverter->SetAllowLossyConversion(m_allowLossyConversion);
       FSLconverter->LoadFromDisk();
       FSLconverter->ExtractDWIData();
     }
@@ -273,18 +299,18 @@ int DWIConvert2(const DWIConvertParameters& params)
     converter = FSLconverter;
   }
     // make FSL file set from a NRRD file.
-  else if( params.conversionMode == "NrrdToFSL" )
+  else if( getConversionMode() == "NrrdToFSL" )
   {
     DWIConverter::FileNamesContainer filesList;
     filesList.clear();
-    filesList.push_back(params.inputVolume);
+    filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, params.transpose);
+    NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, m_transpose);
     useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
     try
     {
-      NRRDconverter->SetAllowLossyConversion(params.allowLossyConversion);
+      NRRDconverter->SetAllowLossyConversion(m_allowLossyConversion);
       NRRDconverter->LoadFromDisk();
       NRRDconverter->ExtractDWIData();
     }
@@ -295,11 +321,11 @@ int DWIConvert2(const DWIConvertParameters& params)
     }
     converter = NRRDconverter;
   }
-  else if( params.conversionMode == "DicomToNrrd" || params.conversionMode == "DicomToFSL")
+  else if( getConversionMode() == "DicomToNrrd" || getConversionMode() == "DicomToFSL")
   {
-    converter = CreateDicomConverter(params.inputDicomDirectory,params.useBMatrixGradientDirections, params.transpose,
-                                     params.smallGradientThreshold,params.allowLossyConversion);
-    if (params.conversionMode == "DicomToFSL")
+    converter = CreateDicomConverter(m_inputDicomDirectory,m_useBMatrixGradientDirections, m_transpose,
+                                     m_smallGradientThreshold,m_allowLossyConversion);
+    if (getConversionMode() == "DicomToFSL")
     {
       useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
     }
@@ -328,26 +354,26 @@ int DWIConvert2(const DWIConvertParameters& params)
 
 
 
-  std::string outputVolumeHeaderName(params.outputVolume);
+  std::string outputVolumeHeaderName(m_outputVolume);
   { // concatenate with outputDirectory
-    if( params.outputVolume.find("/") == std::string::npos &&
-            params.outputVolume.find("\\") == std::string::npos )
+    if( m_outputVolume.find("/") == std::string::npos &&
+            m_outputVolume.find("\\") == std::string::npos )
     {
       if( outputVolumeHeaderName.size() != 0 )
       {
-        outputVolumeHeaderName = params.outputDirectory;
+        outputVolumeHeaderName = m_outputDirectory;
         outputVolumeHeaderName += "/";
-        outputVolumeHeaderName += params.outputVolume;
+        outputVolumeHeaderName += m_outputVolume;
       }
     }
   }
 
-  if( params.conversionMode == "DicomToFSL"  || params.conversionMode == "NrrdToFSL" )
+  if( getConversionMode() == "DicomToFSL"  || getConversionMode() == "NrrdToFSL" )
   {
 
     Volume4DType::Pointer img4D = converter->OrientForFSLConventions();
     // write the image */
-    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, params.outputBValues, params.outputBVectors, img4D);
+    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
   }
   else
   {
@@ -357,8 +383,8 @@ int DWIConvert2(const DWIConvertParameters& params)
     // write header file
     // This part follows a DWI NRRD file in NRRD format 5.
     // There should be a better way using itkNRRDImageIO.
-    const std::string commentSection = converter->MakeFileComment(version,params.useBMatrixGradientDirections,
-                                                                  useIdentityMeasurementFrame, params.smallGradientThreshold, params.conversionMode );
+    const std::string commentSection = converter->MakeFileComment(version,m_useBMatrixGradientDirections,
+                                                                  useIdentityMeasurementFrame, m_smallGradientThreshold, getConversionMode());
 
     converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
     std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
@@ -367,4 +393,173 @@ int DWIConvert2(const DWIConvertParameters& params)
   return EXIT_SUCCESS;
 
 
+}
+
+//return: only one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd",
+//                                                  "NrrdToNrrd", "FSLToFSL"]
+// if return "", invalidate input parameters.
+std::string DWIConvert::setConversionMode()
+{
+  std::string conversionMode= "";
+  std::string outputExt = findFilenameExt(m_outputVolume);
+  if ("" == m_inputDicomDirectory){
+     std::string inputExt = findFilenameExt(m_inputVolume);
+     if (".nii" == inputExt && ".nrrd" == outputExt) conversionMode = "FSLToNrrd";
+     if (".nrrd" == inputExt && ".nii" == outputExt) conversionMode = "NrrdToFSL";
+     if (".nrrd" == inputExt && ".nrrd" == outputExt) conversionMode = "NrrdToNrrd";
+     if (".nii" == inputExt && ".nii" == outputExt) conversionMode = "FSLToFSL";
+  }
+  else if ("" == m_inputVolume)
+  {
+      if (".nrrd" == outputExt) conversionMode = "DicomToNrrd";
+      if (".nii" == outputExt) conversionMode = "DicomToFSL";
+  }
+  else{
+      std::cerr <<"Error: One of inputVoume and inputDicomDirectory must be empty string"<<std::endl;
+  }
+  if ("" == conversionMode){
+      std::cerr <<"Error: invalidate input or output file tyep"<<std::endl;
+  }
+  m_conversionMode =  conversionMode;
+  return conversionMode;
+}
+
+void DWIConvert::setConversionMode(const std::string conversionMode){
+    m_conversionMode =  conversionMode;
+}
+
+std::string DWIConvert::getConversionMode()
+{
+  if ("" == m_conversionMode) setConversionMode();
+  return m_conversionMode;
+}
+
+//{ ".nii", ".nii.gz", ".nhdr", ".nrrd"}
+std::string DWIConvert::findFilenameExt(const std::string filename){
+    std::string::size_type pos = filename.rfind(".");
+    std::string subStr = filename.substr(pos);
+    if (".gz" == subStr){
+        subStr = filename.substr(pos-4,4);
+    }
+    return subStr;
+}
+
+const std::string &DWIConvert::getinputVolume() const {
+  return m_inputVolume;
+}
+
+void DWIConvert::setM_inputVolume(const std::string &m_inputVolume) {
+  DWIConvert::m_inputVolume = m_inputVolume;
+}
+
+const std::string &DWIConvert::getinputDicomDirectory() const {
+  return m_inputDicomDirectory;
+}
+
+void DWIConvert::setM_inputDicomDirectory(const std::string &m_inputDicomDirectory) {
+  DWIConvert::m_inputDicomDirectory = m_inputDicomDirectory;
+}
+
+const std::string &DWIConvert::getinputBValues() const {
+  return m_inputBValues;
+}
+
+void DWIConvert::setM_inputBValues(const std::string &m_inputBValues) {
+  DWIConvert::m_inputBValues = m_inputBValues;
+}
+
+const std::string &DWIConvert::getInputBVectors() const {
+  return m_inputBVectors;
+}
+
+void DWIConvert::setM_inputBVectors(const std::string &m_inputBVectors) {
+  DWIConvert::m_inputBVectors = m_inputBVectors;
+}
+
+const std::string &DWIConvert::getgradientVectorFile() const {
+  return m_gradientVectorFile;
+}
+
+void DWIConvert::setM_gradientVectorFile(const std::string &m_gradientVectorFile) {
+  DWIConvert::m_gradientVectorFile = m_gradientVectorFile;
+}
+
+double DWIConvert::getSmallGradientThreshold() const {
+  return m_smallGradientThreshold;
+}
+
+void DWIConvert::setSmallGradientThreshold(double m_smallGradientThreshold) {
+  DWIConvert::m_smallGradientThreshold = m_smallGradientThreshold;
+}
+
+bool DWIConvert::isM_fMRIOutput() const {
+  return m_fMRIOutput;
+}
+
+void DWIConvert::setM_fMRIOutput(bool m_fMRIOutput) {
+  DWIConvert::m_fMRIOutput = m_fMRIOutput;
+}
+
+bool DWIConvert::isM_transpose() const {
+  return m_transpose;
+}
+
+void DWIConvert::setM_transpose(bool m_transpose) {
+  DWIConvert::m_transpose = m_transpose;
+}
+
+bool DWIConvert::isM_allowLossyConversion() const {
+  return m_allowLossyConversion;
+}
+
+void DWIConvert::setM_allowLossyConversion(bool m_allowLossyConversion) {
+  DWIConvert::m_allowLossyConversion = m_allowLossyConversion;
+}
+
+bool DWIConvert::isM_useIdentityMeasurementFrame() const {
+  return m_useIdentityMeasurementFrame;
+}
+
+void DWIConvert::setM_useIdentityMeasurementFrame(bool m_useIdentityMeasurementFrame) {
+  DWIConvert::m_useIdentityMeasurementFrame = m_useIdentityMeasurementFrame;
+}
+
+bool DWIConvert::isM_useBMatrixGradientDirections() const {
+  return m_useBMatrixGradientDirections;
+}
+
+void DWIConvert::setM_useBMatrixGradientDirections(bool m_useBMatrixGradientDirections) {
+  DWIConvert::m_useBMatrixGradientDirections = m_useBMatrixGradientDirections;
+}
+
+const std::string &DWIConvert::getoutputVolume() const {
+  return m_outputVolume;
+}
+
+void DWIConvert::setM_outputVolume(const std::string &m_outputVolume) {
+  DWIConvert::m_outputVolume = m_outputVolume;
+}
+
+const std::string &DWIConvert::getoutputDirectory() const {
+  return m_outputDirectory;
+}
+
+void DWIConvert::setM_outputDirectory(const std::string &m_outputDirectory) {
+  DWIConvert::m_outputDirectory = m_outputDirectory;
+}
+
+const std::string &DWIConvert::getoutputBValues() const {
+  return m_outputBValues;
+}
+
+void DWIConvert::setM_outputBValues(const std::string &m_outputBValues) {
+  DWIConvert::m_outputBValues = m_outputBValues;
+}
+
+const std::string &DWIConvert::getoutputBVectors() const {
+  return m_outputBVectors;
+}
+
+void DWIConvert::setM_outputBVectors(const std::string &m_outputBVectors) {
+  DWIConvert::m_outputBVectors = m_outputBVectors;
 }

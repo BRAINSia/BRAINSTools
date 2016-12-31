@@ -67,24 +67,24 @@ int main(int argc, char *argv[])
     std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
     DWIConvert params;
 
-    params.inputVolume = inputVolume;
-    params.inputDicomDirectory = inputDicomDirectory;
-    params.inputBValues = inputBValues;
-    params.inputBVectors = inputBVectors;
-    params.gradientVectorFile = gradientVectorFile;
-    params.smallGradientThreshold = smallGradientThreshold;
+    params.setInputVolume(inputVolume);
+    params.setInputDicomDirectory (inputDicomDirectory);
+    params.setInputBValues (inputBValues);
+    params.setInputBVectors (inputBVectors);
+    params.setGradientVectorFile (gradientVectorFile);
+    params.setSmallGradientThreshold (smallGradientThreshold);
 
     params.setConversionMode(conversionMode);
-    params.fMRIOutput = fMRIOutput;
-    params.transpose = transpose;
-    params.allowLossyConversion = allowLossyConversion;
-    params.useIdentityMeasurementFrame = useIdentityMeaseurementFrame;
-    params.useBMatrixGradientDirections = useBMatrixGradientDirections;
+    params.setfMRIOutput (fMRIOutput);
+    params.setTranspose (transpose);
+    params.setAllowLossyConversion (allowLossyConversion);
+    params.setUseIdentityMeasurementFrame (useIdentityMeaseurementFrame);
+    params.setUseBMatrixGradientDirections (useBMatrixGradientDirections);
 
-    params.outputVolume = outputVolume;
-    params.outputDirectory = outputDirectory;
-    params.outputBValues = outputBValues;
-    params.outputBVectors = outputBVectors;
+    params.setOutputVolume(outputVolume);
+    params.setOutputDirectory(outputDirectory);
+    params.setOutputBValues(outputBValues);
+    params.setOutputBVectors(outputBVectors);
 
     //return  DWIConvert1(params);
     return params.DWIConvert2();

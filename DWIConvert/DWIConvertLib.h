@@ -28,65 +28,65 @@ public:
 
     std::string m_outputVolume;
 
-    const std::string &getM_inputVolume() const;
+    const std::string &getInputVolume() const;
 
-    void setM_inputVolume(const std::string &m_inputVolume);
+    void setInputVolume(const std::string &inputVolume);
 
-    const std::string &getM_inputDicomDirectory() const;
+    const std::string &getInputDicomDirectory() const;
 
-    void setM_inputDicomDirectory(const std::string &m_inputDicomDirectory);
+    void setInputDicomDirectory(const std::string &inputDicomDirectory);
 
-    const std::string &getM_inputBValues() const;
+    const std::string &getInputBValues() const;
 
-    void setM_inputBValues(const std::string &m_inputBValues);
+    void setInputBValues(const std::string &inputBValues);
 
-    const std::string &getM_inputBVectors() const;
+    const std::string &getInputBVectors() const;
 
-    void setM_inputBVectors(const std::string &m_inputBVectors);
+    void setInputBVectors(const std::string &inputBVectors);
 
-    const std::string &getM_gradientVectorFile() const;
+    const std::string &getGradientVectorFile() const;
 
-    void setM_gradientVectorFile(const std::string &m_gradientVectorFile);
+    void setGradientVectorFile(const std::string &gradientVectorFile);
 
-    double getM_smallGradientThreshold() const;
+    double getSmallGradientThreshold() const;
 
-    void setM_smallGradientThreshold(double m_smallGradientThreshold);
+    void setSmallGradientThreshold(double smallGradientThreshold);
 
-    bool isM_fMRIOutput() const;
+    bool isfMRIOutput() const;
 
-    void setM_fMRIOutput(bool m_fMRIOutput);
+    void setfMRIOutput(bool fMRIOutput);
 
-    bool isM_transpose() const;
+    bool isTranspose() const;
 
-    void setM_transpose(bool m_transpose);
+    void setTranspose(bool transpose);
 
-    bool isM_allowLossyConversion() const;
+    bool isAllowLossyConversion() const;
 
-    void setM_allowLossyConversion(bool m_allowLossyConversion);
+    void setAllowLossyConversion(bool allowLossyConversion);
 
-    bool isM_useIdentityMeasurementFrame() const;
+    bool isUseIdentityMeasurementFrame() const;
 
-    void setM_useIdentityMeasurementFrame(bool m_useIdentityMeasurementFrame);
+    void setUseIdentityMeasurementFrame(bool useIdentityMeasurementFrame);
 
-    bool isM_useBMatrixGradientDirections() const;
+    bool isUseBMatrixGradientDirections() const;
 
-    void setM_useBMatrixGradientDirections(bool m_useBMatrixGradientDirections);
+    void setUseBMatrixGradientDirections(bool useBMatrixGradientDirections);
 
-    const std::string &getM_outputVolume() const;
+    const std::string &getOutputVolume() const;
 
-    void setM_outputVolume(const std::string &m_outputVolume);
+    void setOutputVolume(const std::string &outputVolume);
 
-    const std::string &getM_outputDirectory() const;
+    const std::string &getOutputDirectory() const;
 
-    void setM_outputDirectory(const std::string &m_outputDirectory);
+    void setOutputDirectory(const std::string &outputDirectory);
 
-    const std::string &getM_outputBValues() const;
+    const std::string &getOutputBValues() const;
 
-    void setM_outputBValues(const std::string &m_outputBValues);
+    void setOutputBValues(const std::string &outputBValues);
 
-    const std::string &getM_outputBVectors() const;
+    const std::string &getOutputBVectors() const;
 
-    void setM_outputBVectors(const std::string &m_outputBVectors);
+    void setOutputBVectors(const std::string &outputBVectors);
 
     std::string m_outputDirectory;  //default: "."
     std::string m_outputBValues; //default: ""

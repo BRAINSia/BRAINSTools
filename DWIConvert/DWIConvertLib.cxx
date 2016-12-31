@@ -444,122 +444,122 @@ std::string DWIConvert::findFilenameExt(const std::string filename){
     return subStr;
 }
 
-const std::string &DWIConvert::getinputVolume() const {
+const std::string &DWIConvert::getInputVolume() const {
   return m_inputVolume;
 }
 
-void DWIConvert::setM_inputVolume(const std::string &m_inputVolume) {
-  DWIConvert::m_inputVolume = m_inputVolume;
+void DWIConvert::setInputVolume(const std::string &inputVolume) {
+  m_inputVolume = inputVolume;
 }
 
-const std::string &DWIConvert::getinputDicomDirectory() const {
+const std::string &DWIConvert::getInputDicomDirectory() const {
   return m_inputDicomDirectory;
 }
 
-void DWIConvert::setM_inputDicomDirectory(const std::string &m_inputDicomDirectory) {
-  DWIConvert::m_inputDicomDirectory = m_inputDicomDirectory;
+void DWIConvert::setInputDicomDirectory(const std::string &inputDicomDirectory) {
+  m_inputDicomDirectory = inputDicomDirectory;
 }
 
-const std::string &DWIConvert::getinputBValues() const {
+const std::string &DWIConvert::getInputBValues() const {
   return m_inputBValues;
 }
 
-void DWIConvert::setM_inputBValues(const std::string &m_inputBValues) {
-  DWIConvert::m_inputBValues = m_inputBValues;
+void DWIConvert::setInputBValues(const std::string &inputBValues) {
+  m_inputBValues = inputBValues;
 }
 
 const std::string &DWIConvert::getInputBVectors() const {
   return m_inputBVectors;
 }
 
-void DWIConvert::setM_inputBVectors(const std::string &m_inputBVectors) {
-  DWIConvert::m_inputBVectors = m_inputBVectors;
+void DWIConvert::setInputBVectors(const std::string &inputBVectors) {
+  m_inputBVectors = inputBVectors;
 }
 
-const std::string &DWIConvert::getgradientVectorFile() const {
+const std::string &DWIConvert::getGradientVectorFile() const {
   return m_gradientVectorFile;
 }
 
-void DWIConvert::setM_gradientVectorFile(const std::string &m_gradientVectorFile) {
-  DWIConvert::m_gradientVectorFile = m_gradientVectorFile;
+void DWIConvert::setGradientVectorFile(const std::string &gradientVectorFile) {
+  m_gradientVectorFile = gradientVectorFile;
 }
 
 double DWIConvert::getSmallGradientThreshold() const {
   return m_smallGradientThreshold;
 }
 
-void DWIConvert::setSmallGradientThreshold(double m_smallGradientThreshold) {
-  DWIConvert::m_smallGradientThreshold = m_smallGradientThreshold;
+void DWIConvert::setSmallGradientThreshold(double smallGradientThreshold) {
+  m_smallGradientThreshold = smallGradientThreshold;
 }
 
-bool DWIConvert::isM_fMRIOutput() const {
+bool DWIConvert::isfMRIOutput() const {
   return m_fMRIOutput;
 }
 
-void DWIConvert::setM_fMRIOutput(bool m_fMRIOutput) {
-  DWIConvert::m_fMRIOutput = m_fMRIOutput;
+void DWIConvert::setfMRIOutput(bool fMRIOutput) {
+  m_fMRIOutput = fMRIOutput;
 }
 
-bool DWIConvert::isM_transpose() const {
+bool DWIConvert::isTranspose() const {
   return m_transpose;
 }
 
-void DWIConvert::setM_transpose(bool m_transpose) {
-  DWIConvert::m_transpose = m_transpose;
+void DWIConvert::setTranspose(bool transpose) {
+  m_transpose = transpose;
 }
 
-bool DWIConvert::isM_allowLossyConversion() const {
+bool DWIConvert::isAllowLossyConversion() const {
   return m_allowLossyConversion;
 }
 
-void DWIConvert::setM_allowLossyConversion(bool m_allowLossyConversion) {
-  DWIConvert::m_allowLossyConversion = m_allowLossyConversion;
+void DWIConvert::setAllowLossyConversion(bool allowLossyConversion) {
+  m_allowLossyConversion = allowLossyConversion;
 }
 
-bool DWIConvert::isM_useIdentityMeasurementFrame() const {
+bool DWIConvert::isUseIdentityMeasurementFrame() const {
   return m_useIdentityMeasurementFrame;
 }
 
-void DWIConvert::setM_useIdentityMeasurementFrame(bool m_useIdentityMeasurementFrame) {
-  DWIConvert::m_useIdentityMeasurementFrame = m_useIdentityMeasurementFrame;
+void DWIConvert::setUseIdentityMeasurementFrame(bool useIdentityMeasurementFrame) {
+  m_useIdentityMeasurementFrame = useIdentityMeasurementFrame;
 }
 
-bool DWIConvert::isM_useBMatrixGradientDirections() const {
+bool DWIConvert::isUseBMatrixGradientDirections() const {
   return m_useBMatrixGradientDirections;
 }
 
-void DWIConvert::setM_useBMatrixGradientDirections(bool m_useBMatrixGradientDirections) {
-  DWIConvert::m_useBMatrixGradientDirections = m_useBMatrixGradientDirections;
+void DWIConvert::setUseBMatrixGradientDirections(bool useBMatrixGradientDirections) {
+  m_useBMatrixGradientDirections = useBMatrixGradientDirections;
 }
 
-const std::string &DWIConvert::getoutputVolume() const {
+const std::string &DWIConvert::getOutputVolume() const {
   return m_outputVolume;
 }
 
-void DWIConvert::setM_outputVolume(const std::string &m_outputVolume) {
-  DWIConvert::m_outputVolume = m_outputVolume;
+void DWIConvert::setOutputVolume(const std::string &outputVolume) {
+  m_outputVolume = outputVolume;
 }
 
-const std::string &DWIConvert::getoutputDirectory() const {
+const std::string &DWIConvert::getOutputDirectory() const {
   return m_outputDirectory;
 }
 
-void DWIConvert::setM_outputDirectory(const std::string &m_outputDirectory) {
-  DWIConvert::m_outputDirectory = m_outputDirectory;
+void DWIConvert::setOutputDirectory(const std::string &outputDirectory) {
+  m_outputDirectory = outputDirectory;
 }
 
-const std::string &DWIConvert::getoutputBValues() const {
+const std::string &DWIConvert::getOutputBValues() const {
   return m_outputBValues;
 }
 
-void DWIConvert::setM_outputBValues(const std::string &m_outputBValues) {
-  DWIConvert::m_outputBValues = m_outputBValues;
+void DWIConvert::setOutputBValues(const std::string &outputBValues) {
+  m_outputBValues = outputBValues;
 }
 
-const std::string &DWIConvert::getoutputBVectors() const {
+const std::string &DWIConvert::getOutputBVectors() const {
   return m_outputBVectors;
 }
 
-void DWIConvert::setM_outputBVectors(const std::string &m_outputBVectors) {
-  DWIConvert::m_outputBVectors = m_outputBVectors;
+void DWIConvert::setOutputBVectors(const std::string &outputBVectors) {
+  m_outputBVectors = outputBVectors;
 }

@@ -65,28 +65,27 @@ int main(int argc, char *argv[])
     //BRAINSRegisterAlternateIO();
 
     std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
-    DWIConvert params;
+    DWIConvert dWIConvert;
 
-    params.setInputVolume(inputVolume);
-    params.setInputDicomDirectory (inputDicomDirectory);
-    params.setInputBValues (inputBValues);
-    params.setInputBVectors (inputBVectors);
-    params.setGradientVectorFile (gradientVectorFile);
-    params.setSmallGradientThreshold (smallGradientThreshold);
+    dWIConvert.setInputVolume(inputVolume);
+    dWIConvert.setInputDicomDirectory (inputDicomDirectory);
+    dWIConvert.setInputBValues (inputBValues);
+    dWIConvert.setInputBVectors (inputBVectors);
+    dWIConvert.setGradientVectorFile (gradientVectorFile);
+    dWIConvert.setSmallGradientThreshold (smallGradientThreshold);
 
-    params.setConversionMode(conversionMode);
-    params.setfMRIOutput (fMRIOutput);
-    params.setTranspose (transpose);
-    params.setAllowLossyConversion (allowLossyConversion);
-    params.setUseIdentityMeasurementFrame (useIdentityMeaseurementFrame);
-    params.setUseBMatrixGradientDirections (useBMatrixGradientDirections);
+    dWIConvert.setConversionMode(conversionMode);
+    dWIConvert.setfMRIOutput (fMRIOutput);
+    dWIConvert.setTranspose (transpose);
+    dWIConvert.setAllowLossyConversion (allowLossyConversion);
+    dWIConvert.setUseIdentityMeasurementFrame (useIdentityMeaseurementFrame);
+    dWIConvert.setUseBMatrixGradientDirections (useBMatrixGradientDirections);
 
-    params.setOutputVolume(outputVolume);
-    params.setOutputDirectory(outputDirectory);
-    params.setOutputBValues(outputBValues);
-    params.setOutputBVectors(outputBVectors);
+    dWIConvert.setOutputVolume(outputVolume);
+    dWIConvert.setOutputDirectory(outputDirectory);
+    dWIConvert.setOutputBValues(outputBValues);
+    dWIConvert.setOutputBVectors(outputBVectors);
 
-    //return  DWIConvert1(params);
-    return params.DWIConvert2();
+    return dWIConvert.readWrite();
 
 }

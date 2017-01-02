@@ -10,70 +10,7 @@
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
 
-DWIConverter * DWIConvert::CreateDicomConverter(
-        const std::string inputDicomDirectory,
-        const bool useBMatrixGradientDirections,
-        const bool transpose,
-        const double smallGradientThreshold,
-        const bool allowLossyConversion)
-{
-// check for required parameters
-  if( inputDicomDirectory == "" )
-  {
-    std::cerr << "Missing DICOM input directory path" << std::endl;
-    return ITK_NULLPTR;
-  }
 
-// use the factor to instantiate a converter object based on the vender.
-  DWIConverterFactory converterFactory(inputDicomDirectory,
-                                       useBMatrixGradientDirections,
-                                       transpose,
-                                       smallGradientThreshold);
-  DWIConverter * converter;
-  try
-  {
-    converter = converterFactory.New();
-  }
-  catch( itk::ExceptionObject &excp)
-  {
-    std::cerr << "Exception creating converter " << excp << std::endl;
-    return ITK_NULLPTR;
-  }
-
-// read Dicom directory
-  try
-  {
-    converter->SetAllowLossyConversion(allowLossyConversion);
-    converter->LoadFromDisk();
-  }
-  catch( itk::ExceptionObject &excp)
-  {
-    std::cerr << "Exception creating converter " << excp << std::endl;
-    delete converter;
-    return ITK_NULLPTR;
-  }
-  // extract the DWI data
-  try
-  {
-    converter->ExtractDWIData();
-  }
-  catch( itk::ExceptionObject &excp)
-  {
-    std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
-    delete converter;
-    return ITK_NULLPTR;
-  }
-// this is a punt, it will still write out the volume image
-// even if we don't know how to extract gradients.
-  if(converterFactory.GetVendor() == "GENERIC")
-  {
-    std::cerr << "Can't extract DWI data from files created by vendor "
-              << converterFactory.GetVendor() << std::endl;
-    delete converter;
-    exit(EXIT_FAILURE);
-  }
-  return converter;
-}
 
 DWIConvert::DWIConvert()
 {
@@ -99,9 +36,24 @@ DWIConvert::DWIConvert()
     m_outputBValues = ""; //default: ""
     m_outputBVectors = "";//default: ""
 
+    m_converter = NULL;
+
 }
 
-int DWIConvert::DWIConvert1() {
+DWIConvert::DWIConvert(const std::string& outputVolume, const std::string& inputVolume, const std::string& inputDicomDirectory)
+{
+   DWIConvert();
+   setOutputVolume(outputVolume);
+   setInputVolume(inputVolume);
+   setInputDicomDirectory(inputDicomDirectory);
+   setConversionMode();
+}
+
+DWIConvert::~DWIConvert(){
+  delete m_converter;
+}
+
+/*int DWIConvert::DWIConvert1() {
   const std::string version = "4.8.0";
   std::vector<std::string> convertModeVector;
   convertModeVector.reserve(4);
@@ -228,7 +180,7 @@ int DWIConvert::DWIConvert1() {
   if (getConversionMode() == "DicomToFSL" || getConversionMode() == "NrrdToFSL") {
 
     Volume4DType::Pointer img4D = converter->OrientForFSLConventions();
-    // write the image */
+    // write the image *//*
     converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
   } else {
     //NRRD requires scaledDiffusionVectors, so find max BValue
@@ -243,21 +195,20 @@ int DWIConvert::DWIConvert1() {
   if (NULL != converter) delete converter;
   return EXIT_SUCCESS;
 }
+ */
 
 
-int DWIConvert::DWIConvert2()
+int DWIConvert::read()
 {
-  const std::string version = "4.8.0";
-  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
+  if ("" == getConversionMode()) setConversionMode();
 
+  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
   // register DCMTK codecs, otherwise they will not be available when
   // `itkDCMTKSeriesFileNames` is used to build a list of filenames,
   // so reading series with JPEG transfer syntax will fail.
   DJDecoderRegistration::registerCodecs();
   DcmRLEDecoderRegistration::registerCodecs();
 
-
-  bool useIdentityMeasurementFrame = m_useIdentityMeasurementFrame;
   if(m_fMRIOutput)
   {
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
@@ -274,10 +225,9 @@ int DWIConvert::DWIConvert2()
     return EXIT_FAILURE;
   }
 
-  DWIConverter *converter;
   // build a NRRD file out of FSL output, which is two text files
   // for gradients and b values plus a NIfTI file for the gradient volumes.
-  if( getConversionMode() == "FSLToNrrd" )
+  if( getConversionMode() == "FSLToNrrd" || "FSLToFSL" == getConversionMode())
   {
     DWIConverter::FileNamesContainer filesList;
     filesList.clear();
@@ -296,10 +246,10 @@ int DWIConvert::DWIConvert2()
       itkGenericExceptionMacro( << "Exception creating converter " << excp << std::endl);
       delete FSLconverter;
     }
-    converter = FSLconverter;
+    m_converter = FSLconverter;
   }
     // make FSL file set from a NRRD file.
-  else if( getConversionMode() == "NrrdToFSL" )
+  else if( getConversionMode() == "NrrdToFSL" || "NrrdToNrrd" ==  getConversionMode() )
   {
     DWIConverter::FileNamesContainer filesList;
     filesList.clear();
@@ -307,7 +257,7 @@ int DWIConvert::DWIConvert2()
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
     NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, m_transpose);
-    useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
+    m_useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
     try
     {
       NRRDconverter->SetAllowLossyConversion(m_allowLossyConversion);
@@ -319,45 +269,38 @@ int DWIConvert::DWIConvert2()
       itkGenericExceptionMacro( << "Exception creating converter " << excp << std::endl);
       delete NRRDconverter;
     }
-    converter = NRRDconverter;
+    m_converter = NRRDconverter;
   }
   else if( getConversionMode() == "DicomToNrrd" || getConversionMode() == "DicomToFSL")
   {
-    converter = CreateDicomConverter(m_inputDicomDirectory,m_useBMatrixGradientDirections, m_transpose,
+    m_converter = CreateDicomConverter(m_inputDicomDirectory,m_useBMatrixGradientDirections, m_transpose,
                                      m_smallGradientThreshold,m_allowLossyConversion);
     if (getConversionMode() == "DicomToFSL")
     {
-      useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
+      m_useIdentityMeasurementFrame = true; //Only true is valid for writing FSL
     }
   }
   else
   {
     std::cerr << "Invalid conversion mode" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 
-//#if 0 //This should use the bvec and bval file formats
-//  // NEED TO ADD --forceGradientOverwrite, and then read bvec and bval files
-//  // A test needs to be written for this case
-//  // ^^^^^^^^^^^^^^^^^^^^^^^ Done Reading Above this line
-//  //Overwrite gradient directions
-//  if( gradientVectorFile != "" )
-//  {
-//    converter->readOverwriteGradientVectorFile(gradientVectorFile);
-//  }
-//#endif
-  //^^^^^^^^^^^^^^^^^^^^^^^^^Done modifying above this line vvvvvvvvvvvvvvvvvvvvv Write outputs
-  if (useIdentityMeasurementFrame)
+}
+
+int DWIConvert::write()
+{
+  const std::string version = "4.8.0";
+  if (m_useIdentityMeasurementFrame)
   {
-    converter->ConvertBVectorsToIdentityMeasurementFrame();
+    m_converter->ConvertBVectorsToIdentityMeasurementFrame();
   }
-
-
 
   std::string outputVolumeHeaderName(m_outputVolume);
   { // concatenate with outputDirectory
     if( m_outputVolume.find("/") == std::string::npos &&
-            m_outputVolume.find("\\") == std::string::npos )
+        m_outputVolume.find("\\") == std::string::npos )
     {
       if( outputVolumeHeaderName.size() != 0 )
       {
@@ -368,36 +311,112 @@ int DWIConvert::DWIConvert2()
     }
   }
 
-  if( getConversionMode() == "DicomToFSL"  || getConversionMode() == "NrrdToFSL" )
+  if( getConversionMode() == "DicomToFSL"  || getConversionMode() == "NrrdToFSL"  || "FSLToFSL" == getConversionMode())
   {
 
-    Volume4DType::Pointer img4D = converter->OrientForFSLConventions();
+    Volume4DType::Pointer img4D = m_converter->OrientForFSLConventions();
     // write the image */
-    converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
+    m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
+  }
+  else if (getConversionMode() == "DicomToNrrd"  || getConversionMode() == "NrrdToNrrd"  || "FSLToNrrd" == getConversionMode())
+  {
+      //NRRD requires scaledDiffusionVectors, so find max BValue
+      m_converter->ConvertToSingleBValueScaledDiffusionVectors();
+      //////////////////////////////////////////////
+      // write header file
+      // This part follows a DWI NRRD file in NRRD format 5.
+      // There should be a better way using itkNRRDImageIO.
+      const std::string commentSection = m_converter->MakeFileComment(version, m_useBMatrixGradientDirections,
+                                                                      m_useIdentityMeasurementFrame,
+                                                                      m_smallGradientThreshold, getConversionMode());
+      m_converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
   }
   else
   {
-    //NRRD requires scaledDiffusionVectors, so find max BValue
-    converter->ConvertToSingleBValueScaledDiffusionVectors();
-    //////////////////////////////////////////////
-    // write header file
-    // This part follows a DWI NRRD file in NRRD format 5.
-    // There should be a better way using itkNRRDImageIO.
-    const std::string commentSection = converter->MakeFileComment(version,m_useBMatrixGradientDirections,
-                                                                  useIdentityMeasurementFrame, m_smallGradientThreshold, getConversionMode());
-
-    converter->ManualWriteNRRDFile(outputVolumeHeaderName, commentSection);
-    std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
+     std::cerr<<"Invalidate conversion mode" << std::endl;
+     return EXIT_FAILURE;
   }
-  delete converter;
+  std::cout << "Wrote file: " << outputVolumeHeaderName << std::endl;
   return EXIT_SUCCESS;
-
-
 }
 
-//return: only one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd",
-//                                                  "NrrdToNrrd", "FSLToFSL"]
-// if return "", invalidate input parameters.
+int DWIConvert::readWrite()
+{
+  int result = read();
+  if (EXIT_SUCCESS == result ){
+    return write();
+  }
+  else return result;
+}
+
+
+DWIConverter * DWIConvert::CreateDicomConverter(
+        const std::string inputDicomDirectory,
+        const bool useBMatrixGradientDirections,
+        const bool transpose,
+        const double smallGradientThreshold,
+        const bool allowLossyConversion)
+{
+// check for required parameters
+  if( inputDicomDirectory == "" )
+  {
+    std::cerr << "Missing DICOM input directory path" << std::endl;
+    return ITK_NULLPTR;
+  }
+
+// use the factor to instantiate a converter object based on the vender.
+  DWIConverterFactory converterFactory(inputDicomDirectory,
+                                       useBMatrixGradientDirections,
+                                       transpose,
+                                       smallGradientThreshold);
+  DWIConverter * converter;
+  try
+  {
+    converter = converterFactory.New();
+  }
+  catch( itk::ExceptionObject &excp)
+  {
+    std::cerr << "Exception creating converter " << excp << std::endl;
+    return ITK_NULLPTR;
+  }
+
+// read Dicom directory
+  try
+  {
+    converter->SetAllowLossyConversion(allowLossyConversion);
+    converter->LoadFromDisk();
+  }
+  catch( itk::ExceptionObject &excp)
+  {
+    std::cerr << "Exception creating converter " << excp << std::endl;
+    delete converter;
+    return ITK_NULLPTR;
+  }
+  // extract the DWI data
+  try
+  {
+    converter->ExtractDWIData();
+  }
+  catch( itk::ExceptionObject &excp)
+  {
+    std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
+    delete converter;
+    return ITK_NULLPTR;
+  }
+// this is a punt, it will still write out the volume image
+// even if we don't know how to extract gradients.
+  if(converterFactory.GetVendor() == "GENERIC")
+  {
+    std::cerr << "Can't extract DWI data from files created by vendor "
+              << converterFactory.GetVendor() << std::endl;
+    delete converter;
+    exit(EXIT_FAILURE);
+  }
+  return converter;
+}
+
+//one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd", "NrrdToNrrd", "FSLToFSL"]
+//if return "", invalidate input parameters.
 std::string DWIConvert::setConversionMode()
 {
   std::string conversionMode= "";
@@ -425,6 +444,7 @@ std::string DWIConvert::setConversionMode()
 }
 
 void DWIConvert::setConversionMode(const std::string conversionMode){
+    //["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd","NrrdToNrrd", "FSLToFSL"]
     m_conversionMode =  conversionMode;
 }
 

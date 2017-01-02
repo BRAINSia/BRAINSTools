@@ -12,6 +12,8 @@
 class DWIConvert {
 public:
     DWIConvert();
+    DWIConvert(const std::string& outputVolume, const std::string& inputVolume, const std::string& inputDicomDirectory = "");
+    ~DWIConvert();
 
     std::string setConversionMode(); //according input params, automatically set conversion mode
     void setConversionMode(const std::string conversionMode);
@@ -19,8 +21,8 @@ public:
     std::string getConversionMode();
 
     //rewrite DWIConvert1, there is a test failure needing to debug
-    //Please use DWIConvert2 interface instead
-    int DWIConvert1();
+    //Please use readWrite interface instead
+    //int DWIConvert1();
 
     DWIConverter *CreateDicomConverter(
             const std::string inputDicomDirectory,
@@ -29,12 +31,12 @@ public:
             const double smallGradientThreshold,
             const bool allowLossyConversion);
 
-    //according Hans's code, encapsulate the DWIConvert2
-    int DWIConvert2();
+    //according Hans's code, encapsulate below readWrite method
+    int readWrite();
 
-    int DWIConvertRead();
+    int read();
 
-    int DWIConvertWrite();
+    int write();
 
 
 
@@ -45,6 +47,8 @@ public:
  *  Volume3DUnwrappedType::PointType GetOrigin() const;
  *  Volume3DUnwrappedType::Pointer getVolumePointer();
  * */
+
+    // get and set methods for private data members
 
     const std::string &getInputVolume() const;
 
@@ -109,6 +113,7 @@ public:
 private:
     std::string findFilenameExt(const std::string filename);
 
+    //one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd","NrrdToNrrd", "FSLToFSL"]
     std::string m_conversionMode;
 
     std::string m_inputVolume;
@@ -128,6 +133,8 @@ private:
     std::string m_outputDirectory;  //default: "."
     std::string m_outputBValues; //default: ""
     std::string m_outputBVectors;//default: ""
+
+    DWIConverter *m_converter;
 
 };
 

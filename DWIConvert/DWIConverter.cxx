@@ -149,6 +149,12 @@ DWIConverter::Volume3DUnwrappedType::PointType DWIConverter::GetOrigin() const
   return this->m_Volume->GetOrigin();
 }
 
+void DWIConverter::SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin)
+{
+  return this->m_Volume->SetOrigin(origin);
+}
+
+
 DWIConverter::RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_Volume->GetDirection(); }
 
 DWIConverter::RotationMatrixType DWIConverter::GetMeasurementFrame() const { return this->m_MeasurementFrame; }
@@ -271,7 +277,7 @@ std::string  DWIConverter::MakeFileComment(
         bool useBMatrixGradientDirections,
         bool useIdentityMeaseurementFrame,
         double smallGradientThreshold,
-        const std::string conversionMode) const
+        const std::string inputFileType) const
 {
   std::stringstream commentSection;
   {
@@ -280,7 +286,7 @@ std::string  DWIConverter::MakeFileComment(
                    << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
                    << "# part of the BRAINSTools package." << std::endl
                    << "# Command line options:" << std::endl
-                   << "# --conversionMode " << conversionMode << std::endl;
+                   << "# --inputFileType " << inputFileType << std::endl;
     if( std::abs( smallGradientThreshold- 0.2 ) > 1e-4 )
     {
       commentSection << "# --smallGradientThreshold " << smallGradientThreshold << std::endl;

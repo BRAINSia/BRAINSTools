@@ -12,43 +12,21 @@
 class DWIConvert {
 public:
     DWIConvert();
-    DWIConvert(const std::string& outputVolume, const std::string& inputVolume, const std::string& inputDicomDirectory = "");
+    DWIConvert(const std::string& outputVolume, const std::string& inputVolume, const std::string& inputDicomDirectory);
+    DWIConvert(const std::string& inputVolume, const std::string& inputDicomDirectory);
     ~DWIConvert();
-
-    std::string setConversionMode(); //according input params, automatically set conversion mode
-    void setConversionMode(const std::string conversionMode);
-
-    std::string getConversionMode();
-
-    //rewrite DWIConvert1, there is a test failure needing to debug
-    //Please use readWrite interface instead
-    //int DWIConvert1();
-
-    DWIConverter *CreateDicomConverter(
-            const std::string inputDicomDirectory,
-            const bool useBMatrixGradientDirections,
-            const bool transpose,
-            const double smallGradientThreshold,
-            const bool allowLossyConversion);
-
-    //according Hans's code, encapsulate below readWrite method
-    int readWrite();
 
     int read();
 
+    int write(const std::string& outputVolume);
     int write();
 
-
-
-//application case use in gtractConcatDWI.cxx
-/*  in DWIConverter class:
- *  const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors();
- *  const std::vector<double> &GetBValues() const;
- *  Volume3DUnwrappedType::PointType GetOrigin() const;
- *  Volume3DUnwrappedType::Pointer getVolumePointer();
- * */
+    DWIConverter *getConverter() const;
 
     // get and set methods for private data members
+    void setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory);
+
+    void setOutputFileType(const std::string& outputVolume);
 
     const std::string &getInputVolume() const;
 
@@ -111,15 +89,25 @@ public:
     void setOutputBVectors(const std::string &outputBVectors);
 
 private:
+
+    std::string getInputFileType();
+    std::string getOutputFileType();
     std::string findFilenameExt(const std::string filename);
 
-    //one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd","NrrdToNrrd", "FSLToFSL"]
-    std::string m_conversionMode;
+    DWIConverter *CreateDicomConverter(
+            const std::string inputDicomDirectory,
+            const bool useBMatrixGradientDirections,
+            const bool transpose,
+            const double smallGradientThreshold,
+            const bool allowLossyConversion);
+
+    std::string m_inputFileType;
+    std::string m_outputFileType;
 
     std::string m_inputVolume;
     std::string m_inputDicomDirectory;
-    std::string m_inputBValues;  //default: ""  ??
-    std::string m_inputBVectors; //default: ""  ??
+    std::string m_inputBValues;  //default: ""  for FSL file
+    std::string m_inputBVectors; //default: ""  for FSL file
     std::string m_gradientVectorFile; //deprecated
     double m_smallGradientThreshold; //default = 0.2
 
@@ -131,8 +119,8 @@ private:
 
     std::string m_outputVolume;
     std::string m_outputDirectory;  //default: "."
-    std::string m_outputBValues; //default: ""
-    std::string m_outputBVectors;//default: ""
+    std::string m_outputBValues; //default: ""  for FSL file
+    std::string m_outputBVectors;//default: ""  for FSL file
 
     DWIConverter *m_converter;
 

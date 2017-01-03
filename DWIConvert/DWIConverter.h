@@ -52,7 +52,6 @@
 #include "itkImage.h"
 #include "itkDCMTKFileReader.h"
 #include "itkDCMTKImageIO.h"
-#include "itkDCMTKSeriesFileNames.h"
 #include "itkNumberToString.h"
 
 #include "dcmtk/oflog/helpers/loglog.h"
@@ -129,6 +128,7 @@ public:
  SpacingType GetSpacing() const;
 
  Volume3DUnwrappedType::PointType GetOrigin() const;
+ void SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin);
 
  RotationMatrixType   GetLPSDirCos() const;
 

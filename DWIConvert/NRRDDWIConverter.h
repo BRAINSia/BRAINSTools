@@ -13,7 +13,7 @@ class NRRDDWIConverter : public DWIConverter
 {
 public:
 
-  typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+
 
   NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames, const bool FSLFileFormatHorizontalBy3Rows );
 

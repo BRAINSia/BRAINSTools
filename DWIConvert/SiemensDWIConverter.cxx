@@ -474,7 +474,7 @@ void SiemensDWIConverter::DeMosaic()
   // http://nipy.org/nibabel/dicom/dicom_mosaic.html
   this->m_3DUnwrappedVolume->SetOrigin(
           previousImage->GetOrigin()
-          + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 )
+          + GetNRRDSpaceDirection<Volume3DUnwrappedType>(this->m_3DUnwrappedVolume) * ( ( mosaicSize - sliceSize) / 2 )
   );
 
 

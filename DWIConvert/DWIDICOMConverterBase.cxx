@@ -376,7 +376,7 @@ void DWIDICOMConverterBase::DetermineSliceOrderIS()
   image1Origin[0] -= image0Origin[0];
   image1Origin[1] -= image0Origin[1];
   image1Origin[2] -= image0Origin[2];
-  const RotationMatrixType & NRRDSpaceDirection = this->GetNRRDSpaceDirection();
+  const RotationMatrixType & NRRDSpaceDirection = GetNRRDSpaceDirection<Volume3DUnwrappedType>(this->m_3DUnwrappedVolume);
   double x1 = image1Origin[0] * (NRRDSpaceDirection[0][2])
               + image1Origin[1] * (NRRDSpaceDirection[1][2])
               + image1Origin[2] * (NRRDSpaceDirection[2][2]);

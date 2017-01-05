@@ -7,7 +7,8 @@
 DWIConverter::DWIConverter( const FileNamesContainer &inputFileNames, const bool FSLFileFormatHorizontalBy3Rows )
         :
         m_InputFileNames(inputFileNames),
-        m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows)
+        m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
+        m_NRRDSpaceDefinition("left-posterior-superior")
 
 {
   this->m_MeasurementFrame.SetIdentity();
@@ -15,15 +16,7 @@ DWIConverter::DWIConverter( const FileNamesContainer &inputFileNames, const bool
 
 DWIConverter::~DWIConverter() {}
 
-DWIConverter::RotationMatrixType DWIConverter::GetSpacingMatrix() const
-{
-  RotationMatrixType SpacingMatrix;
-  SpacingMatrix.Fill(0.0);
-  SpacingMatrix[0][0] = this->m_Vector3DVolume->GetSpacing()[0];
-  SpacingMatrix[1][1] = this->m_Vector3DVolume->GetSpacing()[1];
-  SpacingMatrix[2][2] = this->m_Vector3DVolume->GetSpacing()[2];
-  return SpacingMatrix;
-}
+
 
 const DWIMetaDataDictionaryValidator::GradientTableType&  DWIConverter::GetDiffusionVectors() const { return this->m_DiffusionVectors; }
 
@@ -152,12 +145,9 @@ void DWIConverter::SetOrigin(VectorVolumeType::PointType origin)
 }
 
 
-DWIConverter::RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_Vector3DVolume->GetDirection(); }
+RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_Vector3DVolume->GetDirection(); }
 
-DWIConverter::RotationMatrixType DWIConverter::GetMeasurementFrame() const { return this->m_MeasurementFrame; }
-
-DWIConverter::RotationMatrixType DWIConverter::GetNRRDSpaceDirection() const { return  this->m_Vector3DVolume->GetDirection() * this->GetSpacingMatrix(); }
-
+RotationMatrixType DWIConverter::GetMeasurementFrame() const { return this->m_MeasurementFrame; }
 
 std::string DWIConverter::GetNRRDSpaceDefinition() const
 { return m_NRRDSpaceDefinition; }
@@ -335,7 +325,7 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "dimension: 4" << std::endl;
   header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
-  const DWIConverter::RotationMatrixType& NRRDSpaceDirection = this->GetNRRDSpaceDirection();
+  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<VectorVolumeType>(this->m_Vector3DVolume);
   header << "sizes: " << this->GetCols()
          << " " << this->GetRows()
          << " " << this->GetSlices()
@@ -374,7 +364,7 @@ void DWIConverter::ManualWriteNRRDFile(
   }
 
   {
-    DWIConverter::RotationMatrixType MeasurementFrame = this->GetMeasurementFrame();
+    RotationMatrixType MeasurementFrame = this->GetMeasurementFrame();
     header << "measurement frame: "
            << "(" << DoubleConvert(MeasurementFrame[0][0]) << ","
            << DoubleConvert(MeasurementFrame[1][0]) << ","

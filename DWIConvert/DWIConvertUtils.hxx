@@ -369,5 +369,28 @@ void PrintVec(const std::vector<TVal> & vec)
   }
   std::cerr << "]" << std::endl;
 }
+/*
+template<typename ImageType>
+RotationMatrixType GetSpacingMatrix(typename ImageType::Pointer im)
+{
+  RotationMatrixType SpacingMatrix;
+  SpacingMatrix.Fill(0.0);
+  SpacingMatrix[0][0] = im->GetSpacing()[0];
+  SpacingMatrix[1][1] = im->GetSpacing()[1];
+  SpacingMatrix[2][2] = im->GetSpacing()[2];
+  return SpacingMatrix;
+}
+*/
+
+template<typename ImageType>
+RotationMatrixType GetNRRDSpaceDirection(typename ImageType::Pointer im)
+{
+  RotationMatrixType SpacingMatrix;
+  SpacingMatrix.Fill(0.0);
+  SpacingMatrix[0][0] = im->GetSpacing()[0];
+  SpacingMatrix[1][1] = im->GetSpacing()[1];
+  SpacingMatrix[2][2] = im->GetSpacing()[2];
+  return  im->GetDirection() * SpacingMatrix;
+}
 
 #endif //DWIConvertUtils

@@ -74,7 +74,7 @@ public:
 
   typedef VectorVolumeType::SpacingType            SpacingType;
   //typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
-  typedef itk::Matrix<double, 3, 3>                     RotationMatrixType;
+
   typedef itk::Vector<double, 3>                        PointType;
 
   typedef std::map<std::string,std::string> CommonDicomFieldMapType;
@@ -83,7 +83,7 @@ public:
 
   virtual void LoadFromDisk() = 0 ;
 
-  RotationMatrixType GetSpacingMatrix() const;
+
 
   /** extract dwi data -- vendor specific so must happen in subclass
    *  implementing this method.
@@ -127,9 +127,6 @@ public:
  RotationMatrixType   GetLPSDirCos() const;
 
  RotationMatrixType GetMeasurementFrame() const;
-
- RotationMatrixType GetNRRDSpaceDirection() const;
-
 
  std::string GetNRRDSpaceDefinition() const;
 

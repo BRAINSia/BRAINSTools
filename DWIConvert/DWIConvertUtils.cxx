@@ -318,8 +318,8 @@ Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorVolumeType::Pointer 
 VectorVolumeType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inputVol)
 {
   typedef itk::Image<unsigned short,3> Volume3DType; //Used for a single 3D volume component
-// convert from image series to vector voxels
-  Volume4DType::SpacingType inputSpacing = inputVol->GetSpacing();
+  // convert from image series to vector voxels
+  //Volume4DType::SpacingType inputSpacing = inputVol->GetSpacing();
   Volume4DType::SizeType inputSize = inputVol->GetLargestPossibleRegion().GetSize();
   Volume4DType::IndexType inputIndex = inputVol->GetLargestPossibleRegion().GetIndex();
 ////////

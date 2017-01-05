@@ -50,7 +50,7 @@ ReadScalarVolume( typename TImage::Pointer & img, const std::string & fname, boo
   }
   catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Exception thrown while reading "
+    std::cerr << "Exception thrown while reading"
               << fname << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
@@ -123,7 +123,7 @@ ReadVectorVolume( typename TImage::Pointer & img, const std::string & fname, boo
   }
   catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Exception thrown while reading "
+    std::cerr << "*******Exception thrown while reading *************"
               << fname << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;

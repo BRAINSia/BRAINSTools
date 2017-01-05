@@ -18,6 +18,16 @@
 class DWIDICOMConverterBase : public DWIConverter {
  public:
 
+    /* The internal format is an unwrapped 3D scalar image that is x,y,slices
+   * where slices is all the slices in both 3D and 4d directions.
+   * If each volume is 3DSlices, and their are NumGradients, then
+   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
+   */
+  typedef itk::Image<PixelValueType, 3>  Volume3DUnwrappedType;
+
+  typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
+  //typedef ReaderType::FileNamesContainer                FileNamesContainer;
+
   typedef itk::DCMTKSeriesFileNames           InputNamesGeneratorType;
   typedef std::vector<itk::DCMTKFileReader *> DCMTKFileVector;
 
@@ -73,6 +83,9 @@ protected:
   /* determine if slice order is inferior to superior */
   void DetermineSliceOrderIS();
 
+    unsigned int GetSlicesPerVolume() const;
+    unsigned int GetNVolume() const;
+
   /** force use of the BMatrix to compute gradients in Siemens data instead of
    *  the reported gradients. which are in many cases bogus.
    */
@@ -91,6 +104,24 @@ protected:
 
   /** track if images is interleaved */
   bool                        m_IsInterleaved;
+
+    /** dimensions */
+    unsigned int        m_SlicesPerVolume;
+    /** number of total slices */
+    unsigned int        m_NSlice;
+    /** number of gradient volumes */
+    unsigned int        m_NVolume;
+    /* The following variables make up the primary data model for diffusion weighted images
+     * in the most generic sense.  These variables all need to be manipulated together in
+     * order to maintain a consistent data model.
+     */
+    /** the image read from the DICOM dataset */
+
+    Volume3DUnwrappedType::Pointer m_3DUnwrappedVolume;
+
+    Volume4DType::Pointer ThreeDUnwrappedToFourDImage(Volume3DUnwrappedType::Pointer img) const;
+
+    Volume3DUnwrappedType::Pointer FourDToThreeDUnwrappedImage(Volume4DType::Pointer img4D) const;
 
 
 

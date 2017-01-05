@@ -23,7 +23,10 @@ DWIDICOMConverterBase::DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
         m_Headers(allHeaders),
         m_MultiSliceVolume(false),
         m_SliceOrderIS(true),
-        m_IsInterleaved(false)
+        m_IsInterleaved(false),
+        m_SlicesPerVolume(0),
+        m_NSlice(0),
+        m_NVolume(0)
 {
 
 }
@@ -53,7 +56,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
       std::cerr << excp << std::endl;
       throw;
     }
-    m_Volume = reader->GetOutput();
+      m_3DUnwrappedVolume = reader->GetOutput();
     m_MultiSliceVolume = false;
   }
   else
@@ -73,7 +76,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
       std::cerr << excp << std::endl;
       throw;
     }
-    m_Volume = reader->GetOutput();
+      m_3DUnwrappedVolume = reader->GetOutput();
     m_MultiSliceVolume = true;
   }
   {
@@ -84,7 +87,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     imOrigin[0] = origin[0];
     imOrigin[1] = origin[1];
     imOrigin[2] = origin[2];
-    this->m_Volume->SetOrigin(imOrigin);
+    this->m_3DUnwrappedVolume->SetOrigin(imOrigin);
   }
   // spacing
   {
@@ -95,7 +98,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     imSpacing[0] = spacing[0];
     imSpacing[1] = spacing[1];
     imSpacing[2] = spacing[2];
-    m_Volume->SetSpacing(imSpacing);
+      m_3DUnwrappedVolume->SetSpacing(imSpacing);
   }
 
   // a map of ints keyed by the slice location string
@@ -186,19 +189,12 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     LPSDirCos[1][2] = LPSDirCos[2][0] * LPSDirCos[0][1] - LPSDirCos[0][0] * LPSDirCos[2][1];
     LPSDirCos[2][2] = LPSDirCos[0][0] * LPSDirCos[1][1] - LPSDirCos[1][0] * LPSDirCos[0][1];
 
-    this->m_Volume->SetDirection(LPSDirCos);
+    this->m_3DUnwrappedVolume->SetDirection(LPSDirCos);
   }
   std::cout << "ImageOrientationPatient (0020:0037): ";
   std::cout << "LPS Orientation Matrix" << std::endl;
-  std::cout << this->m_Volume->GetDirection() << std::endl;
+  std::cout << this->m_3DUnwrappedVolume->GetDirection() << std::endl;
 
-
-  //TODO: Remove __1
-  std::cout << "this->m_SpacingMatrix" << std::endl;
-  std::cout << this->GetSpacingMatrix() << std::endl;
-
-  std::cout << "NRRDSpaceDirection" << std::endl;
-  std::cout << this->GetNRRDSpaceDirection() << std::endl;
   //TODO: Add metadata to the DWI images
   {
     //<element tag="0008,0060" vr="CS" vm="1" len="2" name="Modality">MR</element>
@@ -224,11 +220,15 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     //<element tag="0018,1314" vr="DS" vm="1" len="2" name="FlipAngle">90</element>
     this->_addToStringDictionary("0018","1314","FlipAngle",DCM_DS);
   }
+
+
 }
 
 void DWIDICOMConverterBase::LoadFromDisk()
 {
   this->LoadDicomDirectory();
+
+
 }
 
 
@@ -293,11 +293,11 @@ void DWIDICOMConverterBase::SetDirectionsFromSliceOrder()
   else
   {
     std::cout << "Slice order is SI" << std::endl;
-    Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_Volume->GetDirection();
+    Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_3DUnwrappedVolume->GetDirection();
     LPSDirCos[0][2] *= -1;
     LPSDirCos[1][2] *= -1;
     LPSDirCos[2][2] *= -1;
-    this->m_Volume->SetDirection(LPSDirCos);
+    this->m_3DUnwrappedVolume->SetDirection(LPSDirCos);
     //Need to update the measurement frame too!
     this->m_MeasurementFrame[0][2] *= -1;
     this->m_MeasurementFrame[1][2] *= -1;
@@ -313,13 +313,13 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
 {
   size_t NVolumes = this->m_NSlice / this->m_SlicesPerVolume;
 
-  Volume3DUnwrappedType::RegionType R = this->m_Volume->GetLargestPossibleRegion();
+  Volume3DUnwrappedType::RegionType R = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
 
   R.SetSize(2, 1);
   std::vector<Volume3DUnwrappedType::PixelType> v(this->m_NSlice);
   std::vector<Volume3DUnwrappedType::PixelType> w(this->m_NSlice);
 
-  itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_Volume, R );
+  itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_3DUnwrappedVolume, R );
   // permute the slices by extracting the 1D array of voxels for
   // a particular {x,y} position, then re-ordering the voxels such
   // that all the voxels for a particular volume are adjacent
@@ -330,7 +330,7 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
     for( unsigned int k = 0; k < this->m_NSlice; ++k )
     {
       idx[2] = k;
-      v[k] = this->m_Volume->GetPixel( idx );
+      v[k] = this->m_3DUnwrappedVolume->GetPixel( idx );
     }
     // permute
     for( unsigned int k = 0; k < NVolumes; ++k )
@@ -344,7 +344,7 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
     for( unsigned int k = 0; k < this->m_NSlice; ++k )
     {
       idx[2] = k;
-      this->m_Volume->SetPixel( idx, w[k] );
+      this->m_3DUnwrappedVolume->SetPixel( idx, w[k] );
     }
   }
 }
@@ -352,9 +352,9 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
 void DWIDICOMConverterBase::DetermineSliceOrderIS()
 {
   double image0Origin[3];
-  image0Origin[0]=this->m_Volume->GetOrigin()[0];
-  image0Origin[1]=this->m_Volume->GetOrigin()[1];
-  image0Origin[2]=this->m_Volume->GetOrigin()[2];
+  image0Origin[0]=this->m_3DUnwrappedVolume->GetOrigin()[0];
+  image0Origin[1]=this->m_3DUnwrappedVolume->GetOrigin()[1];
+  image0Origin[2]=this->m_3DUnwrappedVolume->GetOrigin()[2];
   std::cout << "Slice 0: " << image0Origin[0] << " "
             << image0Origin[1] << " " << image0Origin[2] << std::endl;
 
@@ -385,3 +385,143 @@ void DWIDICOMConverterBase::DetermineSliceOrderIS()
     this->m_SliceOrderIS = false;
   }
 }
+
+
+Volume4DType::Pointer DWIDICOMConverterBase::ThreeDUnwrappedToFourDImage(Volume3DUnwrappedType::Pointer img) const
+{
+  const int nVolumes = this->GetNVolume();
+
+  Volume3DUnwrappedType::SizeType size3D(img->GetLargestPossibleRegion().GetSize());
+  Volume3DUnwrappedType::DirectionType direction3D(img->GetDirection());
+  Volume3DUnwrappedType::SpacingType spacing3D(img->GetSpacing());
+  Volume3DUnwrappedType::PointType origin3D(img->GetOrigin());
+
+  Volume4DType::RegionType region4D;
+  {
+    Volume4DType::SizeType size4D;
+    size4D[0] = size3D[0];
+    size4D[1] = size3D[1];
+    size4D[2] = size3D[2]/nVolumes;
+    size4D[3] = nVolumes;
+    Volume4DType::IndexType index4D;
+    index4D.Fill(0);
+    region4D.SetIndex(index4D);
+    region4D.SetSize(size4D);
+
+    if ((size4D[2]*nVolumes)!=size3D[2]) {
+      itkGenericExceptionMacro(
+              << "#of slices in volume not evenly divisible by"
+              << " the number of volumes: slices = " << size3D[2]
+              << " volumes = " << nVolumes << " left-over slices = "
+              << size3D[2] % nVolumes << std::endl);
+    }
+  }
+  Volume4DType::DirectionType direction4D;
+  direction4D.SetIdentity();
+  Volume4DType::SpacingType   spacing4D;
+  spacing4D.Fill(1.0);
+  Volume4DType::PointType     origin4D;
+  origin4D.Fill(0.0);
+  for( unsigned i = 0; i < 3; ++i )
+  {
+    for( unsigned j = 0; j < 3; ++j )
+    {
+      direction4D[i][j] = direction3D[i][j];
+    }
+    spacing4D[i] = spacing3D[i];
+    origin4D[i] = origin3D[i];
+  }
+
+
+  Volume4DType::Pointer img4D = Volume4DType::New();
+  img4D->SetRegions(region4D);
+  img4D->SetDirection(direction4D);
+  img4D->SetSpacing(spacing4D);
+  img4D->SetOrigin(origin4D);
+  img4D->Allocate();
+
+  {
+    img4D->SetMetaDataDictionary(img->GetMetaDataDictionary());
+    //Set the qform and sfrom codes for the MetaDataDictionary.
+    itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
+    itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+  }
+
+  const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels()
+                           * sizeof(PixelValueType);
+
+  memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
+  return img4D;
+}
+
+
+DWIDICOMConverterBase::Volume3DUnwrappedType::Pointer DWIDICOMConverterBase::FourDToThreeDUnwrappedImage(Volume4DType::Pointer img4D) const
+{
+  Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize() );
+  Volume4DType::DirectionType direction4D(img4D->GetDirection() );
+  Volume4DType::SpacingType   spacing4D(img4D->GetSpacing() );
+  Volume4DType::PointType     origin4D(img4D->GetOrigin() );
+
+  Volume3DUnwrappedType::RegionType region3D;
+  {
+    Volume3DUnwrappedType::SizeType size3D;
+    size3D[0] = size4D[0];
+    size3D[1] = size4D[1];
+    const int nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
+    size3D[2] = size4D[2] * nVolumes;
+
+    Volume3DUnwrappedType::IndexType index3D;
+    index3D.Fill(0);
+    region3D.SetIndex(index3D);
+    region3D.SetSize(size3D);
+
+    if( (size4D[2] * nVolumes) != size3D[2] )
+    {
+      itkGenericExceptionMacro(
+              << "#of slices in volume not evenly divisible by"
+              << " the number of volumes: slices = " << size3D[2]
+              << " volumes = " << nVolumes << " left-over slices = "
+              << size3D[2] % nVolumes << std::endl);
+    }
+  }
+  Volume3DUnwrappedType::DirectionType direction3D;
+  direction3D.SetIdentity();
+  Volume3DUnwrappedType::SpacingType   spacing3D;
+  spacing3D.Fill(1.0);
+  Volume3DUnwrappedType::PointType     origin3D;
+  origin3D.Fill(0.0);
+  for( unsigned i = 0; i < 3; ++i )
+  {
+    for( unsigned j = 0; j < 3; ++j )
+    {
+      direction3D[i][j] = direction4D[i][j];
+    }
+    spacing3D[i] = spacing4D[i];
+    origin3D[i] = origin4D[i];
+  }
+
+  Volume3DUnwrappedType::Pointer img = Volume3DUnwrappedType::New();
+  img->SetRegions(region3D);
+  img->SetDirection(direction3D);
+  img->SetSpacing(spacing3D);
+  img->SetOrigin(origin3D);
+  img->Allocate();
+
+  {
+    img->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
+    //Set the qform and sfrom codes for the MetaDataDictionary.
+    itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
+    itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+  }
+
+  const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels()
+                           * sizeof(PixelValueType);
+
+  memcpy(img->GetBufferPointer(), img4D->GetBufferPointer(), bytecount);
+  return img;
+}
+
+unsigned int DWIDICOMConverterBase::GetSlicesPerVolume() const { return m_SlicesPerVolume; }
+unsigned int DWIDICOMConverterBase::GetNVolume() const { return this->m_NVolume; }

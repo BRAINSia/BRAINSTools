@@ -69,21 +69,12 @@
 class DWIConverter
 {
 public:
+  /* The internal default format for DWIConverter is an itk::VectorImage<PixelValueType,3> */
+  typedef std::vector< std::string > FileNamesContainer;
 
-  /* The internal format is an unwrapped 3D scalar image that is x,y,slices
-   * where slices is all the slices in both 3D and 4d directions.
-   * If each volume is 3DSlices, and their are NumGradients, then
-   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
-   */
-  typedef itk::Image<PixelValueType, 3>  Volume3DUnwrappedType;
-
-  typedef Volume3DUnwrappedType::SpacingType            SpacingType;
-  typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
-  typedef ReaderType::FileNamesContainer                FileNamesContainer;
-  typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+  typedef VectorVolumeType::SpacingType            SpacingType;
 
 
-  typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
   typedef itk::Matrix<double, 3, 3>                     RotationMatrixType;
   typedef itk::Vector<double, 3>                        PointType;
 
@@ -127,12 +118,12 @@ public:
  void SetBValues( const std::vector<double> & inBValues );
  double GetMaxBValue() const;
 
- Volume3DUnwrappedType::Pointer GetDiffusionVolume() const ;
+ VectorVolumeType::Pointer GetDiffusionVolume() const ;
 
  SpacingType GetSpacing() const;
 
- Volume3DUnwrappedType::PointType GetOrigin() const;
- void SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin);
+ VectorVolumeType::PointType GetOrigin() const;
+ void SetOrigin(VectorVolumeType::PointType origin);
 
  RotationMatrixType   GetLPSDirCos() const;
 
@@ -140,16 +131,16 @@ public:
 
  RotationMatrixType GetNRRDSpaceDirection() const;
 
- unsigned int GetSlicesPerVolume() const;
- unsigned int GetNVolume() const;
+
  std::string GetNRRDSpaceDefinition() const;
 
  unsigned short GetRows() const;
 
  unsigned short GetCols() const;
+ unsigned short GetSlices() const;
 
 
-  /**
+    /**
    * @brief Force overwriting the gradient directions by inserting values read from specified file
    * @param gradientVectorFile The file with gradients specified for overwriting
    */
@@ -171,9 +162,7 @@ public:
   void ManualWriteNRRDFile(
             const std::string& outputVolumeHeaderName,
             const std::string commentstring) const;
-  Volume4DType::Pointer ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const;
 
-  Volume3DUnwrappedType::Pointer FourDToThreeDImage(Volume4DType::Pointer img4D) const;
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
@@ -189,8 +178,7 @@ public:
    */
   void SetAllowLossyConversion(const bool newValue);
 
-  //add by Hui Xie
-  Volume3DUnwrappedType::Pointer getVolumePointer();
+
 
 
 protected:
@@ -211,22 +199,9 @@ protected:
   itk::NumberToString<double> m_DoubleConvert;
   bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
-  unsigned int        m_SlicesPerVolume;
-  /** number of total slices */
-  unsigned int        m_NSlice;
-  /** number of gradient volumes */
-  unsigned int        m_NVolume;
-    /* The following variables make up the primary data model for diffusion weighted images
-     * in the most generic sense.  These variables all need to be manipulated together in
-     * order to maintain a consistent data model.
-     */
-    /** the image read from the DICOM dataset */
- Volume3DUnwrappedType::Pointer m_Volume;
 
-
-  // this is always "left-posterior-superior" in all cases that we currently support
-  const std::string           m_NRRDSpaceDefinition;
-
+  //the default data model for all of DWIConvert
+  VectorVolumeType::Pointer   m_Vector3DVolume;
 
   /** measurement from for gradients if different than patient
    *  reference frame.
@@ -238,6 +213,9 @@ protected:
   DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
   // A map of common dicom fields to be propagated to image
   std::map<std::string,std::string> m_CommonDicomFieldsMap;
+
+// this is always "left-posterior-superior" in all cases that we currently support
+    const std::string           m_NRRDSpaceDefinition;
 
 };
 

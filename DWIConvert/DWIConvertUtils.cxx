@@ -2,6 +2,8 @@
 // Created by Hans Johnson on 10/8/16.
 //
 #include "DWIConvertUtils.h"
+#include <itkExtractImageFilter.h>
+#include <itkComposeImageFilter.h>
 
 
 
@@ -244,4 +246,107 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
     }
   }
   return EXIT_SUCCESS;
+}
+
+static Volume4DType::Pointer CreateEmpty4DVolume(VectorVolumeType::Pointer & inputVol)
+{
+  VectorVolumeType::SizeType inputSize =
+          inputVol->GetLargestPossibleRegion().GetSize();
+  VectorVolumeType::SpacingType inputSpacing = inputVol->GetSpacing();
+  VectorVolumeType::PointType inputOrigin = inputVol->GetOrigin();
+  VectorVolumeType::DirectionType inputDirection = inputVol->GetDirection();
+
+  Volume4DType::Pointer FourDVolume = Volume4DType::New();
+  Volume4DType::SizeType volSize;
+  Volume4DType::SpacingType volSpacing;
+  Volume4DType::PointType volOrigin;
+  Volume4DType::DirectionType volDirection;
+
+  for( unsigned int i = 0; i < 3; ++i )
+  {
+    volSize[i] = inputSize[i];
+    volSpacing[i] = inputSpacing[i];
+    volOrigin[i] = inputOrigin[i];
+    for( unsigned int j = 0; j < 3; ++j )
+    {
+      volDirection[i][j] = inputDirection[i][j];
+    }
+    volDirection[3][i] = 0.0;
+    volDirection[i][3] = 0.0;
+  }
+  volDirection[3][3] = 1.0;
+  volSpacing[3] = 1.0;
+  volOrigin[3] = 0.0;
+  volSize[3] = inputVol->GetNumberOfComponentsPerPixel();
+
+  FourDVolume->SetRegions(volSize);
+  FourDVolume->SetOrigin(volOrigin);
+  FourDVolume->SetSpacing(volSpacing);
+  FourDVolume->SetDirection(volDirection);
+  FourDVolume->Allocate();
+  return FourDVolume;
+}
+
+Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorVolumeType::Pointer inputVol)
+{
+  Volume4DType::Pointer FourDVolume = CreateEmpty4DVolume(inputVol);
+  const VectorVolumeType::SizeType inputSize( inputVol->GetLargestPossibleRegion().GetSize() );
+  const Volume4DType::IndexType::IndexValueType vecLength = inputVol->GetNumberOfComponentsPerPixel();
+
+  VectorVolumeType::IndexType vecIndex;
+  Volume4DType::IndexType volIndex;
+// convert from vector image to 4D volume image
+  for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
+  {
+    for( volIndex[2] = 0; volIndex[2] < Volume4DType::IndexType::IndexValueType( inputSize[2] ); ++volIndex[2] )
+    {
+      vecIndex[2] = volIndex[2];
+      for( volIndex[1] = 0; volIndex[1] < Volume4DType::IndexType::IndexValueType( inputSize[1] ); ++volIndex[1] )
+      {
+        vecIndex[1] = volIndex[1];
+        for( volIndex[0] = 0; volIndex[0] < Volume4DType::IndexType::IndexValueType( inputSize[0] ); ++volIndex[0] )
+        {
+          vecIndex[0] = volIndex[0];
+          FourDVolume->SetPixel(volIndex, inputVol->GetPixel(vecIndex)[volIndex[3]]);
+        }
+      }
+    }
+  }
+  return FourDVolume;
+}
+
+VectorVolumeType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inputVol)
+{
+  typedef itk::Image<unsigned short,3> Volume3DType; //Used for a single 3D volume component
+// convert from image series to vector voxels
+  Volume4DType::SpacingType inputSpacing = inputVol->GetSpacing();
+  Volume4DType::SizeType inputSize = inputVol->GetLargestPossibleRegion().GetSize();
+  Volume4DType::IndexType inputIndex = inputVol->GetLargestPossibleRegion().GetIndex();
+////////
+// "inputVol" is read as a 4D image. Here we convert that to a VectorImageType:
+//
+  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
+
+  typedef itk::ComposeImageFilter<Volume3DType, VectorVolumeType> ComposeImageFilterType;
+  ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
+
+  for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
+  {
+    Volume4DType::SizeType extractSize = inputSize;
+    extractSize[3] = 0;
+    Volume4DType::IndexType extractIndex = inputIndex;
+    extractIndex[3] = componentNumber;
+    Volume4DType::RegionType extractRegion(extractIndex, extractSize);
+
+    ExtractFilterType::Pointer extracter = ExtractFilterType::New();
+    extracter->SetExtractionRegion( extractRegion );
+    extracter->SetInput( inputVol );
+    extracter->SetDirectionCollapseToIdentity();
+    extracter->Update();
+
+    composer->SetInput(componentNumber,extracter->GetOutput());
+  }
+  composer->Update();
+  VectorVolumeType::Pointer nrrdVolume = composer->GetOutput();
+  return nrrdVolume;
 }

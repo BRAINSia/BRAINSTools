@@ -46,6 +46,8 @@ typedef short                          PixelValueType;
  */
 typedef itk::Image<PixelValueType, 4>  Volume4DType;
 
+typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+
 template <typename TArg>
 int
 CheckArg(const char *argName, const TArg & argVal, const TArg & emptyVal);
@@ -162,6 +164,8 @@ extern int NrrdToFSL(const std::string & inputVolume,
                          const std::string & outputBVectors,
                          bool allowLossyConversion);
 
+VectorVolumeType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inputVol);
+Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorVolumeType::Pointer inputVol);
 
 #include "DWIConvertUtils.hxx"
 

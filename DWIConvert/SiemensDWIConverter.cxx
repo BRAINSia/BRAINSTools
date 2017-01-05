@@ -163,6 +163,7 @@ void SiemensDWIConverter::LoadDicomDirectory()
     this->SetDirectionsFromSliceOrder();
   }
   this->CheckCSAHeaderAvailable();
+  m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume( ThreeDUnwrappedToFourDImage(m_3DUnwrappedVolume));
 }
 
 double SiemensDWIConverter::ExtractBValue(CSAHeader *csaHeader, unsigned int strideVolume)
@@ -441,7 +442,7 @@ void SiemensDWIConverter::DeMosaic()
    * voxel size, and dimension, the origin can be computed.
    */
 
-  Volume3DUnwrappedType::Pointer previousImage = this->m_Volume;
+  Volume3DUnwrappedType::Pointer previousImage = this->m_3DUnwrappedVolume;
 
   Volume3DUnwrappedType::RegionType region = previousImage->GetLargestPossibleRegion();
   Volume3DUnwrappedType::SizeType   size = region.GetSize();
@@ -464,20 +465,20 @@ void SiemensDWIConverter::DeMosaic()
   sliceSize[2] = 0;
 
   region.SetSize( dmSize );
-  this->m_Volume = Volume3DUnwrappedType::New();
-  this->m_Volume->CopyInformation( previousImage );
-  this->m_Volume->SetRegions( region );
-  this->m_Volume->Allocate();
+  this->m_3DUnwrappedVolume = Volume3DUnwrappedType::New();
+  this->m_3DUnwrappedVolume->CopyInformation( previousImage );
+  this->m_3DUnwrappedVolume->SetRegions( region );
+  this->m_3DUnwrappedVolume->Allocate();
 
   //Fix Origin
   // http://nipy.org/nibabel/dicom/dicom_mosaic.html
-  this->m_Volume->SetOrigin(
+  this->m_3DUnwrappedVolume->SetOrigin(
           previousImage->GetOrigin()
           + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 )
   );
 
 
-  Volume3DUnwrappedType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
+  Volume3DUnwrappedType::RegionType dmRegion = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
   dmRegion.SetSize(2, 1);
   region.SetSize(0, dmSize[0]);
   region.SetSize(1, dmSize[1]);
@@ -488,7 +489,7 @@ void SiemensDWIConverter::DeMosaic()
     unsigned int new_k = k /* - bad_slice_counter */;
 
     dmRegion.SetIndex(2, new_k);
-    itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> dmIt( this->m_Volume, dmRegion );
+    itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> dmIt( this->m_3DUnwrappedVolume, dmRegion );
 
     // figure out the mosaic region for this slice
     int sliceIndex = k;

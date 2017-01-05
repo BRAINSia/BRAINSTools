@@ -8,6 +8,7 @@
 NRRDDWIConverter::NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
   const bool FSLFileFormatHorizontalBy3Rows)
   : DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows )
+
 {
 }
 
@@ -93,18 +94,15 @@ NRRDDWIConverter::LoadFromDisk()
 
   //Conert vector 3D volume to 4DVolume
   Volume4DType::Pointer                 fourDVolume = CreateVolume(vector3DVolume);
-  this->m_SlicesPerVolume = fourDVolume->GetLargestPossibleRegion().GetSize()[2];
-  this->m_NVolume = fourDVolume->GetLargestPossibleRegion().GetSize()[3];
-  this->m_NSlice = this->m_SlicesPerVolume * this->m_NVolume;
-  this->m_Volume = FourDToThreeDImage(fourDVolume);
+  this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(fourDVolume);
 }
 
 void
 NRRDDWIConverter::ExtractDWIData()
 {
-  RecoverMeasurementFrame<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_MeasurementFrame);
-  RecoverBVectors<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors);
-  RecoverBValues<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
+  RecoverMeasurementFrame<VectorVolumeType>(this->m_Vector3DVolume.GetPointer(), this->m_MeasurementFrame);
+  RecoverBVectors<VectorVolumeType>(this->m_Vector3DVolume.GetPointer(), this->m_DiffusionVectors);
+  RecoverBValues<VectorVolumeType>(this->m_Vector3DVolume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
 }
 
 DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const

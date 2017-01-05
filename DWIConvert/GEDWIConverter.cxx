@@ -15,10 +15,11 @@ GEDWIConverter::~GEDWIConverter() {}
 void GEDWIConverter::LoadDicomDirectory()
 {
       this->DWIDICOMConverterBase::LoadDicomDirectory();
-      this->m_MeasurementFrame = this->m_Volume->GetDirection();
+      this->m_MeasurementFrame = this->m_3DUnwrappedVolume->GetDirection();
       this->DetermineSliceOrderIS();
       this->SetDirectionsFromSliceOrder();
       this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
+      m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume( ThreeDUnwrappedToFourDImage(m_3DUnwrappedVolume));
     }
 
 void GEDWIConverter::ExtractDWIData()

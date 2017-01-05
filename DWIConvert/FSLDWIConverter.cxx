@@ -33,10 +33,8 @@ FSLDWIConverter::LoadFromDisk()
   // string to use as template if no bval or bvec filename is given.
   ReadScalarVolume<Volume4DType>(inputVol, fslNIFTIFile, this->m_allowLossyConversion);
   // Reorient from FSL standard format to ITK/Dicom standard format
-  this->m_SlicesPerVolume = inputVol->GetLargestPossibleRegion().GetSize()[2];
-  this->m_NVolume = inputVol->GetLargestPossibleRegion().GetSize()[3];
-  this->m_NSlice = this->m_SlicesPerVolume * this->m_NVolume;
-  this->m_Volume = FourDToThreeDImage(inputVol);
+
+  this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(inputVol);
 }
 
 void

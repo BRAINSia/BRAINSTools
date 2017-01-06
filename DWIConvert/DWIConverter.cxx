@@ -112,14 +112,12 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
    */
   //
   // FSL wants the second and third dimensions flipped with regards to LPS orientation
-  // FSL wants the second and third dimeinsions flipped with regards to LPS orientation
   myFlipper->SetFlipAxes(arrayAxisFlip);
   myFlipper->FlipAboutOriginOff();  //Flip the image and direction cosignes
   // this is similar to a transform of [1 0 0; 0 -1 0; 0 0 -1]
   myFlipper->Update();
   Volume4DType::Pointer temp = myFlipper->GetOutput();
   temp->SetMetaDataDictionary( image4D->GetMetaDataDictionary());
-  this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(temp);
   return temp;
 }
 

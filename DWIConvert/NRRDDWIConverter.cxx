@@ -102,6 +102,7 @@ NRRDDWIConverter::LoadFromDisk()
       itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
   }
 
+
 }
 
 void

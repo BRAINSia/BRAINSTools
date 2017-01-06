@@ -35,6 +35,7 @@ FSLDWIConverter::LoadFromDisk()
   // Reorient from FSL standard format to ITK/Dicom standard format
 
   this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(inputVol);
+
 }
 
 void

@@ -64,7 +64,8 @@ DWIMetaDataDictionaryValidator::RotationMatrixType DWIMetaDataDictionaryValidato
 {
   RotationMatrixType myRM;
   std::vector<std::vector<double> > retval;
-  itk::ExposeMetaData<std::vector<std::vector<double> > >(m_dict, "NRRD_measurement frame", retval);
+  //itk::ExposeMetaData<std::vector<std::vector<double> > >(m_dict, "NRRD_measurement frame", retval);
+  itk::ExposeMetaData<std::vector<std::vector<double> > >(m_dict, "measurement frame", retval);
   if (retval.size() != 0)
     {
       for (size_t r = 0; r < myRM.RowDimensions; ++r)

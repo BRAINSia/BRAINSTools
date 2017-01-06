@@ -178,7 +178,9 @@ int DWIConvert::write(const std::string& outputVolume)
   if( "FSL" == getOutputFileType())
   {
 
+    //VectorVolumeType::PointType origin3D = m_converter->GetDiffusionVolume()->GetOrigin();
     Volume4DType::Pointer img4D = m_converter->OrientForFSLConventions();
+    //Volume4DType::PointType origin4D = img4D->GetOrigin();
     // write the image */
     m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
   }

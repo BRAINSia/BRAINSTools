@@ -284,6 +284,7 @@ static Volume4DType::Pointer CreateEmpty4DVolume(VectorVolumeType::Pointer & inp
   FourDVolume->SetSpacing(volSpacing);
   FourDVolume->SetDirection(volDirection);
   FourDVolume->Allocate();
+  FourDVolume->SetMetaDataDictionary( inputVol->GetMetaDataDictionary());
   return FourDVolume;
 }
 
@@ -312,6 +313,7 @@ Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorVolumeType::Pointer 
       }
     }
   }
+  FourDVolume->SetMetaDataDictionary( inputVol->GetMetaDataDictionary());
   return FourDVolume;
 }
 
@@ -348,5 +350,6 @@ VectorVolumeType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer 
   }
   composer->Update();
   VectorVolumeType::Pointer nrrdVolume = composer->GetOutput();
+  nrrdVolume->SetMetaDataDictionary( inputVol->GetMetaDataDictionary());
   return nrrdVolume;
 }

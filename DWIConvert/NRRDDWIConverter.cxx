@@ -86,7 +86,7 @@ NRRDDWIConverter::LoadFromDisk()
 {
   const std::string nrrdNRRDFile = m_InputFileNames[0];
 
-  VectorVolumeType::Pointer vector3DVolume;
+  /*VectorVolumeType::Pointer vector3DVolume;
   if( ReadVectorVolume<VectorVolumeType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
   {
     itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
@@ -94,7 +94,14 @@ NRRDDWIConverter::LoadFromDisk()
 
   //Conert vector 3D volume to 4DVolume
   Volume4DType::Pointer                 fourDVolume = CreateVolume(vector3DVolume);
-  this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(fourDVolume);
+  this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(fourDVolume);*/
+
+  // modified by Hui Xie Jan 6th, 2016
+  if( ReadVectorVolume<VectorVolumeType>( m_Vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
+  {
+      itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
+  }
+
 }
 
 void

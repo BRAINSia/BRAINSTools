@@ -409,8 +409,11 @@ void DWIConverter::ManualWriteNRRDFile(
   header << std::endl;;
   if (nrrdSingleFileFormat) {
     unsigned long nVoxels = this->GetDiffusionVolume()->GetBufferedRegion().GetNumberOfPixels();
+    //header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
+    //             nVoxels*sizeof(short));
+    int nVolume = m_Vector3DVolume->GetVectorLength();
     header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
-                 nVoxels*sizeof(short));
+                 nVoxels*sizeof(short)*nVolume);
   }
   else {
     // if we're writing out NRRD, and the split header/data NRRD

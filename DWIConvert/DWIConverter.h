@@ -69,7 +69,7 @@
 class DWIConverter
 {
 public:
-#if 1  //TODO:  Move the "Volume3DUnwrappedType" to DWIDICOMConverterBase.h
+
   /* The internal format is an unwrapped 3D scalar image that is x,y,slices
    * where slices is all the slices in both 3D and 4d directions.
    * If each volume is 3DSlices, and their are NumGradients, then
@@ -80,12 +80,8 @@ public:
   typedef Volume3DUnwrappedType::SpacingType            SpacingType;
   typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
   typedef ReaderType::FileNamesContainer                FileNamesContainer;
-#else
-  /* The internal default format for DWIConverter is an itk::VectorImage<PixelValueType,3> */
-  typedef std::vector< std::string > FileNamesContainer;
   typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
 
-#endif
 
   typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
   typedef itk::Matrix<double, 3, 3>                     RotationMatrixType;
@@ -215,9 +211,6 @@ protected:
   itk::NumberToString<double> m_DoubleConvert;
   bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
-#if 1 /*TODO:  The following make up the DICOM based data model necessary to
- manipulate DICOM data, This should be moved to DWIDICOMConverterBase class
-  /** dimensions */
   unsigned int        m_SlicesPerVolume;
   /** number of total slices */
   unsigned int        m_NSlice;
@@ -230,11 +223,9 @@ protected:
     /** the image read from the DICOM dataset */
  Volume3DUnwrappedType::Pointer m_Volume;
 
-#else
-    VolumeVectorType   m_VectorVolume;  //TODO: VolumeVectorType should be the default data model for all of DWIConvert
-#endif
+
   // this is always "left-posterior-superior" in all cases that we currently support
-  const std::string           m_NRRDSpaceDefinition;  //TODO:  This needs to be moved to the NRRDDWIConverterClass.
+  const std::string           m_NRRDSpaceDefinition;
 
 
   /** measurement from for gradients if different than patient

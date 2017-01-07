@@ -145,6 +145,7 @@ int compareVectorAndScaleImage( const std::string & inputVectorImage, const std:
                        << "scalar image voxel: "<< scalarImageVoxel << std::endl;
              if( nUnmatchVoxels >= 5 )
              {
+               std::cerr<<"find at least 5 voxels unmatching" <<std::endl;
                return EXIT_FAILURE;
              }
            }

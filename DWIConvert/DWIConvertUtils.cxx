@@ -297,6 +297,12 @@ ScalarImage4DType::Pointer convertVectorImage3DToScalarImage4D(VectorImage3DType
   VectorImage3DType::IndexType vecIndex;
   ScalarImage4DType::IndexType volIndex;
 // convert from vector image to 4D volume image
+
+
+
+
+
+
   for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
   {
     for( volIndex[2] = 0; volIndex[2] < ScalarImage4DType::IndexType::IndexValueType( inputSize[2] ); ++volIndex[2] )
@@ -317,16 +323,12 @@ ScalarImage4DType::Pointer convertVectorImage3DToScalarImage4D(VectorImage3DType
   return FourDVolume;
 }
 
+//"inputVol" is read as a 4D image. Here we convert that to a VectorImage3DType:
 VectorImage3DType::Pointer convertScalarImage4DToVectorImage3D(ScalarImage4DType::Pointer inputVol)
 {
-  typedef itk::Image<unsigned short,3> ScalarImage3DType; //Used for a single 3D volume component
-  // convert from image series to vector voxels
-  //ScalarImage4DType::SpacingType inputSpacing = inputVol->GetSpacing();
   ScalarImage4DType::SizeType inputSize = inputVol->GetLargestPossibleRegion().GetSize();
   ScalarImage4DType::IndexType inputIndex = inputVol->GetLargestPossibleRegion().GetIndex();
-////////
-// "inputVol" is read as a 4D image. Here we convert that to a VectorImage3DType:
-//
+
   typedef itk::ExtractImageFilter< ScalarImage4DType, ScalarImage3DType > ExtractFilterType;
 
   typedef itk::ComposeImageFilter<ScalarImage3DType, VectorImage3DType> ComposeImageFilterType;

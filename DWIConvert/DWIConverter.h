@@ -72,8 +72,9 @@ public:
   /* The internal default format for DWIConverter is an itk::VectorImage<PixelValueType,3> */
   typedef std::vector< std::string > FileNamesContainer;
 
-  typedef VectorVolumeType::SpacingType            SpacingType;
 
+  typedef Vector3DType::SpacingType            SpacingType;
+  //typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
   typedef itk::Vector<double, 3>                        PointType;
 
   typedef std::map<std::string,std::string> CommonDicomFieldMapType;
@@ -116,12 +117,12 @@ public:
  void SetBValues( const std::vector<double> & inBValues );
  double GetMaxBValue() const;
 
- VectorVolumeType::Pointer GetDiffusionVolume() const ;
+ Vector3DType::Pointer GetDiffusionVolume() const ;
 
  SpacingType GetSpacing() const;
 
- VectorVolumeType::PointType GetOrigin() const;
- void SetOrigin(VectorVolumeType::PointType origin);
+ Vector3DType::PointType GetOrigin() const;
+ void SetOrigin(Vector3DType::PointType origin);
 
  RotationMatrixType   GetLPSDirCos() const;
 
@@ -165,6 +166,9 @@ public:
   void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
                              const std::string outputBValues, const std::string outputBVectors, Volume4DType::Pointer img4D) const;
 
+  void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
+                                                const std::string outputBValues, const std::string outputBVectors) const;
+
 
   /**
    * @brief Choose if we are going to allow for lossy conversion by typecasting
@@ -196,7 +200,7 @@ protected:
 
 
   //the default data model for all of DWIConvert
-  VectorVolumeType::Pointer   m_Vector3DVolume;
+  Vector3DType::Pointer   m_Vector3DVolume;
 
   /** measurement from for gradients if different than patient
    *  reference frame.

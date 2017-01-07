@@ -46,7 +46,7 @@ typedef short                          PixelValueType;
  */
 typedef itk::Image<PixelValueType, 4>       Volume4DType;
 
-typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+typedef itk::VectorImage<PixelValueType, 3> Vector3DType;
 typedef itk::Matrix<double, 3, 3>           RotationMatrixType;
 
 template <typename TArg>
@@ -165,8 +165,8 @@ extern int NrrdToFSL(const std::string & inputVolume,
                          const std::string & outputBVectors,
                          bool allowLossyConversion);
 
-VectorVolumeType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inputVol);
-Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorVolumeType::Pointer inputVol);
+Vector3DType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inputVol);
+Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(Vector3DType::Pointer inputVol);
 
 //template<typename ImageType>
 //RotationMatrixType GetSpacingMatrix(typename ImageType::Pointer im);

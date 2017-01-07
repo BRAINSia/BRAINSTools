@@ -19,12 +19,12 @@ NRRDDWIConverter::AddFlagsToDictionary()
 
 
 Volume4DType::Pointer
-NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
+NRRDDWIConverter::CreateVolume(Vector3DType::Pointer & vector3DVolume)
 {
-  VectorVolumeType::SizeType      inputSize = vector3DVolume->GetLargestPossibleRegion().GetSize();
-  VectorVolumeType::SpacingType   inputSpacing = vector3DVolume->GetSpacing();
-  VectorVolumeType::PointType     inputOrigin = vector3DVolume->GetOrigin();
-  VectorVolumeType::DirectionType inputDirection = vector3DVolume->GetDirection();
+  Vector3DType::SizeType      inputSize = vector3DVolume->GetLargestPossibleRegion().GetSize();
+  Vector3DType::SpacingType   inputSpacing = vector3DVolume->GetSpacing();
+  Vector3DType::PointType     inputOrigin = vector3DVolume->GetOrigin();
+  Vector3DType::DirectionType inputDirection = vector3DVolume->GetDirection();
 
   Volume4DType::Pointer fourDVolume = Volume4DType::New();
   Volume4DType::SizeType      volSize;
@@ -57,7 +57,7 @@ NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
 
   const Volume4DType::IndexType::IndexValueType vecLength = vector3DVolume->GetNumberOfComponentsPerPixel();
 
-  VectorVolumeType::IndexType vecIndex;
+  Vector3DType::IndexType vecIndex;
   Volume4DType::IndexType       volIndex;
   // convert from vector image to 4D volume image
   for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
@@ -86,8 +86,8 @@ NRRDDWIConverter::LoadFromDisk()
 {
   const std::string nrrdNRRDFile = m_InputFileNames[0];
 
-  /*VectorVolumeType::Pointer vector3DVolume;
-  if( ReadVectorVolume<VectorVolumeType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
+  /*Vector3DType::Pointer vector3DVolume;
+  if( ReadVectorVolume<Vector3DType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
   {
     itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
   }
@@ -97,7 +97,7 @@ NRRDDWIConverter::LoadFromDisk()
   this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(fourDVolume);*/
 
   // modified by Hui Xie Jan 6th, 2016
-  if( ReadVectorVolume<VectorVolumeType>( m_Vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
+  if( ReadVectorVolume<Vector3DType>( m_Vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
   {
       itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
   }
@@ -108,9 +108,9 @@ NRRDDWIConverter::LoadFromDisk()
 void
 NRRDDWIConverter::ExtractDWIData()
 {
-  RecoverMeasurementFrame<VectorVolumeType>(this->m_Vector3DVolume.GetPointer(), this->m_MeasurementFrame);
-  RecoverBVectors<VectorVolumeType>(this->m_Vector3DVolume.GetPointer(), this->m_DiffusionVectors);
-  RecoverBValues<VectorVolumeType>(this->m_Vector3DVolume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
+  RecoverMeasurementFrame<Vector3DType>(this->m_Vector3DVolume.GetPointer(), this->m_MeasurementFrame);
+  RecoverBVectors<Vector3DType>(this->m_Vector3DVolume.GetPointer(), this->m_DiffusionVectors);
+  RecoverBValues<Vector3DType>(this->m_Vector3DVolume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
 }
 
 DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const

@@ -32,7 +32,7 @@
 typedef short                               PixelValueType;
 typedef itk::Image<PixelValueType, 4>       Volume4DType;
 typedef itk::Image<PixelValueType, 3>       Volume3DType;
-typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+
 
 int
 FSLToNrrd(const std::string & inputVolume,
@@ -169,11 +169,11 @@ FSLToNrrd(const std::string & inputVolume,
   std::cout << "Spacing :" << inputSpacing << std::endl;
 
   ////////
-  // "inputVol" is read as a 4D image. Here we convert that to a VectorImageType:
+  // "inputVol" is read as a 4D image. Here we convert that to a Vector3DType:
   //
   typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
 
-  typedef itk::ComposeImageFilter<Volume3DType, VectorVolumeType> ComposeImageFilterType;
+  typedef itk::ComposeImageFilter<Volume3DType, Vector3DType> ComposeImageFilterType;
   ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
 
   for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
@@ -193,7 +193,7 @@ FSLToNrrd(const std::string & inputVolume,
      composer->SetInput(componentNumber,extracter->GetOutput());
      }
   composer->Update();
-  VectorVolumeType::Pointer nrrdVolume = composer->GetOutput();
+  Vector3DType::Pointer nrrdVolume = composer->GetOutput();
 
   const unsigned int nrrdNumOfComponents = nrrdVolume->GetNumberOfComponentsPerPixel();
   std::cout << "Number of components in converted Nrrd volume: " << nrrdNumOfComponents << std::endl;
@@ -264,7 +264,7 @@ FSLToNrrd(const std::string & inputVolume,
   // Add metaDataDictionary to Nrrd volume
   nrrdVolume->SetMetaDataDictionary(nrrdVolumeValidator.GetMetaDataDictionary());
   // Write Nrrd volume to disk
-  typedef itk::ImageFileWriter<VectorVolumeType> WriterType;
+  typedef itk::ImageFileWriter<Vector3DType> WriterType;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

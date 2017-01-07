@@ -20,15 +20,14 @@
 
 typedef short                               PixelValueType;
 typedef itk::Image<PixelValueType, 4>       Volume4DType;
-typedef itk::VectorImage<PixelValueType, 3> VectorVolume4DType;
 
-Volume4DType::Pointer CreateVolume(VectorVolume4DType::Pointer & inputVol)
+Volume4DType::Pointer CreateVolume(Vector3DType::Pointer & inputVol)
 {
-  VectorVolume4DType::SizeType inputSize =
+  Vector3DType::SizeType inputSize =
     inputVol->GetLargestPossibleRegion().GetSize();
-  VectorVolume4DType::SpacingType   inputSpacing = inputVol->GetSpacing();
-  VectorVolume4DType::PointType     inputOrigin = inputVol->GetOrigin();
-  VectorVolume4DType::DirectionType inputDirection = inputVol->GetDirection();
+  Vector3DType::SpacingType   inputSpacing = inputVol->GetSpacing();
+  Vector3DType::PointType     inputOrigin = inputVol->GetOrigin();
+  Vector3DType::DirectionType inputDirection = inputVol->GetDirection();
 
   Volume4DType::Pointer niftiVolume =
     Volume4DType::New();
@@ -115,16 +114,16 @@ int NrrdToFSL(const std::string & inputVolume,
     _outputBVectors = outputBVectors;
     }
 
-  VectorVolume4DType::Pointer inputVol;
-  if( ReadVolume<VectorVolume4DType>( inputVol, inputVolume, allowLossyConversion ) != EXIT_SUCCESS )
+  Vector3DType::Pointer inputVol;
+  if( ReadVolume<Vector3DType>( inputVol, inputVolume, allowLossyConversion ) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }
   Volume4DType::Pointer                         niftiVolume = CreateVolume(inputVol);
-  const VectorVolume4DType::SizeType            inputSize( inputVol->GetLargestPossibleRegion().GetSize() );
+  const Vector3DType::SizeType            inputSize( inputVol->GetLargestPossibleRegion().GetSize() );
   const Volume4DType::IndexType::IndexValueType vecLength = inputVol->GetNumberOfComponentsPerPixel();
 
-  VectorVolume4DType::IndexType vecIndex;
+  Vector3DType::IndexType vecIndex;
   Volume4DType::IndexType       volIndex;
   // convert from vector image to 4D volume image
   for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
@@ -148,7 +147,7 @@ int NrrdToFSL(const std::string & inputVolume,
     return EXIT_FAILURE;
     }
   DWIMetaDataDictionaryValidator::GradientTableType bVectors;
-  if( RecoverBVectors<VectorVolume4DType>(inputVol, bVectors) != EXIT_SUCCESS )
+  if( RecoverBVectors<Vector3DType>(inputVol, bVectors) != EXIT_SUCCESS )
     {
     std::cerr << "No gradient vectors found in "
               << inputVolume << std::endl;
@@ -162,7 +161,7 @@ int NrrdToFSL(const std::string & inputVolume,
     }
 
   std::vector<double> bValues;
-  RecoverBValues<VectorVolume4DType>(inputVol, bVectors, bValues);
+  RecoverBValues<Vector3DType>(inputVol, bVectors, bValues);
 
   if( WriteBValues(bValues, _outputBValues) != EXIT_SUCCESS )
     {

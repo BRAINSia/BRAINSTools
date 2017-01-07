@@ -73,7 +73,7 @@ public:
   typedef std::vector< std::string > FileNamesContainer;
 
 
-  typedef Vector3DType::SpacingType            SpacingType;
+  typedef VectorImage3DType::SpacingType            SpacingType;
 
   typedef itk::Vector<double, 3>                        PointType;
 
@@ -111,18 +111,18 @@ public:
   *         FSL [1 0 0; 0 -1 0; 0 0 1]    Dicom [1 0 0; 0 1 0; 0 0 1]
   * @return Returns a 4D image pointer properly formatted
   */
- Volume4DType::Pointer OrientForFSLConventions (const bool toFSL=true );
+ ScalarImage4DType::Pointer OrientForFSLConventions (const bool toFSL=true );
 
  const std::vector<double> &GetBValues() const;
  void SetBValues( const std::vector<double> & inBValues );
  double GetMaxBValue() const;
 
- Vector3DType::Pointer GetDiffusionVolume() const ;
+ VectorImage3DType::Pointer GetDiffusionVolume() const ;
 
  SpacingType GetSpacing() const;
 
- Vector3DType::PointType GetOrigin() const;
- void SetOrigin(Vector3DType::PointType origin);
+ VectorImage3DType::PointType GetOrigin() const;
+ void SetOrigin(VectorImage3DType::PointType origin);
 
  RotationMatrixType   GetLPSDirCos() const;
 
@@ -164,7 +164,7 @@ public:
  *  written as 4D volumes for image types other than NRRD.
  */
   void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-                             const std::string outputBValues, const std::string outputBVectors, Volume4DType::Pointer img4D) const;
+                             const std::string outputBValues, const std::string outputBVectors, ScalarImage4DType::Pointer img4D) const;
 
   void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
                                                 const std::string outputBValues, const std::string outputBVectors) const;
@@ -200,7 +200,7 @@ protected:
 
 
   //the default data model for all of DWIConvert
-  Vector3DType::Pointer   m_Vector3DVolume;
+  VectorImage3DType::Pointer   m_Vector3DVolume;
 
   /** measurement from for gradients if different than patient
    *  reference frame.

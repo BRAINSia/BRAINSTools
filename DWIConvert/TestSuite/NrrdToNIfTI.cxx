@@ -29,13 +29,13 @@ typedef itk::Image<PixelValueType, DIMENSION>     Image4DType;
 typedef itk::Image<PixelValueType, DIMENSION - 1> Image3DType;
 
 void
-ConvertVectorImageTo4DImage(const Vector3DType * img,
+ConvertVectorImageTo4DImage(const VectorImage3DType * img,
                             Image4DType::Pointer & img4D)
 {
-  Vector3DType::SizeType      size3D(img->GetLargestPossibleRegion().GetSize() );
-  Vector3DType::DirectionType direction3D(img->GetDirection() );
-  Vector3DType::SpacingType   spacing3D(img->GetSpacing() );
-  Vector3DType::PointType     origin3D(img->GetOrigin() );
+  VectorImage3DType::SizeType      size3D(img->GetLargestPossibleRegion().GetSize() );
+  VectorImage3DType::DirectionType direction3D(img->GetDirection() );
+  VectorImage3DType::SpacingType   spacing3D(img->GetSpacing() );
+  VectorImage3DType::PointType     origin3D(img->GetOrigin() );
 
   Image4DType::SizeType size4D;
 
@@ -70,21 +70,21 @@ ConvertVectorImageTo4DImage(const Vector3DType * img,
   img4D->Allocate();
 
   Image4DType::IndexType     index4D;
-  Vector3DType::IndexType vectorIndex;
-  for( vectorIndex[2] = 0; vectorIndex[2] < static_cast<Vector3DType::IndexType::IndexValueType>( size3D[2] );
+  VectorImage3DType::IndexType vectorIndex;
+  for( vectorIndex[2] = 0; vectorIndex[2] < static_cast<VectorImage3DType::IndexType::IndexValueType>( size3D[2] );
        ++vectorIndex[2] )
     {
     index4D[2] = vectorIndex[2];
-    for( vectorIndex[1] = 0; vectorIndex[1] < static_cast<Vector3DType::IndexType::IndexValueType>( size3D[1] );
+    for( vectorIndex[1] = 0; vectorIndex[1] < static_cast<VectorImage3DType::IndexType::IndexValueType>( size3D[1] );
          ++vectorIndex[1] )
       {
       index4D[1] = vectorIndex[1];
-      for( vectorIndex[0] = 0; vectorIndex[0] < static_cast<Vector3DType::IndexType::IndexValueType>( size3D[0] );
+      for( vectorIndex[0] = 0; vectorIndex[0] < static_cast<VectorImage3DType::IndexType::IndexValueType>( size3D[0] );
            ++vectorIndex[0] )
         {
         index4D[0] = vectorIndex[0];
-        const Vector3DType::PixelType pixel = img->GetPixel(vectorIndex);
-        for( index4D[3] = 0; index4D[3] < static_cast<Vector3DType::IndexType::IndexValueType>( size4D[3] );
+        const VectorImage3DType::PixelType pixel = img->GetPixel(vectorIndex);
+        for( index4D[3] = 0; index4D[3] < static_cast<VectorImage3DType::IndexType::IndexValueType>( size4D[3] );
              ++index4D[3] )
           {
           img4D->SetPixel(index4D, pixel[index4D[3]]);
@@ -102,11 +102,11 @@ int main(int argc, char *argv[])
     std::cout << "USAGE: " << argv[0] << "input output outputName3D" << std::endl;
     return EXIT_FAILURE;
     }
-  Vector3DType::Pointer img;
+  VectorImage3DType::Pointer img;
   std::string              inputName(argv[1]), outputName(argv[2]),
   outputName3D(argv[3]);
 
-  ReadVectorVolume<Vector3DType>(img, inputName, false);
+  ReadVectorVolume<VectorImage3DType>(img, inputName, false);
   std::cout << "input directions" << std::endl
             << img->GetDirection() << std::endl;
 

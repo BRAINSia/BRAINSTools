@@ -28,10 +28,10 @@ FSLDWIConverter::LoadFromDisk()
 {
   const std::string fslNIFTIFile = m_InputFileNames[0];
 
-  Volume4DType::Pointer inputVol;
+  ScalarImage4DType::Pointer inputVol;
 
   // string to use as template if no bval or bvec filename is given.
-  ReadScalarVolume<Volume4DType>(inputVol, fslNIFTIFile, this->m_allowLossyConversion);
+  ReadScalarVolume<ScalarImage4DType>(inputVol, fslNIFTIFile, this->m_allowLossyConversion);
   // Reorient from FSL standard format to ITK/Dicom standard format
 
   this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(inputVol);

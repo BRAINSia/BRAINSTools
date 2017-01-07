@@ -288,7 +288,7 @@ static ScalarImage4DType::Pointer CreateEmpty4DVolume(VectorImage3DType::Pointer
   return FourDVolume;
 }
 
-ScalarImage4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorImage3DType::Pointer inputVol)
+ScalarImage4DType::Pointer convertVectorImage3DToScalarImage4D(VectorImage3DType::Pointer inputVol)
 {
   ScalarImage4DType::Pointer FourDVolume = CreateEmpty4DVolume(inputVol);
   const VectorImage3DType::SizeType inputSize( inputVol->GetLargestPossibleRegion().GetSize() );
@@ -317,7 +317,7 @@ ScalarImage4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorImage3DType::Po
   return FourDVolume;
 }
 
-VectorImage3DType::Pointer Convert4DVolumeTo3DVectorVolume(ScalarImage4DType::Pointer inputVol)
+VectorImage3DType::Pointer convertScalarImage4DToVectorImage3D(ScalarImage4DType::Pointer inputVol)
 {
   typedef itk::Image<unsigned short,3> ScalarImage3DType; //Used for a single 3D volume component
   // convert from image series to vector voxels

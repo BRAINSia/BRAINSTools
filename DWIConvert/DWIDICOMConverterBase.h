@@ -118,7 +118,7 @@ protected:
      */
     /** the image read from the DICOM dataset */
 
-    ScalarImage3DType::Pointer m_3DUnwrappedVolume;
+    ScalarImage3DType::Pointer m_scalarImage3DUnwrapped;
 
     ScalarImage4DType::Pointer ThreeDUnwrappedToFourDImage(ScalarImage3DType::Pointer img) const;
 

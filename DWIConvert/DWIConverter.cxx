@@ -75,7 +75,7 @@ ScalarImage4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toF
   this->ConvertToMutipleBValuesUnitScaledBVectors();
 
 
-  ScalarImage4DType::Pointer image4D = Convert3DVectorVolumeTo4DVolume(this->GetDiffusionVolume());
+  ScalarImage4DType::Pointer image4D = convertVectorImage3DToScalarImage4D(this->GetDiffusionVolume());
   ScalarImage4DType::DirectionType direction=image4D->GetDirection();
   direction.GetVnlMatrix().get_row(0).magnitude();
   //LPS to RAI as FSL desires images to be formatted for viewing purposes.
@@ -125,36 +125,36 @@ const std::vector<double>& DWIConverter::GetBValues() const { return this->m_BVa
 void  DWIConverter::SetBValues( const std::vector<double> & inBValues ) { this->m_BValues = inBValues; }
 double DWIConverter::GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
 
-VectorImage3DType::Pointer DWIConverter::GetDiffusionVolume() const { return this->m_Vector3DVolume; }
+VectorImage3DType::Pointer DWIConverter::GetDiffusionVolume() const { return this->m_vectorImage3D; }
 
 DWIConverter::SpacingType DWIConverter::GetSpacing() const
 {
-  return this->m_Vector3DVolume->GetSpacing();
+  return this->m_vectorImage3D->GetSpacing();
 }
 
 VectorImage3DType::PointType DWIConverter::GetOrigin() const
 {
-  return this->m_Vector3DVolume->GetOrigin();
+  return this->m_vectorImage3D->GetOrigin();
 }
 
 void DWIConverter::SetOrigin(VectorImage3DType::PointType origin)
 {
-  return this->m_Vector3DVolume->SetOrigin(origin);
+  return this->m_vectorImage3D->SetOrigin(origin);
 }
 
 
-RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_Vector3DVolume->GetDirection(); }
+RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_vectorImage3D->GetDirection(); }
 
 RotationMatrixType DWIConverter::GetMeasurementFrame() const { return this->m_MeasurementFrame; }
 
 std::string DWIConverter::GetNRRDSpaceDefinition() const
 { return m_NRRDSpaceDefinition; }
 
-unsigned short DWIConverter::GetRows() const { return this->m_Vector3DVolume->GetLargestPossibleRegion().GetSize()[0]; }
+unsigned short DWIConverter::GetRows() const { return this->m_vectorImage3D->GetLargestPossibleRegion().GetSize()[0]; }
 
-unsigned short DWIConverter::GetCols() const { return this->m_Vector3DVolume->GetLargestPossibleRegion().GetSize()[1]; }
+unsigned short DWIConverter::GetCols() const { return this->m_vectorImage3D->GetLargestPossibleRegion().GetSize()[1]; }
 
-unsigned short DWIConverter::GetSlices() const { return this->m_Vector3DVolume->GetLargestPossibleRegion().GetSize()[2]; }
+unsigned short DWIConverter::GetSlices() const { return this->m_vectorImage3D->GetLargestPossibleRegion().GetSize()[2]; }
 
 void DWIConverter::ReadGradientInformation(const std::string& inputBValues, const std::string &inputBVectors, const std::string &inputVolumeNameTemplate)
 {// override gradients embedded in file with an external FSL Formatted files
@@ -203,10 +203,10 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
   }
 
   size_t numGradients = BVals.size();
-  if( numGradients != m_Vector3DVolume->GetVectorLength() )
+  if( numGradients != m_vectorImage3D->GetVectorLength() )
   {
     itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes:"
-                                      << numGradients << " != " << m_Vector3DVolume->GetVectorLength() << std::endl);
+                                      << numGradients << " != " << m_vectorImage3D->GetVectorLength() << std::endl);
   }
   //We need to zero out BVecs for Zero BVals
   for(size_t i = 0; i < bValCount; ++i)
@@ -323,11 +323,11 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "dimension: 4" << std::endl;
   header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
-  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<VectorImage3DType>(this->m_Vector3DVolume);
+  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<VectorImage3DType>(this->m_vectorImage3D);
   header << "sizes: " << this->GetCols()
          << " " << this->GetRows()
          << " " << this->GetSlices()
-         << " " << m_Vector3DVolume->GetVectorLength() << std::endl;
+         << " " << m_vectorImage3D->GetVectorLength() << std::endl;
   header << "thicknesses:  NaN  NaN " << DoubleConvert(this->GetSpacing()[2]) << " NaN" << std::endl;
   // need to check
   header << "space directions: "
@@ -409,7 +409,7 @@ void DWIConverter::ManualWriteNRRDFile(
     unsigned long nVoxels = this->GetDiffusionVolume()->GetBufferedRegion().GetNumberOfPixels();
     //header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
     //             nVoxels*sizeof(short));
-    int nVolume = m_Vector3DVolume->GetVectorLength();
+    int nVolume = m_vectorImage3D->GetVectorLength();
     header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
                  nVoxels*sizeof(short)*nVolume);
   }
@@ -506,7 +506,7 @@ void DWIConverter::WriteFSLFormattedFileSet(const std::string& outputVolumeHeade
 }
 
 void DWIConverter::WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-                                            const std::string outputBValues, const std::string outputBVectors) const
+                                            const std::string outputBValues, const std::string outputBVectors, VectorImage3DType::Pointer vectorImage3D) const
 {
   const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] *
                        this->m_MeasurementFrame[2][2];
@@ -518,12 +518,12 @@ void DWIConverter::WriteFSLFormattedFileSet(const std::string& outputVolumeHeade
 
   {
     //Set the qform and sfrom codes for the MetaDataDictionary.
-    itk::MetaDataDictionary & thisDic = m_Vector3DVolume->GetMetaDataDictionary();
+    itk::MetaDataDictionary & thisDic = vectorImage3D->GetMetaDataDictionary();
     itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
   }
   itk::ImageFileWriter<VectorImage3DType>::Pointer imgWriter = itk::ImageFileWriter<VectorImage3DType>::New();
-  imgWriter->SetInput( m_Vector3DVolume );
+  imgWriter->SetInput( vectorImage3D );
   imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
   try
   {

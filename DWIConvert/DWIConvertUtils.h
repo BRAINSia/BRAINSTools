@@ -174,8 +174,8 @@ extern int NrrdToFSL(const std::string & inputVolume,
                          const std::string & outputBVectors,
                          bool allowLossyConversion);
 
-VectorImage3DType::Pointer Convert4DVolumeTo3DVectorVolume(ScalarImage4DType::Pointer inputVol);
-ScalarImage4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorImage3DType::Pointer inputVol);
+VectorImage3DType::Pointer convertScalarImage4DToVectorImage3D(ScalarImage4DType::Pointer inputVol);
+ScalarImage4DType::Pointer convertVectorImage3DToScalarImage4D(VectorImage3DType::Pointer inputVol);
 
 //template<typename ImageType>
 //RotationMatrixType GetSpacingMatrix(typename ImageType::Pointer im);

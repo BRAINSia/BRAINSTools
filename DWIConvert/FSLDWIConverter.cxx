@@ -34,7 +34,7 @@ FSLDWIConverter::LoadFromDisk()
   ReadScalarVolume<ScalarImage4DType>(inputVol, fslNIFTIFile, this->m_allowLossyConversion);
   // Reorient from FSL standard format to ITK/Dicom standard format
 
-  this->m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume(inputVol);
+  this->m_vectorImage3D = convertScalarImage4DToVectorImage3D(inputVol);
 
 }
 

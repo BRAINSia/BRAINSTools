@@ -83,20 +83,39 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
 
 int compareVectorAndScaleImage( const std::string & inputVectorImage, const std::string & inputScalarImage, bool CheckDWIData ){
   typedef itk::ImageFileReader<VectorImage3DType> VectorImage3DReaderType;
-  typename VectorImage3DReaderType::Pointer vectorImageReader = VectorImage3DReaderType::New();
+  VectorImage3DReaderType::Pointer vectorImageReader = VectorImage3DReaderType::New();
   vectorImageReader->SetFileName(inputVectorImage.c_str());
   vectorImageReader->Update();
-  typename VectorImage3DType::Pointer vectorImage = vectorImageReader->GetOutput();
+  VectorImage3DType::Pointer vectorImage = vectorImageReader->GetOutput();
 
   typedef itk::ImageFileReader<ScalarImage4DType> ScalarImage4DReaderType;
-  typename ScalarImage4DReaderType::Pointer scalarImageReader = ScalarImage4DReaderType::New();
+  ScalarImage4DReaderType::Pointer scalarImageReader = ScalarImage4DReaderType::New();
   scalarImageReader->SetFileName(inputScalarImage.c_str());
   scalarImageReader->Update();
-  typename ScalarImage4DType::Pointer scalarImage = scalarImageReader->GetOutput();
+  ScalarImage4DType::Pointer scalarImage = scalarImageReader->GetOutput();
 
+  //check total number of voxel is equal
+  VectorImage3DType::RegionType vectorImageRegion = vectorImage->GetLargestPossibleRegion();
+  VectorImage3DType::SizeType vectorImageSize =   vectorImageRegion.GetSize();
+  unsigned long vectorImageNVoxel = vectorImageSize[0]*vectorImageSize[1]* vectorImageSize[2]*vectorImage->GetVectorLength();
 
+  ScalarImage4DType::RegionType scalarImageRegion = scalarImage->GetLargestPossibleRegion();
+  ScalarImage4DType::SizeType scalarImageSize =   scalarImageRegion.GetSize();
+  unsigned long scalarImageNVoxel = scalarImageSize[0]*scalarImageSize[1]* scalarImageSize[2]*scalarImageSize[3];
 
+  if (vectorImageNVoxel != scalarImageNVoxel){
+      std::cerr <<"inputVectorImage and inputScalarImage have different number of voxels:\n"
+                <<"vector Image: " << vectorImageNVoxel
+                <<"scalar Image: " << scalarImageNVoxel << std::endl;
+      return EXIT_FAILURE;
+  }
+  else{
+      std::cout<<"\nGood. inputVectorImage and inputScalarImage have same number of voxels.\n" << std::endl;
+  }
 
+  //compare voxel value
+
+  return EXIT_SUCCESS;
 }
 
 template <class PixelType>
@@ -304,7 +323,8 @@ int main( int argc, char * argv[] )
         rval = DoIt( inputVolume1, inputVolume2, static_cast<unsigned short>(0), CheckDWIData );
         break;
       case itk::ImageIOBase::SHORT:
-        rval = DoIt( inputVolume1, inputVolume2, static_cast<short>(0), CheckDWIData );
+        //rval = DoIt( inputVolume1, inputVolume2, static_cast<short>(0), CheckDWIData );
+        rval = compareVectorAndScaleImage(inputVolume1, inputVolume2, CheckDWIData);
         break;
       case itk::ImageIOBase::UINT:
         rval = DoIt( inputVolume1, inputVolume2, static_cast<unsigned int>(0), CheckDWIData );

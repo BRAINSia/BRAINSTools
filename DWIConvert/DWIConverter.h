@@ -74,7 +74,7 @@ public:
 
 
   typedef Vector3DType::SpacingType            SpacingType;
-  //typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
+
   typedef itk::Vector<double, 3>                        PointType;
 
   typedef std::map<std::string,std::string> CommonDicomFieldMapType;

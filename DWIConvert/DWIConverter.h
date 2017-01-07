@@ -73,7 +73,7 @@ public:
   typedef std::vector< std::string > FileNamesContainer;
 
   typedef Vector3DType::SpacingType            SpacingType;
-  //typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
+  //typedef itk::ImageFileReader<Volume3DType>   SingleFileReaderType;
 
   typedef itk::Vector<double, 3>                        PointType;
 

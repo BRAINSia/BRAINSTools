@@ -320,11 +320,11 @@ void PhilipsDWIConverter::ExtractDWIData()
     std::cout << "# of Volumes " << this->m_NVolume << " # of Diffusion Vectors "
               << this->m_DiffusionVectors.size() << " Removing "
               << trailingVolumes << " Isotropic volumes." << std::endl;
-    typedef itk::ExtractImageFilter<Volume3DUnwrappedType,Volume3DUnwrappedType> ExtractImageFilterType;
+    typedef itk::ExtractImageFilter<Volume3DType,Volume3DType> ExtractImageFilterType;
     ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
 
-    Volume3DUnwrappedType::RegionType desiredRegion = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
-    Volume3DUnwrappedType::SizeType desiredSize = desiredRegion.GetSize();
+    Volume3DType::RegionType desiredRegion = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
+    Volume3DType::SizeType desiredSize = desiredRegion.GetSize();
     desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
     desiredRegion.SetSize(desiredSize);
     extractImageFilter->SetExtractionRegion(desiredRegion);

@@ -46,6 +46,15 @@ typedef short                          PixelValueType;
  */
 typedef itk::Image<PixelValueType, 4>       Volume4DType;
 
+/* Volume3DType:
+     *
+     * The internal format is an unwrapped 3D scalar image that is x,y,slices
+   * where slices is all the slices in both 3D and 4d directions.
+   * If each volume is 3DSlices, and their are NumGradients, then
+   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
+   */
+typedef itk::Image<PixelValueType, 3>       Volume3DType;
+
 typedef itk::VectorImage<PixelValueType, 3> Vector3DType;
 typedef itk::Matrix<double, 3, 3>           RotationMatrixType;
 

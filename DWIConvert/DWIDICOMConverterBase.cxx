@@ -61,8 +61,8 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
   }
   else
   {
-    itk::ImageFileReader<Volume3DUnwrappedType>::Pointer reader =
-            itk::ImageFileReader<Volume3DUnwrappedType>::New();
+    itk::ImageFileReader<Volume3DType>::Pointer reader =
+            itk::ImageFileReader<Volume3DType>::New();
     reader->SetImageIO( dcmtkIO );
     reader->SetFileName( this->m_InputFileNames[0] );
     m_NSlice = this->m_InputFileNames.size();
@@ -83,7 +83,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     // origin
     double origin[3];
     m_Headers[0]->GetOrigin(origin);
-    Volume3DUnwrappedType::PointType imOrigin;
+    Volume3DType::PointType imOrigin;
     imOrigin[0] = origin[0];
     imOrigin[1] = origin[1];
     imOrigin[2] = origin[2];
@@ -165,7 +165,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
   }
 
   {
-    Volume3DUnwrappedType::DirectionType LPSDirCos;
+    Volume3DType::DirectionType LPSDirCos;
     LPSDirCos.SetIdentity();
 
     // check ImageOrientationPatient and figure out slice direction in
@@ -293,7 +293,7 @@ void DWIDICOMConverterBase::SetDirectionsFromSliceOrder()
   else
   {
     std::cout << "Slice order is SI" << std::endl;
-    Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_3DUnwrappedVolume->GetDirection();
+    Volume3DType::DirectionType LPSDirCos = this->m_3DUnwrappedVolume->GetDirection();
     LPSDirCos[0][2] *= -1;
     LPSDirCos[1][2] *= -1;
     LPSDirCos[2][2] *= -1;
@@ -313,19 +313,19 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
 {
   size_t NVolumes = this->m_NSlice / this->m_SlicesPerVolume;
 
-  Volume3DUnwrappedType::RegionType R = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
+  Volume3DType::RegionType R = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
 
   R.SetSize(2, 1);
-  std::vector<Volume3DUnwrappedType::PixelType> v(this->m_NSlice);
-  std::vector<Volume3DUnwrappedType::PixelType> w(this->m_NSlice);
+  std::vector<Volume3DType::PixelType> v(this->m_NSlice);
+  std::vector<Volume3DType::PixelType> w(this->m_NSlice);
 
-  itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_3DUnwrappedVolume, R );
+  itk::ImageRegionIteratorWithIndex<Volume3DType> I(this->m_3DUnwrappedVolume, R );
   // permute the slices by extracting the 1D array of voxels for
   // a particular {x,y} position, then re-ordering the voxels such
   // that all the voxels for a particular volume are adjacent
   for( I.GoToBegin(); !I.IsAtEnd(); ++I )
   {
-    Volume3DUnwrappedType::IndexType idx = I.GetIndex();
+    Volume3DType::IndexType idx = I.GetIndex();
     // extract all values in one "column"
     for( unsigned int k = 0; k < this->m_NSlice; ++k )
     {
@@ -376,7 +376,7 @@ void DWIDICOMConverterBase::DetermineSliceOrderIS()
   image1Origin[0] -= image0Origin[0];
   image1Origin[1] -= image0Origin[1];
   image1Origin[2] -= image0Origin[2];
-  const RotationMatrixType & NRRDSpaceDirection = GetNRRDSpaceDirection<Volume3DUnwrappedType>(this->m_3DUnwrappedVolume);
+  const RotationMatrixType & NRRDSpaceDirection = GetNRRDSpaceDirection<Volume3DType>(this->m_3DUnwrappedVolume);
   double x1 = image1Origin[0] * (NRRDSpaceDirection[0][2])
               + image1Origin[1] * (NRRDSpaceDirection[1][2])
               + image1Origin[2] * (NRRDSpaceDirection[2][2]);
@@ -387,14 +387,14 @@ void DWIDICOMConverterBase::DetermineSliceOrderIS()
 }
 
 
-Volume4DType::Pointer DWIDICOMConverterBase::ThreeDUnwrappedToFourDImage(Volume3DUnwrappedType::Pointer img) const
+Volume4DType::Pointer DWIDICOMConverterBase::ThreeDUnwrappedToFourDImage(Volume3DType::Pointer img) const
 {
   const int nVolumes = this->GetNVolume();
 
-  Volume3DUnwrappedType::SizeType size3D(img->GetLargestPossibleRegion().GetSize());
-  Volume3DUnwrappedType::DirectionType direction3D(img->GetDirection());
-  Volume3DUnwrappedType::SpacingType spacing3D(img->GetSpacing());
-  Volume3DUnwrappedType::PointType origin3D(img->GetOrigin());
+  Volume3DType::SizeType size3D(img->GetLargestPossibleRegion().GetSize());
+  Volume3DType::DirectionType direction3D(img->GetDirection());
+  Volume3DType::SpacingType spacing3D(img->GetSpacing());
+  Volume3DType::PointType origin3D(img->GetOrigin());
 
   Volume4DType::RegionType region4D;
   {
@@ -456,22 +456,22 @@ Volume4DType::Pointer DWIDICOMConverterBase::ThreeDUnwrappedToFourDImage(Volume3
 }
 
 
-DWIDICOMConverterBase::Volume3DUnwrappedType::Pointer DWIDICOMConverterBase::FourDToThreeDUnwrappedImage(Volume4DType::Pointer img4D) const
+Volume3DType::Pointer DWIDICOMConverterBase::FourDToThreeDUnwrappedImage(Volume4DType::Pointer img4D) const
 {
   Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize() );
   Volume4DType::DirectionType direction4D(img4D->GetDirection() );
   Volume4DType::SpacingType   spacing4D(img4D->GetSpacing() );
   Volume4DType::PointType     origin4D(img4D->GetOrigin() );
 
-  Volume3DUnwrappedType::RegionType region3D;
+  Volume3DType::RegionType region3D;
   {
-    Volume3DUnwrappedType::SizeType size3D;
+    Volume3DType::SizeType size3D;
     size3D[0] = size4D[0];
     size3D[1] = size4D[1];
     const int nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
     size3D[2] = size4D[2] * nVolumes;
 
-    Volume3DUnwrappedType::IndexType index3D;
+    Volume3DType::IndexType index3D;
     index3D.Fill(0);
     region3D.SetIndex(index3D);
     region3D.SetSize(size3D);
@@ -485,11 +485,11 @@ DWIDICOMConverterBase::Volume3DUnwrappedType::Pointer DWIDICOMConverterBase::Fou
               << size3D[2] % nVolumes << std::endl);
     }
   }
-  Volume3DUnwrappedType::DirectionType direction3D;
+  Volume3DType::DirectionType direction3D;
   direction3D.SetIdentity();
-  Volume3DUnwrappedType::SpacingType   spacing3D;
+  Volume3DType::SpacingType   spacing3D;
   spacing3D.Fill(1.0);
-  Volume3DUnwrappedType::PointType     origin3D;
+  Volume3DType::PointType     origin3D;
   origin3D.Fill(0.0);
   for( unsigned i = 0; i < 3; ++i )
   {
@@ -501,7 +501,7 @@ DWIDICOMConverterBase::Volume3DUnwrappedType::Pointer DWIDICOMConverterBase::Fou
     origin3D[i] = origin4D[i];
   }
 
-  Volume3DUnwrappedType::Pointer img = Volume3DUnwrappedType::New();
+  Volume3DType::Pointer img = Volume3DType::New();
   img->SetRegions(region3D);
   img->SetDirection(direction3D);
   img->SetSpacing(spacing3D);

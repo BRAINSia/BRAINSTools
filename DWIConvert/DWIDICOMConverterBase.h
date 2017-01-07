@@ -18,14 +18,15 @@
 class DWIDICOMConverterBase : public DWIConverter {
  public:
 
-    /* The internal format is an unwrapped 3D scalar image that is x,y,slices
+    /* Volume3DType:
+     *
+     * The internal format is an unwrapped 3D scalar image that is x,y,slices
    * where slices is all the slices in both 3D and 4d directions.
    * If each volume is 3DSlices, and their are NumGradients, then
    * the last direction of the unwrapped direction is (3DSlices*NumGradients).
    */
-  typedef itk::Image<PixelValueType, 3>  Volume3DUnwrappedType;
 
-  typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
+  typedef itk::ImageSeriesReader<Volume3DType> ReaderType;
   //typedef ReaderType::FileNamesContainer                FileNamesContainer;
 
   typedef itk::DCMTKSeriesFileNames           InputNamesGeneratorType;
@@ -117,11 +118,11 @@ protected:
      */
     /** the image read from the DICOM dataset */
 
-    Volume3DUnwrappedType::Pointer m_3DUnwrappedVolume;
+    Volume3DType::Pointer m_3DUnwrappedVolume;
 
-    Volume4DType::Pointer ThreeDUnwrappedToFourDImage(Volume3DUnwrappedType::Pointer img) const;
+    Volume4DType::Pointer ThreeDUnwrappedToFourDImage(Volume3DType::Pointer img) const;
 
-    Volume3DUnwrappedType::Pointer FourDToThreeDUnwrappedImage(Volume4DType::Pointer img4D) const;
+    Volume3DType::Pointer FourDToThreeDUnwrappedImage(Volume4DType::Pointer img4D) const;
 
 
 

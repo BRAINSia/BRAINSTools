@@ -30,8 +30,7 @@
 #include "DWIMetaDataDictionaryValidator.h"
 
 typedef short                               PixelValueType;
-typedef itk::Image<PixelValueType, 4>       Volume4DType;
-typedef itk::Image<PixelValueType, 3>       Volume3DType;
+
 
 
 int

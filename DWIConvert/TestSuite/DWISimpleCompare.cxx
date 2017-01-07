@@ -81,7 +81,8 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
   return rval;
 }
 
-int compareVectorAndScaleImage( const std::string & inputVectorImage, const std::string & inputScalarImage, bool CheckDWIData ){
+int compareVectorAndScaleImage( const std::string & inputVectorImage, const std::string & inputScalarImage, bool CheckDWIData )
+{
   typedef itk::ImageFileReader<VectorImage3DType> VectorImage3DReaderType;
   VectorImage3DReaderType::Pointer vectorImageReader = VectorImage3DReaderType::New();
   vectorImageReader->SetFileName(inputVectorImage.c_str());
@@ -114,9 +115,47 @@ int compareVectorAndScaleImage( const std::string & inputVectorImage, const std:
   }
 
   //compare voxel value
+  VectorImage3DType::IndexType vectorImageIndex;
+  ScalarImage4DType::IndexType scalarImageIndex;
+  int vectorLength = (int)vectorImage->GetVectorLength();
+  int nUnmatchVoxels = 0;
+  for(int i =0; i < (int)vectorImageSize[0]; ++i)
+    for (int j =0; j < (int)vectorImageSize[1]; ++j)
+      for (int k =0; k < (int)vectorImageSize[2]; ++k)
+      {
+        vectorImageIndex[0] = i;
+        vectorImageIndex[1] = j;
+        vectorImageIndex[2] = k;
+        VectorImage3DType::PixelType vectorImageVectorPixel = vectorImage->GetPixel(vectorImageIndex);
+        for (int l=0; l < vectorLength; ++l) //index inside a vector
+        {
+           PixelValueType vectorImageVoxel = vectorImageVectorPixel[i];
+
+           scalarImageIndex[0] = i;
+           scalarImageIndex[1] = j;
+           scalarImageIndex[2] = k;
+           scalarImageIndex[3] = l;
+           PixelValueType scalarImageVoxel = scalarImage->GetPixel(scalarImageIndex);
+
+           if (!CloseEnough(scalarImageVoxel, vectorImageVoxel))
+           {
+             ++nUnmatchVoxels;
+             std::cerr << "Images don't match at scalar image at coordinate: " << scalarImageIndex << std::endl
+                       << "vector image voxel: "<< vectorImageVoxel << std::endl
+                       << "scalar image voxel: "<< scalarImageVoxel << std::endl;
+             if( nUnmatchVoxels >= 5 )
+             {
+               return EXIT_FAILURE;
+             }
+           }
+
+        }
+      }
+  std::cout<<"\n***********Vector image and scalar image have same voxel value.***********\n"<< std::endl;
 
   return EXIT_SUCCESS;
 }
+
 
 template <class PixelType>
 int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, PixelType, bool CheckDWIData )

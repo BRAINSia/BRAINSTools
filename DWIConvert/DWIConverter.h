@@ -167,7 +167,7 @@ public:
                              const std::string outputBValues, const std::string outputBVectors, ScalarImage4DType::Pointer img4D) const;
 
   void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-                                                const std::string outputBValues, const std::string outputBVectors) const;
+                                                const std::string outputBValues, const std::string outputBVectors, VectorImage3DType::Pointer vectorImage3D) const;
 
 
   /**
@@ -200,7 +200,7 @@ protected:
 
 
   //the default data model for all of DWIConvert
-  VectorImage3DType::Pointer   m_Vector3DVolume;
+  VectorImage3DType::Pointer   m_vectorImage3D;
 
   /** measurement from for gradients if different than patient
    *  reference frame.

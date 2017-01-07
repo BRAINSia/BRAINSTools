@@ -20,11 +20,11 @@ void PhilipsDWIConverter::LoadDicomDirectory()
   if(!this->m_MultiSliceVolume)
   {
     this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
-    this->m_MeasurementFrame = this->m_3DUnwrappedVolume->GetDirection();
+    this->m_MeasurementFrame = this->m_scalarImage3DUnwrapped->GetDirection();
     this->DetermineSliceOrderIS();
     this->SetDirectionsFromSliceOrder();
   }
-  m_Vector3DVolume = Convert4DVolumeTo3DVectorVolume( ThreeDUnwrappedToFourDImage(m_3DUnwrappedVolume));
+  m_vectorImage3D = convertScalarImage4DToVectorImage3D( ThreeDUnwrappedToFourDImage(m_scalarImage3DUnwrapped));
   // single-frame file handled specially
 }
 
@@ -288,13 +288,13 @@ void PhilipsDWIConverter::ExtractDWIData()
     this->m_SlicesPerVolume = sliceLocations.size();
 
 
-    std::cout << "LPS Matrix: " << std::endl << this->m_3DUnwrappedVolume->GetDirection() << std::endl;
-    std::cout << "Volume Origin: " << std::endl << this->m_3DUnwrappedVolume->GetOrigin() << std::endl;
+    std::cout << "LPS Matrix: " << std::endl << this->m_scalarImage3DUnwrapped->GetDirection() << std::endl;
+    std::cout << "Volume Origin: " << std::endl << this->m_scalarImage3DUnwrapped->GetOrigin() << std::endl;
     std::cout << "Number of slices per volume: " << this->m_SlicesPerVolume << std::endl;
     std::cout << "Slice matrix size: " << this->GetRows() << " X " << this->GetCols() << std::endl;
-    std::cout << "Image resolution: " << this->m_3DUnwrappedVolume->GetSpacing() << std::endl;
+    std::cout << "Image resolution: " << this->m_scalarImage3DUnwrapped->GetSpacing() << std::endl;
 
-    this->m_MeasurementFrame = this->m_3DUnwrappedVolume->GetDirection();
+    this->m_MeasurementFrame = this->m_scalarImage3DUnwrapped->GetDirection();
 
     this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
     for( unsigned int k2 = 0; k2 < this->m_BValues.size(); ++k2 )
@@ -323,14 +323,14 @@ void PhilipsDWIConverter::ExtractDWIData()
     typedef itk::ExtractImageFilter<ScalarImage3DType,ScalarImage3DType> ExtractImageFilterType;
     ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
 
-    ScalarImage3DType::RegionType desiredRegion = this->m_3DUnwrappedVolume->GetLargestPossibleRegion();
+    ScalarImage3DType::RegionType desiredRegion = this->m_scalarImage3DUnwrapped->GetLargestPossibleRegion();
     ScalarImage3DType::SizeType desiredSize = desiredRegion.GetSize();
     desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
     desiredRegion.SetSize(desiredSize);
     extractImageFilter->SetExtractionRegion(desiredRegion);
-    extractImageFilter->SetInput(this->m_3DUnwrappedVolume);
+    extractImageFilter->SetInput(this->m_scalarImage3DUnwrapped);
     extractImageFilter->Update();
-    this->m_3DUnwrappedVolume = extractImageFilter->GetOutput();
+    this->m_scalarImage3DUnwrapped = extractImageFilter->GetOutput();
     this->m_NVolume -= trailingVolumes;
   }
 }

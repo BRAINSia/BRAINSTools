@@ -105,8 +105,8 @@ int compareVectorAndScaleImage( const std::string & inputVectorImage, const std:
   unsigned long scalarImageNVoxel = scalarImageSize[0]*scalarImageSize[1]* scalarImageSize[2]*scalarImageSize[3];
 
   if (vectorImageNVoxel != scalarImageNVoxel){
-      std::cerr <<"inputVectorImage and inputScalarImage have different number of voxels:\n"
-                <<"vector Image: " << vectorImageNVoxel
+      std::cerr <<"inputVectorImage and inputScalarImage have different number of voxels:\n"<< std::endl
+                <<"vector Image: " << vectorImageNVoxel << std::endl
                 <<"scalar Image: " << scalarImageNVoxel << std::endl;
       return EXIT_FAILURE;
   }

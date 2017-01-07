@@ -81,6 +81,24 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
   return rval;
 }
 
+int compareVectorAndScaleImage( const std::string & inputVectorImage, const std::string & inputScalarImage, bool CheckDWIData ){
+  typedef itk::ImageFileReader<VectorImage3DType> VectorImage3DReaderType;
+  typename VectorImage3DReaderType::Pointer vectorImageReader = VectorImage3DReaderType::New();
+  vectorImageReader->SetFileName(inputVectorImage.c_str());
+  vectorImageReader->Update();
+  typename VectorImage3DType::Pointer vectorImage = vectorImageReader->GetOutput();
+
+  typedef itk::ImageFileReader<ScalarImage4DType> ScalarImage4DReaderType;
+  typename ScalarImage4DReaderType::Pointer scalarImageReader = ScalarImage4DReaderType::New();
+  scalarImageReader->SetFileName(inputScalarImage.c_str());
+  scalarImageReader->Update();
+  typename ScalarImage4DType::Pointer scalarImage = scalarImageReader->GetOutput();
+
+
+
+
+}
+
 template <class PixelType>
 int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, PixelType, bool CheckDWIData )
 {

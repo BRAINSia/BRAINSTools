@@ -248,19 +248,19 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
   return EXIT_SUCCESS;
 }
 
-static Volume4DType::Pointer CreateEmpty4DVolume(Vector3DType::Pointer & inputVol)
+static ScalarImage4DType::Pointer CreateEmpty4DVolume(VectorImage3DType::Pointer & inputVol)
 {
-  Vector3DType::SizeType inputSize =
+  VectorImage3DType::SizeType inputSize =
           inputVol->GetLargestPossibleRegion().GetSize();
-  Vector3DType::SpacingType inputSpacing = inputVol->GetSpacing();
-  Vector3DType::PointType inputOrigin = inputVol->GetOrigin();
-  Vector3DType::DirectionType inputDirection = inputVol->GetDirection();
+  VectorImage3DType::SpacingType inputSpacing = inputVol->GetSpacing();
+  VectorImage3DType::PointType inputOrigin = inputVol->GetOrigin();
+  VectorImage3DType::DirectionType inputDirection = inputVol->GetDirection();
 
-  Volume4DType::Pointer FourDVolume = Volume4DType::New();
-  Volume4DType::SizeType volSize;
-  Volume4DType::SpacingType volSpacing;
-  Volume4DType::PointType volOrigin;
-  Volume4DType::DirectionType volDirection;
+  ScalarImage4DType::Pointer FourDVolume = ScalarImage4DType::New();
+  ScalarImage4DType::SizeType volSize;
+  ScalarImage4DType::SpacingType volSpacing;
+  ScalarImage4DType::PointType volOrigin;
+  ScalarImage4DType::DirectionType volDirection;
 
   for( unsigned int i = 0; i < 3; ++i )
   {
@@ -288,24 +288,24 @@ static Volume4DType::Pointer CreateEmpty4DVolume(Vector3DType::Pointer & inputVo
   return FourDVolume;
 }
 
-Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(Vector3DType::Pointer inputVol)
+ScalarImage4DType::Pointer Convert3DVectorVolumeTo4DVolume(VectorImage3DType::Pointer inputVol)
 {
-  Volume4DType::Pointer FourDVolume = CreateEmpty4DVolume(inputVol);
-  const Vector3DType::SizeType inputSize( inputVol->GetLargestPossibleRegion().GetSize() );
-  const Volume4DType::IndexType::IndexValueType vecLength = inputVol->GetNumberOfComponentsPerPixel();
+  ScalarImage4DType::Pointer FourDVolume = CreateEmpty4DVolume(inputVol);
+  const VectorImage3DType::SizeType inputSize( inputVol->GetLargestPossibleRegion().GetSize() );
+  const ScalarImage4DType::IndexType::IndexValueType vecLength = inputVol->GetNumberOfComponentsPerPixel();
 
-  Vector3DType::IndexType vecIndex;
-  Volume4DType::IndexType volIndex;
+  VectorImage3DType::IndexType vecIndex;
+  ScalarImage4DType::IndexType volIndex;
 // convert from vector image to 4D volume image
   for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
   {
-    for( volIndex[2] = 0; volIndex[2] < Volume4DType::IndexType::IndexValueType( inputSize[2] ); ++volIndex[2] )
+    for( volIndex[2] = 0; volIndex[2] < ScalarImage4DType::IndexType::IndexValueType( inputSize[2] ); ++volIndex[2] )
     {
       vecIndex[2] = volIndex[2];
-      for( volIndex[1] = 0; volIndex[1] < Volume4DType::IndexType::IndexValueType( inputSize[1] ); ++volIndex[1] )
+      for( volIndex[1] = 0; volIndex[1] < ScalarImage4DType::IndexType::IndexValueType( inputSize[1] ); ++volIndex[1] )
       {
         vecIndex[1] = volIndex[1];
-        for( volIndex[0] = 0; volIndex[0] < Volume4DType::IndexType::IndexValueType( inputSize[0] ); ++volIndex[0] )
+        for( volIndex[0] = 0; volIndex[0] < ScalarImage4DType::IndexType::IndexValueType( inputSize[0] ); ++volIndex[0] )
         {
           vecIndex[0] = volIndex[0];
           FourDVolume->SetPixel(volIndex, inputVol->GetPixel(vecIndex)[volIndex[3]]);
@@ -317,28 +317,28 @@ Volume4DType::Pointer Convert3DVectorVolumeTo4DVolume(Vector3DType::Pointer inpu
   return FourDVolume;
 }
 
-Vector3DType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inputVol)
+VectorImage3DType::Pointer Convert4DVolumeTo3DVectorVolume(ScalarImage4DType::Pointer inputVol)
 {
-  typedef itk::Image<unsigned short,3> Volume3DType; //Used for a single 3D volume component
+  typedef itk::Image<unsigned short,3> ScalarImage3DType; //Used for a single 3D volume component
   // convert from image series to vector voxels
-  //Volume4DType::SpacingType inputSpacing = inputVol->GetSpacing();
-  Volume4DType::SizeType inputSize = inputVol->GetLargestPossibleRegion().GetSize();
-  Volume4DType::IndexType inputIndex = inputVol->GetLargestPossibleRegion().GetIndex();
+  //ScalarImage4DType::SpacingType inputSpacing = inputVol->GetSpacing();
+  ScalarImage4DType::SizeType inputSize = inputVol->GetLargestPossibleRegion().GetSize();
+  ScalarImage4DType::IndexType inputIndex = inputVol->GetLargestPossibleRegion().GetIndex();
 ////////
-// "inputVol" is read as a 4D image. Here we convert that to a Vector3DType:
+// "inputVol" is read as a 4D image. Here we convert that to a VectorImage3DType:
 //
-  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
+  typedef itk::ExtractImageFilter< ScalarImage4DType, ScalarImage3DType > ExtractFilterType;
 
-  typedef itk::ComposeImageFilter<Volume3DType, Vector3DType> ComposeImageFilterType;
+  typedef itk::ComposeImageFilter<ScalarImage3DType, VectorImage3DType> ComposeImageFilterType;
   ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
 
   for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
   {
-    Volume4DType::SizeType extractSize = inputSize;
+    ScalarImage4DType::SizeType extractSize = inputSize;
     extractSize[3] = 0;
-    Volume4DType::IndexType extractIndex = inputIndex;
+    ScalarImage4DType::IndexType extractIndex = inputIndex;
     extractIndex[3] = componentNumber;
-    Volume4DType::RegionType extractRegion(extractIndex, extractSize);
+    ScalarImage4DType::RegionType extractRegion(extractIndex, extractSize);
 
     ExtractFilterType::Pointer extracter = ExtractFilterType::New();
     extracter->SetExtractionRegion( extractRegion );
@@ -349,7 +349,7 @@ Vector3DType::Pointer Convert4DVolumeTo3DVectorVolume(Volume4DType::Pointer inpu
     composer->SetInput(componentNumber,extracter->GetOutput());
   }
   composer->Update();
-  Vector3DType::Pointer nrrdVolume = composer->GetOutput();
+  VectorImage3DType::Pointer nrrdVolume = composer->GetOutput();
   nrrdVolume->SetMetaDataDictionary( inputVol->GetMetaDataDictionary());
   return nrrdVolume;
 }

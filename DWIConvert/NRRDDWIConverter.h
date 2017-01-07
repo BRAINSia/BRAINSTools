@@ -40,7 +40,7 @@ public:
 
 
 private:
-  Volume4DType::Pointer CreateVolume(Vector3DType::Pointer & inputVol);
+  ScalarImage4DType::Pointer CreateVolume(VectorImage3DType::Pointer & inputVol);
   std::string m_inputBValues;
   std::string m_inputBVectors;
 

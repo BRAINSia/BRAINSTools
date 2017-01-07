@@ -40,11 +40,11 @@ int main( int argc, char * argv[] )
   const std::string outputPrefix( argv[2] );
 
   typedef float                               PixelValueType;
-  typedef itk::Image<PixelValueType, 4>       Volume4DType;
-  typedef itk::Image<PixelValueType, 3>       Volume3DType;
+  typedef itk::Image<PixelValueType, 4>       ScalarImage4DType;
+  typedef itk::Image<PixelValueType, 3>       ScalarImage3DType;
 
   std::cout << "- Read image: " << input4Dimage << std::endl;
-  typedef itk::ImageFileReader<Volume4DType> Image4DReaderType;
+  typedef itk::ImageFileReader<ScalarImage4DType> Image4DReaderType;
   Image4DReaderType::Pointer image4DReader = Image4DReaderType::New();
   image4DReader->SetFileName( input4Dimage );
   try
@@ -56,27 +56,27 @@ int main( int argc, char * argv[] )
     std::cerr << "Exception thrown while reading the image" << std::endl;
     std::cerr << excp << std::endl;
     }
-  Volume4DType::Pointer inputVol = image4DReader->GetOutput();
+  ScalarImage4DType::Pointer inputVol = image4DReader->GetOutput();
 
   // "inputVol" is read as a 4D image. Here we extract each 3D component and write that to disk
   //
-  Volume4DType::SizeType inputSize =
+  ScalarImage4DType::SizeType inputSize =
     inputVol->GetLargestPossibleRegion().GetSize();
 
-  Volume4DType::IndexType inputIndex =
+  ScalarImage4DType::IndexType inputIndex =
     inputVol->GetLargestPossibleRegion().GetIndex();
 
   const unsigned int volumeCount = inputSize[3];
 
-  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
+  typedef itk::ExtractImageFilter< ScalarImage4DType, ScalarImage3DType > ExtractFilterType;
 
   for( size_t componentNumber = 0; componentNumber < volumeCount; ++componentNumber )
     {
-    Volume4DType::SizeType extractSize = inputSize;
+    ScalarImage4DType::SizeType extractSize = inputSize;
     extractSize[3] = 0;
-    Volume4DType::IndexType extractIndex = inputIndex;
+    ScalarImage4DType::IndexType extractIndex = inputIndex;
     extractIndex[3] = componentNumber;
-    Volume4DType::RegionType extractRegion(extractIndex, extractSize);
+    ScalarImage4DType::RegionType extractRegion(extractIndex, extractSize);
 
     ExtractFilterType::Pointer extracter = ExtractFilterType::New();
     extracter->SetExtractionRegion( extractRegion );
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] )
 
     std::cout << "- Write image: " << fn << std::endl;
 
-    typedef itk::ImageFileWriter<Volume3DType> Image3DWriterType;
+    typedef itk::ImageFileWriter<ScalarImage3DType> Image3DWriterType;
     Image3DWriterType::Pointer image3DWriter = Image3DWriterType::New();
     image3DWriter->SetFileName( fn );
     image3DWriter->SetInput( extracter->GetOutput() );

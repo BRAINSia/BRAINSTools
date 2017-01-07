@@ -67,7 +67,7 @@ void DWIConverter::ConvertToMutipleBValuesUnitScaledBVectors()
   }
 }
 
-Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
+ScalarImage4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
 {
   static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1,-1,1,1};
   static const double DicomDesiredDirectionFlipsWRTLPS[4] = {1,1,1,1};
@@ -75,17 +75,17 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
   this->ConvertToMutipleBValuesUnitScaledBVectors();
 
 
-  Volume4DType::Pointer image4D = Convert3DVectorVolumeTo4DVolume(this->GetDiffusionVolume());
-  Volume4DType::DirectionType direction=image4D->GetDirection();
+  ScalarImage4DType::Pointer image4D = Convert3DVectorVolumeTo4DVolume(this->GetDiffusionVolume());
+  ScalarImage4DType::DirectionType direction=image4D->GetDirection();
   direction.GetVnlMatrix().get_row(0).magnitude();
   //LPS to RAI as FSL desires images to be formatted for viewing purposes.
   // This conversion makes FSLView display the images in
   // a way that is most easily interpretable.
-  typedef itk::FlipImageFilter<Volume4DType> FlipperType;
+  typedef itk::FlipImageFilter<ScalarImage4DType> FlipperType;
   FlipperType::Pointer myFlipper = FlipperType::New();
   myFlipper->SetInput( image4D ) ;
   FlipperType::FlipAxesArrayType arrayAxisFlip;
-  for(size_t i=0; i< Volume4DType::ImageDimension; ++i)
+  for(size_t i=0; i< ScalarImage4DType::ImageDimension; ++i)
   {
     if( toFSL )
     {
@@ -116,7 +116,7 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
   myFlipper->FlipAboutOriginOff();  //Flip the image and direction cosignes
   // this is similar to a transform of [1 0 0; 0 -1 0; 0 0 -1]
   myFlipper->Update();
-  Volume4DType::Pointer temp = myFlipper->GetOutput(); //this line changed the value of origin
+  ScalarImage4DType::Pointer temp = myFlipper->GetOutput(); //this line changed the value of origin
   temp->SetMetaDataDictionary( image4D->GetMetaDataDictionary());
   return temp;
 }
@@ -125,19 +125,19 @@ const std::vector<double>& DWIConverter::GetBValues() const { return this->m_BVa
 void  DWIConverter::SetBValues( const std::vector<double> & inBValues ) { this->m_BValues = inBValues; }
 double DWIConverter::GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
 
-Vector3DType::Pointer DWIConverter::GetDiffusionVolume() const { return this->m_Vector3DVolume; }
+VectorImage3DType::Pointer DWIConverter::GetDiffusionVolume() const { return this->m_Vector3DVolume; }
 
 DWIConverter::SpacingType DWIConverter::GetSpacing() const
 {
   return this->m_Vector3DVolume->GetSpacing();
 }
 
-Vector3DType::PointType DWIConverter::GetOrigin() const
+VectorImage3DType::PointType DWIConverter::GetOrigin() const
 {
   return this->m_Vector3DVolume->GetOrigin();
 }
 
-void DWIConverter::SetOrigin(Vector3DType::PointType origin)
+void DWIConverter::SetOrigin(VectorImage3DType::PointType origin)
 {
   return this->m_Vector3DVolume->SetOrigin(origin);
 }
@@ -323,7 +323,7 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "dimension: 4" << std::endl;
   header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
-  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<Vector3DType>(this->m_Vector3DVolume);
+  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<VectorImage3DType>(this->m_Vector3DVolume);
   header << "sizes: " << this->GetCols()
          << " " << this->GetRows()
          << " " << this->GetSlices()
@@ -352,7 +352,7 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "encoding: raw" << std::endl;
   header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
 
-  const Vector3DType::PointType ImageOrigin = this->GetOrigin();
+  const VectorImage3DType::PointType ImageOrigin = this->GetOrigin();
   header << "space origin: "
          << "(" << DoubleConvert(ImageOrigin[0])
          << "," << DoubleConvert(ImageOrigin[1])
@@ -416,8 +416,8 @@ void DWIConverter::ManualWriteNRRDFile(
   else {
     // if we're writing out NRRD, and the split header/data NRRD
     // format is used, write out the image as a raw volume.
-    itk::ImageFileWriter<Vector3DType>::Pointer
-            rawWriter = itk::ImageFileWriter<Vector3DType>::New();
+    itk::ImageFileWriter<VectorImage3DType>::Pointer
+            rawWriter = itk::ImageFileWriter<VectorImage3DType>::New();
     itk::RawImageIO<PixelValueType,3>::Pointer rawIO
             = itk::RawImageIO<PixelValueType,3>::New();
     rawWriter->SetImageIO(rawIO);
@@ -440,7 +440,7 @@ void DWIConverter::ManualWriteNRRDFile(
 
 
 void DWIConverter::WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-                                            const std::string outputBValues, const std::string outputBVectors, Volume4DType::Pointer img4D) const
+                                            const std::string outputBValues, const std::string outputBVectors, ScalarImage4DType::Pointer img4D) const
 {
   const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] *
                        this->m_MeasurementFrame[2][2];
@@ -456,7 +456,7 @@ void DWIConverter::WriteFSLFormattedFileSet(const std::string& outputVolumeHeade
     itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
   }
-  itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
+  itk::ImageFileWriter<ScalarImage4DType>::Pointer imgWriter = itk::ImageFileWriter<ScalarImage4DType>::New();
   imgWriter->SetInput( img4D );
   imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
   try
@@ -522,7 +522,7 @@ void DWIConverter::WriteFSLFormattedFileSet(const std::string& outputVolumeHeade
     itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
   }
-  itk::ImageFileWriter<Vector3DType>::Pointer imgWriter = itk::ImageFileWriter<Vector3DType>::New();
+  itk::ImageFileWriter<VectorImage3DType>::Pointer imgWriter = itk::ImageFileWriter<VectorImage3DType>::New();
   imgWriter->SetInput( m_Vector3DVolume );
   imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
   try

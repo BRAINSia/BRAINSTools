@@ -117,12 +117,12 @@ public:
  void SetBValues( const std::vector<double> & inBValues );
  double GetMaxBValue() const;
 
- VectorImage3DType::Pointer GetDiffusionVolume() const ;
+    ScalarImage3DType::Pointer GetDiffusionVolume() const ;
 
  SpacingType GetSpacing() const;
 
- VectorImage3DType::PointType GetOrigin() const;
- void SetOrigin(VectorImage3DType::PointType origin);
+    ScalarImage3DType::PointType GetOrigin() const;
+ void SetOrigin(ScalarImage3DType::PointType origin);
 
  RotationMatrixType   GetLPSDirCos() const;
 
@@ -184,6 +184,10 @@ protected:
   double ComputeMaxBvalue(const std::vector<double> &bValues) const;
   size_t has_valid_nifti_extension( std::string outputVolumeHeaderName ) const;
 
+  ScalarImage4DType::Pointer ThreeDUnwrappedToFourDImage(ScalarImage3DType::Pointer img) const;
+
+  ScalarImage3DType::Pointer FourDToThreeDUnwrappedImage(ScalarImage4DType::Pointer img4D) const;
+
   /** add vendor-specific flags; */
   virtual void AddFlagsToDictionary() = 0;
 
@@ -200,7 +204,27 @@ protected:
 
 
   //the default data model for all of DWIConvert
-  VectorImage3DType::Pointer   m_vectorImage3D;
+  //VectorImage3DType::Pointer   m_vectorImage3D;
+
+  /* ScalarImage3DType:
+   *
+   * The internal format is an unwrapped 3D scalar image that is x,y,slices
+   * where slices is all the slices in both 3D and 4d directions.
+   * If each volume is 3DSlices, and their are NumGradients, then
+   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
+   */
+  ScalarImage3DType::Pointer m_scalarImage3D; //Unwrapped
+
+    // this is always "left-posterior-superior" in all cases that we currently support
+    const std::string           m_NRRDSpaceDefinition;
+    /** dimensions */
+    unsigned int        m_SlicesPerVolume;
+    /** number of total slices */
+    unsigned int        m_NSlice;
+    /** number of gradient volumes */
+    unsigned int        m_NVolume;
+    unsigned int GetSlicesPerVolume() const;
+    unsigned int GetNVolume() const;
 
   /** measurement from for gradients if different than patient
    *  reference frame.
@@ -213,8 +237,7 @@ protected:
   // A map of common dicom fields to be propagated to image
   std::map<std::string,std::string> m_CommonDicomFieldsMap;
 
-// this is always "left-posterior-superior" in all cases that we currently support
-    const std::string           m_NRRDSpaceDefinition;
+
 
 };
 

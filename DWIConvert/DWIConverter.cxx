@@ -8,7 +8,10 @@ DWIConverter::DWIConverter( const FileNamesContainer &inputFileNames, const bool
         :
         m_InputFileNames(inputFileNames),
         m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
-        m_NRRDSpaceDefinition("left-posterior-superior")
+        m_NRRDSpaceDefinition("left-posterior-superior"),
+        m_SlicesPerVolume(0),
+        m_NSlice(0),
+        m_NVolume(0)
 
 {
   this->m_MeasurementFrame.SetIdentity();
@@ -75,7 +78,7 @@ ScalarImage4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toF
   this->ConvertToMutipleBValuesUnitScaledBVectors();
 
 
-  ScalarImage4DType::Pointer image4D = convertVectorImage3DToScalarImage4D(this->GetDiffusionVolume());
+  ScalarImage4DType::Pointer image4D = ThreeDUnwrappedToFourDImage(this->GetDiffusionVolume());
   ScalarImage4DType::DirectionType direction=image4D->GetDirection();
   direction.GetVnlMatrix().get_row(0).magnitude();
   //LPS to RAI as FSL desires images to be formatted for viewing purposes.
@@ -118,6 +121,7 @@ ScalarImage4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toF
   myFlipper->Update();
   ScalarImage4DType::Pointer temp = myFlipper->GetOutput(); //this line changed the value of origin
   temp->SetMetaDataDictionary( image4D->GetMetaDataDictionary());
+  this->m_scalarImage3D = FourDToThreeDUnwrappedImage(temp);
   return temp;
 }
 
@@ -125,36 +129,36 @@ const std::vector<double>& DWIConverter::GetBValues() const { return this->m_BVa
 void  DWIConverter::SetBValues( const std::vector<double> & inBValues ) { this->m_BValues = inBValues; }
 double DWIConverter::GetMaxBValue() const { return ComputeMaxBvalue( this->m_BValues); }
 
-VectorImage3DType::Pointer DWIConverter::GetDiffusionVolume() const { return this->m_vectorImage3D; }
+ScalarImage3DType::Pointer DWIConverter::GetDiffusionVolume() const { return this->m_scalarImage3D; }
 
 DWIConverter::SpacingType DWIConverter::GetSpacing() const
 {
-  return this->m_vectorImage3D->GetSpacing();
+  return this->m_scalarImage3D->GetSpacing();
 }
 
-VectorImage3DType::PointType DWIConverter::GetOrigin() const
+ScalarImage3DType::PointType DWIConverter::GetOrigin() const
 {
-  return this->m_vectorImage3D->GetOrigin();
+  return this->m_scalarImage3D->GetOrigin();
 }
 
-void DWIConverter::SetOrigin(VectorImage3DType::PointType origin)
+void DWIConverter::SetOrigin(ScalarImage3DType::PointType origin)
 {
-  return this->m_vectorImage3D->SetOrigin(origin);
+  return this->m_scalarImage3D->SetOrigin(origin);
 }
 
 
-RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_vectorImage3D->GetDirection(); }
+RotationMatrixType   DWIConverter::GetLPSDirCos() const { return this->m_scalarImage3D->GetDirection(); }
 
 RotationMatrixType DWIConverter::GetMeasurementFrame() const { return this->m_MeasurementFrame; }
 
 std::string DWIConverter::GetNRRDSpaceDefinition() const
 { return m_NRRDSpaceDefinition; }
 
-unsigned short DWIConverter::GetRows() const { return this->m_vectorImage3D->GetLargestPossibleRegion().GetSize()[0]; }
+unsigned short DWIConverter::GetRows() const { return this->m_scalarImage3D->GetLargestPossibleRegion().GetSize()[0]; }
 
-unsigned short DWIConverter::GetCols() const { return this->m_vectorImage3D->GetLargestPossibleRegion().GetSize()[1]; }
+unsigned short DWIConverter::GetCols() const { return this->m_scalarImage3D->GetLargestPossibleRegion().GetSize()[1]; }
 
-unsigned short DWIConverter::GetSlices() const { return this->m_vectorImage3D->GetLargestPossibleRegion().GetSize()[2]; }
+unsigned short DWIConverter::GetSlices() const { return this->m_scalarImage3D->GetLargestPossibleRegion().GetSize()[2]; }
 
 void DWIConverter::ReadGradientInformation(const std::string& inputBValues, const std::string &inputBVectors, const std::string &inputVolumeNameTemplate)
 {// override gradients embedded in file with an external FSL Formatted files
@@ -203,10 +207,10 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
   }
 
   size_t numGradients = BVals.size();
-  if( numGradients != m_vectorImage3D->GetVectorLength() )
+  if( numGradients !=this->GetNVolume() )
   {
     itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes:"
-                                      << numGradients << " != " << m_vectorImage3D->GetVectorLength() << std::endl);
+                                      << numGradients << " != " << this->GetNVolume() << std::endl);
   }
   //We need to zero out BVecs for Zero BVals
   for(size_t i = 0; i < bValCount; ++i)
@@ -323,11 +327,11 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "dimension: 4" << std::endl;
   header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
-  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<VectorImage3DType>(this->m_vectorImage3D);
+  const RotationMatrixType& NRRDSpaceDirection = GetNRRDSpaceDirection<ScalarImage3DType>(this->m_scalarImage3D);
   header << "sizes: " << this->GetCols()
          << " " << this->GetRows()
-         << " " << this->GetSlices()
-         << " " << m_vectorImage3D->GetVectorLength() << std::endl;
+         << " " <<  this->GetSlicesPerVolume()
+         << " " << this->GetNVolume()<< std::endl;
   header << "thicknesses:  NaN  NaN " << DoubleConvert(this->GetSpacing()[2]) << " NaN" << std::endl;
   // need to check
   header << "space directions: "
@@ -407,17 +411,17 @@ void DWIConverter::ManualWriteNRRDFile(
   header << std::endl;;
   if (nrrdSingleFileFormat) {
     unsigned long nVoxels = this->GetDiffusionVolume()->GetBufferedRegion().GetNumberOfPixels();
-    //header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
-    //             nVoxels*sizeof(short));
-    int nVolume = m_vectorImage3D->GetVectorLength();
     header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
-                 nVoxels*sizeof(short)*nVolume);
+                 nVoxels*sizeof(short));
+    //int nVolume = m_vectorImage3D->GetVectorLength();
+    //header.write(reinterpret_cast<char*>(this->GetDiffusionVolume()->GetBufferPointer()),
+    //            nVoxels*sizeof(short)*nVolume);
   }
   else {
     // if we're writing out NRRD, and the split header/data NRRD
     // format is used, write out the image as a raw volume.
-    itk::ImageFileWriter<VectorImage3DType>::Pointer
-            rawWriter = itk::ImageFileWriter<VectorImage3DType>::New();
+    itk::ImageFileWriter<ScalarImage3DType>::Pointer
+            rawWriter = itk::ImageFileWriter<ScalarImage3DType>::New();
     itk::RawImageIO<PixelValueType,3>::Pointer rawIO
             = itk::RawImageIO<PixelValueType,3>::New();
     rawWriter->SetImageIO(rawIO);
@@ -608,3 +612,144 @@ size_t DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderNa
   }
   return std::string::npos;
 }
+
+
+ScalarImage4DType::Pointer DWIConverter::ThreeDUnwrappedToFourDImage(ScalarImage3DType::Pointer img) const
+{
+    const int nVolumes = this->GetNVolume();
+
+    ScalarImage3DType::SizeType size3D(img->GetLargestPossibleRegion().GetSize());
+    ScalarImage3DType::DirectionType direction3D(img->GetDirection());
+    ScalarImage3DType::SpacingType spacing3D(img->GetSpacing());
+    ScalarImage3DType::PointType origin3D(img->GetOrigin());
+
+    ScalarImage4DType::RegionType region4D;
+    {
+        ScalarImage4DType::SizeType size4D;
+        size4D[0] = size3D[0];
+        size4D[1] = size3D[1];
+        size4D[2] = size3D[2]/nVolumes;
+        size4D[3] = nVolumes;
+        ScalarImage4DType::IndexType index4D;
+        index4D.Fill(0);
+        region4D.SetIndex(index4D);
+        region4D.SetSize(size4D);
+
+        if ((size4D[2]*nVolumes)!=size3D[2]) {
+            itkGenericExceptionMacro(
+                    << "#of slices in volume not evenly divisible by"
+                    << " the number of volumes: slices = " << size3D[2]
+                    << " volumes = " << nVolumes << " left-over slices = "
+                    << size3D[2] % nVolumes << std::endl);
+        }
+    }
+    ScalarImage4DType::DirectionType direction4D;
+    direction4D.SetIdentity();
+    ScalarImage4DType::SpacingType   spacing4D;
+    spacing4D.Fill(1.0);
+    ScalarImage4DType::PointType     origin4D;
+    origin4D.Fill(0.0);
+    for( unsigned i = 0; i < 3; ++i )
+    {
+        for( unsigned j = 0; j < 3; ++j )
+        {
+            direction4D[i][j] = direction3D[i][j];
+        }
+        spacing4D[i] = spacing3D[i];
+        origin4D[i] = origin3D[i];
+    }
+
+
+    ScalarImage4DType::Pointer img4D = ScalarImage4DType::New();
+    img4D->SetRegions(region4D);
+    img4D->SetDirection(direction4D);
+    img4D->SetSpacing(spacing4D);
+    img4D->SetOrigin(origin4D);
+    img4D->Allocate();
+
+    {
+        img4D->SetMetaDataDictionary(img->GetMetaDataDictionary());
+        //Set the qform and sfrom codes for the MetaDataDictionary.
+        itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
+        itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+        itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    }
+
+    const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels()
+                             * sizeof(PixelValueType);
+
+    memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
+    return img4D;
+}
+
+
+ScalarImage3DType::Pointer DWIConverter::FourDToThreeDUnwrappedImage(ScalarImage4DType::Pointer img4D) const
+{
+    ScalarImage4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize() );
+    ScalarImage4DType::DirectionType direction4D(img4D->GetDirection() );
+    ScalarImage4DType::SpacingType   spacing4D(img4D->GetSpacing() );
+    ScalarImage4DType::PointType     origin4D(img4D->GetOrigin() );
+
+    ScalarImage3DType::RegionType region3D;
+    {
+        ScalarImage3DType::SizeType size3D;
+        size3D[0] = size4D[0];
+        size3D[1] = size4D[1];
+        const int nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
+        size3D[2] = size4D[2] * nVolumes;
+
+        ScalarImage3DType::IndexType index3D;
+        index3D.Fill(0);
+        region3D.SetIndex(index3D);
+        region3D.SetSize(size3D);
+
+        if( (size4D[2] * nVolumes) != size3D[2] )
+        {
+            itkGenericExceptionMacro(
+                    << "#of slices in volume not evenly divisible by"
+                    << " the number of volumes: slices = " << size3D[2]
+                    << " volumes = " << nVolumes << " left-over slices = "
+                    << size3D[2] % nVolumes << std::endl);
+        }
+    }
+    ScalarImage3DType::DirectionType direction3D;
+    direction3D.SetIdentity();
+    ScalarImage3DType::SpacingType   spacing3D;
+    spacing3D.Fill(1.0);
+    ScalarImage3DType::PointType     origin3D;
+    origin3D.Fill(0.0);
+    for( unsigned i = 0; i < 3; ++i )
+    {
+        for( unsigned j = 0; j < 3; ++j )
+        {
+            direction3D[i][j] = direction4D[i][j];
+        }
+        spacing3D[i] = spacing4D[i];
+        origin3D[i] = origin4D[i];
+    }
+
+    ScalarImage3DType::Pointer img = ScalarImage3DType::New();
+    img->SetRegions(region3D);
+    img->SetDirection(direction3D);
+    img->SetSpacing(spacing3D);
+    img->SetOrigin(origin3D);
+    img->Allocate();
+
+    {
+        img->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
+        //Set the qform and sfrom codes for the MetaDataDictionary.
+        itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
+        itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+        itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    }
+
+    const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels()
+                             * sizeof(PixelValueType);
+
+    memcpy(img->GetBufferPointer(), img4D->GetBufferPointer(), bytecount);
+    return img;
+}
+
+
+unsigned int DWIConverter::GetSlicesPerVolume() const { return m_SlicesPerVolume; }
+unsigned int DWIConverter::GetNVolume() const { return this->m_NVolume; }

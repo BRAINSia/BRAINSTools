@@ -34,7 +34,12 @@ FSLDWIConverter::LoadFromDisk()
   ReadScalarVolume<ScalarImage4DType>(inputVol, fslNIFTIFile, this->m_allowLossyConversion);
   // Reorient from FSL standard format to ITK/Dicom standard format
 
-  this->m_vectorImage3D = convertScalarImage4DToVectorImage3D(inputVol);
+  //this->m_vectorImage3D = convertScalarImage4DToVectorImage3D(inputVol);
+  // Reorient from FSL standard format to ITK/Dicom standard format
+  this->m_SlicesPerVolume = inputVol->GetLargestPossibleRegion().GetSize()[2];
+  this->m_NVolume = inputVol->GetLargestPossibleRegion().GetSize()[3];
+  this->m_NSlice = this->m_SlicesPerVolume * this->m_NVolume;
+  this->m_scalarImage3D = FourDToThreeDUnwrappedImage(inputVol);
 
 }
 

@@ -81,6 +81,7 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
   return rval;
 }
 
+    /*
 int compareVectorAndScaleImage( const std::string & inputVectorImage, const std::string & inputScalarImage, bool CheckDWIData )
 {
   typedef itk::ImageFileReader<VectorImage3DType> VectorImage3DReaderType;
@@ -156,7 +157,7 @@ int compareVectorAndScaleImage( const std::string & inputVectorImage, const std:
 
   return EXIT_SUCCESS;
 }
-
+*/
 
 template <class PixelType>
 int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, PixelType, bool CheckDWIData )
@@ -363,8 +364,8 @@ int main( int argc, char * argv[] )
         rval = DoIt( inputVolume1, inputVolume2, static_cast<unsigned short>(0), CheckDWIData );
         break;
       case itk::ImageIOBase::SHORT:
-        //rval = DoIt( inputVolume1, inputVolume2, static_cast<short>(0), CheckDWIData );
-        rval = compareVectorAndScaleImage(inputVolume1, inputVolume2, CheckDWIData);
+        rval = DoIt( inputVolume1, inputVolume2, static_cast<short>(0), CheckDWIData );
+        //rval = compareVectorAndScaleImage(inputVolume1, inputVolume2, CheckDWIData);
         break;
       case itk::ImageIOBase::UINT:
         rval = DoIt( inputVolume1, inputVolume2, static_cast<unsigned int>(0), CheckDWIData );

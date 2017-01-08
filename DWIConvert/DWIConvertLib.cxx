@@ -181,11 +181,11 @@ int DWIConvert::write(const std::string& outputVolume)
     ScalarImage4DType::Pointer img4D = m_converter->OrientForFSLConventions();
 
     // write the scalar image 4D format*/
-    //m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
+    m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);
 
     //write the vectorImage 3D format
-    VectorImage3DType::Pointer vectorImage3D = convertScalarImage4DToVectorImage3D(img4D);
-    m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, vectorImage3D);
+    //VectorImage3DType::Pointer vectorImage3D = convertScalarImage4DToVectorImage3D(img4D);
+    //m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, vectorImage3D);
   }
   else if ("Nrrd" == getOutputFileType())
   {

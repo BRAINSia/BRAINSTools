@@ -86,7 +86,7 @@ NRRDDWIConverter::LoadFromDisk()
 {
   const std::string nrrdNRRDFile = m_InputFileNames[0];
 
-  /*VectorImage3DType::Pointer vector3DVolume;
+  VectorImage3DType::Pointer vector3DVolume;
   if( ReadVectorVolume<VectorImage3DType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
   {
     itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
@@ -94,13 +94,10 @@ NRRDDWIConverter::LoadFromDisk()
 
   //Conert vector 3D volume to 4DVolume
   ScalarImage4DType::Pointer                 fourDVolume = CreateVolume(vector3DVolume);
-  this->m_vectorImage3D = convertScalarImage4DToVectorImage3D(fourDVolume);*/
-
-  // modified by Hui Xie Jan 6th, 2016
-  if( ReadVectorVolume<VectorImage3DType>( m_vectorImage3D, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
-  {
-      itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
-  }
+  this->m_SlicesPerVolume = fourDVolume->GetLargestPossibleRegion().GetSize()[2];
+  this->m_NVolume = fourDVolume->GetLargestPossibleRegion().GetSize()[3];
+  this->m_NSlice = this->m_SlicesPerVolume * this->m_NVolume;
+  this->m_scalarImage3D = FourDToThreeDUnwrappedImage(fourDVolume);
 
 
 }
@@ -108,9 +105,9 @@ NRRDDWIConverter::LoadFromDisk()
 void
 NRRDDWIConverter::ExtractDWIData()
 {
-  RecoverMeasurementFrame<VectorImage3DType>(this->m_vectorImage3D.GetPointer(), this->m_MeasurementFrame);
-  RecoverBVectors<VectorImage3DType>(this->m_vectorImage3D.GetPointer(), this->m_DiffusionVectors);
-  RecoverBValues<VectorImage3DType>(this->m_vectorImage3D.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
+  RecoverMeasurementFrame<ScalarImage3DType>(this->m_scalarImage3D.GetPointer(), this->m_MeasurementFrame);
+  RecoverBVectors<ScalarImage3DType>(this->m_scalarImage3D.GetPointer(), this->m_DiffusionVectors);
+  RecoverBValues<ScalarImage3DType>(this->m_scalarImage3D.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
 }
 
 DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const

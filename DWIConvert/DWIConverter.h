@@ -72,7 +72,6 @@ public:
   /* The internal default format for DWIConverter is an itk::VectorImage<PixelValueType,3> */
   typedef std::vector< std::string > FileNamesContainer;
 
-
   typedef VectorImage3DType::SpacingType            SpacingType;
 
   typedef itk::Vector<double, 3>                        PointType;
@@ -201,10 +200,6 @@ protected:
   /** double conversion instance, for optimal printing of numbers as  text */
   itk::NumberToString<double> m_DoubleConvert;
   bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
-
-
-  //the default data model for all of DWIConvert
-  //VectorImage3DType::Pointer   m_vectorImage3D;
 
   /* ScalarImage3DType:
    *

@@ -72,7 +72,7 @@ public:
   /* The internal default format for DWIConverter is an itk::VectorImage<PixelValueType,3> */
   typedef std::vector< std::string > FileNamesContainer;
 
-  typedef VectorImage3DType::SpacingType            SpacingType;
+  typedef ScalarImage3DType::SpacingType            SpacingType;
 
   typedef itk::Vector<double, 3>                        PointType;
 

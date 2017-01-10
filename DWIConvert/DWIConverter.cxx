@@ -356,7 +356,7 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "encoding: raw" << std::endl;
   header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
 
-  const VectorImage3DType::PointType ImageOrigin = this->GetOrigin();
+  const ScalarImage3DType::PointType ImageOrigin = this->GetOrigin();
   header << "space origin: "
          << "(" << DoubleConvert(ImageOrigin[0])
          << "," << DoubleConvert(ImageOrigin[1])

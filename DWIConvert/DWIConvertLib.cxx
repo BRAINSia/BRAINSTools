@@ -290,12 +290,15 @@ DWIConverter * DWIConvert::CreateDicomConverter(
 void DWIConvert::setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory){
   m_inputVolume = inputVolume;
   m_inputDicomDirectory = inputDicomDirectory;
-  if ("" == m_inputDicomDirectory){
+  if ("" == m_inputDicomDirectory && "" != m_inputVolume){
     std::string inputExt = findFilenameExt(m_inputVolume);
     if (".nii" == inputExt) m_inputFileType = "FSL";
-    if (".nrrd" == inputExt || ".nhdr" == inputExt) m_inputFileType = "Nrrd";
+    else if (".nrrd" == inputExt || ".nhdr" == inputExt) m_inputFileType = "Nrrd";
+    else {
+      std::cerr <<"Error: file type of inputVoume is not supported currently"<<std::endl;
+    }
   }
-  else if ("" == m_inputVolume)
+  else if ("" != m_inputDicomDirectory)
   {
     m_inputFileType = "Dicom";
   }
@@ -340,8 +343,13 @@ std::string DWIConvert::getConversionMode()
 
 //{ ".nii", ".nii.gz", ".nhdr", ".nrrd"}
 std::string DWIConvert::findFilenameExt(const std::string filename){
+    std::string subStr = "";
     std::string::size_type pos = filename.rfind(".");
-    std::string subStr = filename.substr(pos);
+    if (std::string::npos == pos){
+        std::cerr<<"Error: incorrect filename to seek extention name. "<< std::endl;
+        return subStr;
+    }
+    subStr = filename.substr(pos);
     if (".gz" == subStr){
         subStr = filename.substr(pos-4,4);
     }

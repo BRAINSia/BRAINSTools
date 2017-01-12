@@ -37,10 +37,15 @@ public:
    */
   virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
 
+
+
 private:
-  Volume4DType::Pointer CreateVolume(VectorVolumeType::Pointer & inputVol);
+  ScalarImage4DType::Pointer CreateVolume(VectorImage3DType::Pointer & inputVol);
   std::string m_inputBValues;
   std::string m_inputBVectors;
+
+
+
 };
 
 

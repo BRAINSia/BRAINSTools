@@ -30,9 +30,8 @@
 #include "DWIMetaDataDictionaryValidator.h"
 
 typedef short                               PixelValueType;
-typedef itk::Image<PixelValueType, 4>       Volume4DType;
-typedef itk::Image<PixelValueType, 3>       Volume3DType;
-typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+
+
 
 int
 FSLToNrrd(const std::string & inputVolume,
@@ -51,19 +50,19 @@ FSLToNrrd(const std::string & inputVolume,
     return EXIT_FAILURE;
     }
 
-  Volume4DType::Pointer inputVol;
+  ScalarImage4DType::Pointer inputVol;
 
   // string to use as template if no bval or bvec filename is given.
   std::string inputVolumeNameTemplate = inputVolume;
   if(fslNIFTIFile.size() > 0)
     {
-    if( ReadVolume<Volume4DType>(inputVol, fslNIFTIFile, allowLossyConversion) != EXIT_SUCCESS )
+    if( ReadVolume<ScalarImage4DType>(inputVol, fslNIFTIFile, allowLossyConversion) != EXIT_SUCCESS )
       {
       return EXIT_FAILURE;
       }
     inputVolumeNameTemplate = fslNIFTIFile;
     }
-  else if( inputVolume.size() == 0 || ReadVolume<Volume4DType>(inputVol, inputVolume, allowLossyConversion) != EXIT_SUCCESS )
+  else if( inputVolume.size() == 0 || ReadVolume<ScalarImage4DType>(inputVol, inputVolume, allowLossyConversion) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }
@@ -149,10 +148,10 @@ FSLToNrrd(const std::string & inputVolume,
       }
     }
 
-  Volume4DType::SizeType inputSize =
+  ScalarImage4DType::SizeType inputSize =
     inputVol->GetLargestPossibleRegion().GetSize();
 
-  Volume4DType::IndexType inputIndex =
+  ScalarImage4DType::IndexType inputIndex =
     inputVol->GetLargestPossibleRegion().GetIndex();
 
   const unsigned int volumeCount = inputSize[3];
@@ -165,24 +164,24 @@ FSLToNrrd(const std::string & inputVolume,
     }
 
   // convert from image series to vector voxels
-  Volume4DType::SpacingType   inputSpacing = inputVol->GetSpacing();
+  ScalarImage4DType::SpacingType   inputSpacing = inputVol->GetSpacing();
   std::cout << "Spacing :" << inputSpacing << std::endl;
 
   ////////
-  // "inputVol" is read as a 4D image. Here we convert that to a VectorImageType:
+  // "inputVol" is read as a 4D image. Here we convert that to a VectorImage3DType:
   //
-  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
+  typedef itk::ExtractImageFilter< ScalarImage4DType, ScalarImage3DType > ExtractFilterType;
 
-  typedef itk::ComposeImageFilter<Volume3DType, VectorVolumeType> ComposeImageFilterType;
+  typedef itk::ComposeImageFilter<ScalarImage3DType, VectorImage3DType> ComposeImageFilterType;
   ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
 
   for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
      {
-     Volume4DType::SizeType extractSize = inputSize;
+     ScalarImage4DType::SizeType extractSize = inputSize;
      extractSize[3] = 0;
-     Volume4DType::IndexType extractIndex = inputIndex;
+     ScalarImage4DType::IndexType extractIndex = inputIndex;
      extractIndex[3] = componentNumber;
-     Volume4DType::RegionType extractRegion(extractIndex, extractSize);
+     ScalarImage4DType::RegionType extractRegion(extractIndex, extractSize);
 
      ExtractFilterType::Pointer extracter = ExtractFilterType::New();
      extracter->SetExtractionRegion( extractRegion );
@@ -193,7 +192,7 @@ FSLToNrrd(const std::string & inputVolume,
      composer->SetInput(componentNumber,extracter->GetOutput());
      }
   composer->Update();
-  VectorVolumeType::Pointer nrrdVolume = composer->GetOutput();
+  VectorImage3DType::Pointer nrrdVolume = composer->GetOutput();
 
   const unsigned int nrrdNumOfComponents = nrrdVolume->GetNumberOfComponentsPerPixel();
   std::cout << "Number of components in converted Nrrd volume: " << nrrdNumOfComponents << std::endl;
@@ -264,7 +263,7 @@ FSLToNrrd(const std::string & inputVolume,
   // Add metaDataDictionary to Nrrd volume
   nrrdVolume->SetMetaDataDictionary(nrrdVolumeValidator.GetMetaDataDictionary());
   // Write Nrrd volume to disk
-  typedef itk::ImageFileWriter<VectorVolumeType> WriterType;
+  typedef itk::ImageFileWriter<VectorImage3DType> WriterType;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

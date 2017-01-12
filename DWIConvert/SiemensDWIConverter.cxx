@@ -163,6 +163,7 @@ void SiemensDWIConverter::LoadDicomDirectory()
     this->SetDirectionsFromSliceOrder();
   }
   this->CheckCSAHeaderAvailable();
+  //m_vectorImage3D = convertScalarImage4DToVectorImage3D( ThreeDUnwrappedToFourDImage(m_scalarImage3DUnwrapped));
 }
 
 double SiemensDWIConverter::ExtractBValue(CSAHeader *csaHeader, unsigned int strideVolume)
@@ -441,10 +442,10 @@ void SiemensDWIConverter::DeMosaic()
    * voxel size, and dimension, the origin can be computed.
    */
 
-  Volume3DUnwrappedType::Pointer previousImage = this->m_Volume;
+  ScalarImage3DType::Pointer previousImage = this->m_scalarImage3D;
 
-  Volume3DUnwrappedType::RegionType region = previousImage->GetLargestPossibleRegion();
-  Volume3DUnwrappedType::SizeType   size = region.GetSize();
+  ScalarImage3DType::RegionType region = previousImage->GetLargestPossibleRegion();
+  ScalarImage3DType::SizeType   size = region.GetSize();
 
   // de-mosaic
   PointType mosaicSize;
@@ -452,7 +453,7 @@ void SiemensDWIConverter::DeMosaic()
   mosaicSize[1]=size[1];
   mosaicSize[2]=0;
 
-  Volume3DUnwrappedType::SizeType dmSize = size;
+  ScalarImage3DType::SizeType dmSize = size;
   unsigned int         original_slice_number = dmSize[2] * m_SlicesPerVolume;
   dmSize[0] /= this->m_MMosaic;
   dmSize[1] /= this->m_NMosaic;
@@ -464,20 +465,20 @@ void SiemensDWIConverter::DeMosaic()
   sliceSize[2] = 0;
 
   region.SetSize( dmSize );
-  this->m_Volume = Volume3DUnwrappedType::New();
-  this->m_Volume->CopyInformation( previousImage );
-  this->m_Volume->SetRegions( region );
-  this->m_Volume->Allocate();
+  this->m_scalarImage3D = ScalarImage3DType::New();
+  this->m_scalarImage3D->CopyInformation( previousImage );
+  this->m_scalarImage3D->SetRegions( region );
+  this->m_scalarImage3D->Allocate();
 
   //Fix Origin
   // http://nipy.org/nibabel/dicom/dicom_mosaic.html
-  this->m_Volume->SetOrigin(
+  this->m_scalarImage3D->SetOrigin(
           previousImage->GetOrigin()
-          + this->GetNRRDSpaceDirection() * ( ( mosaicSize - sliceSize) / 2 )
+          + GetNRRDSpaceDirection<ScalarImage3DType>(this->m_scalarImage3D) * ( ( mosaicSize - sliceSize) / 2 )
   );
 
 
-  Volume3DUnwrappedType::RegionType dmRegion = this->m_Volume->GetLargestPossibleRegion();
+  ScalarImage3DType::RegionType dmRegion = this->m_scalarImage3D->GetLargestPossibleRegion();
   dmRegion.SetSize(2, 1);
   region.SetSize(0, dmSize[0]);
   region.SetSize(1, dmSize[1]);
@@ -488,7 +489,7 @@ void SiemensDWIConverter::DeMosaic()
     unsigned int new_k = k /* - bad_slice_counter */;
 
     dmRegion.SetIndex(2, new_k);
-    itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> dmIt( this->m_Volume, dmRegion );
+    itk::ImageRegionIteratorWithIndex<ScalarImage3DType> dmIt( this->m_scalarImage3D, dmRegion );
 
     // figure out the mosaic region for this slice
     int sliceIndex = k;
@@ -502,7 +503,7 @@ void SiemensDWIConverter::DeMosaic()
     region.SetIndex( 1, colMosaic * dmSize[1] );
     region.SetIndex( 2, slcMosaic );
 
-    itk::ImageRegionConstIteratorWithIndex<Volume3DUnwrappedType> imIt( previousImage, region );
+    itk::ImageRegionConstIteratorWithIndex<ScalarImage3DType> imIt( previousImage, region );
     for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
     {
       dmIt.Set( imIt.Get() );

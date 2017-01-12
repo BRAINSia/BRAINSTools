@@ -22,6 +22,7 @@ void HitachiDWIConverter::LoadDicomDirectory()
       this->m_SliceOrderIS = false;
       this->SetDirectionsFromSliceOrder();
       this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
+    //m_vectorImage3D = convertScalarImage4DToVectorImage3D( ThreeDUnwrappedToFourDImage(m_scalarImage3DUnwrapped));
     }
   /** extract gradient vectors.
    *  Hitachi apparently supports the Supplement 49 definition

@@ -81,6 +81,84 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
   return rval;
 }
 
+    /*
+int compareVectorAndScaleImage( const std::string & inputVectorImage, const std::string & inputScalarImage, bool CheckDWIData )
+{
+  typedef itk::ImageFileReader<VectorImage3DType> VectorImage3DReaderType;
+  VectorImage3DReaderType::Pointer vectorImageReader = VectorImage3DReaderType::New();
+  vectorImageReader->SetFileName(inputVectorImage.c_str());
+  vectorImageReader->Update();
+  VectorImage3DType::Pointer vectorImage = vectorImageReader->GetOutput();
+
+  typedef itk::ImageFileReader<ScalarImage4DType> ScalarImage4DReaderType;
+  ScalarImage4DReaderType::Pointer scalarImageReader = ScalarImage4DReaderType::New();
+  scalarImageReader->SetFileName(inputScalarImage.c_str());
+  scalarImageReader->Update();
+  ScalarImage4DType::Pointer scalarImage = scalarImageReader->GetOutput();
+
+  //check total number of voxel is equal
+  VectorImage3DType::RegionType vectorImageRegion = vectorImage->GetLargestPossibleRegion();
+  VectorImage3DType::SizeType vectorImageSize =   vectorImageRegion.GetSize();
+  unsigned long vectorImageNVoxel = vectorImageSize[0]*vectorImageSize[1]* vectorImageSize[2]*vectorImage->GetVectorLength();
+
+  ScalarImage4DType::RegionType scalarImageRegion = scalarImage->GetLargestPossibleRegion();
+  ScalarImage4DType::SizeType scalarImageSize =   scalarImageRegion.GetSize();
+  unsigned long scalarImageNVoxel = scalarImageSize[0]*scalarImageSize[1]* scalarImageSize[2]*scalarImageSize[3];
+
+  if (vectorImageNVoxel != scalarImageNVoxel){
+      std::cerr <<"inputVectorImage and inputScalarImage have different number of voxels:\n"<< std::endl
+                <<"vector Image: " << vectorImageNVoxel << std::endl
+                <<"scalar Image: " << scalarImageNVoxel << std::endl;
+      return EXIT_FAILURE;
+  }
+  else{
+      std::cout<<"\nGood. inputVectorImage and inputScalarImage have same number of voxels.\n" << std::endl;
+  }
+
+  //compare voxel value
+  VectorImage3DType::IndexType vectorImageIndex;
+  ScalarImage4DType::IndexType scalarImageIndex;
+  int vectorLength = (int)vectorImage->GetVectorLength();
+  int nUnmatchVoxels = 0;
+  for(int i =0; i < (int)vectorImageSize[0]; ++i)
+    for (int j =0; j < (int)vectorImageSize[1]; ++j)
+      for (int k =0; k < (int)vectorImageSize[2]; ++k)
+      {
+        vectorImageIndex[0] = i;
+        vectorImageIndex[1] = j;
+        vectorImageIndex[2] = k;
+        VectorImage3DType::PixelType vectorImageVectorPixel = vectorImage->GetPixel(vectorImageIndex);
+        for (int l=0; l < vectorLength; ++l) //index inside a vector
+        {
+           PixelValueType vectorImageVoxel = vectorImageVectorPixel[i];
+
+           scalarImageIndex[0] = i;
+           scalarImageIndex[1] = j;
+           scalarImageIndex[2] = k;
+           scalarImageIndex[3] = l;
+           PixelValueType scalarImageVoxel = scalarImage->GetPixel(scalarImageIndex);
+
+           if (!CloseEnough(scalarImageVoxel, vectorImageVoxel))
+           {
+             ++nUnmatchVoxels;
+             std::cerr << "Images don't match at scalar image at coordinate: " << scalarImageIndex << std::endl
+                       << "vector image voxel: "<< vectorImageVoxel << std::endl
+                       << "scalar image voxel: "<< scalarImageVoxel << std::endl;
+             if( nUnmatchVoxels >= 5 )
+             {
+               std::cerr<<"find at least 5 voxels unmatching" <<std::endl;
+               return EXIT_FAILURE;
+             }
+           }
+
+        }
+      }
+  std::cout<<"\n***********Vector image and scalar image have same voxel value.***********\n"<< std::endl;
+
+  return EXIT_SUCCESS;
+}
+*/
+
 template <class PixelType>
 int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, PixelType, bool CheckDWIData )
 {
@@ -287,6 +365,7 @@ int main( int argc, char * argv[] )
         break;
       case itk::ImageIOBase::SHORT:
         rval = DoIt( inputVolume1, inputVolume2, static_cast<short>(0), CheckDWIData );
+        //rval = compareVectorAndScaleImage(inputVolume1, inputVolume2, CheckDWIData);
         break;
       case itk::ImageIOBase::UINT:
         rval = DoIt( inputVolume1, inputVolume2, static_cast<unsigned int>(0), CheckDWIData );

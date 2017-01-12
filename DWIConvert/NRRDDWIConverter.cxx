@@ -8,6 +8,7 @@
 NRRDDWIConverter::NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
   const bool FSLFileFormatHorizontalBy3Rows)
   : DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows )
+
 {
 }
 
@@ -17,19 +18,19 @@ NRRDDWIConverter::AddFlagsToDictionary()
 }
 
 
-Volume4DType::Pointer
-NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
+ScalarImage4DType::Pointer
+NRRDDWIConverter::CreateVolume(VectorImage3DType::Pointer & vector3DVolume)
 {
-  VectorVolumeType::SizeType      inputSize = vector3DVolume->GetLargestPossibleRegion().GetSize();
-  VectorVolumeType::SpacingType   inputSpacing = vector3DVolume->GetSpacing();
-  VectorVolumeType::PointType     inputOrigin = vector3DVolume->GetOrigin();
-  VectorVolumeType::DirectionType inputDirection = vector3DVolume->GetDirection();
+  VectorImage3DType::SizeType      inputSize = vector3DVolume->GetLargestPossibleRegion().GetSize();
+  VectorImage3DType::SpacingType   inputSpacing = vector3DVolume->GetSpacing();
+  VectorImage3DType::PointType     inputOrigin = vector3DVolume->GetOrigin();
+  VectorImage3DType::DirectionType inputDirection = vector3DVolume->GetDirection();
 
-  Volume4DType::Pointer fourDVolume = Volume4DType::New();
-  Volume4DType::SizeType      volSize;
-  Volume4DType::SpacingType   volSpacing;
-  Volume4DType::PointType     volOrigin;
-  Volume4DType::DirectionType volDirection;
+  ScalarImage4DType::Pointer fourDVolume = ScalarImage4DType::New();
+  ScalarImage4DType::SizeType      volSize;
+  ScalarImage4DType::SpacingType   volSpacing;
+  ScalarImage4DType::PointType     volOrigin;
+  ScalarImage4DType::DirectionType volDirection;
 
   for( unsigned int i = 0; i < 3; ++i )
   {
@@ -54,20 +55,20 @@ NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
   fourDVolume->SetDirection(volDirection);
   fourDVolume->Allocate();
 
-  const Volume4DType::IndexType::IndexValueType vecLength = vector3DVolume->GetNumberOfComponentsPerPixel();
+  const ScalarImage4DType::IndexType::IndexValueType vecLength = vector3DVolume->GetNumberOfComponentsPerPixel();
 
-  VectorVolumeType::IndexType vecIndex;
-  Volume4DType::IndexType       volIndex;
+  VectorImage3DType::IndexType vecIndex;
+  ScalarImage4DType::IndexType       volIndex;
   // convert from vector image to 4D volume image
   for( volIndex[3] = 0; volIndex[3] < vecLength; ++volIndex[3] )
   {
-    for( volIndex[2] = 0; volIndex[2] < static_cast<Volume4DType::IndexType::IndexValueType>( inputSize[2] ); ++volIndex[2] )
+    for( volIndex[2] = 0; volIndex[2] < static_cast<ScalarImage4DType::IndexType::IndexValueType>( inputSize[2] ); ++volIndex[2] )
     {
       vecIndex[2] = volIndex[2];
-      for( volIndex[1] = 0; volIndex[1] < static_cast<Volume4DType::IndexType::IndexValueType>( inputSize[1] ); ++volIndex[1] )
+      for( volIndex[1] = 0; volIndex[1] < static_cast<ScalarImage4DType::IndexType::IndexValueType>( inputSize[1] ); ++volIndex[1] )
       {
         vecIndex[1] = volIndex[1];
-        for( volIndex[0] = 0; volIndex[0] < static_cast<Volume4DType::IndexType::IndexValueType>( inputSize[0] ); ++volIndex[0] )
+        for( volIndex[0] = 0; volIndex[0] < static_cast<ScalarImage4DType::IndexType::IndexValueType>( inputSize[0] ); ++volIndex[0] )
         {
           vecIndex[0] = volIndex[0];
           fourDVolume->SetPixel(volIndex, vector3DVolume->GetPixel(vecIndex)[volIndex[3]]);
@@ -85,26 +86,28 @@ NRRDDWIConverter::LoadFromDisk()
 {
   const std::string nrrdNRRDFile = m_InputFileNames[0];
 
-  VectorVolumeType::Pointer vector3DVolume;
-  if( ReadVectorVolume<VectorVolumeType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
+  VectorImage3DType::Pointer vector3DVolume;
+  if( ReadVectorVolume<VectorImage3DType>( vector3DVolume, nrrdNRRDFile, this->m_allowLossyConversion ) != EXIT_SUCCESS )
   {
     itkGenericExceptionMacro(<< "ERROR Reading NRRD File : " << nrrdNRRDFile << std::endl;);
   }
 
   //Conert vector 3D volume to 4DVolume
-  Volume4DType::Pointer                 fourDVolume = CreateVolume(vector3DVolume);
+  ScalarImage4DType::Pointer                 fourDVolume = CreateVolume(vector3DVolume);
   this->m_SlicesPerVolume = fourDVolume->GetLargestPossibleRegion().GetSize()[2];
   this->m_NVolume = fourDVolume->GetLargestPossibleRegion().GetSize()[3];
   this->m_NSlice = this->m_SlicesPerVolume * this->m_NVolume;
-  this->m_Volume = FourDToThreeDImage(fourDVolume);
+  this->m_scalarImage3D = FourDToThreeDUnwrappedImage(fourDVolume);
+
+
 }
 
 void
 NRRDDWIConverter::ExtractDWIData()
 {
-  RecoverMeasurementFrame<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_MeasurementFrame);
-  RecoverBVectors<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors);
-  RecoverBValues<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
+  RecoverMeasurementFrame<ScalarImage3DType>(this->m_scalarImage3D.GetPointer(), this->m_MeasurementFrame);
+  RecoverBVectors<ScalarImage3DType>(this->m_scalarImage3D.GetPointer(), this->m_DiffusionVectors);
+  RecoverBValues<ScalarImage3DType>(this->m_scalarImage3D.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
 }
 
 DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const

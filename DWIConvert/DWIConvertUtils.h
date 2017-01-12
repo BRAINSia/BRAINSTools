@@ -42,9 +42,21 @@
 
 typedef short                          PixelValueType;
 /*
- * The Volume4DType is a scalar image with diemensions cols,rows,3Dslices,NumGradients
+ * The ScalarImage4DType is a scalar image with diemensions cols,rows,3Dslices,NumGradients
  */
-typedef itk::Image<PixelValueType, 4>  Volume4DType;
+typedef itk::Image<PixelValueType, 4>       ScalarImage4DType;
+
+/* ScalarImage3DType:
+     *
+     * The internal format is an unwrapped 3D scalar image that is x,y,slices
+   * where slices is all the slices in both 3D and 4d directions.
+   * If each volume is 3DSlices, and their are NumGradients, then
+   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
+   */
+typedef itk::Image<PixelValueType, 3>       ScalarImage3DType;
+
+typedef itk::VectorImage<PixelValueType, 3> VectorImage3DType;
+typedef itk::Matrix<double, 3, 3>           RotationMatrixType;
 
 template <typename TArg>
 int
@@ -162,6 +174,14 @@ extern int NrrdToFSL(const std::string & inputVolume,
                          const std::string & outputBVectors,
                          bool allowLossyConversion);
 
+VectorImage3DType::Pointer convertScalarImage4DToVectorImage3D(ScalarImage4DType::Pointer inputVol);
+ScalarImage4DType::Pointer convertVectorImage3DToScalarImage4D(VectorImage3DType::Pointer inputVol);
+
+//template<typename ImageType>
+//RotationMatrixType GetSpacingMatrix(typename ImageType::Pointer im);
+
+template<typename ImageType>
+RotationMatrixType GetNRRDSpaceDirection(typename ImageType::Pointer im);
 
 #include "DWIConvertUtils.hxx"
 

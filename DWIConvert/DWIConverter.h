@@ -69,22 +69,11 @@
 class DWIConverter
 {
 public:
+  /* The internal default format for DWIConverter is an itk::VectorImage<PixelValueType,3> */
+  typedef std::vector< std::string > FileNamesContainer;
 
-  /* The internal format is an unwrapped 3D scalar image that is x,y,slices
-   * where slices is all the slices in both 3D and 4d directions.
-   * If each volume is 3DSlices, and their are NumGradients, then
-   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
-   */
-  typedef itk::Image<PixelValueType, 3>  Volume3DUnwrappedType;
+  typedef ScalarImage3DType::SpacingType            SpacingType;
 
-  typedef Volume3DUnwrappedType::SpacingType            SpacingType;
-  typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
-  typedef ReaderType::FileNamesContainer                FileNamesContainer;
-  typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
-
-
-  typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
-  typedef itk::Matrix<double, 3, 3>                     RotationMatrixType;
   typedef itk::Vector<double, 3>                        PointType;
 
   typedef std::map<std::string,std::string> CommonDicomFieldMapType;
@@ -93,7 +82,7 @@ public:
 
   virtual void LoadFromDisk() = 0 ;
 
-  RotationMatrixType GetSpacingMatrix() const;
+
 
   /** extract dwi data -- vendor specific so must happen in subclass
    *  implementing this method.
@@ -121,35 +110,32 @@ public:
   *         FSL [1 0 0; 0 -1 0; 0 0 1]    Dicom [1 0 0; 0 1 0; 0 0 1]
   * @return Returns a 4D image pointer properly formatted
   */
- Volume4DType::Pointer OrientForFSLConventions (const bool toFSL=true );
+ ScalarImage4DType::Pointer OrientForFSLConventions (const bool toFSL=true );
 
  const std::vector<double> &GetBValues() const;
  void SetBValues( const std::vector<double> & inBValues );
  double GetMaxBValue() const;
 
- Volume3DUnwrappedType::Pointer GetDiffusionVolume() const ;
+    ScalarImage3DType::Pointer GetDiffusionVolume() const ;
 
  SpacingType GetSpacing() const;
 
- Volume3DUnwrappedType::PointType GetOrigin() const;
- void SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin);
+    ScalarImage3DType::PointType GetOrigin() const;
+ void SetOrigin(ScalarImage3DType::PointType origin);
 
  RotationMatrixType   GetLPSDirCos() const;
 
  RotationMatrixType GetMeasurementFrame() const;
 
- RotationMatrixType GetNRRDSpaceDirection() const;
-
- unsigned int GetSlicesPerVolume() const;
- unsigned int GetNVolume() const;
  std::string GetNRRDSpaceDefinition() const;
 
  unsigned short GetRows() const;
 
  unsigned short GetCols() const;
+ unsigned short GetSlices() const;
 
 
-  /**
+    /**
    * @brief Force overwriting the gradient directions by inserting values read from specified file
    * @param gradientVectorFile The file with gradients specified for overwriting
    */
@@ -171,15 +157,16 @@ public:
   void ManualWriteNRRDFile(
             const std::string& outputVolumeHeaderName,
             const std::string commentstring) const;
-  Volume4DType::Pointer ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const;
 
-  Volume3DUnwrappedType::Pointer FourDToThreeDImage(Volume4DType::Pointer img4D) const;
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
  */
   void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
-                             const std::string outputBValues, const std::string outputBVectors, Volume4DType::Pointer img4D) const;
+                             const std::string outputBValues, const std::string outputBVectors, ScalarImage4DType::Pointer img4D) const;
+
+  void WriteFSLFormattedFileSet(const std::string& outputVolumeHeaderName,
+                                                const std::string outputBValues, const std::string outputBVectors, VectorImage3DType::Pointer vectorImage3D) const;
 
 
   /**
@@ -189,13 +176,16 @@ public:
    */
   void SetAllowLossyConversion(const bool newValue);
 
-  //add by Hui Xie
-  Volume3DUnwrappedType::Pointer getVolumePointer();
+
 
 
 protected:
   double ComputeMaxBvalue(const std::vector<double> &bValues) const;
   size_t has_valid_nifti_extension( std::string outputVolumeHeaderName ) const;
+
+  ScalarImage4DType::Pointer ThreeDUnwrappedToFourDImage(ScalarImage3DType::Pointer img) const;
+
+  ScalarImage3DType::Pointer FourDToThreeDUnwrappedImage(ScalarImage4DType::Pointer img4D) const;
 
   /** add vendor-specific flags; */
   virtual void AddFlagsToDictionary() = 0;
@@ -211,22 +201,25 @@ protected:
   itk::NumberToString<double> m_DoubleConvert;
   bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
-  unsigned int        m_SlicesPerVolume;
-  /** number of total slices */
-  unsigned int        m_NSlice;
-  /** number of gradient volumes */
-  unsigned int        m_NVolume;
-    /* The following variables make up the primary data model for diffusion weighted images
-     * in the most generic sense.  These variables all need to be manipulated together in
-     * order to maintain a consistent data model.
-     */
-    /** the image read from the DICOM dataset */
- Volume3DUnwrappedType::Pointer m_Volume;
+  /* ScalarImage3DType:
+   *
+   * The internal format is an unwrapped 3D scalar image that is x,y,slices
+   * where slices is all the slices in both 3D and 4d directions.
+   * If each volume is 3DSlices, and their are NumGradients, then
+   * the last direction of the unwrapped direction is (3DSlices*NumGradients).
+   */
+  ScalarImage3DType::Pointer m_scalarImage3D; //Unwrapped
 
-
-  // this is always "left-posterior-superior" in all cases that we currently support
-  const std::string           m_NRRDSpaceDefinition;
-
+    // this is always "left-posterior-superior" in all cases that we currently support
+    const std::string           m_NRRDSpaceDefinition;
+    /** dimensions */
+    unsigned int        m_SlicesPerVolume;
+    /** number of total slices */
+    unsigned int        m_NSlice;
+    /** number of gradient volumes */
+    unsigned int        m_NVolume;
+    unsigned int GetSlicesPerVolume() const;
+    unsigned int GetNVolume() const;
 
   /** measurement from for gradients if different than patient
    *  reference frame.
@@ -238,6 +231,8 @@ protected:
   DWIMetaDataDictionaryValidator::GradientTableType  m_DiffusionVectors;
   // A map of common dicom fields to be propagated to image
   std::map<std::string,std::string> m_CommonDicomFieldsMap;
+
+
 
 };
 

@@ -24,6 +24,7 @@ DWIDICOMConverterBase::DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
         m_MultiSliceVolume(false),
         m_SliceOrderIS(true),
         m_IsInterleaved(false)
+
 {
 
 }
@@ -53,13 +54,13 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
       std::cerr << excp << std::endl;
       throw;
     }
-    m_Volume = reader->GetOutput();
+      m_scalarImage3D = reader->GetOutput();
     m_MultiSliceVolume = false;
   }
   else
   {
-    itk::ImageFileReader<Volume3DUnwrappedType>::Pointer reader =
-            itk::ImageFileReader<Volume3DUnwrappedType>::New();
+    itk::ImageFileReader<ScalarImage3DType>::Pointer reader =
+            itk::ImageFileReader<ScalarImage3DType>::New();
     reader->SetImageIO( dcmtkIO );
     reader->SetFileName( this->m_InputFileNames[0] );
     m_NSlice = this->m_InputFileNames.size();
@@ -73,18 +74,18 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
       std::cerr << excp << std::endl;
       throw;
     }
-    m_Volume = reader->GetOutput();
+      m_scalarImage3D = reader->GetOutput();
     m_MultiSliceVolume = true;
   }
   {
     // origin
     double origin[3];
     m_Headers[0]->GetOrigin(origin);
-    Volume3DUnwrappedType::PointType imOrigin;
+    ScalarImage3DType::PointType imOrigin;
     imOrigin[0] = origin[0];
     imOrigin[1] = origin[1];
     imOrigin[2] = origin[2];
-    this->m_Volume->SetOrigin(imOrigin);
+    this->m_scalarImage3D->SetOrigin(imOrigin);
   }
   // spacing
   {
@@ -95,7 +96,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     imSpacing[0] = spacing[0];
     imSpacing[1] = spacing[1];
     imSpacing[2] = spacing[2];
-    m_Volume->SetSpacing(imSpacing);
+      m_scalarImage3D->SetSpacing(imSpacing);
   }
 
   // a map of ints keyed by the slice location string
@@ -162,7 +163,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
   }
 
   {
-    Volume3DUnwrappedType::DirectionType LPSDirCos;
+    ScalarImage3DType::DirectionType LPSDirCos;
     LPSDirCos.SetIdentity();
 
     // check ImageOrientationPatient and figure out slice direction in
@@ -186,19 +187,12 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     LPSDirCos[1][2] = LPSDirCos[2][0] * LPSDirCos[0][1] - LPSDirCos[0][0] * LPSDirCos[2][1];
     LPSDirCos[2][2] = LPSDirCos[0][0] * LPSDirCos[1][1] - LPSDirCos[1][0] * LPSDirCos[0][1];
 
-    this->m_Volume->SetDirection(LPSDirCos);
+    this->m_scalarImage3D->SetDirection(LPSDirCos);
   }
   std::cout << "ImageOrientationPatient (0020:0037): ";
   std::cout << "LPS Orientation Matrix" << std::endl;
-  std::cout << this->m_Volume->GetDirection() << std::endl;
+  std::cout << this->m_scalarImage3D->GetDirection() << std::endl;
 
-
-  //TODO: Remove __1
-  std::cout << "this->m_SpacingMatrix" << std::endl;
-  std::cout << this->GetSpacingMatrix() << std::endl;
-
-  std::cout << "NRRDSpaceDirection" << std::endl;
-  std::cout << this->GetNRRDSpaceDirection() << std::endl;
   //TODO: Add metadata to the DWI images
   {
     //<element tag="0008,0060" vr="CS" vm="1" len="2" name="Modality">MR</element>
@@ -224,11 +218,15 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     //<element tag="0018,1314" vr="DS" vm="1" len="2" name="FlipAngle">90</element>
     this->_addToStringDictionary("0018","1314","FlipAngle",DCM_DS);
   }
+
+
 }
 
 void DWIDICOMConverterBase::LoadFromDisk()
 {
   this->LoadDicomDirectory();
+
+
 }
 
 
@@ -293,11 +291,11 @@ void DWIDICOMConverterBase::SetDirectionsFromSliceOrder()
   else
   {
     std::cout << "Slice order is SI" << std::endl;
-    Volume3DUnwrappedType::DirectionType LPSDirCos = this->m_Volume->GetDirection();
+    ScalarImage3DType::DirectionType LPSDirCos = this->m_scalarImage3D->GetDirection();
     LPSDirCos[0][2] *= -1;
     LPSDirCos[1][2] *= -1;
     LPSDirCos[2][2] *= -1;
-    this->m_Volume->SetDirection(LPSDirCos);
+    this->m_scalarImage3D->SetDirection(LPSDirCos);
     //Need to update the measurement frame too!
     this->m_MeasurementFrame[0][2] *= -1;
     this->m_MeasurementFrame[1][2] *= -1;
@@ -313,24 +311,24 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
 {
   size_t NVolumes = this->m_NSlice / this->m_SlicesPerVolume;
 
-  Volume3DUnwrappedType::RegionType R = this->m_Volume->GetLargestPossibleRegion();
+  ScalarImage3DType::RegionType R = this->m_scalarImage3D->GetLargestPossibleRegion();
 
   R.SetSize(2, 1);
-  std::vector<Volume3DUnwrappedType::PixelType> v(this->m_NSlice);
-  std::vector<Volume3DUnwrappedType::PixelType> w(this->m_NSlice);
+  std::vector<ScalarImage3DType::PixelType> v(this->m_NSlice);
+  std::vector<ScalarImage3DType::PixelType> w(this->m_NSlice);
 
-  itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_Volume, R );
+  itk::ImageRegionIteratorWithIndex<ScalarImage3DType> I(this->m_scalarImage3D, R );
   // permute the slices by extracting the 1D array of voxels for
   // a particular {x,y} position, then re-ordering the voxels such
   // that all the voxels for a particular volume are adjacent
   for( I.GoToBegin(); !I.IsAtEnd(); ++I )
   {
-    Volume3DUnwrappedType::IndexType idx = I.GetIndex();
+    ScalarImage3DType::IndexType idx = I.GetIndex();
     // extract all values in one "column"
     for( unsigned int k = 0; k < this->m_NSlice; ++k )
     {
       idx[2] = k;
-      v[k] = this->m_Volume->GetPixel( idx );
+      v[k] = this->m_scalarImage3D->GetPixel( idx );
     }
     // permute
     for( unsigned int k = 0; k < NVolumes; ++k )
@@ -344,7 +342,7 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
     for( unsigned int k = 0; k < this->m_NSlice; ++k )
     {
       idx[2] = k;
-      this->m_Volume->SetPixel( idx, w[k] );
+      this->m_scalarImage3D->SetPixel( idx, w[k] );
     }
   }
 }
@@ -352,9 +350,9 @@ void DWIDICOMConverterBase::DeInterleaveVolume()
 void DWIDICOMConverterBase::DetermineSliceOrderIS()
 {
   double image0Origin[3];
-  image0Origin[0]=this->m_Volume->GetOrigin()[0];
-  image0Origin[1]=this->m_Volume->GetOrigin()[1];
-  image0Origin[2]=this->m_Volume->GetOrigin()[2];
+  image0Origin[0]=this->m_scalarImage3D->GetOrigin()[0];
+  image0Origin[1]=this->m_scalarImage3D->GetOrigin()[1];
+  image0Origin[2]=this->m_scalarImage3D->GetOrigin()[2];
   std::cout << "Slice 0: " << image0Origin[0] << " "
             << image0Origin[1] << " " << image0Origin[2] << std::endl;
 
@@ -376,7 +374,7 @@ void DWIDICOMConverterBase::DetermineSliceOrderIS()
   image1Origin[0] -= image0Origin[0];
   image1Origin[1] -= image0Origin[1];
   image1Origin[2] -= image0Origin[2];
-  const RotationMatrixType & NRRDSpaceDirection = this->GetNRRDSpaceDirection();
+  const RotationMatrixType & NRRDSpaceDirection = GetNRRDSpaceDirection<ScalarImage3DType>(this->m_scalarImage3D);
   double x1 = image1Origin[0] * (NRRDSpaceDirection[0][2])
               + image1Origin[1] * (NRRDSpaceDirection[1][2])
               + image1Origin[2] * (NRRDSpaceDirection[2][2]);

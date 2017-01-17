@@ -11,19 +11,20 @@
 #include "dcmtk/dcmdata/dcrledrg.h"
 #include "itksys/SystemTools.hxx"
 
+const std::string emptyString(""); //A named empty string
 
 DWIConvert::DWIConvert()
 {
-    m_inputVolume = "";
-    m_inputDicomDirectory = "";
-    m_inputBValues = "";  //default: ""
-    m_inputBVectors = ""; //default: ""
-    m_gradientVectorFile = ""; //deprecated
+    m_inputVolume = emptyString;
+    m_inputDicomDirectory = emptyString;
+    m_inputBValues = emptyString;  //default: emptyString
+    m_inputBVectors = emptyString; //default: emptyString
+    m_gradientVectorFile = emptyString; //deprecated
     m_smallGradientThreshold = 0.2; //default = 0.2
 
 
-    m_inputFileType = "";
-    m_outputFileType = "";
+    m_inputFileType = emptyString;
+    m_outputFileType = emptyString;
 
     m_fMRIOutput = false; //default: false
     m_transpose = false; //default:false
@@ -31,10 +32,10 @@ DWIConvert::DWIConvert()
     m_useIdentityMeasurementFrame = false; //default: false
     m_useBMatrixGradientDirections = false; //default: false
 
-    m_outputVolume = "";
+    m_outputVolume = emptyString;
     m_outputDirectory = ".";  //default: "."
-    m_outputBValues = ""; //default: ""
-    m_outputBVectors = "";//default: ""
+    m_outputBValues = emptyString; //default: emptyString
+    m_outputBVectors = emptyString;//default: emptyString
 
     m_converter = NULL;
 
@@ -59,7 +60,7 @@ DWIConvert::~DWIConvert(){
 
 int DWIConvert::read()
 {
-  if ("" == getInputFileType()){
+  if (emptyString == getInputFileType()){
     std::cerr << "illegal input file type, exit" << std::endl;
     return EXIT_FAILURE;
   }
@@ -76,12 +77,12 @@ int DWIConvert::read()
     std::cerr << "Deprecated feature no longer supported: --fMRIOutput" << std::endl;
     return EXIT_FAILURE;
   }
-  if( m_gradientVectorFile != "" ) {
+  if( m_gradientVectorFile != emptyString ) {
     std::cerr << "Deprecated feature no longer supported: --gradientVectorFile" << std::endl;
     return EXIT_FAILURE;
   }
 
-  if( m_outputVolume == "" )
+  if( m_outputVolume == emptyString )
   {
     std::cerr << "Missing output volume name" << std::endl;
     return EXIT_FAILURE;
@@ -204,7 +205,7 @@ int DWIConvert::write(const std::string& outputVolume)
 }
 
 int  DWIConvert::write(){
-  if ("" != m_outputVolume){
+  if (emptyString != m_outputVolume){
       return write(m_outputVolume);
   }
   else{
@@ -221,7 +222,7 @@ DWIConverter * DWIConvert::CreateDicomConverter(
         const bool allowLossyConversion)
 {
 // check for required parameters
-  if( inputDicomDirectory == "" )
+  if( inputDicomDirectory == emptyString )
   {
     std::cerr << "Missing DICOM input directory path" << std::endl;
     return ITK_NULLPTR;
@@ -283,7 +284,7 @@ DWIConverter * DWIConvert::CreateDicomConverter(
 void DWIConvert::setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory){
   m_inputVolume = inputVolume;
   m_inputDicomDirectory = inputDicomDirectory;
-  if ("" == m_inputDicomDirectory && "" != m_inputVolume){
+  if (emptyString == m_inputDicomDirectory && emptyString != m_inputVolume){
     const std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
     if ( std::string::npos != inputExt.rfind(".nii")) m_inputFileType = "FSL";
     else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr")) m_inputFileType = "Nrrd";
@@ -291,7 +292,7 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
       std::cerr <<"Error: file type of inputVoume is not supported currently"<<std::endl;
     }
   }
-  else if ("" != m_inputDicomDirectory)
+  else if (emptyString != m_inputDicomDirectory)
   {
     m_inputFileType = "Dicom";
   }

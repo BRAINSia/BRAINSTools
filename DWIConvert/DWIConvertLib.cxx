@@ -21,8 +21,7 @@ DWIConvert::DWIConvert()
     m_gradientVectorFile = ""; //deprecated
     m_smallGradientThreshold = 0.2; //default = 0.2
 
-    //only one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd",
-    //                                          "NrrdToNrrd", "FSLToFSL"]
+
     m_inputFileType = "";
     m_outputFileType = "";
 
@@ -285,7 +284,7 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
   m_inputVolume = inputVolume;
   m_inputDicomDirectory = inputDicomDirectory;
   if ("" == m_inputDicomDirectory && "" != m_inputVolume){
-    std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
+    const std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
     if ( std::string::npos != inputExt.rfind(".nii")) m_inputFileType = "FSL";
     else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr")) m_inputFileType = "Nrrd";
     else {
@@ -303,7 +302,7 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
 
 void DWIConvert::setOutputFileType(const std::string& outputVolume){
   m_outputVolume = outputVolume;
-  std::string outputExt = itksys::SystemTools::GetFilenameExtension(m_outputVolume);
+  const std::string outputExt = itksys::SystemTools::GetFilenameExtension(m_outputVolume);
   if (std::string::npos != outputExt.rfind(".nii")) m_outputFileType = "FSL";
   else if (std::string::npos != outputExt.rfind(".nrrd")|| std::string::npos != outputExt.rfind(".nhdr")) m_outputFileType = "Nrrd";
   else{
@@ -321,29 +320,7 @@ std::string DWIConvert::getOutputFileType()
   return m_outputFileType;
 }
 
-/*
-void DWIConvert::setConversionMode(const std::string conversionMode){
-    //["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd","NrrdToNrrd", "FSLToFSL"]
-    m_conversionMode =  conversionMode;
-}
 
-std::string DWIConvert::getConversionMode()
-{
-  if ("" == m_conversionMode) setConversionMode();
-  return m_conversionMode;
-}
-
- */
-
-//{ ".nii", ".nii.gz", ".nhdr", ".nrrd"}
-/*std::string DWIConvert::findFilenameExt(const std::string filename){
-    std::string::size_type pos = filename.rfind(".");
-    std::string subStr = filename.substr(pos);
-    if (".gz" == subStr){
-        subStr = filename.substr(pos-4,4);
-    }
-    return subStr;
-}*/
 
 const std::string &DWIConvert::getInputVolume() const {
   return m_inputVolume;

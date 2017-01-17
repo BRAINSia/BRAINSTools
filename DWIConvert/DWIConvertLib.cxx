@@ -9,7 +9,7 @@
 #include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
-
+#include "itksys/SystemTools.hxx"
 
 
 DWIConvert::DWIConvert()
@@ -279,18 +279,20 @@ DWIConverter * DWIConvert::CreateDicomConverter(
   return converter;
 }
 
-//one of ["DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd", "NrrdToNrrd", "FSLToFSL"]
-//if return "", invalidate input parameters.
 
+//currently supported file types: { ".nii", ".nii.gz", ".nhdr", ".nrrd"}
 void DWIConvert::setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory){
   m_inputVolume = inputVolume;
   m_inputDicomDirectory = inputDicomDirectory;
-  if ("" == m_inputDicomDirectory){
-    std::string inputExt = findFilenameExt(m_inputVolume);
-    if (".nii" == inputExt) m_inputFileType = "FSL";
-    if (".nrrd" == inputExt || ".nhdr" == inputExt) m_inputFileType = "Nrrd";
+  if ("" == m_inputDicomDirectory && "" != m_inputVolume){
+    std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
+    if ( std::string::npos != inputExt.rfind(".nii")) m_inputFileType = "FSL";
+    else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr")) m_inputFileType = "Nrrd";
+    else {
+      std::cerr <<"Error: file type of inputVoume is not supported currently"<<std::endl;
+    }
   }
-  else if ("" == m_inputVolume)
+  else if ("" != m_inputDicomDirectory)
   {
     m_inputFileType = "Dicom";
   }
@@ -301,9 +303,9 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
 
 void DWIConvert::setOutputFileType(const std::string& outputVolume){
   m_outputVolume = outputVolume;
-  std::string outputExt = findFilenameExt(m_outputVolume);
-  if (".nii" == outputExt) m_outputFileType = "FSL";
-  else if (".nrrd" == outputExt || ".nhdr" == outputExt) m_outputFileType = "Nrrd";
+  std::string outputExt = itksys::SystemTools::GetFilenameExtension(m_outputVolume);
+  if (std::string::npos != outputExt.rfind(".nii")) m_outputFileType = "FSL";
+  else if (std::string::npos != outputExt.rfind(".nrrd")|| std::string::npos != outputExt.rfind(".nhdr")) m_outputFileType = "Nrrd";
   else{
     std::cerr <<"Error: the output file type is not supported currently"<<std::endl;
   }
@@ -334,14 +336,14 @@ std::string DWIConvert::getConversionMode()
  */
 
 //{ ".nii", ".nii.gz", ".nhdr", ".nrrd"}
-std::string DWIConvert::findFilenameExt(const std::string filename){
+/*std::string DWIConvert::findFilenameExt(const std::string filename){
     std::string::size_type pos = filename.rfind(".");
     std::string subStr = filename.substr(pos);
     if (".gz" == subStr){
         subStr = filename.substr(pos-4,4);
     }
     return subStr;
-}
+}*/
 
 const std::string &DWIConvert::getInputVolume() const {
   return m_inputVolume;

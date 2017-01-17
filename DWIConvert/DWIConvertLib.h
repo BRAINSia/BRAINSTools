@@ -92,7 +92,7 @@ private:
 
     std::string getInputFileType();
     std::string getOutputFileType();
-    std::string findFilenameExt(const std::string filename);
+    //std::string findFilenameExt(const std::string filename);
 
     DWIConverter *CreateDicomConverter(
             const std::string inputDicomDirectory,

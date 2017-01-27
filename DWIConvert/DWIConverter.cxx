@@ -66,7 +66,12 @@ void DWIConverter::ConvertToMutipleBValuesUnitScaledBVectors()
     for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
     {
       double mag = m_DiffusionVectors[k].magnitude();
+
+      //0.01 tolerance will lead restore bvalue has about 30 error.
+      //if we change into 0.001 will ctest case  42 fail.
+
       if( std::abs( mag*mag - 1.0 ) < 0.01 ) //if less than 1% differnece
+      //if( std::fabs( mag*mag - 1.0 ) < 0.001 ) //if less than 0.1% differnece
       {
         mag = 1.0;  //If less than 1% difference, then assume 100%
         //This is to avoid numerical instability with computing magnitudes of gradients
@@ -82,9 +87,9 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
   static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1,-1,1,1};
   static const double DicomDesiredDirectionFlipsWRTLPS[4] = {1,1,1,1};
   this->ConvertBVectorsToIdentityMeasurementFrame();
-  this->ConvertToMutipleBValuesUnitScaledBVectors();
-
-
+  if (toFSL){
+      this->ConvertToMutipleBValuesUnitScaledBVectors();
+  }
   Volume4DType::Pointer image4D = ThreeDToFourDImage(this->GetDiffusionVolume());
   Volume4DType::DirectionType direction=image4D->GetDirection();
   direction.GetVnlMatrix().get_row(0).magnitude();

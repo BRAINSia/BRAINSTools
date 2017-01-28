@@ -66,16 +66,6 @@ void DWIConverter::ConvertToMutipleBValuesUnitScaledBVectors()
     for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
     {
       double mag = m_DiffusionVectors[k].magnitude();
-
-      //0.01 tolerance will lead restore bvalue has about 30 error.
-      //if we change into 0.001 will ctest case  42 fail.
-
-      if( std::abs( mag*mag - 1.0 ) < 0.01 ) //if less than 1% differnece
-      //if( std::fabs( mag*mag - 1.0 ) < 0.001 ) //if less than 0.1% differnece
-      {
-        mag = 1.0;  //If less than 1% difference, then assume 100%
-        //This is to avoid numerical instability with computing magnitudes of gradients
-      }
       m_DiffusionVectors[k].normalize();
       this->m_BValues[k] = itk::Math::Round<double>( maxBvalue*mag*mag );
     }
@@ -211,7 +201,7 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
   unsigned int                      bVecCount = 0;
   if( ReadBVecs(BVecs, bVecCount, _inputBVectors,true) != EXIT_SUCCESS )
   {
-    itkGenericExceptionMacro(<< "ERROR reading Bvals " << _inputBVectors);
+    itkGenericExceptionMacro(<< "ERROR reading Bvectors " << _inputBVectors);
   }
   if( bValCount != bVecCount )
   {
@@ -226,7 +216,7 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
     itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes:"
                                       << numGradients << " != " << this->GetNVolume() << std::endl);
   }
-  //We need to zero out BVecs for Zero BVals
+  //We need to zero out BVecs for Zero BVals and normalize all bvector
   for(size_t i = 0; i < bValCount; ++i)
   {
     if ( BVals[i] < 1 )

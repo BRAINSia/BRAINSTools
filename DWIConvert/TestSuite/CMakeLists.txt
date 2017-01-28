@@ -43,6 +43,7 @@ ${DWITarDir}/SiemensTrioTim2.tar.gz
 ${DWITarDir}/SiemensTrioTim3.tar.gz
 ${DWITarDir}/SiemensTrioTimBigEndian1.tar.gz
 ${DWITarDir}/SiemensVerio.tar.gz
+${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz
 )
 
 
@@ -424,4 +425,18 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
   )
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
+# add a ctest case supporting multi-shell FSL data by Hui Xie on Jan 28th, 2017
+add_test(NAME DWIConvertMultiShellFSITest
+        COMMAND ${CMAKE_COMMAND}
+        -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
+        -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.nii.gz
+        -D INPUTBVECTOR=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.bvec
+        -D INPUTBVALUE=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.bval
+        -D OUTPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest_NrrdOutput.nhdr
+        -D RECOVERVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest_Recover.nii
+        -D RECOVERBVECTOR=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest_Recover.bvec
+        -D RECOVERBVALUE=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest_Recover.bval
+        -D TEXT_COMPARE_PROGRAM=$<TARGET_FILE:FSLTextFileCompare>
+        -P ${CMAKE_CURRENT_LIST_DIR}/FSLMultiShellDataTest.cmake
+        )
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

@@ -77,9 +77,7 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
   static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1,-1,1,1};
   static const double DicomDesiredDirectionFlipsWRTLPS[4] = {1,1,1,1};
   this->ConvertBVectorsToIdentityMeasurementFrame();
-  if (toFSL){
-      this->ConvertToMutipleBValuesUnitScaledBVectors();
-  }
+
   Volume4DType::Pointer image4D = ThreeDToFourDImage(this->GetDiffusionVolume());
   Volume4DType::DirectionType direction=image4D->GetDirection();
   direction.GetVnlMatrix().get_row(0).magnitude();

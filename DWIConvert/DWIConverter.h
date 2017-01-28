@@ -149,10 +149,7 @@ public:
  unsigned short GetCols() const;
 
 
-  /**
-   * @brief Force overwriting the gradient directions by inserting values read from specified file
-   * @param gradientVectorFile The file with gradients specified for overwriting
-   */
+  // read bvector and bvalue of FSI file
   void ReadGradientInformation(const std::string& inputBValues, const std::string &inputBVectors, const std::string &inputVolumeNameTemplate);
 
   /**

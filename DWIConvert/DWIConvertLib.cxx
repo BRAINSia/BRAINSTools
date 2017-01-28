@@ -177,7 +177,7 @@ int DWIConvert::write(const std::string& outputVolume)
 
   if( "FSL" == getOutputFileType())
   {
-
+    m_converter->ConvertToMutipleBValuesUnitScaledBVectors();
     Volume4DType::Pointer img4D = m_converter->OrientForFSLConventions();
     // write the image */
     m_converter->WriteFSLFormattedFileSet(outputVolumeHeaderName, m_outputBValues, m_outputBVectors, img4D);

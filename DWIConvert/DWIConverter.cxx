@@ -66,11 +66,6 @@ void DWIConverter::ConvertToMutipleBValuesUnitScaledBVectors()
     for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
     {
       double mag = m_DiffusionVectors[k].magnitude();
-      if( std::abs( mag*mag - 1.0 ) < 0.01 ) //if less than 1% differnece
-      {
-        mag = 1.0;  //If less than 1% difference, then assume 100%
-        //This is to avoid numerical instability with computing magnitudes of gradients
-      }
       m_DiffusionVectors[k].normalize();
       this->m_BValues[k] = itk::Math::Round<double>( maxBvalue*mag*mag );
     }
@@ -82,9 +77,6 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
   static const double FSLDesiredDirectionFlipsWRTLPS[4] = {1,-1,1,1};
   static const double DicomDesiredDirectionFlipsWRTLPS[4] = {1,1,1,1};
   this->ConvertBVectorsToIdentityMeasurementFrame();
-  this->ConvertToMutipleBValuesUnitScaledBVectors();
-
-
   Volume4DType::Pointer image4D = ThreeDToFourDImage(this->GetDiffusionVolume());
   Volume4DType::DirectionType direction=image4D->GetDirection();
   direction.GetVnlMatrix().get_row(0).magnitude();
@@ -200,13 +192,13 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
 
   if( ReadBVals(BVals, bValCount, _inputBValues) != EXIT_SUCCESS )
   {
-    itkGenericExceptionMacro(<< "ERROR reading Bvals " << _inputBValues);
+    itkGenericExceptionMacro(<< "ERROR reading BValue " << _inputBValues);
   }
   DWIMetaDataDictionaryValidator::GradientTableType BVecs;
   unsigned int                      bVecCount = 0;
   if( ReadBVecs(BVecs, bVecCount, _inputBVectors,true) != EXIT_SUCCESS )
   {
-    itkGenericExceptionMacro(<< "ERROR reading Bvals " << _inputBVectors);
+    itkGenericExceptionMacro(<< "ERROR reading BVector " << _inputBVectors);
   }
   if( bValCount != bVecCount )
   {

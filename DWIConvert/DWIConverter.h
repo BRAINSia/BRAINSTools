@@ -148,11 +148,13 @@ public:
 
  unsigned short GetCols() const;
 
-  /**
-   * @brief Force overwriting the gradient directions by inserting values read from specified file
-   * @param gradientVectorFile The file with gradients specified for overwriting
+
+  /** read bvalue and bvector files
+   * @brief  Force overwriting the gradient directions by inserting values read from specified file
+   * @param  gradientVectorFile The file with gradients specified for overwriting
    */
    void ReadGradientInformation(const std::string& inputBValues, const std::string &inputBVectors, const std::string &inputVolumeNameTemplate);
+
 
   /**
    * @brief ConvertBVectorsToIdentityMeasurementFrame, Convert the values of the gradients to

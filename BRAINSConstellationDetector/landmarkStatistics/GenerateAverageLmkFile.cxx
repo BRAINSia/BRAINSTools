@@ -36,6 +36,7 @@
 
 #include "itkImage.h"
 #include <cmath>
+#include <fstream>
 #include "Slicer3LandmarkIO.h"
 
 #include "GenerateAverageLmkFileCLP.h"
@@ -45,9 +46,20 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
 
   std::vector<std::string> inputFileNames;
-  if( inputLandmarkFiles.size() > 0 )
+  if( inputLandmarkFiles.size() > 2 )
     {
     inputFileNames = inputLandmarkFiles;
+    }
+  else if ( inputLandmarkFiles.size() == 1 )
+    {
+    inputFileNames.reserve(1000); //Just reserve a huge memory footprint
+    std::cout << "ASSUMING single file is a list of files." << std::endl;
+    std::string oneLine;
+    std::ifstream infile(inputLandmarkFiles[0]);
+    while (std::getline(infile, oneLine))
+      {
+      inputFileNames.push_back(oneLine);
+      }
     }
   else
     {

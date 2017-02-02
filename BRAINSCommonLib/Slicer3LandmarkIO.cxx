@@ -115,7 +115,8 @@ ReadSlicer3toITKLmk( const std::string & landmarksFilename )
     {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    throw itk::ImageFileReaderException(__FILE__, __LINE__, "Couldn't open landmarks file for reading", ITK_LOCATION);
+    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ")+landmarksFilename;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
     }
   std::string line;

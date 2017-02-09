@@ -32,6 +32,7 @@
 #include "itkMultiplyImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "GenericTransformImage.h"
+#include "landmarksConstellationDetector.h"
 
 namespace itk
 {
@@ -375,18 +376,28 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
    eyes_LR_range[1] = 45.0;
 
    if( this->m_AlignedPoints["LE"][0] < eyes_LR_range[0] || this->m_AlignedPoints["LE"][0] > eyes_LR_range[1]
-   || this->m_AlignedPoints["RE"][0] > -eyes_LR_range[0] || this->m_AlignedPoints["RE"][0] < -eyes_LR_range[1])
+   || this->m_AlignedPoints["RE"][0] > -eyes_LR_range[0] || this->m_AlignedPoints["RE"][0] < -eyes_LR_range[1]
+     || this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] >0)
    {
-   itkGenericExceptionMacro(<< "Eyes are out of range in MSP aligned space." << std::endl
-                            << "Normally in left-right direction, 15<LE<45 and -45<RE<-15." << std::endl
-                            << "LE[0] = " << this->m_AlignedPoints["LE"][0] << ", RE[0] = " << this->m_AlignedPoints["RE"][0] << std::endl);
+     const std::string EMSP_Fiducial_file_name("EMSP.fcsv");
+     std::stringstream failureMessageStream("");
+     if (this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] > 0)
+     {
+       failureMessageStream << "Eyes are normally lower than AC point in Superior-Inferior direction "
+                            << "in MSP aligned space." << std::endl;
+     }
+     else
+     {
+       failureMessageStream << "Eyes are out of range in MSP aligned space." << std::endl
+                            << "Normally in left-right direction, "
+                            << eyes_LR_range[0] << "<LE< " << eyes_LR_range[1]
+                            << " and " << -eyes_LR_range[1] << "<RE<" << -eyes_LR_range[0] << std::endl
+                            << "LE[0] = " << this->m_AlignedPoints["LE"][0]
+                            << ", RE[0] = " << this->m_AlignedPoints["RE"][0] << std::endl;
+
+     }
+     WriteManualFixFiles(EMSP_Fiducial_file_name, this->m_OutputResampledImage.GetPointer(), this->m_ResultsDir, this->m_AlignedPoints, failureMessageStream.str());
    }
-   if( this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] >0 )
-   {
-   itkGenericExceptionMacro(<< "Eyes are normally lower than AC point in Superior-Inferior direction "
-                            << "in MSP aligned space." << std::endl);
-   }
-   //
 
   if( this->m_WriteBranded2DImage.compare("") != 0 )
     {

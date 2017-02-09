@@ -33,8 +33,6 @@
 #include <BRAINSFitHelper.h>
 #include "itkLandmarkBasedTransformInitializer.h"
 
-#include <sstream>
-
 std::string local_to_string(unsigned int i)
 {
   std::stringstream localStream;
@@ -790,35 +788,34 @@ void landmarksConstellationDetector::Compute( void )
     {
     itkGenericExceptionMacro(<< "Too large MSP estimation error! reflective correlation metric is: "
                              << c_c << std::endl
-                             << "Estimation of landmarks will not be reliable.\n" << std::endl);
+                             << "Estimation of landmarks will not be reliable.\n"
+
+      << std::endl);
     }
 
   // In case hough eye detector failed
   if( this->m_HoughEyeFailure || ( globalImagedebugLevel > 1 ) )
     {
     const std::string EMSP_Fiducial_file_name("EMSP.fcsv");
-    //ADD MetaData for EMSP_FCSV_FILENAME
-    itk::MetaDataDictionary &dict = this->m_VolumeMSP->GetMetaDataDictionary();
-    const char * const metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
-    itk::EncapsulateMetaData<std::string>(dict,metaDataEMSP_FCSVName,EMSP_Fiducial_file_name.c_str());
-
-    // write EMSP aligned image
-    itkUtil::WriteImage<SImageType> ( this->m_VolumeMSP, this->m_ResultsDir + "/EMSP.nrrd" );
-
-    if( this->m_HoughEyeFailure )
-      {
-      SImageType::PointType zeroPoint;
-      zeroPoint.Fill( 0 );
+      std::stringstream failureMessageStream("");
+      failureMessageStream << "EMSP aligned image and zero eye centers "
+                           << "landmarks are written to " << std::endl
+                           << this->m_ResultsDir << ". Use GUI corrector to "
+                           << "correct the landmarks in." << EMSP_Fiducial_file_name
+                           << "INITIAL LMKS: " << EMSP_Fiducial_file_name
+                           << "FOR IMAGE: " << this->m_VolumeMSP
+                           << "IN DIR: " << this->m_ResultsDir
+                           << std::endl;
       LandmarksMapType zeroEyeCenters;
-      zeroEyeCenters["LE"] = zeroPoint;
-      zeroEyeCenters["RE"] = zeroPoint;
-      WriteITKtoSlicer3Lmk
-        ( this->m_ResultsDir + "/"+EMSP_Fiducial_file_name, zeroEyeCenters );
-      itkGenericExceptionMacro(<< "EMSP aligned image and zero eye centers "
-                               << "landmarks are written to " << std::endl
-                               << this->m_ResultsDir << ". Use GUI corrector to "
-                               << "correct the landmarks in." << EMSP_Fiducial_file_name);
+      if(this->m_HoughEyeFailure)
+      {
+        SImageType::PointType zeroPoint;
+        zeroPoint.Fill( 0 );
+
+        zeroEyeCenters["LE"] = zeroPoint;
+        zeroEyeCenters["RE"] = zeroPoint;
       }
+    WriteManualFixFiles(EMSP_Fiducial_file_name, this->m_VolumeMSP, this->m_ResultsDir, zeroEyeCenters, failureMessageStream.str());
     }
 
   if( globalImagedebugLevel > 2 )
@@ -1379,6 +1376,7 @@ void landmarksConstellationDetector::Compute( void )
     }   // End of local searching
 }
 
+
 void landmarksConstellationDetector::LinearEstimation
   ( LandmarksMapType & namedPoints,
   const std::vector<std::string> & processingList,
@@ -1454,4 +1452,25 @@ landmarksConstellationDetector::FindVectorFromPointAndVectors
   BC[1] = ( BA.GetNorm() * BCMean.GetNorm()
             * cosTheta - BA[2] * BC[2] ) / BA[1];
   return BC;
+}
+
+
+void WriteManualFixFiles(const std::string &EMSP_Fiducial_file_name,
+                         SImageType * const mspVolume,
+                         const std::string &resultDir,
+                         const LandmarksMapType & errorLmks,
+                         const std::string &failureMessage)
+{//ADD MetaData for EMSP_FCSV_FILENAME
+  itk::MetaDataDictionary &dict = mspVolume->GetMetaDataDictionary();
+  const char * const metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
+  itk::EncapsulateMetaData<std::__1::string>(dict, metaDataEMSP_FCSVName, EMSP_Fiducial_file_name.c_str());
+
+  // write EMSP aligned image
+  itkUtil::WriteImage<SImageType> (mspVolume, resultDir + "/EMSP.nrrd" );
+
+  if(errorLmks.size() > 0)
+  {
+    WriteITKtoSlicer3Lmk( resultDir + "/"+EMSP_Fiducial_file_name, errorLmks );
+  }
+  itkGenericExceptionMacro(<< failureMessage );
 }

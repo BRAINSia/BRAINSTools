@@ -288,7 +288,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
       this->m_Ipd += vnl_math_sqr( this->m_LE[i] - this->m_RE[i] );
       }
     this->m_Ipd = std::sqrt( this->m_Ipd );
-    std::cout << "The resulted interpupilary distance is " << this->m_Ipd << " mm" << std::endl;
+    std::cout << "The resulted inter-pupilary distance is " << this->m_Ipd << " mm" << std::endl;
 
     if( this->m_Ipd < 40 or this->m_Ipd > 85 )
       {
@@ -343,14 +343,20 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     rotation2[2] = 0;
 
     // Note: this algorithm doesn't treat rotations about +L-axis
-    this->m_RotAngle[0] = 0;
+    this->m_RotAngle[0] = 0.0;
+    this->m_RotAngle[1] = 0.0;
+    this->m_RotAngle[2] = 0.0;
 
+    const double lr_distance_between_eyes=( this->m_LE[0] - this->m_RE[0] );
+    if( lr_distance_between_eyes < 40) {
+      std::cerr << "WARNING: The distance is abnormal! Get ready to use a GUI corrector next." << std::endl;
+      this->m_Failure = true;
+    }
     // about +P-axis
-    this->m_RotAngle[1] = std::atan( ( this->m_LE[2] - this->m_RE[2] )
-                                    / ( this->m_LE[0] - this->m_RE[0] ) );
+    this->m_RotAngle[1] =  std::atan( ( this->m_LE[2] - this->m_RE[2] ) / lr_distance_between_eyes );
     // about +S-axis
-    this->m_RotAngle[2] = -std::atan( ( this->m_LE[1] - this->m_RE[1] )
-                                     / ( this->m_LE[0] - this->m_RE[0] ) );
+    this->m_RotAngle[2] = -std::atan( ( this->m_LE[1] - this->m_RE[1] ) / lr_distance_between_eyes );
+
 
     // Set affine tranformation
     this->m_VersorTransform->Translate( translation2 );

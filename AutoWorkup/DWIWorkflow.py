@@ -32,8 +32,8 @@ def ExtractBRAINFromHead(RawScan, BrainLabels):
     # Remove skull from the head scan
     assert os.path.exists(RawScan), "File not found: %s" % RawScan
     assert os.path.exists(BrainLabels), "File not found: %s" % BrainLabels
-    headImage = sitk.ReadImage(RawScan)
-    labelsMap = sitk.ReadImage(BrainLabels)
+    headImage = sitk.ReadImage(RawScan.encode('ascii','replace'))
+    labelsMap = sitk.ReadImage(BrainLabels.encode('ascii','replace'))
     rs = sitk.ResampleImageFilter()
     rs.SetInterpolator(sitk.sitkLinear)
     rs.SetTransform(sitk.Transform(3, sitk.sitkIdentity))
@@ -43,7 +43,7 @@ def ExtractBRAINFromHead(RawScan, BrainLabels):
     label_mask = labelsMap>0
     brainImage = sitk.Cast(resampledHead,sitk.sitkInt16) * sitk.Cast(label_mask,sitk.sitkInt16)
     outputVolume = os.path.realpath('T2Stripped.nrrd')
-    sitk.WriteImage(brainImage, outputVolume)
+    sitk.WriteImage(brainImage, outputVolume.encode('ascii','replace'))
     return outputVolume
 
 def MakeResamplerInFileList(inputT2, inputLabelMap):
@@ -59,7 +59,7 @@ def CreateAntsRegistrationMask(brainMask):
     import os
     import SimpleITK as sitk
     assert os.path.exists(brainMask), "File not found: %s" % brainMask
-    labelsMap = sitk.ReadImage(brainMask)
+    labelsMap = sitk.ReadImage(brainMask.encode('ascii','replace'))
     label_mask = labelsMap>0
     # dilate the label mask
     dilateFilter = sitk.BinaryDilateImageFilter()
@@ -67,7 +67,7 @@ def CreateAntsRegistrationMask(brainMask):
     dilated_mask = dilateFilter.Execute( label_mask )
     regMask = dilated_mask
     registrationMask = os.path.realpath('registrationMask.nrrd')
-    sitk.WriteImage(regMask, registrationMask)
+    sitk.WriteImage(regMask, registrationMask.encode('ascii','replace'))
     return registrationMask
 
 # Save direction cosine for the input volume
@@ -75,7 +75,7 @@ def SaveDirectionCosineToMatrix(inputVolume):
     import os
     import SimpleITK as sitk
     assert os.path.exists(inputVolume), "File not found: %s" % inputVolume
-    t2 = sitk.ReadImage(inputVolume)
+    t2 = sitk.ReadImage(inputVolume.encode('ascii','replace'))
     directionCosine = t2.GetDirection()
     return directionCosine
 
@@ -91,10 +91,10 @@ def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
 def ForceDCtoID(inputVolume):
     import os
     import SimpleITK as sitk
-    inImage = sitk.ReadImage(inputVolume)
+    inImage = sitk.ReadImage(inputVolume.encode('ascii','replace'))
     inImage.SetDirection((1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0))
     outputVolume = os.path.realpath('IDDC_'+ os.path.basename(inputVolume))
-    sitk.WriteImage(inImage, outputVolume)
+    sitk.WriteImage(inImage, outputVolume.encode('ascii','replace'))
     return outputVolume
 
 def pickCompositeTransfromFromList(composite_transform_as_list):
@@ -105,10 +105,10 @@ def pickCompositeTransfromFromList(composite_transform_as_list):
 def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
     import os
     import SimpleITK as sitk
-    inImage = sitk.ReadImage(inputVolume)
+    inImage = sitk.ReadImage(inputVolume.encode('ascii','replace'))
     inImage.SetDirection(inputDirectionCosine)
     outputVolume = os.path.realpath('CorrectedDWI.nrrd')
-    sitk.WriteImage(inImage, outputVolume)
+    sitk.WriteImage(inImage, outputVolume.encode('ascii','replace'))
     return outputVolume
 
 def GetRigidTransformInverse(inputTransform):

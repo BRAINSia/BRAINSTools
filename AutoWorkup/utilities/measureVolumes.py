@@ -44,8 +44,8 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
     """
     import SimpleITK as sitk
     import os
-    labelImg = sitk.ReadImage(labelVolume, sitk.sitkInt64)
-    RefImg = sitk.ReadImage(RefVolume, sitk.sitkFloat64)
+    labelImg = sitk.ReadImage(labelVolume, sitk.sitkInt64.encode('ascii','replace'))
+    RefImg = sitk.ReadImage(RefVolume, sitk.sitkFloat64.encode('ascii','replace'))
     labelStatFilter = sitk.LabelStatisticsImageFilter()
     labelStatFilter.Execute(RefImg, labelImg)
     ImageSpacing = RefImg.GetSpacing()

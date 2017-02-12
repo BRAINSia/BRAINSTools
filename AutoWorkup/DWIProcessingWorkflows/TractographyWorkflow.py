@@ -20,7 +20,7 @@ def CreateTractographyWorkflow(WFname):
     def computeNumberOfSeedsPerVoxel(inputVolume):
         import operator
         import SimpleITK as sitk
-        inVol = sitk.ReadImage(inputVolume)
+        inVol = sitk.ReadImage(inputVolume.encode('ascii','replace'))
         voxelVolume = reduce(operator.mul, inVol.GetSpacing())
         # 10 seeds per voxel is used when voxel voluem is 8 mm^3.
         seedsPerVoxel = round(voxelVolume*10/8)

@@ -439,7 +439,7 @@ def GetBaseSize(filename):
     base_size = good_list.get(filename)
     #print "#"*40+filename
     if not base_size:
-      base_size = sitk.ReadImage(filename).GetSpacing()
+      base_size = sitk.ReadImage(filename.encode('ascii','replace')).GetSpacing()
       good_list[filename] = base_size
       pf=open(pickled_good_list_fn,'w')
       pickle.dump(good_list,pf)
@@ -452,8 +452,8 @@ def getInputFileName(filename):
     if filename.find('.nrrd'):
        outfn = filename.replace('.nrrd','.nii.gz')
        if not os.path.exists(outfn):
-           tempIm = sitk.ReadImage(filename)
-           sitk.WriteImage( tempIm, outfn )
+           tempIm = sitk.ReadImage(filename.encode('ascii','replace'))
+           sitk.WriteImage( tempIm, outfn.encode('ascii','replace'))
     return outfn
 
 def find_mgz(inlist_withNrrd):

@@ -124,7 +124,7 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
         or IsFirstNewerThanSecond(brainmask, output_nu_fn_mgz) \
             or IsFirstNewerThanSecond(output_nu_fn_mgz, output_custom_brainmask_fn_mgz):
         print("Fixing BrainMask recon-auto1 stage")
-        brain = sitk.ReadImage(brainmask)
+        brain = sitk.ReadImage(brainmask.encode('ascii','replace'))
         blood = sitk.BinaryThreshold(brain, 5, 5)
         not_blood = 1 - blood
         clipping = sitk.BinaryThreshold(brain, 1, 1000000) - blood
@@ -135,7 +135,7 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
         hole_filled = sitk.ErodeObjectMorphology(sitk.DilateObjectMorphology(clipping, fill_size), fill_size)
         final_mask = sitk.Cast(hole_filled * not_blood, sitk.sitkUInt8)
         ## Now make an mgz version of the binary custom brain mask
-        sitk.WriteImage(final_mask, output_custom_brainmask_fn)  # brain_matter mask with blood zero'ed out, and no "NOT" regions.
+        sitk.WriteImage(final_mask, output_custom_brainmask_fn.encode('ascii','replace'))  # brain_matter mask with blood zero'ed out, and no "NOT" regions.
         run_mri_convert_script(output_custom_brainmask_fn, output_custom_brainmask_fn_mgz, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT)
         os.rename(output_brainmask_fn_mgz, output_brainmask_fn_mgz.replace('.mgz', '_orig_backup.mgz'))
         ## Multipy output_brainmask_fn_mgz =  output_custom_brainmask_fn_mgz * output_nu_fn_mgz

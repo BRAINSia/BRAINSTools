@@ -82,8 +82,8 @@ def main(argv):
   print('Input Landmarks File is "', inputLandmarksFile)
   print('Output Talairach Landmarks File is "', outputTalairachLandmarksFile)
 
-  input_img = sitk.ReadImage(inputVolume)
-  img_labels = sitk.ReadImage(inputLabelsImage)
+  input_img = sitk.ReadImage(inputVolume.encode('ascii','replace'))
+  img_labels = sitk.ReadImage(inputLabelsImage.encode('ascii','replace'))
 
   exclusionLabels=((img_labels == 11) +
                    (img_labels == 35) +
@@ -103,7 +103,7 @@ def main(argv):
   unified_important_labels = important_labels>0
 
   # debug
-  #sitk.WriteImage(unified_important_labels,'./unified_important_labels.nrrd')
+  #sitk.WriteImage(unified_important_labels,'./unified_important_labels.nrrd'.encode('ascii','replace'))
   ##
 
   labelStatFilter = sitk.LabelStatisticsImageFilter()

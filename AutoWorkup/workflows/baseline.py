@@ -38,7 +38,7 @@ package_check('IPython', '0.10', 'tutorial1')
 
 from utilities.distributed import modify_qsub_args
 from PipeLineFunctionHelpers import convertToList, FixWMPartitioning, AccumulateLikeTissuePosteriors
-from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
+from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 
 from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
 from .WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
@@ -113,7 +113,7 @@ def CreateLeftRightWMHemispheres(BRAINLABELSFile,
 
         return (largestMask * dilateMask > 0)
 
-    ABCLabelsImage = sitk.Cast(sitk.ReadImage(BRAINLABELSFile), sitk.sitkUInt32)
+    ABCLabelsImage = sitk.Cast(sitk.ReadImage(BRAINLABELSFile.encode('ascii','replace')), sitk.sitkUInt32)
     # # Remove brain stem and cerebellum
     BS = (ABCLabelsImage == 30)
     Cerebellum_GM = (ABCLabelsImage == 12)
@@ -122,7 +122,7 @@ def CreateLeftRightWMHemispheres(BRAINLABELSFile,
 
     ABCLabelsImage = KeepRegion * ABCLabelsImage
 
-    HDCMARegisteredVentricleLabels = sitk.Cast(sitk.ReadImage(HDCMARegisteredVentricleMaskFN), sitk.sitkUInt32)
+    HDCMARegisteredVentricleLabels = sitk.Cast(sitk.ReadImage(HDCMARegisteredVentricleMaskFN.encode('ascii','replace')), sitk.sitkUInt32)
     ABCCSFLabelCode = 4
     HDMCALeftVentricleCode = 4
     HDMCARightVentricleCode = 43
@@ -152,8 +152,8 @@ def CreateLeftRightWMHemispheres(BRAINLABELSFile,
     ### START WM
 
     # Template masks for left and right hemispheres
-    Left_template = (sitk.Cast(sitk.ReadImage(LeftHemisphereMaskName), sitk.sitkUInt32) > 0 )
-    Right_template = (sitk.Cast(sitk.ReadImage(RightHemisphereMaskName), sitk.sitkUInt32) > 0 )
+    Left_template = (sitk.Cast(sitk.ReadImage(LeftHemisphereMaskName.encode('ascii','replace')), sitk.sitkUInt32) > 0 )
+    Right_template = (sitk.Cast(sitk.ReadImage(RightHemisphereMaskName.encode('ascii','replace')), sitk.sitkUInt32) > 0 )
 
     # Split into left and right hemispheres
     WM_left = ( WM_Final * Left_template > 0 )
@@ -170,10 +170,10 @@ def CreateLeftRightWMHemispheres(BRAINLABELSFile,
 
     ## Write todisk
     WM_LeftHemisphereFileName = os.path.abspath(WM_LeftHemisphereFileName)
-    sitk.WriteImage(WM_Largest_left, WM_LeftHemisphereFileName)
+    sitk.WriteImage(WM_Largest_left, WM_LeftHemisphereFileName.encode('ascii','replace'))
 
     WM_RightHemisphereFileName = os.path.abspath(WM_RightHemisphereFileName)
-    sitk.WriteImage(WM_Largest_right, WM_RightHemisphereFileName)
+    sitk.WriteImage(WM_Largest_right, WM_RightHemisphereFileName.encode('ascii','replace'))
 
     ## TODO Add splitting into hemispheres code here
     return WM_LeftHemisphereFileName, WM_RightHemisphereFileName
@@ -270,7 +270,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
     unwrapped_outputfn = []
     for index in range(0,len(wrapped_inputfn)):
         ii = wrapped_inputfn[index]
-        wrapped_image = sitk.ReadImage(str(ii))
+        wrapped_image = sitk.ReadImage(str(ii.encode('ascii','replace')))
         identdc_wrapped_image=FlipPermuteToIdentity(wrapped_image)
         del wrapped_image
         if 0 == 1: # THIS DOES NOT WORK ROBUSTLY YET
@@ -285,7 +285,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
             unwrapped_image = identdc_wrapped_image
         import os
         unwrapped_outputfn1=os.path.realpath(unwrapped_outputbasefn[index])
-        sitk.WriteImage(unwrapped_image,unwrapped_outputfn1)
+        sitk.WriteImage(unwrapped_image,unwrapped_outputfn1.encode('ascii','replace'))
         unwrapped_outputfn.append(unwrapped_outputfn1)
 
     return unwrapped_outputfn
@@ -690,7 +690,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                             name=currentFixWMPartitioningName)
 
         baw201.connect([(myLocalTCWF, FixWMNode, [('outputspec.outputLabels', 'brainMask'),
-                                                  (('outputspec.posteriorImages', flattenDict), 'PosteriorsList')]),
+                                                  (('outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction), 'PosteriorsList')]),
                         (FixWMNode, outputsSpec, [('UpdatedPosteriorsList', 'UpdatedPosteriorsList')]),
         ])
 

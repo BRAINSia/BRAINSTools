@@ -201,7 +201,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         full_pathname=str(full_pathname)
         base_name = os.path.basename(full_pathname)
         if base_name in list(patternDict.keys()):
-            load_images_list[base_name] = sitk.ReadImage(full_pathname)
+            load_images_list[base_name] = sitk.ReadImage(full_pathname.encode('ascii','replace'))
         else:
             print("MISSING FILE FROM patternDict: {0}".format(base_name))
     ## Make binary dilated mask
@@ -266,7 +266,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             ### Make Brain Mask Binary
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
-            sitk.WriteImage(binmask, clipped_name)
+            sitk.WriteImage(binmask, clipped_name.encode('ascii','replace'))
             clean_deformed_list[index] = os.path.realpath(clipped_name)
         elif base_name == 'AVG_T2.nii.gz':
             T2File = full_pathname
@@ -274,21 +274,21 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             PDFile = full_pathname
         elif base_name in interiorPriors:
             ### Make clipped posteriors for brain regions
-            curr = sitk.Cast(sitk.ReadImage(full_pathname), sitk.sitkFloat32)
+            curr = sitk.Cast(sitk.ReadImage(full_pathname.encode('ascii','replace')), sitk.sitkFloat32)
             curr = curr * brainmask_dilatedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
-            sitk.WriteImage(curr, clipped_name)
+            sitk.WriteImage(curr, clipped_name.encode('ascii','replace'))
             clean_deformed_list[index] = os.path.realpath(clipped_name)
             #print "HACK: ", clean_deformed_list[index]
             curr = None
         elif base_name in exteriorPriors:
             ### Make clipped posteriors for brain regions
-            curr = sitk.Cast(sitk.ReadImage(full_pathname), sitk.sitkFloat32)
+            curr = sitk.Cast(sitk.ReadImage(full_pathname.encode('ascii','replace')), sitk.sitkFloat32)
             curr = curr * inv_brainmask_erodedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
-            sitk.WriteImage(curr, clipped_name)
+            sitk.WriteImage(curr, clipped_name.encode('ascii','replace'))
             clean_deformed_list[index] = os.path.realpath(clipped_name)
             #print "HACK: ", clean_deformed_list[index]
             curr = None

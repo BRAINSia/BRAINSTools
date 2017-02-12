@@ -139,11 +139,11 @@ def ChangeDynamicRangeOfImage(inFN, outFN, winMin, winMax, outMin, outMax):
     import SimpleITK as sitk
     import os
 
-    at = sitk.ReadImage(inFN)
+    at = sitk.ReadImage(inFN.encode('ascii','replace'))
     out_at = sitk.IntensityWindowing(at, windowMinimum=winMin, windowMaximum=winMax, outputMinimum=outMin,
                                      outputMaximum=outMax)
     out_at = sitk.Cast(out_at, sitk.sitkUInt16)
-    sitk.WriteImage(out_at, outFN)
+    sitk.WriteImage(out_at, outFN.encode('ascii','replace'))
     return os.path.realpath(outFN)
 
 
@@ -193,13 +193,13 @@ def SmoothBrainMask(inFN, outFN):
     import os
 
     FIXED_BM = inFN
-    fbm = sitk.ReadImage(FIXED_BM) > 0  # Make binary
+    fbm = sitk.ReadImage(FIXED_BM.encode('ascii','replace')) > 0  # Make binary
 
     ## A smoothing operation to get rid of rough brain edges
     fbm = sitk.BinaryErode(fbm, 1)
     fbm = sitk.BinaryDilate(fbm, 2)
     fbm = sitk.BinaryErode(fbm, 1)
-    sitk.WriteImage(sitk.Cast(fbm, sitk.sitkUInt16), outFN)
+    sitk.WriteImage(sitk.Cast(fbm, sitk.sitkUInt16.encode('ascii','replace')), outFN)
     return os.path.realpath(outFN)
 
 
@@ -244,12 +244,12 @@ def ChopImage(inFN, inMaskFN, outFN):
     import SimpleITK as sitk
     import os
 
-    fbm = sitk.ReadImage(inMaskFN) > 0
-    int1 = sitk.ReadImage(inFN)
+    fbm = sitk.ReadImage(inMaskFN.encode('ascii','replace')) > 0
+    int1 = sitk.ReadImage(inFN.encode('ascii','replace'))
     int1_mask = sitk.Cast(int1 > 0, sitk.sitkUInt16)
     outt1 = sitk.Cast(int1, sitk.sitkUInt16) * sitk.Cast(fbm, sitk.sitkUInt16) * int1_mask
 
-    sitk.WriteImage(outt1, outFN)
+    sitk.WriteImage(outt1, outFN.encode('ascii','replace'))
     return os.path.realpath(outFN)
 
 

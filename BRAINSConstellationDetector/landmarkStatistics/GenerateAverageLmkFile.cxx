@@ -55,7 +55,7 @@ int main( int argc, char * argv[] )
     inputFileNames.reserve(1000); //Just reserve a huge memory footprint
     std::cout << "ASSUMING single file is a list of files." << std::endl;
     std::string oneLine;
-    std::ifstream infile(inputLandmarkFiles[0]);
+    std::ifstream infile(inputLandmarkFiles[0].c_str());
     while (std::getline(infile, oneLine))
       {
       inputFileNames.push_back(oneLine);

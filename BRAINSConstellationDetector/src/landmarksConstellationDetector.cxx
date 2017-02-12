@@ -1463,7 +1463,7 @@ void WriteManualFixFiles(const std::string &EMSP_Fiducial_file_name,
 {//ADD MetaData for EMSP_FCSV_FILENAME
   itk::MetaDataDictionary &dict = mspVolume->GetMetaDataDictionary();
   const char * const metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
-  itk::EncapsulateMetaData<std::__1::string>(dict, metaDataEMSP_FCSVName, EMSP_Fiducial_file_name.c_str());
+  itk::EncapsulateMetaData<std::string>(dict, metaDataEMSP_FCSVName, EMSP_Fiducial_file_name.c_str());
 
   // write EMSP aligned image
   itkUtil::WriteImage<SImageType> (mspVolume, resultDir + "/EMSP.nrrd" );

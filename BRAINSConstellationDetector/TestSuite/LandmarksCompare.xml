@@ -37,7 +37,7 @@
       <longflag>tolerance</longflag>
       <label>The maximum error (in mm) allowed in each direction of a landmark</label>
       <description>The maximum error (in mm) allowed in each direction of a landmark</description>
-      <default>0.0</default>
+      <default>0.0001</default>
     </double>
 
   </parameters>

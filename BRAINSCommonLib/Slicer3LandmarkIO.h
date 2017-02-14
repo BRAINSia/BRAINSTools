@@ -40,6 +40,16 @@
  */
 
 
+/**
+ * @brief enumeration for selecting different FCSV file formats.
+ */
+typedef enum {
+  SLICER_FCSV_BEGIN=0,
+  SLICER_V3_FCSV=1,
+  SLICER_V4_FCSV=2,
+  SLICER_FCSV_END=3
+} SLICER_LANDMARK_FILE_TYPE;
+
 /*
  * Read lmk weights
  * weightFilename  -
@@ -56,7 +66,9 @@ LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename );
  * Output:
  * NONE
  */
-extern void WriteITKtoSlicer3Lmk( const std::string & landmarksFilename, const LandmarksMapType & landmarks );
+extern void WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
+  const LandmarksMapType & landmarks,
+  const SLICER_LANDMARK_FILE_TYPE slicerLmkType = SLICER_V4_FCSV);
 
 /*
  * Read Slicer3 landmark list file (.fcsv) into a map of ITK points

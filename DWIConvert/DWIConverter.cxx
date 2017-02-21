@@ -14,6 +14,7 @@ DWIConverter::DWIConverter( const FileNamesContainer &inputFileNames, const bool
         m_NRRDSpaceDefinition("left-posterior-superior")
 {
   this->m_MeasurementFrame.SetIdentity();
+  m_thickness = 0;
 }
 
 DWIConverter::~DWIConverter() {}
@@ -135,6 +136,12 @@ DWIConverter::SpacingType DWIConverter::GetSpacing() const
 {
   return this->m_Volume->GetSpacing();
 }
+
+double DWIConverter::GetThickness() const
+{
+  return m_thickness;
+}
+
 
 DWIConverter::Volume3DUnwrappedType::PointType DWIConverter::GetOrigin() const
 {
@@ -333,7 +340,7 @@ void DWIConverter::ManualWriteNRRDFile(
          << " " << this->GetRows()
          << " " << this->GetSlicesPerVolume()
          << " " << this->GetNVolume() << std::endl;
-  header << "thicknesses:  NaN  NaN " << DoubleConvert(this->GetSpacing()[2]) << " NaN" << std::endl;
+  header << "thicknesses:  NaN  NaN " << DoubleConvert(GetThickness()) << " NaN" << std::endl;
   // need to check
   header << "space directions: "
          << "("
@@ -498,6 +505,7 @@ Volume4DType::Pointer DWIConverter::ThreeDToFourDImage(Volume3DUnwrappedType::Po
     itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
     itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    itk::EncapsulateMetaData<double>( thisDic, "NRRD_thicknesses", GetThickness());
   }
 
   const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels()
@@ -565,6 +573,7 @@ DWIConverter::Volume3DUnwrappedType::Pointer DWIConverter::FourDToThreeDImage(Vo
     itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
     itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
     itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    itk::EncapsulateMetaData<double>( thisDic, "NRRD_thicknesses", GetThickness());
   }
 
   const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels()
@@ -679,4 +688,11 @@ size_t DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderNa
 
 DWIConverter::Volume3DUnwrappedType::Pointer DWIConverter::getVolumePointer(){
   return m_Volume;
+}
+
+double DWIConverter::readThicknessFromDict(){
+  DWIMetaDataDictionaryValidator myValidator;
+  myValidator.SetMetaDataDictionary(m_Volume->GetMetaDataDictionary());
+  m_thickness = myValidator.GetThicknesses().at(2);
+  return m_thickness;
 }

@@ -35,7 +35,7 @@ class DWIDICOMConverterBase : public DWIConverter {
   virtual void LoadFromDisk() ITK_OVERRIDE;
 
   virtual void LoadDicomDirectory();
-
+  double readThicknessFromDicom() const;
 
 protected:
   enum VRType{

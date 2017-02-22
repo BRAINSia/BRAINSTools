@@ -105,6 +105,7 @@ NRRDDWIConverter::ExtractDWIData()
   RecoverMeasurementFrame<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_MeasurementFrame);
   RecoverBVectors<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors);
   RecoverBValues<Volume3DUnwrappedType>(this->m_Volume.GetPointer(), this->m_DiffusionVectors, this->m_BValues);
+  readThicknessFromDict();
 }
 
 DWIConverter::CommonDicomFieldMapType NRRDDWIConverter::GetCommonDicomFieldsMap() const

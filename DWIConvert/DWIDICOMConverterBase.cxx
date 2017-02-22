@@ -97,6 +97,7 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
     imSpacing[2] = spacing[2];
     m_Volume->SetSpacing(imSpacing);
   }
+  m_thickness = readThicknessFromDicom();
 
   // a map of ints keyed by the slice location string
   // reported in the dicom file.  The number of slices per
@@ -384,4 +385,18 @@ void DWIDICOMConverterBase::DetermineSliceOrderIS()
   {
     this->m_SliceOrderIS = false;
   }
+}
+
+/*
+ * According Dicom standard:(DICOM PS3.6 2016b - Data Dictionary)
+ * (0018, 0050) indicates slice thickness.
+ *  which is also consistent with Dcom2iix software.
+ *  In the 348-bytes header of NifTi, there is no place to store thickness information.
+ *  And 348 bytes which are already occupied compactly leave no space for private information extension.
+ *  In another words, you will loss thickness information from Dicom to FSL, or from Nrrd to FSL.
+ * */
+double DWIDICOMConverterBase::readThicknessFromDicom() const{
+  double thickness= 0.0;
+  m_Headers[0]->GetElementDS<double>(0x0018,0x0050,1,&thickness);
+  return thickness;
 }

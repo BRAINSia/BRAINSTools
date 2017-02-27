@@ -29,6 +29,7 @@ from configparser import ConfigParser
 import os
 import sys
 import copy
+import io
 
 from .pathHandling import *
 from .distributed import modify_qsub_args
@@ -42,6 +43,11 @@ def str2bool(v):
       return False
   raise ValueError( "ERROR: INVALID String to bool conversion for '{0}'".format(v) )
 
+def getASCIIFromParser(parser,region,tag):
+    unicodeText = parser.get(region,tag)
+    asciiText = unicodeText.encode('ascii',errors='strict')
+    return asciiText
+
 def parseEnvironment(parser, environment):
     """ Parse the environment environment given by 'section' and return a dictionary
         Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
@@ -49,33 +55,34 @@ def parseEnvironment(parser, environment):
     """
     retval = dict()
     if parser.has_option(environment, 'ENVAR_DICT'):
-        retval['env'] = eval(parser.get(environment, 'ENVAR_DICT'))
+        retval['env'] = eval(getASCIIFromParser(parser, environment, 'ENVAR_DICT'))
     else:
         retval['env'] = dict()
     if 'PYTHONPATH' in list(retval['env'].keys()):
-        pythonpath = appendPathList(parser.get(environment, 'APPEND_PYTHONPATH'), retval['env']['PYTHONPATH'])
+        pythonpath = appendPathList(getASCIIFromParser(parser, environment, 'APPEND_PYTHONPATH'),
+                                    retval['env']['PYTHONPATH'])
         retval['env']['PYTHONPATH'] = pythonpath  # Create append to PYTHONPATH
     else:
-        retval['env']['PYTHONPATH'] = parser.get(environment, 'APPEND_PYTHONPATH')
+        retval['env']['PYTHONPATH'] = getASCIIFromParser(parser, environment, 'APPEND_PYTHONPATH')
     if 'PATH' in list(retval['env'].keys()):
-        envpath = appendPathList(parser.get(environment, 'APPEND_PATH'), retval['env']['PATH'])
+        envpath = appendPathList(getASCIIFromParser(parser, environment, 'APPEND_PATH'), retval['env']['PATH'])
         retval['env']['PATH'] = envpath  # Create append to PATH
     else:
-        retval['env']['PATH'] = parser.get(environment, 'APPEND_PATH')
+        retval['env']['PATH'] = getASCIIFromParser(parser, environment, 'APPEND_PATH')
 
-    retval['prefix'] = validatePath(parser.get(environment, 'MOUNT_PREFIX'), True, True)
+    retval['prefix'] = validatePath(getASCIIFromParser(parser, environment, 'MOUNT_PREFIX'), True, True)
     if retval['prefix'] is None:
         retval['prefix'] = ''
     if parser.has_option(environment, 'VIRTUALENV_DIR'):
-        retval['virtualenv_dir'] = validatePath(parser.get(environment, 'VIRTUALENV_DIR'), False, True)
+        retval['virtualenv_dir'] = validatePath(getASCIIFromParser(parser, environment, 'VIRTUALENV_DIR'), False, True)
     else:
         retval['virtualenv_dir'] = None
     retval_cluster = dict()
-    retval_cluster['modules'] = eval(parser.get(environment, 'MODULES'))
-    retval_cluster['queue'] = parser.get(environment, 'QUEUE')
-    retval_cluster['long_q'] = parser.get(environment, 'QUEUE_LONG')
-    retval_cluster['qstat'] = parser.get(environment, 'QSTAT_IMMEDIATE')
-    retval_cluster['qstat_cached'] = parser.get(environment, 'QSTAT_CACHED')
+    retval_cluster['modules'] = eval(getASCIIFromParser(parser, environment, 'MODULES'))
+    retval_cluster['queue'] = getASCIIFromParser(parser, environment, 'QUEUE')
+    retval_cluster['long_q'] = getASCIIFromParser(parser, environment, 'QUEUE_LONG')
+    retval_cluster['qstat'] = getASCIIFromParser(parser, environment, 'QSTAT_IMMEDIATE')
+    retval_cluster['qstat_cached'] = getASCIIFromParser(parser, environment, 'QSTAT_CACHED')
 
     return retval, retval_cluster
 
@@ -101,7 +108,7 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
 def parseExperiment(parser, workflow_phase):
     """ Parse the experiment section and return a dictionary """
     retval = dict()
-    dirname = validatePath(parser.get('EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
+    dirname = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
     if workflow_phase == 'atlas-based-reference':
         current_suffix = '_BASE'
     elif workflow_phase == 'subject-template-generation':
@@ -112,7 +119,7 @@ def parseExperiment(parser, workflow_phase):
         current_suffix = '_CV'
     else:
         assert 0 == 1, "ERROR INVALID workflow_phase"
-    current = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix)
+    current = getASCIIFromParser(parser, 'EXPERIMENT', 'EXPERIMENT' + current_suffix)
 
     """ output directory """
     retval['cachedir'] = create_experiment_dir(dirname, current, 'CACHE')
@@ -121,35 +128,35 @@ def parseExperiment(parser, workflow_phase):
     """ any previous run HACK: DO WE EVER USE THIS?"""
     if parser.has_option('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT'):
         # If this is the initial run, there will be no previous experiment
-        previous = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT')
+        previous = getASCIIFromParser(parser, 'EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT')
         retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
 
     useRegistrationMasking = True
     try:
-        regMasking = parser.get('EXPERIMENT', 'USE_REGISTRATION_MASKING')
+        regMasking = getASCIIFromParser(parser, 'EXPERIMENT', 'USE_REGISTRATION_MASKING')
         useRegistrationMasking = str2bool(regMasking)
     except:
         pass
     retval['use_registration_masking'] = useRegistrationMasking
 
-    atlas = validatePath(parser.get('EXPERIMENT', 'ATLAS_PATH'), False, True)
+    atlas = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'ATLAS_PATH'), False, True)
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
 
     if workflow_phase == 'cross-validation':
         retval['components'] = ['']
     else:
-        retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
-        retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
+        retval['dbfile'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
+        retval['components'] = [x.lower() for x in eval(getASCIIFromParser(parser, 'EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
         if 'jointfusion_2015_wholebrain' in retval['components']:
             print("'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'.")
             """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""
-            retval['jointfusion_atlas_db_base'] = validatePath(parser.get('EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
+            retval['jointfusion_atlas_db_base'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
                                                        allow_empty=False,
                                                        isDirectory=False)
-            retval['labelmap_colorlookup_table'] = validatePath(parser.get('EXPERIMENT', 'LABELMAP_COLORLOOKUP_TABLE'),
+            retval['labelmap_colorlookup_table'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'LABELMAP_COLORLOOKUP_TABLE'),
                                                        allow_empty=False,
                                                        isDirectory=False)
-            retval['relabel2lobes_filename'] = validatePath(parser.get('EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
+            retval['relabel2lobes_filename'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
                                                        allow_empty=True,
                                                        isDirectory=False)
         retval['workflow_phase'] = workflow_phase
@@ -162,7 +169,7 @@ def parseNIPYPE(parser):
     retval['ds_overwrite'] = parser.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE')
 
     if parser.has_option('NIPYPE', 'CRASHDUMP_DIR'):
-        retval['CRASHDUMP_DIR'] = parser.get('NIPYPE', 'CRASHDUMP_DIR')
+        retval['CRASHDUMP_DIR'] = getASCIIFromParser(parser, 'NIPYPE', 'CRASHDUMP_DIR')
     else:
         retval['CRASHDUMP_DIR'] = None
 
@@ -172,11 +179,11 @@ def parseNIPYPE(parser):
 #def parseCluster(parser, env):
 #    """ Parse the cluster section and return a dictionary """
 #    retval = dict()
-#    retval['modules'] = eval(parser.get(env, 'MODULES'))
-#    retval['queue'] = parser.get(env, 'QUEUE')
-#    retval['long_q'] = parser.get(env, 'QUEUE_LONG')
-#    retval['qstat'] = parser.get(env, 'QSTAT_IMMEDIATE')
-#    retval['qstat_cached'] = parser.get(env, 'QSTAT_CACHED')
+#    retval['modules'] = eval(getASCIIFromParser(parser, env, 'MODULES'))
+#    retval['queue'] = getASCIIFromParser(parser, env, 'QUEUE')
+#    retval['long_q'] = getASCIIFromParser(parser, env, 'QUEUE_LONG')
+#    retval['qstat'] = getASCIIFromParser(parser, env, 'QSTAT_IMMEDIATE')
+#    retval['qstat_cached'] = getASCIIFromParser(parser, env, 'QSTAT_CACHED')
 #    return retval
 
 
@@ -185,7 +192,8 @@ def parseFile(configFile, env, workphase):
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
-    parser.read(configFile)
+    with io.open(configFile, "r", encoding='ascii') as configFID:
+      parser.read_file(configFID)
     assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')
             ), "BUILD_DIR option not in {0}".format(env)
     environment, cluster = parseEnvironment(parser, env)

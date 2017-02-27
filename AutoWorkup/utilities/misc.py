@@ -219,6 +219,9 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
     print (outBFCImageList)
     print ("imageTypeList:::")
     print (imageTypeList)
+    if( len(inImageList) != len(outImageList) or len(inImageList) != len(outBFCImageList)
+        or len(inImageList) != len(imageTypeList)):
+        return "ERROR:  INVALID LIST SIZE MATCHING"
     return inImageList, outImageList, outBFCImageList, outUnwrappedImageList, imageTypeList
 
 def GenerateSeparateImageTypeList(inFileList, inTypeList):

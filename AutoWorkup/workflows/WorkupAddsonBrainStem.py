@@ -67,7 +67,22 @@ def brainStem(tissueLabelFilename,
 
     myLandmark = dict()
     with open(landmarkFilename, 'r') as myLandmarkFile:
-        landmark = myLandmarkFile.readlines()[8:]
+        all_lines = myLandmarkFile.readlines()
+
+    if "Markups fiducial file version " in all_lines[0]:
+        ## New slicer format
+        landmark = all_lines[3:]
+        for row in landmark:
+            lmk = row.split(',')
+            lmkID = lmk[11]
+            lmkX = float(lmk[1])
+            lmkY = float(lmk[2])
+            lmkZ = float(lmk[3])
+            #RAS to LPS
+            myLandmark[lmkID] = (-lmkX, -lmkY, lmkZ)
+    else:
+        ## Old slicer format
+        landmark = all_lines[8:]
         for row in landmark:
             lmk = row.split(',')
             lmkID = lmk[0]

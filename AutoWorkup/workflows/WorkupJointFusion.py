@@ -43,8 +43,7 @@ def MakeVector(inFN1, inFN2=None, jointFusion =False):
     if jointFusion:
         returnVector = [returnVector]
 
-    print ("jointFusion: ")
-    print (str(jointFusion))
+    print ("jointFusion: " + str(jointFusion))
     print (returnVector)
     print ("============================================")
     return returnVector
@@ -55,7 +54,9 @@ def adjustMergeList(allList, n_modality):
         for i in xrange(0, len(inList), n):
             yield inList[i:i+n]
     # Need to convert unicode filenames back to ascii filenames
-    return [ fname.encode('ascii','replace') for fname in list(yieldList(allList, n_modality)) ]
+    # asciiAllList = [ x.encode('ascii','replace') for x in allList ]
+    asciiAllList = [ x for x in allList ]
+    return [ fname for fname in list(yieldList(asciiAllList, n_modality)) ]
 
 def readRecodingList( recodeLabelFilename ):
     recodeLabelPairList = []
@@ -198,13 +199,13 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     for jointFusion_atlas_subject in list(jointFusionAtlasDict.keys()):
         ## Need DataGrabber Here For the Atlas
         jointFusionAtlases[jointFusion_atlas_subject] = pe.Node(interface = IdentityInterface(
-                                                                  fields=['t1','t2','label','lmks','regisration_mask']),
+                                                                  fields=['t1','t2','label','lmks','registration_mask']),
                                                                   name='jointFusionAtlasInput'+jointFusion_atlas_subject)
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t1 = jointFusionAtlasDict[jointFusion_atlas_subject]['t1']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t2 = jointFusionAtlasDict[jointFusion_atlas_subject]['t2']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.label = jointFusionAtlasDict[jointFusion_atlas_subject]['label']
         jointFusionAtlases[jointFusion_atlas_subject].inputs.lmks = jointFusionAtlasDict[jointFusion_atlas_subject]['lmks']
-        jointFusionAtlases[jointFusion_atlas_subject].inputs.regisration_mask = jointFusionAtlasDict[jointFusion_atlas_subject]['regisration_mask']
+        jointFusionAtlases[jointFusion_atlas_subject].inputs.registration_mask = jointFusionAtlasDict[jointFusion_atlas_subject]['registration_mask']
         ## Create BLI first
         ########################################################
         # Run BLI atlas_to_subject
@@ -247,7 +248,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
             #movingROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
             #JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1', movingROIAuto[jointFusion_atlas_subject],'inputVolume')
             #JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
-            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'regisration_mask',
+            JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'registration_mask',
                                   A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
 
         JointFusionWF.connect(BLICreator[jointFusion_atlas_subject],'outputTransformFilename',

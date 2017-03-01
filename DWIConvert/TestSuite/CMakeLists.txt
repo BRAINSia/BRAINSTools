@@ -43,9 +43,9 @@ ${DWITarDir}/SiemensTrioTim2.tar.gz
 ${DWITarDir}/SiemensTrioTim3.tar.gz
 ${DWITarDir}/SiemensTrioTimBigEndian1.tar.gz
 ${DWITarDir}/SiemensVerio.tar.gz
-#${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz
+${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz
+${DWITarDir}/SpaceThicknessDiffDicom.tar.gz
 )
-
 
 # accumulator for test names that actually force
 # unpacking tars to directories
@@ -62,6 +62,9 @@ foreach( curr_tarball ${ALL_DICOM_TARBALLS} )
   )
   list(APPEND DWITarDownloadTestNames ${test_name})
 endforeach()
+
+message("DWIConvert_BINARY_DIR = "  ${DWIConvert_BINARY_DIR})
+message(${TestData_DIR})
 
 #
 # make a test depend on the tarball downloads.
@@ -429,7 +432,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
 # add a ctest case supporting multi-shell FSL data by Hui Xie on Jan 28th, 2017
-#[[ExternalData_Add_Test(${PROJECT_NAME}FetchData NAME
+ExternalData_Add_Test(${PROJECT_NAME}FetchData NAME DWIConvertMultiShellFSITest
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.nii.gz
@@ -442,6 +445,17 @@ AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
         -D TEXT_COMPARE_PROGRAM=$<TARGET_FILE:FSLTextFileCompare>
         -P ${CMAKE_CURRENT_LIST_DIR}/FSLMultiShellDataTest.cmake
         )
-AddDataDependency(DWIConvertMultiShellFSITest)]]
+AddDataDependency(DWIConvertMultiShellFSITest)
+
+# add a cest case supporting thicknes and zSpace of Dicom file are different on Feb 28th, 2017
+ExternalData_Add_Test(${PROJECT_NAME}FetchData NAME DWIConvertZspaceThicknessDiffDicomTest
+        COMMAND ${CMAKE_COMMAND}
+        -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
+        -D INPUTDICOMDIRECTORY=${DWIConvert_BINARY_DIR}/SpaceThicknessDiffDicom/
+        -D OUTPUTVOLUME=${DWIConvert_BINARY_DIR}/SpaceThicknessDiffDicom.nhdr
+        -D KEYVALUE_COMPARE_PROGRAM=$<TARGET_FILE:checkTagValueInHeader>
+        -P ${CMAKE_CURRENT_LIST_DIR}/ZspaceThicknessDiffDicom.cmake
+        )
+AddDataDependency(DWIConvertZspaceThicknessDiffDicomTest)
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

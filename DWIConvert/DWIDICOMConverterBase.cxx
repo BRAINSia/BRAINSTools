@@ -90,7 +90,8 @@ void DWIDICOMConverterBase::LoadDicomDirectory()
   {
 
     double spacing[3];
-    m_Headers[0]->GetSpacing(spacing);
+    //m_Headers[0]->GetSpacing(spacing);
+    getDicomSpacing(spacing);
     SpacingType imSpacing;
     imSpacing[0] = spacing[0];
     imSpacing[1] = spacing[1];
@@ -399,4 +400,110 @@ double DWIDICOMConverterBase::readThicknessFromDicom() const{
   double thickness= 0.0;
   m_Headers[0]->GetElementDS<double>(0x0018,0x0050,1,&thickness);
   return thickness;
+}
+
+// This getDicomSpacing method is abstracted from itk::itkDCMTKFileReader::GetSpacing of version Feb 27, 2017
+// as currently ITK::GetSpacing can not correctly handle zSpace case
+int DWIDICOMConverterBase::getDicomSpacing(double * const spacing) const{
+  double _spacing[3];
+  //
+  // There are several tags that can have spacing, and we're going
+  // from most to least desirable, starting with PixelSpacing, which
+  // is guaranteed to be in patient space.
+  // Imager Pixel spacing is inter-pixel spacing at the sensor front plane
+  // Pixel spacing
+
+  // first, shared function groups sequence, then
+  // per-frame groups sequence
+  _spacing[0] = _spacing[1] = _spacing[2] = 0.0;
+  int rval(EXIT_SUCCESS);
+
+  rval = m_Headers[0]->GetElementDS<double>(0x0028,0x0030,2,_spacing,false);
+  if(rval != EXIT_SUCCESS)
+  {
+    // imager pixel spacing
+    rval = m_Headers[0]->GetElementDS<double>(0x0018, 0x1164, 2, &_spacing[0],false);
+    if(rval != EXIT_SUCCESS)
+    {
+      // Nominal Scanned PixelSpacing
+      rval = m_Headers[0]->GetElementDS<double>(0x0018, 0x2010, 2, &_spacing[0],false);
+    }
+  }
+
+  if(rval == EXIT_SUCCESS)
+  {
+    // slice thickness
+    spacing[0] = _spacing[1];
+    spacing[1] = _spacing[0];
+    /*
+     * According Dicom standard (DICOM PS3.6 2016b - Data Dictionary)
+     * (0028, 0030) indicates physical X,Y spacing inside a slice;
+     * (0018, 0088) indicates physical Z spacing between slices;
+     *  which above are also consistent with Dcom2iix software.
+     *  when we can not get (0018, 0088),we will revert to previous
+     *  behavior and use (0018, 0050) thickness as a proxy to spacing.
+     * */
+    if(m_Headers[0]->GetElementDS<double>(0x0018,0x0088,1,&_spacing[2], false) == EXIT_SUCCESS
+       || m_Headers[0]->GetElementDS<double>(0x0018,0x0050,1,&_spacing[2],false) == EXIT_SUCCESS)
+    {
+      spacing[2] = _spacing[2];
+    }
+    else
+    {
+      // punt, thicknes of 1
+      spacing[2] = 1.0;
+    }
+    return rval;
+  }
+  // this is for multiframe images -- preferentially use the shared
+  // functional group, and then the per-frame functional group
+  unsigned short candidateSequences[2] =
+          {
+                  0x9229, // check for Shared Functional Group Sequence first
+                  0x9230, // check the Per-frame Functional Groups Sequence
+          };
+  for(unsigned i = 0; i < 2; ++i)
+  {
+    itk::DCMTKSequence spacingSequence;
+    rval = m_Headers[0]->GetElementSQ(0x5200,candidateSequences[i],spacingSequence,false);
+    if(rval == EXIT_SUCCESS)
+    {
+      itk::DCMTKItem item;
+      rval = spacingSequence.GetElementItem(0,item,false);
+      if(rval == EXIT_SUCCESS)
+      {
+        itk::DCMTKSequence subSequence;
+        // Pixel Measures Sequence
+        rval = item.GetElementSQ(0x0028,0x9110,subSequence,false);
+        if(rval == EXIT_SUCCESS)
+        {
+          /*
+           * According Dicom standard (DICOM PS3.6 2016b - Data Dictionary)
+           * (0028, 0030) indicates physical X,Y spacing inside a slice;
+           * (0018, 0088) indicates physical Z spacing between slices;
+           *  which above are also consistent with Dcom2iix software.
+           *  when we can not get (0018, 0088),we will revert to previous
+           *  behavior and use (0018, 0050) thickness as a proxy to spacing.
+           * */
+          if(subSequence.GetElementDS<double>(0x0028,0x0030,2,_spacing,false) == EXIT_SUCCESS)
+          {
+            spacing[0] = _spacing[1];
+            spacing[1] = _spacing[0];
+            if (subSequence.GetElementDS<double>(0x0018,0x0088,1,&_spacing[2], false) == EXIT_SUCCESS
+                || subSequence.GetElementDS<double>(0x0018,0x0050,1,&_spacing[2], false) == EXIT_SUCCESS){
+              spacing[2] = _spacing[2];
+            }
+            else
+            {
+              // punt, zSpace of 1
+              spacing[2] = 1.0;
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+  return rval;
+
 }

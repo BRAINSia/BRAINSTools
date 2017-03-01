@@ -36,6 +36,7 @@ class DWIDICOMConverterBase : public DWIConverter {
 
   virtual void LoadDicomDirectory();
   double readThicknessFromDicom() const;
+  int getDicomSpacing(double * const spacing) const;
 
 protected:
   enum VRType{

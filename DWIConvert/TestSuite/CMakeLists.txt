@@ -103,6 +103,9 @@ target_link_libraries(BFileCompareTool DWIConvertSupportLib BRAINSCommonLib )
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
 target_link_libraries (FSLTextFileCompare DWIConvertSupportLib BRAINSCommonLib )
 
+# Check Tag-Value pair in Header file
+add_executable(checkTagValueInHeader checkTagValueInHeader.cxx)
+
 #
 # This program not currently used but hey, might come in
 # handy.
@@ -426,7 +429,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
 # add a ctest case supporting multi-shell FSL data by Hui Xie on Jan 28th, 2017
-#[[ExternalData_Add_Test(${PROJECT_NAME}FetchData NAME DWIConvertMultiShellFSITest
+#[[ExternalData_Add_Test(${PROJECT_NAME}FetchData NAME
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.nii.gz

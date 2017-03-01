@@ -14,7 +14,7 @@ def MakeLabelDictionary(inputColorLookUpTableFilename):
         label No.: label name
     """
     #inputColorLookUpTableFilename="/Shared/johnsonhj/HDNI/ReferenceData/20150709_HDAdultAtlas/BAWHDAdultAtlas_FreeSurferConventionColorLUT_20150709.txt"
-    import csv
+    #import csv
     labelDictionary=dict()
     with open(inputColorLookUpTableFilename) as f:
         contents = f.readlines()
@@ -22,10 +22,11 @@ def MakeLabelDictionary(inputColorLookUpTableFilename):
             currentline=line.split()
             #print(currentline)
             if (len(currentline)>0 and currentline[0].isdigit()):
-                #print currentline
+                #print( currentline )
                 labelNo=int(currentline[0])
                 labelName=currentline[1]
                 labelDictionary[labelNo] = labelName
+                #print(labelDictionary)
     return labelDictionary
 """
 #Unit test:

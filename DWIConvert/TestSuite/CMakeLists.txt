@@ -44,8 +44,8 @@ ${DWITarDir}/SiemensTrioTim2.tar.gz
 ${DWITarDir}/SiemensTrioTim3.tar.gz
 ${DWITarDir}/SiemensTrioTimBigEndian1.tar.gz
 ${DWITarDir}/SiemensVerio.tar.gz
-${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz
-${DWITarDir}/SpaceThicknessDiffDicom.tar.gz
+#${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz
+#${DWITarDir}/SpaceThicknessDiffDicom.tar.gz
 )
 
 # accumulator for test names that actually force
@@ -431,7 +431,7 @@ AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
 # add a ctest case supporting multi-shell FSL data by Hui Xie on Jan 28th, 2017
 # the blank space between "ExternalData_Add_Test( " and "${PROJECT_NAME}FetchData  NAME" below is critical.
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITest
+#[[ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITest
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.nii.gz
@@ -444,10 +444,10 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITe
         -D TEXT_COMPARE_PROGRAM=$<TARGET_FILE:FSLTextFileCompare>
         -P ${CMAKE_CURRENT_LIST_DIR}/FSLMultiShellDataTest.cmake
         )
-AddDataDependency(DWIConvertMultiShellFSITest)
+AddDataDependency(DWIConvertMultiShellFSITest)]]
 
 # add a cest case supporting thicknes and zSpace of Dicom file are different on Feb 28th, 2017
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  SpaceThicknessDiffDicom
+#[[ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  SpaceThicknessDiffDicom
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTDICOMDIRECTORY=${DWIConvert_BINARY_DIR}/SpaceThicknessDiffDicom/
@@ -455,6 +455,6 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  SpaceThicknessDiffDicom
         -D KEYVALUE_COMPARE_PROGRAM=$<TARGET_FILE:checkTagValueInHeader>
         -P ${CMAKE_CURRENT_LIST_DIR}/ZspaceThicknessDiffDicom.cmake
         )
-AddDataDependency(SpaceThicknessDiffDicom)
+AddDataDependency(SpaceThicknessDiffDicom)]]
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

@@ -9,10 +9,10 @@ set(command_line
 message("Running ${command_line}")
 
 execute_process(COMMAND ${command_line}
-        RESULT_VARIABLE TEST_RESULT
+        RESULT_VARIABLE TEST_RESULT1
         )
 
-if(TEST_RESULT)
+if(TEST_RESULT1)
     message(FATAL_ERROR "Converting SpaceThicknessDiffDicom into Nrrd failed")
 endif()
 
@@ -29,9 +29,9 @@ set(command_line
 message("Running ${command_line}")
 execute_process(COMMAND
         ${command_line}
-        RESULT_VARIABLE TEST_RESULT
+        RESULT_VARIABLE TEST_RESULT2
         )
-if(TEST_RESULT)
+if(TEST_RESULT2)
     message(FATAL_ERROR
             "Failed: thickness from nrrd file is not correct")
 endif()
@@ -49,11 +49,15 @@ set(command_line
 message("Running ${command_line}")
 execute_process(COMMAND
         ${command_line}
-        RESULT_VARIABLE TEST_RESULT
+        RESULT_VARIABLE TEST_RESULT3
         )
-if(TEST_RESULT)
+if(TEST_RESULT3)
     message(FATAL_ERROR
             "Failed: zSpace from nrrd file is not correct")
 endif()
 
-message("Passed")
+if (TEST_RESULT1 OR TEST_RESULT2 OR TEST_RESULT3)
+    message("Failed: checking the case that zSpace and thickness have different value.")
+else()
+    message("Passed")
+endif()

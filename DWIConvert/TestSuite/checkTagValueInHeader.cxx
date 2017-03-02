@@ -10,11 +10,11 @@
 void printUsage(char* argv0){
   std::cout<<"Function: check whether a specific tag-value pair in header file match with a input value."<< std::endl;
   std::cout<<"Usage:"<<std::endl
-           << argv0 << " --f HeaderFileName --tag TagName --section sectionIndex --subsection subsectionIndex --v verifyingValue --numType <1|0>" << std::endl
+           << argv0 << " --f HeaderFileName --tag TagName --section sectionIndex --subsection subsectionIndex --v verifyingValue --numtype <1|0>" << std::endl
            << "Notes: index is from 0 to count after the tag" <<std::endl;
   std::cout<<"Example:" <<std::endl
           <<"For a line text: space directions: (0.9343162500000001,0.07719215625,0) (-0.07719215625,0.9343162500000001,0) (0,0,5.999994770777341) none ,"<<std::endl
-          <<"--tag \"space direction\" --section 2 --subsection 2  --v 6  --numType 1 will check whether 5.999994770777341 is consistent with 6." << std::endl;
+          <<"--tag \"space direction\" --section 2 --subsection 2  --v 6  --numtype 1 will check whether 5.999994770777341 is consistent with 6." << std::endl;
   return;
 }
 
@@ -50,11 +50,12 @@ int main(int argc, char * argv[])
     else if(0 == strcmp("--v", argv[i])){
       verifyingValue = argv[i+1];
     }
-    else if(0 == strcmp("--numType", argv[i])){
+    else if(0 == strcmp("--numtype", argv[i])){
       numType = atoi(argv[i+1]) > 0;
     }
     else{
       std::cout<<"Parameter Error: unmatched option."<<std::endl;
+      std::cout<<"All options are small case characters."<<std::endl;
       printUsage(argv[0]);
       return -1;
     }

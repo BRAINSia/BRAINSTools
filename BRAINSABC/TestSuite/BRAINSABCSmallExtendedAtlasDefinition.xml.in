@@ -12,7 +12,7 @@
   <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
-  <type>FLAIR</type>
+  <type>FL</type>
   <filename>@BRAINSTools_BINARY_DIR@/ExternalData/template_t2_denoised_gaussian.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
@@ -49,7 +49,7 @@
    <upper>0.70</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -83,7 +83,7 @@
    <upper>0.98</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -118,7 +118,7 @@
    <upper>0.98</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -152,7 +152,7 @@
    <upper>0.98</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -186,7 +186,7 @@
    <upper>0.98</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -220,7 +220,7 @@
    <upper>0.98</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -255,7 +255,7 @@
    <upper>0.99</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -289,7 +289,7 @@
    <upper>0.99</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -323,7 +323,7 @@
    <upper>1.0</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.0</lower>
    <upper>0.5</upper>
   </bounds>
@@ -357,7 +357,7 @@
    <upper>0.5</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.0</lower>
    <upper>0.9</upper>
   </bounds>
@@ -391,7 +391,7 @@
    <upper>0.5</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.0</lower>
    <upper>0.5</upper>
   </bounds>
@@ -425,7 +425,7 @@
    <upper>1.0</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.1</lower>
    <upper>0.99</upper>
   </bounds>
@@ -459,7 +459,7 @@
    <upper>1.0</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.01</lower>
    <upper>0.99</upper>
   </bounds>
@@ -493,7 +493,7 @@
    <upper>0.3</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.0</lower>
    <upper>0.5</upper>
   </bounds>
@@ -527,7 +527,7 @@
    <upper>0.1</upper>
   </bounds>
   <bounds>
-   <type>FLAIR</type>
+   <type>FL</type>
    <lower>0.0</lower>
    <upper>0.10</upper>
   </bounds>

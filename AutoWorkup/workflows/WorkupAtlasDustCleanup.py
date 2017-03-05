@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 from nipype.interfaces.utility import Function, IdentityInterface
-import nipype.pipeline.engine as pe  # pypeline engine
+import nipype.pipeline.engine as pe  # pipeline engine
+
 
 def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
-               useFullyConnected, forceLabelChange, noDilation,
-               inFN2=None, includeList=None, excludeList=None):
+                              useFullyConnected, forceLabelChange, noDilation,
+                              inFN2=None, includeList=None, excludeList=None):
     arguments = {'--inputT1Path': inFN1,
                  '--inputT2Path': inFN2,
                  '--inputAtlasPath': inAtlas,
@@ -16,7 +17,7 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
                  '--noDilation': noDilation,
                  '--includeLabelsList': includeList,
                  '--excludeLabelsList': excludeList
-               }
+                 }
 
     from atlasSmallIslandCleanup import DustCleanup
     localDustCleanupObject = DustCleanup(arguments=arguments)
@@ -25,21 +26,21 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
     import os
     return os.path.abspath(outAtlas)
 
-def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
 
-    if onlyT1:
-      n_modality = 1
-    else:
-      n_modality = 2
-    CLUSTER_QUEUE = master_config['queue']
-    CLUSTER_QUEUE_LONG = master_config['long_q']
+def CreateDustCleanupWorkflow(workflowFileName, onlyT1, master_config):
+    #if onlyT1:
+    #    n_modality = 1
+    #else:
+    #    n_modality = 2
+    #CLUSTER_QUEUE = master_config['queue']
+    #CLUSTER_QUEUE_LONG = master_config['long_q']
 
-    dustCleanupWF = pe.Workflow(name=WFname)
+    dustCleanupWF = pe.Workflow(name=workflowFileName)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_t1_image', #Input T1 image
-                                                             'subj_t2_image', #Input T2 image
-                                                             'subj_label_atlas' #Input label atlas image
-                                                            ]),
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_t1_image',  # Input T1 image
+                                                             'subj_t2_image',  # Input T2 image
+                                                             'subj_label_atlas'  # Input label atlas image
+                                                             ]),
                          run_without_submitting=True,
                          name='inputspec')
 
@@ -54,12 +55,12 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
     mask in order to clean all dust particles even clusters, and only suspicious (999) is cleaned.
     """
     sessionRunDustCleanupOnSuspicious = pe.Node(Function(function=runAutomaticCleanupScript,
-                                                  input_names=['inFN1', 'inFN2', 'inAtlas', 'outAtlas',
-                                                               'maxIslandCount', 'useFullyConnected',
-                                                               'forceLabelChange', 'noDilation',
-                                                               'includeList', 'excludeList'],
-                                                  output_names=['cleanedLabelImage']),
-                                run_without_submitting=True, name="sessionRunDustCleanupOnSuspicious")
+                                                         input_names=['inFN1', 'inFN2', 'inAtlas', 'outAtlas',
+                                                                      'maxIslandCount', 'useFullyConnected',
+                                                                      'forceLabelChange', 'noDilation',
+                                                                      'includeList', 'excludeList'],
+                                                         output_names=['cleanedLabelImage']),
+                                                run_without_submitting=True, name="sessionRunDustCleanupOnSuspicious")
     dustCleanupWF.connect(inputsSpec, 'subj_t1_image', sessionRunDustCleanupOnSuspicious, 'inFN1')
     if not onlyT1:
         dustCleanupWF.connect(inputsSpec, 'subj_t2_image', sessionRunDustCleanupOnSuspicious, 'inFN2')
@@ -83,12 +84,12 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
     does dilate the label mask to avoid cleaning clustered dust, and several labels are excluded.
     """
     sessionRunDustCleanup = pe.Node(Function(function=runAutomaticCleanupScript,
-                                                  input_names=['inFN1', 'inFN2', 'inAtlas', 'outAtlas',
-                                                               'maxIslandCount', 'useFullyConnected',
-                                                               'forceLabelChange', 'noDilation',
-                                                               'includeList', 'excludeList'],
-                                                  output_names=['cleanedLabelImage']),
-                                run_without_submitting=True, name="sessionRunDustCleanup")
+                                             input_names=['inFN1', 'inFN2', 'inAtlas', 'outAtlas',
+                                                          'maxIslandCount', 'useFullyConnected',
+                                                          'forceLabelChange', 'noDilation',
+                                                          'includeList', 'excludeList'],
+                                             output_names=['cleanedLabelImage']),
+                                    run_without_submitting=True, name="sessionRunDustCleanup")
     dustCleanupWF.connect(inputsSpec, 'subj_t1_image', sessionRunDustCleanup, 'inFN1')
     if not onlyT1:
         dustCleanupWF.connect(inputsSpec, 'subj_t2_image', sessionRunDustCleanup, 'inFN2')
@@ -104,6 +105,7 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
     sessionRunDustCleanup.inputs.includeList = None
     sessionRunDustCleanup.inputs.excludeList = '4,5,14,15,21,24,31,43,44,63,72,85,98,128,219,15000'
 
-    dustCleanupWF.connect(sessionRunDustCleanup, 'cleanedLabelImage', outputsSpec, 'JointFusion_HDAtlas20_2015_dustCleaned_label')
+    dustCleanupWF.connect(sessionRunDustCleanup, 'cleanedLabelImage', outputsSpec,
+                          'JointFusion_HDAtlas20_2015_dustCleaned_label')
 
     return dustCleanupWF

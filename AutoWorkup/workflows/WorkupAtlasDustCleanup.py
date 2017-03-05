@@ -19,7 +19,6 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
                }
 
     from atlasSmallIslandCleanup import DustCleanup
-    print arguments
     localDustCleanupObject = DustCleanup(arguments=arguments)
     localDustCleanupObject.main()
 

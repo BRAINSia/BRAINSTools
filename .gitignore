@@ -22,6 +22,7 @@
 *.swp
 *ExternalSources*
 # emacs backups
+*.bak
 *~
 .DS_Store
 .ExternalData_MD5*

@@ -18,10 +18,12 @@ Options:
   -v, --version  Print file version and exit
   --debug        Run doctests for file  # TODO
 """
-from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
+
 from future import standard_library
+
 standard_library.install_aliases()
 from past.utils import old_div
 from builtins import object
@@ -35,18 +37,21 @@ from .pathHandling import *
 from .distributed import modify_qsub_args
 from . import misc
 
+
 # http://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
 def str2bool(v):
-  if str(v).lower() in ("yes", "true", "t", "1"):
-      return True
-  elif str(v).lower() in ("no", "false", "f", "0"):
-      return False
-  raise ValueError( "ERROR: INVALID String to bool conversion for '{0}'".format(v) )
+    if str(v).lower() in ("yes", "true", "t", "1"):
+        return True
+    elif str(v).lower() in ("no", "false", "f", "0"):
+        return False
+    raise ValueError("ERROR: INVALID String to bool conversion for '{0}'".format(v))
 
-def getASCIIFromParser(parser,region,tag):
-    unicodeText = parser.get(region,tag)
-    asciiText = unicodeText.encode('ascii',errors='strict')
+
+def getASCIIFromParser(parser, region, tag):
+    unicodeText = parser.get(region, tag)
+    asciiText = unicodeText.encode('ascii', errors='strict')
     return asciiText
+
 
 def parseEnvironment(parser, environment):
     """ Parse the environment environment given by 'section' and return a dictionary
@@ -145,20 +150,25 @@ def parseExperiment(parser, workflow_phase):
     if workflow_phase == 'cross-validation':
         retval['components'] = ['']
     else:
-        retval['dbfile'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
-        retval['components'] = [x.lower() for x in eval(getASCIIFromParser(parser, 'EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
+        retval['dbfile'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'SESSION_DB' + current_suffix), False,
+                                        False)
+        retval['components'] = [x.lower() for x in
+                                eval(getASCIIFromParser(parser, 'EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
         if 'jointfusion_2015_wholebrain' in retval['components']:
             print("'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'.")
             """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""
-            retval['jointfusion_atlas_db_base'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
-                                                       allow_empty=False,
-                                                       isDirectory=False)
-            retval['labelmap_colorlookup_table'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'LABELMAP_COLORLOOKUP_TABLE'),
-                                                       allow_empty=False,
-                                                       isDirectory=False)
-            retval['relabel2lobes_filename'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
-                                                       allow_empty=True,
-                                                       isDirectory=False)
+            retval['jointfusion_atlas_db_base'] = validatePath(
+                getASCIIFromParser(parser, 'EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
+                allow_empty=False,
+                isDirectory=False)
+            retval['labelmap_colorlookup_table'] = validatePath(
+                getASCIIFromParser(parser, 'EXPERIMENT', 'LABELMAP_COLORLOOKUP_TABLE'),
+                allow_empty=False,
+                isDirectory=False)
+            retval['relabel2lobes_filename'] = validatePath(
+                getASCIIFromParser(parser, 'EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
+                allow_empty=True,
+                isDirectory=False)
         retval['workflow_phase'] = workflow_phase
     return retval
 
@@ -176,7 +186,7 @@ def parseNIPYPE(parser):
     return retval
 
 
-#def parseCluster(parser, env):
+# def parseCluster(parser, env):
 #    """ Parse the cluster section and return a dictionary """
 #    retval = dict()
 #    retval['modules'] = eval(getASCIIFromParser(parser, env, 'MODULES'))
@@ -188,12 +198,11 @@ def parseNIPYPE(parser):
 
 
 def parseFile(configFile, env, workphase):
-
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
     with io.open(configFile, "r", encoding='ascii') as configFID:
-      parser.read_file(configFID)
+        parser.read_file(configFID)
     assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')
             ), "BUILD_DIR option not in {0}".format(env)
     environment, cluster = parseEnvironment(parser, env)
@@ -209,7 +218,6 @@ def resolveDataSinkOption(args, pipeline):
 
 
 class _create_DS_runner(object):
-
     def run(self, graph, **kwargs):
         for node in graph.nodes():
             if '_ds' in node.name.lower():
@@ -245,7 +253,7 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
     if wfrun in ['SGEGraph', 'SGE']:
         plugin_name = wfrun
         plugin_args = {'template': template,
-                       'qsub_args': modify_qsub_args(cluster['queue'],2,1,1),
+                       'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 1),
                        'qstatProgramPath': cluster['qstat'],
                        'qstatCachedProgramPath': cluster['qstat_cached']}
     elif wfrun in ['local_4', 'local_12']:
@@ -276,21 +284,21 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
 
     if crashdumpTempDirName is None:
         import tempfile
-        crashdumpTempDirName=tempfile.gettempdir()
-    print( "*** Note")
-    print( "    Crash file will be written to '{0}'".format(crashdumpTempDirName))
+        crashdumpTempDirName = tempfile.gettempdir()
+    print("*** Note")
+    print("    Crash file will be written to '{0}'".format(crashdumpTempDirName))
     return {
         'stop_on_first_crash': stop_crash,
         'stop_on_first_rerun': stop_rerun,
-        'hash_method': 'timestamp',          # default
-        'single_thread_matlab': 'true',      # default # Multi-core 2011a  multi-core for matrix multiplication.
+        'hash_method': 'timestamp',  # default
+        'single_thread_matlab': 'true',  # default # Multi-core 2011a  multi-core for matrix multiplication.
         # default # relative paths should be on, require hash update when changed.
         'use_relative_paths': 'false',
         'remove_node_directories': 'false',  # default
-        'remove_unnecessary_outputs': 'true', #remove any interface outputs not needed by the workflow
-        'local_hash_check': 'true',          # default
+        'remove_unnecessary_outputs': 'true',  # remove any interface outputs not needed by the workflow
+        'local_hash_check': 'true',  # default
         'job_finished_timeout': 25,
-        'crashdump_dir':crashdumpTempDirName}
+        'crashdump_dir': crashdumpTempDirName}
 
 
 def _nipype_logging_config(cachedir):
@@ -312,18 +320,20 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     retval = copy.deepcopy(pipeline)
     from .distributed import create_global_sge_script
     template = create_global_sge_script(cluster, environment)
-    #else:
+    # else:
     #    template = None
     plugin_name, plugin_args = _nipype_plugin_config(args['--wfrun'], cluster, template)
     retval['plugin_name'] = plugin_name
     retval['plugin_args'] = plugin_args
-    retval['execution'] = _nipype_execution_config(stop_on_first_crash=True, stop_on_first_rerun=False, crashdumpTempDirName=pipeline['CRASHDUMP_DIR'])
+    retval['execution'] = _nipype_execution_config(stop_on_first_crash=True, stop_on_first_rerun=False,
+                                                   crashdumpTempDirName=pipeline['CRASHDUMP_DIR'])
     retval['logging'] = _nipype_logging_config(experiment['cachedir'])
     return retval
 
 
 if __name__ == "__main__":
     from docopt import docopt
+
     SILENT = True
     args = docopt(__doc__, version='0.1')  # Get argv as dictionary
     assert args["PHASE"] in ['atlas-based-reference',
@@ -333,6 +343,7 @@ if __name__ == "__main__":
         pass
     output = parseFile(args["FILE"], args["ENV"], args["PHASE"])
     from pprint import pprint
+
     print("")
     print("**** OUTPUT ****")
     for d in output:

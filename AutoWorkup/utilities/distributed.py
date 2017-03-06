@@ -1,6 +1,8 @@
 from __future__ import division
-from past.utils import old_div
+
 import math
+from past.utils import old_div
+
 
 def load_cluster(modules=[]):
     if len(modules) > 0:
@@ -23,7 +25,8 @@ def prepend_env(environment={}):
     import os
     export_list = []
     for key, value in list(environment.items()):
-        export_list.append("export {key}={value}{sep}${key}".format(key=key, value=value, sep=os.pathsep))  # Append to variable
+        export_list.append(
+            "export {key}={value}{sep}${key}".format(key=key, value=value, sep=os.pathsep))  # Append to variable
     return '\n'.join(export_list)
 
 
@@ -75,26 +78,26 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
 
     """
-    assert memoryGB <= 48 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
+    assert memoryGB <= 48, "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
 
     ## NOTE: At least 1 thread needs to be requested per 2GB needed
-    memoryThreads = int(math.ceil((old_div(math.ceil(memoryGB),2)))) #Ensure that threads are integers
+    memoryThreads = int(math.ceil((old_div(math.ceil(memoryGB), 2))))  # Ensure that threads are integers
     minThreads = max(minThreads, memoryThreads)
     maxThreads = max(maxThreads, memoryThreads)
-    maxThreads=int(maxThreads) # Ensure that threads are integers
-    minThreads=int(minThreads) # Ensure that threads are integers
+    maxThreads = int(maxThreads)  # Ensure that threads are integers
+    minThreads = int(minThreads)  # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
-       threadsRangeString =  '{0}'.format(minThreads)
-       maxThreads = minThreads
+        threadsRangeString = '{0}'.format(minThreads)
+        maxThreads = minThreads
     elif maxThreads == -1:
-       threadsRangeString= '{0}-'.format(minThreasds)
-       maxThreads = 12345 #HUGE NUMBER!
+        threadsRangeString = '{0}-'.format(minThreasds)
+        maxThreads = 12345  # HUGE NUMBER!
     else:
-       threadsRangeString= "{0}-{1}".format(minThreads,maxThreads)
+        threadsRangeString = "{0}-{1}".format(minThreads, maxThreads)
 
     if maxThreads < minThreads:
-       assert  maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads,maxThreads)
+        assert maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads, maxThreads)
 
     ## TODO:  May need to figure out how to set memory and threads for cluster.
     ## for now just let the number of threads requested take care of this because
@@ -103,8 +106,8 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
 
     ## format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
     format_str = '-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}'.format(
-                 mint=minThreads, maxt=threadsRangeString,
-                 totalThreads=threadsRangeString,
-                 mem=memoryGB,
-                 stdout=stdout, stderr=stderr, queue=queue)
+        mint=minThreads, maxt=threadsRangeString,
+        totalThreads=threadsRangeString,
+        mem=memoryGB,
+        stdout=stdout, stderr=stderr, queue=queue)
     return format_str

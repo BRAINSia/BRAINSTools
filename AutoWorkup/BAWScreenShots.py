@@ -1,13 +1,12 @@
 from __future__ import print_function
 
-
-import sys, getopt
-import os
 import ast
+import getopt
+import os
+import sys
 
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import BRAINSSnapShotWriter
-
 
 
 def print_usage():
@@ -20,6 +19,7 @@ def print_usage():
           "              -d <inputDirectory>\n"
           "              -c <cacheDirectory>\n"
           "              -s <inputSubDirectory>")
+
 
 def readInputFile(inputFilename):
     inputList = []
@@ -58,9 +58,9 @@ def main(argv=None):
     searchBinaryVolumeList = ['JointFusion_HDAtlas20_2015_fs_standard_label.nii.gz']
     try:
         opts, _ = getopt.getopt(argv, "hi:d:c:s:", ["inputFilename=",
-                                                       "inputDirectory=",
-                                                       "cacheDirectory=",
-                                                       "inputSubDirectory="])
+                                                    "inputDirectory=",
+                                                    "cacheDirectory=",
+                                                    "inputSubDirectory="])
     except getopt.GetoptError:
         print_usage()
 
@@ -78,7 +78,7 @@ def main(argv=None):
         elif opt in ("-s", "--inputSubDirectory"):
             inputSubDirectory = arg
 
-    print ('Input file is {0}'.format(inputfile))
+    print('Input file is {0}'.format(inputfile))
 
     inputDictList = readInputFile(inputfile)
     snapShotWF = pe.Workflow(name="BAWSnapshots")  # templage generate work flow
@@ -92,7 +92,7 @@ def main(argv=None):
                                        sessionProj, sessionSubj, sessionid,
                                        inputSubDirectory)
         anatomicalImageList = []
-        print ("For session = {0} ".format(sessionid))
+        print("For session = {0} ".format(sessionid))
         for filename in searchVolumeList:
             fullPathFilename = os.path.join(sessionInputDir, filename)
             if os.path.isfile(fullPathFilename):
@@ -125,6 +125,7 @@ def main(argv=None):
 
             snapShotWF.add_nodes([SnapShotWriter])
     snapShotWF.run()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

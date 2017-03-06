@@ -1,13 +1,14 @@
-import numpy as np
 import os.path
 from warnings import warn
 
 import SimpleITK as sitk
+import numpy as np
 
-from ..config import _config
 from ..common import check_file
+from ..config import _config
 
-partials = ['accumben', 'air', 'caudate', 'crblgm', 'crblwm', 'csf', 'globus', 'hippocampus', 'notcsf', 'notgm', 'notvb', 'notwm', 'putamen', 'surfgm', 'thalamus', 'vb', 'wm']
+partials = ['accumben', 'air', 'caudate', 'crblgm', 'crblwm', 'csf', 'globus', 'hippocampus', 'notcsf', 'notgm',
+            'notvb', 'notwm', 'putamen', 'surfgm', 'thalamus', 'vb', 'wm']
 accumulated = ['background_total', 'gm_total', 'csf_total', 'vb_total', 'globus_total', 'wm_total']
 
 _isAccumulated = False
@@ -45,8 +46,8 @@ def _setIfAccumulated(label):
         _isAccumulated = True
     else:
         _isAccumulated = False
-    # if label == "ICV":
-    #     print "_isAccumulated: ", _isAccumulated
+        # if label == "ICV":
+        #     print "_isAccumulated: ", _isAccumulated
 
 
 def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolerance):
@@ -70,7 +71,7 @@ def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolera
 
     labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_' + label + '.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
-    image = sitk.ReadImage(labelFile.encode('ascii','replace'))
+    image = sitk.ReadImage(labelFile.encode('ascii', 'replace'))
     lowerTol, upperTol = tolerance
     binary = sitk.BinaryThreshold(image, lowerTol, upperTol, 1, 0)
     nda = sitk.GetArrayFromImage(binary)
@@ -103,7 +104,7 @@ def calculatePartialVolume(dirname, label, _isAccumulated=True):
 
     labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_' + label + '.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
-    image = sitk.ReadImage(labelFile.encode('ascii','replace'))
+    image = sitk.ReadImage(labelFile.encode('ascii', 'replace'))
     nda = sitk.GetArrayFromImage(image)
     maskSum = nda.sum()
     ## print maskSum

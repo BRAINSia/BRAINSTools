@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.utility import Function, IdentityInterface
-import nipype.pipeline.engine as pe  # pipeline engine
 
 
 def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,

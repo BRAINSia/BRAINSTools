@@ -1,7 +1,8 @@
 from __future__ import print_function
-import sys
-import os
+
 import errno
+import os
+import sys
 
 if len(sys.argv) != 1:
     print("""ERROR:  Improper invocation
@@ -40,9 +41,11 @@ if len(sys.argv) != 1:
 
 """.format(PROGRAM_NAME=sys.argv[0]))
 
+
 def addToSysPath(index, path):
     if path not in sys.path:
         sys.path.insert(index, path)
+
 
 # Modify the PATH for python modules
 addToSysPath(0, '/scratch/johnsonhj/src/NEP-11/NIPYPE')
@@ -78,10 +81,12 @@ import yaml
 
 ## Using yaml to load keys and values as strings
 
-with open(sys.argv[1],'r') as paramFptr:
-   ExperimentInfo = yaml.safe_load(paramFptr)
+with open(sys.argv[1], 'r') as paramFptr:
+    ExperimentInfo = yaml.safe_load(paramFptr)
 
 print(ExperimentInfo)
+
+
 # del WDIR
 
 def mkdir_p(path):
@@ -104,10 +109,10 @@ minipigWF.config['execution'] = {
     # 'stop_on_first_rerun': 'true',
     'stop_on_first_crash': 'false',
     'stop_on_first_rerun': 'false',
-# This stops at first attempt to rerun, before running, and before deleting previous results.
+    # This stops at first attempt to rerun, before running, and before deleting previous results.
     'hash_method': 'timestamp',
     'single_thread_matlab': 'true',  # Multi-core 2011a  multi-core for matrix multip  lication.
-    'remove_unnecessary_outputs': 'true', #remove any interface outputs not needed by the workflow
+    'remove_unnecessary_outputs': 'true',  # remove any interface outputs not needed by the workflow
     'use_relative_paths': 'false',  # relative paths should be on, require hash updat  e when changed.
     'remove_node_directories': 'false',  # Experimental
     'local_hash_check': 'true',
@@ -122,8 +127,8 @@ minipigWF.config['logging'] = {
 
 input_spec = pe.Node(interface=IdentityInterface(
     fields=['Raw_Atlas', 'Raw_T1', 'Cropped_T1', 'Raw_T2', 'Raw_BM', 'DomesticLUT', 'Domestic_LabelMap']),
-                     run_without_submitting=True,
-                     name='inputspec')
+    run_without_submitting=True,
+    name='inputspec')
 
 input_spec.inputs.Raw_T1 = ExperimentInfo["Subject"]["Raw_T1"]
 input_spec.inputs.Raw_T2 = ExperimentInfo["Subject"]["Raw_T2"]
@@ -139,11 +144,11 @@ def ChangeDynamicRangeOfImage(inFN, outFN, winMin, winMax, outMin, outMax):
     import SimpleITK as sitk
     import os
 
-    at = sitk.ReadImage(inFN.encode('ascii','replace'))
+    at = sitk.ReadImage(inFN.encode('ascii', 'replace'))
     out_at = sitk.IntensityWindowing(at, windowMinimum=winMin, windowMaximum=winMax, outputMinimum=outMin,
                                      outputMaximum=outMax)
     out_at = sitk.Cast(out_at, sitk.sitkUInt16)
-    sitk.WriteImage(out_at, outFN.encode('ascii','replace'))
+    sitk.WriteImage(out_at, outFN.encode('ascii', 'replace'))
     return os.path.realpath(outFN)
 
 
@@ -193,13 +198,13 @@ def SmoothBrainMask(inFN, outFN):
     import os
 
     FIXED_BM = inFN
-    fbm = sitk.ReadImage(FIXED_BM.encode('ascii','replace')) > 0  # Make binary
+    fbm = sitk.ReadImage(FIXED_BM.encode('ascii', 'replace')) > 0  # Make binary
 
     ## A smoothing operation to get rid of rough brain edges
     fbm = sitk.BinaryErode(fbm, 1)
     fbm = sitk.BinaryDilate(fbm, 2)
     fbm = sitk.BinaryErode(fbm, 1)
-    sitk.WriteImage(sitk.Cast(fbm, sitk.sitkUInt16.encode('ascii','replace')), outFN)
+    sitk.WriteImage(sitk.Cast(fbm, sitk.sitkUInt16.encode('ascii', 'replace')), outFN)
     return os.path.realpath(outFN)
 
 
@@ -226,6 +231,7 @@ T2_to_T1_Fit.inputs.initializeTransformMode = 'Off'
 minipigWF.connect(T1DynFix, 'outFN', T2_to_T1_Fit, 'fixedVolume')
 minipigWF.connect(T2DynFix, 'outFN', T2_to_T1_Fit, 'movingVolume')
 
+
 ## No masking needed, these should be topologically equivalent in all spaces
 ## T2_to_T1_Fit.inputs.maskProcessingMode="ROI"
 ## minipigWF.connect( smoothBrainMask, 'outFN',T2_to_T1_Fit,'fixedBinaryVolume')
@@ -244,12 +250,12 @@ def ChopImage(inFN, inMaskFN, outFN):
     import SimpleITK as sitk
     import os
 
-    fbm = sitk.ReadImage(inMaskFN.encode('ascii','replace')) > 0
-    int1 = sitk.ReadImage(inFN.encode('ascii','replace'))
+    fbm = sitk.ReadImage(inMaskFN.encode('ascii', 'replace')) > 0
+    int1 = sitk.ReadImage(inFN.encode('ascii', 'replace'))
     int1_mask = sitk.Cast(int1 > 0, sitk.sitkUInt16)
     outt1 = sitk.Cast(int1, sitk.sitkUInt16) * sitk.Cast(fbm, sitk.sitkUInt16) * int1_mask
 
-    sitk.WriteImage(outt1, outFN.encode('ascii','replace'))
+    sitk.WriteImage(outt1, outFN.encode('ascii', 'replace'))
     return os.path.realpath(outFN)
 
 
@@ -319,13 +325,14 @@ BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
 BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 BeginANTS.inputs.save_state = 'SavedBeginANTSSyNState.h5'
 BeginANTS.inputs.float = True
-BeginANTS.inputs.num_threads = -1 # Tell nipype to respect qsub envirionmental variable NSLOTS
+BeginANTS.inputs.num_threads = -1  # Tell nipype to respect qsub envirionmental variable NSLOTS
 BeginANTS.inputs.args = "--verbose"
 BeginANTS.inputs.invert_initial_moving_transform = False
 
 minipigWF.connect(chopT2, 'outFN', BeginANTS, "fixed_image")
 minipigWF.connect(fixAtlas, 'outFN', BeginANTS, "moving_image")
 minipigWF.connect(AT_to_T1_Fit, 'outputTransform', BeginANTS, 'initial_moving_transform')
+
 
 ######===========================
 def MakeVector(inFN1, inFN2):
@@ -374,7 +381,7 @@ BeginANTS2.inputs.output_warped_image = 'atlas2subjectMultiModal.nii.gz'
 BeginANTS2.inputs.output_inverse_warped_image = 'subject2atlasMultiModal.nii.gz'
 BeginANTS2.inputs.save_state = 'SavedBeginANTSSyNState.h5'
 BeginANTS2.inputs.float = True
-BeginANTS2.inputs.num_threads = -1 # Tell nipype to respect qsub envirionmental variable NSLOTS
+BeginANTS2.inputs.num_threads = -1  # Tell nipype to respect qsub envirionmental variable NSLOTS
 BeginANTS2.inputs.args = "--verbose"
 
 minipigWF.connect(SubjectMakeVector, 'outFNs', BeginANTS2, "fixed_image")

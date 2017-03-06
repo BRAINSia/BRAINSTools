@@ -1,13 +1,13 @@
 from __future__ import print_function
-from builtins import object
-import os
+
 import argparse
 import csv
+import os
 import sys
+from builtins import object
 
 
 class runOneAW(object):
-
     def main(self):
         self.makeOuputDir()
         self.sessionPath = os.path.join(input_arguments.experimentOutputDir, 'session.csv')
@@ -152,10 +152,11 @@ BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
         print('\nThe configuration file has been generated: {0}'.format(self.configPath))
         print(newConfigString)
 
+
 if __name__ == "__main__":
     # Create and parse input arguments
     parser = argparse.ArgumentParser(description="This program is used to run a mini version of AutoWorkup "
-                                     "for a specific session and specified T1 and T2 files.")
+                                                 "for a specific session and specified T1 and T2 files.")
     group = parser.add_argument_group('Required')
     group.add_argument('-project', action="store", dest='project', required=True,
                        help='The name of the project to process')

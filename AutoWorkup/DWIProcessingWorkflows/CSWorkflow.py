@@ -5,25 +5,26 @@
 ##
 
 import os
+
 import nipype
+import nipype.interfaces.io as nio  # Data i/oS
+import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces import ants
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/oS
-import nipype.pipeline.engine as pe  # pypeline engine
+
 
 def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
-
     if PYTHON_AUX_PATHS is not None:
-       Path_to_Matlab_Func = os.path.join(PYTHON_AUX_PATHS[0],'DWIProcessingWorkflows')
-       assert os.path.exists(Path_to_Matlab_Func), "Path to CS matlab function is not found: %s" % Path_to_Matlab_Func
+        Path_to_Matlab_Func = os.path.join(PYTHON_AUX_PATHS[0], 'DWIProcessingWorkflows')
+        assert os.path.exists(Path_to_Matlab_Func), "Path to CS matlab function is not found: %s" % Path_to_Matlab_Func
 
     #### Utility function ####
-    def runCSbyMatlab(inputScan,inputMask,CSScanFileName,Path_to_Matlab_Func):
+    def runCSbyMatlab(inputScan, inputMask, CSScanFileName, Path_to_Matlab_Func):
         import os
         import nipype.interfaces.matlab as matlab
-        script="runCS('"+inputScan+"','"+inputMask+"','"+CSScanFileName+"')"
+        script = "runCS('" + inputScan + "','" + inputMask + "','" + CSScanFileName + "')"
         mlab = matlab.MatlabCommand()
         mlab.set_default_matlab_cmd("matlab")
         mlab.inputs.single_comp_thread = False
@@ -32,9 +33,10 @@ def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
         mlab.inputs.paths = Path_to_Matlab_Func
         mlab.inputs.script = script
         mlab.run()
-        outputCSFilename = os.path.join(os.getcwd(), CSScanFileName) # return output CS filename
+        outputCSFilename = os.path.join(os.getcwd(), CSScanFileName)  # return output CS filename
         assert os.path.isfile(outputCSFilename), "CS file is not found: %s" % outputCSFilename
         return outputCSFilename
+
     #########################
 
     CSWF = pe.Workflow(name=WFname)
@@ -57,13 +59,13 @@ def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
     CSWF.connect(createMatlabScriptNode,'matlabScript',runCS,'script')
     CSWF.connect(runCS,'out',outputsSpec,'DWI_Corrected_Aligned_CS') #This line cause problem
     '''
-    runCS=pe.Node(interface=Function(function = runCSbyMatlab,
-                                     input_names=['inputScan','inputMask','CSScanFileName','Path_to_Matlab_Func'],
-                                     output_names=['outputCSFilename']),
-                  name="runCS")
+    runCS = pe.Node(interface=Function(function=runCSbyMatlab,
+                                       input_names=['inputScan', 'inputMask', 'CSScanFileName', 'Path_to_Matlab_Func'],
+                                       output_names=['outputCSFilename']),
+                    name="runCS")
     runCS.inputs.Path_to_Matlab_Func = Path_to_Matlab_Func
     runCS.inputs.CSScanFileName = 'DWI_Corrected_Aligned_CS.nrrd'
-    CSWF.connect([(inputsSpec,runCS,[('DWI_Corrected_Aligned','inputScan'),('DWIBrainMask','inputMask')])])
-    CSWF.connect(runCS,'outputCSFilename',outputsSpec,'DWI_Corrected_Aligned_CS')
+    CSWF.connect([(inputsSpec, runCS, [('DWI_Corrected_Aligned', 'inputScan'), ('DWIBrainMask', 'inputMask')])])
+    CSWF.connect(runCS, 'outputCSFilename', outputsSpec, 'DWI_Corrected_Aligned_CS')
 
     return CSWF

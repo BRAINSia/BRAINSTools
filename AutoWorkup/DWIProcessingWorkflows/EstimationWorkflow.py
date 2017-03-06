@@ -5,15 +5,17 @@
 ##
 
 import os
+
 import SimpleITK as sitk
 import nipype
+import nipype.interfaces.io as nio  # Data i/oS
+import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces import ants
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/oS
-import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
+from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+
 
 def CreateEstimationWorkflow(WFname):
     #### Utility function ####
@@ -47,7 +49,8 @@ def CreateEstimationWorkflow(WFname):
         assert os.path.isfile(lambda1_output), "lambda1 file is not found: %s" % lambda1_output
         assert os.path.isfile(lambda2_output), "lambda2 file is not found: %s" % lambda2_output
         assert os.path.isfile(lambda3_output), "lambda3 file is not found: %s" % lambda3_output
-        return fa_output,md_output,RD_output,frobenius_norm_output,lambda1_output,lambda2_output,lambda3_output
+        return fa_output, md_output, RD_output, frobenius_norm_output, lambda1_output, lambda2_output, lambda3_output
+
     #########################
 
     EstimationWF = pe.Workflow(name=WFname)
@@ -55,9 +58,11 @@ def CreateEstimationWorkflow(WFname):
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputDWIImage', 'DWIBrainMask']),
                          name='inputsSpec')
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['tensor_image','idwi_image', # from dtiestim
-                                                              'FAImage','MDImage','RDImage','FrobeniusNormImage', # from dtiprocess
-                                                              'Lambda1Image','Lambda2Image','Lambda3Image']), # from dtiprocess
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['tensor_image', 'idwi_image',  # from dtiestim
+                                                              'FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
+                                                              # from dtiprocess
+                                                              'Lambda1Image', 'Lambda2Image', 'Lambda3Image']),
+                          # from dtiprocess
                           name='outputsSpec')
 
     # Step1: DTI estimation
@@ -77,10 +82,11 @@ def CreateEstimationWorkflow(WFname):
     # at the moment of destroying all registered factories.
     # Therefore, we run "dtiprocess" through an utility function to ignore this probable exception.
     # However, some checkings are done to make sure all needed outputs of dtiprocess are written properly.
-    DTIProcess = pe.Node(interface=Function(function = RunDTIProcess,
-                                 input_names=['dti_image'],
-                                 output_names=['fa_output','md_output','RD_output','frobenius_norm_output',
-                                               'lambda1_output','lambda2_output','lambda3_output']),
+    DTIProcess = pe.Node(interface=Function(function=RunDTIProcess,
+                                            input_names=['dti_image'],
+                                            output_names=['fa_output', 'md_output', 'RD_output',
+                                                          'frobenius_norm_output',
+                                                          'lambda1_output', 'lambda2_output', 'lambda3_output']),
                          name="DTIProcess")
     '''
     DTIProcess = pe.Node(interface=dtiprocess(), name='DTIProcess')

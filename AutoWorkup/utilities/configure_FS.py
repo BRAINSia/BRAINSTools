@@ -3,6 +3,7 @@
     you will set the FreeSurfer environment driven by the configuration file.
 """
 from __future__ import absolute_import
+
 try:
     list(env.keys())
     FS_VARS
@@ -12,6 +13,7 @@ except NameError as AttributeError:
         where 'env' is set to an os.environ-like dictionary")
 import os
 from . import misc
+
 #####################################################################################
 #  FreeSurfer is extraordinarly finicky and is easily confused and incorrect.
 

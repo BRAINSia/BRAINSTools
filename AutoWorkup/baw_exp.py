@@ -10,10 +10,12 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 ##
 #################################################################################
-from __future__ import print_function
 from __future__ import absolute_import
-from past.builtins import execfile
+from __future__ import print_function
+
 from future import standard_library
+from past.builtins import execfile
+
 standard_library.install_aliases()
 from builtins import str
 from builtins import range
@@ -25,6 +27,8 @@ import traceback
 
 import multiprocessing
 import time
+
+
 ##############################################################################
 
 
@@ -34,31 +38,31 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
     ## TODO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or \
-      (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
+            (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
     else:
-        print("Single_subject {0}: Using cached database, {1}".format(single_subject,subjectDatabaseFile))
+        print("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile))
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-    #print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
-    #print "^^^^^^^^^^^^^"
-    #for row in ExperimentDatabase.getEverything():
+    # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
+    # print "^^^^^^^^^^^^^"
+    # for row in ExperimentDatabase.getEverything():
     #    print row
-    #print "^^^^^^^^^^^^^"
+    # print "^^^^^^^^^^^^^"
     return ExperimentDatabase
 
+
 def DoSingleSubjectProcessing(sp_args):
+    CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, \
+    ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
+    GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
+    input_arguments, mountPrefix, start_time, subjectid, PreviousExperimentName = sp_args
 
-    CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE, \
-          ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
-          GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
-          input_arguments, mountPrefix,start_time,subjectid, PreviousExperimentName = sp_args
-
-    while time.time() < start_time :
-        time.sleep(start_time-time.time()+1)
+    while time.time() < start_time:
+        time.sleep(start_time - time.time() + 1)
         print("Delaying start for {0}".format(subjectid))
 
-    list_with_one_subject = [ subjectid ]
+    list_with_one_subject = [subjectid]
     ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, list_with_one_subject, mountPrefix,
                                              subject_data_file)
 
@@ -88,25 +92,25 @@ def DoSingleSubjectProcessing(sp_args):
     try:
         if input_arguments.wfrun == 'helium_all.q':
             try:
-                #baw200.write_graph()
+                # baw200.write_graph()
                 pass
             except:
                 pass
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
+                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'helium_all.q_graph':
             try:
-                #baw200.write_graph()
+                # baw200.write_graph()
                 pass
             except:
                 pass
             SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
+                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'ipl_OSX':
@@ -117,7 +121,7 @@ def DoSingleSubjectProcessing(sp_args):
             print("Running On ipl_OSX")
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
+                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'local_4':
@@ -151,7 +155,8 @@ def DoSingleSubjectProcessing(sp_args):
             # baw200.run(updatehash=True)
             baw200.run()
         else:
-            print("You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]")
+            print(
+                "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]")
             print(input_arguments.wfrun)
             sys.exit(-1)
     except:
@@ -190,7 +195,8 @@ def MasterProcessingController(argv=None):
     config.read(args.ExperimentConfig)
 
     # Pipeline-specific information
-    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(args.rewrite_datasinks, config.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE'))
+    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(args.rewrite_datasinks,
+                                                       config.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE'))
     experiment = get_experiment_settings(config)
     # Platform specific information
     environment = get_environment_settings(config)
@@ -203,19 +209,19 @@ def MasterProcessingController(argv=None):
         print("Loading virtualenv_dir...")
         execfile(environment['virtualenv_dir'], dict(__file__=environment['virtualenv_dir']))
     ###### Now ensure that all the required packages can be read in from this custom path
-    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path
     ## Check to ensure that SimpleITK can be found
     import SimpleITK as sitk
     from nipype import config  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     config.enable_debug_mode()  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    #config.enable_provenance()
+    # config.enable_provenance()
 
     ##############################################################################
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
     from nipype.interfaces.base import traits, isdefined, BaseInterface
     from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-    import nipype.interfaces.io as nio   # Data i/o
+    import nipype.interfaces.io as nio  # Data i/o
     import nipype.pipeline.engine as pe  # pypeline engine
     from nipype.interfaces.freesurfer import ReconAll
 
@@ -237,9 +243,11 @@ def MasterProcessingController(argv=None):
     if not os.path.exists(experiment['output_results']):
         os.makedirs(experiment['output_results'])
     if 'input_results' in list(experiment.keys()):
-        assert os.path.exists(experiment['input_results']), "The previous experiment directory does not exist: {0}".format(experiment['input_results'])
+        assert os.path.exists(
+            experiment['input_results']), "The previous experiment directory does not exist: {0}".format(
+            experiment['input_results'])
 
-    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #    Define platform specific output write paths
     mountPrefix = expConfig.get(input_arguments.processingEnvironment, 'MOUNTPREFIX')
     BASEOUTPUTDIR = expConfig.get(input_arguments.processingEnvironment, 'BASEOUTPUTDIR')
@@ -253,10 +261,12 @@ def MasterProcessingController(argv=None):
     if not PreviousExperimentName is None:
         PreviousBaseDirectoryPrefix = os.path.realpath(os.path.join(BASEOUTPUTDIR, PreviousExperimentName))
         PreviousBaseDirectoryResults = PreviousBaseDirectoryPrefix + "_Results"
-        assert os.path.exists(PreviousBaseDirectoryResults), "The previous experiment directory does not exist: {0}".format(PreviousBaseDirectoryResults)
+        assert os.path.exists(
+            PreviousBaseDirectoryResults), "The previous experiment directory does not exist: {0}".format(
+            PreviousBaseDirectoryResults)
     else:
         PreviousBaseDirectoryResults = None
-    #    Define workup common reference data sets
+    # Define workup common reference data sets
     #    The ATLAS needs to be copied to the ExperimentBaseDirectoryPrefix
     #    The ATLAS pathing must stay constant
     ATLASPATH = expConfig.get(input_arguments.processingEnvironment, 'ATLASPATH')
@@ -266,10 +276,13 @@ def MasterProcessingController(argv=None):
     CACHE_ATLASPATH = os.path.realpath(os.path.join(ExperimentBaseDirectoryCache, 'Atlas'))
     from distutils.dir_util import copy_tree
     if not os.path.exists(CACHE_ATLASPATH):
-        print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(ATLASPATH, CACHE_ATLASPATH))
+        print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(
+            ATLASPATH, CACHE_ATLASPATH))
         copy_tree(ATLASPATH, CACHE_ATLASPATH, preserve_mode=1, preserve_times=1)
         ## Now generate the xml file with the correct pathing
-        file_replace(os.path.join(ATLASPATH, 'ExtendedAtlasDefinition.xml.in'), os.path.join(CACHE_ATLASPATH, 'ExtendedAtlasDefinition.xml'), "@ATLAS_INSTALL_DIRECTORY@", CACHE_ATLASPATH)
+        file_replace(os.path.join(ATLASPATH, 'ExtendedAtlasDefinition.xml.in'),
+                     os.path.join(CACHE_ATLASPATH, 'ExtendedAtlasDefinition.xml'), "@ATLAS_INSTALL_DIRECTORY@",
+                     CACHE_ATLASPATH)
     else:
         print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
 
@@ -291,10 +304,11 @@ def MasterProcessingController(argv=None):
 
     print("Configuring Pipeline")
     ## Ensure that entire db is built and cached before parallel section starts.
-    _ignoreme = OpenSubjectDatabase(experiment['output_cache'], [ "all" ], environment['prefix'], environment['subject_data_file'])
+    _ignoreme = OpenSubjectDatabase(experiment['output_cache'], ["all"], environment['prefix'],
+                                    environment['subject_data_file'])
     to_do_subjects = args.subject.split(',')
     if to_do_subjects[0] == "all":
-        to_do_subjects=_ignoreme.getAllSubjects()
+        to_do_subjects = _ignoreme.getAllSubjects()
     _ignoreme = None
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
@@ -309,16 +323,16 @@ def MasterProcessingController(argv=None):
 
     ## Make a list of all the arguments to be processed
     sp_args_list = list()
-    start_time=time.time()
+    start_time = time.time()
     subj_index = 1
     for subjectid in to_do_subjects:
-        delay = 2.5*subj_index
+        delay = 2.5 * subj_index
         subj_index += 1
         print("START DELAY: {0}".format(delay))
-        sp_args=(CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
-                                  experiment['output_cache'], experiment['output_results'], environment['subject_data_file'],
-                                  GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, args,
-                                  mountPrefix, start_time+delay, subjectid, PreviousBaseDirectoryResult)
+        sp_args = (CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE,
+                   experiment['output_cache'], experiment['output_results'], environment['subject_data_file'],
+                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, args,
+                   mountPrefix, start_time + delay, subjectid, PreviousBaseDirectoryResult)
         sp_args_list.append(sp_args)
     if 'local' in args.wfrun:
         print("RUNNING WITHOUT POOL BUILDING")
@@ -327,17 +341,19 @@ def MasterProcessingController(argv=None):
     else:
         ## Make a pool of workers to submit simultaneously
         from multiprocessing import Pool
-        myPool = Pool(processes=64,maxtasksperchild=1)
-        all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
+        myPool = Pool(processes=64, maxtasksperchild=1)
+        all_results = myPool.map_async(DoSingleSubjectProcessing, sp_args_list).get(1e100)
 
-        for indx in range(0,len(sp_args_list)):
+        for indx in range(0, len(sp_args_list)):
             if all_results[indx] == False:
-                    print("FAILED for {0}".format(sp_args_list[indx][-1]))
+                print("FAILED for {0}".format(sp_args_list[indx][-1]))
 
     print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects))
     return 0
 
+
 if __name__ == "__main__":
     import sys
+
     main_status = MasterProcessingController(None)
     sys.exit(main_status)

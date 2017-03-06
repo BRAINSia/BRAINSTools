@@ -3,6 +3,7 @@ Image processing functions for pipelines
 """
 from builtins import range
 
+
 def FixWMPartitioning(brainMask, PosteriorsList):
     """"There were some errors in mis-classifications for WM/NON_WM"""
     import SimpleITK as sitk
@@ -17,7 +18,8 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         return sitk.BinaryThreshold(
             inputMask +
             sitk.ErodeObjectMorphology(
-                sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1, 10000)
+                sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1,
+            10000)
 
     BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask), 1, 1000)
     BM_FILLED = FillHolePreserveEdge(BM, 3)
@@ -52,7 +54,8 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         elif bnames[i] == 'POSTERIOR_AIR.nii.gz':
             AIR_index = i
 
-    def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME, NOTREGION_NAME):
+    def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME,
+                                   NOTREGION_NAME):
         NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index])
         REGION = sitk.ReadImage(ShiftPosteriorsList[REGION_index])
         ALL_REGION = NOTREGION + REGION
@@ -67,10 +70,14 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         return ShiftPosteriorsList
 
     UpdatedPosteriorsList = list(PosteriorsList)
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, 'CSF', 'NOTCSF')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index, 'SURFGM', 'NOTGM')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, 'WM', 'NOTWM')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, 'VB', 'NOTVB')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, 'CSF',
+                                                       'NOTCSF')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index,
+                                                       'SURFGM', 'NOTGM')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, 'WM',
+                                                       'NOTWM')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, 'VB',
+                                                       'NOTVB')
 
     AirMask = sitk.BinaryThreshold(sitk.ReadImage(PosteriorsList[AIR_index]), 0.50, 1000000)
     nonAirMask = sitk.Cast(1 - AirMask, sitk.sitkUInt8)

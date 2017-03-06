@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import print_function
+
 from builtins import str
-from nipype.interfaces.utility import Merge, Function, IdentityInterface
+
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
-from PipeLineFunctionHelpers import getListIndex
+from nipype.interfaces.utility import Merge, Function, IdentityInterface
 
+from PipeLineFunctionHelpers import getListIndex
 from .RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
 
@@ -33,21 +35,22 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print("AA", initial_seg)
         # print "BB", dict(sitk.Statistics(seg))
-        exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8)
+        exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1),
+                                 sitk.sitkUInt8)
         # print "CC", dict(sitk.Statistics(exclude_Mask))
         cleanedUpSeg = seg * exclude_Mask
         # print "DD", dict(sitk.Statistics(cleanedUpSeg))
         return cleanedUpSeg
 
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
-        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn.encode('ascii','replace')), sitk.sitkUInt8)
+        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn.encode('ascii', 'replace')), sitk.sitkUInt8)
 
-        #WM_FN = posteriorDictionary['WM']
-        #WM_PROB = sitk.ReadImage(WM_FN.encode('ascii','replace'))
-        #WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
+        # WM_FN = posteriorDictionary['WM']
+        # WM_PROB = sitk.ReadImage(WM_FN.encode('ascii','replace'))
+        # WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
 
         CSF_FN = posteriorDictionary['CSF']
-        CSF_PROB = sitk.ReadImage(CSF_FN.encode('ascii','replace'))
+        CSF_PROB = sitk.ReadImage(CSF_FN.encode('ascii', 'replace'))
         CSF_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, CSF_PROB, CSFThreshold)
         return CSF_removed
 
@@ -94,12 +97,13 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         curr_segROI.GetSize()
         remove_pre_postfix = segFN.replace(".nii.gz", "")
         remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("subjectANNLabel_", "").replace("_seg", ""))
-        remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("ANNContinuousPrediction", "").replace("subject", ""))
+        remove_pre_postfix = os.path.basename(
+            remove_pre_postfix.replace("ANNContinuousPrediction", "").replace("subject", ""))
         structName = remove_pre_postfix.lower()
         cleaned_fileName = os.path.join(os.path.dirname(segFN), "cleaned_" + structName + "_seg.nii.gz")
         print("=" * 20, structName, " ", cleaned_fileName)
         cleaned_labels_map[structName] = cleaned_fileName
-        sitk.WriteImage(curr_segROI, cleaned_fileName.encode('ascii','replace'))
+        sitk.WriteImage(curr_segROI, cleaned_fileName.encode('ascii', 'replace'))
         if labelImage is None:
             labelImage = curr_segROI * valueDict[structName]
         else:
@@ -108,13 +112,14 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
             labelImage *= not_mask
             ## Add in the mask image with it's proper label
             labelImage = labelImage + curr_segROI * valueDict[structName]
-    sitk.WriteImage(labelImage, LabelImageName.encode('ascii','replace'))
+    sitk.WriteImage(labelImage, LabelImageName.encode('ascii', 'replace'))
 
     ls = sitk.LabelStatisticsImageFilter()
     ls.Execute(labelImage, labelImage)
     ImageSpacing = labelImage.GetSpacing()
     csvFile = open(CSVFileName, 'w')
-    dWriter = csv.DictWriter(csvFile, ['projectid', 'subjectid', 'sessionid', 'Structure', 'LabelCode', 'Volume_mm3'], restval='', extrasaction='raise', dialect='excel')
+    dWriter = csv.DictWriter(csvFile, ['projectid', 'subjectid', 'sessionid', 'Structure', 'LabelCode', 'Volume_mm3'],
+                             restval='', extrasaction='raise', dialect='excel')
     dWriter.writeheader()
     writeDictionary = dict()
     for name in orderOfPriority:
@@ -125,7 +130,8 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
             # dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
             # dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
             # measurementDict = dict(zip(dictKeys, dictValues))
-            structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * ls.GetCount(value) # measurementDict['Count']
+            structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * ls.GetCount(
+                value)  # measurementDict['Count']
             writeDictionary['Volume_mm3'] = structVolume
             writeDictionary['Structure'] = name
             writeDictionary['LabelCode'] = value
@@ -147,14 +153,16 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     CleanedRightAccumben = cleaned_labels_map['r_accumben']
     CleanedLeftGlobus = cleaned_labels_map['l_globus']
     CleanedRightGlobus = cleaned_labels_map['r_globus']
-    return os.path.abspath(LabelImageName), os.path.abspath(CSVFileName), CleanedLeftCaudate, CleanedRightCaudate, CleanedLeftHippocampus, CleanedRightHippocampus, CleanedLeftPutamen, CleanedRightPutamen, CleanedLeftThalamus, CleanedRightThalamus, CleanedLeftAccumben, CleanedRightAccumben, CleanedLeftGlobus, CleanedRightGlobus
+    return os.path.abspath(LabelImageName), os.path.abspath(
+        CSVFileName), CleanedLeftCaudate, CleanedRightCaudate, CleanedLeftHippocampus, CleanedRightHippocampus, CleanedLeftPutamen, CleanedRightPutamen, CleanedLeftThalamus, CleanedRightThalamus, CleanedLeftAccumben, CleanedRightAccumben, CleanedLeftGlobus, CleanedRightGlobus
 
-#==============================================
-#==============================================
-#==============================================
-#==============================================
-#==============================================
-#==============================================
+
+# ==============================================
+# ==============================================
+# ==============================================
+# ==============================================
+# ==============================================
+# ==============================================
 
 def CreateBRAINSCutWorkflow(projectid,
                             subjectid,
@@ -170,15 +178,16 @@ def CreateBRAINSCutWorkflow(projectid,
                                                              'atlasToSubjectTransform', 'template_t1_denoised_gaussian',
                                                              'rho', 'phi', 'theta',
                                                              'l_caudate_ProbabilityMap', 'r_caudate_ProbabilityMap',
-                                                             'l_hippocampus_ProbabilityMap', 'r_hippocampus_ProbabilityMap',
+                                                             'l_hippocampus_ProbabilityMap',
+                                                             'r_hippocampus_ProbabilityMap',
                                                              'l_putamen_ProbabilityMap', 'r_putamen_ProbabilityMap',
                                                              'l_thalamus_ProbabilityMap', 'r_thalamus_ProbabilityMap',
                                                              'l_accumben_ProbabilityMap', 'r_accumben_ProbabilityMap',
                                                              'l_globus_ProbabilityMap', 'r_globus_ProbabilityMap',
                                                              'trainModelFile_txtD0060NT0060_gz']),
-                                                              name='inputspec')
+                         name='inputspec')
 
-    #Denoised T1 input for BRAINSCut
+    # Denoised T1 input for BRAINSCut
     denosingTimeStep = 0.0625
     denosingConductance = 0.4
     denosingIteration = 5
@@ -191,7 +200,7 @@ def CreateBRAINSCutWorkflow(projectid,
 
     cutWF.connect(inputsSpec, 'T1Volume', DenoisedT1, 'inputVolume')
 
-    #Gradient Anistropic Diffusion T1 images for BRAINSCut
+    # Gradient Anistropic Diffusion T1 images for BRAINSCut
     GADT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT1")
     GADT1.inputs.timeStep = 0.025
     GADT1.inputs.conductance = 1
@@ -201,7 +210,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(inputsSpec, 'T1Volume', GADT1, 'inputVolume')
 
     if not t1Only:
-        #Denoised T1 input for BRAINSCut
+        # Denoised T1 input for BRAINSCut
         DenoisedT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT2")
         DenoisedT2.inputs.timeStep = denosingTimeStep
         DenoisedT2.inputs.conductance = denosingConductance
@@ -210,7 +219,7 @@ def CreateBRAINSCutWorkflow(projectid,
 
         cutWF.connect(inputsSpec, 'T2Volume', DenoisedT2, 'inputVolume')
 
-        #Gradient Anistropic Diffusion T1 images for BRAINSCut
+        # Gradient Anistropic Diffusion T1 images for BRAINSCut
         GADT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT2")
         GADT2.inputs.timeStep = 0.025
         GADT2.inputs.conductance = 1
@@ -218,14 +227,14 @@ def CreateBRAINSCutWorkflow(projectid,
         GADT2.inputs.outputVolume = "GADT2.nii.gz"
         cutWF.connect(inputsSpec, 'T2Volume', GADT2, 'inputVolume')
 
-        #Sum the gradient images for BRAINSCut
+        # Sum the gradient images for BRAINSCut
         SGI = pe.Node(interface=GenerateSummedGradientImage(), name="SGI")
         SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
 
         cutWF.connect(GADT1, 'outputVolume', SGI, 'inputVolume1')
         cutWF.connect(GADT2, 'outputVolume', SGI, 'inputVolume2')
 
-    #BRAINSCut
+    # BRAINSCut
     RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(), name="IQR_NORM_SEP_RF12_BRAINSCut")
     # HACK
     # import os
@@ -255,7 +264,8 @@ def CreateBRAINSCutWorkflow(projectid,
     from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures
     makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary', 'candidateRegionFileName'],
                                                          ['outputCandidateRegionFileName'],
-                                                         function=MakeInclusionMaskForGMStructures), name="MakeCandidateRegion")
+                                                         function=MakeInclusionMaskForGMStructures),
+                                      name="MakeCandidateRegion")
     makeCandidateRegionNode.inputs.candidateRegionFileName = "RF12_CandidateRegionMask.nii.gz"
     cutWF.connect(inputsSpec, 'posteriorDictionary', makeCandidateRegionNode, 'posteriorDictionary')
     cutWF.connect(makeCandidateRegionNode, 'outputCandidateRegionFileName', RF12BC, 'candidateRegion')
@@ -277,7 +287,7 @@ def CreateBRAINSCutWorkflow(projectid,
                                          ('r_accumben_ProbabilityMap', 'probabilityMapsRightAccumben'),
                                          ('l_globus_ProbabilityMap', 'probabilityMapsLeftGlobus'),
                                          ('r_globus_ProbabilityMap', 'probabilityMapsRightGlobus'),
-                 ])])
+                                         ])])
 
     # TODO:
     if not t1Only:
@@ -292,11 +302,13 @@ def CreateBRAINSCutWorkflow(projectid,
         ### to avoid changing the hash keys of the input files from the atlas.
         def ChangeModelPathDirectory(multiModalFileName):
             return multiModalFileName.replace('modelFiles', 'T1OnlyModels')
+
         cutWF.connect([(inputsSpec, RF12BC,
                         [(('trainModelFile_txtD0060NT0060_gz', ChangeModelPathDirectory), 'modelFilename')])])
 
     ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
-    cutWF.connect([(inputsSpec, RF12BC, [(('atlasToSubjectTransform', getListIndex, 0), 'deformationFromTemplateToSubject')]), ])
+    cutWF.connect(
+        [(inputsSpec, RF12BC, [(('atlasToSubjectTransform', getListIndex, 0), 'deformationFromTemplateToSubject')]), ])
 
     mergeAllLabels = pe.Node(interface=Merge(12), name="labelMergeNode")
     # NOTE: Ordering is important

@@ -15,6 +15,7 @@ Options:
 
 """
 from __future__ import print_function
+
 import csv
 import glob
 import os.path
@@ -89,7 +90,6 @@ def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', 
                 outdict[key] = [fname]
             row['imagefiles'] = outdict
             writer.writerow(row)
-
 
 
 if __name__ == "__main__":

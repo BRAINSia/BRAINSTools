@@ -32,8 +32,8 @@ Examples:
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
-from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import print_function
 
 
 def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
@@ -84,9 +84,9 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
             doDenoise = False
         else:
             doDenoise = True
-    useEMSP=False
-    if len( dataDict['EMSP']) >0:
-        useEMSP =True
+    useEMSP = False
+    if len(dataDict['EMSP']) > 0:
+        useEMSP = True
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
@@ -124,7 +124,8 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
         all_sessions = database.getAllSessions()
         if not set(sessions) <= set(all_sessions) and 'all' not in sessions:
             missing = set(sessions) - set(all_sessions)
-            assert len(missing) == 0, "Requested sessions are missing from the database: {0}\n\n{1}".format(missing,all_sessions)
+            assert len(missing) == 0, "Requested sessions are missing from the database: {0}\n\n{1}".format(missing,
+                                                                                                            all_sessions)
         elif 'all' in sessions:
             sessions = set(all_sessions)
         else:
@@ -136,7 +137,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             _dict = OrderedDict()
             t1_list = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
             if len(t1_list) == 0:
-                print("ERROR: Skipping session {0} for subject {1} due to missing T1's".format(session,subject))
+                print("ERROR: Skipping session {0} for subject {1} due to missing T1's".format(session, subject))
                 print("REMOVE OR FIX BEFORE CONTINUING")
                 continue
             subject = database.getSubjFromSession(session)
@@ -188,37 +189,37 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
             if 'warp_atlas_to_subject' in master_config['components']:
                 warp_atlas_file_list = [
-"hncma_atlas.nii.gz",
-"l_accumben_ProbabilityMap.nii.gz",
-"l_caudate_ProbabilityMap.nii.gz",
-"l_globus_ProbabilityMap.nii.gz",
-"l_hippocampus_ProbabilityMap.nii.gz",
-"l_putamen_ProbabilityMap.nii.gz",
-"l_thalamus_ProbabilityMap.nii.gz",
-"left_hemisphere_wm.nii.gz",
-"phi.nii.gz",
-"r_accumben_ProbabilityMap.nii.gz",
-"r_caudate_ProbabilityMap.nii.gz",
-"r_globus_ProbabilityMap.nii.gz",
-"r_hippocampus_ProbabilityMap.nii.gz",
-"r_putamen_ProbabilityMap.nii.gz",
-"r_thalamus_ProbabilityMap.nii.gz",
-"rho.nii.gz",
-"right_hemisphere_wm.nii.gz",
-"template_WMPM2_labels.nii.gz",
-"template_headregion.nii.gz",
-"template_leftHemisphere.nii.gz",
-"template_nac_labels.nii.gz",
-"template_rightHemisphere.nii.gz",
-"template_ventricles.nii.gz",
-"theta.nii.gz"
-]
+                    "hncma_atlas.nii.gz",
+                    "l_accumben_ProbabilityMap.nii.gz",
+                    "l_caudate_ProbabilityMap.nii.gz",
+                    "l_globus_ProbabilityMap.nii.gz",
+                    "l_hippocampus_ProbabilityMap.nii.gz",
+                    "l_putamen_ProbabilityMap.nii.gz",
+                    "l_thalamus_ProbabilityMap.nii.gz",
+                    "left_hemisphere_wm.nii.gz",
+                    "phi.nii.gz",
+                    "r_accumben_ProbabilityMap.nii.gz",
+                    "r_caudate_ProbabilityMap.nii.gz",
+                    "r_globus_ProbabilityMap.nii.gz",
+                    "r_hippocampus_ProbabilityMap.nii.gz",
+                    "r_putamen_ProbabilityMap.nii.gz",
+                    "r_thalamus_ProbabilityMap.nii.gz",
+                    "rho.nii.gz",
+                    "right_hemisphere_wm.nii.gz",
+                    "template_WMPM2_labels.nii.gz",
+                    "template_headregion.nii.gz",
+                    "template_leftHemisphere.nii.gz",
+                    "template_nac_labels.nii.gz",
+                    "template_rightHemisphere.nii.gz",
+                    "template_ventricles.nii.gz",
+                    "theta.nii.gz"
+                ]
                 for ff in warp_atlas_file_list:
-                  sentinal_file_list.append(os.path.join(
-                      sentinal_file_basedir,
-                      "WarpedAtlas2Subject",
-                      ff
-                  ))
+                    sentinal_file_list.append(os.path.join(
+                        sentinal_file_basedir,
+                        "WarpedAtlas2Subject",
+                        ff
+                    ))
 
             if 'jointfusion_2015_wholebrain' in master_config['components']:
                 sentinal_file_list.append(os.path.join(
@@ -238,7 +239,8 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             else:
                 atlasDirectory = os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_rho.nii.gz')
                 sentinal_file_list.append(atlasDirectory)
-                sentinal_file_list.append(os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_template_headregion.nii.gz'))
+                sentinal_file_list.append(
+                    os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_template_headregion.nii.gz'))
 
             if os.path.exists(atlasDirectory):
                 print("LOOKING FOR DIRECTORY {0}".format(atlasDirectory))
@@ -290,7 +292,6 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
     from utilities.configFileParser import nipype_options
-
 
     print("Copying Atlas directory and determining appropriate Nipype options...")
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options

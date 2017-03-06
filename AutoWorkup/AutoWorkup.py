@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 
-from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import print_function
+
+
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
 
@@ -25,37 +27,37 @@ def setup_environment(argv):
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
     if cluster is None:
         print("Running on local")
-        #raise NotImplementedError("Running local has old code and has not been tested!")
-        #assert argv["--wfrun"] in argvWFRUN, \
+        # raise NotImplementedError("Running local has old code and has not been tested!")
+        # assert argv["--wfrun"] in argvWFRUN, \
         #    "wfrun  options for clusters can only be given when the configuration file's CLUSTER option == True"
-        #os.environ['NSLOTS'] = str(misc.get_cpus(argv["--wf_template_runner"]))
+        # os.environ['NSLOTS'] = str(misc.get_cpus(argv["--wf_template_runner"]))
     else:
         load_modules(cluster['modules'])  # Load modules if not already done  ## MODS PATH
         # print os.environ['LOADEDMODULES']
-    #if environment['virtualenv_dir'] is not None:  # MODS PATH
-        #activate_this = validatePath(
+        # if environment['virtualenv_dir'] is not None:  # MODS PATH
+        # activate_this = validatePath(
         #    os.path.join(environment['virtualenv_dir'], 'bin', 'activate_this.py'), False, False)
-        #if os.path.exists( activate_this ) :
+        # if os.path.exists( activate_this ) :
         #    exec(open(activate_this).read(), dict(__file__=activate_this))
     utilities_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utilities')
     configure_env = validatePath(os.path.join(utilities_path, 'configure_env.py'), False, False)
     # Add the AutoWorkup directory to the PYTHONPATH every time - REQUIRED FOR CLUSTER DISPATCHING
     environment['env']['PYTHONPATH'] = environment['env']['PYTHONPATH'] + ":" + os.path.dirname(__file__)
 
-    exec(open(configure_env).read() , dict(__file__=__file__,
-                                 append_os_path=environment['env']['PATH'],
-                                 append_sys_path=environment['env']['PYTHONPATH'])
-             )  # MODS PATH
+    exec(open(configure_env).read(), dict(__file__=__file__,
+                                          append_os_path=environment['env']['PATH'],
+                                          append_sys_path=environment['env']['PYTHONPATH'])
+         )  # MODS PATH
 
-    print("@"*80)
+    print("@" * 80)
     print(environment['env']['PYTHONPATH'])
-    print("@"*80)
+    print("@" * 80)
     print(environment['env']['PATH'])
-    print("@"*80)
+    print("@" * 80)
 
     from nipype import config
     config.enable_debug_mode()
-    #config.enable_provenance()
+    # config.enable_provenance()
 
     from utilities.package_check import verify_packages
     verify_packages()

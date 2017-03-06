@@ -1,8 +1,10 @@
 from __future__ import print_function
+
 try:
     from nipype.utils.misc import package_check
 except ImportError:
     import sys
+
     print(sys.path)
     raise ImportError(
         "Cannot import nipype.utils.misc.package_check(). \
@@ -18,6 +20,6 @@ def verify_packages(application='AutoWorkup'):
         ('networkx', '1.8'),
         # ('IPython', '1.2'),
         # ('SimpleITK', '0.7')
-        ]
+    ]
     for item in package_version:
         package_check(*item, app=application)

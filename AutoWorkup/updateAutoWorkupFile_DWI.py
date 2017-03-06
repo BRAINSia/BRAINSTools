@@ -1,15 +1,15 @@
 from __future__ import print_function
-from builtins import str
-from builtins import object
+
 import argparse
 import csv
 import os
-import textwrap
 import sqlite3 as lite
+import textwrap
+from builtins import object
+from builtins import str
 
 
 class UpdateAutoWorkup(object):
-
     def updateAutoWorkup(self):
         newPath = self._generateNewPathName()
         newFile = csv.writer(open(newPath, 'wb'), quoting=csv.QUOTE_ALL)
@@ -43,7 +43,6 @@ class UpdateAutoWorkup(object):
 
 
 class MakeNewImageDict(object):
-
     def __init__(self):
         self.newImageDict = dict()
         self.commandList = list()
@@ -78,7 +77,8 @@ class MakeNewImageDict(object):
         dbColTypes = "modality TEXT, project TEXT, subject TEXT, session TEXT, filepath TEXT"
         con = lite.connect(self.dbName)
         dbCur = con.cursor()
-        dbCur.execute("CREATE TABLE {dbTableName}({dbColTypes});".format(dbColTypes=dbColTypes, dbTableName=self.dbTableName))
+        dbCur.execute(
+            "CREATE TABLE {dbTableName}({dbColTypes});".format(dbColTypes=dbColTypes, dbTableName=self.dbTableName))
         dbCur.close()
 
     def _fillDB(self):
@@ -95,7 +95,8 @@ class MakeNewImageDict(object):
         col_names = ",".join(keys)
         values = ', '.join(["'" + x + "'" for x in vals])
         sqlCommand = "INSERT INTO {dbTableName} ({col_names}) VALUES ({values});".format(dbTableName=self.dbTableName,
-                                                                                         col_names=col_names, values=values)
+                                                                                         col_names=col_names,
+                                                                                         values=values)
         return sqlCommand
 
     def _appendCommand(self, val):
@@ -119,7 +120,9 @@ class MakeNewImageDict(object):
 
     def _makeDBquery(self, project, subject, session):
         return "SELECT filepath FROM {dbTableName} WHERE modality='{modality}' AND project='{project}' AND subject='{subject}' AND session='{session}';".format(
-            dbTableName=self.dbTableName, modality=inputArguments.modality, project=project, subject=subject, session=session)
+            dbTableName=self.dbTableName, modality=inputArguments.modality, project=project, subject=subject,
+            session=session)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -130,8 +133,10 @@ Example Usage: \n
 $ python updateAutoWorkupFile_DWI.py -a example_autoworkup.csv -m DWI -d /paulsen/Experiments/20120814_DTIPREP
 """))
     parser.add_argument('-a', '--autoWorkupFile', action='store', dest='autoWorkupFile', help='')
-    parser.add_argument('-m', '--modality', action='store', dest='modality', help='T1-15, T1-30, T2-15, T2-30, PD-15, or DWI')
-    parser.add_argument('-d', '--inputDir', action='store', dest='inputDir', help='Directory to search through for the new filepaths')
+    parser.add_argument('-m', '--modality', action='store', dest='modality',
+                        help='T1-15, T1-30, T2-15, T2-30, PD-15, or DWI')
+    parser.add_argument('-d', '--inputDir', action='store', dest='inputDir',
+                        help='Directory to search through for the new filepaths')
     inputArguments = parser.parse_args()
     Object = UpdateAutoWorkup()
     Object.updateAutoWorkup()

@@ -1,29 +1,21 @@
 from __future__ import print_function
-from builtins import range
-## NOTE: THERE CAN NOT BE ANY GLOBAL imports in this file
-##       NIPYPE pipeline functions must be self contained
-##       and any import needed for a function must be
-##       included in the function itself.
 
-## This file contains misc SimpleITK based functions for use in nipype
-## nodes.
-
-## AVOID REFORMATTING THIS FILE, it causes the hash to change in
-## nipype and that require re-running the function.
-
-import os
-import shutil ## needed for removing directory tree
 import errno
+import os
+import shutil  ## needed for removing directory tree
+from builtins import range
 
 # Globals
 POSTERIORS = ['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
               'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
               'NOTVB', 'AIR']
 
+
 def convertToList(element):
     if element is None:
         return ''
     return [element]
+
 
 def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
     import SimpleITK as sitk
@@ -33,21 +25,22 @@ def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileNam
     VB_FN = posteriorDictionary['VB']
     WM_FN = posteriorDictionary['WM']
 
-    AIR_PROB = sitk.ReadImage(AIR_FN.encode('ascii','replace'))
-    CSF_PROB = sitk.ReadImage(CSF_FN.encode('ascii','replace'))
-    VB_PROB = sitk.ReadImage(VB_FN.encode('ascii','replace'))
-    WM_PROB = sitk.ReadImage(WM_FN.encode('ascii','replace'))
+    AIR_PROB = sitk.ReadImage(AIR_FN.encode('ascii', 'replace'))
+    CSF_PROB = sitk.ReadImage(CSF_FN.encode('ascii', 'replace'))
+    VB_PROB = sitk.ReadImage(VB_FN.encode('ascii', 'replace'))
+    WM_PROB = sitk.ReadImage(WM_FN.encode('ascii', 'replace'))
 
     AIR_Region = sitk.BinaryThreshold(AIR_PROB, 0.51, 1.01, 1, 0)
     CSF_Region = sitk.BinaryThreshold(CSF_PROB, 0.51, 1.01, 1, 0)
     VB_Region = sitk.BinaryThreshold(VB_PROB, 0.51, 1.01, 1, 0)
     WM_Region = sitk.BinaryThreshold(WM_PROB, 0.99, 1.01, 1, 0)  # NOTE: Higher tolerance for WM regions!
 
-    outputCandidateRegion = sitk.BinaryThreshold(AIR_Region + CSF_Region + VB_Region + WM_Region, 1, 100, 0, 1)  # NOTE: Inversion of input/output definitions
+    outputCandidateRegion = sitk.BinaryThreshold(AIR_Region + CSF_Region + VB_Region + WM_Region, 1, 100, 0,
+                                                 1)  # NOTE: Inversion of input/output definitions
     ##  Now write out the candidate region name.
     import os
     outputCandidateRegionFileName = os.path.realpath(candidateRegionFileName)
-    sitk.WriteImage(outputCandidateRegion, outputCandidateRegionFileName.encode('ascii','replace'))
+    sitk.WriteImage(outputCandidateRegion, outputCandidateRegionFileName.encode('ascii', 'replace'))
 
     return outputCandidateRegionFileName
 
@@ -57,6 +50,7 @@ def makeListOfValidImages(imageFile):
         return []  # an empty iterable is a valid input to a data string
     else:
         return imageFile
+
 
 # def makeStringForMissingImages(imageFile):
 #     if imageFile is None:
@@ -75,11 +69,11 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
-    t1 = sitk.Cast(sitk.ReadImage(t1_image.encode('ascii','replace')), sitk.sitkFloat32)
-    bl = sitk.Cast(sitk.ReadImage(brain_labels.encode('ascii','replace')), sitk.sitkFloat32)
+    t1 = sitk.Cast(sitk.ReadImage(t1_image.encode('ascii', 'replace')), sitk.sitkFloat32)
+    bl = sitk.Cast(sitk.ReadImage(brain_labels.encode('ascii', 'replace')), sitk.sitkFloat32)
     bl_binary = sitk.Cast(sitk.BinaryThreshold(bl, 1, 1000000), sitk.sitkFloat32)
     clipped = t1 * bl_binary
-    sitk.WriteImage(clipped, clipped_file_name.encode('ascii','replace'))
+    sitk.WriteImage(clipped, clipped_file_name.encode('ascii', 'replace'))
     clipped_file = os.path.realpath(clipped_file_name)
     return clipped_file
 
@@ -87,7 +81,7 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
 def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
     ## Dictionary values are now being returned as unicode characters
     ## so convert back to ascii
-    return [x.encode('ascii','replace') for x in list(postDict.values()) ]
+    return [x.encode('ascii', 'replace') for x in list(postDict.values())]
 
 
 def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
@@ -106,17 +100,18 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
     # Do the firt session for initialization
     first_session = dg_list_list[0]
     for postFileName in first_session:
-        key = basename(postFileName).replace('POSTERIOR_','').replace('.nii.gz','')
-        dictionary_of_session_list[key]=[postFileName]
+        key = basename(postFileName).replace('POSTERIOR_', '').replace('.nii.gz', '')
+        dictionary_of_session_list[key] = [postFileName]
 
     ## Now do the rest!
     for one_session_list in dg_list_list[1:]:
         for postFileName in one_session_list:
-            key = basename(postFileName).replace('POSTERIOR_','').replace('.nii.gz','')
+            key = basename(postFileName).replace('POSTERIOR_', '').replace('.nii.gz', '')
             assert key in list(dictionary_of_session_list.keys()), "All session list must have the same key values"
             dictionary_of_session_list[key].append(postFileName)
     print(dictionary_of_session_list)
     return dictionary_of_session_list
+
 
 def GetOnePosteriorImageFromDictionaryFunction(postDict, key):
     return postDict[key]
@@ -127,8 +122,8 @@ def FixWMPartitioning(brainMask, PosteriorsList):
     import SimpleITK as sitk
     import os
 
-    brainMask = brainMask.encode('ascii','replace')
-    PosteriorsList = [ x.encode('ascii','replace') for x in PosteriorsList]
+    brainMask = brainMask.encode('ascii', 'replace')
+    PosteriorsList = [x.encode('ascii', 'replace') for x in PosteriorsList]
 
     def FillHolePreserveEdge(inputMask, HOLE_FILL_SIZE):
         """This function fills holes and tries to preserve
@@ -139,10 +134,11 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         return sitk.BinaryThreshold(
             inputMask +
             sitk.ErodeObjectMorphology(
-                sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1, 10000)
+                sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1,
+            10000)
 
     print("Reading {0} of type {1}".format(brainMask, type(brainMask)))
-    BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask.encode('ascii','replace')), 1, 1000)
+    BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask.encode('ascii', 'replace')), 1, 1000)
     BM_FILLED = FillHolePreserveEdge(BM, 3)
 
     NOTCSF_index = None  # Note: Purposfully using '-1' as it will force an error.
@@ -175,33 +171,40 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         elif bnames[i] == 'POSTERIOR_AIR.nii.gz':
             AIR_index = i
 
-    def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME, NOTREGION_NAME):
-        print("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index], type(ShiftPosteriorsList[NOTREGION_index])))
-        NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index].encode('ascii','replace'))
-        print("Reading {0} of type {1}".format(ShiftPosteriorsList[REGION_index], type(ShiftPosteriorsList[REGION_index])))
-        REGION = sitk.ReadImage(ShiftPosteriorsList[REGION_index].encode('ascii','replace'))
+    def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME,
+                                   NOTREGION_NAME):
+        print("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index],
+                                               type(ShiftPosteriorsList[NOTREGION_index])))
+        NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index].encode('ascii', 'replace'))
+        print("Reading {0} of type {1}".format(ShiftPosteriorsList[REGION_index],
+                                               type(ShiftPosteriorsList[REGION_index])))
+        REGION = sitk.ReadImage(ShiftPosteriorsList[REGION_index].encode('ascii', 'replace'))
         ALL_REGION = NOTREGION + REGION
         NEW_REGION = ALL_REGION * sitk.Cast(BM_FILLED, sitk.sitkFloat32)
         NEW_NOTREGION = ALL_REGION * sitk.Cast((1 - BM_FILLED), sitk.sitkFloat32)
         NEW_REGION_FN = os.path.realpath('POSTERIOR_{0}.nii.gz'.format(REGION_NAME))
         NEW_NOTREGION_FN = os.path.realpath('POSTERIOR_{0}.nii.gz'.format(NOTREGION_NAME))
-        sitk.WriteImage(NEW_REGION, NEW_REGION_FN.encode('ascii','replace'))
-        sitk.WriteImage(NEW_NOTREGION, NEW_NOTREGION_FN.encode('ascii','replace'))
+        sitk.WriteImage(NEW_REGION, NEW_REGION_FN.encode('ascii', 'replace'))
+        sitk.WriteImage(NEW_NOTREGION, NEW_NOTREGION_FN.encode('ascii', 'replace'))
         ShiftPosteriorsList[NOTREGION_index] = NEW_NOTREGION_FN
         ShiftPosteriorsList[REGION_index] = NEW_REGION_FN
         return ShiftPosteriorsList
 
     UpdatedPosteriorsList = list(PosteriorsList)
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, 'CSF', 'NOTCSF')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index, 'SURFGM', 'NOTGM')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, 'WM', 'NOTWM')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, 'VB', 'NOTVB')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, 'CSF',
+                                                       'NOTCSF')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index,
+                                                       'SURFGM', 'NOTGM')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, 'WM',
+                                                       'NOTWM')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, 'VB',
+                                                       'NOTVB')
 
-    print("Reading {0} of type {1}".format(PosteriorsList[AIR_index],type(PosteriorsList[AIR_index])))
-    AirMask = sitk.BinaryThreshold(sitk.ReadImage(PosteriorsList[AIR_index].encode('ascii','replace')), 0.50, 1000000)
+    print("Reading {0} of type {1}".format(PosteriorsList[AIR_index], type(PosteriorsList[AIR_index])))
+    AirMask = sitk.BinaryThreshold(sitk.ReadImage(PosteriorsList[AIR_index].encode('ascii', 'replace')), 0.50, 1000000)
     nonAirMask = sitk.Cast(1 - AirMask, sitk.sitkUInt8)
     nonAirRegionMask = os.path.realpath('NonAirMask.nii.gz')
-    sitk.WriteImage(nonAirMask, nonAirRegionMask.encode('ascii','replace'))
+    sitk.WriteImage(nonAirMask, nonAirRegionMask.encode('ascii', 'replace'))
 
     POSTERIOR_LABELS = dict()  # (FG,Label)
     POSTERIOR_LABELS["POSTERIOR_WM.nii.gz"] = (1, 1)
@@ -241,7 +244,7 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
     load_images_list = dict()
     for full_pathname in posteriorImages:
         base_name = os.path.basename(full_pathname)
-        load_images_list[base_name] = sitk.ReadImage(full_pathname.encode('ascii','replace'))
+        load_images_list[base_name] = sitk.ReadImage(full_pathname.encode('ascii', 'replace'))
     GM_ACCUM = [
         'POSTERIOR_SURFGM.nii.gz',
         'POSTERIOR_BASAL.nii.gz',
@@ -281,7 +284,7 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
         accum_image = load_images_list[inlist[0]]  # copy first image
         for curr_image in range(1, len(inlist)):
             accum_image = accum_image + load_images_list[inlist[curr_image]]
-        sitk.WriteImage(accum_image, outname.encode('ascii','replace'))
+        sitk.WriteImage(accum_image, outname.encode('ascii', 'replace'))
         AccumulatePriorsList.append(os.path.realpath(outname))
     print("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList))
     print(": {APN}\n".format(APN=AccumulatePriorsNames))
@@ -297,6 +300,7 @@ def mkdir_p(path):
             pass
         else:
             raise
+
 
 def recursive_dir_rm(path):
     """ Force recursive remove of directory """

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+
+import nipype.interfaces.io as nio  # Data i/o
+import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/o
-import nipype.pipeline.engine as pe  # pypeline engine
-
 from nipype.interfaces.semtools import *
+from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 
 """
     from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
@@ -25,7 +25,9 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     """
     PERSISTANCE_CHECKWF = pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolume', 'fixedBinaryVolume', 'movingVolume', 'movingBinaryVolume', 'initialTransform']), name='inputspec')
+    inputsSpec = pe.Node(interface=IdentityInterface(
+        fields=['fixedVolume', 'fixedBinaryVolume', 'movingVolume', 'movingBinaryVolume', 'initialTransform']),
+        name='inputspec')
     PERSISTANCE_CHECKWF.connect(inputsSpec, 'subject_id', fs_reconall, 'subject_id')
     PERSISTANCE_CHECKWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')
 

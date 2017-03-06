@@ -1,6 +1,9 @@
 from __future__ import print_function
-from builtins import zip
+
 from builtins import range
+from builtins import zip
+
+
 def MakeAtlasNode(atlasDirectory, name, atlasParts):
     """ Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
@@ -195,13 +198,13 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
     # # Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
-    #print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
+    # print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
     load_images_list = dict()
     for full_pathname in deformed_list:
-        full_pathname=str(full_pathname)
+        full_pathname = str(full_pathname)
         base_name = os.path.basename(full_pathname)
         if base_name in list(patternDict.keys()):
-            load_images_list[base_name] = sitk.ReadImage(full_pathname.encode('ascii','replace'))
+            load_images_list[base_name] = sitk.ReadImage(full_pathname.encode('ascii', 'replace'))
         else:
             print("MISSING FILE FROM patternDict: {0}".format(base_name))
     ## Make binary dilated mask
@@ -266,7 +269,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             ### Make Brain Mask Binary
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
-            sitk.WriteImage(binmask, clipped_name.encode('ascii','replace'))
+            sitk.WriteImage(binmask, clipped_name.encode('ascii', 'replace'))
             clean_deformed_list[index] = os.path.realpath(clipped_name)
         elif base_name == 'AVG_T2.nii.gz':
             T2File = full_pathname
@@ -274,23 +277,23 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             PDFile = full_pathname
         elif base_name in interiorPriors:
             ### Make clipped posteriors for brain regions
-            curr = sitk.Cast(sitk.ReadImage(full_pathname.encode('ascii','replace')), sitk.sitkFloat32)
+            curr = sitk.Cast(sitk.ReadImage(full_pathname.encode('ascii', 'replace')), sitk.sitkFloat32)
             curr = curr * brainmask_dilatedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
-            sitk.WriteImage(curr, clipped_name.encode('ascii','replace'))
+            sitk.WriteImage(curr, clipped_name.encode('ascii', 'replace'))
             clean_deformed_list[index] = os.path.realpath(clipped_name)
-            #print "HACK: ", clean_deformed_list[index]
+            # print "HACK: ", clean_deformed_list[index]
             curr = None
         elif base_name in exteriorPriors:
             ### Make clipped posteriors for brain regions
-            curr = sitk.Cast(sitk.ReadImage(full_pathname.encode('ascii','replace')), sitk.sitkFloat32)
+            curr = sitk.Cast(sitk.ReadImage(full_pathname.encode('ascii', 'replace')), sitk.sitkFloat32)
             curr = curr * inv_brainmask_erodedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
-            sitk.WriteImage(curr, clipped_name.encode('ascii','replace'))
+            sitk.WriteImage(curr, clipped_name.encode('ascii', 'replace'))
             clean_deformed_list[index] = os.path.realpath(clipped_name)
-            #print "HACK: ", clean_deformed_list[index]
+            # print "HACK: ", clean_deformed_list[index]
             curr = None
         elif base_name in extraFiles:
             pass
@@ -312,12 +315,15 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             xmlAtlasFileContents = xmlAtlasFileContents.replace(patternDict[base_name], base_name)
     ## If there is no T2, then use the PD image
     if T2File is not None:
-        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz',
-                                                            os.path.basename(T2File))
+        xmlAtlasFileContents = xmlAtlasFileContents.replace(
+            '@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz',
+            os.path.basename(T2File))
     elif PDFile is not None:
-        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz',
-                                                            os.path.basename(PDFile))
-    xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t1_denoised_gaussian.nii.gz', 'AVG_T1.nii.gz')
+        xmlAtlasFileContents = xmlAtlasFileContents.replace(
+            '@ATLAS_INSTALL_DIRECTORY@/template_t2_denoised_gaussian.nii.gz',
+            os.path.basename(PDFile))
+    xmlAtlasFileContents = xmlAtlasFileContents.replace(
+        '@ATLAS_INSTALL_DIRECTORY@/template_t1_denoised_gaussian.nii.gz', 'AVG_T1.nii.gz')
     ## NOTE:  HEAD REGION CAN JUST BE T1 image.
     xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz',
                                                         os.path.basename(t1_image))

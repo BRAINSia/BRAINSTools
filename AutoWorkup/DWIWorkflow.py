@@ -23,8 +23,9 @@ Options:
 """
 from __future__ import print_function
 
+
 #############################  UTILITY FUNCTIONS  #####################################
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 # remove the skull from the T2 volume
 def ExtractBRAINFromHead(RawScan, BrainLabels):
     import os
@@ -32,52 +33,57 @@ def ExtractBRAINFromHead(RawScan, BrainLabels):
     # Remove skull from the head scan
     assert os.path.exists(RawScan), "File not found: %s" % RawScan
     assert os.path.exists(BrainLabels), "File not found: %s" % BrainLabels
-    headImage = sitk.ReadImage(RawScan.encode('ascii','replace'))
-    labelsMap = sitk.ReadImage(BrainLabels.encode('ascii','replace'))
+    headImage = sitk.ReadImage(RawScan.encode('ascii', 'replace'))
+    labelsMap = sitk.ReadImage(BrainLabels.encode('ascii', 'replace'))
     rs = sitk.ResampleImageFilter()
     rs.SetInterpolator(sitk.sitkLinear)
     rs.SetTransform(sitk.Transform(3, sitk.sitkIdentity))
     rs.SetReferenceImage(labelsMap)
     resampledHead = rs.Execute(headImage)
 
-    label_mask = labelsMap>0
-    brainImage = sitk.Cast(resampledHead,sitk.sitkInt16) * sitk.Cast(label_mask,sitk.sitkInt16)
+    label_mask = labelsMap > 0
+    brainImage = sitk.Cast(resampledHead, sitk.sitkInt16) * sitk.Cast(label_mask, sitk.sitkInt16)
     outputVolume = os.path.realpath('T2Stripped.nrrd')
-    sitk.WriteImage(brainImage, outputVolume.encode('ascii','replace'))
+    sitk.WriteImage(brainImage, outputVolume.encode('ascii', 'replace'))
     return outputVolume
+
 
 def MakeResamplerInFileList(inputT2, inputLabelMap):
     imagesList = [inputT2, inputLabelMap]
     return imagesList
 
+
 # This function helps to pick desirable output from the outputVolume list
-def pickFromList(inlist,item):
+def pickFromList(inlist, item):
     return inlist[item]
+
 
 # Create registration mask for ANTs from resampled label map image
 def CreateAntsRegistrationMask(brainMask):
     import os
     import SimpleITK as sitk
     assert os.path.exists(brainMask), "File not found: %s" % brainMask
-    labelsMap = sitk.ReadImage(brainMask.encode('ascii','replace'))
-    label_mask = labelsMap>0
+    labelsMap = sitk.ReadImage(brainMask.encode('ascii', 'replace'))
+    label_mask = labelsMap > 0
     # dilate the label mask
     dilateFilter = sitk.BinaryDilateImageFilter()
     dilateFilter.SetKernelRadius(12)
-    dilated_mask = dilateFilter.Execute( label_mask )
+    dilated_mask = dilateFilter.Execute(label_mask)
     regMask = dilated_mask
     registrationMask = os.path.realpath('registrationMask.nrrd')
-    sitk.WriteImage(regMask, registrationMask.encode('ascii','replace'))
+    sitk.WriteImage(regMask, registrationMask.encode('ascii', 'replace'))
     return registrationMask
+
 
 # Save direction cosine for the input volume
 def SaveDirectionCosineToMatrix(inputVolume):
     import os
     import SimpleITK as sitk
     assert os.path.exists(inputVolume), "File not found: %s" % inputVolume
-    t2 = sitk.ReadImage(inputVolume.encode('ascii','replace'))
+    t2 = sitk.ReadImage(inputVolume.encode('ascii', 'replace'))
     directionCosine = t2.GetDirection()
     return directionCosine
+
 
 def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
     import os
@@ -87,29 +93,33 @@ def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
     imagesList = [inputB0, inputT2, inputLabelMap]
     return imagesList
 
+
 # Force DC to ID
 def ForceDCtoID(inputVolume):
     import os
     import SimpleITK as sitk
-    inImage = sitk.ReadImage(inputVolume.encode('ascii','replace'))
+    inImage = sitk.ReadImage(inputVolume.encode('ascii', 'replace'))
     inImage.SetDirection((1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0))
-    outputVolume = os.path.realpath('IDDC_'+ os.path.basename(inputVolume))
-    sitk.WriteImage(inImage, outputVolume.encode('ascii','replace'))
+    outputVolume = os.path.realpath('IDDC_' + os.path.basename(inputVolume))
+    sitk.WriteImage(inImage, outputVolume.encode('ascii', 'replace'))
     return outputVolume
+
 
 def pickCompositeTransfromFromList(composite_transform_as_list):
     if isinstance(composite_transform_as_list, basestring):
         return composite_transform_as_list;
     return composite_transform_as_list[0]
 
+
 def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
     import os
     import SimpleITK as sitk
-    inImage = sitk.ReadImage(inputVolume.encode('ascii','replace'))
+    inImage = sitk.ReadImage(inputVolume.encode('ascii', 'replace'))
     inImage.SetDirection(inputDirectionCosine)
     outputVolume = os.path.realpath('CorrectedDWI.nrrd')
-    sitk.WriteImage(inImage, outputVolume.encode('ascii','replace'))
+    sitk.WriteImage(inImage, outputVolume.encode('ascii', 'replace'))
     return outputVolume
+
 
 def GetRigidTransformInverse(inputTransform):
     import os
@@ -119,11 +129,13 @@ def GetRigidTransformInverse(inputTransform):
     versorRigidTx.SetFixedParameters(inputTx.GetFixedParameters())
     versorRigidTx.SetParameters(inputTx.GetParameters())
     invTx = versorRigidTx.GetInverse()
-    inverseTransform = os.path.realpath('Inverse_'+ os.path.basename(inputTransform))
+    inverseTransform = os.path.realpath('Inverse_' + os.path.basename(inputTransform))
     sitk.WriteTransform(invTx, inverseTransform)
     return inverseTransform
+
+
 #######################################################################################
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
 def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     print("Running the workflow ...")
@@ -132,28 +144,29 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     subjectID = os.path.basename(os.path.dirname(os.path.dirname(DWI_scan)))
     siteID = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(DWI_scan))))
 
-    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+    # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     ####### Workflow ###################
     WFname = 'DWIWorkflow_CACHE_' + sessionID
     DWIWorkflow = pe.Workflow(name=WFname)
     DWIWorkflow.base_dir = BASE_DIR
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T2Volume', 'DWIVolume','LabelMapVolume']),
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T2Volume', 'DWIVolume', 'LabelMapVolume']),
                          name='inputspec')
 
     inputsSpec.inputs.DWIVolume = DWI_scan
     inputsSpec.inputs.T2Volume = T2_scan
     inputsSpec.inputs.LabelMapVolume = labelMap_image
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['CorrectedDWI','CorrectedDWI_in_T2Space','tensor_image','DWIBrainMask',
-                                                              'FAImage','MDImage','RDImage','FrobeniusNormImage',
-                                                              'Lambda1Image','Lambda2Image','Lambda3Image',
-                                                              'ukfTracks','ukf2ndTracks' ]),
-                          name='outputsSpec')
+    outputsSpec = pe.Node(
+        interface=IdentityInterface(fields=['CorrectedDWI', 'CorrectedDWI_in_T2Space', 'tensor_image', 'DWIBrainMask',
+                                            'FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
+                                            'Lambda1Image', 'Lambda2Image', 'Lambda3Image',
+                                            'ukfTracks', 'ukf2ndTracks']),
+        name='outputsSpec')
 
     # Step0: remove the skull from the T2 volume
-    ExtractBRAINFromHeadNode = pe.Node(interface=Function(function = ExtractBRAINFromHead,
-                                                          input_names=['RawScan','BrainLabels'],
+    ExtractBRAINFromHeadNode = pe.Node(interface=Function(function=ExtractBRAINFromHead,
+                                                          input_names=['RawScan', 'BrainLabels'],
                                                           output_names=['outputVolume']),
                                        name="ExtractBRAINFromHead")
 
@@ -161,10 +174,10 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIWorkflow.connect(inputsSpec, 'LabelMapVolume', ExtractBRAINFromHeadNode, 'BrainLabels')
 
     # Step1: extract B0 from DWI volume
-    EXTRACT_B0 = pe.Node(interface=extractNrrdVectorIndex(),name="EXTRACT_B0")
+    EXTRACT_B0 = pe.Node(interface=extractNrrdVectorIndex(), name="EXTRACT_B0")
     EXTRACT_B0.inputs.vectorIndex = 0
     EXTRACT_B0.inputs.outputVolume = 'B0_Image.nrrd'
-    DWIWorkflow.connect(inputsSpec,'DWIVolume',EXTRACT_B0,'inputVolume')
+    DWIWorkflow.connect(inputsSpec, 'DWIVolume', EXTRACT_B0, 'inputVolume')
 
     # Step2: Register T2 to B0 space using BRAINSFit
     BFit_T2toB0 = pe.Node(interface=BRAINSFit(), name="BFit_T2toB0")
@@ -188,24 +201,24 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     # Step3: Use T_rigid to "resample" T2 and label map images to B0 image space
     MakeResamplerInFilesListNode = pe.Node(Function(function=MakeResamplerInFileList,
-                                                    input_names=['inputT2','inputLabelMap'],
+                                                    input_names=['inputT2', 'inputLabelMap'],
                                                     output_names=['imagesList']),
                                            name="MakeResamplerInFilesListNode")
 
-    DWIWorkflow.connect([(ExtractBRAINFromHeadNode,MakeResamplerInFilesListNode,[('outputVolume','inputT2')]),
-                         (inputsSpec,MakeResamplerInFilesListNode,[('LabelMapVolume','inputLabelMap')])])
+    DWIWorkflow.connect([(ExtractBRAINFromHeadNode, MakeResamplerInFilesListNode, [('outputVolume', 'inputT2')]),
+                         (inputsSpec, MakeResamplerInFilesListNode, [('LabelMapVolume', 'inputLabelMap')])])
 
     ResampleToB0Space = pe.MapNode(interface=BRAINSResample(), name="ResampleToB0Space",
                                    iterfield=['inputVolume', 'pixelType', 'outputVolume'])
     ResampleToB0Space.inputs.interpolationMode = 'Linear'
-    ResampleToB0Space.inputs.outputVolume = ['T2toB0.nrrd','BRAINMaskToB0.nrrd']
-    ResampleToB0Space.inputs.pixelType = ['ushort','binary']
-    DWIWorkflow.connect(BFit_T2toB0,'strippedOutputTransform',ResampleToB0Space,'warpTransform')
-    DWIWorkflow.connect(EXTRACT_B0,'outputVolume',ResampleToB0Space,'referenceVolume')
-    DWIWorkflow.connect(MakeResamplerInFilesListNode,'imagesList',ResampleToB0Space,'inputVolume')
+    ResampleToB0Space.inputs.outputVolume = ['T2toB0.nrrd', 'BRAINMaskToB0.nrrd']
+    ResampleToB0Space.inputs.pixelType = ['ushort', 'binary']
+    DWIWorkflow.connect(BFit_T2toB0, 'strippedOutputTransform', ResampleToB0Space, 'warpTransform')
+    DWIWorkflow.connect(EXTRACT_B0, 'outputVolume', ResampleToB0Space, 'referenceVolume')
+    DWIWorkflow.connect(MakeResamplerInFilesListNode, 'imagesList', ResampleToB0Space, 'inputVolume')
 
     # Step4: Create registration mask from resampled label map image
-    CreateRegistrationMask = pe.Node(interface=Function(function = CreateAntsRegistrationMask,
+    CreateRegistrationMask = pe.Node(interface=Function(function=CreateAntsRegistrationMask,
                                                         input_names=['brainMask'],
                                                         output_names=['registrationMask']),
                                      name="CreateAntsRegistrationMask")
@@ -214,7 +227,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
                         CreateRegistrationMask, 'brainMask')
 
     # Step5: Save direction cosine for the resampled T2 image
-    SaveDirectionCosineToMatrixNode = pe.Node(interface=Function(function = SaveDirectionCosineToMatrix,
+    SaveDirectionCosineToMatrixNode = pe.Node(interface=Function(function=SaveDirectionCosineToMatrix,
                                                                  input_names=['inputVolume'],
                                                                  output_names=['directionCosine']),
                                               name="SaveDirectionCosineToMatrix")
@@ -224,15 +237,17 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     # Step6: Force DC to ID
     MakeForceDCFilesListNode = pe.Node(Function(function=MakeForceDCFilesList,
-                                                input_names=['inputB0','inputT2','inputLabelMap'],
+                                                input_names=['inputB0', 'inputT2', 'inputLabelMap'],
                                                 output_names=['imagesList']),
                                        name="MakeForceDCFilesListNode")
 
-    DWIWorkflow.connect([(EXTRACT_B0,MakeForceDCFilesListNode,[('outputVolume','inputB0')]),
-                         (ResampleToB0Space,MakeForceDCFilesListNode,[(('outputVolume', pickFromList, 0),'inputT2')]),
-                         (CreateRegistrationMask,MakeForceDCFilesListNode,[('registrationMask','inputLabelMap')])])
+    DWIWorkflow.connect([(EXTRACT_B0, MakeForceDCFilesListNode, [('outputVolume', 'inputB0')]),
+                         (
+                             ResampleToB0Space, MakeForceDCFilesListNode,
+                             [(('outputVolume', pickFromList, 0), 'inputT2')]),
+                         (CreateRegistrationMask, MakeForceDCFilesListNode, [('registrationMask', 'inputLabelMap')])])
 
-    ForceDCtoIDNode = pe.MapNode(interface=Function(function = ForceDCtoID,
+    ForceDCtoIDNode = pe.MapNode(interface=Function(function=ForceDCtoID,
                                                     input_names=['inputVolume'],
                                                     output_names=['outputVolume']),
                                  name="ForceDCtoID",
@@ -270,7 +285,8 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     antsReg_B0ToTransformedT2.inputs.args = '--restrict-deformation 0x1x0'
 
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), antsReg_B0ToTransformedT2, 'fixed_image')
-    DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 2), antsReg_B0ToTransformedT2, 'fixed_image_mask')
+    DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 2), antsReg_B0ToTransformedT2,
+                        'fixed_image_mask')
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 0), antsReg_B0ToTransformedT2, 'moving_image')
 
     # Step8: Now, all necessary transforms are acquired. It's a time to
@@ -279,42 +295,46 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     # --> Restore DirectionCosine From Saved Matrix --> gtractResampleDWIInPlace(inverse of T_rigid from BFit)
     # --> {CorrectedDW_in_T2Space}
 
-    DWI_ForceDCtoIDNode = pe.Node(interface=Function(function = ForceDCtoID,
+    DWI_ForceDCtoIDNode = pe.Node(interface=Function(function=ForceDCtoID,
                                                      input_names=['inputVolume'],
                                                      output_names=['outputVolume']),
                                   name='DWI_ForceDCtoIDNode')
 
-    DWIWorkflow.connect(inputsSpec,'DWIVolume',DWI_ForceDCtoIDNode,'inputVolume')
+    DWIWorkflow.connect(inputsSpec, 'DWIVolume', DWI_ForceDCtoIDNode, 'inputVolume')
 
     gtractResampleDWI_SyN = pe.Node(interface=gtractResampleDWIInPlace(),
                                     name="gtractResampleDWI_SyN")
 
-    DWIWorkflow.connect(DWI_ForceDCtoIDNode,'outputVolume',gtractResampleDWI_SyN,'inputVolume')
-    DWIWorkflow.connect(antsReg_B0ToTransformedT2,('composite_transform',pickCompositeTransfromFromList),gtractResampleDWI_SyN,'warpDWITransform')
-    DWIWorkflow.connect(ForceDCtoIDNode,('outputVolume', pickFromList, 1),gtractResampleDWI_SyN,'referenceVolume') # fixed image of antsRegistration
+    DWIWorkflow.connect(DWI_ForceDCtoIDNode, 'outputVolume', gtractResampleDWI_SyN, 'inputVolume')
+    DWIWorkflow.connect(antsReg_B0ToTransformedT2, ('composite_transform', pickCompositeTransfromFromList),
+                        gtractResampleDWI_SyN, 'warpDWITransform')
+    DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), gtractResampleDWI_SyN,
+                        'referenceVolume')  # fixed image of antsRegistration
     gtractResampleDWI_SyN.inputs.outputVolume = 'IDDC_correctedDWI.nrrd'
 
-    RestoreDCFromSavedMatrixNode = pe.Node(interface=Function(function = RestoreDCFromSavedMatrix,
-                                                              input_names=['inputVolume','inputDirectionCosine'],
+    RestoreDCFromSavedMatrixNode = pe.Node(interface=Function(function=RestoreDCFromSavedMatrix,
+                                                              input_names=['inputVolume', 'inputDirectionCosine'],
                                                               output_names=['outputVolume']),
                                            name='RestoreDCFromSavedMatrix')
 
-    DWIWorkflow.connect(gtractResampleDWI_SyN,'outputVolume',RestoreDCFromSavedMatrixNode,'inputVolume')
-    DWIWorkflow.connect(SaveDirectionCosineToMatrixNode,'directionCosine',RestoreDCFromSavedMatrixNode,'inputDirectionCosine')
-    DWIWorkflow.connect(RestoreDCFromSavedMatrixNode,'outputVolume', outputsSpec, 'CorrectedDWI')
+    DWIWorkflow.connect(gtractResampleDWI_SyN, 'outputVolume', RestoreDCFromSavedMatrixNode, 'inputVolume')
+    DWIWorkflow.connect(SaveDirectionCosineToMatrixNode, 'directionCosine', RestoreDCFromSavedMatrixNode,
+                        'inputDirectionCosine')
+    DWIWorkflow.connect(RestoreDCFromSavedMatrixNode, 'outputVolume', outputsSpec, 'CorrectedDWI')
 
-    GetRigidTransformInverseNode = pe.Node(interface=Function(function = GetRigidTransformInverse,
+    GetRigidTransformInverseNode = pe.Node(interface=Function(function=GetRigidTransformInverse,
                                                               input_names=['inputTransform'],
                                                               output_names=['inverseTransform']),
                                            name='GetRigidTransformInverse')
 
-    DWIWorkflow.connect(BFit_T2toB0,'strippedOutputTransform',GetRigidTransformInverseNode,'inputTransform')
+    DWIWorkflow.connect(BFit_T2toB0, 'strippedOutputTransform', GetRigidTransformInverseNode, 'inputTransform')
 
     gtractResampleDWIInPlace_Trigid = pe.Node(interface=gtractResampleDWIInPlace(),
                                               name="gtractResampleDWIInPlace_Trigid")
 
-    DWIWorkflow.connect(RestoreDCFromSavedMatrixNode,'outputVolume',gtractResampleDWIInPlace_Trigid,'inputVolume')
-    DWIWorkflow.connect(GetRigidTransformInverseNode,'inverseTransform',gtractResampleDWIInPlace_Trigid,'inputTransform') #Inverse of rigid transform from BFit
+    DWIWorkflow.connect(RestoreDCFromSavedMatrixNode, 'outputVolume', gtractResampleDWIInPlace_Trigid, 'inputVolume')
+    DWIWorkflow.connect(GetRigidTransformInverseNode, 'inverseTransform', gtractResampleDWIInPlace_Trigid,
+                        'inputTransform')  # Inverse of rigid transform from BFit
     gtractResampleDWIInPlace_Trigid.inputs.outputVolume = 'CorrectedDWI_in_T2Space_estimate.nrrd'
     gtractResampleDWIInPlace_Trigid.inputs.outputResampledB0 = 'CorrectedDWI_in_T2Space_estimate_B0.nrrd'
 
@@ -335,13 +355,17 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     BFit_TuneRegistration.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
     BFit_TuneRegistration.inputs.strippedOutputTransform = "CorrectedB0inT2Space_to_T2_RigidTransform.h5"
     BFit_TuneRegistration.inputs.writeOutputTransformInFloat = True
-    DWIWorkflow.connect(ExtractBRAINFromHeadNode, 'outputVolume', BFit_TuneRegistration, 'fixedVolume') #T2 brain volume
-    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputResampledB0', BFit_TuneRegistration, 'movingVolume') # CorrectedB0_in_T2Space
+    DWIWorkflow.connect(ExtractBRAINFromHeadNode, 'outputVolume', BFit_TuneRegistration,
+                        'fixedVolume')  # T2 brain volume
+    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputResampledB0', BFit_TuneRegistration,
+                        'movingVolume')  # CorrectedB0_in_T2Space
 
     gtractResampleDWIInPlace_TuneRigidTx = pe.Node(interface=gtractResampleDWIInPlace(),
                                                    name="gtractResampleDWIInPlace_TuneRigidTx")
-    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid,'outputVolume',gtractResampleDWIInPlace_TuneRigidTx,'inputVolume')
-    DWIWorkflow.connect(BFit_TuneRegistration,'strippedOutputTransform',gtractResampleDWIInPlace_TuneRigidTx,'inputTransform')
+    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputVolume', gtractResampleDWIInPlace_TuneRigidTx,
+                        'inputVolume')
+    DWIWorkflow.connect(BFit_TuneRegistration, 'strippedOutputTransform', gtractResampleDWIInPlace_TuneRigidTx,
+                        'inputTransform')
     gtractResampleDWIInPlace_TuneRigidTx.inputs.outputVolume = 'CorrectedDWI_in_T2Space.nrrd'
     gtractResampleDWIInPlace_TuneRigidTx.inputs.outputResampledB0 = 'CorrectedDWI_in_T2Space_B0.nrrd'
 
@@ -353,8 +377,8 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIBRAINMASK.inputs.interpolationMode = 'Linear'
     DWIBRAINMASK.inputs.outputVolume = 'BrainMaskForDWI.nrrd'
     DWIBRAINMASK.inputs.pixelType = 'binary'
-    DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx,'outputResampledB0',DWIBRAINMASK,'referenceVolume')
-    DWIWorkflow.connect(inputsSpec,'LabelMapVolume',DWIBRAINMASK,'inputVolume')
+    DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx, 'outputResampledB0', DWIBRAINMASK, 'referenceVolume')
+    DWIWorkflow.connect(inputsSpec, 'LabelMapVolume', DWIBRAINMASK, 'inputVolume')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', outputsSpec, 'DWIBrainMask')
 
     # Step11: DTI estimation
@@ -412,7 +436,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIDataSink.inputs.container = sessionID
 
     DWIWorkflow.connect(outputsSpec, 'ukfTracks', DWIDataSink, 'Outputs.@ukfTracks')
-    #DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
+    # DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
     DWIWorkflow.connect(outputsSpec, 'CorrectedDWI', DWIDataSink, 'Outputs.@CorrectedDWI')
     DWIWorkflow.connect(outputsSpec, 'CorrectedDWI_in_T2Space', DWIDataSink, 'Outputs.@CorrectedDWI_in_T2Space')
     DWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Outputs.@tensor_image')
@@ -430,69 +454,71 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
 
 if __name__ == '__main__':
-  import os
-  import glob
-  import sys
+    import os
+    import glob
+    import sys
 
-  from docopt import docopt
-  argv = docopt(__doc__, version='1.0')
-  print(argv)
+    from docopt import docopt
 
-  DWISCAN = argv['--inputDWIScan']
-  assert os.path.exists(DWISCAN), "Input DWI scan is not found: %s" % DWISCAN
+    argv = docopt(__doc__, version='1.0')
+    print(argv)
 
-  T2SCAN = argv['--inputT2Scan']
-  assert os.path.exists(T2SCAN), "Input T2 scan is not found: %s" % T2SCAN
+    DWISCAN = argv['--inputDWIScan']
+    assert os.path.exists(DWISCAN), "Input DWI scan is not found: %s" % DWISCAN
 
-  LabelMapImage = argv['--inputBrainLabelsMapImage']
-  assert os.path.exists(LabelMapImage), "Input Brain labels map image is not found: %s" % LabelMapImage
+    T2SCAN = argv['--inputT2Scan']
+    assert os.path.exists(T2SCAN), "Input T2 scan is not found: %s" % T2SCAN
 
-  PROGRAM_PATHS = argv['--program_paths']
+    LabelMapImage = argv['--inputBrainLabelsMapImage']
+    assert os.path.exists(LabelMapImage), "Input Brain labels map image is not found: %s" % LabelMapImage
 
-  PYTHON_AUX_PATHS = argv['--python_aux_paths']
+    PROGRAM_PATHS = argv['--program_paths']
 
-  if argv['--workflowCacheDir'] == None:
-      print("*** workflow cache directory is set to current working directory.")
-      CACHEDIR = os.getcwd()
-  else:
-      CACHEDIR = argv['--workflowCacheDir']
-      assert os.path.exists(CACHEDIR), "Cache directory is not found: %s" % CACHEDIR
+    PYTHON_AUX_PATHS = argv['--python_aux_paths']
 
-  if argv['--resultDir'] == None:
-      print("*** data sink result directory is set to the cache directory.")
-      RESULTDIR = CACHEDIR
-  else:
-      RESULTDIR = argv['--resultDir']
-      assert os.path.exists(RESULTDIR), "Results directory is not found: %s" % RESULTDIR
+    if argv['--workflowCacheDir'] == None:
+        print("*** workflow cache directory is set to current working directory.")
+        CACHEDIR = os.getcwd()
+    else:
+        CACHEDIR = argv['--workflowCacheDir']
+        assert os.path.exists(CACHEDIR), "Cache directory is not found: %s" % CACHEDIR
 
-  print('=' * 100)
+    if argv['--resultDir'] == None:
+        print("*** data sink result directory is set to the cache directory.")
+        RESULTDIR = CACHEDIR
+    else:
+        RESULTDIR = argv['--resultDir']
+        assert os.path.exists(RESULTDIR), "Results directory is not found: %s" % RESULTDIR
 
-  #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-  #####################################################################################
-  #     Prepend the shell environment search paths
-  PROGRAM_PATHS = PROGRAM_PATHS.split(':')
-  PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
-  os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
+    print('=' * 100)
 
-  CUSTOM_ENVIRONMENT=dict()
+    # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    #####################################################################################
+    #     Prepend the shell environment search paths
+    PROGRAM_PATHS = PROGRAM_PATHS.split(':')
+    PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
+    os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
-  # Platform specific information
-  #     Prepend the python search paths
-  PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
-  PYTHON_AUX_PATHS.extend(sys.path)
-  sys.path = PYTHON_AUX_PATHS
+    CUSTOM_ENVIRONMENT = dict()
 
-  import SimpleITK as sitk
-  import nipype
-  from nipype.interfaces import ants
-  from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
-  from nipype.interfaces.base import traits, isdefined, BaseInterface
-  from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-  import nipype.interfaces.io as nio   # Data i/oS
-  import nipype.pipeline.engine as pe  # pypeline engine
-  from nipype.interfaces.freesurfer import ReconAll
-  from nipype.interfaces.semtools import *
-  #####################################################################################
-  exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR)
+    # Platform specific information
+    #     Prepend the python search paths
+    PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
+    PYTHON_AUX_PATHS.extend(sys.path)
+    sys.path = PYTHON_AUX_PATHS
 
-  sys.exit(exit)
+    import SimpleITK as sitk
+    import nipype
+    from nipype.interfaces import ants
+    from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
+    from nipype.interfaces.base import traits, isdefined, BaseInterface
+    from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+    import nipype.interfaces.io as nio  # Data i/oS
+    import nipype.pipeline.engine as pe  # pypeline engine
+    from nipype.interfaces.freesurfer import ReconAll
+    from nipype.interfaces.semtools import *
+
+    #####################################################################################
+    exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR)
+
+    sys.exit(exit)

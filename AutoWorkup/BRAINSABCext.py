@@ -1,15 +1,14 @@
-from builtins import range
-from builtins import object
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
 import os
-from nipype.interfaces.semtools.segmentation.specialized import BRAINSABCOutputSpec, BRAINSABCInputSpec, BRAINSABC
-# from nipype.interfaces.semtools import BRAINSABCInputSpec,BRAINSABCOutputSpec,BRAINSABC
-
+from builtins import object
+from builtins import range
 from xml.etree import ElementTree as et
+
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, \
+    InputMultiPath, OutputMultiPath
+from nipype.interfaces.semtools.segmentation.specialized import BRAINSABCOutputSpec, BRAINSABCInputSpec, BRAINSABC
 
 
 class GetPosteriorsFromAtlasXML(object):
-
     def __init__(self, xmlFile):
         self.xmlFile = xmlFile
         self.xmlString = self.getXMLstring(self.xmlFile)
@@ -42,6 +41,7 @@ class GetPosteriorsFromAtlasXML(object):
             ## HACK:  The following is correct from the command line posteriorTemplate arguments
             # posteriorFileNameList.append(posteriorTemplate % priorType)
         return posteriorFileNameList
+
 
 """
 class BRAINSABCextInputSpec(BRAINSABCInputSpec):

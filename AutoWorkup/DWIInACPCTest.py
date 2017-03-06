@@ -30,11 +30,11 @@
 
 # <codecell>
 
-import os
 import glob
+import os
 import sys
 
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #####################################################################################
 #     Prepend the shell environment search paths
 PROGRAM_PATHS = '/Users/johnsonhj/src/BT-build/bin:/Users/johnsonhj/src/ANTs-clang/bin:/Users/johnsonhj/src/DTIPrep-build/bin:/usr/local/bin'
@@ -46,7 +46,6 @@ CUSTOM_ENVIRONMENT = dict()
 
 CLUSTER_QUEUE_LONG = '-q OSX'
 CLUSTER_QUEUE = '-q OSX'
-
 
 # Platform specific information
 #     Prepend the python search paths
@@ -60,7 +59,7 @@ import nipype
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/oS
+import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.semtools import *
@@ -96,10 +95,12 @@ echo {CUSTENV}
 '''.format(PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString)
     return GLOBAL_SGE_SCRIPT
 
+
 ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
 #  have the same environment as the job submission host.
 JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
 SGE_JOB_SCRIPT = JOB_SCRIPT
+
 
 def MergeByExtendListElements(FAImageList):
     ## Initial list with empty dictionaries
@@ -129,8 +130,8 @@ def MergeByExtendListElements(FAImageList):
 
 
 def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
-
     return MasterDWIWorkflow
+
 
 #############################
 def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
@@ -140,8 +141,12 @@ def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     PROJ_ID = SESSION_TUPLE[0]
     SUBJ_ID = SESSION_TUPLE[1]
     SESSION_ID = SESSION_TUPLE[2]
-    FixImageList = glob.glob('{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/t2_average_BRAINSABC.nii.gz'.format(BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
-    FixMaskImageList = glob.glob('{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/fixed_brainlabels_seg.nii.gz'.format(BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
+    FixImageList = glob.glob(
+        '{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/t2_average_BRAINSABC.nii.gz'.format(
+            BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
+    FixMaskImageList = glob.glob(
+        '{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/fixed_brainlabels_seg.nii.gz'.format(
+            BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
     MovingGlobPattern = '{BASE_DWI}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/*/*_[Cc][oO][nN][Cc][aA][tT]_QCed.nrrd'.format(
         BASE_DWI=BASE_DWI, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID)
 
@@ -153,26 +158,42 @@ def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
 
     ## Should check that each list has 1 element
 
-    print '^' * 80
-    print SESSION_TUPLE
-    print BASE_STRUCT
-    print BASE_DWI
-    print '^' * 80
-    print FixImageList
-    print FixMaskImageList
-    print MovingDWIList
-    print '^' * 80
+    print
+    '^' * 80
+    print
+    SESSION_TUPLE
+    print
+    BASE_STRUCT
+    print
+    BASE_DWI
+    print
+    '^' * 80
+    print
+    FixImageList
+    print
+    FixMaskImageList
+    print
+    MovingDWIList
+    print
+    '^' * 80
     FixImage = FixImageList[0]
     FixMaskImage = FixMaskImageList[0]
     MovingDWI = MovingDWIList[0]
 
-    print '=' * 80
-    print FixImage
-    print FixMaskImage
-    print MovingDWI
-    print '=' * 80
+    print
+    '=' * 80
+    print
+    FixImage
+    print
+    FixMaskImage
+    print
+    MovingDWI
+    print
+    '=' * 80
 
     return PROJ_ID, SUBJ_ID, SESSION_ID, FixImage, FixMaskImage, MovingDWI
+
+
 #################################
 
 
@@ -186,7 +207,7 @@ def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
 ##                  MAIN WORK HERE
 # <codecell>
 SESSION_TUPLE = [('HDNI_001', '068044003', '068044003_20120522_30')]
-#\'\'\'                 ,('PHD_024','0029','84091'),
+# \'\'\'                 ,('PHD_024','0029','84091'),
 #                     ('PHD_024','0091','60387'),('PHD_024','0091','78867'),('PHD_024','0093','50120'),
 #                     ('PHD_024','0093','60307'),('PHD_024','0093','88775'),('PHD_024','0122','42742'),
 #                     ('PHD_024','0122','63892'),('PHD_024','0131','76658'),('PHD_024','0131','90863'),
@@ -218,13 +239,14 @@ MasterDWIWorkflow.base_dir = BASE_DIR
 
 MasterDWIWorkflow.config['execution'] = {
     'plugin': 'Linear',
-    #'stop_on_first_crash':'true',
-    #'stop_on_first_rerun': 'true',
+    # 'stop_on_first_crash':'true',
+    # 'stop_on_first_rerun': 'true',
     'stop_on_first_crash': 'false',
-    'stop_on_first_rerun': 'false',  # This stops at first attempt to rerun, before running, and before deleting previous results.
+    'stop_on_first_rerun': 'false',
+# This stops at first attempt to rerun, before running, and before deleting previous results.
     'hash_method': 'timestamp',
     'single_thread_matlab': 'true',  # Multi-core 2011a  multi-core for matrix multiplication.
-    'remove_unnecessary_outputs': 'true', #remove any interface outputs not needed by the workflow
+    'remove_unnecessary_outputs': 'true',  # remove any interface outputs not needed by the workflow
     'use_relative_paths': 'false',  # relative paths should be on, require hash update when changed.
     'remove_node_directories': 'false',  # Experimental
     'local_hash_check': 'true',
@@ -244,6 +266,7 @@ MasterDWIWorkflow.config['logging'] = {
 
 # <codecell>
 import multiprocessing
+
 total_CPUS = multiprocessing.cpu_count()
 NUMPARALLEL = 1
 os.environ['NSLOTS'] = '{0}'.format(total_CPUS / NUMPARALLEL)
@@ -256,18 +279,19 @@ import nipype
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/oS
+import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 
-from nipype.interfaces.semtools import BRAINSFit,gtractResampleDWIInPlace,dtiestim,dtiprocess
+from nipype.interfaces.semtools import BRAINSFit, gtractResampleDWIInPlace, dtiestim, dtiprocess
 
 inputsSpec = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE']), name='inputspec')
-inputsSpec.iterables = ('SESSION_TUPLE',SESSION_TUPLE)
+inputsSpec.iterables = ('SESSION_TUPLE', SESSION_TUPLE)
 
 GetFileNamesNode = pe.Node(interface=Function(function=GetDWIReferenceImagesFromSessionID,
-                           input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
-                           output_names=['PROJ_ID', 'SUBJ_ID', 'SESSION_ID', 'FixImage', 'FixMaskImage', 'MovingDWI']),
+                                              input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
+                                              output_names=['PROJ_ID', 'SUBJ_ID', 'SESSION_ID', 'FixImage',
+                                                            'FixMaskImage', 'MovingDWI']),
                            run_without_submitting=True, name='99_GetDWIReferenceImagesFromSessionID')
 GetFileNamesNode.inputs.BASE_STRUCT = BASE_STRUCT
 GetFileNamesNode.inputs.BASE_DWI = BASE_DWI
@@ -275,11 +299,12 @@ GetFileNamesNode.inputs.BASE_DWI = BASE_DWI
 MasterDWIWorkflow.connect(inputsSpec, 'SESSION_TUPLE', GetFileNamesNode, 'SESSION_TUPLE')
 
 outputsSpec = pe.Node(interface=IdentityInterface(fields=['FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
-                                                          'Lambda1Image', 'Lambda2Image', 'Lambda3Image', 'tensor_image']),
+                                                          'Lambda1Image', 'Lambda2Image', 'Lambda3Image',
+                                                          'tensor_image']),
                       name='outputspec')
 
 BFitB0_T2 = pe.Node(interface=BRAINSFit(), name='B0ToT2_Rigid')
-BF_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,2,1,24) 'overwrite': True}
+BF_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE, 2, 1, 24) 'overwrite': True}
 
 BFitB0_T2.plugin_args = BF_cpu_sge_options_dictionary
 BFitB0_T2.inputs.costMetric = 'MMI'
@@ -314,7 +339,6 @@ DWIRIP.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
 MasterDWIWorkflow.connect(BFitB0_T2, 'strippedOutputTransform', DWIRIP, 'inputTransform')
 MasterDWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP, 'referenceVolume')
 MasterDWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP, 'inputVolume')
-
 
 DWIRIP_lowRes = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2_lowRes')
 DWIRIP_lowRes.inputs.outputVolume = 'ACPC_DWI.nrrd'
@@ -397,18 +421,19 @@ MasterDWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Ima
 
 ## UKF Processing
 from nipype.interfaces.semtools import UKFTractography
-UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
+
+UKFNode = pe.Node(interface=UKFTractography(), name="UKFRunRecordStates")
 UKFNode.inputs.tracts = "ukfTrackts.vtk"
 UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"
 UKFNode.inputs.numTensor = '2'  ## default True
-UKFNode.inputs.freeWater = True ## default False
-UKFNode.inputs.recordFA = True ## default False
-UKFNode.inputs.recordTensors = True ## default False
-#UKFNode.inputs.recordCovariance = True ## default False
-#UKFNode.inputs.recordState = True ## default False
-#UKFNode.inputs.recordFreeWater = True ## default False
-#UKFNode.inputs.recordTrace = True ## default False
-#UKFNode.inputs.recordNMSE = True ## default False
+UKFNode.inputs.freeWater = True  ## default False
+UKFNode.inputs.recordFA = True  ## default False
+UKFNode.inputs.recordTensors = True  ## default False
+# UKFNode.inputs.recordCovariance = True ## default False
+# UKFNode.inputs.recordState = True ## default False
+# UKFNode.inputs.recordFreeWater = True ## default False
+# UKFNode.inputs.recordTrace = True ## default False
+# UKFNode.inputs.recordNMSE = True ## default False
 
 
 MasterDWIWorkflow.connect(DWIRIP_lowRes, 'outputVolume', UKFNode, 'dwiFile')
@@ -416,11 +441,14 @@ MasterDWIWorkflow.connect(RESAMPLE_BRAINMASK, 'outputVolume', UKFNode, 'maskFile
 
 DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
 DWIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIPrototype_Results'
+
+
 # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
 
 def sinkContainer(_tuple):
     import os.path
     return os.path.join(*_tuple)
+
 
 MasterDWIWorkflow.connect([(inputsSpec, DWIDataSink, [(('SESSION_TUPLE', sinkContainer), 'container')])])
 
@@ -436,5 +464,7 @@ MasterDWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Output.@ten
 MasterDWIWorkflow.write_graph()
 MasterDWIWorkflow.run()
 
-print sys.argv
-print sys.api_version
+print
+sys.argv
+print
+sys.api_version

@@ -1,5 +1,6 @@
-from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import print_function
+
 import os.path
 import sqlite3
 
@@ -91,7 +92,7 @@ class SQLiteGrabber(IOBase):
                 c.close()
                 conn.close()
             except:
-                raise  #TODO: Give warning of premature disconnect
+                raise  # TODO: Give warning of premature disconnect
         return retval
 
     def _gen_query(self):
@@ -116,7 +117,8 @@ class SQLiteGrabber(IOBase):
             query = query[:-4]  # Remove last unnecessary " AND"
         if self.inputs.orderby:
             # Remove last unnecessary ","
-            query = " ".join([query, 'ORDER BY'] + [" ".join([column, order.upper() + ","]) for column, order in self.inputs.orderby])[:-1]
+            query = " ".join([query, 'ORDER BY'] + [" ".join([column, order.upper() + ","]) for column, order in
+                                                    self.inputs.orderby])[:-1]
         return query
 
 
@@ -126,19 +128,19 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
     ## TODO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or \
-      (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
+            (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
         ExperimentDatabase = None
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     else:
-        print("Single_subject {0}: Using cached database, {1}".format(single_subject,subjectDatabaseFile))
+        print("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile))
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-    #print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
-    #print "^^^^^^^^^^^^^"
-    #for row in ExperimentDatabase.getEverything():
+    # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
+    # print "^^^^^^^^^^^^^"
+    # for row in ExperimentDatabase.getEverything():
     #    print row
-    #print "^^^^^^^^^^^^^"
+    # print "^^^^^^^^^^^^^"
     return ExperimentDatabase
 
 

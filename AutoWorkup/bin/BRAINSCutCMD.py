@@ -5,9 +5,10 @@
 # :: connect input/output in the BAW
 
 from __future__ import print_function
-import sys
+
 import argparse
 import subprocess
+import sys
 
 if False:
     print("^" * 100)
@@ -32,6 +33,7 @@ if False:
 
     if dummy:  # debugging
         import os
+
         print("PATH: [")
         __PATH = os.environ['PATH']
         for p in __PATH.split(':'):
@@ -50,7 +52,7 @@ if False:
         print("^" * 100)
         raise NotImplementedError
         sys.exit(-1)
-    # END HACK
+        # END HACK
 
 
 def addProbabilityMapElement(probabilityMap, maskName, outputStream):
@@ -81,7 +83,8 @@ def xmlGenerator(args, roi=""):
 
     outputStream.write("      <SpatialLocation Type=\"rho\" Filename=\"" + args.inputTemplateRhoFilename + "\" />\n")
     outputStream.write("      <SpatialLocation Type=\"phi\" Filename=\"" + args.inputTemplatePhiFilename + "\" />\n")
-    outputStream.write("      <SpatialLocation Type=\"theta\" Filename=\"" + args.inputTemplateThetaFilename + "\" />\n")
+    outputStream.write(
+        "      <SpatialLocation Type=\"theta\" Filename=\"" + args.inputTemplateThetaFilename + "\" />\n")
     outputStream.write("  </DataSet>\n")
 
     #
@@ -194,7 +197,8 @@ def xmlGenerator(args, roi=""):
     #    outputStream.write( "    <Mask Type=\"RegistrationROIi\"  Filename=\""+args.inputSubjectBrainMaskFilename+"\" />\n")
 
     if not args.deformationFromSubjectToTemplate is None:
-        outputStream.write('    <Registration SubjToAtlasRegistrationFilename="' + args.deformationFromSubjectToTemplate + '"\n')
+        outputStream.write(
+            '    <Registration SubjToAtlasRegistrationFilename="' + args.deformationFromSubjectToTemplate + '"\n')
     else:
         outputStream.write('    <Registration SubjToAtlasRegistrationFilename="" \n')
     outputStream.write("       AtlasToSubjRegistrationFilename=\"" + args.deformationFromTemplateToSubject + "\"\n")
@@ -211,7 +215,8 @@ if __name__ == '__main__':
     brainscutParser = argparse.ArgumentParser(description='BRAINSCut command line argument parser')
 
     # HACK:  This is to allow special treatment of caudates with masking
-    brainscutParser.add_argument('--candidateRegion', help='Specify the valid candidate region for caudate', required=True)
+    brainscutParser.add_argument('--candidateRegion', help='Specify the valid candidate region for caudate',
+                                 required=True)
 
     #
     # input arguments
@@ -233,21 +238,35 @@ if __name__ == '__main__':
     brainscutParser.add_argument('--trainingVectorFilename', help='training vector filename', default="NA")
     # brainscutParser.add_argument('--modelFileBasename', help='model filei base name for net configuration file (xml).', default="NA" )
     brainscutParser.add_argument('--modelFilename', help='model filename', default="NA", required=True)
-    brainscutParser.add_argument('--vectorNormalization', help='feature vector normalization (IQR,Linear,Sigmoid_Q01,Sigmoid_Q05,ZScore,NONE)', required=True)
+    brainscutParser.add_argument('--vectorNormalization',
+                                 help='feature vector normalization (IQR,Linear,Sigmoid_Q01,Sigmoid_Q05,ZScore,NONE)',
+                                 required=True)
 
     # probability maps
-    brainscutParser.add_argument('--probabilityMapsLeftCaudate', help='model probability maps for left caudate', required=True)
-    brainscutParser.add_argument('--probabilityMapsRightCaudate', help='model probability maps for right caudate', required=True)
-    brainscutParser.add_argument('--probabilityMapsLeftPutamen', help='model probability maps for left putamen', required=True)
-    brainscutParser.add_argument('--probabilityMapsRightPutamen', help='model probability maps for right putamen', required=True)
-    brainscutParser.add_argument('--probabilityMapsLeftThalamus', help='model probability maps for left thalamus', required=True)
-    brainscutParser.add_argument('--probabilityMapsRightThalamus', help='model probability maps for right thalamus', required=True)
-    brainscutParser.add_argument('--probabilityMapsLeftHippocampus', help='model probability maps for left hippocampus', required=True)
-    brainscutParser.add_argument('--probabilityMapsRightHippocampus', help='model probability maps for right hippocampus', required=True)
-    brainscutParser.add_argument('--probabilityMapsLeftAccumben', help='model probability maps for left accumben', required=True)
-    brainscutParser.add_argument('--probabilityMapsRightAccumben', help='model probability maps for right accumben', required=True)
-    brainscutParser.add_argument('--probabilityMapsLeftGlobus', help='model probability maps for left globus', required=True)
-    brainscutParser.add_argument('--probabilityMapsRightGlobus', help='model probability maps for right globus', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftCaudate', help='model probability maps for left caudate',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsRightCaudate', help='model probability maps for right caudate',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftPutamen', help='model probability maps for left putamen',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsRightPutamen', help='model probability maps for right putamen',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftThalamus', help='model probability maps for left thalamus',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsRightThalamus', help='model probability maps for right thalamus',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftHippocampus', help='model probability maps for left hippocampus',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsRightHippocampus',
+                                 help='model probability maps for right hippocampus', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftAccumben', help='model probability maps for left accumben',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsRightAccumben', help='model probability maps for right accumben',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftGlobus', help='model probability maps for left globus',
+                                 required=True)
+    brainscutParser.add_argument('--probabilityMapsRightGlobus', help='model probability maps for right globus',
+                                 required=True)
 
     brainscutParser.add_argument('--deformationFromTemplateToSubject', help="deformationFromTemplateToSubject")
     brainscutParser.add_argument('--deformationFromSubjectToTemplate', help="deformationFromSubjectToTemplate")
@@ -276,16 +295,17 @@ if __name__ == '__main__':
         print("ERROR:   ONLY IQR SUPPORTED AT THE MOMENT")
         exit - 1
 
-
     print(args)
     roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus']
 
     for roi in roiList:
         currentXmlFilename = xmlGenerator(args, roi)
         if roi == "caudate":
-            currentModelFilename = args.modelFilename[:-3] + '_' + roi + '_LinearWithMask.gz'  # trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
+            currentModelFilename = args.modelFilename[
+                                   :-3] + '_' + roi + '_LinearWithMask.gz'  # trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
         else:
-            currentModelFilename = args.modelFilename[:-3] + '_' + roi + '.gz'  # trainModelFile.txtD0060NT0060_accumben.gz
+            currentModelFilename = args.modelFilename[
+                                   :-3] + '_' + roi + '.gz'  # trainModelFile.txtD0060NT0060_accumben.gz
 
         BRAINSCutCommand = ["BRAINSCut" + " --applyModel " +
                             " --netConfiguration " + currentXmlFilename +

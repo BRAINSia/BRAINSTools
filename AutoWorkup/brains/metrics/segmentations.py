@@ -1,14 +1,15 @@
 from __future__ import print_function
+
+import os.path
 from builtins import map
 from builtins import range
-import numpy as np
-import os.path
 
 import SimpleITK as sitk
+import numpy as np
 
-from ..config import _config
-from ..common import check_file
 from .partials import calcutateBinaryVolume
+from ..common import check_file
+from ..config import _config
 
 labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus', 'icv']
 
@@ -48,7 +49,7 @@ def calculateLabelVolume(dirname, label):
     labelFile = os.path.join(dirname, _config.get('Results', 'segmentations'),
                              label + '_seg_seg.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
-    image = sitk.ReadImage(labelFile.encode('ascii','replace'))
+    image = sitk.ReadImage(labelFile.encode('ascii', 'replace'))
     nda = sitk.GetArrayFromImage(image)
     maskSum = nda.sum()
     print(maskSum)
@@ -88,7 +89,7 @@ def getVolume(args=[], kwds={}):
         labels = args
     if dirname is None:
         try:
-        # config needs to be accessible
+            # config needs to be accessible
             dirname = os.path.join(experimentDir, project, subject, session)
         except Exception as err:
             raise err

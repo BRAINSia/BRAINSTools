@@ -1,12 +1,14 @@
 from __future__ import print_function
-from builtins import str
-from builtins import range
-from builtins import object
-import os
-import sys
-import sqlite3 as lite
+
 import csv
+import os
+import sqlite3 as lite
+import sys
+from builtins import object
+from builtins import range
+from builtins import str
 from collections import OrderedDict
+
 
 class SessionDB(object):
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
@@ -20,7 +22,7 @@ class SessionDB(object):
             subject_filter += "'" + curr_subject + "',"
         subject_filter = subject_filter.rstrip(',')  # Remove last ,
         subject_filter += " )"
-        if  subject_list[0] == 'all':
+        if subject_list[0] == 'all':
             self.MasterQueryFilter = "SELECT * FROM {_tablename}".format(
                 _tablename=self.MasterTableName)
         else:
@@ -52,7 +54,8 @@ class SessionDB(object):
             os.remove(self.dbName)
         self.open_connection()
         dbColTypes = "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
-        self.cursor.execute("CREATE TABLE {tablename}({coltypes});".format(tablename=self.MasterTableName, coltypes=dbColTypes))
+        self.cursor.execute(
+            "CREATE TABLE {tablename}({coltypes});".format(tablename=self.MasterTableName, coltypes=dbColTypes))
         self.connection.commit()
         sqlCommandList = list()
         missingFilesLog = self.dbName + "_MissingFiles.log"
@@ -80,10 +83,10 @@ class SessionDB(object):
                             'session': row[2]}
                 rawDict = OrderedDict(eval(row[3]))
                 dictionary_keys = list(rawDict.keys())
-                if not ( ('T1-15' in dictionary_keys)  or ('T1-30' in dictionary_keys) ):
+                if not (('T1-15' in dictionary_keys) or ('T1-30' in dictionary_keys)):
                     print("ERROR: Skipping session {0} due to missing T1's: {1}".format(currDict, dictionary_keys))
                     print("REMOVE OR FIX BEFORE CONTINUING")
-                    allEntriesOK =False
+                    allEntriesOK = False
                 for imageType in dictionary_keys:
                     currDict['type'] = imageType
                     fullPaths = [mountPrefix + i for i in rawDict[imageType]]
@@ -109,11 +112,11 @@ class SessionDB(object):
                 print(row)
         sqlCommandList
         self._local_fillDB_AndClose(sqlCommandList)
-        if ( missingCount > 0 ) or ( allEntriesOK == False ):
+        if (missingCount > 0) or (allEntriesOK == False):
             if os.path.exists(self.dbName):
                 os.remove(self.dbName)
             missingFiles.close()
-            print("ABORTING: At least 1 missing file\n"*20)
+            print("ABORTING: At least 1 missing file\n" * 20)
             sys.exit(-1)
         else:
             missingFiles.write("NO_MISSING_FILES")
@@ -134,7 +137,7 @@ class SessionDB(object):
         return sqlCommand
 
     def getInfoFromDB(self, sqlCommand):
-        #print("getInfoFromDB({0})".format(sqlCommand))
+        # print("getInfoFromDB({0})".format(sqlCommand))
         self.open_connection()
         self.cursor.execute(sqlCommand)
         dbInfo = self.cursor.fetchall()
@@ -263,7 +266,6 @@ class SessionDB(object):
             print("ERROR: More than one project found")
             sys.exit(-1)
         return returnList[0]
-
 
 #
 # import SessionDB

@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+
 def run_workflow(workflow, plugin='Linear', plugin_args={}):
     """
     Run workflow object and catch traceback for printing to stdout
@@ -8,7 +10,7 @@ def run_workflow(workflow, plugin='Linear', plugin_args={}):
 
     print("Running workflow...")
     try:
-        workflow.run(plugin=plugin,plugin_args=plugin_args)
+        workflow.run(plugin=plugin, plugin_args=plugin_args)
     except:
         print("=+-+" * 25)
         print("Error: Exception while running subjects")

@@ -1,13 +1,13 @@
 from __future__ import print_function
-from builtins import object
+
 import argparse
 import csv
 import os
 import textwrap
+from builtins import object
 
 
 class UpdateAutoWorkup(object):
-
     def _getBlackList(self):
         handle = csv.reader(open(inputArguments.blackList, 'rb'), delimiter=',', quotechar='\"')
         blackListDict = dict()
@@ -59,6 +59,7 @@ class UpdateAutoWorkup(object):
                     session = row[2]
                     line = (project, subject, session, newScanDict)
                     newFile.writerow(line)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,

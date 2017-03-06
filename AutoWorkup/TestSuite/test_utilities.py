@@ -1,6 +1,9 @@
-from past.builtins import execfile
 from builtins import range
+
+from past.builtins import execfile
+
 from AutoWorkup import utilities
+
 
 def configure_env_test():
     config_env = os.path.join(os.path.dirname(utilities.__file__), 'configure_env.py')

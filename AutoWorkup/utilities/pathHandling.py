@@ -1,8 +1,8 @@
 from __future__ import print_function
-# TODO: Run doctests (failing first!)
 
 import os.path
 import re
+
 
 def validatePath(path, allow_empty, isDirectory):
     """ Check if a path exists and return the path with all variables expanded or raise AssertionError
@@ -17,7 +17,7 @@ def validatePath(path, allow_empty, isDirectory):
         ...
     AssertionError: Path could not be found! /dev/null
     """
-    msg="Path could not be found! {0}"
+    msg = "Path could not be found! {0}"
     if (path is None or path == '') and allow_empty:
         return None
     full = os.path.realpath(os.path.abspath(path))
@@ -67,7 +67,7 @@ def file_replace(in_file, out_file, pattern, repl):
     # From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
     from platform import system
     if system().lower() == 'linux':
-        pass #  assert not os.path.samefile(in_file, out_file), "Input and output files refer to the same file!"
+        pass  # assert not os.path.samefile(in_file, out_file), "Input and output files refer to the same file!"
     assert in_file != out_file, "Input and output files are the same!"
     with open(in_file) as f:
         assert any(re.search(pattern, line) for line in f), "Pattern not found in input file!"
@@ -87,7 +87,7 @@ def clone_atlas_dir(cachedir, atlasdir):
         old_dir = validatePath(atlasdir, False, True)
         print("Copying new atlas {0} to cache directory...".format(old_dir))
         newfiles = copy_tree(old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True)
-        xml_file='ExtendedAtlasDefinition.xml'
+        xml_file = 'ExtendedAtlasDefinition.xml'
         old_xml = os.path.join(old_dir, xml_file + '.in')
         new_xml = os.path.join(new_dir, xml_file)
         assert file_replace(old_xml, new_xml, "@ATLAS_INSTALL_DIRECTORY@", new_dir)

@@ -1,23 +1,25 @@
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
 import os
+
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, \
+    InputMultiPath, OutputMultiPath
 from nipype.interfaces.semtools.diffusion.dtiprep import DTIPrepInputSpec, DTIPrepOutputSpec, DTIPrep
 
 
 class DTIPrepextOutputSpec(DTIPrepOutputSpec):
-	outputVolume =    traits.Either(File(exists=True), None)
-	outputReportXML = traits.Either(File(exists=True), None)
-	outputReportTxt = traits.Either(File(exists=True), None)
-	# outputQCedBaseline = traits.Either(File(exists=True), None)
-	# outputQCedDTI = traits.Either(File(exists=True), None)
-	# outputQCedDTI_FA = traits.Either(File(exists=True), None)
-	# outputQCedDTI_MD = traits.Either(File(exists=True), None)
-	# outputQCedDTI_colorFA = traits.Either(File(exists=True), None)
-	# outputQCedDTI_frobeniusnorm = traits.Either(File(exists=True), None)
-	# outputQCedIDWI = traits.Either(File(exists=True), None)
+    outputVolume = traits.Either(File(exists=True), None)
+    outputReportXML = traits.Either(File(exists=True), None)
+    outputReportTxt = traits.Either(File(exists=True), None)
+# outputQCedBaseline = traits.Either(File(exists=True), None)
+# outputQCedDTI = traits.Either(File(exists=True), None)
+# outputQCedDTI_FA = traits.Either(File(exists=True), None)
+# outputQCedDTI_MD = traits.Either(File(exists=True), None)
+# outputQCedDTI_colorFA = traits.Either(File(exists=True), None)
+# outputQCedDTI_frobeniusnorm = traits.Either(File(exists=True), None)
+# outputQCedIDWI = traits.Either(File(exists=True), None)
 
 
 class DTIPrepext(DTIPrep):
-    #input_spec = DTIPrepextInputSpec
+    # input_spec = DTIPrepextInputSpec
     output_spec = DTIPrepextOutputSpec
 
     def _list_outputs(self):
@@ -34,12 +36,13 @@ class DTIPrepext(DTIPrep):
         inputDir, filename = os.path.split(self.inputs.DWINrrdFile)
         filenameList = filename.split(".")
         prefix = '.'.join(filenameList[:-1])
-                                                                                             #ConcatenatedDWIFile.nrrd
-                                                                                             #ConcatenatedDWIFile_QCed.nrrd
-                                                                                             #ConcatenatedDWIFile_QCed.nrrd
-        outputs['outputVolume'] =         os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed.nrrd") )
-        outputs['outputReportXML'] =      os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_XMLQCResult.xml") )
-        outputs['outputReportTxt'] =      os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCReport.txt") )
+        # ConcatenatedDWIFile.nrrd
+        # ConcatenatedDWIFile_QCed.nrrd
+        # ConcatenatedDWIFile_QCed.nrrd
+        outputs['outputVolume'] = os.path.abspath(os.path.join(self.inputs.outputFolder, prefix + "_QCed.nrrd"))
+        outputs['outputReportXML'] = os.path.abspath(
+            os.path.join(self.inputs.outputFolder, prefix + "_XMLQCResult.xml"))
+        outputs['outputReportTxt'] = os.path.abspath(os.path.join(self.inputs.outputFolder, prefix + "_QCReport.txt"))
         # outputs['outputQCedBaseline'] = os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed_Baseline.nrrd") )
         # outputs['outputQCedDTI'] =      os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed_DTI.nrrd") )
         # outputs['outputQCedDTI_FA'] =   os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed_DTI_FA.nrrd") )

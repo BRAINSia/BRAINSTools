@@ -4,6 +4,11 @@
 set(DWITarDir ${TestData_DIR}/DWI_TestData_TARBALLS)
 
 #make sure: tarballs are stored in /scratch/hxie1/Projects/BrainsToolsBuild/ExternalData/TestData/DWI_TestData_TARBALLS/
+# 1 upload testcase file into BRAINSTools/Public/ in http://slicer.kitware.com;
+# 2 download the key file(MD5);
+# 3 put the MD5 file into /Volumes/scratch/hxie1/Projects/BRAINSTools/TestData/DWI_TestData_TARBALLS;
+# 4 rerun CCMake, then Ctest will automatically find it and download it
+
 set(ALL_DICOM_TARBALLS
 ${DWITarDir}/DWIConvertGeSignaHdxBMatrixTest.tar.gz
 ${DWITarDir}/DWIConvertGeSignaHdxBigEndianTest.tar.gz
@@ -44,8 +49,9 @@ ${DWITarDir}/SiemensTrioTim2.tar.gz
 ${DWITarDir}/SiemensTrioTim3.tar.gz
 ${DWITarDir}/SiemensTrioTimBigEndian1.tar.gz
 ${DWITarDir}/SiemensVerio.tar.gz
-#${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz
-#${DWITarDir}/SpaceThicknessDiffDicom.tar.gz
+${DWITarDir}/DWIConvertMultiShellFSITestSmallSize.tar.gz
+${DWITarDir}/SpaceThicknessDiffDicom.tar.gz
+#${DWITarDir}/DWIConvertMultiShellFSITest.tar.gz (for 640M big file)
 )
 
 # accumulator for test names that actually force
@@ -429,7 +435,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
   )
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
-# add a ctest case supporting multi-shell FSL data by Hui Xie on Jan 28th, 2017
+# multi-shell FSL data for 640M big file
 # the blank space between "ExternalData_Add_Test( " and "${PROJECT_NAME}FetchData  NAME" below is critical.
 #[[ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITest
         COMMAND ${CMAKE_COMMAND}
@@ -447,7 +453,7 @@ AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 AddDataDependency(DWIConvertMultiShellFSITest)]]
 
 # add a cest case supporting thicknes and zSpace of Dicom file are different on Feb 28th, 2017
-#[[ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  SpaceThicknessDiffDicom
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  SpaceThicknessDiffDicom
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTDICOMDIRECTORY=${DWIConvert_BINARY_DIR}/SpaceThicknessDiffDicom/
@@ -455,6 +461,23 @@ AddDataDependency(DWIConvertMultiShellFSITest)]]
         -D KEYVALUE_COMPARE_PROGRAM=$<TARGET_FILE:checkTagValueInHeader>
         -P ${CMAKE_CURRENT_LIST_DIR}/ZspaceThicknessDiffDicom.cmake
         )
-AddDataDependency(SpaceThicknessDiffDicom)]]
+AddDataDependency(SpaceThicknessDiffDicom)
+
+
+# multishell data test for small size file
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITestSmallSize
+        COMMAND ${CMAKE_COMMAND}
+        -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
+        -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize.nii.gz
+        -D INPUTBVECTOR=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize.bvec
+        -D INPUTBVALUE=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize.bval
+        -D OUTPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize_NrrdOutput.nhdr
+        -D RECOVERVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize_Recover.nii
+        -D RECOVERBVECTOR=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize_Recover.bvec
+        -D RECOVERBVALUE=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize_Recover.bval
+        -D TEXT_COMPARE_PROGRAM=$<TARGET_FILE:FSLTextFileCompare>
+        -P ${CMAKE_CURRENT_LIST_DIR}/FSLMultiShellDataTest.cmake
+        )
+AddDataDependency(DWIConvertMultiShellFSITestSmallSize)
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

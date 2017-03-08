@@ -25,7 +25,7 @@ class GetPosteriorsFromAtlasXML(object):
 
     def getPriorTypeNameList(self, xmlString):
         myelem = et.fromstring(xmlString)
-        elementsList = myelem.getiterator()
+        elementsList = list(myelem.getiterator())
         iterator = list(range(len(elementsList)))
         priorTypeNameList = list()
         for i in iterator:

@@ -63,7 +63,7 @@ class SessionDB(object):
         print("MISSING FILES RECORED IN {0}".format(missingFilesLog))
         missingFiles = open(missingFilesLog, 'w')
         print("Building Subject returnList: " + subject_data_file)
-        subjData = csv.reader(open(subject_data_file, 'rb'), delimiter=',', quotechar='"')
+        subjData = csv.reader(open(subject_data_file, 'rt'), delimiter=',', quotechar='"')
         allEntriesOK = True
         for row in subjData:
             if len(row) < 1:

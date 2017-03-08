@@ -189,7 +189,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
         permute_values = [7, 7, 7]
         for i in range(0, 3):
             permute_values[i] = np.argmax(np.abs(dc[i, :]))
-        permuted_image = sitk.PermuteAxes(sitkImageIn, permute_values)
+        permuted_image = sitk.PermuteAxes(sitkImageIn, [ int(x) for x in permute_values ] )
 
         dc = np.array(permuted_image.GetDirection())
         dc = dc.reshape(3, 3)

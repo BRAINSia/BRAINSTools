@@ -57,7 +57,7 @@ def adjustMergeList(allList, n_modality):
             yield inList[i:i + n]
 
     # Need to convert unicode filenames back to ascii filenames
-    # asciiAllList = [ x.encode('ascii','replace') for x in allList ]
+    # asciiAllList = [ x for x in allList ]
     asciiAllList = [x for x in allList]
     return [fname for fname in list(yieldList(asciiAllList, n_modality))]
 

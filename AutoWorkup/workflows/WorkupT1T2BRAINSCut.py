@@ -43,14 +43,14 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         return cleanedUpSeg
 
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
-        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn.encode('ascii', 'replace')), sitk.sitkUInt8)
+        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8)
 
         # WM_FN = posteriorDictionary['WM']
-        # WM_PROB = sitk.ReadImage(WM_FN.encode('ascii','replace'))
+        # WM_PROB = sitk.ReadImage(WM_FN)
         # WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
 
         CSF_FN = posteriorDictionary['CSF']
-        CSF_PROB = sitk.ReadImage(CSF_FN.encode('ascii', 'replace'))
+        CSF_PROB = sitk.ReadImage(CSF_FN)
         CSF_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, CSF_PROB, CSFThreshold)
         return CSF_removed
 
@@ -103,7 +103,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         cleaned_fileName = os.path.join(os.path.dirname(segFN), "cleaned_" + structName + "_seg.nii.gz")
         print("=" * 20, structName, " ", cleaned_fileName)
         cleaned_labels_map[structName] = cleaned_fileName
-        sitk.WriteImage(curr_segROI, cleaned_fileName.encode('ascii', 'replace'))
+        sitk.WriteImage(curr_segROI, cleaned_fileName)
         if labelImage is None:
             labelImage = curr_segROI * valueDict[structName]
         else:
@@ -112,7 +112,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
             labelImage *= not_mask
             ## Add in the mask image with it's proper label
             labelImage = labelImage + curr_segROI * valueDict[structName]
-    sitk.WriteImage(labelImage, LabelImageName.encode('ascii', 'replace'))
+    sitk.WriteImage(labelImage, LabelImageName)
 
     ls = sitk.LabelStatisticsImageFilter()
     ls.Execute(labelImage, labelImage)

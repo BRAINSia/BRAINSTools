@@ -57,8 +57,8 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posterior_dict,
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt64)
         return outlabels
 
-    fusionIm = sitk.Cast(sitk.ReadImage(fusionFN.encode('ascii', 'replace')), sitk.sitkUInt32)
-    FixedHead = sitk.Cast(sitk.ReadImage(FixedHeadFN.encode('ascii', 'replace')), sitk.sitkUInt32)
+    fusionIm = sitk.Cast(sitk.ReadImage(fusionFN), sitk.sitkUInt32)
+    FixedHead = sitk.Cast(sitk.ReadImage(FixedHeadFN), sitk.sitkUInt32)
 
     BRAINSABC_DICT = {'BRAINSTEM': 30, 'CSF': 4, 'BLOOD': 5}
 
@@ -66,35 +66,35 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posterior_dict,
     outlabels = sitk.Image(fusionIm)
     lbl_orig_mask = (outlabels > 0)
     lbl_outter_ring = sitk.BinaryDilate(lbl_orig_mask, 2) - lbl_orig_mask
-    # DEBUG sitk.WriteImage(lbl_outter_ring,"/tmp/lbl_outter_ring.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(lbl_outter_ring,"/tmp/lbl_outter_ring.nii.gz")
 
 
-    vb_post = sitk.ReadImage(posterior_dict["VB"].encode('ascii', 'replace'))
+    vb_post = sitk.ReadImage(posterior_dict["VB"])
     ring_vb = lbl_outter_ring * sitk.BinaryThreshold(vb_post, 0.5, 1.01, 1, 0)  # just outside mask
-    # DEBUG sitk.WriteImage(ring_vb,"/tmp/ring_vb.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(ring_vb,"/tmp/ring_vb.nii.gz")
     inner_vb = lbl_orig_mask * sitk.BinaryThreshold(vb_post, 0.85, 1.01, 1, 0)  # inside mask, but very high probability
-    # DEBUG sitk.WriteImage(inner_vb,"/tmp/inner_vb.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(inner_vb,"/tmp/inner_vb.nii.gz")
     # background = 0 , suspicous = 999
     ## Add blood from BRAINSABC to mask as as value OUT_DICT['BLOOD']
     blood_labels = (FixedHead == BRAINSABC_DICT['BLOOD']) * (outlabels == 0 | outlabels == 999) | ring_vb | inner_vb
-    # DEBUG sitk.WriteImage(blood_labels,"/tmp/blood_labels.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(blood_labels,"/tmp/blood_labels.nii.gz")
     outlabels = ForceMaskInsert(outlabels, blood_labels, OUT_DICT['BLOOD'])
 
-    csf_post = sitk.ReadImage(posterior_dict["CSF"].encode('ascii', 'replace'))
+    csf_post = sitk.ReadImage(posterior_dict["CSF"])
     ring_csf = lbl_outter_ring * sitk.BinaryThreshold(csf_post, 0.5, 1.01, 1, 0)  # just outside mask
-    # DEBUG sitk.WriteImage(ring_csf,"/tmp/ring_csf.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(ring_csf,"/tmp/ring_csf.nii.gz")
     inner_csf = lbl_orig_mask * sitk.BinaryThreshold(csf_post, 0.85, 1.01, 1,
                                                      0)  # inside mask, but very high probability
-    # DEBUG sitk.WriteImage(inner_csf,"/tmp/inner_csf.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(inner_csf,"/tmp/inner_csf.nii.gz")
     ## Add CSF from BRAINSABC to mask as as value OUT_DICT['RH_CSF']
     csf_labels = (FixedHead == BRAINSABC_DICT['CSF']) * (outlabels == 0 | outlabels == 999) | ring_csf | inner_csf
-    # DEBUG sitk.WriteImage(csf_labels,"/tmp/csf_labels.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(csf_labels,"/tmp/csf_labels.nii.gz")
     outlabels = ForceMaskInsert(outlabels, csf_labels, OUT_DICT['RH_CSF'])
-    # DEBUG sitk.WriteImage(outlabels,"/tmp/outlabels.nii.gz".encode('ascii','replace'))
+    # DEBUG sitk.WriteImage(outlabels,"/tmp/outlabels.nii.gz")
 
     ## Now split CSF based on LeftHemisphereMask
     if LeftHemisphereFN != None:
-        LeftHemisphereIm = sitk.Cast(sitk.ReadImage(LeftHemisphereFN.encode('ascii', 'replace')), sitk.sitkUInt32)
+        LeftHemisphereIm = sitk.Cast(sitk.ReadImage(LeftHemisphereFN), sitk.sitkUInt32)
         left_hemi_pre = (outlabels == OUT_DICT['LH_CSF'])
         outlabels = ForceMaskInsert(outlabels, left_hemi_pre, OUT_DICT['RH_CSF'])  ## Make all CSF Right hemisphere
         left_hemi_post = (LeftHemisphereIm * sitk.Cast((outlabels == OUT_DICT['RH_CSF']),
@@ -127,7 +127,7 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posterior_dict,
     outlabels = MinimizeSizeOfImage(outlabels)
 
     fixedFusionLabelFN = os.path.realpath(outFN)
-    sitk.WriteImage(outlabels, fixedFusionLabelFN.encode('ascii', 'replace'))
+    sitk.WriteImage(outlabels, fixedFusionLabelFN)
     # print("\n\n\n\n\n\n{0}\n\n\n\nXXXXXXXX".format(fixedFusionLabelFN))
     return fixedFusionLabelFN
 
@@ -154,10 +154,10 @@ def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt64)
         return outlabels
 
-    LabelImage = sitk.Cast(sitk.ReadImage(InputFileName.encode('ascii', 'replace')), sitk.sitkUInt32)
+    LabelImage = sitk.Cast(sitk.ReadImage(InputFileName), sitk.sitkUInt32)
     for (old, new) in RECODE_TABLE:
         LabelImage = sitk.Cast((LabelImage == old), sitk.sitkUInt32) * (new - old) + LabelImage
     LabelImage = MinimizeSizeOfImage(LabelImage)
     recodedFN = os.path.realpath(OutputFileName)
-    sitk.WriteImage(LabelImage, recodedFN.encode('ascii', 'replace'))
+    sitk.WriteImage(LabelImage, recodedFN)
     return recodedFN

@@ -28,17 +28,17 @@ class DustCleanup():
             return None
 
     def main(self):
-        labelImage = sitk.Cast(sitk.ReadImage(self.inputAtlasPath.encode('ascii', 'replace')), sitk.sitkInt16)
-        inputT1VolumeImage = sitk.ReadImage(self.inputT1Path.encode('ascii', 'replace'))
+        labelImage = sitk.Cast(sitk.ReadImage(self.inputAtlasPath), sitk.sitkInt16)
+        inputT1VolumeImage = sitk.ReadImage(self.inputT1Path)
         if self.inputT2Path:
-            inputT2VolumeImage = sitk.ReadImage(self.inputT2Path.encode('ascii', 'replace'))
+            inputT2VolumeImage = sitk.ReadImage(self.inputT2Path)
         else:
             inputT2VolumeImage = None
         labelsList = self.getLabelsList(inputT1VolumeImage, labelImage)
         for label in labelsList:
             labelImage = self.relabelCurrentLabel(labelImage, inputT1VolumeImage, inputT2VolumeImage, label)
         self.printIslandStatistics()
-        sitk.WriteImage(labelImage, self.outputAtlasPath.encode('ascii', 'replace'))
+        sitk.WriteImage(labelImage, self.outputAtlasPath)
 
     def getLabelsList(self, volumeImage, labelImage):
         labelStatsObject = self.getLabelStatsObject(volumeImage, labelImage)

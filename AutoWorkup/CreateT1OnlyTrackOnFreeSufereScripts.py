@@ -286,7 +286,7 @@ def GetBaseSize(filename):
     tmp = good_list
     base_size = good_list.get(filename)
     if not base_size:
-        base_size = sitk.ReadImage(filename.encode('ascii', 'replace')).GetSpacing()
+        base_size = sitk.ReadImage(filename).GetSpacing()
         good_list[filename] = base_size
         pf = open(pickled_good_list_fn, 'w')
         pickle.dump(good_list, pf)
@@ -311,8 +311,8 @@ def find_mgz(inlist):
         if ff.find('.nrrd'):
             outfn = ff.replace('.nrrd', '.nii.gz')
             if not os.path.exists(outfn):
-                tempIm = sitk.ReadImage(ff.encode('ascii', 'replace'))
-                sitk.WriteImage(tempIm, outfn.encode('ascii', 'replace'))
+                tempIm = sitk.ReadImage(ff)
+                sitk.WriteImage(tempIm, outfn)
                 ff = outfn
         testmgz = ff.replace('.nii.gz', '.mgz')
         ## TODO:  Search for .nrrd files and figure out what to do.

@@ -49,7 +49,7 @@ def calculateLabelVolume(dirname, label):
     labelFile = os.path.join(dirname, _config.get('Results', 'segmentations'),
                              label + '_seg_seg.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
-    image = sitk.ReadImage(labelFile.encode('ascii', 'replace'))
+    image = sitk.ReadImage(labelFile)
     nda = sitk.GetArrayFromImage(image)
     maskSum = nda.sum()
     print(maskSum)

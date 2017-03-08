@@ -18,9 +18,9 @@ Options:
   -v, --version  Print file version and exit
   --debug        Run doctests for file  # TODO
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 from future import standard_library
 
@@ -49,7 +49,8 @@ def str2bool(v):
 
 def getASCIIFromParser(parser, region, tag):
     unicodeText = parser.get(region, tag)
-    asciiText = unicodeText.encode('ascii', errors='strict')
+    asciiText = unicodeText
+    #asciiText = str(unicodeText.encode('utf-8', errors='strict'))
     return asciiText
 
 

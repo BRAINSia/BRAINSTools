@@ -24,7 +24,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         import SimpleITK as sitk
         T2LabelMapVolume = sitk.ReadImage(T2LabelMapVolume, sitk.sitkUInt16.encode('ascii',
                                                                                    'replace'))  # FreeSurfer labelmap needs uint-16
-        DWIBrainMask = sitk.ReadImage(DWIBrainMask.encode('ascii', 'replace'))
+        DWIBrainMask = sitk.ReadImage(DWIBrainMask)
         # 1- Dilate input DWI mask
         dilateFilter = sitk.BinaryDilateImageFilter()
         dilateFilter.SetKernelRadius(1)
@@ -48,7 +48,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         DWILabelMapVolume = mulFilt.Execute(casted_thresh_resampled_dilated_mask, T2LabelMapVolume)
         # write the output label map
         outputVolume = os.path.realpath('DWILabelMapVolume.nrrd')
-        sitk.WriteImage(DWILabelMapVolume, outputVolume.encode('ascii', 'replace'))
+        sitk.WriteImage(DWILabelMapVolume, outputVolume)
         return outputVolume
 
     def MakeResamplerInFileList(FAImage, MDImage, RDImage, FrobeniusNormImage, Lambda1Image, Lambda2Image,
@@ -125,9 +125,9 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
                     wr.writerows([[key] + value])
 
         #### #### #### ####
-        resampledRISVolume = sitk.ReadImage(inputVolume.encode('ascii', 'replace'))
-        T2LabelMap = sitk.ReadImage(T2LabelMapVolume.encode('ascii', 'replace'))
-        DWILabelMap = sitk.ReadImage(DWILabelMapVolume.encode('ascii', 'replace'))
+        resampledRISVolume = sitk.ReadImage(inputVolume)
+        T2LabelMap = sitk.ReadImage(T2LabelMapVolume)
+        DWILabelMap = sitk.ReadImage(DWILabelMapVolume)
         labelsDictionary = createLabelsDictionary(labelCodesFile)
         statisticsDictionary = {}
         voxelVolume = computeVoxelVolume(resampledRISVolume)
@@ -152,8 +152,8 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     def ResampleRISVolumes(referenceVolume, inputVolume):
         import os
         import SimpleITK as sitk
-        refVolume = sitk.ReadImage(referenceVolume.encode('ascii', 'replace'))
-        RISVolume = sitk.ReadImage(inputVolume.encode('ascii', 'replace'))
+        refVolume = sitk.ReadImage(referenceVolume)
+        RISVolume = sitk.ReadImage(inputVolume)
         # 0- because of numberical precision error, we have small negative values
         # in rotationary invariant scalars e.g. -1e-13,
         # so set voxel value x to 0 if -1e-5<x<1e-5
@@ -184,7 +184,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         inputBaseName = os.path.basename(inputVolume)
         RISName = os.path.splitext(inputBaseName)[0]
         outputVolume = os.path.realpath(RISName + '_res.nrrd')
-        sitk.WriteImage(RIS_resampled, outputVolume.encode('ascii', 'replace'))
+        sitk.WriteImage(RIS_resampled, outputVolume)
         assert os.path.isfile(outputVolume), "Resampled RIS file is not found: %s" % outputVolume
         return outputVolume
 

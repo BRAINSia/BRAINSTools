@@ -24,7 +24,7 @@ def brainStem(tissueLabelFilename,
                                physBB1, physBB2, thresholdUpper, thresholdLower,
                                outputImageFilename):
 
-        brainLbl = sitk.ReadImage(inputBrainLabelFilename.encode('ascii', 'replace'))
+        brainLbl = sitk.ReadImage(inputBrainLabelFilename)
 
         roiBBStart_index = brainLbl.TransformPhysicalPointToIndex(physBB1)
         roiBBStop_index = brainLbl.TransformPhysicalPointToIndex(physBB2)
@@ -60,7 +60,7 @@ def brainStem(tissueLabelFilename,
         rs.SetReferenceImage(brainLbl)
         brainStemInPlace = rs.Execute(brainStem_fillHole)
 
-        sitk.WriteImage(brainStemInPlace, outputImageFilename.encode('ascii', 'replace'))
+        sitk.WriteImage(brainStemInPlace, outputImageFilename)
 
         import os
         return os.path.abspath(outputImageFilename)
@@ -111,7 +111,7 @@ def brainStem(tissueLabelFilename,
     below the brain stem
     """
     ## read a label file 'TissueClassify/fixed_brainlabels_seg.nii.gz'
-    brainLbl = sitk.ReadImage(tissueLabelFilename.encode('ascii', 'replace'))
+    brainLbl = sitk.ReadImage(tissueLabelFilename)
     brainLblMaxIndex = [x - 1 for x in brainLbl.GetSize()]
     fov1 = brainLbl.TransformIndexToPhysicalPoint([0, 0, 0])
     fov2 = brainLbl.TransformIndexToPhysicalPoint(brainLblMaxIndex)
@@ -122,8 +122,8 @@ def brainStem(tissueLabelFilename,
     noExtraBottomBrainStem = cropAndResampleInPlace(tissueLabelFilename, roiBBStart, roiBBStop, 0, 255,
                                                     brainStemFilename + "_InValid.nii.gz")
 
-    brainStemBinary = (sitk.ReadImage(brainStem.encode('ascii', 'replace')) > 0)
-    noExtraBottomBrainStemBinary = (sitk.ReadImage(noExtraBottomBrainStem.encode('ascii', 'replace')) > 0)
+    brainStemBinary = (sitk.ReadImage(brainStem) > 0)
+    noExtraBottomBrainStemBinary = (sitk.ReadImage(noExtraBottomBrainStem) > 0)
 
     outputTissueLabel = brainLbl * (1 - (brainStemBinary > 0)) * (
         1 - (noExtraBottomBrainStemBinary > 0)) + brainStemBinary * 30
@@ -135,7 +135,7 @@ def brainStem(tissueLabelFilename,
     cleanedOutputTissueLabel = outputTissueLabel * dilate_one_region
 
     full_output_path = os.path.abspath(ouputTissuelLabelFilename)
-    sitk.WriteImage(cleanedOutputTissueLabel, full_output_path.encode('ascii', 'replace'))
+    sitk.WriteImage(cleanedOutputTissueLabel, full_output_path)
     return full_output_path
 
 

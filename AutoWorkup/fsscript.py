@@ -129,7 +129,7 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
             or IsFirstNewerThanSecond(brainmask, output_nu_fn_mgz) \
             or IsFirstNewerThanSecond(output_nu_fn_mgz, output_custom_brainmask_fn_mgz):
         print("Fixing BrainMask recon-auto1 stage")
-        brain = sitk.ReadImage(brainmask.encode('ascii', 'replace'))
+        brain = sitk.ReadImage(brainmask)
         blood = sitk.BinaryThreshold(brain, 5, 5)
         not_blood = 1 - blood
         clipping = sitk.BinaryThreshold(brain, 1, 1000000) - blood

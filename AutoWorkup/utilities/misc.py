@@ -17,7 +17,8 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
                                    output_warped_image,
                                    output_inverse_warped_image,
                                    save_state,
-                                   invert_initial_moving_transform):
+                                   invert_initial_moving_transform,
+                                   initial_moving_transform):
     """ Ants registration settings are difficult
     to get correct all the time.  This utility function
     is designed to assist with getting the common settings
@@ -147,8 +148,11 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     antsRegistrationNode.inputs.winsorize_lower_quantile = 0.01
     antsRegistrationNode.inputs.winsorize_upper_quantile = 0.99
 
-    if invert_initial_moving_transform is not None:
-        antsRegistrationNode.inputs.invert_initial_moving_transform = invert_initial_moving_transform
+    if  initial_moving_transform is not None:
+        antsRegistrationNode.inputs.initial_moving_transform = initial_moving_transform
+        if (invert_initial_moving_transform == True ):
+            antsRegistrationNode.inputs.invert_initial_moving_transform = True
+
     if output_transform_prefix is not None:
         antsRegistrationNode.inputs.output_transform_prefix = output_transform_prefix
     if output_warped_image is not None:

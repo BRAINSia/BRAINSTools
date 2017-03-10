@@ -350,11 +350,14 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                               ]),
                           run_without_submitting=True, name='outputspec')
 
-    dsName = "{0}_ds_{1}".format(phase, sessionid)
-    DataSink = pe.Node(name=dsName, interface=nio.DataSink())
-    DataSink.overwrite = master_config['ds_overwrite']
-    DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
-    DataSink.inputs.base_directory = master_config['resultdir']
+    dsName = "{0}_ds_{1}_lmks".format(phase, sessionid)
+    DataSinkLandmarks = pe.Node(name=dsName, interface=nio.DataSink())
+    DataSinkLandmarks.overwrite = master_config['ds_overwrite']
+    DataSinkLandmarks.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+    DataSinkLandmarks.inputs.base_directory = master_config['resultdir']
+    del dsName
+
+
 
     atlas_static_directory = master_config['atlascache']
     if master_config['workflow_phase'] == 'atlas-based-reference':
@@ -633,7 +636,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                           ('outputspec.atlasToSubjectTransform', 'LMIatlasToSubject_tx'),
                           ('outputspec.writeBranded2DImage', 'writeBranded2DImage')])
                         ])
-        baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalLMIWF -> DataSink
+        baw201.connect([(outputsSpec, DataSinkLandmarks,  # TODO: change to myLocalLMIWF -> DataSink
                          [('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
                           ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
                           ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
@@ -645,6 +648,13 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                        )
 
     if 'tissue_classify' in master_config['components']:
+        dsName = "{0}_ds_{1}_tissue".format(phase, sessionid)
+        DataSinkTissue = pe.Node(name=dsName, interface=nio.DataSink())
+        DataSinkTissue.overwrite = master_config['ds_overwrite']
+        DataSinkTissue.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+        DataSinkTissue.inputs.base_directory = master_config['resultdir']
+        del dsName
+
         useRegistrationMask = master_config['use_registration_masking']
 
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config, interpMode, useRegistrationMask)
@@ -676,12 +686,43 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                     ]),
                         ])
 
-        baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
-                         [(('t1_average', convertToList), 'TissueClassify.@t1'),
-                          (('t2_average', convertToList), 'TissueClassify.@t2'),
-                          (('pd_average', convertToList), 'TissueClassify.@pd'),
-                          (('fl_average', convertToList), 'TissueClassify.@fl')])
-                        ])
+
+
+        dsName = "{0}_ds_{1}_tissue_t1".format(phase, sessionid)
+        DataSinkTissueT1 = pe.Node(name=dsName, interface=nio.DataSink())
+        DataSinkTissueT1.overwrite = master_config['ds_overwrite']
+        DataSinkTissueT1.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+        DataSinkTissueT1.inputs.base_directory = master_config['resultdir']
+        del dsName
+        baw201.connect(outputsSpec, 't1_average', DataSinkTissueT1, 'TissueClassify.@t1')
+
+        dsName = "{0}_ds_{1}_tissue_t2".format(phase, sessionid)
+        DataSinkTissueT2 = pe.Node(name=dsName, interface=nio.DataSink())
+        DataSinkTissueT2.overwrite = master_config['ds_overwrite']
+        DataSinkTissueT2.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+        DataSinkTissueT2.inputs.base_directory = master_config['resultdir']
+        DataSinkTissueT2.inputs.ignore_exception = True
+        del dsName
+        baw201.connect(outputsSpec, 't2_average', DataSinkTissueT2, 'TissueClassify.@t2')
+
+        dsName = "{0}_ds_{1}_tissue_fl".format(phase, sessionid)
+        DataSinkTissueFL = pe.Node(name=dsName, interface=nio.DataSink())
+        DataSinkTissueFL.overwrite = master_config['ds_overwrite']
+        DataSinkTissueFL.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+        DataSinkTissueFL.inputs.base_directory = master_config['resultdir']
+        DataSinkTissueFL.inputs.ignore_exception = True
+        del dsName
+        baw201.connect(outputsSpec, 'fl_average', DataSinkTissueFL, 'TissueClassify.@fl')
+
+        dsName = "{0}_ds_{1}_tissue_pd".format(phase, sessionid)
+        DataSinkTissuePD = pe.Node(name=dsName, interface=nio.DataSink())
+        DataSinkTissuePD.overwrite = master_config['ds_overwrite']
+        DataSinkTissuePD.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+        DataSinkTissuePD.inputs.base_directory = master_config['resultdir']
+        DataSinkTissuePD.inputs.ignore_exception = True
+        del dsName
+        baw201.connect(outputsSpec, 'pd_average', DataSinkTissuePD, 'TissueClassify.@pd')
+
 
         currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
         FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,
@@ -708,16 +749,21 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect([(FixWMNode, BRAINSCreateLabelMapNode, [('UpdatedPosteriorsList', 'inputProbabilityVolume'),
                                                                ('MatchingFGCodeList', 'foregroundPriors'),
                                                                ('MatchingLabelList', 'priorLabelCodes'),
-                                                               ('nonAirRegionMask', 'nonAirRegionMask')]),
-                        (BRAINSCreateLabelMapNode, DataSink,
-                         [  # brainstem code below replaces this ('cleanLabelVolume', 'TissueClassify.@outputLabels'),
-                             ('dirtyLabelVolume', 'TissueClassify.@outputHeadLabels')]),
-                        (myLocalTCWF, DataSink, [('outputspec.atlasToSubjectTransform',
-                                                  'TissueClassify.@atlas2session_tx'),
-                                                 ('outputspec.atlasToSubjectInverseTransform',
-                                                  'TissueClassify.@atlas2sessionInverse_tx')]),
-                        (FixWMNode, DataSink, [('UpdatedPosteriorsList', 'TissueClassify.@posteriors')]),
-                        ])
+                                                               ('nonAirRegionMask', 'nonAirRegionMask')]) ])
+        baw201.connect([
+                       (BRAINSCreateLabelMapNode, DataSinkTissue,
+                        [  # brainstem code below replaces this ('cleanLabelVolume', 'TissueClassify.@outputLabels'),
+                            ('dirtyLabelVolume', 'TissueClassify.@outputHeadLabels')])
+           ])
+        baw201.connect([
+                       (myLocalTCWF, DataSinkTissue, [('outputspec.atlasToSubjectTransform',
+                                                 'TissueClassify.@atlas2session_tx'),
+                                                ('outputspec.atlasToSubjectInverseTransform',
+                                                 'TissueClassify.@atlas2sessionInverse_tx')])
+           ])
+        baw201.connect([
+                       (FixWMNode, DataSinkTissue, [('UpdatedPosteriorsList', 'TissueClassify.@posteriors')]),
+                       ])
 
         currentAccumulateLikeTissuePosteriorsName = 'AccumulateLikeTissuePosteriors_' + str(subjectid) + "_" + str(
             sessionid)
@@ -728,7 +774,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                      name=currentAccumulateLikeTissuePosteriorsName)
 
         baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
-                        (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
+                        (AccumulateLikeTissuePosteriorsNode, DataSinkTissue, [('AccumulatePriorsList',
                                                                          'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
 
         """
@@ -749,12 +795,20 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                                          'inputspec.inputTissueLabelFilename')])
                         ])
 
-        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename', DataSink,
-                       'TissueClassify.@complete_brainlabels_seg')
+        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename', DataSinkTissue,
+                      'TissueClassify.@complete_brainlabels_seg')
+
+    dsName = "{0}_ds_{1}_seg".format(phase, sessionid)
+    DataSinkSegmentation = pe.Node(name=dsName, interface=nio.DataSink())
+    DataSinkSegmentation.overwrite = master_config['ds_overwrite']
+    DataSinkSegmentation.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+    DataSinkSegmentation.inputs.base_directory = master_config['resultdir']
+    del dsName
 
     ###########################
     do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
     if do_BRAINSCut_Segmentation:
+
         from workflows.segmentation import segmentation
         from workflows.WorkupT1T2BRAINSCut import GenerateWFName
 
@@ -840,7 +894,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             baw201.connect(inputsSpec, atlasImage, BResample[atlasImage], 'inputVolume')
             baw201.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform',
                            BResample[atlasImage], 'warpTransform')
-            baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@' + atlasImage)
+            baw201.connect(BResample[atlasImage], 'outputVolume', DataSinkSegmentation, 'WarpedAtlas2Subject.@' + atlasImage)
 
         AtlasBinaryMapsToResample = [
             'template_rightHemisphere',
@@ -860,7 +914,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             baw201.connect(myLocalTCWF, 'outputspec.t1_average', BResample[atlasImage], 'referenceVolume')
             baw201.connect(inputsSpec, atlasImage, BResample[atlasImage], 'inputVolume')
             baw201.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform', BResample[atlasImage], 'warpTransform')
-            baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@' + atlasImage)
+            baw201.connect(BResample[atlasImage], 'outputVolume', DataSinkSegmentation, 'WarpedAtlas2Subject.@' + atlasImage)
 
         BRAINSCutAtlasImages = [
             'rho',
@@ -891,7 +945,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             baw201.connect(myLocalTCWF, 'outputspec.t1_average', BResample[atlasImage], 'referenceVolume')
             baw201.connect(atlasBCUTNode_W, atlasImage, BResample[atlasImage], 'inputVolume')
             baw201.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform', BResample[atlasImage], 'warpTransform')
-            baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@' + atlasImage)
+            baw201.connect(BResample[atlasImage], 'outputVolume', DataSinkSegmentation, 'WarpedAtlas2Subject.@' + atlasImage)
 
         WhiteMatterHemisphereNode = pe.Node(interface=Function(function=CreateLeftRightWMHemispheres,
                                                                input_names=['BRAINLABELSFile',
@@ -915,9 +969,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(BResample['template_rightHemisphere'], 'outputVolume', WhiteMatterHemisphereNode,
                        'RightHemisphereMaskName')
 
-        baw201.connect(WhiteMatterHemisphereNode, 'WM_LeftHemisphereFileName', DataSink,
+        baw201.connect(WhiteMatterHemisphereNode, 'WM_LeftHemisphereFileName', DataSinkSegmentation,
                        'WarpedAtlas2Subject.@LeftHemisphereWM')
-        baw201.connect(WhiteMatterHemisphereNode, 'WM_RightHemisphereFileName', DataSink,
+        baw201.connect(WhiteMatterHemisphereNode, 'WM_RightHemisphereFileName', DataSinkSegmentation,
                        'WarpedAtlas2Subject.@RightHemisphereWM')
 
     if 'jointfusion_2015_wholebrain' in master_config['components']:  ## HACK Do JointFusion labeling
@@ -949,23 +1003,23 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(inputLabelFileJointFusionnameSpec, 'labelBaseFilename',
                        myLocalJointFusion, 'inputspec.labelBaseFilename')
 
-        # baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_label',DataSink,'JointFusion.@JointFusion_HDAtlas20_2015_label')
-        # baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_CSFVBInjected_label',DataSink,'JointFusion.@JointFusion_HDAtlas20_2015_CSFVBInjected_label')
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_fs_standard_label', DataSink,
+        # baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_label',DataSinkSegmentation,'JointFusion.@JointFusion_HDAtlas20_2015_label')
+        # baw201.connect(myLocalJointFusion,'outputspec.JointFusion_HDAtlas20_2015_CSFVBInjected_label',DataSinkSegmentation,'JointFusion.@JointFusion_HDAtlas20_2015_CSFVBInjected_label')
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_fs_standard_label', DataSinkSegmentation,
                        'JointFusion.@JointFusion_HDAtlas20_2015_fs_standard_label')
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_lobe_label', DataSink,
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_lobe_label', DataSinkSegmentation,
                        'JointFusion.@JointFusion_HDAtlas20_2015_lobe_label')
-        # baw201.connect(myLocalJointFusion,'outputspec.JointFusion_extended_snapshot',DataSink,'JointFusion.@JointFusion_extended_snapshot')
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_dustCleaned_label', DataSink,
+        # baw201.connect(myLocalJointFusion,'outputspec.JointFusion_extended_snapshot',DataSinkSegmentation,'JointFusion.@JointFusion_extended_snapshot')
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_HDAtlas20_2015_dustCleaned_label', DataSinkSegmentation,
                        'JointFusion.@JointFusion_HDAtlas20_2015_dustCleaned_label')
 
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_volumes_csv', DataSink,
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_volumes_csv', DataSinkSegmentation,
                        'JointFusion.allVol.@JointFusion_volumesCSV')
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_volumes_json', DataSink,
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_volumes_json', DataSinkSegmentation,
                        'JointFusion.allVol.@JointFusion_volumesJSON')
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_lobe_volumes_csv', DataSink,
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_lobe_volumes_csv', DataSinkSegmentation,
                        'JointFusion.lobeVol.@JointFusion_lobe_volumesCSV')
-        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_lobe_volumes_json', DataSink,
+        baw201.connect(myLocalJointFusion, 'outputspec.JointFusion_lobe_volumes_json', DataSinkSegmentation,
                        'JointFusion.lobeVol.@JointFusion_lobe_volumesJSON')
 
     return baw201

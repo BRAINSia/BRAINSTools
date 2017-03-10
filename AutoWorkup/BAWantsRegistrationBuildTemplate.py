@@ -239,7 +239,8 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix, CLUS
         output_warped_image='atlas2subject.nii.gz',
         output_inverse_warped_image='subject2atlas.nii.gz',
         save_state='SavedantsRegistrationNodeSyNState.h5',
-        invert_initial_moving_transform=None)
+        invert_initial_moving_transform=False,
+        initial_moving_transform=None)
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,
                                                           input_names=['ListOfImagesDictionaries',

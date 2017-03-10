@@ -53,7 +53,7 @@ def MakeVector(inFN1, inFN2=None, jointFusion=False):
 
 def adjustMergeList(allList, n_modality):
     def yieldList(inList, n):
-        for i in xrange(0, len(inList), n):
+        for i in range(0, len(inList), n):
             yield inList[i:i + n]
 
     # Need to convert unicode filenames back to ascii filenames
@@ -251,7 +251,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
             output_warped_image=jointFusion_atlas_subject + '_2subject.nii.gz',
             output_inverse_warped_image=None,  # NO NEED FOR THIS
             save_state=None,  # NO NEED FOR THIS
-            invert_initial_moving_transform=False)
+            invert_initial_moving_transform=False,
+        initial_moving_transform=None)
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         if UseRegistrationMasking == True:

@@ -73,21 +73,21 @@ class DustCleanup():
         "-" * 50
         print
         "Label, numberOfIslandsCleaned, numberOfIslands, IslandVoxelCount, numberOfIslandsCleanedForIslandVoxelCount"
-        for val in sorted(self.islandStatistics):
-            labelStats = [str(val), str(self.islandStatistics[val]['numberOfIslandsCleaned']),
-                          str(self.islandStatistics[val]['numberOfIslands'])]
-            if val != 'Total':
+        for islandName in sorted(self.islandStatistics.keys()):
+            labelStats = [str(islandName), str(self.islandStatistics[islandName]['numberOfIslandsCleaned']),
+                          str(self.islandStatistics[islandName]['numberOfIslands'])]
+            if islandName != 'Total':
                 for i in range(1, self.maximumIslandVoxelCount + 1):
-                    labelStats.extend([str(i), str(self.islandStatistics[val][i])])
+                    labelStats.extend([str(i), str(self.islandStatistics[islandName][i])])
             print
             ','.join(labelStats)
 
-    def relabelCurrentLabel(self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label):
-
-        self.islandStatistics[label] = {'numberOfIslandsCleaned': 0}
-
+    def relabelCurrentLabel(self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label_key):
+        label_key = str(label_key)  # all keys must be strings in order to sort
+        self.islandStatistics[label_key] = {'numberOfIslandsCleaned': 0}
+        label_value = int(label_key)
         for currentIslandSize in range(1, self.maximumIslandVoxelCount + 1):
-            maskForCurrentLabel = sitk.BinaryThreshold(labelImage, label, label)
+            maskForCurrentLabel = sitk.BinaryThreshold(labelImage, label_value, label_value)
             relabeledConnectedRegion = self.getRelabeldConnectedRegion(maskForCurrentLabel, currentIslandSize)
             labelStatsT1WithRelabeledConnectedRegion = self.getLabelStatsObject(inputT1VolumeImage,
                                                                                 relabeledConnectedRegion)
@@ -99,7 +99,7 @@ class DustCleanup():
             labelList.reverse()
 
             if currentIslandSize == 1:  # use island size 1 to get # of islands since this label map is not dilated
-                self.islandStatistics[label]['numberOfIslands'] = len(labelList)
+                self.islandStatistics[label_key]['numberOfIslands'] = len(labelList)
                 self.islandStatistics['Total']['numberOfIslands'] += len(labelList)
 
             numberOfIslandsCleaned = 0
@@ -120,8 +120,8 @@ class DustCleanup():
                                                                            targetLabels, inputT1VolumeImage,
                                                                            inputT2VolumeImage, labelImage)
                     if self.forceSuspiciousLabelChange:
-                        diffDict.pop(label)
-                    sortedLabelList = self.getDictKeysListSortedByValue(diffDict)
+                        diffDict.pop(label_key)
+                    sortedLabelList = [ int(x) for x in self.getDictKeysListSortedByValue(diffDict) ]
                     currentLabelBinaryThresholdImage = sitk.BinaryThreshold(relabeledConnectedRegion, currentLabel,
                                                                             currentLabel)
                     labelImage = self.relabelImage(labelImage, currentLabelBinaryThresholdImage, sortedLabelList[0])
@@ -129,8 +129,8 @@ class DustCleanup():
                 else:
                     break
 
-            self.islandStatistics[label][currentIslandSize] = numberOfIslandsCleaned
-            self.islandStatistics[label]['numberOfIslandsCleaned'] += numberOfIslandsCleaned
+            self.islandStatistics[label_key][currentIslandSize] = numberOfIslandsCleaned
+            self.islandStatistics[label_key]['numberOfIslandsCleaned'] += numberOfIslandsCleaned
             self.islandStatistics['Total']['numberOfIslandsCleaned'] += numberOfIslandsCleaned
 
         return labelImage
@@ -231,7 +231,7 @@ class DustCleanup():
                 squareDiffAverageT2 = 0
             squareRootDiff = math.sqrt(squareDiffAverageT1 + squareDiffAverageT2)
 
-            squareRootDiffLabelDict[int(targetLabel)] = squareRootDiff
+            squareRootDiffLabelDict[str(targetLabel)] = squareRootDiff
 
         return squareRootDiffLabelDict
 

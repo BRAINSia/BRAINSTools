@@ -590,9 +590,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         N4BFC.inputs.num_threads = -1
         N4BFC.inputs.dimension = 3
         N4BFC.inputs.bspline_fitting_distance = 200
-        N4BFC.inputs.shrink_factor = 3
-        N4BFC.inputs.n_iterations = [50, 50, 30, 20]
-        N4BFC.inputs.convergence_threshold = 1e-6
+        N4BFC.inputs.shrink_factor = 2
+        N4BFC.inputs.n_iterations = [100,100,100,75]
+        N4BFC.inputs.convergence_threshold = 0.0000000001
 
         baw201.connect([(DenoiseInputImgs, N4BFC, [('output_image', 'input_image')]),
                         (makeDenoiseInImageList, N4BFC, [('outBFCImageList', 'output_image')])

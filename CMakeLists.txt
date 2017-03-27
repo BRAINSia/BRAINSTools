@@ -12,7 +12,7 @@ if(POLICY CMP0017)
 endif()
 foreach(p
   CMP0054 # CMake 3.1 Only interpret ``if()`` arguments as variables or keywords when unquoted.
-  CMP0042 # ``MACOSX_RPATH`` is enabled by default.
+  # CMP0042 # ``MACOSX_RPATH`` is enabled by default. NOTE: as of 20160719, this is disabled in Slicer
   CMP0025 # AppleClang vs. regular Clang
   CMP0063 # Honor visibility properties for all target types
   )

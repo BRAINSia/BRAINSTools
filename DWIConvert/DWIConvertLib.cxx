@@ -290,9 +290,16 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
   m_inputDicomDirectory = inputDicomDirectory;
   if (emptyString == m_inputDicomDirectory && emptyString != m_inputVolume){
     const std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
-    if ( std::string::npos != inputExt.rfind(".nii")) m_inputFileType = "FSL";
-    else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr")) m_inputFileType = "Nrrd";
-    else {
+    if ( std::string::npos != inputExt.rfind(".nii"))
+    {
+      m_inputFileType = "FSL";
+    }
+    else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr"))
+    {
+      m_inputFileType = "Nrrd";
+    }
+    else
+    {
       std::cerr <<"Error: file type of inputVoume is not supported currently"<<std::endl;
     }
   }

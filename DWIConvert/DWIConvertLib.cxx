@@ -143,7 +143,7 @@ int DWIConvert::read()
     std::cerr << "Invalid conversion mode" << std::endl;
     return EXIT_FAILURE;
   }
-  return EXIT_SUCCESS;
+  return (NULL == m_converter ? EXIT_FAILURE : EXIT_SUCCESS);
 
 }
 
@@ -241,6 +241,11 @@ DWIConverter * DWIConvert::CreateDicomConverter(
   catch( itk::ExceptionObject &excp)
   {
     std::cerr << "Exception creating converter " << excp << std::endl;
+    return ITK_NULLPTR;
+  }
+  if (NULL == converter)
+  {
+    std::cerr << "Unable to create converter!" << std::endl;
     return ITK_NULLPTR;
   }
 

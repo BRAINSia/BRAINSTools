@@ -288,7 +288,11 @@ DWIConverter * DWIConvert::CreateDicomConverter(
 void DWIConvert::setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory){
   m_inputVolume = inputVolume;
   m_inputDicomDirectory = inputDicomDirectory;
-  if (emptyString == m_inputDicomDirectory && emptyString != m_inputVolume){
+
+  // prefer the inputVolume field if available
+  if ( (!m_inputVolume.empty()) ||
+       m_inputDicomDirectory.empty() )
+  {
     const std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
     if ( std::string::npos != inputExt.rfind(".nii"))
     {

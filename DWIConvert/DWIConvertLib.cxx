@@ -65,7 +65,6 @@ int DWIConvert::read()
     return EXIT_FAILURE;
   }
 
-  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
   // register DCMTK codecs, otherwise they will not be available when
   // `itkDCMTKSeriesFileNames` is used to build a list of filenames,
   // so reading series with JPEG transfer syntax will fail.

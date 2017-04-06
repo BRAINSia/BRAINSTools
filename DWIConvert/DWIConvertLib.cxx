@@ -65,7 +65,6 @@ int DWIConvert::read()
     return EXIT_FAILURE;
   }
 
-  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
   // register DCMTK codecs, otherwise they will not be available when
   // `itkDCMTKSeriesFileNames` is used to build a list of filenames,
   // so reading series with JPEG transfer syntax will fail.
@@ -143,7 +142,7 @@ int DWIConvert::read()
     std::cerr << "Invalid conversion mode" << std::endl;
     return EXIT_FAILURE;
   }
-  return EXIT_SUCCESS;
+  return (NULL == m_converter ? EXIT_FAILURE : EXIT_SUCCESS);
 
 }
 
@@ -243,6 +242,11 @@ DWIConverter * DWIConvert::CreateDicomConverter(
     std::cerr << "Exception creating converter " << excp << std::endl;
     return ITK_NULLPTR;
   }
+  if (NULL == converter)
+  {
+    std::cerr << "Unable to create converter!" << std::endl;
+    return ITK_NULLPTR;
+  }
 
 // read Dicom directory
   try
@@ -284,11 +288,22 @@ DWIConverter * DWIConvert::CreateDicomConverter(
 void DWIConvert::setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory){
   m_inputVolume = inputVolume;
   m_inputDicomDirectory = inputDicomDirectory;
-  if (emptyString == m_inputDicomDirectory && emptyString != m_inputVolume){
+
+  // prefer the inputVolume field if available
+  if ( (!m_inputVolume.empty()) ||
+       m_inputDicomDirectory.empty() )
+  {
     const std::string inputExt = itksys::SystemTools::GetFilenameExtension(m_inputVolume);
-    if ( std::string::npos != inputExt.rfind(".nii")) m_inputFileType = "FSL";
-    else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr")) m_inputFileType = "Nrrd";
-    else {
+    if ( std::string::npos != inputExt.rfind(".nii"))
+    {
+      m_inputFileType = "FSL";
+    }
+    else if (std::string::npos != inputExt.rfind(".nrrd") || std::string::npos != inputExt.rfind(".nhdr"))
+    {
+      m_inputFileType = "Nrrd";
+    }
+    else
+    {
       std::cerr <<"Error: file type of inputVoume is not supported currently"<<std::endl;
     }
   }

@@ -49,11 +49,12 @@
       <longflag>--inputDicomDirectory</longflag>
       <label>Input Dicom Data Directory</label>
       <channel>input</channel>
+      <default></default>
       <description><![CDATA[Directory holding Dicom series]]></description>
     </directory>
   </parameters>
 
-  <parameters>
+  <parameters advanced="true">
     <label>NiftiFSL To Nrrd Conversion Parameters</label>
     <description><![CDATA[NiftiFSL To Nrrd Conversion Parameters]]></description>
     <file>
@@ -81,7 +82,14 @@
 
   <parameters advanced="true">
     <label>Nrrd To NiftiFSL Conversion Parameters</label>
-    <description><![CDATA[Nrrd To NiftiFSL Conversion Parameters]]></description>
+    <description><![CDATA[Nrrd To NiftiFSL (NrrdToFSL) Conversion Parameters]]></description>
+    <file fileExtensions=".nii,.nii.gz">
+      <name>outputNiftiFile</name>
+      <longflag>--outputNiftiFile</longflag>
+      <label>Output nii file</label>
+      <channel>output</channel>
+      <description><![CDATA[Nifti output filename (for Slicer GUI use).]]></description>
+    </file>
     <file fileExtensions=".bval">
       <name>outputBValues</name>
       <longflag>--outputBValues</longflag>

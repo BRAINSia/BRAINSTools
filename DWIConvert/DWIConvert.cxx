@@ -79,6 +79,9 @@ int main(int argc, char *argv[])
     dWIConvert.setUseIdentityMeasurementFrame (useIdentityMeaseurementFrame);
     dWIConvert.setUseBMatrixGradientDirections (useBMatrixGradientDirections);
 
+    if (!outputNiftiFile.empty())
+      outputVolume = outputNiftiFile;
+
     dWIConvert.setOutputFileType(outputVolume);
     dWIConvert.setOutputDirectory(outputDirectory);
     dWIConvert.setOutputBValues(outputBValues);

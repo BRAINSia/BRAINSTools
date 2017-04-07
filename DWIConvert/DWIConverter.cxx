@@ -175,8 +175,11 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
   if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
   {
     std::vector<std::string> pathElements;
-    pathElements.push_back(baseDirectory);
-    pathElements.push_back("/");
+    if (!baseDirectory.empty())
+    {
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
+    }
     pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension (inputVolumeNameTemplate) + ".bval");
     _inputBValues = itksys::SystemTools::JoinPath(pathElements);
     std::cout << "   From template " << inputVolumeNameTemplate << std::endl;
@@ -186,8 +189,11 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
   if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
   {
     std::vector<std::string> pathElements;
-    pathElements.push_back(baseDirectory);
-    pathElements.push_back("/");
+    if (!baseDirectory.empty())
+    {
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
+    }
     pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec" );
     _inputBVectors = itksys::SystemTools::JoinPath(pathElements);
     std::cout << "   From template " << inputVolumeNameTemplate << std::endl;

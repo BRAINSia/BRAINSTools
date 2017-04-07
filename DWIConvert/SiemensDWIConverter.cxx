@@ -4,17 +4,18 @@
 #include "SiemensDWIConverter.h"
 
 SiemensDWIConverter::SiemensDWIConverter (DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
-DWIConverter::FileNamesContainer &inputFileNames,
-const bool useBMatrixGradientDirections,
-const bool FSLFileFormatHorizontalBy3Rows,
-const double smallGradientThreshold) : DWIDICOMConverterBase(allHeaders,inputFileNames,
-        useBMatrixGradientDirections,
-        FSLFileFormatHorizontalBy3Rows),
-m_SmallGradientThreshold(smallGradientThreshold),
-m_MMosaic(0),
-m_NMosaic(0),
-m_Stride(0),
-m_HasCSAHeader(false)
+                                          DWIConverter::FileNamesContainer &inputFileNames,
+                                          const bool useBMatrixGradientDirections,
+                                          const bool FSLFileFormatHorizontalBy3Rows,
+                                          const double smallGradientThreshold) :
+      DWIDICOMConverterBase(allHeaders,inputFileNames,
+                            useBMatrixGradientDirections,
+                            FSLFileFormatHorizontalBy3Rows),
+      m_SmallGradientThreshold(smallGradientThreshold),
+      m_MMosaic(0),
+      m_NMosaic(0),
+      m_Stride(0),
+      m_HasCSAHeader(false)
 {
 }
 

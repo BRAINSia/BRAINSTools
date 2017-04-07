@@ -177,7 +177,8 @@ DWIConverter* DWIConverterFactory::New()
     {
       converter = new SiemensDWIConverter(m_Headers,m_InputFileNames,
                                           m_UseBMatrixGradientDirections,
-                                          m_SmallGradientThreshold, m_FSLFileFormatHorizontalBy3Rows);
+                                          m_FSLFileFormatHorizontalBy3Rows,
+                                          m_SmallGradientThreshold);
     }
     else if(StringContains(this->m_Vendor,"GE"))
     {

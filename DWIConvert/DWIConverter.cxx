@@ -292,7 +292,7 @@ std::string  DWIConverter::MakeFileComment(
                    << "# part of the BRAINSTools package." << std::endl
                    << "# Command line options:" << std::endl
                    << "# --inputFileType " << inputFileType << std::endl;
-    if( std::abs( smallGradientThreshold- 0.2 ) > 1e-4 )
+    if( std::abs( smallGradientThreshold - 0.2 ) > 1e-4 )
     {
       commentSection << "# --smallGradientThreshold " << smallGradientThreshold << std::endl;
     }

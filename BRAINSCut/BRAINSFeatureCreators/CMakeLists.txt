@@ -32,3 +32,4 @@ add_subdirectory(DumpBinaryTrainingVectors)
 
 add_subdirectory(SphericalCoordinateGeneration)
 
+add_subdirectory(HessianToObjectness)

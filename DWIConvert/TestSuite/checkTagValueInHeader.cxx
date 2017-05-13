@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
   }
 
   //read file
-  std::ifstream file(inputFilename);
+  std::ifstream file(inputFilename.c_str());
   std::string lineText;
   while (std::getline(file, lineText))
   {

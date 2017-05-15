@@ -103,6 +103,10 @@ foreach( prog ${ALL_PROGS_LIST} )
   StandardBRAINSBuildMacro( NAME ${prog} TARGET_LIBRARIES BRAINSCutCOMMONLIB )
 endforeach()
 
+add_subdirectory(cnpy) ## https://github.com/rogersce/cnpy Read/write numpy formatted arrays.
+add_executable(ImageFeatureExtractor ImageFeatureExtractor.cpp)
+target_link_libraries(ImageFeatureExtractor BRAINSCommonLib cnpy)
+
 if(1) ## HACK Regina many tests are failing and needs investigation,
       ## HACK Regina some tests are segmentation faulting
   add_subdirectory(TestSuite)

@@ -18,31 +18,38 @@
 //#include "BRAINSCutApplyModel.h"
 #include "cnpy/cnpy.h"
 
-int main(int argc, char * argv[])
+//TODO: Write VTK lines for visualization in Slicer3D
+//TODO: Fix command-line interface to use SlicerExecutionModel
+//TODO: Remove hard-coded elements of this file
+//TODO: Fix Gradient Magnitude mode to use "MaxGradient" of N Input feature images (or other strategy)
+
+
+int main(int argc, char *argv[])
 {
-  if(argc > 1000000)
+  if (argc > 1000000)
   {
-    std::cout << "USAGE: " << argv[0] << "<sample_length> <sample_spacing> <label_image> <GradientMode> <first_feature_image> ... < last_feature_image>" << std::endl;
+    std::cout << "USAGE: " << argv[0]
+              << "<sample_length> <sample_spacing> <label_image> <GradientMode> <first_feature_image> ... < last_feature_image>"
+              << std::endl;
     //GradientMode
     //      First image, just use the first image as the gradient computation
     //      Max gradient, Magnitude.
 
   }
-  typedef itk::Image<float,3> FeatureImageType;
-  typedef itk::Image<unsigned int ,3> LabelImageType;
+  typedef itk::Image<float, 3> FeatureImageType;
+  typedef itk::Image<unsigned int, 3> LabelImageType;
 
-    const int sample_length{std::atoi(argv[1])};
+  const int sample_length{std::atoi(argv[1])};
   const float sample_spacing{static_cast<float>(std::atof(argv[2]))};
   const std::string lblImageFN{argv[3]};
   const int gradient_mode{std::atoi(argv[4])};
 
-  const int numfeatureImages{argc-5};
+  const int numfeatureImages{argc - 5};
   std::vector<std::string> imFeatureImageFilenames;
-  for(auto i=5; i< argc; i++)
+  for (auto i = 5; i < argc; i++)
   {
     imFeatureImageFilenames.push_back(std::string(argv[i]));
   }
-
 
 
   typedef itk::ImageFileReader<LabelImageType> LabelReaderType;
@@ -50,7 +57,7 @@ int main(int argc, char * argv[])
   LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName(lblImageFN);
   labelReader->Update();
-  LabelImageType::Pointer labelImage{ labelReader->GetOutput()};
+  LabelImageType::Pointer labelImage{labelReader->GetOutput()};
   labelReader = nullptr;
 
   typedef itk::ImageFileReader<FeatureImageType> ReaderType;
@@ -60,27 +67,28 @@ int main(int argc, char * argv[])
   std::vector<FeatureImageType::Pointer> imVector;
   std::vector<InterpolatorType::Pointer> imInterpolatorVector;
 
-  for(auto i=0; i< numfeatureImages; ++i)
+  for (auto i = 0; i < numfeatureImages; ++i)
   {
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(imFeatureImageFilenames[i]);
     reader->Update();
-    FeatureImageType::Pointer image=reader->GetOutput();
+    FeatureImageType::Pointer image = reader->GetOutput();
     imVector.push_back(image);
-    InterpolatorType::Pointer interp= InterpolatorType::New();
+    InterpolatorType::Pointer interp = InterpolatorType::New();
     interp->SetInputImage(image);
     imInterpolatorVector.push_back(interp);
   }
 
   typedef itk::GradientImageFilter<FeatureImageType, double, double> GradientFilterType;
   GradientFilterType::OutputImageType::Pointer gradientImage;
-  if(gradient_mode == 1)
+  if (gradient_mode == 1)
   {
     GradientFilterType::Pointer gf = GradientFilterType::New();
     gf->SetInput(imVector[0]);
     gf->Update();
     gradientImage = gf->GetOutput();
-  } else{
+  } else
+  {
     return EXIT_FAILURE;
   }
 
@@ -95,31 +103,31 @@ int main(int argc, char * argv[])
   LabelImageType::PointType currPnt;
 
   step.Fill(1.0);
-  itk::ImageRegionIteratorWithIndex<LabelImageType> it(labelImage,labelImage->GetLargestPossibleRegion());
-  const float start{ -( sample_spacing * ( sample_length/2 ) ) };
-  const float end{ -start };
-  while(!it.IsAtEnd())
+  itk::ImageRegionIteratorWithIndex<LabelImageType> it(labelImage, labelImage->GetLargestPossibleRegion());
+  const float start{-(sample_spacing * (sample_length / 2))};
+  const float end{-start};
+  while (!it.IsAtEnd())
   {
-    const float current_out_value=it.Get();
+    const float current_out_value = it.Get();
 
-    if(current_out_value > 0.0)
+    if (current_out_value > 0.0)
     {
       LabelImageType::IndexType index = it.GetIndex();
-      GradientFilterType::OutputImageType::ValueType grad=gradientImage->GetPixel(index);
+      GradientFilterType::OutputImageType::ValueType grad = gradientImage->GetPixel(index);
       grad.Normalize();
 
-      labelImage->TransformIndexToPhysicalPoint(index,pnt);
-      for(size_t imIdx =0; imIdx < imInterpolatorVector.size(); ++imIdx)
+      labelImage->TransformIndexToPhysicalPoint(index, pnt);
+      for (size_t imIdx = 0; imIdx < imInterpolatorVector.size(); ++imIdx)
       {
-        for(double scaleStep= start; scaleStep <=end; scaleStep+=sample_spacing)
+        for (double scaleStep = start; scaleStep <= end; scaleStep += sample_spacing)
         {
           //const vnl_vector<double> temp = pnt.GetVnlVector() + scaleStep*grad.GetVnlVector();
           //currPnt.operator=(temp.data_block());
-          for(size_t i =0; i< LabelImageType::ImageDimension; ++i)
+          for (size_t i = 0; i < LabelImageType::ImageDimension; ++i)
           {
-            currPnt[i] = pnt[i] + scaleStep*grad[i];
+            currPnt[i] = pnt[i] + scaleStep * grad[i];
           }
-          float curr_value=imInterpolatorVector[imIdx]->Evaluate(currPnt);
+          float curr_value = imInterpolatorVector[imIdx]->Evaluate(currPnt);
           inputVector.push_back(curr_value);
         }
       }
@@ -133,13 +141,15 @@ int main(int argc, char * argv[])
   std::cout << "OutputVector: " << outputVector.size() << std::endl;
 
   unsigned int oshape[1];
-  oshape[0]=outputVector.size();
-  cnpy::npy_save("/Shared/johnsonhj/HDNI/20170425_CerebellumSegmentation/EditorHelperML/out.npy",&(outputVector[0]),oshape,1,"w");
+  oshape[0] = outputVector.size();
+  cnpy::npy_save("/Shared/johnsonhj/HDNI/20170425_CerebellumSegmentation/EditorHelperML/out.npy", &(outputVector[0]),
+                 oshape, 1, "w");
 
   unsigned int ishape[2];
-  ishape[0]=inputVector.size()/outputVector.size();
-  ishape[1] =outputVector.size();
-  cnpy::npy_save("/Shared/johnsonhj/HDNI/20170425_CerebellumSegmentation/EditorHelperML/in.npy",&(inputVector[0]),ishape,2,"w");
+  ishape[0] = inputVector.size() / outputVector.size();
+  ishape[1] = outputVector.size();
+  cnpy::npy_save("/Shared/johnsonhj/HDNI/20170425_CerebellumSegmentation/EditorHelperML/in.npy", &(inputVector[0]),
+                 ishape, 2, "w");
 
   return EXIT_SUCCESS;
 }

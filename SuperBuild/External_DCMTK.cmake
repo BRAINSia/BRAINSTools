@@ -40,7 +40,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   # DCMTK-3.6.1_20160630
   set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
-  set(${proj}_GIT_TAG "a8cf5d114ff318ae75387452f4042fc0a708094c") ##2016-12-10 Need latest to catch C++11 clang fixes
+  set(${proj}_GIT_TAG "d8ed091cda2b815226eafe41f5b4fe3bd22f8d5d") ##20170421
 
   if( USING_MODERN_CXX ) # CXX11 or greater
     set( DCMTK_USE_CXX11_STL_FLAG "-DDCMTK_USE_CXX11_STL:BOOL=ON")

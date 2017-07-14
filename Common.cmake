@@ -93,7 +93,7 @@ cmake_dependent_option(USE_BRAINSConstellationDetectorGUI "Build BRAINSConstella
 mark_as_superbuild(USE_BRAINSConstellationDetectorGUI)
 
 if( USING_MODERN_CXX )
-  cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" OFF "USE_AutoWorkup;USE_ReferenceAtlas" ON)
+  cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" ON "USE_AutoWorkup;USE_ReferenceAtlas" OFF)
 else()
   cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" OFF "USE_AutoWorkup;USE_ReferenceAtlas" OFF)
 endif()

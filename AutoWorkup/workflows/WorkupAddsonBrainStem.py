@@ -36,6 +36,10 @@ def brainStem(tissueLabelFilename,
         del (roiBBStart_index)
         del (roiBBStop_index)
 
+        if roiBBSize_final_index[0] * roiBBSize_final_index[1] * roiBBSize_final_index[2] < 10:
+            raise ValueError('ROI Bounding Box Size is too small!   BCD likely failed due to large initial head rotation')
+
+
         #        print( "XX"*30)
         #        print( brainLbl.GetSize() )
         #        print( roiBBStart_final_index )

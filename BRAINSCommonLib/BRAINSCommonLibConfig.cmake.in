@@ -3,6 +3,11 @@
 # installation)
 get_filename_component(BRAINSCommonLib_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
+set(BRAINSCommonLib_TARGETS_FILE "${BRAINSCommonLib_CONFIG_DIR}/BRAINSCommonLibTargets.cmake")
+if(EXISTS ${BRAINSCommonLib_TARGETS_FILE} AND NOT TARGET BRAINSCommonLib)
+  include(${BRAINSCommonLib_TARGETS_FILE})
+endif()
+
 set(BRAINSCommonLib_USE_FILE "${BRAINSCommonLib_CONFIG_DIR}/UseBRAINSCommonLib.cmake")
 #set(ITK_DIR "@ITK_DIR@")
 

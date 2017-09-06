@@ -1,10 +1,32 @@
 cmake_minimum_required(VERSION 3.5.0) ## Tying to Slicer as of 2017-08-04
 
+#-----------------------------------------------------------------------------
+# Enable C++11
+#-----------------------------------------------------------------------------
+set(_msg "Setting C++ standard")
+message(STATUS "${_msg}")
+if(DEFINED Qt5_DIR)
+  set(CMAKE_CXX_STANDARD 11)
+  # Since SimpleITK requires CMP0067 to properly support C++11, requires
+  # the corresponding CMake version.
+  if(CMAKE_VERSION VERSION_LESS "3.8.2")
+    message(FATAL_ERROR "CMake >= 3.8.2 is required to enable C++11 support")
+  endif()
+else()
+  ## For compatibility with Slicer
+  if(NOT CMAKE_CXX_STANDARD)
+     set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
+  endif()
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
+
 if(POLICY CMP0048)
-  cmake_policy(SET CMP0048 OLD) #OLD project() behavior for setting VERSION variable
+  cmake_policy(SET CMP0048 NEW) #project() behavior for setting VERSION variable
 endif()
 if(POLICY CMP0017)
-  cmake_policy(SET CMP0017 OLD) #Prefer files from the CMake module directory when including from there
+  cmake_policy(SET CMP0017 NEW) #Prefer files from the CMake module directory when including from there
 endif()
 foreach(p
   CMP0054 # CMake 3.1 Only interpret ``if()`` arguments as variables or keywords when unquoted.
@@ -60,10 +82,6 @@ else()
   project(${LOCAL_PROJECT_NAME} C CXX)
 endif()
 
-## For compatibility with Slicer
-if(NOT CMAKE_CXX_STANDARD)
-   set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
-endif()
 ## Now set boolean to determine if a modern C++ is being used
 if( CMAKE_CXX_STANDARD LESS 11 OR CMAKE_CXX_STANDARD GREATER 80)
   set(USING_MODERN_CXX OFF)
@@ -90,10 +108,18 @@ include(itkCheckSourceTree)
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
+  set(PROJECT_NAME SuperBuild_${LOCAL_PROJECT_NAME} )
+  project(${PROJECT_NAME} LANGUAGES C CXX )
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 else()
+#-----------------------------------------------------------------------------
+  set(PROJECT_NAME ${LOCAL_PROJECT_NAME} )
+  # Version information
+  include(Version.cmake)
+  set(_project_version "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}")
+  project(${PROJECT_NAME} LANGUAGES  C CXX VERSION ${_project_version})
+
   include("${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_PROJECT_NAME}.cmake")
   return()
 endif()

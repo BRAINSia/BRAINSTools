@@ -9,9 +9,6 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
-#-----------------------------------------------------------------------------
-# Version information
-include(Version.cmake)
 
 set(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}")
 if(DEFINED ${PROJECT_NAME}_VERSION_PATCH)

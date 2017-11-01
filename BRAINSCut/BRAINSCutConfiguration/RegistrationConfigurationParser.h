@@ -39,6 +39,7 @@ public:
     this->Add(new StringValue("ImageTypeToUse", ""), "ImageTypeToUse");
     this->Add(new StringValue("ID", ""), "ID");
     this->Add(new IntValue("BRAINSROIAutoDilateSize", 1), "BRAINSROIAutoDilateSize");
+    this->Add(new BooleanValue("ProbabilityMapRegistrationToSubject", true), "ProbabilityMapRegistrationToSubject");
   }
 };
 

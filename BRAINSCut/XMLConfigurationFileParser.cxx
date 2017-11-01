@@ -156,6 +156,9 @@ XMLConfigurationFileParser::StartElement(void *userData,
       params->SetAttribute<IntValue>( "BRAINSROIAutoDilateSize",
                                       attribMap.GetIfExist("RegistrationConfiguration",
                                                            "BRAINSROIAutoDilateSize") );
+      params->SetAttribute<BooleanValue>( "ProbabilityMapRegistrationToSubject",
+                                      attribMap.GetIfExist("RegistrationConfiguration",
+                                                           "ProbabilityMapRegistrationToSubject") );
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {

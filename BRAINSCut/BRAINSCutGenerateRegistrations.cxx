@@ -69,8 +69,10 @@ BRAINSCutGenerateRegistrations
     const std::string subjectFilename( (*subjectIt)->GetImageFilenameByType(
                                          myDataHandler->GetRegistrationImageTypeToUse() ) );
 
+    const std::string registrationID = myDataHandler->GetRegistrationID();
+
     const RegistrationType *subjectRegistration = (*subjectIt)->GetRegistrationWithID(
-        myDataHandler->GetRegistrationID() );
+        registrationID );
     const std::string SubjectToAtlasRegistrationFilename
       ( subjectRegistration->GetAttribute<StringValue>("SubjToAtlasRegistrationFilename") );
     const std::string AtlasToSubjRegistrationFilename
@@ -78,7 +80,11 @@ BRAINSCutGenerateRegistrations
     const std::string SubjectBinaryFilename
       ( (*subjectIt)->GetMaskFilenameByType( "RegistrationROI" ) );
 
-    if( atlasToSubjectRegistraionOn &&
+    if( registrationID == "identity" || registrationID == "Identity")
+      {
+      break;
+      }
+    else if( atlasToSubjectRegistraionOn &&
         (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
       {
       // create directories

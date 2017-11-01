@@ -170,6 +170,7 @@ protected:
   ProbabilityMapList *      m_roiDataList;
   DataSet::StringVectorType m_roiIDsInOrder;
   unsigned int              roiCount;
+  bool                      ROIRegistrationToSubject;
 
   /** registration data set */
   RegistrationConfigurationParser * registrationParser;

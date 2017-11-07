@@ -67,6 +67,11 @@ int main(int argc, char *argv[])
     std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
     DWIConvert dWIConvert;
 
+    if (conversionMode == "FSLToNrrd" && (!fslNIFTIFile.empty()))
+      {
+      inputVolume = fslNIFTIFile;
+      }
+
     dWIConvert.setInputFileType(inputVolume, inputDicomDirectory);
     dWIConvert.setInputBValues (inputBValues);
     dWIConvert.setInputBVectors (inputBVectors);
@@ -80,7 +85,9 @@ int main(int argc, char *argv[])
     dWIConvert.setUseBMatrixGradientDirections (useBMatrixGradientDirections);
 
     if (!outputNiftiFile.empty())
+      {
       outputVolume = outputNiftiFile;
+      }
 
     dWIConvert.setOutputFileType(outputVolume);
     dWIConvert.setOutputDirectory(outputDirectory);
@@ -88,8 +95,9 @@ int main(int argc, char *argv[])
     dWIConvert.setOutputBVectors(outputBVectors);
 
     int result = dWIConvert.read();
-    if (EXIT_SUCCESS == result) {
-        return dWIConvert.write(outputVolume);
-    }
+    if (EXIT_SUCCESS == result)
+      {
+      return dWIConvert.write(outputVolume);
+      }
     else return result;
 }

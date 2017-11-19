@@ -1,28 +1,30 @@
-cmake_minimum_required(VERSION 3.8.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9.5 FATAL_ERROR)
+
+if(CMAKE_CXX_STANDARD EQUAL "98" )
+   MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=98 is not supported in ITK version 5 and greater.")
+endif()
 
 #-----------------------------------------------------------------------------
 # Enable C++11
 #-----------------------------------------------------------------------------
-set(_msg "Setting C++ standard")
-message(STATUS "${_msg}")
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
+#####
+##  Set the default target properties for ITK
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 11) # Supported values are ``11``, ``14``, and ``17``.
+endif()
+if(NOT CMAKE_CXX_STANDARD_REQUIRED)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+if(NOT CMAKE_CXX_EXTENSIONS)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
-if(POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW) #project() behavior for setting VERSION variable
-endif()
-if(POLICY CMP0017)
-  cmake_policy(SET CMP0017 NEW) #Prefer files from the CMake module directory when including from there
-endif()
 foreach(p
-  CMP0054 # CMake 3.1 Only interpret ``if()`` arguments as variables or keywords when unquoted.
-  CMP0042 # ``MACOSX_RPATH`` is enabled by default.
-  CMP0025 # AppleClang vs. regular Clang
-  CMP0063 # Honor visibility properties for all target types
-  CMP0012 # 3.10.0
-  )
+    ## Only policies introduced after the cmake_minimum_required
+    ## version need to explicitly be set to NEW.
+    CMP0070 #3.10.0 Define ``file(GENERATE)`` behavior for relative paths.
+    CMP0071 #3.10.0 Let ``AUTOMOC`` and ``AUTOUIC`` process ``GENERATED`` files.
+    )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
   endif()

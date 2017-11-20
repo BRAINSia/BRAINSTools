@@ -46,3 +46,21 @@ Could you please help us find the tools and documentation to achieve this?
 
 Thanks,
 Hans
+
+``` bash
+#!/bin/bash
+
+time python /scratch/SuperResolution/BRAINSSuperResolution/HCPWorkflows/HCPWF.py \
+--inputDWIScan /Shared/johnsonhj/HDNI/ReferenceData/HCP_DATA/${SUBJID}/T1w/Diffusion/data.nii.gz \
+--inputT1Scan /Shared/sinapse/CACHE/20160610_HCP_base_Results/HCP_DATA/${SUBJID}/HCP_${SUBJID}_01/TissueClassify/t1_average_BRAINSABC.nii.gz \
+--inputT2Scan /Shared/sinapse/CACHE/20160610_HCP_base_Results/HCP_DATA/${SUBJID}/HCP_${SUBJID}_01/TissueClassify/t2_average_BRAINSABC.nii.gz \
+--inputStandardLabels /Shared/sinapse/CACHE/20160610_HCP_base_Results/HCP_DATA/${SUBJID}/HCP_${SUBJID}_01/JointFusion/JointFusion_HDAtlas20_2015_fs_standard_label.nii.gz \
+--inputLobeLabels /Shared/sinapse/CACHE/20160610_HCP_base_Results/HCP_DATA/${SUBJID}/HCP_${SUBJID}_01/JointFusion/JointFusion_HDAtlas20_2015_lobe_label.nii.gz \
+--program_paths /scratch/NAMICExternalProjects/release-20160523/bin \
+--python_aux_paths '/scratch/SuperResolution/BRAINSSuperResolution/HCPWorkflows:/scratch/wmql/tract_querier/tract_querier/' \
+--labelsConfigFile /scratch/BS/BRAINSTools/AutoWorkup/DWIProcessingWorkflows/FS_Extended_Labels_Config.csv \
+--workflowCacheDir /Shared/johnsonhj/HDNI/20160804_HCP_Processing_Pipeline/Results/${SUBJID} \
+--resultDir /Shared/johnsonhj/HDNI/20160804_HCP_Processing_Pipeline/Results/${SUBJID}
+_${SUBJID}
+
+```

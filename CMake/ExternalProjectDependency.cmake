@@ -4,21 +4,21 @@
 
 ###########################################################################
 #
-#  Program: BRAINSTools
+#  Program: 3D Slicer
 #
 #  Copyright (c) Kitware Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0.txt
+#  See COPYRIGHT.txt
+#  or http://www.slicer.org/copyright/copyright.txt for details.
 #
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+#
+#  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+#  and was partially funded by NIH grant 3P41RR013218-12S1
 #
 ###########################################################################
 
@@ -343,7 +343,14 @@ function(_sb_get_external_project_arguments proj varname)
     list(APPEND _ep_arguments CMAKE_GENERATOR_PLATFORM ${_sb_CMAKE_GENERATOR_PLATFORM})
   endif()
   list(APPEND _ep_arguments CMAKE_GENERATOR_TOOLSET ${_sb_CMAKE_GENERATOR_TOOLSET})
-
+  if(CMAKE_VERSION VERSION_EQUAL "3.4" OR CMAKE_VERSION VERSION_GREATER "3.4")
+    # USES_TERMINAL_* options were introduced in CMake 3.4
+    foreach(step IN ITEMS DOWNLOAD UPDATE CONFIGURE BUILD TEST INSTALL)
+      list(APPEND _ep_arguments
+        USES_TERMINAL_${step}
+        )
+    endforeach()
+  endif()
   set(${varname} ${_ep_arguments} PARENT_SCOPE)
 endfunction()
 
@@ -786,4 +793,74 @@ function(ExternalProject_Install_CMake project_name)
   ExternalProject_Get_Property(${project_name} binary_dir)
 
   install(SCRIPT ${binary_dir}/cmake_install.cmake)
+endfunction()
+
+#.rst:
+# .. cmake:function:: ExternalProject_SetIfNotDefined
+#
+# Set a variable to its default value if not already defined.
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_SetIfNotDefined(<var> <defaultvalue> [OBFUSCATE] [QUIET])
+#
+# The default value is set with:
+#  (1) if set, the value environment variable <var>.
+#  (2) if set, the value of local variable variable <var>.
+#  (3) if none of the above, the value passed as a parameter.
+#
+# Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
+# Setting the optional parameter 'QUIET' will not display any message.
+macro(ExternalProject_SetIfNotDefined var defaultvalue)
+  set(_obfuscate FALSE)
+  set(_quiet FALSE)
+  foreach(arg ${ARGN})
+    if(arg STREQUAL "OBFUSCATE")
+      set(_obfuscate TRUE)
+    endif()
+    if(arg STREQUAL "QUIET")
+      set(_quiet TRUE)
+    endif()
+  endforeach()
+  if(DEFINED ENV{${var}} AND NOT DEFINED ${var})
+    set(_value "$ENV{${var}}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    if(NOT _quiet)
+      message(STATUS "Setting '${var}' variable with environment variable value '${_value}'")
+    endif()
+    set(${var} $ENV{${var}})
+  endif()
+  if(NOT DEFINED ${var})
+    set(_value "${defaultvalue}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    if(NOT _quiet)
+      message(STATUS "Setting '${var}' variable with default value '${_value}'")
+    endif()
+    set(${var} "${defaultvalue}")
+  endif()
+endmacro()
+
+#.rst:
+# .. cmake:function:: ExternalProject_AlwaysConfigure
+#
+# Add a external project step named `forceconfigure` to `project_name` ensuring
+# the project will always be reconfigured.
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_AlwaysConfigure(<project_name>)
+function(ExternalProject_AlwaysConfigure proj)
+  # This custom external project step forces the configure and later
+  # steps to run.
+  _ep_get_step_stampfile(${proj} "configure" stampfile)
+  ExternalProject_Add_Step(${proj} forceconfigure
+    COMMAND ${CMAKE_COMMAND} -E remove ${stampfile}
+    COMMENT "Forcing configure step for '${proj}'"
+    DEPENDEES build
+    ALWAYS 1
+    )
 endfunction()

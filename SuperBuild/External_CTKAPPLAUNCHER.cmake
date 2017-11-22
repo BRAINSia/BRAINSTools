@@ -21,40 +21,50 @@ if(${CMAKE_PROJECT_NAME}_USE_CTKAPPLAUNCHER)
     message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
   endif()
 
-  if(NOT DEFINED CTKAPPLAUNCHER_DIR)
+  if(NOT DEFINED CTKAppLauncher_DIR)
+
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.14")
-    set(item_id "")
+    set(launcher_version "0.1.21")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
-      set(md5 "e185716a7ee9b674aa213f58dd122c61")
-      set(item_id "6113")
+      set(md5 "9fa2acb7d934a43720a0bee8679cbeff")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "linux")
-      set(md5 "276751c42ee52741afddd5b555f7e600")
-      set(item_id "6111")
+      set(md5 "57d9e6fc1fdfe42d78fc4e277b9559ba")
     elseif("${CTKAPPLAUNCHER_OS}" STREQUAL "macosx")
-      set(md5 "06bff63508db30244467de64afae000b")
-      set(item_id "6112")
+      set(md5 "1f0d86b1eeb386d6892a76db7b111280")
     endif()
+
+    set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj})
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL http://packages.kitware.com/api/rest?method=midas.item.download&id=${item_id}&dummy=CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
+      URL https://github.com/commontk/AppLauncher/releases/download/v${launcher_version}/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
       URL_MD5 ${md5}
-      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
+      SOURCE_DIR ${EP_BINARY_DIR}
+      BUILD_IN_SOURCE 1
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
         ${${proj}_DEPENDENCIES}
       )
-    set(CTKAPPLAUNCHER_DIR ${CMAKE_BINARY_DIR}/${proj})
+
+    ExternalProject_GenerateProjectDescription_Step(${proj}
+      VERSION ${launcher_version}
+      )
+
+    set(CTKAppLauncher_DIR ${EP_BINARY_DIR})
 
   else()
     ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
   endif()
 
-  mark_as_superbuild(CTKAPPLAUNCHER_DIR:PATH)
+  mark_as_superbuild(
+    VARS
+      CTKAppLauncher_DIR:PATH
+    LABELS "FIND_PACKAGE"
+    )
 
 endif()

@@ -43,6 +43,7 @@ endforeach()
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 include(ExternalProject)
 include(ExternalProjectDependency)
+include(ExternalProjectGenerateProjectDescription)
 #-----------------------------------------------------------------------------
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,

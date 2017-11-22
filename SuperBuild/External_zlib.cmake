@@ -29,26 +29,40 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
+  ExternalProject_SetIfNotDefined(
+    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    "${git_protocol}://github.com/commontk/zlib.git"
+    QUIET
+    )
+
+  ExternalProject_SetIfNotDefined(
+    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    "66a753054b356da85e1838a081aa94287226823e"
+    QUIET
+    )
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${git_protocol}://github.com/commontk/zlib.git"
-    GIT_TAG "66a753054b356da85e1838a081aa94287226823e"
+    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
-    CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
-      #-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-      #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      ## CXX should not be needed, but it a cmake default test
+      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
-      ## CXX should not be needed, but it a cmake default test
-#      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
+      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      # macOS
+      -DCMAKE_MACOSX_RPATH:BOOL=0
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
   set(zlib_DIR ${EP_INSTALL_DIR})
   set(ZLIB_ROOT ${zlib_DIR})
   set(ZLIB_INCLUDE_DIR ${zlib_DIR}/include)

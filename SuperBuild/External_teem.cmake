@@ -3,8 +3,8 @@ set(proj teem)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES zlib)
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_teem AND ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK )
-  list(APPEND ${proj}_DEPENDENCIES VTK)
+if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_teem)
+  list(APPEND teem_DEPENDENCIES ${VTK_EXTERNAL_NAME})
 endif()
 
 # Include dependent projects if any
@@ -44,19 +44,32 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
+  ExternalProject_SetIfNotDefined(
+    ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+    "${git_protocol}://github.com/Slicer/teem"
+    QUIET
+    )
+
+  ExternalProject_SetIfNotDefined(
+    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+    "e4746083c0e1dc0c137124c41eca5d23adf73bfa"
+    QUIET
+    )
+
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/teem"
-    GIT_TAG slicer-2015-04-14-r6245
-    SOURCE_DIR teem
-    BINARY_DIR teem-build
-    CMAKE_ARGS -Wno-dev --no-warn-unused-cli
+    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      # Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=OFF
       ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
@@ -69,17 +82,20 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      -DVTK_DIR:PATH=${VTK_DIR}
       -DTeem_VTK_MANGLE:BOOL=OFF ## NOT NEEDED FOR EXTERNAL ZLIB outside of vtk
-      -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
       -DPNG_PNG_INCLUDE_DIR:PATH=${PNG_INCLUDE_DIR}
+      -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+      # macOS
+      -DCMAKE_MACOSX_RPATH:BOOL=0
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
 
-  set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
+  ExternalProject_GenerateProjectDescription_Step(${proj})
+
+  set(Teem_DIR ${EP_BINARY_DIR})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

@@ -340,6 +340,6 @@ private:
 //TODO:  Move out of class all together
 void WriteManualFixFiles(const std::string &EMSP_Fiducial_file_name, SImageType * const mspVolume,
                          const std::string &resultDir, const LandmarksMapType & errorLmks,
-                         const std::string & failureMessage) ;
+                         const std::string & failureMessage, const bool throwException) ;
 
 #endif // __landmarksConstellationDetector__h

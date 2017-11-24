@@ -784,7 +784,7 @@ void landmarksConstellationDetector::Compute( void )
     }
 
   // Throw an exception and stop BCD if RC metric is too low (less than 0.4) because results will not be reliable.
-  if( c_c > -0.4 )
+  if( c_c > -0.40 )
     {
     itkGenericExceptionMacro(<< "Too large MSP estimation error! reflective correlation metric is: "
                              << c_c << std::endl
@@ -807,15 +807,15 @@ void landmarksConstellationDetector::Compute( void )
                            << "IN DIR: " << this->m_ResultsDir
                            << std::endl;
       LandmarksMapType zeroEyeCenters;
-      if(this->m_HoughEyeFailure)
-      {
+      if(this->m_HoughEyeFailure) {
         SImageType::PointType zeroPoint;
-        zeroPoint.Fill( 0 );
+        zeroPoint.Fill(0);
 
         zeroEyeCenters["LE"] = zeroPoint;
         zeroEyeCenters["RE"] = zeroPoint;
       }
-    WriteManualFixFiles(EMSP_Fiducial_file_name, this->m_VolumeMSP, this->m_ResultsDir, zeroEyeCenters, failureMessageStream.str());
+      WriteManualFixFiles(EMSP_Fiducial_file_name, this->m_VolumeMSP, this->m_ResultsDir,
+                          zeroEyeCenters, failureMessageStream.str(), this->m_HoughEyeFailure);
     }
 
   if( globalImagedebugLevel > 2 )
@@ -1459,7 +1459,7 @@ void WriteManualFixFiles(const std::string &EMSP_Fiducial_file_name,
                          SImageType * const mspVolume,
                          const std::string &resultDir,
                          const LandmarksMapType & errorLmks,
-                         const std::string &failureMessage)
+                         const std::string &failureMessage,const bool throwException)
 {//ADD MetaData for EMSP_FCSV_FILENAME
   itk::MetaDataDictionary &dict = mspVolume->GetMetaDataDictionary();
   const char * const metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
@@ -1469,8 +1469,11 @@ void WriteManualFixFiles(const std::string &EMSP_Fiducial_file_name,
   itkUtil::WriteImage<SImageType> (mspVolume, resultDir + "/EMSP.nrrd" );
 
   if(errorLmks.size() > 0)
-  {
+    {
     WriteITKtoSlicer3Lmk( resultDir + "/"+EMSP_Fiducial_file_name, errorLmks );
-  }
-  itkGenericExceptionMacro(<< failureMessage );
+    }
+  if(throwException)
+    {
+    itkGenericExceptionMacro(<< failureMessage );
+    }
 }

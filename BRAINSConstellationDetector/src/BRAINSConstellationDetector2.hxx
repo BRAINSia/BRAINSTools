@@ -396,7 +396,8 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
                             << ", RE[0] = " << this->m_AlignedPoints["RE"][0] << std::endl;
 
      }
-     WriteManualFixFiles(EMSP_Fiducial_file_name, this->m_OutputResampledImage.GetPointer(), this->m_ResultsDir, this->m_AlignedPoints, failureMessageStream.str());
+     WriteManualFixFiles(EMSP_Fiducial_file_name, this->m_OutputResampledImage.GetPointer(),
+                         this->m_ResultsDir, this->m_AlignedPoints, failureMessageStream.str(),true);
    }
 
   if( this->m_WriteBranded2DImage.compare("") != 0 )

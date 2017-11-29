@@ -23,7 +23,7 @@ set(CLP prepSurface)
 StandardBRAINSBuildMacro(
   NAME ${CLP} TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES} ${BRAINSSurfaceTools_ITK_LIBRARIES} vtkITK)
 
-if( BUILD_TESTING )
+if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   enable_testing()
   include(CTest)
 
@@ -37,4 +37,4 @@ if( BUILD_TESTING )
 
   set_tests_properties( ${G0CompareTestName} PROPERTIES DEPENDS ${G0TestName} )
 
-  endif(BUILD_TESTING)
+endif ()

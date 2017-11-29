@@ -1,6 +1,6 @@
 StandardBRAINSBuildMacro(NAME WarpQuadEdgeMesh TARGET_LIBRARIES BRAINSCommonLib ${BRAINSSurfaceTools_ITK_LIBRARIES} ${VTK_LIBRARIES})
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceWarpQuadEdgeMesh
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:WarpQuadEdgeMesh>

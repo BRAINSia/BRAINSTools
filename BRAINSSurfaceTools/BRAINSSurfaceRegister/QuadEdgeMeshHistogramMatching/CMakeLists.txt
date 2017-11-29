@@ -1,7 +1,7 @@
 StandardBRAINSBuildMacro(NAME QuadEdgeMeshHistogramMatching  TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
   ${BRAINSSurfaceTools_ITK_LIBRARIES})
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceHistogramMatching
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:QuadEdgeMeshHistogramMatching>

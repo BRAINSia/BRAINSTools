@@ -2,6 +2,7 @@
 # first, convert multishell FSL into Nrrd
 set(command_line
         ${TEST_PROGRAM}
+        --allowLossyConversion
         --inputVolume ${INPUTVOLUME}
         --outputVolume ${OUTPUTVOLUME}
         )

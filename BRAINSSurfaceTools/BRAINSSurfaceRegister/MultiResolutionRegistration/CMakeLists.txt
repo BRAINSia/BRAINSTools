@@ -1,6 +1,6 @@
 StandardBRAINSBuildMacro(NAME MultiResolutionRegistration TARGET_LIBRARIES BRAINSCommonLib ${BRAINSSurfaceTools_ITK_LIBRARIES} ${VTK_LIBRARIES})
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceMultiResRegistration1

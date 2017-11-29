@@ -20,7 +20,7 @@ StandardBRAINSBuildMacro(NAME BRAINSAssignSurfaceFeatures
   ${BRAINSSurfaceTools_ITK_LIBRARIES}
   ${VTK_LIBRARIES})
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 
 set(BRAINSAssignSurfaceFeaturesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/BRAINSAssignSurfaceFeatures)
 set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)

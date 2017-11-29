@@ -342,8 +342,8 @@ void DWIConverter::ManualWriteNRRDFile(
   header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
   const DWIConverter::RotationMatrixType& NRRDSpaceDirection = this->GetNRRDSpaceDirection();
-  header << "sizes: " << this->GetCols()
-         << " " << this->GetRows()
+  header << "sizes: " << this->GetRows()
+         << " " << this->GetCols()
          << " " << this->GetSlicesPerVolume()
          << " " << this->GetNVolume() << std::endl;
   header << "thicknesses:  NaN  NaN " << DoubleConvert(GetThickness()) << " NaN" << std::endl;

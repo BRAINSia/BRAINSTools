@@ -239,11 +239,10 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
       for( int dIndex = numberOfSamplelingLines - 1; dIndex >= 0; dIndex-- )
         {
         // Equally space the SI sampling around the COM for each index
+        const double percentage = ( static_cast<double>( dIndex + 1 ) /
+            static_cast<double>( numberOfSamplelingLines ) );
         rectPhysPoint[2] =
-          ( rectangularGridRadius
-            * 2.0 )
-          * ( static_cast<double>( dIndex
-                                   + 1 ) / static_cast<double>( numberOfSamplelingLines ) ) - rectangularGridRadius;
+          ( rectangularGridRadius * 2.0 )*  percentage - rectangularGridRadius;
         currRotatedSampleGridLocation[2] = CenterOfMass[2] + rectPhysPoint[2];
         for( rectPhysPoint[1] = -rectangularGridRadius;
              rectPhysPoint[1] < rectangularGridRadius;
@@ -271,7 +270,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
                 }
               maskCountsInPlane[dIndex]++;
               }
-            // #ifdef USE_DEBUGGIN_IMAGES
+            // #ifdef USE_DEBUGGING_IMAGES
             else if( this->m_GenerateDebugImages && isValidRegion )
               {
               this->m_DebugGridImage->SetPixel(currIndex, 0);

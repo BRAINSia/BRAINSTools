@@ -47,7 +47,7 @@ macro(DownloadAndInstallRules UNIQUE_TARGET_NAME GLOBPAT INSTDEST)
         )
     list(APPEND AtlasImageFiles ${INSTDEST}/${${ThisImageVarName}_VAR_BASENAME})
 
-  endforeach(CurrentMD5Reference ${AtlasImageFilesMD5Names})
+  endforeach()
   #message(STATUS "XXXXX\n${AtlasImageFiles}\nZZZZZZZ")
   add_custom_target(${UNIQUE_TARGET_NAME} DEPENDS ${AtlasImageFiles})
 

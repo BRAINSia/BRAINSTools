@@ -40,7 +40,7 @@ macro(BuildMex)
       LINK_TO ${BuildMex_LIBRARIES}
 #--      [...]
   )
-endmacro(BuildMex)
+endmacro()
 
 matlab_add_mex(
       NAME itkLoadWithMetadata

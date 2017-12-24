@@ -38,11 +38,11 @@ set(XXX "
   execute_process(COMMAND ./b2 install --prefix=${BOOST_INSTALL_DIR}
     WORKING_DIRECTORY ${BUILD_DIR} RESULT_VARIABLE build_result)
 
-else(WIN32)
+else()
 
   execute_process(COMMAND ./b2 install
     WORKING_DIRECTORY ${BUILD_DIR} RESULT_VARIABLE build_result)
 
-endif(WIN32)
+endif()
 
 return(${build_result})

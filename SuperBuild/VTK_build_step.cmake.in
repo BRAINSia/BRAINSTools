@@ -7,9 +7,9 @@ if(UNIX)
 
   if(APPLE)
     set(ENV{DYLD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
-  else(APPLE)
+  else()
     set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@")
-  endif(APPLE)
+  endif()
 
   execute_process(
     COMMAND ${MAKE_COMMAND}

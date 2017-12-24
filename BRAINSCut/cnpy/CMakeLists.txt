@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+endif()
 
 project(CNPY)
 
@@ -15,7 +15,7 @@ if(ENABLE_STATIC)
     add_library(cnpy-static STATIC "cnpy.cpp")
     set_target_properties(cnpy-static PROPERTIES OUTPUT_NAME "cnpy")
     install(TARGETS "cnpy-static" ARCHIVE DESTINATION lib)
-endif(ENABLE_STATIC)
+endif()
 
 install(FILES "cnpy.h" DESTINATION include)
 install(FILES "mat2npz" "npy2mat" "npz2mat" DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

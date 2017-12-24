@@ -1,27 +1,27 @@
 # arguments checking
 if( NOT TEST_PROGRAM )
   message( FATAL_ERROR "Require TEST_PROGRAM to be defined" )
-endif( )
+endif()
 
 if( NOT TEST_COMPARE_PROGRAM )
   message( FATAL_ERROR "Require TEST_COMPARE_PROGRAM to be defined" )
-endif( )
+endif()
 
 if( NOT TEST_BASELINE )
   message( FATAL_ERROR "Require TEST_BASELINE to be defined" )
-endif( )
+endif()
 
 if( NOT TEST_BASELINE_NHDR )
   set( TEST_BASELINE_NHDR ${TEST_BASELINE} )
-endif( )
+endif()
 
 if( NOT TEST_INPUT )
   message( FATAL_ERROR "Require TEST_INPUT to be defined" )
-endif( )
+endif()
 
 if( NOT TEST_TEMP_OUTPUT )
   message( FATAL_ERROR "Require TEST_TEMP_OUTPUT to be defined" )
-endif( )
+endif()
 
 # Run the compare program to make sure it built correctly
 # execute_process(
@@ -32,12 +32,12 @@ endif( )
 # if the return value is !=0 bail out
 if( TEST_RESULT )
   message( FATAL_ERROR "Failed: Test compare program ${TEST_COMPARE_PROGRAM} won't run.\n${TEST_ERROR}" )
-endif( )
+endif()
 
 # Check to see if the image we are comparing against exists.  We do this here to avoid a lengthy test for no reason.
 if(NOT EXISTS ${TEST_BASELINE})
   message( FATAL_ERROR "Failed: Baseline image ${TEST_BASELINE} does not exist!\n")
-endif( )
+endif()
 
 
 # run the test program, capture the stdout/stderr and the result var
@@ -56,7 +56,7 @@ if(TEST_FSL_FLAG)
   )
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: Test program ${TEST_PROGRAM} exited != 0.\n${TEST_ERROR}" )
-  endif( )
+  endif()
 
 else()
   ## For testing purposes, convert from dicom to nhdr, nhdr to fsl, fsl to nrrd, then compare results
@@ -91,7 +91,7 @@ else()
   message(STATUS ${TEST_ERROR})
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: Test program ${Test_Command_Line_DICOMToNRRD} exited != 0.\n${TEST_ERROR}" )
-  endif( )
+  endif()
 
   message(STATUS "\n\nTest_Command_Line_NRRDToFSL=${Test_Command_Line_NRRDToFSL}\n")
   execute_process(
@@ -102,7 +102,7 @@ else()
   message(STATUS ${TEST_ERROR})
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: Test program ${Test_Command_Line_NRRDToFSL} exited != 0.\n${TEST_ERROR}" )
-  endif( )
+  endif()
 
   message(STATUS "\n\nTest_Command_Line_FSLToNHDR=${Test_Command_Line_FSLToNHDR}\n")
   execute_process(
@@ -113,7 +113,7 @@ else()
   message(STATUS ${TEST_ERROR})
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: Test program ${Test_Command_Line_FSLToNHDR} exited != 0.\n${TEST_ERROR}" )
-  endif( )
+  endif()
 
 endif()
 
@@ -144,7 +144,7 @@ if(TEST_FSL_FLAG)
     if( TEST_RESULT )
       message( FATAL_ERROR
         "Failed: Test program ${TEST_TEXT_COMPARE} exited != 0.  ${TEST_ERROR}" )
-    endif( )
+    endif()
   #   foreach(file VEC VAL)
   #     file(READ ${TEST_BASELINE_B${file}} baseline)
   #     file(READ ${TEST_TEMP_B${file}} testoutput)
@@ -161,7 +161,7 @@ else()
   # if the return value is !=0 bail out
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: Test program ${TEST_PROGRAM} exited != 0.\n${TEST_ERROR}" )
-  endif( )
+  endif()
 
   #------------------------------------------------------------------------------------------
   set(Test_Compare_Command_Line_TEMP_OUTPUT
@@ -176,7 +176,7 @@ else()
   # again, if return value is !=0 scream and shout
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: ${Test_Compare_Command_Line_TEMP_OUTPUT}: ${TEST_RESULT}")
-  endif( )
+  endif()
 
   if( 0 ) ## These NHDR images are oriented differently, and would need a new BASELINE_NHDR ##TODO:
   #------------------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ else()
   # again, if return value is !=0 scream and shout
   if( TEST_RESULT )
     message( FATAL_ERROR "Failed: ${Test_Compare_Command_Line_NHDR_OUTPUT}: ${TEST_RESULT}")
-  endif( )
+  endif()
   endif()
 endif()
 

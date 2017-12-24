@@ -31,7 +31,7 @@ target_link_libraries(ConvertBetweenFileFormats  ${ConvertBetweenFileFormats_ITK
 if(VTK_FOUND)
   target_link_libraries(ConvertBetweenFileFormats ${VTK_LIBRARIES})
   include_directories( ${ITKApps_SOURCE_DIR}/Auxiliary/vtk )
-endif(VTK_FOUND)
+endif()
 
 install_targets(/bin ConvertBetweenFileFormats)
 

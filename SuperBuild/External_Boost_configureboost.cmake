@@ -7,7 +7,7 @@ if(WIN32) # bootstrap.bat has no options, the options are given to ./b2 when BUI
   execute_process(COMMAND bootstrap.bat
     WORKING_DIRECTORY ${BUILD_DIR} RESULT_VARIABLE boostrap_result)
 
-else(WIN32)
+else()
 
   execute_process(COMMAND ./bootstrap.sh --prefix=${BOOST_INSTALL_DIR}
     --with-libraries=system,thread,program_options,log,math
@@ -19,6 +19,6 @@ else(WIN32)
 ###        any of the unnecessary boost libraries.  ANTS only needs
 ###        the header-only components of boost!
 
-endif(WIN32)
+endif()
 
 return(${bootstrap_result})

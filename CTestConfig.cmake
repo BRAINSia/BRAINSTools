@@ -3,8 +3,8 @@
 ## project to incorporate the testing dashboard.
 ##
 ## # The following are required to submit to the CDash dashboard:
-##   ENABLE_TESTING()
-##   INCLUDE(CTest)
+##   enable_testing()
+##   include(CTest)
 
 set(CTEST_PROJECT_NAME "BRAINSTools")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 EST")

@@ -32,7 +32,7 @@ if(NOT StandardBRAINSBuildMacro)
       # LINK_DIRECTORIES
       # INCLUDE_DIRECTORIES
     )
-    CMAKE_PARSE_ARGUMENTS(BRAINS_SEM
+    cmake_parse_arguments(BRAINS_SEM
       "${options}"
       "${oneValueArgs}"
       "${multiValueArgs}"

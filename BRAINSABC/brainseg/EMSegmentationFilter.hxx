@@ -279,6 +279,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   //
   itk::ImageRandomNonRepeatingConstIteratorWithIndex<ByteImageType> NRit( labelsImage,
                                                                           labelsImage->GetBufferedRegion() );
+  NRit.ReinitializeSeed(121212);
   NRit.SetNumberOfSamples( labelsImage->GetBufferedRegion().GetNumberOfPixels() );
   NRit.GoToBegin();
 

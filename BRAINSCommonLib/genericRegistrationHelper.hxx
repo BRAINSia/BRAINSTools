@@ -350,6 +350,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   m_Registration->SetMetricSamplingStrategy(
                 static_cast<typename RegistrationType::MetricSamplingStrategyType>( m_SamplingStrategy ));
   m_Registration->SetMetricSamplingPercentage(this->m_SamplingPercentage);
+  m_Registration->MetricSamplingReinitializeSeed(121212);
 
   // Create the Command observer and register it with the optimizer.
   // TODO:  make this output optional.

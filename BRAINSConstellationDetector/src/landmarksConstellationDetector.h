@@ -204,7 +204,7 @@ public:
     itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
 
     duplicator->SetInputImage(this->GetOriginalInputImage());
-    SImageType::Pointer taggedImage = duplicator->GetModifiableOutput();
+    SImageType::Pointer taggedImage = duplicator->GetOutput();
 
     SImageType::PixelType low=0.0;
     SImageType::PixelType high=0.0;

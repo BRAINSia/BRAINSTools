@@ -229,7 +229,7 @@ int  main(  int  argc,  char *argv[] )
       testReader->Update();
 
       /** Extract the ImageIO from the testReader. */
-      ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
+      ImageIOBaseType::Pointer testImageIOBase = testReader->GetModifiableImageIO();
 
       numberOfComponents = testImageIOBase->GetNumberOfComponents();
       inputDimension = testImageIOBase->GetNumberOfDimensions();

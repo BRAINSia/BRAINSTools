@@ -57,7 +57,7 @@ ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPo
 
   if( temp == ITK_NULLPTR )
     {
-    itkGenericExceptionMacro(<< "Invalid mask converstion attempted.");
+    itkGenericExceptionMacro(<< "Invalid mask conversation attempted.");
     }
   ImageMaskSpatialObjectType::ConstPointer ImageMask( temp );
   const MaskImageType *tempOutputVolumeROI = ImageMask->GetImage();

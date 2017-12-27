@@ -88,7 +88,7 @@ void DoCenteredTransformMaskClipping(
     typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(tempOutputFixedVolumeROI);
     duplicator->Update();
-    fixedMaskImage = duplicator->GetModifiableOutput();
+    fixedMaskImage = duplicator->GetOutput();
     }
   typename MaskImageType::Pointer movingMaskImage = ITK_NULLPTR;
     {
@@ -98,7 +98,7 @@ void DoCenteredTransformMaskClipping(
     typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(tempOutputMovingVolumeROI);
     duplicator->Update();
-    movingMaskImage = duplicator->GetModifiableOutput();
+    movingMaskImage = duplicator->GetOutput();
     }
 
   typename MaskImageType::PointType fixedInferior  = fixedCenter;
@@ -267,7 +267,7 @@ typename TInputImage::Pointer ClampNoisyTailsOfImage(
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(InputImage);
   duplicator->Update();
-  typename TInputImage::Pointer image = duplicator->GetModifiableOutput();
+  typename TInputImage::Pointer image = duplicator->GetOutput();
 
   float min;
   float max;

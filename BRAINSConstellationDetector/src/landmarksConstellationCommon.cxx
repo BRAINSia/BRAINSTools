@@ -104,7 +104,7 @@ void ComputeMSP(SImageType::Pointer image,
     itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
     MSP->SetInputImage(image);
     MSP->Update();
-    transformedImage = MSP->GetModifiableOutput();
+    transformedImage = MSP->GetOutput();
     }
   else
     {
@@ -137,7 +137,7 @@ void CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string
   itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
-  SImageType::Pointer           MSPImage = MSP->GetModifiableOutput();
+  SImageType::Pointer           MSPImage = MSP->GetOutput();
   const SImageType::SpacingType imSpacing = MSPImage->GetSpacing();
   SImageType::PointType         CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
 
@@ -169,7 +169,7 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
   itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
-  SImageType::Pointer           MSPImage = MSP->GetModifiableOutput();
+  SImageType::Pointer           MSPImage = MSP->GetOutput();
   const SImageType::SpacingType imSpacing = MSPImage->GetSpacing();
   SImageType::PointType CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
     {
@@ -227,7 +227,7 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
   itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
   duplicator->SetInputImage(referenceImage);
   duplicator->Update();
-  SImageType::Pointer RasterImage = duplicator->GetModifiableOutput();
+  SImageType::Pointer RasterImage = duplicator->GetOutput();
 
   itk::ImageRegionIteratorWithIndex<SImageType> rasterIt( RasterImage, RasterImage->GetLargestPossibleRegion() );
   itk::ImageRegionIteratorWithIndex<SImageType> rplaneIt( RotatedPlane, RotatedPlane->GetLargestPossibleRegion() );

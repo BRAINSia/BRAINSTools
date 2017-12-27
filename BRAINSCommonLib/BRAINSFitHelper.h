@@ -375,6 +375,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
 
     itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
       this->m_FixedVolume->GetBufferedRegion() );
+    NRit.ReinitializeSeed(121212);
 
     const typename FixedImageType::SpacingType oneThirdVirtualSpacing = this->m_FixedVolume->GetSpacing() / 3.0;
     NRit.SetNumberOfSamples( numberOfAllSamples ); //Take random samples from entire image.

@@ -306,7 +306,7 @@ int main( int argc, char * argv[] )
   duplicator->SetInputImage( inputVolume );
   duplicator->Update();
 
-  ImageType::Pointer outputVolume =  duplicator->GetModifiableOutput();
+  ImageType::Pointer outputVolume =  duplicator->GetOutput();
 
   // cut by landmarks
   typedef std::vector<std::string>::const_iterator stringVectorIteratorType;

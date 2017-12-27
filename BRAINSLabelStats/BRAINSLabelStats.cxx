@@ -49,14 +49,13 @@ std::string GetXmlLabelName( std::string fileName, int label )
   std::string labelName = "Error";
 
   // Load the XML File
-  itk::DOMNode::Pointer          labelXmlInfo;
   itk::DOMNodeXMLReader::Pointer xmlReader = itk::DOMNodeXMLReader::New();
 
   xmlReader->SetFileName( fileName );
   xmlReader->Update();
 
   // Find the labels and extract name of specified label
-  labelXmlInfo = xmlReader->GetOutput();
+  itk::DOMNode::Pointer  labelXmlInfo = xmlReader->GetOutput();
   itk::DOMNode::ChildrenListType elementList;
   labelXmlInfo->GetAllChildren(elementList);
   for( std::vector<itk::DOMNode *>::iterator it = elementList.begin(); it != elementList.end(); ++it )

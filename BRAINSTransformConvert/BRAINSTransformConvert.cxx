@@ -241,7 +241,7 @@ DoConversion( int argc, char *argv[] )
   typename TransformFileReaderType::Pointer reader = TransformFileReaderType::New();
   reader->SetFileName(inputTransform.c_str() );
   reader->Update();
-  typename TransformFileReaderType::TransformListType *transformList = reader->GetTransformList();
+  typename TransformFileReaderType::TransformListType *transformList = reader->GetModifiableTransformList();
   typename GenericTransformType::Pointer inputXfrm = dynamic_cast<GenericTransformType *>( transformList->front().GetPointer() );
 
   const std::string inputTransformTypeName = inputXfrm->GetTransformTypeAsString();
@@ -357,12 +357,12 @@ DoConversion( int argc, char *argv[] )
             dynamic_cast<DisplacementFieldTransformType *>( compToWrite->GetNthTransform( numOfTransforms-1 ).GetPointer() );
 
           typename DisplacementFieldTransformType::Pointer fixedToMiddleTransform = DisplacementFieldTransformType::New();
-          fixedToMiddleTransform->SetDisplacementField( fixedToMiddleForwardTx->GetDisplacementField() );
-          fixedToMiddleTransform->SetInverseDisplacementField( fixedToMiddleInverseTx->GetDisplacementField() );
+          fixedToMiddleTransform->SetDisplacementField( fixedToMiddleForwardTx->GetModifiableDisplacementField() );
+          fixedToMiddleTransform->SetInverseDisplacementField( fixedToMiddleInverseTx->GetModifiableDisplacementField() );
 
           typename DisplacementFieldTransformType::Pointer movingToMiddleTransform = DisplacementFieldTransformType::New();
-          movingToMiddleTransform->SetDisplacementField( movingToMiddleForwardTx->GetDisplacementField() );
-          movingToMiddleTransform->SetInverseDisplacementField( movingToMiddleInverseTx->GetDisplacementField() );
+          movingToMiddleTransform->SetDisplacementField( movingToMiddleForwardTx->GetModifiableDisplacementField() );
+          movingToMiddleTransform->SetInverseDisplacementField( movingToMiddleInverseTx->GetModifiableDisplacementField() );
 
           typename DisplacementFieldTransformType::Pointer resultSyNTransform = DisplacementFieldTransformType::New();
 

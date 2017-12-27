@@ -64,7 +64,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
   typedef typename ImageIORegionType::SizeType SizeType;
 
   /** Get IOBase of the reader and extract information. */
-  ImageIOBaseType::Pointer imageIOBaseIn = reader->GetImageIO();
+  ImageIOBaseType::Pointer imageIOBaseIn = reader->GetModifiableImageIO();
   ImageIORegionType        iORegionIn = imageIOBaseIn->GetIORegion();
 
   const char * fileNameIn = imageIOBaseIn->GetFileName();
@@ -75,7 +75,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
   SizeType     sizeIn = iORegionIn.GetSize();
 
   /**  Get  IOBase of  the  writer and extract information.  */
-  ImageIOBaseType::Pointer imageIOBaseOut = writer->GetImageIO();
+  ImageIOBaseType::Pointer imageIOBaseOut = writer->GetModifiableImageIO();
   ImageIORegionType        iORegionOut = imageIOBaseOut->GetIORegion();
 
   const char * fileNameOut = imageIOBaseOut->GetFileName();

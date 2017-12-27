@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 
   //Read the original image format
 
-  itk::ImageIOBase::Pointer imageReaderIOBase = imageReader->GetImageIO();
+  itk::ImageIOBase::Pointer imageReaderIOBase = imageReader->GetModifiableImageIO();
   imageReaderIOBase->ReadImageInformation();
   // Note that in ImageIOBase pixel type refers to vector/scalar
   // component type refers to INT, LONG, FLOAT, etc.

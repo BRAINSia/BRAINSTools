@@ -409,7 +409,7 @@ setLowHigh(typename SImageType::Pointer & image,
   typename OtsuCalcType::Pointer OtsuCalc = OtsuCalcType::New();
   OtsuCalc->SetInputHistogram(histogram);
   OtsuCalc->SetNumberOfThresholds(1);
-  OtsuCalc->Update();
+  OtsuCalc->Compute();
   typename OtsuCalcType::OutputType otsuThresholds = OtsuCalc->GetOutput();
 
   low = static_cast<typename SImageType::PixelType>( histogram->Quantile(0, 0.0F + percent) );

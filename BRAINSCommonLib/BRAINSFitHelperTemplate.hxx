@@ -746,7 +746,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
        currentTransformIndex++ )
     {
     const std::string currentTransformType(m_TransformType[currentTransformIndex]);
-    std::cout << "TranformTypes: "
+    std::cout << "TransformTypes: "
               << currentTransformType << "(" << currentTransformIndex + 1 << " of " << m_TransformType.size() << ")."
               << std::endl;
     std::cout << std::flush << std::endl;
@@ -833,7 +833,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       if( m_CurrentGenericTransform.IsNotNull() ) //When null, m_CurrentGenericTransform will be initialized by identity.
         {
         /* NOTE1: m_CurrentGenericTransform is a composite transform. When not null, it is initialized by:
-                 {Intial Moving Transform
+                 {Initial Moving Transform
                         OR
                   Estimated initial transform indicated by initialTransformMode
                         OR

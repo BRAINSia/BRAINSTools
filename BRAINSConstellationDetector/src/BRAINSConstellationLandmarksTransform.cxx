@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
   reader->SetFileName( inputTransformFile );
   reader->Update();
 
-  ReaderType::TransformListType *transformList = reader->GetTransformList();
+  ReaderType::TransformListType *transformList = reader->GetModifiableTransformList();
 
   typedef itk::CompositeTransform<double, 3> BRAINSCompositeTransformType;
 

@@ -129,7 +129,13 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
   myHelper->SetCurrentGenericTransform(ITK_NULLPTR);
   myHelper->SetInitializeTransformMode("useCenterOfROIAlign");
   myHelper->SetTransformType(transformTypeVector);
+  std::vector<double> minStepLength;
+  minStepLength.push_back(0.001);
+  myHelper->SetMinimumStepLength(minStepLength);
+  myHelper->SetDebugLevel(100);
+  myHelper->PrintCommandLine(true,"DEBUGTESTFAILURES");
   myHelper->Update();
+
 
   typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform().GetPointer();

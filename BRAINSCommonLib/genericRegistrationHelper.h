@@ -201,7 +201,7 @@ public:
 
   void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
   {
-    Execute( (const itk::Object *)caller, event );
+    this->Execute( (const itk::Object *)caller, event );
   }
 
   typename TImage::Pointer Transform(typename TTransform::Pointer & xfrm)

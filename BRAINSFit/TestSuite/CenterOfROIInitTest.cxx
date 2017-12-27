@@ -25,6 +25,18 @@
 #include <itkCastImageFilter.h>
 #include <itkIO.h>
 
+/*
+static std::string myGetEnv(std::string p)
+{
+  const char *  const temp = std::getenv(p.c_str());
+  if (temp != nullptr)
+  {
+    return std::string(temp);
+  }
+  return std::string("");
+}
+*/
+
 int main(int, char * *)
 {
   typedef unsigned char                                             MaskPixelType;
@@ -104,6 +116,7 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
   CastType::Pointer movingImageCast = CastType::New();
   movingImageCast->SetInput(eTfmImage);
 
+  //std::string prefix=myGetEnv("DEBUG_PREFIX")
   itkUtil::WriteImage<LocalMaskImageType>(fixedImageCast->GetOutput(), "/tmp/fixed.nii.gz");
   itkUtil::WriteImage<LocalMaskImageType>(movingImageCast->GetOutput(), "/tmp/moving.nii.gz");
 
@@ -129,9 +142,9 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
   myHelper->SetCurrentGenericTransform(ITK_NULLPTR);
   myHelper->SetInitializeTransformMode("useCenterOfROIAlign");
   myHelper->SetTransformType(transformTypeVector);
-  std::vector<double> minStepLength;
-  minStepLength.push_back(0.001);
-  myHelper->SetMinimumStepLength(minStepLength);
+  //std::vector<double> minStepLength;
+  //minStepLength.push_back(0.001);
+  //myHelper->SetMinimumStepLength(minStepLength);
   myHelper->SetDebugLevel(100);
   myHelper->PrintCommandLine(true,"DEBUGTESTFAILURES");
   myHelper->Update();
@@ -164,10 +177,13 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
     error+=e*e;
   }
   const double tolerance = 0.05;
+  std::cout << "PLOT,"<< error << "," << transVector << "," << recoveredTransVector << ","<< tolerance << std::endl;
   if( error > tolerance )
     {
       std::cout << "ERROR term too big: " << error << " must be less than " << tolerance << std::endl;
-    return EXIT_FAILURE;
+      std::cout << "Known Translation Vector: " << transVector << std::endl;
+      std::cout << "Recovered Vector        : " << recoveredTransVector << std::endl;
+      return EXIT_FAILURE;
     }
 
   return EXIT_SUCCESS;

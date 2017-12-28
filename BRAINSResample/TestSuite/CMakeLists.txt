@@ -23,6 +23,9 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4
   )
 
 ## Should provide exactly the same result as BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp
+#NOTE:  need --ignoreInputInformation because the ResampleInPlace can cause
+#       minor numerical differences in the origin/spaceing/directioncos
+#       that are compariable to the reference data set
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
@@ -31,6 +34,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7
   --compareIntensityTolerance 30
   --compareRadiusTolerance 5
   --compareNumberOfPixelsTolerance 1
+  --ignoreInputInformation
   BRAINSResampleTest
   --interpolationMode ResampleInPlace
   --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}

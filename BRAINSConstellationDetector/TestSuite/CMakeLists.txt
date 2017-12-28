@@ -72,6 +72,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSEyeDetectorTestName
   --compareIntensityTolerance 0
   --compareRadiusTolerance 5
   --compareNumberOfPixelsTolerance 0
+  --ignoreInputInformation
+#NOTE:  need --ignoreInputInformation because the ResampleInPlace can cause
+#       minor numerical differences in the origin/spaceing/directioncos
+#       that are compariable to the reference data set
   BRAINSEyeDetectorTest
   --inputVolume DATA{${TestData_DIR}/${BRAINSEyeDetectorTestName}_standard.nrrd}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSEyeDetectorTestName}_aligned.nrrd
@@ -338,6 +342,10 @@ set(BCDTestName BCDTest_ForceVN4Point)
     --compareIntensityTolerance 0
     --compareRadiusTolerance 5
     --compareNumberOfPixelsTolerance 0
+    --ignoreInputInformation
+#NOTE:  need --ignoreInputInformation because the ResampleInPlace can cause
+#       minor numerical differences in the origin/spaceing/directioncos
+#       that are compariable to the reference data set
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -553,7 +561,10 @@ set(BCDTestName BCDTest_ForceVN4Point)
     --compareIntensityTolerance 0
     --compareRadiusTolerance 5
     --compareNumberOfPixelsTolerance 0
-
+    --ignoreInputInformation
+#NOTE:  need --ignoreInputInformation because the ResampleInPlace can cause
+#       minor numerical differences in the origin/spaceing/directioncos
+#       that are compariable to the reference data set
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd

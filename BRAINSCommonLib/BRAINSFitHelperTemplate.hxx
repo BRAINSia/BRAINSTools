@@ -596,6 +596,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetNumberOfIterations( numberOfIterations);
   appMutualRegistration->SetSamplingStrategy(m_SamplingStrategy);
   appMutualRegistration->SetSamplingPercentage(m_SamplingPercentage);
+  // HACK appMutualRegistration->MetricSamplingReinitializeSeed(121212);
 
   appMutualRegistration->SetRelaxationFactor( m_RelaxationFactor );
   appMutualRegistration->SetMaximumStepLength( m_MaximumStepLength );

@@ -34,6 +34,9 @@ FindITKUtil( GTRACT_ITK
   ITKThresholding
   ITKTransform
   ITKNrrdIO
+  ITKDCMTK
+  ITKIODCMTK
+  ITKIORAW
   )
 
 #-----------------------------------------------------------------------------
@@ -86,4 +89,3 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/Common )
 # Build GTRACT Tools
 add_subdirectory(Common)
 add_subdirectory(Cmdline)
-

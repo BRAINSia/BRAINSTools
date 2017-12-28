@@ -1,7 +1,7 @@
 
 #add_executable( gtractCoRegAnatomyTests
 #    ${GTRACT_SOURCE_DIR}/Cmdline/gtractCoRegAnatomyPrimary.cxx gtractCoRegAnatomyTests.cxx )
-#target_link_libraries( gtractCoRegAnatomyTests  BRAINSCommonLib GTRACTCommon )
+#target_link_libraries( gtractCoRegAnatomyTests GTRACTCommon BRAINSCommonLib DWIConvertSupportLib )
 #set_target_properties(gtractCoRegAnatomyTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${GTRACT_BINARY_DIR})
 #set(GTRACT_CoRegAnatomy_TESTS ${GTRACT_BINARY_DIR}/gtractCoRegAnatomyTests )
 #
@@ -41,7 +41,7 @@ set(DWIBASELINE_DIR ${TestData_DIR}/DWI_TestData_OUTPUTS)
 
 ## Test for gtractCoregBvalues
 add_executable( gtractCoregBvaluesTests gtractCoregBvaluesTests.cxx )
-target_link_libraries( gtractCoregBvaluesTests  BRAINSCommonLib GTRACTCommon )
+target_link_libraries( gtractCoregBvaluesTests GTRACTCommon BRAINSCommonLib DWIConvertSupportLib )
 set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 ## TODO: gtractCoregBvalues returns segfault after the registration step.
@@ -69,7 +69,7 @@ set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTOR
 
 ## Test for gtractAverageBvalues
 add_executable( gtractAverageBvaluesTests gtractAverageBvaluesTests.cxx )
-target_link_libraries( gtractAverageBvaluesTests  BRAINSCommonLib GTRACTCommon )
+target_link_libraries( gtractAverageBvaluesTests BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
 set_target_properties(gtractAverageBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(GTRACTTestName GTRACTTest_gtractAverageBvalues)
@@ -88,7 +88,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
 
 ## Test for gtractConcatDwi
 add_executable( gtractConcatDwiTests gtractConcatDwiTests.cxx )
-target_link_libraries( gtractConcatDwiTests  BRAINSCommonLib GTRACTCommon )
+target_link_libraries( gtractConcatDwiTests BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
 set_target_properties(gtractConcatDwiTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(GTRACTTestName GTRACTTest_gtractConcatDwi)
@@ -104,9 +104,41 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
 )
 
+# add the directory containing DWI Dicom NiFTI files
+set(DWITestFileDir ${PROJECT_BINARY_DIR}/../DWIConvert)
+#set(DWITestFileDir /Users/hxie1/Projects/BrainsToolsBuild/DWIConvert)
+
+# in order to make sure the origin are same of concating images, we use same images to concatenate
+
+# new added test case for GTRACT to support NifTI
+# For NifTI, need to find suitible NifTI file for test
+#add_test(NAME ${GTRACTTestName}_Concat_NifTI
+#        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
+#        gtractConcatDwiTest
+#        --inputVolume ${DWITestFileDir}/DWIConvertMultiShellFSITest_Recover.nii,${DWITestFileDir}/DWIConvertMultiShellFSITest_Recover.nii
+#        --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.nii.test.nrrd
+#        )
+
+# new added test case for GTRACT to support Dicom
+add_test(NAME ${GTRACTTestName}_Concat_Dicom
+        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
+        gtractConcatDwiTest
+        --inputVolume ${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1
+        --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.dicom.test.nrrd
+        )
+
+# new added test case for GTRACT to support multi Dicom
+add_test(NAME ${GTRACTTestName}_Concat_multi_Dicom
+        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
+        gtractConcatDwiTest
+        --inputVolume ${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1
+        --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.multidicom.test.nrrd
+        )
+
+
 ## A set of tests for gtractResampleDWIInPlace
 add_executable( gtractResampleDWIInPlaceTests gtractResampleDWIInPlaceTests.cxx )
-target_link_libraries( gtractResampleDWIInPlaceTests  BRAINSCommonLib GTRACTCommon )
+target_link_libraries( gtractResampleDWIInPlaceTests  BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
 set_target_properties(gtractResampleDWIInPlaceTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(GTRACTTestName GTRACTTest_gtractResampleDWIInPlace)

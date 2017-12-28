@@ -48,6 +48,7 @@
 #include "itkGtractImageIO.h"
 #include "gtractResampleB0CLP.h"
 #include "GenericTransformImage.h"
+#include "DWIConvertLib.h"
 
 int main(int argc, char *argv[])
 {
@@ -89,6 +90,18 @@ int main(int argc, char *argv[])
     {
     return EXIT_FAILURE;
     }
+
+  std::string convertedVolume;
+  DWIConvert dwiConvert;
+  if (0 == dwiConvert.convertInputVolumeToNrrdOrNifti(dwiConvert.detectOuputVolumeType(outputVolume),
+                                                      inputVolume,convertedVolume)){
+    inputVolume = convertedVolume;
+  }
+  else{
+    std::cout<<"Error: DWI Convert can not read inputVolume."<<std::endl;
+    return -1;
+  }
+
 
   typedef signed short PixelType;
 

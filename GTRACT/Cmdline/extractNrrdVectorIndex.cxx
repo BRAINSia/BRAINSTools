@@ -50,6 +50,7 @@
 #include "extractNrrdVectorIndexCLP.h"
 #include "BRAINSThreadControl.h"
 #include <BRAINSCommonLib.h>
+#include "DWIConvertLib.h"
 
 int main(int argc, char *argv[])
 {
@@ -79,6 +80,17 @@ int main(int argc, char *argv[])
     {
     return EXIT_FAILURE;
     }
+
+  std::string convertedVolume;
+  DWIConvert dwiConvert;
+  if (0 == dwiConvert.convertInputVolumeToNrrdOrNifti(dwiConvert.detectOuputVolumeType(outputVolume),
+                                                      inputVolume,convertedVolume)){
+    inputVolume = convertedVolume;
+  }
+  else{
+    std::cout<<"Error: DWI Convert can not read inputVolume."<<std::endl;
+    return -1;
+  }
 
   typedef signed short                   PixelType;
   typedef itk::VectorImage<PixelType, 3> NrrdImageType;

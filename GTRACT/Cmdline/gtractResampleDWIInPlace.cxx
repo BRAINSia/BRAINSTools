@@ -55,6 +55,7 @@
 #include "gtractResampleDWIInPlaceCLP.h"
 #include "itkImageDuplicator.h"
 #include "itkNumberToString.h"
+#include "DWIConvertLib.h"
 /**
  * \author Hans J. Johnson
  * \brief This templated function will duplicate the input image, change the direction and origin to refelect the physical space
@@ -125,6 +126,17 @@ int main(int argc, char *argv[])
     {
     return EXIT_FAILURE;
     }
+
+  std::string convertedVolume;
+  DWIConvert dwiConvert;
+  if (0 == dwiConvert.convertInputVolumeToNrrdOrNifti(dwiConvert.detectOuputVolumeType(outputVolume),
+                                                      inputVolume,convertedVolume)){
+    inputVolume = convertedVolume;
+  }
+  else{
+    std::cout<<"Error: DWI Convert can not read inputVolume."<<std::endl;
+    return -1;
+  }
 
   typedef signed short                        PixelType;
   typedef itk::VectorImage<PixelType, 3>      NrrdImageType;

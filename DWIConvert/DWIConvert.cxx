@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     //const std::string version = commandLine.getVersion();
     //BRAINSRegisterAlternateIO();
 
-    std::cout << "======= DWI Convert Public Lib Ctest =========" << std::endl;
+    std::cout << "======= DWI Convert Tool Program=========" << std::endl;
     DWIConvert dWIConvert;
 
     if (conversionMode == "FSLToNrrd" && (!fslNIFTIFile.empty()))

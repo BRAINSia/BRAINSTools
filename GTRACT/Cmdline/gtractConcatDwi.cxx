@@ -51,11 +51,13 @@
 #include <itkComposeImageFilter.h>
 #include "itkNumberToString.h"
 
-#include "gtractConcatDwiCLP.h"
+
 #include "BRAINSThreadControl.h"
 #include "DWIMetaDataDictionaryValidator.h"
 #include <BRAINSCommonLib.h>
 
+#include "gtractConcatDwiCLP.h"
+#include "DWIConvertLib.h"
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
@@ -87,6 +89,17 @@ int main(int argc, char *argv[])
     {
     return EXIT_FAILURE;
     }
+
+  std::vector<std::string> inputVolumeNrrd;
+  DWIConvert dwiConvert;
+  if (0 == dwiConvert.convertInputVolumeVectorToNrrdOrNifti(dwiConvert.detectOuputVolumeType(outputVolume),
+                                                            inputVolume,inputVolumeNrrd)){
+    inputVolume = inputVolumeNrrd;
+  }
+  else{
+    std::cout<<"Error: DWI Convert can not read inputVolume."<<std::endl;
+    return -1;
+  }
 
   typedef signed short                   PixelType;
   typedef itk::VectorImage<PixelType, 3> NrrdImageType;

@@ -1,3 +1,14 @@
+
+FindITKUtil( DWIConvert_ITK
+        ITKImageIntensity
+        ITKImageStatistics
+        ITKTestKernel
+        ITKIODCMTK
+        ITKIORAW
+        ITKDCMTK
+        ITKNrrdIO
+        )
+
 FindVTKUtil(
   vtkIOLegacy
   vtkIOXML
@@ -6,34 +17,69 @@ FindVTKUtil(
   vtkFiltersGeneral
 )
 
+set(DWIConvertDir /Users/hxie1/Projects/BrainsTools/DWIConvert)
+include_directories(${DWIConvertDir})
+set(DWIConvertSrc
+        ${DWIConvertDir}/NRRDDWIConverter.h
+        ${DWIConvertDir}/NRRDDWIConverter.cxx
+        ${DWIConvertDir}/FSLDWIConverter.h
+        ${DWIConvertDir}/FSLDWIConverter.cxx
+        ${DWIConvertDir}/DWIConvertUtils.h
+        ${DWIConvertDir}/DWIConvertUtils.cxx
+        ${DWIConvertDir}/DWIConverterFactory.h
+        ${DWIConvertDir}/DWIConverterFactory.cxx
+        ${DWIConvertDir}/DWIConverter.h
+        ${DWIConvertDir}/DWIConverter.cxx
+        ${DWIConvertDir}/DWIDICOMConverterBase.h
+        ${DWIConvertDir}/DWIDICOMConverterBase.cxx
+        ${DWIConvertDir}/GEDWIConverter.h
+        ${DWIConvertDir}/GenericDWIConverter.h
+        ${DWIConvertDir}/HitachiDWIConverter.h
+        ${DWIConvertDir}/PhilipsDWIConverter.h
+        ${DWIConvertDir}/SiemensDWIConverter.h
+        ${DWIConvertDir}/StringContains.h
+        ${DWIConvertDir}/GEDWIConverter.cxx
+        ${DWIConvertDir}/GenericDWIConverter.cxx
+        ${DWIConvertDir}/HitachiDWIConverter.cxx
+        ${DWIConvertDir}/PhilipsDWIConverter.cxx
+        ${DWIConvertDir}/SiemensDWIConverter.cxx
+        ${DWIConvertDir}/SiemensDWIConverter.hxx
+        ${DWIConvertDir}/DWIConvertLib.cxx
+        ${DWIConvertDir}/DWIConvertLib.h
+        )
+
+
 option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
 ### A local macro for configuring all these programs consistantly for the different platforms.
 ###
+
+include_directories(../../DWIConvert)
+
 set(ALL_PROGS_LIST
-  gtractImageConformity
-  gtractInvertRigidTransform
-  gtractTransformToDisplacementField
-  gtractInvertBSplineTransform
-  gtractResampleCodeImage
-  gtractResampleFibers
-  compareTractInclusion
-  gtractAnisotropyMap
-  gtractTensor
-  gtractCreateGuideFiber
-  gtractFiberTracking
-  gtractResampleAnisotropy
-  gtractResampleB0
-  extractNrrdVectorIndex
-  gtractAverageBvalues
-  gtractConcatDwi
-  gtractCostFastMarching
-  gtractFastMarchingTracking
-  gtractCopyImageOrientation
-  gtractClipAnisotropy
-  gtractInvertDisplacementField
-  gtractResampleDWIInPlace
-  gtractCoregBvalues
-  gtractCoRegAnatomy
+  gtractImageConformity               # support DWI interface
+  gtractInvertRigidTransform          # No need DWI interface
+  gtractTransformToDisplacementField  # No need DWI interface
+  gtractInvertBSplineTransform        # No need DWI interface
+  gtractResampleCodeImage             # No need DWI interface
+  gtractResampleFibers                # No need DWI interface
+  compareTractInclusion               # No need DWI interface
+  gtractAnisotropyMap                 # No need DWI interface
+  gtractTensor                        # No need DWI interface  ???
+  gtractCreateGuideFiber              # No need DWI interface
+  gtractFiberTracking                 # No need DWI interface
+  gtractResampleAnisotropy            # No need DWI interface
+  gtractResampleB0                    # support DWI interface
+  extractNrrdVectorIndex              # support DWI interface
+  gtractAverageBvalues                # support DWI interface
+  gtractConcatDwi                     # support DWI interface
+  gtractCostFastMarching              # No need DWI interface
+  gtractFastMarchingTracking          # No need DWI interface
+  gtractCopyImageOrientation          # support DWI interface
+  gtractClipAnisotropy                # support DWI interface
+  gtractInvertDisplacementField       # No need DWI interface
+  gtractResampleDWIInPlace            # support DWI interface
+  gtractCoregBvalues                  # No need DWI interface
+  gtractCoRegAnatomy                  # support DWI interface
 #  gtractCoRegAnatomyRigid
 #  gtractCoRegAnatomyBspline
 #  gtractFreeTracking
@@ -42,7 +88,7 @@ set(ALL_PROGS_LIST
 #  gtractGraphSearchTracking
   )
 foreach(prog ${ALL_PROGS_LIST})
-  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES GTRACTCommon BRAINSCommonLib ${VTK_LIBRARIES})
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES GTRACTCommon BRAINSCommonLib ${VTK_LIBRARIES} DWIConvertSupportLib)
 endforeach()
 
 if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)

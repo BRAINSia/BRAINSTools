@@ -23,7 +23,20 @@ public:
 
     DWIConverter *getConverter() const;
 
+    //public interface for file convert
+
+    std::string detectOuputVolumeType(const std::string& outputVolume);
+
+    int convertInputVolumeVectorToNrrdOrNifti(const std::string targetType,
+                                              const std::vector<std::string> inputVolumeVector,
+                                              std::vector<std::string>& targetVolumeVector);
+
+    int convertInputVolumeToNrrdOrNifti(const std::string targetType, const std::string inputVolume, std::string& targetVolume);
+
+
     // get and set methods for private data members
+    std::string getInputFileType();
+    std::string getOutputFileType();
     void setInputFileType(const std::string& inputVolume,
                           const std::string& inputDicomDirectory);
 
@@ -91,8 +104,7 @@ public:
 
 private:
 
-    std::string getInputFileType();
-    std::string getOutputFileType();
+
 
     DWIConverter *CreateDicomConverter(
             const std::string inputDicomDirectory,

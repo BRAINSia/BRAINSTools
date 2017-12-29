@@ -177,8 +177,8 @@ public:
       return;
       }
 
-    typename DisplacementFieldType::Pointer deffield = 0;
-    typename DisplacementFieldType::Pointer backdeffield = 0;
+    typename DisplacementFieldType::Pointer deffield = nullptr;
+    typename DisplacementFieldType::Pointer backdeffield = nullptr;
     unsigned int iter = std::numeric_limits<unsigned int>::max();
     double       metricbefore = -1.0;
     double       backmetricbefore = -1.0;
@@ -502,9 +502,9 @@ protected:
 
     m_HarmonicEnergyCalculator = HarmonicEnergyCalculatorType::New();
 
-    m_TrueField = 0;
-    m_TrueWarpGradientCalculator = 0;
-    m_CompWarpGradientCalculator = 0;
+    m_TrueField = nullptr;
+    m_TrueWarpGradientCalculator = nullptr;
+    m_CompWarpGradientCalculator = nullptr;
   }
 
   ~CommandIterationUpdate()

@@ -81,8 +81,8 @@ public:
 protected:
   VectorFFTWRealToHalfHermitianForwardFFTImageFilter() : m_PlanComputed(false),
     m_LastImageSize(0),
-    m_InputBuffer(0),
-    m_OutputBuffer(0)
+    m_InputBuffer(nullptr),
+    m_OutputBuffer(nullptr)
   {
   }
 

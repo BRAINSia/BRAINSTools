@@ -925,7 +925,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
       }
       break;
     default:
-      return NULL;
+      return nullptr;
     }
 }
 

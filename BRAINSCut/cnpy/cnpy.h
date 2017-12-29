@@ -64,14 +64,14 @@ namespace cnpy {
     }
 
     template<typename T> void npy_save(std::string fname, const T* data, const unsigned int* shape, const unsigned int ndims, std::string mode = "w") {
-        FILE* fp = NULL;
+        FILE* fp = nullptr;
 
         if(mode == "a") fp = fopen(fname.c_str(),"r+b");
 
         if(fp) {
             //file exists. we need to append to it. read the header, modify the array size
             unsigned int word_size, tmp_dims;
-            unsigned int* tmp_shape = 0;
+            unsigned int* tmp_shape = nullptr;
             bool fortran_order;
             parse_npy_header(fp,word_size,tmp_shape,tmp_dims,fortran_order);
             assert(!fortran_order);
@@ -119,7 +119,7 @@ namespace cnpy {
         fname += ".npy";
 
         //now, on with the show
-        FILE* fp = NULL;
+        FILE* fp = nullptr;
         unsigned short nrecs = 0;
         unsigned int global_header_offset = 0;
         std::vector<char> global_header;

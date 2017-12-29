@@ -57,7 +57,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
   m_FixedImagePyramid     = FixedImagePyramidType::New();
   m_FieldExpander12     = FieldExpanderType::New();
   m_FieldExpander21     = FieldExpanderType::New();
-  m_InitialDisplacementField = NULL;
+  m_InitialDisplacementField = nullptr;
 
   this->SetNumberOfRequiredOutputs( 2 );
   this->SetNthOutput( 0, this->MakeOutput( 0 ) );
@@ -288,7 +288,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     {
     if( tempField12.IsNull() )
       {
-      m_RegistrationFilter->SetInitialDisplacementField( NULL );
+      m_RegistrationFilter->SetInitialDisplacementField( nullptr );
       }
     else
       {
@@ -453,11 +453,11 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 
   // Release memory
-  m_FieldExpander12->SetInput(NULL);
+  m_FieldExpander12->SetInput(nullptr);
   m_FieldExpander12->GetOutput()->ReleaseData();
-  m_FieldExpander21->SetInput(NULL);
+  m_FieldExpander21->SetInput(nullptr);
   m_FieldExpander21->GetOutput()->ReleaseData();
-  m_RegistrationFilter->SetInput(NULL);
+  m_RegistrationFilter->SetInput(nullptr);
   m_RegistrationFilter->GetOutput(0)->ReleaseData();
   m_RegistrationFilter->GetOutput(1)->ReleaseData();
 }
@@ -604,7 +604,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
       }
       break;
     default:
-      return NULL;
+      return nullptr;
     }
 }
 } // end namespace itk

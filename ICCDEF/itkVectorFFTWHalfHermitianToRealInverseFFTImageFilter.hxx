@@ -197,8 +197,8 @@ VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, VDimension>::Generate
       }
 
     this->m_Plan = fftwf_plan_many_dft_c2r(VDimension, sizes, 3,
-                                           this->m_InputBuffer, 0, 3, 1,
-                                           this->m_OutputBuffer, 0, 3, 1,
+                                           this->m_InputBuffer, nullptr, 3, 1,
+                                           this->m_OutputBuffer, nullptr, 3, 1,
                                            FFTW_MEASURE | FFTW_DESTROY_INPUT);
     delete [] sizes;
     this->m_PlanComputed = true;

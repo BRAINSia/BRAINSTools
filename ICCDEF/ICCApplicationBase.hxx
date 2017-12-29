@@ -74,7 +74,7 @@ ICCApplicationBase<TPreprocessor, TRegistrator>
   try
     {
     this->InitializeRegistrator();
-    m_Preprocessor = NULL;
+    m_Preprocessor = nullptr;
     m_Registrator->Execute();
     }
   catch( itk::ExceptionObject & err )

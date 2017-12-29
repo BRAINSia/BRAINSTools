@@ -109,10 +109,10 @@ template <
 IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 {
   // Images need to be set from the outside
-  this->m_FixedImage = NULL;
-  this->m_MovingImage = NULL;
-  this->m_DisplacementField = NULL;
-  this->m_BackwardDisplacementField = NULL;
+  this->m_FixedImage = nullptr;
+  this->m_MovingImage = nullptr;
+  this->m_DisplacementField = nullptr;
+  this->m_BackwardDisplacementField = nullptr;
 
   // Set up internal registrator with default components
   this->m_FixedImagePyramid = FixedImagePyramidType::New();
@@ -163,7 +163,7 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   this->m_UseHistogramMatching = false;
   this->m_OutDebug = false;
 
-  this->m_InitialDisplacementField = NULL;
+  this->m_InitialDisplacementField = nullptr;
   this->m_ForwardDir = "forward";
   this->m_BackwardDir = "backward";
 }
@@ -278,7 +278,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       this->m_Registration->RemoveObserver(this->m_Tag);
       this->m_Tag = 0;
       }
-    this->m_Registration = NULL;
+    this->m_Registration = nullptr;
     }
   catch( itk::ExceptionObject & err )
     {
@@ -350,8 +350,8 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_OutputPrefix != std::string("none") )
     {
     /*Warp the image with the generated deformation field.*/
-    typename RealImageType::Pointer DeformedMovingImagePtr(0);
-    typename RealImageType::Pointer DeformedFixedImagePtr(0);
+    typename RealImageType::Pointer DeformedMovingImagePtr(nullptr);
+    typename RealImageType::Pointer DeformedFixedImagePtr(nullptr);
 
     typedef WarpImageFilter<RealImageType, RealImageType,
                             TDisplacementField> WarperType;

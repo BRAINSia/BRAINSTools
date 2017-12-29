@@ -80,7 +80,7 @@ int main( int argc, char * argv[] ) {
 
   DImageType3D::Pointer rescaledInputVolume =
       StandardizeMaskIntensity<DImageType3D, ByteImageType>(reader->GetOutput(),
-                                                            ITK_NULLPTR,
+                                                            nullptr,
                                                             0.0005, 1.0 - 0.0005,
                                                             1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                                                             0, MAX_IMAGE_OUTPUT_VALUE);

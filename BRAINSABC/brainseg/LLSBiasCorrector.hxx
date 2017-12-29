@@ -75,7 +75,7 @@ template <class TInputImage, class TProbabilityImage>
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::~LLSBiasCorrector()
 {
-  m_ForegroundBrainMask = ITK_NULLPTR;
+  m_ForegroundBrainMask = nullptr;
 }
 
 template <class TInputImage, class TProbabilityImage>

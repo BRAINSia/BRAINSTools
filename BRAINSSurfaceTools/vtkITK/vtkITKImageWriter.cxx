@@ -44,13 +44,13 @@ vtkStandardNewMacro(vtkITKImageWriter);
 // helper function
 template <class  TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* MeasurementFrameMatrix=ITK_NULLPTR) {
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* MeasurementFrameMatrix=nullptr) {
 
   typedef  itk::Image<TPixelType, Dimension> ImageType;
 
   vtkMatrix4x4 *ijkToRasMatrix = vtkMatrix4x4::New();
 
-  if (rasToIjkMatrix == ITK_NULLPTR)
+  if (rasToIjkMatrix == nullptr)
     {
     std::cerr << "ITKWriteVTKImage: rasToIjkMatrix is null" << std::endl;
     }
@@ -173,7 +173,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
     }
   itkImageWriter->SetInput(itkImporter->GetOutput());
 
-  if (MeasurementFrameMatrix != ITK_NULLPTR)
+  if (MeasurementFrameMatrix != nullptr)
     {
     typedef std::vector<std::vector<double> >    DoubleVectorType;
     typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
@@ -232,7 +232,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 //----------------------------------------------------------------------------
 template <class  TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=ITK_NULLPTR)
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
   std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fileName) );
   bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
@@ -249,11 +249,11 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 //----------------------------------------------------------------------------
 vtkITKImageWriter::vtkITKImageWriter()
 {
-  this->FileName = ITK_NULLPTR;
-  this->RasToIJKMatrix = ITK_NULLPTR;
-  this->MeasurementFrameMatrix = ITK_NULLPTR;
+  this->FileName = nullptr;
+  this->RasToIJKMatrix = nullptr;
+  this->MeasurementFrameMatrix = nullptr;
   this->UseCompression = 0;
-  this->ImageIOClassName = ITK_NULLPTR;
+  this->ImageIOClassName = nullptr;
 }
 
 
@@ -264,13 +264,13 @@ vtkITKImageWriter::~vtkITKImageWriter()
   if (this->FileName)
     {
     delete [] this->FileName;
-    this->FileName = ITK_NULLPTR;
+    this->FileName = nullptr;
     }
 
   if (this->ImageIOClassName)
     {
     delete [] this->ImageIOClassName;
-    this->ImageIOClassName = ITK_NULLPTR;
+    this->ImageIOClassName = nullptr;
     }
 }
 
@@ -316,8 +316,8 @@ void vtkITKImageWriter::Write()
   vtkImageData *inputImage = this->GetImageDataInput(0);
   vtkPointData* pointData = inputImage->GetPointData();
 
-  if ( inputImage == ITK_NULLPTR ||
-       pointData == ITK_NULLPTR )
+  if ( inputImage == nullptr ||
+       pointData == nullptr )
     {
     vtkErrorMacro(<<"vtkITKImageWriter: No image to write");
     return;
@@ -517,7 +517,7 @@ void vtkITKImageWriter::Write()
         ITKWriteVTKImage<TensorPixelType>(this, outImage.GetPointer(),
           this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
         }
-        inputImage->GetPointData()->SetScalars(ITK_NULLPTR);
+        inputImage->GetPointData()->SetScalars(nullptr);
         break;
       default:
         vtkErrorMacro(<< "Execute: Unknown output ScalarType");

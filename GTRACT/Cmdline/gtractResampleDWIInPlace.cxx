@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 
   NrrdImageType::Pointer        resampleImage = imageReader->GetOutput();
   NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
-  GenericTransformType::Pointer baseTransform = ITK_NULLPTR;
+  GenericTransformType::Pointer baseTransform = nullptr;
   if( inputTransform == "ID"  || inputTransform == "Identity" || inputTransform.size() == 0 )
     {
     RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  GenericTransformType::Pointer     warpDWIXFRM = ITK_NULLPTR;
+  GenericTransformType::Pointer     warpDWIXFRM = nullptr;
   if(warpDWITransform.size() > 0)
     {
     if ( warpDWITransform.find(".nii") != std::string::npos )

@@ -80,7 +80,7 @@ void DoCenteredTransformMaskClipping(
     movingCenter[i] = translationVector[i] - rotationCenter[i];
     }
 
-  typename MaskImageType::Pointer fixedMaskImage  = ITK_NULLPTR;
+  typename MaskImageType::Pointer fixedMaskImage  = nullptr;
     {
     const typename MaskImageType::ConstPointer tempOutputFixedVolumeROI =
       ExtractConstPointerToImageMaskFromImageSpatialObject(fixedMask.GetPointer() );
@@ -90,7 +90,7 @@ void DoCenteredTransformMaskClipping(
     duplicator->Update();
     fixedMaskImage = duplicator->GetOutput();
     }
-  typename MaskImageType::Pointer movingMaskImage = ITK_NULLPTR;
+  typename MaskImageType::Pointer movingMaskImage = nullptr;
     {
     const typename MaskImageType::ConstPointer tempOutputMovingVolumeROI =
       ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask.GetPointer() );

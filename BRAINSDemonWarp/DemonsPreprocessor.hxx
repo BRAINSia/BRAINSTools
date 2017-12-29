@@ -183,8 +183,8 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       itkUtil::WriteImage<TOutputImage>(m_OutputFixedImage, "BOBF_Fixed.nii.gz");
       }
     }
-  m_InputMovingImage = ITK_NULLPTR;
-  m_InputFixedImage = ITK_NULLPTR;
+  m_InputMovingImage = nullptr;
+  m_InputFixedImage = nullptr;
 }
 
 /*This function takes in a brain image and a whole brain mask and strips the

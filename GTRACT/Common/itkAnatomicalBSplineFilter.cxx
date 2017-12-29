@@ -71,7 +71,7 @@ AnatomicalBSplineFilter::AnatomicalBSplineFilter()
   m_UpperBoundY = 0.0;
   m_UpperBoundZ = 0.0;
 
-  m_BulkTransform = ITK_NULLPTR;
+  m_BulkTransform = nullptr;
   m_Output = TransformType::New();
 }
 

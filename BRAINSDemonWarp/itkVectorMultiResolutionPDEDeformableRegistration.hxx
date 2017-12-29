@@ -78,7 +78,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
   m_CurrentLevel = 0;
 
   m_StopRegistrationFlag = false;
-  m_InitialDisplacementField = ITK_NULLPTR;
+  m_InitialDisplacementField = nullptr;
 }
 
 /*
@@ -327,7 +327,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
   unsigned int fixedLevel = vnl_math_min(
       (int)m_CurrentLevel, (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
-  DisplacementFieldPointer tempField = ITK_NULLPTR;
+  DisplacementFieldPointer tempField = nullptr;
 
   DisplacementFieldPointer inputPtr = const_cast<DisplacementFieldType *>(
       this->GetInput(2) );
@@ -396,7 +396,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     {
     if( tempField.IsNull() )
       {
-      m_RegistrationFilter->SetInitialDisplacementField(ITK_NULLPTR);
+      m_RegistrationFilter->SetInitialDisplacementField(nullptr);
       }
     else
       {

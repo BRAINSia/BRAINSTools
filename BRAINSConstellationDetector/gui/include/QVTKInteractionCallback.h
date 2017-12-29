@@ -36,7 +36,7 @@
 
 #include <QDebug>
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 // The mouse motion callback, to turn "Slicing" on and off
 class QVTKInteractionCallback : public QObject, public vtkCommand
@@ -44,7 +44,7 @@ class QVTKInteractionCallback : public QObject, public vtkCommand
   Q_OBJECT;
 public:
 
-  QVTKInteractionCallback( const QString & text, const int type, double *bound, QObject *myParent = ITK_NULLPTR );
+  QVTKInteractionCallback( const QString & text, const int type, double *bound, QObject *myParent = nullptr );
 
   void SetImageReslice( vtkImageReslice *reslice )
   {

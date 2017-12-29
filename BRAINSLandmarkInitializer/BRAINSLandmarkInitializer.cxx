@@ -93,7 +93,7 @@ InitializeTransform( int argc, char *argv[] )
 
   typedef itk::Image<PixelType, Dimension>           ImageType;
 
-  ImageType::Pointer referenceImage = ITK_NULLPTR;
+  ImageType::Pointer referenceImage = nullptr;
   if( !inputReferenceImageFilename.empty() )
     {
     typedef itk::ImageFileReader<ImageType> ReaderType;

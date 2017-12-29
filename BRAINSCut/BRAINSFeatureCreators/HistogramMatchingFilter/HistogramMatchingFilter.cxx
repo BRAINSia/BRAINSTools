@@ -79,8 +79,8 @@ main(int argc, char *argv[])
    */
 
   typedef itk::ImageMaskSpatialObject<Dimension> MaskSpatialObjectType;
-  MaskSpatialObjectType::Pointer referenceMaskSpatialObject = ITK_NULLPTR;
-  MaskSpatialObjectType::Pointer inputMaskSpatialObject = ITK_NULLPTR;
+  MaskSpatialObjectType::Pointer referenceMaskSpatialObject = nullptr;
+  MaskSpatialObjectType::Pointer inputMaskSpatialObject = nullptr;
 
   if( !referenceBinaryVolume.empty() && !inputBinaryVolume.empty() )
     {

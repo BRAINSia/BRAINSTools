@@ -26,8 +26,8 @@ class XMLParser
 {
 public:
   XMLParser(const std::string & filename) : m_Filename(filename),
-    m_UserData(ITK_NULLPTR),
-    m_Buffer(ITK_NULLPTR)
+    m_UserData(nullptr),
+    m_Buffer(nullptr)
   {
   }
 

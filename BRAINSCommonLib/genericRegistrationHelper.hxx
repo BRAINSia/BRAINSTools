@@ -64,17 +64,17 @@ template <typename TTransformType, typename TOptimizer, typename TFixedImage,
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
 ::MultiModal3DMutualRegistrationHelper() :
-  m_FixedImage(ITK_NULLPTR),                         // has to be provided by the user.
-  m_MovingImage(ITK_NULLPTR),                        // has to be provided by the user.
-  m_FixedImage2(ITK_NULLPTR),                        // has to be provided by the user.
-  m_MovingImage2(ITK_NULLPTR),                       // has to be provided by the user.
-  m_CompositeTransform(ITK_NULLPTR),              /* It is set by initial moving transform and
+  m_FixedImage(nullptr),                         // has to be provided by the user.
+  m_MovingImage(nullptr),                        // has to be provided by the user.
+  m_FixedImage2(nullptr),                        // has to be provided by the user.
+  m_MovingImage2(nullptr),                       // has to be provided by the user.
+  m_CompositeTransform(nullptr),              /* It is set by initial moving transform and
                                               integrates that with registration output transform.*/
-  m_Transform(ITK_NULLPTR),                          // has to be provided by
+  m_Transform(nullptr),                          // has to be provided by
                                            // this->Initialize().
-  m_Registration(ITK_NULLPTR),                       // has to be provided by
+  m_Registration(nullptr),                       // has to be provided by
                                            // this->Initialize().
-  m_CostMetricObject(ITK_NULLPTR),
+  m_CostMetricObject(nullptr),
   m_SamplingPercentage(1),
   m_NumberOfHistogramBins(200),
   m_NumberOfIterations(0),
@@ -419,7 +419,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 
     OptimizerPointer optimizer =
       dynamic_cast<OptimizerPointer>( m_Registration->GetOptimizer() );
-    if( optimizer == ITK_NULLPTR )
+    if( optimizer == nullptr )
       {
       itkExceptionMacro(<< "Failed to convert pointer to Optimizer type");
       }
@@ -656,7 +656,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     default:
       itkExceptionMacro(
         "MakeOutput request for an output number larger than the expected number of outputs");
-      return ITK_NULLPTR;
+      return nullptr;
     }
 }
 

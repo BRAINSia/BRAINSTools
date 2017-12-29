@@ -100,13 +100,13 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *o
   //
   vtkPointData *pd = input->GetPointData();
   pd=input->GetPointData();
-  if (pd ==ITK_NULLPTR)
+  if (pd ==nullptr)
     {
     vtkErrorMacro(<<"PointData is NULL");
     return;
     }
   vtkDataArray *inScalars=pd->GetScalars();
-  if ( inScalars == ITK_NULLPTR )
+  if ( inScalars == nullptr )
     {
     vtkErrorMacro(<<"Scalars must be defined for distance tranform");
     return;

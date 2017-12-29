@@ -507,21 +507,21 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
 QVTKInteractionCallback::QVTKInteractionCallback(const QString & text, const int type, double *bound,
                                                  QObject *myParent) :
   QObject(myParent),
-  m_origin(ITK_NULLPTR),
+  m_origin(nullptr),
   m_valueSendX(0),
   m_valueSendY(0),
   m_valueSendZ(0)
 {
   EPS = .3;
   m_action = 0;
-  m_imageReslice = ITK_NULLPTR;
-  m_interactor = ITK_NULLPTR;
-  m_direction = ITK_NULLPTR;
-  m_physicalExtentIdentity = ITK_NULLPTR;
-  m_physicalExtent = ITK_NULLPTR;
+  m_imageReslice = nullptr;
+  m_interactor = nullptr;
+  m_direction = nullptr;
+  m_physicalExtentIdentity = nullptr;
+  m_physicalExtent = nullptr;
   m_bound = bound;
-  m_spacing = ITK_NULLPTR;
-  m_indexExtent = ITK_NULLPTR;
+  m_spacing = nullptr;
+  m_indexExtent = nullptr;
   m_text_physicalLocation = text;
   m_type = type;
   m_lastPos[0] = 0;

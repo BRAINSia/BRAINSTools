@@ -217,7 +217,7 @@ public:
       MapOfFloatImageVectors::iterator test_map_location = this->m_AtlasOriginalImageList.find( type );
       if( test_map_location == this->m_AtlasOriginalImageList.end() )
         {
-        return ITK_NULLPTR;
+        return nullptr;
         }
       return *(test_map_location->second.begin());
     }

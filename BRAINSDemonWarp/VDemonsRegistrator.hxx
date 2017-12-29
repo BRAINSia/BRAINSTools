@@ -106,7 +106,7 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   // Images need to be set from the outside
   m_VectorFixedImage = VectorImageType::New();
   m_VectorMovingImage = VectorImageType::New();
-  m_DisplacementField = ITK_NULLPTR;
+  m_DisplacementField = nullptr;
 
   // Set up internal registrator with default components
   m_FixedImagePyramid = FixedImagePyramidType::New();
@@ -160,7 +160,7 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   m_UseHistogramMatching = false;
   m_OutDebug = false;
 
-  m_InitialDisplacementField = ITK_NULLPTR;
+  m_InitialDisplacementField = nullptr;
   m_InterpolationMode = "Linear";
 }
 
@@ -295,7 +295,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
         m_VectorRegistration->RemoveObserver(m_VectorTag);
         m_VectorTag = 0;
         }
-      m_VectorRegistration = ITK_NULLPTR;
+      m_VectorRegistration = nullptr;
       }
     catch( itk::ExceptionObject & err )
       {
@@ -371,7 +371,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
         m_Registration->RemoveObserver(m_Tag);
         m_Tag = 0;
         }
-      m_Registration = ITK_NULLPTR;
+      m_Registration = nullptr;
       }
     catch( itk::ExceptionObject & err )
       {
@@ -409,10 +409,10 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_WarpedImageName != std::string("none")
       || this->m_CheckerBoardFilename != std::string("none") )
     {
-    typename RealImageType::Pointer DeformedMovingImagePtr(ITK_NULLPTR);
+    typename RealImageType::Pointer DeformedMovingImagePtr(nullptr);
 
       {
-      typename RealImageType::Pointer sourceMovingImage = ITK_NULLPTR;
+      typename RealImageType::Pointer sourceMovingImage = nullptr;
       if( this->GetUseHistogramMatching() == true )
         {
         sourceMovingImage = m_MovingImage[0];

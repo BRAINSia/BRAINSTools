@@ -251,7 +251,7 @@ public:
 
   std::vector<CellIdentifierListType> m_ClusterBorderVector;
 protected:
-  QuadEdgeMeshDualFastMarching() : m_Mesh( ITK_NULLPTR ),
+  QuadEdgeMeshDualFastMarching() : m_Mesh( nullptr ),
     m_NumberOfUnprocessedElements( 1 ),
     m_FastMarchingComputed( false )
   {
@@ -334,11 +334,11 @@ protected:
       dynamic_cast<PolygonType *>( m_Mesh->GetCells(
                                      )->GetElement( iId_face ) );
 
-    if( poly != ITK_NULLPTR )
+    if( poly != nullptr )
       {
       QEType* edge = poly->GetEdgeRingEntry();
 
-      if( edge != ITK_NULLPTR )
+      if( edge != nullptr )
         {
         if( edge->GetLeft() != iId_face )
           {

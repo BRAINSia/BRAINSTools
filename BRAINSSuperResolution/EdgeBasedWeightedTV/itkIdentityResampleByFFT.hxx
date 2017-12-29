@@ -64,7 +64,7 @@ ResampleImageFilter< TInputImage, TOutputImage, TInterpolatorPrecisionType, TTra
   m_Interpolator = dynamic_cast< InterpolatorType * >
     ( LinearInterpolatorType::New().GetPointer() );
 
-  m_Extrapolator = ITK_NULLPTR;
+  m_Extrapolator = nullptr;
 
   m_DefaultPixelValue
     = NumericTraits<PixelType>::ZeroValue( m_DefaultPixelValue );
@@ -210,11 +210,11 @@ ResampleImageFilter< TInputImage, TOutputImage, TInterpolatorPrecisionType, TTra
 ::AfterThreadedGenerateData()
 {
   // Disconnect input image from the interpolator
-  m_Interpolator->SetInputImage(ITK_NULLPTR);
+  m_Interpolator->SetInputImage(nullptr);
   if( !m_Extrapolator.IsNull() )
     {
     // Disconnect input image from the extrapolator
-    m_Extrapolator->SetInputImage(ITK_NULLPTR);
+    m_Extrapolator->SetInputImage(nullptr);
     }
 }
 

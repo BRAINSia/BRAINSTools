@@ -115,11 +115,11 @@ ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
   // Load the PointData into the itk::Mesh
   //
   vtkPointData * inputPointData = m_inputPolyData->GetPointData();
-  if( inputPointData != ITK_NULLPTR )
+  if( inputPointData != nullptr )
     {
     vtkDataArray * dataArray = m_inputPolyData->GetPointData()->GetScalars();
 
-    if( dataArray != ITK_NULLPTR )
+    if( dataArray != nullptr )
       {
       typedef typename OutputMeshType::PointDataContainer PointDataContainer;
 

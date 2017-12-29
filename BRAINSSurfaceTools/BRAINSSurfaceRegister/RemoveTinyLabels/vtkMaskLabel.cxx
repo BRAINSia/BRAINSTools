@@ -38,7 +38,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 vtkStandardNewMacro(vtkMaskLabel);
 
@@ -68,7 +68,7 @@ int vtkMaskLabel::RequestData(
   vtkIdType     id, pid;
   vtkPointData *pd;
   vtkIdType     numCells;
-  vtkIdType *   pts = ITK_NULLPTR;
+  vtkIdType *   pts = nullptr;
   vtkIdType     npts = 0;
   bool          LabelYes;
   int           abortExecute = 0;

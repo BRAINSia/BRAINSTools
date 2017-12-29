@@ -32,11 +32,11 @@ MeshToMeshRegistrationMethod<TFixedMesh, TMovingMesh>
 {
   this->SetNumberOfRequiredOutputs( 1 );      // for the Transform
 
-  m_FixedMesh   = ITK_NULLPTR;     // has to be provided by the user.
-  m_MovingMesh  = ITK_NULLPTR;     // has to be provided by the user.
-  m_Transform       = ITK_NULLPTR; // has to be provided by the user.
-  m_Metric          = ITK_NULLPTR; // has to be provided by the user.
-  m_Optimizer       = ITK_NULLPTR; // has to be provided by the user.
+  m_FixedMesh   = nullptr;     // has to be provided by the user.
+  m_MovingMesh  = nullptr;     // has to be provided by the user.
+  m_Transform       = nullptr; // has to be provided by the user.
+  m_Metric          = nullptr; // has to be provided by the user.
+  m_Optimizer       = nullptr; // has to be provided by the user.
 
   m_InitialTransformParameters = ParametersType(1);
   m_LastTransformParameters = ParametersType(1);
@@ -214,7 +214,7 @@ MeshToMeshRegistrationMethod<TFixedMesh, TMovingMesh>
       break;
     default:
       itkExceptionMacro("MakeOutput request for an output number larger than the expected number of outputs");
-      return ITK_NULLPTR;
+      return nullptr;
     }
 }
 

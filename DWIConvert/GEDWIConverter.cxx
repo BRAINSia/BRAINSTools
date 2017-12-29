@@ -145,16 +145,16 @@ void GEDWIConverter::AddFlagsToDictionary()
 
       // relevant GE tags
       DcmDictEntry *GEDictBValue = new DcmDictEntry(0x0043, 0x1039, DcmVR(EVR_IS),
-                                                    "B Value of diffusion weighting", 1, 1, ITK_NULLPTR, true,
+                                                    "B Value of diffusion weighting", 1, 1, nullptr, true,
                                                     "dicomtonrrd");
       DcmDictEntry *GEDictXGradient = new DcmDictEntry(0x0019, 0x10bb, DcmVR(EVR_DS),
-                                                       "X component of gradient direction", 1, 1, ITK_NULLPTR, true,
+                                                       "X component of gradient direction", 1, 1, nullptr, true,
                                                        "dicomtonrrd");
       DcmDictEntry *GEDictYGradient = new DcmDictEntry(0x0019, 0x10bc, DcmVR(EVR_DS),
-                                                       "Y component of gradient direction", 1, 1, ITK_NULLPTR, true,
+                                                       "Y component of gradient direction", 1, 1, nullptr, true,
                                                        "dicomtonrrd");
       DcmDictEntry *GEDictZGradient = new DcmDictEntry(0x0019, 0x10bd, DcmVR(EVR_DS),
-                                                       "Z component of gradient direction", 1, 1, ITK_NULLPTR, true,
+                                                       "Z component of gradient direction", 1, 1, nullptr, true,
                                                        "dicomtonrrd");
 
       itk::DCMTKFileReader::AddDictEntry(GEDictBValue);

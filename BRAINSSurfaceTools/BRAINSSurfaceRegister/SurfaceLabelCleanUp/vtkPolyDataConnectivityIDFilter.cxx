@@ -45,7 +45,7 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 vtkStandardNewMacro(vtkPolyDataConnectivityIDFilter);
 
@@ -115,7 +115,7 @@ int vtkPolyDataConnectivityIDFilter::RequestData(
   //  Check input/allocate storage
   inPts = input->GetPoints();
 
-  if( inPts == ITK_NULLPTR )
+  if( inPts == nullptr )
     {
     vtkErrorMacro("No points!");
     return 1;
@@ -134,7 +134,7 @@ int vtkPolyDataConnectivityIDFilter::RequestData(
   this->InScalars = input->GetPointData()->GetScalars();
   if( !this->ScalarConnectivity )
     {
-    this->InScalars = ITK_NULLPTR;
+    this->InScalars = nullptr;
     }
   else
     {

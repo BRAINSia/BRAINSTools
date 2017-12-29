@@ -30,7 +30,7 @@
 #include <vector>
 #include <cctype>
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 class ElementParser :
   public ElementContainer
@@ -140,7 +140,7 @@ public:
       {
       std::cout << "ERROR:  map does not contain element for "
                 << lowercaseName << std::endl;
-      return ITK_NULLPTR;
+      return nullptr;
       }
 
     return dynamic_cast<const T *>( it->second );     // returns zero if it can't
@@ -158,7 +158,7 @@ public:
       {
       std::cout << "ERROR:  map does not contain element for "
                 << lowercaseName << std::endl;
-      return ITK_NULLPTR;
+      return nullptr;
       }
 
     return dynamic_cast<T *>( it->second );     // returns zero if it can't
@@ -170,7 +170,7 @@ public:
   {
     T *t = this->Get<T>(name);
 
-    if( t == ITK_NULLPTR )
+    if( t == nullptr )
       {
       std::cout << "ERROR:  Can not set name " << name << " to value "
                 << val << std::endl;
@@ -183,7 +183,7 @@ public:
   {
     const T *t = this->Get<T>(name);
 
-    if( t == ITK_NULLPTR )
+    if( t == nullptr )
       {
       //      return std::string();
       std::string err("Can't find ");
@@ -198,7 +198,7 @@ public:
   {
     T *t = this->Get<T>(name);
 
-    if( t == ITK_NULLPTR )
+    if( t == nullptr )
       {
       //      return std::string();
       std::string err("Can't find ");
@@ -257,7 +257,7 @@ public:
     for( it = this->begin(); it != this->end(); ++it )
       {
       T *current = dynamic_cast<T *>( it->second );
-      if( current == ITK_NULLPTR )           // skip everything not of the
+      if( current == nullptr )           // skip everything not of the
         {                          // requested type
         continue;
         }
@@ -284,7 +284,7 @@ public:
     for( it = this->begin(); it != this->end(); ++it )
       {
       const T *current = dynamic_cast<const T *>( it->second );
-      if( current == ITK_NULLPTR )
+      if( current == nullptr )
         {
         continue;
         }
@@ -294,7 +294,7 @@ public:
         return current;
         }
       }
-    return ITK_NULLPTR;
+    return nullptr;
   }
 
   //
@@ -309,7 +309,7 @@ public:
     for( it = this->begin(); it != this->end(); ++it )
       {
       T *current = dynamic_cast<T *>( it->second );
-      if( current == ITK_NULLPTR )
+      if( current == nullptr )
         {
         continue;
         }
@@ -319,7 +319,7 @@ public:
         return current;
         }
       }
-    return ITK_NULLPTR;
+    return nullptr;
   }
 
   const_iterator begin() const

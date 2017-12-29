@@ -43,19 +43,19 @@
 
 #include <iostream>
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 class QSliceViewer : public QVTKWidget
 {
   Q_OBJECT
 public:
 
-  QSliceViewer( int type, QWidget *myParent = ITK_NULLPTR ) :
+  QSliceViewer( int type, QWidget *myParent = nullptr ) :
     QVTKWidget( myParent ),
-    m_bound(ITK_NULLPTR)
+    m_bound(nullptr)
   {
     m_actors = vtkActor2DCollection::New();
-    m_actor = ITK_NULLPTR;
+    m_actor = nullptr;
     m_type = type;
     m_cPos = -1.0;
     m_color = 0;

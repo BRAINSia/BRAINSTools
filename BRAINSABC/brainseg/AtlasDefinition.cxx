@@ -267,13 +267,13 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   std::streamsize fSize =
     itksys::SystemTools::FileLength(XMLFilename.c_str() );
 
-  XML_Parser parser = XML_ParserCreate(ITK_NULLPTR);
+  XML_Parser parser = XML_ParserCreate(nullptr);
   XML_SetUserData( parser, static_cast<void *>( this ) );
   XML_SetElementHandler(parser, AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
   XML_SetCharacterDataHandler(parser, AtlasXMLParser::XMLcharhandler);
 
   auto filebuf = new char[fSize];
-  if( filebuf == ITK_NULLPTR )
+  if( filebuf == nullptr )
     {
     std::cout << "ERROR:  memory char[" << fSize << "] can not be allocated properly " << std::flush << std::endl;
     throw;

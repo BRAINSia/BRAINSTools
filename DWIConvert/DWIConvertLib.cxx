@@ -224,7 +224,7 @@ DWIConverter * DWIConvert::CreateDicomConverter(
   if( inputDicomDirectory == emptyString )
   {
     std::cerr << "Missing DICOM input directory path" << std::endl;
-    return ITK_NULLPTR;
+    return nullptr;
   }
 
 // use the factor to instantiate a converter object based on the vender.
@@ -240,12 +240,12 @@ DWIConverter * DWIConvert::CreateDicomConverter(
   catch( itk::ExceptionObject &excp)
   {
     std::cerr << "Exception creating converter " << excp << std::endl;
-    return ITK_NULLPTR;
+    return nullptr;
   }
   if (NULL == converter)
   {
     std::cerr << "Unable to create converter!" << std::endl;
-    return ITK_NULLPTR;
+    return nullptr;
   }
 
 // read Dicom directory
@@ -258,7 +258,7 @@ DWIConverter * DWIConvert::CreateDicomConverter(
   {
     std::cerr << "Exception creating converter " << excp << std::endl;
     delete converter;
-    return ITK_NULLPTR;
+    return nullptr;
   }
   // extract the DWI data
   try
@@ -269,7 +269,7 @@ DWIConverter * DWIConvert::CreateDicomConverter(
   {
     std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
     delete converter;
-    return ITK_NULLPTR;
+    return nullptr;
   }
 // this is a punt, it will still write out the volume image
 // even if we don't know how to extract gradients.

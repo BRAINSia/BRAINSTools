@@ -24,22 +24,22 @@
 /** constructors */
 BRAINSCutDataHandler
 ::BRAINSCutDataHandler() :
-  trainingVectorConfiguration(ITK_NULLPTR),
-  TrainConfiguration(ITK_NULLPTR),
-  m_atlasDataSet(ITK_NULLPTR),
+  trainingVectorConfiguration(nullptr),
+  TrainConfiguration(nullptr),
+  m_atlasDataSet(nullptr),
   m_atlasFilename(""),
   m_atlasBinaryFilename(""),
-  m_atlasImage(ITK_NULLPTR),
-  m_roiDataList(ITK_NULLPTR),
+  m_atlasImage(nullptr),
+  m_roiDataList(nullptr),
   m_roiIDsInOrder(),
   roiCount(0),
-  registrationParser(ITK_NULLPTR),
+  registrationParser(nullptr),
   registrationImageTypeToUse(""),
   registrationID(""),
   roiAutoDilateSize(0),
-  m_rho(ITK_NULLPTR),
-  m_phi(ITK_NULLPTR),
-  m_theta(ITK_NULLPTR),
+  m_rho(nullptr),
+  m_phi(nullptr),
+  m_theta(nullptr),
   m_gradientSize(0),
   m_trainVectorFilename(""),
   m_normalization(""),
@@ -47,28 +47,28 @@ BRAINSCutDataHandler
   RandomForestModelFilename(""),
   ANNTestingSSEFilename(""),
   myConfigurationFilename(""),
-  myConfiguration(ITK_NULLPTR)
+  myConfiguration(nullptr)
 {
 }
 
 BRAINSCutDataHandler
 ::BRAINSCutDataHandler( const std::string & modelConfigurationFilename ) :
-  trainingVectorConfiguration(ITK_NULLPTR),
-  TrainConfiguration(ITK_NULLPTR),
-  m_atlasDataSet(ITK_NULLPTR),
+  trainingVectorConfiguration(nullptr),
+  TrainConfiguration(nullptr),
+  m_atlasDataSet(nullptr),
   m_atlasFilename(""),
   m_atlasBinaryFilename(""),
-  m_atlasImage(ITK_NULLPTR),
-  m_roiDataList(ITK_NULLPTR),
+  m_atlasImage(nullptr),
+  m_roiDataList(nullptr),
   m_roiIDsInOrder(),
   roiCount(0),
-  registrationParser(ITK_NULLPTR),
+  registrationParser(nullptr),
   registrationImageTypeToUse(""),
   registrationID(""),
   roiAutoDilateSize(0),
-  m_rho(ITK_NULLPTR),
-  m_phi(ITK_NULLPTR),
-  m_theta(ITK_NULLPTR),
+  m_rho(nullptr),
+  m_phi(nullptr),
+  m_theta(nullptr),
   m_gradientSize(0),
   m_trainVectorFilename(""),
   m_normalization(""),
@@ -76,7 +76,7 @@ BRAINSCutDataHandler
   RandomForestModelFilename(""),
   ANNTestingSSEFilename(""),
   myConfigurationFilename(""),
-  myConfiguration(ITK_NULLPTR)
+  myConfiguration(nullptr)
 {
   try
     {
@@ -328,7 +328,7 @@ BRAINSCutDataHandler
     {
     std::cout << "* No candidate region is given! "
               << std::endl;
-    return ITK_NULLPTR;
+    return nullptr;
     }
   else if( !itksys::SystemTools::FileExists( candidateRegionFilename.c_str() ) )
     {

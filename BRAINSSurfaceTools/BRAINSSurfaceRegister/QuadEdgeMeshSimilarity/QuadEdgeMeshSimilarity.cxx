@@ -82,7 +82,7 @@ int main( int argc, char * argv [] )
     {
     labelArray1 = inputSurface1->GetPointData()->GetArray(labelName1.c_str() );
     }
-  if( labelArray1 == ITK_NULLPTR )
+  if( labelArray1 == nullptr )
     {
     std::cerr << "surface1 does't have label array with the name: " << labelName1 << std::endl;
     std::cerr << "Quit." << std::endl;
@@ -111,7 +111,7 @@ int main( int argc, char * argv [] )
     {
     labelArray2 = inputSurface2->GetPointData()->GetArray(labelName2.c_str() );
     }
-  if( labelArray2 == ITK_NULLPTR )
+  if( labelArray2 == nullptr )
     {
     std::cerr << "surface2 does't have label array with the name: " << labelName2 << std::endl;
     std::cerr << "Quit." << std::endl;

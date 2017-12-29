@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
       }
     }
 
-  FixedVolumeType::Pointer fixedImage = ITK_NULLPTR;
+  FixedVolumeType::Pointer fixedImage = nullptr;
   try
     {
     typedef itk::ImageFileReader<FixedVolumeType> FixedVolumeReaderType;

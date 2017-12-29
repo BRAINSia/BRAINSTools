@@ -51,7 +51,7 @@
 #include <vtkSmartPointer.h>
 #include "vtkMath.h"
 
-#include "itkMacro.h" // Needed for ITK_NULLPTR
+#include "itkMacro.h" // Needed for nullptr
 
 int main( int argc, char * *argv )
 {
@@ -161,7 +161,7 @@ int main( int argc, char * *argv )
 
     if( distanceToPC_AP )
       {
-      if( surface->GetPointData()->GetScalars() == ITK_NULLPTR )
+      if( surface->GetPointData()->GetScalars() == nullptr )
         {
         surface->GetPointData()->SetScalars(distArray_AP);
         }
@@ -173,7 +173,7 @@ int main( int argc, char * *argv )
 
     if( distanceToPC_IS )
       {
-      if( surface->GetPointData()->GetScalars() == ITK_NULLPTR )
+      if( surface->GetPointData()->GetScalars() == nullptr )
         {
         surface->GetPointData()->SetScalars(distArray_IS);
         }
@@ -229,7 +229,7 @@ int main( int argc, char * *argv )
 
     // add the array to surface
     depthArray->SetName("distToHull");
-    if( surface->GetPointData()->GetScalars() == ITK_NULLPTR )
+    if( surface->GetPointData()->GetScalars() == nullptr )
       {
       surface->GetPointData()->SetScalars(depthArray);
       }
@@ -275,7 +275,7 @@ int main( int argc, char * *argv )
 
     // add the array to surface
     thickArray->SetName("corticalThickness");
-    if( surface->GetPointData()->GetScalars() == ITK_NULLPTR )
+    if( surface->GetPointData()->GetScalars() == nullptr )
       {
       surface->GetPointData()->SetScalars(thickArray);
       }
@@ -313,7 +313,7 @@ int main( int argc, char * *argv )
     std::string arrayName = curvatureType + "_Curvature";
 
     curveArray->SetName(arrayName.c_str() );
-    if( surface->GetPointData()->GetScalars() == ITK_NULLPTR )
+    if( surface->GetPointData()->GetScalars() == nullptr )
       {
       surface->GetPointData()->SetScalars(curveArray);
       }

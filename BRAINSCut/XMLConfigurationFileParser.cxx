@@ -41,7 +41,7 @@ XMLConfigurationFileParser::StartElement(void *userData,
 
   StringMap attribMap;
 
-  for( unsigned i = 0; atts[i] != ITK_NULLPTR; i += 2 )
+  for( unsigned i = 0; atts[i] != nullptr; i += 2 )
     {
     attribMap[std::string(atts[i])] = std::string(atts[i + 1]);
     }

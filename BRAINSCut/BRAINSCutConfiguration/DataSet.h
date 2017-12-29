@@ -63,7 +63,7 @@ public:
     const ListType *   list = this->Get<ListType>(listName);
     const ElementType *element    = list->template GetMatching<ElementType>("Type", type);
 
-    return element == ITK_NULLPTR ? std::string() :
+    return element == nullptr ? std::string() :
            element->template GetAttribute<StringValue>("Filename");
   }
 

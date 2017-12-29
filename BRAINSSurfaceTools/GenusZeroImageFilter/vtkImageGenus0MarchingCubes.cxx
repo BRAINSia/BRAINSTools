@@ -32,7 +32,7 @@
 #include <map>
 #include "genus0.h"
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 vtkStandardNewMacro(vtkImageGenus0MarchingCubes);
 
@@ -86,15 +86,15 @@ vtkImageGenus0MarchingCubes::vtkImageGenus0MarchingCubes()
 
   iConnectedComponents = 0;
 
-  pCorrectedImageData = ITK_NULLPTR;
+  pCorrectedImageData = nullptr;
 }
 
 vtkImageGenus0MarchingCubes::~vtkImageGenus0MarchingCubes()
 {
-  if( pCorrectedImageData != ITK_NULLPTR )
+  if( pCorrectedImageData != nullptr )
     {
     pCorrectedImageData->Delete();
-    pCorrectedImageData = ITK_NULLPTR;
+    pCorrectedImageData = nullptr;
     }
 }
 
@@ -139,7 +139,7 @@ int vtkImageGenus0MarchingCubes::RequestData( vtkInformation *vtkNotUsed(request
 
   // get memory for the topologcially corrected volume
 
-  if( pCorrectedImageData != ITK_NULLPTR )
+  if( pCorrectedImageData != nullptr )
     {
     pCorrectedImageData->Delete();
     }
@@ -311,10 +311,10 @@ int vtkImageGenus0MarchingCubes::RequestData( vtkInformation *vtkNotUsed(request
 
   outData->SetPoints(_Points);
   _Points->Delete();
-  _Points = ITK_NULLPTR;
+  _Points = nullptr;
   outData->SetPolys(_Triangles);
   _Triangles->Delete();
-  _Triangles = ITK_NULLPTR;
+  _Triangles = nullptr;
 
   // now export the topologically corrected image
   // g0->output

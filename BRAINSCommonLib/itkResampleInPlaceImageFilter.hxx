@@ -38,8 +38,8 @@ namespace itk
 template <class TInputImage, class TOutputImage>
 ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 ::ResampleInPlaceImageFilter() :
-  m_OutputImage( ITK_NULLPTR ),
-  m_RigidTransform( ITK_NULLPTR )
+  m_OutputImage( nullptr ),
+  m_RigidTransform( nullptr )
 {
   this->SetNumberOfRequiredInputs( 1 );
 }

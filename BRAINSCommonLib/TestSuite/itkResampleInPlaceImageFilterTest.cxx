@@ -108,7 +108,7 @@ int main( int argc, char * argv[] )
   ImageSpacingType   spacing = outputImage->GetSpacing();
 
   // Read in baseline image
-  ImagePointer baselineImage = ITK_NULLPTR;
+  ImagePointer baselineImage = nullptr;
     {
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( argv[2] );

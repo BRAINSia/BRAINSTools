@@ -14,7 +14,7 @@ static const int VALUE_TOLERANCE_FAILURE_CODE=4;
 
 int readFileIntoBuffer(const char* filename, char** buffer){
   FILE* pFile = fopen(filename, "rb");
-  if (NULL == pFile) {
+  if (nullptr == pFile) {
     std::cerr<<"Sorry, can not open file: "<<filename<<std::endl;
     return FILE_READ_FAILURE_CODE;
   }
@@ -124,11 +124,11 @@ int main(int argc, char * argv[])
 
 
   //Open files to read data into vector
-  char* buffer1 = NULL;
+  char* buffer1 = nullptr;
   if (0 != readFileIntoBuffer(argv[1], &buffer1)){
     return FILE_READ_FAILURE_CODE;
   }
-  char* buffer2 = NULL;
+  char* buffer2 = nullptr;
   if (0 != readFileIntoBuffer(argv[2], &buffer2)){
     delete[] buffer1;
     return FILE_READ_FAILURE_CODE;

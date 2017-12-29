@@ -156,7 +156,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
     typedef itk::TransformFileReader TransformReaderType;
     typename TransformReaderType::Pointer affineReader =  TransformReaderType::New();
     typedef typename TransformReaderType::TransformType BaseTransformType;
-    BaseTransformType * baseTransform(0);
+    BaseTransformType * baseTransform(nullptr);
 
     std::cout << "Read ITK transform from text file: " << m_InitialTransformFilename << std::endl;
 
@@ -190,7 +190,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
     itk::TransformFileReader::TransformListType::const_iterator it
       = transforms->begin();
 
-    TransformType* trsf = NULL;
+    TransformType* trsf = nullptr;
     if( transforms->size() == 1 ) // There is no bulk transform.
       {
       // baseTransform = transforms->front();
@@ -351,8 +351,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
                                       "HistogramModifiedMovingImage.nii.gz");
     }
 
-  m_InputMovingImage = NULL;
-  m_InputFixedImage = NULL;
+  m_InputMovingImage = nullptr;
+  m_InputFixedImage = nullptr;
 }
 
 /*This function takes in a brain image and a whole brain mask and strips the

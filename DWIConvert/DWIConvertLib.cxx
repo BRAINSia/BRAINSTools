@@ -37,7 +37,7 @@ DWIConvert::DWIConvert()
     m_outputBValues = emptyString; //default: emptyString
     m_outputBVectors = emptyString;//default: emptyString
 
-    m_converter = NULL;
+    m_converter = nullptr;
 
 }
 
@@ -142,7 +142,7 @@ int DWIConvert::read()
     std::cerr << "Invalid conversion mode" << std::endl;
     return EXIT_FAILURE;
   }
-  return (NULL == m_converter ? EXIT_FAILURE : EXIT_SUCCESS);
+  return (nullptr == m_converter ? EXIT_FAILURE : EXIT_SUCCESS);
 
 }
 
@@ -242,7 +242,7 @@ DWIConverter * DWIConvert::CreateDicomConverter(
     std::cerr << "Exception creating converter " << excp << std::endl;
     return nullptr;
   }
-  if (NULL == converter)
+  if (nullptr == converter)
   {
     std::cerr << "Unable to create converter!" << std::endl;
     return nullptr;

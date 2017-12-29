@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   intensityReader->Update();
   FloatImageType::Pointer lriImage = intensityReader->GetOutput();
   FloatImageType::Pointer X_lr = NormalizeDataComponent(lriImage);
-  lriImage=NULL;
+  lriImage=nullptr;
 
   FloatImageType::Pointer SRImage = OpWeightedL2(X_lr, highResEdgeImage);
 

@@ -206,8 +206,8 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
   typedef itk::SpatialObject<dims>        ImageMaskType;
   typedef typename ImageMaskType::Pointer ImageMaskPointer;
 
-  ImageMaskPointer fixedMask = NULL;
-  ImageMaskPointer movingMask = NULL;
+  ImageMaskPointer fixedMask = nullptr;
+  ImageMaskPointer movingMask = nullptr;
 
   typedef typename itk::ICCDEFWarp
     <ImageType,

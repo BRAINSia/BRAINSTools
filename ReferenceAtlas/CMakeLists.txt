@@ -49,6 +49,7 @@ macro(DownloadAndInstallRules UNIQUE_TARGET_NAME GLOBPAT INSTDEST)
 
   endforeach()
   #message(STATUS "XXXXX\n${AtlasImageFiles}\nZZZZZZZ")
+  #message(STATUS "${UNIQUE_TARGET_NAME} DEPENDS ${AtlasImageFiles}")
   add_custom_target(${UNIQUE_TARGET_NAME} DEPENDS ${AtlasImageFiles})
 
 endmacro()

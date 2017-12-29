@@ -13,6 +13,7 @@ configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
 #target_link_libraries(TestLinearRegressionTesting BRAINSCommonLib )
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
+add_dependencies(BRAINSABCTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>

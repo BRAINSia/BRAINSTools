@@ -248,7 +248,7 @@ public:
 
 protected:
   BRAINSFitHelper();
-  virtual ~BRAINSFitHelper()
+  ~BRAINSFitHelper() override
   {
   }
 

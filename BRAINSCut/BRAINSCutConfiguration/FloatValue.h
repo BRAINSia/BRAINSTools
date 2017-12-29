@@ -26,7 +26,7 @@ class FloatValue :
 {
 public:
   typedef NumericValue<double> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const override
+  int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== FloatValue === !"
@@ -48,7 +48,7 @@ public:
 
   void SetValue(const std::string & stringval);
 
-  virtual bool Verify() const override;
+  bool Verify() const override;
 
 private:
 };

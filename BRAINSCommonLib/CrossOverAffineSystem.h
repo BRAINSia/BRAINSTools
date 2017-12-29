@@ -136,7 +136,7 @@ protected:
   itkSetMacro(ExhaleDecodeConversion, AffineTransformPointer);
 
   CrossOverAffineSystem();
-  virtual ~CrossOverAffineSystem();
+  ~CrossOverAffineSystem() override;
 
   mutable AffineTransformPointer m_InhaleEncodeConversion;
   mutable AffineTransformPointer m_InhaleDecodeConversion;

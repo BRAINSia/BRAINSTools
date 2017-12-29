@@ -148,7 +148,7 @@ public:
 
 protected:
   ResampleInPlaceImageFilter();
-  ~ResampleInPlaceImageFilter()
+  ~ResampleInPlaceImageFilter() override
   {
   };
 

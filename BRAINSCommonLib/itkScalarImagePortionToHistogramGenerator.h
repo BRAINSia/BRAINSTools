@@ -112,7 +112,7 @@ public:
 
 protected:
   ScalarImagePortionToHistogramGenerator();
-  virtual ~ScalarImagePortionToHistogramGenerator()
+  ~ScalarImagePortionToHistogramGenerator() override
   {
   }
 

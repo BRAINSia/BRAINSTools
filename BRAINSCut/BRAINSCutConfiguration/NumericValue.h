@@ -26,7 +26,7 @@ class NumericValue :
 {
 public:
   typedef XMLContents<T> SuperClass;
-  virtual int PrintSelf(std::ostream &, int indent) const
+  int PrintSelf(std::ostream &, int indent) const override
   {
     // indent+=SuperClass::PrintSelf(os, indent);
     // os << this->PrintSpaces(indent) << "=== NumericValue ===" <<
@@ -40,7 +40,7 @@ public:
   {
   }
 
-  T GetValue(void) const
+  T GetValue(void) const override
   {
     return this->m_Value;
   }

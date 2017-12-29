@@ -148,7 +148,7 @@ public:
 
 protected:
   MixtureStatisticCostFunction();
-  virtual ~MixtureStatisticCostFunction();
+  ~MixtureStatisticCostFunction() override;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 

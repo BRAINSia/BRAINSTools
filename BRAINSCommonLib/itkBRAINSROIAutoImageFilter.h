@@ -166,7 +166,7 @@ public:
 #endif
 protected:
   BRAINSROIAutoImageFilter();
-  virtual ~BRAINSROIAutoImageFilter()
+  ~BRAINSROIAutoImageFilter() override
   {
   }
 

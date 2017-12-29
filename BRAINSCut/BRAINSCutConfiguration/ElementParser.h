@@ -60,7 +60,7 @@ public:
   {
   }
 
-  virtual ~ElementParser()
+  ~ElementParser() override
   {
     for( iterator it = m_Map.begin();
          it != m_Map.end(); ++it )
@@ -69,7 +69,7 @@ public:
       }
   }
 
-  virtual bool Verify() const override
+  bool Verify() const override
   {
     static bool             ErrorPrinted = false;
     MapType::const_iterator it;
@@ -89,7 +89,7 @@ public:
     return true;
   }
 
-  virtual int PrintSelf(std::ostream & os, int indent) const override
+  int PrintSelf(std::ostream & os, int indent) const override
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== ElementParser ===" <<

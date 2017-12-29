@@ -29,14 +29,14 @@ public:
   FSLDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
   const std::string inputBValues, const std::string inputBVectors, const bool FSLFileFormatHorizontalBy3Rows);
 
-  virtual ~FSLDWIConverter() {}
+  ~FSLDWIConverter() override {}
 
-  virtual void AddFlagsToDictionary() override;
+  void AddFlagsToDictionary() override;
 
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
    */
-   virtual void LoadFromDisk() override;
+   void LoadFromDisk() override;
 
    /**
     * @brief  find the bvalues and gradient vectors
@@ -47,7 +47,7 @@ public:
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
+  CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
 
 
 private:

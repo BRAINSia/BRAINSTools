@@ -115,12 +115,12 @@ public:
 
 protected:
   FindCenterOfBrainFilter();
-  ~FindCenterOfBrainFilter();
+  ~FindCenterOfBrainFilter() override;
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
   void AllocateOutputs() override;
 
-  virtual void GenerateData() override;
+  void GenerateData() override;
 
 private:
   bool         m_Maximize;

@@ -259,7 +259,7 @@ public:
   itkGetConstMacro(SaveState, std::string);
 protected:
   BRAINSFitHelperTemplate();
-  virtual ~BRAINSFitHelperTemplate()
+  ~BRAINSFitHelperTemplate() override
   {
   }
 

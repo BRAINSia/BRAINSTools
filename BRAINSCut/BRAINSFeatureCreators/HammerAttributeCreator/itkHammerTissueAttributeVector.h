@@ -69,7 +69,7 @@ public:
 
   /** define interface for computing similarity/difference between two
     * attribute vectors */
-  virtual double ComputeSimilarity(const VectorType & vec2) const override
+  double ComputeSimilarity(const VectorType & vec2) const override
   {
     if( this->operator[](0) != vec2.operator[](0) )
       {
@@ -87,7 +87,7 @@ public:
       }
   }
 
-  virtual double ComputeDifference(const VectorType & vec2) const override
+  double ComputeDifference(const VectorType & vec2) const override
   {
     const double diff = ComputeSimilarity(vec2);
 
@@ -126,7 +126,7 @@ public:
     return this->operator[](4);
   }
 
-  virtual bool IsQualifiedDrivingVoxel(std::vector<float> & qualifier) override
+  bool IsQualifiedDrivingVoxel(std::vector<float> & qualifier) override
   {
     if( this->GetEdge() == 0 )
       {
@@ -173,7 +173,7 @@ public:
   {
   }
 
-  ~HammerTissueAttributeVector()
+  ~HammerTissueAttributeVector() override
   {
   }
 

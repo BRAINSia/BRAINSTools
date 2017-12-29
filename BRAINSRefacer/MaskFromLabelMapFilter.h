@@ -35,9 +35,9 @@ protected:
     {
     this->SetInput(TImage::New());
     };
-  ~MaskFromLabelMapFilter(){};
+  ~MaskFromLabelMapFilter() override{};
 
-  virtual void GenerateData() override
+  void GenerateData() override
     {
     //resample LabelImage
     typedef itk::NearestNeighborInterpolateImageFunction<TAtlas, double> NN_InterpolatorType;

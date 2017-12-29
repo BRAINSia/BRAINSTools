@@ -31,11 +31,11 @@ public:
                       const bool useBMatrixGradientDirections,
                       const bool FSLFileFormatHorizontalBy3Rows);
 
-  virtual ~HitachiDWIConverter();
+  ~HitachiDWIConverter() override;
   /* load dicom directory -- no postprocessing necessary after letting
    * superclass do its thing.
    */
-  virtual void LoadDicomDirectory() override;
+  void LoadDicomDirectory() override;
   /** extract gradient vectors.
    *  Hitachi apparently supports the Supplement 49 definition
    *  for Diffusion data.-- see page 94 of the Supplement 49 document:
@@ -44,7 +44,7 @@ public:
   void ExtractDWIData() override;
 
 protected:
-  virtual void AddFlagsToDictionary() override;
+  void AddFlagsToDictionary() override;
 
 };
 

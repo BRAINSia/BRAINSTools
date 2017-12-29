@@ -91,7 +91,7 @@ public:
 
 protected:
   AverageImageFilter() {}
-  virtual ~AverageImageFilter() {}
+  ~AverageImageFilter() override {}
 
   void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId) override;
 

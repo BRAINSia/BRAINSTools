@@ -161,7 +161,7 @@ public:
 protected:
   IntegrityMetricMembershipFunction();
   virtual ~IntegrityMetricMembershipFunction(void) {}
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Set the mean used in the Mahalanobis distance.
     * This method run sanity checks after mean is computed.  */

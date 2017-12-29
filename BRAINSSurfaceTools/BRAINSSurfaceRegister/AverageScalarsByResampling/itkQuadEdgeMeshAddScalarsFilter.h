@@ -74,7 +74,7 @@ protected:
   QuadEdgeMeshAddScalarsFilter();
   ~QuadEdgeMeshAddScalarsFilter();
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
 private:
 

@@ -146,7 +146,7 @@ public:
   itkGetConstObjectMacro( BasisSystemList, BasisSystemListType );
 
   /** Evaluate at the specified input position */
-  virtual OutputType Evaluate( const InputType& input) const ITK_OVERRIDE;
+  virtual OutputType Evaluate( const InputType& input) const override;
 
   /** Set Sphere Center.  The implementation of this class assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -169,7 +169,7 @@ protected:
   NodeScalarGradientCalculator();
   ~NodeScalarGradientCalculator();
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(NodeScalarGradientCalculator);

@@ -94,7 +94,7 @@ public:
 
   /** Evaluate the function at specified Point position.
    * Subclasses must provide this method. */
-  virtual TOutput Evaluate( const PointType& point ) const ITK_OVERRIDE = 0;
+  virtual TOutput Evaluate( const PointType& point ) const override = 0;
 
 protected:
   MeshFunction();
@@ -102,7 +102,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
   /** Const pointer to the input image. */
   InputMeshConstPointer m_Mesh;

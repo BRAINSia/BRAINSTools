@@ -24,7 +24,7 @@
 #include <string>
 
 #include "Log.h"
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 namespace mu
 {
@@ -54,7 +54,7 @@ public:
     os << m_Message << std::endl;
   }
 
-  const char * what() const throw ( ) ITK_OVERRIDE
+  const char * what() const throw ( ) override
   {
     return m_Message.c_str();
   }

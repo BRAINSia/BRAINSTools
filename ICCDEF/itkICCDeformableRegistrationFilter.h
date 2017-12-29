@@ -153,9 +153,9 @@ public:
 //  virtual void SetUseGradientType( GradientType gtype );
 //  virtual GradientType GetUseGradientType() const;
 
-  virtual void CopyInputToOutput() ITK_OVERRIDE;
+  virtual void CopyInputToOutput() override;
 
-  virtual void PostProcessOutput() ITK_OVERRIDE { }
+  virtual void PostProcessOutput() override { }
 
   /** Use a first-order approximation of the exponential.
    *  This amounts to using an update rule of the type
@@ -222,7 +222,7 @@ public:
   itkGetMacro( MinJac, float );
 
   using Superclass::MakeOutput;
-  virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
+  virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx) override;
 
   virtual void SetInitialForwardDisplacementField( DisplacementFieldType * ptr )
   {
@@ -234,7 +234,7 @@ public:
     this->SetInput( 4, ptr );
   }
 
-  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
+  virtual void GenerateInputRequestedRegion() override;
 
   virtual void SetMovingImageMask( MaskType *mask);
 
@@ -254,21 +254,21 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
   /** Initialize the state of filter and equation before each iteration. */
-  virtual void InitializeIteration() ITK_OVERRIDE;
+  virtual void InitializeIteration() override;
 
   /** This method allocates storage in m_UpdateBuffer.  It is called from
    * FiniteDifferenceFilter::GenerateData(). */
-  virtual void AllocateUpdateBuffer() ITK_OVERRIDE;
+  virtual void AllocateUpdateBuffer() override;
 
   /** Apply update. */
-  virtual void ApplyUpdate(const TimeStepType& dt) ITK_OVERRIDE;
+  virtual void ApplyUpdate(const TimeStepType& dt) override;
 
-  virtual TimeStepType CalculateChange() ITK_OVERRIDE;
+  virtual TimeStepType CalculateChange() override;
 
-  virtual void Initialize() ITK_OVERRIDE;
+  virtual void Initialize() override;
 
   void ComputeLinearElastic(DisplacementFieldFFTPointer &, float normalizer);
 
@@ -321,7 +321,7 @@ private:
 
   static ITK_THREAD_RETURN_TYPE ComputeInverseConsistencyThreaderCallback(void * arg);
 
-  virtual unsigned int SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType& splitRegion) ITK_OVERRIDE;
+  virtual unsigned int SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType& splitRegion) override;
 
   /** Exp and composition typedefs */
   typedef MultiplyImageFilter<DisplacementFieldType,

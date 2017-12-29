@@ -77,16 +77,16 @@ public:
    * FIXME: What to do if the point is far from the Mesh ?
    *
    */
-  virtual OutputType Evaluate( const PointType& point ) const ITK_OVERRIDE;
+  virtual OutputType Evaluate( const PointType& point ) const override;
 
-  virtual void EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const ITK_OVERRIDE;
+  virtual void EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const override;
 
   typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
 protected:
   NearestNeighborInterpolateMeshFunction();
   ~NearestNeighborInterpolateMeshFunction();
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(NearestNeighborInterpolateMeshFunction);

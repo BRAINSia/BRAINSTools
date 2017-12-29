@@ -88,13 +88,13 @@ public:
 
   /** Provide empty implementation of virtual method from the base class.
       This method is not expected to be used by this current class. */
-  virtual OutputType Evaluate( const PointType& point ) const ITK_OVERRIDE;
+  virtual OutputType Evaluate( const PointType& point ) const override;
 
 protected:
   LinearInterpolateDeformationFieldMeshFunction();
   ~LinearInterpolateDeformationFieldMeshFunction();
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
   typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
 private:

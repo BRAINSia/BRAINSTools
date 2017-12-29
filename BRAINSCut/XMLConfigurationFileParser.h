@@ -73,9 +73,9 @@ public:
     myConfiguration = new BRAINSCutConfiguration();
   }
 
-  virtual void StartElement(void *userData, const XML_Char *name, const XML_Char * *atts) ITK_OVERRIDE;
+  virtual void StartElement(void *userData, const XML_Char *name, const XML_Char * *atts) override;
 
-  virtual void EndElement(void *userData, const XML_Char *name) ITK_OVERRIDE;
+  virtual void EndElement(void *userData, const XML_Char *name) override;
 
   BRAINSCutConfiguration * GetConfiguration();
 

@@ -97,9 +97,9 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream& os, itk::Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, itk::Indent indent) const override;
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
   PointType Divide( const PointType & p1, const PointType & p2) const;
 

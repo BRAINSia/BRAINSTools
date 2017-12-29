@@ -85,7 +85,7 @@ public:
    * FIXME: What to do if the point is far from the Mesh ?
    *
    */
-  virtual OutputType Evaluate( const PointType& point ) const ITK_OVERRIDE = 0;
+  virtual OutputType Evaluate( const PointType& point ) const override = 0;
 
   /** Evaluate the derivative of the scalar function at the
    *  specified point. */
@@ -99,7 +99,7 @@ protected:
   InterpolateMeshFunction();
   ~InterpolateMeshFunction();
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
   typedef PointLocator2<TInputMesh>          PointLocatorType;
   typedef typename PointLocatorType::Pointer PointLocatorPointer;

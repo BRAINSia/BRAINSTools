@@ -92,10 +92,10 @@ protected:
   {
   }
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const override;
 
   virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId)
-      ITK_OVERRIDE;
+      override;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(BlendImageFilter);

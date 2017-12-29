@@ -30,9 +30,9 @@ class DWIDICOMConverterBase : public DWIConverter {
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
 
-  virtual void LoadFromDisk() ITK_OVERRIDE;
+  virtual void LoadFromDisk() override;
 
   virtual void LoadDicomDirectory();
   double readThicknessFromDicom() const;

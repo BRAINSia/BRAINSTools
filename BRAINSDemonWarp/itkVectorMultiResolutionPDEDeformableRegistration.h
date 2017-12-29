@@ -201,7 +201,7 @@ public:
     * MultiResolutionPDEDeformableRegistration2 can take a third input
     * as an initial deformation field, this input is not a required input.
     */
-  virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const ITK_OVERRIDE;
+  virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const override;
 
   /** Set the internal registrator. */
   itkSetObjectMacro(RegistrationFilter, RegistrationType);
@@ -246,7 +246,7 @@ public:
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration();
 
-  virtual void VerifyInputInformation() ITK_OVERRIDE;
+  virtual void VerifyInputInformation() override;
 
 protected:
   VectorMultiResolutionPDEDeformableRegistration();
@@ -254,16 +254,16 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Generate output data by performing the registration
     * at each resolution level. */
-  virtual void GenerateData() ITK_OVERRIDE;
+  virtual void GenerateData() override;
 
   /** The current implementation of this class does not support
     * streaming. As such it requires the largest possible region
     * for the moving, fixed and input deformation field. */
-  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
+  virtual void GenerateInputRequestedRegion() override;
 
   /** By default, the output deformation field has the same
     * spacing, origin and LargestPossibleRegion as the input/initial
@@ -271,12 +271,12 @@ protected:
     *
     * If the initial deformation field is not set, the output
     * information is copied from the fixed image. */
-  virtual void GenerateOutputInformation() ITK_OVERRIDE;
+  virtual void GenerateOutputInformation() override;
 
   /** The current implementation of this class does not supprot
     * streaming. As such it produces the output for the largest
     * possible region. */
-  virtual void EnlargeOutputRequestedRegion(DataObject *ptr) ITK_OVERRIDE;
+  virtual void EnlargeOutputRequestedRegion(DataObject *ptr) override;
 
   /** This method returns true to indicate that the registration should
     * terminate at the current resolution level. */

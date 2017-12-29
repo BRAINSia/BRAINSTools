@@ -78,7 +78,7 @@ protected:
   AssignScalarValuesQuadEdgeMeshFilter();
   ~AssignScalarValuesQuadEdgeMeshFilter();
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
 private:
 

@@ -139,7 +139,7 @@ protected:
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
 
-  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
+  void PrintSelf( std::ostream & os, Indent indent ) const override;
 
   void InitializeSeeds();
 

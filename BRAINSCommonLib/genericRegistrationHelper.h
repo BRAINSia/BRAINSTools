@@ -199,7 +199,7 @@ public:
     m_Transform = xfrm;
   }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
+  void Execute(itk::Object *caller, const itk::EventObject & event) override
   {
     this->Execute( (const itk::Object *)caller, event );
   }
@@ -221,7 +221,7 @@ public:
     return rval;
   }
 
-  void Execute(const itk::Object *object, const itk::EventObject & event) ITK_OVERRIDE
+  void Execute(const itk::Object *object, const itk::EventObject & event) override
   {
     OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>( object );
 
@@ -440,7 +440,7 @@ public:
   virtual void Initialize(void); // throw ( ExceptionObject );
 
   /** Method that initiates the registration. */
-  void Update(void) ITK_OVERRIDE;
+  void Update(void) override;
 
   /** Set/Get the Fixed image. */
   void SetFixedImage(FixedImagePointer fixedImage);
@@ -502,7 +502,7 @@ public:
 
   /** Method to return the latest modified time of this object or
     * any of its cached ivars */
-  unsigned long GetMTime() const ITK_OVERRIDE;
+  unsigned long GetMTime() const override;
 
 protected:
   MultiModal3DMutualRegistrationHelper();
@@ -510,11 +510,11 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Method invoked by the pipeline in order to trigger the computation of
     * the registration. */
-  void  GenerateData() ITK_OVERRIDE;
+  void  GenerateData() override;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(MultiModal3DMutualRegistrationHelper);

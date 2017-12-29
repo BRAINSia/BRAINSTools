@@ -39,7 +39,7 @@ protected:
   }
   ~MaskFromLandmarksFilter() {};
 
-  void GenerateData() ITK_OVERRIDE
+  void GenerateData() override
   {
     typedef TInputMask ImageMaskType;
     typedef ImageMaskType OutputImageType;

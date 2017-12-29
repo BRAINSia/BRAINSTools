@@ -132,7 +132,7 @@ public:
    *  a collection of 2D slices arranged in a single
    *  mosaic slice.
    */
-  virtual void LoadDicomDirectory() ITK_OVERRIDE;
+  virtual void LoadDicomDirectory() override;
 
   double ExtractBValue(CSAHeader *csaHeader, unsigned int strideVolume);
 
@@ -144,7 +144,7 @@ public:
    /**
     * @brief  find the bvalues and gradient vectors
     */
-  void ExtractDWIData() ITK_OVERRIDE;
+  void ExtractDWIData() override;
 private:
   static bool IsZeroMag(DWIMetaDataDictionaryValidator::GradientDirectionType vec);
 protected:
@@ -168,7 +168,7 @@ protected:
 
   void CheckCSAHeaderAvailable();
 
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
+  virtual void AddFlagsToDictionary() override;
 private:
   double      m_SmallGradientThreshold;
   unsigned int m_MMosaic;

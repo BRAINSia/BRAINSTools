@@ -30,12 +30,12 @@ public:
                  const bool FSLFileFormatHorizontalBy3Rows);
 
   virtual ~GEDWIConverter();
-  virtual void LoadDicomDirectory() ITK_OVERRIDE;
+  virtual void LoadDicomDirectory() override;
 
-  void ExtractDWIData() ITK_OVERRIDE;
+  void ExtractDWIData() override;
 
 protected:
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
+  virtual void AddFlagsToDictionary() override;
 };
 
 #endif // __GEDWIConverter_h

@@ -43,7 +43,7 @@ public:
   // Make sure all values are OK
   virtual bool CheckValues() const;
 
-  virtual void PrintSelf(std::ostream & os, itk::Indent) const ITK_OVERRIDE;
+  virtual void PrintSelf(std::ostream & os, itk::Indent) const override;
 
   itkGetConstMacro(Suffix, std::string);
   itkSetMacro(Suffix, std::string);

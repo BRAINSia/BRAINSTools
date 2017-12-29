@@ -35,16 +35,16 @@ public:
   /* load dicom directory -- no postprocessing necessary after letting
    * superclass do its thing.
    */
-  virtual void LoadDicomDirectory() ITK_OVERRIDE;
+  virtual void LoadDicomDirectory() override;
   /** extract gradient vectors.
    *  Hitachi apparently supports the Supplement 49 definition
    *  for Diffusion data.-- see page 94 of the Supplement 49 document:
    *  ftp://medical.nema.org/medical/dicom/final/sup49_ft.pdf
    */
-  void ExtractDWIData() ITK_OVERRIDE;
+  void ExtractDWIData() override;
 
 protected:
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
+  virtual void AddFlagsToDictionary() override;
 
 };
 

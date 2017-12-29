@@ -154,22 +154,22 @@ public:
   using Superclass::MakeOutput;
   /** Make a DataObject of the correct type to be used as the specified
    * output. */
-  virtual DataObjectPointer MakeOutput(size_t idx) ITK_OVERRIDE;
+  virtual DataObjectPointer MakeOutput(size_t idx) override;
 
   /** Method to return the latest modified time of this object or
    * any of its cached ivars */
-  unsigned long GetMTime() const ITK_OVERRIDE;
+  unsigned long GetMTime() const override;
 
 protected:
   MeshToMeshRegistrationMethod();
   virtual ~MeshToMeshRegistrationMethod()
   {
   };
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
   /** Method invoked by the pipeline in order to trigger the computation of
    * the registration. */
-  void  GenerateData() ITK_OVERRIDE;
+  void  GenerateData() override;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);

@@ -69,7 +69,7 @@ public:
       }
   }
 
-  virtual bool Verify() const ITK_OVERRIDE
+  virtual bool Verify() const override
   {
     static bool             ErrorPrinted = false;
     MapType::const_iterator it;
@@ -89,7 +89,7 @@ public:
     return true;
   }
 
-  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE
+  virtual int PrintSelf(std::ostream & os, int indent) const override
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== ElementParser ===" <<

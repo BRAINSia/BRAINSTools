@@ -48,7 +48,7 @@ public:
   /* Description:
    * Write out the appropriate data when the talairachConversion object
    * is added to an IO stream */
-  void PrintSelf(ostream & os, vtkIndent indent) ITK_OVERRIDE;
+  void PrintSelf(ostream & os, vtkIndent indent) override;
 
   /* Description:
    * Set the origin, direction, etc. of the mask image from
@@ -122,7 +122,7 @@ public:
    * Update the image */
   using vtkAlgorithm::Update;   // silence warning about this Update
                                 // hiding the one in vtkAlgorithm
-  virtual void Update() ITK_OVERRIDE;
+  virtual void Update() override;
 
 protected:
 

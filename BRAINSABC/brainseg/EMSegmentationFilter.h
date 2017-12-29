@@ -222,7 +222,7 @@ public:
 
   MapOfInputImageVectors  GetRawCorrected();
 
-  void Update() ITK_OVERRIDE;
+  void Update() override;
 
   itkGetMacro(AtlasTransformType, std::string);
   itkSetMacro(AtlasTransformType, std::string);

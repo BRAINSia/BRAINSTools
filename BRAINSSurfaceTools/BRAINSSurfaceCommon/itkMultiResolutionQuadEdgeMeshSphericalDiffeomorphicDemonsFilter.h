@@ -89,7 +89,7 @@ public:
 
   using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
-  virtual DataObject::Pointer MakeOutput(size_t idx) ITK_OVERRIDE;
+  virtual DataObject::Pointer MakeOutput(size_t idx) override;
 
   typedef VersorTransform<double> TransformType;
 
@@ -199,9 +199,9 @@ public:
 protected:
   MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
   ~MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
-  virtual void GenerateData() ITK_OVERRIDE;
+  virtual void GenerateData() override;
 
 private:
   MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter( const Self & );

@@ -19,14 +19,14 @@
 #ifndef FloatValue_h
 #define FloatValue_h
 #include "NumericValue.h"
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 class FloatValue :
   public NumericValue<double>
 {
 public:
   typedef NumericValue<double> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE
+  virtual int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== FloatValue === !"
@@ -48,7 +48,7 @@ public:
 
   void SetValue(const std::string & stringval);
 
-  virtual bool Verify() const ITK_OVERRIDE;
+  virtual bool Verify() const override;
 
 private:
 };

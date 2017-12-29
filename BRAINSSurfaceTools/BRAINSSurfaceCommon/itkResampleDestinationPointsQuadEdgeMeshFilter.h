@@ -141,7 +141,7 @@ protected:
   ResampleDestinationPointsQuadEdgeMeshFilter();
   ~ResampleDestinationPointsQuadEdgeMeshFilter();
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
 private:
 

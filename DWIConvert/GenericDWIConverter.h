@@ -25,20 +25,20 @@ class GenericDWIConverter : public DWIConverter
 public:
   GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames , const bool FSLFileFormatHorizontalBy3Rows);
 
-  virtual void LoadFromDisk() ITK_OVERRIDE;
+  virtual void LoadFromDisk() override;
 
 
   virtual ~GenericDWIConverter();
 
 protected:
-  virtual void ExtractDWIData() ITK_OVERRIDE;
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
+  virtual void ExtractDWIData() override;
+  virtual void AddFlagsToDictionary() override;
 
   /**
  * @brief Return common fields.  Does nothing for FSL
  * @return empty map
  */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
 
 };
 

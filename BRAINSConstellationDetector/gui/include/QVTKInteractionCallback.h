@@ -156,7 +156,7 @@ public:
     return m_precision;
   }
 
-  void Execute( vtkObject *, unsigned long event, void * ) ITK_OVERRIDE;
+  void Execute( vtkObject *, unsigned long event, void * ) override;
 
   const QString & textPhysicalLocation() const
   {

@@ -122,9 +122,9 @@ public:
 protected:
   LargestForegroundFilledMaskImageFilter();
   ~LargestForegroundFilledMaskImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
-  virtual void GenerateData() ITK_OVERRIDE;
+  virtual void GenerateData() override;
 
 private:
   /** Returns true if more than two bins of informaiton are found,

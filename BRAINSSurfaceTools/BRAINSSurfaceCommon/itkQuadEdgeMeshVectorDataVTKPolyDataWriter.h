@@ -85,7 +85,7 @@ protected:
   std::string m_CellDataName;
   std::string m_PointDataName;
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
   void WriteCellData();
 

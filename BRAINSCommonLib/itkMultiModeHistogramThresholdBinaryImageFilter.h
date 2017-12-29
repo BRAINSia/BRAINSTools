@@ -87,9 +87,9 @@ public:
 protected:
   MultiModeHistogramThresholdBinaryImageFilter();
   ~MultiModeHistogramThresholdBinaryImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
-  virtual void GenerateData() ITK_OVERRIDE;
+  virtual void GenerateData() override;
 
 private:
   ThresholdArrayType m_QuantileLowerThreshold;

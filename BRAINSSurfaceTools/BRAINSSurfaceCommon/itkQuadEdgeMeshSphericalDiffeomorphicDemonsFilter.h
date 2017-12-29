@@ -260,7 +260,7 @@ public:
 
   using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
-  virtual DataObject::Pointer MakeOutput(size_t idx) ITK_OVERRIDE;
+  virtual DataObject::Pointer MakeOutput(size_t idx) override;
 
   /** Print out in the argument ostream the results of the chronometer
    * measurements. This is intended to be used for profiling the deformation
@@ -270,9 +270,9 @@ public:
 protected:
   QuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
   ~QuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
-  virtual void GenerateData() ITK_OVERRIDE;
+  virtual void GenerateData() override;
 
 private:
   QuadEdgeMeshSphericalDiffeomorphicDemonsFilter( const Self & );

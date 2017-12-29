@@ -84,7 +84,7 @@ public:
 protected:
   ComputeHistogramQuantileThresholds();
   ~ComputeHistogramQuantileThresholds();
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
   void ImageMinMax(InputPixelType & min, InputPixelType & max);

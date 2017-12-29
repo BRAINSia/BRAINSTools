@@ -253,13 +253,13 @@ protected:
   }
 
   /** Initialize the input parser. */
-  virtual void InitializeParser() ITK_OVERRIDE;
+  virtual void InitializeParser() override;
 
   /*** Initialize the preprocessor */
-  virtual void InitializePreprocessor() ITK_OVERRIDE;
+  virtual void InitializePreprocessor() override;
 
   /*** Initialize the registrator  */
-  virtual void InitializeRegistrator() ITK_OVERRIDE;
+  virtual void InitializeRegistrator() override;
 
 private:
 

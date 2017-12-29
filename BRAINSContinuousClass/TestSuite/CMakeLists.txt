@@ -1,9 +1,10 @@
-###  This is the test suite for the BRAINSResample program.
+###  This is the test suite
 
 MakeTestDriverFromSEMTool(BRAINSContinuousClass BRAINSContinuousClassTest.cxx)
+add_dependencies(BRAINSContinuousClassTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSContinuousClassTest_nii
-  COMMAND ${LAUNCH_EXE} ${CMAKE_BIN_DIR}/BRAINSContinuousClassTestDriver
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSContinuousClassTestDriver>
   --compare
   DATA{${TestData_DIR}/BRAINSContinuousClassTest_baseline.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSContinuousClassTest_test.nii.gz

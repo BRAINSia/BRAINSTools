@@ -3,23 +3,24 @@ include_directories(
   )
 
 MakeTestDriverFromSEMTool(BRAINSPosteriorToContinuousClass BRAINSPosteriorToContinuousClassTest.cxx)
+add_dependencies(BRAINSPosteriorToContinuousClassTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 
 set(BRAINSPosteriorToContinuousClassTestName BRAINSPosteriorToContinuousClassTest)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSPosteriorToContinuousClassTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSPosteriorToContinuousClass>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSPosteriorToContinuousClassTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSPosteriorToContinuousClassTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSPosteriorToContinuousClassTestName}.output.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 777
-  BRAINSPosteriorToContinuousClass
-  --inputCrblWmVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVCRBLWM.nii.gz
-  --inputCrblGmVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVCRBLGM.nii.gz
-  --inputVbVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVVB.nii.gz
-  --inputCsfVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVCSF.nii.gz
-  --inputSurfaceGmVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVSURFGM.nii.gz
-  --inputWhiteVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVWM.nii.gz
-  --inputBasalGmVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVBASALTISSUE.nii.gz
+  BRAINSPosteriorToContinuousClassTest
+  --inputCrblWmVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVCRBLWM.nii.gz
+  --inputCrblGmVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVCRBLGM.nii.gz
+  --inputVbVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVVB.nii.gz
+  --inputCsfVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVCSF.nii.gz
+  --inputSurfaceGmVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVSURFGM.nii.gz
+  --inputWhiteVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVWM.nii.gz
+  --inputBasalGmVolume ${ATLAS_INSTALL_DIRECTORY}/ALLPVBASALTISSUE.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSPosteriorToContinuousClassTestName}.output.nii.gz
 #  --debugLevel 50
 )

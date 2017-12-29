@@ -1,23 +1,11 @@
-cmake_minimum_required(VERSION 3.5.0) ## Tying to Slicer as of 2017-08-04
+cmake_minimum_required(VERSION 3.8.2 FATAL_ERROR)
 
 #-----------------------------------------------------------------------------
 # Enable C++11
 #-----------------------------------------------------------------------------
 set(_msg "Setting C++ standard")
 message(STATUS "${_msg}")
-if(DEFINED Qt5_DIR)
-  set(CMAKE_CXX_STANDARD 11)
-  # Since SimpleITK requires CMP0067 to properly support C++11, requires
-  # the corresponding CMake version.
-  if(CMAKE_VERSION VERSION_LESS "3.8.2")
-    message(FATAL_ERROR "CMake >= 3.8.2 is required to enable C++11 support")
-  endif()
-else()
-  ## For compatibility with Slicer
-  if(NOT CMAKE_CXX_STANDARD)
-     set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
-  endif()
-endif()
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
@@ -33,6 +21,7 @@ foreach(p
   CMP0042 # ``MACOSX_RPATH`` is enabled by default.
   CMP0025 # AppleClang vs. regular Clang
   CMP0063 # Honor visibility properties for all target types
+  CMP0012 # 3.10.0
   )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)

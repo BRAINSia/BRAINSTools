@@ -58,13 +58,13 @@ DWIConverter* DWIConverterFactory::New()
     m_InputFileNames.push_back(m_DicomDirectory);
   }
 
-  DWIConverter *converter(ITK_NULLPTR);
+  DWIConverter *converter(nullptr);
   // nothing at all found?
   if(m_InputFileNames.size() < 1)
   {
     std::cerr << "Error: no DICOMfiles found in inputDirectory: " << m_DicomDirectory
               << std::endl;
-    return ITK_NULLPTR;
+    return nullptr;
   }
 
   // there is a logic error below --huixie
@@ -93,7 +93,7 @@ DWIConverter* DWIConverterFactory::New()
       {
         std::cerr << "Error reading slice" << m_InputFileNames[i] << std::endl;
         delete curReader;
-        curReader = ITK_NULLPTR;
+        curReader = nullptr;
       }
       // check for pixel data.
       if(curReader)
@@ -125,7 +125,7 @@ DWIConverter* DWIConverterFactory::New()
       {
         std::cerr << "Error reading slice" << m_InputFileNames[i] << std::endl;
         delete curReader;
-        curReader = ITK_NULLPTR;
+        curReader = nullptr;
       }
       // check for pixel data.
       if(curReader)
@@ -148,7 +148,7 @@ DWIConverter* DWIConverterFactory::New()
     if( headerCount == 0 )
     {
       std::cerr << "No pixel data in series " << m_DicomDirectory << std::endl;
-      return ITK_NULLPTR;
+      return nullptr;
     }
     m_InputFileNames.resize(0);
     //
@@ -165,7 +165,7 @@ DWIConverter* DWIConverterFactory::New()
     catch(itk::ExceptionObject &excp)
     {
       std::cerr << "Can't get vendor name from DICOM file" << excp << std::endl;
-      return ITK_NULLPTR;
+      return nullptr;
     }
 
     if(StringContains(this->m_Vendor,"PHILIPS"))

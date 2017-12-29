@@ -42,7 +42,7 @@
 #include "AssignArrayCLP.h"
 #include "vtkSmartPointer.h"
 #include <BRAINSCommonLib.h>
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 int main( int argc, char * argv[] )
 {
@@ -111,7 +111,7 @@ int main( int argc, char * argv[] )
     label = source->GetPointData()->GetScalars();
     }
 
-  if( label == ITK_NULLPTR )
+  if( label == nullptr )
     {
     std::cout << "there is no label array in the source." << std::endl;
     return 1;
@@ -120,7 +120,7 @@ int main( int argc, char * argv[] )
   // set new name to the label
   label->SetName(setArrayName.c_str() );
 
-  if( target->GetPointData()->GetScalars() == ITK_NULLPTR )
+  if( target->GetPointData()->GetScalars() == nullptr )
     {
     target->GetPointData()->SetScalars(label);
     }

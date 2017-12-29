@@ -21,14 +21,14 @@
 #include "BRAINSConstellationDetectorVersion.h"
 
 LLSModel
-::LLSModel() : m_H5File(ITK_NULLPTR)
+::LLSModel() : m_H5File(nullptr)
 {
 }
 
 LLSModel
 ::~LLSModel()
 {
-  if( this->m_H5File != ITK_NULLPTR )
+  if( this->m_H5File != nullptr )
     {
     this->m_H5File->close();
     delete this->m_H5File;
@@ -186,7 +186,7 @@ LLSModel
 
     this->m_H5File->close();
     delete this->m_H5File;
-    this->m_H5File = ITK_NULLPTR;
+    this->m_H5File = nullptr;
     }
   // catch failure caused by the H5File operations
   catch( H5::FileIException & error )
@@ -230,7 +230,7 @@ LLSModel
               << "in HDF5 File" << std::endl;
     throw;
     }
-  Space.getSimpleExtentDims(&dim, ITK_NULLPTR);
+  Space.getSimpleExtentDims(&dim, nullptr);
   vec.resize(dim);
 
   double *buf = new double[dim];
@@ -258,7 +258,7 @@ LLSModel
               << "in HDF5 File" << std::endl;
     throw;
     }
-  matrixSpace.getSimpleExtentDims(dims, ITK_NULLPTR);
+  matrixSpace.getSimpleExtentDims(dims, nullptr);
   MatrixType mat(dims[0], dims[1]);
   matrixSet.read(mat.data_block(), H5::PredType::NATIVE_DOUBLE);
   matrixSet.close();
@@ -278,7 +278,7 @@ LLSModel
     std::cerr << "Wrong #of dims for TransformType "
               << "in HDF5 File" << std::endl;
     }
-  Space.getSimpleExtentDims(&dim, ITK_NULLPTR);
+  Space.getSimpleExtentDims(&dim, nullptr);
   if( dim != 1 )
     {
     std::cerr << "Elements > 1 for scalar type "
@@ -303,7 +303,7 @@ LLSModel
     std::cerr << "Wrong #of dims for TransformType "
     << "in HDF5 File" << std::endl;
     }
-  Space.getSimpleExtentDims(&dim, ITK_NULLPTR);
+  Space.getSimpleExtentDims(&dim, nullptr);
   if( dim != 1 )
     {
     std::cerr << "Elements > 1 for string type "
@@ -380,7 +380,7 @@ LLSModel
 
     this->m_H5File->close();
     delete this->m_H5File;
-    this->m_H5File = ITK_NULLPTR;
+    this->m_H5File = nullptr;
     }
   // catch failure caused by the H5File operations
   catch( H5::FileIException & error )

@@ -166,14 +166,14 @@ int main( int argc, char * *argv )
   vtkIdList *    cellPtIds = vtkIdList::New();
   vtkFloatArray *curvature = vtkFloatArray::SafeDownCast( surfaceData->GetPointData()->GetAbstractArray(
                                                             "Mean_Curvature") );
-  if( curvature == ITK_NULLPTR )
+  if( curvature == nullptr )
     {
     std::cout << "curvature is empty" << std::endl;
     return EXIT_FAILURE;
     }
   vtkFloatArray *thickness =
     vtkFloatArray::SafeDownCast( surfaceData->GetPointData()->GetAbstractArray("corticalThickness") );
-  if( thickness == ITK_NULLPTR )
+  if( thickness == nullptr )
     {
     std::cout << "thickness is empty" << std::endl;
     return EXIT_FAILURE;

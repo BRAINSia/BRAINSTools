@@ -64,7 +64,7 @@ void QSliceViewer::createLabel(double *labelPos)
   // hide all actors
   m_actors->InitTraversal();
   vtkActor2D *actor = m_actors->GetNextActor2D();
-  while( actor != ITK_NULLPTR )
+  while( actor != nullptr )
     {
     actor->GetProperty()->SetOpacity(0.0);
     actor = m_actors->GetNextActor2D();
@@ -80,7 +80,7 @@ void QSliceViewer::createLabelSlot()
 
 void QSliceViewer::deleteLabelSlot()
 {
-  if( m_actor != ITK_NULLPTR )
+  if( m_actor != nullptr )
     {
     this->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(m_actor);
     m_actors->RemoveItem(m_actor);
@@ -96,7 +96,7 @@ void QSliceViewer::deleteAllLabelSlot()
 {
   m_actors->InitTraversal();
   m_actor = m_actors->GetNextActor2D();
-  while( m_actor != ITK_NULLPTR )
+  while( m_actor != nullptr )
     {
     this->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(m_actor);
     m_actors->RemoveItem(m_actor);
@@ -116,10 +116,10 @@ void QSliceViewer::deleteLabelMouseSlot(QListWidgetItem *)
 
 void QSliceViewer::switchLabelSlot()
 {
-  if( m_actor != ITK_NULLPTR )
+  if( m_actor != nullptr )
     {
     m_actor = m_actors->GetNextActor2D();
-    if( m_actor == ITK_NULLPTR )
+    if( m_actor == nullptr )
       {
       m_actors->InitTraversal();            // move current list pointer to the
                                             // beginning
@@ -132,7 +132,7 @@ void QSliceViewer::switchLabelSlot()
 
 void QSliceViewer::moveLabelSlot(double *labelPos)
 {
-  if( m_actor != ITK_NULLPTR )  // we only need to update current label
+  if( m_actor != nullptr )  // we only need to update current label
     {
     // get current position for each viewer
     int             currPos[2];
@@ -201,7 +201,7 @@ void QSliceViewer::moveLabelSlot(double *labelPos)
 
 void QSliceViewer::wheelSlot(double *labelPos)
 {
-  if( m_actor != ITK_NULLPTR )
+  if( m_actor != nullptr )
     {
     vtkActor2D *currActor = m_actor; // a backup
     m_actors->InitTraversal();
@@ -211,7 +211,7 @@ void QSliceViewer::wheelSlot(double *labelPos)
                                   // communication
     double *bound = m_bound;
 
-    while( actor != ITK_NULLPTR )
+    while( actor != nullptr )
       {
       m_actor = actor;
       labelPosRatio[0] =
@@ -275,7 +275,7 @@ void QSliceViewer::GenSphere()
 
 void QSliceViewer::Highlight()
 {
-  if( m_actor != ITK_NULLPTR )  // we only need to update current label
+  if( m_actor != nullptr )  // we only need to update current label
     {
     // create sphere geometry
     vtkSphereSource *sphere1 = vtkSphereSource::New();
@@ -311,7 +311,7 @@ void QSliceViewer::Highlight()
 
     m_actors->InitTraversal();
     vtkActor2D *actor = m_actors->GetNextActor2D();
-    while( actor != ITK_NULLPTR )
+    while( actor != nullptr )
       {
       double color[3];
       actor->GetProperty()->GetColor(color);
@@ -343,7 +343,7 @@ void QSliceViewer::Highlight()
 
 void QSliceViewer::pickLabelSlot(QListWidgetItem *item)
 {
-  if( m_actor != ITK_NULLPTR )  // we only need to update current label
+  if( m_actor != nullptr )  // we only need to update current label
     {
     m_actors->InitTraversal();
 
@@ -359,12 +359,12 @@ void QSliceViewer::pickLabelSlot(QListWidgetItem *item)
 
 void QSliceViewer::visibilityUpdate(int *table)
 {
-  if( m_actor != ITK_NULLPTR )
+  if( m_actor != nullptr )
     {
     m_actors->InitTraversal();
     vtkActor2D *actor = m_actors->GetNextActor2D();
     int         index = 0; // index of actor
-    while( actor != ITK_NULLPTR )
+    while( actor != nullptr )
       {
       actor = m_actors->GetNextActor2D();
       ++index;
@@ -375,7 +375,7 @@ void QSliceViewer::visibilityUpdate(int *table)
     index = 0;
     m_actors->InitTraversal();
     actor = m_actors->GetNextActor2D();
-    while( actor != ITK_NULLPTR )
+    while( actor != nullptr )
       {
       if( table[numActors * ( ( m_type + 1 ) % 3 ) + index] == 0 )
         {

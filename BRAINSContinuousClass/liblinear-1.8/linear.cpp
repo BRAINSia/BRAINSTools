@@ -2205,7 +2205,7 @@ static void train_one(const problem *prob, const parameter *param, double *w, do
     }
   neg = prob->l - pos;
 
-  function *fun_obj = ITK_NULLPTR;
+  function *fun_obj = nullptr;
 
   switch( param->solver_type )
     {
@@ -2236,7 +2236,7 @@ static void train_one(const problem *prob, const parameter *param, double *w, do
     case L1R_L2LOSS_SVC:
       {
       problem       prob_col;
-      feature_node *x_space = ITK_NULLPTR;
+      feature_node *x_space = nullptr;
       transpose(prob, &x_space, &prob_col);
       solve_l1r_l2_svc(&prob_col, w, eps * min(pos, neg) / prob->l, Cp, Cn);
       delete [] prob_col.y;
@@ -2247,7 +2247,7 @@ static void train_one(const problem *prob, const parameter *param, double *w, do
     case L1R_LR:
       {
       problem       prob_col;
-      feature_node *x_space = ITK_NULLPTR;
+      feature_node *x_space = nullptr;
       transpose(prob, &x_space, &prob_col);
       solve_l1r_lr(&prob_col, w, eps * min(pos, neg) / prob->l, Cp, Cn);
       delete [] prob_col.y;
@@ -2287,9 +2287,9 @@ model * train(const problem *prob, const parameter *param)
   model_->bias = prob->bias;
 
   int  nr_class;
-  int *label = ITK_NULLPTR;
-  int *start = ITK_NULLPTR;
-  int *count = ITK_NULLPTR;
+  int *label = nullptr;
+  int *start = nullptr;
+  int *count = nullptr;
   int *perm = Malloc(int, l);
 
   // group training data of the same class
@@ -2602,7 +2602,7 @@ int predict_probability(const struct model *model_, const struct feature_node *x
 static const char *solver_type_table[] =
   {
   "L2R_LR", "L2R_L2LOSS_SVC_DUAL", "L2R_L2LOSS_SVC", "L2R_L1LOSS_SVC_DUAL", "MCSVM_CS",
-  "L1R_L2LOSS_SVC", "L1R_LR", "L2R_LR_DUAL", ITK_NULLPTR
+  "L1R_L2LOSS_SVC", "L1R_LR", "L2R_LR_DUAL", nullptr
   };
 
 int save_model(const char *model_file_name, const struct model *model_)
@@ -2622,7 +2622,7 @@ int save_model(const char *model_file_name, const struct model *model_)
     }
   int   w_size = n;
   FILE *fp = fopen(model_file_name, "w");
-  if( fp == ITK_NULLPTR )
+  if( fp == nullptr )
     {
     return -1;
     }
@@ -2672,9 +2672,9 @@ struct model * load_model(const char *model_file_name)
 {
   FILE *fp = fopen(model_file_name, "r");
 
-  if( fp == ITK_NULLPTR )
+  if( fp == nullptr )
     {
-    return ITK_NULLPTR;
+    return nullptr;
     }
 
   int        i;
@@ -2685,7 +2685,7 @@ struct model * load_model(const char *model_file_name)
   model *    model_ = Malloc(model, 1);
   parameter& param = model_->param;
 
-  model_->label = ITK_NULLPTR;
+  model_->label = nullptr;
 
   char cmd[81];
   while( 1 )
@@ -2703,12 +2703,12 @@ struct model * load_model(const char *model_file_name)
           break;
           }
         }
-      if( solver_type_table[_i] == ITK_NULLPTR )
+      if( solver_type_table[_i] == nullptr )
         {
         fprintf(stderr, "unknown solver type.\n");
         free(model_->label);
         free(model_);
-        return ITK_NULLPTR;
+        return nullptr;
         }
       }
     else if( strcmp(cmd, "nr_class") == 0 )
@@ -2743,7 +2743,7 @@ struct model * load_model(const char *model_file_name)
       {
       fprintf(stderr, "unknown text in model file: [%s]\n", cmd);
       free(model_);
-      return ITK_NULLPTR;
+      return nullptr;
       }
     }
 
@@ -2779,7 +2779,7 @@ struct model * load_model(const char *model_file_name)
     }
   if( ferror(fp) != 0 || fclose(fp) != 0 )
     {
-    return ITK_NULLPTR;
+    return nullptr;
     }
 
   return model_;
@@ -2797,7 +2797,7 @@ int get_nr_class(const model *model_)
 
 void get_labels(const model *model_, int* label)
 {
-  if( model_->label != ITK_NULLPTR )
+  if( model_->label != nullptr )
     {
     for( int i = 0; i < model_->nr_class; i++ )
       {
@@ -2808,11 +2808,11 @@ void get_labels(const model *model_, int* label)
 
 void free_model_content(struct model *model_ptr)
 {
-  if( model_ptr->w != ITK_NULLPTR )
+  if( model_ptr->w != nullptr )
     {
     free(model_ptr->w);
     }
-  if( model_ptr->label != ITK_NULLPTR )
+  if( model_ptr->label != nullptr )
     {
     free(model_ptr->label);
     }
@@ -2822,7 +2822,7 @@ void free_and_destroy_model(struct model * *model_ptr_ptr)
 {
   struct model *model_ptr = *model_ptr_ptr;
 
-  if( model_ptr != ITK_NULLPTR )
+  if( model_ptr != nullptr )
     {
     free_model_content(model_ptr);
     free(model_ptr);
@@ -2831,11 +2831,11 @@ void free_and_destroy_model(struct model * *model_ptr_ptr)
 
 void destroy_param(parameter* param)
 {
-  if( param->weight_label != ITK_NULLPTR )
+  if( param->weight_label != nullptr )
     {
     free(param->weight_label);
     }
-  if( param->weight != ITK_NULLPTR )
+  if( param->weight != nullptr )
     {
     free(param->weight);
     }
@@ -2865,7 +2865,7 @@ const char * check_parameter(const problem *, const parameter *param)
     return "unknown solver type";
     }
 
-  return ITK_NULLPTR;
+  return nullptr;
 }
 
 int check_probability_model(const struct model *model_)
@@ -2877,7 +2877,7 @@ int check_probability_model(const struct model *model_)
 
 void set_print_string_function(void (*print_func)(const char *) )
 {
-  if( print_func == ITK_NULLPTR )
+  if( print_func == nullptr )
     {
     liblinear_print_string = &print_string_stdout;
     }

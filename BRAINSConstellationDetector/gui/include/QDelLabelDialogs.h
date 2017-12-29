@@ -32,14 +32,14 @@
 #include <QListWidget>
 #include <QObject>
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 class QDelLabelDialogs : public QDialog
 {
   Q_OBJECT
 public:
 
-  QDelLabelDialogs( QString text = "", QWidget *myParent = ITK_NULLPTR );
+  QDelLabelDialogs( QString text = "", QWidget *myParent = nullptr );
 public slots:
 
   void exec( QListWidgetItem * );

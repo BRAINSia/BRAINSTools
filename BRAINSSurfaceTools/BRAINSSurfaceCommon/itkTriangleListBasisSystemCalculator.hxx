@@ -34,7 +34,7 @@ TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 ::TriangleListBasisSystemCalculator()
 {
   itkDebugMacro("Constructor");
-  this->m_InputMesh = ITK_NULLPTR;
+  this->m_InputMesh = nullptr;
   this->m_BasisSystemList = BasisSystemListType::New();
 }
 

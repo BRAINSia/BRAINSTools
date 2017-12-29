@@ -49,7 +49,7 @@ EE(void *parser,
 bool
 XMLParser::Parse()
 {
-  this->m_Parser = XML_ParserCreate(ITK_NULLPTR);
+  this->m_Parser = XML_ParserCreate(nullptr);
 
   XML_SetElementHandler(this->m_Parser,
                         &SE,

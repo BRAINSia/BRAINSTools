@@ -38,8 +38,8 @@ BRAINSCutTrainModel
   m_modelBasename(""),
   m_ANNVectorFilenamePrefix(""),
   m_RFErrorFilename(""),
-  m_trainingDataSet(ITK_NULLPTR),
-  m_ANNLayerStructure(ITK_NULLPTR)
+  m_trainingDataSet(nullptr),
+  m_ANNLayerStructure(nullptr)
 {
 }
 
@@ -47,11 +47,11 @@ BRAINSCutTrainModel
 ::~BRAINSCutTrainModel()
 {
   // Must release the memory so that it does not leak
-  if( this->m_ANNLayerStructure != ITK_NULLPTR )
+  if( this->m_ANNLayerStructure != nullptr )
     {
     cvReleaseMat( &this->m_ANNLayerStructure );
     }
-  if( this->m_trainingDataSet != ITK_NULLPTR )
+  if( this->m_trainingDataSet != nullptr )
     {
     delete this->m_trainingDataSet;
     }
@@ -102,7 +102,7 @@ BRAINSCutTrainModel
 {
   m_myDataHandler.SetTrainConfiguration( "ANNParameters" );
   m_myDataHandler.SetTrainingVectorConfiguration();
-  if( this->m_ANNLayerStructure != ITK_NULLPTR )
+  if( this->m_ANNLayerStructure != nullptr )
     {
     cvReleaseMat( &this->m_ANNLayerStructure );
     }

@@ -62,12 +62,12 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_AtlasLinearTransformChoice("Affine"),
   m_ImageLinearTransformChoice("Rigid"),
   m_SaveState(""),
-  m_RestoreState(ITK_NULLPTR),
+  m_RestoreState(nullptr),
   m_DebugLevel(0)
 {
-  m_InputImageTissueRegion = ITK_NULLPTR;
-  m_InputSpatialObjectTissueRegion = ITK_NULLPTR;
-  m_AtlasToSubjectInitialTransform = ITK_NULLPTR;
+  m_InputImageTissueRegion = nullptr;
+  m_InputSpatialObjectTissueRegion = nullptr;
+  m_AtlasToSubjectInitialTransform = nullptr;
 }
 
 template <class TOutputPixel, class TProbabilityPixel>
@@ -283,7 +283,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         intraSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
         //
         // maskInferiorCutOffFromCenter);
-        intraSubjectRegistrationHelper->SetCurrentGenericTransform(ITK_NULLPTR);
+        intraSubjectRegistrationHelper->SetCurrentGenericTransform(nullptr);
         if( this->m_DebugLevel > 9 )
           {
           static unsigned int IntraSubjectRegistration = 0;
@@ -443,7 +443,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         {
         std::cout << "SyN registration is restored from state, and no atlasToSubjectInitialTransform is needed."
                   << std::endl;
-        this->m_AtlasToSubjectInitialTransform = ITK_NULLPTR;
+        this->m_AtlasToSubjectInitialTransform = nullptr;
         runSyNFull = false; // When SyN is restored from state, we need to run that only in full resolution level.
         }
       else if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )

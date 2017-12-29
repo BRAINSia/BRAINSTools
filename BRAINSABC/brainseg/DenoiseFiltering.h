@@ -41,7 +41,7 @@ typename TInputImageType::Pointer DenoiseFiltering(
   const std::vector<unsigned int> &          // gridSize   //Only used in median filtering
   )
 {
-  typename TInputImageType::Pointer denoisedImage = ITK_NULLPTR;
+  typename TInputImageType::Pointer denoisedImage = nullptr;
   if( PrefilteringIterations >  0 && PrefilteringMethod.compare("None") != 0 )
     {
     if( PrefilteringMethod.compare("GradientAnisotropicDiffusion") == 0 )

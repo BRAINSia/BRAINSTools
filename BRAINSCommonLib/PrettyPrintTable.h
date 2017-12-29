@@ -88,27 +88,27 @@ public:
     add( row, column, s.c_str() );
   }
 
-  void add(const unsigned int row, const unsigned int column, const int x, const char *printf_format = ITK_NULLPTR)
+  void add(const unsigned int row, const unsigned int column, const int x, const char *printf_format = nullptr)
   {
-    const char *format(printf_format == ITK_NULLPTR ? "%d" : printf_format);
+    const char *format(printf_format == nullptr ? "%d" : printf_format);
     char        buf[4096];
 
     SNPRINTF_FUNC(buf, 4096, format, x);
     this->add(row, column, buf);
   }
 
-  void add(const unsigned int row, const unsigned int column, const unsigned int x, const char *printf_format = ITK_NULLPTR)
+  void add(const unsigned int row, const unsigned int column, const unsigned int x, const char *printf_format = nullptr)
   {
-    const char *format(printf_format == ITK_NULLPTR ? "%d" : printf_format);
+    const char *format(printf_format == nullptr ? "%d" : printf_format);
     char        buf[4096];
 
     SNPRINTF_FUNC(buf, 4096, format, x);
     this->add(row, column, buf);
   }
 
-  void add(const unsigned int row, const unsigned int column, const double x, const char *printf_format = ITK_NULLPTR)
+  void add(const unsigned int row, const unsigned int column, const double x, const char *printf_format = nullptr)
   {
-    if( printf_format != ITK_NULLPTR )
+    if( printf_format != nullptr )
       {
       char buf[4096];
       SNPRINTF_FUNC(buf, 4096, printf_format, x);

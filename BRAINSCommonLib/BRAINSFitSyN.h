@@ -42,7 +42,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               RealType samplingPercentage = 1.0,
               std::string whichMetric = "cc",
               const bool synFull = true,
-              typename CompositeTransformType::Pointer restoreState = ITK_NULLPTR )
+              typename CompositeTransformType::Pointer restoreState = nullptr )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {

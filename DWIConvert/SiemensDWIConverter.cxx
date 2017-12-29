@@ -675,22 +675,22 @@ void SiemensDWIConverter::AddFlagsToDictionary()
   0019; 1028;  Bandwidth Per Pixel Phase Encode
    */
   DcmDictEntry *SiemensMosiacParameters = new DcmDictEntry(0x0051, 0x100b, DcmVR(EVR_IS),
-                                                           "Mosiac Matrix Size", 1, 1, ITK_NULLPTR, true,
+                                                           "Mosiac Matrix Size", 1, 1, nullptr, true,
                                                            "dicomtonrrd");
   DcmDictEntry *SiemensDictNMosiac = new DcmDictEntry(0x0019, 0x100a, DcmVR(EVR_US),
-                                                      "Number of Images In Mosaic", 1, 1, ITK_NULLPTR, true,
+                                                      "Number of Images In Mosaic", 1, 1, nullptr, true,
                                                       "dicomtonrrd");
   DcmDictEntry *SiemensDictBValue = new DcmDictEntry(0x0019, 0x100c, DcmVR(EVR_IS),
-                                                     "B Value of diffusion weighting", 1, 1, ITK_NULLPTR, true,
+                                                     "B Value of diffusion weighting", 1, 1, nullptr, true,
                                                      "dicomtonrrd");
   DcmDictEntry *SiemensDictDiffusionDirection = new DcmDictEntry(0x0019, 0x100e, DcmVR(EVR_FD),
-                                                                 "Diffusion Gradient Direction", 3, 3, ITK_NULLPTR, true,
+                                                                 "Diffusion Gradient Direction", 3, 3, nullptr, true,
                                                                  "dicomtonrrd");
   DcmDictEntry *SiemensDictDiffusionMatrix = new DcmDictEntry(0x0019, 0x1027, DcmVR(EVR_FD),
-                                                              "Diffusion Matrix", 6, 6, ITK_NULLPTR, true,
+                                                              "Diffusion Matrix", 6, 6, nullptr, true,
                                                               "dicomtonrrd");
   DcmDictEntry *SiemensDictShadowInfo = new DcmDictEntry(0x0029, 0x1010, DcmVR(EVR_OB),
-                                                         "Siemens DWI Info", 1, 1, ITK_NULLPTR, true,
+                                                         "Siemens DWI Info", 1, 1, nullptr, true,
                                                          "dicomtonrrd");
 
   // relevant Siemens private tags

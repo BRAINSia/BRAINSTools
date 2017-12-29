@@ -58,13 +58,13 @@ public:
 
   Rigid3DCenterReflectorFunctor() :
   m_params(),
-  m_OriginalImage(ITK_NULLPTR),
-  m_ResamplerReferenceImage(ITK_NULLPTR),
+  m_OriginalImage(nullptr),
+  m_ResamplerReferenceImage(nullptr),
   m_CenterOfHeadMass(),
   m_CenterOfHeadMassIsSet(false),
   m_BackgroundValue(0),
   m_DoPowell(true),
-  m_imInterp(ITK_NULLPTR),
+  m_imInterp(nullptr),
   m_cc(0.0),
   m_HasLocalSupport(false)
   {

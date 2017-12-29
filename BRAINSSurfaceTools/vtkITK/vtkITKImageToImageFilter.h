@@ -201,11 +201,11 @@ public:
   };
   void HandleStartEvent ()
   {
-    this->InvokeEvent(vtkCommand::StartEvent,ITK_NULLPTR);
+    this->InvokeEvent(vtkCommand::StartEvent,nullptr);
   };
   void HandleEndEvent ()
   {
-    this->InvokeEvent(vtkCommand::EndEvent,ITK_NULLPTR);
+    this->InvokeEvent(vtkCommand::EndEvent,nullptr);
   };
   /// ETX
 
@@ -230,7 +230,7 @@ public:
 #else
     this->vtkExporter->SetInputConnection( this->vtkCast->GetOutputPort() );
 #endif
-    this->m_Process = ITK_NULLPTR;
+    this->m_Process = nullptr;
     this->m_ProgressCommand = MemberCommand::New();
     this->m_ProgressCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleProgressEvent );
     this->m_StartEventCommand = MemberCommand::New();

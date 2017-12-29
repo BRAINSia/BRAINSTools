@@ -45,7 +45,7 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   m_ThresholdCorrectionFactor(1.0),
   m_ClosingSize(9.0),
   m_DilateSize(0.0),
-  m_ResultMaskPointer(ITK_NULLPTR)
+  m_ResultMaskPointer(nullptr)
 {
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(1);
@@ -56,7 +56,7 @@ void
 BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
-  m_ResultMaskPointer = ITK_NULLPTR; // Need to make this null during every re-run of
+  m_ResultMaskPointer = nullptr; // Need to make this null during every re-run of
                               // the data.
   // Create a process accumulator for tracking the progress of this minipipeline
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();

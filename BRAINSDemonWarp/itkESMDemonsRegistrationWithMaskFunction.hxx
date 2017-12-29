@@ -46,10 +46,10 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
   m_IntensityDifferenceThreshold = 0.001;
   m_MaximumUpdateStepLength = 0.5;
 
-  this->SetMovingImage(ITK_NULLPTR);
-  this->SetFixedImage(ITK_NULLPTR);
-  this->SetMovingImageMask(ITK_NULLPTR);
-  this->SetFixedImageMask(ITK_NULLPTR);
+  this->SetMovingImage(nullptr);
+  this->SetFixedImage(nullptr);
+  this->SetMovingImageMask(nullptr);
+  this->SetFixedImageMask(nullptr);
   m_FixedImageSpacing.Fill(1.0);
   m_FixedImageOrigin.Fill(0.0);
   m_FixedImageDirection.SetIdentity();

@@ -218,13 +218,13 @@ int vtkITKLevelTracingImageFilter::RequestData(
   // Initialize and check input
   //
   pd=input->GetPointData();
-  if (pd ==ITK_NULLPTR)
+  if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
     return 1;
   }
   inScalars=pd->GetScalars();
-  if ( inScalars == ITK_NULLPTR )
+  if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for level tracing");
     return 1;

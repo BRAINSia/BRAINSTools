@@ -37,7 +37,7 @@
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel() :
-  m_myDataHandler(ITK_NULLPTR),
+  m_myDataHandler(nullptr),
   m_applyDataSetList(),
   m_method(""),
   m_normalization(""),
@@ -73,7 +73,7 @@ BRAINSCutApplyModel
 
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler ) :
-  m_myDataHandler(ITK_NULLPTR),
+  m_myDataHandler(nullptr),
   m_applyDataSetList(),
   m_method(""),
   m_normalization(""),

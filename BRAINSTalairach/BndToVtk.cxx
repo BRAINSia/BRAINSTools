@@ -22,7 +22,7 @@
 #include <vector>
 #include <sstream>
 
-#include "itkMacro.h" //Needed for ITK_NULLPTR
+#include "itkMacro.h" //Needed for nullptr
 
 #define PR(x) std::cout << #x " = " << x << "\n"; // print macro
 
@@ -65,25 +65,25 @@ void BndToVtk::ProcessBND(std::string bndFile)
   for( int i = 0; i < 3; i++ )
     {
     const std::string fillVals = tokens[i];
-    AC[i] = strtod(fillVals.c_str(), ITK_NULLPTR);
+    AC[i] = strtod(fillVals.c_str(), nullptr);
     }
   /* fill in PC point values */
   for( int i = 3; i < 6; i++ )
     {
     const std::string fillVals = tokens[i];
-    PC[i - 3] = strtod(fillVals.c_str(), ITK_NULLPTR);
+    PC[i - 3] = strtod(fillVals.c_str(), nullptr);
     }
   /* fill in SLA point values */
   for( int i = 6; i < 9; i++ )
     {
     const std::string fillVals = tokens[i];
-    SLA[i - 6] = strtod(fillVals.c_str(), ITK_NULLPTR);
+    SLA[i - 6] = strtod(fillVals.c_str(), nullptr);
     }
   /* fill in IRP point values */
   for( int i = 9; i < 12; i++ )
     {
     const std::string fillVals = tokens[i];
-    IRP[i - 9] = strtod(fillVals.c_str(), ITK_NULLPTR);
+    IRP[i - 9] = strtod(fillVals.c_str(), nullptr);
     }
 
   /* Y and Z are inverted in the BRAINS representation vis a vis VTK */

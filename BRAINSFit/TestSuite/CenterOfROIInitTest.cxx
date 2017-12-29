@@ -139,7 +139,7 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
   myHelper->SetMovingVolume(eTfmImage);
   myHelper->SetFixedBinaryVolume(fixedMask);
   myHelper->SetMovingBinaryVolume(movingMask);
-  myHelper->SetCurrentGenericTransform(ITK_NULLPTR);
+  myHelper->SetCurrentGenericTransform(nullptr);
   myHelper->SetInitializeTransformMode("useCenterOfROIAlign");
   myHelper->SetTransformType(transformTypeVector);
   //std::vector<double> minStepLength;

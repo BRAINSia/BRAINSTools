@@ -28,10 +28,10 @@ template <class TFixedMesh, class TMovingMesh>
 MeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::MeshToMeshMetric()
 {
-  m_FixedMesh     = ITK_NULLPTR; // has to be provided by the user.
-  m_MovingMesh    = ITK_NULLPTR; // has to be provided by the user.
-  m_Transform     = ITK_NULLPTR; // has to be provided by the user.
-  m_Interpolator  = ITK_NULLPTR; // has to be provided by the user.
+  m_FixedMesh     = nullptr; // has to be provided by the user.
+  m_MovingMesh    = nullptr; // has to be provided by the user.
+  m_Transform     = nullptr; // has to be provided by the user.
+  m_Interpolator  = nullptr; // has to be provided by the user.
 }
 
 /** Set the parameters that define a unique transform */

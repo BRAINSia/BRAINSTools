@@ -32,7 +32,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::TriangleBasisSystemCalculator()
 {
   itkDebugMacro("Constructor");
-  this->m_InputMesh = ITK_NULLPTR;
+  this->m_InputMesh = nullptr;
 }
 
 /**

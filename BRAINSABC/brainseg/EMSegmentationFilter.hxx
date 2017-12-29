@@ -268,7 +268,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     reverseLabelToIndex[ labelClasses[i] ] = i;
     }
 
-  typename MaskNNInterpolationType::Pointer purePlugsMaskInterp = ITK_NULLPTR;
+  typename MaskNNInterpolationType::Pointer purePlugsMaskInterp = nullptr;
   if( m_UsePurePlugs && m_PurePlugsMask.IsNotNull() )
     {
     purePlugsMaskInterp = MaskNNInterpolationType::New();
@@ -591,10 +591,10 @@ template <class TInputImage, class TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::EMSegmentationFilter()
 {
-  m_DirtyLabels = ITK_NULLPTR;
-  m_CleanedLabels = ITK_NULLPTR;
-  m_ThresholdedLabels = ITK_NULLPTR;
-  m_DirtyThresholdedLabels = ITK_NULLPTR;
+  m_DirtyLabels = nullptr;
+  m_CleanedLabels = nullptr;
+  m_ThresholdedLabels = nullptr;
+  m_DirtyThresholdedLabels = nullptr;
 
   m_SampleSpacing = 2.0;
 
@@ -634,14 +634,14 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_CorrectedImages.clear();
   m_RawCorrectedImages.clear();
 
-  m_TemplateBrainMask = ITK_NULLPTR;
+  m_TemplateBrainMask = nullptr;
   m_OriginalAtlasImages.clear();
   m_WarpedAtlasImages.clear();
 
   m_OutputDebugDir = "";
   // m_PriorLookupTable = IntVectorType(0);
 
-  m_NonAirRegion = ITK_NULLPTR;
+  m_NonAirRegion = nullptr;
 
   m_AtlasTransformType = "SyN"; // "invalid_TransformationTypeNotSet";
 
@@ -654,13 +654,13 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_NumberOfSubSamplesInEachPlugArea[1] = 0;
   m_NumberOfSubSamplesInEachPlugArea[2] = 0;
 
-  m_PurePlugsMask = ITK_NULLPTR;
+  m_PurePlugsMask = nullptr;
 
   m_UpdateTransformation = false;
 
   m_DebugLevel = 0;
 
-  m_TemplateGenericTransform = ITK_NULLPTR;
+  m_TemplateGenericTransform = nullptr;
 
   m_WarpGrid[0] = 5;
   m_WarpGrid[1] = 5;
@@ -1124,7 +1124,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   std::vector<ByteImageType::Pointer>  distributionsCandidateRegions;
 
   // resample the PurePlugsMask to the voxel lattice of the CandidateRegions
-  ByteImagePointer resampledPurePlugsMask = ITK_NULLPTR;
+  ByteImagePointer resampledPurePlugsMask = nullptr;
   if( this->m_UsePurePlugs && this->m_PurePlugsMask.IsNotNull() )
     {
     resampledPurePlugsMask =
@@ -1398,8 +1398,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   AveragePosteriors.resize(numClasses);
   if( this->m_UseKNN )
     {
-    ByteImagePointer thresholdedLabels = ITK_NULLPTR;
-    ByteImagePointer dirtyThresholdedLabels = ITK_NULLPTR; // It is the label image that is used in ComputeKNNPosteriors,
+    ByteImagePointer thresholdedLabels = nullptr;
+    ByteImagePointer dirtyThresholdedLabels = nullptr; // It is the label image that is used in ComputeKNNPosteriors,
                                                     // since it has all labels (not only foreground region).
     ComputeLabels<TProbabilityImage, ByteImageType, double>(EMPosteriors, priorIsForegroundPriorVector,
                                                             priorLabelCodeVector, nonAirRegion,
@@ -1770,7 +1770,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                       [=,&stdoutMutex,&subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> &r) {
                         for (LOOPITERTYPE i = r.begin(); i < r.end(); ++i) {
                           std::ostringstream logMessage("\n*********************************************\n");
-                          typename ByteImageType::Pointer probThreshImage = ITK_NULLPTR;
+                          typename ByteImageType::Pointer probThreshImage = nullptr;
 
                           typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
                           typename ProbThresholdType::Pointer probThresh = ProbThresholdType::New();
@@ -2746,7 +2746,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   std::vector<ByteImageType::Pointer>  biasCandidateRegions;
 
   // resample the PurePlugsMask to the voxel lattice of the CandidateRegions
-  ByteImagePointer resampledPurePlugsMask = ITK_NULLPTR;
+  ByteImagePointer resampledPurePlugsMask = nullptr;
   if( this->m_UsePurePlugs && this->m_PurePlugsMask.IsNotNull() )
     {
     resampledPurePlugsMask =

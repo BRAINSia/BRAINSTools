@@ -101,7 +101,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
           << " not equal to any recognized type VersorRigid3DTransform OR "
           << " ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"
           << std::endl;
-        return ITK_NULLPTR;
+        return nullptr;
         }
       }
     catch( itk::ExceptionObject & excp )
@@ -111,7 +111,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
         << "Error while converting the genericTransformToWrite to Rigid"
         << std::endl;
       std::cerr << excp << std::endl;
-      return ITK_NULLPTR;
+      return nullptr;
       }
     }
   return versorRigid;
@@ -255,7 +255,7 @@ template int WriteStrippedRigidTransformToDisk<double,float>(const itk::Transfor
 template<class TScalarType>
 typename itk::Transform<TScalarType, 3, 3>::Pointer ReadTransformFromDisk(const std::string & initialTransform)
 {
-  typename itk::Transform<TScalarType, 3, 3>::Pointer genericTransform = ITK_NULLPTR;
+  typename itk::Transform<TScalarType, 3, 3>::Pointer genericTransform = nullptr;
 
   typedef typename itk::ThinPlateR2LogRSplineKernelTransform<TScalarType, 3> ThinPlateSpline3DTransformType;
   typedef typename itk::ScaleVersor3DTransform<TScalarType>                  ScaleVersor3DTransformType;

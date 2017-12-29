@@ -87,8 +87,8 @@ ReadScalarVolume( typename TImage::Pointer & img, const std::string & fname, boo
       doubleReader->SetFileName( fname.c_str());
       try
       {
-        imgReader = ITK_NULLPTR;  //Throw away existing reader (save memory)
-        img = ITK_NULLPTR;        //Throw away existing version of image (save memory)
+        imgReader = nullptr;  //Throw away existing reader (save memory)
+        img = nullptr;        //Throw away existing version of image (save memory)
         doubleReader->Update();
       }
       catch( itk::ExceptionObject & excp )
@@ -160,8 +160,8 @@ ReadVectorVolume( typename TImage::Pointer & img, const std::string & fname, boo
       doubleReader->SetFileName( fname.c_str());
       try
       {
-        imgReader = ITK_NULLPTR;  //Throw away existing reader (save memory)
-        img = ITK_NULLPTR;        //Throw away existing version of image (save memory)
+        imgReader = nullptr;  //Throw away existing reader (save memory)
+        img = nullptr;        //Throw away existing version of image (save memory)
         doubleReader->Update();
       }
       catch( itk::ExceptionObject & excp )

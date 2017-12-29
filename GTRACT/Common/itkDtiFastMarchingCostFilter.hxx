@@ -83,9 +83,9 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   m_OutputSpacing.Fill( 1.0 );
   m_OverrideOutputInformation = false;
 
-  m_AlivePoints = ITK_NULLPTR;
-  m_TrialPoints = ITK_NULLPTR;
-  m_ProcessedPoints = ITK_NULLPTR;
+  m_AlivePoints = nullptr;
+  m_TrialPoints = nullptr;
+  m_ProcessedPoints = nullptr;
 
   m_LabelImage = LabelImageType::New();
   m_AnisotropyImage = AnisotropyImageType::New();
@@ -140,7 +140,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   // use user-specified output information
 
-  if( this->GetInput() == ITK_NULLPTR || m_OverrideOutputInformation )
+  if( this->GetInput() == nullptr || m_OverrideOutputInformation )
     {
     LevelSetPointer output = this->GetOutput();
     output->SetLargestPossibleRegion( m_OutputRegion );

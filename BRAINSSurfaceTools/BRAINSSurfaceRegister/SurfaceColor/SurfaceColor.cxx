@@ -236,7 +236,7 @@ int main( int argc, char * argv[] )
     }
 
   label->SetName("LabelValue");
-  if( surface->GetPointData()->GetScalars() == ITK_NULLPTR )
+  if( surface->GetPointData()->GetScalars() == nullptr )
     {
     surface->GetPointData()->SetScalars(label);
     }

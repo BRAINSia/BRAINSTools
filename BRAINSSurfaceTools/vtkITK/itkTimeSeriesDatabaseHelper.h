@@ -25,7 +25,7 @@ namespace itk {
         typedef X element_type;
 
         explicit counted_ptr(X* p = 0) /// allocate a new counter
-          : itsCounter(ITK_NULLPTR) {if (p) itsCounter = new counter(p);}
+          : itsCounter(nullptr) {if (p) itsCounter = new counter(p);}
         ~counted_ptr()
           {release();}
         counted_ptr(const counted_ptr& r) throw()
@@ -55,7 +55,7 @@ namespace itk {
 
         X& operator*()  const throw()   {return *itsCounter->ptr;}
         X* operator->() const throw()   {return itsCounter->ptr;}
-        X* get()        const throw()   {return itsCounter ? itsCounter->ptr : ITK_NULLPTR;}
+        X* get()        const throw()   {return itsCounter ? itsCounter->ptr : nullptr;}
         bool unique()   const throw()
         {return (itsCounter ? itsCounter->count == 1 : true);}
 
@@ -80,7 +80,7 @@ namespace itk {
               delete itsCounter->ptr;
               delete itsCounter;
             }
-            itsCounter = ITK_NULLPTR;
+            itsCounter = nullptr;
           }
         }
       };
@@ -221,7 +221,7 @@ namespace itk {
         IF_DEBUG(stats.finds++);
 
         if (ti == table.end())
-          return ITK_NULLPTR;
+          return nullptr;
 
         IF_DEBUG(stats.finds_hit++);
 

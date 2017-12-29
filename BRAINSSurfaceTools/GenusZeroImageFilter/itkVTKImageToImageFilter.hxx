@@ -56,7 +56,7 @@ VTKImageToImageFilter<TOutputImage>
   if( m_Exporter )
     {
     m_Exporter->Delete();
-    m_Exporter = ITK_NULLPTR;
+    m_Exporter = nullptr;
     }
 }
 

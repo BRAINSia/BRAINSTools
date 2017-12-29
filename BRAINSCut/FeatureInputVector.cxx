@@ -101,7 +101,7 @@ FeatureInputVector
   m_gradientSize(-1),
   m_inputVectorSize(0),
   m_normalizationMethod("None"),
-  m_imageInterpolator(ITK_NULLPTR),
+  m_imageInterpolator(nullptr),
   m_imagesOfInterestInOrder(),
   m_roiIDsInOrder(),
   m_spatialLocations(),

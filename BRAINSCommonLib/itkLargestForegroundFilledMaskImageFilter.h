@@ -121,10 +121,10 @@ public:
   itkGetConstMacro(ThresholdCorrectionFactor, double);
 protected:
   LargestForegroundFilledMaskImageFilter();
-  ~LargestForegroundFilledMaskImageFilter();
+  ~LargestForegroundFilledMaskImageFilter() override;
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
-  virtual void GenerateData() override;
+  void GenerateData() override;
 
 private:
   /** Returns true if more than two bins of informaiton are found,

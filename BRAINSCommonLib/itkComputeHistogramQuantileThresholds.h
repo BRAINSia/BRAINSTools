@@ -83,7 +83,7 @@ public:
 
 protected:
   ComputeHistogramQuantileThresholds();
-  ~ComputeHistogramQuantileThresholds();
+  ~ComputeHistogramQuantileThresholds() override;
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:

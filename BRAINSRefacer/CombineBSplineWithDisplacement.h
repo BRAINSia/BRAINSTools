@@ -52,7 +52,7 @@ protected:
     this->m_Verbose = false;
     this->m_Debug = false;
   }
-  ~CombineBSplineWithDisplacement(){};
+  ~CombineBSplineWithDisplacement() override{};
 
   void GenerateData() override
   {

@@ -149,7 +149,7 @@ public:
   itkGetConstMacro(NumberOfMatchPoints, unsigned long);
 
   /** This filter requires all of the input to be in the buffer. */
-  virtual void GenerateInputRequestedRegion() override;
+  void GenerateInputRequestedRegion() override;
 
   /** Methods to get the histograms of the source, reference, and
     * output. Objects are only valid after Update() has been called
@@ -182,12 +182,12 @@ protected:
     *
     * \sa ProcessObject::VerifyInputInformation
     */
-  virtual void VerifyInputInformation() override
+  void VerifyInputInformation() override
   {
   }
 
   OtsuHistogramMatchingImageFilter();
-  ~OtsuHistogramMatchingImageFilter()
+  ~OtsuHistogramMatchingImageFilter() override
   {
   }
 

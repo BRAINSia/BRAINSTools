@@ -29,13 +29,13 @@ public:
                  const bool useBMatrixGradientDirections,
                  const bool FSLFileFormatHorizontalBy3Rows);
 
-  virtual ~GEDWIConverter();
-  virtual void LoadDicomDirectory() override;
+  ~GEDWIConverter() override;
+  void LoadDicomDirectory() override;
 
   void ExtractDWIData() override;
 
 protected:
-  virtual void AddFlagsToDictionary() override;
+  void AddFlagsToDictionary() override;
 };
 
 #endif // __GEDWIConverter_h

@@ -139,7 +139,7 @@ class l2r_lr_fun : public function
 {
 public:
   l2r_lr_fun(const problem *prob, double Cp, double Cn);
-  ~l2r_lr_fun();
+  ~l2r_lr_fun() override;
 
   double fun(double *w) override;
 
@@ -312,7 +312,7 @@ class l2r_l2_svc_fun : public function
 {
 public:
   l2r_l2_svc_fun(const problem *prob, double Cp, double Cn);
-  ~l2r_l2_svc_fun();
+  ~l2r_l2_svc_fun() override;
 
   double fun(double *w) override;
 

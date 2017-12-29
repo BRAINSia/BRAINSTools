@@ -28,7 +28,7 @@ class StringValue :
 {
 public:
   typedef XMLContents<const std::string> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const override
+  int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== StringValue ===!"
@@ -57,7 +57,7 @@ public:
   // presumably, if you cared if the string wasn't empty
   // or you had particular values in mind, you'd derive from
   // StringValue;
-  virtual bool Verify() const override
+  bool Verify() const override
   {
     bool returnvalue = true;
 

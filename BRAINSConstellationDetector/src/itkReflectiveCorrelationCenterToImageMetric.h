@@ -83,7 +83,7 @@ public:
 
   ////////////////////////
   // Mandatory metric functions
-  virtual void Initialize(void) throw ( itk::ExceptionObject ) override
+  void Initialize(void) throw ( itk::ExceptionObject ) override
   {
     ParametersType params;
     params.set_size(SpaceDimension);
@@ -151,12 +151,12 @@ public:
       }
   }
 
-  virtual MeasureType GetValue() const override
+  MeasureType GetValue() const override
   {
     return f(this->m_params);
   }
 
-  virtual void GetDerivative( DerivativeType & ) const override
+  void GetDerivative( DerivativeType & ) const override
   {
   }
 
@@ -167,27 +167,27 @@ public:
     GetDerivative( derivative );
   }
 
-  virtual unsigned int GetNumberOfLocalParameters() const override
+  unsigned int GetNumberOfLocalParameters() const override
   {
     return SpaceDimension;
   }
 
-  virtual unsigned int GetNumberOfParameters(void) const override
+  unsigned int GetNumberOfParameters(void) const override
   {
     return SpaceDimension;
   }
 
-  virtual void SetParameters( ParametersType & parameters ) override
+  void SetParameters( ParametersType & parameters ) override
   {
     this->m_params = parameters;
   }
 
-  virtual const ParametersType & GetParameters() const override
+  const ParametersType & GetParameters() const override
   {
     return this->m_params;
   }
 
-  virtual bool HasLocalSupport() const override
+  bool HasLocalSupport() const override
   {
     return this->m_HasLocalSupport;
   }
@@ -197,7 +197,7 @@ public:
     this->m_HasLocalSupport = hls;
   }
 
-  virtual void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) override
+  void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) override
   {
   }
   ////////////////////////

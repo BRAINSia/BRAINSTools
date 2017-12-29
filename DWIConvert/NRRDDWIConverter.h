@@ -17,25 +17,25 @@ public:
 
   NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames, const bool FSLFileFormatHorizontalBy3Rows );
 
-  virtual ~NRRDDWIConverter() {}
+  ~NRRDDWIConverter() override {}
 
-  virtual void AddFlagsToDictionary() override;
+  void AddFlagsToDictionary() override;
 
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
    */
-  virtual void LoadFromDisk() override;
+  void LoadFromDisk() override;
 
   /**
    * @brief  find the bvalues and gradient vectors
    */
-  virtual void ExtractDWIData() override;
+  void ExtractDWIData() override;
 
   /**
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
+  CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
 
 private:
   Volume4DType::Pointer CreateVolume(VectorVolumeType::Pointer & inputVol);

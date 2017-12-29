@@ -86,10 +86,10 @@ public:
   itkGetConstMacro(OutsideValue, IntegerPixelType);
 protected:
   MultiModeHistogramThresholdBinaryImageFilter();
-  ~MultiModeHistogramThresholdBinaryImageFilter();
+  ~MultiModeHistogramThresholdBinaryImageFilter() override;
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
-  virtual void GenerateData() override;
+  void GenerateData() override;
 
 private:
   ThresholdArrayType m_QuantileLowerThreshold;

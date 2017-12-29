@@ -89,7 +89,7 @@ public:
   itkGetConstMacro(NumberOfPixelsWithDifferences, SizeValueType);
 protected:
   LOCAL_DifferenceImageFilter();
-  virtual ~LOCAL_DifferenceImageFilter()
+  ~LOCAL_DifferenceImageFilter() override
   {
   }
 

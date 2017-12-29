@@ -30,12 +30,12 @@ public:
                       DWIConverter::FileNamesContainer &inputFileNames,
                       const bool useBMatrixGradientDirections,
                       const bool FSLFileFormatHorizontalBy3Rows) ;
-  virtual ~PhilipsDWIConverter();
+  ~PhilipsDWIConverter() override;
 
-  virtual void LoadDicomDirectory() override;
-  virtual void ExtractDWIData() override;
+  void LoadDicomDirectory() override;
+  void ExtractDWIData() override;
 protected:
-  virtual void AddFlagsToDictionary() override;
+  void AddFlagsToDictionary() override;
   /** # of trailing images to ignore */
   unsigned int        m_NTrailingImagesToIgnore;
 };

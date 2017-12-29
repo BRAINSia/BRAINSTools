@@ -33,14 +33,14 @@ public:
   typedef FileToRead<std::fstream *> Superclass;
   typedef Superclass::OutputType     OutputType;
 
-  virtual OutputType GetValue() const override;
+  OutputType GetValue() const override;
 
-  virtual void Close() override;
+  void Close() override;
 
-  virtual int PrintSelf(std::ostream & os, int indent) const override;
+  int PrintSelf(std::ostream & os, int indent) const override;
 
   StreamToRead(const std::string & name, const std::string & filename);
-  virtual ~StreamToRead();
+  ~StreamToRead() override;
 protected:
   StreamToRead() ITK_DELETED_FUNCTION;
   ITK_DISALLOW_COPY_AND_ASSIGN(StreamToRead);

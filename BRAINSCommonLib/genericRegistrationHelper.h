@@ -506,7 +506,7 @@ public:
 
 protected:
   MultiModal3DMutualRegistrationHelper();
-  virtual ~MultiModal3DMutualRegistrationHelper()
+  ~MultiModal3DMutualRegistrationHelper() override
   {
   }
 

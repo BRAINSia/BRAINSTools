@@ -74,7 +74,7 @@ class XMLContents :
 public:
   typedef ElementContainer SuperClass;
   typedef TOutputType      OutputType;
-  virtual int PrintSelf(std::ostream &, int indent) const override
+  int PrintSelf(std::ostream &, int indent) const override
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== XMLContents ===" <<
@@ -92,7 +92,7 @@ public:
   {
   }
 
-  virtual ~XMLContents()
+  ~XMLContents() override
   {
   }
 

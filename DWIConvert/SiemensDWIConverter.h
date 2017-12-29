@@ -31,7 +31,7 @@ public:
                       const bool useBMatrixGradientDirections,
                       const bool FSLFileFormatHorizontalBy3Rows,
                       const double smallGradientThreshold) ;
-  virtual ~SiemensDWIConverter();
+  ~SiemensDWIConverter() override;
 
   template <typename T>
   T CSAExtractFromString(const char *ptr);
@@ -132,7 +132,7 @@ public:
    *  a collection of 2D slices arranged in a single
    *  mosaic slice.
    */
-  virtual void LoadDicomDirectory() override;
+  void LoadDicomDirectory() override;
 
   double ExtractBValue(CSAHeader *csaHeader, unsigned int strideVolume);
 
@@ -168,7 +168,7 @@ protected:
 
   void CheckCSAHeaderAvailable();
 
-  virtual void AddFlagsToDictionary() override;
+  void AddFlagsToDictionary() override;
 private:
   double      m_SmallGradientThreshold;
   unsigned int m_MMosaic;

@@ -37,7 +37,7 @@ protected:
     this->m_Verbose = false;
     this->m_Debug = false;
   }
-  ~MaskFromLandmarksFilter() {};
+  ~MaskFromLandmarksFilter() override {};
 
   void GenerateData() override
   {

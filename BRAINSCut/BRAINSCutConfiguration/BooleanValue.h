@@ -27,7 +27,7 @@ class BooleanValue :
 {
 public:
   typedef XMLContents<bool> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const override
+  int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== BooleanValue ===!"
@@ -52,7 +52,7 @@ public:
     this->m_Value = s;
   }
 
-  virtual bool Verify() const override
+  bool Verify() const override
   {
     return true;
   }

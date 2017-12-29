@@ -268,7 +268,7 @@ public:
 #endif
 protected:
   HoughTransformRadialVotingImageFilter();
-  virtual ~HoughTransformRadialVotingImageFilter();
+  ~HoughTransformRadialVotingImageFilter() override;
 
   InputCoordType       m_MinimumRadius;
   InputCoordType       m_MaximumRadius;
@@ -292,11 +292,11 @@ protected:
   int m_HoughEyeDetectorMode;
 
   /** Method for evaluating the implicit function over the image. */
-  virtual void BeforeThreadedGenerateData() override;
+  void BeforeThreadedGenerateData() override;
 
-  virtual void AfterThreadedGenerateData() override;
+  void AfterThreadedGenerateData() override;
 
-  virtual void ThreadedGenerateData(const OutputImageRegionType & windowRegion, ThreadIdType threadId) override;
+  void ThreadedGenerateData(const OutputImageRegionType & windowRegion, ThreadIdType threadId) override;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 

@@ -147,7 +147,7 @@ public:
 #endif
 protected:
   GridForwardWarpImageFilterNew();
-  ~GridForwardWarpImageFilterNew()
+  ~GridForwardWarpImageFilterNew() override
   {
   }
 

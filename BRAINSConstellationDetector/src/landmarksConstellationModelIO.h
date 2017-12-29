@@ -104,7 +104,7 @@ public:
     m_RPAC_over_RPPCMean = 0;
   }
 
-  virtual ~landmarksConstellationModelIO()
+  ~landmarksConstellationModelIO() override
   {
   }
 

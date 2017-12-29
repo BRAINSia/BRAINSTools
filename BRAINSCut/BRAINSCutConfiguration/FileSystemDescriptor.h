@@ -28,7 +28,7 @@ class FileSystemDescriptor :
 public:
   typedef XMLContents<TOutputType> SuperClass;
   typedef TOutputType              OutputType;
-  virtual int PrintSelf(std::ostream & os, int indent) const
+  int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== FileSystemDescriptor ==="
@@ -80,9 +80,9 @@ public:
 
   virtual void Close() = 0;
 
-  virtual bool Verify() const = 0;
+  bool Verify() const override = 0;
 
-  virtual OutputType GetValue() const = 0;
+  OutputType GetValue() const override = 0;
 
 protected:
   std::string m_Filename;

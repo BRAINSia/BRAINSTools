@@ -27,7 +27,7 @@ class FileToRead :
 {
 public:
   typedef FileSystemDescriptor<OutputType> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const
+  int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== FileToRead ===" << std::endl;
@@ -43,7 +43,7 @@ public:
   {
   }
 
-  virtual bool Verify() const
+  bool Verify() const override
   {
     bool returnvalue = true;
 

@@ -26,7 +26,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
  public:
   static vtkITKArchetypeDiffusionTensorImageReaderFile *New();
   vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
  protected:
   vtkITKArchetypeDiffusionTensorImageReaderFile();
@@ -35,7 +35,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
 #if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
 #else
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) ITK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 #endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:

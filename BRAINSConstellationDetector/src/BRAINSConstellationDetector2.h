@@ -116,7 +116,7 @@ public:
   itkNewMacro(Self);
 
   /** Display */
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
   // Set Basic Inputs
   /** Set the filename of the output transform */
@@ -304,7 +304,7 @@ protected:
 
   BRAINSConstellationDetector2();
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
   /** Essential Parameters */
   // Inputs

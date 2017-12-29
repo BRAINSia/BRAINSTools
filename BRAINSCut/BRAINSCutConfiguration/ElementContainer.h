@@ -20,7 +20,7 @@
 #define ElementContainer_H
 #include <string>
 #include <iostream>
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 class ElementContainer
 {
@@ -74,7 +74,7 @@ class XMLContents :
 public:
   typedef ElementContainer SuperClass;
   typedef TOutputType      OutputType;
-  virtual int PrintSelf(std::ostream &, int indent) const ITK_OVERRIDE
+  virtual int PrintSelf(std::ostream &, int indent) const override
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== XMLContents ===" <<

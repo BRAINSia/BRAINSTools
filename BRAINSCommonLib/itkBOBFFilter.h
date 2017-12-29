@@ -110,7 +110,7 @@ public:
   itkGetConstReferenceMacro(Seed, IndexType);
 
   /** Method to execute the Filter */
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
 protected:
   BOBFFilter();
@@ -123,14 +123,14 @@ protected:
     *
     * \sa ProcessObject::VerifyInputInformation
     */
-  virtual void VerifyInputInformation() ITK_OVERRIDE
+  virtual void VerifyInputInformation() override
   {
   }
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(BOBFFilter);
 
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
   // std::vector<IndexType> m_Seeds;
   IndexType       m_Seed;

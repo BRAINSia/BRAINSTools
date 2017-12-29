@@ -41,7 +41,7 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "vtkContourValues.h" // Needed for direct access to ContourValues
 
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 class vtkCellArray;
 class vtkFloatArray;
@@ -55,7 +55,7 @@ public:
   static vtkImageGenus0MarchingCubes * New();
 
   vtkTypeMacro(vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Methods to set contour values
@@ -127,7 +127,7 @@ protected:
   ~vtkImageGenus0MarchingCubes();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector**, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation *info) ITK_OVERRIDE;
+  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
 
   int BiggestComponent;
   int ConnectedComponent;

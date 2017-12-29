@@ -20,14 +20,14 @@
 #define BooleanValue_h
 #include "ElementContainer.h"
 #include <iostream>
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 class BooleanValue :
   public XMLContents<bool>
 {
 public:
   typedef XMLContents<bool> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE
+  virtual int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== BooleanValue ===!"
@@ -42,7 +42,7 @@ public:
   {
   }
 
-  ReturnType GetValue(void) const ITK_OVERRIDE
+  ReturnType GetValue(void) const override
   {
     return this->m_Value;
   }
@@ -52,7 +52,7 @@ public:
     this->m_Value = s;
   }
 
-  virtual bool Verify() const ITK_OVERRIDE
+  virtual bool Verify() const override
   {
     return true;
   }

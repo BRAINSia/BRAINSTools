@@ -117,13 +117,13 @@ protected:
   HistogramMatchingQuadEdgeMeshFilter();
   ~HistogramMatchingQuadEdgeMeshFilter();
 
-  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const override;
 
   void BeforeTransform();
 
   void Transform();
 
-  void GenerateData() ITK_OVERRIDE;
+  void GenerateData() override;
 
   /** Compute min, max and mean of an image. */
   void ComputeMinMax( const InputMeshType * mesh, THistogramMeasurement& minValue, THistogramMeasurement& maxValue );

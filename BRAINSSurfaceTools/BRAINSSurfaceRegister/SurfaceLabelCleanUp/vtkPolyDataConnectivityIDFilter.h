@@ -64,7 +64,7 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkVersion.h"
 
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 #if (VTK_MAJOR_VERSION >= 6)
 #define VTK_GRAPHICS_EXPORT /* */
@@ -85,7 +85,7 @@ class VTK_GRAPHICS_EXPORT vtkPolyDataConnectivityIDFilter : public vtkPolyDataAl
 {
 public:
   vtkTypeMacro(vtkPolyDataConnectivityIDFilter, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with default extraction mode to extract largest regions.
@@ -185,7 +185,7 @@ protected:
   ~vtkPolyDataConnectivityIDFilter();
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *) ITK_OVERRIDE;
+  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *) override;
 
   int             ColorRegions;       // boolean turns on/off scalar gen for separate regions
   int             ExtractionMode;     // how to extract regions

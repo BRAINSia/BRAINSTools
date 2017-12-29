@@ -54,7 +54,7 @@ protected:
   }
   ~CombineBSplineWithDisplacement(){};
 
-  void GenerateData() ITK_OVERRIDE
+  void GenerateData() override
   {
     if( m_Debug )
       {

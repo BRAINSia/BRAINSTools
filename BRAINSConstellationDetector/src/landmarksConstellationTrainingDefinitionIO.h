@@ -52,7 +52,7 @@ public:
     this->ReadFile(filename);
   }
 
-  const ValMapType & GetRadii() const ITK_OVERRIDE
+  const ValMapType & GetRadii() const override
   {
     return landmarksConstellationModelBase::GetRadii();
   }

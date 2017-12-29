@@ -31,23 +31,23 @@ public:
 
   virtual ~FSLDWIConverter() {}
 
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
+  virtual void AddFlagsToDictionary() override;
 
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
    */
-   virtual void LoadFromDisk() ITK_OVERRIDE;
+   virtual void LoadFromDisk() override;
 
    /**
     * @brief  find the bvalues and gradient vectors
     */
-  void ExtractDWIData() ITK_OVERRIDE;
+  void ExtractDWIData() override;
 
   /**
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const ITK_OVERRIDE;
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
 
 
 private:

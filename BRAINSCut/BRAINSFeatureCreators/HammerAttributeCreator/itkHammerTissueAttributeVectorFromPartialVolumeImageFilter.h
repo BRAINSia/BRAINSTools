@@ -151,7 +151,7 @@ public:
     * in order to inform the pipeline execution model.
     *
     * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion() throw ( InvalidRequestedRegionError ) ITK_OVERRIDE;
+  virtual void GenerateInputRequestedRegion() throw ( InvalidRequestedRegionError ) override;
 
   /** Set/Get whether or not the filter will use the spacing of the input
     image in its calculations */
@@ -197,7 +197,7 @@ public:
 protected:
   HammerTissueAttributeVectorFromPartialVolumeImageFilter();
   virtual ~HammerTissueAttributeVectorFromPartialVolumeImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** HammerTissueAttributeVectorFromPartialVolumeImageFilter can be implemented as a multithreaded filter.
   * Therefore, this implementation provides a ThreadedGenerateData()
@@ -209,7 +209,7 @@ protected:
     *
     * \sa ImageToImageFilter::ThreadedGenerateData(),
     *     ImageToImageFilter::GenerateData() */
-  virtual void GenerateData() ITK_OVERRIDE;
+  virtual void GenerateData() override;
 
 private:
   HammerTissueAttributeVectorFromPartialVolumeImageFilter(const Self &);   // purposely not

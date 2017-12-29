@@ -89,7 +89,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const ITK_OVERRIDE;
+  virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override;
 
 protected:
   TensorLinearInterpolateImageFunction();
@@ -97,7 +97,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
   TensorLinearInterpolateImageFunction(const Self &); // purposely not

@@ -43,7 +43,7 @@ class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageAlgorithm
 public:
   /// vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
   static vtkITKTimeSeriesDatabase *New();
-  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE{ Superclass::PrintSelf(os, indent);};
+  void PrintSelf(ostream& os, vtkIndent indent) override{ Superclass::PrintSelf(os, indent);};
   vtkTypeMacro(vtkITKTimeSeriesDatabase,vtkImageAlgorithm);
 
 public:
@@ -90,12 +90,12 @@ protected:
   ImageExportType::Pointer itkExporter;
   vtkImageImport* vtkImporter;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) ITK_OVERRIDE;
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   /// defined in the subclasses
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void ExecuteData(vtkDataObject *output);
 #else
-  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) ITK_OVERRIDE;
+  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
 #endif
 
 private:

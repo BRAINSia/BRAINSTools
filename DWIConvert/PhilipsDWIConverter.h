@@ -32,10 +32,10 @@ public:
                       const bool FSLFileFormatHorizontalBy3Rows) ;
   virtual ~PhilipsDWIConverter();
 
-  virtual void LoadDicomDirectory() ITK_OVERRIDE;
-  virtual void ExtractDWIData() ITK_OVERRIDE;
+  virtual void LoadDicomDirectory() override;
+  virtual void ExtractDWIData() override;
 protected:
-  virtual void AddFlagsToDictionary() ITK_OVERRIDE;
+  virtual void AddFlagsToDictionary() override;
   /** # of trailing images to ignore */
   unsigned int        m_NTrailingImagesToIgnore;
 };

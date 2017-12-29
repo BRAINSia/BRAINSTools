@@ -19,14 +19,14 @@
 #ifndef IntValue_h
 #define IntValue_h
 #include "NumericValue.h"
-#include "itkMacro.h" //Needed for ITK_OVERRIDE
+#include "itkMacro.h" //Needed for override
 
 class IntValue :
   public NumericValue<long>
 {
 public:
   typedef NumericValue<long> SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE
+  virtual int PrintSelf(std::ostream & os, int indent) const override
   {
     indent = SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== IntValue ===!" << this->m_Value
@@ -48,7 +48,7 @@ public:
 
   void SetValue(const std::string & stringval);
 
-  virtual bool Verify() const ITK_OVERRIDE;
+  virtual bool Verify() const override;
 
 private:
 };

@@ -43,7 +43,7 @@ protected:
   ITKStyleFilterExample(){};
   ~ITKStyleFilterExample(){};
 
-  void GenerateData() ITK_OVERRIDE
+  void GenerateData() override
   {
     std::cout << "Hello Filter!!!" << std::endl;
   }

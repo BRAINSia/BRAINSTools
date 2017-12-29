@@ -46,7 +46,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageAlgorithm
 public:
   static vtkITKArchetypeImageSeriesReader *New();
   vtkTypeMacro(vtkITKArchetypeImageSeriesReader,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
 
@@ -823,7 +823,7 @@ protected:
   std::vector<std::string> FileNames;
   std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) ITK_OVERRIDE;
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   itk::MetaDataDictionary Dictionary;
 

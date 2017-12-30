@@ -88,8 +88,8 @@ void cnpy::parse_npy_header(FILE* fp, unsigned int& word_size, unsigned int*& sh
     //byte order code | stands for not applicable. 
     //not sure when this applies except for byte array
     loc1 = header.find("descr")+9;
-    bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
-    assert(littleEndian);
+    //const bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
+    //assert(littleEndian);
 
     //char type = header[loc1+1];
     //assert(type == map_type(T));
@@ -99,6 +99,29 @@ void cnpy::parse_npy_header(FILE* fp, unsigned int& word_size, unsigned int*& sh
     word_size = atoi(str_ws.substr(0,loc2).c_str());
 }
 
+static unsigned short getUshortFromChar(const char * const in)
+{
+    unsigned short out;
+    char * const ptr = reinterpret_cast<char *>( &out );
+    ptr[0] = in[0];
+    ptr[1] = in[1];
+
+    return out;
+}
+
+static unsigned int getUintFromChar(const char * const in)
+{
+    unsigned int out;
+    char * const ptr = reinterpret_cast<char *>( &out );
+    ptr[0] = in[0];
+    ptr[1] = in[1];
+    ptr[2] = in[2];
+    ptr[3] = in[3];
+
+    return out;
+}
+
+
 void cnpy::parse_zip_footer(FILE* fp, unsigned short& nrecs, unsigned int& global_header_size, unsigned int& global_header_offset)
 {
     std::vector<char> footer(22);
@@ -107,18 +130,18 @@ void cnpy::parse_zip_footer(FILE* fp, unsigned short& nrecs, unsigned int& globa
     if(res != 22)
         throw std::runtime_error("parse_zip_footer: failed fread");
 
-    const unsigned short disk_no = *(unsigned short*) &footer[4];
-    const unsigned short disk_start = *(unsigned short*) &footer[6];
-    const unsigned short nrecs_on_disk = *(unsigned short*) &footer[8];
-    nrecs = *(unsigned short*) &footer[10];
-    global_header_size = *(unsigned int*) &footer[12];
-    global_header_offset = *(unsigned int*) &footer[16];
-    const unsigned short comment_len = *(unsigned short*) &footer[20];
+    //const unsigned short disk_no = getUshortFromChar( &footer[4] );
+    //const unsigned short disk_start = getUshortFromChar( &footer[6] );
+    //const unsigned short nrecs_on_disk = getUshortFromChar( &footer[8];
+    nrecs = getUshortFromChar( &footer[10] );
+    global_header_size = getUintFromChar( &footer[12] );
+    global_header_offset = getUintFromChar( &footer[16] );
+    //const unsigned short comment_len = getUshortFromChar( &footer[20] );
 
-    assert(disk_no == 0);
-    assert(disk_start == 0);
-    assert(nrecs_on_disk == nrecs);
-    assert(comment_len == 0);
+    //assert(disk_no == 0);
+    //assert(disk_start == 0);
+    //assert(nrecs_on_disk == nrecs);
+    //assert(comment_len == 0);
 }
 
 cnpy::NpyArray load_the_npy_file(FILE* fp) {
@@ -159,7 +182,7 @@ cnpy::npz_t cnpy::npz_load(std::string fname) {
         if(local_header[2] != 0x03 || local_header[3] != 0x04) break;
 
         //read in the variable name
-        unsigned short name_len = *(unsigned short*) &local_header[26];
+        const unsigned short name_len = getUshortFromChar( &local_header[26] );
         std::string varname(name_len,' ');
         size_t vname_res = fread(&varname[0],sizeof(char),name_len,fp);
         if(vname_res != name_len)
@@ -169,7 +192,7 @@ cnpy::npz_t cnpy::npz_load(std::string fname) {
         varname.erase(varname.end()-4,varname.end());
 
         //read in the extra field
-        unsigned short extra_field_len = *(unsigned short*) &local_header[28];
+        unsigned short extra_field_len = getUshortFromChar( &local_header[28] );
         if(extra_field_len > 0) {
             std::vector<char> buff(extra_field_len);
             size_t efield_res = fread(&buff[0],sizeof(char),extra_field_len,fp);
@@ -202,7 +225,7 @@ cnpy::NpyArray cnpy::npz_load(std::string fname, std::string varname) {
         if(local_header[2] != 0x03 || local_header[3] != 0x04) break;
 
         //read in the variable name
-        unsigned short name_len = *(unsigned short*) &local_header[26];
+        unsigned short name_len = getUshortFromChar( &local_header[26] );
         std::string vname(name_len,' ');
         size_t vname_res = fread(&vname[0],sizeof(char),name_len,fp);      
         if(vname_res != name_len)
@@ -210,7 +233,7 @@ cnpy::NpyArray cnpy::npz_load(std::string fname, std::string varname) {
         vname.erase(vname.end()-4,vname.end()); //erase the lagging .npy
 
         //read in the extra field
-        unsigned short extra_field_len = *(unsigned short*) &local_header[28];
+        unsigned short extra_field_len = getUshortFromChar( &local_header[28] );
         fseek(fp,extra_field_len,SEEK_CUR); //skip past the extra field
 
         if(vname == varname) {
@@ -220,7 +243,7 @@ cnpy::NpyArray cnpy::npz_load(std::string fname, std::string varname) {
         }
         else {
             //skip past the data
-            unsigned int size = *(unsigned int*) &local_header[22];
+            const unsigned int size = getUintFromChar( &local_header[22] );
             fseek(fp,size,SEEK_CUR);
         }
     }

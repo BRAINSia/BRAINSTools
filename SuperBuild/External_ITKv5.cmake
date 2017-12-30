@@ -4,7 +4,7 @@ set(proj ITKv5)
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
 if(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
-  list(APPEND ${proj}_DEPENDENCIES "VTKv9")
+  list(APPEND ${proj}_DEPENDENCIES "VTK")
 endif()
 #if(${CMAKE_PROJECT_NAME}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)

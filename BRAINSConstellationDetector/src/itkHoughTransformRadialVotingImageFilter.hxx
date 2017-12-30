@@ -187,6 +187,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
   const InputSpacingType       spacing = inputImage->GetSpacing();
 
   DoGFunctionPointer DoGFunction = DoGFunctionType::New();
+  DoGFunction->SetUseImageSpacing(true);
 
   DoGFunction->SetInputImage(inputImage);
   DoGFunction->SetSigma(m_SigmaGradient);

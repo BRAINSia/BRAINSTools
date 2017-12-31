@@ -1,6 +1,6 @@
 set(proj        ANTs) #This local name
 
-set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel )
+set(${proj}_DEPENDENCIES ITKv5 SlicerExecutionModel )
 
 if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)

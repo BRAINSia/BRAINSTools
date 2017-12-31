@@ -140,7 +140,7 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 # ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 
-set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel)
+set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv5 SlicerExecutionModel)
 
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
 if(USE_tbb) ## Needed for BRAINSABC

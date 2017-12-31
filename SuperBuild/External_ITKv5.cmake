@@ -1,5 +1,5 @@
 
-set(proj ITKv4)
+set(proj ITKv5)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -41,7 +41,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY git@github.com:BRAINSia/ITK.git)
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG ITKv5_InitialConversion_20171210 )
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG master ) # 20171221 ITKv4 update
+  #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG master ) # 20171221 ITKv5 update
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   if(NOT ${CMAKE_PROJECT_NAME}ITKV3_COMPATIBILITY AND CMAKE_CL_64)

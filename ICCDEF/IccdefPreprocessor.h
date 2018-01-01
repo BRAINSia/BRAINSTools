@@ -174,7 +174,7 @@ public:
   itkGetConstMacro(UseHistogramMatching, bool);
 protected:
   IccdefPreprocessor();
-  ~IccdefPreprocessor()
+  ~IccdefPreprocessor() override
   {
   };
 private:

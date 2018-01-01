@@ -507,7 +507,7 @@ protected:
     m_CompWarpGradientCalculator = nullptr;
   }
 
-  ~CommandIterationUpdate()
+  ~CommandIterationUpdate() override
   {
     this->m_Fid.close();
     this->m_Bid.close();

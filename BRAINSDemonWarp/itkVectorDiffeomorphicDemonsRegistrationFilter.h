@@ -130,7 +130,7 @@ public:
    * This value is calculated for the current iteration */
   virtual double GetMetric() const;
 
-  virtual const double & GetRMSChange() const override;
+  const double & GetRMSChange() const override;
 
   virtual void SetUseGradientType(GradientType gtype);
 
@@ -159,27 +159,27 @@ public:
 
 protected:
   VectorDiffeomorphicDemonsRegistrationFilter();
-  ~VectorDiffeomorphicDemonsRegistrationFilter()
+  ~VectorDiffeomorphicDemonsRegistrationFilter() override
   {
   }
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Initialize the state of filter and equation before each iteration. */
-  virtual void InitializeIteration() override;
+  void InitializeIteration() override;
 
   /** This method allocates storage in m_UpdateBuffer.  It is called from
    * FiniteDifferenceFilter::GenerateData(). */
-  virtual void AllocateUpdateBuffer() override;
+  void AllocateUpdateBuffer() override;
 
   /** Apply update. */
-  virtual void ApplyUpdate(const TimeStepType& dt) override;
+  void ApplyUpdate(const TimeStepType& dt) override;
 
 
   /** override to do nothing since by definition input image spaces
    *  won't match
    */
-  virtual void VerifyInputInformation() override;
+  void VerifyInputInformation() override;
 
 private:
   VectorDiffeomorphicDemonsRegistrationFilter(const Self &); // purposefully not

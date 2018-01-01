@@ -98,7 +98,7 @@ public:
 
 protected:
   DtiGuidedTrackingFilter();
-  ~DtiGuidedTrackingFilter()
+  ~DtiGuidedTrackingFilter() override
   {
   }
 

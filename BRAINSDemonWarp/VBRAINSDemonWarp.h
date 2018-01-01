@@ -260,18 +260,18 @@ public:
 protected:
 
   VBRAINSDemonWarp();
-  virtual ~VBRAINSDemonWarp()
+  ~VBRAINSDemonWarp() override
   {
   }
 
   /** Initialize the input parser. */
-  virtual void InitializeParser() override;
+  void InitializeParser() override;
 
   /*** Initialize the preprocessor */
-  virtual void InitializePreprocessor() override;
+  void InitializePreprocessor() override;
 
   /*** Initialize the registrator  */
-  virtual void InitializeRegistrator() override;
+  void InitializeRegistrator() override;
 
 private:
 

@@ -125,7 +125,7 @@ public:
 protected:
 
   vtkTalairachGrid();
-  ~vtkTalairachGrid();
+  ~vtkTalairachGrid() override;
 private:
 
   /* Convert between talairach and voxel points */

@@ -269,7 +269,7 @@ public:
 #endif
 protected:
   DiffusionTensor3DReconstructionWithMaskImageFilter();
-  ~DiffusionTensor3DReconstructionWithMaskImageFilter()
+  ~DiffusionTensor3DReconstructionWithMaskImageFilter() override
   {
   };
   void PrintSelf(std::ostream& os, Indent indent) const override;

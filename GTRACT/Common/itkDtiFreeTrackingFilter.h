@@ -88,7 +88,7 @@ public:
 
 protected:
   DtiFreeTrackingFilter();
-  ~DtiFreeTrackingFilter()
+  ~DtiFreeTrackingFilter() override
   {
   }
 

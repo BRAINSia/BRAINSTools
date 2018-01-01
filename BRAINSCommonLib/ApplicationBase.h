@@ -77,7 +77,7 @@ public:
 protected:
 
   ApplicationBase();
-  virtual ~ApplicationBase()
+  ~ApplicationBase() override
   {
   }
 

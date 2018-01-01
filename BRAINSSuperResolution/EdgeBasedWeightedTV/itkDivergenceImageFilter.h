@@ -193,7 +193,7 @@ public:
    * pipeline execution model.
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion() override;
+  void GenerateInputRequestedRegion() override;
 
   /** Set the derivative weights according to the spacing of the input image
       (1/spacing). Use this option if you want to calculate the gradient in the

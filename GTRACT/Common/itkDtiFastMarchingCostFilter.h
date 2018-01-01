@@ -301,7 +301,7 @@ private:
 
 protected:
   DtiFastMarchingCostFilter();
-  ~DtiFastMarchingCostFilter()
+  ~DtiFastMarchingCostFilter() override
   {
   }
 
@@ -330,9 +330,9 @@ protected:
   }
 
   /** Generate the output image meta information. */
-  virtual void GenerateOutputInformation() override;
+  void GenerateOutputInformation() override;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *output) override;
+  void EnlargeOutputRequestedRegion(DataObject *output) override;
 
   /** Get Large Value. This value is used to
       represent the concept of infinity for the time assigned to pixels that

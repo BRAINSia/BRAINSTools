@@ -85,7 +85,7 @@ protected:
   Brains2LandmarkReader & operator=(const Self &);
 
   Brains2LandmarkReader();
-  virtual ~Brains2LandmarkReader()
+  ~Brains2LandmarkReader() override
   {
   };
 //   void GenerateData();

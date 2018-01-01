@@ -67,7 +67,7 @@ public:
 
 protected:
   ApplyField();
-  virtual ~ApplyField();
+  ~ApplyField() override;
 private:
   typename InputImageType::Pointer m_InputImage;
   typename OutputImageType::Pointer m_OutputImage;

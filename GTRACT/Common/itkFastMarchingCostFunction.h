@@ -121,7 +121,7 @@ public:
 protected:
   FastMarchingCostFunction();
   // virtual ~FastMarchingCostFunction(){};
-  ~FastMarchingCostFunction()
+  ~FastMarchingCostFunction() override
   {
   }
 

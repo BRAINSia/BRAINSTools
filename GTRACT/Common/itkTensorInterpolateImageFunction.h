@@ -88,7 +88,7 @@ public:
 
   /** CoordRep typedef support. */
   typedef TCoordRep CoordRepType;
-  virtual OutputType Evaluate( const PointType & point ) const override
+  OutputType Evaluate( const PointType & point ) const override
   {
     ContinuousIndexType index;
 
@@ -106,7 +106,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override = 0;
+  OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override = 0;
 
   /** Interpolate the image at an index position.
    * Simply returns the image value at the
@@ -115,7 +115,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType EvaluateAtIndex( const IndexType & index ) const override
+  OutputType EvaluateAtIndex( const IndexType & index ) const override
   {
     OutputType output;
     PixelType  input = this->GetInputImage()->GetPixel( index );
@@ -132,7 +132,7 @@ protected:
   {
   }
 
-  ~TensorInterpolateImageFunction()
+  ~TensorInterpolateImageFunction() override
   {
   }
 

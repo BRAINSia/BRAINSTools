@@ -83,7 +83,7 @@ public:
 protected:
   /** Constructor and Destructor */
   GtractParameterIO();
-  ~GtractParameterIO()
+  ~GtractParameterIO() override
   {
   }
 

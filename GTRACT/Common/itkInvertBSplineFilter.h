@@ -127,7 +127,7 @@ public:
 
 protected:
   InvertBSplineFilter();
-  ~InvertBSplineFilter()
+  ~InvertBSplineFilter() override
   {
   }
 

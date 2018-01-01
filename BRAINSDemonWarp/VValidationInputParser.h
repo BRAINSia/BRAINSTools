@@ -175,7 +175,7 @@ public:
 
 protected:
   VValidationInputParser();
-  ~VValidationInputParser()
+  ~VValidationInputParser() override
   {
   }
 

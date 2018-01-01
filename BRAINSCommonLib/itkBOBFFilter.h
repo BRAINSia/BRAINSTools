@@ -114,7 +114,7 @@ public:
 
 protected:
   BOBFFilter();
-  ~BOBFFilter()
+  ~BOBFFilter() override
   {
   }
 
@@ -123,7 +123,7 @@ protected:
     *
     * \sa ProcessObject::VerifyInputInformation
     */
-  virtual void VerifyInputInformation() override
+  void VerifyInputInformation() override
   {
   }
 

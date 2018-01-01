@@ -211,7 +211,7 @@ public:
 
 protected:
   IccdefRegistrator();
-  ~IccdefRegistrator();
+  ~IccdefRegistrator() override;
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(IccdefRegistrator);
 

@@ -222,7 +222,7 @@ public:
 
 protected:
   DemonsRegistrator();
-  ~DemonsRegistrator();
+  ~DemonsRegistrator() override;
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(DemonsRegistrator);
 

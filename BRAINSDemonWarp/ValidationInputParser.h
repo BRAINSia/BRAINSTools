@@ -187,7 +187,7 @@ public:
 
 protected:
   ValidationInputParser();
-  ~ValidationInputParser()
+  ~ValidationInputParser() override
   {
   }
 

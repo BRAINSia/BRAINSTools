@@ -191,7 +191,7 @@ public:
   itkGetConstMacro(UseHistogramMatching, bool);
 protected:
   VDemonsPreprocessor();
-  ~VDemonsPreprocessor()
+  ~VDemonsPreprocessor() override
   {
   }
 

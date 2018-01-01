@@ -89,11 +89,11 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override;
+  OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override;
 
 protected:
   TensorLinearInterpolateImageFunction();
-  ~TensorLinearInterpolateImageFunction()
+  ~TensorLinearInterpolateImageFunction() override
   {
   }
 

@@ -122,12 +122,12 @@ public:
    * Update the image */
   using vtkAlgorithm::Update;   // silence warning about this Update
                                 // hiding the one in vtkAlgorithm
-  virtual void Update() override;
+  void Update() override;
 
 protected:
 
   vtkTalairachConversion();
-  ~vtkTalairachConversion();
+  ~vtkTalairachConversion() override;
 
   /* Description:
    * Process a box file to calculate the regions of active masking */

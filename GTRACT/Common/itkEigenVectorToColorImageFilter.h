@@ -113,7 +113,7 @@ public:
 
 protected:
   EigenVectorToColorImageFilter();
-  ~EigenVectorToColorImageFilter()
+  ~EigenVectorToColorImageFilter() override
   {
   }
 

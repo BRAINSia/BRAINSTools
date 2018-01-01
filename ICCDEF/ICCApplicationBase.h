@@ -72,7 +72,7 @@ public:
 protected:
 
   ICCApplicationBase();
-  virtual ~ICCApplicationBase()
+  ~ICCApplicationBase() override
   {
   }
 

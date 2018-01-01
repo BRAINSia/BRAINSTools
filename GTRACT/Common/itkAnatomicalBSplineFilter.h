@@ -184,7 +184,7 @@ public:
 
 protected:
   AnatomicalBSplineFilter();
-  ~AnatomicalBSplineFilter()
+  ~AnatomicalBSplineFilter() override
   {
   }
 

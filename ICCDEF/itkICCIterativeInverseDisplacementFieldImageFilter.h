@@ -123,7 +123,7 @@ public:
 #endif
 protected:
   ICCIterativeInverseDisplacementFieldImageFilter();
-  ~ICCIterativeInverseDisplacementFieldImageFilter()
+  ~ICCIterativeInverseDisplacementFieldImageFilter() override
   {
   }
 

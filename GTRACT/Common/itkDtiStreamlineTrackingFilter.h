@@ -88,7 +88,7 @@ public:
 
 protected:
   DtiStreamlineTrackingFilter();
-  ~DtiStreamlineTrackingFilter()
+  ~DtiStreamlineTrackingFilter() override
   {
   }
 

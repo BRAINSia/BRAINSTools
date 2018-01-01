@@ -98,7 +98,7 @@ public:
 
 protected:
   DtiGraphSearchTrackingFilter();
-  ~DtiGraphSearchTrackingFilter()
+  ~DtiGraphSearchTrackingFilter() override
   {
   }
 

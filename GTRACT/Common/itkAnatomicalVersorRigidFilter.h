@@ -144,7 +144,7 @@ public:
 
 protected:
   AnatomicalVersorRigidFilter();
-  ~AnatomicalVersorRigidFilter()
+  ~AnatomicalVersorRigidFilter() override
   {
   }
 

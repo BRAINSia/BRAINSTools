@@ -172,14 +172,14 @@ public:
   }
 
   /** This class uses a constant timestep of 1. */
-  virtual TimeStepType ComputeGlobalTimeStep(void * itkNotUsed(GlobalData) ) const override
+  TimeStepType ComputeGlobalTimeStep(void * itkNotUsed(GlobalData) ) const override
   {
     return m_TimeStep;
   }
 
   /** Return a pointer to a global data structure that is passed to
    * this object from the solver at each calculation.  */
-  virtual void * GetGlobalDataPointer() const override
+  void * GetGlobalDataPointer() const override
   {
     GlobalDataStruct *global = new GlobalDataStruct();
 
@@ -190,17 +190,17 @@ public:
   }
 
   /** Release memory for global data structure. */
-  virtual void ReleaseGlobalDataPointer( void *GlobalData ) const override;
+  void ReleaseGlobalDataPointer( void *GlobalData ) const override;
 
   /** Set the object's state before each iteration. */
-  virtual void InitializeIteration() override;
+  void InitializeIteration() override;
 
   /** This method is called by a finite difference solver image filter at
    * each pixel that does not lie on a data set boundary */
 
   virtual void ComputeMetric( void *globalData);
 
-  virtual PixelType  ComputeUpdate(const NeighborhoodType & neighborhood, void *globalData,
+  PixelType  ComputeUpdate(const NeighborhoodType & neighborhood, void *globalData,
                                    const FloatOffsetType & offset = FloatOffsetType( 0.0) ) override;
 
   /** Get the metric value. The metric value is the mean square difference
@@ -371,7 +371,7 @@ public:
 
 protected:
   ICCDeformableFunction();
-  ~ICCDeformableFunction()
+  ~ICCDeformableFunction() override
   {
   }
 

@@ -260,7 +260,7 @@ public:
 
 protected:
   VDemonsRegistrator();
-  ~VDemonsRegistrator();
+  ~VDemonsRegistrator() override;
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsRegistrator);
 

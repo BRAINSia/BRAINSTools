@@ -394,7 +394,7 @@ protected:
     m_CompWarpGradientCalculator = nullptr;
   }
 
-  ~VCommandIterationUpdate()
+  ~VCommandIterationUpdate() override
   {
     this->m_Fid.close();
   }

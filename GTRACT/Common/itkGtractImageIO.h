@@ -129,7 +129,7 @@ protected:
 
   /** Constructor and Destructor */
   GtractImageIO();
-  ~GtractImageIO()
+  ~GtractImageIO() override
   {
   }
 

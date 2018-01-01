@@ -66,13 +66,13 @@ public:
   /** Image type typedef support. */
   typedef TInputImageType              ImageType;
   typedef typename ImageType::SizeType ImageSizeType;
-  virtual void GenerateOutputInformation() override; // figure out allocation for output image
+  void GenerateOutputInformation() override; // figure out allocation for output image
 
-  virtual void GenerateInputRequestedRegion() override;
+  void GenerateInputRequestedRegion() override;
 
   //
   // these should be defined in every FFT filter class
-  virtual void GenerateData() override;  // generates output from input
+  void GenerateData() override;  // generates output from input
 
   virtual bool FullMatrix();
 
@@ -105,7 +105,7 @@ protected:
   {
   }
 
-  virtual ~VectorFFTWHalfHermitianToRealInverseFFTImageFilter()
+  ~VectorFFTWHalfHermitianToRealInverseFFTImageFilter() override
   {
     if( m_PlanComputed )
       {

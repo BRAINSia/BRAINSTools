@@ -164,14 +164,14 @@ public:
    * for GenerateOutputInformation() in order to inform the pipeline
    * execution model.  The original documentation of this method is
    * below. \sa ProcessObject::GenerateOutputInformaton() */
-  virtual void GenerateOutputInformation() override;
+  void GenerateOutputInformation() override;
 
   /** GtractInverseDisplacementFieldImageFilter needs a different input requested region than
    * the output requested region.  As such, GtractInverseDisplacementFieldImageFilter needs
    * to provide an implementation for GenerateInputRequestedRegion()
    * in order to inform the pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion() override;
+  void GenerateInputRequestedRegion() override;
 
   /** Method Compute the Modified Time based on changed to the components. */
   unsigned long GetMTime( void ) const override;
@@ -184,7 +184,7 @@ public:
 #endif
 protected:
   GtractInverseDisplacementFieldImageFilter();
-  ~GtractInverseDisplacementFieldImageFilter()
+  ~GtractInverseDisplacementFieldImageFilter() override
   {
   }
 

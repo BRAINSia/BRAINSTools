@@ -166,7 +166,7 @@ public:
   itkGetConstMacro(UseHistogramMatching, bool);
 protected:
   DemonsPreprocessor();
-  ~DemonsPreprocessor()
+  ~DemonsPreprocessor() override
   {
   }
 

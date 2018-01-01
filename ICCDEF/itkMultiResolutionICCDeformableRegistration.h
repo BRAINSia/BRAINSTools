@@ -202,7 +202,7 @@ public:
    * MultiResolutionICCDeformableRegistration can take a third input
    * as an initial deformation field, this input is not a required input.
    */
-  virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const override;
+  std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const override;
 
   /** Set the internal registrator. */
   itkSetObjectMacro(RegistrationFilter, RegistrationType);
@@ -252,13 +252,13 @@ public:
   itkGetModifiableObjectMacro(FieldExpander21, FieldExpanderType);
 
   using Superclass::MakeOutput;
-  virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx) override;
+  ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx) override;
 
   itkSetStringMacro(DisplacementFieldOutputNamePrefix);
   itkGetStringMacro(DisplacementFieldOutputNamePrefix);
 protected:
   MultiResolutionICCDeformableRegistration();
-  ~MultiResolutionICCDeformableRegistration()
+  ~MultiResolutionICCDeformableRegistration() override
   {
   }
 
@@ -266,12 +266,12 @@ protected:
 
   /** Generate output data by performing the registration
    * at each resolution level. */
-  virtual void GenerateData() override;
+  void GenerateData() override;
 
   /** The current implementation of this class does not support
    * streaming. As such it requires the largest possible region
    * for the moving, fixed and input deformation field. */
-  virtual void GenerateInputRequestedRegion() override;
+  void GenerateInputRequestedRegion() override;
 
   /** By default, the output deformation field has the same
    * spacing, origin and LargestPossibleRegion as the input/initial
@@ -279,12 +279,12 @@ protected:
    *
    * If the initial deformation field is not set, the output
    * information is copied from the fixed image. */
-  virtual void GenerateOutputInformation() override;
+  void GenerateOutputInformation() override;
 
   /** The current implementation of this class does not supprot
    * streaming. As such it produces the output for the largest
    * possible region. */
-  virtual void EnlargeOutputRequestedRegion(DataObject *ptr) override;
+  void EnlargeOutputRequestedRegion(DataObject *ptr) override;
 
   /** This method returns true to indicate that the registration should
    * terminate at the current resolution level. */
@@ -295,7 +295,7 @@ protected:
    *
    * \sa ProcessObject::VerifyInputInformation
    */
-  virtual void VerifyInputInformation() override
+  void VerifyInputInformation() override
   {
   }
 

@@ -38,7 +38,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(git_protocol "git")
   endif()
 
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY git@github.com:BRAINSia/ITK.git)
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/BRAINSia/ITK.git)
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG ITKv5_InitialConversion_20171210 )
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://itk.org/ITK.git)
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG master ) # 20171221 ITKv5 update

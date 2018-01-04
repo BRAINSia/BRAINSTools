@@ -72,26 +72,11 @@ else()
   project(${LOCAL_PROJECT_NAME} C CXX)
 endif()
 
-## Now set boolean to determine if a modern C++ is being used
-if( CMAKE_CXX_STANDARD LESS 11 OR CMAKE_CXX_STANDARD GREATER 80)
-  set(USING_MODERN_CXX OFF)
-else()
-  set(USING_MODERN_CXX ON)
-endif()
-
-if(USING_MODERN_CXX)
 ##-- From SimpleITK -- force try-compiles to respect language
 if(POLICY CMP0067) # CMake 3.8.2
   cmake_policy(SET CMP0067 NEW)
-elseif( DEFINED CMAKE_CXX_STANDARD
-  OR DEFINED CMAKE_CXX_STANDARD_REQUIRED
-  OR CMAKE_CXX_EXTENSIONS )
-message(WARNING "CXX standard variables are not properly supported by \
-  CMake ${CMAKE_VERSION}. Configuration compilations will not detect \
-  features properly!")
 endif()
 ##--
-endif()
 
 enable_language(C)
 enable_language(CXX)

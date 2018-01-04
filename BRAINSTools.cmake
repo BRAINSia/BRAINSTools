@@ -63,7 +63,6 @@ include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
-set(USE_BRAINSABC "OFF")
 if(USE_BRAINSABC)
   if( NOT USE_AutoWorkup )
      message(FATAL_ERROR "BRAINSABC requires USE_AutoWorkup to be ON: ${USE_BRAINSABC} != ${USE_AutoWorkup}")
@@ -171,6 +170,7 @@ include_directories(
 # Define list of module names
 #-----------------------------------------------------------------------------
 set(brains_modulenames
+  BRAINSABC
   BRAINSFit
   BRAINSLabelStats
   BRAINSResample
@@ -195,7 +195,6 @@ set(brains_modulenames
   BRAINSTransformConvert
   BRAINSTalairach
   BRAINSConstellationDetector
-  BRAINSABC
   ConvertBetweenFileFormats
   DWIConvert
   BRAINSCreateLabelMapFromProbabilityMaps
@@ -209,8 +208,7 @@ set(brains_modulenames
   )
 
 if(USE_DebugImageViewer)
-  list(APPEND brains_modulenames
-    DebugImageViewer)
+  list(APPEND brains_modulenames DebugImageViewer)
 endif()
 
 ## HACK: This is needed to get DWIConvert to build in installed tree
@@ -224,11 +222,11 @@ set(BRAINSToolsModules "")
 foreach(modulename ${brains_modulenames})
   # message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
-  #  message("Adding ${modulename}")
+    message("++++++++++++++++++++++++++++++++++++++Adding ${modulename}")
     add_subdirectory(${modulename})
     list(APPEND BRAINSToolsModules ${modulename})
-  #else()
-  #  message("USE_${modulename} = ${USE_${modulename}}")
+  else()
+    message("--------------------------------------USE_${modulename} = ${USE_${modulename}}")
   endif()
 endforeach()
 

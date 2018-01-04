@@ -95,11 +95,7 @@ bt_option(USE_BRAINSSuperResolution          "Build BRAINSSuperResolution"      
 cmake_dependent_option(USE_BRAINSConstellationDetectorGUI "Build BRAINSConstellationDetectorGUI" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
 mark_as_superbuild(USE_BRAINSConstellationDetectorGUI)
 
-if( USING_MODERN_CXX )
-  cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" ON "USE_AutoWorkup;USE_ReferenceAtlas" OFF)
-else()
-  cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" OFF "USE_AutoWorkup;USE_ReferenceAtlas" OFF)
-endif()
+cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" ON "USE_AutoWorkup;USE_ReferenceAtlas" OFF)
 mark_as_superbuild(USE_BRAINSABC)
 
 ## These are no longer needed on a day to day basis
@@ -129,9 +125,6 @@ cmake_dependent_option(USE_DebugImageViewer "Build DebugImageViewer" OFF "${PRIM
 mark_as_superbuild(USE_DebugImageViewer)
 bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 bt_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ON)
-
-cmake_dependent_option(USE_tbb "Build tbb as an internal module. This feature is still experimental and unsupported" ON "USE_BRAINSABC" ON)
-mark_as_advanced(USE_tbb)
 
 if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
   message("NOTE: Following toolkits are dependent to VTK:

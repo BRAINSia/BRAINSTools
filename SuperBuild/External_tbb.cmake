@@ -1,17 +1,10 @@
 set(proj        tbb) #This local name
 
-set(${proj}_DEPENDENCIES ITKv5 )
-
-if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-endif()
+set(${proj}_DEPENDENCIES )
 
 # Set dependency list
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-### --- Project specific additions here
-# cmake -Dtbb_SUPERBUILD:BOOL=OFF -DBUILD_ALL_tbb_APPS:BOOL=OFF\
-#          -Dtbb_BUILD_StackSlices=ON ../tbb
 set(${proj}_CMAKE_OPTIONS
   -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -24,15 +17,20 @@ set(${proj}_CMAKE_OPTIONS
   #-DBUILD_EXAMPLES:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
   )
-### --- End Project specific additions
-set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/tbb.git)
-set(${proj}_GIT_TAG AddCMakeToOfficialTBBRepository)  # BRAINSTools_CompilerCleanup
+
+set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
+set(${proj}_GIT_TAG 2018_U2)  #
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
-  BINARY_DIR ${proj}-build
+  BINARY_DIR tbb_downloaded/2018_U2
+  DOWNLOAD_COMMAND  "" #, no download
+  CONFIGURE_COMMAND "" #, no config
+  BUILD_COMMAND     "" #, no build
+  INSTALL_COMMAND   "" #, no install
+  UPDATE_COMMAND    "" #, no update
   LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
   LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
   LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
@@ -47,12 +45,35 @@ ExternalProject_Add(${proj}
   ${${proj}_DEPENDENCIES}
   )
 
-set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
-set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
-set(${proj}_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install/lib/cmake/${proj})
+#TODO:  Will need to wrap configuration files for compilers
+#       that have non-default names
+#set(TBB_MAKE_ARGS "compiler=${CMAKE_CXX_COMPILER}")
+
+## Following instructions from for source package integration
+## https://github.com/01org/tbb/tree/tbb_2018/cmake#source-package-integration
+include(${CMAKE_CURRENT_LIST_DIR}/tbb_cmake/TBBGet.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/tbb_cmake/TBBBuild.cmake)
+tbb_get(TBB_ROOT TBB_LOCAL_SRC_DIR
+        SAVE_TO ${SOURCE_DOWNLOAD_CACHE}/${proj}
+        RELEASE_TAG 2018_U2
+        SYSTEM_NAME ${CMAKE_SYSTEM_NAME}
+        CONFIG_DIR TBB_DIR
+        SOURCE_CODE)
+tbb_build(TBB_ROOT ${TBB_LOCAL_SRC_DIR}
+          CONFIG_DIR TBB_DIR  #Need to set TBB_DIR for the find_package, and to propogate to other packages
+          MAKE_ARGS ${TBB_MAKE_ARGS})
+
+message(STATUS "ZZZ:TBB_DIR=${TBB_DIR}:ZZZ")
+message(STATUS "ZZZ:TBB_LOCAL_SRC_DIR=${TBB_LOCAL_SRC_DIR}:ZZZ")
+
+find_package(TBB REQUIRED tbb tbbmalloc)
+
+if(NOT EXISTS ${TBB_DIR})
+  message(FATAL_ERROR "'TBB_DIR:PATH=${TBB_DIR}' does not exist")
+endif()
 
 mark_as_superbuild(
-  VARS ${proj}_SOURCE_DIR:PATH
-       ${proj}_DIR:PATH
+  VARS
+       TBB_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

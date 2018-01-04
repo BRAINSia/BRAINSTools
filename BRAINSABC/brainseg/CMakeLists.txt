@@ -39,7 +39,7 @@ set(BABC_CXX11_Required_Features
 target_compile_features(BRAINSABCCOMMONLIB PRIVATE ${BABC_CXX11_Required_Features})
 
 
-set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES} tbb::tbb)
+set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES} ${TBB_IMPORTED_TARGETS})
 
 DebugImageViewerLibAdditions(BRAINSABCCOMMONLIBLibraries)
 

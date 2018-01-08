@@ -41,7 +41,7 @@ set(DWIBASELINE_DIR ${TestData_DIR}/DWI_TestData_OUTPUTS)
 
 ## Test for gtractCoregBvalues
 add_executable( gtractCoregBvaluesTests gtractCoregBvaluesTests.cxx )
-target_link_libraries( gtractCoregBvaluesTests GTRACTCommon BRAINSCommonLib DWIConvertSupportLib )
+target_link_libraries( gtractCoregBvaluesTests GTRACTCommon BRAINSCommonLib DWIConvertSupportLib)
 set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 ## TODO: gtractCoregBvalues returns segfault after the registration step.

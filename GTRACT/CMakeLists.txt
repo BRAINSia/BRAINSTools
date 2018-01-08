@@ -34,9 +34,6 @@ FindITKUtil( GTRACT_ITK
   ITKThresholding
   ITKTransform
   ITKNrrdIO
-  ITKDCMTK
-  ITKIODCMTK
-  ITKIORAW
   )
 
 #-----------------------------------------------------------------------------

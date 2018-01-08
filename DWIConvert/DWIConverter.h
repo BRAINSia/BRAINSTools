@@ -25,7 +25,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <ctype.h>
+#include <cctype>
 
 #include "itkMacro.h"
 #include "itkIntTypes.h"

@@ -4,9 +4,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <math.h>       /* fabs */
+#include <cmath>       /* fabs */
 #include <cstdlib>      /* atof */
-#include <string.h>     /* strcmp */
+#include <cstring>     /* strcmp */
 
 void printUsage(char* argv0){
   std::cout<<"Function: check whether a specific tag-value pair in header file match with a input value."<< std::endl;

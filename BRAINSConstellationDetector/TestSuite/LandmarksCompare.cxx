@@ -20,7 +20,7 @@
 
 #include "LandmarksCompareCLP.h"
 #include "Slicer3LandmarkIO.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )

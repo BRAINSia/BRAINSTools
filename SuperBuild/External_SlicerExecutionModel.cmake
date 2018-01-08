@@ -2,7 +2,7 @@
 set(proj SlicerExecutionModel)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME})
+set(${proj}_DEPENDENCIES "ITKv5")
 
 if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
   set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} JsonCpp ParameterSerializer)

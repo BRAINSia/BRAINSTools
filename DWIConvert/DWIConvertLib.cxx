@@ -498,13 +498,9 @@ bool convertInputVolumeVectorToNrrdOrNifti(const std::string& targetType,
 bool convertInputVolumeToNrrdOrNifti(const std::string& targetType,
                                                 const std::string& inputVolume, std::string &targetVolume) {
 
-  // AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER
-  // On Windows,judge file or directory are different with Linux. It does not support Windows currently.
-
   DWIConvert dwiConvert;
-
   struct stat inputInfor;
-  if (-1 == stat(inputVolume.c_str(), &inputInfor)) {
+  if (-1 == itksys::SystemTools::Stat(inputVolume, &inputInfor)) {
     std::cout << "Error: inputVolume is illegal file description. " << std::endl;
     return false;
   } else {

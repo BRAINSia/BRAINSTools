@@ -57,6 +57,8 @@ if(APPLE)
   set(OSX_SDK_109_NAME "Mavericks")
   set(OSX_SDK_1010_NAME "Yosemite")
   set(OSX_SDK_1011_NAME "El Capitan")
+  set(OSX_SDK_1012_NAME "Sierra")
+  set(OSX_SDK_1012_NAME "High Sierra")
 
   set(OSX_SDK_ROOTS
     /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
@@ -71,30 +73,59 @@ if(APPLE)
 
       if(NOT "x${SDK_SYSROOTS}x" STREQUAL "xx")
         set(SDK_SYSROOT_NEWEST "")
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "0")
+        set(SDK_VERSION "0")
         # find the latest SDK
         foreach(SDK_ROOT_I ${SDK_SYSROOTS})
           # extract version from SDK
           string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${SDK_ROOT_I}")
-          if("${CMAKE_MATCH_1}" VERSION_GREATER "${CMAKE_OSX_DEPLOYMENT_TARGET}")
+          if("${CMAKE_MATCH_1}" VERSION_GREATER "${SDK_VERSION}")
             set(SDK_SYSROOT_NEWEST "${SDK_ROOT_I}")
-            set(CMAKE_OSX_DEPLOYMENT_TARGET "${CMAKE_MATCH_1}")
+            set(SDK_VERSION "${CMAKE_MATCH_1}")
           endif()
         endforeach()
 
         if(NOT "x${SDK_SYSROOT_NEWEST}x" STREQUAL "xx")
-          string(REPLACE "." "" sdk_version_no_dot ${CMAKE_OSX_DEPLOYMENT_TARGET})
+          string(REPLACE "." "" sdk_version_no_dot ${SDK_VERSION})
           set(OSX_NAME ${OSX_SDK_${sdk_version_no_dot}_NAME})
           set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Force build for 64-bit ${OSX_NAME}." FORCE)
           set(CMAKE_OSX_SYSROOT "${SDK_SYSROOT_NEWEST}" CACHE PATH "Force build for 64-bit ${OSX_NAME}." FORCE)
-          set(CMAKE_OSX_DEPLOYMENT_TARGET "${CMAKE_OSX_DEPLOYMENT_TARGET}" CACHE PATH "Force Deployment Target ${OSX_NAME}." FORCE)
           message(STATUS "Setting OSX_ARCHITECTURES to '${CMAKE_OSX_ARCHITECTURES}' as none was specified.")
           message(STATUS "Setting OSX_SYSROOT to latest '${CMAKE_OSX_SYSROOT}' as none was specified.")
-          message(STATUS "Setting OSX_DEPLOYMENT_TARGET to latest '${CMAKE_OSX_DEPLOYMENT_TARGET}' as none was specified.")
         endif()
       endif()
     endif()
   endforeach()
+
+    string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${CMAKE_OSX_SYSROOT}")
+    set(SDK_VERSION "${CMAKE_MATCH_1}")
+    ## Min version supported is 10.9
+    if( "${SDK_VERSION}" VERSION_LESS "10.9" )
+      # add to cache to allow interactive editing after fatal error
+      set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE PATH "Deployment target needs to be explicitly set." FORCE)
+      message(FATAL_ERROR
+        "The OSX_SYSROOT is set to version ${SDK_VERSION} (>10.8) and OSX_DEPLOYMENT_TARGET is not explicitly set!\n"
+        "Since:\n"
+        " (1) the default runtime associated with >=10.9 deployment target is 'libc++'.[1]\n"
+        " (2) the default runtime associated with <=10.8 deployment target is 'libstdc++'.\n"
+        " (3) Qt support for 'macx-clang-libc++' is listed as 'unsupported' mkspecs.\n"
+        " (4) Qt binaries may be build against 'libstdc++' or 'libc++'.\n"
+        " (5) Mixing the two different runtime in binaries is unstable.\n"
+        "  [1]http://stackoverflow.com/questions/19637164/c-linking-error-after-upgrading-to-mac-os-x-10-9-xcode-5-0-1/19637199#19637199\n"
+        "--------------------------------\n"
+        "Run '$otool -L $(which qmake) |grep lib.\\*c++' to check what library Qt is built against:\n"
+        " (1) if it is libstdc++ then add '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.8' (or older) to the cmake command line.\n"
+        " (2) if it is libc++ then add '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.9' (or newer) to the cmake command line.\n"
+        )
+    endif()
+
+    # Require minimum deployment target of 10.9. In 10.9 libc++ replaces libstdc++
+    # as the default runtime. Requiring this minimum ensures that all libraries
+    # use libc++.
+  set(required_deployment_target "10.9")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "${required_deployment_target}" CACHE STRING "Force deployment target to 10.9" FORCE)
+  if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${required_deployment_target})
+    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET must be ${required_deployment_target} or greater.")
+  endif()
 
   if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")
     if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")

@@ -168,14 +168,11 @@ endif()
 
 if(USE_BRAINSSuperResolution)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES RTK)
-endif()
-
-if(USE_BRAINSSuperResolution)
-mark_as_superbuild(
-  VARS
-  RTK_DIR:PATH
-ALL_PROJECTS
-)
+  mark_as_superbuild(
+    VARS
+      RTK_DIR:PATH
+    ALL_PROJECTS
+  )
 endif()
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables

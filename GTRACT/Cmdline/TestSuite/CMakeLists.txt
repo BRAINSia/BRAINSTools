@@ -106,8 +106,6 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
 
 # add the directory containing DWI Dicom NiFTI files
 set(DWITestFileDir ${PROJECT_BINARY_DIR}/../DWIConvert)
-#set(DWITestFileDir /Users/hxie1/Projects/BrainsToolsBuild/DWIConvert)
-
 # in order to make sure the origin are same of concating images, we use same images to concatenate
 
 # new added test case for GTRACT to support NifTI

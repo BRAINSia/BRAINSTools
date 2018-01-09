@@ -81,8 +81,7 @@ int main(int argc, char *argv[])
     }
 
   std::string convertedVolume;
-  DWIConvert dwiConvert;
-  if (0 == dwiConvert.convertInputVolumeToNrrdOrNifti(dwiConvert.detectOuputVolumeType(outputVolume),
+  if (convertInputVolumeToNrrdOrNifti(detectOuputVolumeType(outputVolume),
                                                       inputVolume,convertedVolume)){
     inputVolume = convertedVolume;
   }

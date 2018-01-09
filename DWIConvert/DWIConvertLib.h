@@ -8,6 +8,15 @@
 #include "DWIConverter.h"
 #include "DWIConverterFactory.h"
 
+//public utility interface for file convert
+std::string detectOuputVolumeType(const std::string& outputVolume);
+
+bool convertInputVolumeVectorToNrrdOrNifti(const std::string& targetType,
+                                          const std::vector<std::string>& inputVolumeVector,
+                                          std::vector<std::string>& targetVolumeVector);
+
+bool convertInputVolumeToNrrdOrNifti(const std::string& targetType, const std::string& inputVolume, std::string& targetVolume);
+
 
 class DWIConvert {
 public:
@@ -22,17 +31,6 @@ public:
     int write();
 
     DWIConverter *getConverter() const;
-
-    //public interface for file convert
-
-    std::string detectOuputVolumeType(const std::string& outputVolume);
-
-    int convertInputVolumeVectorToNrrdOrNifti(const std::string targetType,
-                                              const std::vector<std::string> inputVolumeVector,
-                                              std::vector<std::string>& targetVolumeVector);
-
-    int convertInputVolumeToNrrdOrNifti(const std::string targetType, const std::string inputVolume, std::string& targetVolume);
-
 
     // get and set methods for private data members
     std::string getInputFileType();

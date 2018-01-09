@@ -316,17 +316,7 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
   }
 }
 
-std::string DWIConvert::detectOuputVolumeType(const std::string& outputVolume){
-  std::string outputFileType;
-  const std::string outputExt = itksys::SystemTools::GetFilenameExtension(outputVolume);
-  if (std::string::npos != outputExt.rfind(".nii")) outputFileType = "FSL";
-  else if (std::string::npos != outputExt.rfind(".nrrd")|| std::string::npos != outputExt.rfind(".nhdr")) outputFileType = "Nrrd";
-  else{
-    std::cerr <<"Error: the output file type is not supported currently"<<std::endl;
-  }
-  return outputFileType;
 
-}
 
 
 void DWIConvert::setOutputFileType(const std::string& outputVolume){
@@ -470,44 +460,66 @@ DWIConverter *DWIConvert::getConverter() const {
     return m_converter;
 }
 
-int DWIConvert::convertInputVolumeVectorToNrrdOrNifti(const std::string targetType,
-                                          const std::vector<std::string> inputVolumeVector,
+
+//public utility interface
+
+std::string detectOuputVolumeType(const std::string& outputVolume){
+  std::string outputFileType = "";
+  const std::string outputExt = itksys::SystemTools::GetFilenameExtension(outputVolume);
+  if (std::string::npos != outputExt.rfind(".nii")){
+    outputFileType = "FSL";
+  }
+  else if (std::string::npos != outputExt.rfind(".nrrd")|| std::string::npos != outputExt.rfind(".nhdr")) {
+    outputFileType = "Nrrd";
+  }
+  else{
+    std::cerr <<"Error: the output file type is not supported currently"<<std::endl;
+  }
+  return outputFileType;
+}
+
+bool convertInputVolumeVectorToNrrdOrNifti(const std::string& targetType,
+                                          const std::vector<std::string>& inputVolumeVector,
                                           std::vector<std::string>& targetVolumeVector){
   targetVolumeVector.clear();
   int nSize = inputVolumeVector.size();
   for (int i = 0; i< nSize; ++i){
     std::string targetVolume;
-    if (0 == convertInputVolumeToNrrdOrNifti(targetType, inputVolumeVector.at(i),targetVolume)){
+    if (convertInputVolumeToNrrdOrNifti(targetType, inputVolumeVector.at(i),targetVolume)){
       targetVolumeVector.push_back(targetVolume);
-    } else{
-      return 1;
-     }
+    }
+    else{
+      return false;
+    }
   }
-  return 0;
+  return true;
 }
 
-int DWIConvert::convertInputVolumeToNrrdOrNifti(const std::string targetType,
-                                                const std::string inputVolume, std::string &targetVolume) {
+bool convertInputVolumeToNrrdOrNifti(const std::string& targetType,
+                                                const std::string& inputVolume, std::string &targetVolume) {
 
   // AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER
   // On Windows,judge file or directory are different with Linux. It does not support Windows currently.
+
+  DWIConvert dwiConvert;
+
   struct stat inputInfor;
   if (-1 == stat(inputVolume.c_str(), &inputInfor)) {
     std::cout << "Error: inputVolume is illegal file description. " << std::endl;
-    return 1;
+    return false;
   } else {
     if (inputInfor.st_mode & S_IFDIR) {
-      setInputFileType("", inputVolume);
+      dwiConvert.setInputFileType("", inputVolume);
     }
     else if (inputInfor.st_mode & S_IFREG) {
-      setInputFileType(inputVolume, "");
+      dwiConvert.setInputFileType(inputVolume, "");
     } else {
       std::cout << "Error: the inputVolume is neither file nor directory." << std::endl;
-      return -1;
+      return false;
     }
   }
 
-  if (targetType == getInputFileType()) {
+  if (targetType == dwiConvert.getInputFileType()) {
     targetVolume = inputVolume;
   }
   else {
@@ -519,18 +531,18 @@ int DWIConvert::convertInputVolumeToNrrdOrNifti(const std::string targetType,
     }
     else{
       std::cout <<"Error: the targetType of DWIConvert is not supported. "<<std::endl;
-      return -1;
+      return false;
     }
 
-    setOutputFileType(targetVolume);
-    int result = read();
+    dwiConvert.setOutputFileType(targetVolume);
+    int result = dwiConvert.read();
     if (EXIT_SUCCESS == result) {
-      write(targetVolume);
+      dwiConvert.write(targetVolume);
     }
     else {
       std::cout<<"Error: read inputVolume failed."<<std::endl;
-      return 1;
+      return false;
     }
   }
-  return 0;
+  return true;
 }

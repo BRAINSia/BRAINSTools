@@ -91,8 +91,7 @@ int main(int argc, char *argv[])
     }
 
   std::vector<std::string> inputVolumeNrrd;
-  DWIConvert dwiConvert;
-  if (0 == dwiConvert.convertInputVolumeVectorToNrrdOrNifti(dwiConvert.detectOuputVolumeType(outputVolume),
+  if (convertInputVolumeVectorToNrrdOrNifti(detectOuputVolumeType(outputVolume),
                                                             inputVolume,inputVolumeNrrd)){
     inputVolume = inputVolumeNrrd;
   }

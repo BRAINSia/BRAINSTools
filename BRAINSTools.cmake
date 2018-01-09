@@ -235,3 +235,4 @@ if(USE_ITKMatlabIO)
 endif()
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+include(${CMAKE_CURRENT_LIST_DIR}/cpack_brainstools.cmake)

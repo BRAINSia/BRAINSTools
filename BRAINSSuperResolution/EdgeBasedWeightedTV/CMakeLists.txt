@@ -64,7 +64,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/../../CMake/LinAlgSelector.cmake)
 #-- find_package(VTK REQUIRED)
 #-- include(${VTK_USE_FILE})
 
-find_package(RTK REQUIRED)
+find_package(RTK REQUIRED NO_MODULE)
 include(${RTK_USE_FILE})
 
 

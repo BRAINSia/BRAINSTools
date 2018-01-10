@@ -7,6 +7,9 @@ include(ExternalProjectDependency)
 include(CMakeDependentOption)
 include(CMakeParseArguments)
 
+if(NOT Slicer_BUILD_BRAINSTOOLS)
+   set(BUILD_SHARED_LIBS OFF) ## Build everything static for non-slicer builds
+endif()
 #------------------------------------------------------------------------------
 #if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
 

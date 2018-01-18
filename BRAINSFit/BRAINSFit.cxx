@@ -537,7 +537,16 @@ int main(int argc, char *argv[])
       {
       myHelper->PrintCommandLine(true, "BF");
       }
-    myHelper->Update();
+    try
+      {
+      myHelper->Update();
+      }
+    catch( itk::ExceptionObject & err )
+      {
+      std::cerr << "Exception during registration: " << std::endl;
+      std::cerr << err << std::endl;
+      return EXIT_FAILURE;
+      }
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
 
     std::string currentGenericTransformFileType;

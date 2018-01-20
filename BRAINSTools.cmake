@@ -186,7 +186,6 @@ set(brains_modulenames
                   ##       further review before trusting it.
   ##TODO: KENT:  This is broken with latest builds,  I think something in ITKv4 changed slightly, or VTK6 compatibility -->BRAINSSurfaceTools
   BRAINSSurfaceTools
-  ICCDEF
   BRAINSContinuousClass
   BRAINSPosteriorToContinuousClass
   BRAINSMush
@@ -205,7 +204,9 @@ set(brains_modulenames
   ReferenceAtlas
   BRAINSSuperResolution
   BRAINSRefacer
-  )
+#ARCHIVED MODULES
+  ICCDEF
+)
 
 if(USE_DebugImageViewer)
   list(APPEND brains_modulenames DebugImageViewer)
@@ -222,11 +223,19 @@ set(BRAINSToolsModules "")
 foreach(modulename ${brains_modulenames})
   # message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
-    message("++++++++++++++++++++++++++++++++++++++Adding ${modulename}")
-    add_subdirectory(${modulename})
+    if(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${modulename})
+      message("++++++++++++++++++++++++++++++++++++++Adding ${modulename}")
+      add_subdirectory(${modulename})
+      message("--------------------------------------USE_${modulename} = ${USE_${modulename}}")
+    else()
+      if(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ARCHIVE/${modulename})
+        add_subdirectory( ARCHIVE/${modulename} )
+      else()
+        message(FATAL_ERROR "ERROR: Missing directory for module '${modulename}' and 'ARCHIVE/${modulename}'")
+      endif()
+    endif()
     list(APPEND BRAINSToolsModules ${modulename})
   else()
-    message("--------------------------------------USE_${modulename} = ${USE_${modulename}}")
   endif()
 endforeach()
 

@@ -207,6 +207,7 @@ if(BUILD_ARCHIVE)
   BRAINSContinuousClass  ## simpleITK + scikit learn are easier
   BRAINSRefacer
   BRAINSTalairach
+  DicomSignature
 )
 
 endif()

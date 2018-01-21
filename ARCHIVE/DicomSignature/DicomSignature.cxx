@@ -23,11 +23,23 @@
 
 #include "itkMetaDataObject.h"
 
-#include <gdcm/src/gdcm.h>
-#include <gdcm/src/gdcmDict.h>
-#include <gdcm/src/gdcmValEntry.h> // internal of gdcm
-#include <gdcm/src/gdcmBinEntry.h> // internal of gdcm
-#include <gdcm/src/gdcmFileHelper.h>
+#include "gdcmSerieHelper.h"
+#include "gdcmImageHelper.h"
+#include "gdcmFileExplicitFilter.h"
+#include "gdcmImageChangeTransferSyntax.h"
+#include "gdcmDataSetHelper.h"
+#include "gdcmStringFilter.h"
+#include "gdcmImageApplyLookupTable.h"
+#include "gdcmImageChangePlanarConfiguration.h"
+#include "gdcmRescaler.h"
+#include "gdcmImageReader.h"
+#include "gdcmImageWriter.h"
+#include "gdcmUIDGenerator.h"
+#include "gdcmAttribute.h"
+#include "gdcmGlobal.h"
+#include "gdcmMediaStorage.h"
+
+
 
 #include <list>
 #include <fstream>
@@ -153,7 +165,7 @@ std::string GetDigestString(EVP_MD_CTX & mdctx)
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   // Then we declare the pixel type and image dimension, and use them for
   // instantiating the image type to be read.
 
@@ -285,10 +297,36 @@ int main(int argc, char *argv[])
               << fileNamePath << ","
               << std::endl;
     }
+#define SKIP_DICOM_REPORTS 1
+#if SKIP_DICOM_REPORTS
+
+std::cout << "-1" << ","
+              << digestMode << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+              << "-1" << ","
+#if 0 // Time is not a good indicator for a signature, it is rounded off
+      // differently, and often anonymized through truncation
+              << "-1" << ","
+#else
+              << "-1" << ","
+#endif
+              << "-1" << ","
+              << fileNameName << ","
+              << fileNamePath << ","
+              << std::endl;
+   return EXIT_FAILURE;
+#else
   else  // Perhaps the file is a dicom report with out image data
     {
-    gdcm::File *header = new gdcm::File;
-    header->SetFileName( inputVolume );
+    gdcm::SerieHelper *header = new gdcm::SerieHelper;
+    header->AddFileName( inputVolume );
     header->SetLoadMode(  gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW );
     bool headerLoaded = header->Load();
     if( !headerLoaded )
@@ -385,6 +423,7 @@ int main(int argc, char *argv[])
               << fileNamePath << ","
               << std::endl;
     }
+#endif
 
   return EXIT_SUCCESS;
 }

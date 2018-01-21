@@ -35,14 +35,12 @@
 #include <map>
 #include <vector>
 
-namespace
+namespace LandmarkIO
 {
-typedef vnl_matrix<double>                           MatrixType;
-typedef vnl_vector<double>                           VectorType;
-typedef itk::VersorRigid3DTransform<double>          VersorTransformType;
-typedef VersorTransformType::Pointer                 VersorTransformPointer;
-typedef VersorTransformType::MatrixType              VersorTransformMatrixType;
-typedef itk::ImageDuplicator<SImageType>             DuplicatorType;
+typedef vnl_matrix<double>                   MatrixType;
+typedef itk::VersorRigid3DTransform<double>  VersorTransformType;
+typedef VersorTransformType::MatrixType      VersorTransformMatrixType;
+typedef itk::ImageDuplicator<SImageType>     DuplicatorType;
 }
 
 extern void MakeBrandeddebugImage(SImageType::ConstPointer in, const landmarksConstellationModelIO & mDef,
@@ -65,28 +63,28 @@ extern void WriteMRMLFile(std::string outputMRML, std::string outputLandmarksInI
                           std::string outputLandmarksInOutputSpace, std::string inputVolume, std::string outputVolume,
                           std::string outputTransform, const LandmarksMapType & outputLandmarksInInputSpaceMap,
                           const LandmarksMapType & outputLandmarksInOutputSpaceMap,
-                          VersorTransformType::ConstPointer versorTransform);
+                          LandmarkIO::VersorTransformType::ConstPointer versorTransform);
 
 // load linear least squares model for selected landmarks
 // .load from txt file
 extern void loadLLSModel(std::string llsModel, std::map<std::string, std::vector<double> > & llsMeans,
-                         std::map<std::string, MatrixType> & llsMatrices, std::map<std::string, double> & searchRadii);
+                         std::map<std::string, LandmarkIO::MatrixType> & llsMatrices, std::map<std::string, double> & searchRadii);
 
 /*
 // load from .mat file
 extern void loadLLSModelMat(std::string llsModel, std::string processingList,
                             std::map<std::string,
                                      std::vector<double> > & llsMeans,
-                            std::map<std::string, MatrixType> & llsMatrices, std::map<std::string,
+                            std::map<std::string, LandmarkIO::MatrixType> & llsMatrices, std::map<std::string,
                                                                                       double>
                             & searchRadii);
 */
 extern void writeLLSModel(const std::string & modelName, const std::map<std::string, std::vector<double> > & llsMeans,
-                          const std::map<std::string, MatrixType> & llsMatrices, const std::map<std::string,
+                          const std::map<std::string, LandmarkIO::MatrixType> & llsMatrices, const std::map<std::string,
                                                                                                 double> & searchRadii);
 
 extern void readLLSModel(const std::string & modelName, std::map<std::string, std::vector<double> > & llsMeans,
-                         std::map<std::string, MatrixType> & llsMatrices, std::map<std::string, double> & searchRadii);
+                         std::map<std::string, LandmarkIO::MatrixType> & llsMatrices, std::map<std::string, double> & searchRadii);
 
 // write out verification script
 extern void writeVerificationScript(std::string outputVerificationScript, std::string outputVolume,

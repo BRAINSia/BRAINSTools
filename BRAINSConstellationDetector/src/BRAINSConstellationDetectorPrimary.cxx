@@ -81,9 +81,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   std::cout << "\nReading in external files..." << std::endl;
 
   // read in lls model file
-  std::map<std::string, std::vector<double> > llsMeans;
-  std::map<std::string, MatrixType>           llsMatrices;
-  std::map<std::string, double>               searchRadii;
+  std::map<std::string, std::vector<double> >   llsMeans;
+  std::map<std::string, LandmarkIO::MatrixType> llsMatrices;
+  std::map<std::string, double>                 searchRadii;
 
   LLSModel theModel;
 

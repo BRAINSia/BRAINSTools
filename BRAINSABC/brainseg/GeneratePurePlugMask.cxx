@@ -29,7 +29,6 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  typedef itk::Image<float, 3>                                                FloatImageType;
   typedef FloatImageType::Pointer                                             FloatImagePointer;
   typedef std::vector<FloatImagePointer>                                      InputImageList;
   typedef itk::ImageFileReader<FloatImageType>                                LocalReaderType;

@@ -23,28 +23,28 @@
 #include "itkantsRegistrationHelper.h"
 #include "GenericTransformImage.h"
 
-namespace // put in anon namespace to suppress shadow declaration warnings.
+namespace SyN
 {
-typedef  double                                            RealType;
-typedef  ants::RegistrationHelper<RealType,3>              SyNRegistrationHelperType;
-typedef  SyNRegistrationHelperType::ImageType              ImageType;
-typedef  SyNRegistrationHelperType::CompositeTransformType CompositeTransformType;
+typedef  double                                         RealType;
+typedef  ants::RegistrationHelper<SyN::RealType,3>      RegistrationHelperType;
+typedef  RegistrationHelperType::ImageType              ImageType;
+typedef  RegistrationHelperType::CompositeTransformType CompositeTransformType;
 }
 
 template <class FixedImageType, class MovingimageType>
-typename CompositeTransformType::Pointer
+typename SyN::CompositeTransformType::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,
-              typename CompositeTransformType::Pointer compositeInitialTransform,
-              typename CompositeTransformType::Pointer & internalSavedState,
+              typename SyN::CompositeTransformType::Pointer compositeInitialTransform,
+              typename SyN::CompositeTransformType::Pointer & internalSavedState,
               typename FixedImageType::Pointer & infixedImage2 = NULL,
               typename MovingimageType::Pointer & inmovingImage2 = NULL,
-              RealType samplingPercentage = 1.0,
+              SyN::RealType samplingPercentage = 1.0,
               std::string whichMetric = "cc",
               const bool synFull = true,
-              typename CompositeTransformType::Pointer restoreState = nullptr )
+              typename SyN::CompositeTransformType::Pointer restoreState = nullptr )
 {
-  typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
+  typename SyN::RegistrationHelperType::Pointer regHelper = SyN::RegistrationHelperType::New();
     {
     /*
     const float lowerQuantile = 0.025;
@@ -86,8 +86,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     }
 
     {
-    std::vector<RealType> convergenceThresholdList;
-    const RealType        convergenceThreshold = 1e-6;
+    std::vector<SyN::RealType> convergenceThresholdList;
+    const SyN::RealType        convergenceThreshold = 1e-6;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
@@ -159,11 +159,11 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // All the parameters of the second metric is the same as the first metric except for fixed and moving volumes.
     // Common parameters are:
     // - Metric type (MMI->mattes, MSE->meansquares, NC->cc, MIH->mi)
-    typename SyNRegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
+    typename SyN::RegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
     // - Metric weight
-    const RealType weighting = 1.0;
+    const SyN::RealType weighting = 1.0;
     // - Sampling strategy (alway random)
-    typename SyNRegistrationHelperType::SamplingStrategy samplingStrategy = SyNRegistrationHelperType::random;
+    typename SyN::RegistrationHelperType::SamplingStrategy samplingStrategy = SyN::RegistrationHelperType::random;
     // - Sampling percentage (defined by input)
     // - Number of bins
     const int          bins = 32;
@@ -172,17 +172,17 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     //
     // Add the first metric with the first mandatory fixed and moving volumes
     //
-    typedef itk::CastImageFilter<FixedImageType,ImageType> FixedCasterType;
+    typedef itk::CastImageFilter<FixedImageType,SyN::ImageType> FixedCasterType;
     typename FixedCasterType::Pointer fixedCaster = FixedCasterType::New();
     fixedCaster->SetInput( infixedImage );
     fixedCaster->Update();
-    typename ImageType::Pointer dblFixedImage = fixedCaster->GetOutput();
+    typename SyN::ImageType::Pointer dblFixedImage = fixedCaster->GetOutput();
 
-    typedef itk::CastImageFilter<MovingimageType,ImageType> MovingCasterType;
+    typedef itk::CastImageFilter<MovingimageType,SyN::ImageType> MovingCasterType;
     typename MovingCasterType::Pointer movingCaster = MovingCasterType::New();
     movingCaster->SetInput( inmovingImage );
     movingCaster->Update();
-    typename ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
+    typename SyN::ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
 
     regHelper->AddMetric(curMetric,
                          dblFixedImage,
@@ -202,12 +202,12 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
       typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
       fixedCaster2->SetInput( infixedImage2 );
       fixedCaster2->Update();
-      typename ImageType::Pointer dblFixedImage2 = fixedCaster2->GetOutput();
+      typename SyN::ImageType::Pointer dblFixedImage2 = fixedCaster2->GetOutput();
 
       typename MovingCasterType::Pointer movingCaster2 = MovingCasterType::New();
       movingCaster2->SetInput( inmovingImage2 );
       movingCaster2->Update();
-      typename ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();
+      typename SyN::ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();
 
       regHelper->AddMetric(curMetric,
                            dblFixedImage2,
@@ -257,11 +257,11 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     std::cerr << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
-  typename CompositeTransformType::Pointer outputCompositeTransform =
+  typename SyN::CompositeTransformType::Pointer outputCompositeTransform =
     regHelper->GetModifiableCompositeTransform();
   // Get the registration state file
   internalSavedState =
-    dynamic_cast<CompositeTransformType *>( regHelper->GetModifiableRegistrationState() );
+    dynamic_cast<SyN::CompositeTransformType *>( regHelper->GetModifiableRegistrationState() );
   // return composite result Transform;
   return outputCompositeTransform;
 }

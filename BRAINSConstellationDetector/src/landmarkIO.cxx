@@ -37,7 +37,7 @@ RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)
   // of the input image through that
   SImageType::Pointer inputStatsImage;
     {
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
@@ -266,7 +266,7 @@ MakePointBranded3DImage(SImageType::ConstPointer in,
                                                                     ITK_COORDINATE_ORIENTATION_RAI);
   SImageType::Pointer inputStatsImage;
     {
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
@@ -432,7 +432,7 @@ WriteMRMLFile(std::string outputMRML,
               std::string outputTransform,
               const LandmarksMapType & outputLandmarksInInputSpaceMap,
               const LandmarksMapType & outputLandmarksInOutputSpaceMap,
-              VersorTransformType::ConstPointer versorTransform)
+              LandmarkIO::VersorTransformType::ConstPointer versorTransform)
 {
   const unsigned int LocalImageDimension = 3;
   itk::NumberToString<double>     doubleToString;
@@ -658,7 +658,7 @@ WriteMRMLFile(std::string outputMRML,
   // For output transform
   if( outputTransform.compare("") != 0 )
     {
-    VersorTransformMatrixType tm = versorTransform->GetMatrix();
+    LandmarkIO::VersorTransformMatrixType tm = versorTransform->GetMatrix();
 
     myfile
       <<
@@ -687,7 +687,7 @@ WriteMRMLFile(std::string outputMRML,
 void
 loadLLSModel(std::string llsModelFilename,
              std::map<std::string, std::vector<double> > & llsMeans,
-             std::map<std::string, MatrixType> & llsMatrices,
+             std::map<std::string, LandmarkIO::MatrixType> & llsMatrices,
              std::map<std::string, double> & searchRadii)
 {
   std::ifstream myfile( llsModelFilename.c_str() );
@@ -757,7 +757,7 @@ loadLLSModel(std::string llsModelFilename,
         numParameters = atoi( line.c_str() );
         }
 
-      MatrixType coefficients; // linear model coefficients
+      LandmarkIO::MatrixType coefficients; // linear model coefficients
       coefficients.set_size(dimension, numParameters);
       for( unsigned int j = 0; j < dimension; ++j )
         {

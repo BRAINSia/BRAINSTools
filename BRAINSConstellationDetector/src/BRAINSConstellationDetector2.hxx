@@ -139,7 +139,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // file
   SImageType::Pointer copyOfOriginalInputImage;
     {
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(this->m_OriginalInputImage);
     duplicator->Update();
     copyOfOriginalInputImage = duplicator->GetOutput();
@@ -212,7 +212,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   landmarksConstellationDetector myDetector;
     {
     // a little abuse of the duplicator here
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
     // Use HoughEyeAlignedImage + HoughTransform as starting point.
     duplicator->SetInputImage( this->GetHoughEyeAlignedImage().GetPointer() );
     duplicator->Update();
@@ -223,7 +223,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     {
     // The detector also needs the original input if it has to fix a bad estimation of the MSP
     //HACK: TODO:  Why duplicate?  This seems crazy
-    DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+    LandmarkIO::DuplicatorType::Pointer duplicator2 = LandmarkIO::DuplicatorType::New();
     duplicator2->SetInputImage( this->m_CleanedIntensityOriginalInputImage );
     duplicator2->Update();
     myDetector.SetOriginalInputImage( duplicator2->GetOutput() );

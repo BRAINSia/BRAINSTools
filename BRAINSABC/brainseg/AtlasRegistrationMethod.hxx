@@ -476,7 +476,6 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     this->m_AtlasToSubjectTransform = this->m_AtlasToSubjectInitialTransform;
     if( this->m_AtlasToSubjectTransform.IsNotNull() )
       {
-      typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
       CompositeTransformType::Pointer atlasToSubjectCompositeTransform =
          dynamic_cast<CompositeTransformType *>( m_AtlasToSubjectTransform.GetPointer() );
       if( atlasToSubjectCompositeTransform.IsNull() )

@@ -123,19 +123,25 @@ mark_as_superbuild(USE_DebugImageViewer)
 bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
 
-
-
-cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Items that are archived.  May be usefult for compiler testing,
+## but probably wont be useful for research work.
+cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
 mark_as_superbuild(USE_BRAINSContinuousClass)
 
 cmake_dependent_option(USE_ICCDEF "Build ICCDEF" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(USE_ICCDEF)
 
-cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
 mark_as_superbuild(USE_BRAINSRefacer)
 
-cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
 mark_as_superbuild(USE_BRAINSTalairach)
+
+cmake_dependent_option(USE_DicomSignature "Build DicomSignature is under development" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" ON)
+mark_as_superbuild(USE_DicomSignature)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
 #  message("NOTE: Following toolkits are dependent to VTK:

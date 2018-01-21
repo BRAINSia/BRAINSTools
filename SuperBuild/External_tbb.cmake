@@ -49,6 +49,7 @@ ExternalProject_Add(${proj}
 #       that have non-default names
 #set(TBB_MAKE_ARGS "compiler=${CMAKE_CXX_COMPILER}")
 
+message(STATUS "Building TBB for :${CMAKE_SYSTEM_NAME}")
 ## Following instructions from for source package integration
 ## https://github.com/01org/tbb/tree/tbb_2018/cmake#source-package-integration
 include(${CMAKE_CURRENT_LIST_DIR}/tbb_cmake/TBBGet.cmake)

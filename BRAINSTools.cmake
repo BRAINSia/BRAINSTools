@@ -170,43 +170,46 @@ include_directories(
 # Define list of module names
 #-----------------------------------------------------------------------------
 set(brains_modulenames
-  BRAINSABC
+  AutoWorkup
+  ReferenceAtlas
   BRAINSFit
-  BRAINSLabelStats
   BRAINSResample
+  BRAINSABC
   BRAINSROIAuto
-  GTRACT
+  DWIConvert
+  ConvertBetweenFileFormats
+  BRAINSConstellationDetector
   ImageCalculator
+  GTRACT
+  BRAINSLabelStats
   BRAINSCut
-  ## Temporarily Removed Need to update OpenCV BRAINSCut
   BRAINSLandmarkInitializer
   BRAINSSnapShotWriter
+  BRAINSDWICleanup
   BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
-  ##TODO: KENT:  This is broken with latest builds,  I think something in ITKv4 changed slightly, or VTK6 compatibility -->BRAINSSurfaceTools
   BRAINSSurfaceTools
-  BRAINSContinuousClass
   BRAINSPosteriorToContinuousClass
   BRAINSMush
   BRAINSMultiModeSegment
   BRAINSInitializedControlPoints
   BRAINSTransformConvert
-  BRAINSTalairach
-  BRAINSConstellationDetector
-  ConvertBetweenFileFormats
-  DWIConvert
   BRAINSCreateLabelMapFromProbabilityMaps
   BRAINSMultiSTAPLE
   BRAINSStripRotation
-  AutoWorkup
-  BRAINSDWICleanup
-  ReferenceAtlas
   BRAINSSuperResolution
-  BRAINSRefacer
-#ARCHIVED MODULES
-  ICCDEF
 )
+
+if(BUILD_ARCHIVE)
+   list(APPEND brains_modulenames
+  ICCDEF
+  BRAINSContinuousClass  ## simpleITK + scikit learn are easier
+  BRAINSRefacer
+  BRAINSTalairach
+)
+
+endif()
 
 if(USE_DebugImageViewer)
   list(APPEND brains_modulenames DebugImageViewer)
@@ -224,9 +227,9 @@ foreach(modulename ${brains_modulenames})
   # message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
     if(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${modulename})
-      message("++++++++++++++++++++++++++++++++++++++Adding ${modulename}")
+      #message("++++++++++++++++++++++++++++++++++++++Adding ${modulename}")
       add_subdirectory(${modulename})
-      message("--------------------------------------USE_${modulename} = ${USE_${modulename}}")
+      #message("--------------------------------------USE_${modulename} = ${USE_${modulename}}")
     else()
       if(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ARCHIVE/${modulename})
         add_subdirectory( ARCHIVE/${modulename} )

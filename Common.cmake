@@ -74,6 +74,7 @@ bt_option(USE_AutoWorkup                     "Build AutoWorkup"                 
 bt_option(USE_ReferenceAtlas                 "Build the Reference Atlas"            ON)
 
 bt_option(USE_ANTS                           "Build ANTS"                           ON)
+bt_option(BUILD_ARCHIVE                      "Build old tools from archive"        OFF)
 
 bt_option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
 bt_option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
@@ -114,29 +115,39 @@ bt_option(USE_BRAINSMush                     "Build BRAINSMush"                 
 bt_option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
 
 ## These are not yet ready for prime time.
-cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(USE_BRAINSTalairach)
 cmake_dependent_option(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
 mark_as_superbuild(USE_BRAINSSurfaceTools)
-bt_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass"         OFF)
-bt_option(USE_ICCDEF                         "Build ICCDEF     "                    OFF)
 bt_option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
 cmake_dependent_option(USE_DebugImageViewer "Build DebugImageViewer" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
 mark_as_superbuild(USE_DebugImageViewer)
 bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
-bt_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ON)
 
-if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
-  message("NOTE: Following toolkits are dependent to VTK:
-      -GTRACT
-      -BRAINSDemonWarp
-      -BRAINSTalairach
-      -BRAINSSurfaceTools
-      -DebugImageViewer
-      -ITKMatlabIO
-      -BRAINSConstellationDetectorGUI
-      First you need to set ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK to ON to be able to choose above application for build.")
-endif()
+
+
+
+cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+mark_as_superbuild(USE_BRAINSContinuousClass)
+
+cmake_dependent_option(USE_ICCDEF "Build ICCDEF" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+mark_as_superbuild(USE_ICCDEF)
+
+cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+mark_as_superbuild(USE_BRAINSRefacer)
+
+cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
+mark_as_superbuild(USE_BRAINSTalairach)
+
+#if(NOT ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
+#  message("NOTE: Following toolkits are dependent to VTK:
+#      -GTRACT
+#      -BRAINSDemonWarp
+#      -BRAINSTalairach
+#      -BRAINSSurfaceTools
+#      -DebugImageViewer
+#      -ITKMatlabIO
+#      -BRAINSConstellationDetectorGUI
+#      First you need to set ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK to ON to be able to choose above application for build.")
+#endif()
 
 if(${LOCAL_PROJECT_NAME}_USE_QT)
   if(NOT QT4_FOUND)

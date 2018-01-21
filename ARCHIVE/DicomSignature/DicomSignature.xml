@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Utility</category>
+  <title>DicomSignature</title>
+
+  <description>
+   This program creates a unique signature from a dicom image.
+  </description>
+  <version>0.0.5</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>This tool was developed by Hans Johnson.</contributor>
+  <acknowledgements>The development of this tool was supported by funding from grants NS050568 and NS40068 from the National Institute of Neurological Disorders and Stroke and grants MH31593, MH40856, from the National Institute of Mental Health.  </acknowledgements>
+
+  <parameters>
+    <label>Inputs</label>
+    <description>Parameters for specifying the image to create signature from</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <flag>i</flag>
+      <description>Reference Image</description>
+      <label>Reference Image</label>
+      <channel>input</channel>
+    </image>
+
+    <string-enumeration>
+      <name>digestMode</name>
+      <longflag>digestMode</longflag>
+      <label>Digest Mode</label>
+      <description>The type of digest to create. Options are md2, md5, sha, sha1, dss, dss1, mdc2, ripemd160</description>
+      <default>sha1</default>
+      <element>md2</element>
+      <element>md5</element>
+      <element>sha</element>
+      <element>sha1</element>
+      <element>dss</element>
+      <element>dss1</element>
+      <element>mdc2</element>
+      <element>ripemd160</element>
+    </string-enumeration>
+  </parameters>
+  <parameters advanced="true">
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

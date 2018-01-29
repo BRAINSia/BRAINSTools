@@ -231,7 +231,7 @@ BRAINSCutVectorTrainingSet
   std::string temporaryResultFilename = trainingVectorFilename;
   temporaryResultFilename += "Shuffled";
 
-  const int        samplingProportion = 1; // shuffle order only (without up/down sampling)
+  constexpr int samplingProportion = 1; // shuffle order only (without up/down sampling)
   ShuffleVectors * my_ShuffleVector = new ShuffleVectors(  trainingVectorFilename,
                                                            temporaryResultFilename,
                                                            samplingProportion );

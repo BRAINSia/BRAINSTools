@@ -82,7 +82,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   TRealImage::Pointer movingBinaryVolumeImage;
   TRealImage::Pointer fixedBinaryVolumeImage;
   const double        otsuPercentileThreshold = 0.01;
-  const int           closingSize = 7;
+  constexpr int closingSize = 7;
   //   fixedBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
   //     m_FixedImage,
   //     otsuPercentileThreshold,

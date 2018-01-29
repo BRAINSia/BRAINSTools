@@ -104,7 +104,7 @@ namespace itk
           // tissue region if necessary
           {
           //  No double opportunity when generating both kinds of images.
-          const unsigned int closingSize = 7;
+          constexpr unsigned int closingSize = 7;
           typedef itk::LargestForegroundFilledMaskImageFilter<SImageType> LFFMaskFilterType;
           LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
           LFF->SetInput(lOutputResampledImage);

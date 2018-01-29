@@ -131,7 +131,7 @@ typename ByteImageType::Pointer ComputeForegroundProbMask(
   currForegroundMask->Allocate();
 
   const typename TProbabilityImage::SizeType size = probList[0]->GetLargestPossibleRegion().GetSize();
-  const typename ByteImageType::PixelType insideMaskValue = 1;
+  constexpr typename ByteImageType::PixelType insideMaskValue  = 1;
     {
     tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0,size[2],1,0,size[1],size[1]/2,0,size[0],512),
                       [=](tbb::blocked_range3d<LOOPITERTYPE> &r) {

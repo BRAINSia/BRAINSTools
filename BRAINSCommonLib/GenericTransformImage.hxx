@@ -102,7 +102,7 @@ GetInterpolatorFromString(const std::string & interpolationMode)
   typedef typename itk::ConstantBoundaryCondition<InputImageType>                   BoundaryConditionType;
   //
   // WindowRadius set to 3 to match default for Slicer
-  static const unsigned int SlicerWindowedSincWindowRadius = 3;
+  static constexpr unsigned int SlicerWindowedSincWindowRadius = 3;
 
   if( interpolationMode == "NearestNeighbor" )
     {
@@ -124,7 +124,7 @@ GetInterpolatorFromString(const std::string & interpolationMode)
     }
   else if( interpolationMode == "WindowedSinc" )
     {
-    static const unsigned int WindowedSincHammingWindowRadius = 5;
+    static constexpr unsigned int WindowedSincHammingWindowRadius = 5;
     typedef typename itk::Function::HammingWindowFunction<WindowedSincHammingWindowRadius,
                                                           TInterpolatorPrecisionType,
                                                           TInterpolatorPrecisionType>
@@ -262,8 +262,8 @@ typename OutputImageType::Pointer GenericTransformImage(
       const typename FloatThresholdFilterType::OutputPixelType insideValue  = 0.0;
       initialFilter->SetOutsideValue(outsideValue);
       initialFilter->SetInsideValue(insideValue);
-      const typename FloatThresholdFilterType::InputPixelType lowerThreshold = 0;
-      const typename FloatThresholdFilterType::InputPixelType upperThreshold = 0;
+      constexpr typename FloatThresholdFilterType::InputPixelType lowerThreshold  = 0;
+      constexpr typename FloatThresholdFilterType::InputPixelType upperThreshold  = 0;
       initialFilter->SetLowerThreshold(lowerThreshold);
       initialFilter->SetUpperThreshold(upperThreshold);
       }
@@ -434,8 +434,8 @@ typename OutputImageType::Pointer GenericTransformImage(
     typename BinaryThresholdFilterType::Pointer finalFilter = BinaryThresholdFilterType::New();
     finalFilter->SetInput(TransformedImage);
 
-    const typename BinaryThresholdFilterType::OutputPixelType outsideValue = 0;
-    const typename BinaryThresholdFilterType::OutputPixelType insideValue  = 1;
+    constexpr typename BinaryThresholdFilterType::OutputPixelType outsideValue  = 0;
+    constexpr typename BinaryThresholdFilterType::OutputPixelType insideValue   = 1;
     finalFilter->SetOutsideValue(outsideValue);
     finalFilter->SetInsideValue(insideValue);
     // Signed distance boundary voxels are defined as being included in the

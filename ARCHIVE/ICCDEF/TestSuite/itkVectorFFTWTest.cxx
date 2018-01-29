@@ -34,7 +34,7 @@ int itkVectorFFTWTest(int argc, char *argv[] )
     }
 
   typedef  float PixelType;
-  const unsigned int dims = 3;
+  constexpr unsigned int dims = 3;
   typedef itk::Image<itk::Vector<PixelType, dims>, dims>                                   ImageType;
   typedef itk::VectorFFTWHalfHermitianToRealInverseFFTImageFilter<ImageType::PixelType, 3> FFTWComplexToRealImageType;
   typedef itk::VectorFFTWRealToHalfHermitianForwardFFTImageFilter<ImageType::PixelType, 3> FFTWRealToComplexImageType;

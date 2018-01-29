@@ -45,7 +45,7 @@ int main(int argc, char * argv[])
 {
   typedef double ScalarType;
   typedef std::complex<ScalarType> ComplexType;
-  const size_t DIMENSION =2;
+  constexpr size_t DIMENSION = 2;
 
   typedef itk::Image<ComplexType,DIMENSION> CImageType;
   typedef itk::Image<ScalarType ,DIMENSION> SImageType;

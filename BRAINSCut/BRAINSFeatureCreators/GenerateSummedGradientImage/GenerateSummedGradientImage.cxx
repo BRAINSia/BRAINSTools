@@ -39,7 +39,7 @@ main(int argc, char * *argv)
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   typedef float PixelType;
-  const unsigned int Dim = 3;
+  constexpr unsigned int Dim = 3;
   typedef  itk::Image<PixelType, Dim> ImageType;
 
   typedef unsigned char                    OutputPixelType;

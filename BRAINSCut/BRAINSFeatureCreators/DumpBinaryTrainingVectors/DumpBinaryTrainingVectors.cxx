@@ -101,8 +101,8 @@ main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
   // read binary
-  // const unsigned int OutputVectorSize=2;
-  const unsigned int SentinalValueSize = 1;
+  // constexpr unsigned int OutputVectorSize = 2;
+  constexpr unsigned int SentinalValueSize = 1;
   std::ifstream      binfile;
   binfile.open(inputVectorFilename.c_str(), std::ios::in | std::ios::binary);
   if( !binfile.is_open() )

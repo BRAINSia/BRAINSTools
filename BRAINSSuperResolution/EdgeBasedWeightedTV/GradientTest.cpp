@@ -22,7 +22,7 @@
 #include <rtkForwardDifferenceGradientImageFilter.h>
 #include <rtkBackwardDifferenceDivergenceImageFilter.h>
 
-const size_t IM2DSIZE=3;
+constexpr size_t IM2DSIZE = 3;
 
 template<typename IMTYPE>
 void DumpImage(IMTYPE out)

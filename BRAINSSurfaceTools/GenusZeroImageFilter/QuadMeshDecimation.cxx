@@ -6,7 +6,7 @@
 #include "itkQuadEdgeMeshDecimationCriteria.h"
 
 typedef double Coord;
-const unsigned int Dimension = 3;
+constexpr unsigned int Dimension = 3;
 
 // Declaration of the type of Mesh
 typedef itk::QuadEdgeMesh<Coord, Dimension> MeshType;

@@ -240,7 +240,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     TensorImageIndexType tensorIndex = tensorIt.GetIndex();
 
     // Define type of tensor pixel
-    const unsigned int tensElements = 6;
+    constexpr unsigned int tensElements = 6;
     typedef itk::Vector<float, tensElements> VectorTensorPixelType;
     VectorTensorPixelType tensor;
 

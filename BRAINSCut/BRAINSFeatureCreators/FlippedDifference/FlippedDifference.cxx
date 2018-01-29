@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
   //  typedef signed short       PixelType;
   typedef float PixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef itk::Image<PixelType,  Dimension>   ImageType;
   typedef itk::ImageFileReader<ImageType>     ReaderType;

@@ -146,7 +146,7 @@ int CompareNoCase( const std::string & s, const std::string & s2 )
 template <class InPixelType, class OutPixelType>
 void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 {
-  const int dims = 3;
+  constexpr int dims = 3;
 
   typedef itk::Image<InPixelType, dims>              ImageType;
   typedef itk::Image<float, dims>                    TRealImage;

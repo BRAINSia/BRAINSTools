@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   const bool checkDeformedArea = !checkNonDeformedArea;
 
   typedef float                                                                           InputPixelType;
-  const int                                                                               Dimension = 3;
+  constexpr int Dimension = 3;
 
   typedef itk::Image<InputPixelType, Dimension>                                           ImageType;
   typedef itk::Image<unsigned char, Dimension>                                            MaskImageType;

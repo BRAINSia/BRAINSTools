@@ -44,7 +44,7 @@ int main( int argc, char * argv[] )
 
   typedef    float InputPixelType;
   typedef    float OutputPixelType;
-  const int Dimension = 3;
+  constexpr int Dimension = 3;
 
   typedef itk::Image<InputPixelType,  Dimension> InputImageType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;

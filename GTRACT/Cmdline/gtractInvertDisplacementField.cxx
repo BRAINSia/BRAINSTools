@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef   signed short                            ScalarPixelType;
   typedef   itk::Image<ScalarPixelType,  Dimension> ScalarImageType;
 

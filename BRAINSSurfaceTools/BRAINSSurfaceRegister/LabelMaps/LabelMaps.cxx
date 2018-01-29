@@ -58,7 +58,7 @@ int main( int argc, char * argv[] )
   unsigned char nLabels = labelFileList.size();
 
   // define image type
-  const int dimension = 3;
+  constexpr int dimension = 3;
   typedef unsigned char                    PixelType;
   typedef itk::Image<PixelType, dimension> ImageType;
 

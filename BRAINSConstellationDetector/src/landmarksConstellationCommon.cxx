@@ -312,7 +312,7 @@ SImageType::PointType GetCenterOfHeadMass(SImageType::Pointer volume)
   // Choose the Inferior/Superior based on maximum dirction cosign
 
   // Find center of the image space which is where the MSP has been placed.
-  const unsigned int    ISdirectionIndex = 2;
+  constexpr unsigned int ISdirectionIndex = 2;
   SImageType::PointType CenterOfMass =
     FindCenterOfBrainBasedOnTopOfHead(volume,
                                       ISdirectionIndex,

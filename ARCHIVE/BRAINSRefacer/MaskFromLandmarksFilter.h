@@ -18,7 +18,7 @@ public:
   typedef MaskFromLandmarksFilter Self;
   typedef itk::SmartPointer<Self> Pointer;
 
- // const unsigned int Dimension = 3;
+ // constexpr unsigned int Dimension = 3;
 
   itkNewMacro(Self);
   itkTypeMacro(Self, ImageToImageFilter)

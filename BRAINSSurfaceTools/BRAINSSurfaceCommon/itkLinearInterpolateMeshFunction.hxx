@@ -164,7 +164,7 @@ LinearInterpolateMeshFunction<TInputMesh>
     {
     if( this->GetUseNearestNeighborInterpolationAsBackup() )
       {
-      const unsigned int numberOfNeighbors = 1;
+      constexpr unsigned int numberOfNeighbors = 1;
 
       InstanceIdentifierVectorType closestPointIds(numberOfNeighbors);
 
@@ -289,7 +289,7 @@ void
 LinearInterpolateMeshFunction<TInputMesh>
 ::FindTriangleOfClosestPoint( const PointType& point, InstanceIdentifierVectorType & pointIds ) const
 {
-  const unsigned int numberOfNeighbors = 1;
+  constexpr unsigned int numberOfNeighbors = 1;
 
   InstanceIdentifierVectorType closestPointId(numberOfNeighbors);
 

@@ -25,7 +25,7 @@
 
 int main( int argc, char * argv[] )
 {
-  const unsigned int LocalImageDimension = 3;
+  constexpr unsigned int LocalImageDimension = 3;
 
   typedef short                                            InputPixelType;
   typedef double                                           OutputPixelType;

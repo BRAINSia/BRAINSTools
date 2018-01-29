@@ -64,7 +64,7 @@ int main( int argc, char * argv [] )
   std::cout << "-----------------------------------------------" << std::endl;
 
   typedef double PixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   // Declaration of the type of Mesh
   typedef itk::QuadEdgeMesh<PixelType, Dimension> MeshType;

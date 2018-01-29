@@ -43,7 +43,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
                              std::string discreteVolumeName, std::string outputVolumeName)
 {
   // typedef float PixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef typename itk::Image<PixelType,  Dimension>    ImageType;
   typedef typename itk::Image<unsigned int, Dimension>  ShortImageType;
@@ -51,13 +51,13 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   typedef typename itk::ImageFileReader<ShortImageType> ShortReaderType;
   typedef typename itk::ImageFileWriter<ImageType>      WriterType;
 
-  static const typename ShortImageType::PixelType grayMatterDiscreteValue = 2;
-  static const typename ShortImageType::PixelType basalGrayMatterDiscreteValue = 3;
-  static const typename ShortImageType::PixelType whiteMatterDiscreteValue = 1;
-  static const typename ShortImageType::PixelType csfDiscreteValue = 4;
-  static const typename ShortImageType::PixelType airDiscreteValue = 0;
-  static const typename ShortImageType::PixelType veinousBloodDiscreteValue = 5;
-  static const typename ShortImageType::PixelType allStandInDiscreteValue = 9;
+  static constexpr typename ShortImageType::PixelType grayMatterDiscreteValue  = 2;
+  static constexpr typename ShortImageType::PixelType basalGrayMatterDiscreteValue  = 3;
+  static constexpr typename ShortImageType::PixelType whiteMatterDiscreteValue  = 1;
+  static constexpr typename ShortImageType::PixelType csfDiscreteValue  = 4;
+  static constexpr typename ShortImageType::PixelType airDiscreteValue  = 0;
+  static constexpr typename ShortImageType::PixelType veinousBloodDiscreteValue  = 5;
+  static constexpr typename ShortImageType::PixelType allStandInDiscreteValue  = 9;
 
   typename ReaderType::Pointer t1Reader = ReaderType::New();
   typename ReaderType::Pointer t2Reader = ReaderType::New();
@@ -103,7 +103,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   const unsigned int csfSampleCount = labelStatisticsFilter->GetCount(csfDiscreteValue);
   const unsigned int veinousBloodSampleCount = labelStatisticsFilter->GetCount(veinousBloodDiscreteValue);
 
-  const unsigned int            featureCount = 2; // T1 and T2
+  constexpr unsigned int featureCount = 2; // T1 and T2
   LogisticRegression<PixelType> logisticRegressionWhiteVsCSF = LogisticRegression<PixelType>(featureCount,
                                                                                              csfSampleCount
                                                                                              + whiteMatterSampleCount);

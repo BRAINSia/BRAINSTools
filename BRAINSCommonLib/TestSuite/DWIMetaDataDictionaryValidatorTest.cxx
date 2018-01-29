@@ -153,7 +153,7 @@ int main( int argc, char *argv[] )
    *  - Writes the created volume with output MetaDataDictionary
    */
 
-  const size_t numOfComponents=8;
+  constexpr size_t numOfComponents = 8;
 
   // Create a vector image
   VectorImageType::Pointer nrrdVolume = CreateVolume(numOfComponents);

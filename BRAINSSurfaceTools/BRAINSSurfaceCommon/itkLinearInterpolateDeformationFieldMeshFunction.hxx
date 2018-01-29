@@ -85,7 +85,7 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
     {
     if( this->GetUseNearestNeighborInterpolationAsBackup() )
       {
-      const unsigned int numberOfNeighbors = 1;
+      constexpr unsigned int numberOfNeighbors = 1;
 
       InstanceIdentifierVectorType closestPointIds(numberOfNeighbors);
 

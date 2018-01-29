@@ -154,7 +154,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     //
     {
     // Note that here we run only one stage of registration, so stageID does not change
-    const unsigned int stageID = 0;
+    constexpr unsigned int stageID = 0;
     // However, this stage can have one or two metrics (for multi-modality registration).
     // All the parameters of the second metric is the same as the first metric except for fixed and moving volumes.
     // Common parameters are:
@@ -168,7 +168,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // - Number of bins
     const int          bins = 32;
     // - radius
-    const unsigned int radius = 4;
+    constexpr unsigned int radius = 4;
     //
     // Add the first metric with the first mandatory fixed and moving volumes
     //

@@ -93,8 +93,8 @@ public:
   typedef RegisterImageType::DirectionType RegisterImageDirectionType;
   typedef RegisterImageType::IndexType     RegisterImageIndexType;
 
-  static const unsigned int SpaceDimension = 3;
-  static const unsigned int SplineOrder = 3;
+  static constexpr unsigned int SpaceDimension = 3;
+  static constexpr unsigned int SplineOrder = 3;
   typedef double CoordinateRepType;
   typedef itk::BSplineDeformableTransform<
       CoordinateRepType,

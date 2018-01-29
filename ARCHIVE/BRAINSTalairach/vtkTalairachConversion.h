@@ -35,7 +35,7 @@ public:
 
   /* Declare image type */
   typedef unsigned char PixelType;
-  static const int Dimension = 3;
+  static constexpr int Dimension = 3;
   typedef itk::Image<PixelType, Dimension> ImageType;
 
   /* Define the Hemisphere Types */

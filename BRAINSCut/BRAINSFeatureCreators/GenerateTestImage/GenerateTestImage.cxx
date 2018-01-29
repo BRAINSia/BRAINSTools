@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const unsigned int dimension = 3;
+  constexpr unsigned int dimension = 3;
   typedef itk::Image<double, dimension>        InputImageType;
   typedef itk::Image<unsigned char, dimension> OutputImageType;
   // Create input image

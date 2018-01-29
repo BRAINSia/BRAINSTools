@@ -169,7 +169,7 @@ struct BRAINSDemonWarpAppParameters
 template <class InPixelType, class OutPixelType>
 void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
-  const int dims = 3;
+  constexpr int dims = 3;
 
   typedef itk::Image<InPixelType, dims>              ImageType;
   typedef itk::Image<float, dims>                    TRealImage;
@@ -261,7 +261,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         typename  TRealImage::Pointer movingBinaryVolumeImage;
         typename  TRealImage::Pointer fixedBinaryVolumeImage;
         const double otsuPercentileThreshold = 0.01;
-        const int    closingSize = 7;
+        constexpr int closingSize = 7;
         // typedef itk::Image<signed long, dims> LargeIntegerImage;
 
         typename  TRealImage::Pointer fixedVolume =
@@ -641,7 +641,7 @@ ProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
 template <class InPixelType, class OutPixelType>
 void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
-  const int dims = 3;
+  constexpr int dims = 3;
 
   typedef itk::Image<InPixelType, dims>              ImageType;
   typedef itk::Image<float, dims>                    TRealImage;

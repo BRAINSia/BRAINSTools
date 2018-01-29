@@ -99,7 +99,7 @@ int main( int argc, char * argv[] )
   vtkPolyData *surface = resampleSurface->GetOutput();
 
   // define image type
-  const unsigned char dimension = 3;
+  constexpr unsigned char dimension = 3;
   typedef unsigned char                    PixelType;
   typedef itk::Image<PixelType, dimension> ImageType;
 

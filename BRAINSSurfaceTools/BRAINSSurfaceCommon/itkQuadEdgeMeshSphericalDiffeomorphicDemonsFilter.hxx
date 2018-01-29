@@ -777,7 +777,7 @@ void
 QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
                                                TOutputMesh>::ComputeScalingAndSquaringNumberOfIterations()
 {
-  const unsigned int minimumNumberOfIterations = 1;
+  constexpr unsigned int minimumNumberOfIterations = 1;
 
   if( this->m_SelfRegulatedMode )
     {

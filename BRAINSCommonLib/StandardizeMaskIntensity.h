@@ -60,7 +60,7 @@ ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType
     {
     typedef typename itk::ConstantBoundaryCondition<ImageType>
     BoundaryConditionType;
-    static const unsigned int WindowedSincHammingWindowRadius = 5;
+    static constexpr unsigned int WindowedSincHammingWindowRadius = 5;
     typedef itk::Function::HammingWindowFunction<
     WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
     typedef typename itk::WindowedSincInterpolateImageFunction
@@ -145,7 +145,7 @@ typename ImageType::Pointer StandardizeMaskIntensity(
     numBins = MAX_IMAGE_OUTPUT_VALUE;
     }
 
-  const typename LabelImageType::PixelType maskInteriorLabel = 1;
+  constexpr typename LabelImageType::PixelType maskInteriorLabel  = 1;
   typename LabelImageType::Pointer internalMask;
   if( mask.IsNull() )
     {

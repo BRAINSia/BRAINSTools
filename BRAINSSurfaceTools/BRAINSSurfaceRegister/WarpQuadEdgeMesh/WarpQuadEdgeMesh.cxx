@@ -66,7 +66,7 @@ int main( int argc, char * argv [] )
   std::cout << "-----------------------------------------------" << std::endl;
 
   typedef float PixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef itk::QuadEdgeMesh<PixelType, Dimension> MeshType;
 

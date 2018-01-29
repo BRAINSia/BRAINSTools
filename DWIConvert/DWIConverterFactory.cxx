@@ -24,7 +24,7 @@ DWIConverterFactory::~DWIConverterFactory()
 
 bool DWIConverterFactory::isNIIorNrrd( const std::string & filename )
 {
-  const size_t NUMEXT=4;
+  constexpr size_t NUMEXT = 4;
   const char * extensions [NUMEXT] = { ".nii", ".nii.gz", ".nhdr", ".nrrd"};
   for( size_t i=0; i< NUMEXT; ++i)
   {

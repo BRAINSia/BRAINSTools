@@ -134,7 +134,7 @@ int main( int argc, char * argv [] )
   // use integer as pixelType of QuadEdgeMesh
 
   typedef int MeshPixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
 

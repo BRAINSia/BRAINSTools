@@ -40,7 +40,7 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef float         InputPixelType;
   typedef unsigned char OutputPixelType;

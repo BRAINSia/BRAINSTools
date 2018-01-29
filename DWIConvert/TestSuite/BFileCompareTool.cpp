@@ -8,9 +8,9 @@ using namespace std;
 
 typedef std::vector< std::vector< double > > DataVector;
 
-static const int USAGE_FAILURE_CODE=1;
-static const int FILE_READ_FAILURE_CODE=2;
-static const int VALUE_TOLERANCE_FAILURE_CODE=4;
+static constexpr int USAGE_FAILURE_CODE = 1;
+static constexpr int FILE_READ_FAILURE_CODE = 2;
+static constexpr int VALUE_TOLERANCE_FAILURE_CODE = 4;
 
 int readFileIntoBuffer(const char* filename, char** buffer){
   FILE* pFile = fopen(filename, "rb");

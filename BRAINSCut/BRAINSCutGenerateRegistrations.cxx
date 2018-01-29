@@ -271,7 +271,7 @@ BRAINSCutGenerateRegistrations
   // Set Other Options
 
   // TODO :: Following has to be user input
-  const unsigned int maxBSplineDisplacement = 7;
+  constexpr unsigned int maxBSplineDisplacement = 7;
   const double       maskInferiorCutOffFromCenter = 65.0;
   const double       translationScale = 1000.0;
   const double       reproportionalScale = 1.0;

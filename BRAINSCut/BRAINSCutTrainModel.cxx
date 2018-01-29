@@ -253,7 +253,7 @@ BRAINSCutTrainModel
   int             layer[3];
 
   this->FillANNLayerStructureArray3D(layer);
-  const int nLayer=3;
+  constexpr int nLayer = 3;
   //cv::Mat annLayer = cv::Mat(nLayer, layer, CV_32SC1, cv::Scalar::all(0.0F));
   cv::Mat annLayer = cv::Mat(1, nLayer, CV_32SC1, layer);
   trainner->setActivationFunction(OpenCVMLPType::SIGMOID_SYM);

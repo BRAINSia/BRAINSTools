@@ -51,7 +51,7 @@ int main( int argc, char * argv[] )
     }
   typedef  unsigned char BinaryPixelType;
 
-  const unsigned char Dim = 3;
+  constexpr unsigned char Dim = 3;
 
   typedef itk::Image<BinaryPixelType,  Dim> InputBinaryImageType;
 

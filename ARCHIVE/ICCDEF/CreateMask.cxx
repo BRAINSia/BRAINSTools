@@ -55,7 +55,7 @@ int CreateMask(int argc, char *argv[])
     exit(-1);
     }
 
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef float                            PixelType;
   typedef itk::Image<PixelType, Dimension> ImageType;
 

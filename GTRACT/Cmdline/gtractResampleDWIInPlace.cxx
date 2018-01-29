@@ -473,7 +473,7 @@ int main(int argc, char *argv[])
     }
   if(!outputResampledB0.empty())
     {
-    const size_t B0Index=0;
+    constexpr size_t B0Index = 0;
 
     typedef itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >
       VectorIndexSelectionCastImageFilterType;

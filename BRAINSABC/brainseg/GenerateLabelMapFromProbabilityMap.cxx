@@ -51,7 +51,7 @@ main(int argc, char *argv[])
 
   // Define Image Type
   typedef float ProbabilityMapPixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef itk::Image<ProbabilityMapPixelType, Dimension> ProbabilityMapImageType;
 
   // Label Index should start from zero and increasing order.

@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  const int dimension = 3;
+  constexpr int dimension = 3;
   typedef itk::ContinuousIndex<double, 3>      ContinuousIndexType;
   typedef itk::Image<unsigned char, dimension> ImageType;
   typedef itk::ImageFileReader<ImageType>      ImageReaderType;

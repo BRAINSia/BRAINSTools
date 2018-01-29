@@ -121,7 +121,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 
   BasisSystemListIterator basisSystemListIterator = m_BasisSystemList->Begin();
 
-  const unsigned int numberOfVerticesInTriangle = 3;
+  constexpr unsigned int numberOfVerticesInTriangle = 3;
 
   DerivativeType derivative;
   DerivativeType parallelTransportedDerivative[numberOfVerticesInTriangle];
@@ -275,7 +275,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 {
   const CellsContainer * cells =  this->m_InputMesh->GetCells();
 
-  const unsigned int numberOfVerticesInTriangle = 3;
+  constexpr unsigned int numberOfVerticesInTriangle = 3;
   PointType          point[numberOfVerticesInTriangle];
 
   AreaListIterator areaIterator = this->m_AreaList->Begin();

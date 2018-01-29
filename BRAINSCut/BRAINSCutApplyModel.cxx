@@ -654,7 +654,7 @@ BRAINSCutApplyModel
 
     LabelImagePointerType multipleLabelVolume = relabelInOrder->GetOutput();
     /* get the label one */
-    const unsigned char LargestLabelIndex = 1; //NOTE:  After RelabelInOrder 1 is always the largest remaining region.
+    constexpr unsigned char LargestLabelIndex = 1; //NOTE:  After RelabelInOrder 1 is always the largest remaining region.
     resultMask = ExtractLabel( multipleLabelVolume, LargestLabelIndex );
     }
   catch( itk::ExceptionObject& ex )

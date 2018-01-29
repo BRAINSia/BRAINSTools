@@ -118,7 +118,7 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
                       << "different number of points or cells" );
     }
 
-  const unsigned int numberOfVerticesInTriangle = 3;
+  constexpr unsigned int numberOfVerticesInTriangle = 3;
 
   InputPointType1 point1[numberOfVerticesInTriangle];
 

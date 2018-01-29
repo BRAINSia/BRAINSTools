@@ -43,9 +43,9 @@ public:
 
   bool Parse();
 
-  virtual void StartElement(void *userData, const XML_Char *name, const XML_Char * *atts) = 0;
+  virtual void StartElement(void *userData, constexpr XML_Char *name, constexpr XML_Char * *atts)   = 0;
 
-  virtual void EndElement(void *userData, const XML_Char *name) = 0;
+  virtual void EndElement(void *userData, constexpr XML_Char *name)  = 0;
 
   virtual ~XMLParser()
   {

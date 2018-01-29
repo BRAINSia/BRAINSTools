@@ -85,11 +85,11 @@ public:
    * FIXME: What to do if the point is far from the Mesh ?
    *
    */
-  virtual OutputType Evaluate( const PointType& point ) const override = 0;
+  virtual OutputType Evaluate( constexpr PointType& point ) constexpr override   = 0;
 
   /** Evaluate the derivative of the scalar function at the
    *  specified point. */
-  virtual void EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const = 0;
+  virtual void EvaluateDerivative( constexpr PointType& point, DerivativeType & derivative ) const = 0;
 
   /** Prepare internal data structures of the PointLocator. This method must be
    * called before performing any call to Evaluate. */

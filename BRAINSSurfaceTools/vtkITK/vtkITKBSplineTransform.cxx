@@ -12,26 +12,26 @@ public:
 
   virtual unsigned int GetNumberOfParameters() const = 0;
 
-  virtual void SetParameters( ParametersType const & ) = 0;
+  virtual void SetParameters( ParametersType constexpr & )  = 0;
 
   virtual void SetParameters( vtkDoubleArray & param ) = 0;
 
-  virtual void SetParameters( double const * ) = 0;
+  virtual void SetParameters( double constexpr * )  = 0;
 
-  virtual ParametersType const & GetParameters() const = 0;
+  virtual ParametersType constexpr & GetParameters() const = 0;
 
-  virtual void SetFixedParameters( double const *, unsigned N ) = 0;
+  virtual void SetFixedParameters( double constexpr *, unsigned N )  = 0;
 
-  virtual const double * GetFixedParameters( unsigned & N ) const = 0;
+  virtual constexpr double * GetFixedParameters( unsigned & N ) const = 0;
 
-  virtual void SetGridOrigin( const double origin[3] ) = 0;
+  virtual void SetGridOrigin( constexpr double origin[3] )  = 0;
 
-  virtual void SetGridSpacing( const double spacing[3] ) = 0;
+  virtual void SetGridSpacing( constexpr double spacing[3] )  = 0;
 
-  virtual void SetGridSize( const unsigned int size[3] ) = 0;
+  virtual void SetGridSize( constexpr unsigned int size[3] )  = 0;
 
-  virtual void ForwardTransformPoint( const double in[3], double out[3] ) = 0;
-  virtual void ForwardTransformPoint( const float in[3], float out[3] ) = 0;
+  virtual void ForwardTransformPoint( constexpr double in[3], double out[3] )  = 0;
+  virtual void ForwardTransformPoint( constexpr float in[3], float out[3] )  = 0;
   virtual void ForwardTransformDerivative( const double in[3], double out[3],
                                            double derivative[3][3] ) = 0;
   virtual void ForwardTransformDerivative( const float in[3], float out[3],
@@ -40,17 +40,17 @@ public:
                                            double derivative[3][3] ) = 0;
   virtual void InverseTransformDerivative( const float in[3], float out[3],
                                            float derivative[3][3] ) = 0;
-  virtual void InverseTransformPoint( const float in[3], float out[3] ) = 0;
-  virtual void InverseTransformPoint( const double in[3], double out[3] ) = 0;
+  virtual void InverseTransformPoint( constexpr float in[3], float out[3] )  = 0;
+  virtual void InverseTransformPoint( constexpr double in[3], double out[3] )  = 0;
 
   virtual void SetSwitchCoordinateSystem( bool v ) = 0;
 
   virtual bool GetSwitchCoordinateSystem() const = 0;
 
-  virtual void SetBulkTransform( const double linear[3][3], const double offset[3] ) = 0;
+  virtual void SetBulkTransform( constexpr double linear[3][3], constexpr double offset[3] )   = 0;
 
   virtual void GetBulkTransform( double linear[3][3], double offset[3] ) const = 0;
-  virtual BulkTransformType const * GetBulkTransform() const = 0;
+  virtual BulkTransformType constexpr * GetBulkTransform() const = 0;
 
   virtual itk::Transform<double, 3, 3>::Pointer GetITKTransform() const = 0;
 };
@@ -900,7 +900,7 @@ InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
 
   // iterative inverse bSpline transform
   int const       MaxIterationNumber = 10;
-  double const    Tolerance = 1;
+  double constexpr Tolerance  = 1;
   OutputPointType opt;
   InputPointType  ipt;
   opt[0] = in[0];
@@ -1023,7 +1023,7 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::SetBulkTransform( const double linear[3][3], const double offset[3] )
 {
-  // static const int VTKDimension = 3;
+  // static constexpr int VTKDimension = 3;
   BulkTransformType::MatrixType       matrix;
   BulkTransformType::OutputVectorType vector;
 
@@ -1046,7 +1046,7 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::GetBulkTransform( double linear[3][3], double offset[3] ) const
 {
-  // static const int VTKDimension = 3;
+  // static constexpr int VTKDimension = 3;
   BulkTransformType const             *bulk = dynamic_cast<BulkTransformType const *>( BSpline->GetBulkTransform() );
   BulkTransformType::MatrixType       matrix = bulk->GetMatrix();
   BulkTransformType::OutputVectorType vector = bulk->GetOffset();
@@ -1066,6 +1066,6 @@ typename vtkITKBSplineTransformHelperImpl<O>::BulkTransformType const *
 vtkITKBSplineTransformHelperImpl<O>
 ::GetBulkTransform() const
 {
-  // static const int VTKDimension = 3;
+  // static constexpr int VTKDimension = 3;
   return dynamic_cast<BulkTransformType const *>( BSpline->GetBulkTransform() );
 }

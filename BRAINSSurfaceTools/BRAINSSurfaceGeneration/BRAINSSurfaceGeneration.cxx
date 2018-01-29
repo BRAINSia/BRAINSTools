@@ -226,7 +226,7 @@ int main( int argc, char * *argv )
 
   // convert vtkPolyData to itkQuadEdgeMesh
   typedef float MeshPixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
 

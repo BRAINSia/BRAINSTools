@@ -130,7 +130,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
   // list of rescaled gradient magnitude images
   RescaledImageGradientVectorType rescaledGradientImageList( numberOfImageModalities );
 
-  const typename MaskImageType::PixelType maskInteriorLabel = 1;
+  constexpr typename MaskImageType::PixelType maskInteriorLabel  = 1;
   typename MaskImageType::Pointer internalMask;
   if( mask.IsNull() )
     {

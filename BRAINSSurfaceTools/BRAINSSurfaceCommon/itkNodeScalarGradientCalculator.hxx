@@ -127,7 +127,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
   //
   // Look at all triangular cells, re-use the basis of each, and new scalar values.
   //
-  const unsigned int numberOfVerticesInTriangle = 3;
+  constexpr unsigned int numberOfVerticesInTriangle = 3;
   PixelType          pixelValue[numberOfVerticesInTriangle];
   PointIdentifier    pointIds[numberOfVerticesInTriangle];
   PointType          point[numberOfVerticesInTriangle];
@@ -261,7 +261,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 {
   const CellsContainer * cells =  this->m_InputMesh->GetCells();
 
-  const unsigned int numberOfVerticesInTriangle = 3;
+  constexpr unsigned int numberOfVerticesInTriangle = 3;
   PointType          point[numberOfVerticesInTriangle];
 
   AreaListIterator areaIterator = this->m_AreaList->Begin();

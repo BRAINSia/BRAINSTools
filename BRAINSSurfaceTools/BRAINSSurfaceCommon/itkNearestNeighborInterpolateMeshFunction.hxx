@@ -71,7 +71,7 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>::OutputType
 NearestNeighborInterpolateMeshFunction<TInputMesh>
 ::Evaluate( const PointType& point ) const
 {
-  const unsigned int           numberOfNeighbors = 1;
+  constexpr unsigned int numberOfNeighbors = 1;
   InstanceIdentifierVectorType result;
 
   this->Search( point, numberOfNeighbors, result );

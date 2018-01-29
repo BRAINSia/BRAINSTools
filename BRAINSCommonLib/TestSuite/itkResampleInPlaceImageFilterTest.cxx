@@ -50,7 +50,7 @@ int main( int argc, char * argv[] )
   double tol = 1.e-3;    // tolerance
 
   // Image, filter, transform typedef
-  const unsigned int LocalImageDimension = 3;
+  constexpr unsigned int LocalImageDimension = 3;
   typedef short PixelType;
 
   typedef itk::Image<PixelType, LocalImageDimension> ImageType;

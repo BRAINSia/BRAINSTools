@@ -671,7 +671,7 @@ double DWIConverter::ComputeMaxBvalue(const std::vector<double> &bValues) const
 
 size_t DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderName ) const
 {
-  const size_t NUMEXT=2;
+  constexpr size_t NUMEXT = 2;
   const char * const extList [NUMEXT] = {".nii.gz", ".nii"};
   for(size_t i = 0 ; i < NUMEXT; ++i)
   {

@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
   // instantiating the image type to be read.
 
   typedef float InputPixelType;
-  const unsigned int InputDimension = 2;
+  constexpr unsigned int InputDimension = 2;
 
   const std::string fileNamePath = ::itksys::SystemTools::GetFilenamePath(inputVolume);
   const std::string fileNameName = ::itksys::SystemTools::GetFilenameName(inputVolume);

@@ -119,7 +119,7 @@ private:
                 << "!!!!!!!!!!!! CAUTION !!!!!!!!!!!!!!!!!!!" << std::endl;
       genericTransform = itk::ReadTransformFromDisk(RegistrationFilename);
       }
-    const double defaultValue = 0;
+    constexpr double defaultValue = 0;
     const typename std::string interpolationMode = "Linear";
     const typename std::string pixelType = "short";
 

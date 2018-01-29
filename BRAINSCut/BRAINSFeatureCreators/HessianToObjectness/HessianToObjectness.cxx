@@ -58,7 +58,7 @@ int main( int argc, char* argv[] )
     bright = argv[10];
   }
 
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef float PixelType;
   typedef itk::Image< PixelType, Dimension > ImageType;
   typedef itk::SymmetricSecondRankTensor< double, Dimension > HessianPixelType;

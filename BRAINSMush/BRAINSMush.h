@@ -66,7 +66,7 @@
 
 namespace BRAINSMush
 {
-const int Dimension = 3;
+constexpr int Dimension = 3;
 }
 
 namespace

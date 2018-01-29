@@ -179,7 +179,7 @@ int  main(  int  argc,  char *argv[] )
      */
 
     /** Initial image type. */
-    const unsigned int Dimension  =  3;
+    constexpr unsigned int Dimension = 3;
     typedef short PixelType;
 
     /** Some typedef's. */

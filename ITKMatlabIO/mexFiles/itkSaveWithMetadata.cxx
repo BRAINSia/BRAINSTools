@@ -362,7 +362,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
     itkOrigin.Fill(0.0);
     const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
     // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
-    const unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
+    constexpr unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
     if (spatialDims != 3) {
         myMexPrintf("ERROR: ONLY 3D images (3D+gradients OK) supported.\n");
         return;
@@ -622,7 +622,7 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
   itkOrigin.Fill(0.0);
   const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
   // WriteDWINrrd only work for 4D image.
-  const unsigned int spatialDims = 3; //spatialDims is different with numDims
+  constexpr unsigned int spatialDims = 3; //spatialDims is different with numDims
   for (unsigned int sdIdx = 0; sdIdx < spatialDims; sdIdx++) {
     if (sdIdx < spatialDims) {
       itkOrigin[sdIdx] = spaceorigin_temp[sdIdx];

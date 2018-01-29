@@ -43,7 +43,7 @@ protected:
     typedef itk::NearestNeighborInterpolateImageFunction<TAtlas, double> NN_InterpolatorType;
     typename NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
 
-    const int Dimension = 3;
+    constexpr int Dimension = 3;
     typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
     typename IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
 

@@ -45,9 +45,9 @@ int main( int argc, char *argv[] )
 
   const double               lFract = 0.00005;
   const double               uFract = 1.0 - lFract;
-  const ImageType::PixelType lTarget = 1;
+  constexpr ImageType::PixelType lTarget  = 1;
   const ImageType::PixelType uTarget = 0.95 * MAX_IMAGE_OUTPUT_VALUE;
-  const ImageType::PixelType clipMin = 0;
+  constexpr ImageType::PixelType clipMin  = 0;
   const ImageType::PixelType clipMax = MAX_IMAGE_OUTPUT_VALUE;
 
   ImageType::Pointer result = StandardizeMaskIntensity<ImageType, MaskImageType>(image,

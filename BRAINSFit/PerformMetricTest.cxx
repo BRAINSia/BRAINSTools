@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   CHECK_PARAMETER_IS_SET(inputMovingImage,
                          "Missing inputMovingImage parameter");
 
-  const    unsigned int    Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef  float           PixelType;
 
   typedef itk::Image< PixelType, Dimension > FixedImageType;

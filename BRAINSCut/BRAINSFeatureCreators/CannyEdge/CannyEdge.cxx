@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
   typedef float CharPixelType;            //  IO
   typedef float RealPixelType;            //  Operations
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef itk::Image<CharPixelType, Dimension> CharImageType;
   typedef itk::Image<RealPixelType, Dimension> RealImageType;

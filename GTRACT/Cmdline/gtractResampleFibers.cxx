@@ -131,7 +131,7 @@ int main( int argc, char *argv[] )
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   // Some required typedef's
   typedef itk::Matrix<double, Dimension, Dimension> MatrixType;

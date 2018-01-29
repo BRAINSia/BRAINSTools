@@ -66,14 +66,14 @@ enum FeatureNormalizationMethodEnum
  */
 static const float        HundredPercentValue = 1.0F;
 static const float        ZeroPercentValue = -1.0F;
-static const unsigned int LineGuardSize = 1;
+static constexpr unsigned int LineGuardSize = 1;
 static const scalarType   LineGuard = 1234567.0;
 static const float        FLOAT_TOLERANCE = 0.01;
 
 /*
 * Image Definitions
 */
-const unsigned char DIMENSION = 3;
+constexpr unsigned char DIMENSION = 3;
 
 typedef double                                 ReadInPixelType;
 typedef itk::Image<ReadInPixelType, DIMENSION> ReadInImageType;

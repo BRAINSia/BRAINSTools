@@ -441,7 +441,7 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
 
     /* use ten to parse the key/value pairs */
     /** bvalue **/
-    const mwSize bvalue_size = 1;
+    constexpr mwSize bvalue_size  = 1;
     mxArray *const bvalue = mxCreateNumericArray(1, &bvalue_size, mxDOUBLE_CLASS, mxREAL);
     double *const bvalue_temp = (double *) mxGetData(bvalue);
     *bvalue_temp = bValue;

@@ -296,7 +296,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         }
       }
 
-    const double movingHeadScaleGuessRatio = 1;
+    constexpr double movingHeadScaleGuessRatio = 1;
     /*
       *
       *fixedFindCenter->GetHeadSizeEstimate()/movingFindCenter->GetHeadSizeEstimate();
@@ -1192,8 +1192,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       }
     else if( currentTransformType == "BSpline" )
       {
-      const unsigned int SpaceDimension = 3;
-      const unsigned int SplineOrder = 3;
+      constexpr unsigned int SpaceDimension = 3;
+      constexpr unsigned int SplineOrder = 3;
       typedef itk::BSplineTransform<double, SpaceDimension, SplineOrder> BSplineTransformType;
 
       typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> BSplineRegistrationType;
@@ -1519,7 +1519,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         }
 
       // we have a 1 level BSpline registration.
-      const unsigned int numberOfLevels = 1;
+      constexpr unsigned int numberOfLevels = 1;
 
       typename BSplineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
       shrinkFactorsPerLevel.SetSize( 1 );

@@ -89,7 +89,7 @@ InitializeTransform( int argc, char *argv[] )
 
   /** Landmark Initializaer */
   typedef double PixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef itk::Image<PixelType, Dimension>           ImageType;
 
@@ -206,7 +206,7 @@ main(int argc, char *argv[])
     }
 
   typedef double ParameterValueType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   if( outputTransformType == "AffineTransform" )
     {
@@ -215,7 +215,7 @@ main(int argc, char *argv[])
     }
   else if( outputTransformType == "BSplineTransform" )
     {
-    const static unsigned int SplineOrder = 3;
+    constexpr static unsigned int SplineOrder  = 3;
     typedef itk::BSplineTransform< ParameterValueType,
                                    Dimension,
                                    SplineOrder>                  BSplineTransformType;

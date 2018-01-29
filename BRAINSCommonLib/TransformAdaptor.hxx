@@ -176,7 +176,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
         */
     VectorType Flip(1.0);
 
-    const int flipIndex = 1;  // A Flip in Y gets the rotation components of
+    constexpr int flipIndex = 1;  // A Flip in Y gets the rotation components of
     // Air16 evidently right.
     Flip[flipIndex] = -1.0;
 

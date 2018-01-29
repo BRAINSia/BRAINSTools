@@ -71,7 +71,7 @@
 // Image, filter typedef
 namespace
 { // put in anon namespace so they don't collide with other files.
-const unsigned int LocalImageDimension = 3;
+constexpr unsigned int LocalImageDimension = 3;
 typedef short LocalPixelType;
 }
 

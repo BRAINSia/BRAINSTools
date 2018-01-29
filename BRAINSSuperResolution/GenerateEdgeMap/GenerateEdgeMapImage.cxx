@@ -36,7 +36,7 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  const unsigned int Dim = 3;
+  constexpr unsigned int Dim = 3;
 
   typedef itk::Image<float, Dim>                  FloatImageType;
   typedef FloatImageType::Pointer                 FloatImagePointer;

@@ -34,7 +34,7 @@
 #include <iostream>
 
 // typedef
-const unsigned int PointDim = 3;
+constexpr unsigned int PointDim = 3;
 typedef itk::Point<double, PointDim>          PointType;
 typedef std::map<std::string, PointType>      DatasetMapType;
 typedef std::map<std::string, DatasetMapType> LmkDBType;

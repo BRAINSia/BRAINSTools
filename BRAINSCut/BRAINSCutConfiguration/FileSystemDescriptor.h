@@ -80,9 +80,9 @@ public:
 
   virtual void Close() = 0;
 
-  bool Verify() const override = 0;
+  bool Verify() constexpr override  = 0;
 
-  OutputType GetValue() const override = 0;
+  OutputType GetValue() constexpr override  = 0;
 
 protected:
   std::string m_Filename;

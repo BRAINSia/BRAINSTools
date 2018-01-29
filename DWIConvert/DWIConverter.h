@@ -99,7 +99,7 @@ public:
    *  implementing this method.
    */
   virtual void ExtractDWIData() = 0;
-  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const =0;
+  virtual CommonDicomFieldMapType GetCommonDicomFieldsMap() const = 0;
 
   /** access methods for image data */
   const DWIMetaDataDictionaryValidator::GradientTableType &GetDiffusionVectors() const;

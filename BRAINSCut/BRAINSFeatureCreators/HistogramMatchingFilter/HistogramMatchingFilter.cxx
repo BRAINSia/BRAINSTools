@@ -59,7 +59,7 @@ main(int argc, char *argv[])
     }
   // define image with type of voxel
   typedef float PixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef itk::Image<PixelType, Dimension> ImageType;
 
   /*

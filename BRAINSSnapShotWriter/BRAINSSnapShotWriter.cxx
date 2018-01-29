@@ -43,8 +43,8 @@ typedef std::vector<int> IndexType;
 typedef std::vector<int> PercentIndexType;
 typedef std::vector<float> PhysicalPointIndexType;
 
-const size_t NN_INTERP = 0;
-const size_t LINEAR_INTERP = 1;
+constexpr size_t NN_INTERP = 0;
+constexpr size_t LINEAR_INTERP = 1;
 
 template<class TImageType>
 ExtractIndexType GetSliceIndexToExtract(

@@ -330,7 +330,7 @@ void
 FeatureInputVector
 ::SetNormalizationParameters( std::string ROIName )
 {
-  const unsigned char defaultLabel = 1;
+  constexpr unsigned char defaultLabel = 1;
 
   /* threshold roi */
   typedef itk::BinaryThresholdImageFilter<WorkingImageType,

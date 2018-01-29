@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   // Image, filter typedef
-  const unsigned int LocalImageDimension = 3;
+  constexpr unsigned int LocalImageDimension = 3;
 
   typedef short PixelType;
 

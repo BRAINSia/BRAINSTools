@@ -40,7 +40,7 @@ int main( int argc, char * argv[] )
   typedef  double        InputPixelType;
   typedef  unsigned char OutputPixelType;
 
-  const unsigned char Dim = 3;
+  constexpr unsigned char Dim = 3;
 
   typedef itk::Image<InputPixelType,  Dim> InputImageType;
   typedef itk::Image<OutputPixelType, Dim> OutputImageType;

@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
               << std::endl;
     }
 
-  const     unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   typedef   double                              InputPixelType;
   typedef itk::Image<InputPixelType, Dimension> InputImageType;

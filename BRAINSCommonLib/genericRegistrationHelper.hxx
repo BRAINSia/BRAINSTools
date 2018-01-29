@@ -306,7 +306,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   m_Registration->SetOptimizer(optimizer);
 
 ////////////////////////HARD CODED PART//////////////////////
-  const unsigned int numberOfLevels = 1;
+  constexpr unsigned int numberOfLevels = 1;
 
   m_Registration->SetNumberOfLevels( numberOfLevels );
 

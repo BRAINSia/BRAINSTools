@@ -55,7 +55,7 @@ main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   // define image with type of voxel
   typedef double PixelType;
-  const  unsigned long int Dimension = 3;
+  constexpr unsigned long int Dimension  = 3;
   typedef itk::Image<PixelType, 3> InputImageType;
 
   // there has to be two input volumes and label volume

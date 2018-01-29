@@ -221,8 +221,8 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
     //    << std::endl;
     //  return EXIT_FAILURE;
     //  }
-    static const unsigned int ROIAutoClosingSize=4;
-    static const unsigned int ROIAutoDilateSize=6;
+    static constexpr unsigned int ROIAutoClosingSize = 4;
+    static constexpr unsigned int ROIAutoDilateSize = 6;
       {
       typedef itk::BRAINSROIAutoImageFilter<SImageType, itk::Image<unsigned char, 3> > ROIAutoType;
       ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
@@ -410,9 +410,9 @@ landmarksConstellationDetector::FindCandidatePoints
   currentPointLocation[1] = CenterOfSearchArea[1];
   currentPointLocation[2] = CenterOfSearchArea[2];
 
-  const double deltaLR = 1; // in mm
-  const double deltaAP = 1; // in mm
-  const double deltaIS = 1; // in mm
+  constexpr double deltaLR = 1; // in mm
+  constexpr double deltaAP = 1; // in mm
+  constexpr double deltaIS = 1; // in mm
 
   for( double LeftToRight = LeftToRight_BEGIN;
       LeftToRight < LeftToRight_END; LeftToRight += deltaLR )

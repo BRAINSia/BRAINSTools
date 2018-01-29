@@ -183,7 +183,7 @@ public:
 
   mxArray * GetField(const std::string & name) const
   {
-    const int index = 0; // Always 0 in our case
+    constexpr int index = 0; // Always 0 in our case
 
     if( !isValidField(name) )
       {

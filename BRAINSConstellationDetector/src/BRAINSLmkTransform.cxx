@@ -81,7 +81,7 @@ public:
  * physical space as that of the reference image
  */
 
-const   unsigned int ImageDimension = 3;
+constexpr unsigned int ImageDimension = 3;
 typedef short                                 PixelType;
 typedef itk::Image<PixelType, ImageDimension> ImageType;
 typedef std::vector<ImageType::PointType>     LandmarksVectorType;

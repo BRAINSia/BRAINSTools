@@ -22,7 +22,7 @@
  */
 static const unsigned int  ModuleLogoWidth          = 40;
 static const unsigned int  ModuleLogoHeight         = 40;
-static const unsigned int  ModuleLogoPixelSize     = 4;
+static constexpr unsigned int ModuleLogoPixelSize = 4;
 static const unsigned long ModuleLogoLength         = 2572;
 static const unsigned long image_BRAINSIcon_decoded_length = 6400;
 

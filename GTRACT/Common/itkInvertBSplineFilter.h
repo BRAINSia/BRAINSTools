@@ -73,7 +73,7 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
-  static const unsigned int transformDimension = 3;
+  static constexpr unsigned int transformDimension = 3;
   typedef double CoordinateRepresentationType;
 
   /** Fixed Image typedefs. */
@@ -89,7 +89,7 @@ public:
   typedef ImageType::IndexType                         ImageIndexType;
 
   /** B-Spline Transform typedefs */
-  static const unsigned int SplineOrder = 3;
+  static constexpr unsigned int SplineOrder = 3;
   typedef itk::BSplineTransform<
       CoordinateRepresentationType,
       transformDimension,

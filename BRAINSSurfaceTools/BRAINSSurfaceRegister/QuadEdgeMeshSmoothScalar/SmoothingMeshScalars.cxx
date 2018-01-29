@@ -65,7 +65,7 @@ int main( int argc, char *argv[] )
   std::cout << "And the number of iterations: " << iterations << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef float MeshPixelType;
 
   typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> InputMeshType;

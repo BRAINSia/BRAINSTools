@@ -13,7 +13,7 @@ int main( int argc, char ** argv )
 
 
   typedef unsigned int PixelType;
-  const   unsigned int        Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef itk::Image< PixelType, Dimension >    LabelType;
 
   typedef itk::ImageFileReader< LabelType >  ReaderType;

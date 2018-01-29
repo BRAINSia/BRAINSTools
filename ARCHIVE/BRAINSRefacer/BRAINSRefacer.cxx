@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 
   //Basic typedef's
   typedef double ProcessPixelType;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef itk::Image<ProcessPixelType, Dimension> ProcessImageType;
 
   //Read in subject image
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
   distanceMapScaler->Update();
 
   //Perform some kind of BSpline on Image
-  const int BSplineOrder = 3;
+  constexpr int BSplineOrder = 3;
 
   typedef CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
   BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();

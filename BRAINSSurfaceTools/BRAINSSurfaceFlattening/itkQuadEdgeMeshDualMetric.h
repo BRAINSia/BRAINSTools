@@ -56,7 +56,7 @@ public:
     m_Mesh = iMesh;
   }
 
-  virtual ValueType operator ()( const CellIdentifier& iFace1, const CellIdentifier& iFace2 ) const = 0;
+  virtual ValueType operator ()( constexpr CellIdentifier& iFace1, constexpr CellIdentifier& iFace2 ) const = 0;
 
 protected:
   MeshConstPointer m_Mesh;

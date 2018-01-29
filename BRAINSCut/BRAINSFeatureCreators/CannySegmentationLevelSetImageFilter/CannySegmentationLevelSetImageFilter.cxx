@@ -125,7 +125,7 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   typedef   float InternalPixelType;
-  const     unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
   typedef itk::Image<InternalPixelType, Dimension> InternalImageType;
   // Software Guide : EndCodeSnippet
 

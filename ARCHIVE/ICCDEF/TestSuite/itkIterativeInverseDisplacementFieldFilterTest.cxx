@@ -33,7 +33,7 @@ int itkIterativeInverseDisplacementFieldFilterTest(int argc, char *argv[] )
     }
 
   typedef  float PixelType;
-  const unsigned int dims = 3;
+  constexpr unsigned int dims = 3;
   typedef itk::Image<itk::Vector<PixelType, dims>, dims> ImageType;
   typedef itk::ImageFileWriter<ImageType>                WriterType;
 

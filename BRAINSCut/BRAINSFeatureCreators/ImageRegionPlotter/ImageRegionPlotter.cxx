@@ -195,7 +195,7 @@ main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   // define image with type of voxel
   typedef double PixelType;
-  const int Dimension = 3;
+  constexpr int Dimension = 3;
   typedef itk::Image<PixelType, Dimension> ImageType;
 
   // there has to be two input volumes and label volume
@@ -227,7 +227,7 @@ main(int argc, char *argv[])
     typedef itk::Image<ProcessingPixelType, Dimension>                       ProcessingImageType;
     typedef itk::RescaleIntensityImageFilter<ImageType, ProcessingImageType> RescalerType;
 
-    const unsigned int MIN = 0;
+    constexpr unsigned int MIN = 0;
     const unsigned int MAX = 4095;
 
     RescalerType::Pointer image1Rescaler = RescalerType::New();

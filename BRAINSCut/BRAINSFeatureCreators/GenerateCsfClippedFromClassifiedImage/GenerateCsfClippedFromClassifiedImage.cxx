@@ -35,7 +35,7 @@ main(int argc, char * *argv)
   BRAINSRegisterAlternateIO();
 
   typedef float PixelType;
-  const unsigned int Dim = 3;
+  constexpr unsigned int Dim = 3;
   typedef  itk::Image<PixelType, Dim> ImageType;
 
   typedef itk::ImageFileReader<ImageType> ImageReaderType;

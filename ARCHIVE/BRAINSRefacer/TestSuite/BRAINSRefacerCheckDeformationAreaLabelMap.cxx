@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
 
   typedef double                                                                    InputPixelType;
-  const int                                                                         Dimension = 3;
+  constexpr int Dimension = 3;
 
   typedef itk::Image<InputPixelType, Dimension>                                     ImageType;
 

@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  const unsigned int dimension = 3;
+  constexpr unsigned int dimension = 3;
   typedef float                                PixelType;
   typedef itk::Image<float, dimension>         InputImage;
   typedef itk::Image<unsigned char, dimension> OutputImage;

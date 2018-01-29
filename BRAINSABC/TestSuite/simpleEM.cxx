@@ -102,7 +102,7 @@ int simpleRunEMS( std::string t1Volume,
     inputReaderT1->Update();
     typename RescaleImageFilterType::Pointer rescalerT1 = RescaleImageFilterType::New();
     // Set the upper limit to 4096 in the case of floating point data.
-    const inputPixelType outMin = 0;
+    constexpr inputPixelType outMin  = 0;
     const inputPixelType outMax
       = ( std::numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : std::numeric_limits<inputPixelType>::max();
     rescalerT1->SetOutputMinimum(outMin);
@@ -124,7 +124,7 @@ int simpleRunEMS( std::string t1Volume,
     inputReaderT2->Update();
     typename RescaleImageFilterType::Pointer rescalerT2 = RescaleImageFilterType::New();
     // Set the upper limit to 4096 in the case of floating point data.
-    const inputPixelType outMin = 0;
+    constexpr inputPixelType outMin  = 0;
     const inputPixelType outMax
       = ( std::numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : std::numeric_limits<inputPixelType>::max();
     rescalerT2->SetOutputMinimum(outMin);
@@ -146,7 +146,7 @@ int simpleRunEMS( std::string t1Volume,
     inputReaderPD->Update();
     typename RescaleImageFilterType::Pointer rescalerPD = RescaleImageFilterType::New();
     // Set the upper limit to 4096 in the case of floating point data.
-    const inputPixelType outMin = 0;
+    constexpr inputPixelType outMin  = 0;
     const inputPixelType outMax
       = ( std::numeric_limits<inputPixelType>::max() > 4096 ) ? 4096 : std::numeric_limits<inputPixelType>::max();
     rescalerPD->SetOutputMinimum(outMin);
@@ -162,7 +162,7 @@ int simpleRunEMS( std::string t1Volume,
     }
   // Compute the brain outline in order to cut images later after bias
   // correction
-  const unsigned int closingSize = 7;
+  constexpr unsigned int closingSize = 7;
   const float        otsuPercentileThreshold = 0.01;
   //  typename InputImageType::Pointer HeadOutlineMaskImage =
   // FindLargestForgroundFilledMask<InputImageType>( images[0],

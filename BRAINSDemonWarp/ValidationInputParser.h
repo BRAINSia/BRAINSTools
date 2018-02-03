@@ -88,8 +88,8 @@ public:
   typedef typename ImageType::Pointer ImagePointer;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TImage::ImageDimension);
-  itkStaticConstMacro(SplineOrder, unsigned int, 3);
+  static constexpr unsigned int ImageDimension = TImage::ImageDimension;
+  static constexpr unsigned int SplineOrder = 3;
 
   /** Transform Types. */
   typedef VersorRigid3DTransform<double>                                  VersorRigid3DTransformType;

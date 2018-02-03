@@ -76,7 +76,7 @@ public:
   typedef typename OutputPointSetType::PointsContainerPointer      OutputPointsContainerPointer;
   typedef typename OutputPointSetType::PointsContainerIterator     OutputPointsContainerIterator;
 
-  itkStaticConstMacro( PointDimension, unsigned int, OutputPointSetType::PointDimension );
+  static constexpr unsigned int PointDimension = OutputPointSetType::PointDimension;
 
   /** Transform typedef. */
   typedef Transform<double,

@@ -86,10 +86,8 @@ public:
   typedef typename Superclass::DerivativeDataType DerivativeDataType;
 
   /** Constants for the pointset dimensions */
-  itkStaticConstMacro(MovingMeshDimension, unsigned int,
-                      Superclass::MovingMeshDimension);
-  itkStaticConstMacro(FixedMeshDimension, unsigned int,
-                      Superclass::FixedMeshDimension);
+  static constexpr unsigned int MovingMeshDimension = Superclass::MovingMeshDimension;
+  static constexpr unsigned int FixedMeshDimension = Superclass::FixedMeshDimension;
 
   /** Get the derivatives of the match measure. */
   void GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const override;

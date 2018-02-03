@@ -47,7 +47,7 @@ public:
   itkTypeMacro( DisplacementFieldTransform, Transform );
 
   /** Dimension of the domain space. */
-  itkStaticConstMacro(SpaceDimension, unsigned int, NDimensions);
+  static constexpr unsigned int SpaceDimension = NDimensions;
 
   /** Standard scalar type for this class. */
   typedef typename Superclass::ScalarType ScalarType;

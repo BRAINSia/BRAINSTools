@@ -58,7 +58,7 @@ public:
   typedef typename Superclass::InputMeshType InputMeshType;
 
   /** Dimension underlying input mesh. */
-  itkStaticConstMacro(MeshDimension, unsigned int, Superclass::MeshDimension);
+  static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
   /** Point typedef support. */
   typedef typename Superclass::PointType       PointType;

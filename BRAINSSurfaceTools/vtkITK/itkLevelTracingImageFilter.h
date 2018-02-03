@@ -44,8 +44,7 @@ public:
                ImageToImageFilter);
 
   /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension ) ;
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension ;
 
   typedef TInputImage InputImageType;
   typedef typename InputImageType::Pointer InputImagePointer;
@@ -69,10 +68,8 @@ public:
   typedef typename DataObject::Pointer DataObjectPointer;
 
   /** Image dimension constants */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   void PrintSelf ( std::ostream& os, Indent indent ) const override;
 

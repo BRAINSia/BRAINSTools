@@ -78,7 +78,7 @@ public:
   typedef typename OutputImageType::SizeType  SizeType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Set the input fixed image. */
   itkSetObjectMacro(InputFixedImage, InputImageType);

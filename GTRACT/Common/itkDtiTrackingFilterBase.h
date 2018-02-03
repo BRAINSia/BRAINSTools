@@ -160,10 +160,8 @@ public:
   typedef vtkPolyData *                  DtiFiberType;
 
   /** ImageDimension constants * /
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   / ** The dimensions of the input image must equal those of the
       output image. * /

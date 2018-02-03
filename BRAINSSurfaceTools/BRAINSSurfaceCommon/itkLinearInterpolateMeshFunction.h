@@ -60,7 +60,7 @@ public:
   typedef typename Superclass::InputMeshType InputMeshType;
 
   /** Dimension underlying input mesh. */
-  itkStaticConstMacro(MeshDimension, unsigned int, Superclass::MeshDimension);
+  static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
   /** Point typedef support. */
   typedef typename Superclass::PointType       PointType;
@@ -144,7 +144,7 @@ private:
 
   mutable RealType m_InterpolationWeights[MeshDimension];
 
-  itkStaticConstMacro( SurfaceDimension, unsigned int, 2 );
+  static constexpr unsigned int SurfaceDimension = 2;
 
   typedef TriangleBasisSystem<VectorType, SurfaceDimension>                  TriangleBasisSystemType;
   typedef TriangleBasisSystemCalculator<TInputMesh, TriangleBasisSystemType> TriangleBasisSystemCalculatorType;

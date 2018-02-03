@@ -101,10 +101,8 @@ public:
   typedef typename OutputImageType::SpacingType   SpacingType;
 
   /** Determine the image dimension. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
-  itkStaticConstMacro(DisplacementFieldDimension, unsigned int,
-                      TDisplacementField::ImageDimension);
+  static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
+  static constexpr unsigned int DisplacementFieldDimension = TDisplacementField::ImageDimension;
 
   /** Displacement field typedef support. */
   typedef TDisplacementField                           DisplacementFieldType;

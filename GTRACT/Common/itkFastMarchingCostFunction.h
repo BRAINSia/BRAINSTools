@@ -92,7 +92,7 @@ public:
   typedef  CostIPType::Pointer CostIPTypePointer;
 
   /** ImageDimension constants */
-  itkStaticConstMacro(CostImageDimension, unsigned int, 3);
+  static constexpr unsigned int CostImageDimension = 3;
 
   /*  A position in the optimization space. */
   typedef Superclass::ParametersType ParametersType;

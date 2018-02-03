@@ -53,7 +53,7 @@ public:
   typedef SmartPointer<Self>                            Pointer;
   typedef SmartPointer<const Self>                      ConstPointer;
 
-  itkStaticConstMacro(Dimension, unsigned int, TInputImage::ImageDimension);
+  static constexpr unsigned int Dimension = TInputImage::ImageDimension;
 
   /** Input image typedef */
   typedef typename TInputImage::Pointer         InputImagePointer;

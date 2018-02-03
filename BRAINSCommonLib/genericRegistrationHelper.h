@@ -398,8 +398,8 @@ public:
     TransformOutputConstPointer;
 
   /** Constants for the image dimensions */
-  itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
+  static constexpr unsigned int FixedImageDimension = FixedImageType::ImageDimension;
+  static constexpr unsigned int MovingImageDimension = MovingImageType::ImageDimension;
 
   typedef typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
                                                      MovingImageDimension,

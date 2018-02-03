@@ -69,7 +69,7 @@ public:
   typedef typename InputImageType::SizeType InputImageSizeType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Type of the scalar representing coordinate and vector elements. */
   typedef  TCoordinateType

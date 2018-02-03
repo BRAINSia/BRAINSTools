@@ -49,7 +49,7 @@ public:
   /** Standard part of every itk Object. */
   itkTypeMacro(PointLocator2, Object);
 
-  itkStaticConstMacro(PointDimension, unsigned int, TPointSet::PointDimension);
+  static constexpr unsigned int PointDimension = TPointSet::PointDimension;
 
   /** Typedefs related to the PointSet type */
   typedef TPointSet                                          PointSetType;

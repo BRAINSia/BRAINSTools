@@ -99,7 +99,7 @@ public:
 
     catch( const DOMException & e )
       {
-      const unsigned int maxChars = 2047;
+      constexpr unsigned int maxChars = 2047;
       XMLCh              errText[maxChars + 1];
 
       std::cerr << "\nDOM Error during parsing: '" << filename << "'\n"

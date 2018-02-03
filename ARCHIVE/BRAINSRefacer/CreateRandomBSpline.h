@@ -90,7 +90,7 @@ protected:
 
     typedef typename ImageType::RegionType ImageRegionType;
 
-    const unsigned int sizeVal = 400; // The image should be large enough to contain most heads, 40 cm^3 should do it
+    constexpr unsigned int sizeVal = 400; // The image should be large enough to contain most heads, 40 cm^3 should do it
     if(sizeVal % 2 != 0)
       {
       std::cerr << "File: " << __FILE__ << std::endl;

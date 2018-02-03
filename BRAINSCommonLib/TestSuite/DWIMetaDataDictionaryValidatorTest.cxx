@@ -85,7 +85,7 @@ typedef itk::VectorImage<PixelType, 3>  VectorImageType;
 
 static VectorImageType::Pointer CreateVolume(const size_t numOfComponents)
 {
-  const int imageSize = 11; // each image component has size of imageSize^3
+  constexpr int imageSize = 11; // each image component has size of imageSize^3
 
   VectorImageType::IndexType start;
   start.Fill(0);

@@ -66,7 +66,7 @@ void ComputeLabels(
   foregroundMask->Allocate();
 
   size_t currentMinLabelSize = 0;
-  const unsigned short max_iterations = 10; // Prevent infinite looping, just fail
+  constexpr unsigned short max_iterations = 10; // Prevent infinite looping, just fail
   unsigned short current_iteration = 0;
   do
     {

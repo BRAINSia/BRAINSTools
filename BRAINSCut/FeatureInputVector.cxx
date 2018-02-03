@@ -20,7 +20,7 @@
 #include "BRAINSCutExceptionStringHandler.h"
 #include "itkLabelStatisticsImageFilter.h"
 
-const unsigned int                MAX_IMAGE_SIZE = 1024;
+constexpr unsigned int MAX_IMAGE_SIZE = 1024;
 const WorkingImageType::IndexType ConstantHashIndexSize = {{1024, 1024, 1024}};
 
 bool

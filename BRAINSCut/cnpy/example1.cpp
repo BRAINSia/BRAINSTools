@@ -5,9 +5,9 @@
 #include<map>
 #include<string>
 
-const int Nx = 128;
-const int Ny = 64;
-const int Nz = 32;
+constexpr int Nx = 128;
+constexpr int Ny = 64;
+constexpr int Nz = 32;
 
 int main()
 {

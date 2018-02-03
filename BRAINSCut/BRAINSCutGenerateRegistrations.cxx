@@ -272,10 +272,10 @@ BRAINSCutGenerateRegistrations
 
   // TODO :: Following has to be user input
   constexpr unsigned int maxBSplineDisplacement = 7;
-  const double       maskInferiorCutOffFromCenter = 65.0;
-  const double       translationScale = 1000.0;
-  const double       reproportionalScale = 1.0;
-  const double       skewScale = 1.0;
+  constexpr double maskInferiorCutOffFromCenter = 65.0;
+  constexpr double translationScale = 1000.0;
+  constexpr double reproportionalScale = 1.0;
+  constexpr double skewScale = 1.0;
 
   BSplineRegistrationHelper->SetSamplingPercentage( 0.05 ); // Use 5% of image
   BSplineRegistrationHelper->SetMaxBSplineDisplacement( maxBSplineDisplacement );

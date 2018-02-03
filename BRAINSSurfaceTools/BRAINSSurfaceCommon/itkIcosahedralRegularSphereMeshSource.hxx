@@ -58,8 +58,8 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
   //
   //  Coordinates and connections taken from vtkPlatonicSolidSource.
   //
-  const double c = 1.0;
-  const double d = 0.61803398;
+  constexpr double c = 1.0;
+  constexpr double d = 0.61803398;
 
   const double norm = std::sqrt( c * c + d * d );
 
@@ -82,7 +82,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
   PointType     p1;
   unsigned long idx = 0;
 
-  const unsigned int numberOfVertex = 12;
+  constexpr unsigned int numberOfVertex = 12;
 
   unsigned int jj = 0;
   for( unsigned int i = 0; i < numberOfVertex; i++ )
@@ -93,7 +93,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
     outputMesh->SetPoint(idx++, p1);
     }
 
-  const unsigned int numberOfFaces = 20;
+  constexpr unsigned int numberOfFaces = 20;
 
   unsigned int kk = 0;
   for( unsigned int cellId = 0; cellId < numberOfFaces; cellId++ )

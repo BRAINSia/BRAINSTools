@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
   // we need a DOUBLE constant, not a FLOAT constant, for exact switch
   // comparisons.
-  const double thousand = 1000.0;
+  constexpr double thousand = 1000.0;
   if( acLowerBound != thousand )
     {
     double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - acLowerBound;

@@ -82,7 +82,7 @@ namespace itk
       //  This is ugly code that could be re-written much simpler.
       //
       typedef itk::ImageRegionIteratorWithIndex<SImageType> IteratorType;
-      const double thousand = 1000.0;   // we need a DOUBLE constant, not a
+      constexpr double thousand = 1000.0;   // we need a DOUBLE constant, not a
       // FLOAT constant, for exact switch
       // comparisons.
       if( lACLowerBound < thousand )

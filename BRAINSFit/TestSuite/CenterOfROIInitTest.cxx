@@ -176,7 +176,7 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
     const double e=(transVector[i]-recoveredTransVector[i]);
     error+=e*e;
   }
-  const double tolerance = 0.05;
+  constexpr double tolerance = 0.05;
   std::cout << "PLOT,"<< error << "," << transVector << "," << recoveredTransVector << ","<< tolerance << std::endl;
   if( error > tolerance )
     {

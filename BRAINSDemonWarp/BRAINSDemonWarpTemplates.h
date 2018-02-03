@@ -260,7 +260,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
                   << std::endl;
         typename  TRealImage::Pointer movingBinaryVolumeImage;
         typename  TRealImage::Pointer fixedBinaryVolumeImage;
-        const double otsuPercentileThreshold = 0.01;
+        constexpr double otsuPercentileThreshold = 0.01;
         constexpr int closingSize = 7;
         // typedef itk::Image<signed long, dims> LargeIntegerImage;
 

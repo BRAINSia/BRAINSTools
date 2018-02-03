@@ -59,10 +59,10 @@ public:
   typedef FixedArray<TValueType, VLength> VectorType;
 
   /** Length constant */
-  itkStaticConstMacro(Length, unsigned int, VLength);
+  static constexpr unsigned int Length = VLength;
 
   /** Dimension constant */
-  itkStaticConstMacro(Dimension, unsigned int, VLength);
+  static constexpr unsigned int Dimension = VLength;
 
   /** The element type stored at each location in the FixedArray. */
   typedef TValueType ValueType;

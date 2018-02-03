@@ -90,7 +90,7 @@ public:
   typedef typename TOutputImage::PixelType PixelType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TRealImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TRealImage::ImageDimension;
 
   /** Type to hold the number of checker boxes per dimension */
   typedef FixedArray<unsigned int, TRealImage::ImageDimension> PatternArrayType;

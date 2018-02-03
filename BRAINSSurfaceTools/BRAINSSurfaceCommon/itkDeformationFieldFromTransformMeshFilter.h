@@ -62,7 +62,7 @@ public:
   typedef typename OutputMeshType::PointsContainerIterator      OutputPointsContainerIterator;
   typedef typename OutputMeshType::PointsContainerConstIterator OutputPointsContainerConstIterator;
 
-  itkStaticConstMacro( PointDimension, unsigned int, OutputMeshType::PointDimension );
+  static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   /** Transform typedef. */
   typedef Transform<double,

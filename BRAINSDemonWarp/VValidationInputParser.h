@@ -74,7 +74,7 @@ public:
   typedef typename ImageType::Pointer ImagePointer;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TImage::ImageDimension;
 
   /** Displacement field value type. */
   typedef float FieldValueType;

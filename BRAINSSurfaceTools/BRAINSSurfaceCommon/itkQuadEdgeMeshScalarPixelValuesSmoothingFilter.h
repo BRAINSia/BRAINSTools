@@ -95,7 +95,7 @@ public:
   typedef typename OutputMeshType::PointDataContainerPointer OutputPointDataContainerPointer;
   typedef typename OutputMeshType::PixelType                 OutputPixelType;
 
-  itkStaticConstMacro( PointDimension, unsigned int, OutputMeshType::PointDimension );
+  static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   /** The smoothing filter will run iteratively until reaching this maximum
    * number of iterations. Emprical observartions indicate that ten iterations

@@ -94,8 +94,7 @@ public:
   typedef typename OutputMeshType::PointsContainerIterator
     OutputPointsContainerIterator;
 
-  itkStaticConstMacro( PointDimension, unsigned int,
-                       OutputMeshType::PointDimension );
+  static constexpr unsigned int PointDimension = OutputMeshType::PointDimension ;
 
   typedef TSolverTraits SolverTraits;
 

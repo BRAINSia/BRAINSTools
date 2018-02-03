@@ -53,8 +53,7 @@ class TensorInterpolateImageFunction :
     TCoordRep>
 {
 public:
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Standard class typedefs. */
   typedef TensorInterpolateImageFunction Self;

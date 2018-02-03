@@ -69,8 +69,7 @@ public:
   typedef TRealImage RealImageType;
 
   /** Image dimension. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TImage::ImageDimension;
 
   /** Type to hold the number of checker boxes per dimension */
   typedef FixedArray<unsigned int, TImage::ImageDimension> PatternArrayType;

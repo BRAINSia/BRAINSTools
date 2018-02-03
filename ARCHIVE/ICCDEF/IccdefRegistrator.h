@@ -92,7 +92,7 @@ public:
   typedef typename OutputImageType::PixelType PixelType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TRealImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TRealImage::ImageDimension;
 
   /** Deformation field value type. */
   typedef TFieldValue FieldValueType;

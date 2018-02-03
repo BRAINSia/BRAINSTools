@@ -73,10 +73,8 @@ class HammerTissueAttributeVectorImageFilter :
 {
 public:
   /** Extract dimension from input image. */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TInputImage::ImageDimension;
 
   /** Standard class typedefs. */
   typedef HammerTissueAttributeVectorImageFilter Self;

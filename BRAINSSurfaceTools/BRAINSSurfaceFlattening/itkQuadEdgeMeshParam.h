@@ -58,8 +58,7 @@ public:
   typedef typename InputMeshType::PixelType       InputPixelType;
   typedef typename InputMeshType::Traits          InputTraits;
 
-  itkStaticConstMacro( InputVDimension, unsigned int,
-                       InputMeshType::PointDimension );
+  static constexpr unsigned int InputVDimension = InputMeshType::PointDimension ;
 
   typedef typename InputMeshType::PointsContainer InputPointsContainer;
   typedef typename InputMeshType::PointsContainerConstIterator
@@ -91,8 +90,7 @@ public:
   typedef typename OutputMeshType::PointsContainerIterator
     OutputPointsContainerIterator;
 
-  itkStaticConstMacro( OutputVDimension, unsigned int,
-                       OutputMeshType::PointDimension );
+  static constexpr unsigned int OutputVDimension = OutputMeshType::PointDimension ;
 
   typedef TSolverTraits                     SolverTraits;
   typedef typename SolverTraits::ValueType  ValueType;

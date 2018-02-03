@@ -65,8 +65,8 @@ public:
   itkTypeMacro(CrossOverAffineSystem, itk::LightProcessObject);
 
   /** Dimension of the domain space. */
-  itkStaticConstMacro(SpaceDimension,  unsigned int, NDimensions);
-  itkStaticConstMacro(AffineDimension, unsigned int, NDimensions + 1);
+  static constexpr unsigned int SpaceDimension = NDimensions;
+  static constexpr unsigned int AffineDimension = NDimensions + 1;
 
   /** Type of the scalar representing coordinate and vector elements. */
   typedef  TCoordinateType ScalarType;

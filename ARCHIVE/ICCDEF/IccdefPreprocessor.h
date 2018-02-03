@@ -83,7 +83,7 @@ public:
   typedef typename OutputImageType::SizeType  SizeType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Set the atlas patient ID. */
   itkSetStringMacro(TheMovingImageFilename);
@@ -139,7 +139,7 @@ public:
   typedef AffineTransform<double, itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(SplineOrder, unsigned int, 3);
+  static constexpr unsigned int SplineOrder = 3;
 
   typedef double CoordinateRepType;
   typedef typename itk::BSplineTransform<

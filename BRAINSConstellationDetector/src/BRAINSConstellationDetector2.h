@@ -106,7 +106,7 @@ public:
   typedef SmartPointer<Self>                         Pointer;
   typedef SmartPointer<const Self>                   ConstPointer;
 
-  itkStaticConstMacro(Dimension, unsigned int, SImageType::ImageDimension);
+  static constexpr unsigned int Dimension = SImageType::ImageDimension;
   typedef vnl_matrix<double>                                 MatrixType;
 
   /** Run-time type information (and related methods) */

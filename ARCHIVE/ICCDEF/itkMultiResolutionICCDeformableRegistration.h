@@ -122,7 +122,7 @@ public:
   typedef typename DeformationFieldType::Pointer DeformationFieldPointer;
 #endif
   /** ImageDimension. */
-  itkStaticConstMacro(ImageDimension, unsigned int, FixedImageType::ImageDimension);
+  static constexpr unsigned int ImageDimension = FixedImageType::ImageDimension;
 
   /** Internal float image type. */
   typedef Image<TRealType, itkGetStaticConstMacro(ImageDimension)> FloatImageType;

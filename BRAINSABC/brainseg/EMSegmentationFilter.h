@@ -55,8 +55,7 @@ public:
   itkNewMacro(Self);
 
   // The dimension of the image we're working with
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   typedef double CoordinateRepType;
 

@@ -76,8 +76,7 @@ template<class TInputImage,
                ImageToImageFilter);
 
   /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension ) ;
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension ;
 
   typedef TInputImage InputImageType;
   typedef typename InputImageType::Pointer InputImagePointer;
@@ -100,10 +99,8 @@ template<class TInputImage,
 
 
    /** Image dimension constants */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
    /** Index typedef support. */
   typedef Index<itkGetStaticConstMacro(InputImageDimension)> IndexType;

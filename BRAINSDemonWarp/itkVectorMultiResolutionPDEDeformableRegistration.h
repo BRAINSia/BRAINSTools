@@ -113,8 +113,7 @@ public:
   typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
 
   /** ImageDimension. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      FixedImageType::ImageDimension);
+  static constexpr unsigned int ImageDimension = FixedImageType::ImageDimension;
 
   /** Internal float image type. */
   typedef Image<TRealType,

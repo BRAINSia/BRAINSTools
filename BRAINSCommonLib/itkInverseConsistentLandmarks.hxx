@@ -361,7 +361,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
     return UNKNOWN_LANDMARKS;
     }
 
-  const unsigned short int FILE_BUFFER_SIZE = 256;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                   status = 0;
   // Read Header Information
@@ -435,8 +435,8 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 256;
-  const unsigned short int LANDMARK_NAME_SIZE = 40;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
+  constexpr unsigned short int LANDMARK_NAME_SIZE  = 40;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
@@ -540,7 +540,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 128;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 128;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   std::string              CurrentLandmarkName;
   char *                   status = 0;
@@ -685,7 +685,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 128;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 128;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   std::string              CurrentLandmarkName;
   char *                   status = 0;
@@ -805,8 +805,8 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 256;
-  const unsigned short int LANDMARK_NAME_SIZE = 40;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
+  constexpr unsigned short int LANDMARK_NAME_SIZE  = 40;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
@@ -980,8 +980,8 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 256;
-  const unsigned short int LANDMARK_NAME_SIZE = 40;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
+  constexpr unsigned short int LANDMARK_NAME_SIZE  = 40;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
@@ -1524,8 +1524,8 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 256;
-  const unsigned short int LANDMARK_NAME_SIZE = 40;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
+  constexpr unsigned short int LANDMARK_NAME_SIZE  = 40;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
@@ -1763,7 +1763,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 256;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                   status = 0;
   // Read Header Information
@@ -1800,7 +1800,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
   while( ( strncmp(buffer, "TALAIRACH_PARAMETER_HEADER_END",
                    30) != 0 ) && ( status != NULL ) )
     {
-    const unsigned short int TALAIRACH_PARAMETER_NAME_SIZE = 40;
+    constexpr unsigned short int TALAIRACH_PARAMETER_NAME_SIZE  = 40;
     char                     Dummy[TALAIRACH_PARAMETER_NAME_SIZE];
     // Look for x
     if( strncmp(buffer, "TALAIRACH_PARAMETER_X_SIZE", 26) == 0  )
@@ -2120,7 +2120,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const unsigned short int FILE_BUFFER_SIZE = 256;
+  constexpr unsigned short int FILE_BUFFER_SIZE  = 256;
   char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                   status = 0;
   // Read Header Information
@@ -2156,7 +2156,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
   while( ( strncmp(buffer, "TALAIRACH_PARAMETER_HEADER_END",
                    30) != 0 ) && ( status != NULL ) )
     {
-    const unsigned short int TALAIRACH_PARAMETER_NAME_SIZE = 40;
+    constexpr unsigned short int TALAIRACH_PARAMETER_NAME_SIZE  = 40;
     char                     Dummy[TALAIRACH_PARAMETER_NAME_SIZE];
     // Look for x
     if( strncmp(buffer, "TALAIRACH_PARAMETER_X_SIZE", 26) == 0  )

@@ -116,7 +116,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   // Compute Likelihood matrix
   // Limit the number of threads to limit memory usage
   const size_t maxNumThreads = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
-  const float baseMemoryNeeded = 11.0; //10GB needed
+  constexpr float baseMemoryNeeded = 11.0; //10GB needed
   //Assume 2GB per thread is available
   const signed int threadsToUse = std::max<signed int>( 1, ( maxNumThreads*2.0 - baseMemoryNeeded )/2.0 );
   // i.e. 10 cores = 20GB available - 10 base requireed= 10/2 = 5 threads can run.
@@ -250,7 +250,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const size_t numOfInputImages = inputImagesVector.size();
   muLogMacro(<< "Number of total input images: " << numOfInputImages << std::endl);
 
-  const size_t KNN_SamplesPerLabel = 75;//std::min<size_t>(minLabelCount,75);
+  constexpr size_t KNN_SamplesPerLabel = 75;//std::min<size_t>(minLabelCount,75);
 
   // Set train sample set and the label vector by picking samples from label image.
   // Make sure each train sample is chosen from pure plugs
@@ -1251,7 +1251,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                             // is renormalized anyway, so it is not really that big of a deal as
                             // long as the main priors for
                             // the desired class is significantly higher than 1%.
-                            const typename TProbabilityImage::PixelType minPriorValue = 0.0;
+                            constexpr typename TProbabilityImage::PixelType minPriorValue  = 0.0;
                             const typename TProbabilityImage::PixelType priorValue = (prior->GetPixel(currIndex) +
                                                                                       minPriorValue);
                             // MatrixType X(numModalities, 1);

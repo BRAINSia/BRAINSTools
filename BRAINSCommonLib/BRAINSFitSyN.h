@@ -47,8 +47,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
   typename SyN::RegistrationHelperType::Pointer regHelper = SyN::RegistrationHelperType::New();
     {
     /*
-    const float lowerQuantile = 0.025;
-    const float upperQuantile = 0.975;
+    constexpr float lowerQuantile = 0.025;
+    constexpr float upperQuantile = 0.975;
     const bool  doWinsorize(false);
     regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
     */
@@ -94,7 +94,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
 
     {
     std::vector<unsigned int> convergenceWindowSizeList;
-    const unsigned int        convergenceWindowSize = 10;
+    constexpr unsigned int convergenceWindowSize = 10;
     convergenceWindowSizeList.push_back(convergenceWindowSize);
     regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
     }
@@ -161,12 +161,12 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // - Metric type (MMI->mattes, MSE->meansquares, NC->cc, MIH->mi)
     typename SyN::RegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
     // - Metric weight
-    const SyN::RealType weighting = 1.0;
+    constexpr SyN::RealType weighting  = 1.0;
     // - Sampling strategy (alway random)
     typename SyN::RegistrationHelperType::SamplingStrategy samplingStrategy = SyN::RegistrationHelperType::random;
     // - Sampling percentage (defined by input)
     // - Number of bins
-    const int          bins = 32;
+    constexpr int bins = 32;
     // - radius
     constexpr unsigned int radius = 4;
     //
@@ -223,9 +223,9 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
 
     {
     // --transform "SyN[0.33,3.0,0.0]"
-    const float learningRate = 0.15;
-    const float varianceForUpdateField = 3.0;
-    const float varianceForTotalField = 0.0;
+    constexpr float learningRate = 0.15;
+    constexpr float varianceForUpdateField = 3.0;
+    constexpr float varianceForTotalField = 0.0;
     regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);
     }
 

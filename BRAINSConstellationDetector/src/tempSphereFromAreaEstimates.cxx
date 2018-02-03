@@ -359,7 +359,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         // space
         // Now compute 1.5 times the size of a sphere with this estimated
         // radius.
-        const double ScaleFactor = 1.1; // Add 10% for safety
+        constexpr double ScaleFactor = 1.1; // Add 10% for safety
         //  //5+(MaxCrossSectionalArea-200)/100;
         // //Larger brains need more scaling
         const double CurentVolumeBasedOnArea = ScaleFactor

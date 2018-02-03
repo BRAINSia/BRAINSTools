@@ -258,8 +258,8 @@ typename OutputImageType::Pointer GenericTransformImage(
       FloatThresholdFilterType::New();
     initialFilter->SetInput(OperandImage);
       {
-      const typename FloatThresholdFilterType::OutputPixelType outsideValue = 1.0;
-      const typename FloatThresholdFilterType::OutputPixelType insideValue  = 0.0;
+      constexpr typename FloatThresholdFilterType::OutputPixelType outsideValue  = 1.0;
+      constexpr typename FloatThresholdFilterType::OutputPixelType insideValue   = 0.0;
       initialFilter->SetOutsideValue(outsideValue);
       initialFilter->SetInsideValue(insideValue);
       constexpr typename FloatThresholdFilterType::InputPixelType lowerThreshold  = 0;

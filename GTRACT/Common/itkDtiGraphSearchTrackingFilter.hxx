@@ -161,7 +161,7 @@ void DtiGraphSearchTrackingFilter<
   this->m_StartIP->SetInputImage(this->m_StartingRegion);
   Self::InitializeSeeds();
 
-  const int maxFibers = 25;
+  constexpr int maxFibers = 25;
   int       sizeOfOutput = 0;
   int       oldsizeOfOutput = 0;
   int       originalSeedCount = 0;

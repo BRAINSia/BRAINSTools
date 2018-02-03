@@ -241,7 +241,7 @@ using sitkHalfHermetianImageType =  sitk::Image;
 
 sitk::Image SimpleOpWeightedL2(sitk::Image &norm01_lowres, sitk::Image &edgemask) {
   const PrecisionType lambda = 1e-3F;
-  const int Niter = 100;
+  constexpr int Niter = 100;
   const PrecisionType tol = 1e-8F;
 
   const PrecisionType gam = 1.0F;

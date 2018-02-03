@@ -228,7 +228,7 @@ main(int argc, char *argv[])
     typedef itk::RescaleIntensityImageFilter<ImageType, ProcessingImageType> RescalerType;
 
     constexpr unsigned int MIN = 0;
-    const unsigned int MAX = 4095;
+    constexpr unsigned int MAX = 4095;
 
     RescalerType::Pointer image1Rescaler = RescalerType::New();
 

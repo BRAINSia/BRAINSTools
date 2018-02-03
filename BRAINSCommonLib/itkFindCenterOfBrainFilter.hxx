@@ -189,11 +189,11 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
 
   double inferiorCutOff = -1000000;
   std::cout << "Computing Sampled Distance Computations\n" << std::endl;
-  const double samplingDistanceMM = 3.0;
+  constexpr double samplingDistanceMM = 3.0;
   // Only look in 3mm regions
   const double samplingDistanceCM = samplingDistanceMM * 0.1;
   // Only look in 3mm regions
-  const double rectangularGridRadius = 150.0;
+  constexpr double rectangularGridRadius = 150.0;
   // How big of region around COM are we going to look for?
   const int numberOfSamplelingLines =
     static_cast<int>( ( rectangularGridRadius * 2.0 ) / samplingDistanceMM );
@@ -284,7 +284,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
         // Put this into cm^3
         const double estimated_radius = std::sqrt(crossSectionalArea / vnl_math::pi);
         // Estimate the radis of a circle filling this much space
-        const double ScaleFactor = 1.1;
+        constexpr double ScaleFactor = 1.1;
         // Add 10% for safety //5+(crossSectionalArea-200)/100; //Larger brains
         // need more scaling
         const double CurentVolumeBasedOnArea = ScaleFactor

@@ -1221,7 +1221,7 @@ void solve_l2r_lr_dual(const problem *prob, double *w, double eps, double Cp, do
       Gmax = max(Gmax, fabs(gp) );
 
       // Newton method on the sub-problem
-      const double eta = 0.1; // xi in the paper
+      constexpr double eta = 0.1; // xi in the paper
       int          inner_iter = 0;
       while( inner_iter <= max_inner_iter )
         {

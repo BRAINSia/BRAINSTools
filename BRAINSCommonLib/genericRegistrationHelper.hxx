@@ -177,7 +177,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     affineOptimizer->SetMaximumStepSizeInPhysicalUnits(m_MaximumStepLength);
     affineOptimizer->SetNumberOfIterations(m_NumberOfIterations);
     const double convergenceThreshold = 1e-6;
-    const int convergenceWindowSize = 10;
+    constexpr int convergenceWindowSize = 10;
     affineOptimizer->SetMinimumConvergenceValue( convergenceThreshold );
     affineOptimizer->SetConvergenceWindowSize( convergenceWindowSize );
     affineOptimizer->SetDoEstimateLearningRateAtEachIteration( true );

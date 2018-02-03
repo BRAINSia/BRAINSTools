@@ -270,7 +270,7 @@ public:
 
   double f(const ParametersType & params) const
   {
-  const double        MaxUnpenalizedAllowedDistance = 8.0;
+  constexpr double MaxUnpenalizedAllowedDistance = 8.0;
   const double        DistanceFromCenterOfMass = std::abs(params[2]);
   static const double FortyFiveDegreesAsRadians = 45.0 * vnl_math::pi / 180.0;
   const double        cost_of_HeadingAngle = ( std::abs(params[0]) < FortyFiveDegreesAsRadians ) ? 0 :

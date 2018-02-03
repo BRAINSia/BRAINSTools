@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
     {
     /* The Threshold Image Filter is used to produce the brain clipping mask. */
     typedef itk::ThresholdImageFilter<AnatomicalImageType> ThresholdFilterType;
-    const PixelType              imageThresholdBelow = 100;
+    constexpr PixelType              imageThresholdBelow  = 100;
     ThresholdFilterType::Pointer brainOnlyFilter = ThresholdFilterType::New();
     brainOnlyFilter->SetInput( selectIndexImageFilter->GetOutput() );
     brainOnlyFilter->ThresholdBelow( imageThresholdBelow );

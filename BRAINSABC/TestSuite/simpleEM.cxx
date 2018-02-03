@@ -163,7 +163,7 @@ int simpleRunEMS( std::string t1Volume,
   // Compute the brain outline in order to cut images later after bias
   // correction
   constexpr unsigned int closingSize = 7;
-  const float        otsuPercentileThreshold = 0.01;
+  constexpr float otsuPercentileThreshold = 0.01;
   //  typename InputImageType::Pointer HeadOutlineMaskImage =
   // FindLargestForgroundFilledMask<InputImageType>( images[0],
   // otsuPercentileThreshold, closingSize );

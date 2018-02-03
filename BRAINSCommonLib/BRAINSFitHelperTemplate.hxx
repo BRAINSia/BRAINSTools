@@ -336,10 +336,10 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     const double PAStepSize = 3.0 * one_degree;
     // Quick search just needs to get an approximate angle correct.
     {
-    const double HARange = 12.0;
+    constexpr double HARange = 12.0;
     for( double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize )
       {
-      const double PARange = 12.0;
+      constexpr double PARange = 12.0;
       for( double PA = -PARange * one_degree; PA <= PARange * one_degree; PA += PAStepSize )
         {
         currentEulerAngles3D->SetRotation(PA, 0, HA);

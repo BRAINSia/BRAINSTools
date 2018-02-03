@@ -103,7 +103,7 @@ void AnatomicalVersorRigidFilter::Update()
   axis[2] = 0.0;
   axis[m_InitialRotationAxis] = 1.0;
 
-  const double pi = 3.14159265358979323846;
+  constexpr double pi = 3.14159265358979323846;
   const double inRadians = pi / 180.0;
   const double angle = m_InitialRotationAngle * inRadians;
 

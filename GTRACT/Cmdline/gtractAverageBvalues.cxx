@@ -312,7 +312,7 @@ int buildDirectionLut(itk::Array<int> & lut,
 
 bool areDirectionsEqual(std::string direction1, std::string direction2, double directionsTolerance, bool averageB0only)
 {
-  const unsigned int MAXSTR = 256;
+  constexpr unsigned int MAXSTR = 256;
   char               tmpDir1[MAXSTR];
   char               tmpDir2[MAXSTR];
 

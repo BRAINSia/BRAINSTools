@@ -81,7 +81,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   // typedef RegistrationFilterType::GradientType TGradientType;
   TRealImage::Pointer movingBinaryVolumeImage;
   TRealImage::Pointer fixedBinaryVolumeImage;
-  const double        otsuPercentileThreshold = 0.01;
+  constexpr double otsuPercentileThreshold = 0.01;
   constexpr int closingSize = 7;
   //   fixedBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
   //     m_FixedImage,

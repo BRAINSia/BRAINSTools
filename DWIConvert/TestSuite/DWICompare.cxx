@@ -131,8 +131,8 @@ int DoIt( int argc, char * argv[], PixelType )
 
   // If the angle between two gradients differs more than this value they are
   // considered to be non-colinear
-  //constexpr double gradientToleranceForSameness = 1;
-  const float  bValueTolerance = .05;
+  //const double gradientToleranceForSameness = 1;
+  constexpr float bValueTolerance = .05;
 
   typedef itk::MetaDataDictionary DictionaryType;
   const DictionaryType & firstDictionary = firstReader->GetMetaDataDictionary();

@@ -49,7 +49,7 @@ void PhilipsDWIConverter::ExtractDWIData()
 
       bool   B0FieldFound = false;
       double b = 0.0;
-      const double zeroBValueTolerance = 0.1;  // Implausibly small value assumed to be b0 images
+      constexpr double zeroBValueTolerance = 0.1;  // Implausibly small value assumed to be b0 images
       {// Fill out the B-Values
         if( useSupplement49Definitions == true )
         {

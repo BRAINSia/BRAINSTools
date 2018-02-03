@@ -194,10 +194,10 @@ int main( int argc, char * argv [] )
 
   typedef MultiResolutionDemonsFilterType::DoubleArrayType DoubleArrayType;
 
-  const double shortestEdgeLengthAtIC4 = 6.92;
-  const double shortestEdgeLengthAtIC5 = 3.46;
-  const double shortestEdgeLengthAtIC6 = 1.73;
-  const double shortestEdgeLengthAtIC7 = 0.86;
+  constexpr double shortestEdgeLengthAtIC4 = 6.92;
+  constexpr double shortestEdgeLengthAtIC5 = 3.46;
+  constexpr double shortestEdgeLengthAtIC6 = 1.73;
+  constexpr double shortestEdgeLengthAtIC7 = 0.86;
 
   DoubleArrayType epsilon(resolutionLevels);
 
@@ -256,7 +256,7 @@ int main( int argc, char * argv [] )
   MultiResolutionDemonsFilterType::PointType center;
   center.Fill( 0.0 );
 
-  const double radius = 100.0;
+  constexpr double radius = 100.0;
 
   multiResDemonsFilter->SetSphereCenter( center );
   multiResDemonsFilter->SetSphereRadius( radius );

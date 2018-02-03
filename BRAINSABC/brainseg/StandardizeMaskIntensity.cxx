@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
     mask = maskReader->GetOutput();
     }
 
-  const double               lFract = 0.00005;
+  constexpr double lFract = 0.00005;
   const double               uFract = 1.0 - lFract;
   constexpr ImageType::PixelType lTarget  = 1;
   const ImageType::PixelType uTarget = 0.95 * MAX_IMAGE_OUTPUT_VALUE;

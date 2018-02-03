@@ -38,8 +38,7 @@ class ComputeHistogramQuantileThresholds :
 {
 public:
   /** Extract dimension from input and output image. */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
 
   /** Convenient typedefs for simplifying declarations. */
   typedef TInputImage                           InputImageType;

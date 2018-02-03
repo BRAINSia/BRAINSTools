@@ -58,8 +58,7 @@ public:
   typedef typename itk::Image<float, 3>       DistanceImageType;
   typedef typename DistanceImageType::Pointer DistanceImagePointer;
   /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   itkSetMacro(Maximize, bool);
   itkGetConstMacro(Maximize, bool);

@@ -121,8 +121,7 @@ public:
   typedef typename DemonsRegistrationFunctionType::GradientType GradientType;
 
   /** Inherit some enums from the superclass. */
-  itkStaticConstMacro(
-    ImageDimension, unsigned int, FixedImageType::ImageDimension);
+  static constexpr unsigned int ImageDimension = FixedImageType::ImageDimension;
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image

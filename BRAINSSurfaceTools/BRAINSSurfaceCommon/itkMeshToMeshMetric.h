@@ -68,10 +68,8 @@ public:
   typedef typename FixedMeshType::ConstPointer FixedMeshConstPointer;
 
   /** Constants for the pointset dimensions */
-  itkStaticConstMacro(MovingMeshDimension, unsigned int,
-                      TMovingMesh::PointDimension);
-  itkStaticConstMacro(FixedMeshDimension, unsigned int,
-                      TFixedMesh::PointDimension);
+  static constexpr unsigned int MovingMeshDimension = TMovingMesh::PointDimension;
+  static constexpr unsigned int FixedMeshDimension = TFixedMesh::PointDimension;
 
   typedef typename FixedMeshType::PointsContainer::ConstIterator    PointIterator;
   typedef typename FixedMeshType::PointDataContainer::ConstIterator PointDataIterator;

@@ -66,8 +66,7 @@ public:
   typedef typename InputMeshType::CellIdentifier  CellIdentifier;
 
   /** Dimension underlying input mesh. */
-  itkStaticConstMacro(MeshDimension, unsigned int,
-                      Superclass::MeshDimension);
+  static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
   /** Point typedef support. */
   typedef typename Superclass::PointType PointType;

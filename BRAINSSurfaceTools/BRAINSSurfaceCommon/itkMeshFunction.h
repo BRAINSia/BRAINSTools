@@ -54,7 +54,7 @@ class MeshFunction :
 {
 public:
   /** Dimension underlying input mesh. */
-  itkStaticConstMacro(MeshDimension, unsigned int, TInputMesh::PointDimension);
+  static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
 
   /** Standard class typedefs. */
   typedef MeshFunction Self;

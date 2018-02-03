@@ -107,7 +107,7 @@ public:
   typedef typename VectorFixedImageType::ConstPointer VectorFixedImagePointer;
 
   /** Inherit some enums from the superclass. */
-  itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
+  static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
 
   /** MovingImage image type. */
   //  typedef typename Superclass::MovingImageType      MovingImageType;

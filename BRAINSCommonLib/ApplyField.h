@@ -47,7 +47,7 @@ public:
   typedef typename OutputImageType::PixelType PixelType;
   typedef typename InputImageType::Pointer    ImagePointer;
 
-  itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   itkSetObjectMacro(InputImage, InputImageType);
   itkGetConstObjectMacro(InputImage, InputImageType);

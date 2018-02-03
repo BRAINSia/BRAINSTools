@@ -77,12 +77,8 @@ public:
   typedef typename SecondImageType::RegionType   SecondImageRegionType;
 
   /** Constants for the image dimensions */
-  itkStaticConstMacro(FirstImageDimension,
-                      unsigned int,
-                      TFirstImage::ImageDimension);
-  itkStaticConstMacro(SecondImageDimension,
-                      unsigned int,
-                      TSecondImage::ImageDimension);
+  static constexpr unsigned int FirstImageDimension = TFirstImage::ImageDimension;
+  static constexpr unsigned int SecondImageDimension = TSecondImage::ImageDimension;
 
   /** Array Typedefs. */
   typedef Superclass::ParametersType ParametersType;

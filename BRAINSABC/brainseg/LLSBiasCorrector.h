@@ -68,8 +68,7 @@ public:
   itkNewMacro(Self);
 
   /** The dimension of the image. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   // Image types
   typedef TInputImage                       InputImageType;

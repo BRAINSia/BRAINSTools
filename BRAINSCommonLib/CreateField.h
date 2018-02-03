@@ -55,7 +55,7 @@ public:
 
   typedef TImage                      ImageType;
   typedef typename ImageType::Pointer ImagePointer;
-  itkStaticConstMacro(ImageDimension, unsigned int, TImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TImage::ImageDimension;
   typedef Array<unsigned int> IterationsArrayType;
   itkGetConstObjectMacro(ImageOne, ImageType);
   itkGetConstObjectMacro(ImageTwo, ImageType);

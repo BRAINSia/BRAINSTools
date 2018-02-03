@@ -84,7 +84,7 @@ public:
   typedef DisplacementFieldType OutputImageType;
 
   /** Inherit some enums from the superclass. */
-  itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
+  static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
   typedef unsigned char                                                MaskPixelType;
   typedef Image<MaskPixelType, itkGetStaticConstMacro(ImageDimension)> MaskImageType;
   typedef typename MaskImageType::Pointer                              MaskImagePointer;

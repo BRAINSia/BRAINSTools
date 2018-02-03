@@ -62,7 +62,7 @@ public:
   typedef typename  FixedPointDataContainer::ConstIterator FixedPointDataConstIterator;
   typedef typename  MovingMeshType::ConstPointer           MovingMeshConstPointer;
 
-  itkStaticConstMacro( PointDimension, unsigned int, FixedMeshType::PointDimension );
+  static constexpr unsigned int PointDimension = FixedMeshType::PointDimension;
 
   /** Output types. */
   typedef TOutputMesh                                    OutputMeshType;

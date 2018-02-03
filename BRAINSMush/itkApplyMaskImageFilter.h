@@ -42,10 +42,8 @@ public:    /* define methods available to everyone */
   itkTypeMacro(ApplyMaskImageFilter, ImageToImageFilter);
 
   /** ImageDimension enumeration */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   /** typedef to describe the output image region type */
   typedef typename TOutputImage::RegionType OutputImageRegionType;

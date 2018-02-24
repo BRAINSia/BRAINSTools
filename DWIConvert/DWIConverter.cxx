@@ -40,7 +40,7 @@ void DWIConverter::ConvertToSingleBValueScaledDiffusionVectors()
     BvalueScaledDiffusionVectors.reserve(m_DiffusionVectors.size());
     for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
     {
-      vnl_vector_fixed<double,3> vec(3);
+      vnl_vector_fixed<double,3> vec(0);
       float scaleFactor = 0;
       if( maxBvalue > 0 )
       {

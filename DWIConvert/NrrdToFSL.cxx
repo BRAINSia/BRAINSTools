@@ -97,6 +97,12 @@ int NrrdToFSL(const std::string & inputVolume,
     return EXIT_FAILURE;
     }
 
+  if (outputBVectors == outputBValues)
+    {
+    std::cerr << ".bvec and .bval files must be unique!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   std::string _outputBValues, _outputBVectors;
   if(CheckArg<std::string>("B Values", outputBValues, "") == EXIT_FAILURE)
     {

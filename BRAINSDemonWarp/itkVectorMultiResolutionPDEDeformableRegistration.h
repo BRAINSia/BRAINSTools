@@ -117,8 +117,8 @@ public:
 
   /** Internal float image type. */
   typedef Image<TRealType,
-                itkGetStaticConstMacro(ImageDimension)> FloatImageType;
-  typedef itk::VectorImageToImageAdaptor<TRealType, itkGetStaticConstMacro(ImageDimension)> AdaptorType;
+                Self::ImageDimension> FloatImageType;
+  typedef itk::VectorImageToImageAdaptor<TRealType, Self::ImageDimension> AdaptorType;
 
   /** The internal registration type. */
   //  typedef DiffeomorphicDemonsRegistrationFilter2<

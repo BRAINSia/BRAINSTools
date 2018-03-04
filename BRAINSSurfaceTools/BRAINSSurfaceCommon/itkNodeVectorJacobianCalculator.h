@@ -108,8 +108,8 @@ public:
 
   typedef Matrix<
       JacobianComponentType,
-      itkGetStaticConstMacro(MeshDimension),
-      itkGetStaticConstMacro(MeshDimension)>                               JacobianType;
+      Self::MeshDimension,
+      Self::MeshDimension>                               JacobianType;
 
   typedef VectorContainer<CellIdentifier, JacobianType> JacobianListType;
 

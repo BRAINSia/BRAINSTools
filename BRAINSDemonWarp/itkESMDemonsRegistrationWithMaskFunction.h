@@ -123,7 +123,7 @@ public:
   typedef typename WarperType::Pointer WarperPointer;
 
   /** Covariant vector type. */
-  typedef CovariantVector<double, itkGetStaticConstMacro(ImageDimension)> CovariantVectorType;
+  typedef CovariantVector<double, Self::ImageDimension> CovariantVectorType;
 
   /** Fixed image gradient calculator type. */
   typedef CentralDifferenceImageFunction<FixedImageType> GradientCalculatorType;
@@ -232,8 +232,8 @@ public:
   }
 
   typedef Point<CoordRepType,
-                itkGetStaticConstMacro(ImageDimension)>         MovingImagePointType;
-  typedef SpatialObject<itkGetStaticConstMacro(ImageDimension)> MaskType;
+                Self::ImageDimension>         MovingImagePointType;
+  typedef SpatialObject<Self::ImageDimension> MaskType;
   typedef typename MaskType::Pointer                            MaskPointer;
 
   virtual void SetMovingImageMask(MaskType *mask)

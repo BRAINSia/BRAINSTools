@@ -83,7 +83,7 @@ public:
   typedef typename ByteImageType::SizeType   ByteImageSizeType;
   typedef std::vector<ByteImagePointer>      ByteImageVectorType;
 
-  typedef itk::Image<short, itkGetStaticConstMacro(ImageDimension)> ShortImageType;
+  typedef itk::Image<short, Self::ImageDimension> ShortImageType;
   typedef typename ShortImageType::Pointer                          ShortImagePointer;
   typedef typename ShortImageType::IndexType                        ShortImageIndexType;
   typedef typename ShortImageType::OffsetType                       ShortImageOffsetType;

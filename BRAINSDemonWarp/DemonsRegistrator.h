@@ -104,11 +104,11 @@ public:
 
   /** Displacement field pixel type. */
   typedef Vector<FieldValueType,
-                 itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+                 Self::ImageDimension> FieldPixelType;
 
   /** Displacement field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
+                Self::ImageDimension> TDisplacementField;
 
   /** Fixed Image Pyramid Type. */
   typedef RecursiveMultiResolutionPyramidImageFilter<
@@ -131,7 +131,7 @@ public:
 
   /** ShrinkFactorsArray type. */
   typedef FixedArray<unsigned int,
-                     itkGetStaticConstMacro(ImageDimension)> ShrinkFactorsArray;
+                     Self::ImageDimension> ShrinkFactorsArray;
 
   /** Set the intial deformation field */
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);

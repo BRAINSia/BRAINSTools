@@ -115,8 +115,8 @@ public:
   typedef typename CompositeTransformType::Pointer                    CompositeTransformPointer;
   typedef IdentityTransform<RealType, MovingImageDimension>           IdentityTransformType;
 
-  typedef SpatialObject<itkGetStaticConstMacro(FixedImageDimension)>  FixedBinaryVolumeType;
-  typedef SpatialObject<itkGetStaticConstMacro(MovingImageDimension)> MovingBinaryVolumeType;
+  typedef SpatialObject<Self::FixedImageDimension>  FixedBinaryVolumeType;
+  typedef SpatialObject<Self::MovingImageDimension> MovingBinaryVolumeType;
   typedef typename FixedBinaryVolumeType::Pointer                     FixedBinaryVolumePointer;
   typedef typename MovingBinaryVolumeType::Pointer                    MovingBinaryVolumePointer;
 

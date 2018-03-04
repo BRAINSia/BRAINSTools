@@ -86,8 +86,8 @@ public:
 
   typedef itk::CompositeTransform<RealType, MovingImageDimension>       CompositeTransformType;
 
-  typedef SpatialObject<itkGetStaticConstMacro(FixedImageDimension)>  FixedBinaryVolumeType;
-  typedef SpatialObject<itkGetStaticConstMacro(MovingImageDimension)> MovingBinaryVolumeType;
+  typedef SpatialObject<Self::FixedImageDimension>  FixedBinaryVolumeType;
+  typedef SpatialObject<Self::MovingImageDimension> MovingBinaryVolumeType;
   typedef FixedBinaryVolumeType::Pointer                              FixedBinaryVolumePointer;
   typedef MovingBinaryVolumeType::Pointer                             MovingBinaryVolumePointer;
 

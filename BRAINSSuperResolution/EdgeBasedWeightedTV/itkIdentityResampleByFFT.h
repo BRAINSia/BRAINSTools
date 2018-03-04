@@ -110,10 +110,10 @@ public:
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
 
   /** base type for images of the current ImageDimension */
-  typedef ImageBase< itkGetStaticConstMacro(ImageDimension) > ImageBaseType;
+  typedef ImageBase< Self::ImageDimension > ImageBaseType;
 
   /** Image size typedef. */
-  typedef Size< itkGetStaticConstMacro(ImageDimension) > SizeType;
+  typedef Size< Self::ImageDimension > SizeType;
 
   /** Image index typedef. */
   typedef typename TOutputImage::IndexType IndexType;

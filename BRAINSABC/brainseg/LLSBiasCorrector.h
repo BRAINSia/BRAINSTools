@@ -82,7 +82,7 @@ public:
   typedef std::vector<InputImagePointer> InputImageVector;
   typedef orderedmap<std::string,InputImageVector> MapOfInputImageVectors;
 
-  typedef itk::Image<unsigned char, itkGetStaticConstMacro(ImageDimension)> ByteImageType;
+  typedef itk::Image<unsigned char, Self::ImageDimension> ByteImageType;
   typedef typename ByteImageType::Pointer                                   ByteImagePointer;
   typedef typename ByteImageType::IndexType                                 ByteImageIndexType;
   typedef typename ByteImageType::OffsetType                                ByteImageOffsetType;

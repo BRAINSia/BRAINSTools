@@ -29,7 +29,7 @@
 #define __itkTestDriverInclude_h
 
 #include "itkMacro.h"
-#if ITK_VERSION < 4
+#if ITK_VERSION_MAJOR < 4
 namespace itk
 {
 /** Any count of number of items (number of pixels in an image, number of

@@ -45,7 +45,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 
   typedef ThinPlateSplineKernelTransform<
       double,
-      itkGetStaticConstMacro( ImageDimension )>  DefaultTransformType;
+      Self::ImageDimension >  DefaultTransformType;
 
   m_KernelTransform = DefaultTransformType::New();
 

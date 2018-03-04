@@ -111,14 +111,14 @@ public:
 
   /** MovingImage image type. */
   //  typedef typename Superclass::MovingImageType      MovingImageType;
-  typedef  itk::Image<float, itkGetStaticConstMacro(ImageDimension)> MovingImageType;
+  typedef  itk::Image<float, Self::ImageDimension> MovingImageType;
   //  typedef typename Superclass::MovingImagePointer   MovingImagePointer;
   typedef  typename MovingImageType::Pointer  MovingImagePointer;
   typedef typename MovingImageType::PixelType MovingPixelType;
 
   /** FixedImage image type. */
   //  typedef typename Superclass::FixedImageType       FixedImageType;
-  typedef itk::Image<float, itkGetStaticConstMacro(ImageDimension)> FixedImageType;
+  typedef itk::Image<float, Self::ImageDimension> FixedImageType;
   typedef typename  FixedImageType::Pointer                         FixedImagePointer;
   //  typedef typename Superclass::FixedImagePointer    FixedImagePointer;
   typedef typename FixedImageType::IndexType     IndexType;
@@ -137,7 +137,7 @@ public:
   typedef typename Superclass::FloatOffsetType  FloatOffsetType;
   typedef typename Superclass::TimeStepType     TimeStepType;
 
-  typedef itk::VectorImageToImageAdaptor<MovingPixelType, itkGetStaticConstMacro(ImageDimension)> AdaptorType;
+  typedef itk::VectorImageToImageAdaptor<MovingPixelType, Self::ImageDimension> AdaptorType;
 
   /** Interpolator type. */
   typedef double CoordRepType;
@@ -156,7 +156,7 @@ public:
 
   /** Covariant vector type. */
   typedef CovariantVector<double,
-                          itkGetStaticConstMacro(ImageDimension)>
+                          Self::ImageDimension>
     CovariantVectorType;
 
   /** Fixed image gradient calculator type. */

@@ -60,27 +60,27 @@ public:
 
   /** Standard vector type for this class. */
   typedef Vector<TScalarType,
-                 itkGetStaticConstMacro(SpaceDimension)> InputVectorType;
+                 Self::SpaceDimension> InputVectorType;
   typedef Vector<TScalarType,
-                 itkGetStaticConstMacro(SpaceDimension)> OutputVectorType;
+                 Self::SpaceDimension> OutputVectorType;
 
   /** Standard covariant vector type for this class. */
   typedef CovariantVector<TScalarType,
-                          itkGetStaticConstMacro(SpaceDimension)> InputCovariantVectorType;
+                          Self::SpaceDimension> InputCovariantVectorType;
   typedef CovariantVector<TScalarType,
-                          itkGetStaticConstMacro(SpaceDimension)> OutputCovariantVectorType;
+                          Self::SpaceDimension> OutputCovariantVectorType;
 
   /** Standard vnl_vector type for this class. */
   typedef vnl_vector_fixed<TScalarType,
-                           itkGetStaticConstMacro(SpaceDimension)> InputVnlVectorType;
+                           Self::SpaceDimension> InputVnlVectorType;
   typedef vnl_vector_fixed<TScalarType,
-                           itkGetStaticConstMacro(SpaceDimension)> OutputVnlVectorType;
+                           Self::SpaceDimension> OutputVnlVectorType;
 
   /** Standard coordinate point type for this class. */
   typedef Point<TScalarType,
-                itkGetStaticConstMacro(SpaceDimension)> InputPointType;
+                Self::SpaceDimension> InputPointType;
   typedef Point<TScalarType,
-                itkGetStaticConstMacro(SpaceDimension)> OutputPointType;
+                Self::SpaceDimension> OutputPointType;
 
   /** This method sets the parameters of the transform.
    *
@@ -144,7 +144,7 @@ public:
 
   /** Parameters as SpaceDimension number of images. */
   typedef typename ParametersType::ValueType                                     InternalPixelType;
-  typedef VectorImage<InternalPixelType, itkGetStaticConstMacro(SpaceDimension)> ImageType;
+  typedef VectorImage<InternalPixelType, Self::SpaceDimension> ImageType;
   typedef typename ImageType::Pointer                                            ImagePointer;
   typedef typename ImageType::PixelType                                          PixelType;
 
@@ -169,7 +169,7 @@ public:
   OutputPointType  TransformPoint(const InputPointType  & point ) const;
 
   typedef typename ContinuousIndex<ScalarType,
-                                   itkGetStaticConstMacro(SpaceDimension)> ContinuousIndexType;
+                                   Self::SpaceDimension> ContinuousIndexType;
 
   /** Method to transform a vector -
    *  not applicable for this type of transform. */
@@ -233,7 +233,7 @@ private:
   ITK_DISALLOW_COPY_AND_ASSIGN(DisplacementFieldTransform);
 
   /** Typedefs for specifying the extend to the grid. */
-  typedef ImageRegion<itkGetStaticConstMacro(SpaceDimension)> RegionType;
+  typedef ImageRegion<Self::SpaceDimension> RegionType;
 
   typedef typename RegionType::IndexType                      IndexType;
   typedef typename RegionType::SizeType                       SizeType;
@@ -250,7 +250,7 @@ private:
   /** Jacobian as SpaceDimension number of images. */
   typedef typename JacobianType::ValueType JacobianInternalPixelType;
   typedef VectorImage<JacobianInternalPixelType,
-                      itkGetStaticConstMacro(SpaceDimension)> JacobianImageType;
+                      Self::SpaceDimension> JacobianImageType;
   typedef typename JacobianImageType::PixelType JacobianPixelType;
 
   typename JacobianImageType::Pointer m_JacobianImage[NDimensions];

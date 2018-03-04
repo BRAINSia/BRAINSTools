@@ -200,8 +200,8 @@ public:
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   typedef ImageToImageFilterDetail::ExtractImageFilterRegionCopier<
-      itkGetStaticConstMacro(InputImageDimension),
-      itkGetStaticConstMacro(OutputImageDimension)> ExtractSliceImageFilterRegionCopierType;
+      Self::InputImageDimension,
+      Self::OutputImageDimension> ExtractSliceImageFilterRegionCopierType;
 
   /** Set/Get the output image region.
    *  If any of the ExtractionRegion.Size = 0 for any particular dimension dim,

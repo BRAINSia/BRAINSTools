@@ -136,8 +136,8 @@ public:
   typedef itk::VersorRigid3DTransform< double >     BulkTransformType;
   typedef BulkTransformType::Pointer           BulkTransformPointer;
    */
-  typedef Transform<CoordinateRepType, itkGetStaticConstMacro(SpaceDimension),
-                    itkGetStaticConstMacro(SpaceDimension)> BulkTransformType;
+  typedef Transform<CoordinateRepType, Self::SpaceDimension,
+                    Self::SpaceDimension> BulkTransformType;
   typedef BulkTransformType::ConstPointer BulkTransformPointer;
   /** Standard New method. */
   itkNewMacro(Self);

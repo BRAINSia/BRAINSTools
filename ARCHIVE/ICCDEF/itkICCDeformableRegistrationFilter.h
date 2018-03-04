@@ -86,18 +86,18 @@ public:
   /** Inherit some enums from the superclass. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
   typedef unsigned char                                                MaskPixelType;
-  typedef Image<MaskPixelType, itkGetStaticConstMacro(ImageDimension)> MaskImageType;
+  typedef Image<MaskPixelType, Self::ImageDimension> MaskImageType;
   typedef typename MaskImageType::Pointer                              MaskImagePointer;
 
-  typedef SpatialObject<itkGetStaticConstMacro(ImageDimension)> MaskType;
+  typedef SpatialObject<Self::ImageDimension> MaskType;
   typedef typename MaskType::Pointer                            MaskPointer;
 
   typedef typename DataObject::Pointer DataObjectPointer;
 
-  typedef LandmarkSpatialObject<itkGetStaticConstMacro(ImageDimension)> LandmarkType;
+  typedef LandmarkSpatialObject<Self::ImageDimension> LandmarkType;
   typedef typename LandmarkType::Pointer                                LandmarkPointer;
 
-  typedef PointSet<typename MovingImageType::PixelType, itkGetStaticConstMacro(ImageDimension)> PointSetType;
+  typedef PointSet<typename MovingImageType::PixelType, Self::ImageDimension> PointSetType;
   typedef typename PointSetType::Pointer                                                        PointSetPointer;
 
   typedef std::complex<float>                     ComplexPixelType;

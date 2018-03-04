@@ -108,7 +108,7 @@ public:
   typedef typename WarperMovingType::Pointer WarperMovingPointer;
 
   typedef unsigned char                                                MaskPixelType;
-  typedef Image<MaskPixelType, itkGetStaticConstMacro(ImageDimension)> MaskImageType;
+  typedef Image<MaskPixelType, Self::ImageDimension> MaskImageType;
   typedef typename MaskImageType::Pointer                              MaskImagePointer;
 
   typedef WarpImageFilter<MaskImageType,
@@ -117,18 +117,18 @@ public:
 
   typedef std::complex<MovingPixelType> ComplexPixelType;
   typedef itk::Vector<ComplexPixelType,
-                      itkGetStaticConstMacro(ImageDimension)>             DisplacementFieldFFTPixelType;
-  typedef itk::Image<ComplexPixelType, itkGetStaticConstMacro(ImageDimension)>              ComplexImageType;
-  typedef itk::Image<DisplacementFieldFFTPixelType, itkGetStaticConstMacro(ImageDimension)> DisplacementFieldFFTType;
+                      Self::ImageDimension>             DisplacementFieldFFTPixelType;
+  typedef itk::Image<ComplexPixelType, Self::ImageDimension>              ComplexImageType;
+  typedef itk::Image<DisplacementFieldFFTPixelType, Self::ImageDimension> DisplacementFieldFFTType;
 
   typedef typename DisplacementFieldFFTType::Pointer DisplacementFieldFFTPointer;
   typedef typename ComplexImageType::Pointer         ComplexImagePointer;
 
   typedef VectorFFTWRealToHalfHermitianForwardFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             itkGetStaticConstMacro(ImageDimension)>
+                                                             Self::ImageDimension>
     FFTWRealToComplexType;
   typedef VectorFFTWHalfHermitianToRealInverseFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             itkGetStaticConstMacro(ImageDimension)>
+                                                             Self::ImageDimension>
     FFTWComplexToRealType;
 
   typedef SubtractImageFilter<FixedImageType, FixedImageType, FixedImageType> SubtractImageType;
@@ -145,19 +145,19 @@ public:
 //  typedef MultiplyByConstantImageFilter<DisplacementFieldFFTType, float, DisplacementFieldFFTType>
 // MultiplyByConstantFFTType;
   typedef AddImageFilter<DisplacementFieldType, DisplacementFieldType, DisplacementFieldType> AddImageType;
-  typedef Image<float, itkGetStaticConstMacro(ImageDimension)>                                FloatImageType;
+  typedef Image<float, Self::ImageDimension>                                FloatImageType;
 
   // typename TDisplacementField::PixelType
   /** Covariant vector type. */
-  typedef CovariantVector<double, itkGetStaticConstMacro(ImageDimension)> CovariantVectorType;
+  typedef CovariantVector<double, Self::ImageDimension> CovariantVectorType;
 
-  typedef SpatialObject<itkGetStaticConstMacro(ImageDimension)> MaskType;
+  typedef SpatialObject<Self::ImageDimension> MaskType;
   typedef typename MaskType::Pointer                            MaskPointer;
 
-  typedef LandmarkSpatialObject<itkGetStaticConstMacro(ImageDimension)> LandmarkType;
+  typedef LandmarkSpatialObject<Self::ImageDimension> LandmarkType;
   typedef typename LandmarkType::Pointer                                LandmarkPointer;
 
-  typedef PointSet<MovingPixelType, itkGetStaticConstMacro(ImageDimension)> PointSetType;
+  typedef PointSet<MovingPixelType, Self::ImageDimension> PointSetType;
   typedef typename PointSetType::Pointer                                    PointSetPointer;
   /** Set the moving image interpolator. */
   void SetMovingImageInterpolator( InterpolatorMovingType * ptr )

@@ -96,15 +96,15 @@ public:
   /** Deformation field value type. */
   typedef float FieldValueType;
 
-  typedef itk::Image<unsigned char, itkGetStaticConstMacro(ImageDimension)> TImageType;
+  typedef itk::Image<unsigned char, Self::ImageDimension> TImageType;
 
   /** Deformation field pixel type. */
   typedef Vector<FieldValueType,
-                 itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+                 Self::ImageDimension> FieldPixelType;
 
   /** Deformation field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
+                Self::ImageDimension> TDisplacementField;
 
   /** Set the initial Deformation Field. */
   itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
@@ -136,7 +136,7 @@ public:
   /** Transform Types. */
   typedef VersorRigid3DTransform<double>                                  VersorRigid3DTransformType;
   typedef ScaleSkewVersor3DTransform<double>                              ScaleSkewVersor3DTransformType;
-  typedef AffineTransform<double, itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
+  typedef AffineTransform<double, Self::ImageDimension> AffineTransformType;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int SplineOrder = 3;
@@ -144,8 +144,8 @@ public:
   typedef double CoordinateRepType;
   typedef typename itk::BSplineTransform<
       CoordinateRepType,
-      itkGetStaticConstMacro(ImageDimension),
-      itkGetStaticConstMacro(SplineOrder)> BSplineTransformType;
+      Self::ImageDimension,
+      Self::SplineOrder> BSplineTransformType;
 
   /*BOBF macros*/
   /**Set Target Mask filename*/

@@ -88,8 +88,8 @@ public:
 
   /** Transform typedef. */
   typedef Transform<double,
-                    itkGetStaticConstMacro(PointDimension),
-                    itkGetStaticConstMacro(PointDimension)>         TransformType;
+                    Self::PointDimension,
+                    Self::PointDimension>         TransformType;
   typedef typename TransformType::ConstPointer TransformPointerType;
 
   /** Interpolator typedef. */

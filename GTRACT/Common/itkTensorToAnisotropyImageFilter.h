@@ -111,11 +111,11 @@ public:
   / ** The dimensions of the input image must equal those of the
       output image. * /
   itkConceptMacro(SameDimension,
-    (Concept::SameDimension<itkGetStaticConstMacro(InputImageDimension),itkGetStaticConstMacro(OutputImageDimension)>));
+    (Concept::SameDimension<Self::InputImageDimension,Self::OutputImageDimension>));
 
   / ** The dimension of the input image must be 4. * /
   itkConceptMacro(DimensionShouldBe4,
-    (Concept::SameDimension<itkGetStaticConstMacro(InputImageDimension),4>));
+    (Concept::SameDimension<Self::InputImageDimension,4>));
 */
   /** Standard New method. */
   itkNewMacro(Self);

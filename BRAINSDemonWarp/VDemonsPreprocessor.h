@@ -100,11 +100,11 @@ public:
 
   /** Displacement field pixel type. */
   typedef Vector<FieldValueType,
-                 itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+                 Self::ImageDimension> FieldPixelType;
 
   /** Displacement field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
+                Self::ImageDimension> TDisplacementField;
 
   /** Set the initial Displacement Field. */
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);

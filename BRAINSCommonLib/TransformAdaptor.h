@@ -80,7 +80,7 @@ public:
 
   /** Affine transform type. */
   typedef AffineTransform<TCoordinateType,
-                          itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
+                          Self::ImageDimension> AffineTransformType;
   typedef typename AffineTransformType::Pointer
     AffineTransformPointer;
   typedef typename AffineTransformType::MatrixType
@@ -94,7 +94,7 @@ public:
 
   /** CrossOverAffineSystem type. */
   typedef CrossOverAffineSystem<TCoordinateType,
-                                itkGetStaticConstMacro(ImageDimension)> CrossOverAffineSystemType;
+                                Self::ImageDimension> CrossOverAffineSystemType;
   typedef typename CrossOverAffineSystemType::Pointer
     CrossOverAffineSystemPointer;
 

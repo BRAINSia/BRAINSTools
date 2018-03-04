@@ -94,28 +94,28 @@ public:
   /** Transform Types. */
   typedef VersorRigid3DTransform<double>                                  VersorRigid3DTransformType;
   typedef ScaleSkewVersor3DTransform<double>                              ScaleSkewVersor3DTransformType;
-  typedef AffineTransform<double, itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
+  typedef AffineTransform<double, Self::ImageDimension> AffineTransformType;
 
   typedef double CoordinateRepType;
   typedef typename itk::BSplineTransform<
       CoordinateRepType,
-      itkGetStaticConstMacro(ImageDimension),
-      itkGetStaticConstMacro(SplineOrder)> BSplineTransformType;
+      Self::ImageDimension,
+      Self::SplineOrder> BSplineTransformType;
 
   /** Displacement field value type. */
   typedef float FieldValueType;
 
   /** Displacement field pixel type. */
   typedef Vector<FieldValueType,
-                 itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+                 Self::ImageDimension> FieldPixelType;
 
   /** Displacement field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
+                Self::ImageDimension> TDisplacementField;
 
   /** ShrinkFactors type. */
   typedef FixedArray<unsigned int,
-                     itkGetStaticConstMacro(ImageDimension)> ShrinkFactorsType;
+                     Self::ImageDimension> ShrinkFactorsType;
 
   /** IterationArray type. */
   typedef Array<unsigned int> IterationsArrayType;

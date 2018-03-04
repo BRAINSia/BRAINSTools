@@ -125,7 +125,7 @@ public:
   static constexpr unsigned int ImageDimension = FixedImageType::ImageDimension;
 
   /** Internal float image type. */
-  typedef Image<TRealType, itkGetStaticConstMacro(ImageDimension)> FloatImageType;
+  typedef Image<TRealType, Self::ImageDimension> FloatImageType;
 
   /** The internal registration type. */
   typedef ICCDeformableRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType> RegistrationType;

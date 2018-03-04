@@ -196,7 +196,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
   m_FixedImageSpacing = this->GetFixedImage()->GetSpacing();
   m_FixedImageDirection = this->GetFixedImage()->GetDirection();
 // std::cout<<"Function!"<<std::endl;
-  typedef ImageMaskSpatialObject<itkGetStaticConstMacro(ImageDimension)> ImageMaskSpatialObjectType;
+  typedef ImageMaskSpatialObject<Self::ImageDimension> ImageMaskSpatialObjectType;
   if( this->GetMovingImageMask() && this->GetFixedImageMask() )
     {
     m_MovingMaskImageWarper->SetOutputOrigin( this->m_FixedImageOrigin );

@@ -103,7 +103,7 @@ template<class TInputImage,
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
    /** Index typedef support. */
-  typedef Index<itkGetStaticConstMacro(InputImageDimension)> IndexType;
+  typedef Index<Self::InputImageDimension> IndexType;
 
  /** InputSizeType typedef support **/
   typedef typename InputImageType::SizeType InputSizeType;
@@ -123,7 +123,7 @@ template<class TInputImage,
 
   /** WeightImage typedef support */
   /* indicates the strength of a label for a given cell */
-  typedef Image<TWeightPixelType, itkGetStaticConstMacro(InputImageDimension) > WeightImageType;
+  typedef Image<TWeightPixelType, Self::InputImageDimension > WeightImageType;
 
   /** WeightImagePointer typedef support. */
   typedef typename WeightImageType::Pointer WeightImagePointer;

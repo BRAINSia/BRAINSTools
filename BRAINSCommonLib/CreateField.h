@@ -69,7 +69,7 @@ public:
 
   itkGetMacro(NumberOfLevels, unsigned short);
   typedef FixedArray<unsigned int,
-                     itkGetStaticConstMacro(ImageDimension)> ShrinkFactorsType;
+                     Self::ImageDimension> ShrinkFactorsType;
   itkGetMacro(Image1ShrinkFactors, ShrinkFactorsType);
   itkSetMacro(Image1ShrinkFactors, ShrinkFactorsType);
   itkGetMacro(Image2ShrinkFactors, ShrinkFactorsType);
@@ -89,9 +89,9 @@ public:
   typedef T2Image
     MovingImageType;
   typedef Vector<float,
-                 itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+                 Self::ImageDimension> FieldPixelType;
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
+                Self::ImageDimension> TDisplacementField;
   typedef RecursiveMultiResolutionPyramidImageFilter<FixedImageType,
                                                      FixedImageType>                         FixedImagePyramidType;
   typedef RecursiveMultiResolutionPyramidImageFilter<MovingImageType,

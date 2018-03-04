@@ -77,8 +77,8 @@ public:
   /**  Type of the Transform Base class */
   typedef typename NumericTraits<CoordinateRepresentationType>::RealType TransformComputationType;
   typedef Transform<TransformComputationType,
-                    itkGetStaticConstMacro(MovingMeshDimension),
-                    itkGetStaticConstMacro(FixedMeshDimension)> TransformType;
+                    Self::MovingMeshDimension,
+                    Self::FixedMeshDimension> TransformType;
 
   typedef typename TransformType::Pointer         TransformPointer;
   typedef typename TransformType::InputPointType  InputPointType;
@@ -103,12 +103,12 @@ public:
 
   /**  Type for the mask of the fixed image. Only pixels that are "inside"
        this mask will be considered for the computation of the metric */
-  typedef SpatialObject<itkGetStaticConstMacro(FixedMeshDimension)> FixedMaskType;
+  typedef SpatialObject<Self::FixedMeshDimension> FixedMaskType;
   typedef typename  FixedMaskType::ConstPointer                     FixedMaskPointer;
 
   /**  Type for the mask of the moving image. Only pixels that are "inside"
        this mask will be considered for the computation of the metric */
-  typedef SpatialObject<itkGetStaticConstMacro(MovingMeshDimension)> MovingMaskType;
+  typedef SpatialObject<Self::MovingMeshDimension> MovingMaskType;
   typedef typename  MovingMaskType::ConstPointer                     MovingMaskPointer;
 
   /** Connect the Fixed Pointset.  */

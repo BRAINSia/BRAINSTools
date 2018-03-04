@@ -156,7 +156,7 @@ public:
 
   virtual double GetMaximumUpdateStepLength() const;
 
-  typedef itk::SpatialObject<itkGetStaticConstMacro(ImageDimension)> MaskType;
+  typedef itk::SpatialObject<Self::ImageDimension> MaskType;
 
   virtual void SetMovingImageMask(MaskType *mask);
 

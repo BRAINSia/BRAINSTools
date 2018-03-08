@@ -16,7 +16,7 @@ configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 add_dependencies(BRAINSABCTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCSmallTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/BRAINSABCSmallLabels.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallLabels.test.nii.gz
@@ -49,7 +49,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
 )
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCLongTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/labels.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/labels.nii.gz
@@ -73,7 +73,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   --gridSize  5,3,4
   --atlasDefinition ${ATLAS_INSTALL_DIRECTORY}/ExtendedAtlasDefinition.xml
   )
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest2
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCLongTest2
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/labels.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/labels.nii.gz
@@ -106,7 +106,5 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fix
   add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
   target_link_libraries(BlendImageFilterTest ${BRAINSABC_ITK_LIBRARIES})
   set_target_properties(BlendImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
+  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
 endif()
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

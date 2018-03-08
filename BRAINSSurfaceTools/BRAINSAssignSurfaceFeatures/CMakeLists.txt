@@ -26,7 +26,7 @@ if (FALSE AND BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 set(BRAINSAssignSurfaceFeaturesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/BRAINSAssignSurfaceFeatures)
 set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TEST_BRAINSAssignSurfaceFeatures
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME TEST_BRAINSAssignSurfaceFeatures
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSAssignSurfaceFeatures>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_SurfaceGeneration.vtk}
           --outerSurfaceFile DATA{${TestData_DIR}/0036195_leftTissueClass130.vtk}
@@ -40,7 +40,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TEST_BRAINSAssignSurfaceFea
           --curvature
           --curvatureType Mean )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME COMPARE_BRAINSAssignSurfaceFeatures
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME COMPARE_BRAINSAssignSurfaceFeatures
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile 0036195_SurfaceFeaturesTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_leftSurfaceFeatures.vtk}
@@ -49,7 +49,5 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME COMPARE_BRAINSAssignSurface
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_BRAINSAssignSurfaceFeatures PROPERTIES DEPENDS TEST_BRAINSAssignSurfaceFeatures )
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 
 endif ()

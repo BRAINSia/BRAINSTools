@@ -87,6 +87,9 @@ macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     )
+  if(DEFINED MODULE_FOLDER)
+    set_target_properties(${SEMToolName}TestDriver PROPERTIES FOLDER ${MODULE_FOLDER})
+  endif()
 endmacro()
 
 # DebugImageViewer Macro

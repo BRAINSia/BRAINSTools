@@ -8,6 +8,7 @@ link_libraries( itksys )
 ##
 add_library(NetConfigurationCOMMONLIB STATIC ${NetConfiguration_SRCS})
 target_link_libraries(NetConfigurationCOMMONLIB BRAINSCommonLib ${BRAINSCut_ITK_LIBRARIES})
+set_target_properties(NetConfigurationCOMMONLIB PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

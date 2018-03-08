@@ -1,30 +1,37 @@
 add_executable(DumpImageInfo DumpImageInfo.cxx)
 target_link_libraries(DumpImageInfo BRAINSCommonLib)
 set_target_properties(DumpImageInfo PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+set_target_properties(DumpImageInfo PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
 target_link_libraries(PrettyPrintTableTest BRAINSCommonLib)
 set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+set_target_properties(PrettyPrintTableTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_LIBRARIES})
+set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(BRAINSCleanMask BRAINSCleanMask.cxx)
 target_link_libraries(BRAINSCleanMask ${BRAINSCommonLib_ITK_LIBRARIES})
+set_target_properties(BRAINSCleanMask PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(DWIMetaDataDictionaryValidatorTests DWIMetaDataDictionaryValidatorTests.cxx)
 target_link_libraries(DWIMetaDataDictionaryValidatorTests BRAINSCommonLib)
 set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(Slicer3LandmarkIOExceptionTest Slicer3LandmarkIOTest.cxx)
 target_link_libraries(Slicer3LandmarkIOExceptionTest BRAINSCommonLib)
 set_target_properties(Slicer3LandmarkIOExceptionTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
+set_target_properties(Slicer3LandmarkIOExceptionTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(AverageImageFilterTest AverageImageFilterTest.cxx)
 target_link_libraries(AverageImageFilterTest BRAINSCommonLib)
 set_target_properties(AverageImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+set_target_properties(AverageImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 ExternalData_add_test(FindCenterOfBrainFetchData
   NAME AverageImageFilterTest

@@ -9,7 +9,7 @@ add_library(landmarksConstellationCOMMONLIB STATIC
   BRAINSConstellationDetectorPrimary.cxx)
 
 target_link_libraries(landmarksConstellationCOMMONLIB BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES} ${VTK_LIBRARIES})
-
+set_target_properties(landmarksConstellationCOMMONLIB PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

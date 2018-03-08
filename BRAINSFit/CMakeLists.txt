@@ -29,6 +29,8 @@ FindITKUtil(BRAINSFit_ITK
 # Output directories.
 #
 
+set(MODULE_FOLDER "Module-BRAINSFit")
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSFitCommonLib.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSFitCommonLib.h

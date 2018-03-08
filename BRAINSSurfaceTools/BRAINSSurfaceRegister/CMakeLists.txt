@@ -1,5 +1,7 @@
 ##- project(SurfaceRegister)
 
+set(MODULE_FOLDER "BRAINSSurfaceRegister")
+
 add_subdirectory( MultiResolutionRegistration )
 add_subdirectory( AssignArray )
 add_subdirectory( AverageScalarsByResampling )

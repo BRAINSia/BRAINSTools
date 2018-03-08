@@ -78,6 +78,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gtractConfigure.h.in
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/Common )
 
+set(MODULE_FOLDER "Module-GTRACT")
+
 #-----------------------------------------------------------------------------
 # Build Generate CLP
 #add_subdirectory( Utils )

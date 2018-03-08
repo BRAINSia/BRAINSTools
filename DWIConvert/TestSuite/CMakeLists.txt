@@ -99,25 +99,30 @@ foreach(CLP DWICompare DWISimpleCompare)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
   add_executable(${CLP} ${${CLP}_SOURCE})
   target_link_libraries (${CLP} DWIConvertSupportLib BRAINSCommonLib )
+  set_target_properties(${CLP} PROPERTIES FOLDER ${MODULE_FOLDER})
 endforeach()
 
 ## Tool for comparing if BVec and BVal files are the same.
 add_executable(BFileCompareTool BFileCompareTool.cpp)
 target_link_libraries(BFileCompareTool DWIConvertSupportLib BRAINSCommonLib )
+set_target_properties(BFileCompareTool PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # build FSL test program
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
 target_link_libraries (FSLTextFileCompare DWIConvertSupportLib BRAINSCommonLib )
+set_target_properties(FSLTextFileCompare PROPERTIES FOLDER ${MODULE_FOLDER})
 
 # Check Tag-Value pair in Header file
 add_executable(checkTagValueInHeader checkTagValueInHeader.cxx)
+set_target_properties(checkTagValueInHeader PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # This program not currently used but hey, might come in
 # handy.
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
 target_link_libraries(NrrdToNIfTI DWIConvertSupportLib BRAINSCommonLib )
+set_target_properties(NrrdToNIfTI PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # This isn't used; we use a CMake Script to handle running the
@@ -126,6 +131,7 @@ target_link_libraries(NrrdToNIfTI DWIConvertSupportLib BRAINSCommonLib )
 # set (CLP DWIConvert)
 # add_executable(${CLP}Test ${CLP}Test.cxx ${DWIConvertTest_SRC})
 # target_link_libraries(${CLP}Test DWIConvertSupportLib BRAINSCommonLib )
+# set_target_properties(${CLP}Test PROPERTIES FOLDER ${MODULE_FOLDER})
 #
 # add_test(NAME DWIConvertHelpTest
 #   COMMAND ${SLICER_LAUNCH_COMMAND} $<TARGET_FILE:DWIConvertTest> DWIConvertTest --help

@@ -67,22 +67,28 @@ include(${CMAKE_CURRENT_LIST_DIR}/../../CMake/LinAlgSelector.cmake)
 find_package(RTK REQUIRED NO_MODULE)
 include(${RTK_USE_FILE})
 
+set(MODULE_FOLDER "Module-EdgeBaseWeightedTV")
 
 add_library(SR_support FFTWUpsample.cpp OpWeightedL2.cpp)
 target_link_libraries(SR_support ${ITK_LIBRARIES} ${RTK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
+set_target_properties(SR_support PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(TestSR SRmain.cpp)
 target_link_libraries(TestSR SR_support)
+set_target_properties(TestSR PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(FFTWUpsampleTest FFTWUpsampleTest.cpp)
 target_link_libraries(FFTWUpsampleTest SR_support)
+set_target_properties(FFTWUpsampleTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 if(0)
 add_executable(TESTFFTW TestFFTW2D.cpp )
 target_link_libraries(TESTFFTW SR_support)
+set_target_properties(TESTFFTW PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(GradientTest GradientTest.cpp )
 target_link_libraries(GradientTest SR_support)
+set_target_properties(GradientTest PROPERTIES FOLDER ${MODULE_FOLDER})
 endif()
 
 
@@ -92,7 +98,9 @@ include(${SimpleITK_USE_FILE})
 
 add_library(SimpleSR_support SimpleOpWeightedL2.cpp)
 target_link_libraries(SipmleSR_support SR_support)
+set_target_properties(SimpleSR_support PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(SimpleSR SimpleSR.cpp)
 target_link_libraries(SimpleSR SimpleSR_support ${ITK_LIBRARIES} ${SimpleITK_LIBRARIES})
+set_target_properties(SimpleSR PROPERTIES FOLDER ${MODULE_FOLDER})
 endif()

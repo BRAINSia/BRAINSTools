@@ -14,6 +14,7 @@ set(GTRACTCommon_SRC
 
 add_library(GTRACTCommon STATIC ${GTRACTCommon_SRC})
 target_link_libraries(GTRACTCommon BRAINSCommonLib ${VTK_LIBRARIES} ${double-conversion_LIBRARIES})
+set_target_properties(GTRACTCommon PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

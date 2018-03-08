@@ -36,11 +36,18 @@ option(ENABLE_STATIC "Build static (.a) library" ON)
 
 add_library(cnpy SHARED "cnpy.cpp")
 target_link_libraries(cnpy ${ZLIB_LIBRARY})
+if(DEFINED MODULE_FOLDER)
+  set_target_properties(cnpy PROPERTIES FOLDER ${MODULE_FOLDER})
+endif()
+
 install(TARGETS "cnpy" LIBRARY DESTINATION lib PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 if(ENABLE_STATIC)
     add_library(cnpy-static STATIC "cnpy.cpp")
     set_target_properties(cnpy-static PROPERTIES OUTPUT_NAME "cnpy")
+    if(DEFINED MODULE_FOLDER)
+      set_target_properties(cnpy PROPERTIES FOLDER ${MODULE_FOLDER})
+    endif()
     install(TARGETS "cnpy-static" ARCHIVE DESTINATION lib)
 endif()
 
@@ -49,3 +56,6 @@ install(FILES "mat2npz" "npy2mat" "npz2mat" DESTINATION bin PERMISSIONS OWNER_RE
 
 add_executable(example1 example1.cpp)
 target_link_libraries(example1 cnpy)
+if(DEFINED MODULE_FOLDER)
+  set_target_properties(cnpy PROPERTIES FOLDER ${MODULE_FOLDER})
+endif()

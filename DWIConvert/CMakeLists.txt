@@ -54,8 +54,11 @@ set(DWIConvertSupportLib_SRCS
   DWIConvertLib.cxx
   DWIConvertLib.h)
 
+set(MODULE_FOLDER "Module-DWIConvert")
+
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
 target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)
+set_target_properties(DWIConvertSupportLib PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(PROGS_LIST_1
   Convert4DImageTo3DSeries
@@ -63,6 +66,7 @@ set(PROGS_LIST_1
 foreach(prog ${PROGS_LIST_1})
   add_executable(${prog} ${prog}.cxx)
   target_link_libraries(${prog} DWIConvertSupportLib)
+  set_target_properties(${prog} PROPERTIES FOLDER ${MODULE_FOLDER})
 endforeach()
 
 #-----------------------------------------------------------------------------

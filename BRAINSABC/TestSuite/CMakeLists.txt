@@ -11,6 +11,7 @@ configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
 
 #add_executable(TestLinearRegressionTesting TestLinearRegresionInstensityMatching.cxx)
 #target_link_libraries(TestLinearRegressionTesting BRAINSCommonLib )
+#set_target_properties(TestLinearRegressionTesting PROPERTIES FOLDER ${MODULE_FOLDER})
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 add_dependencies(BRAINSABCTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
@@ -104,6 +105,7 @@ endif()
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
   add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
   target_link_libraries(BlendImageFilterTest ${BRAINSABC_ITK_LIBRARIES})
+  set_target_properties(BlendImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
 endif()
 

@@ -1,5 +1,6 @@
 add_executable(QuadEdgeMeshSimilarityTest QuadEdgeMeshSimilarityTest.cxx)
 target_link_libraries(QuadEdgeMeshSimilarityTest ${BRAINSSurfaceTools_ITK_LIBRARIES} ${VTK_LIBRARIES})
+set_target_properties(${prog}Lib PROPERTIES FOLDER ${MODULE_FOLDER})
 
 ##  Test goes here:
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceQuadEdgeMeshSimilarity

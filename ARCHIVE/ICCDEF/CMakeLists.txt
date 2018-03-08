@@ -33,6 +33,8 @@ FindITKUtil( ICCDEF_ITK
 ##- include_directories(${COMMON_BRAINSCOMMONLIB_SOURCE_DIR})
 ##- link_directories(${COMMON_BRAINSCOMMONLIB_BINARY_DIR})
 
+set(MODULE_FOLDER "Modules-ICCDEF")
+
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "/opt/iccdefRegistration_New" CACHE PATH "Install path prefix,
      prepended onto install directories." FORCE)

@@ -64,6 +64,8 @@ FindVTKUtil(
   ${LOCAL_VTKQT})
 endif()
 
+set(MODULE_FOLDER "Module-BRAINSConstellationDetector")
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

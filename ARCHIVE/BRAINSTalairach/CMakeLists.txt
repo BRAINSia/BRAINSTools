@@ -35,8 +35,11 @@ set(BRAINSTalairachSupportLib_SRCS
   BndToVtk.cxx
 )
 
+set(MODULE_FOLDER "Module-BRAINSTalairach")
+
 add_library(BRAINSTalairachSupportLib STATIC ${BRAINSTalairachSupportLib_SRCS})
 target_link_libraries(BRAINSTalairachSupportLib BRAINSCommonLib ${VTK_LIBRARIES})
+set_target_properties(BRAINSTalairachSupportLib PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

@@ -11,6 +11,7 @@ set(Reference_BINARY_DIR ${BRAINSTools_BINARY_DIR}/ExternalData)
 
 add_executable(TestHashKey TestHashKey.cxx)
 target_link_libraries(TestHashKey BRAINSCutCOMMONLIB)
+set_target_properties(TestHashKey PROPERTIES FOLDER ${MODULE_FOLDER})
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TestHashKeyUnitTests
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:TestHashKey> )

@@ -7,6 +7,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
 target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES}
   ${VTK_LIBRARIES})
+set_target_properties(TestlandmarksConstellationTrainingDefinitionIO PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(ALL_TEST_PROGS
   BRAINSAlignMSP
@@ -39,6 +40,7 @@ endforeach()
 ##
 # add_executable(BRAINSClipInferiorTest BRAINSClipInferiorTest.cxx)
 # target_link_libraries(BRAINSClipInferiorTest BRAINSClipInferiorCOMMONLIB)
+# set_target_properties(BRAINSClipInferiorTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ## Test Versor,  This does not currently have a formal test, so disable building it.
@@ -47,6 +49,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fix
 set (VersorTester_source VersorTester.cxx)
 add_executable(VersorTester ${VersorTester_source})
 target_link_libraries(VersorTester ${BRAINSConstellationDetector_ITK_LIBRARIES})
+set_target_properties(VersorTester PROPERTIES FOLDER ${MODULE_FOLDER})
 endif()
 
 # We want to fetch some data, but we do not want to use them explicity as an argument in

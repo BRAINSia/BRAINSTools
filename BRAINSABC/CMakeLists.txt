@@ -36,6 +36,9 @@ FindITKUtil(BRAINSABC_ITK
 #
 
 ###
+
+set(MODULE_FOLDER "Module-BRAINSABC")
+
 add_subdirectory(brainseg)
 
 if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)

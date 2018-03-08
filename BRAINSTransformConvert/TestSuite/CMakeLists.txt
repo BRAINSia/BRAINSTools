@@ -4,9 +4,11 @@
 add_executable(BRAINSTransformConvertMakeTestFiles
   BRAINSTransformConvertMakeTestFiles.cxx)
 target_link_libraries(BRAINSTransformConvertMakeTestFiles BRAINSCommonLib ${BRAINSTransformConvert_ITK_LIBRARIES})
+set_target_properties(BRAINSTransformConvertMakeTestFiles PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(ImageCompare ImageCompare.cxx)
 target_link_libraries(ImageCompare BRAINSCommonLib ${BRAINSTransformConvert_ITK_LIBRARIES})
+set_target_properties(ImageCompare PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set_target_properties(BRAINSTransformConvertMakeTestFiles
   ImageCompare

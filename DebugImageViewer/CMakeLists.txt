@@ -35,6 +35,9 @@ set(EXE_SRCS
   ${MOCSrc}
 )
 
+set(MODULE_FOLDER "Module-DebugImageViewer")
+
+###
 add_executable(DebugImageViewer
   ${EXE_SRCS}
 )
@@ -44,6 +47,9 @@ target_link_libraries(DebugImageViewer
   ${VTK_LIBRARIES}
   ${QT_LIBRARIES})
 
+set_target_properties(DebugImageViewer PROPERTIES FOLDER ${MODULE_FOLDER})
+
+###
 add_executable(DebugImageViewerClientTest DebugImageViewerClientTest.cxx )
 
 target_link_libraries(DebugImageViewerClientTest
@@ -51,6 +57,9 @@ ${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
 
+set_target_properties(DebugImageViewerClientTest PROPERTIES FOLDER ${MODULE_FOLDER})
+
+###
 add_executable(DebugImageViewerClientTest2 DebugImageViewerClientTest2.cxx )
 
 target_link_libraries(DebugImageViewerClientTest2
@@ -58,9 +67,14 @@ ${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
 
+set_target_properties(DebugImageViewerClientTest2 PROPERTIES FOLDER ${MODULE_FOLDER})
+
+###
 add_executable(DebugImageViewerVectorClientTest DebugImageViewerVectorClientTest.cxx
 )
 target_link_libraries(DebugImageViewerVectorClientTest
 ${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
+
+set_target_properties(DebugImageViewerVectorClientTest PROPERTIES FOLDER ${MODULE_FOLDER})

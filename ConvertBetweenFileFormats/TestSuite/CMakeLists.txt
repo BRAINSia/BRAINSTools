@@ -83,6 +83,7 @@ set_tests_properties(compare_nifti PROPERTIES DEPENDS ccvnt_from_nifti)
 
 add_executable(ImageCompareTests ImageCompareTests.cxx)
 target_link_libraries(ImageCompareTests ${ConvertBetweenFileFormats_ITK_LIBRARIES})
+set_target_properties(ImageCompareTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 if(VTK_FOUND)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_jpg_unsigned_int COMMAND

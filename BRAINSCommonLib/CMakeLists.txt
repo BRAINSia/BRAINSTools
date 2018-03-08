@@ -60,9 +60,12 @@ set(BRAINSCommonLib_SRCS
   DWIMetaDataDictionaryValidator.cxx
 )
 
+set(MODULE_FOLDER "Module-BRAINSCommon")
+
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
 target_link_libraries(BRAINSCommonLib ${BRAINSCommonLib_ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
+set_target_properties(BRAINSCommonLib PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

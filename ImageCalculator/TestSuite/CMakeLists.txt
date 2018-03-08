@@ -6,6 +6,7 @@ add_executable(ImageCalculatorTests
 target_link_libraries(ImageCalculatorTests ${ImageCalculator_ITK_LIBRARIES})
 set_target_properties(ImageCalculatorTests PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+set_target_properties(ImageCalculatorTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(IC_STATCMDS --statNPX --statMIN --statAVG --statMAX --statVAR --statSUM)
 set(IC_BIN "${CMAKE_CURRENT_BINARY_DIR}/testbin")

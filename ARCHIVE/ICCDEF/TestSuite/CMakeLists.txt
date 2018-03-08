@@ -5,7 +5,7 @@ MakeTestDriverFromSEMTool(AverageBrainGenerator AverageBrainGeneratorTest.cxx)
 MakeTestDriverFromSEMTool(iccdefRegistration_New iccdefRegistration_NewTest.cxx)
 
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test1_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test1_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
     DATA{${TestData_DIR}/iccdef_result1.nii.gz}
@@ -29,7 +29,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test1_nii
     --outputForwardDisplacementFieldVolume  ${CMAKE_CURRENT_BINARY_DIR}/test1/forwardDF.nii.gz
 )
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME  ValidateICCDEF_Test2_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME  ValidateICCDEF_Test2_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
     DATA{${TestData_DIR}/iccdef_result2.nii.gz}
@@ -52,7 +52,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME  ValidateICCDEF_Test2_nii
     --similarityWeight 5.0
 )
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test3_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test3_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${CMAKE_CURRENT_BINARY_DIR}/test1/forward/deformedMovingImage.nii.gz
@@ -77,7 +77,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test3_nii
 )
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test4_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test4_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${CMAKE_CURRENT_BINARY_DIR}/test4/HistogramReferenceFixedImage.nii.gz
@@ -104,7 +104,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test4_nii
 )
 endif() #HACK: This test needs to be fixed!
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test5_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test5_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${CMAKE_CURRENT_BINARY_DIR}/test5/forward/deformedMovingImage.nii.gz
@@ -130,7 +130,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test5_nii
 )
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test6_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test6_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${CMAKE_CURRENT_BINARY_DIR}/test6/backward/deformedFixedImage.nii.gz
@@ -215,5 +215,3 @@ add_test(NAME itkIterativeInverseDisplacementFieldFilterTest2 COMMAND $<TARGET_F
      ${UNIT_TEST_TEMP_DIR}/originalImage.nii.gz
      ${UNIT_TEST_TEMP_DIR}/inverse_test2.nii.gz
 )
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

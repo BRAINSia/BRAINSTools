@@ -27,5 +27,3 @@ set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 # Add module sub-directory if USE_<MODULENAME> is both defined and true
 #-----------------------------------------------------------------------------
 add_subdirectory(mexFiles)
-
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

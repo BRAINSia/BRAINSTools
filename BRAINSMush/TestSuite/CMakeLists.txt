@@ -3,7 +3,7 @@ MakeTestDriverFromSEMTool(BRAINSMush BRAINSMushTest.cxx)
 
 ##  Test goes here:
 set(BRAINSMushTestName BRAINSMushTest_MaskGiven)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSMushTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSMushTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSMushTestName}_MushResult_BrainMask.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest_BrainMask.nii.gz
@@ -20,7 +20,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
 )
 
 set(BRAINSMushTestName BRAINSMushTest_NoMaskGiven)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSMushTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSMushTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSMushTestName}_MushResult_BrainMask.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest_BrainMask.nii.gz
@@ -34,5 +34,3 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest.nii.gz
   --outputMask ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest_BrainMask.nii.gz
 )
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

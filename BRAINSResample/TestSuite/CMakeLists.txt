@@ -6,7 +6,7 @@
 MakeTestDriverFromSEMTool(BRAINSResample BRAINSResampleTest.cxx)
 
 ## Should provide exactly the same result as BRAINSFitTest_AffineRotationMasks
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest4_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
   DATA{${TestData_DIR}/BRAINSFitTest_AffineRotationMasks.result.nii.gz}
@@ -23,10 +23,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4
   )
 
 ## Should provide exactly the same result as BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp
-#NOTE:  need --ignoreInputInformation because the ResampleInPlace can cause
-#       minor numerical differences in the origin/spaceing/directioncos
-#       that are compariable to the reference data set
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest7_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
   DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp.result.nii.gz}
@@ -34,6 +31,9 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7
   --compareIntensityTolerance 30
   --compareRadiusTolerance 5
   --compareNumberOfPixelsTolerance 1
+#NOTE:  need --ignoreInputInformation because the ResampleInPlace can cause
+#       minor numerical differences in the origin/spaceing/directioncos
+#       that are compariable to the reference data set
   --ignoreInputInformation
   BRAINSResampleTest
   --interpolationMode ResampleInPlace
@@ -45,7 +45,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7
   )
 
 ## Should provide exactly the same result as BRAINSFit BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks test
-# ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest5_nii
+# ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest5_nii
 #   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
 #   --compare
 #   DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.result.nii.gz}
@@ -61,7 +61,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7
 #   --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
 #   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest6_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
   DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasks.result.nii.gz}
@@ -79,7 +79,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6
   )
 
 # BSplineDeformableTransform is deprecated.
-# ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7_nii
+# ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest7_nii
 #   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
 #   --compare
 #   DATA{${TestData_DIR}/ValidateBRAINSResampleTest7.result.nii.gz}
@@ -96,7 +96,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6
 #   --warpTransform DATA{${TestData_DIR}/Transforms_h5/applyWarp_BSpline.${XFRM_EXT}}
 #   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest1_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest1_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
   DATA{${TestData_DIR}/applyWarp1.nii.gz}
@@ -110,7 +110,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest1
   --deformationVolume DATA{${TestData_DIR}/OutDefField.nii.gz}
   --pixelType short --interpolationMode NearestNeighbor
   )
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest2_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest2_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
   DATA{${TestData_DIR}/applyWarp2.nii.gz}
@@ -125,7 +125,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest2
   --interpolationMode BSpline --pixelType float
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest3_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest3_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare
   DATA{${TestData_DIR}/orientedImagesDemons_test.nii.gz}
@@ -140,7 +140,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest3
   )
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleInvertTest
+  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleInvertTest
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
     --compare
     DATA{${TestData_DIR}/BRAINSResampleTest_Invert.output.nii.gz}
@@ -163,7 +163,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
 # I think this test is failing because the displacement field is and
 # "itkImage" rather than a "itkTransform that stores and itkImage"
 set(BRAINSResampleTestName BRAINSResampleTest_H5CompositeTransform)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSResampleTestName}
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSResampleTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
   --compare DATA{${TestData_DIR}/test.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
@@ -178,5 +178,3 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSResampleTestName}
   --warpTransform DATA{${TestData_DIR}/Transforms_h5/syn.benchmark.transform.h5}
   )
 endif()
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

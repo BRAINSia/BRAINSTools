@@ -34,7 +34,7 @@ macro(DownloadAndInstallRules UNIQUE_TARGET_NAME GLOBPAT INSTDEST)
   foreach(CurrentMD5Reference ${AtlasImageFilesMD5Names})
     get_filename_component(ThisImageVarName ${CurrentMD5Reference} NAME)
     string(REPLACE  ".md5" "" CurrentOutFile ${CurrentMD5Reference})
-    ExternalData_expand_arguments(${PROJECT_NAME}FetchData ${ThisImageVarName}_VAR DATA{${CurrentOutFile}})
+    ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} ${ThisImageVarName}_VAR DATA{${CurrentOutFile}})
     get_filename_component(${ThisImageVarName}_VAR_REALPATH ${${ThisImageVarName}_VAR} REALPATH)
     get_filename_component(${ThisImageVarName}_VAR_BASENAME ${${ThisImageVarName}_VAR} NAME)
 
@@ -74,5 +74,3 @@ add_custom_target(InstallReferenceAtlas
                   DEPENDS AtlasNIFTI AtlasNRRD AtlasTxt AtlasCtbl AtlasFcsv AtlasCsv AtlasModels AtlasProb AtlasSpatial
                           AtlasSurface AtlasBCD AtlasT1Only)
 set_target_properties(InstallReferenceAtlas PROPERTIES FOLDER ${MODULE_FOLDER})
-
-ExternalData_add_target( ${PROJECT_NAME}FetchData )  # Name of data management target

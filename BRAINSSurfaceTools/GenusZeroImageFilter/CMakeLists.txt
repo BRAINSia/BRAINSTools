@@ -30,10 +30,10 @@ if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   set(TESTBIN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
   set(G0TestName TEST_GenusZeroImageFilter)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${G0TestName} COMMAND ${TESTBIN}/GenusZeroImageFilter --inputVolume DATA{${TestData_DIR}/0036195-T1T2_leftTissueClass.nii.gz} --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${G0TestName}.nii.gz --connectivity 6 --biggestComponent --connectedComponent )
+  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${G0TestName} COMMAND ${TESTBIN}/GenusZeroImageFilter --inputVolume DATA{${TestData_DIR}/0036195-T1T2_leftTissueClass.nii.gz} --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${G0TestName}.nii.gz --connectivity 6 --biggestComponent --connectedComponent )
 
   set(G0CompareTestName COMPARE_GenusZeroImageFilter)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${G0CompareTestName} COMMAND ${TESTBIN}/ImageCompare ${CMAKE_CURRENT_BINARY_DIR}/${G0TestName}.nii.gz DATA{${TestData_DIR}/0036195-T1T2_leftTissueClass_genus0.nii.gz} )
+  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${G0CompareTestName} COMMAND ${TESTBIN}/ImageCompare ${CMAKE_CURRENT_BINARY_DIR}/${G0TestName}.nii.gz DATA{${TestData_DIR}/0036195-T1T2_leftTissueClass_genus0.nii.gz} )
 
   set_tests_properties( ${G0CompareTestName} PROPERTIES DEPENDS ${G0TestName} )
 

@@ -63,7 +63,7 @@ foreach( curr_tarball ${ALL_DICOM_TARBALLS} )
   get_filename_component(base_filename "${curr_tarball}" NAME)
   set(test_name Uncompress_${base_filename})
 
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${test_name}
+  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${test_name}
     WORKING_DIRECTORY ${DWIConvert_BINARY_DIR}
     COMMAND  ${CMAKE_COMMAND} -E tar xzf DATA{${curr_tarball}}
   )
@@ -150,7 +150,7 @@ add_test(NAME DWIConvertDWICompareHelpTest
   --help
   )
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxTest COMMAND ${CMAKE_COMMAND}
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertGeSignaHdxTest COMMAND ${CMAKE_COMMAND}
   -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
@@ -160,7 +160,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxTest CO
   )
 AddDataDependency(DWIConvertGeSignaHdxTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxFSLTest COMMAND ${CMAKE_COMMAND}
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertGeSignaHdxFSLTest COMMAND ${CMAKE_COMMAND}
   -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWISimpleCompare>
   -D TEST_TEXT_COMPARE=$<TARGET_FILE:FSLTextFileCompare>
@@ -229,7 +229,7 @@ set_property(TEST NrrdToFSLTest2
   APPEND PROPERTY DEPENDS FSLToNrrdTest)
 
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxBigEndianTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertGeSignaHdxBigEndianTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
@@ -239,7 +239,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxBigEndi
   )
 AddDataDependency(DWIConvertGeSignaHdxBigEndianTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxBMatrixTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertGeSignaHdxBMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
@@ -250,7 +250,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxBMatrix
   )
 AddDataDependency(DWIConvertGeSignaHdxBMatrixTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertGeSignaHdxtTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDxt.nrrd}
@@ -260,7 +260,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtTest
   )
 AddDataDependency(DWIConvertGeSignaHdxtTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtBMatrixTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertGeSignaHdxtBMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDxt.nrrd}
@@ -271,7 +271,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtBMatri
   )
 AddDataDependency(DWIConvertGeSignaHdxtBMatrixTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchievaTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
@@ -281,7 +281,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaTes
   )
 AddDataDependency(DWIConvertPhilipsAchievaTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBigEndianTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchievaBigEndianTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
@@ -291,7 +291,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBig
   )
 AddDataDependency(DWIConvertPhilipsAchievaBigEndianTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBMatrixTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchievaBMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
@@ -303,7 +303,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBMa
 AddDataDependency(DWIConvertPhilipsAchievaBMatrixTest)
 set_tests_properties(DWIConvertPhilipsAchievaBMatrixTest PROPERTIES DEPENDS DWIConvertPhilipsAchievaTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchieva2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva2.nrrd}
@@ -313,7 +313,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2Te
   )
 AddDataDependency(DWIConvertPhilipsAchieva2Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2BMatrixTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchieva2BMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva2.nrrd}
@@ -325,7 +325,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2BM
 AddDataDependency(DWIConvertPhilipsAchieva2BMatrixTest)
 set_tests_properties(DWIConvertPhilipsAchieva2BMatrixTest PROPERTIES DEPENDS DWIConvertPhilipsAchieva2Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva3Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchieva3Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva3.nrrd}
@@ -335,7 +335,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva3Te
   )
 AddDataDependency(DWIConvertPhilipsAchieva3Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva4Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchieva4Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva4.nrrd}
@@ -345,7 +345,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva4Te
   )
 AddDataDependency(DWIConvertPhilipsAchieva4Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva6Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchieva6Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva6.nrrd}
@@ -355,7 +355,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva6Te
   )
 AddDataDependency(DWIConvertPhilipsAchieva6Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva7Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertPhilipsAchieva7Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva7.nrrd}
@@ -365,7 +365,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva7Te
   )
 AddDataDependency(DWIConvertPhilipsAchieva7Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTimTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrioTimTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim1.nrrd}
@@ -376,7 +376,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTimTes
   )
 AddDataDependency(DWIConvertSiemensTrioTimTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTimBigEndian1Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrioTimBigEndian1Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim1.nrrd}
@@ -387,7 +387,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTimBig
   )
 AddDataDependency(DWIConvertSiemensTrioTimBigEndian1Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTim2Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrioTim2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim2.nrrd}
@@ -398,7 +398,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTim2Te
   )
 AddDataDependency(DWIConvertSiemensTrioTim2Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTim3Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrioTim3Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim3.nrrd}
@@ -409,7 +409,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTim3Te
   )
 AddDataDependency(DWIConvertSiemensTrioTim3Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensVerioTest
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensVerioTest
   COMMAND ${CMAKE_COMMAND}
   -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
@@ -421,7 +421,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensVerioTest
   )
 AddDataDependency(DWIConvertSiemensVerioTest)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo2004A_1Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrio_Syngo2004A_1Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
@@ -431,7 +431,7 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
   )
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_1Test)
 
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo2004A_2Test
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrio_Syngo2004A_2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-2.nrrd}
@@ -442,8 +442,8 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
 # multi-shell FSL data for 640M big file
-# the blank space between "ExternalData_Add_Test( " and "${PROJECT_NAME}FetchData  NAME" below is critical.
-#[[ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITest
+# the blank space between "ExternalData_Add_Test( " and "${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME" below is critical.
+#[[ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME  DWIConvertMultiShellFSITest
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITest.nii.gz
@@ -459,7 +459,7 @@ AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 AddDataDependency(DWIConvertMultiShellFSITest)]]
 
 # add a cest case supporting thicknes and zSpace of Dicom file are different on Feb 28th, 2017
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  SpaceThicknessDiffDicom
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME  SpaceThicknessDiffDicom
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTDICOMDIRECTORY=${DWIConvert_BINARY_DIR}/SpaceThicknessDiffDicom/
@@ -471,7 +471,7 @@ AddDataDependency(SpaceThicknessDiffDicom)
 
 
 # multishell data test for small size file
-ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITestSmallSize
+ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME  DWIConvertMultiShellFSITestSmallSize
         COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
         -D INPUTVOLUME=${DWIConvert_BINARY_DIR}/DWIConvertMultiShellFSITestSmallSize.nii.gz
@@ -485,5 +485,3 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData  NAME  DWIConvertMultiShellFSITe
         -P ${CMAKE_CURRENT_LIST_DIR}/FSLMultiShellDataTest.cmake
         )
 AddDataDependency(DWIConvertMultiShellFSITestSmallSize)
-
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

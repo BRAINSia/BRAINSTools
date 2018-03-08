@@ -19,6 +19,8 @@ FindITKUtil(BRAINSTransformConvert_ITK
 # Output directories.
 #
 
+set(MODULE_FOLDER "Module-BRAINSTransformConvert")
+
 set(ALL_PROGS_LIST
   BRAINSTransformConvert
 )

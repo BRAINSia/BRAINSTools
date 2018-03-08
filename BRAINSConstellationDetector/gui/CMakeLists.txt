@@ -49,6 +49,7 @@ add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
   ${BRAINSConstellationDetectorGUI_SRC}
   ${HEADERS_MOC}
   )
+set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

@@ -14,6 +14,7 @@ FindITKUtil( BRAINSCut_TestSuite_ITK
 # Below Commented out by Regina
 #add_executable(testRandomForest testRandomForest.cxx)
 #target_link_libraries(testRandomForest ${BRAINSCut_TestSuite_ITK_LIBRARIES} ${OpenCV_LIBRARIES})
+#set_target_properties(testRandomForest PROPERTIES FOLDER ${MODULE_FOLDER})
 #
 #ExternalData_add_test( ${PROJECT_NAME}FetchData NAME OpenCVRandomForestTest
 #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:testRandomForest>
@@ -23,6 +24,7 @@ FindITKUtil( BRAINSCut_TestSuite_ITK
 
 add_executable(compareBinaryTest compareBinaryTest.cxx)
 target_link_libraries(compareBinaryTest ${BRAINSCut_TestSuite_ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+set_target_properties(compareBinaryTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 # compare caudate
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData BRAINSCutcaudate_left_scan3_baseline

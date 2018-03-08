@@ -19,6 +19,7 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ${CLP}Lib ${LIBICONV_LIBRARIES})
 
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
+set_target_properties(${CLP}Test PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #-----------------------------------------------------------------------------
 # Testing

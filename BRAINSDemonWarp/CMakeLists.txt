@@ -56,7 +56,10 @@ set(BRAINSDemonWarpTemplatesLIB_SRCS
          BRAINSDemonWarpTemplates.cxx
 )
 
+set(MODULE_FOLDER "Module-BRAINSDemonWarp")
+
 add_library(BRAINSDemonWarpTemplatesLIB STATIC ${BRAINSDemonWarpTemplatesLIB_SRCS})
+set_target_properties(BRAINSDemonWarpTemplatesLIB PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(BRAINSDemonWarpTemplatesLIBLibraries BRAINSCommonLib)
 DebugImageViewerLibAdditions(BRAINSDemonWarpTemplatesLIBLibraries)

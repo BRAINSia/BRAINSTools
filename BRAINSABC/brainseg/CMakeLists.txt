@@ -30,6 +30,7 @@ add_library(BRAINSABCCOMMONLIB STATIC ${BRAINSABCCOMMONLIB_SRCS})
 add_dependencies(BRAINSABCCOMMONLIB InstallReferenceAtlas )
 set_property(TARGET BRAINSABCCOMMONLIB PROPERTY CXX_STANDARD 11)
 set_property(TARGET BRAINSABCCOMMONLIB PROPERTY CXX_STANDARD_REQUIRED ON)
+set_target_properties(BRAINSABCCOMMONLIB PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(BABC_CXX11_Required_Features
       cxx_lambdas
@@ -76,4 +77,5 @@ if(0)
   ## A utility program
   add_executable(StandardizeMaskIntensity StandardizeMaskIntensity.cxx)
   target_link_libraries(StandardizeMaskIntensity ${BRAINSABC_ITK_LIBRARIES})
+  set_target_properties(StandardizeMaskIntensity PROPERTIES FOLDER ${MODULE_FOLDER})
 endif()

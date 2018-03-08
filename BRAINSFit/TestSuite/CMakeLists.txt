@@ -7,12 +7,15 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   if(MakeMakeXfrmImage)
     add_executable(makexfrmedImage makexfrmedImage.cxx)
     target_link_libraries(makexfrmedImage ${BRAINSFit_ITK_LIBRARIES})
+    set_target_properties(makexfrmedImage PROPERTIES FOLDER ${MODULE_FOLDER})
   endif()
 endif()
 
 
 # Test the CenterOfROI Test
 add_executable(CenterOfROIInitTest CenterOfROIInitTest.cxx )
+set_target_properties(CenterOfROIInitTest PROPERTIES FOLDER ${MODULE_FOLDER})
+
 set(CenterOfROIInitTestLibraries BRAINSCommonLib ${BRAINSFit_ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
 
 DebugImageViewerLibAdditions(CenterOfROIInitTestLibraries)

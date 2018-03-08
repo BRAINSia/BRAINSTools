@@ -40,6 +40,8 @@ message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
 find_package( OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+set(MODULE_FOLDER "Module-BRAINSCut")
+
 ###
 add_subdirectory(BRAINSFeatureCreators)
 
@@ -72,6 +74,8 @@ set(BRAINSCutCOMMONLIB_SRCS
 ## Build BRAINSCutCOMMONLIB library
 ##
 add_library(BRAINSCutCOMMONLIB STATIC ${BRAINSCutCOMMONLIB_SRCS})
+set_target_properties(BRAINSCutCOMMONLIB PROPERTIES FOLDER ${MODULE_FOLDER})
+
 #message(STATUS "${OpenCV_LIBS}")      ## Recent versions of OpenCV changed CMake variable name.
 #message(STATUS "${OpenCV_LIBRARIES}")
 target_link_libraries(BRAINSCutCOMMONLIB
@@ -106,6 +110,7 @@ endforeach()
 add_subdirectory(cnpy) ## https://github.com/rogersce/cnpy Read/write numpy formatted arrays.
 add_executable(ImageFeatureExtractor ImageFeatureExtractor.cpp)
 target_link_libraries(ImageFeatureExtractor BRAINSCommonLib cnpy)
+set_target_properties(ImageFeatureExtractor PROPERTIES FOLDER ${MODULE_FOLDER})
 
 if(1) ## HACK Regina many tests are failing and needs investigation,
       ## HACK Regina some tests are segmentation faulting

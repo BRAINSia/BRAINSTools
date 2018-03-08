@@ -168,6 +168,7 @@ itkIterativeInverseDisplacementFieldFilterTest2.cxx
 
 add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
 target_link_libraries(UnitTests ${ICCDEF_ITK_LIBRARIES} )
+set_target_properties(UnitTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #add_test(NAME itkVectorFFTWTest COMMAND $<TARGET_FILE:UnitTests>
 #   --compare ${CMAKE_CURRENT_BINARY_DIR}/transformedImage.nii.gz
@@ -182,6 +183,7 @@ target_link_libraries(UnitTests ${ICCDEF_ITK_LIBRARIES} )
 #target_link_libraries(UnitTests
 #    ${ICCDEF_ITK_LIBRARIES}
 #)
+#set_target_properties(UnitTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(UNIT_TEST_TEMP_DIR ${CMAKE_CURRENT_BINARY_DIR})
 

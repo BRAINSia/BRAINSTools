@@ -12,7 +12,7 @@ set(IC_STATCMDS --statNPX --statMIN --statAVG --statMAX --statVAR --statSUM)
 set(IC_BIN "${CMAKE_CURRENT_BINARY_DIR}/testbin")
 set(IC_OUT --out "${IC_BIN}/Test.png")
 #Test to show arithmetic operation and printing the statistics.
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DTest1 COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator2DTest1 COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
      "${IC_BIN}/ImageCalculator2DTest1.png"
      "DATA{${TestData_DIR}/AllHundreds.png}"
@@ -24,7 +24,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DTest1 COMMA
      -d 2 ${IC_STATCMDS}  )
 
 #Test gaussian filtering on input and output
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DGaussianTest COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator2DGaussianTest COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
      "${IC_BIN}/ImageCalculator2DGaussianTest.png"
      "DATA{${TestData_DIR}/GaussianIOFilteringTest.png}"
@@ -37,7 +37,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DGaussianTes
 #Test for more than 2 images different data types for Input image and output image
 #
 # Test add
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DTest2 COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator2DTest2 COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalculator2DTest2.png"
       "DATA{${TestData_DIR}/AllFiveHundreds.png}"
@@ -53,7 +53,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DTest2 COMMA
 
 #
 # Test SUB
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DTest3 COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator2DTest3 COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalculator2DTest3.png"
       "DATA{${TestData_DIR}/AllZeroes.png}"
@@ -65,7 +65,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DTest3 COMMA
       -d 2 ${IC_STATCMDS}  )
 #
 # Test histogram equalization on inputs before making the difference image
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DHisteqTest COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator2DHisteqTest COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
      "${IC_BIN}/ImageCalculator2DHisteqTest.png"
      "DATA{${TestData_DIR}/histeq2D.png}"
@@ -78,7 +78,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator2DHisteqTest 
 
 #
 # Test Mult
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DMult COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DMult COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc2DMult.png"
       "DATA{${TestData_DIR}/AllHundreds.png}"
@@ -90,7 +90,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DMult COMMAND $<TA
       -d 2 ${IC_STATCMDS}  )
 #
 # Test Mult
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DDiv COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DDiv COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc2DDiv.png"
       "DATA{${TestData_DIR}/AllTens.png}"
@@ -103,7 +103,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DDiv COMMAND $<TAR
 
 #
 # Test Avg
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DAvg COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DAvg COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc2DAvg.png"
       "DATA{${TestData_DIR}/AllFifties.png}"
@@ -117,7 +117,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DAvg COMMAND $<TAR
 
 #
 # Test Input Square
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestSquare COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DTestSquare COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc2DTestSquare.png"
       "DATA{${TestData_DIR}/AllHundreds.png}"
@@ -129,7 +129,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestSquare COMMAN
       -d 2 ${IC_STATCMDS}  )
 #
 # Test Input Square Root
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestSquareRoot COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DTestSquareRoot COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc2DTestSquareRoot.png"
       "DATA{${TestData_DIR}/AllTens.png}"
@@ -143,7 +143,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestSquareRoot CO
 # Test for 3d Images and division
 #
 # test Divide
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator3DTest1 COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator3DTest1 COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalculator3DTest1.hdr"
       "DATA{${TestData_DIR}/AllTwos.hdr,AllTwos.img}"
@@ -156,7 +156,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalculator3DTest1 COMMA
 
 #A simple scalar multiplcation test
 # test multiply
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestOMult COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc3DTestOMult COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc3DTestOMult.hdr"
       "DATA{${TestData_DIR}/TwoHundred.hdr,TwoHundred.img}"
@@ -168,7 +168,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestOMult COMMAND
 
 #A simple scalar multiplcation test
 # test multiply
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestIMult COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc3DTestIMult COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc3DTestIMult.hdr"
       "DATA{${TestData_DIR}/TwoHundred.hdr,TwoHundred.img}"
@@ -180,7 +180,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestIMult COMMAND
 
 #A simple scalar division test
 # test
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestODiv COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc3DTestODiv COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc3DTestODiv.hdr"
       "DATA{${TestData_DIR}/Hundred.hdr,Hundred.img}"
@@ -192,7 +192,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestODiv COMMAND 
 
 #A simple scalar divide test
 # test diviply
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestIDiv COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc3DTestIDiv COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc3DTestIDiv.hdr"
       "DATA{${TestData_DIR}/Hundred.hdr,Hundred.img}"
@@ -204,7 +204,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc3DTestIDiv COMMAND 
 
 #A simple scalar addition test
 # test
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestIAdd COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DTestIAdd COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       ${IC_BIN}/ImageCalculator3DTest1.png
       "DATA{${TestData_DIR}/AllHundreds.png}"
@@ -213,7 +213,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestIAdd COMMAND 
       --intype UCHAR --outtype UCHAR
       --out ${IC_BIN}/ImageCalculator3DTest1.png
       -d 2 ${IC_STATCMDS} --ifaddc 50 )
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ImageCalc2DTestOAdd COMMAND $<TARGET_FILE:ImageCalculatorTests>
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalc2DTestOAdd COMMAND $<TARGET_FILE:ImageCalculatorTests>
   --compare
       "${IC_BIN}/ImageCalc2DTestOAdd.png"
       "DATA{${TestData_DIR}/AllHundreds.png}"

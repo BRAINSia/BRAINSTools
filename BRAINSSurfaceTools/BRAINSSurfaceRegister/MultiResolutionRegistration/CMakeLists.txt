@@ -3,7 +3,7 @@ StandardBRAINSBuildMacro(NAME MultiResolutionRegistration TARGET_LIBRARIES BRAIN
 if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceMultiResRegistration1
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME TEST_SurfaceMultiResRegistration1
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:MultiResolutionRegistration>
           --fixedMeshFileList DATA{${TestData_DIR}/0036195_left_sphereIC4.vtk}
           --fixedMeshFileList DATA{${TestData_DIR}/0036195_left_sphereIC5.vtk}
@@ -23,7 +23,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceMultiResRegistra
           --deformedFileName deformed0036195_test.vtk
           --deformationFieldFileName deformationFieldOn0036195_test.vtk )
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceMultiResRegistration1
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME COMPARE_SurfaceMultiResRegistration1
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile deformed0036195_test.vtk
           --refSurfaceFile DATA{${TestData_DIR}/deformed0036195.vtk}
@@ -31,7 +31,5 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceMultiResRegis
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceMultiResRegistration1 PROPERTIES DEPENDS TEST_SurfaceMultiResRegistration1 )
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 
 endif ()

@@ -247,5 +247,8 @@ if(USE_ITKMatlabIO)
   add_subdirectory(ITKMatlabIO)
 endif()
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 include(${CMAKE_CURRENT_LIST_DIR}/cpack_brainstools.cmake)
+# Name of data management target
+if(${CMAKE_PROJECT_NAME} STREQUAL "BRAINSTools")
+  ExternalData_Add_Target( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} )
+endif()

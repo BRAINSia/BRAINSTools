@@ -3,7 +3,7 @@ StandardBRAINSBuildMacro(NAME AverageScalarsByResampling TARGET_LIBRARIES BRAINS
 
 if (BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceAverageScalarsByResampling
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME TEST_SurfaceAverageScalarsByResampling
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:AverageScalarsByResampling>
           --templateSurfaceWithAverageScalars AverageHullOn0036195Test.vtk
           --sphereWithScalarsList DATA{${TestData_DIR}/0036896_left_sphereIC6.vtk}
@@ -12,7 +12,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceAverageScalarsBy
           --templateSurfaceFile DATA{${TestData_DIR}/0036195_left_sphere.vtk}
           --numSubs 1 )
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceAverageScalarsByResampling
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME COMPARE_SurfaceAverageScalarsByResampling
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile AverageHullOn0036195Test.vtk
           --refSurfaceFile DATA{${TestData_DIR}/AverageHullOn0036195.vtk}
@@ -21,7 +21,5 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceAverageScalar
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceAverageScalarsByResampling PROPERTIES DEPENDS TEST_SurfaceAverageScalarsByResampling )
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 
 endif ()

@@ -1,7 +1,7 @@
 
 MakeTestDriverFromSEMTool(BRAINSROIAuto BRAINSROIAutoTest.cxx)
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSROIAutoTest_GenerateBrain_seg
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSROIAutoTest_GenerateBrain_seg
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSROIAutoTestDriver>
   --compare DATA{${TestData_DIR}/BRAINSROIAutoTest_GenerateBrainMask.result.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSROIAutoTest_GenerateBrain_seg.nii.gz
@@ -14,5 +14,3 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSROIAutoTest_GenerateB
   --cropOutput
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/BRAINSROIAutoTest_GenerateBrain_clipped_cropped.nii.gz
   )
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

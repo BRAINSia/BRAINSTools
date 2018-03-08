@@ -39,19 +39,19 @@ ExternalData_add_test(FindCenterOfBrainFetchData
   ## No arguments
   )
 
-ExternalData_add_test(FindCenterOfBrainFetchData
+ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME PrettyPrintTableTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>
   ## No arguments
   )
 
-ExternalData_add_test(FindCenterOfBrainFetchData
+ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME Slicer3LandmarkIOExceptionTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Slicer3LandmarkIOExceptionTest>
   ## No arguments
   )
 
-ExternalData_add_test(FindCenterOfBrainFetchData
+ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME FindCenterOfBrainTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:FindCenterOfBrain>
   --inputVolume DATA{${TestData_DIR}/BRAINSEyeDetectorTest_T1_standard.nii.gz}
@@ -79,7 +79,7 @@ ExternalData_expand_arguments(FindCenterOfBrainFetchData
   FindCenterTrimmedImage DATA{${TestData_DIR}/FindCenter/FindCenterTrimmedImage.nii.gz})
 
 set(MetaDataValidatorTestName DWIMetaDataDictionaryValidatorTest)
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${MetaDataValidatorTestName}
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${MetaDataValidatorTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:DWIMetaDataDictionaryValidatorTests>
     --compare DATA{${TestData_DIR}/DWI_TestData_OUTPUTS/PhilipsAchieva2.nrrd}
               ${CMAKE_CURRENT_BINARY_DIR}/outputSameAsRefVolume.nrrd
@@ -92,10 +92,8 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${MetaDataValidatorTestName}
   ${CMAKE_CURRENT_BINARY_DIR}/outputSameAsRefVolume.nrrd
 )
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )
-
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-ExternalData_add_test(FindCenterOfBrainFetchData
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME FindCenterOfBrainOutputTest
   COMMAND $<TARGET_FILE:ImageCompare>
   ${CMAKE_CURRENT_BINARY_DIR}/FindCenterDistanceImage.nii.gz
@@ -115,10 +113,9 @@ set_property(TEST FindCenterOfBrainOutputTest APPEND PROPERTY DEPENDS
 
 ## HACK: TODO: Make this test do something meaningful.
 ## HACK: DAVID: This test is failing, but needs to have valid data added so that it will pass
-ExternalData_add_test(FindCenterOfBrainFetchData
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME itkResampleInPlaceImageFilterTest
   COMMAND $<TARGET_FILE:itkResampleInPlaceImageFilterTest>
     itkResampleInPlaceImageFilterTest input1 transform1 checkresult
 )
 endif()
-ExternalData_add_target(FindCenterOfBrainFetchData)

@@ -9,7 +9,7 @@ MakeTestDriverFromSEMTool(VBRAINSDemonWarp VBRAINSDemonWarpTest.cxx)
 
 
 #1
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSDemonsWarpTest_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSDemonsWarpTest_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/thirionDemons.nii.gz}
@@ -31,7 +31,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSDemonsWarpTes
   )
 
 #2
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateFastSymmetricForcesTest_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateFastSymmetricForcesTest_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/fastSymmetricForcesDemons.nii.gz}
@@ -55,7 +55,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateFastSymmetricForces
   )
 
 #3
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateDiffeomorphicTest1_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons1.nii.gz}
@@ -82,7 +82,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
   --registrationFilterType Diffeomorphic
   )
 #4
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest2_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateDiffeomorphicTest2_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons2.nii.gz}
@@ -111,7 +111,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest2_
   )
 
 #5
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest3_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateDiffeomorphicTest3_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons3.nii.gz}
@@ -142,7 +142,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest3_
   )
 
 #6
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest4_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateDiffeomorphicTest4_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons4.nii.gz}
@@ -168,7 +168,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest4_
   )
 
 ### Need to add more test to get better code coverage of this test suite.  Need to make sure that all the command line options are tested.
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateOrientedImagesTest5_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateOrientedImagesTest5_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/ValidateOrientedImagesTest5.nii.gz}
@@ -189,7 +189,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateOrientedImagesTest5
   --registrationFilterType Diffeomorphic
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorBRAINSDemonWarpTest_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorBRAINSDemonWarpTest_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/thirionDemons.nii.gz}
@@ -211,7 +211,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorBRAINSDemonWa
   )
 
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorFastSymmetricForcesTest_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorFastSymmetricForcesTest_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/fastSymmetricForcesDemons.nii.gz}
@@ -234,7 +234,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorFastSymmetric
   --registrationFilterType FastSymmetricForces
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest1_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorDiffeomorphicTest1_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons1.nii.gz}
@@ -264,7 +264,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   )
 
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest2_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorDiffeomorphicTest2_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons2.nii.gz}
@@ -292,7 +292,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --registrationFilterType Diffeomorphic
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest3_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorDiffeomorphicTest3_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons3.nii.gz}
@@ -325,7 +325,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   )
 
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest4_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorDiffeomorphicTest4_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons4.nii.gz}
@@ -353,7 +353,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --outputDisplacementFieldPrefix ${CMAKE_CURRENT_BINARY_DIR}/displacement.nii.gz
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest5_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorDiffeomorphicTest5_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons5.nii.gz}
@@ -384,7 +384,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --registrationFilterType Diffeomorphic
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest6_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorDiffeomorphicTest6_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons3.nii.gz}
@@ -416,7 +416,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
 
 
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImagesTest6_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorOrientedImagesTest6_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/ValidateVectorOrientedImagesTest6.nii.gz}
@@ -438,7 +438,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
   --registrationFilterType Diffeomorphic
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImagesTest7_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateVectorOrientedImagesTest7_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/ValidateVectorOrientedImagesTest7.nii.gz}
@@ -461,7 +461,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
   --registrationFilterType Diffeomorphic
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithAUTOMask_Test_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateDiffeomorphicWithAUTOMask_Test_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons_AutoMask.nii.gz}
@@ -488,7 +488,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithAU
   --registrationFilterType Diffeomorphic
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithMask_Test_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateDiffeomorphicWithMask_Test_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemonsWithMask.nii.gz}
@@ -520,7 +520,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithMa
 #Test for initial Transform
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
 # TODO # I think this test is failing because the reference data is wrong.
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateInitialTransform_Test_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateInitialTransform_Test_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/ValidateInitialTransform_Test.nii.gz}
@@ -547,7 +547,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fix
 # TODO Determine if this is even a valid test any longer
 # These do not work, and appear to have never worked
 #Test for Log Domain
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateLogDemons_Test_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateLogDemons_Test_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/logDemons.nii.gz}
@@ -570,7 +570,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateLogDemons_Test_nii
   --registrationFilterType LogDemons
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_Test1_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateSymmetricLogDemons_Test1_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/symmetricLogDemons1.nii.gz}
@@ -593,7 +593,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
   --registrationFilterType SymmetricLogDemons
   )
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_Test2_nii
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateSymmetricLogDemons_Test2_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
   DATA{${TestData_DIR}/symmetricLogDemons2.nii.gz}
@@ -617,5 +617,3 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
   --registrationFilterType SymmetricLogDemons
   )
 endif()  # Commend out the LogDemons tests.
-
-## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

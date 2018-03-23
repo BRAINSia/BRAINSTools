@@ -40,11 +40,7 @@ void DWIConverter::ConvertToSingleBValueScaledDiffusionVectors()
     for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
     {
       vnl_vector_fixed<double,3> vec(0.0);
-      float scaleFactor = 0;
-      if( maxBvalue > 0 )
-      {
-        scaleFactor = sqrt( this->m_BValues[k] / maxBvalue );
-      }
+      const float scaleFactor = ( maxBvalue > 0 ) ?  ( sqrt( this->m_BValues[k] / maxBvalue ) ): 0.0F;
       std::cout << "Scale Factor for Multiple BValues: " << k
                 << " -- sqrt( " << this->m_BValues[k] << " / " << maxBvalue << " ) = "
                 << scaleFactor << std::endl;

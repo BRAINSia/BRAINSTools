@@ -100,6 +100,7 @@ int DWIConvert::read()
     {
       FSLconverter->SetAllowLossyConversion(m_allowLossyConversion);
       FSLconverter->LoadFromDisk();
+      FSLconverter->SetThicknessFromSpacing(); // When converting from FSL, use thinkness as spacing[2]
       FSLconverter->ExtractDWIData();
     }
     catch( itk::ExceptionObject &excp)

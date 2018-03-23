@@ -131,6 +131,7 @@ public:
 
  SpacingType GetSpacing() const;
  double GetThickness() const;
+ void SetThicknessFromSpacing();
 
  Volume3DUnwrappedType::PointType GetOrigin() const;
  void SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin);

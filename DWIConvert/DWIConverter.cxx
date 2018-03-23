@@ -141,6 +141,10 @@ double DWIConverter::GetThickness() const
   return m_thickness;
 }
 
+void DWIConverter::SetThicknessFromSpacing()
+{
+  m_thickness =  this->m_Volume->GetSpacing()[2];
+}
 
 DWIConverter::Volume3DUnwrappedType::PointType DWIConverter::GetOrigin() const
 {

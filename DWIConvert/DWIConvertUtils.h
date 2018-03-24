@@ -122,7 +122,7 @@ extern int ReadBVals(std::vector<double> & bVals, unsigned int & bValCount,
                      const std::string & bValFilename);
 
 extern int ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount,
-                     const std::string & bVecFilename , bool horizontalBy3Rows );
+                     const std::string & bVecFilename );
 
 template <typename TValue>
 bool

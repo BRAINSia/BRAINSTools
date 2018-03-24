@@ -209,7 +209,7 @@ void DWIConverter::ReadGradientInformation(const std::string& inputBValues, cons
   }
   DWIMetaDataDictionaryValidator::GradientTableType BVecs;
   unsigned int                      bVecCount = 0;
-  if( ReadBVecs(BVecs, bVecCount, _inputBVectors, m_FSLFileFormatHorizontalBy3Rows) != EXIT_SUCCESS )
+  if( ReadBVecs(BVecs, bVecCount, _inputBVectors ) != EXIT_SUCCESS )
   {
     itkGenericExceptionMacro(<< "ERROR reading BVector " << _inputBVectors);
   }

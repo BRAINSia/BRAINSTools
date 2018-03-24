@@ -158,20 +158,49 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
   return EXIT_SUCCESS;
 }
 
-int
-ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool horizontalBy3Rows )
+static bool bVecFileIsHorizontalBy3Rows(const std::string & bVecFilename)
 {
   std::ifstream bVecFile(bVecFilename.c_str(), std::ifstream::in);
-
   if( !bVecFile.good() )
   {
     std::cerr << "Failed to open " << bVecFilename
               << std::endl;
     return EXIT_FAILURE;
   }
+  std::string line;
+  size_t num_lines = 0;
+  while( std::getline(bVecFile,line,'\n') )
+  {
+    if(line.size() > 5)
+    {
+      num_lines++;
+    }
+  }
+  if( num_lines > 5 ) // A minimum of 6 lines are needed for vertical format.
+  {
+    return false; // When more than 5 lines are found, assume vertical format
+  }
+  return true;  //When less than 5 lines are found, assume horizontal format (only 3 lines needed)
+}
+
+
+int
+ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned int & bVecCount, const std::string & bVecFilename )
+{
+
+  bool internal_bvec_organization_check = bVecFileIsHorizontalBy3Rows(bVecFilename);
+
+  std::ifstream bVecFile(bVecFilename.c_str(), std::ifstream::in);
+  if( !bVecFile.good() )
+  {
+    std::cerr << "Failed to open " << bVecFilename
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+
   bVecs.clear();
   bVecCount = 0;
-  if( horizontalBy3Rows )
+  if( internal_bvec_organization_check )
   {
     std::vector<std::vector<double> > bVecst( 3 ) ;
     for( unsigned i = 0 ; i < 3 ; i++ )
@@ -220,7 +249,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs, unsigned in
       bVecs.push_back(x);
     }
   }
-  else
+  else //BVECTOR FILE AS COLUMNS
   {
     while( !bVecFile.eof() )
     {

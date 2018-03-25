@@ -5,10 +5,10 @@
 
 PhilipsDWIConverter::PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                                          DWIConverter::FileNamesContainer &inputFileNames,
-                                         const bool useBMatrixGradientDirections,
-                                         const bool FSLFileFormatHorizontalBy3Rows)
+                                         const bool useBMatrixGradientDirections
+                                        )
                                         : DWIDICOMConverterBase(allHeaders,inputFileNames,
-                                          useBMatrixGradientDirections, FSLFileFormatHorizontalBy3Rows)
+                                          useBMatrixGradientDirections)
 {
 }
 

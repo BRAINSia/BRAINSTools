@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
     dWIConvert.setSmallGradientThreshold (smallGradientThreshold);
 
     dWIConvert.setfMRIOutput (fMRIOutput);
-    dWIConvert.setTranspose (transpose);
     dWIConvert.setAllowLossyConversion (allowLossyConversion);
     dWIConvert.setUseIdentityMeasurementFrame (useIdentityMeaseurementFrame);
     dWIConvert.setUseBMatrixGradientDirections (useBMatrixGradientDirections);

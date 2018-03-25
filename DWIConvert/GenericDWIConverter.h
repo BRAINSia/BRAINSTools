@@ -23,7 +23,7 @@
 class GenericDWIConverter : public DWIConverter
 {
 public:
-  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames , const bool FSLFileFormatHorizontalBy3Rows);
+  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames );
 
   void LoadFromDisk() override;
 

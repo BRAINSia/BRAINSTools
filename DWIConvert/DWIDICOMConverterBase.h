@@ -23,8 +23,8 @@ class DWIDICOMConverterBase : public DWIConverter {
 
   DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
                           const FileNamesContainer &inputFileNames,
-                          const bool useBMatrixGradientDirections,
-                          const bool FSLFileFormatHorizontalBy3Rows);
+                          const bool useBMatrixGradientDirections
+                        );
 
   /**
    * @brief Return common fields.  Does nothing for FSL

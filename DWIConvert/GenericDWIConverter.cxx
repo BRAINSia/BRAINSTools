@@ -3,8 +3,8 @@
 //
 #include "GenericDWIConverter.h"
 
-GenericDWIConverter::GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames , const bool FSLFileFormatHorizontalBy3Rows)
-:  DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows)
+GenericDWIConverter::GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames )
+:  DWIConverter( inputFileNames )
 {
 }
 

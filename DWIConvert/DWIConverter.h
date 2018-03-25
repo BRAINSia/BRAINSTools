@@ -88,7 +88,7 @@ public:
   typedef itk::Vector<double, 3>                        PointType;
 
   typedef std::map<std::string,std::string> CommonDicomFieldMapType;
-  DWIConverter( const FileNamesContainer &inputFileNames, const bool FSLFileFormatHorizontalBy3Rows );
+  DWIConverter( const FileNamesContainer &inputFileNames );
   virtual ~DWIConverter();
 
   virtual void LoadFromDisk() = 0 ;
@@ -211,7 +211,6 @@ protected:
 
   /** double conversion instance, for optimal printing of numbers as  text */
   itk::NumberToString<double> m_DoubleConvert;
-  bool       m_FSLFileFormatHorizontalBy3Rows; // Format of FSL files on disk
 
   unsigned int        m_SlicesPerVolume;
   /** number of total slices */

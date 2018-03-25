@@ -4,10 +4,9 @@
 
 #include "DWIConverter.h"
 #include "itkFlipImageFilter.h"
-DWIConverter::DWIConverter( const FileNamesContainer &inputFileNames, const bool FSLFileFormatHorizontalBy3Rows )
+DWIConverter::DWIConverter( const FileNamesContainer &inputFileNames )
         :
         m_InputFileNames(inputFileNames),
-        m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows),
         m_SlicesPerVolume(0),
         m_NSlice(0),
         m_NVolume(0),
@@ -40,7 +39,7 @@ void DWIConverter::ConvertToSingleBValueScaledDiffusionVectors()
     BvalueScaledDiffusionVectors.reserve(m_DiffusionVectors.size());
     for( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
     {
-      vnl_vector_fixed<double,3> vec(0);
+      vnl_vector_fixed<double,3> vec(0.0);
       float scaleFactor = 0;
       if( maxBvalue > 0 )
       {

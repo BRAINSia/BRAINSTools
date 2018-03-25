@@ -27,7 +27,6 @@ DWIConvert::DWIConvert()
     m_outputFileType = emptyString;
 
     m_fMRIOutput = false; //default: false
-    m_transpose = false; //default:false
     m_allowLossyConversion = false; //defualt: false
     m_useIdentityMeasurementFrame = false; //default: false
     m_useBMatrixGradientDirections = false; //default: false
@@ -96,7 +95,7 @@ int DWIConvert::read()
     filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors,m_transpose);
+    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors);
     try
     {
       FSLconverter->SetAllowLossyConversion(m_allowLossyConversion);
@@ -118,7 +117,7 @@ int DWIConvert::read()
     filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList, m_transpose);
+    NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList);
     try
     {
       NRRDconverter->SetAllowLossyConversion(m_allowLossyConversion);
@@ -134,7 +133,7 @@ int DWIConvert::read()
   }
   else if( "Dicom" ==  getInputFileType())
   {
-    m_converter = CreateDicomConverter(m_inputDicomDirectory,m_useBMatrixGradientDirections, m_transpose,
+    m_converter = CreateDicomConverter(m_inputDicomDirectory,m_useBMatrixGradientDirections,
                                      m_smallGradientThreshold,m_allowLossyConversion);
   }
   else
@@ -216,7 +215,6 @@ int  DWIConvert::write(){
 DWIConverter * DWIConvert::CreateDicomConverter(
         const std::string inputDicomDirectory,
         const bool useBMatrixGradientDirections,
-        const bool transpose,
         const double smallGradientThreshold,
         const bool allowLossyConversion)
 {
@@ -230,7 +228,6 @@ DWIConverter * DWIConvert::CreateDicomConverter(
 // use the factor to instantiate a converter object based on the vender.
   DWIConverterFactory converterFactory(inputDicomDirectory,
                                        useBMatrixGradientDirections,
-                                       transpose,
                                        smallGradientThreshold);
   DWIConverter * converter;
   try
@@ -390,14 +387,6 @@ bool DWIConvert::isfMRIOutput() const {
 
 void DWIConvert::setfMRIOutput(bool fMRIOutput) {
   m_fMRIOutput = fMRIOutput;
-}
-
-bool DWIConvert::isTranspose() const {
-  return m_transpose;
-}
-
-void DWIConvert::setTranspose(bool transpose) {
-  m_transpose = transpose;
 }
 
 bool DWIConvert::isAllowLossyConversion() const {

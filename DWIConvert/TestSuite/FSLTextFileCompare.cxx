@@ -34,14 +34,14 @@ int main(int argc, char *argv[])
 
   unsigned int                      bVecCount1;
   DWIMetaDataDictionaryValidator::GradientTableType bvecs1;
-  if( ReadBVecs(bvecs1, bVecCount1, bvecfile1, false) != EXIT_SUCCESS )
+  if( ReadBVecs(bvecs1, bVecCount1, bvecfile1) != EXIT_SUCCESS )
     {
     std::cerr << "Can't read " << bvecfile1 << std::endl;
     return EXIT_FAILURE;
     }
   unsigned int                      bVecCount2;
   DWIMetaDataDictionaryValidator::GradientTableType bvecs2;
-  if( ReadBVecs(bvecs2, bVecCount2, bvecfile2, false) != EXIT_SUCCESS )
+  if( ReadBVecs(bvecs2, bVecCount2, bvecfile2) != EXIT_SUCCESS )
     {
     std::cerr << "Can't read " << bvecfile2 << std::endl;
     return EXIT_FAILURE;

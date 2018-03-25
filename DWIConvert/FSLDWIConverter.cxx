@@ -6,8 +6,8 @@
 
 FSLDWIConverter::FSLDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
   const std::string inputBValues,
-  const std::string inputBVectors, const bool FSLFileFormatHorizontalBy3Rows)
-  : DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows )
+  const std::string inputBVectors)
+  : DWIConverter( inputFileNames )
   , m_inputBValues(inputBValues)
   , m_inputBVectors(inputBVectors)
 {

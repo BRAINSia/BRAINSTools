@@ -39,7 +39,6 @@ class DWIConverterFactory
 public:
   DWIConverterFactory(const std::string DicomDirectory,
                         const bool UseBMatrixGradientDirections,
-                        const bool FSLFileFormatHorizontalBy3Rows,
                         const double smallGradientThreshold);
 
   ~DWIConverterFactory();
@@ -52,7 +51,6 @@ private:
   std::string m_DicomDirectory;
   std::string m_Vendor;
   bool        m_UseBMatrixGradientDirections;
-  bool        m_FSLFileFormatHorizontalBy3Rows;
   double      m_SmallGradientThreshold;
 
   DWIDICOMConverterBase::DCMTKFileVector m_Headers;

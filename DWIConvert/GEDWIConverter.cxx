@@ -6,9 +6,9 @@
 
 GEDWIConverter::GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                  DWIConverter::FileNamesContainer &inputFileNames,
-                 const bool useBMatrixGradientDirections,
-                 const bool FSLFileFormatHorizontalBy3Rows) : DWIDICOMConverterBase(allHeaders,inputFileNames,
-                                                                   useBMatrixGradientDirections, FSLFileFormatHorizontalBy3Rows)
+                 const bool useBMatrixGradientDirections
+                 ) : DWIDICOMConverterBase(allHeaders,inputFileNames,
+                                           useBMatrixGradientDirections)
 {
 }
 GEDWIConverter::~GEDWIConverter() {}

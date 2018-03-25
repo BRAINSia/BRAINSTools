@@ -15,7 +15,7 @@ public:
 
 
 
-  NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames, const bool FSLFileFormatHorizontalBy3Rows );
+  NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames );
 
   ~NRRDDWIConverter() override {}
 

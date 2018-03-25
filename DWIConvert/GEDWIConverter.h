@@ -26,8 +26,8 @@ class GEDWIConverter : public DWIDICOMConverterBase
 public:
   GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                  DWIConverter::FileNamesContainer &inputFileNames,
-                 const bool useBMatrixGradientDirections,
-                 const bool FSLFileFormatHorizontalBy3Rows);
+                 const bool useBMatrixGradientDirections
+                 );
 
   ~GEDWIConverter() override;
   void LoadDicomDirectory() override;

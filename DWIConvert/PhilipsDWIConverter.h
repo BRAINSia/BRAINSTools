@@ -28,8 +28,8 @@ class PhilipsDWIConverter : public DWIDICOMConverterBase
 public:
   PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      const bool useBMatrixGradientDirections,
-                      const bool FSLFileFormatHorizontalBy3Rows) ;
+                      const bool useBMatrixGradientDirections
+                      ) ;
   ~PhilipsDWIConverter() override;
 
   void LoadDicomDirectory() override;

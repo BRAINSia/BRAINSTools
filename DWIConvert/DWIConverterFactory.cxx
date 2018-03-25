@@ -6,11 +6,9 @@
 
 DWIConverterFactory::DWIConverterFactory(const std::string DicomDirectory,
                                          const bool UseBMatrixGradientDirections,
-                                         const bool FSLFileFormatHorizontalBy3Rows,
                                          const double smallGradientThreshold)
         : m_DicomDirectory(DicomDirectory)
         , m_UseBMatrixGradientDirections(UseBMatrixGradientDirections)
-        , m_FSLFileFormatHorizontalBy3Rows(FSLFileFormatHorizontalBy3Rows)
         , m_SmallGradientThreshold(smallGradientThreshold)
 {
 }
@@ -71,7 +69,7 @@ DWIConverter* DWIConverterFactory::New()
   else if( m_InputFileNames.size() == 1 &&  isNIIorNrrd( m_InputFileNames[0])) // FSL Reader or NRRD Reader
   {
     itkGenericExceptionMacro(<< "INVALID PATH, create FSLDWIConverter in main program" << std::endl);
-    converter = new FSLDWIConverter(m_InputFileNames,"","", this->m_FSLFileFormatHorizontalBy3Rows);
+    converter = new FSLDWIConverter(m_InputFileNames,"","");
   }
   else  // Assume multi file dicom file reading
   {
@@ -171,30 +169,29 @@ DWIConverter* DWIConverterFactory::New()
     if(StringContains(this->m_Vendor,"PHILIPS"))
     {
       converter = new PhilipsDWIConverter(m_Headers,m_InputFileNames,
-                                          m_UseBMatrixGradientDirections, m_FSLFileFormatHorizontalBy3Rows);
+                                          m_UseBMatrixGradientDirections);
     }
     else if(StringContains(this->m_Vendor,"SIEMENS"))
     {
       converter = new SiemensDWIConverter(m_Headers,m_InputFileNames,
                                           m_UseBMatrixGradientDirections,
-                                          m_FSLFileFormatHorizontalBy3Rows,
                                           m_SmallGradientThreshold);
     }
     else if(StringContains(this->m_Vendor,"GE"))
     {
       converter = new GEDWIConverter(m_Headers,m_InputFileNames,
-                                     m_UseBMatrixGradientDirections, m_FSLFileFormatHorizontalBy3Rows);
+                                     m_UseBMatrixGradientDirections);
     }
     else if(StringContains(this->m_Vendor,"HITACHI"))
     {
       converter = new HitachiDWIConverter(m_Headers,m_InputFileNames,
-                                          m_UseBMatrixGradientDirections, m_FSLFileFormatHorizontalBy3Rows);
+                                          m_UseBMatrixGradientDirections);
     }
     else
     {
       // generic converter can't do anything except load a DICOM
       // directory
-      converter = new GenericDWIConverter(m_InputFileNames, m_FSLFileFormatHorizontalBy3Rows);
+      converter = new GenericDWIConverter(m_InputFileNames);
       this->m_Vendor = "GENERIC";
     }
   }

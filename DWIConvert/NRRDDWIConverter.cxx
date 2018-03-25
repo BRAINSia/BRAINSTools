@@ -5,9 +5,8 @@
 #include "NRRDDWIConverter.h"
 
 
-NRRDDWIConverter::NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
-  const bool FSLFileFormatHorizontalBy3Rows)
-  : DWIConverter( inputFileNames, FSLFileFormatHorizontalBy3Rows )
+NRRDDWIConverter::NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames)
+  : DWIConverter( inputFileNames )
 {
 }
 

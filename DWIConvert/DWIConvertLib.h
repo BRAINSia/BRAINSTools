@@ -68,10 +68,6 @@ public:
 
     void setfMRIOutput(bool fMRIOutput);
 
-    bool isTranspose() const;
-
-    void setTranspose(bool transpose);
-
     bool isAllowLossyConversion() const;
 
     void setAllowLossyConversion(bool allowLossyConversion);
@@ -107,7 +103,6 @@ private:
     DWIConverter *CreateDicomConverter(
             const std::string inputDicomDirectory,
             const bool useBMatrixGradientDirections,
-            const bool transpose,
             const double smallGradientThreshold,
             const bool allowLossyConversion);
 
@@ -122,7 +117,6 @@ private:
     double m_smallGradientThreshold; //default = 0.2
 
     bool m_fMRIOutput; //default: false
-    bool m_transpose; //default:false
     bool m_allowLossyConversion; //defualt: false
     bool m_useIdentityMeasurementFrame; //default: false
     bool m_useBMatrixGradientDirections; //default: false

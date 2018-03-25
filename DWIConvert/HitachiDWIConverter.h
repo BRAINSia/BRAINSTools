@@ -28,8 +28,8 @@ class HitachiDWIConverter : public DWIDICOMConverterBase
 public:
   HitachiDWIConverter(DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
-                      const bool useBMatrixGradientDirections,
-                      const bool FSLFileFormatHorizontalBy3Rows);
+                      const bool useBMatrixGradientDirections
+                      );
 
   ~HitachiDWIConverter() override;
   /* load dicom directory -- no postprocessing necessary after letting

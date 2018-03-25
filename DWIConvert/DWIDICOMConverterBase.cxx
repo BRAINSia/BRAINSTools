@@ -16,9 +16,8 @@ return this->m_CommonDicomFieldsMap;
 
 DWIDICOMConverterBase::DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
                                              const FileNamesContainer &inputFileNames,
-                                             const bool useBMatrixGradientDirections,
-                                             const bool FSLFileFormatHorizontalBy3Rows) :
-        DWIConverter(inputFileNames, FSLFileFormatHorizontalBy3Rows),
+                                             const bool useBMatrixGradientDirections) :
+        DWIConverter(inputFileNames),
         m_UseBMatrixGradientDirections(useBMatrixGradientDirections),
         m_Headers(allHeaders),
         m_MultiSliceVolume(false),

@@ -29,7 +29,6 @@ public:
   SiemensDWIConverter(DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
                       const bool useBMatrixGradientDirections,
-                      const bool FSLFileFormatHorizontalBy3Rows,
                       const double smallGradientThreshold) ;
   ~SiemensDWIConverter() override;
 

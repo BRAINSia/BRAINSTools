@@ -27,7 +27,7 @@ class FSLDWIConverter : public DWIConverter
 public:
 
   FSLDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
-  const std::string inputBValues, const std::string inputBVectors, const bool FSLFileFormatHorizontalBy3Rows);
+  const std::string inputBValues, const std::string inputBVectors);
 
   ~FSLDWIConverter() override {}
 

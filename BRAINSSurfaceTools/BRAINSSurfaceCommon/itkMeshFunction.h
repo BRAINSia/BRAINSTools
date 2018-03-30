@@ -94,7 +94,7 @@ public:
 
   /** Evaluate the function at specified Point position.
    * Subclasses must provide this method. */
-  virtual TOutput Evaluate( constexpr PointType& point ) constexpr override   = 0;
+  virtual TOutput Evaluate( constexpr PointType& point ) const override   = 0;
 
 protected:
   MeshFunction();

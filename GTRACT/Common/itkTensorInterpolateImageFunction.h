@@ -105,7 +105,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  OutputType EvaluateAtContinuousIndex(constexpr ContinuousIndexType & index ) constexpr override   = 0;
+  OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override   = 0;
 
   /** Interpolate the image at an index position.
    * Simply returns the image value at the

@@ -62,9 +62,9 @@ if(Slicer_BUILD_BRAINSTOOLS)
   option(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK "Determine if tools depending on VTK need to be built." ON)
 else()
   option(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK "Determine if tools depending on VTK need to be built." OFF)
-  # Enable this option to avoid unnecessary re-compilation associated with command line module
-  set(GENERATECLP_USE_MD5 ON)
 endif()
+# Enable this option to avoid unnecessary re-compilation associated with command line module
+set(GENERATECLP_USE_MD5 ON)
 mark_as_advanced(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
 
 option(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)

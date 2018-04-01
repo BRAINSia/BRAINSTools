@@ -62,12 +62,18 @@ if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
   project(${PROJECT_NAME} LANGUAGES C CXX)
 else()
   set(PROJECT_NAME ${LOCAL_PROJECT_NAME} )
+  project(${PROJECT_NAME} LANGUAGES  C CXX
+    DESCRIPTION "BRAINSTools see github at BRAINSia"
+    VERSION 4.7.1
+  )
+  #-----------------------------------------------------------------------------
+  # Version strings need to be set outside of project so that
+  # we can get version information from Version.cmake (which rquires
+  # that the project() command was already run.
+  #-----------------------------------------------------------------------------
   # Version information
   include(Version.cmake)
-  set(_project_version "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}")
-  project(${PROJECT_NAME} LANGUAGES  C CXX VERSION ${_project_version})
 endif()
-
 #-----------------------------------------------------------------------------
 # Common build features for both the superbuild and the main build
 #-----------------------------------------------------------------------------

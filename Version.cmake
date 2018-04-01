@@ -16,11 +16,21 @@ include(ProjectSourceVersion)
 ##          git tag -a v4.7.0
 ##          git push origin v4.7.0
 ##          git push origin --tags  ## DON'T forget to do this!
-set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})
-set(${PROJECT_NAME}_VERSION_MINOR ${_GIT_VERSION_MINOR})  ## See note above for updating versions
-set(${PROJECT_NAME}_VERSION_PATCH ${_GIT_VERSION_PATCH})
-set(${PROJECT_NAME}_VERSION_TWEAK ${_GIT_VERSION_TWEAK})
+## See note above for updating versions
+#-- DON'T OVERRIDE projcet() set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})
+#-- DON'T OVERRIDE project() set(${PROJECT_NAME}_VERSION_MINOR ${_GIT_VERSION_MINOR})
+#-- DON'T OVERRIDE project() set(${PROJECT_NAME}_VERSION_PATCH ${_GIT_VERSION_PATCH})
+#-- DON"T OVERRIDE project() set(${PROJECT_NAME}_VERSION_TWEAK ${_GIT_VERSION_TWEAK})
 ### SEE ---- NOTE  --- ABOVE --- FOR CONSISTENT -- TAGGING
+if(NOT "${${PROJECT_NAME}_VERSION_MAJOR}" EQUAL "${_GIT_VERSION_MAJOR}")
+  message(WARNING "VERSION_MAJOR from project not match git tag version: \"${${PROJECT_NAME}_VERSION_MAJOR}\" EQUAL \"${_GIT_VERSION_MAJOR}\"")
+endif()
+if(NOT "${${PROJECT_NAME}_VERSION_MINOR}" EQUAL "${_GIT_VERSION_MINOR}")
+  message(WARNING "VERSION_MINOR from project not match git tag version: \"${${PROJECT_NAME}_VERSION_MINOR}\" EQUAL \"${_GIT_VERSION_MINOR}\"")
+endif()
+if(NOT "${${PROJECT_NAME}_VERSION_PATCH}" EQUAL "${_GIT_VERSION_PATCH}")
+  message(WARNING "VERSION_PATCH from project not match git tag version: \"${${PROJECT_NAME}_VERSION_PATCH}\" EQUAL \"${_GIT_VERSION_PATCH}\"")
+endif()
 
 # pre-release codes are defined based on suffix of most recent tags.
 

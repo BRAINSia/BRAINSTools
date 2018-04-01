@@ -49,7 +49,13 @@ function(get_git_head_revision _refvar _hashvar)
 	endif()
 
 	set(src_dir ${PROJECT_SOURCE_DIR})
+        if("x${src_dir}" EQUAL "x")
+           message(FATAL_ERROR "PROJECT_SOURCE_DIR not set")
+        endif()
 	set(bin_dir ${PROJECT_BINARY_DIR})
+        if("x${bin_dir}" EQUAL "x")
+           message(FATAL_ERROR "PROJECT_BINARY_DIR not set")
+        endif()
 
 	execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --git-dir
 		WORKING_DIRECTORY ${src_dir}

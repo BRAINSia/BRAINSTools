@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.9.5 FATAL_ERROR)
 
-if(CMAKE_CXX_STANDARD EQUAL "98" )
-   MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=98 is not supported in ITK version 5 and greater.")
-endif()
-
 #-----------------------------------------------------------------------------
 # Enable C++11
 #-----------------------------------------------------------------------------
@@ -18,6 +14,11 @@ endif()
 if(NOT CMAKE_CXX_EXTENSIONS)
   set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
+set(VALID_CXX_STANDARDS "11" "14" "17")
+if(NOT CMAKE_CXX_STANDARD IN_LIST VALID_CXX_STANDARDS )
+   MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
+endif()
+
 
 foreach(p
     ## Only policies introduced after the cmake_minimum_required

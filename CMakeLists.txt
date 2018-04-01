@@ -143,5 +143,7 @@ else()
   return()
 endif()
 
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+  message(STATUS "Exporting compiler flags") #silence cmake warnings when building jason db of compile options
+endif()
 message(FATAL_ERROR "You should never reach this point !")
-

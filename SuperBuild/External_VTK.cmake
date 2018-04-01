@@ -163,7 +163,7 @@ else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-mark_as_superbuild(VTK_SOURCE_DIR:PATH)
+mark_as_superbuild(VARS VTK_SOURCE_DIR:PATH ALL_PROJECTS)
 
 mark_as_superbuild(
   VARS ${proj}_DIR:PATH VTK_VERSION_MAJOR:STRING

@@ -19,7 +19,6 @@ if(NOT CMAKE_CXX_STANDARD IN_LIST VALID_CXX_STANDARDS )
    MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
 endif()
 
-
 foreach(p
     ## Only policies introduced after the cmake_minimum_required
     ## version need to explicitly be set to NEW.

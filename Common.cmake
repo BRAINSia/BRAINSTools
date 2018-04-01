@@ -72,21 +72,6 @@ mark_as_advanced(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT)
 
 CMAKE_DEPENDENT_OPTION(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
 
-set(USE_ITKv4 ON)
-set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS only version 4 allowed.")
-# Set the possible values of ITK major version for cmake-gui
-set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "4")
-set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
-if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
-  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
-  #       explicitly instead of passing the version as an argument to find_package() command.
-  message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
-                      "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
-                      "The following configuration files were considered but not accepted:\n"
-                      "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
-endif()
-
-
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -98,10 +83,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 if(NOT CMAKE_CONFIGURATION_TYPES)
   mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
-endif()
-
-if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  message(FATAL_ERROR "ITKv3 is no longer supported")
 endif()
 
 #-----------------------------------------------------------------------------

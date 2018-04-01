@@ -11,13 +11,8 @@ constexpr unsigned int Dimension = 3;
 // Declaration of the type of Mesh
 typedef itk::QuadEdgeMesh<Coord, Dimension> MeshType;
 
-#if ITK_VERSION_MAJOR < 4
-#include "itkQuadEdgeMeshSmoothing.h"
-typedef itk::QuadEdgeMeshSmoothing<MeshType, MeshType> SmoothingType;
-#else
 #include "itkSmoothingQuadEdgeMeshFilter.h"
 typedef itk::SmoothingQuadEdgeMeshFilter<MeshType, MeshType> SmoothingType;
-#endif
 
 #include "itkQuadEdgeMeshVTKPolyDataReader.h"
 #include "itkQuadEdgeMeshScalarDataVTKPolyDataWriter.h"

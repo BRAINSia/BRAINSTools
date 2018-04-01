@@ -3,7 +3,34 @@ include(ExternalProject)
 include(ExternalProjectDependency) #<-- Must be after project() calls
 include(ExternalProjectGenerateProjectDescription)
 #-----------------------------------------------------------------------------
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
+
+  mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
+endif()
+
+#-----------------------------------------------------------------------------
 if(APPLE)
+#-----------------------------------------------------------------------------
+# Platform check
+#-----------------------------------------------------------------------------
+  # See CMake/Modules/Platform/Darwin.cmake)
+  #   6.x == Mac OSX 10.2 (Jaguar)
+  #   7.x == Mac OSX 10.3 (Panther)
+  #   8.x == Mac OSX 10.4 (Tiger)
+  #   9.x == Mac OSX 10.5 (Leopard)
+  #  10.x == Mac OSX 10.6 (Snow Leopard)
+  #  11.x == Mac OSX 10.7 (Lion)
+  #  12.x == Mac OSX 10.8 (Mountain Lion)
+  if (DARWIN_MAJOR_VERSION LESS "13")
+    message(FATAL_ERROR "Only Mac OSX >= 10.9 are supported !")
+  endif()
+
   ## RPATH-RPATH-RPATH
   ## https://cmake.org/Wiki/CMake_RPATH_handling
   ## Always full RPATH
@@ -71,19 +98,6 @@ option(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support in
 mark_as_advanced(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT)
 
 CMAKE_DEPENDENT_OPTION(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-
-#-----------------------------------------------------------------------------
-# Set a default build type if none was specified
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-  mark_as_advanced(CMAKE_BUILD_TYPE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
-endif()
-if(NOT CMAKE_CONFIGURATION_TYPES)
-  mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
-endif()
 
 #-----------------------------------------------------------------------------
 # Build option(s)
@@ -184,22 +198,6 @@ if(${LOCAL_PROJECT_NAME}_USE_QT)
   if(NOT QT4_FOUND)
     find_package(Qt4 4.8 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
     include(${QT_USE_FILE})
-  endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# Platform check
-#-----------------------------------------------------------------------------
-set(PLATFORM_CHECK true)
-if(PLATFORM_CHECK)
-  # See CMake/Modules/Platform/Darwin.cmake)
-  #   6.x == Mac OSX 10.2 (Jaguar)
-  #   7.x == Mac OSX 10.3 (Panther)
-  #   8.x == Mac OSX 10.4 (Tiger)
-  #   9.x == Mac OSX 10.5 (Leopard)
-  #  10.x == Mac OSX 10.6 (Snow Leopard)
-  if (DARWIN_MAJOR_VERSION LESS "9")
-    message(FATAL_ERROR "Only Mac OSX >= 10.5 are supported !")
   endif()
 endif()
 

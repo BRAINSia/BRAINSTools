@@ -2,7 +2,9 @@
 echo 'Your work tree has not been configured for development.
 Paste the following commands into a shell:
 
- ./Utilities/SetupForDevelopment.sh
+  ./Utilities/SetupForDevelopment.sh
 
-See http://www.itk.org/Wiki/ITK/Git/Develop for more details.'
+See
+http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
+ for more information.'
 exit 1

@@ -1,13 +1,4 @@
 #-----------------------------------------------------------------------------
-enable_language(C)
-enable_language(CXX)
-#-----------------------------------------------------------------------------
-# Sanity checks
-#------------------------------------------------------------------------------
-include(PreventInSourceBuilds)
-include(PreventInBuildInstalls)
-
-#-----------------------------------------------------------------------------
 include(SlicerMacroGetOperatingSystemArchitectureBitness)
 
 #-----------------------------------------------------------------------------
@@ -81,17 +72,8 @@ else()
 endif()
 
 
-# With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
-# For earlier versions, we nullify the update state to prevent updates and
-# undesirable rebuild.
-option(FORCE_EXTERNAL_BUILDS "Force rebuilding of external project (if they are updated)" ON)
-if(CMAKE_VERSION VERSION_LESS 2.8.9 OR NOT FORCE_EXTERNAL_BUILDS)
-  set(cmakeversion_external_update UPDATE_COMMAND)
-  set(cmakeversion_external_update_value "" )
-else()
-  set(cmakeversion_external_update LOG_UPDATE )
-  set(cmakeversion_external_update_value 1)
-endif()
+set(cmakeversion_external_update LOG_UPDATE )
+set(cmakeversion_external_update_value 1)
 
 #-----------------------------------------------------------------------------
 # Platform check
@@ -177,6 +159,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables
 #-----------------------------------------------------------------------------
+    # BUILD_SHARED_LIBS:BOOL
 mark_as_superbuild(
   VARS
     MAKECOMMAND:STRING
@@ -184,7 +167,6 @@ mark_as_superbuild(
     BUILD_SHARED_LIBS:BOOL
     CMAKE_MODULE_PATH:PATH
     CMAKE_BUILD_TYPE:STRING
-    # BUILD_SHARED_LIBS:BOOL
     CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
     CMAKE_CXX_COMPILER:PATH
     CMAKE_CXX_FLAGS:STRING
@@ -376,7 +358,6 @@ ExternalProject_Add(${proj}
     -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}
     -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
     -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=${EXTERNAL_PROJECT_BUILD_TYPE}
-    -DFORCE_EXTERNAL_BUILDS:BOOL=${FORCE_EXTERNAL_BUILDS}
     -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
     -DSuperBuild_BRAINSTools_BUILD_DICOM_SUPPORT:BOOL=${SuperBuild_BRAINSTools_BUILD_DICOM_SUPPORT}
     -DSuperBuild_BRAINSTools_USE_CTKAPPLAUNCHER:BOOL=${SuperBuild_BRAINSTools_USE_CTKAPPLAUNCHER}

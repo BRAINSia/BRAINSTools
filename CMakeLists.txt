@@ -24,6 +24,7 @@ foreach(p
     ## version need to explicitly be set to NEW.
     CMP0070 #3.10.0 Define ``file(GENERATE)`` behavior for relative paths.
     CMP0071 #3.10.0 Let ``AUTOMOC`` and ``AUTOUIC`` process ``GENERATED`` files.
+    CMP0067
     )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
@@ -77,7 +78,6 @@ endif()
 set(LOCAL_PROJECT_NAME BRAINSTools)
 set(PRIMARY_PROJECT_NAME ${LOCAL_PROJECT_NAME})
 
-## NOTE THERE SHOULD BE NO PROJECT STATEMENT HERE!
 ## This file acts as a simple switch to initiate
 ## two completely independant CMake build environments.
 
@@ -97,19 +97,15 @@ option(${LOCAL_PROJECT_NAME}_SUPERBUILD "Build ${LOCAL_PROJECT_NAME} and the pro
 mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
 
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  project(${PRIMARY_PROJECT_NAME} C CXX)
+  set(PROJECT_NAME SuperBuild_${LOCAL_PROJECT_NAME} )
+  project(${PROJECT_NAME} LANGUAGES C CXX)
 else()
-  project(${LOCAL_PROJECT_NAME} C CXX)
+  set(PROJECT_NAME ${LOCAL_PROJECT_NAME} )
+  # Version information
+  include(Version.cmake)
+  set(_project_version "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}")
+  project(${PROJECT_NAME} LANGUAGES  C CXX VERSION ${_project_version})
 endif()
-
-##-- From SimpleITK -- force try-compiles to respect language
-if(POLICY CMP0067) # CMake 3.8.2
-  cmake_policy(SET CMP0067 NEW)
-endif()
-##--
-
-enable_language(C)
-enable_language(CXX)
 
 #-----------------------------------------------------------------------------
 # Common build features for both the superbuild and the main build
@@ -117,28 +113,13 @@ enable_language(CXX)
 include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
 
 #-----------------------------------------------------------------------------
-# Sanity checks
-#------------------------------------------------------------------------------
-include(PreventInSourceBuilds)
-include(PreventInBuildInstalls)
-include(itkCheckSourceTree)
-
-#-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  set(PROJECT_NAME SuperBuild_${LOCAL_PROJECT_NAME} )
-  project(${PROJECT_NAME} LANGUAGES C CXX )
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 else()
 #-----------------------------------------------------------------------------
-  set(PROJECT_NAME ${LOCAL_PROJECT_NAME} )
-  # Version information
-  include(Version.cmake)
-  set(_project_version "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MAJOR}")
-  project(${PROJECT_NAME} LANGUAGES  C CXX VERSION ${_project_version})
-
   include("${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_PROJECT_NAME}.cmake")
   return()
 endif()

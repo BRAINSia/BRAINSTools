@@ -3,6 +3,14 @@
 #------------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
+#-----------------------------------------------------------------------------
+# Sanity checks
+#------------------------------------------------------------------------------
+include(PreventInSourceBuilds)
+include(PreventInBuildInstalls)
+include(itkCheckSourceTree)
+
+
 include(ExternalProjectDependency)
 include(CMakeDependentOption)
 include(CMakeParseArguments)
@@ -228,6 +236,6 @@ endif()
 
 #-------------------------------------------------------------------------
 if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)
-  set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSFetchData")
+  set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSToolsFetchData")
 endif()
 mark_as_superbuild(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET:STRING)

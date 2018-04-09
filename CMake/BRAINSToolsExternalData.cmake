@@ -44,6 +44,8 @@ mark_as_advanced(ExternalData_URL_TEMPLATES)
 list(APPEND ExternalData_URL_TEMPLATES
   # Local data store populated by the ITK pre-commit hook
   "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
+  # Data published on Girder
+  "https://data.kitware.com:443/api/v1/file/hashsum/%(algo)/%(hash)/download"
   # Data published by Iowa Psychiatry web interface
   ## The primary home for data
   "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)"

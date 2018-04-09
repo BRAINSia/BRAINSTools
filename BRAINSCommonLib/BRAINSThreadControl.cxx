@@ -23,7 +23,7 @@
 namespace BRAINSUtils
 {
 StackPushITKDefaultNumberOfThreads::StackPushITKDefaultNumberOfThreads(const int desiredCount) :
-  m_originalThreadValue( itk::MultiThreader::GetGlobalDefaultNumberOfThreads() )
+  m_originalThreadValue( itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() )
 {
   int threadCount(-1);
 
@@ -60,12 +60,12 @@ StackPushITKDefaultNumberOfThreads::StackPushITKDefaultNumberOfThreads(const int
     }
   if( threadCount > 0 )
     {
-    itk::MultiThreader::SetGlobalDefaultNumberOfThreads(threadCount);
+    itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(threadCount);
     }
 }
 
 StackPushITKDefaultNumberOfThreads::~StackPushITKDefaultNumberOfThreads()
 {
-  itk::MultiThreader::SetGlobalDefaultNumberOfThreads(this->m_originalThreadValue);
+  itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(this->m_originalThreadValue);
 }
 }

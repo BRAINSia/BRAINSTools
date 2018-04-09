@@ -185,7 +185,7 @@ int main(int argc, char * *argv)
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   // Construct TBB task scheduler with matching threads to ITK threads
-  tbb::task_scheduler_init init( itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+  tbb::task_scheduler_init init( itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() );
 
   // TODO:  Need to figure out how to conserve memory better during the running
   // of this application:  itk::DataObject::GlobalReleaseDataFlagOn();

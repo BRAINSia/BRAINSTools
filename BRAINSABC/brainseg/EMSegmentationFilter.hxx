@@ -115,7 +115,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   // Compute Likelihood matrix
   // Limit the number of threads to limit memory usage
-  const size_t maxNumThreads = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+  const size_t maxNumThreads = itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
   constexpr float baseMemoryNeeded = 11.0; //10GB needed
   //Assume 2GB per thread is available
   const signed int threadsToUse = std::max<signed int>( 1, ( maxNumThreads*2.0 - baseMemoryNeeded )/2.0 );

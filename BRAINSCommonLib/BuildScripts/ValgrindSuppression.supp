@@ -32,7 +32,7 @@
 }
 
 {
-   Some Error from the itk::MultiThreader::DispatchSingleMethodThread
+   Some Error from the itk::MultiThreaderBase::DispatchSingleMethodThread
    Memcheck:Leak
    fun:calloc
    fun:_dl_allocate_tls
@@ -40,7 +40,7 @@
    fun:_ZN3itk13MultiThreader26DispatchSingleMethodThreadEPNS0_16ThreadInfoStructE
 }
 {
-  Some Error from the itk::MultiThreader::SingleMethodExecute
+  Some Error from the itk::MultiThreaderBase::SingleMethodExecute
   Memcheck:Leak
   fun:calloc
   obj:/lib/ld-2.3.?.so
@@ -62,7 +62,7 @@
 }
 
 {
-   <itk::MultiThreader::SpawnThread>
+   <itk::MultiThreaderBase::SpawnThread>
    Memcheck:Leak
    fun:calloc
    fun:_dl_allocate_tls

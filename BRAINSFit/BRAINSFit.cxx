@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
   if( debugLevel > 1 )
     {
     std::cout << "Number Of Threads used: " << numberOfThreads << std::endl;
-    std::cout << " " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads()  << std::endl;
+    std::cout << " " << itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads()  << std::endl;
     }
 
   std::string localInitializeTransformMode = initializeTransformMode;

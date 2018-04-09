@@ -123,13 +123,13 @@ int main(int ac, char *av[])
       if( strcmp(av[1], "--with-threads") == 0 )
         {
         int numThreads = atoi(av[2]);
-        itk::MultiThreader::SetGlobalDefaultNumberOfThreads(numThreads);
+        itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(numThreads);
         av += 2;
         ac -= 2;
         }
       else if( strcmp(av[1], "--without-threads") == 0 )
         {
-        itk::MultiThreader::SetGlobalDefaultNumberOfThreads(1);
+        itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(1);
         av += 1;
         ac -= 1;
         }

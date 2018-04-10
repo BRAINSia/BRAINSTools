@@ -7,7 +7,7 @@ add_dependencies(BRAINSPosteriorToContinuousClassTestDriver InstallReferenceAtla
 
 set(BRAINSPosteriorToContinuousClassTestName BRAINSPosteriorToContinuousClassTest)
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSPosteriorToContinuousClassTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSPosteriorToContinuousClass>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSPosteriorToContinuousClassTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSPosteriorToContinuousClassTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSPosteriorToContinuousClassTestName}.output.nii.gz
   --compareIntensityTolerance 7

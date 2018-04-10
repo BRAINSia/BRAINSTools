@@ -38,3 +38,5 @@ cmake-build-*
 CMakeCache.txt
 CMakeFiles/*
 crash*
+
+Testing/Temporary/LastTest.log

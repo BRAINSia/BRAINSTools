@@ -56,12 +56,12 @@ endif()
 # any program. They just have been addressed later in a txt file. However, we cannot pass
 # an empty command, so we have used "BCD --help", which is like a command that do nothing.
 set(BCDTestName fetchDataTobeUsedInInputTrainingList)
-ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}TrainingCase1_T1_VAR DATA{${TestData_DIR}/TrainingCase1_T1.nii.gz})
-ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}TrainingCase2_T1_VAR DATA{${TestData_DIR}/TrainingCase2_T1.nii.gz})
-ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}TrainingCase3_T1_VAR DATA{${TestData_DIR}/TrainingCase3_T1.nii.gz})
-ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}TrainingCase1_fcsv_VAR DATA{${TestData_DIR}/TrainingCase1.fcsv})
-ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}TrainingCase2_fcsv_VAR DATA{${TestData_DIR}/TrainingCase2.fcsv})
-ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}TrainingCase3_fcsv_VAR DATA{${TestData_DIR}/TrainingCase3.fcsv})
+ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} TrainingCase1_T1_VAR DATA{${TestData_DIR}/TrainingCase1_T1.nii.gz})
+ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} TrainingCase2_T1_VAR DATA{${TestData_DIR}/TrainingCase2_T1.nii.gz})
+ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} TrainingCase3_T1_VAR DATA{${TestData_DIR}/TrainingCase3_T1.nii.gz})
+ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} TrainingCase1_fcsv_VAR DATA{${TestData_DIR}/TrainingCase1.fcsv})
+ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} TrainingCase2_fcsv_VAR DATA{${TestData_DIR}/TrainingCase2.fcsv})
+ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} TrainingCase3_fcsv_VAR DATA{${TestData_DIR}/TrainingCase3.fcsv})
 ## The following configure uses the paths from the previous ExternalData_expand_arguments
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
 
@@ -242,7 +242,7 @@ set(BCDTestName BCDTest_ForceACPoint)
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTest_ForceACPoint_InputSpace.fcsv # output of the ForceACPoint Test
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
-    --tolerance 1.875 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
+    --tolerance 1.876 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 

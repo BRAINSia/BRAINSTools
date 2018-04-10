@@ -27,9 +27,9 @@ target_link_libraries(compareBinaryTest ${BRAINSCut_TestSuite_ITK_LIBRARIES} ${O
 set_target_properties(compareBinaryTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 # compare caudate
-ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}BRAINSCutcaudate_left_scan3_baseline
+ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} BRAINSCutcaudate_left_scan3_baseline
     DATA{${TestData_DIR}/BRAINSCutcaudate_left_scan3_baseline.nii.gz} )
-ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}BRAINSCutcaudate_right_scan3_baseline
+ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} BRAINSCutcaudate_right_scan3_baseline
     DATA{${TestData_DIR}/BRAINSCutcaudate_right_scan3_baseline.nii.gz} )
 
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME VolumeMatch_Left_Caudate
@@ -42,9 +42,9 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
     ${BRAINSCutcaudate_right_scan3_baseline} )
 
 # comare putamen
-ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}BRAINSCutputamen_left_scan3_baseline
+ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} BRAINSCutputamen_left_scan3_baseline
     DATA{${TestData_DIR}/BRAINSCutputamen_left_scan3_baseline.nii.gz} )
-  ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}BRAINSCutputamen_right_scan3_baseline
+  ExternalData_expand_arguments( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} BRAINSCutputamen_right_scan3_baseline
     DATA{${TestData_DIR}/BRAINSCutputamen_right_scan3_baseline.nii.gz} )
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME VolumeMatch_Left_Putamen
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:compareBinaryTest>

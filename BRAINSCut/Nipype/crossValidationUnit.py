@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 def getProbabilityMapFilename(roiList):
     probabilityMapFilename = {}
     for roi in roiList:
@@ -96,8 +96,8 @@ def unitWorkUp(configurationFilename,
     import ast
     normalizationOption = Options['normalization'.lower()]
     # normalizationOption = ast.literal_eval( Options[ 'normalization'.lower()]  )
-    print( """Normalization Option: {str}
-           """.format( str=normalizationOption ) )
+    print(( """Normalization Option: {str}
+           """.format( str=normalizationOption ) ))
     vectorCreatorND.iterables = ('normalization', normalizationOption)
     #
     #--------------------------------  workflow connections

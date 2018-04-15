@@ -1,5 +1,5 @@
-from __future__ import print_function
-from __future__ import division
+
+
 from builtins import str
 from past.utils import old_div
 
@@ -98,12 +98,12 @@ def LabelStatistics(inputLabel,
     outputDictionary['Maximum'] = Maximum
     outputDictionary['Sigma'] = Sigma
     outputDictionary['Variance'] = Variance
-    print("################################################## Mean:: " + str(Mean))
-    print("################################################## Median:: " + str(Median))
-    print("################################################## Minimum:: " + str(Minimum))
-    print("################################################## Maximum:: " + str(Maximum))
-    print("################################################## Sigma:: " + str(Sigma))
-    print("################################################## Variance:: " + str(Variance))
+    print(("################################################## Mean:: " + str(Mean)))
+    print(("################################################## Median:: " + str(Median)))
+    print(("################################################## Minimum:: " + str(Minimum)))
+    print(("################################################## Maximum:: " + str(Maximum)))
+    print(("################################################## Sigma:: " + str(Sigma)))
+    print(("################################################## Variance:: " + str(Variance)))
 
     ## TODO 25/75 quantiles
     LowerHalfMsk = sitk.BinaryThreshold(inImg, Minimum, Median)
@@ -111,14 +111,14 @@ def LabelStatistics(inputLabel,
     Quantile25Calculator.Execute(inImg, inMsk * LowerHalfMsk)
     Quantile25 = Quantile25Calculator.GetMedian(labelValue)
     outputDictionary['Quantile25'] = Quantile25
-    print("################################################## Quantile25:: " + str(Quantile25))
+    print(("################################################## Quantile25:: " + str(Quantile25)))
 
     UpperHalfMsk = sitk.BinaryThreshold(inImg, Median, Maximum)
     Quantile75Calculator = sitk.LabelStatisticsImageFilter()
     Quantile75Calculator.Execute(inImg, inMsk * UpperHalfMsk)
     Quantile75 = Quantile75Calculator.GetMedian(labelValue)
     outputDictionary['Quantile75'] = Quantile75
-    print("################################################## Quantile75:: " + str(Quantile75))
+    print(("################################################## Quantile75:: " + str(Quantile75)))
 
     ## TODO MAD
     AbsoluteFilter = sitk.AbsImageFilter()
@@ -128,7 +128,7 @@ def LabelStatistics(inputLabel,
     MADCalculator.Execute(AbsImg, inMsk)
     MAD = MADCalculator.GetMedian(labelValue)
     outputDictionary['MAD'] = MAD
-    print("################################################## MAD:: " + str(MAD))
+    print(("################################################## MAD:: " + str(MAD)))
 
     import csv
     csvFile = open(outputCSVFilename, 'w')

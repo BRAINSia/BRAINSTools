@@ -1,5 +1,5 @@
-from __future__ import print_function
-from __future__ import division
+
+
 from future import standard_library
 standard_library.install_aliases()
 from builtins import str
@@ -35,9 +35,9 @@ def getOutputDirDict(configurationFilename):
 
 
 def ConfigurationSectionMap(configurationFilename):
-    print( """Executing
+    print(( """Executing
            ConfigurationSectionMap ::: {fn}
-           """.format( fn=configurationFilename) )
+           """.format( fn=configurationFilename) ))
     import sys
     import os
     import configparser
@@ -46,30 +46,29 @@ def ConfigurationSectionMap(configurationFilename):
     if os.path.exists(configurationFilename):
         pass
     else:
-        print("""ERROR in ConfigurationSectionMap
+        print(("""ERROR in ConfigurationSectionMap
               file "{fn}" does not exist!
-              """.format( fn=configurationFilename ) )
+              """.format( fn=configurationFilename ) ))
         sys.exit()
 
-    dictionaryListSet = set(["roilist",
+    dictionaryListSet = {"roilist",
                              "roibooleancreator",
                              "featurelistfiledictionary",
                              "applyFeatureListFileDictionary".lower(),
                              'numberOfElementInSubset'.lower(),
                              "modelParameter".lower(),
-                             "normalization"]
-                            )
+                             "normalization"}
 
     m_configuration = configparser.ConfigParser()
-    print( """READ
-           {fn}.""".format( fn=configurationFilename ))
+    print(( """READ
+           {fn}.""".format( fn=configurationFilename )))
     m_configuration.read(configurationFilename)
 
     returnDict = {}
 
     for section in m_configuration.sections():
-        print( """
-               porcessing section : {sc}""".format( sc=section ))
+        print(( """
+               porcessing section : {sc}""".format( sc=section )))
         sectionDict = {}
         for option in m_configuration.options(section):
             try:
@@ -77,12 +76,12 @@ def ConfigurationSectionMap(configurationFilename):
                     sectionDict[option] = ast.literal_eval(m_configuration.get(section, option))
                 else:
                     sectionDict[option] = m_configuration.get(section, option)
-                print("{option} ==>  {value}".format(option=option,
-                                                     value=sectionDict[option]))
+                print(("{option} ==>  {value}".format(option=option,
+                                                     value=sectionDict[option])))
             except:
-                print("""exception on
-                      %s""" % option )
-                print("Unexpected error:", sys.exc_info()[0])
+                print(("""exception on
+                      %s""" % option ))
+                print(("Unexpected error:", sys.exc_info()[0]))
                 sectionDict[option] = None
         returnDict[section] = sectionDict
     return returnDict
@@ -122,9 +121,9 @@ def BRAINSCutCMDFromConfigFile(configurationFilename,
     else:
         subjectListFilename = listFiles['subjectListFilename'.lower()]
         featureListFileDict = listFiles['featureListFileDictionary'.lower()]
-        print ( """featureListFileDict:::
+        print(( """featureListFileDict:::
                 {fn}
-                """.format( fn=featureListFileDict))
+                """.format( fn=featureListFileDict)))
 
     optionsDict = configurationMap['Options']
     generalOption = ""
@@ -172,14 +171,14 @@ def BRAINSCutCMDFromConfigFile(configurationFilename,
         BRAINSCutCommand = ["BRAINSCut" + " --generateProbability" +
                             " --netConfiguration " + p_xmlFilename
                             ]
-        print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+        print(("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand)))
         subprocess.call(BRAINSCutCommand, shell=True)
     if createVectors:
         BRAINSCutCommand = ["BRAINSCut" + " --createVectors" +
                             " --netConfiguration " + p_xmlFilename +
                             " " + generalOption
                             ]
-        print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+        print(("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand)))
         subprocess.call(BRAINSCutCommand, shell=True)
     if trainModel:
         BRAINSCutCommand = ["BRAINSCut" + " --trainModel" +
@@ -187,18 +186,18 @@ def BRAINSCutCMDFromConfigFile(configurationFilename,
                             optionStr + " --NoTrainingVectorShuffling" +
                             " " + generalOption
                             ]
-        print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+        print(("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand)))
         subprocess.call(BRAINSCutCommand, shell=True)
     if applyModel:
-        print( """METHOD:
-               {str}""".format( str=methodParameter ))
+        print(( """METHOD:
+               {str}""".format( str=methodParameter )))
         BRAINSCutCommand = ["BRAINSCut" + " --applyModel" +
                             " --netConfiguration " + p_xmlFilename +
                             optionStr +
                             " --modelFilename " + p_modelFilename +
                             " " + generalOption
                             ]
-        print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+        print(("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand)))
         subprocess.call(BRAINSCutCommand, shell=True)
 
     return returnList
@@ -219,13 +218,13 @@ def BRAINSCutGenerateProbabilityMap(configurationFilename,
     applyModel = False
     dummyMethodParameter = {}
 
-    print( """generate probability map
+    print(( """generate probability map
            {str}
-           """.format( str=probabilityMapDict) )
+           """.format( str=probabilityMapDict) ))
 
     import os
     for roi in list(probabilityMapDict.keys()):
-        print(os.path.abspath(probabilityMapDict[roi]))
+        print((os.path.abspath(probabilityMapDict[roi])))
         probDir = os.path.dirname(os.path.abspath(probabilityMapDict[roi]))
         if not os.path.exists(probDir):
             os.mkdirs(probDir)
@@ -276,9 +275,9 @@ def BRAINSCutCreateVector(configurationFilename,
     import sys
     for roi in list(probabilityMapDict.keys()):
         if not os.path.exists(probabilityMapDict[roi]):
-            print( """ ERROR
+            print(( """ ERROR
                    {fn}  does not exist.
-                   """.format( fn=probabilityMapDict[roi]) )
+                   """.format( fn=probabilityMapDict[roi]) ))
             sys.exit()
 
     vectorDir = os.path.dirname(os.path.abspath(outputVectorFilename))
@@ -310,7 +309,7 @@ def BRAINSCutCreateVector(configurationFilename,
     outputVectorHdrFilename = outputVectorFilename + ".hdr"
     outputXmlFilename = os.path.abspath(outputXmlFilename)
     outputNormalization = normalization
-    print("""Output of BRAINSCutCreateVector
+    print(("""Output of BRAINSCutCreateVector
           outputVectorFilename = {ovf}
           outputVectorHdrFilename = {ovh}
           outputNormalization = {on}
@@ -318,7 +317,7 @@ def BRAINSCutCreateVector(configurationFilename,
           """.format( ovf=outputVectorFilename,
                       ovh=outputVectorHdrFilename,
                       on=outputNormalization,
-                      oxf=outputXmlFilename))
+                      oxf=outputXmlFilename)))
     return outputVectorFilename, outputVectorHdrFilename, outputNormalization, outputXmlFilename
 
 #########################################################################################
@@ -384,16 +383,16 @@ def BRAINSCutApplyModel(configurationFilename,
                         outputXmlFilename):
     import os.path
     import sys
-    if type(normalization) == list:
+    if isinstance(normalization, list):
         if(len(set(normalization)) == 1):
             normalization = normalization[0]
         else:
-            print("""ERROR::
+            print(("""ERROR::
                   Improper normalization input.
                   Currently only one normalization type for
                   all ROIs are supported.
                   Normalization input is not same for all ROIs.
-                  {fn}""".format( fn=normalization))
+                  {fn}""".format( fn=normalization)))
             sys.exit()
     p_probMapDict = {}
     for roi in list(probabilityMapDict.keys()):
@@ -466,9 +465,9 @@ def updating(originalFilename,
         outConfigParser.add_section(section)
         for option in inConfigParser.options(section):
             if option in whatToChangeDict:
-                print("""
+                print(("""
                       change option {op} to {value}
-                      """.format( op=option, value=whatToChangeDict[ option ] ) )
+                      """.format( op=option, value=whatToChangeDict[ option ] ) ))
                 outConfigParser.set(section, option, whatToChangeDict[option])
             else:
                 outConfigParser.set(section, option, inConfigParser.get(section, option))
@@ -568,7 +567,7 @@ def BalanceInputVectors(inputVectorFilenames):
                        outputVectorFilenames[inputVectorFile] +
                        " --inputVectorFileBaseName " + inputVectorFile +
                        " --resampleProportion " + str(old_div(float(maxTVC), float(TVC[inputVectorFile])))]
-        print("HACK:  UPSAMPPLING: {0}".format(upsampleCMD))
+        print(("HACK:  UPSAMPPLING: {0}".format(upsampleCMD)))
         subprocess.call(upsampleCMD, shell=True)
         outputVectorFilenames[inFile] = os.path.abspath(outputVectorFilenames[inFile])
 
@@ -613,8 +612,8 @@ def CombineInputVectors(inputVectorFilenames,
     try:
         subprocess.call(shuffleVector, shell=True)
     except:
-        print("""ERROR
-              fail to run {str}""".format( str=shuffleVector ))
+        print(("""ERROR
+              fail to run {str}""".format( str=shuffleVector )))
         sys.exit()
     return os.path.abspath(outShuffleFileBase), outShuffleFileBase + ".hdr"
 

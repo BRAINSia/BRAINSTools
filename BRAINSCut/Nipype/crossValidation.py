@@ -1,7 +1,6 @@
-from __future__ import print_function
+
 from future import standard_library
 standard_library.install_aliases()
-from builtins import next
 from builtins import str
 from builtins import zip
 from builtins import range
@@ -71,13 +70,13 @@ def writeConfigFile(originalFilename,
 
     inConfigParser = configparser.ConfigParser()
     try:
-        print( """read
-               {fn}""".format( fn=originalFilename ))
+        print(( """read
+               {fn}""".format( fn=originalFilename )))
         inConfigParser.read(originalFilename)
     except:
-        print( """ERROR
+        print(( """ERROR
                fail to read file {fn}
-               """.format( fn=originalFilename ))
+               """.format( fn=originalFilename )))
 
     outConfigParser = configparser.RawConfigParser()
 
@@ -88,10 +87,10 @@ def writeConfigFile(originalFilename,
 
     print(outputAdditionaListFiles)
     for option in list(outputAdditionaListFiles.keys()):
-        print(outputAdditionaListFiles[option])
-        print(outputAdditionaListFiles[option])
-        print(outputAdditionaListFiles[option])
-        print(outputAdditionaListFiles[option])
+        print((outputAdditionaListFiles[option]))
+        print((outputAdditionaListFiles[option]))
+        print((outputAdditionaListFiles[option]))
+        print((outputAdditionaListFiles[option]))
         outConfigParser.set('ListFiles',
                             option,
                             outputAdditionaListFiles[option])
@@ -121,10 +120,10 @@ def writeListFile(sessionDict,
         for session in list(sessionDict.keys()):
             sessionRow = sessionDict[session]
             if tagsToWrite[session] == outTag:
-                print("Add {s} ".format(s=sessionRow['sessionID']))
+                print(("Add {s} ".format(s=sessionRow['sessionID'])))
                 writer.writerow(sessionRow)
             else:
-                print("Drop {s} ".format(s=sessionRow['sessionID']))
+                print(("Drop {s} ".format(s=sessionRow['sessionID'])))
         outFile.close()
 
     import os.path
@@ -147,7 +146,7 @@ def getStartAndEndIndex(p_iTh,
         StartIndex = sum(p_numberOfElementsPerSubset[0:p_iTh])
     EndIndx = StartIndex + p_numberOfElementsPerSubset[p_iTh] - 1
     print(p_numberOfElementsPerSubset)
-    print("({s},{e})".format(s=StartIndex, e=EndIndx))
+    print(("({s},{e})".format(s=StartIndex, e=EndIndx)))
     return StartIndex, EndIndx
 
 #############################################################################
@@ -159,8 +158,8 @@ def readListFileBySessionID(inputFilename,
     listDict = {}
 
     try:
-        print("""Read
-              {fn}""".format( fn=inputFilename ))
+        print(("""Read
+              {fn}""".format( fn=inputFilename )))
         with open(inputFilename, "r") as inFile:
             reader = csv.reader(inFile, delimiter=",", skipinitialspace=True)
             header = next(reader)
@@ -172,15 +171,15 @@ def readListFileBySessionID(inputFilename,
                     rowDict[name] = value.strip()
                 listDict[rowDict['sessionID']] = rowDict
     except:
-        print( """ERROR
+        print(( """ERROR
                fail to read file {fn}
-               """.format( fn=inputFilename))
+               """.format( fn=inputFilename)))
     import sys
     if totalNumber > 0 and len(listDict) != totalNumber:
-        print("""ERROR
+        print(("""ERROR
               Total number of feature images are not equal to the main list.
               n( inputFilename ) = {n} != {t}
-              """.format( n=len( listDict ) , t=totalNumber ))
+              """.format( n=len( listDict ), t=totalNumber )))
         sys.exit()
 
     return listDict
@@ -209,8 +208,8 @@ def getTags(sessionList,
             tags[session] = 'Apply'
         else:
             tags[session] = 'Train'
-    print("""Generate tags:::
-             {t}""".format( t=tags))
+    print(("""Generate tags:::
+             {t}""".format( t=tags)))
     return tags
 #############################################################################
 
@@ -221,15 +220,15 @@ def getRandomizedSessionOrder(sessionList):
           """)
     ## randomize the order
     import random
-    print ("""input list:::
-           {s}""".format( s=sessionList ))
+    print(("""input list:::
+           {s}""".format( s=sessionList )))
     random.shuffle(sessionList, random.random)
-    print( """randomized list:::
-           {s}""".format( s=sessionList ))
+    print(( """randomized list:::
+           {s}""".format( s=sessionList )))
     orderIndex = 0
     sessionOrder = {}
     for s in sessionList:
-        print( """ assign sessionOrder[{s}] = {orderIndex}""".format( s=s, orderIndex=orderIndex))
+        print(( """ assign sessionOrder[{s}] = {orderIndex}""".format( s=s, orderIndex=orderIndex)))
         sessionOrder[s] = orderIndex
         orderIndex = orderIndex + 1
     return sessionOrder
@@ -251,10 +250,10 @@ def generateNewFilenames(nTest,
         currentPefix = outputPrefix + "_" + "Test" + str(nTest) + "_" + str(ft)
         returnFeatureListFilenameDict[ft] = {'Train': currentPefix + "_featureTrainList.csv",
                                              'Apply': currentPefix + "_featureApplyList.csv"}
-    print("""
+    print(("""
           returnMainListFilename: {fn1}
           returnFeatureListFilenameDict: {fn2}
-          """.format( fn1=returnMainListFilename, fn2=returnFeatureListFilenameDict))
+          """.format( fn1=returnMainListFilename, fn2=returnFeatureListFilenameDict)))
     return returnConfigFilename, returnMainListFilename, returnFeatureListFilenameDict
 
 #############################################################################
@@ -312,8 +311,8 @@ def createConfigurationFileForCrossValidationUnitTest(inputConfigurationFilename
                 trainFeatureStr[ft] = newFeatureFilenameDict[ft]['Train']
                 applyFeatureStr[ft] = newFeatureFilenameDict[ft]['Apply']
 
-        print(newMainFilename['Train'])
-        print(newMainFilename['Apply'])
+        print((newMainFilename['Train']))
+        print((newMainFilename['Apply']))
         print(trainFeatureStr)
         print(applyFeatureStr)
         this.writeConfigFile(inputConfigurationFilename,
@@ -392,10 +391,10 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     dg.inputs.template = "*config"
     mainConfigFiles = dg.run()
 
-    print(mainConfigFiles.outputs.outfiles)
-    print(mainConfigFiles.outputs.outfiles)
-    print(mainConfigFiles.outputs.outfiles)
-    print(mainConfigFiles.outputs.outfiles)
+    print((mainConfigFiles.outputs.outfiles))
+    print((mainConfigFiles.outputs.outfiles))
+    print((mainConfigFiles.outputs.outfiles))
+    print((mainConfigFiles.outputs.outfiles))
 
     #------------------------------------------------------------------------------------
     workflow = pe.Workflow(name='crossValidationWF')
@@ -486,8 +485,8 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     vectorCreatorND.inputs.outputVectorFilename = 'oneROIVectorFile.txt'
     vectorCreatorND.inputs.outputXmlFilename = 'oneROICreateVectorNetConfiguration.xml'
     normalizationOption = Options['normalization'.lower()]
-    print( """Normalization Option: {str}
-           """.format( str=normalizationOption ) )
+    print(( """Normalization Option: {str}
+           """.format( str=normalizationOption ) ))
     vectorCreatorND.iterables = ('normalization', normalizationOption)
     #
     #--------------------------------  workflow connections

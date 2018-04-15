@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from builtins import str
 ## Analysis interface for BAW version
 ## input: segmentations from BCut
@@ -76,9 +76,9 @@ def getData(ResultDir,
     DG.inputs.method = methodParameter
     DG.inputs.sessionID = sessionID
     dt = DG.run()
-    print( """Data grabber with {opt}:::
+    print(( """Data grabber with {opt}:::
            {str}
-           """.format( opt=optionalString, str=dt.outputs.outputList ))
+           """.format( opt=optionalString, str=dt.outputs.outputList )))
 
     return dt.outputs.outputList
 
@@ -100,7 +100,7 @@ def experimentAnalysis(resultDir,
     label = 1
     for roi in sorted(set(roiList)):
         roiLabel[roi] = label
-        print( """{r} ===> {l}""".format( r=roi, l=label))
+        print(( """{r} ===> {l}""".format( r=roi, l=label)))
         label = label + 1
 
     autoFileList = []
@@ -142,9 +142,9 @@ def experimentAnalysis(resultDir,
 
             autoFileList.append(labelDT)
 
-            print( """compute roi of ::
+            print(( """compute roi of ::
                    {s}
-                   """.format( s=roi ))
+                   """.format( s=roi )))
             #
             # get get deformation
             #
@@ -155,13 +155,13 @@ def experimentAnalysis(resultDir,
             # read manual image
             refFileList.append(roiManualDict[roi])
 
-    print( """LENGTH:::
+    print(( """LENGTH:::
         length( roiSeqList) = {roiL}
         length( sessionList ) = {sessionL}
         length( autoFileList ) = {autuL}
         length( refFilename ) = {refL}
     """.format( roiL=len( roiSeqList), sessionL=len(sessionList), autuL=len(autoFileList),
-                refL=len(refFileList)))
+                refL=len(refFileList))))
 
     import nipype.pipeline.engine as pe
     import os
@@ -231,9 +231,9 @@ def similarityComputeWorkflow(ResultDir,
     import analysis as this
     configMap = configParser.ConfigurationSectionMap(ExperimentalConfigurationFile)
     normalizationOptions = configMap['Options']['normalization']
-    print(""" Normalization Option:::
+    print((""" Normalization Option:::
           {str}
-          """.format( str=normalizationOptions ))
+          """.format( str=normalizationOptions )))
 
     #
     # get methods
@@ -245,17 +245,17 @@ def similarityComputeWorkflow(ResultDir,
     for option in methodOptionsDictList:
         methodStr = 'TreeDepth' + str(option['--randomTreeDepth']) + '_TreeNumber' + str(option['--numberOfTrees'])
         methodOptions.append(methodStr)
-    print(""" Method Option:::
+    print((""" Method Option:::
           {str}
-          """.format( str=methodStr ))
+          """.format( str=methodStr )))
 
     #
     # get roiList
     #
     roiList = list(configMap['Options']['roiBooleanCreator'.lower()].keys())
-    print(""" ROIList:::
+    print((""" ROIList:::
           {str}
-          """.format( str=roiList ))
+          """.format( str=roiList )))
 
     #
     # get sessionList and manualDict

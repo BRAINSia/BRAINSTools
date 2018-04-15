@@ -149,7 +149,7 @@ int DWIConvert::read()
 int DWIConvert::write(const std::string& outputVolume)
 {
   setOutputFileType(outputVolume);
-  const std::string version = "4.8.0";
+  const std::string version = "5.0.0";
   if ("FSL" == getOutputFileType())
   {
     m_useIdentityMeasurementFrame = true; //Only true is valid for writing FSL

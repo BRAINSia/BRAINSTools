@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 ##############################################################################
 import os
 import re
@@ -87,7 +87,7 @@ def findInputImagesForSubject(inputT1, BRAINSAtlasDir, outputDir):
     # scan      = subjectID_date_postFix.split( '_' )[1]
 
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print("site::" + siteID + ", subjectID::" + subjectID + ",scan::" + scan)
+    print(("site::" + siteID + ", subjectID::" + subjectID + ",scan::" + scan))
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     import WFPerSubject
@@ -149,7 +149,7 @@ def main(argv=None):
                        help='Input sujbect list file')
 
     inputArg = argParser.parse_args()
-    print(inputArg.PythonBinDir)
+    print((inputArg.PythonBinDir))
 
     # ------------------------------------------------------------------------------------- }#
     # --------------------------------------------------------------------------------------- #
@@ -176,7 +176,7 @@ def main(argv=None):
         else:
             ncol = 0
             for col in row:
-                print('%-8s: %s' % (header[ncol], col))
+                print(('%-8s: %s' % (header[ncol], col)))
                 if header[ncol] == "subject":
                     subjectList.append(col)
                 ncol += 1

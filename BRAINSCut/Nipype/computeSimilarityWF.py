@@ -14,8 +14,8 @@ def getLabelVolume(img, label=1):
         count = 0
         pass
     volume = count * (img.GetSpacing()[0] * img.GetSpacing()[1] * img.GetSpacing()[2])
-    print( """Computed volume is
-            {vl} mm^3""".format( vl=volume ))
+    print(( """Computed volume is
+            {vl} mm^3""".format( vl=volume )))
     return volume
 
 #########################################################################################
@@ -23,13 +23,13 @@ def getLabelVolume(img, label=1):
 
 def printImageInfo(img):
     import SimpleITK as sitk
-    print("""Image info:::
+    print(("""Image info:::
           spacing: {sp}
           pixelID: {pid}
           dimension: {d}
           """.format( sp=img.GetSpacing(),
                       pid=img.GetPixelIDValue(),
-                      d=img.GetDimension()))
+                      d=img.GetDimension())))
 #########################################################################################
 
 
@@ -41,14 +41,14 @@ def getDefMask(img, tolerance):
     return binary
 #########################################################################################
 
-def computeSimilarity(autoFilename, refFilename, autoLabel, roi, session, defFilename = NULL):
+def computeSimilarity(autoFilename, refFilename, autoLabel, roi, session, defFilename = None):
     import SimpleITK as sitk
     import os
     import analysis as this
     floatTolerance = 0.01
 
-    print( """ compute similarity of label :
-           {l}""".format( l=autoLabel ))
+    print(( """ compute similarity of label :
+           {l}""".format( l=autoLabel )))
 
     autoImg = sitk.BinaryThreshold(sitk.ReadImage(autoFilename), autoLabel, autoLabel)
 
@@ -63,7 +63,7 @@ def computeSimilarity(autoFilename, refFilename, autoLabel, roi, session, defFil
     OUT['autoVol'] = this.getLabelVolume(autoImg)
     OUT['refVol'] = this.getLabelVolume(refImg)
 
-    if defFilename not NULL:
+    if defFilename is not None:
         defImg = sitk.ReadImage(defFilename)
         this.printImageInfo(defImg)
         defMsk = this.getDefMask(defImg, floatTolerance)
@@ -99,8 +99,8 @@ def computeSimilarity(autoFilename, refFilename, autoLabel, roi, session, defFil
         OUT['Hausdorff'] = -1
         OUT['HausdorffAvg'] = -1
 
-    for ele in OUT.iterkeys():
-        print("{e} = {v}".format(e=ele, v=OUT[ele]))
+    for ele in list(OUT.keys()):
+        print(("{e} = {v}".format(e=ele, v=OUT[ele])))
     return OUT
 
 #########################################################################################
@@ -142,7 +142,7 @@ def computeSummary(rObject):
       {
         subResult <- data.frame( matrix( nrow=0,
                                          ncol= length( numericCols ) ,
-                                         dimnames = list( NULL, col.names=numericCols ) ))
+                                         dimnames = list( None, col.names=numericCols ) ))
         print( paste("processing ", cROI ) )
         roiDT <- subset( dt, dt$roi == cROI , select=numericCols )
         print(head(roiDT))

@@ -1,5 +1,4 @@
-from __future__ import print_function
-from builtins import next
+
 from builtins import zip
 import sys
 #########################################################################################

@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 ## \author Hans J. Johnson
 ## This file contains the code necessary to build the python module
@@ -136,7 +136,7 @@ import os
 import shutil
 import argparse
 
-print("Running: ", ' '.join(sys.argv), "\n\n")
+print(("Running: ", ' '.join(sys.argv), "\n\n"))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--python_paths", dest='python_paths', type=str, help="usually just the path the nipype")
@@ -188,8 +188,8 @@ help_file = open(os.path.join(OUTPUT_PATH, 'generated.sh'), 'w')
 help_file.write(' '.join(sys.argv) + "\n")
 help_file.close()
 
-print("\n\nRan: ", ' '.join(sys.argv), "\n\n")
+print(("\n\nRan: ", ' '.join(sys.argv), "\n\n"))
 
-print("FOUND: ", found_modules_list)
+print(("FOUND: ", found_modules_list))
 for test_module in missing_modules_list:
-    print("Missing Candidate Program: {prog_name}".format(prog_name=test_module))
+    print(("Missing Candidate Program: {prog_name}".format(prog_name=test_module)))

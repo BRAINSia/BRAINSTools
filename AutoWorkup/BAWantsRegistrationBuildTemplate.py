@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 from builtins import range
 from builtins import str
@@ -13,8 +13,8 @@ from nipype.interfaces.ants import (
     AverageAffineTransform)
 from nipype.interfaces.utility import Function
 
-from utilities.distributed import modify_qsub_args
-from utilities.misc import CommonANTsRegistrationSettings
+from .utilities.distributed import modify_qsub_args
+from .utilities.misc import CommonANTsRegistrationSettings
 
 
 def makeListOfOneElement(inputFile):
@@ -58,11 +58,11 @@ def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes
             nested_interpolation_type.append(interpolationMapping[image_type])
         else:
             nested_interpolation_type.append('Linear')  # Linear is the default.
-    print("\n" * 10)
-    print("HACK: ", nested_imagetype_list)
-    print("HACK: ", outputAverageImageName_list)
-    print("HACK: ", image_type_list)
-    print("HACK: ", nested_interpolation_type)
+    print(("\n" * 10))
+    print(("HACK: ", nested_imagetype_list))
+    print(("HACK: ", outputAverageImageName_list))
+    print(("HACK: ", image_type_list))
+    print(("HACK: ", nested_interpolation_type))
     return nested_imagetype_list, outputAverageImageName_list, image_type_list, nested_interpolation_type
 
 
@@ -90,8 +90,8 @@ def SplitCompositeToComponentTransforms(transformFilename):
         script.close()
         os.chmod(script_name, 0o777)
         script_name = os.path.abspath(script_name)
-        print("XX" * 40)
-        print("Starting CompositeTransformUtil script: {0}".format(script_name))
+        print(("XX" * 40))
+        print(("Starting CompositeTransformUtil script: {0}".format(script_name)))
         scriptStatus = subprocess.check_call([script_name], shell=True)
         if scriptStatus != 0:
             sys.exit(scriptStatus)
@@ -117,17 +117,17 @@ def SplitCompositeToComponentTransforms(transformFilename):
 def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, interpolationMapping,
                                   invert_transform_flags=None):
     import sys
-    print("HACK:  DEBUG: ListOfPassiveImagesDictionaries\n{lpi}\n".format(lpi=ListOfPassiveImagesDictionaries))
+    print(("HACK:  DEBUG: ListOfPassiveImagesDictionaries\n{lpi}\n".format(lpi=ListOfPassiveImagesDictionaries)))
     subjCount = len(ListOfPassiveImagesDictionaries)
     tranCount = len(transforms)
     if subjCount != tranCount:
-        print("ERROR:  subjCount must equal tranCount {0} != {1}".format(subjCount, tranCount))
+        print(("ERROR:  subjCount must equal tranCount {0} != {1}".format(subjCount, tranCount)))
         sys.exit(-1)
     if invert_transform_flags is None:
         invert_transform_flags = [False] * subjCount
     invertTfmsFlagsCount = len(invert_transform_flags)
     if subjCount != invertTfmsFlagsCount:
-        print("ERROR:  subjCount must equal invertTfmsFlags {0} != {1}".format(subjCount, invertTfmsFlagsCount))
+        print(("ERROR:  subjCount must equal invertTfmsFlags {0} != {1}".format(subjCount, invertTfmsFlagsCount)))
         sys.exit(-1)
     flattened_images = list()
     flattened_image_nametypes = list()
@@ -151,10 +151,10 @@ def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, i
                 flattened_interpolation_type.append(interpolationMapping[imgname])
             else:
                 flattened_interpolation_type.append('Linear')  # Linear is the default.
-    print("HACK: flattened images    {0}\n".format(flattened_images))
-    print("HACK: flattened nametypes {0}\n".format(flattened_image_nametypes))
-    print("HACK: flattened txfms     {0}\n".format(flattened_transforms))
-    print("HACK: flattened txfmsFlags{0}\n".format(flattened_invert_transform_flags))
+    print(("HACK: flattened images    {0}\n".format(flattened_images)))
+    print(("HACK: flattened nametypes {0}\n".format(flattened_image_nametypes)))
+    print(("HACK: flattened txfms     {0}\n".format(flattened_transforms)))
+    print(("HACK: flattened txfmsFlags{0}\n".format(flattened_invert_transform_flags)))
     return flattened_images, flattened_transforms, flattened_invert_transform_flags, flattened_image_nametypes, flattened_interpolation_type
 
 

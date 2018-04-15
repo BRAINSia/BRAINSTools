@@ -4,16 +4,16 @@
 # :: copy model file into md5 repository
 # :: connect input/output in the BAW
 
-from __future__ import print_function
+
 
 import argparse
 import subprocess
 import sys
 
 if False:
-    print("^" * 100)
-    print("PYTHON EXEC: ", sys.executable)
-    print("VERSION: ", sys.version)
+    print(("^" * 100))
+    print(("PYTHON EXEC: ", sys.executable))
+    print(("VERSION: ", sys.version))
     # HACK
     dummy = False
     if sys.version[:3] != '2.7':
@@ -21,15 +21,15 @@ if False:
         dummy = True
     # END HACK
     print("ARGV: [\n")
-    print(sys.argv[0])
+    print((sys.argv[0]))
     for __argv in sys.argv[1:]:
         if __argv.startswith('-'):
-            print("    ", __argv, "=", end=' ')
+            print(("    {0}= ".format( __argv ) ))
         else:
             print(__argv)
     print("]")
     del __argv
-    print("^" * 100)
+    print(("^" * 100))
 
     if dummy:  # debugging
         import os
@@ -37,19 +37,19 @@ if False:
         print("PATH: [")
         __PATH = os.environ['PATH']
         for p in __PATH.split(':'):
-            print(p, ",")
+            print((p, ","))
         print(']')
         __PPATH = ''
         try:
             print("PYTHONPATH: [")
             __PPATH = os.environ['PYTHONPATH']
             for p in __PPATH.split(':'):
-                print(p, ",")
+                print((p, ","))
             print(']')
         except KeyError:
             pass
         del __PATH, __PPATH
-        print("^" * 100)
+        print(("^" * 100))
         raise NotImplementedError
         sys.exit(-1)
         # END HACK
@@ -196,7 +196,7 @@ def xmlGenerator(args, roi=""):
     # if args.inputSubjectBrainMaskFilename != "NA":
     #    outputStream.write( "    <Mask Type=\"RegistrationROIi\"  Filename=\""+args.inputSubjectBrainMaskFilename+"\" />\n")
 
-    if not args.deformationFromSubjectToTemplate is None:
+    if args.deformationFromSubjectToTemplate is not None:
         outputStream.write(
             '    <Registration SubjToAtlasRegistrationFilename="' + args.deformationFromSubjectToTemplate + '"\n')
     else:
@@ -313,7 +313,7 @@ if __name__ == '__main__':
                             " --method RandomForest" +
                             " --numberOfTrees 60  --randomTreeDepth 60"
                             ]
-        print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+        print(("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand)))
         subprocess.check_call(BRAINSCutCommand, shell=True)
     """
     script to be run

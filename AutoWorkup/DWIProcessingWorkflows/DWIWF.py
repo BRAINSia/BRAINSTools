@@ -33,7 +33,7 @@ Options:
   --workflowCacheDir CACHEDIR               Base directory that cache outputs of workflow will be written to (default: ./)
   --resultDir RESULTDIR                     Outputs of dataSink will be written to a sub directory under the resultDir named by input scan sessionID (default: CACHEDIR)
 """
-from __future__ import print_function
+
 
 
 def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, PYTHON_AUX_PATHS, LABELS_CONFIG_FILE):
@@ -319,7 +319,7 @@ if __name__ == '__main__':
         RESULTDIR = argv['--resultDir']
         assert os.path.exists(RESULTDIR), "Results directory is not found: %s" % RESULTDIR
 
-    print('=' * 100)
+    print(('=' * 100))
 
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #####################################################################################

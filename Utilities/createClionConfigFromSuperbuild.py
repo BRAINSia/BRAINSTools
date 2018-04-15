@@ -22,22 +22,22 @@ if len(sys.argv) > 1:
 else:
   usage()
 
-with open(input_cache_file_from_superbuild,'r') as fid:
+with open(input_cache_file_from_superbuild, 'r') as fid:
     lines=fid.readlines()
 
 
 ## By placing all values into a dictionary, only the last processed value is stored
 options_dict =dict()
 for line in lines:
-    ll = line.replace("set(","").replace(")","")
+    ll = line.replace("set(", "").replace(")", "")
     elems=shlex.split(ll)
     if len(elems) > 5:
-        options_dict[elems[0]] = (elems[3],elems[1])
+        options_dict[elems[0]] = (elems[3], elems[1])
 
 ## A few items should be under the control of CLion
-skip_cmake_directives_list=["CMAKE_BUILD_TYPE","CMAKE_GENERATOR","MAKECOMMAND","EXTERNAL_PROJECT_BUILD_TYPE"];
-for k,v in options_dict.items():
+skip_cmake_directives_list=["CMAKE_BUILD_TYPE", "CMAKE_GENERATOR", "MAKECOMMAND", "EXTERNAL_PROJECT_BUILD_TYPE"];
+for k, v in list(options_dict.items()):
   if k in skip_cmake_directives_list:
     continue
   if len(v[1]) > 0 and v[1] != '""':
-     print("-D{0}:{1}=\"{2}\"".format(k,v[0],v[1]))
+     print(("-D{0}:{1}=\"{2}\"".format(k, v[0], v[1])))

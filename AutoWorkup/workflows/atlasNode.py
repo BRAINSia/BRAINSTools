@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 from builtins import range
 from builtins import zip
@@ -206,7 +206,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         if base_name in list(patternDict.keys()):
             load_images_list[base_name] = sitk.ReadImage(full_pathname)
         else:
-            print("MISSING FILE FROM patternDict: {0}".format(base_name))
+            print(("MISSING FILE FROM patternDict: {0}".format(base_name)))
     ## Make binary dilated mask
     binmask = sitk.BinaryThreshold(load_images_list['AVG_BRAINMASK.nii.gz'], 1, 1000000)
     brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, 5)
@@ -300,9 +300,9 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         else:
             import sys
 
-            print("ERROR: basename {0} not in list!! \n{1}".format(base_name, ['AVG_BRAINMASK.nii.gz', 'AVG_T2.nii.gz',
+            print(("ERROR: basename {0} not in list!! \n{1}".format(base_name, ['AVG_BRAINMASK.nii.gz', 'AVG_T2.nii.gz',
                                                                                'AVG_PD.nii.gz', interiorPriors,
-                                                                               exteriorPriors]))
+                                                                               exteriorPriors])))
             sys.exit(-1)
 
     binmask = None

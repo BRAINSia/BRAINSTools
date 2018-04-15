@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 from builtins import range
 from builtins import str
@@ -45,7 +45,7 @@ def MakeVector(inFN1, inFN2=None, jointFusion=False):
     if jointFusion:
         returnVector = [returnVector]
 
-    print("jointFusion: " + str(jointFusion))
+    print(("jointFusion: " + str(jointFusion)))
     print(returnVector)
     print("============================================")
     return returnVector
@@ -180,7 +180,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     print("master_config")
     print(master_config)
     print("master_config['jointfusion_atlas_db_base']")
-    print(master_config['jointfusion_atlas_db_base'])
+    print((master_config['jointfusion_atlas_db_base']))
     jointFusionAtlasDict = readMalfAtlasDbBase(master_config['jointfusion_atlas_db_base'])
     number_of_atlas_sources = len(jointFusionAtlasDict)
     jointFusionAtlases = dict()

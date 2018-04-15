@@ -9,7 +9,7 @@ Purpose:       Wrap a convenience function for the BRAINSCut program in Nipype
 Requirements:  <<< Interface specifications >>>
 
 """
-from __future__ import print_function
+
 
 import os
 import sys
@@ -141,9 +141,9 @@ class RF12BRAINSCutWrapper(CommandLine):
     """
     _cmd = 'BRAINSCutCMD.py'
     # HACK
-    print("^" * 100)
-    print("PYTHON EXEC: ", sys.executable)
-    print("VERSION: ", sys.version)
+    print(("^" * 100))
+    print(("PYTHON EXEC: ", sys.executable))
+    print(("VERSION: ", sys.version))
     # if sys.version[:2] != '2.7':
     #     raise NotImplementedError
     # END HACK

@@ -30,8 +30,8 @@ Examples:
   $ template.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 2001
 
 """
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import glob
 import os
@@ -39,7 +39,7 @@ import sys
 import traceback
 from builtins import range
 
-from baw_exp import OpenSubjectDatabase
+from .baw_exp import OpenSubjectDatabase
 
 
 def get_processed_subjects(resultdir, input_subjects_list):
@@ -101,13 +101,13 @@ def get_processed_subjects(resultdir, input_subjects_list):
             for testFile in required_files:
                 if not os.path.exists(os.path.join(testDirectory, testFile)):
                     all_files_exists = False
-                    print("MISSING FILE: {0}: ".format(os.path.join(testDirectory, testFile)))
+                    print(("MISSING FILE: {0}: ".format(os.path.join(testDirectory, testFile))))
             if all_files_exists:
                 processedSubjects.append(os.path.basename(os.path.dirname(testDirectory)))
             else:
                 partial_done.append(os.path.basename(os.path.dirname(testDirectory)))
-        print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
-        print("Finishing Incomplete SUBJECTS: {0}".format(partial_done))
+        print(("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects)))
+        print(("Finishing Incomplete SUBJECTS: {0}".format(partial_done)))
         return processedSubjects
 
 
@@ -117,7 +117,7 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
     if "all" in input_subjects:
         input_subjects = _temp.getAllSubjects();
     if useSentinal:
-        print("=" * 80)
+        print(("=" * 80))
         print("Using Sentinal Files to Limit Jobs Run")
         _all_subjects = set(input_subjects)
         _processed_subjects = set(get_processed_subjects(resultdir, input_subjects))
@@ -186,7 +186,7 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
             ListOfImagesDictionaries[subject_index]['FL'] = fls[subject_index]
         if labels[subject_index] is not None:
             ListOfImagesDictionaries[subject_index]['BRAINMASK'] = labels[subject_index]
-        print(ListOfImagesDictionaries[subject_index])
+        print((ListOfImagesDictionaries[subject_index]))
         for key, value in list(posteriors.items()):
             # print "key:", key, " -> value:", value
             ListOfImagesDictionaries[subject_index][key] = value[subject_index]
@@ -212,12 +212,12 @@ def xml_filename(subject):
 
 
 def getSessionsFromSubjectDictionary(subject_session_dictionary, subject):
-    print("#" + subject + "#" * 80 + "\n")
-    print(subject_session_dictionary[subject])
+    print(("#" + subject + "#" * 80 + "\n"))
+    print((subject_session_dictionary[subject]))
     if len(subject_session_dictionary[subject]) == 0:
         import sys
         print(subject_session_dictionary)
-        print("ERROR:  No sessions for subject {0}".format(subject))
+        print(("ERROR:  No sessions for subject {0}".format(subject)))
         sys.exit(-1)
     return subject_session_dictionary[subject]
 
@@ -238,14 +238,14 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     # Quick preliminary sanity check
     for thisSubject in subjects:
         if len(subjects_sessions_dictionary[thisSubject]) == 0:
-            print(
+            print((
                 "ERROR: subject {0} has no sessions found.  Did you supply a valid subject id on the command line?".format(
-                    thisSubject))
+                    thisSubject)))
             sys.exit(-1)
 
     for thisSubject in subjects:
-        print("Processing atlas generation for this subject: {0}".format(thisSubject))
-        print("=" * 80)
+        print(("Processing atlas generation for this subject: {0}".format(thisSubject)))
+        print(("=" * 80))
         print("Copying Atlas directory and determining appropriate Nipype options...")
         subj_pipeline_options = nipype_options(argv, pipeline_options, cluster, experiment,
                                                environment)  # Generate Nipype options
@@ -263,11 +263,11 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                                                                                    thisSession))
             t1_file_result = glob.glob(path_test)
             if len(t1_file_result) != 1:
-                print("Incorrect number of t1 images found for data grabber {0}".format(t1_file_result))
-                print("     at path {0}".format(path_test))
+                print(("Incorrect number of t1 images found for data grabber {0}".format(t1_file_result)))
+                print(("     at path {0}".format(path_test)))
                 ready_for_template_building = False
         if not ready_for_template_building:
-            print("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject))
+            print(("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject)))
             continue
 
         base_output_directory = os.path.join(subj_pipeline_options['logging']['log_directory'], thisSubject)
@@ -518,7 +518,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
 if __name__ == '__main__':
     import sys
-    from AutoWorkup import setup_environment
+    from .AutoWorkup import setup_environment
 
     from docopt import docopt
 
@@ -527,7 +527,7 @@ if __name__ == '__main__':
     if argv['--workphase'] != 'subject-template-generation':
         print("ERROR: Only --workphase subject-template-generation supported for template building")
         sys.exit(-1)
-    print('=' * 100)
+    print(('=' * 100))
     environment, experiment, pipeline, cluster = setup_environment(argv)
     from nipype import config as nipype_config
     import nipype.pipeline.engine as pe
@@ -535,13 +535,13 @@ if __name__ == '__main__':
     from nipype.interfaces.utility import IdentityInterface, Function
     import nipype.interfaces.ants as ants
 
-    from PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
-    from workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
-    from utilities.misc import GenerateSubjectOutputPattern as outputPattern
-    from utilities.distributed import modify_qsub_args
-    from workflows.utils import run_workflow, print_workflow
-    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
-    from utilities.configFileParser import nipype_options
+    from .PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
+    from .workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
+    from .utilities.misc import GenerateSubjectOutputPattern as outputPattern
+    from .utilities.distributed import modify_qsub_args
+    from .workflows.utils import run_workflow, print_workflow
+    from .BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
+    from .utilities.configFileParser import nipype_options
     from nipype.interfaces.semtools.testing.generateaveragelmkfile import GenerateAverageLmkFile
 
     exit = _template_runner(argv, environment, experiment, pipeline, cluster)

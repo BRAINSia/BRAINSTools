@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import errno
 import os
@@ -137,7 +137,7 @@ def FixWMPartitioning(brainMask, PosteriorsList):
                 sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1,
             10000)
 
-    print("Reading {0} of type {1}".format(brainMask, type(brainMask)))
+    print(("Reading {0} of type {1}".format(brainMask, type(brainMask))))
     BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask), 1, 1000)
     BM_FILLED = FillHolePreserveEdge(BM, 3)
 
@@ -173,11 +173,11 @@ def FixWMPartitioning(brainMask, PosteriorsList):
 
     def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME,
                                    NOTREGION_NAME):
-        print("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index],
-                                               type(ShiftPosteriorsList[NOTREGION_index])))
+        print(("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index],
+                                               type(ShiftPosteriorsList[NOTREGION_index]))))
         NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index])
-        print("Reading {0} of type {1}".format(ShiftPosteriorsList[REGION_index],
-                                               type(ShiftPosteriorsList[REGION_index])))
+        print(("Reading {0} of type {1}".format(ShiftPosteriorsList[REGION_index],
+                                               type(ShiftPosteriorsList[REGION_index]))))
         REGION = sitk.ReadImage(ShiftPosteriorsList[REGION_index])
         ALL_REGION = NOTREGION + REGION
         NEW_REGION = ALL_REGION * sitk.Cast(BM_FILLED, sitk.sitkFloat32)
@@ -200,7 +200,7 @@ def FixWMPartitioning(brainMask, PosteriorsList):
     UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, 'VB',
                                                        'NOTVB')
 
-    print("Reading {0} of type {1}".format(PosteriorsList[AIR_index], type(PosteriorsList[AIR_index])))
+    print(("Reading {0} of type {1}".format(PosteriorsList[AIR_index], type(PosteriorsList[AIR_index]))))
     AirMask = sitk.BinaryThreshold(sitk.ReadImage(PosteriorsList[AIR_index]), 0.50, 1000000)
     nonAirMask = sitk.Cast(1 - AirMask, sitk.sitkUInt8)
     nonAirRegionMask = os.path.realpath('NonAirMask.nii.gz')
@@ -286,8 +286,8 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
             accum_image = accum_image + load_images_list[inlist[curr_image]]
         sitk.WriteImage(accum_image, outname)
         AccumulatePriorsList.append(os.path.realpath(outname))
-    print("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList))
-    print(": {APN}\n".format(APN=AccumulatePriorsNames))
+    print(("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)))
+    print((": {APN}\n".format(APN=AccumulatePriorsNames)))
     return AccumulatePriorsList, AccumulatePriorsNames
 
 

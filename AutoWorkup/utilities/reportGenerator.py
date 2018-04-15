@@ -14,7 +14,7 @@ Options:
   -f OUTFILE   The output file csv with average T1/T2 entries in Python dictionary [default: /tmp/autoworkup_report.csv]
 
 """
-from __future__ import print_function
+
 
 import csv
 import glob

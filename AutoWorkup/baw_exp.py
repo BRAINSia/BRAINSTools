@@ -10,8 +10,8 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 ##
 #################################################################################
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 from future import standard_library
 from past.builtins import execfile
@@ -34,7 +34,7 @@ import time
 
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
     import os.path
-    import SessionDB
+    from . import SessionDB
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
     ## TODO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or \
@@ -42,7 +42,7 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
     else:
-        print("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile))
+        print(("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile)))
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
     # print "^^^^^^^^^^^^^"
@@ -60,7 +60,7 @@ def DoSingleSubjectProcessing(sp_args):
 
     while time.time() < start_time:
         time.sleep(start_time - time.time() + 1)
-        print("Delaying start for {0}".format(subjectid))
+        print(("Delaying start for {0}".format(subjectid)))
 
     list_with_one_subject = [subjectid]
     ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, list_with_one_subject, mountPrefix,
@@ -157,10 +157,10 @@ def DoSingleSubjectProcessing(sp_args):
         else:
             print(
                 "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]")
-            print(input_arguments.wfrun)
+            print((input_arguments.wfrun))
             sys.exit(-1)
     except:
-        print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
+        print(("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid)))
         traceback.print_exc(file=sys.stdout)
         return False
     return True
@@ -207,7 +207,7 @@ def MasterProcessingController(argv=None):
     # Virtualenv
     if not environment['virtualenv_dir'] is None:
         print("Loading virtualenv_dir...")
-        execfile(environment['virtualenv_dir'], dict(__file__=environment['virtualenv_dir']))
+        exec(compile(open(environment['virtualenv_dir']).read(), environment['virtualenv_dir'], 'exec'), dict(__file__=environment['virtualenv_dir']))
     ###### Now ensure that all the required packages can be read in from this custom path
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path
@@ -271,20 +271,20 @@ def MasterProcessingController(argv=None):
     #    The ATLAS pathing must stay constant
     ATLASPATH = expConfig.get(input_arguments.processingEnvironment, 'ATLASPATH')
     if not os.path.exists(ATLASPATH):
-        print("ERROR:  Invalid Path for Atlas: {0}".format(ATLASPATH))
+        print(("ERROR:  Invalid Path for Atlas: {0}".format(ATLASPATH)))
         sys.exit(-1)
     CACHE_ATLASPATH = os.path.realpath(os.path.join(ExperimentBaseDirectoryCache, 'Atlas'))
     from distutils.dir_util import copy_tree
     if not os.path.exists(CACHE_ATLASPATH):
-        print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(
-            ATLASPATH, CACHE_ATLASPATH))
+        print(("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(
+            ATLASPATH, CACHE_ATLASPATH)))
         copy_tree(ATLASPATH, CACHE_ATLASPATH, preserve_mode=1, preserve_times=1)
         ## Now generate the xml file with the correct pathing
         file_replace(os.path.join(ATLASPATH, 'ExtendedAtlasDefinition.xml.in'),
                      os.path.join(CACHE_ATLASPATH, 'ExtendedAtlasDefinition.xml'), "@ATLAS_INSTALL_DIRECTORY@",
                      CACHE_ATLASPATH)
     else:
-        print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
+        print(("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH)))
 
     ## Set custom environmental variables so that subproceses work properly (i.e. for FreeSurfer)
     CUSTOM_ENVIRONMENT = eval(environment['misc'])
@@ -328,7 +328,7 @@ def MasterProcessingController(argv=None):
     for subjectid in to_do_subjects:
         delay = 2.5 * subj_index
         subj_index += 1
-        print("START DELAY: {0}".format(delay))
+        print(("START DELAY: {0}".format(delay)))
         sp_args = (CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE,
                    experiment['output_cache'], experiment['output_results'], environment['subject_data_file'],
                    GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, args,
@@ -346,9 +346,9 @@ def MasterProcessingController(argv=None):
 
         for indx in range(0, len(sp_args_list)):
             if all_results[indx] == False:
-                print("FAILED for {0}".format(sp_args_list[indx][-1]))
+                print(("FAILED for {0}".format(sp_args_list[indx][-1])))
 
-    print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects))
+    print(("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects)))
     return 0
 
 

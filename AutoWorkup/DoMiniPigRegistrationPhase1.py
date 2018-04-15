@@ -1,11 +1,11 @@
-from __future__ import print_function
+
 
 import errno
 import os
 import sys
 
 if len(sys.argv) != 1:
-    print("""ERROR:  Improper invocation
+    print(("""ERROR:  Improper invocation
 
 {PROGRAM_NAME} <Experiment.json>
 
@@ -39,7 +39,7 @@ if len(sys.argv) != 1:
   }
 }
 
-""".format(PROGRAM_NAME=sys.argv[0]))
+""".format(PROGRAM_NAME=sys.argv[0])))
 
 
 def addToSysPath(index, path):
@@ -58,7 +58,7 @@ temp_paths = os.environ['PATH'].split(os.pathsep)
 temp_paths.insert(0, os.path.join('/scratch/johnsonhj/src/NEP-11', 'bin'))
 os.environ['PATH'] = os.pathsep.join(temp_paths)
 
-print(sys.path)
+print((sys.path))
 
 import SimpleITK as sitk
 import matplotlib as mp

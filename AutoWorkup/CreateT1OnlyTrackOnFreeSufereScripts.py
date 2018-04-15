@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 __author__ = 'johnsonhj'
 
@@ -121,32 +121,32 @@ def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
                 return_status = False
 
     if return_status == False:
-        print("WARNING:  DON'T KNOW WHAT TO DO: ", base_tps_file)
-        print("current   ", found_sessions)
-        print("base-tps   ", previous_list)
+        print(("WARNING:  DON'T KNOW WHAT TO DO: ", base_tps_file))
+        print(("current   ", found_sessions))
+        print(("base-tps   ", previous_list))
         import shutil
         templ_dir = os.path.join(subjects_dir, templateID)
         if os.path.exists(templ_dir):
-            print("REMOVE TEMPLATE: ", templ_dir)
+            print(("REMOVE TEMPLATE: ", templ_dir))
             try:
                 shutil.rmtree(templ_dir)
             except:
-                print("MANUALLY REMOVE: ", templ_dir)
+                print(("MANUALLY REMOVE: ", templ_dir))
             pass
         else:
-            print("NO NEED TO REMOVE TEMPLATE: ", templ_dir)
+            print(("NO NEED TO REMOVE TEMPLATE: ", templ_dir))
 
         for session in found_sessions:
             long_sess_dir = os.path.join(subjects_dir, session + ".long." + templateID)
             if os.path.exists(long_sess_dir):
-                print("REMOVE LONG: ", long_sess_dir)
+                print(("REMOVE LONG: ", long_sess_dir))
                 try:
                     shutil.rmtree(long_sess_dir)
                 except:
-                    print("MANUALLY REMOVE: ", long_sess_dir)
+                    print(("MANUALLY REMOVE: ", long_sess_dir))
                 pass
             else:
-                print("LONG already deleted: ", long_sess_dir)
+                print(("LONG already deleted: ", long_sess_dir))
 
     return return_status
 
@@ -268,7 +268,7 @@ if (not os.path.exists(subjectDatabaseFile)) or (
     ExperimentDatabase = None
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
 else:
-    print("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile))
+    print(("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile)))
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
 
 import pickle
@@ -333,8 +333,7 @@ base_done = 0
 temp_done = 0
 long_done = 0
 
-all_subjects = ExperimentDatabase.getAllSubjects()
-all_subjects.sort()
+all_subjects = sorted(ExperimentDatabase.getAllSubjects())
 all_subjects.reverse()
 for thisSubject in all_subjects:
     # if thisSubject != '0152':
@@ -371,7 +370,7 @@ for thisSubject in all_subjects:
             T2_files_30 = ExperimentDatabase.getFilenamesByScantype(session, ['T2-30'])
             T2_files = find_mgz(T2_files_30)
             if len(T2_files) != len(T2_files_30):
-                print("SKIPPING: mgz files missing: {0}".format(T2_files_30))
+                print(("SKIPPING: mgz files missing: {0}".format(T2_files_30)))
                 continue
         else:
             # print "HACK: ",T1_files_15
@@ -391,13 +390,13 @@ for thisSubject in all_subjects:
 
         sentinal_file = os.path.join(subjects_dir, session, 'surf/rh.jacobian_white.fwhm15.fsaverage.mgh')
         if os.path.exists(sentinal_file):
-            print("1DONE:", session, ":", sentinal_file, ":")
+            print(("1DONE:", session, ":", sentinal_file, ":"))
             base_done += 1
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
             this_session_base_done = True
         else:
-            print("1TODO:", session, ":", sentinal_file, ":")
+            print(("1TODO:", session, ":", sentinal_file, ":"))
             job_name = mkfsscript(session, fsscript, T1_files, T2_files, is3T)
             if is3T:
                 base3T_job_names.append(job_name)
@@ -425,15 +424,15 @@ for thisSubject in all_subjects:
                 os.unlink(sentinal_file)
             pass;
         else:
-            print("TPS OK for: ", templateID)
+            print(("TPS OK for: ", templateID))
 
         if validatedsamelength and os.path.exists(sentinal_file):
-            print("2DONE:", templateID, ":")
+            print(("2DONE:", templateID, ":"))
             temp_done += 1
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
         else:
-            print("2TODO:", templateID, ":")
+            print(("2TODO:", templateID, ":"))
             template_job_name = mktemplatescript(templateID, ThreeT_sessions, fsscript, base3T_job_names)
             template_job_names.append(template_job_name)
             ## Do secondary run
@@ -454,12 +453,12 @@ for thisSubject in all_subjects:
             fsscript = os.path.join(scripts_dir, 'lg' + session + '.sh')
             sentinal_file = os.path.join(subjects_dir, session + '.long.' + templateID, 'surf/rh.volume')
             if os.path.exists(sentinal_file):
-                print("3DONE:", session, ":", sentinal_file, ":")
+                print(("3DONE:", session, ":", sentinal_file, ":"))
                 long_done += 1
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print("3TODO:", session, ":", sentinal_file, ":")
+                print(("3TODO:", session, ":", sentinal_file, ":"))
                 long_job_name = mklongscript(templateID, session, fsscript, template_job_names, "all", is3T)
                 long_job_names.append(long_job_name)
 
@@ -470,11 +469,11 @@ for thisSubject in all_subjects:
             sentinal_file = os.path.join(subjects_dir, session + '.long.' + templateID,
                                          'surf/rh.w-g.pct.mgh.fwhm25.fsaverage.mgh')
             if os.path.exists(sentinal_file):
-                print("3DONE:", session, ":", sentinal_file, ":")
+                print(("3DONE:", session, ":", sentinal_file, ":"))
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print("3TODO:", session, ":", sentinal_file, ":")
+                print(("3TODO:", session, ":", sentinal_file, ":"))
                 qcache_job_name = mklongscript(templateID, session, fsscript, long_job_names, "qcache", is3T)
                 qcache_job_names.append(qcache_job_name)
 
@@ -486,12 +485,12 @@ for thisSubject in all_subjects:
         templateID = thisSubject + '.template15'
         sentinal_file = os.path.join(subjects_dir, templateID, 'surf/rh.volume')
         if os.path.exists(sentinal_file):
-            print("15TDONE:", templateID, ":", sentinal_file)
+            print(("15TDONE:", templateID, ":", sentinal_file))
             temp_done += 1
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
         else:
-            print("15TTODO:", templateID, ":", OneT_sessions)
+            print(("15TTODO:", templateID, ":", OneT_sessions))
             template_job_name = mktemplatescript(templateID, OneT_sessions, fsscript, base1T_job_names)
             template_job_names.append(template_job_name)
             ## Do secondary run
@@ -510,12 +509,12 @@ for thisSubject in all_subjects:
             fsscript = os.path.join(scripts_dir, 'lg15' + session + '.sh')
             sentinal_file = os.path.join(subjects_dir, session + '.long.' + templateID, 'surf/rh.volume')
             if os.path.exists(sentinal_file):
-                print("15LDONE:", session, ":", sentinal_file, ":")
+                print(("15LDONE:", session, ":", sentinal_file, ":"))
                 long_done += 1
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print("15LTODO:", session, ":", sentinal_file, ":")
+                print(("15LTODO:", session, ":", sentinal_file, ":"))
                 long_job_name = mklongscript(templateID, session, fsscript, template_job_names, "all", False)
                 long_job_names.append(long_job_name)
 
@@ -526,11 +525,11 @@ for thisSubject in all_subjects:
             sentinal_file = os.path.join(subjects_dir, session + '.long.' + templateID,
                                          'surf/rh.w-g.pct.mgh.fwhm25.fsaverage.mgh')
             if os.path.exists(sentinal_file):
-                print("15QDONE:", session, ":", sentinal_file, ":")
+                print(("15QDONE:", session, ":", sentinal_file, ":"))
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print("15QTODO:", session, ":", sentinal_file, ":")
+                print(("15QTODO:", session, ":", sentinal_file, ":"))
                 qcache_job_name = mklongscript(templateID, session, fsscript, long_job_names, "qcache", is3T)
                 qcache_job_names.append(qcache_job_name)
 
@@ -538,6 +537,6 @@ ff = open('type_report.csv', 'w')
 ff.write(type_report)
 ff.close()
 
-print("BASE COMPLETED: {0}".format(base_done))
-print("TEMPLATE COMPLETED: {0}".format(temp_done))
-print("LONGITUDINAL COMPLETED: {0}".format(long_done))
+print(("BASE COMPLETED: {0}".format(base_done)))
+print(("TEMPLATE COMPLETED: {0}".format(temp_done)))
+print(("LONGITUDINAL COMPLETED: {0}".format(long_done)))

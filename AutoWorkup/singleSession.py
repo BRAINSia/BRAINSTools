@@ -32,8 +32,8 @@ Examples:
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 
 def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
@@ -57,7 +57,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     config.update_config(master_config)  # Set universal pipeline options
     logging.update_logging(config)
 
-    from workflows.baseline import generate_single_session_template_WF
+    from .workflows.baseline import generate_single_session_template_WF
 
     project = dataDict['project']
     subject = dataDict['subject']
@@ -108,12 +108,12 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
 
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
-    from baw_exp import OpenSubjectDatabase
-    from utilities.misc import add_dict
+    from .baw_exp import OpenSubjectDatabase
+    from .utilities.misc import add_dict
     from collections import OrderedDict
     import sys
 
-    from workflows.utils import run_workflow
+    from .workflows.utils import run_workflow
 
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
@@ -130,14 +130,14 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             sessions = set(all_sessions)
         else:
             sessions = set(sessions)
-        print("!=" * 40)
-        print("Doing sessions {0}".format(sessions))
-        print("!=" * 40)
+        print(("!=" * 40))
+        print(("Doing sessions {0}".format(sessions)))
+        print(("!=" * 40))
         for session in sessions:
             _dict = OrderedDict()
             t1_list = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
             if len(t1_list) == 0:
-                print("ERROR: Skipping session {0} for subject {1} due to missing T1's".format(session, subject))
+                print(("ERROR: Skipping session {0} for subject {1} due to missing T1's".format(session, subject)))
                 print("REMOVE OR FIX BEFORE CONTINUING")
                 continue
             subject = database.getSubjFromSession(session)
@@ -152,7 +152,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 print("This T2 is not going to be used for JointFusion")
                 print("This T2 is not going to be used for JointFusion")
                 print("This T2 is not going to be used for JointFusion")
-                print(_dict['T2s'])
+                print((_dict['T2s']))
                 _dict['BadT2'] = True
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
@@ -243,14 +243,14 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_template_headregion.nii.gz'))
 
             if os.path.exists(atlasDirectory):
-                print("LOOKING FOR DIRECTORY {0}".format(atlasDirectory))
+                print(("LOOKING FOR DIRECTORY {0}".format(atlasDirectory)))
             else:
-                print("MISSING REQUIRED ATLAS INPUT {0}".format(atlasDirectory))
-                print("SKIPPING: {0} prerequisites missing".format(session))
+                print(("MISSING REQUIRED ATLAS INPUT {0}".format(atlasDirectory)))
+                print(("SKIPPING: {0} prerequisites missing".format(session)))
                 continue
 
             ## Use different sentinal file if segmentation specified.
-            from workflows.baseline import DetermineIfSegmentationShouldBeDone
+            from .workflows.baseline import DetermineIfSegmentationShouldBeDone
 
             do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:
@@ -265,17 +265,17 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 for ff in list_of_paths:
                     if not os.path.exists(ff):
                         is_missing = True
-                        print("MISSING: {0}".format(ff))
+                        print(("MISSING: {0}".format(ff)))
                 return not is_missing
 
             if useSentinal and allPathsExists(sentinal_file_list):
-                print("SKIPPING: {0} exists".format(sentinal_file_list))
+                print(("SKIPPING: {0} exists".format(sentinal_file_list)))
             else:
                 print("PROCESSING INCOMPLETE: at least 1 required file does not exists")
                 if dryRun == False:
                     workflow = _create_singleSession(_dict, master_config, 'Linear',
                                                      'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
-                    print("Starting session {0}".format(session))
+                    print(("Starting session {0}".format(session)))
                     # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
                     run_workflow(workflow, plugin=master_config['plugin_name'],
                                  plugin_args=master_config['plugin_args'])
@@ -291,7 +291,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
 
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
-    from utilities.configFileParser import nipype_options
+    from .utilities.configFileParser import nipype_options
 
     print("Copying Atlas directory and determining appropriate Nipype options...")
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
@@ -309,11 +309,11 @@ if __name__ == '__main__':
     import os
 
     from docopt import docopt
-    from AutoWorkup import setup_environment
+    from .AutoWorkup import setup_environment
 
     argv = docopt(__doc__, version='1.1')
     print(argv)
-    print('=' * 100)
+    print(('=' * 100))
     environment, experiment, pipeline, cluster = setup_environment(argv)
 
     exit = _SingleSession_main(environment, experiment, pipeline, cluster, **argv)

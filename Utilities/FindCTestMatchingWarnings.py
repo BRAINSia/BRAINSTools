@@ -1,6 +1,6 @@
 #!/bin/python
 
-from __future__ import print_function
+
 from builtins import range
 import termcolor  # <-- used to make pretty printing in color
 import regex  # <-- support Perl style regular expressions that closely match what is used in CTest
@@ -37,8 +37,8 @@ USAGE_COMMENT = r"""
 ################
 
 if len(sys.argv) != 3:
-    print("{0}\n\n".format(USAGE_COMMENT))
-    print("USAGE {0} <CDASH_WARNING_LOGGER> <$CMAKE_SOURCE_DIR/CMake/CTestCustom.cmake.in>\n".format(sys.argv[0]))
+    print(("{0}\n\n".format(USAGE_COMMENT)))
+    print(("USAGE {0} <CDASH_WARNING_LOGGER> <$CMAKE_SOURCE_DIR/CMake/CTestCustom.cmake.in>\n".format(sys.argv[0])))
     sys.exit(0)
 
 
@@ -66,12 +66,12 @@ def GetListOfCustomExludePatterns(patterns_file_name):
             start_matchresult = start_excepts_pat.search(line)
             if start_matchresult:
                 in_excepts_block = True
-                print("Starting Block on line ", linenum)
+                print(("Starting Block on line ", linenum))
         else:
             end_matchresult = end_excepts_pat.search(line)
             if end_matchresult:
                 in_excepts_block = False
-                print("Ending Block on line ", linenum)
+                print(("Ending Block on line ", linenum))
             else:
                 ispat_matchresult = string_pattern_pat.search(line)
                 if ispat_matchresult:
@@ -88,10 +88,10 @@ def GetListOfCustomExludePatterns(patterns_file_name):
 ## that often are stored in a file like CMake/CTestCustom.cmake.in
 ##
 ######
-print(termcolor.colored('Generating Custom exceptions from file: {0}'.format(
-    sys.argv[2]), 'green'))
+print((termcolor.colored('Generating Custom exceptions from file: {0}'.format(
+    sys.argv[2]), 'green')))
 CTEST_CUSTOM_WARNING_EXCEPTION = GetListOfCustomExludePatterns(sys.argv[2])
-print(termcolor.colored('count= {0} {1}'.format(len(CTEST_CUSTOM_WARNING_EXCEPTION), CTEST_CUSTOM_WARNING_EXCEPTION), 'green'))
+print((termcolor.colored('count= {0} {1}'.format(len(CTEST_CUSTOM_WARNING_EXCEPTION), CTEST_CUSTOM_WARNING_EXCEPTION), 'green')))
 
 CTEST_CUSTOM_WARNING_EXCEPTION_compiled = list()
 for cc in CTEST_CUSTOM_WARNING_EXCEPTION:
@@ -129,14 +129,14 @@ warn_regex_compiled = list()
 for cc in warn_regex_patterns:
     warn_regex_compiled.append(regex.compile(cc))
 
-print(termcolor.colored('Processing file: {0}'.format(sys.argv[1]), 'green'))
+print((termcolor.colored('Processing file: {0}'.format(sys.argv[1]), 'green')))
 ff = open(sys.argv[1], 'r')
 all_lines = ff.readlines()
 ff.close
 for idx in range(0, len(warn_regex_patterns)):
     print("")
-    print(termcolor.colored(warn_regex_patterns[idx], 'blue'))
-    print("=" * 80)
+    print((termcolor.colored(warn_regex_patterns[idx], 'blue')))
+    print(("=" * 80))
 
     line_count = 0
     for line in all_lines:
@@ -153,5 +153,5 @@ for idx in range(0, len(warn_regex_patterns)):
                     ignore_found = True
                     continue
             if ignore_found == False:
-                print(termcolor.colored(
-                    "No Match :{0}: {1}    ".format(line_count, line), 'red'))
+                print((termcolor.colored(
+                    "No Match :{0}: {1}    ".format(line_count, line), 'red')))

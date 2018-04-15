@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import argparse
 import csv
@@ -29,8 +29,8 @@ class runOneAW(object):
  -wfrun local \
  -subject {subject} \n""".format(brainsToolsScriptsDir=input_arguments.brainsToolsScriptsDir,
                                  configFile=self.configPath, subject=input_arguments.subject)
-        print('-' * 80)
-        print('\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand))
+        print(('-' * 80))
+        print(('\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)))
         os.system(bawCommand)
 
     def generateSessionCSV(self):
@@ -47,7 +47,7 @@ class runOneAW(object):
         newFile.writerow(col_name_list)
         line = (input_arguments.project, input_arguments.subject, input_arguments.session, sessionDict)
         newFile.writerow(line)
-        print('\nThe session csv file has been generated: {0}\n'.format(self.sessionPath))
+        print(('\nThe session csv file has been generated: {0}\n'.format(self.sessionPath)))
         print(line)
 
     def generateConfigFile(self):
@@ -149,7 +149,7 @@ BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
         handle = open(self.configPath, 'w')
         handle.write(newConfigString)
         handle.close()
-        print('\nThe configuration file has been generated: {0}'.format(self.configPath))
+        print(('\nThe configuration file has been generated: {0}'.format(self.configPath)))
         print(newConfigString)
 
 

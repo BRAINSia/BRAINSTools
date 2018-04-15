@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 # \author Hans J. Johnson
 # This file will help store new data
 # in a publicly available web location
@@ -42,9 +42,9 @@ if __name__ == '__main__':
     fileName = args.sourceFile
     # Do not upload file hashes of file hashs.  To prevent infinite recursion when using sloppy glob expressions!
     if fileName[-4:] == ".md5":
-        print("Skipping md5 file:  {0}".format(fileName))
+        print(("Skipping md5 file:  {0}".format(fileName)))
         exit(0)
-    print("Preparing: {0}".format(fileName))
+    print(("Preparing: {0}".format(fileName)))
     localPublicPath = args.destPath
     algo = 'MD5'
     f = open(fileName)
@@ -57,18 +57,18 @@ if __name__ == '__main__':
     if not os.path.exists(destPath):
         os.mkdir(destPath)
     dest = destPath + '/' + value
-    print("mv -f {0} {1}".format(source, dest))
+    print(("mv -f {0} {1}".format(source, dest)))
     md5FileName = fileName + '.md5'
     f = open(md5FileName, 'w')
     f.write(value)
     f.close()
     finalDestination = destPath + '/' + os.path.basename(md5FileName)
     if os.path.exists(finalDestination):
-        print("Destination file already exists: SKIPPING {0}".format(finalDestination))
+        print(("Destination file already exists: SKIPPING {0}".format(finalDestination)))
     else:
         shutil.copyfile(md5FileName, destPath + '/' + os.path.basename(md5FileName))
         shutil.copy(source, dest)
         os.unlink(source)
     ## if prepareing data remotely, echo a helpful rsync command needed to push from remote destination to IPL via rsync
     if args.destPath != defaultCMakeRepository:
-        print('rsync -av {0}/ neuron.psychiatry.uiowa.edu:{1}/'.format(args.destPath, defaultCMakeRepository))
+        print(('rsync -av {0}/ neuron.psychiatry.uiowa.edu:{1}/'.format(args.destPath, defaultCMakeRepository)))

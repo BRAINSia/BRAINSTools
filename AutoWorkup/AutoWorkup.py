@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 
 def load_modules(modules):
@@ -19,9 +19,9 @@ def setup_environment(argv):
     print("Configuring environment...")
     import os
     import os.path
-    from utilities.configFileParser import resolveDataSinkOption, parseFile
-    from utilities.pathHandling import validatePath
-    from utilities import misc
+    from .utilities.configFileParser import resolveDataSinkOption, parseFile
+    from .utilities.pathHandling import validatePath
+    from .utilities import misc
     environment, experiment, pipeline, cluster = parseFile(
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
@@ -49,17 +49,17 @@ def setup_environment(argv):
                                           append_sys_path=environment['env']['PYTHONPATH'])
          )  # MODS PATH
 
-    print("@" * 80)
-    print(environment['env']['PYTHONPATH'])
-    print("@" * 80)
-    print(environment['env']['PATH'])
-    print("@" * 80)
+    print(("@" * 80))
+    print((environment['env']['PYTHONPATH']))
+    print(("@" * 80))
+    print((environment['env']['PATH']))
+    print(("@" * 80))
 
     from nipype import config
     config.enable_debug_mode()
     # config.enable_provenance()
 
-    from utilities.package_check import verify_packages
+    from .utilities.package_check import verify_packages
     verify_packages()
     if 'FREESURFER' in experiment['components']:  # FREESURFER MODS
         configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'), False, False)

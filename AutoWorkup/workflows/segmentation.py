@@ -19,8 +19,8 @@
 # --config.set('logging', 'interface_level', 'DEBUG')
 # --config.set('execution','remove_unnecessary_outputs','true')
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 from builtins import str
 
@@ -56,9 +56,9 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
 
     # HACK: print for debugging
     for key, itme in list(master_config.items()):
-        print("-" * 30)
-        print(key, ":", itme)
-    print("-" * 30)
+        print(("-" * 30))
+        print((key, ":", itme))
+    print(("-" * 30))
     # END HACK
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average',

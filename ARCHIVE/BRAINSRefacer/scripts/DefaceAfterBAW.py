@@ -19,13 +19,13 @@ class DefaceAfterBAW():
         self.experiment_dir = os.path.dirname(os.path.dirname(self.acpc_aligned_face_image_fn))
         out_base_fn = os.path.basename(self.acpc_aligned_face_image_fn)
 
-        self.result_dir = os.path.join(self.experiment_dir,"DEFACE")
+        self.result_dir = os.path.join(self.experiment_dir, "DEFACE")
         ## -- DEBUG: self.result_dir = "/tmp"
 
         self.out_preserve_mask_fn = os.path.join(self.result_dir, out_base_fn.replace(".nii.gz", "_deface_mask.nii.gz"))
         self.out_deface_image_fn = os.path.join(self.result_dir, out_base_fn.replace(".nii.gz", "_deface.nii.gz"))
         if os.path.exists(self.out_deface_image_fn):
-            print("FILE EXISTS SO QUITTING: {0}".format(self.out_deface_image_fn))
+            print(("FILE EXISTS SO QUITTING: {0}".format(self.out_deface_image_fn)))
             sys.exit(-1)
         self.out_re_png_fn = self.out_deface_image_fn.replace("_deface.nii.gz", "_right_eye.png")
         self.out_le_png_fn = self.out_deface_image_fn.replace("_deface.nii.gz", "_left_eye.png")
@@ -70,7 +70,7 @@ class DefaceAfterBAW():
         force_keep_InIDIMG = ((left_eye > 0) + (right_eye > 0) + (top_of_head_mask > 0) + (behind_acpnt > 0) + (
             self.head_mask > 0)) > 0
 
-        force_keep = sitk.Resample(force_keep_InIDIMG,self.reference_image,self.IDTXFM)
+        force_keep = sitk.Resample(force_keep_InIDIMG, self.reference_image, self.IDTXFM)
         self.in_mask = sitk.Cast(force_keep, self.reference_image_storage_type)
         del force_keep, force_keep_InIDIMG
 
@@ -96,7 +96,7 @@ class DefaceAfterBAW():
         sitk.WriteImage(le_2dimg, self.out_le_png_fn)
 
     def get_eye_images(self):
-        id_space_out_img=sitk.Resample(self.out_img,self.idimg,self.IDTXFM)
+        id_space_out_img=sitk.Resample(self.out_img, self.idimg, self.IDTXFM)
         right_eye = get_eye_image(self.lndmk_pts["RE"], id_space_out_img, GLB_EYE_DIAMETER * 3)
         left_eye = get_eye_image(self.lndmk_pts["LE"], id_space_out_img, GLB_EYE_DIAMETER * 3)
         return right_eye, left_eye
@@ -111,12 +111,12 @@ class DefaceAfterBAW():
 if __name__ == '__main__':
     import sys
 
-    print(sys.argv[1])
+    print((sys.argv[1]))
     if len(sys.argv) != 2:
-        print("""USAGE: {0} <FullPathToUnDefacedImage.nii.gz>\n
-        """.format(sys.argv[0]))
+        print(("""USAGE: {0} <FullPathToUnDefacedImage.nii.gz>\n
+        """.format(sys.argv[0])))
         sys.exit(-1)
-    print("Defacing: {0}".format(sys.argv[1]))
+    print(("Defacing: {0}".format(sys.argv[1])))
     ref_img = sys.argv[1]
     defacer = DefaceAfterBAW(ref_img)
     defacer.do_defacing()

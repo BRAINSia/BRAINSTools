@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import ast
 import getopt
@@ -27,7 +27,7 @@ def readInputFile(inputFilename):
         for line in infile:
             sessionInfo = ast.literal_eval(line)
             # print sessionInfo
-            if type(sessionInfo) is list:
+            if isinstance(sessionInfo, list):
                 pass
             else:
                 sessionDict = dict()
@@ -78,7 +78,7 @@ def main(argv=None):
         elif opt in ("-s", "--inputSubDirectory"):
             inputSubDirectory = arg
 
-    print('Input file is {0}'.format(inputfile))
+    print(('Input file is {0}'.format(inputfile)))
 
     inputDictList = readInputFile(inputfile)
     snapShotWF = pe.Workflow(name="BAWSnapshots")  # templage generate work flow
@@ -92,13 +92,13 @@ def main(argv=None):
                                        sessionProj, sessionSubj, sessionid,
                                        inputSubDirectory)
         anatomicalImageList = []
-        print("For session = {0} ".format(sessionid))
+        print(("For session = {0} ".format(sessionid)))
         for filename in searchVolumeList:
             fullPathFilename = os.path.join(sessionInputDir, filename)
             if os.path.isfile(fullPathFilename):
                 anatomicalImageList.append(fullPathFilename)
             else:
-                print
+                print()
                 "    {0} does not exist. Skip.".format(fullPathFilename)
 
         binaryImageList = []
@@ -107,11 +107,11 @@ def main(argv=None):
             if os.path.isfile(fullPathBinaryFilename):
                 binaryImageList.append(fullPathBinaryFilename)
             else:
-                print
+                print()
                 "    {0} does not exist. Skip.".format(fullPathBinaryFilename)
 
         if len(anatomicalImageList) > 0:
-            print("  Generating SnapShot Writer for {0} ... ... ".format(sessionid))
+            print(("  Generating SnapShot Writer for {0} ... ... ".format(sessionid)))
             ## SnapShotWriter for Segmented result checking:
             SnapShotWriterNodeName = "SnapShotWriter_" + str(sessionid)
             SnapShotWriter = pe.Node(interface=BRAINSSnapShotWriter(), name=SnapShotWriterNodeName)

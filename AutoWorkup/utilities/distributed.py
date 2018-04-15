@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import math
 from past.utils import old_div

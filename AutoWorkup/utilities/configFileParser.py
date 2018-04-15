@@ -102,7 +102,7 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     else:
         if os.path.isdir(fullpath):
             print("WARNING: Experiment directory already exists.  Continuing will overwrite the previous results...")
-            print("   Path: {0}".format(fullpath))
+            print(("   Path: {0}".format(fullpath)))
             return fullpath
         try:
             os.makedirs(fullpath)
@@ -260,7 +260,7 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
     elif wfrun in ['local_4', 'local_12']:
         plugin_name = 'MultiProc'
         proc_count = int(wfrun.split('local_')[1])
-        print("Running with {0} parallel processes on local machine".format(proc_count))
+        print(("Running with {0} parallel processes on local machine".format(proc_count)))
         plugin_args = {'n_procs': proc_count}
     elif wfrun == 'ds_runner':
         plugin_name = _create_DS_runner()
@@ -287,7 +287,7 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
         import tempfile
         crashdumpTempDirName = tempfile.gettempdir()
     print("*** Note")
-    print("    Crash file will be written to '{0}'".format(crashdumpTempDirName))
+    print(("    Crash file will be written to '{0}'".format(crashdumpTempDirName)))
     return {
         'stop_on_first_crash': stop_crash,
         'stop_on_first_rerun': stop_rerun,

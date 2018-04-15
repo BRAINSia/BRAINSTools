@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import argparse
 import csv
@@ -15,7 +15,7 @@ class UpdateAutoWorkup(object):
             if len(row) == 3:
                 blackListDict[row[0]] = row[1]
             else:
-                print("WARNING: WRONG # of columns in csv (should be 3): {0}".format(row))
+                print(("WARNING: WRONG # of columns in csv (should be 3): {0}".format(row)))
         return blackListDict, list(blackListDict.keys())
 
     def _generateNewPathName(self):
@@ -31,7 +31,7 @@ class UpdateAutoWorkup(object):
         newFile.writerow(col_name_list)
         oldFile = csv.reader(open(inputArguments.autoWorkupFile, 'rb'), delimiter=',', quotechar='\"')
         blackListDict, blackListKeys = self._getBlackList()
-        print(blackListDict, blackListKeys)
+        print((blackListDict, blackListKeys))
         for row in oldFile:
             ## skip header
             if oldFile.line_num > 1:

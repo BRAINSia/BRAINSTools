@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 from builtins import str
 
@@ -33,7 +33,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     The inputs are the initial segmentation, the WM Probability, and the CSF Probability
     """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
-        print("AA", initial_seg)
+        print(("AA", initial_seg))
         # print "BB", dict(sitk.Statistics(seg))
         exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1),
                                  sitk.sitkUInt8)
@@ -90,7 +90,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     x = 0
     for segFN in listOfImages:
         x = x + 1
-        print(x, segFN)
+        print((x, segFN))
         ## Clean up the segmentations
         curr_segROI = CleanUpGMSegmentationWithWMCSF(segFN, posteriorDictionary, 0.85, 0.85)
         print("Y")
@@ -101,7 +101,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
             remove_pre_postfix.replace("ANNContinuousPrediction", "").replace("subject", ""))
         structName = remove_pre_postfix.lower()
         cleaned_fileName = os.path.join(os.path.dirname(segFN), "cleaned_" + structName + "_seg.nii.gz")
-        print("=" * 20, structName, " ", cleaned_fileName)
+        print(("=" * 20, structName, " ", cleaned_fileName))
         cleaned_labels_map[structName] = cleaned_fileName
         sitk.WriteImage(curr_segROI, cleaned_fileName)
         if labelImage is None:

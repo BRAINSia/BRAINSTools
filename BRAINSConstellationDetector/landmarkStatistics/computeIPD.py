@@ -20,9 +20,9 @@ Example:
   computeIPD.py --inputFilesList TRACKDataFCSVList.txt --outputIPDsList TRACKIPDs.txt
   computeIPD.py --inputFilesList PREDICTDataFCSVList.txt --outputIPDsList PREDICTIPDs.txt
 """
-from __future__ import print_function
 
-def csv_file_reader(fcsvFile,dataList):
+
+def csv_file_reader(fcsvFile, dataList):
   import csv
   import numpy
   sessionID = os.path.basename(os.path.dirname(os.path.dirname(fcsvFile)))
@@ -37,9 +37,9 @@ def csv_file_reader(fcsvFile,dataList):
          else:
            continue
   IPD = numpy.linalg.norm(REpoint - LEpoint)
-  dataList.append([sessionID,IPD])
+  dataList.append([sessionID, IPD])
 
-def csv_file_writer(outputCSVFile,data):
+def csv_file_writer(outputCSVFile, data):
   with open(outputCSVFile, 'w') as lf:
       headerdata = [['#sessionID', 'IPD']]
       wr = csv.writer(lf, delimiter=',')
@@ -61,15 +61,15 @@ if __name__ == '__main__':
 
   IPDsLIST = argv['--outputIPDsList']
 
-  print('=' * 100)
+  print(('=' * 100))
 
   dataList=[]
   with open(INPUTLIST) as lf:
       reader = csv.reader(lf)
       for line in reader:
         fcsvFile = line[0]
-        csv_file_reader(fcsvFile,dataList)
+        csv_file_reader(fcsvFile, dataList)
 
-  csv_file_writer(IPDsLIST,dataList)
+  csv_file_writer(IPDsLIST, dataList)
 
   sys.exit(0)

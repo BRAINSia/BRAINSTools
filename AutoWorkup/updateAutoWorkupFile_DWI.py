@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import argparse
 import csv
@@ -69,7 +69,7 @@ class MakeNewImageDict(object):
                     sqlCommand = self._makeSQLiteCommand(imageInfo)
                     self._appendCommand(sqlCommand)
                 else:
-                    print("WARNING: Wrong number of columns in csv file (should be 5): {0}".format(row))
+                    print(("WARNING: Wrong number of columns in csv file (should be 5): {0}".format(row)))
 
     def _makeDB(self):
         if os.path.exists(self.dbName):

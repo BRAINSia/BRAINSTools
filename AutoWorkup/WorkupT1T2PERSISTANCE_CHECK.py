@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+
 
 import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine

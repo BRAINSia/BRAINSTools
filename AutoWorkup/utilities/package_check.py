@@ -1,11 +1,11 @@
-from __future__ import print_function
+
 
 try:
     from nipype.utils.misc import package_check
 except ImportError:
     import sys
 
-    print(sys.path)
+    print((sys.path))
     raise ImportError(
         "Cannot import nipype.utils.misc.package_check(). \
         Verify that the sys.path includes the correct Nipype path.  \

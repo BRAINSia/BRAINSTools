@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+
 from ctypes import *
 from ctypes.util import find_library
 import sys
@@ -22,7 +22,7 @@ else:
 # Construct constants
 SOLVER_TYPE = ['L2R_LR', 'L2R_L2LOSS_SVC_DUAL', 'L2R_L2LOSS_SVC', 'L2R_L1LOSS_SVC_DUAL',\
 		'MCSVM_CS', 'L1R_L2LOSS_SVC', 'L1R_LR', 'L2R_LR_DUAL']
-for i, s in enumerate(SOLVER_TYPE): exec("%s = %d" % (s , i))
+for i, s in enumerate(SOLVER_TYPE): exec("%s = %d" % (s, i))
 
 PRINT_STRING_FUN = CFUNCTYPE(None, c_char_p)
 def print_null(s): 
@@ -42,18 +42,18 @@ class feature_node(Structure):
 
 def gen_feature_nodearray(xi, feature_max=None, issparse=True):
 	if isinstance(xi, dict):
-		index_range = xi.keys()
+		index_range = list(xi.keys())
 	elif isinstance(xi, (list, tuple)):
 		xi = [0] + xi  # idx should start from 1
-		index_range = range(1, len(xi))
+		index_range = list(range(1, len(xi)))
 	else:
 		raise TypeError('xi should be a dictionary, list or tuple')
 
 	if feature_max:
 		assert(isinstance(feature_max, int))
-		index_range = filter(lambda j: j <= feature_max, index_range)
+		index_range = [j for j in index_range if j <= feature_max]
 	if issparse: 
-		index_range = filter(lambda j:xi[j] != 0, index_range)
+		index_range = [j for j in index_range if xi[j] != 0]
 
 	index_range = sorted(index_range)
 	ret = (feature_node * (len(index_range)+2))()
@@ -120,10 +120,10 @@ class parameter(Structure):
 		self.parse_options(options)
 
 	def show(self):
-		attrs = parameter._names + self.__dict__.keys()
-		values = map(lambda attr: getattr(self, attr), attrs) 
+		attrs = parameter._names + list(self.__dict__.keys())
+		values = [getattr(self, attr) for attr in attrs] 
 		for attr, val in zip(attrs, values):
-			print(' %s: %s' % (attr, val))
+			print((' %s: %s' % (attr, val)))
 
 	def set_to_default_values(self):
 		self.solver_type = L2R_L2LOSS_SVC_DUAL

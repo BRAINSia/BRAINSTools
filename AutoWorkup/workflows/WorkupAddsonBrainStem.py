@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 usage = """
    Usage::
@@ -200,7 +200,7 @@ def main(argv=None):
             bsFilename = a
         elif o == '--tissueLabelFilename':
             tlFilename = a
-    print(lmkFilename, bsFilename, tlFilename)
+    print((lmkFilename, bsFilename, tlFilename))
 
     brainStem(tlFilename, lmkFilename, bsFilename)
 

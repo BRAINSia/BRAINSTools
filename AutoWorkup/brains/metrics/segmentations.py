@@ -1,4 +1,5 @@
-from __future__ import print_function
+
+from itertools import starmap, zip_longest
 
 import os.path
 from builtins import map
@@ -26,7 +27,7 @@ def constructLabels(labels):
 
 def _moduleCreateLabels(labels):
     full_labels, numbers = constructLabels(labels)
-    labelMap = map(None, full_labels, numbers)
+    labelMap = zip_longest(full_labels, numbers)
     return dict(labelMap)  # Use this variable
 
 

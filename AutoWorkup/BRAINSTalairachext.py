@@ -15,7 +15,7 @@ USAGE:
   --inputLandmarksFile <input landmarks file (output of BCD)> \
   --outputTalairachLandmarksFile <output landmarks file (including AC,PC,SLA,IRP)>
 """
-from __future__ import print_function
+
 
 import csv
 import getopt
@@ -24,7 +24,7 @@ import sys
 
 import SimpleITK as sitk
 
-print(sitk.Version())
+print((sitk.Version()))
 
 
 def csv_file_writer(filename, data):
@@ -85,10 +85,10 @@ def main(argv):
         elif opt in ("-o", "--outputTalairachLandmarksFile"):
             outputTalairachLandmarksFile = arg
 
-    print('Input Volume is "', inputVolume)
-    print('Input Labels Image is "', inputLabelsImage)
-    print('Input Landmarks File is "', inputLandmarksFile)
-    print('Output Talairach Landmarks File is "', outputTalairachLandmarksFile)
+    print(('Input Volume is "', inputVolume))
+    print(('Input Labels Image is "', inputLabelsImage))
+    print(('Input Landmarks File is "', inputLandmarksFile))
+    print(('Output Talairach Landmarks File is "', outputTalairachLandmarksFile))
 
     input_img = sitk.ReadImage(inputVolume)
     img_labels = sitk.ReadImage(inputLabelsImage)

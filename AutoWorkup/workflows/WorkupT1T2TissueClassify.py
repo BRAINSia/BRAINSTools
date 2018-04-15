@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+
 
 from builtins import zip
 
@@ -36,8 +36,8 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
 def MakePosteriorDictionaryFunc(posteriorImages):
     from PipeLineFunctionHelpers import POSTERIORS
     if len(POSTERIORS) != len(posteriorImages):
-        print("ERROR: ", posteriorNames)
-        print("ERROR: ", POSTERIORS)
+        print(("ERROR: ", posteriorNames))
+        print(("ERROR: ", POSTERIORS))
         return -1
     temp_dictionary = dict(list(zip(POSTERIORS, posteriorImages)))
     return temp_dictionary

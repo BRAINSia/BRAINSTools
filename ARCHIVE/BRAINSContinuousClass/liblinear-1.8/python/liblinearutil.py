@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+
 from builtins import zip
 from liblinear import *
 
@@ -34,7 +34,7 @@ def load_model(model_file_name):
 	"""
 	model = liblinear.load_model(model_file_name)
 	if not model: 
-		print("can't open model file %s" % model_file_name)
+		print(("can't open model file %s" % model_file_name))
 		return None
 	model = toPyModel(model)
 	return model
@@ -125,7 +125,7 @@ def train(arg1, arg2=None, arg3=None):
 		target = (c_int * l)()
 		liblinear.cross_validation(prob, param, nr_fold, target)
 		ACC = evaluations(prob.y[:l], target[:l])
-		print("Cross Validation Accuracy = %g%%" % ACC)
+		print(("Cross Validation Accuracy = %g%%" % ACC))
 		return ACC
 	else :
 		m = liblinear.train(prob, param)
@@ -206,7 +206,7 @@ def predict(y, x, m, options=""):
 		y = [0] * len(x)
 	ACC = evaluations(y, pred_labels)
 	l = len(y)
-	print("Accuracy = %g%% (%d/%d)" % (ACC, int(l*ACC//100), l))
+	print(("Accuracy = %g%% (%d/%d)" % (ACC, int(l*ACC//100), l)))
 
 	return pred_labels, ACC, pred_values
 	

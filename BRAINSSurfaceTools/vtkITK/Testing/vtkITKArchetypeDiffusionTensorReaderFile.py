@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from builtins import range
 #Testing against the NRRD reader
 import unittest
@@ -44,9 +44,9 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
 
     def test_ras_to_ijk(self):
         print("ITK Matrix")
-        print(self.ritk.GetRasToIjkMatrix(), end=' ')
+        print(("{0} ".format(self.ritk.GetRasToIjkMatrix())))
         print("NRRD Reader Matrix")
-        print(self.rnrrd.GetRasToIjkMatrix())
+        print((self.rnrrd.GetRasToIjkMatrix()))
 
         self.assertTrue(
             compare_vtk_matrix(
@@ -70,9 +70,9 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
 
 
 def compare_vtk_matrix(m1, m2, n=4):
-    for i in range(0,n):
-        for j in range(0,n):
-            assert(m1.GetElement(i,j) == m2.GetElement(i,j))
+    for i in range(0, n):
+        for j in range(0, n):
+            assert(m1.GetElement(i, j) == m2.GetElement(i, j))
     return True
 
 

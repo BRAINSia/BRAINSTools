@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 from builtins import range
 from builtins import str
@@ -126,7 +126,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
         antsRegistrationNode.inputs.shrink_factors = [[1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[0]]
     else:
-        print("!!" * 160 + "\nERROR invalid registration description: {0}".format(registrationTypeDescription))
+        print(("!!" * 160 + "\nERROR invalid registration description: {0}".format(registrationTypeDescription)))
         raise NameError(registrationTypeDescription)
 
     ## COMMON SETTINGS
@@ -260,9 +260,9 @@ def add_dict(d1, d2, force=False):
         if not force:
             try:
                 print("d1.keys():::")
-                print(list(d1.keys()))
+                print((list(d1.keys())))
                 print("d2.keys():::")
-                print(list(d2.keys()))
+                print((list(d2.keys())))
                 assert set(d1.keys()).isdisjoint(set(d2.keys()))
             except AssertionError:
                 raise ValueError("Dictionaries have one or more duplicate keys")

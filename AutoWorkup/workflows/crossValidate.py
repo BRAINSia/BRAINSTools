@@ -30,8 +30,8 @@ PIPELINE
              -> JointFusion(), iterfield=[sample_list, test_list])
              -> DataSink()
 """
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import os.path
 from builtins import range
@@ -71,7 +71,7 @@ def subsample_crossValidationSet(length, test_size):
             except ValueError:
                 raise ValueError("List test size is not evenly divisible by N({0})".format(test_size))
         subsample_data_index.append({'train': train, 'test': test})
-    print("=" * 80)
+    print(("=" * 80))
     print(subsample_data_index)
     return subsample_data_index
 
@@ -116,9 +116,9 @@ def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test
 
     subset_no = 1
     for subset in cv_subsets:
-        print("-" * 80)
-        print(" Creat a subset workflow Set " + str(subset_no))
-        print("-" * 80)
+        print(("-" * 80))
+        print((" Creat a subset workflow Set " + str(subset_no)))
+        print(("-" * 80))
         trainData = [csv_data[i] for i in subset['train']]
         testData = [csv_data[i] for i in subset['test']]
 
@@ -203,9 +203,9 @@ class CrossValidationJointFusionWorkflow(Workflow):
         csvReader.inputs.header = self.hasHeader.default_value
         csvOut = csvReader.run()
 
-        print("=" * 80)
-        print(csvOut.outputs.__dict__)
-        print("=" * 80)
+        print(("=" * 80))
+        print((csvOut.outputs.__dict__))
+        print(("=" * 80))
 
         iters = {}
         label = list(csvOut.outputs.__dict__.keys())[0]
@@ -343,7 +343,7 @@ if __name__ == "__main__":
 
     argv = docopt(__doc__, version='1.1')
     print(argv)
-    print('=' * 100)
+    print(('=' * 100))
     from AutoWorkup import setup_environment
 
     if argv['--test']:

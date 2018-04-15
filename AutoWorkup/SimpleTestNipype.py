@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 __author__ = 'johnsonhj'
 
@@ -144,4 +144,4 @@ DWI_AutoProcess.write_graph()
 DWI_AutoProcess.run()
 
 x = BRAINSResample()
-print(x.inputs)
+print((x.inputs))

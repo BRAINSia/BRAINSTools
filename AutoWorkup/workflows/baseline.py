@@ -11,8 +11,8 @@
 ##
 #################################################################################
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import os
 from builtins import str
@@ -188,7 +188,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
         dc = dc.reshape(3, 3)
         permute_values = [7, 7, 7]
         for i in range(0, 3):
-            permute_values[i] = np.argmax(np.abs(dc[i, :]))
+            permute_values[i] = np.argmax(np.abs(dc[i,:]))
         permuted_image = sitk.PermuteAxes(sitkImageIn, [ int(x) for x in permute_values ] )
 
         dc = np.array(permuted_image.GetDirection())
@@ -221,14 +221,14 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
         for ii in range(0, last_slice):
             next_index = (ii + 1) % last_slice
             if axis == 0:
-                curr_slice = image_as_np[ii, :, :].flatten()
-                next_slice = image_as_np[next_index, :, :].flatten()
+                curr_slice = image_as_np[ii,:,:].flatten()
+                next_slice = image_as_np[next_index,:,:].flatten()
             elif axis == 1:
-                curr_slice = image_as_np[:, ii, :].flatten()
-                next_slice = image_as_np[:, next_index, :].flatten()
+                curr_slice = image_as_np[:, ii,:].flatten()
+                next_slice = image_as_np[:, next_index,:].flatten()
             elif axis == 2:
-                curr_slice = image_as_np[:, :, ii].flatten()
-                next_slice = image_as_np[:, :, next_index].flatten()
+                curr_slice = image_as_np[:,:, ii].flatten()
+                next_slice = image_as_np[:,:, next_index].flatten()
             else:
                 curr_slice = 0
                 next_slice = 0
@@ -395,7 +395,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     elif master_config['workflow_phase'] == 'subject-based-reference':
         PostACPCAlignToAtlas = True  # Use this subjects atlas image to align landmarks
-        print(master_config['previousresult'])
+        print((master_config['previousresult']))
         atlas_warped_directory = os.path.join(master_config['previousresult'], subjectid, 'Atlas')
 
         atlasBCUTNode_W = pe.Node(interface=nio.DataGrabber(infields=['subject'],
@@ -591,7 +591,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         N4BFC.inputs.dimension = 3
         N4BFC.inputs.bspline_fitting_distance = 200
         N4BFC.inputs.shrink_factor = 2
-        N4BFC.inputs.n_iterations = [100,100,100,75]
+        N4BFC.inputs.n_iterations = [100, 100, 100, 75]
         N4BFC.inputs.convergence_threshold = 0.0000000001
 
         baw201.connect([(DenoiseInputImgs, N4BFC, [('output_image', 'input_image')]),

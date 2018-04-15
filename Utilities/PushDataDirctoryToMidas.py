@@ -34,20 +34,20 @@ def md5_for_file(f, block_size=2 ** 20):
         md5.update(data)
     return md5.hexdigest()
 
-def MakeLocalKeyFile(fullpath,LocalMD5Dir):
+def MakeLocalKeyFile(fullpath, LocalMD5Dir):
     """
     fullpath - is the original input file to be uploaded to midas
     LocalMD5Dir - is the local key cache of md5 files
     """
 
     if not os.path.exists(LocalMD5Dir):
-        raise "ERROR: Output path for key files does not exists"
+        raise Exception("ERROR: Output path for key files does not exists")
 
     f = open(fullpath)
     md5HashValue = md5_for_file(f)
     f.close()
     baseFileName = os.path.basename(fullpath)
-    localKeyFileFullPath = os.path.join(LocalMD5Dir,baseFileName+".md5")
+    localKeyFileFullPath = os.path.join(LocalMD5Dir, baseFileName+".md5")
     f = open(localKeyFileFullPath, 'w')
     f.write(md5HashValue)
     f.close()
@@ -90,7 +90,7 @@ for driver in communicator.drivers:
         break
 community = driver.get_community_by_name(name="BRAINSTools")
 for folder in driver.folder_children(token=sessionToken, folder_id=community['folder_id'])['folders']:
-    if folder['name'] == u'Public':
+    if folder['name'] == 'Public':
         break
 publicFolderID = folder['folder_id']
 dirpath = os.path.abspath(argv['DIR'])
@@ -106,4 +106,4 @@ for root, dirs, files in os.walk(dirpath):
         upload_response = driver.perform_upload(uploadToken, filename=fullpath)
 
         if argv['--MD5CacheDir'] is not None:
-            MakeLocalKeyFile(fullpath,argv['--MD5CacheDir'])
+            MakeLocalKeyFile(fullpath, argv['--MD5CacheDir'])

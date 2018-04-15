@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 from builtins import range
 from builtins import str
@@ -61,11 +61,11 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
         labelVolDict = dict()
         labelVolDict['Volume_mm3'] = structVolume
 
-        if value in labelDictionary.keys():
-            print("{0} --> {1}".format(value, labelDictionary[value]))
+        if value in list(labelDictionary.keys()):
+            print(("{0} --> {1}".format(value, labelDictionary[value])))
             labelVolDict['LabelName'] = labelDictionary[value]
         else:
-            print("** Caution: {0} --> No name exists!".format(value))
+            print(("** Caution: {0} --> No name exists!".format(value)))
             labelVolDict['LabelName'] = 'NA'
         labelVolDict['LabelCode'] = value
         labelVolDict['FileName'] = os.path.abspath(labelVolume)
@@ -149,7 +149,7 @@ def main():
                                     "referenceFilename=",
                                     "outputFileBasename="])
     except getopt.GetoptError as err:
-        print(str(err))
+        print((str(err)))
         print(
             "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename>  -r <referenceFilename> -o <outputFileBasename>")
         sys.exit(2)
@@ -172,11 +172,11 @@ def main():
             outputFileBasename = arg
 
     if (colorTable and labelFilename and outputFileBasename):
-        print(""" Arguments:
+        print((""" Arguments:
         color table: {0}
         labelFile: {1}
         referenceFilename: {2}
-        outputFileBasename: {3}""".format(colorTable, labelFilename, referenceFilename, outputFileBasename))
+        outputFileBasename: {3}""".format(colorTable, labelFilename, referenceFilename, outputFileBasename)))
 
         outputFiles = VolumeMeasure(colorTable, labelFilename, referenceFilename, outputFileBasename)
         print(outputFiles)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import argparse
 import os
@@ -30,15 +30,15 @@ def normalizeWM(t1, wm_prob):
 
 def IsFirstNewerThanSecond(firstFile, secondFile):
     if not os.path.exists(firstFile):
-        print("ERROR: image missing", firstFile)
+        print(("ERROR: image missing", firstFile))
         return True
     if not os.path.exists(secondFile):
-        print("Returning True because file is missing:  {0}".format(secondFile))
+        print(("Returning True because file is missing:  {0}".format(secondFile)))
         return True
     image_time = os.path.getmtime(firstFile)
     reference_time = os.path.getmtime(secondFile)
     if image_time > reference_time:
-        print("Returning True because {0} is newer than {1}".format(firstFile, secondFile))
+        print(("Returning True because {0} is newer than {1}".format(firstFile, secondFile)))
         return True
     return False
 
@@ -194,12 +194,12 @@ exit $status
     os.chmod(script_name, 0o777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id))
+    print(("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id)))
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT,
                                          shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id))
+    print(("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id)))
     script_name_stdout_fid.close()
     return
 
@@ -210,11 +210,11 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     base_template_id = args.base_template_id
     list_all_subj_session_ids = args.list_all_subj_session_ids
     subjects_dir = args.subjects_dir
-    print("X" * 80)
-    print("base_template_id :{0}:".format(base_template_id))
-    print("Input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids))
-    print("subjects_dir :{0}:".format(subjects_dir))
-    print("X" * 80)
+    print(("X" * 80))
+    print(("base_template_id :{0}:".format(base_template_id)))
+    print(("Input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)))
+    print(("subjects_dir :{0}:".format(subjects_dir)))
+    print(("X" * 80))
     assert isinstance(list_all_subj_session_ids, list), "Must input a list of list_all_subj_session_ids :{0}:".format(
         list_all_subj_session_ids)
     StageToRun = "Within-SubjectTemplate"
@@ -282,12 +282,12 @@ exit $status
     os.chmod(script_name, 0o777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
+    print(("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)))
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT,
                                          shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
+    print(("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)))
     script_name_stdout_fid.close()
     return
 
@@ -334,12 +334,12 @@ exit $status
     os.chmod(script_name, 0o777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
+    print(("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)))
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT,
                                          shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
+    print(("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)))
     script_name_stdout_fid.close()
     return
 

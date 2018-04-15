@@ -2,7 +2,7 @@
          execfile('path/to/configure_FS', dict(env={os.environ-like dictionary})
     you will set the FreeSurfer environment driven by the configuration file.
 """
-from __future__ import absolute_import
+
 
 try:
     list(env.keys())

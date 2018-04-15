@@ -5,7 +5,7 @@
     you will activate the Autoworkup environment.
     __file__ is the current Python file that exists in the BRAINSTools/AutoWorkup/ directory.
 """
-from __future__ import print_function
+
 
 from builtins import str
 
@@ -47,12 +47,12 @@ for item in list(old_sys_path):
         old_sys_path.remove(item)
 sys.path = [''] + append_sys_path + old_sys_path
 
-print("=" * 100)
-print("=" * 100)
-print("=" * 100)
-print("=" * 100)
-print("=" * 100)
-print("NEW PATH env " + os.environ['PATH'])
-print("=" * 100)
-print("NEW PYTHONPATH env " + str(sys.path))
-print("=" * 100)
+print(("=" * 100))
+print(("=" * 100))
+print(("=" * 100))
+print(("=" * 100))
+print(("=" * 100))
+print(("NEW PATH env " + os.environ['PATH']))
+print(("=" * 100))
+print(("NEW PYTHONPATH env " + str(sys.path)))
+print(("=" * 100))

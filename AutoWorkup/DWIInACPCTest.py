@@ -64,7 +64,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.semtools import *
 
-from utilities.misc import CommonANTsRegistrationSettings
+from .utilities.misc import CommonANTsRegistrationSettings
 
 
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
@@ -72,7 +72,7 @@ def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
 so that all the python modules and commands are pathed properly'''
 
     custEnvString = ''
-    for key, value in customEnvironment.items():
+    for key, value in list(customEnvironment.items()):
         custEnvString += 'export ' + key + '=' + value + '\n'
 
     PYTHONPATH = ':'.join(pythonPathsList)
@@ -158,37 +158,37 @@ def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
 
     ## Should check that each list has 1 element
 
-    print
+    print()
     '^' * 80
-    print
+    print()
     SESSION_TUPLE
-    print
+    print()
     BASE_STRUCT
-    print
+    print()
     BASE_DWI
-    print
+    print()
     '^' * 80
-    print
+    print()
     FixImageList
-    print
+    print()
     FixMaskImageList
-    print
+    print()
     MovingDWIList
-    print
+    print()
     '^' * 80
     FixImage = FixImageList[0]
     FixMaskImage = FixMaskImageList[0]
     MovingDWI = MovingDWIList[0]
 
-    print
+    print()
     '=' * 80
-    print
+    print()
     FixImage
-    print
+    print()
     FixMaskImage
-    print
+    print()
     MovingDWI
-    print
+    print()
     '=' * 80
 
     return PROJ_ID, SUBJ_ID, SESSION_ID, FixImage, FixMaskImage, MovingDWI
@@ -304,7 +304,8 @@ outputsSpec = pe.Node(interface=IdentityInterface(fields=['FAImage', 'MDImage', 
                       name='outputspec')
 
 BFitB0_T2 = pe.Node(interface=BRAINSFit(), name='B0ToT2_Rigid')
-BF_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE, 2, 1, 24) 'overwrite': True}
+BF_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE, 2, 1, 24),
+                                 'overwrite': True}
 
 BFitB0_T2.plugin_args = BF_cpu_sge_options_dictionary
 BFitB0_T2.inputs.costMetric = 'MMI'
@@ -464,7 +465,7 @@ MasterDWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Output.@ten
 MasterDWIWorkflow.write_graph()
 MasterDWIWorkflow.run()
 
-print
+print()
 sys.argv
-print
+print()
 sys.api_version

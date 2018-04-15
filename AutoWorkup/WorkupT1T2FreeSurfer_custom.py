@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import os
 from builtins import str
@@ -27,7 +27,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
         name='outputspec')
 
     ### HACK: the nipype interface requires that this environmental variable is set before running
-    print("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR))
+    print(("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)))
     os.environ['SUBJECTS_DIR'] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 
@@ -94,7 +94,7 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, WFname, CLUSTER_QUEUE,
         interface=IdentityInterface(fields=['base_template_id', 'subjects_dir', 'list_all_subj_session_ids']),
         name='inputspec')
     ### HACK: the nipype interface requires that this environmental variable is set before running
-    print("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR))
+    print(("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)))
     os.environ['SUBJECTS_DIR'] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
     print("""Run FreeSurfer Within Subject Template at""")
@@ -125,7 +125,7 @@ def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['base_template_id', 'subj_session_id', 'subjects_dir']),
                          name='inputspec')
     ### HACK: the nipype interface requires that this environmental variable is set before running
-    print("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR))
+    print(("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)))
     os.environ['SUBJECTS_DIR'] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 

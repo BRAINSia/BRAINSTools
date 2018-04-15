@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import os.path
 import sqlite3
@@ -134,7 +134,7 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
         ExperimentDatabase = None
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     else:
-        print("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile))
+        print(("Single_subject {0}: Using cached database, {1}".format(single_subject, subjectDatabaseFile)))
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
     # print "^^^^^^^^^^^^^"

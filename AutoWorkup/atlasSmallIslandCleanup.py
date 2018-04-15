@@ -23,7 +23,7 @@ class DustCleanup():
 
     def evalInputListArg(self, inputArg):
         if inputArg:
-            return map(int, inputArg.split(','))
+            return list(map(int, inputArg.split(',')))
         else:
             return None
 
@@ -69,9 +69,9 @@ class DustCleanup():
         return verifiedList
 
     def printIslandStatistics(self):
-        print
+        print()
         "-" * 50
-        print
+        print()
         "Label, numberOfIslandsCleaned, numberOfIslands, IslandVoxelCount, numberOfIslandsCleanedForIslandVoxelCount"
         for islandName in sorted(self.islandStatistics.keys()):
             labelStats = [str(islandName), str(self.islandStatistics[islandName]['numberOfIslandsCleaned']),
@@ -79,7 +79,7 @@ class DustCleanup():
             if islandName != 'Total':
                 for i in range(1, self.maximumIslandVoxelCount + 1):
                     labelStats.extend([str(i), str(self.islandStatistics[islandName][i])])
-            print
+            print()
             ','.join(labelStats)
 
     def relabelCurrentLabel(self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label_key):
@@ -252,9 +252,9 @@ if __name__ == '__main__':
     from docopt import docopt
 
     arguments = docopt(__doc__)
-    print
+    print()
     arguments
-    print
+    print()
     "-" * 50
     Object = DustCleanup(arguments)
     Object.main()

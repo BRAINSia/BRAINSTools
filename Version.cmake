@@ -11,10 +11,10 @@ include(ProjectSourceVersion)
 
 ## NOTE:    NEED TO MANUALLY UPDATE ALL XML FILES
 ##          vim $(git grep  -l "<version>" -- *.xml)
-##          :%s/< *version *> *[^<]*</<version>4.7.0</g
+##          :%s/< *version *> *[^<]*</<version>5.0.0</g
 ##          git commit
-##          git tag -a v4.7.0
-##          git push origin v4.7.0
+##          git tag -a v5.0.0
+##          git push origin v5.0.0
 ##          git push origin --tags  ## DON'T forget to do this!
 ## See note above for updating versions
 #-- DON'T OVERRIDE projcet() set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})

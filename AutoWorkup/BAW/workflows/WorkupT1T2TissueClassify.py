@@ -233,6 +233,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRe
     tissueClassifyWF.connect(BABCext, 'outputT2AverageImage', outputsSpec, 't2_average')
     tissueClassifyWF.connect(BABCext, 'outputPDAverageImage', outputsSpec, 'pd_average')
     tissueClassifyWF.connect(BABCext, 'outputFLAverageImage', outputsSpec, 'fl_average')
+
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 0 ), "t1_average")] ), ] )
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 1 ), "t2_average")] ), ] )
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 2 ), "pd_average")] ), ] )

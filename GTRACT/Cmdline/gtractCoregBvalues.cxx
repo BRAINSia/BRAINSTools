@@ -260,6 +260,7 @@ int main(int argc, char *argv[])
         itk::TransformFileWriter::New();
       xfrmWriter->SetFileName(outputTransform);
       xfrmWriter->SetInput(transform);
+      xfrmWriter->SetUseCompression(true);
       xfrmWriter->Update();
       }
     typedef itk::ResampleImageFilter<InputIndexImageType, OutputIndexImageType, double> ResampleFilterType;

@@ -467,6 +467,7 @@ DoConversion( int argc, char *argv[] )
       typedef typename itk::TransformFileWriterTemplate<TScalarType> TransformWriterType;
       typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
       transformWriter->SetFileName(outputTransform);
+      transformWriter->SetUseCompression(true);
       for( typename itk::TransformFileReaderTemplate<TScalarType>::TransformListType::iterator it = transformList->begin();
           it != transformList->end(); ++it )
         {

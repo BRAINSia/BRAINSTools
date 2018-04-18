@@ -45,6 +45,7 @@ void WriteTransform(std::string transformFileName, TTransformType transform )
 
   transformWriter->SetInput(transform);
   transformWriter->SetFileName(transformFileName);
+  transformWriter->SetUseCompression(true);
   transformWriter->Update();
   std::cout << "\t done writing Transform: " << transformFileName << std::endl;
 }

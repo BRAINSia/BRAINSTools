@@ -35,6 +35,7 @@ main(int argc, char * *argv)
   WriterType::Pointer writer =  WriterType::New();
 
   writer->SetFileName("./identityTransformation.mat");
-  writer->SetInput( transform);
+  writer->SetInput( transform );
+  writer->SetUseCompression( true );
   writer->Update();
 }

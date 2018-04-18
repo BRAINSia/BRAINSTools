@@ -168,6 +168,7 @@ int main( int argc, char * argv[] )
     TransformWriterType::Pointer writer = TransformWriterType::New();
     writer->SetInput( affine );
     writer->SetFileName( outputAffineTransform );
+    writer->SetUseCompression(true);
     try
       {
       writer->Update();

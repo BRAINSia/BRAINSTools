@@ -52,12 +52,12 @@ class BRAINSABCextInputSpec(BRAINSABCInputSpec):
 
 class BRAINSABCextOutputSpec(BRAINSABCOutputSpec):
     # Not convenient outputAverageImages = OutputMultiPath(File(exists=True), exists = True)
-    outputT1AverageImage = traits.Either(File(exists=True), None)
-    outputT2AverageImage = traits.Either(File(exists=True), None)
-    outputPDAverageImage = traits.Either(File(exists=True), None)
-    outputFLAverageImage = traits.Either(File(exists=True), None)
+    outputT1AverageImage = traits.Either(File(exists=True), [None])
+    outputT2AverageImage = traits.Either(File(exists=True), [None])
+    outputPDAverageImage = traits.Either(File(exists=True), [None])
+    outputFLAverageImage = traits.Either(File(exists=True), [None])
     posteriorImages = OutputMultiPath(File(exists=True), exists=True)
-    atlasToSubjectInverseTransform = traits.Either(File(exists=True), None)
+    atlasToSubjectInverseTransform = traits.Either(File(exists=True), [None])
 
 
 class BRAINSABCext(BRAINSABC):
@@ -86,7 +86,7 @@ class BRAINSABCext(BRAINSABC):
             if key in self.inputs.inputVolumeTypes:
                 outputs[values[0]] = os.path.abspath(values[1])
             else:
-                outputs[values[0]] = None
+                outputs[values[0]] = "XX"
 
         PosteriorOutputs = GetPosteriorsFromAtlasXML(self.inputs.atlasDefinition)
         PosteriorPaths = PosteriorOutputs.getPosteriorFileNameList(self.inputs.posteriorTemplate)
@@ -96,5 +96,5 @@ class BRAINSABCext(BRAINSABC):
         if os.path.exists(fixed_inverse_name):
             outputs['atlasToSubjectInverseTransform'] = fixed_inverse_name
         else:
-            outputs['atlasToSubjectInverseTransform'] = None
+            outputs['atlasToSubjectInverseTransform'] = "YYDEUMMY"
         return outputs

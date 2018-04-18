@@ -232,7 +232,7 @@ def CreateCorrectionWorkflow(WFname):
     antsReg_B0ToTransformedT2.inputs.args = '--restrict-deformation 0x1x0'
     CorrectionWF.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), antsReg_B0ToTransformedT2, 'fixed_image')
     CorrectionWF.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 2), antsReg_B0ToTransformedT2,
-                         'fixed_image_mask')
+                         'fixed_image_masks')
     CorrectionWF.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 0), antsReg_B0ToTransformedT2, 'moving_image')
 
     # Step8: Now, all necessary transforms are acquired. It's a time to

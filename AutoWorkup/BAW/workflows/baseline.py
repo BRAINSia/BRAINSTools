@@ -701,7 +701,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DataSinkTissueT2.overwrite = master_config['ds_overwrite']
         DataSinkTissueT2.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
         DataSinkTissueT2.inputs.base_directory = master_config['resultdir']
-        DataSinkTissueT2.inputs.ignore_exception = True
+        #DataSinkTissueT2.inputs.ignore_exception = True
         del dsName
         baw201.connect(outputsSpec, 't2_average', DataSinkTissueT2, 'TissueClassify.@t2')
 
@@ -710,7 +710,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DataSinkTissueFL.overwrite = master_config['ds_overwrite']
         DataSinkTissueFL.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
         DataSinkTissueFL.inputs.base_directory = master_config['resultdir']
-        DataSinkTissueFL.inputs.ignore_exception = True
+        #DataSinkTissueFL.inputs.ignore_exception = True
         del dsName
         baw201.connect(outputsSpec, 'fl_average', DataSinkTissueFL, 'TissueClassify.@fl')
 
@@ -719,7 +719,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         DataSinkTissuePD.overwrite = master_config['ds_overwrite']
         DataSinkTissuePD.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
         DataSinkTissuePD.inputs.base_directory = master_config['resultdir']
-        DataSinkTissuePD.inputs.ignore_exception = True
+        #DataSinkTissuePD.inputs.ignore_exception = True
         del dsName
         baw201.connect(outputsSpec, 'pd_average', DataSinkTissuePD, 'TissueClassify.@pd')
 

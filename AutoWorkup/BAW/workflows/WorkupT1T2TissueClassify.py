@@ -143,12 +143,12 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRe
 
         tissueClassifyWF.connect(inputsSpec, 'PrimaryT1', fixedROIAuto, 'inputVolume')
         tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume', A2SantsRegistrationPreABCAffine,
-                                 'fixed_image_mask')
-        tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume', A2SantsRegistrationPreABCSyN, 'fixed_image_mask')
+                                 'fixed_image_masks')
+        tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume', A2SantsRegistrationPreABCSyN, 'fixed_image_masks')
 
     ## NOTE: Always use atlas head region to avoid computing this every time.
-    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion', A2SantsRegistrationPreABCAffine, 'moving_image_mask')
-    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion', A2SantsRegistrationPreABCSyN, 'moving_image_mask')
+    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion', A2SantsRegistrationPreABCAffine, 'moving_image_masks')
+    tissueClassifyWF.connect(inputsSpec, 'atlasheadregion', A2SantsRegistrationPreABCSyN, 'moving_image_masks')
 
     tissueClassifyWF.connect(A2SantsRegistrationPreABCAffine, 'composite_transform',
                              A2SantsRegistrationPreABCSyN, 'initial_moving_transform')

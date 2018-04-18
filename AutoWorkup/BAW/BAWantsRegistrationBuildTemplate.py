@@ -337,7 +337,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix, CLUS
                                 output_names=['TransformListWithGradientWarps']),
         run_without_submitting=True,
         name='99_MakeTransformListWithGradientWarps')
-    ApplyInvAverageAndFourTimesGradientStepWarpImage.inputs.ignore_exception = True
+    #ApplyInvAverageAndFourTimesGradientStepWarpImage.inputs.ignore_exception = True
 
     TemplateBuildSingleIterationWF.connect(AvgAffineTransform, 'affine_transform',
                                            ApplyInvAverageAndFourTimesGradientStepWarpImage, 'averageAffineTranform')

@@ -258,18 +258,18 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         if UseRegistrationMasking == True:
             from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
             JointFusionWF.connect(fixedROIAuto, 'outputROIMaskVolume',
-                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject], 'fixed_image_mask')
+                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject], 'fixed_image_masks')
             # JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels',
-            #                       A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_mask')
+            #                       A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'fixed_image_masks')
 
             # NOTE: Moving image mask can be taken from Atlas directly so that it does not need to be read in
             # movingROIAuto[jointFusion_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="movingROIAUTOMask_"+jointFusion_atlas_subject)
             # movingROIAuto.inputs.ROIAutoDilateSize=10
             # movingROIAuto[jointFusion_atlas_subject].inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
             # JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 't1', movingROIAuto[jointFusion_atlas_subject],'inputVolume')
-            # JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_mask')
+            # JointFusionWF.connect(movingROIAuto[jointFusion_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],'moving_image_masks')
             JointFusionWF.connect(jointFusionAtlases[jointFusion_atlas_subject], 'registration_mask',
-                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject], 'moving_image_mask')
+                                  A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject], 'moving_image_masks')
 
         JointFusionWF.connect(BLICreator[jointFusion_atlas_subject], 'outputTransformFilename',
                               A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject],

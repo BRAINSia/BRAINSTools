@@ -57,7 +57,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     config.update_config(master_config)  # Set universal pipeline options
     logging.update_logging(config)
 
-    from .workflows.baseline import generate_single_session_template_WF
+    from BAW.workflows.baseline import generate_single_session_template_WF
 
     project = dataDict['project']
     subject = dataDict['subject']
@@ -108,12 +108,12 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
 
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
-    from .baw_exp import OpenSubjectDatabase
-    from .utilities.misc import add_dict
+    from BAW.baw_exp import OpenSubjectDatabase
+    from BAW.utilities.misc import add_dict
     from collections import OrderedDict
     import sys
 
-    from .workflows.utils import run_workflow
+    from BAW.workflows.utils import run_workflow
 
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
@@ -250,7 +250,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 continue
 
             ## Use different sentinal file if segmentation specified.
-            from .workflows.baseline import DetermineIfSegmentationShouldBeDone
+            from BAW.workflows.baseline import DetermineIfSegmentationShouldBeDone
 
             do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:
@@ -291,7 +291,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
 
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
-    from .utilities.configFileParser import nipype_options
+    from BAW.utilities.configFileParser import nipype_options
 
     print("Copying Atlas directory and determining appropriate Nipype options...")
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
@@ -309,7 +309,7 @@ if __name__ == '__main__':
     import os
 
     from docopt import docopt
-    from .AutoWorkup import setup_environment
+    from BAW import setup_environment
 
     argv = docopt(__doc__, version='1.1')
     print(argv)

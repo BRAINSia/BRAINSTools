@@ -1,9 +1,6 @@
 #! /usr/bin/env python
 
 
-
-
-
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
 
@@ -19,9 +16,9 @@ def setup_environment(argv):
     print("Configuring environment...")
     import os
     import os.path
-    from .utilities.configFileParser import resolveDataSinkOption, parseFile
-    from .utilities.pathHandling import validatePath
-    from .utilities import misc
+    from BAW.utilities.configFileParser import resolveDataSinkOption, parseFile
+    from BAW.utilities.pathHandling import validatePath
+    from BAW.utilities import misc
     environment, experiment, pipeline, cluster = parseFile(
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
@@ -59,7 +56,7 @@ def setup_environment(argv):
     config.enable_debug_mode()
     # config.enable_provenance()
 
-    from .utilities.package_check import verify_packages
+    from BAW.utilities.package_check import verify_packages
     verify_packages()
     if 'FREESURFER' in experiment['components']:  # FREESURFER MODS
         configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'), False, False)

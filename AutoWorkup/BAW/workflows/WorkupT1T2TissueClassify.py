@@ -33,14 +33,23 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def MakePosteriorDictionaryFunc(posteriorImages):
-    from PipeLineFunctionHelpers import POSTERIORS
+#POSTERIORS = sorted(['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
+#              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
+#              'NOTVB', 'AIR'])
+def MakePosteriorListOfTuplesFunc(posteriorImages):
+    #from PipeLineFunctionHelpers import POSTERIORS
+    posteriorImages.sort()
+    #print("AAAA {0}".format(posteriorImages))
+    import os
+    POSTERIORS = [ os.path.basename( pfn ).replace("POSTERIOR_","").replace(".nii.gz","") for pfn in posteriorImages ]
+    #print("BBBB {0}".format(POSTERIORS))
     if len(POSTERIORS) != len(posteriorImages):
         print(("ERROR: ", posteriorNames))
         print(("ERROR: ", POSTERIORS))
         return -1
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-    temp_dictionary = OrderedDict(list(zip(POSTERIORS, posteriorImages)))
+    temp_dictionary = list(zip(POSTERIORS, posteriorImages))
+    #print("XXXXX: {0}".format(temp_dictionary))
     return temp_dictionary
 
 
@@ -239,12 +248,12 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRe
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 1 ), "t2_average")] ), ] )
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 2 ), "pd_average")] ), ] )
 
-    MakePosteriorDictionaryNode = pe.Node(Function(function=MakePosteriorDictionaryFunc,
+    MakePosteriorListOfTuplesNode = pe.Node(Function(function=MakePosteriorListOfTuplesFunc,
                                                    input_names=['posteriorImages'],
                                                    output_names=['posteriorDictionary']), run_without_submitting=True,
                                           name="99_makePosteriorDictionary")
-    tissueClassifyWF.connect(BABCext, 'posteriorImages', MakePosteriorDictionaryNode, 'posteriorImages')
+    tissueClassifyWF.connect(BABCext, 'posteriorImages', MakePosteriorListOfTuplesNode, 'posteriorImages')
 
-    tissueClassifyWF.connect(MakePosteriorDictionaryNode, 'posteriorDictionary', outputsSpec, 'posteriorImages')
+    tissueClassifyWF.connect(MakePosteriorListOfTuplesNode, 'posteriorDictionary', outputsSpec, 'posteriorImages')
 
     return tissueClassifyWF

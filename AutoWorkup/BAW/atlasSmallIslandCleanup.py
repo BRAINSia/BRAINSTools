@@ -150,9 +150,9 @@ class DustCleanup():
 
     def runConnectedComponentsAndRelabel(self, binaryImage):
         if not self.useFullyConnectedInConnectedComponentFilter:
-            connectedRegion = sitk.ConnectedComponent(binaryImage, fullyConnected=False)
+            connectedRegion = sitk.ConnectedComponent(image=binaryImage, False)
         else:
-            connectedRegion = sitk.ConnectedComponent(binaryImage, fullyConnected=True)
+            connectedRegion = sitk.ConnectedComponent(image=binaryImage, True)
         relabeledConnectedRegion = sitk.RelabelComponent(connectedRegion)
         return relabeledConnectedRegion
 

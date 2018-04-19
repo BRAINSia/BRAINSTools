@@ -3,10 +3,12 @@
 ## various different sources.
 ##
 
-def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posterior_dict, LeftHemisphereFN, outFN, OUT_DICT):
+def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOfTuples, LeftHemisphereFN, outFN, OUT_DICT):
     import SimpleITK as sitk
     import os
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
+    posterior_dict = OrderedDict(posteriorListOfTuples)
     def ForceMaskInsert(inlabels, newmask, newmaskvalue):
         inlabels = sitk.Cast(inlabels, sitk.sitkUInt32)
         newmask = sitk.Cast((newmask > 0), sitk.sitkUInt32)
@@ -59,7 +61,6 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posterior_dict,
 
     fusionIm = sitk.Cast(sitk.ReadImage(fusionFN), sitk.sitkUInt32)
     FixedHead = sitk.Cast(sitk.ReadImage(FixedHeadFN), sitk.sitkUInt32)
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
     BRAINSABC_DICT = OrderedDict({'BRAINSTEM': 30, 'CSF': 4, 'BLOOD': 5})
 
@@ -104,7 +105,7 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posterior_dict,
     ## Now extend brainstem lower
     ## BrainStem often mislabled to Cerebellum WM (label 7 and 46)
     ## Fix for brainstem for the mislabeld Cerebellum as well.
-    misLabelDict = OrdredDict({"none": 0, "leftCrblWM": 7, "rightCrblWM": 46})
+    misLabelDict = OrderedDict({"none": 0, "leftCrblWM": 7, "rightCrblWM": 46})
     for misLabel in misLabelDict:
         brain_stem = (FixedHead == BRAINSABC_DICT['BRAINSTEM']) * (outlabels == misLabelDict[misLabel])
         outlabels = ForceMaskInsert(outlabels, brain_stem, OUT_DICT['BRAINSTEM'])  ## Make all CSF Right hemisphere

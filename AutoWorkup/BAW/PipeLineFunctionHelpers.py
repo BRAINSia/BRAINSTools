@@ -1,21 +1,12 @@
-
-
 import errno
 import os
 import shutil  ## needed for removing directory tree
 from builtins import range
 
-# Globals
-POSTERIORS = ['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
-              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
-              'NOTVB', 'AIR']
-
-
 def convertToList(element):
     if element is None:
         return ''
     return [element]
-
 
 def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
     import SimpleITK as sitk
@@ -78,10 +69,13 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
     return clipped_file
 
 
-def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
+def UnwrapPosteriorImagesFromListOfTuplesFunction(posteriorListOfTuples):
     ## Dictionary values are now being returned as unicode characters
     ## so convert back to ascii
-    return [x for x in list(postDict.values())]
+    #print("QQQQQ {0}".format(posteriorListOfTuples))
+    mylist = [ x[1] for x in posteriorListOfTuples]
+    #print("YYYYY {0}".format(mylist))
+    return mylist
 
 
 def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
@@ -112,11 +106,6 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
             dictionary_of_session_list[key].append(postFileName)
     print(dictionary_of_session_list)
     return dictionary_of_session_list
-
-
-def GetOnePosteriorImageFromDictionaryFunction(postDict, key):
-    return postDict[key]
-
 
 
 def AccumulateLikeTissuePosteriors(posteriorImages):

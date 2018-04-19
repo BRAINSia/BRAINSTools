@@ -32,7 +32,7 @@ package_check('IPython', '0.10', 'tutorial1')
 from utilities.distributed import modify_qsub_args
 from utilities.image_processing import FixWMPartitioning
 from PipeLineFunctionHelpers import convertToList, AccumulateLikeTissuePosteriors
-from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
+from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromListOfTuplesFunction
 
 from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
 from .WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
@@ -736,7 +736,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         baw201.connect([(myLocalTCWF, FixWMNode, [('outputspec.outputLabels', 'brainMask'),
                                                   (('outputspec.posteriorImages',
-                                                    UnwrapPosteriorImagesFromDictionaryFunction), 'PosteriorsList')]),
+                                                    UnwrapPosteriorImagesFromListOfTuplesFunction), 'PosteriorsList')]),
                         (FixWMNode, outputsSpec, [('UpdatedPosteriorsList', 'UpdatedPosteriorsList')]),
                         ])
 

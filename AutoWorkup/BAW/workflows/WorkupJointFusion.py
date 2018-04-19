@@ -475,7 +475,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
                                                              input_names=['fusionFN',
                                                                           'FixedHeadFN',
-                                                                          'posterior_dict',
+                                                                          'posteriorListOfTuples',
                                                                           'LeftHemisphereFN',
                                                                           'outFN',
                                                                           'OUT_DICT'],
@@ -489,7 +489,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         injectSurfaceCSFandVBIntoLabelMap.inputs.OUT_DICT = FREESURFER_DICT
         JointFusionWF.connect(jointFusion, 'out_label_fusion', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
         JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels', injectSurfaceCSFandVBIntoLabelMap, 'FixedHeadFN')
-        JointFusionWF.connect(inputsSpec, 'subj_posteriors', injectSurfaceCSFandVBIntoLabelMap, 'posterior_dict')
+        JointFusionWF.connect(inputsSpec, 'subj_posteriors', injectSurfaceCSFandVBIntoLabelMap, 'posteriorListOfTuples')
         JointFusionWF.connect(inputsSpec, 'subj_left_hemisphere', injectSurfaceCSFandVBIntoLabelMap, 'LeftHemisphereFN')
 
         JointFusionWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',

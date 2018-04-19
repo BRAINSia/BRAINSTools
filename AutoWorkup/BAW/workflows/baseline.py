@@ -30,7 +30,8 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from utilities.distributed import modify_qsub_args
-from PipeLineFunctionHelpers import convertToList, FixWMPartitioning, AccumulateLikeTissuePosteriors
+from utilities.image_processing import FixWMPartitioning
+from PipeLineFunctionHelpers import convertToList, AccumulateLikeTissuePosteriors
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 
 from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow

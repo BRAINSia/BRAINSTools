@@ -171,8 +171,8 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
             accum_image = accum_image + load_images_list[inlist[curr_image]]
         sitk.WriteImage(accum_image, outname)
         AccumulatePriorsList.append(os.path.realpath(outname))
-    print(("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)))
-    print((": {APN}\n".format(APN=AccumulatePriorsNames)))
+    #print(("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)))
+    #print((": {APN}\n".format(APN=AccumulatePriorsNames)))
     return AccumulatePriorsList, AccumulatePriorsNames
 
 

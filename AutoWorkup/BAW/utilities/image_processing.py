@@ -21,10 +21,11 @@ def FixWMPartitioning(brainMask, PosteriorsList):
                 sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1,
             10000)
 
+    print(("Reading {0} of type {1}".format(brainMask, type(brainMask))))
     BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask), 1, 1000)
     BM_FILLED = FillHolePreserveEdge(BM, 3)
 
-    NOTCSF_index = None
+    NOTCSF_index = None  # Note: Purposfully using '-1' as it will force an error.
     CSF_index = None
     NOTGM_index = None
     GM_index = None

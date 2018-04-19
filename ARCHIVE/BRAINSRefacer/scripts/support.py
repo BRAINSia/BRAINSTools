@@ -8,7 +8,8 @@ def readFCSV(lmks_fn):
       lmks_fn: A slicer complant fcsv fiducial file
       This function returns a map of named landmark points.
     """
-    lmks_map = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    lmks_map = OrderedDict()
     with open(lmks_fn, 'r') as fid:
         lines = fid.readlines()
         for line in lines:

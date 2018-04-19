@@ -44,7 +44,8 @@ class UpdateAutoWorkup(object):
 
 class MakeNewImageDict(object):
     def __init__(self):
-        self.newImageDict = dict()
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        self.newImageDict = OrderedDict()
         self.commandList = list()
         self.dbName = 'NewImages.db'
         self.dbTableName = 'NewImages'

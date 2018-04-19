@@ -473,7 +473,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                               name='Template_DG')
         template_DG.inputs.base_directory = master_config['previousresult']
         template_DG.inputs.subject = subjectid
-        template_DG.inputs.field_template = {'outAtlasXMLFullPath': '%s/Atlas/AtlasDefinition_%s.xml',
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        template_DG.inputs.field_template = OrderedDict({'outAtlasXMLFullPath': '%s/Atlas/AtlasDefinition_%s.xml',
                                              'hncma_atlas': '%s/Atlas/AVG_hncma_atlas.nii.gz',
                                              'template_leftHemisphere': '%s/Atlas/AVG_template_leftHemisphere.nii.gz',
                                              'template_rightHemisphere': '%s/Atlas/AVG_template_rightHemisphere.nii.gz',
@@ -483,8 +484,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                              'template_t1_denoised_gaussian': '%s/Atlas/AVG_T1.nii.gz',
                                              'template_landmarks_50Lmks_fcsv': '%s/Atlas/AVG_LMKS.fcsv',
                                              'template_headregion': '%s/Atlas/AVG_template_headregion.nii.gz'
-                                             }
-        template_DG.inputs.template_args = {'outAtlasXMLFullPath': [['subject', 'subject']],
+                                             })
+        template_DG.inputs.template_args = OrderedDict({'outAtlasXMLFullPath': [['subject', 'subject']],
                                             'hncma_atlas': [['subject']],
                                             'template_leftHemisphere': [['subject']],
                                             'template_rightHemisphere': [['subject']],
@@ -494,7 +495,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                             'template_t1_denoised_gaussian': [['subject']],
                                             'template_landmarks_50Lmks_fcsv': [['subject']],
                                             'template_headregion': [['subject']]
-                                            }
+                                            })
         template_DG.inputs.template = '*'
         template_DG.inputs.sort_filelist = True
         template_DG.inputs.raise_on_empty = True
@@ -877,7 +878,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         ## TODO : SHOULD USE BRAINSCut transform that was refined even further!
 
-        BResample = dict()
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        BResample = OrderedDict()
         AtlasLabelMapsToResample = [
             'hncma_atlas',
             'template_WMPM2_labels',

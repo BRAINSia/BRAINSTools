@@ -39,7 +39,8 @@ def MakePosteriorDictionaryFunc(posteriorImages):
         print(("ERROR: ", posteriorNames))
         print(("ERROR: ", POSTERIORS))
         return -1
-    temp_dictionary = dict(list(zip(POSTERIORS, posteriorImages)))
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    temp_dictionary = OrderedDict(list(zip(POSTERIORS, posteriorImages)))
     return temp_dictionary
 
 

@@ -26,6 +26,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     import SimpleITK as sitk
     import os
     import csv
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
     def CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, probMapOfExclusion, percentageThreshold=0.85):
         """This function is used to clean up grey matter sub-cortical segmentations
@@ -34,12 +35,12 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print(("AA", initial_seg))
-        # print "BB", dict(sitk.Statistics(seg))
+        # print "BB", OrderedDict(sitk.Statistics(seg))
         exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1),
                                  sitk.sitkUInt8)
-        # print "CC", dict(sitk.Statistics(exclude_Mask))
+        # print "CC", OrderedDict(sitk.Statistics(exclude_Mask))
         cleanedUpSeg = seg * exclude_Mask
-        # print "DD", dict(sitk.Statistics(cleanedUpSeg))
+        # print "DD", OrderedDict(sitk.Statistics(cleanedUpSeg))
         return cleanedUpSeg
 
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
@@ -84,7 +85,8 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         "r_globus": 12
     }
 
-    cleaned_labels_map = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    cleaned_labels_map = OrderedDict()
     labelImage = None
     print("ZZZ")
     x = 0
@@ -121,7 +123,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     dWriter = csv.DictWriter(csvFile, ['projectid', 'subjectid', 'sessionid', 'Structure', 'LabelCode', 'Volume_mm3'],
                              restval='', extrasaction='raise', dialect='excel')
     dWriter.writeheader()
-    writeDictionary = dict()
+    writeDictionary = OrderedDict()
     for name in orderOfPriority:
         value = valueDict[name]
         if ls.HasLabel(value):
@@ -129,7 +131,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
             # myMeasurementMap = ls.GetMeasurementMap(value)
             # dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
             # dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
-            # measurementDict = dict(zip(dictKeys, dictValues))
+            # measurementDict = OrderedDict(zip(dictKeys, dictValues))
             structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * ls.GetCount(
                 value)  # measurementDict['Count']
             writeDictionary['Volume_mm3'] = structVolume
@@ -238,7 +240,7 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(), name="IQR_NORM_SEP_RF12_BRAINSCut")
     # HACK
     # import os
-    # RF12BC.inputs.environ = dict(os.environ)
+    # RF12BC.inputs.environ = OrderedDict(os.environ)
     # many_cpu_RF12BC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,2), 'overwrite': True}
     # RF12BC.plugin_args = many_cpu_RF12BC_options_dictionary
     # END HACK

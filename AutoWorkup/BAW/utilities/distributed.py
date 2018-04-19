@@ -2,6 +2,7 @@
 
 import math
 from past.utils import old_div
+from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
 
 def load_cluster(modules=[]):
@@ -21,7 +22,7 @@ def source_virtualenv(virtualenv_dir=''):
     return "source {0}".format(virtualenv_dir)
 
 
-def prepend_env(environment={}):
+def prepend_env(environment=OrderedDict()):
     import os
     export_list = []
     for key, value in list(environment.items()):
@@ -45,8 +46,9 @@ def create_global_sge_script(cluster, environment):
     import os
     from string import Template
     import sys
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
-    sub_dict = dict(LOAD_MODULES=load_cluster(cluster['modules']),
+    sub_dict = OrderedDict(LOAD_MODULES=load_cluster(cluster['modules']),
                     VIRTUALENV_DIR=source_virtualenv(environment['virtualenv_dir']),
                     EXPORT_ENV=prepend_env(environment['env']))
     with open(os.path.join(os.path.dirname(__file__), 'node.sh.template')) as fid:

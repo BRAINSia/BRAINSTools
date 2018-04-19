@@ -34,12 +34,13 @@ class runOneAW(object):
         os.system(bawCommand)
 
     def generateSessionCSV(self):
-        sessionDict = dict()
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        sessionDict = OrderedDict()
         if input_arguments.t1 != []:
             sessionDict['T1-30'] = input_arguments.t1
         if input_arguments.t2 != []:
             sessionDict['T2-30'] = input_arguments.t2
-        if sessionDict == dict():
+        if sessionDict == OrderedDict():
             print('ERROR: No T1 or T2 images were given as input arguments.')
             sys.exit()
         col_name_list = ["project", "subject", "session", "imagefiles"]

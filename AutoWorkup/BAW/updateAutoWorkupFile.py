@@ -9,8 +9,9 @@ from builtins import object
 
 class UpdateAutoWorkup(object):
     def _getBlackList(self):
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         handle = csv.reader(open(inputArguments.blackList, 'rb'), delimiter=',', quotechar='\"')
-        blackListDict = dict()
+        blackListDict = OrderedDict()
         for row in handle:
             if len(row) == 3:
                 blackListDict[row[0]] = row[1]
@@ -25,6 +26,7 @@ class UpdateAutoWorkup(object):
         return newPath
 
     def updateAutoWorkup(self):
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         newPath = self._generateNewPathName()
         newFile = csv.writer(open(newPath, 'wb'), quoting=csv.QUOTE_ALL)
         col_name_list = ["project", "subject", "session", "imagefiles"]
@@ -36,7 +38,7 @@ class UpdateAutoWorkup(object):
             ## skip header
             if oldFile.line_num > 1:
                 scanDict = eval(row[3])
-                newScanDict = dict()
+                newScanDict = OrderedDict()
                 for scan in list(scanDict.keys()):
                     filepaths = scanDict[scan]
                     for path in filepaths:
@@ -53,7 +55,7 @@ class UpdateAutoWorkup(object):
                                 newScanDict[scan] = [path]
                             else:
                                 newScanDict[scan].append(path)
-                if newScanDict != {}:
+                if newScanDict != OrderedDict():
                     project = row[0]
                     subject = row[1]
                     session = row[2]

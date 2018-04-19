@@ -65,6 +65,7 @@ class BRAINSABCext(BRAINSABC):
     output_spec = BRAINSABCextOutputSpec
 
     def _list_outputs(self):
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         custom_implied_outputs_with_no_inputs = ['posteriorImages',
                                                  'outputT1AverageImage',
                                                  'outputT2AverageImage',
@@ -73,15 +74,17 @@ class BRAINSABCext(BRAINSABC):
                                                  'atlasToSubjectInverseTransform'
                                                  ]
         full_outputs = self.output_spec().get()
-        pruned_outputs = dict()
+        pruned_outputs = OrderedDict()
         for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
         outputs = super(BRAINSABCext, self)._outputs_from_inputs(pruned_outputs)
-        input_check = {'T1': ('outputT1AverageImage', 't1_average_BRAINSABC.nii.gz'),
+        input_check = OrderedDict(
+                      {'T1': ('outputT1AverageImage', 't1_average_BRAINSABC.nii.gz'),
                        'T2': ('outputT2AverageImage', 't2_average_BRAINSABC.nii.gz'),
                        'PD': ('outputPDAverageImage', 'pd_average_BRAINSABC.nii.gz'),
                        'FL': ('outputFLAverageImage', 'fl_average_BRAINSABC.nii.gz')}
+                      )
         for key, values in list(input_check.items()):
             if key in self.inputs.inputVolumeTypes:
                 outputs[values[0]] = os.path.abspath(values[1])

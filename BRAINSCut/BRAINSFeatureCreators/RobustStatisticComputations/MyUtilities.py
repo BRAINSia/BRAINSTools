@@ -71,6 +71,7 @@ def LabelStatistics(inputLabel,
     labelValue = 1
 
     import SimpleITK as sitk
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
     statCalculator = sitk.LabelStatisticsImageFilter()
     inImg = sitk.Cast(sitk.ReadImage(inputVolume),
@@ -90,7 +91,7 @@ def LabelStatistics(inputLabel,
     Sigma = statCalculator.GetSigma(labelValue)
     Variance = statCalculator.GetVariance(labelValue)
 
-    outputDictionary = dict()
+    outputDictionary = OrderedDict()
 
     outputDictionary['Mean'] = Mean
     outputDictionary['Median'] = Median
@@ -138,9 +139,10 @@ def LabelStatistics(inputLabel,
 
     import os
     import sys
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     returnFile = os.path.realpath(outputCSVFilename)
 
-    outputDictionarySet = dict(volume=inputVolume,
+    outputDictionarySet = OrderedDict(volume=inputVolume,
                                labelVolume=inputLabel,
                                statDict=outputDictionary)
     # returnDict = { 'outputStatDictionary': outputDictionary,

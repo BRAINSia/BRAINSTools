@@ -114,10 +114,11 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
     from BAW.utilities.misc import add_dict
     from collections import OrderedDict
     import sys
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
     from BAW.workflows.utils import run_workflow
 
-    master_config = {}
+    master_config = OrderedDict()
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
     database = OpenSubjectDatabase(experiment['cachedir'], ['all'], environment['prefix'], experiment['dbfile'])

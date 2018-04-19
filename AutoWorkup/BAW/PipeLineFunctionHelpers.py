@@ -93,7 +93,8 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
         dictionary_of_session_list={'AIR':['Y1/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_AIR.nii.gz'], 'CAUDATE':['Y1/POSTERIOR_CAUDATE.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']}
     """
     from os.path import basename
-    dictionary_of_session_list = {}
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    dictionary_of_session_list = OrderedDict()
     assert not dg_list_list is None, "Input must be a list, not None"
     assert isinstance(dg_list_list, list), "Input must be a list, not {0}".format(type(postList))
 
@@ -122,11 +123,12 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
     import os
     import sys
     import SimpleITK as sitk
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
 
-    load_images_list = dict()
+    load_images_list = OrderedDict()
     for full_pathname in posteriorImages:
         base_name = os.path.basename(full_pathname)
         load_images_list[base_name] = sitk.ReadImage(full_pathname)

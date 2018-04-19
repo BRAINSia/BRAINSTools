@@ -42,6 +42,7 @@ def onlyT1T2(src, names):
 
 
 def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', **kwargs):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     if outdir is not None:
         EXPERIMENT = EXPERIMENT.rstrip(os.path.sep)
         outdir = os.path.join(outdir, os.path.basename(EXPERIMENT))
@@ -76,7 +77,7 @@ def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', 
                         pass
                 # END HACK
                 print(outpath)
-            outdict = {}
+            outdict = OrderedDict()
             olddict = eval(row['imagefiles'])
             for key in list(olddict.keys()):
                 if key.startswith('T1'):

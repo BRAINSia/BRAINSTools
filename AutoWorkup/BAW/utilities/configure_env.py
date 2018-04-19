@@ -1,5 +1,5 @@
 """ By using
-         execfile(this_file, dict(__file__=__file__,
+         execfile(this_file, OrderedDict(__file__=__file__,
                                   append_os_path=['list', 'of', 'PATH'],
                                   append_sys_path=['list', 'of', 'PYTHONPATH']))
     you will activate the Autoworkup environment.
@@ -16,7 +16,7 @@ try:
 except NameError:
     raise AssertionError(
         "You must run this like execfile('path/to/utilities/configure_env.py',\n\
-        \tdict(__file__=__file__,\n\
+        \tOrderedDict(__file__=__file__,\n\
         \tappend_os_path=['list', 'of', 'PATH'],\n\
         \tappend_sys_path=['list', 'of', 'PYTHONPATH']))")
 import sys

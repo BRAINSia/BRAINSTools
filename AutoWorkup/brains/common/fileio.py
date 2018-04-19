@@ -9,10 +9,11 @@ def check_file(path):
 def parseLabelsFile():
     import os.path
     from ..config import _config
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     build_tree = _config.get('Resources', 'build_directory')
     filename = _config.get('Resources', 'label_template')
     fullname = check_file(os.path.join(build_tree, filename))
-    labelDict = {}
+    labelDict = OrderedDict()
     with open(fullname, 'r') as fid:
         for line in fid.readlines():
             if line[0] != "#":

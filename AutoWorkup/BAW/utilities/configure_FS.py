@@ -1,5 +1,5 @@
 """ By using
-         execfile('path/to/configure_FS', dict(env={os.environ-like dictionary})
+         execfile('path/to/configure_FS', OrderedDict(env={os.environ-like dictionary})
     you will set the FreeSurfer environment driven by the configuration file.
 """
 
@@ -9,7 +9,7 @@ try:
     FS_VARS
 except NameError as AttributeError:
     raise AssertionError(
-        "Run this file like: execfile('path/to/configure_FS', dict(env={}) \
+        "Run this file like: execfile('path/to/configure_FS', OrderedDict(env={}) \
         where 'env' is set to an os.environ-like dictionary")
 import os
 from . import misc

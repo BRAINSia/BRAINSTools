@@ -61,10 +61,11 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     def ComputeStatistics(inputVolume, T2LabelMapVolume, DWILabelMapVolume, labelCodesFile):
         import os
         import SimpleITK as sitk
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         #### Util Funcs ####
         def createLabelsDictionary(labelCodesFile):
             import csv
-            labelsDictionary = {}
+            labelsDictionary = OrderedDict()
             with open(labelCodesFile) as lf:
                 reader = csv.reader(lf, delimiter=',')
                 for line in reader:
@@ -80,6 +81,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
 
         def ReturnStatisticsList(labelID, voxelVolume, resampledRISVolume, DWILabelMap, T2LabelMap):
             from past.utils import old_div
+            from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
             statFilter = sitk.LabelStatisticsImageFilter()
             # RIS stats over input label ID
             statFilter.Execute(resampledRISVolume, DWILabelMap)
@@ -129,7 +131,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         T2LabelMap = sitk.ReadImage(T2LabelMapVolume)
         DWILabelMap = sitk.ReadImage(DWILabelMapVolume)
         labelsDictionary = createLabelsDictionary(labelCodesFile)
-        statisticsDictionary = {}
+        statisticsDictionary = OrderedDict()
         voxelVolume = computeVoxelVolume(resampledRISVolume)
         for key in labelsDictionary:
             labelID = int(key)

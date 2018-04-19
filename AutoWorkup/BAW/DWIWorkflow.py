@@ -499,7 +499,8 @@ if __name__ == '__main__':
     PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
     os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
-    CUSTOM_ENVIRONMENT = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    CUSTOM_ENVIRONMENT = OrderedDict()
 
     # Platform specific information
     #     Prepend the python search paths

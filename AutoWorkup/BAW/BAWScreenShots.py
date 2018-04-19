@@ -22,6 +22,7 @@ def print_usage():
 
 
 def readInputFile(inputFilename):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     inputList = []
     with open(inputFilename) as infile:
         for line in infile:
@@ -30,7 +31,7 @@ def readInputFile(inputFilename):
             if isinstance(sessionInfo, list):
                 pass
             else:
-                sessionDict = dict()
+                sessionDict = OrderedDict()
                 sessionDict['project'] = sessionInfo[0]
                 sessionDict['subject'] = sessionInfo[1]
                 sessionDict['session'] = sessionInfo[2]

@@ -69,7 +69,8 @@ def brainStem(tissueLabelFilename,
         import os
         return os.path.abspath(outputImageFilename)
 
-    myLandmark = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    myLandmark = OrderedDict()
     with open(landmarkFilename, 'r') as myLandmarkFile:
         all_lines = myLandmarkFile.readlines()
 

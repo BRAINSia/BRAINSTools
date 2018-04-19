@@ -11,6 +11,7 @@ import numpy as np
 from .partials import calcutateBinaryVolume
 from ..common import check_file
 from ..config import _config
+from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
 labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus', 'icv']
 
@@ -26,9 +27,10 @@ def constructLabels(labels):
 
 
 def _moduleCreateLabels(labels):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     full_labels, numbers = constructLabels(labels)
     labelMap = zip_longest(full_labels, numbers)
-    return dict(labelMap)  # Use this variable
+    return OrderedDict(labelMap)  # Use this variable
 
 
 def formatLabel(label):
@@ -66,7 +68,7 @@ def calculateICV(dirname):
     calculateBinaryVolume(filename)
 
 
-def getVolume(args=[], kwds={}):
+def getVolume(args=[], kwds=OrderedDict()):
     dirname = labels = project = subject = session = experimentDir = None
     experimentDir = _config.get('Results', 'directory')  # HACK
     for key, value in kwds:

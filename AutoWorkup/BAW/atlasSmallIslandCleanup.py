@@ -9,6 +9,7 @@ import math
 
 class DustCleanup():
     def __init__(self, arguments):
+        from collections import OrderedDict
         self.inputAtlasPath = arguments['--inputAtlasPath']
         self.outputAtlasPath = arguments['--outputAtlasPath']
         self.inputT1Path = arguments['--inputT1Path']
@@ -19,7 +20,7 @@ class DustCleanup():
         self.useFullyConnectedInConnectedComponentFilter = arguments['--useFullyConnectedInConnectedComponentFilter']
         self.forceSuspiciousLabelChange = arguments['--forceSuspiciousLabelChange']
         self.noDilation = arguments['--noDilation']
-        self.islandStatistics = {'Total': {'numberOfIslandsCleaned': 0, 'numberOfIslands': 0}}
+        self.islandStatistics = OrderedDict({'Total': {'numberOfIslandsCleaned': 0, 'numberOfIslands': 0}})
 
     def evalInputListArg(self, inputArg):
         if inputArg:
@@ -83,8 +84,9 @@ class DustCleanup():
             ','.join(labelStats)
 
     def relabelCurrentLabel(self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label_key):
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         label_key = str(label_key)  # all keys must be strings in order to sort
-        self.islandStatistics[label_key] = {'numberOfIslandsCleaned': 0}
+        self.islandStatistics[label_key] = OrderedDict({'numberOfIslandsCleaned': 0})
         label_value = int(label_key)
         for currentIslandSize in range(1, self.maximumIslandVoxelCount + 1):
             maskForCurrentLabel = sitk.BinaryThreshold(labelImage, label_value, label_value)
@@ -150,9 +152,9 @@ class DustCleanup():
 
     def runConnectedComponentsAndRelabel(self, binaryImage):
         if not self.useFullyConnectedInConnectedComponentFilter:
-            connectedRegion = sitk.ConnectedComponent(image=binaryImage, False)
+            connectedRegion = sitk.ConnectedComponent(binaryImage, False)
         else:
-            connectedRegion = sitk.ConnectedComponent(image=binaryImage, True)
+            connectedRegion = sitk.ConnectedComponent(binaryImage, True)
         relabeledConnectedRegion = sitk.RelabelComponent(connectedRegion)
         return relabeledConnectedRegion
 
@@ -213,8 +215,8 @@ class DustCleanup():
         sorted in ascending order - meaning that the smallest value has the "closest" average
         intensity to the suspicious label.
         """
-
-        squareRootDiffLabelDict = dict()
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        squareRootDiffLabelDict = OrderedDict()
         labelStatsT1WithInputLabelImage = self.getLabelStatsObject(inputT1VolumeImage, inputLabelImage)
         if inputT2VolumeImage:
             labelStatsT2WithInputLabelImage = self.getLabelStatsObject(inputT2VolumeImage, inputLabelImage)

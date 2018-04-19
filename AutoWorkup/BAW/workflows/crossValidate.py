@@ -78,7 +78,8 @@ def subsample_crossValidationSet(length, test_size):
 
 def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test_size, hasHeader):
     from utilities.misc import add_dict
-    master_config = {}
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    master_config = OrderedDict()
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
 
@@ -184,6 +185,7 @@ def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test
 
 class CrossValidationJointFusionWorkflow(Workflow):
     """ Nipype workflow for Multi-Label Atlas Fusion cross-validation experiment """
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     csv_file = None
     hasHeader = None
     sample_size = None
@@ -207,7 +209,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         print((csvOut.outputs.__dict__))
         print(("=" * 80))
 
-        iters = {}
+        iters = OrderedDict()
         label = list(csvOut.outputs.__dict__.keys())[0]
         result = eval("csvOut.outputs.{0}".format(label))
         iters['tests'], iters['trains'] = subsample_crossValidationSet(result, self.sample_size.default_value)

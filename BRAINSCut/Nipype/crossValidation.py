@@ -343,6 +343,7 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     print("""****************************
           crossValidationWorkUp
           """)
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     from nipype import config
     config.enable_debug_mode()
 
@@ -637,7 +638,7 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
                                                {}
                                                )
         workflow.run(plugin='SGE',
-                     plugin_args=dict(template=Cluster_Script,
+                     plugin_args=OrderedDict(template=Cluster_Script,
                                       qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null "))
     else:
         print("""************************

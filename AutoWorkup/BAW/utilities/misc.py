@@ -240,7 +240,8 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
 
 
 def GenerateSeparateImageTypeList(inFileList, inTypeList):
-    allListDict = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    allListDict = OrderedDict()
     allListDict["T1"] = list()
     allListDict["T2"] = list()
     allListDict["PD"] = list()

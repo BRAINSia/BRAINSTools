@@ -90,7 +90,12 @@ def FixWMPartitioning(brainMask, PosteriorsList):
     nonAirRegionMask = os.path.realpath('NonAirMask.nii.gz')
     sitk.WriteImage(nonAirMask, nonAirRegionMask)
 
-    POSTERIOR_LABELS = dict()  # (FG,Label)
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+                                         # input order is maintained across runs.
+                                         # This prevents "Outdated cache" errors
+                                         # That were causing the rest of
+                                         # the pipeline to be constantly re-run
+    POSTERIOR_LABELS = OrderedDict()  # (FG,Label)
     POSTERIOR_LABELS["POSTERIOR_WM.nii.gz"] = (1, 1)
     POSTERIOR_LABELS["POSTERIOR_SURFGM.nii.gz"] = (1, 2)
     POSTERIOR_LABELS["POSTERIOR_BASAL.nii.gz"] = (1, 21)

@@ -113,6 +113,7 @@ def get_processed_subjects(resultdir, input_subjects_list):
 
 def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
     import random
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
     if "all" in input_subjects:
         input_subjects = _temp.getAllSubjects();
@@ -127,7 +128,7 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
 
     if shuffle:
         random.shuffle(subjects)  # randomly shuffle to get max cluster efficiency
-    subject_sessions_dictionary = dict()
+    subject_sessions_dictionary = OrderedDict()
     for subject in subjects:
         subject_sessions_dictionary[subject] = _temp.getSessionsFromSubject(subject)
     return subjects, subject_sessions_dictionary
@@ -135,6 +136,7 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
 
 ## Merge the different subjects together
 def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_intensities, passive_masks):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     """
     *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
 
@@ -165,7 +167,7 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
     # print "labels", labels
     # print "$$$$$$$$$$$$$$$$$$$$$$$"
     # print "posteriors", posteriors
-    ListOfImagesDictionaries = [dict() for i in t1s]  # Initial list with empty dictionaries
+    ListOfImagesDictionaries = [OrderedDict() for i in t1s]  # Initial list with empty dictionaries
     ## HACK:  Need to make it so that AVG_AIR.nii.gz has a background value of 1
     registrationImageTypes = ['T1']  # ['T1','T2'] someday.
     DefaultContinuousInterpolationType = 'Linear'  # or 'LanczosWindowedSinc' ('Linear' for speed)

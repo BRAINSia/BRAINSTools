@@ -80,7 +80,8 @@ def readRecodingList(recodeLabelFilename):
 
 
 def readMalfAtlasDbBase(dictionaryFilename):
-    jointFusionAtlasDict = {}
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    jointFusionAtlasDict = OrderedDict()
     # scanID, ['atlasID', 't1', 't2' ,'label', 'lmks']
     import ast
     with open(dictionaryFilename, 'r') as f:
@@ -137,11 +138,12 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                           run_without_submitting=True,
                           name='outputspec')
 
-    BLICreator = dict()
-    A2SantsRegistrationPreJointFusion_SyN = dict()
-    movingROIAuto = dict()
-    labelMapResample = dict()
-    NewlabelMapResample = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    BLICreator = OrderedDict()
+    A2SantsRegistrationPreJointFusion_SyN = OrderedDict()
+    movingROIAuto = OrderedDict()
+    labelMapResample = OrderedDict()
+    NewlabelMapResample = OrderedDict()
 
     jointFusion_atlas_mergeindex = 0
     merge_input_offset = 1  # Merge nodes are indexed from 1, not zero!
@@ -183,9 +185,9 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     print((master_config['jointfusion_atlas_db_base']))
     jointFusionAtlasDict = readMalfAtlasDbBase(master_config['jointfusion_atlas_db_base'])
     number_of_atlas_sources = len(jointFusionAtlasDict)
-    jointFusionAtlases = dict()
-    atlasMakeMultimodalInput = dict()
-    t2Resample = dict()
+    jointFusionAtlases = OrderedDict()
+    atlasMakeMultimodalInput = OrderedDict()
+    t2Resample = OrderedDict()
     warpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources), name="LblMergeAtlas")
     NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources), name="fswmLblMergeAtlas")
     # "HACK NOT to use T2 for JointFusion only"
@@ -480,9 +482,10 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
                                                              output_names=['fixedFusionLabelFN']),
                                                     name="injectSurfaceCSFandVBIntoLabelMap")
         injectSurfaceCSFandVBIntoLabelMap.inputs.outFN = 'JointFusion_HDAtlas20_2015_CSFVBInjected_label.nii.gz'
-        FREESURFER_DICT = {'BRAINSTEM': 16, 'RH_CSF': 24, 'LH_CSF': 24, 'BLOOD': 15000, 'UNKNOWN': 999,
+        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        FREESURFER_DICT = OrderedDict({'BRAINSTEM': 16, 'RH_CSF': 24, 'LH_CSF': 24, 'BLOOD': 15000, 'UNKNOWN': 999,
                            'CONNECTED': [11, 12, 13, 9, 17, 26, 50, 51, 52, 48, 53, 58]
-                           }
+                           })
         injectSurfaceCSFandVBIntoLabelMap.inputs.OUT_DICT = FREESURFER_DICT
         JointFusionWF.connect(jointFusion, 'out_label_fusion', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
         JointFusionWF.connect(inputsSpec, 'subj_fixed_head_labels', injectSurfaceCSFandVBIntoLabelMap, 'FixedHeadFN')

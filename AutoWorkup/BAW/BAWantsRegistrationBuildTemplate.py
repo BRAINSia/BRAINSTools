@@ -32,13 +32,14 @@ def MakeTransformListWithGradientWarps(averageAffineTranform, gradientStepWarp):
 
 def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes, interpolationMapping):
     import os
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     """ Now make a list of lists of images where the outter list is per image type,
     and the inner list is the same size as the number of subjects to be averaged.
     In this case, the first element will be a list of all the deformed T2's, and
     the second element will be a list of all deformed POSTERIOR_AIR,  etc..
     """
     all_images_size = len(deformedPassiveImages)
-    image_dictionary_of_lists = dict()
+    image_dictionary_of_lists = OrderedDict()
     nested_imagetype_list = list()
     outputAverageImageName_list = list()
     image_type_list = list()
@@ -172,12 +173,13 @@ def GetMovingImages(ListOfImagesDictionaries, registrationImageTypes, interpolat
 
 
 def GetPassiveImages(ListOfImagesDictionaries, registrationImageTypes):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     if len(registrationImageTypes) != 1:
         print("ERROR:  Multivariate imageing not supported yet!")
-        return [dict()]
+        return [OrderedDict()]
     passive_images = list()
     for mdict in ListOfImagesDictionaries:
-        ThisSubjectPassiveImages = dict()
+        ThisSubjectPassiveImages = OrderedDict()
         for key, value in list(mdict.items()):
             if key not in registrationImageTypes:
                 ThisSubjectPassiveImages[key] = value

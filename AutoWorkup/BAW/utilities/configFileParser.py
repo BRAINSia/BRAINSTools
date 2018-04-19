@@ -59,11 +59,12 @@ def parseEnvironment(parser, environment):
         Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
 
     """
-    retval = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    retval = OrderedDict()
     if parser.has_option(environment, 'ENVAR_DICT'):
         retval['env'] = eval(getASCIIFromParser(parser, environment, 'ENVAR_DICT'))
     else:
-        retval['env'] = dict()
+        retval['env'] = OrderedDict()
     if 'PYTHONPATH' in list(retval['env'].keys()):
         pythonpath = appendPathList(getASCIIFromParser(parser, environment, 'APPEND_PYTHONPATH'),
                                     retval['env']['PYTHONPATH'])
@@ -83,7 +84,7 @@ def parseEnvironment(parser, environment):
         retval['virtualenv_dir'] = validatePath(getASCIIFromParser(parser, environment, 'VIRTUALENV_DIR'), False, True)
     else:
         retval['virtualenv_dir'] = None
-    retval_cluster = dict()
+    retval_cluster = OrderedDict()
     retval_cluster['modules'] = eval(getASCIIFromParser(parser, environment, 'MODULES'))
     retval_cluster['queue'] = getASCIIFromParser(parser, environment, 'QUEUE')
     retval_cluster['long_q'] = getASCIIFromParser(parser, environment, 'QUEUE_LONG')
@@ -113,7 +114,8 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
 
 def parseExperiment(parser, workflow_phase):
     """ Parse the experiment section and return a dictionary """
-    retval = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    retval = OrderedDict()
     dirname = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
     if workflow_phase == 'atlas-based-reference':
         current_suffix = '_BASE'
@@ -176,7 +178,8 @@ def parseExperiment(parser, workflow_phase):
 
 def parseNIPYPE(parser):
     """ Parse the nipype section and return a dictionary """
-    retval = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    retval = OrderedDict()
     retval['ds_overwrite'] = parser.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE')
 
     if parser.has_option('NIPYPE', 'CRASHDUMP_DIR'):
@@ -189,7 +192,8 @@ def parseNIPYPE(parser):
 
 # def parseCluster(parser, env):
 #    """ Parse the cluster section and return a dictionary """
-#    retval = dict()
+#    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+#    retval = OrderedDict()
 #    retval['modules'] = eval(getASCIIFromParser(parser, env, 'MODULES'))
 #    retval['queue'] = getASCIIFromParser(parser, env, 'QUEUE')
 #    retval['long_q'] = getASCIIFromParser(parser, env, 'QUEUE_LONG')
@@ -250,6 +254,7 @@ def get_cpus(option):
 
 
 def _nipype_plugin_config(wfrun, cluster, template=''):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(wfrun)
     if wfrun in ['SGEGraph', 'SGE']:
         plugin_name = wfrun
@@ -264,12 +269,12 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
         plugin_args = {'n_procs': proc_count}
     elif wfrun == 'ds_runner':
         plugin_name = _create_DS_runner()
-        plugin_args = {}
+        plugin_args = OrderedDict()
     else:
         assert wfrun in ['local',
                          'ds_runner'], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
         plugin_name = 'Linear'
-        plugin_args = {}
+        plugin_args = OrderedDict()
 
     return plugin_name, plugin_args
 

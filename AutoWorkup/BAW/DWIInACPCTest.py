@@ -33,6 +33,7 @@
 import glob
 import os
 import sys
+from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
 # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #####################################################################################
@@ -42,7 +43,7 @@ PROGRAM_PATHS = PROGRAM_PATHS.split(':')
 PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
 os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
-CUSTOM_ENVIRONMENT = dict()
+CUSTOM_ENVIRONMENT = OrderedDict()
 
 CLUSTER_QUEUE_LONG = '-q OSX'
 CLUSTER_QUEUE = '-q OSX'
@@ -65,9 +66,10 @@ from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.semtools import *
 
 from .utilities.misc import CommonANTsRegistrationSettings
+from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
 
-def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
+def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment=OrderedDict()):
     '''This is a wrapper script for running commands on an SGE cluster
 so that all the python modules and commands are pathed properly'''
 
@@ -103,6 +105,7 @@ SGE_JOB_SCRIPT = JOB_SCRIPT
 
 
 def MergeByExtendListElements(FAImageList):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     ## Initial list with empty dictionaries
     ListOfImagesDictionaries = list()
     for FAImage in FAImageList:
@@ -118,14 +121,14 @@ def MergeByExtendListElements(FAImageList):
     # DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
     DefaultContinuousInterpolationType = 'Linear'
     DTIinterpolationType = 'ResampleDTIlogEuclidean'
-    interpolationMapping = {'T1': DefaultContinuousInterpolationType,
+    interpolationMapping = OrderedDict({'T1': DefaultContinuousInterpolationType,
                             'T2': DefaultContinuousInterpolationType,
                             'PD': DefaultContinuousInterpolationType,
                             'FL': DefaultContinuousInterpolationType,
                             'FA': DefaultContinuousInterpolationType,
                             'DUMMY': DefaultContinuousInterpolationType,
                             'BRAINMASK': 'MultiLabel',
-                            'DTI': DTIinterpolationType}
+                            'DTI': DTIinterpolationType})
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 

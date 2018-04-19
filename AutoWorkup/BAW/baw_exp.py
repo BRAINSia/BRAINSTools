@@ -53,6 +53,7 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 
 
 def DoSingleSubjectProcessing(sp_args):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, \
     ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
     GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
@@ -97,7 +98,7 @@ def DoSingleSubjectProcessing(sp_args):
             except:
                 pass
             baw200.run(plugin=SGEFlavor,
-                       plugin_args=dict(template=JOB_SCRIPT,
+                       plugin_args=OrderedDict(template=JOB_SCRIPT,
                                         qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
@@ -109,7 +110,7 @@ def DoSingleSubjectProcessing(sp_args):
                 pass
             SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
             baw200.run(plugin=SGEFlavor,
-                       plugin_args=dict(template=JOB_SCRIPT,
+                       plugin_args=OrderedDict(template=JOB_SCRIPT,
                                         qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
@@ -120,7 +121,7 @@ def DoSingleSubjectProcessing(sp_args):
                 pass
             print("Running On ipl_OSX")
             baw200.run(plugin=SGEFlavor,
-                       plugin_args=dict(template=JOB_SCRIPT,
+                       plugin_args=OrderedDict(template=JOB_SCRIPT,
                                         qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
@@ -167,6 +168,7 @@ def DoSingleSubjectProcessing(sp_args):
 
 
 def MasterProcessingController(argv=None):
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     import argparse
     import configparser
     import csv
@@ -207,7 +209,7 @@ def MasterProcessingController(argv=None):
     # Virtualenv
     if not environment['virtualenv_dir'] is None:
         print("Loading virtualenv_dir...")
-        exec(compile(open(environment['virtualenv_dir']).read(), environment['virtualenv_dir'], 'exec'), dict(__file__=environment['virtualenv_dir']))
+        exec(compile(open(environment['virtualenv_dir']).read(), environment['virtualenv_dir'], 'exec'), OrderedDict(__file__=environment['virtualenv_dir']))
     ###### Now ensure that all the required packages can be read in from this custom path
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path
@@ -300,7 +302,7 @@ def MasterProcessingController(argv=None):
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         check_freesurfer_environment()
 
-    cluster = setup_cpu(args.wfrun, config)  # None unless wfrun is 'helium*' or 'ipl_OSX', then dict()
+    cluster = setup_cpu(args.wfrun, config)  # None unless wfrun is 'helium*' or 'ipl_OSX', then OrderedDict()
 
     print("Configuring Pipeline")
     ## Ensure that entire db is built and cached before parallel section starts.

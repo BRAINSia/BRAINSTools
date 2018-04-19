@@ -64,6 +64,7 @@ def getData(ResultDir,
             sessionID,
             optionalString=''):  # ex = ANNLabel_seg.nii.gz
     import nipype.interfaces.io as nio
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     #
     # get label map
     #
@@ -71,7 +72,7 @@ def getData(ResultDir,
                          outfields=['outputList'])
     DG.inputs.base_directory = ResultDir
     DG.inputs.template = 'Test*/%s/RF/%s/%s*' + optionalString
-    DG.inputs.template_args = dict(outputList=[['normalization', 'method', 'sessionID']])
+    DG.inputs.template_args = OrderedDict(outputList=[['normalization', 'method', 'sessionID']])
     DG.inputs.normalization = normalization
     DG.inputs.method = methodParameter
     DG.inputs.sessionID = sessionID
@@ -221,6 +222,7 @@ def similarityComputeWorkflow(ResultDir,
                               BRAINSToolsSrcDir,
                               BRAINSToolsBuildDir):
 
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     import sys
     import nipype.interfaces.io as nio
     import nipype.pipeline.engine as pe
@@ -336,7 +338,7 @@ def similarityComputeWorkflow(ResultDir,
                                                {}
                                                )
         workflow.run(plugin='SGE',
-                     plugin_args=dict(template=Cluster_Script,
+                     plugin_args=OrderedDict(template=Cluster_Script,
                                       qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null "))
     else:
         workflow.run()

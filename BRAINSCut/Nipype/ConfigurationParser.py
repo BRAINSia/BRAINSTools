@@ -488,6 +488,7 @@ def ConfigurationFileEditor(originalFilename,
     print(ConfigurationFileEditor)
     varToChange = ['roiBooleanCreator'.lower()]
 
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     from ConfigurationParser import ConfigurationSectionMap
     from ConfigurationParser import updating
     Options = ConfigurationSectionMap(originalFilename)['Options']
@@ -506,7 +507,7 @@ def ConfigurationFileEditor(originalFilename,
         new_ConfigFilename = editedFilenamePrefix + "_" + roi + ".config"
 
         newValues = [new_ROIDict]
-        whatToChange = dict(list(zip(varToChange, newValues)))
+        whatToChange = OrderedDict(list(zip(varToChange, newValues)))
         editedFilenames[roi] = updating(originalFilename,
                                         new_ConfigFilename,
                                         whatToChange)

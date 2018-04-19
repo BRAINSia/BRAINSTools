@@ -29,6 +29,7 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 import os
+from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
 ## Check to ensure that SimpleITK can be found
 # import SimpleITK as sitk
@@ -80,7 +81,7 @@ DWI_DG = pe.Node(
     )
 DWI_DG.inputs.base_directory = SLICER_REFERENCE_DIR
 DWI_DG.inputs.template = '*'
-DWI_DG.inputs.field_template = dict(
+DWI_DG.inputs.field_template = OrderedDict(
     DWIQCed='20121019_DTIPrep/HDNI_001/068044003/068044003_20120522_30/DTIPrepOutput/068044003_068044003_20120522_30_DWI_CONCAT_QCed.nrrd',
     ACPCT1='20130109_TrackOn_Results/HDNI_001/068044003/068044003_20120522_30/TissueClassify/t1_average_BRAINSABC.nii.gz',
     ACPCT2='20130109_TrackOn_Results/HDNI_001/068044003/068044003_20120522_30/TissueClassify/t2_average_BRAINSABC.nii.gz',

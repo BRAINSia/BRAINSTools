@@ -79,7 +79,8 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
     csvFile = open(CSVFileName, 'w')
     dWriter = csv.DictWriter(csvFile, ['projectid', 'subjectid', 'sessionid', 'Structure', 'LabelCode', 'Volume_mm3'], restval='', extrasaction='raise', dialect='excel')
     dWriter.writeheader()
-    writeDictionary = dict()
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    writeDictionary = OrderedDict()
     for name in orderOfPriority:
         value = valueDict[name]
         if ls.HasLabel(value):
@@ -87,7 +88,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
             myMeasurementMap = ls.GetMeasurementMap(value)
             dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
             dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
-            measurementDict = dict(list(zip(dictKeys, dictValues)))
+            measurementDict = OrderedDict(list(zip(dictKeys, dictValues)))
             structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * measurementDict['Count']
             writeDictionary['Volume_mm3'] = structVolume
             writeDictionary['Structure'] = name

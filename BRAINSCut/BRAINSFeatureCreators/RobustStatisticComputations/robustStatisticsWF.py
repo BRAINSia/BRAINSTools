@@ -109,6 +109,7 @@ def main(argv=None):
     from nipype.interfaces.utility import Function
     import nipype.interfaces.io as nio
     import argparse
+    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
     if argv == None:
         argv = sys.argv
@@ -194,7 +195,7 @@ def main(argv=None):
     # dataSrc.inputs.base_directory = "/hjohnson/TrackOn/Experiments/TrackOn_2012_Results/"
     dataSrc.inputs.base_directory = inputArg.inputBAWDir
     dataSrc.inputs.template = '*'
-    dataSrc.inputs.field_template = dict(t1='*/%s/*/TissueClassify/BABC//t1_average_BRAINSABC.nii.gz')
+    dataSrc.inputs.field_template = OrderedDict(t1='*/%s/*/TissueClassify/BABC//t1_average_BRAINSABC.nii.gz')
     dataSrc.inputs.subjectid = subjectList
     results = dataSrc.run()
 
@@ -251,7 +252,7 @@ def main(argv=None):
                                                {}
                                                )
         myWF.run(plugin='SGE',
-                 plugin_args=dict(template=Cluster_Script,
+                 plugin_args=OrderedDict(template=Cluster_Script,
                                   qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null -q OSX "))
     else:
         myWF.run()

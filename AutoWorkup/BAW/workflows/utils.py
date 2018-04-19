@@ -9,6 +9,8 @@ def run_workflow(workflow, plugin='Linear', plugin_args={}):
     import sys
 
     print("Running workflow...")
+    for key,value in workflow.config['execution'].items():
+        print("EXECUTE ENV: {0}={1}".format(key,value))
     try:
         workflow.run(plugin=plugin, plugin_args=plugin_args)
     except:

@@ -188,7 +188,9 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
         typename WriterType::Pointer writer = WriterType::New();
         writer->SetFileName( this->m_ResultsDir + "/HoughEyeROI.nii.gz" );
         writer->SetInput( this->m_RoIImage );
+#if ITK_VERSION_MAJOR >= 5
         writer->SetUseCompression( true );
+#endif
         try
           {
           writer->Update();
@@ -205,7 +207,9 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
         typename WriterType::Pointer writer = WriterType::New();
         writer->SetFileName( this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz" );
         writer->SetInput( this->m_AccumulatorImage );
+#if ITK_VERSION_MAJOR >= 5
         writer->SetUseCompression( true );
+#endif
         try
           {
           writer->Update();

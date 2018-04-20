@@ -45,7 +45,9 @@ void WriteTransform(std::string transformFileName, TTransformType transform )
 
   transformWriter->SetInput(transform);
   transformWriter->SetFileName(transformFileName);
+#if ITK_VERSION_MAJOR >= 5
   transformWriter->SetUseCompression(true);
+#endif
   transformWriter->Update();
   std::cout << "\t done writing Transform: " << transformFileName << std::endl;
 }

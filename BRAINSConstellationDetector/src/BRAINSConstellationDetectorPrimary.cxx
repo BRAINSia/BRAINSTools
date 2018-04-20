@@ -321,7 +321,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputVolume );
     writer->SetInput( constellation2->GetOutput() );
+#if ITK_VERSION_MAJOR >= 5
     writer->SetUseCompression( true );
+#endif
     try
       {
       writer->Update();
@@ -343,7 +345,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     writer->SetFileName( this->m_outputResampledVolume );
     // TODO: Encapsulate this for applying a transform resampling.
     writer->SetInput( constellation2->GetOutputResampledImage() );
+#if ITK_VERSION_MAJOR >= 5
     writer->SetUseCompression( true );
+#endif
     try
       {
       writer->Update();
@@ -395,7 +399,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputUntransformedClippedVolume );
     writer->SetInput( constellation2->GetOutputUntransformedClippedVolume() );
+#if ITK_VERSION_MAJOR >= 5
     writer->SetUseCompression( true );
+#endif
     try
       {
       writer->Update();

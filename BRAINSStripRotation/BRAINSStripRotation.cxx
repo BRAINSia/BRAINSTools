@@ -110,7 +110,9 @@ ReadAndSplitImage(const std::string &inputVolume,
   xfrmWriter->SetInput(xfrm.GetPointer());
 
   xfrmWriter->SetFileName(transform);
+#if ITK_VERSION_MAJOR >= 5
   xfrmWriter->SetUseCompression(true);
+#endif
   try
     {
     xfrmWriter->Update();

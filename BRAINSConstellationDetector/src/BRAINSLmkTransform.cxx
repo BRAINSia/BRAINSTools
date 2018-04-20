@@ -168,7 +168,9 @@ int main( int argc, char * argv[] )
     TransformWriterType::Pointer writer = TransformWriterType::New();
     writer->SetInput( affine );
     writer->SetFileName( outputAffineTransform );
+#if ITK_VERSION_MAJOR >= 5
     writer->SetUseCompression(true);
+#endif
     try
       {
       writer->Update();
@@ -232,7 +234,9 @@ int main( int argc, char * argv[] )
     ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetInput( resampler->GetOutput() );
     writer->SetFileName( outputResampledVolume );
+#if ITK_VERSION_MAJOR >= 5
     writer->SetUseCompression( true );
+#endif
     try
       {
       writer->Update();

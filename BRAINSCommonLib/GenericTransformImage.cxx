@@ -495,7 +495,9 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
     typedef itk::TransformFileWriterTemplate<TWriteScalarType> TransformWriterType;
     typename TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
     transformWriter->SetFileName( TransformFilename.c_str() );
+#if ITK_VERSION_MAJOR >= 5
     transformWriter->SetUseCompression(true);
+#endif
 
     const std::string extension = itksys::SystemTools::GetFilenameLastExtension(TransformFilename);
     std::string       inverseTransformFileName(TransformFilename);
@@ -503,7 +505,9 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
                                      inverseTransformFileName.end(), "_Inverse.h5");
     typename TransformWriterType::Pointer inverseTransformWriter =  TransformWriterType::New();
     inverseTransformWriter->SetFileName( inverseTransformFileName.c_str() );
+#if ITK_VERSION_MAJOR >= 5
     inverseTransformWriter->SetUseCompression(true);
+#endif
     bool              inverseTransformExists = true;
 
     // if the transform to write is not displacementField transform.

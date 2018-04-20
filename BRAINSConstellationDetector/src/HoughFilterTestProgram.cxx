@@ -80,7 +80,9 @@ this->m_AccumulatorImage = houghFilter->GetOutput();
 typename WriterType::Pointer writer = WriterType::New();
 writer->SetFileName( this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz" );
 writer->SetInput( this->m_AccumulatorImage );
+#if ITK_VERSION_MAJOR >= 5
 writer->SetUseCompression( true );
+#endif
 
 */
 

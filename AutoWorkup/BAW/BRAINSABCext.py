@@ -89,7 +89,7 @@ class BRAINSABCext(BRAINSABC):
             if key in self.inputs.inputVolumeTypes:
                 outputs[values[0]] = os.path.abspath(values[1])
             else:
-                outputs[values[0]] = "XX"
+                outputs[values[0]] = None
 
         PosteriorOutputs = GetPosteriorsFromAtlasXML(self.inputs.atlasDefinition)
         PosteriorPaths = PosteriorOutputs.getPosteriorFileNameList(self.inputs.posteriorTemplate)
@@ -99,5 +99,5 @@ class BRAINSABCext(BRAINSABC):
         if os.path.exists(fixed_inverse_name):
             outputs['atlasToSubjectInverseTransform'] = fixed_inverse_name
         else:
-            outputs['atlasToSubjectInverseTransform'] = "YYDEUMMY"
+            outputs['atlasToSubjectInverseTransform'] = None
         return outputs

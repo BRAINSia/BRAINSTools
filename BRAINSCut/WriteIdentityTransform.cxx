@@ -36,6 +36,8 @@ main(int argc, char * *argv)
 
   writer->SetFileName("./identityTransformation.mat");
   writer->SetInput( transform );
+#if ITK_VERSION_MAJOR >= 5
   writer->SetUseCompression( true );
+#endif
   writer->Update();
 }

@@ -687,7 +687,9 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , con
   typename itk::TransformFileWriterTemplate<TScalarType>::Pointer writer = itk::TransformFileWriterTemplate<TScalarType>::New();
   writer->SetInput( myTransform );
   writer->SetFileName( filename );
+#if ITK_VERSION_MAJOR >= 5
   writer->SetUseCompression(true);
+#endif
   try
     {
     writer->Update();

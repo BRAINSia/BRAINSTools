@@ -385,7 +385,9 @@ int main(int argc, char * argv[])
       imageWriter->SetInputData( itk2vtkImageFilter->GetOutput() );
 
       imageWriter->SetFileName( outputVolume.c_str() );
+#if ITK_VERSION_MAJOR >= 5
       imageWriter->SetUseCompression( 1 );
+#endif
       imageWriter->Write();
 
       }
@@ -395,7 +397,9 @@ int main(int argc, char * argv[])
       imageWriter->SetInputData( imageCast->GetOutput() );
 
       imageWriter->SetFileName( outputVolume.c_str() );
+#if ITK_VERSION_MAJOR >= 5
       imageWriter->SetUseCompression( 1 );
+#endif
       imageWriter->Write();
 
       }

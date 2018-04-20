@@ -107,7 +107,7 @@ CMAKE_DEPENDENT_OPTION(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to
 macro(bt_option name)
   option(${name} ${ARGN})
   mark_as_superbuild(VARS    ${name}:BOOL
-                     PROJECT ${LOCAL_PROJECT_NAME})
+                     PROJECTS ${LOCAL_PROJECT_NAME} )
 endmacro()
 
 bt_option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
@@ -134,10 +134,12 @@ bt_option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"       
 bt_option(USE_BRAINSSuperResolution          "Build BRAINSSuperResolution"          OFF)
 
 cmake_dependent_option(USE_BRAINSConstellationDetectorGUI "Build BRAINSConstellationDetectorGUI" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_BRAINSConstellationDetectorGUI:BOOL PROJECT ${LOCAL_PROJECT_NAME} )
+mark_as_superbuild(VARS USE_BRAINSConstellationDetectorGUI:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_BRAINSABC "Build BRAINSABC" ON "USE_AutoWorkup;USE_ReferenceAtlas" OFF)
-mark_as_superbuild(VARS USE_BRAINSABC:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_BRAINSABC:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
+
+#${LOCAL_PROJECT_NAME})
 
 ## These are no longer needed on a day to day basis
 if(NOT BUILD_FOR_DASHBOARD)
@@ -146,20 +148,20 @@ endif()
 bt_option(USE_BRAINSCut                      "Build BRAINSCut"                      ${BUILD_FOR_DASHBOARD})
 bt_option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
 cmake_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_BRAINSDemonWarp:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_BRAINSDemonWarp:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 cmake_dependent_option(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_GTRACT:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_GTRACT:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 cmake_dependent_option(USE_ITKMatlabIO "Build ITKMatlabIO" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_ITKMatlabIO:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_ITKMatlabIO:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 bt_option(USE_BRAINSMush                     "Build BRAINSMush"                     ${BUILD_FOR_DASHBOARD})
 bt_option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
 
 ## These are not yet ready for prime time.
 cmake_dependent_option(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_BRAINSSurfaceTools:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_BRAINSSurfaceTools:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 bt_option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
 cmake_dependent_option(USE_DebugImageViewer "Build DebugImageViewer" OFF "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_DebugImageViewer:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_DebugImageViewer:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
 
@@ -167,19 +169,19 @@ bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image result
 ## Items that are archived.  May be usefult for compiler testing,
 ## but probably wont be useful for research work.
 cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
-mark_as_superbuild(VARS USE_BRAINSContinuousClass:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_BRAINSContinuousClass:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_ICCDEF "Build ICCDEF" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
-mark_as_superbuild(VARS USE_ICCDEF:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_ICCDEF:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
-mark_as_superbuild(VARS USE_BRAINSRefacer:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_BRAINSRefacer:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${PRIMARY_PROJECT_NAME}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
-mark_as_superbuild(VARS USE_BRAINSTalairach:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_BRAINSTalairach:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_DicomSignature "Build DicomSignature is under development" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" ON)
-mark_as_superbuild(VARS USE_DicomSignature:BOOL PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS USE_DicomSignature:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -254,4 +256,4 @@ endif()
 if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)
   set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSToolsFetchData")
 endif()
-mark_as_superbuild(VARS BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET:STRING PROJECT ${LOCAL_PROJECT_NAME})
+mark_as_superbuild(VARS BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET:STRING PROJECTS ${LOCAL_PROJECT_NAME} )

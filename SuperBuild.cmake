@@ -125,7 +125,6 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv5 SlicerExecutionModel)
 
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
-list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES tbb)
 #list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
 
 if(BUILD_STYLE_UTILS)
@@ -134,9 +133,10 @@ endif()
 
 if(USE_BRAINSABC OR USE_BRAINSCut)
   #list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES qhull)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES tbb)
 endif()
 
-if(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
+if(${LOCAL_PROJECT_NAME}_REQUIRES_VTK)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES VTK)
 endif()
 
@@ -219,14 +219,14 @@ mark_as_superbuild(
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION:PATH
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION:PATH
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
-    ${PRIMARY_PROJECT_NAME}_REQUIRES_VTK:BOOL
+    ${LOCAL_PROJECT_NAME}_REQUIRES_VTK:BOOL
   ALL_PROJECTS
   )
 
 if(${LOCAL_PROJECT_NAME}_USE_QT)
   mark_as_superbuild(
     VARS
-      ${PRIMARY_PROJECT_NAME}_USE_QT:BOOL
+      ${LOCAL_PROJECT_NAME}_USE_QT:BOOL
       QT_QMAKE_EXECUTABLE:PATH
       QT_MOC_EXECUTABLE:PATH
       QT_UIC_EXECUTABLE:PATH
@@ -298,9 +298,6 @@ mark_as_superbuild(
   CMAKE_CXX_STANDARD:STRING
 
   TBB_DIR:PATH
-#  tbb_ROOT:PATH
-#  tbb_BUILD_PREFIX:STRING
-#  tbb_BUILD_DIR:PATH
 ALL_PROJECTS
 )
 
@@ -316,9 +313,13 @@ ALL_PROJECTS
 
 #------------------------------------------------------------------------------
 # Calling this macro last will ensure all prior calls to 'mark_as_superbuild' are
-# considered when updating the variable '${proj}_EP_ARGS' passed to the main project
+# considered when updating the variable '${LOCAL_PROJECT_NAME}_EP_ARGS' passed to the main project
 # below.
-ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
+ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
+   PROJECT_VAR proj
+   EP_ARGS_VAR MYBRAINSTools_EP_ARGS
+   DEPENDS_VAR ${LOCAL_PROJECT_NAME}_DEPENDENCIES
+)
 
 #------------------------------------------------------------------------------
 # Configure and build
@@ -333,9 +334,9 @@ ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}
 ## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
 ## 9 - Run silly tests that don't have much untility
 set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
-set(proj ${LOCAL_PROJECT_NAME})
-ExternalProject_Add(${proj}
-  ${${proj}_EP_ARGS}
+
+ExternalProject_Add(${LOCAL_PROJECT_NAME}
+  ${MYBRAINSTools_EP_ARGS}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${LOCAL_PROJECT_NAME}-build
@@ -371,9 +372,6 @@ ExternalProject_Add(${proj}
     -DBRAINSTools_LIBRARY_PATH:PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
     -DTBB_DIR:PATH=${TBB_DIR}
-#    -Dtbb_ROOT:PATH=${tbb_ROOT}
-#    -Dtbb_BUILD_PREFIX:STRING=${tbb_BUILD_PREFIX}
-#    -Dtbb_BUILD_DIR:PATH=${tbb_BUILD_DIR}
     -DRTK_DIR:PATH=${RTK_DIR}
   INSTALL_COMMAND ""
   )
@@ -387,13 +385,13 @@ ExternalProject_Add(${proj}
 # version will be at least 3.1.
 #
 if(CMAKE_CONFIGURATION_TYPES)
-  set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${CMAKE_CFG_INTDIR}/${proj}-build")
+  set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-prefix/src/${LOCAL_PROJECT_NAME}-stamp/${CMAKE_CFG_INTDIR}/${LOCAL_PROJECT_NAME}-build")
 else()
-  set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build")
+  set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-prefix/src/${LOCAL_PROJECT_NAME}-stamp/${LOCAL_PROJECT_NAME}-build")
 endif()
-ExternalProject_Add_Step(${proj} forcebuild
+ExternalProject_Add_Step(${LOCAL_PROJECT_NAME} forcebuild
   COMMAND ${CMAKE_COMMAND} -E remove ${BUILD_STAMP_FILE}
-  COMMENT "Forcing build step for '${proj}'"
+  COMMENT "Forcing build step for '${LOCAL_PROJECT_NAME}'"
   DEPENDEES build
   ALWAYS 1
   )

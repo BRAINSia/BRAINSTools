@@ -32,12 +32,6 @@ find_package(Git REQUIRED)
 cmake_dependent_option(${CMAKE_PROJECT_NAME}_USE_CTKAPPLAUNCHER "CTKAppLauncher used with python" ON
   "NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python" OFF)
 
-#-----------------------------------------------------------------------------
-# Enable and setup External project global properties
-#-----------------------------------------------------------------------------
-include(SlicerMacroEmptyExternalProject)
-include(SlicerMacroCheckExternalProjectDependency)
-
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
   set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
@@ -71,6 +65,7 @@ set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for s
 option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
+option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)
 option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 
@@ -227,6 +222,9 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
 
 #message("${MYBRAINSTools_EP_ARGS}")
 
+#------------------------------------------------------------------------------
+# Configure and build ${PROJECT_NAME}
+#------------------------------------------------------------------------------
 ExternalProject_Add(${LOCAL_PROJECT_NAME}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}

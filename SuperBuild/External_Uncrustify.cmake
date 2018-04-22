@@ -1,6 +1,5 @@
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
-# SlicerMacroCheckExternalProjectDependency
 set(extProjName Uncrustify) #The find_package known name
 set(proj        Uncrustify) #This local name
 set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
@@ -18,7 +17,7 @@ endif()
 set(${proj}_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")

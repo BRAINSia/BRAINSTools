@@ -122,8 +122,9 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 # ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 
-set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv5 SlicerExecutionModel)
-
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK)
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ITKv5)
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SlicerExecutionModel)
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
 #list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
 
@@ -150,21 +151,82 @@ endif()
 
 if(USE_BRAINSSuperResolution)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES RTK)
+endif()
+if(USE_BRAINSCut)
   mark_as_superbuild(
     VARS
-      RTK_DIR:PATH
-    ALL_PROJECTS
+     OpenCV_DIR:PATH
+    PROJECTS ${LOCAL_PROJECT_NAME}
   )
 endif()
+
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables
 #-----------------------------------------------------------------------------
-    # BUILD_SHARED_LIBS:BOOL
+
+if(${LOCAL_PROJECT_NAME}_USE_QT)
+  mark_as_superbuild(
+    VARS
+      ${LOCAL_PROJECT_NAME}_USE_QT:BOOL
+      QT_QMAKE_EXECUTABLE:PATH
+      QT_MOC_EXECUTABLE:PATH
+      QT_UIC_EXECUTABLE:PATH
+    PROJECTS VTK
+    )
+endif()
+
+
+set(extProjName ${LOCAL_PROJECT_NAME})
+set(proj        ${LOCAL_PROJECT_NAME})
+
+#-----------------------------------------------------------------------------
+# Enable and setup External project global properties
+#-----------------------------------------------------------------------------
+
+set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
+set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
+
+#-----------------------------------------------------------------------------
+# Set CMake OSX variable to pass down the external project
+#-----------------------------------------------------------------------------
+set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+if(APPLE)
+  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+endif()
+
+set(${LOCAL_PROJECT_NAME}_CLI_RUNTIME_DESTINATION  bin)
+set(${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION  lib)
+set(${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_DESTINATION  lib)
+set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION  bin)
+set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION  lib)
+set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
+
+set(${LOCAL_PROJECT_NAME}_INSTALL_LIB_DIR ${${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION} )
+
+#-----------------------------------------------------------------------------
+# Add external project CMake args
+#-----------------------------------------------------------------------------
 mark_as_superbuild(
   VARS
-    MAKECOMMAND:STRING
-    CMAKE_SKIP_RPATH:BOOL
+    BUILD_EXAMPLES:BOOL
+    BUILD_TESTING:BOOL
     BUILD_SHARED_LIBS:BOOL
+
+    MAKECOMMAND:STRING
+
+    ITK_DIR:PATH
+    VTK_DIR:PATH
+    BOOST_INCLUDE_DIR:PATH
+
+    INSTALL_RUNTIME_DESTINATION:STRING
+    INSTALL_LIBRARY_DESTINATION:STRING
+    INSTALL_ARCHIVE_DESTINATION:STRING
+
+    CMAKE_CXX_STANDARD:STRING
+    CMAKE_SKIP_RPATH:BOOL
     CMAKE_MODULE_PATH:PATH
     CMAKE_BUILD_TYPE:STRING
     CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
@@ -209,6 +271,7 @@ mark_as_superbuild(
     CMAKE_SHARED_LINKER_FLAGS:STRING
     CMAKE_EXE_LINKER_FLAGS:STRING
     CMAKE_MODULE_LINKER_FLAGS:STRING
+
     SITE:STRING
     BUILDNAME:STRING
     ${PROJECT_NAME}_BUILD_DICOM_SUPPORT:BOOL
@@ -219,87 +282,8 @@ mark_as_superbuild(
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION:PATH
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION:PATH
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
-    ${LOCAL_PROJECT_NAME}_REQUIRES_VTK:BOOL
   ALL_PROJECTS
   )
-
-if(${LOCAL_PROJECT_NAME}_USE_QT)
-  mark_as_superbuild(
-    VARS
-      ${LOCAL_PROJECT_NAME}_USE_QT:BOOL
-      QT_QMAKE_EXECUTABLE:PATH
-      QT_MOC_EXECUTABLE:PATH
-      QT_UIC_EXECUTABLE:PATH
-    ALL_PROJECTS
-    )
-endif()
-
-if(USE_BRAINSCut)
-  mark_as_superbuild(
-    VARS
-     OpenCV_DIR:PATH
-    ALL_PROJECTS
-  )
-endif()
-
-set(extProjName ${LOCAL_PROJECT_NAME})
-set(proj        ${LOCAL_PROJECT_NAME})
-
-#-----------------------------------------------------------------------------
-# Enable and setup External project global properties
-#-----------------------------------------------------------------------------
-
-set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
-set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
-
-#-----------------------------------------------------------------------------
-# Set CMake OSX variable to pass down the external project
-#-----------------------------------------------------------------------------
-set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-if(APPLE)
-  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-endif()
-
-set(${LOCAL_PROJECT_NAME}_CLI_RUNTIME_DESTINATION  bin)
-set(${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION  lib)
-set(${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_DESTINATION  lib)
-set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION  bin)
-set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION  lib)
-set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
-
-set(${LOCAL_PROJECT_NAME}_INSTALL_LIB_DIR ${${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION} )
-
-#-----------------------------------------------------------------------------
-# Add external project CMake args
-#-----------------------------------------------------------------------------
-mark_as_superbuild(
-  VARS
-  BUILD_EXAMPLES:BOOL
-  BUILD_TESTING:BOOL
-  ITK_DIR:PATH
-  VTK_DIR:PATH
-  SlicerExecutionModel_DIR:PATH
-  ${LOCAL_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
-  ${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
-  ${LOCAL_PROJECT_NAME}_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
-  ${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION:PATH
-  ${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
-  ${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION:PATH
-
-  BOOST_INCLUDE_DIR:PATH
-  BRAINS_DEBUG_IMAGE_WRITE:BOOL
-  INSTALL_RUNTIME_DESTINATION:STRING
-  INSTALL_LIBRARY_DESTINATION:STRING
-  INSTALL_ARCHIVE_DESTINATION:STRING
-
-  CMAKE_CXX_STANDARD:STRING
-
-  TBB_DIR:PATH
-ALL_PROJECTS
-)
 
 #
 # By default we want to build BRAINSTools stuff using the CMAKE_BUILD_TYPE of
@@ -309,7 +293,32 @@ ALL_PROJECTS
 #
 # since we use a macro to build the list of arguments, it's easier to modify the
 # list after it's built than try and conditionally change just the build type in the macro.
-
+set(BRAINSTools_LIBRARY_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+mark_as_superbuild(
+  VARS
+    BRAINSTools_LIBRARY_PATH:PATH
+    BRAINSTools_MAX_TEST_LEVEL
+    ${LOCAL_PROJECT_NAME}_REQUIRES_VTK:BOOL
+    BRAINS_DEBUG_IMAGE_WRITE:BOOL
+    SlicerExecutionModel_DIR:PATH
+    ${LOCAL_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
+    ${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
+    ${LOCAL_PROJECT_NAME}_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
+    ${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION:PATH
+    ${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
+    ${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION:PATH
+    SuperBuild_BRAINSTools_BUILD_DICOM_SUPPORT:BOOL
+    SuperBuild_BRAINSTools_USE_CTKAPPLAUNCHER:BOOL
+    SuperBuild_BRAINSTools_USE_GIT_PROTOCOL:BOOL
+    BUILD_STYLE_UTILS:BOOL
+    EXTERNAL_PROJECT_BUILD_TYPE:STRING
+    USE_SYSTEM_DCMTK:BOOL
+    USE_SYSTEM_ITK:BOOL
+    USE_SYSTEM_SlicerExecutionModel:BOOL
+    USE_SYSTEM_VTK:BOOL
+    VTK_GIT_REPOSITORY:STRING
+  PROJECTS ${LOCAL_PROJECT_NAME}
+)
 
 #------------------------------------------------------------------------------
 # Calling this macro last will ensure all prior calls to 'mark_as_superbuild' are
@@ -335,8 +344,9 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
 ## 9 - Run silly tests that don't have much untility
 set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
 
+message("${MYBRAINSTools_EP_ARGS}")
+
 ExternalProject_Add(${LOCAL_PROJECT_NAME}
-  ${MYBRAINSTools_EP_ARGS}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${LOCAL_PROJECT_NAME}-build
@@ -345,6 +355,7 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     --no-warn-unused-cli    # HACK Only expected variables should be passed down.
+  ${MYBRAINSTools_EP_ARGS}  # All superbuild options should be passed by mark_as_superbuild
   CMAKE_CACHE_ARGS
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}

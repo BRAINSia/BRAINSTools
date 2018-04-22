@@ -35,9 +35,47 @@ endforeach()
 # Update CMake module path
 #------------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
+#-----------------------------------------------------------------------------
+set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often matches the superbuild name)
+set(SUPERBUILD_TOPLEVEL_PROJECT ${LOCAL_PROJECT_NAME})
+set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
+include(ExternalProject)
+include(ExternalProjectDependency) #<-- Must be after SUPERBUILD_TOPLEVEL_PROJECT and EXTERNAL_PROJECT_DIR
+include(ExternalProjectGenerateProjectDescription)
 
-set(LOCAL_PROJECT_NAME BRAINSTools)
-set(PRIMARY_PROJECT_NAME ${LOCAL_PROJECT_NAME})
+#-----------------------------------------------------------------------------
+if(APPLE)
+  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+  #       we ensure that the bitness, and C++ standard library will be properly detected.
+  include(BlockSetCMakeOSXVariables)
+  mark_as_superbuild(
+    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+    ALL_PROJECTS
+    )
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+project(${LOCAL_PROJECT_NAME}
+   LANGUAGES  C CXX
+   DESCRIPTION "BRAINSTools see github at BRAINSia" #<-- cmake version 3.9 or greater
+   VERSION 5.0.0
+)
+#-- The project() command stores the version number and its components in variables
+#-- PROJECT_VERSION, <PROJECT-NAME>_VERSION
+#-- PROJECT_VERSION_MAJOR, <PROJECT-NAME>_VERSION_MAJOR
+#-- PROJECT_VERSION_MINOR, <PROJECT-NAME>_VERSION_MINOR
+#-- PROJECT_VERSION_PATCH, <PROJECT-NAME>_VERSION_PATCH
+#-- PROJECT_VERSION_TWEAK, <PROJECT-NAME>_VERSION_TWEAK
+if( IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/.git")
+  #-----------------------------------------------------------------------------
+  # Version strings need to be set outside of project so that
+  # we can get version information from Version.cmake (which rquires
+  # that the project() command was already run.
+  #-----------------------------------------------------------------------------
+  # Version information
+  include(Version.cmake) ## Do introspection for fine grained versioning, and tag matching
+endif()
 
 ## This file acts as a simple switch to initiate
 ## two completely independant CMake build environments.
@@ -57,37 +95,20 @@ set(PRIMARY_PROJECT_NAME ${LOCAL_PROJECT_NAME})
 option(${LOCAL_PROJECT_NAME}_SUPERBUILD "Build ${LOCAL_PROJECT_NAME} and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
 
-if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  set(PROJECT_NAME SuperBuild_${LOCAL_PROJECT_NAME} )
-  project(${PROJECT_NAME} LANGUAGES C CXX)
-else()
-  set(PROJECT_NAME ${LOCAL_PROJECT_NAME} )
-  project(${PROJECT_NAME} LANGUAGES  C CXX
-    DESCRIPTION "BRAINSTools see github at BRAINSia"
-    VERSION 4.7.1
-  )
-  #-----------------------------------------------------------------------------
-  # Version strings need to be set outside of project so that
-  # we can get version information from Version.cmake (which rquires
-  # that the project() command was already run.
-  #-----------------------------------------------------------------------------
-  # Version information
-  include(Version.cmake)
-endif()
 #-----------------------------------------------------------------------------
 # Common build features for both the superbuild and the main build
 #-----------------------------------------------------------------------------
-include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake) #<-- All feature options for top superbuild and inner product build
 
 #-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake") #<-- Harness for managing top superbuild, and finally delegate inner product build
   return()
 else()
 #-----------------------------------------------------------------------------
-  include("${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_PROJECT_NAME}.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_PROJECT_NAME}.cmake") #<-- inner product build (a separate build environment from top level build)
   return()
 endif()
 

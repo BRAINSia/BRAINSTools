@@ -1,6 +1,7 @@
-set(proj        tbb) #This local name
+set(proj        TBB) #This local name
 
-set(${proj}_DEPENDENCIES )
+# Set dependency list
+set(${proj}_DEPENDENCIES "")
 
 # Set dependency list
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -63,9 +64,6 @@ tbb_build(TBB_ROOT ${TBB_LOCAL_SRC_DIR}
           CONFIG_DIR TBB_DIR  #Need to set TBB_DIR for the find_package, and to propogate to other packages
           MAKE_ARGS ${TBB_MAKE_ARGS})
 
-message(STATUS "ZZZ:TBB_DIR=${TBB_DIR}:ZZZ")
-message(STATUS "ZZZ:TBB_LOCAL_SRC_DIR=${TBB_LOCAL_SRC_DIR}:ZZZ")
-
 find_package(TBB REQUIRED tbb tbbmalloc)
 
 if(NOT EXISTS ${TBB_DIR})
@@ -74,6 +72,9 @@ endif()
 
 mark_as_superbuild(
   VARS
-       TBB_DIR:PATH
-  LABELS "FIND_PACKAGE"
-  )
+    TBB_DIR:PATH
+  LABELS
+     "FIND_PACKAGE"
+)
+#message(STATUS "ZZZ:TBB_DIR=${TBB_DIR}:ZZZ")
+#message(STATUS "ZZZ:TBB_LOCAL_SRC_DIR=${TBB_LOCAL_SRC_DIR}:ZZZ")

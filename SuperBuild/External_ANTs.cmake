@@ -2,7 +2,7 @@ set(proj        ANTs) #This local name
 
 set(${proj}_DEPENDENCIES ITKv5 SlicerExecutionModel )
 
-if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
+if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
 
@@ -33,7 +33,7 @@ set(${proj}_CMAKE_OPTIONS
   #  -DANTS_BUILD_antsRegistration=ON
   #  -DANTS_BUILD_antsJointFusion=ON
   )
-if(${PRIMARY_PROJECT_NAME}_USE_QT)
+if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
@@ -63,6 +63,8 @@ set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
 set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 mark_as_superbuild(
-  VARS ${proj}_SOURCE_DIR:PATH
+  VARS
+     ${proj}_SOURCE_DIR:PATH
+     ${proj}_LIBRARY_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

@@ -2,7 +2,7 @@ set(proj        RTK) #This local name
 
 set(${proj}_DEPENDENCIES ITKv5 )
 
-if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
+if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
 
@@ -27,8 +27,8 @@ set(${proj}_CMAKE_OPTIONS
   -DBUILD_TESTING:BOOL=OFF
   )
 ### --- End Project specific additions
-set(${proj}_REPOSITORY "https://github.com/hjmjohnson/RTK.git")
-set(${proj}_GIT_TAG ITKv5) # 20171231
+set(${proj}_REPOSITORY "https://github.com/SimonRit/RTK.git")
+set(${proj}_GIT_TAG 125063515aa50208816e62d3e25042c0535859ee) # 20180421
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

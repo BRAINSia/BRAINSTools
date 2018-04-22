@@ -6,9 +6,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
 #Matlab Mex files require char16_t for mex files
 #--include(CMake/compilerTestChar16_t.cmake)
 
-option(${PRIMARY_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
-mark_as_advanced(${PRIMARY_PROJECT_NAME}_INSTALL_DEVELOPMENT)
-
 # Some test are failing due to inadequate test construction, but
 # the code seems to do the correct thing on real data.
 # This is also for tests that are huge, and can not be running

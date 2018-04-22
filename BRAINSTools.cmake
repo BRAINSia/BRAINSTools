@@ -2,13 +2,11 @@
 # Update CMake module path
 #------------------------------------------------------------------------------
 set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
-set(CMAKE_MODULE_PATH
+list(INSERT CMAKE_MODULE_PATH 0
   ${BRAINSCommonLib_BUILDSCRIPTS_DIR}
   ${${PROJECT_NAME}_SOURCE_DIR}/CMake
   ${${PROJECT_NAME}_BINARY_DIR}/CMake
-  ${CMAKE_MODULE_PATH}
   )
-
 
 set(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}")
 if(DEFINED ${PROJECT_NAME}_VERSION_PATCH)
@@ -46,7 +44,7 @@ message(STATUS "Building ${PROJECT_NAME} version \"${${PROJECT_NAME}_VERSION}\""
 include(FindITKUtil)
 include(FindVTKUtil)
 # #-----------------------------------------------------------------------------
-# if(${PRIMARY_PROJECT_NAME}_REQUIRES_VTK)
+# if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
 # #  message("VTK_DIR:${VTK_DIR}")
 #   find_package(VTK REQUIRED)
 #   if(VTK_FOUND)
@@ -67,7 +65,7 @@ if(USE_BRAINSABC)
   if( NOT USE_AutoWorkup )
      message(FATAL_ERROR "BRAINSABC requires USE_AutoWorkup to be ON: ${USE_BRAINSABC} != ${USE_AutoWorkup}")
   endif()
-  find_package(TBB REQUIRED)
+  find_package(TBB REQUIRED tbb tbbmalloc)
   # set(VTK_SMP_IMPLEMENTATION_LIBRARIES ${tbb_LIBRARY})
   include_directories(${tbb_INCLUDE_DIRS})
 endif()
@@ -101,10 +99,6 @@ if(USE_ReferenceAtlas)
   set(ATLAS_INSTALL_DIRECTORY ${ReferenceAtlas_XML_DIR}/${ATLAS_NAME})
 endif()
 
-#-----------------------------------------------------------------------------
-enable_testing()
-include(CTest)
-
 # Note: Projects (e.g. Slicer) integrating BRAINSTools as a subtree that want
 #       to disable BRAINSTools testing while managing their own test suite
 #       also using the option "BUILD_TESTING" can explicitly set the
@@ -131,17 +125,6 @@ mark_as_advanced(ENABLE_EXTENDED_TESTING)
 #and should be revisted to reduce based on "LONG/SHORT" test times, set to 1 hr for now
 set(CTEST_TEST_TIMEOUT 1800 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 set(DART_TESTING_TIMEOUT ${CTEST_TEST_TIMEOUT} CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
-
-## BRAINSTools_MAX_TEST_LEVEL adjusts how agressive the test suite is
-## so that long running tests or incomplete tests can easily be
-## silenced
-## 1 - Run the absolute minimum very fast tests (These should always pass before any code commit)
-## 3 - Run fast tests on continous builds (These need immediate attention if they begin to fail)
-## 5 - Run moderate nightly tests (These need immediate attention if they begin to fail)
-## 7 - Run long running extensive test that are a burden to normal development (perhaps test 1x per week)
-## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
-## 9 - Run silly tests that don't have much untility
-set(BRAINSTools_MAX_TEST_LEVEL 4 CACHE STRING "Testing level for managing test burden")
 
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.
@@ -218,7 +201,7 @@ endif()
 
 ## HACK: This is needed to get DWIConvert to build in installed tree
 ## KENT: Please remove this line and make DWIConvert build by fixing ITK install of DCMTK
-include_directories(${ITK_INSTALL_PREFIX}/install)
+# --include_directories(${ITK_INSTALL_PREFIX}/install)
 
 #-----------------------------------------------------------------------------
 # Add module sub-directory if USE_<MODULENAME> is both defined and true

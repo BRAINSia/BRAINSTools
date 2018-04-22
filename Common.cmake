@@ -263,11 +263,11 @@ SETIFEMPTY(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION ${CMAKE_INSTALL_RUNTIME_D
 include(ITKSetStandardCompilerFlags)
 if(ITK_LEGACY_REMOVE)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    list(APPEND CMAKE_C_FLAGS ${C_DEBUG_DESIRED_FLAGS} )
-    list(APPEND CMAKE_CXX_FLAGS ${CXX_DEBUG_DESIRED_FLAGS})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_DEBUG_DESIRED_FLAGS}" )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_DEBUG_DESIRED_FLAGS}")
   else() # Release, or anything else
-    list(APPEND CMAKE_C_FLAGS   ${C_RELEASE_DESIRED_FLAGS} )
-    list(APPEND CMAKE_CXX_FLAGS ${CXX_RELEASE_DESIRED_FLAGS} )
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${C_RELEASE_DESIRED_FLAGS}" )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_RELEASE_DESIRED_FLAGS}" )
   endif()
 endif()
 
@@ -284,6 +284,31 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
   endif()
 endif()
+
+option(BUILD_OPTIMIZED "Set compiler flags for native host building." OFF)
+mark_as_advanced(BUILD_OPTIMIZED)
+
+if(BUILD_OPTIMIZED)
+  include(CheckCXXCompilerFlag)
+  include(CheckCCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG("-march=native" CAN_BUILD_CXX_OPTIMIZED)
+  CHECK_C_COMPILER_FLAG("-march=native" CAN_BUILD_C_OPTIMIZED)
+  if(CAN_BUILD_CXX_OPTIMIZED AND CAN_BUILD_C_OPTIMIZED)
+    string(FIND CMAKE_CXX_FLAGS "-march=native" PREVIOUS_CXX_OPTIMIZED_SET)
+    if(PREVIOUS_CXX_OPTIMIZED_SET LESS 0)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+    endif()
+    string(FIND CMAKE_C_FLAGS "-march=native" PREVIOUS_C_OPTIMIZED_SET)
+    if(PREVIOUS_C_OPTIMIZED_SET LESS 0 )
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
+    endif()
+  else()
+    message("WARNING: Requested optimized build, but -march=native flag not supported by"
+            "${CMAKE_CXX_COMPILER}"
+            "${CMAKE_C_COMPILER}")
+  endif()
+endif()
+mark_as_superbuild(VARS BUILD_OPTIMIZED:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 #-------------------------------------------------------------------------
 if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)

@@ -28,6 +28,7 @@
 #include "itkCannyEdgeDetectionImageFilter.h"
 #include "BRAINSABCUtilities.h"
 #include "itkIntegrityMetricMembershipFunction.h"
+#include "itkTimeProbe.h"
 
 template <class InputImageType, class ByteImageType>
 typename ByteImageType::Pointer

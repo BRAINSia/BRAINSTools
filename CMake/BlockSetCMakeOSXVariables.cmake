@@ -99,7 +99,7 @@ if(APPLE)
     string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${CMAKE_OSX_SYSROOT}")
     set(SDK_VERSION "${CMAKE_MATCH_1}")
     ## Min version supported is 10.9
-    if( "${SDK_VERSION}" VERSION_LESS "10.9" )
+    if( "${SDK_VERSION}" VERSION_LESS "10.9" AND CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "")
       # add to cache to allow interactive editing after fatal error
       set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE PATH "Deployment target needs to be explicitly set." FORCE)
       message(FATAL_ERROR

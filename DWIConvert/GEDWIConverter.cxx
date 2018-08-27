@@ -124,7 +124,6 @@ void GEDWIConverter::ExtractDWIData()
           }
         else
           {
-          vect3d.normalize();
           this->m_DiffusionVectors.push_back(vect3d);
           }
 

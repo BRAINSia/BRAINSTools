@@ -103,7 +103,13 @@ void SiemensDWIConverter::LoadDicomDirectory()
 {
   this->DWIDICOMConverterBase::LoadDicomDirectory();
   std::string ImageType;
-  this->m_MeasurementFrame.SetIdentity();
+
+  // Siemens scanners store gradients relative to the magnet, so we need to set
+  // the measurement frame to provide the rotation into patient space.
+  // See discussion and test data on the dcm2nii wiki:
+  //   https://www.nitrc.org/plugins/mwiki/index.php/dcm2nii:MainPage#Diffusion_Tensor_Imaging
+  this->m_MeasurementFrame = this->m_Volume->GetDirection();
+
   this->m_Headers[0]->GetElementCS(0x0008, 0x0008, ImageType);
   if(StringContains(ImageType,"MOSAIC"))
   {

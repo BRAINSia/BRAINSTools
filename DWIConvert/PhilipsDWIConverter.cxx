@@ -41,8 +41,11 @@ void PhilipsDWIConverter::ExtractDWIData()
     for( unsigned int k = 0; k < this->m_NVolume; ++k )
     {
       std::string DiffusionDirectionality;
+      double tmpFD;
       bool        useSupplement49Definitions(false);
-      if( this->m_Headers[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS )
+      if( (this->m_Headers[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS ||
+           this->m_Headers[k]->GetElementFD(0x0018, 0x9087, tmpFD, false) == EXIT_SUCCESS) ||
+          (this->m_Headers[k]->GetElementDSorOB(0x0018, 0x9087, tmpFD, false) == EXIT_SUCCESS) )
       {
         useSupplement49Definitions = true;
       }

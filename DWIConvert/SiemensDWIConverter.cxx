@@ -615,7 +615,7 @@ unsigned int SiemensDWIConverter::ExtractSiemensDiffusionInformation(const std::
       return 0;
     }
     const std::string valueString = infoAsString.substr( offset + 16, itemLength );
-    const double componentValue =  atof(valueString.c_str() );
+    const double componentValue =  std::stod(valueString.c_str() );
     valueArray.push_back( componentValue );
     offset += 16 + strideSize;
   }

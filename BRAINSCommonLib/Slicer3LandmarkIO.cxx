@@ -42,7 +42,7 @@ LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename )
     {
     const size_t      firstComma = line.find(',', 0);
     const std::string landmark = line.substr( 0, firstComma );
-    const float       weight   = atof( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
+    const float       weight   = std::stod( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
     landmarkWeightMap[landmark] = weight;
     }
 
@@ -177,7 +177,7 @@ ReadSlicer3toITKLmkOldSlicer( const std::string & landmarksFilename )
       for( unsigned int i = 0; i < 3; ++i )
       {
         const size_t pos2 = line.find( ',', pos1 + 1 );
-        labelPos[i] = atof( line.substr(pos1 + 1, pos2 - pos1 - 1 ).c_str() );
+        labelPos[i] = std::stod( line.substr(pos1 + 1, pos2 - pos1 - 1 ).c_str() );
         if( i < 2 )  // Negate first two components for RAS -> LPS
         {
           labelPos[i] *= -1;

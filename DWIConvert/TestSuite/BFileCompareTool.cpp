@@ -54,7 +54,7 @@ DataVector convertBufferIntoVector(char* buffer){
       char *dataBuf = new char[dataOffset + 1];
       memcpy(dataBuf, dataBeginning, dataOffset);
       dataBuf[dataOffset] = '\0';
-      double dataValue = atof(dataBuf);
+      double dataValue = std::stod(dataBuf);
       delete[] dataBuf;
       lineData.push_back(dataValue);
       p = nextNoneSpacePointer(p);
@@ -120,8 +120,7 @@ int main(int argc, char * argv[])
     return USAGE_FAILURE_CODE;
     }
   const int linesToCompare = std::stoi(argv[3]);
-  const double tolerance = atof(argv[4]);
-
+  const double tolerance = std::stod(argv[4]);
 
   //Open files to read data into vector
   char* buffer1 = nullptr;

@@ -724,7 +724,7 @@ loadLLSModel(std::string llsModelFilename,
         while( pos2 < line.size() )
           {
           llsMeans[name].push_back(
-            atof( line.substr(pos1, pos2 - pos1).c_str() ) );
+            std::stod( line.substr(pos1, pos2 - pos1).c_str() ) );
           ++i;
           pos1 = pos2 + 1;
           pos2 = line.find(' ', pos1 + 1);
@@ -743,7 +743,7 @@ loadLLSModel(std::string llsModelFilename,
         }
       else
         {
-        searchRadii[name] = atof( line.c_str() );
+        searchRadii[name] = std::stod( line.c_str() );
         }
 
       // read in the number of linear model coefficients
@@ -773,7 +773,7 @@ loadLLSModel(std::string llsModelFilename,
           while( pos2 < line.size() )
             {
             coefficients(j, i++) =
-              atof( line.substr(pos1, pos2 - pos1).c_str() );
+              std::stod( line.substr(pos1, pos2 - pos1).c_str() );
             pos1 = pos2 + 1;
             pos2 = line.find(' ', pos1 + 1);
             }

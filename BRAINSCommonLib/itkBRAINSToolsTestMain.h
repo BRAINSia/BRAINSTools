@@ -167,7 +167,7 @@ int main(int ac, char* av[] )
         }
       else if( ac > 2 && strcmp(av[1], "--compareIntensityTolerance") == 0 )
         {
-        intensityTolerance = atof(av[2]);
+        intensityTolerance = std::stod(av[2]);
         av += 2;
         ac -= 2;
         }

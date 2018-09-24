@@ -118,8 +118,8 @@ int main(int argc, char * argv[])
 
       //compare the value
       if (numType){
-        double verifyingNum = atof(verifyingValue.c_str());
-        double tagNum = atof(valueStr.c_str());
+        double verifyingNum = std::stod(verifyingValue.c_str());
+        double tagNum = std::stod(valueStr.c_str());
         if (fabs(verifyingNum-tagNum) <= 1e-3)
         {
           result = 0;

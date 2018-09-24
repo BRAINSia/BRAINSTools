@@ -279,7 +279,7 @@ LoadLandmarks( std::string filename )
       for( i = 0; i < 3; ++i )
         {
         pos2 = line.find(',', pos1 + 1);
-        labelPos[i] = atof( line.substr( pos1 + 1, pos2 - pos1 - 1 ).c_str() );
+        labelPos[i] = std::stod( line.substr( pos1 + 1, pos2 - pos1 - 1 ).c_str() );
         if( i < 2 )
           {
           labelPos[i] *= -1; // RAS -> LPS

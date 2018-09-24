@@ -27,27 +27,27 @@ int main( int argc, char* argv[] )
   bool bright = true;
   if( argc > 3 )
   {
-    sigmaMinimum = atof( argv[3] );
+    sigmaMinimum = std::stod( argv[3] );
   }
   if( argc > 4 )
   {
-    sigmaMaximum = atof( argv[4] );
+    sigmaMaximum = std::stod( argv[4] );
   }
   if( argc > 5 )
   {
-    numberOfSigmaSteps = atof( argv[5] );
+    numberOfSigmaSteps = std::stod( argv[5] );
   }
   if( argc > 6 )
   {
-    alpha = atof( argv[6] );
+    alpha = std::stod( argv[6] );
   }
   if( argc > 7 )
   {
-    beta = atof(argv[7] );
+    beta = std::stod(argv[7] );
   }
   if( argc > 8 )
   {
-    gamma = atof( argv[8] );
+    gamma = std::stod( argv[8] );
   }
   if( argc > 9 )
   {

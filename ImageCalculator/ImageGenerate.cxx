@@ -101,7 +101,7 @@ ProcessArgs(int argc, char * *argv,
         }
       --argc;
       ++argv;
-      value = atof(*argv);
+      value = std::stod(*argv);
       }
     else if( arg == "-d" || arg == "--dim" )
       {

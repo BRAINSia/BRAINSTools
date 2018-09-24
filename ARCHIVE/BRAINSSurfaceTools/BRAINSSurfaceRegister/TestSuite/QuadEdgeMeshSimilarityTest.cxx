@@ -76,7 +76,7 @@ int main( int argc, char * argv [] )
   similarityCalculator->Compute();
 
   double diceTest = similarityCalculator->GetDice();
-  double diceExp = atof(argv[4]);
+  double diceExp = std::stod(argv[4]);
   double tolerance = 1.0e-4;
 
   if( fabs(diceTest - diceExp) > tolerance )

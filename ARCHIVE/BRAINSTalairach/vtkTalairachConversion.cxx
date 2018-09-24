@@ -279,7 +279,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
       }
     else
       {
-      boxDistancePercentage = atof( distance.c_str() );
+      boxDistancePercentage = std::stod( distance.c_str() );
       }
 
     /* Base the Distance on the High Resolution Grid */
@@ -359,7 +359,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
       }
     else
       {
-      boxDistancePercentage = atof( distance.c_str() );
+      boxDistancePercentage = std::stod( distance.c_str() );
       }
 
     /* Base the Distance on the High Resolution Grid */
@@ -413,7 +413,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
         }
       else
         {
-        boxDistancePercentage = atof( distance.c_str() );
+        boxDistancePercentage = std::stod( distance.c_str() );
         }
 
       /* Base the Distance on the High Resolution Grid */
@@ -447,7 +447,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
         }
       else
         {
-        boxDistancePercentage = atof( distance.c_str() );
+        boxDistancePercentage = std::stod( distance.c_str() );
         }
 
       /* Base the Distance on the High Resolution Grid */
@@ -485,7 +485,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
         }
       else
         {
-        boxDistancePercentage = atof( distance.c_str() );
+        boxDistancePercentage = std::stod( distance.c_str() );
         }
 
       /* Base the Distance on the High Resolution Grid */
@@ -525,7 +525,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
         }
       else
         {
-        boxDistancePercentage = atof( distance.c_str() );
+        boxDistancePercentage = std::stod( distance.c_str() );
         }
 
       /* Base the Distance on the High Resolution Grid */
@@ -550,7 +550,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
     std::string zEnd = tokens[4].substr(0, pos);
     // std::cout << "zEnd: " << zEnd << std::endl;
 
-    zGridEndIndex = TALAIRACH_Z_POINTS - static_cast<int>( floor( atof( zEnd.c_str() ) ) );
+    zGridEndIndex = TALAIRACH_Z_POINTS - static_cast<int>( floor( std::stod( zEnd.c_str() ) ) );
 
     if( pos > 0 && pos < 3 )
       {
@@ -567,7 +567,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
       }
     else
       {
-      boxDistancePercentage = atof( distance.c_str() );
+      boxDistancePercentage = std::stod( distance.c_str() );
       }
 
     // std::cout << "zEndIndex: " << zGridEndIndex << std::endl;
@@ -586,7 +586,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
     pos = tokens[5].find(".");
     std::string zStart = tokens[5].substr(0, pos);
     // std::cout << "zStart: " << zStart << std::endl;
-    zGridStartIndex = TALAIRACH_Z_POINTS - static_cast<int>( floor( atof( zStart.c_str() ) ) );
+    zGridStartIndex = TALAIRACH_Z_POINTS - static_cast<int>( floor( std::stod( zStart.c_str() ) ) );
 
     // std::cout << "zGridStartIndex: " << zGridStartIndex << std::endl;
 
@@ -605,7 +605,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
       }
     else
       {
-      boxDistancePercentage = atof( distance.c_str() );
+      boxDistancePercentage = std::stod( distance.c_str() );
       }
 
     // std::cout << "boxDistancePercentage1: " << boxDistancePercentage <<

@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
   std::string BValue_keyStr("DWMRI_b-value");
   itk::ExposeMetaData<std::string>(vectorImageReader->GetOutput()->GetMetaDataDictionary(),
                                    BValue_keyStr.c_str(), BValue_str);
-  double BValue = atof( BValue_str.c_str() );
+  double BValue = std::stod( BValue_str.c_str() );
   std::cout << "The BValue was found to be " << BValue_str << std::endl;
 
   std::vector<std::vector<double> > msrFrame;
@@ -284,9 +284,9 @@ int main(int argc, char *argv[])
     char tokTmStr[64];
     strcpy( tokTmStr, NrrdValue.c_str() );
     TVector tmpDir(3);
-    tmpDir[0] = atof( strtok(tokTmStr, " ") );
-    tmpDir[1] = atof( strtok(nullptr, " ") );
-    tmpDir[2] = atof( strtok(nullptr, " ") );
+    tmpDir[0] = std::stod( strtok(tokTmStr, " ") );
+    tmpDir[1] = std::stod( strtok(nullptr, " ") );
+    tmpDir[2] = std::stod( strtok(nullptr, " ") );
     if( applyMeasurementFrame )
       {
       std::cout << "Original Direction: " << tmpDir << std::endl;

@@ -96,7 +96,7 @@ public:
           throw landmarksDataSet::shortLine;
           }
         std::string datum = CSVs.substr( posA + 1, posB - ( posA + 1 ) );
-        tempPoint[j] = atof( datum.c_str() );
+        tempPoint[j] = std::stod( datum.c_str() );
         posA = posB;
         }
       // NOTE:  RAS is was slicer requires, but ITK is internall LPS, so we need

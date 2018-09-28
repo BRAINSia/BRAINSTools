@@ -157,6 +157,14 @@ def parseExperiment(parser, workflow_phase):
                                         False)
         retval['components'] = [x.lower() for x in
                                 eval(getASCIIFromParser(parser, 'EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
+
+        valid_components=['FREESURFER', 'auxlmk', 'denoise', 'jointfusion_2015_wholebrain', 'landmark', 'segmentation', 'tissue_classify', 'warp_atlas_to_subject']
+
+        for component in retval['components']:
+            if component != valid_components:
+                print("ERROR: Unknown workflow component: {0} not in {1}".format(component, valid_components))
+                sys.exit(-1)
+
         if 'jointfusion_2015_wholebrain' in retval['components']:
             print("'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'.")
             """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""

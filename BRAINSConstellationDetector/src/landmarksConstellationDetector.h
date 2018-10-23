@@ -286,7 +286,7 @@ private:
 
   RigidTransformType::Pointer   m_TmspBasedOnReflectionCrossCorrelation;
   SImageType::PointType         m_CenterOfHeadMassEMSP;
-  SImageType::PointType         m_BestCenter;
+  //SImageType::PointType         m_BestCenter;
   SImageType::Pointer           m_VolumeRoughAlignedWithHoughEye;
   SImageType::Pointer           m_OriginalInputImage;
   SImageType::Pointer           m_VolumeMSP;
@@ -316,8 +316,8 @@ private:
   SImageType::PointType        m_LEPoint;    // in input space
   SImageType::PointType        m_REPoint;
 
-  SImageType::PointType m_ReferencePointAC;
-  SImageType::PointType m_ReferencePointPC;
+  //SImageType::PointType m_ReferencePointAC;
+  //SImageType::PointType m_ReferencePointPC;
   SImageType::PointType m_CenterOfHeadMass;
 
   // Store linear model parameters

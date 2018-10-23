@@ -43,6 +43,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DWITH_JPEG:BOOL=OFF
       -DWITH_TIFF:BOOL=OFF
       -DWITH_PNG:BOOL=OFF
+
+      -DENABLE_CXX11:BOOL=ON  #Will be required for OpenCV4
 ## The following might cause build issues, here for testing
 #-- OUTDATED      -DENABLE_SSE:BOOL=ON
 #-- OUTDATED      -DENABLE_SSE2:BOOL=ON
@@ -106,8 +108,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ### --- End Project specific additions
   #set(${proj}_REPOSITORY "${git_protocol}://github.com/Itseez/opencv")
   #set(${proj}_GIT_TAG "2.4.9") # USE THIS FOR UPDATED VERSION
-  set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/opencv.git") # USE THIS FOR UPDATED VERSION
-  set(${proj}_GIT_TAG 71f42810808b78c1b85682058694db6e9bccaea5)  # "20160127
+  set(${proj}_REPOSITORY "${git_protocol}://github.com/opencv/opencv.git")
+  set(${proj}_GIT_TAG 3.4.2)  # 20181017
   #set(${proj}_GIT_TAG "20140630_Upstream") # USE THIS FOR UPDATED VERSION for GCC 4.4.7 on RHEL6
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

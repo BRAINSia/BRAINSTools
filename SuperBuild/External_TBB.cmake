@@ -20,13 +20,13 @@ set(${proj}_CMAKE_OPTIONS
   )
 
 set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
-set(${proj}_GIT_TAG 2018_U2)  #
+set(${proj}_GIT_TAG 2018_U6)  # 20181017
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
-  BINARY_DIR tbb_downloaded/2018_U2
+  BINARY_DIR tbb_downloaded/${${proj}_GIT_TAG}
   DOWNLOAD_COMMAND  "" #, no download
   CONFIGURE_COMMAND "" #, no config
   BUILD_COMMAND     "" #, no build
@@ -56,7 +56,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/tbb_cmake/TBBGet.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/tbb_cmake/TBBBuild.cmake)
 tbb_get(TBB_ROOT TBB_LOCAL_SRC_DIR
         SAVE_TO ${SOURCE_DOWNLOAD_CACHE}/${proj}
-        RELEASE_TAG 2018_U2
+        RELEASE_TAG ${${proj}_GIT_TAG}
         SYSTEM_NAME ${CMAKE_SYSTEM_NAME}
         CONFIG_DIR TBB_DIR
         SOURCE_CODE)

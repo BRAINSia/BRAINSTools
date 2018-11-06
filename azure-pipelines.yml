@@ -1,0 +1,32 @@
+# C/C++ with GCC
+# Build your C/C++ project with GCC using make.
+# Add steps that publish test results, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+jobs:
+- job: Linux
+  timeoutInMinutes: 0
+  cancelTimeoutInMinutes: 300
+  pool:
+    vmImage: ubuntu-16.04
+  steps:
+    - script: |
+        set -x
+
+        git clone -b dashboard --single-branch https://github.com/BRAINSia/BRAINSTools.git BRAINSTools-dashboard
+
+        sudo pip3 install ninja
+
+        c++ --version
+        cmake --version
+
+        export BUILD_EXAMPLES=OFF
+        export CTEST_BUILD_CONFIGURATION=MinSizeRel
+
+        ctest -S BRAINSTools-dashboard/azure_dashboard.cmake -VV -j 4
+      displayName: Build and Test
+      workingDirectory: $(Agent.BuildDirectory)

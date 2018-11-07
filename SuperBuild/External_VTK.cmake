@@ -1,8 +1,8 @@
 
 set(proj VTK)
 
-set(${proj}_REQUIRED_VERSION "7.10")  #If a required version is necessary, then set this, else leave blank
-set(VTK_VERSION_MAJOR 7)
+set(${proj}_REQUIRED_VERSION "v8.1.1")  #If a required version is necessary, then set this, else leave blank
+set(VTK_VERSION_MAJOR 8)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -101,7 +101,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
   set(vtk_git_protocol "https")
   set(${proj}_GIT_REPOSITORY "${vtk_git_protocol}://gitlab.kitware.com/vtk/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "80814113457ecec301a92edee556e51c7722a974")  # VTK 20180422
+  set(${proj}_GIT_TAG "v8.1.1")  # VTK 20181108
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

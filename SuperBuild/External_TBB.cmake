@@ -20,7 +20,7 @@ set(${proj}_CMAKE_OPTIONS
   )
 
 set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
-set(${proj}_GIT_TAG 2018_U6)  # 20181017
+set(${proj}_GIT_TAG 2019_U1)  # 20181108
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

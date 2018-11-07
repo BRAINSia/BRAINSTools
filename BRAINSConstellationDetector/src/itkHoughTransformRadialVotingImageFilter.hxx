@@ -89,6 +89,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
   // In a single threaded status, the increment of run time for this filter is not tremendous in compare with
   // the total run time of the BCD
   this->SetNumberOfThreads(1);
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
 }
 
 template <class TInputImage, class TOutputImage>

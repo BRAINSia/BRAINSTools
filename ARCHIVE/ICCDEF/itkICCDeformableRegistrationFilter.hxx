@@ -941,7 +941,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   str.normalizer_Regularization = normalizer;
 //   str.fft = m_InvFFT12;
 //   std::cout<<"Number:"<<this->GetNumberOfThreads()<<std::endl;
-  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads() );
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->ComputeLinearElasticThreaderCallback, &str);
   this->GetMultiThreader()->SingleMethodExecute();
 }
@@ -954,10 +954,10 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   ThreadStruct * str;
   int            total, threadId, threadCount;
 
-  threadId = ( (MultiThreader::ThreadInfoStruct *)(arg) )->ThreadID;
-  threadCount = ( (MultiThreader::ThreadInfoStruct *)(arg) )->NumberOfThreads;
+  threadId = ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->ThreadID;
+  threadCount = ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->NumberOfThreads;
 
-  str = (ThreadStruct *)( ( (MultiThreader::ThreadInfoStruct *)(arg) )->UserData);
+  str = (ThreadStruct *)( ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->UserData);
 
   // Execute the actual method with appropriate output region
   // first find out how many pieces extent can be split into.
@@ -1068,7 +1068,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   str.normalizer_InverseConsistency = normalizer;
 //   str.coeff = coeff;
 //   std::cout<<"Number:"<<this->GetNumberOfThreads()<<std::endl;
-  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads() );
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->ComputeInverseConsistencyThreaderCallback, &str);
   this->GetMultiThreader()->SingleMethodExecute();
 }
@@ -1081,10 +1081,10 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   ThreadStruct * str;
   int            total, threadId, threadCount;
 
-  threadId = ( (MultiThreader::ThreadInfoStruct *)(arg) )->ThreadID;
-  threadCount = ( (MultiThreader::ThreadInfoStruct *)(arg) )->NumberOfThreads;
+  threadId = ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->ThreadID;
+  threadCount = ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->NumberOfThreads;
 
-  str = (ThreadStruct *)( ( (MultiThreader::ThreadInfoStruct *)(arg) )->UserData);
+  str = (ThreadStruct *)( ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->UserData);
 
   // Execute the actual method with appropriate output region
   // first find out how many pieces extent can be split into.

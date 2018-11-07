@@ -25,8 +25,6 @@
 #ifndef __BRAINSHoughEyeDetector_h
 #define __BRAINSHoughEyeDetector_h
 
-#include "itkMultiThreader.h"
-
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
 #include "itkImageRegionIterator.h"

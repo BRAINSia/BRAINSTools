@@ -38,7 +38,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

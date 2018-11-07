@@ -21,7 +21,7 @@
 
 #include <itksys/SystemTools.hxx>
 #include <sstream>
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 
 namespace BRAINSUtils
 {

@@ -40,7 +40,7 @@
 #include <iostream>
 #include <fstream>
 #include "itkNumericTraits.h"
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

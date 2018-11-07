@@ -259,7 +259,7 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
   str.outputPtr = outputPtr;
   str.interpolator = inputFieldInterpolator;
   str.spacing = spacing;
-  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads() );
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->ComputeInverseThreaderCallback, &str);
   this->GetMultiThreader()->SingleMethodExecute();
 }
@@ -272,10 +272,10 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
   ThreadStruct * str;
   int            total, threadId, threadCount;
 
-  threadId = ( (MultiThreader::ThreadInfoStruct *)(arg) )->ThreadID;
-  threadCount = ( (MultiThreader::ThreadInfoStruct *)(arg) )->NumberOfThreads;
+  threadId = ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->ThreadID;
+  threadCount = ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->NumberOfThreads;
 
-  str = (ThreadStruct *)( ( (MultiThreader::ThreadInfoStruct *)(arg) )->UserData);
+  str = (ThreadStruct *)( ( (MultiThreaderBase::ThreadInfoStruct *)(arg) )->UserData);
 
   // Execute the actual method with appropriate output region
   // first find out how many pieces extent can be split into.

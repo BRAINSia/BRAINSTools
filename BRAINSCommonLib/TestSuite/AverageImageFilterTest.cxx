@@ -88,9 +88,9 @@ int main( int , char * [] )
             << statFilter->GetSum() << std::endl;
 
   const double _eps(0.00000001);
-  if(vcl_abs(statFilter->GetMinimum()) < _eps &&
-     vcl_abs(statFilter->GetMaximum()) < _eps &&
-     vcl_abs(statFilter->GetMean()) < _eps)
+  if(std::abs(statFilter->GetMinimum()) < _eps &&
+     std::abs(statFilter->GetMaximum()) < _eps &&
+     std::abs(statFilter->GetMean()) < _eps)
     {
     return EXIT_SUCCESS;
     }

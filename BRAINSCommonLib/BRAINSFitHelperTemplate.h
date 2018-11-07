@@ -43,7 +43,6 @@
 #include "itkCenteredVersorTransformInitializer.h"
 #include "itkCenteredTransformInitializer.h"
 #include "itkRegularStepGradientDescentOptimizerv4.h"
-#include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"
 #include "itkAffineTransform.h"
 #include "itkDisplacementFieldTransform.h"

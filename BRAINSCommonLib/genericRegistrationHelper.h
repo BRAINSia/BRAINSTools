@@ -55,7 +55,6 @@
 #include <fstream>
 #include <string>
 
-#include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"
 
 #include "itkIntensityWindowingImageFilter.h"

@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
               << std::endl;
     directionCode = 3;
     }
-  unsigned int axis = vnl_math_abs(directionCode) - 1;
+  unsigned int axis = itk::Math::abs (directionCode) - 1;
   if( axis > 2 )
     {
     std::cout << "Your directionCode was too large so we will use the program default, axis 2 (Superior/Inferior)."

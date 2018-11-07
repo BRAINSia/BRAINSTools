@@ -23,7 +23,7 @@
 #include <sstream>
 #include "DWIConvertUtils.h"
 #include "itksys/SystemTools.hxx"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include <itkExtractImageFilter.h>
 #include <itkComposeImageFilter.h>

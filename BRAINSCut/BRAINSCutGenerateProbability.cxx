@@ -299,6 +299,6 @@ BRAINSCutGenerateProbability
 
   rhoValue = rhoValue / 128.0F;  // The largest brain ever will always fit in a sphere
   // with radius of 128MM centered at the AC point
-  phiValue = phiValue / (vnl_math::pi);
-  thetaValue = thetaValue / (vnl_math::pi);
+  phiValue = phiValue / (itk::Math::pi);
+  thetaValue = thetaValue / (itk::Math::pi);
 }

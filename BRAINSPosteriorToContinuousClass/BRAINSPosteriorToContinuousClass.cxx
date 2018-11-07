@@ -170,25 +170,25 @@ int main(int argc, char * *argv)
     if( (maxWm > maxGm) && (maxWm > maxCsf) && (maxWm > maxVb) && (maxWm > minThreshold) )
       {
       total = maxWm + maxGm;
-      voxelValue = vnl_math_rnd(130.0 + 120.0 * maxWm / total);
+      voxelValue = itk::Math::rnd (130.0 + 120.0 * maxWm / total);
       }
     else if( (maxGm >= maxWm) && (maxGm >= maxCsf) && (maxGm > maxVb) && (maxGm > minThreshold) )
       {
       if( maxWm >= maxCsf )
         {
         total = maxWm + maxGm;
-        voxelValue = vnl_math_rnd(130.0 + 120.0 * maxWm / total);
+        voxelValue = itk::Math::rnd (130.0 + 120.0 * maxWm / total);
         }
       else
         {
         total = maxCsf + maxGm;
-        voxelValue = vnl_math_rnd(130.0 - 120.0 * maxCsf / total);
+        voxelValue = itk::Math::rnd (130.0 - 120.0 * maxCsf / total);
         }
       }
     else if( (maxCsf > maxGm) && (maxCsf >= maxWm) && (maxCsf > maxVb) && (maxCsf > minThreshold) )
       {
       total = maxCsf + maxGm;
-      voxelValue = vnl_math_rnd(10.0 + 120.0 * maxGm / total);
+      voxelValue = itk::Math::rnd (10.0 + 120.0 * maxGm / total);
       }
     else if( maxVb > minThreshold )
       {

@@ -23,7 +23,7 @@
 // #include <itkSimpleFilterWatcher.h>
 #include <itkImageRegionIterator.h>
 #include <vnl/vnl_sample.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 
 #include <itkNumericTraits.h>
 #include <itkMinimumMaximumImageFilter.h>

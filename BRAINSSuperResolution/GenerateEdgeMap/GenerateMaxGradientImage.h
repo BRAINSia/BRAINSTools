@@ -157,7 +157,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
      typename InputImageType::PixelType imgMin = myMinMax->GetMinimum();
      typename InputImageType::PixelType imgMax = myMinMax->GetMaximum();
 
-     int numBins = vnl_math_rnd(imgMax - imgMin + 1);
+     int numBins = itk::Math::rnd (imgMax - imgMin + 1);
      if( numBins < 256 )
        {
        numBins = 256;

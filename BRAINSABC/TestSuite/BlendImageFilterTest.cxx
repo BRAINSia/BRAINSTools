@@ -20,7 +20,7 @@
 #include "itkBlendImageFilter.h"
 #include "itkRandomImageSource.h"
 #include "itkImageRegionConstIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 int main(int, char * *)
 {

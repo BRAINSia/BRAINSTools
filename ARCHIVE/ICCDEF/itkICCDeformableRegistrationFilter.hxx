@@ -390,11 +390,11 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
     {
     const ComplexImageType::IndexType HI = MyIterator.GetIndex();
     const float                       omega1 =
-      2.0F * static_cast<float>(vnl_math::pi * static_cast<float>(HI[0]) ) * delta1;
+      2.0F * static_cast<float>(itk::Math::pi * static_cast<float>(HI[0]) ) * delta1;
     const float omega2 =
-      2.0F * static_cast<float>(vnl_math::pi * static_cast<float>(HI[1]) ) * delta2;
+      2.0F * static_cast<float>(itk::Math::pi * static_cast<float>(HI[1]) ) * delta2;
     const float omega3 =
-      2.0F * static_cast<float>(vnl_math::pi * static_cast<float>(HI[2]) ) * delta3;
+      2.0F * static_cast<float>(itk::Math::pi * static_cast<float>(HI[2]) ) * delta3;
 
     const float alphaCosOmega2 =
       2.0F * m_Alpha * (fnx2 * std::cos(omega1) + fny2 * std::cos(omega2)

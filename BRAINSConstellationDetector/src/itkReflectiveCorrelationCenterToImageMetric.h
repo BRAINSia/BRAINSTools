@@ -143,8 +143,8 @@ public:
       {
       itk::NumberToString<double> doubleToString;
       std::cout << "Initialize exhaustive search: "
-                << " HA= " << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi)
-                << " BA= " << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi)
+                << " HA= " << doubleToString(this->m_params[0] * 180.0 / itk::Math::pi)
+                << " BA= " << doubleToString(this->m_params[1] * 180.0 / itk::Math::pi)
                 << " XO= " << doubleToString(this->m_params[2])
                 << " cc="  <<  doubleToString(this->m_cc)
                 << std::endl;
@@ -223,7 +223,7 @@ public:
 #ifdef WRITE_CSV_FILE
   std::stringstream csvFileOfMetricValues;
 #endif
-  const double degree_to_rad = vnl_math::pi / 180.0;
+  const double degree_to_rad = itk::Math::pi / 180.0;
 
   for( double LR = -LRRange; LR <= LRRange; LR += LRStepSize)
     {
@@ -272,7 +272,7 @@ public:
   {
   constexpr double MaxUnpenalizedAllowedDistance = 8.0;
   const double        DistanceFromCenterOfMass = std::abs(params[2]);
-  static const double FortyFiveDegreesAsRadians = 45.0 * vnl_math::pi / 180.0;
+  static const double FortyFiveDegreesAsRadians = 45.0 * itk::Math::pi / 180.0;
   const double        cost_of_HeadingAngle = ( std::abs(params[0]) < FortyFiveDegreesAsRadians ) ? 0 :
   ( ( std::abs(params[0]) - FortyFiveDegreesAsRadians ) * 2 );
   const double cost_of_BankAngle = ( std::abs(params[1]) < FortyFiveDegreesAsRadians ) ? 0 :
@@ -290,7 +290,7 @@ public:
   const double raw_finalcos_gamma = cc + cost_of_motion + cost_of_BankAngle + cost_of_HeadingAngle;
 
 #ifdef __USE_EXTENSIVE_DEBUGGING__
-  if( !vnl_math_isfinite(raw_finalcos_gamma) )
+  if( !std::isfinite(raw_finalcos_gamma) )
     {
     std::cout << __FILE__ << " " << __LINE__ << " "
     << params << " : " << cc << " " << cost_of_HeadingAngle << " " << cost_of_BankAngle << " "
@@ -568,8 +568,8 @@ public:
       }
     this->m_cc = this->GetValue();
 
-    std::cout << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi) << " "
-              << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi) << " "
+    std::cout << doubleToString(this->m_params[0] * 180.0 / itk::Math::pi) << " "
+              << doubleToString(this->m_params[1] * 180.0 / itk::Math::pi) << " "
               << this->m_params[2] << " cc= "
               << doubleToString(this->m_cc) << " iters= " << this->m_Optimizer->GetCurrentIteration()
               << std::endl;

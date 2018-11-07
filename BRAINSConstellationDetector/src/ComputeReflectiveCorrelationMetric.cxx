@@ -152,7 +152,7 @@ int main( int argc, char * argv[] ) {
   Offset_Stepsizes[1] = 0.5;
   Offset_Stepsizes[2] = 0.25;
 
-  const double degree_to_rad = vnl_math::pi / 180.0;
+  const double degree_to_rad = itk::Math::pi / 180.0;
 
   for( unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter )
     {

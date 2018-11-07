@@ -31,7 +31,7 @@
 #include <itkBinaryDilateImageFilter.h>
 #include <itkBinaryErodeImageFilter.h>
 #include <vnl/vnl_sample.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include <itkConnectedThresholdImageFilter.h>
 
 #include <itkNumericTraits.h>
@@ -243,7 +243,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     typename myKernelType::SizeType erodeBallSize;
     for( unsigned int d = 0; d < 3; ++d )
       {
-      const unsigned int ClosingVoxels = vnl_math_ceil( m_ClosingSize / ( relabel->GetOutput()->GetSpacing()[d] ) );
+      const unsigned int ClosingVoxels = itk::Math::ceil ( m_ClosingSize / ( relabel->GetOutput()->GetSpacing()[d] ) );
       if( ClosingVoxels > 20 )
         {
         std::cout << "WARNING:  Attempting to close with a very large number of voxels:  "
@@ -359,7 +359,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
       for( unsigned int d = 0; d < 3; ++d )
         {
         const unsigned int DilateVoxels =
-          vnl_math_ceil( m_DilateSize / ( FinalThreshold->GetOutput()->GetSpacing()[d] ) );
+          itk::Math::ceil ( m_DilateSize / ( FinalThreshold->GetOutput()->GetSpacing()[d] ) );
         dilateBallSize[d] = DilateVoxels;
         }
       dilateBall.SetRadius(dilateBallSize);

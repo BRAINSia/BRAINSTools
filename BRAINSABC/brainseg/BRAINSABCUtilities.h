@@ -41,12 +41,12 @@
 
 typedef unsigned int LOOPITERTYPE;
 
-//  vnl_math_isnan(value) || vnl_math_isinf(value) )
+//  std::isnan(value) || std::isinf(value) )
 #if 1  // Runtime performance penalty that can be used to find faulty code
        // during debugging.
 #define CHECK_NAN( XXXTESTXXX, srcfile, srcline, extra_print ) \
     { \
-    if( !vnl_math_isfinite( XXXTESTXXX ) ) \
+    if( !std::isfinite( XXXTESTXXX ) ) \
       { \
       std::cout << "Found " << XXXTESTXXX << " at " << srcfile << " " << srcline << extra_print << std::endl; \
       raise(SIGSEGV); \

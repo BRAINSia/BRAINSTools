@@ -173,7 +173,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
         {
         const typename MaskImageType::IndexType tempIndex = ItPixel.GetIndex();
         LFFimage->TransformIndexToPhysicalPoint(tempIndex, PixelPhysicalPoint);
-        double val =  vnl_math_rnd( vnl_math_abs(maxSIDirection
+        double val =  itk::Math::rnd ( itk::Math::abs (maxSIDirection
                                                  - PixelPhysicalPoint[m_Axis]) );
         distanceMap->SetPixel( tempIndex,
                                static_cast<typename DistanceImageType::PixelType>( val ) );
@@ -282,13 +282,13 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
         // Put this into cm^2
         const double crossSectionalVolume = crossSectionalArea * ( samplingDistanceCM );
         // Put this into cm^3
-        const double estimated_radius = std::sqrt(crossSectionalArea / vnl_math::pi);
+        const double estimated_radius = std::sqrt(crossSectionalArea / itk::Math::pi);
         // Estimate the radis of a circle filling this much space
         constexpr double ScaleFactor = 1.1;
         // Add 10% for safety //5+(crossSectionalArea-200)/100; //Larger brains
         // need more scaling
         const double CurentVolumeBasedOnArea = ScaleFactor
-          * ( 1.33333333333333333 * vnl_math::pi * estimated_radius
+          * ( 1.33333333333333333 * itk::Math::pi * estimated_radius
               * estimated_radius * estimated_radius );
         // (4/3)*pi*r^3
         MaxVolumeBasedOnArea =

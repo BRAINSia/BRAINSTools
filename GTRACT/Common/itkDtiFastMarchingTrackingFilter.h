@@ -49,7 +49,7 @@
 #include <itkImageToImageFilter.h>
 #include <itkIOCommon.h>
 #include <itkIndex.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkSingleValuedCostFunction.h>

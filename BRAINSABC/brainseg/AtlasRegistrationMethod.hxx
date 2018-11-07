@@ -33,7 +33,7 @@
 // MI registration module
 #include "AtlasRegistrationMethod.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include "Log.h"
 

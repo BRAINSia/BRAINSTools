@@ -58,7 +58,7 @@
 #include <string>
 
 #include <itkIndex.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkPointSet.h>
@@ -264,7 +264,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
     currentPosition = m_GradientOP->GetCurrentPosition();
     for( unsigned int k = 0; k < spaceDimension; k++ )  //
       {
-      double diff = vnl_math_abs(currentPosition[k] - tmpIndex[k]);
+      double diff = itk::Math::abs (currentPosition[k] - tmpIndex[k]);
 
       // if last point is repeated, stop Gradient Descent
       if( diff > gradientTol )

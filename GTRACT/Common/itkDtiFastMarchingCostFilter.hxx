@@ -56,7 +56,7 @@
 #include <iostream>
 
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <algorithm>
 
 namespace itk
@@ -537,7 +537,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       eigoffset = eigNeighborIt.GetOffset(i);
       for( unsigned int k = 0; k < dimension; k++ )
         {
-        distance[k] = eigoffset[k] * vnl_math_abs(spacing[k]);
+        distance[k] = eigoffset[k] * itk::Math::abs (spacing[k]);
         }
 
       // Set speed of initial trial points to F=|dot
@@ -547,8 +547,8 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       normal = normal.normalize();
 
       // outputSpeedPixel =
-      // (vnl_math_abs(dot_product(trialEigvalue,trialEigvalue)) );
-      outputSpeedPixel = ( vnl_math_abs( dot_product(trialEigvalue, normal) ) );
+      // (itk::Math::abs (dot_product(trialEigvalue,trialEigvalue)) );
+      outputSpeedPixel = ( itk::Math::abs ( dot_product(trialEigvalue, normal) ) );
 
       /*Scale by FA*/
       AnisotropyImagePixelType aniso = 0.0;
@@ -717,7 +717,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       eigoffset = eigNeighborIt.GetOffset(i);
       for( unsigned int k = 0; k < dimension; k++ )
         {
-        neighOffset[k] = eigoffset[k] * vnl_math_abs(spacing[k]);
+        neighOffset[k] = eigoffset[k] * itk::Math::abs (spacing[k]);
         }
 
       // Normal calculation based on neighborhood
@@ -760,14 +760,14 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     {
     long int val
       = static_cast<long int>( neighOffset[i]
-                               / vnl_math_abs(spacing[i]) );
+                               / itk::Math::abs (spacing[i]) );
     neighIndex[i] += val;
     }
 
   // Compute Speed: F(r)=min[F(AlivePoint), |dot product(principal
   // eigenvector(AlivePoint),normal)| ]
   TVector neighEigvalue = m_EigenvectorImage->GetPixel(neighIndex).GetVnlVector();
-  double  trialSpeedPixel = ( vnl_math_abs( dot_product(neighEigvalue, normal) ) );
+  double  trialSpeedPixel = ( itk::Math::abs ( dot_product(neighEigvalue, normal) ) );
 
   /*Scale trialSpeed by FA, Fractional Anisotropy of trial point*/
   AnisotropyImagePixelType aniso = 0.0;
@@ -784,7 +784,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
     // Compute Speed: F(r)=min[F(AlivePoint), F(TrialPoint ]
     neighSpeedPixel = m_OutputSpeedImage->GetPixel( neighIndex );
-    outputSpeedPixel = vnl_math_min( neighSpeedPixel, trialSpeedPixel );
+    outputSpeedPixel = std::min( neighSpeedPixel, trialSpeedPixel );
 
     // Calculate std::cost (time): neighbor time (of selected Alive point) +
     // distance/speed (of Trial point)
@@ -879,7 +879,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       // of r, TrialPoint
       for( unsigned int k = 0; k < dimension; k++ )  // convert offset to vector
         {
-        neighOffset[k] = eigoffset[k] * vnl_math_abs(spacing[k]);
+        neighOffset[k] = eigoffset[k] * itk::Math::abs (spacing[k]);
         }
       normal = neighOffset;
       normal = normal.normalize();
@@ -887,7 +887,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       // Compute Speed: F(r)= |dot product(principal
       // eigenvector(AlivePoint),normal)|
       TVector aliveEigvalue = m_EigenvectorImage->GetPixel(eigIndex).GetVnlVector();
-      double  maxSpeedPixel = vnl_math_abs( dot_product(aliveEigvalue, normal) );
+      double  maxSpeedPixel = itk::Math::abs ( dot_product(aliveEigvalue, normal) );
 
       // Get max Speedvalue
       if( maxSpeedPixel > trialSpeedPixel )
@@ -905,7 +905,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   for( int i = 0; i < dimension; i++ )
     {
     long int val
-      = static_cast<long int>( aliveOffset[i] / vnl_math_abs(spacing[i]) );
+      = static_cast<long int>( aliveOffset[i] / itk::Math::abs (spacing[i]) );
     neighIndex[i] += val;
     }
 
@@ -921,7 +921,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
     // Compute Speed: F(r)=min[F(AlivePoint), F(TrialPoint ]
     neighSpeedPixel = m_OutputSpeedImage->GetPixel( neighIndex );
-    outputSpeedPixel = vnl_math_min( neighSpeedPixel, trialSpeedPixel );
+    outputSpeedPixel = std::min( neighSpeedPixel, trialSpeedPixel );
 
     // Calculate std::cost (time): neighbor time (of selected Alive point) +
     // distance/speed (of Trial point)

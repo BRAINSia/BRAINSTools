@@ -331,7 +331,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     double max_cc = CostMetricObject->GetValue();
 
     // rough search in neighborhood.
-    const double one_degree = 1.0F * vnl_math::pi / 180.0F;
+    const double one_degree = 1.0F * itk::Math::pi / 180.0F;
     const double HAStepSize = 3.0 * one_degree;
     const double PAStepSize = 3.0 * one_degree;
     // Quick search just needs to get an approximate angle correct.
@@ -355,8 +355,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 #ifdef DEBUGGING_PRINT_IMAGES
         {
         std::cout << "quick search "
-                  << " HA= " << ( currentEulerAngles3D->GetParameters()[2] ) * 180.0 / vnl_math::pi
-                  << " PA= " << ( currentEulerAngles3D->GetParameters()[0] ) * 180.0 / vnl_math::pi
+                  << " HA= " << ( currentEulerAngles3D->GetParameters()[2] ) * 180.0 / itk::Math::pi
+                  << " PA= " << ( currentEulerAngles3D->GetParameters()[0] ) * 180.0 / itk::Math::pi
                   << " cc="  <<  current_cc
                   << std::endl;
         }
@@ -392,8 +392,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
             }
           char filename[300];
           sprintf(filename, "%05.2f_%05.2f_%05.2f.nii.gz",
-                  ( currentEulerAngles3D->GetParameters()[2] ) * 180 / vnl_math::pi,
-                  ( currentEulerAngles3D->GetParameters()[0] ) * 180 / vnl_math::pi, current_cc);
+                  ( currentEulerAngles3D->GetParameters()[2] ) * 180 / itk::Math::pi,
+                  ( currentEulerAngles3D->GetParameters()[0] ) * 180 / itk::Math::pi, current_cc);
 
           {
           typedef typename itk::ImageFileWriter<FixedImageType> WriterType;
@@ -421,8 +421,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 #ifdef DEBUGGING_PRINT_IMAGES
     {
     std::cout << "FINAL: quick search "
-              << " HA= " << ( bestEulerAngles3D->GetParameters()[2] ) * 180.0 / vnl_math::pi
-              << " PA= " << ( bestEulerAngles3D->GetParameters()[0] ) * 180.0 / vnl_math::pi
+              << " HA= " << ( bestEulerAngles3D->GetParameters()[2] ) * 180.0 / itk::Math::pi
+              << " PA= " << ( bestEulerAngles3D->GetParameters()[0] ) * 180.0 / itk::Math::pi
               << " cc="  <<  max_cc
               << std::endl;
     }
@@ -468,8 +468,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         }
       char filename[300];
       sprintf(filename, "FINAL_%05.2f_%05.2f_%05.2f.nii.gz",
-              ( bestEulerAngles3D->GetParameters()[2] ) * 180 / vnl_math::pi,
-              ( bestEulerAngles3D->GetParameters()[0] ) * 180 / vnl_math::pi, max_cc);
+              ( bestEulerAngles3D->GetParameters()[2] ) * 180 / itk::Math::pi,
+              ( bestEulerAngles3D->GetParameters()[0] ) * 180 / itk::Math::pi, max_cc);
 
         {
         typedef typename itk::ImageFileWriter<FixedImageType> WriterType;

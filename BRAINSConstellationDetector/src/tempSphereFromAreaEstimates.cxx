@@ -53,7 +53,7 @@
 #include <itkImageIteratorWithIndex.h>
 #include <itkMinimumMaximumImageCalculator.h>
 #include <itkHistogram.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include "itkNumberToString.h"
 
 double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SImageType::Pointer & volOrig,
@@ -147,7 +147,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
       if( ItPixel.Get() != 0 )
         {
         volOrig->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
-        ItPixel.Set( static_cast<SImageType::PixelType>( vnl_math_rnd( vnl_math_abs(extremum
+        ItPixel.Set( static_cast<SImageType::PixelType>( itk::Math::rnd ( itk::Math::abs (extremum
                                                                                     - PixelPhysicalPoint[axis]) ) ) );
         }
       // else, leave the foreground coded zero, not some positive distance from
@@ -190,7 +190,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     // single layer cannot have more than one row of voxels accumulated in a
     // single bin.
     int numBins =
-      (int)( ( maxval - minval ) / ( vnl_math_min( origSpacing[0], vnl_math_min(origSpacing[1], origSpacing[2]) ) ) );
+      (int)( ( maxval - minval ) / ( std::min( origSpacing[0], std::min(origSpacing[1], origSpacing[2]) ) ) );
 
     // Histogram computation
     HistogramType::SizeType size;
@@ -272,9 +272,9 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
       volOrig->TransformContinuousIndexToPhysicalPoint(originPlusOne, physOriginPlusOne);
       // std::cout << "physOrigin         " << physOrigin        << std::endl;
       // std::cout << "physOriginPlusOne  " << physOriginPlusOne << std::endl;
-      const double RL_thickness = vnl_math_abs(physOrigin[0] - physOriginPlusOne[0]) * 0.1;
-      const double AP_thickness = vnl_math_abs(physOrigin[1] - physOriginPlusOne[1]) * 0.1;
-      SupInf_thickness         = vnl_math_abs(physOrigin[2] - physOriginPlusOne[2]) * 0.1; //
+      const double RL_thickness = itk::Math::abs (physOrigin[0] - physOriginPlusOne[0]) * 0.1;
+      const double AP_thickness = itk::Math::abs (physOrigin[1] - physOriginPlusOne[1]) * 0.1;
+      SupInf_thickness         = itk::Math::abs (physOrigin[2] - physOriginPlusOne[2]) * 0.1; //
       // Convert
       // to
       // cm
@@ -286,7 +286,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         // std::cout << "  " << SupInf_thickness << std::endl;
         // std::cout << "  " << RL_thickness << std::endl;
         // std::cout << "  " << AP_thickness << std::endl;
-        // std::cout << "  " << vnl_math_abs(physOrigin[1]-physOriginPlusOne[1])
+        // std::cout << "  " << itk::Math::abs (physOrigin[1]-physOriginPlusOne[1])
         // << std::endl;
 
         itkGenericExceptionMacro(<< "ERROR:  Can not have zero area, or zero thickness. "
@@ -346,7 +346,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         )
         {
         MaxCrossSectionalArea = CurrentCrossSectionalArea;
-        const double estimated_radius = std::sqrt(MaxCrossSectionalArea / vnl_math::pi); //
+        const double estimated_radius = std::sqrt(MaxCrossSectionalArea / itk::Math::pi); //
         // Estimate
         // the
         // radis
@@ -363,7 +363,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         //  //5+(MaxCrossSectionalArea-200)/100;
         // //Larger brains need more scaling
         const double CurentVolumeBasedOnArea = ScaleFactor
-          * ( 1.33333333333333333 * vnl_math::pi * estimated_radius
+          * ( 1.33333333333333333 * itk::Math::pi * estimated_radius
               * estimated_radius * estimated_radius );
         DesiredVolumeToIncludeBeforeClipping = CurentVolumeBasedOnArea;
         // std::cout << "TESTING:  Radius: " << estimated_radius << "
@@ -371,7 +371,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         }
       const double CurrentCrossSectionalVolume = histoIter.GetFrequency() * voxelSize;
       CummulativeVolume += CurrentCrossSectionalVolume;
-      largestAreaRadius = std::pow(0.75 * vnl_math::one_over_pi * CummulativeVolume, 0.33333333333333333); //
+      largestAreaRadius = std::pow(0.75 * itk::Math::one_over_pi * CummulativeVolume, 0.33333333333333333); //
       // Assuming
       // Sphere,
       // what

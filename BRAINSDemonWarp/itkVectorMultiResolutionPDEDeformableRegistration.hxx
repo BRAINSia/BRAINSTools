@@ -21,7 +21,7 @@
 #include "itkVectorMultiResolutionPDEDeformableRegistration.h"
 
 #include "itkImageRegionIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
 
@@ -321,10 +321,10 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
   m_CurrentLevel = 0;
   m_StopRegistrationFlag = false;
 
-  unsigned int movingLevel = vnl_math_min(
+  unsigned int movingLevel = std::min(
       (int)m_CurrentLevel, (int)m_MovingImagePyramid->GetNumberOfLevels() );
 
-  unsigned int fixedLevel = vnl_math_min(
+  unsigned int fixedLevel = std::min(
       (int)m_CurrentLevel, (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
   DisplacementFieldPointer tempField = nullptr;
@@ -478,9 +478,9 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 
     // Increment level counter.
     m_CurrentLevel++;
-    movingLevel = vnl_math_min( (int)m_CurrentLevel,
+    movingLevel = std::min( (int)m_CurrentLevel,
                                 (int)m_MovingImagePyramid->GetNumberOfLevels() );
-    fixedLevel = vnl_math_min( (int)m_CurrentLevel,
+    fixedLevel = std::min( (int)m_CurrentLevel,
                                (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
     // Invoke an iteration event.

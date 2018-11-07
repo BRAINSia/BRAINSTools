@@ -53,7 +53,7 @@
 #include <itkImageIteratorWithIndex.h>
 #include <itkMinimumMaximumImageCalculator.h>
 #include <itkHistogram.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include "itkFindCenterOfBrainFilter.h"
 
 // #define USE_DEBUGGIN_IMAGES

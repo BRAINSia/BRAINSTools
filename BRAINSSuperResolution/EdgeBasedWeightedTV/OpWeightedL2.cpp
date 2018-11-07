@@ -46,7 +46,7 @@ void AddAllElements(ImagePointerType &OutImg,
   PrecisionType * y =  GetFirstPointer(yImg);
   cblas_saxpy(N,aScaler,x,1,y,1);
 
-  PrecisionType * Out=  GetFirstPointer(OutImg);
+  //PrecisionType * Out=  GetFirstPointer(OutImg);
   if(cScaler != 1.0F)
   {
   cblas_sscal(N,cScaler,y,1);
@@ -200,8 +200,6 @@ FloatImageType::Pointer OpWeightedL2(FloatImageType::Pointer norm01_lowres, Floa
 {
   const PrecisionType lambda = 1e-3F ;
   constexpr int Niter = 100;
-  const PrecisionType tol = 1e-8F ;
-
   const PrecisionType gam = 1.0F ;
 
   //typedef itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType> GMType;

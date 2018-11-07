@@ -437,14 +437,24 @@ while(NOT dashboard_done)
     if(COMMAND dashboard_hook_build)
       dashboard_hook_build()
     endif()
-    ctest_build(RETURN_VALUE build_return
+    ctest_build(
+                BUILD "${CTEST_BINARY_DIRECTORY}"
+                RETURN_VALUE build_return
                 NUMBER_ERRORS build_errors
                 NUMBER_WARNINGS build_warnings)
 
     if(COMMAND dashboard_hook_test)
       dashboard_hook_test()
     endif()
-    ctest_test(${CTEST_TEST_ARGS} RETURN_VALUE test_return)
+    ctest_build(
+                BUILD "${CTEST_BINARY_DIRECTORY}/BRAINSTools-build"
+                RETURN_VALUE build_return
+                NUMBER_ERRORS build_errors
+                NUMBER_WARNINGS build_warnings)
+    ctest_test(
+         BUILD "${CTEST_BINARY_DIRECTORY}/BRAINSTools-build"
+         ${CTEST_TEST_ARGS}
+         RETURN_VALUE test_return)
     set(safe_message_skip 1) # Block furhter messages
 
     if(dashboard_do_coverage)

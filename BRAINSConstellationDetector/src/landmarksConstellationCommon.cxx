@@ -421,7 +421,7 @@ void decomposeRPAC(const SImageType::PointType & RP,
   *RPAC_over_RPPC = RPtoAC / RPtoPC; // The ratio of lengths between the RP-PC
                                      // vector and the RP-AC vector
                                      // std::cout << "----------TEST ANGLE " <<
-                                     //  *RPPC_to_RPAC_angle *180.0/vnl_math::pi
+                                     //  *RPPC_to_RPAC_angle *180.0/itk::Math::pi
                                      // << "  RATIO " << *RPAC_over_RPPC <<
                                      // std::endl;
 }
@@ -567,8 +567,8 @@ static vnl_vector<double> convertToReadable(const vnl_vector<double> & input)
 {
   vnl_vector<double> temp;
   temp.set_size(3);
-  temp[0] = input[0] * 180.0 / vnl_math::pi;
-  temp[1] = input[1] * 180.0 / vnl_math::pi;
+  temp[0] = input[0] * 180.0 / itk::Math::pi;
+  temp[1] = input[1] * 180.0 / itk::Math::pi;
   temp[2] = input[2];
   return temp;
 }
@@ -599,14 +599,14 @@ void ComputeEulerAnglesFromRotationMatrix(const itk::Matrix<double, 3, 3> &  m,
     {
     initialAttitudeAngle = 0;
     initialBankAngle = std::atan2(m[0][2], m[2][2]);
-    initialHeadingAngle = vnl_math::pi_over_2;
+    initialHeadingAngle = itk::Math::pi_over_2;
     return;
     }
   if( m[1][0] < -0.998 )  // singularity at south pole
     {
     initialAttitudeAngle = 0;
     initialBankAngle = std::atan2(m[0][2], m[2][2]);
-    initialHeadingAngle = -vnl_math::pi_over_2;
+    initialHeadingAngle = -itk::Math::pi_over_2;
     return;
     }
   initialAttitudeAngle = std::atan2(-m[1][2], m[1][1]);

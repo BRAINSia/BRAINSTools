@@ -77,7 +77,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                         const typename ByteImageType::ConstPointer currentCandidateRegion =
                             SubjectCandidateRegions[iclass].GetPointer();
 
-                        // NOTE:  vnl_math:eps is too small vnl_math::eps;
+                        // NOTE:  itk::Math:eps is too small itk::Math::eps;
                         CompensatedSummationType tmp_accumC = tbb::parallel_reduce(tbb::blocked_range3d<long>(0,size[2],1,
                                                                                        0,size[1],size[1]/2,
                                                                                        0,size[0],512),

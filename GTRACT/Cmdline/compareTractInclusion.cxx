@@ -52,7 +52,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
 #include "vtkVersion.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 
 // ////////////////////////////////////////////////////////////////////////

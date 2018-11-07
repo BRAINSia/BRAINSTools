@@ -289,7 +289,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     this->m_Ipd = 0.;
     for( unsigned int i = 0; i < Dimension; ++i )
       {
-      this->m_Ipd += vnl_math_sqr( this->m_LE[i] - this->m_RE[i] );
+      this->m_Ipd += itk::Math::sqr ( this->m_LE[i] - this->m_RE[i] );
       }
     this->m_Ipd = std::sqrt( this->m_Ipd );
     std::cout << "The resulted inter-pupilary distance is " << this->m_Ipd << " mm" << std::endl;

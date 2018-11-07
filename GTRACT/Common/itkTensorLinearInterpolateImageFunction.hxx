@@ -38,7 +38,7 @@
 #define _itkTensorLinearInterpolateImageFunction_hxx
 #include "itkTensorLinearInterpolateImageFunction.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {

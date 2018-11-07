@@ -308,7 +308,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
     if( imposedMaxUpStep > 0.0 )
       {
       // max(norm(Phi))/2^N <= 0.25*pixelspacing
-      const double numiterfloat = 2.0 + std::log(imposedMaxUpStep) / vnl_math::ln2;
+      const double numiterfloat = 2.0 + std::log(imposedMaxUpStep) / itk::Math::ln2;
       unsigned int numiter = 0;
       if( numiterfloat > 0.0 )
         {

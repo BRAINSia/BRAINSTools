@@ -880,7 +880,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
   this->m_ShortestEdgeLength = shortestLength;
   // std::cout << "m_ShortestEdgeLength = " << this->m_ShortestEdgeLength << std::endl;
 
-  if( this->m_ShortestEdgeLength < vnl_math::eps )
+  if( this->m_ShortestEdgeLength < itk::Math::eps )
     {
     itkExceptionMacro("The shortest edge length is too close to zero = " << shortestLength );
     }

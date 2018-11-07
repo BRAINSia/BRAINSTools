@@ -51,7 +51,7 @@
 // #include "itkMersenneTwisterRandomVariateGenerator.h"
 
 #include "vnl/algo/vnl_determinant.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include "BRAINSComputeLabels.h"
 #include "itkBRAINSROIAutoImageFilter.h"
@@ -565,7 +565,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     // Smoothing filter
     typename SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
     smoothingFilter->SetUseImageSpacingOn();
-    smoothingFilter->SetVariance( vnl_math_sqr( 1 ) );
+    smoothingFilter->SetVariance( itk::Math::sqr ( 1 ) );
     smoothingFilter->SetMaximumError( 0.01 );
     smoothingFilter->SetInput( Posteriors[iclass] );
     smoothingFilter->Update();
@@ -1203,7 +1203,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   // Normalizing constant for the Gaussian
   const FloatingPrecision denom =
-    std::pow(2 * vnl_math::pi, numModalities / 2.0) * std::sqrt(detcov) + vnl_math::eps;
+    std::pow(2 * itk::Math::pi, numModalities / 2.0) * std::sqrt(detcov) + itk::Math::eps;
   const FloatingPrecision invdenom = 1.0 / denom;
   CHECK_NAN(invdenom, __FILE__, __LINE__, "\n  denom:" << denom );
   const MatrixType invcov = MatrixInverseType(currCovariance);
@@ -2560,7 +2560,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   this->CheckInput();
 
   // FloatingPrecision logLikelihood = vnl_huge_val(1.0);
-  FloatingPrecision logLikelihood = 1.0 / vnl_math::eps;
+  FloatingPrecision logLikelihood = 1.0 / itk::Math::eps;
   FloatingPrecision deltaLogLikelihood = 1.0;
 
   unsigned int biasdegree = 0;
@@ -2629,7 +2629,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
     }
 
-    FloatingPrecision prevLogLikelihood = ( logLikelihood < vnl_math::eps ) ? vnl_math::eps : logLikelihood;
+    FloatingPrecision prevLogLikelihood = ( logLikelihood < itk::Math::eps ) ? itk::Math::eps : logLikelihood;
     // Compute log-likelihood and normalize posteriors
     logLikelihood = this->ComputeLogLikelihood();
     muLogMacro(<< "log(likelihood) = " << logLikelihood <<  std::endl);

@@ -22,7 +22,7 @@
 #include "ValidationInputParser.h"
 #include "itkMetaDataObject.h"
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkImage.h"
 #include "itkAffineTransform.h"
 #include "itkLinearInterpolateImageFunction.h"

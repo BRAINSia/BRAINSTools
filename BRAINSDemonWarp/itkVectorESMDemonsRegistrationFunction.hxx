@@ -38,7 +38,7 @@
 
 #include "itkVectorESMDemonsRegistrationFunction.h"
 #include "itkExceptionObject.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -499,12 +499,12 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 
   CovariantVectorType tempGradient = usedGradientTimes2[0];
   double              sum_speedValue = speedValue[0];
-  double              sqr_speedValue = vnl_math_sqr(speedValue[0]);
+  double              sqr_speedValue = itk::Math::sqr (speedValue[0]);
   for( unsigned int i = 1; i < usedGradientTimes2.size(); ++i )
     {
     tempGradient += usedGradientTimes2[i];
     sum_speedValue += speedValue[i];
-    sqr_speedValue += vnl_math_sqr(speedValue[i]);
+    sqr_speedValue += itk::Math::sqr (speedValue[i]);
     }
   const double usedGradientTimes2SquaredMagnitude = tempGradient.GetSquaredNorm();
 
@@ -512,7 +512,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   // usedGradientTimes2.GetSquaredNorm();
 
   //  const double speedValue = fixedValue - movingValue;
-  if( vnl_math_abs(speedValue[0]) < m_IntensityDifferenceThreshold )
+  if( itk::Math::abs (speedValue[0]) < m_IntensityDifferenceThreshold )
     {
     update.Fill(0.0);
     }
@@ -523,7 +523,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
       {
       // "ITK-Thirion" normalization
       denom =  usedGradientTimes2SquaredMagnitude
-        + ( vnl_math_sqr(sum_speedValue) / m_Normalizer );
+        + ( itk::Math::sqr (sum_speedValue) / m_Normalizer );
       }
     else
       {
@@ -554,7 +554,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   // if we could, this would be an often unnecessary time-consuming task.
   if( globalData )
     {
-    globalData->m_SumOfSquaredDifference += vnl_math_sqr(sqr_speedValue);
+    globalData->m_SumOfSquaredDifference += itk::Math::sqr (sqr_speedValue);
     globalData->m_NumberOfPixelsProcessed +=
       this->GetFixedImage()->GetVectorLength();
     globalData->m_SumOfSquaredChange += update.GetSquaredNorm();

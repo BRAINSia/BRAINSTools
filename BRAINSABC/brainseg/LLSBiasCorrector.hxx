@@ -27,7 +27,7 @@
 #include "Log.h"
 #include "StandardizeMaskIntensity.h"
 #include "LLSBiasCorrector.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkTimeProbe.h"
 #include "ComputeDistributions.h"
 
@@ -812,7 +812,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
                                 }
                                 /* NOTE:  For regions listed as background, clamp the outputs[ichan
                                   */
-                                if (vnl_math_isnan(logFitValue) || vnl_math_isinf(logFitValue)) {
+                                if (std::isnan(logFitValue) || std::isinf(logFitValue)) {
                                   std::cout << "WARNING:  Bad Scale Value Computed!" << std::endl;
                                   logFitValue = 0.0;
                                 }

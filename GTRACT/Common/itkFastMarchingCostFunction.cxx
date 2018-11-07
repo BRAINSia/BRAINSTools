@@ -60,7 +60,7 @@
 // #include "itkMetaDataObject.h"
 
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <algorithm>
 
 namespace itk
@@ -190,7 +190,7 @@ FastMarchingCostFunction // < TCostImage>
         /* Compute distance from initial point to its neighbor */
         for( unsigned int n = 0; n < CostImageDimension; n++ )
           {
-          neighOffset[n] = offset[n] * vnl_math_abs(spacing[n]);
+          neighOffset[n] = offset[n] * itk::Math::abs (spacing[n]);
           }
 
         neighCost = m_CostIP->EvaluateAtContinuousIndex(neighIndex);

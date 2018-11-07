@@ -76,7 +76,7 @@ gtractDiffusionTensor3D<TComponent>
 
   this->Superclass::ComputeEigenValues( eigenValues );
 
-  return vnl_math_abs(eigenValues[2]);
+  return itk::Math::abs (eigenValues[2]);
 }
 
 /**
@@ -91,7 +91,7 @@ gtractDiffusionTensor3D<TComponent>
 
   this->Superclass::ComputeEigenValues( eigenValues );
 
-  return ( vnl_math_abs(eigenValues[0]) + vnl_math_abs(eigenValues[1]) ) / 2.0;
+  return ( itk::Math::abs (eigenValues[0]) + itk::Math::abs (eigenValues[1]) ) / 2.0;
 }
 
 /**

@@ -34,7 +34,7 @@
 
 #include "itkICCDeformableFunction.h"
 #include "itkExceptionObject.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 // #include "itkIterativeInverseDisplacementFieldImageFilter.h"
 // #include "itkIterativeInverseDisplacementFieldImageFilter1.h"
 #include "itkICCIterativeInverseDisplacementFieldImageFilter.h"
@@ -509,7 +509,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
         {
         if( globalData )
           {
-          globalData->m_SumOfSquaredDifference += vnl_math_sqr( speedValue );
+          globalData->m_SumOfSquaredDifference += itk::Math::sqr ( speedValue );
           globalData->m_NumberOfPixelsProcessed += 1;
           //    globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
           }
@@ -532,7 +532,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 
       if( globalData )
         {
-        globalData->m_SumOfSquaredDifference += vnl_math_sqr( speedValue );
+        globalData->m_SumOfSquaredDifference += itk::Math::sqr ( speedValue );
         globalData->m_NumberOfPixelsProcessed += 1;
         //    globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
         }

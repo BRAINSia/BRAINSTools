@@ -54,7 +54,7 @@
 #include <vnl/vnl_vector.h>
 #include <itkTextOutput.h>
 #include <itkCommand.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 
 #include "itkDtiFastMarchingCostFilter.h"
 #include "gtractCostFastMarchingCLP.h"

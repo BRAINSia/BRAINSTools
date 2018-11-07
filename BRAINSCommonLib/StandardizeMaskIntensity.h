@@ -135,7 +135,7 @@ typename ImageType::Pointer StandardizeMaskIntensity(
   typename ImageType::PixelType imgMin = wholeStatistics->GetMinimum();
   typename ImageType::PixelType imgMax = wholeStatistics->GetMaximum();
 
-  int numBins = vnl_math_rnd(imgMax - imgMin + 1);
+  int numBins = itk::Math::rnd (imgMax - imgMin + 1);
   if( numBins < 256 )
     {
     numBins = 256;

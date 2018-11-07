@@ -53,7 +53,7 @@
 
 #include <itkLevelSet.h>
 #include <itkIndex.h>
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 
 #include <functional>
 #include <queue>

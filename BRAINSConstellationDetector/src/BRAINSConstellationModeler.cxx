@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
         // current test rotation angle
         const float degree_current_angle = myModel.GetInitialRotationAngle() + myModel.GetInitialRotationStep()
           * currentAngle;
-        const float current_angle = degree_current_angle * vnl_math::pi / 180;
+        const float current_angle = degree_current_angle * itk::Math::pi / 180;
 
         RigidTransformType::Pointer Point_Rotate = RigidTransformType::New();
         Point_Rotate->SetCenter(transformedPoint);

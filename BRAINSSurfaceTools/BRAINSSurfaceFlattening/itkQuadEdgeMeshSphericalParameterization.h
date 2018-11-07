@@ -198,11 +198,11 @@ protected:
         ComputeEnergyAndRelaxVertexLocation();
         // if( m_Iteration % 10 == 0 )
 //           std::cout <<m_Iteration <<" " <<m_NewEnergy <<" "
-//             <<vnl_math_abs( m_OldEnergy - m_NewEnergy )
+//             <<itk::Math::abs ( m_OldEnergy - m_NewEnergy )
 //             <<std::endl;
         ++m_Iteration;
         }
-      while( vnl_math_abs( m_OldEnergy - m_NewEnergy ) > m_Threshold
+      while( itk::Math::abs ( m_OldEnergy - m_NewEnergy ) > m_Threshold
              && m_Iteration < m_IterationSTOP );
 
       std::cout << m_Iteration << std::endl;

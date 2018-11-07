@@ -255,7 +255,7 @@ void DWIMetaDataDictionaryValidator::GenericSetDoubleVector(const std::vector<do
      * Also, itkNrrdIO handles the correct permutation based on the "kinds" field in image. It sets the thickness value
      * for the 3rd space/domain.
      */
-    if( !vnl_math_isnan(values[index]) )
+    if( !std::isnan(values[index]) )
       {
       itk::EncapsulateMetaData< double >(this->m_dict,
                                          currKey,

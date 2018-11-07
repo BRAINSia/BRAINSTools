@@ -39,7 +39,7 @@
 
 #include "itkSingleValuedCostFunction.h"
 
-#include <vnl/vnl_math.h>
+#include <itkMath.h>
 #include <iostream>
 #include <fstream>
 #include <itkImage.h>
@@ -55,7 +55,7 @@
 #include <string>
 
 #include "itkIndex.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {

@@ -180,7 +180,7 @@ protected:
     *
     * \sa ProcessObject::VerifyInputInformation
     */
-  void VerifyInputInformation() override
+  void VerifyInputInformation() const override
   {
   }
 

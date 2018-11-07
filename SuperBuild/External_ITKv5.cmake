@@ -15,7 +15,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
-  find_package(ITK 4.9 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
+  find_package(ITK 5.0 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks
@@ -29,7 +29,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
     list(APPEND ITK_VTK_OPTIONS
-      -DModule_ITKVtkGlue:BOOL=OFF
+      -DModule_ITKVtkGlue:BOOL=ON
       -DVTK_DIR:PATH=${VTK_DIR}
       )
   endif()
@@ -39,7 +39,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG 465a69bc633aed484bcd46f323d93e32d4feed8d ) # 20181022
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG 2785aaaf5b111e9e662e9c54328f12e350d5adbb ) # 20181112
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 

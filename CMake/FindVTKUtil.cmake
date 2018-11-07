@@ -1,7 +1,7 @@
 #
 # find and incorporate the VTK library
 macro(FindVTKUtil)
-  set(VTK_VERSION_MIN 9.0)
+  set(VTK_VERSION_MIN 8.1.1)
   if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
     message( FATAL_ERROR "You have requested the FindVTKUtil macro, but "
                          "the requesting module is not listed as requiring vtk "

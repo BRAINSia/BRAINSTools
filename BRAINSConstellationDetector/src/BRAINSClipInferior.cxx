@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     }
   else
     {
-    BackgroundFillValue = atoi( backgroundFillValueString.c_str() );
+    BackgroundFillValue = std::stoi( backgroundFillValueString.c_str() );
     }
   // //////////////////////////////////////////////////////////////////////////
   SImageType::Pointer image = itkUtil::ReadImage<SImageType>(inputVolume);

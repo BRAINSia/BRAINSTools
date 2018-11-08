@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-    const int requestedDim = atoi(argv[1]);
+    const int requestedDim = std::stoi(argv[1]);
     switch(requestedDim)
     {
     case 2:

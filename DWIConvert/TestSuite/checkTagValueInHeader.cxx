@@ -43,16 +43,16 @@ int main(int argc, char * argv[])
        tagStr = argv[i+1];
     }
     else if(0 == strcmp("--section", argv[i])){
-      sectionIndex = atoi(argv[i+1]);
+      sectionIndex = std::stoi(argv[i+1]);
     }
     else if(0 == strcmp("--subsection", argv[i])){
-      subsectionIndex = atoi(argv[i+1]);
+      subsectionIndex = std::stoi(argv[i+1]);
     }
     else if(0 == strcmp("--v", argv[i])){
       verifyingValue = argv[i+1];
     }
     else if(0 == strcmp("--numtype", argv[i])){
-      numType = atoi(argv[i+1]) > 0;
+      numType = std::stoi(argv[i+1]) > 0;
     }
     else{
       std::cout<<"Parameter Error: unmatched option."<<std::endl;

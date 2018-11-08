@@ -119,7 +119,7 @@ int main(int argc, char * argv[])
     std::cerr << "Parameters have errors. Program exits." <<std::endl;
     return USAGE_FAILURE_CODE;
     }
-  const int linesToCompare = atoi(argv[3]);
+  const int linesToCompare = std::stoi(argv[3]);
   const double tolerance = atof(argv[4]);
 
 

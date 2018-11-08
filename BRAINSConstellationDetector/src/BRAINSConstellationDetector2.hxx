@@ -108,7 +108,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     }
   else
     {
-    BackgroundFillValue = atoi( this->m_BackgroundFillValueString.c_str() );
+    BackgroundFillValue = std::stoi( this->m_BackgroundFillValueString.c_str() );
     }
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, and initialize some variables

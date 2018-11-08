@@ -80,7 +80,7 @@ void cnpy::parse_npy_header(FILE* fp, unsigned int& word_size, unsigned int*& sh
     shape = new unsigned int[ndims];
     for(unsigned int i = 0;i < ndims;i++) {
         loc1 = str_shape.find(",");
-        shape[i] = atoi(str_shape.substr(0,loc1).c_str());
+        shape[i] = std::stoi(str_shape.substr(0,loc1).c_str());
         str_shape = str_shape.substr(loc1+1);
     }
 
@@ -96,7 +96,7 @@ void cnpy::parse_npy_header(FILE* fp, unsigned int& word_size, unsigned int*& sh
 
     std::string str_ws = header.substr(loc1+2);
     loc2 = str_ws.find("'");
-    word_size = atoi(str_ws.substr(0,loc2).c_str());
+    word_size = std::stoi(str_ws.substr(0,loc2).c_str());
 }
 
 static unsigned short getUshortFromChar(const char * const in)

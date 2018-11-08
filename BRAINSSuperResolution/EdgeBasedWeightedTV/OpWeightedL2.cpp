@@ -109,9 +109,11 @@ static CVImageType::Pointer ComputeInvTwoMuPlusGamma( FloatImageType::Pointer ed
   itk::ImageRegionIterator<CVImageType> cvIt(repMu,repMu->GetLargestPossibleRegion());
   itk::ImageRegionConstIterator<FloatImageType> muIt(edgemask,edgemask->GetLargestPossibleRegion());
   CVImageType::PixelType temp;
+  itk::CovariantVector<float, 3> local_cv;
   while(!muIt.IsAtEnd())
   {
-    cvIt.Set( 1.0 / ( 2.0*muIt.Value() + gam) );
+    local_cv.Fill( 1.0 / ( 2.0*muIt.Value() + gam) );
+    cvIt.Set( local_cv );
     ++cvIt;
     ++muIt;
   }

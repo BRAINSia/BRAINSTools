@@ -44,7 +44,7 @@ public:
                ImageToImageFilter);
 
   /** Image related typedefs. */
-  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension ;
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   typedef TInputImage InputImageType;
   typedef typename InputImageType::Pointer InputImagePointer;

@@ -58,7 +58,7 @@ public:
   typedef typename InputMeshType::PixelType       InputPixelType;
   typedef typename InputMeshType::Traits          InputTraits;
 
-  static constexpr unsigned int InputVDimension = InputMeshType::PointDimension ;
+  static constexpr unsigned int InputVDimension = InputMeshType::PointDimension;
 
   typedef typename InputMeshType::PointsContainer InputPointsContainer;
   typedef typename InputMeshType::PointsContainerConstIterator
@@ -90,7 +90,7 @@ public:
   typedef typename OutputMeshType::PointsContainerIterator
     OutputPointsContainerIterator;
 
-  static constexpr unsigned int OutputVDimension = OutputMeshType::PointDimension ;
+  static constexpr unsigned int OutputVDimension = OutputMeshType::PointDimension;
 
   typedef TSolverTraits                     SolverTraits;
   typedef typename SolverTraits::ValueType  ValueType;

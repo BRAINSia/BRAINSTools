@@ -61,7 +61,7 @@ public:
   itkTypeMacro(NodeScalarGradientCalculator, FunctionBase);
 
   /** Dimension underlying input mesh. */
-  static constexpr unsigned int MeshDimension = TInputMesh::PointDimension ;
+  static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
 
   /** Point typedef support. */
   typedef TInputMesh                                 InputMeshType;

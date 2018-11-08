@@ -94,7 +94,7 @@ public:
   typedef typename OutputMeshType::PointsContainerIterator
     OutputPointsContainerIterator;
 
-  static constexpr unsigned int PointDimension = OutputMeshType::PointDimension ;
+  static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   typedef TSolverTraits SolverTraits;
 

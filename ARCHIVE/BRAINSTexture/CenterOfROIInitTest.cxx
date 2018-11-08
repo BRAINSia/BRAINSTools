@@ -131,7 +131,7 @@ int main(int, char * *)
   myHelper->SetMovingVolume(eTfmImage);
   myHelper->SetFixedBinaryVolume(fixedMask);
   myHelper->SetMovingBinaryVolume(movingMask);
-  myHelper->SetCurrentGenericTransform(ITK_NULLPTR);
+  myHelper->SetCurrentGenericTransform(nullptr);
   myHelper->SetInitializeTransformMode("useCenterOfROIAlign");
   myHelper->SetTransformType(transformTypeVector);
   myHelper->Update();

@@ -28,7 +28,7 @@
 namespace itk
 {
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::LOCAL_DifferenceImageFilter() :
   m_DifferenceThreshold(NumericTraits<OutputPixelType>::ZeroValue()),
@@ -43,7 +43,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -60,7 +60,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::SetValidInput(const InputImageType *validImage)
@@ -70,7 +70,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::SetTestInput(const InputImageType *testImage)
@@ -80,7 +80,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::BeforeThreadedGenerateData()
@@ -102,7 +102,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType & threadRegion, ThreadIdType threadId)
@@ -234,7 +234,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
 ::AfterThreadedGenerateData()

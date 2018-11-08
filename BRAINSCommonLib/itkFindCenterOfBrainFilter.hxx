@@ -29,7 +29,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 FindCenterOfBrainFilter<TInputImage, TMaskImage>
 ::FindCenterOfBrainFilter() :
   m_Maximize(true),
@@ -54,13 +54,13 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   m_CenterOfBrain[2] = 0.0;
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 FindCenterOfBrainFilter<TInputImage, TMaskImage>
 ::~FindCenterOfBrainFilter()
 {
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void
 FindCenterOfBrainFilter<TInputImage, TMaskImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -79,7 +79,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   os << indent << "TrimmedImage:            " << this->m_TrimmedImage << std::endl;
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void
 FindCenterOfBrainFilter<TInputImage, TMaskImage>
 ::AllocateOutputs()
@@ -91,7 +91,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   this->GraftOutput(image);
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void
 FindCenterOfBrainFilter<TInputImage, TMaskImage>
 ::GenerateData()

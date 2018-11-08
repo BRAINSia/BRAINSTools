@@ -43,7 +43,7 @@
  *  This helper class will take care of instantiating the appropriate
  *  ITK Export class corresponding to the actual pixel type of the
  *  input image. */
-template <class TPixel>
+template <typename TPixel>
 class PipelineCreator
 {
 public:

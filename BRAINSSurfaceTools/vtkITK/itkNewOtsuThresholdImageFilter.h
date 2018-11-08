@@ -38,7 +38,7 @@ namespace itk
  * \sa BinaryThresholdImageFilter
  * \ingroup IntensityImageFilters  Multithreaded
  */
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 class NewOtsuThresholdImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage>
 {

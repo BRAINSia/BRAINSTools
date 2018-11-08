@@ -52,7 +52,7 @@ namespace itk
 //
 // Constructor
 //
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::HammerTissueAttributeVectorFromPartialVolumeImageFilter()
 {
@@ -77,13 +77,13 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
 //
 // Destructor
 //
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::~HammerTissueAttributeVectorFromPartialVolumeImageFilter()
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -196,7 +196,7 @@ throw (InvalidRequestedRegionError)
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::CreateN1Neighbor()
@@ -218,7 +218,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
   m_N1Neighborhood[5][2] = 1;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::CreateFeatureNeighbor(int Radius)
@@ -248,7 +248,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -478,7 +478,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
 /**
   * Standard "PrintSelf" method
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

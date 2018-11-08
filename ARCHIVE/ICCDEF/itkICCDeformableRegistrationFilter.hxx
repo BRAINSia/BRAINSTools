@@ -40,7 +40,7 @@ namespace itk
 /**
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ICCDeformableRegistrationFilter()
 {
@@ -100,7 +100,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   m_UseConsistentIntensity =  false;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GenerateInputRequestedRegion()
@@ -152,7 +152,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
  * If the initial deformation is not set, the output is
  * fill with zero vectors.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::CopyInputToOutput()
@@ -220,7 +220,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
+template <typename TFixedImage, typename TMovingImage, typename TField>
 typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::ICCDeformableFunctionType
 * ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
@@ -238,7 +238,7 @@ typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
   }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
+template <typename TFixedImage, typename TMovingImage, typename TField>
 const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::ICCDeformableFunctionType
 * ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
@@ -256,7 +256,7 @@ const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField
   }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
+template <typename TFixedImage, typename TMovingImage, typename TField>
 typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::ICCDeformableFunctionType
 * ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
@@ -274,7 +274,7 @@ typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
   }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
+template <typename TFixedImage, typename TMovingImage, typename TField>
 const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::ICCDeformableFunctionType
 * ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
@@ -291,7 +291,7 @@ const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TField
   return drfp;
   }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::Initialize()
@@ -486,7 +486,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  * Set the function state values before each iteration
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::InitializeIteration()
@@ -513,7 +513,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                 TDisplacementField>
@@ -529,7 +529,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
   b->SetBackgroundFilledValue(this->GetBackgroundFilledValue() );
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                                TDisplacementField>::MaskType
 * ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
@@ -540,7 +540,7 @@ const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
   return f->GetMovingImageMask();
   }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                 TDisplacementField>
@@ -553,7 +553,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
   b->SetFixedLandmark(lk);
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                 TDisplacementField>
@@ -569,7 +569,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                 TDisplacementField>
@@ -585,7 +585,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
   f->SetBackgroundFilledValue(this->GetBackgroundFilledValue() );
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                                TDisplacementField>::MaskType
 * ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
@@ -599,7 +599,7 @@ const typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage,
 /*
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetForwardMetric() const
@@ -612,7 +612,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /*
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetBackwardMetric() const
@@ -625,7 +625,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *  Get Intensity Difference Threshold
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetIntensityDifferenceThreshold() const
@@ -638,7 +638,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *  Set Intensity Difference Threshold
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetIntensityDifferenceThreshold(double threshold)
@@ -653,7 +653,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *  Get Maximum Update Step Length
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetMaximumUpdateStepLength() const
@@ -666,7 +666,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *  Set Maximum Update Step Length
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetMaximumUpdateStepLength(double threshold)
@@ -683,7 +683,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const double &
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetForwardRMSChange() const
@@ -693,7 +693,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   return drfp->GetRMSChange();
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const double &
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetBackwardRMSChange() const
@@ -706,7 +706,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::AllocateUpdateBuffer()
@@ -726,7 +726,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 typename
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>::TimeStepType
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
@@ -761,7 +761,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 /**
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ApplyUpdate(const TimeStepType & /* dt */)
@@ -894,7 +894,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -907,7 +907,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
      << this->m_UseFirstOrderExp << std::endl;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ProcessObject::DataObjectPointer
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx)
@@ -929,7 +929,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeLinearElastic(DisplacementFieldFFTPointer& coeff, float normalizer)
@@ -946,7 +946,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   this->GetMultiThreader()->SingleMethodExecute();
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ITK_THREAD_RETURN_TYPE
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeLinearElasticThreaderCallback(void * arg)
@@ -974,7 +974,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   return ITK_THREAD_RETURN_VALUE;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ThreadedComputeLinearElastic(DisplacementFieldFFTPointer& coeff, float rho4delta_normalizer,
@@ -1055,7 +1055,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeInverseConsistency(DisplacementFieldFFTPointer& inv0, DisplacementFieldFFTPointer& inv1, float normalizer)
@@ -1073,7 +1073,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   this->GetMultiThreader()->SingleMethodExecute();
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ITK_THREAD_RETURN_TYPE
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeInverseConsistencyThreaderCallback(void * arg)
@@ -1103,7 +1103,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   return ITK_THREAD_RETURN_VALUE;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ThreadedComputeInverseConsistency(DisplacementFieldFFTPointer& inv0, DisplacementFieldFFTPointer& inv1,
@@ -1145,7 +1145,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   m_Coefficients[1]->Modified();
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 unsigned int
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType& splitRegion)
@@ -1201,7 +1201,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   return maxThreadIdUsed + 1;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeMinJac(DisplacementFieldPointer& deffield)

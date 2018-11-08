@@ -55,7 +55,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 class QuadEdgeMeshScalarPixelValuesSmoothingFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

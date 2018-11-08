@@ -681,7 +681,7 @@ itk::Matrix<double, 3, 3> GetMatrixInverse(const itk::Matrix<double, 3, 3> & inp
 #endif
 
 #if 0 //RM
-template<class TScalarType>
+template<typename TScalarType>
 void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  )
 {
   typename itk::TransformFileWriterTemplate<TScalarType>::Pointer writer = itk::TransformFileWriterTemplate<TScalarType>::New();

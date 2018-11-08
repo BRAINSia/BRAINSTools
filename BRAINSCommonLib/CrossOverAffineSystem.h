@@ -47,7 +47,7 @@
   *
   */
 
-template <class TCoordinateType,
+template <typename TCoordinateType,
           unsigned int NDimensions = 3>
 class CrossOverAffineSystem : public itk::LightProcessObject
 {

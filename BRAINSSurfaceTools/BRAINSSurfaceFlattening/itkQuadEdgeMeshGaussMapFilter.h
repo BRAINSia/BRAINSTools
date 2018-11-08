@@ -31,7 +31,7 @@ namespace itk
  * \brief Compute the Gauss map of a given mesh. It change the position of
  * each vertex to its computed normal.
 */
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 class QuadEdgeMeshGaussMapFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

@@ -35,9 +35,9 @@ namespace itk
  * Then each disk is mapped to one sphere hemisphere by inverse stereo
  * projection.
 */
-template <class TInputMesh,
-          class TOutputMesh,
-          class TSolverTraits>
+template <typename TInputMesh,
+          typename TOutputMesh,
+          typename TSolverTraits>
 class QuadEdgeMeshToSphereFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

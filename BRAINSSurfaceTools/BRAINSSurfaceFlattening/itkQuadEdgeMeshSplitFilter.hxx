@@ -23,7 +23,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshSplitFilter() : Superclass(), m_StartCellId( 0 ), m_Area(
     0. )
 {
@@ -34,13 +34,13 @@ QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshSplitFilter() : Su
   this->SetNthOutput( 1, OutputMeshType::New() );
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::
 ~QuadEdgeMeshSplitFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
@@ -105,7 +105,7 @@ QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::GenerateData()
     }
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::OutputPointIdList
 QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::AddFacePointsToOutputMesh( OutputMeshType* ioMesh,
                                                                              InputPolygonType* iPoly )

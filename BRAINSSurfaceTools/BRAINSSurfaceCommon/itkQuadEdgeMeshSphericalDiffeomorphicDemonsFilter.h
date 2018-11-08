@@ -31,7 +31,7 @@
 
 namespace itk
 {
-template <class TFixedMesh, class TMovingMesh, class TOutputMesh>
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 class QuadEdgeMeshSphericalDiffeomorphicDemonsFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TFixedMesh, TOutputMesh>
 {

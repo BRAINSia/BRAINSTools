@@ -29,7 +29,7 @@ namespace itk
  * \brief This filter first computes the center of mass C of the input mesh.
  * Then it projects each vertex on a sphere centered at C.
 */
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 class QuadEdgeMeshRayTracingFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

@@ -33,7 +33,7 @@ namespace itk
  * \ingroup Writers
  *
  */
-template <class TMesh>
+template <typename TMesh>
 class QuadEdgeMeshVectorDataVTKPolyDataWriter : public VTKPolyDataWriter<TMesh>
 {
 public:

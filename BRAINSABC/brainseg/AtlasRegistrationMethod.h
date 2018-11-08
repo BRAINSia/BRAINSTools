@@ -137,7 +137,7 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
 
 /** \class AtlasRegistrationMethod
  */
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 class AtlasRegistrationMethod : public itk::Object
 {
 public:

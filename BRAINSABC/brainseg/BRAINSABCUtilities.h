@@ -117,7 +117,7 @@ private:
   mutable std::list<std::string> m_firstInOrdering;
 };
 
-template<class Key, class T>
+template<typename Key, typename T>
 class orderedmap: public std::map<Key, T, firstInOrderingOfStrings>
 {
 public:
@@ -204,7 +204,7 @@ extern template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatI
 
 extern template void ZeroNegativeValuesInPlace<FloatImageType>(  std::vector<FloatImageType::Pointer> & );
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
 {
@@ -248,7 +248,7 @@ NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
 }
 
 // debug output for map of vector structure
-template <class TMap>
+template <typename TMap>
 void
 PrintMapOfImageVectors(const TMap &map)
 {
@@ -267,7 +267,7 @@ PrintMapOfImageVectors(const TMap &map)
     }
 }
 
-template <class TMap>
+template <typename TMap>
 unsigned int TotalMapSize(const TMap &map)
 {
   unsigned int rval = 0;
@@ -283,7 +283,7 @@ unsigned int TotalMapSize(const TMap &map)
   return rval;
 }
 
-template <class TMap>
+template <typename TMap>
 typename TMap::mapped_type::value_type &
 GetMapVectorNthElement(TMap &map, int n)
 {
@@ -308,21 +308,21 @@ GetMapVectorNthElement(TMap &map, int n)
   return returnElement;
 }
 
-template <class TMap>
+template <typename TMap>
 typename TMap::mapped_type::value_type &
 GetMapVectorFirstElement(TMap &map)
 {
   return *(map.begin()->second.begin());
 }
 
-template <class TMap>
+template <typename TMap>
 const typename TMap::mapped_type::value_type &
 GetMapVectorFirstElement(const TMap &map)
 {
   return *(map.begin()->second.begin());
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 CopyImage(const typename ImageType::Pointer & input )
 {

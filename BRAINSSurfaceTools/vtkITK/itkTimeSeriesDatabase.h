@@ -25,7 +25,7 @@ namespace itk
  * is larger than main memory, but may still be accessed in a rapid manner.  Though not strictly
  * ITK conforming, this initial pass is strictly 4 dimensional datasets.
  */
-template <class TPixel> class TimeSeriesDatabase : public ImageSource<Image<TPixel,3> > {
+template <typename TPixel> class TimeSeriesDatabase : public ImageSource<Image<TPixel,3> > {
 public:
 
   typedef TimeSeriesDatabase Self;

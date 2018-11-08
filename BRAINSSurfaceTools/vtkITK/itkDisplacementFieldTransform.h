@@ -27,7 +27,7 @@
 namespace itk
 {
 template <
-  class TScalarType = double,             // Data type for scalars
+  typename TScalarType = double,             // Data type for scalars
   unsigned int NDimensions = 3>
 // Number of dimensions
 class DisplacementFieldTransform :

@@ -60,7 +60,7 @@ namespace itk
 /** \class DtiFreeTrackingFilter
  */
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 class DtiFreeTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
                                                                 TAnisotropyImageType,
                                                                 TMaskImageType>

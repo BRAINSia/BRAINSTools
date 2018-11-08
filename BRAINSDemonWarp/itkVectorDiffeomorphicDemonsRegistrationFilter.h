@@ -74,7 +74,7 @@ namespace itk
  * \sa DemonsRegistrationFunction
  * \ingroup DeformableImageRegistration MultiThreaded
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 class VectorDiffeomorphicDemonsRegistrationFilter :
   public         PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                                  TDisplacementField>

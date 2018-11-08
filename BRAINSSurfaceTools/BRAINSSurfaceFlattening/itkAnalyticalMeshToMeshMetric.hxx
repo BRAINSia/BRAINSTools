@@ -31,7 +31,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::AnalyticalMeshToMeshMetric()
 {
@@ -41,7 +41,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 /**
  * Get the match Measure
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 typename AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>::MeasureType
 AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::GetValue( const TransformParametersType & parameters ) const
@@ -101,7 +101,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 /**
  * Get the Derivative Measure
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::GetDerivative( const TransformParametersType & parameters,
@@ -221,7 +221,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 /*
  * Get both the match Measure and theDerivative Measure
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::GetValueAndDerivative(const TransformParametersType & parameters,

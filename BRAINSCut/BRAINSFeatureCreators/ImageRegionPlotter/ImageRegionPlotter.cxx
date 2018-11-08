@@ -83,7 +83,7 @@ GetFilename( const std::string& filename)
 /*
  * Histogram Mapping to Image
  */
-template <class TImageType, class THistogram>
+template <typename TImageType, typename THistogram>
 typename TImageType::Pointer
 MapHistogramToImage( typename TImageType::Pointer inputImage,
                      typename THistogram::Pointer histogram,

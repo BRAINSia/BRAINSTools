@@ -29,7 +29,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 LinearInterpolateMeshFunction<TInputMesh>
 ::LinearInterpolateMeshFunction()
 {
@@ -41,7 +41,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Destructor
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 LinearInterpolateMeshFunction<TInputMesh>
 ::~LinearInterpolateMeshFunction()
 {
@@ -50,7 +50,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 LinearInterpolateMeshFunction<TInputMesh>
 ::PrintSelf( std::ostream& os, Indent indent) const
@@ -61,7 +61,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Evaluate the mesh at a given point position.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 LinearInterpolateMeshFunction<TInputMesh>
 ::EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const
@@ -105,7 +105,7 @@ LinearInterpolateMeshFunction<TInputMesh>
     }
 }
 
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 LinearInterpolateMeshFunction<TInputMesh>
 ::GetDerivativeFromPixelsAndBasis(PixelType pixelValue1, PixelType pixelValue2,
@@ -122,8 +122,8 @@ LinearInterpolateMeshFunction<TInputMesh>
   derivative = m_U12 * variation12  + m_U32 * variation32;
 }
 
-template <class TInputMesh>
-template <class TArray, class TMatrix>
+template <typename TInputMesh>
+template <typename TArray, typename TMatrix>
 void
 LinearInterpolateMeshFunction<TInputMesh>
 ::GetJacobianFromVectorAndBasis(
@@ -150,7 +150,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Evaluate the mesh at a given point position.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 typename
 LinearInterpolateMeshFunction<TInputMesh>::OutputType
 LinearInterpolateMeshFunction<TInputMesh>
@@ -208,7 +208,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Find corresponding triangle, vector base and barycentric coordinates
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 bool
 LinearInterpolateMeshFunction<TInputMesh>
 ::FindTriangle( const PointType& point, InstanceIdentifierVectorType & pointIds ) const
@@ -284,7 +284,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Find the first triangle of the closest point
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 LinearInterpolateMeshFunction<TInputMesh>
 ::FindTriangleOfClosestPoint( const PointType& point, InstanceIdentifierVectorType & pointIds ) const
@@ -315,7 +315,7 @@ LinearInterpolateMeshFunction<TInputMesh>
  * Compute interpolation weights and verify if the input point is inside the
  * triangle formed by the three identifiers.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 bool
 LinearInterpolateMeshFunction<TInputMesh>
 ::ComputeWeights( const PointType & inputPoint,
@@ -442,7 +442,7 @@ LinearInterpolateMeshFunction<TInputMesh>
  * Return interpolate weight values. This is provided as a convenience for
  * derived classes.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 const typename LinearInterpolateMeshFunction<TInputMesh>::RealType
 & LinearInterpolateMeshFunction<TInputMesh>
 ::GetInterpolationWeight( unsigned int index ) const

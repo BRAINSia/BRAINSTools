@@ -45,7 +45,7 @@
 #include "gtractGuidedTrackingCLP.h"
 #include "itkDtiGuidedTrackingFilter.h"
 
-template <class TImageType>
+template <typename TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
   typename TImageType::DirectionType imageDir = image->GetDirection();

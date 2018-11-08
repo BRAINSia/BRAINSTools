@@ -61,7 +61,7 @@ namespace itk
  *
  * \ingroup ImageToImageFilter
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class GtractInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

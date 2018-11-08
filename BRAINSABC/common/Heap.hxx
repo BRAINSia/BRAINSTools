@@ -29,26 +29,26 @@
 #define HEAP_LEFT(x) ( 2 * ( x ) )
 #define HEAP_RIGHT(x) ( 2 * ( x ) + 1 )
 
-template <class T>
+template <typename T>
 Heap<T>
 ::Heap()
 {
 }
 
-template <class T>
+template <typename T>
 Heap<T>
 ::Heap(const Heap<T> & h) :
   m_Elements(h.m_Elements)
 {
 }
 
-template <class T>
+template <typename T>
 Heap<T>
 ::~Heap()
 {
 }
 
-template <class T>
+template <typename T>
 Heap<T> &
 Heap<T>
 ::operator =( const Heap & h )
@@ -56,7 +56,7 @@ Heap<T>
   m_Elements = h.m_Elements;
 }
 
-template <class T>
+template <typename T>
 void
 Heap<T>
 ::Allocate(unsigned int size)
@@ -64,7 +64,7 @@ Heap<T>
   m_Elements.resize(size);
 }
 
-template <class T>
+template <typename T>
 T
 Heap<T>
 ::ExtractMinimum()
@@ -86,7 +86,7 @@ Heap<T>
   return minElem;
 }
 
-template <class T>
+template <typename T>
 bool
 Heap<T>
 ::IsEmpty()
@@ -94,7 +94,7 @@ Heap<T>
   return m_Elements.empty();
 }
 
-template <class T>
+template <typename T>
 void
 Heap<T>
 ::Insert(const T & e)
@@ -112,7 +112,7 @@ Heap<T>
   m_Elements[i - 1] = e;
 }
 
-template <class T>
+template <typename T>
 void
 Heap<T>
 ::PreserveHeapOrder()
@@ -162,7 +162,7 @@ Heap<T>
   while( true );
 }
 
-template <class T>
+template <typename T>
 void
 Heap<T>
 ::UpdateElementAt(unsigned int i)
@@ -196,7 +196,7 @@ Heap<T>
     }
 }
 
-template <class T>
+template <typename T>
 T *
 heapFirstK(std::vector<T> & array, unsigned int n, unsigned int k)
 {
@@ -220,7 +220,7 @@ heapFirstK(std::vector<T> & array, unsigned int n, unsigned int k)
   return firstk;
 }
 
-template <class T>
+template <typename T>
 T
 heapKthElement(std::vector<T> & array, unsigned int n, unsigned int k)
 {
@@ -244,7 +244,7 @@ heapKthElement(std::vector<T> & array, unsigned int n, unsigned int k)
   return heap.ExtractMinimum();
 }
 
-template <class T>
+template <typename T>
 T
 heapMedian(std::vector<T> & array, unsigned int n)
 {

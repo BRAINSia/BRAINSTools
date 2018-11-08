@@ -32,7 +32,7 @@ namespace itk
   * This filter
   *
   */
-template <class TInputImage, class TOutputImage = Image<unsigned short, TInputImage::ImageDimension> >
+template <typename TInputImage, typename TOutputImage = Image<unsigned short, TInputImage::ImageDimension> >
 class MultiModeHistogramThresholdBinaryImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

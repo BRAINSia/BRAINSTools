@@ -12,7 +12,7 @@
 namespace itk
 {
 
-template <class TInputImage, class TCoordRep = float>
+template <typename TInputImage, typename TCoordRep = float>
 class LevelTracingImageFunction :
     public ImageFunction<TInputImage,bool,TCoordRep>
 {
@@ -160,7 +160,7 @@ private:
 /**
  * Constructor
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 LevelTracingImageFilter<TInputImage, TOutputImage>
 ::LevelTracingImageFilter()
 {
@@ -178,7 +178,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
 /** Smart Pointer type to a DataObject. */
 typedef DataObject::Pointer DataObjectPointer;
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 DataObjectPointer
 LevelTracingImageFilter<TInputImage, TOutputImage>
 ::MakeOutput(unsigned int output)
@@ -204,7 +204,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
 /**
  * Standard PrintSelf method.
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LevelTracingImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -214,7 +214,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
      << std::endl;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LevelTracingImageFilter<TInputImage,TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -227,7 +227,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LevelTracingImageFilter<TInputImage,TOutputImage>
 ::EnlargeOutputRequestedRegion(DataObject *output)
@@ -236,7 +236,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   output->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LevelTracingImageFilter<TInputImage,TOutputImage>
 ::GenerateData()
@@ -253,7 +253,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 int
 LevelTracingImageFilter<TInputImage,TOutputImage>
 ::GetThreshold()
@@ -263,7 +263,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 }
 
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LevelTracingImageFilter<TInputImage,TOutputImage>
 ::Trace(const Dispatch<2>&)
@@ -446,7 +446,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
     }  while ( ! ((pix[0] == seed[0]) && (pix[1] == seed[1])) );  //end while
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LevelTracingImageFilter<TInputImage,TOutputImage>
 ::Trace(const DispatchBase &)

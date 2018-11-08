@@ -19,7 +19,7 @@ namespace itk {
     /* For ANSI-challenged compilers, you may want to #define
      * NO_MEMBER_TEMPLATES or explicit */
 #define NO_MEMBER_TEMPLATES
-    template <class X> class counted_ptr
+    template <typename X> class counted_ptr
       {
       public:
         typedef X element_type;
@@ -40,10 +40,10 @@ namespace itk {
           }
 
 #ifndef NO_MEMBER_TEMPLATES
-        template <class Y> friend class counted_ptr<Y>;
-        template <class Y> counted_ptr(const counted_ptr<Y>& r) throw()
+        template <typename Y> friend class counted_ptr<Y>;
+        template <typename Y> counted_ptr(const counted_ptr<Y>& r) throw()
           {acquire(r.itsCounter);}
-        template <class Y> counted_ptr& operator=(const counted_ptr<Y>& r)
+        template <typename Y> counted_ptr& operator=(const counted_ptr<Y>& r)
           {
             if (this != &r) {
               release();

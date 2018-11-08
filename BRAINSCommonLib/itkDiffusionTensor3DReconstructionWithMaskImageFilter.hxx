@@ -28,8 +28,8 @@
 
 namespace itk
 {
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                    TGradientImagePixelType, TTensorPixelType>
 ::DiffusionTensor3DReconstructionWithMaskImageFilter() :
@@ -50,8 +50,8 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
   this->SetNumberOfThreads(1);
 }
 
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                         TGradientImagePixelType, TTensorPixelType>
 ::BeforeThreadedGenerateData()
@@ -121,8 +121,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
 //
 // Until we fix netlib svd routines, we will need to set the number of thread
 // to 1.
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                         TGradientImagePixelType, TTensorPixelType>
 ::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
@@ -360,8 +360,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
     }
 }
 
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                         TGradientImagePixelType, TTensorPixelType>
 ::ComputeTensorBasis()
@@ -412,8 +412,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
   m_BMatrix.inplace_transpose();
 }
 
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                         TGradientImagePixelType, TTensorPixelType>
 ::AddGradientImage( const GradientDirectionType & gradientDirection,
@@ -442,8 +442,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
   m_GradientImageTypeEnumeration = GradientIsInManyImages;
 }
 
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                         TGradientImagePixelType, TTensorPixelType>
 ::SetGradientImage( GradientDirectionContainerType *gradientDirection,
@@ -491,8 +491,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
   m_GradientImageTypeEnumeration = GradientIsInASingleImage;
 }
 
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType, class TTensorPixelType>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType, typename TTensorPixelType>
 void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                         TGradientImagePixelType, TTensorPixelType>
 ::PrintSelf(std::ostream& os, Indent indent) const

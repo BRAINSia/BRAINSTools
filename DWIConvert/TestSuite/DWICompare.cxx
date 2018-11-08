@@ -47,7 +47,7 @@
 namespace
 {
 
-template <class ImageType>
+template <typename ImageType>
 bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
                                   typename ImageType::ConstPointer second)
 {
@@ -109,7 +109,7 @@ bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
   return failureStatus;
 }
 
-template <class PixelType>
+template <typename PixelType>
 int DoIt( int argc, char * argv[], PixelType )
 {
   PARSE_ARGS;

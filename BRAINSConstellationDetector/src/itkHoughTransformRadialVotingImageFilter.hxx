@@ -63,7 +63,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::HoughTransformRadialVotingImageFilter() :
   m_MinimumRadius(0),   // by default
@@ -92,13 +92,13 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
   this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::~HoughTransformRadialVotingImageFilter()
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::SetRadius(InputCoordType radius)
@@ -107,7 +107,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
   this->SetMaximumRadius(radius);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::EnlargeOutputRequestedRegion(DataObject *output)
@@ -117,7 +117,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
   output->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -132,7 +132,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::BeforeThreadedGenerateData()
@@ -154,7 +154,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
   m_RadiusImage->FillBuffer(0);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::AfterThreadedGenerateData()
@@ -176,7 +176,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(
   const OutputImageRegionType & windowRegion,
@@ -299,7 +299,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeMeanRadiusImage()
 {
@@ -324,7 +324,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeMeanRad
 }
 
 /** Get the list of circles. This recomputes the circles */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::SpheresListType
 & HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::GetSpheres()
@@ -436,7 +436,7 @@ typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::Spher
   }
 
 /** Print Self information */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

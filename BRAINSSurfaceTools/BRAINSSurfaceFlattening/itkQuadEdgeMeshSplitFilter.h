@@ -28,7 +28,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 class QuadEdgeMeshSplitFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

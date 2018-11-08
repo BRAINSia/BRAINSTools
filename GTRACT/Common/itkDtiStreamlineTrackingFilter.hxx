@@ -58,7 +58,7 @@
 
 namespace itk
 {
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::DtiStreamlineTrackingFilter() : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType,
                                                         TMaskImageType >::DtiTrackingFilterBase()
@@ -66,7 +66,7 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
   this->m_CurvatureThreshold = 45;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::Update()

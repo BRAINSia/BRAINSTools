@@ -42,7 +42,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 class DeformQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
 {

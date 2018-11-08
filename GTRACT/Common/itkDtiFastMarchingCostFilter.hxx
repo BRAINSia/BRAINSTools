@@ -64,7 +64,7 @@ namespace itk
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::DtiFastMarchingCostFilter() :
   m_TrialHeap()
@@ -104,7 +104,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 void
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -130,7 +130,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 void
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::GenerateOutputInformation()
@@ -153,7 +153,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 void
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::EnlargeOutputRequestedRegion(
@@ -181,7 +181,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 // ::Initialize( const TensorImageType * tensorImage, LevelSetImageType * output
 // )
@@ -382,7 +382,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::UpdateFront( /* const TensorImageType * tensorImage, */ LevelSetImageType *output )
 {
@@ -462,7 +462,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
  *
  */
 
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 double
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::InitializeTrialPoints(
@@ -603,7 +603,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 /*
  *
  */
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 void
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 ::UpdateNeighbors(
@@ -664,7 +664,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
  *
  */
 
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 double
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
@@ -824,7 +824,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
  *
  */
 
-template <class TLevelSet, class TTensorImage>
+template <typename TLevelSet, typename TTensorImage>
 double
 DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 

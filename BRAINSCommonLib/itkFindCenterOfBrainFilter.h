@@ -28,7 +28,7 @@ namespace itk
 /**
   * \class FindCenterOfBrainFilter
   */
-template <class TInputImage, class TMaskImage = itk::Image<unsigned char, 3> >
+template <typename TInputImage, typename TMaskImage = itk::Image<unsigned char, 3> >
 class FindCenterOfBrainFilter :
   public         ImageToImageFilter<TInputImage, TInputImage>
 {

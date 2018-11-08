@@ -29,7 +29,7 @@ namespace itk
 {
 // ----------------------------------------------------------------------------
 // Constructor
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 ICCIterativeInverseDisplacementFieldImageFilter<TInputImage,
                                                 TOutputImage>::ICCIterativeInverseDisplacementFieldImageFilter()
 {
@@ -39,7 +39,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage,
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
@@ -74,7 +74,7 @@ void ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   m_Time = time.GetMean();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr)
@@ -90,7 +90,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   this->GetMultiThreader()->SingleMethodExecute();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 ITK_THREAD_RETURN_TYPE
 ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverseThreaderCallback(void * arg)
@@ -118,7 +118,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   return ITK_THREAD_RETURN_VALUE;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ThreadedComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
@@ -222,7 +222,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
     }   // end while loop
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::OutputImagePixelType
 ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
@@ -339,7 +339,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::InputImageIndexType
 ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
@@ -364,7 +364,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {

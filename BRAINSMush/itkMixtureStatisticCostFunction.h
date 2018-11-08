@@ -47,7 +47,7 @@
 
 namespace itk
 {
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 class MixtureStatisticCostFunction :
   public MultipleValuedCostFunction
 {

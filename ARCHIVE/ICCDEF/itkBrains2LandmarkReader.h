@@ -39,7 +39,7 @@
 
 namespace itk
 {
-template <class TPixelType, unsigned Dimension>
+template <typename TPixelType, unsigned Dimension>
 class Brains2LandmarkReader : public LightProcessObject
 {
 public:

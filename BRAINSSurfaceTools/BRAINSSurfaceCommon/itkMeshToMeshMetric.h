@@ -41,7 +41,7 @@ namespace itk
  *
  */
 
-template <class TFixedMesh,  class TMovingMesh>
+template <typename TFixedMesh,  typename TMovingMesh>
 class MeshToMeshMetric : public SingleValuedCostFunction
 {
 public:

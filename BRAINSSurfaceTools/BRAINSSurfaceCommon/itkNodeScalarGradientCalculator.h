@@ -37,7 +37,7 @@ namespace itk
  * \ingroup MeshFunctions
  *
  * */
-template <class TInputMesh, class TPointDataContainer = double>
+template <typename TInputMesh, typename TPointDataContainer = double>
 class NodeScalarGradientCalculator :
   public         FunctionBase<typename TInputMesh::PointIdentifier,
                               CovariantVector<

@@ -67,7 +67,7 @@ namespace itk
 /** \class DtiFastMarchingTrackingFilter
  */
 
-template <class TTensorImageType, class TAnisotropyImageType, class TCostImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 class GTRACT_COMMON_EXPORT DtiFastMarchingTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
                                                                                              TAnisotropyImageType,
                                                                                              TMaskImageType>

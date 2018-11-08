@@ -55,7 +55,7 @@
 #endif
 
 /** Print image information from the reader and the writer. */
-template <class ReaderType, class WriterType>
+template <typename ReaderType, typename WriterType>
 void PrintInfo( ReaderType reader, WriterType writer )
 {
   /** Typedef's. */
@@ -117,7 +117,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.
  */
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string  outputFileName )
 {
   /** Typedef the correct reader, caster and writer. */
@@ -191,7 +191,7 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string 
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.
  */
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
 {
   /**  Typedef the correct reader, caster and writer. */
@@ -291,7 +291,7 @@ if( outputFileName.rfind(".vti") == (outputFileName.size() - 4) )
   vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, call);                 \
   vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, call)
 
-template <class TInputPixelType, class TOutputPixelType>
+template <typename TInputPixelType, typename TOutputPixelType>
 int
 ReadVTICastWriteImage( std::string inputFileName,
                        std::string outputFileName,
@@ -304,7 +304,7 @@ ReadVTICastWriteImage( std::string inputFileName,
   return 1;
 }
 
-template <class TOutputPixelType>
+template <typename TOutputPixelType>
 int
 ReadVTICastWriteImage( std::string inputFileName,
                        std::string outputFileName,
@@ -338,7 +338,7 @@ ReadVTICastWriteImage( std::string inputFileName,
 }
 
 #else
-template <class TOuptutPixelType>
+template <typename TOuptutPixelType>
 int
 ReadVTICastWriteImage( std::string,
                        std::string,

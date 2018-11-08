@@ -26,7 +26,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 TriangleBasisSystem<TVector, NSubspaceDimension>
 ::TriangleBasisSystem()
 {
@@ -35,7 +35,7 @@ TriangleBasisSystem<TVector, NSubspaceDimension>
 /**
  * Destructor
  */
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 TriangleBasisSystem<TVector, NSubspaceDimension>
 ::~TriangleBasisSystem()
 {
@@ -44,7 +44,7 @@ TriangleBasisSystem<TVector, NSubspaceDimension>
 /**
  * Copy Constructor
  */
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 TriangleBasisSystem<TVector, NSubspaceDimension>
 ::TriangleBasisSystem( const TriangleBasisSystem & rhs )
 {
@@ -57,7 +57,7 @@ TriangleBasisSystem<TVector, NSubspaceDimension>
 /**
  * Operator assignment
  */
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 const TriangleBasisSystem<TVector, NSubspaceDimension> &
 TriangleBasisSystem<TVector, NSubspaceDimension>
 ::operator=( const TriangleBasisSystem & rhs )
@@ -69,7 +69,7 @@ TriangleBasisSystem<TVector, NSubspaceDimension>
   return *this;
 }
 
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 void
 TriangleBasisSystem<TVector, NSubspaceDimension>
 ::SetVector( unsigned int k, const VectorType & v )
@@ -81,7 +81,7 @@ TriangleBasisSystem<TVector, NSubspaceDimension>
   m_Basis[k] = v;
 }
 
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 const TVector &
 TriangleBasisSystem<TVector, NSubspaceDimension>
 ::GetVector( unsigned int k ) const

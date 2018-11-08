@@ -41,7 +41,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TCoordRep = float>
+template <typename TInputImage, typename TCoordRep = float>
 class TensorLinearInterpolateImageFunction :
   public         TensorInterpolateImageFunction<TInputImage, TCoordRep>
 {

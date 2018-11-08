@@ -27,7 +27,7 @@ namespace itk
 *  \class QuadEdgeMeshDualMetric
 *  \brief Functor which computes a distance between two dual cells.
 * */
-template <class TMesh>
+template <typename TMesh>
 class QuadEdgeMeshDualMetric
 {
 public:
@@ -66,7 +66,7 @@ protected:
 * \brief Functor which computes the distance between 2 faces as the squared
 * Euclidean distance between their center of mass.
 * */
-template <class TMesh>
+template <typename TMesh>
 class QuadEdgeMeshDualSquaredEuclideanMetric : public
   QuadEdgeMeshDualMetric<TMesh>
 {
@@ -129,7 +129,7 @@ public:
 * squared Euclidean distance between their center of mass, weighted by the
 * area of the first face.
 * */
-template <class TMesh>
+template <typename TMesh>
 class QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric
   : public QuadEdgeMeshDualMetric<TMesh>
 {

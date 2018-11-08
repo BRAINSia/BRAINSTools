@@ -49,7 +49,7 @@
 
 namespace itk
 {
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 class ICCDeformableRegistrationFilter :
   public         PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                                  TDisplacementField>

@@ -28,7 +28,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 NaryRelabelImageFilter<TInputImage, TOutputImage>
 ::NaryRelabelImageFilter()
 {
@@ -39,7 +39,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
 /**
  * ThreadedGenerateData Performs the pixel-wise addition
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 NaryRelabelImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -139,7 +139,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 NaryRelabelImageFilter<TInputImage, TOutputImage>
 ::PrintSelf( std::ostream& os, Indent indent) const

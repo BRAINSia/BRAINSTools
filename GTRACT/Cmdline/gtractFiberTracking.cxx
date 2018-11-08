@@ -55,7 +55,7 @@
 #include "BRAINSThreadControl.h"
 #include <BRAINSCommonLib.h>
 
-template <class TImageType>
+template <typename TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
   typename TImageType::DirectionType imageDir = image->GetDirection();
@@ -75,7 +75,7 @@ void AdaptOriginAndDirection( typename TImageType::Pointer image )
   image->SetSpacing( spacing );
 }
 
-template <class TImageType>
+template <typename TImageType>
 vtkMatrix4x4 * CreateIjkToRasMatrix( typename TImageType::Pointer image )
 {
   double        spacing[3];

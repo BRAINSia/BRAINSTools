@@ -57,7 +57,7 @@ public:
   // get the filename out of the list specified by listname.
   // templated over the list type and element typee.
   //
-  template <class ListType, class ElementType>
+  template <typename ListType, typename ElementType>
   std::string GetFilenameByType(const char *listName,  const char *type) const
   {
     const ListType *   list = this->Get<ListType>(listName);

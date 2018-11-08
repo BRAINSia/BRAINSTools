@@ -27,7 +27,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::NodeVectorJacobianCalculator()
 {
@@ -42,7 +42,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Destructor
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::~NodeVectorJacobianCalculator()
 {
@@ -51,7 +51,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Check inputs
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::Initialize()
@@ -64,7 +64,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Check inputs
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::VerifyInputs() const
@@ -88,7 +88,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Allocate internal Containers
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::AllocateInternalContainers()
@@ -105,7 +105,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::Compute()
@@ -242,7 +242,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Initialize several containers with null values in all their elements.
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::SetContainersToNullValues()
@@ -268,7 +268,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Compute the area of each cell and store them in a container
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::ComputeAreaForAllCells()
@@ -312,7 +312,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::NormalizeDerivativesByTotalArea()
@@ -329,7 +329,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
     }
 }
 
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::ParallelTransport(
@@ -358,7 +358,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 typename NodeVectorJacobianCalculator<TInputMesh, TScalar>::OutputType
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::Evaluate( const InputType & input  ) const
@@ -369,7 +369,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeVectorJacobianCalculator<TInputMesh, TScalar>
 ::PrintSelf( std::ostream& os, Indent indent) const

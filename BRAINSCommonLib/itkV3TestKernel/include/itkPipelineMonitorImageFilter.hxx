@@ -22,7 +22,7 @@
 
 namespace itk
 {
-template <class TImageType>
+template <typename TImageType>
 PipelineMonitorImageFilter<TImageType>
 ::PipelineMonitorImageFilter(void)
 {
@@ -31,7 +31,7 @@ PipelineMonitorImageFilter<TImageType>
   this->ClearPipelineSavedInformation();
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyDownStreamFilterExecutedPropagation(void)
@@ -49,7 +49,7 @@ PipelineMonitorImageFilter<TImageType>
   return ret;
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyInputFilterExecutedStreaming(int expectedNumber)
@@ -72,7 +72,7 @@ PipelineMonitorImageFilter<TImageType>
   return false;
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyInputFilterMatchedUpdateOutputInformation(void)
@@ -108,7 +108,7 @@ PipelineMonitorImageFilter<TImageType>
   return true;
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyInputFilterBufferedRequestedRegions(void)
@@ -129,7 +129,7 @@ PipelineMonitorImageFilter<TImageType>
   return ret;
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyInputFilterMatchedRequestedRegions(void)
@@ -154,7 +154,7 @@ PipelineMonitorImageFilter<TImageType>
   return ret;
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyInputFilterRequestedLargestRegion(void)
@@ -167,7 +167,7 @@ PipelineMonitorImageFilter<TImageType>
   return true;
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyAllInputCanStream(int expectedNumber)
@@ -179,7 +179,7 @@ PipelineMonitorImageFilter<TImageType>
          VerifyInputFilterMatchedUpdateOutputInformation();
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyAllInputCanNotStream(void)
@@ -190,7 +190,7 @@ PipelineMonitorImageFilter<TImageType>
          VerifyInputFilterMatchedUpdateOutputInformation();
 }
 
-template <class TImageType>
+template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>
 ::VerifyAllNoUpdate(void)
@@ -199,7 +199,7 @@ PipelineMonitorImageFilter<TImageType>
          m_NumberOfUpdates == 0;
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::ClearPipelineSavedInformation(void)
@@ -217,7 +217,7 @@ PipelineMonitorImageFilter<TImageType>
   ++m_NumberOfClearPipeline;
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::GenerateOutputInformation(void)
@@ -237,7 +237,7 @@ PipelineMonitorImageFilter<TImageType>
   itkDebugMacro("GenerateOutputInformation called");
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::PropagateRequestedRegion(DataObject *output)
@@ -251,7 +251,7 @@ PipelineMonitorImageFilter<TImageType>
   this->m_OutputRequestedRegions.push_back(this->GetOutput()->GetRequestedRegion() );
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::EnlargeOutputRequestedRegion( DataObject *output)
@@ -262,7 +262,7 @@ PipelineMonitorImageFilter<TImageType>
   itkDebugMacro("EnlargeOutputRequestRegion: " << this->GetOutput()->GetRequestedRegion() );
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::GenerateInputRequestedRegion(void)
@@ -275,7 +275,7 @@ PipelineMonitorImageFilter<TImageType>
   itkDebugMacro("GenerateInputRequestRegion: " << this->GetInput()->GetRequestedRegion() );
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::GenerateData(void)
@@ -299,7 +299,7 @@ PipelineMonitorImageFilter<TImageType>
   ++m_NumberOfUpdates;
 }
 
-template <class TImageType>
+template <typename TImageType>
 void
 PipelineMonitorImageFilter<TImageType>
 ::PrintSelf(std::ostream & os, Indent indent) const

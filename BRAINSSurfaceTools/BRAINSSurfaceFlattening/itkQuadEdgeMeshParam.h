@@ -32,7 +32,7 @@ namespace itk
  *  \note Here we have only implemented some parameterizations with fixed
  *        boundary.
  */
-template <class TInputMesh, class TOutputMesh, class TSolverTraits>
+template <typename TInputMesh, typename TOutputMesh, typename TSolverTraits>
 class QuadEdgeMeshParam :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

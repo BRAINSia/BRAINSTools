@@ -24,7 +24,7 @@
 
 namespace itk
 {
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
 ::QuadEdgeMeshSimilarityCalculator()
 {
@@ -36,13 +36,13 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
   this->m_Jaccard = 0.0;
 }
 
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
 ::~QuadEdgeMeshSimilarityCalculator()
 {
 }
 
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 void
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
 ::SetInputMesh1( const InputMeshType1 * mesh1 )
@@ -55,7 +55,7 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
     }
 }
 
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 const typename
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>::InputMeshType1
 * QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
@@ -67,7 +67,7 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>::InputMeshType1
   return inputMesh1;
   }
 
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 void
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
 ::SetInputMesh2( const InputMeshType2 * mesh2 )
@@ -80,7 +80,7 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
     }
 }
 
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 const typename
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>::InputMeshType2
 * QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
@@ -92,7 +92,7 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>::InputMeshType2
   return inputMesh2;
   }
 
-template <class TInputMesh1, class TInputMesh2>
+template <typename TInputMesh1, typename TInputMesh2>
 void
 QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
 ::Compute()

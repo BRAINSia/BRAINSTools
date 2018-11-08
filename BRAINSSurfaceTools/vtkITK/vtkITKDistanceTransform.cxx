@@ -36,7 +36,7 @@ vtkITKDistanceTransform::~vtkITKDistanceTransform()
 }
 
 
-template <class T>
+template <typename T>
 void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData* input,
                 vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)

@@ -31,7 +31,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::ComputeHistogramQuantileThresholds() :
   m_Image(nullptr),
@@ -46,13 +46,13 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 {
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::~ComputeHistogramQuantileThresholds()
 {
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -65,7 +65,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
      << m_QuantileUpperThreshold << std::endl;
 }
 
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::ImageMinMax(typename TInputImage::PixelType & ImageMin,
@@ -92,7 +92,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
   * @param m_NumberOfValidHistogramsEntries  The number of non-zero histogram
   *bins
   */
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::Calculate()

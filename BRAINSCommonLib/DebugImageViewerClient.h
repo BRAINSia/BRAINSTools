@@ -39,7 +39,7 @@ namespace DebugImageViewerUtil
 typedef itk::SpatialOrientationAdapter SOAdapterType;
 typedef SOAdapterType::DirectionType   DirectionType;
 
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 ScaleAndCast(const typename InputImageType::Pointer & image,
              const typename OutputImageType::PixelType OutputMin,
@@ -68,7 +68,7 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
  * using TemplateImageType as the source of size and spacing...
  *
  */
-template <class TemplateImageType, class OutputImageType>
+template <typename TemplateImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 AllocateImageFromExample(
   const typename TemplateImageType::Pointer & TemplateImage)
@@ -80,7 +80,7 @@ AllocateImageFromExample(
   return rval;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage,
             itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
@@ -99,7 +99,7 @@ OrientImage(typename ImageType::Pointer & inputImage,
   return returnval;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage,
             const typename ImageType::DirectionType & dirCosines)
@@ -133,7 +133,7 @@ public:
   }
 
   /** Send an image to the viewer */
-  template <class ImageType>
+  template <typename ImageType>
   void SendImage(const typename ImageType::Pointer & image,
                  unsigned viewIndex = 0)
   {
@@ -151,7 +151,7 @@ public:
   }
 
   /** Send one component of a vector image to the viewer */
-  template <class ImageType>
+  template <typename ImageType>
   void SendImage(const typename ImageType::Pointer & image,
                  unsigned viewIndex,
                  unsigned vectorIndex)
@@ -197,10 +197,10 @@ private:
     this->m_Sock->ConnectToServer("localhost", 19345);
   }
 
-  template <class ImageType>
+  template <typename ImageType>
   void Send(const typename ImageType::Pointer & image, unsigned int viewIndex);
 
-  template <class ImageType>
+  template <typename ImageType>
   void Send(const typename ImageType::Pointer & image, unsigned int viewIndex, unsigned int vectorIndex);
 
 private:
@@ -209,7 +209,7 @@ private:
   bool             m_PromptUser;
 };
 
-template <class ImageType>
+template <typename ImageType>
 void
 DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned int viewIndex)
 {
@@ -276,7 +276,7 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
   //   std::cerr.flush();
 }
 
-template <class ImageType>
+template <typename ImageType>
 void
 DebugImageViewerClient::Send(const typename ImageType::Pointer & image,
                              unsigned int viewIndex,

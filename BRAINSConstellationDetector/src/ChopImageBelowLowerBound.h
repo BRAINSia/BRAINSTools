@@ -51,7 +51,7 @@
 
 #include "itkImage.h"
 
-template <class ImageType>
+template <typename ImageType>
 void ChopImageBelowLowerBound(typename ImageType::Pointer inputVolume,
                               const typename ImageType::PixelType BackgroundFillValue,
                               const double PhysicalLowerBound)

@@ -48,9 +48,9 @@ namespace itk
 {
 /*This function writes the displacement fields of the Displacement.*/
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 void VDemonsRegistrator<TRealImage, TOutputImage,
                         TFieldValue>::WriteDisplacementComponents()
 {
@@ -98,9 +98,9 @@ void VDemonsRegistrator<TRealImage, TOutputImage,
 
 /*Constructor to initialize the parameters.*/
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
 {
   // Images need to be set from the outside
@@ -165,9 +165,9 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
 }
 
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~VDemonsRegistrator()
 {
   if( m_Tag )
@@ -179,8 +179,8 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~VDemonsRegistrator()
 /*Perform the registration of preprocessed images.*/
 template <
   typename TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TOutputImage,
+  typename TFieldValue>
 void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
   // Setup the registrator
@@ -489,9 +489,9 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
 // Print out the present registration level.
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel()
 {
   if( this->GetOutDebug() )

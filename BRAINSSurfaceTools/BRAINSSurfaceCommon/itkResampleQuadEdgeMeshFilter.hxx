@@ -26,19 +26,19 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::ResampleQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::~ResampleQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::SetReferenceMesh( const TOutputMesh * mesh )
@@ -51,7 +51,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 const typename ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::OutputMeshType
 * ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::GetReferenceMesh() const
@@ -62,7 +62,7 @@ const typename ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::OutputMeshTy
   return referenceMesh;
   }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::GenerateData()
@@ -132,7 +132,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMesh()
@@ -142,7 +142,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshGeometry()
@@ -153,7 +153,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshFieldData()
@@ -163,7 +163,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshPoints()
@@ -175,7 +175,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshEdgeCells()
@@ -187,7 +187,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshCells()
@@ -199,7 +199,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshPointData()
@@ -211,7 +211,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 }
 
 // ---------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::CopyReferenceMeshToOutputMeshCellData()

@@ -37,7 +37,7 @@
 vtkStandardNewMacro(vtkImageGenus0MarchingCubes);
 
 // ----------------------------------------------------------------------------
-template <class T>
+template <typename T>
 void vtkGetUnsignedShortData(vtkImageGenus0MarchingCubes *,
                              vtkImageData *, T *ptr,
                              unsigned short *pus, int totlen)
@@ -56,7 +56,7 @@ void vtkGetUnsignedShortData(vtkImageGenus0MarchingCubes *,
 }
 
 // ----------------------------------------------------------------------------
-template <class T>
+template <typename T>
 void vtkSetUnsignedShortData(vtkImageGenus0MarchingCubes *,
                              vtkImageData *, T *ptr,
                              unsigned short *pus, int totlen)

@@ -49,9 +49,9 @@ namespace itk
 {
 /*This function writes the displacement fields of the Deformation.*/
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 void IccdefRegistrator<TRealImage, TOutputImage,
                        TFieldValue>::WriteDisplacementComponents(TDisplacementField * df, std::string prefix)
 {
@@ -103,9 +103,9 @@ void IccdefRegistrator<TRealImage, TOutputImage,
 
 /*Constructor to initialize the parameters.*/
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 {
   // Images need to be set from the outside
@@ -169,9 +169,9 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 }
 
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::~IccdefRegistrator()
 {
   if( this->m_Tag )
@@ -183,8 +183,8 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::~IccdefRegistrator()
 /*Perform the registration of preprocessed images.*/
 template <
   typename TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TOutputImage,
+  typename TFieldValue>
 void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
 
@@ -417,9 +417,9 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
 // Print out the present registration level.
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel()
 {
   if( this->GetOutDebug() )

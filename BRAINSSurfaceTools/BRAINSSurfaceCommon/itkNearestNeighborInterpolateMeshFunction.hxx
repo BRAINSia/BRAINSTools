@@ -26,7 +26,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 NearestNeighborInterpolateMeshFunction<TInputMesh>
 ::NearestNeighborInterpolateMeshFunction()
 {
@@ -35,7 +35,7 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>
 /**
  * Destructor
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 NearestNeighborInterpolateMeshFunction<TInputMesh>
 ::~NearestNeighborInterpolateMeshFunction()
 {
@@ -44,7 +44,7 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 NearestNeighborInterpolateMeshFunction<TInputMesh>
 ::PrintSelf( std::ostream& os, Indent indent) const
@@ -55,7 +55,7 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>
 /**
  * Evaluate the mesh at a given point position.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 NearestNeighborInterpolateMeshFunction<TInputMesh>
 ::EvaluateDerivative( const PointType & itkNotUsed(point), DerivativeType & itkNotUsed(derivative) ) const
@@ -65,7 +65,7 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>
 /**
  * Evaluate the mesh at a given point position.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 typename
 NearestNeighborInterpolateMeshFunction<TInputMesh>::OutputType
 NearestNeighborInterpolateMeshFunction<TInputMesh>

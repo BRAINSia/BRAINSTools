@@ -47,7 +47,7 @@ private:
   void XYZToSpherical( const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
                        float & theta);
 
-  template <class WarperImageType>
+  template <typename WarperImageType>
   typename WarperImageType::Pointer ImageWarper(  const std::string & RegistrationFilename,
                                                   const std::string & ImageName,
                                                   typename WarperImageType::Pointer ReferenceImage  )

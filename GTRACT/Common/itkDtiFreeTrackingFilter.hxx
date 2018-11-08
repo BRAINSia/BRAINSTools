@@ -56,7 +56,7 @@
 
 namespace itk
 {
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::DtiFreeTrackingFilter() : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType,
                                                   TMaskImageType >::DtiTrackingFilterBase()
@@ -81,7 +81,7 @@ DtiFreeTrackingFilter
 }
 */
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::Update()

@@ -24,7 +24,7 @@
 namespace itk
 {
 /** Constructor */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 MeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::MeshToMeshMetric()
 {
@@ -35,7 +35,7 @@ MeshToMeshMetric<TFixedMesh, TMovingMesh>
 }
 
 /** Set the parameters that define a unique transform */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 MeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::SetTransformParameters( const ParametersType & parameters ) const
@@ -48,7 +48,7 @@ MeshToMeshMetric<TFixedMesh, TMovingMesh>
 }
 
 /** Initialize the metric */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 MeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::Initialize(void) throw ( ExceptionObject )
@@ -111,7 +111,7 @@ MeshToMeshMetric<TFixedMesh, TMovingMesh>
 }
 
 /** PrintSelf */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 MeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::PrintSelf(std::ostream& os, Indent indent) const

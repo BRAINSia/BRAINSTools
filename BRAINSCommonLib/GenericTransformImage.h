@@ -68,11 +68,11 @@ namespace itk
   * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
   * \endcode
   */
-template<class TInputScalarType, class TWriteScalarType>
+template<typename TInputScalarType, typename TWriteScalarType>
 extern void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const genericTransformToWrite,
                                  const std::string & outputTransform);
 
-template<class TScalarType>
+template<typename TScalarType>
 extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const genericTransformToWrite,
                                  const std::string & outputTransform);
 
@@ -110,7 +110,7 @@ extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const
   * \endcode
   */
 
-template<class TScalarType>
+template<typename TScalarType>
 extern typename itk::Transform<TScalarType, 3, 3>::Pointer
 ReadTransformFromDisk(const std::string & initialTransform);
 
@@ -141,7 +141,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
   * \brief Special purpose convenience function -- should not have a public
   *interface.
   */
-template<class TInputScalarType, class TWriteScalarType>
+template<typename TInputScalarType, typename TWriteScalarType>
 extern int WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
                                      const std::string & outputTransform, const std::string & strippedOutputTransform);
 
@@ -150,7 +150,7 @@ extern int WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarT
   * \brief Special purpose convenience function -- should not have a public
   *interface.
   */
-template<class TInputScalarType, class TWriteScalarType>
+template<typename TInputScalarType, typename TWriteScalarType>
 extern int WriteStrippedRigidTransformToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
                                              const std::string & strippedOutputTransform);
 }
@@ -159,7 +159,7 @@ extern int WriteStrippedRigidTransformToDisk(const typename itk::Transform<TInpu
   * \author Hans J. Johnson
   * \brief A class to transform images
   */
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 TransformResample(
   typename InputImageType::ConstPointer inputImage,
@@ -173,7 +173,7 @@ TransformResample(
   * \author Hans J. Johnson
   * \brief A class to transform images
   */
-template <class InputImageType, class OutputImageType, class DisplacementImageType>
+template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
 typename OutputImageType::Pointer
   TransformWarp(
   InputImageType const *const inputImage,
@@ -189,7 +189,7 @@ typename OutputImageType::Pointer
   * \brief A class to transform images.  Only one of genericTransform or
   *DisplacementField can be non-null.
   */
-template <typename InputImageType, class OutputImageType, typename DisplacementImageType>
+template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
 typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,

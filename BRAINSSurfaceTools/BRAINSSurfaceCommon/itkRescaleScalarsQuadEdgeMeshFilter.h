@@ -37,7 +37,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TMesh>
+template <typename TMesh>
 class RescaleScalarsQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
 {

@@ -51,7 +51,7 @@ namespace itk
 //
 // Constructor
 //
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::HammerTissueAttributeVectorImageFilter()
 {
@@ -76,13 +76,13 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 //
 // Destructor
 //
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::~HammerTissueAttributeVectorImageFilter()
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -195,7 +195,7 @@ throw (InvalidRequestedRegionError)
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::CreateN1Neighbor()
@@ -217,7 +217,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
   m_N1Neighborhood[5][2] = 1;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::CreateFeatureNeighbor(int Radius)
@@ -247,7 +247,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -509,7 +509,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 /**
   * Standard "PrintSelf" method
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

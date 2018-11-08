@@ -45,7 +45,7 @@ namespace itk
 /**
   * Default constructor
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                     TDisplacementField>
 ::VectorESMDemonsRegistrationFunction()
@@ -113,7 +113,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /*
   * Standard "PrintSelf" method.
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                     TDisplacementField>
@@ -152,7 +152,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   *
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                     TDisplacementField>
@@ -164,7 +164,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   *
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                     TDisplacementField>
@@ -176,7 +176,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   * Set the function state values before each iteration
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                     TDisplacementField>
@@ -269,7 +269,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   * Compute update at a non boundary neighbourhood
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 typename VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                              TDisplacementField>
 ::PixelType
@@ -566,7 +566,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   * Update the metric and release the per-thread-global data.
   */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
                                     TDisplacementField>

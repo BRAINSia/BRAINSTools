@@ -26,7 +26,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
 ::QuadEdgeMeshScalarPixelValuesSmoothingFilter()
 {
@@ -34,13 +34,13 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
   this->m_MaximumNumberOfIterations = 10;
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
 ::~QuadEdgeMeshScalarPixelValuesSmoothingFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
 ::GenerateData()

@@ -34,7 +34,7 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template <class TInputMesh>
+template <typename TInputMesh>
 class NearestNeighborInterpolateMeshFunction :
   public         InterpolateMeshFunction<TInputMesh>
 {

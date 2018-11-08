@@ -26,7 +26,7 @@ namespace itk
 /**
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::DiffeomorphicDemonsRegistrationWithMaskFilter() :
   m_UseFirstOrderExp(false)
@@ -55,7 +55,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
  * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
  * It throws and exception, if it is not.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage,
                                                        TDisplacementField>::DemonsRegistrationFunctionType
 * DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
@@ -78,7 +78,7 @@ typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage
  * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
  * It throws and exception, if it is not.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage,
                                                              TDisplacementField>::DemonsRegistrationFunctionType
 * DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
@@ -100,7 +100,7 @@ const typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovin
 /**
  * Set the function state values before each iteration
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::InitializeIteration()
@@ -117,7 +117,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /*
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetMetric() const
@@ -130,7 +130,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *  Get Intensity Difference Threshold
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetIntensityDifferenceThreshold() const
@@ -143,7 +143,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *  Set Intensity Difference Threshold
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetIntensityDifferenceThreshold(double threshold)
@@ -156,7 +156,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *  Get Maximum Update Step Length
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetMaximumUpdateStepLength() const
@@ -169,7 +169,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *  Set Maximum Update Step Length
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetMaximumUpdateStepLength(double threshold)
@@ -182,7 +182,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const double &
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetRMSChange() const
@@ -195,7 +195,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GradientType
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
@@ -209,7 +209,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetUseGradientType(GradientType gtype)
@@ -222,7 +222,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::AllocateUpdateBuffer()
@@ -243,7 +243,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 /**
  * Get the metric value from the difference function
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ApplyUpdate(const TimeStepType &dt)
@@ -356,7 +356,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
     }
   }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -369,7 +369,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
      << this->m_UseFirstOrderExp << std::endl;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::VerifyInputInformation()
@@ -377,7 +377,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
   // Do nothing, since images to be registered will not be in the same space
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>::MaskType
 * DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetMovingImageMask() const
@@ -386,7 +386,7 @@ const typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovin
   return drfp->GetMovingImageMask();
   }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 const typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>::MaskType
 * DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::GetFixedImageMask() const
@@ -399,7 +399,7 @@ const typename DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovin
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetMovingImageMask(MaskType *mask)
 {
@@ -411,7 +411,7 @@ void DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TD
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::SetFixedImageMask(MaskType *mask)
 {

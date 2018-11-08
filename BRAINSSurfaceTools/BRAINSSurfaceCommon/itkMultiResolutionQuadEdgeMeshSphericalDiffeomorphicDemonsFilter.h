@@ -30,7 +30,7 @@
 
 namespace itk
 {
-template <class TMesh>
+template <typename TMesh>
 class MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
 {

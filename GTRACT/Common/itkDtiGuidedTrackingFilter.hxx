@@ -56,7 +56,7 @@
 
 namespace itk
 {
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::DtiGuidedTrackingFilter() : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType,
                                                     TMaskImageType >::DtiTrackingFilterBase()
@@ -66,7 +66,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   this->m_MaximumGuideDistance     = 12.0;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::SetGuideFiber( GuideFiberType guideFiber)
@@ -74,7 +74,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   this->m_GuideFiber = guideFiber;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::Update()
@@ -322,7 +322,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     }   // Seed Loop
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 bool
 DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::GuideDirection(typename Self::ContinuousIndexType index,

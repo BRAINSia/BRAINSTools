@@ -45,7 +45,7 @@ namespace itk
  *
  * \ingroup RegistrationMetrics
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 class AnalyticalMeshToMeshMetric :
   public         MeshToMeshMetric<TFixedMesh, TMovingMesh>
 {

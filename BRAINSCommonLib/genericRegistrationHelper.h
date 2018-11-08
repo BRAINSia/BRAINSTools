@@ -82,7 +82,7 @@ enum
 
 namespace BRAINSFit
 {
-template <class JointPDFType>
+template <typename JointPDFType>
 void MakeDebugJointHistogram(const std::string & debugOutputDirectory, const typename JointPDFType::Pointer myHistogram,
                              const int globalIteration,
                              const int currentIteration)

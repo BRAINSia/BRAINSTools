@@ -52,12 +52,12 @@ namespace itk
 **/
 
 
-/* template<class TInputImage,  */
-/*   class TOutputImage, class TLabelPixelType = short,  */
-/*   class TWeightPixelType = float >  */
-template<class TInputImage,
-  class TOutputImage,
-  class TWeightPixelType = float>
+/* template<typename TInputImage,  */
+/*   typename TOutputImage, typename TLabelPixelType = short,  */
+/*   typename TWeightPixelType = float >  */
+template<typename TInputImage,
+  typename TOutputImage,
+  typename TWeightPixelType = float>
   class GrowCutSegmentationImageFilter: public ImageToImageFilter<TInputImage,TOutputImage>
 {
 

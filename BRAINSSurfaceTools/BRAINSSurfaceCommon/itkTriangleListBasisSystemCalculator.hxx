@@ -29,7 +29,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 ::TriangleListBasisSystemCalculator()
 {
@@ -41,14 +41,14 @@ TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 /**
  * Destructor
  */
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 ::~TriangleListBasisSystemCalculator()
 {
   itkDebugMacro("Destructor");
 }
 
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 void
 TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 ::Calculate()

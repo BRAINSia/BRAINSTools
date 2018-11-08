@@ -70,8 +70,8 @@ namespace itk
   *
   */
 template <
-  class TDisplacementField,
-  class TOutputImage
+  typename TDisplacementField,
+  typename TOutputImage
   >
 class GridForwardWarpImageFilterNew :
   public         ImageToImageFilter<TDisplacementField, TOutputImage>

@@ -38,7 +38,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
 ::BRAINSROIAutoImageFilter() :
   m_OtsuPercentileThreshold(0.01),
@@ -51,7 +51,7 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   this->SetNumberOfRequiredInputs(1);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -76,7 +76,7 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   this->GraftOutput( LFF->GetOutput() );
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

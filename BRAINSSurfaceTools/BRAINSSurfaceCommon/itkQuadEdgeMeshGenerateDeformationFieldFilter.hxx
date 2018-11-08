@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
 ::QuadEdgeMeshGenerateDeformationFieldFilter()
 {
@@ -39,13 +39,13 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
   this->m_SphereRadius = 1.0;
 }
 
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
 ::~QuadEdgeMeshGenerateDeformationFieldFilter()
 {
 }
 
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 void
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
 ::SetInputMesh( const InputMeshType * mesh )
@@ -58,7 +58,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
     }
 }
 
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 const typename
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>::InputMeshType
 * QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
@@ -70,7 +70,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
   return referenceMesh;
   }
 
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 void
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
 ::SetDestinationPoints( const InputPointSetType * destinationPointSet )
@@ -83,7 +83,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
     }
 }
 
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 const typename
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>::InputPointSetType
 * QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
@@ -95,7 +95,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
   return destinationPointSet;
   }
 
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 void
 QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMesh>
 ::GenerateData()

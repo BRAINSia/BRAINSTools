@@ -104,7 +104,7 @@ namespace itk
  *         DtiGuidedTrackingFilter,
  */
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 class DtiTrackingFilterBase : public itk::Object
 {
 public:

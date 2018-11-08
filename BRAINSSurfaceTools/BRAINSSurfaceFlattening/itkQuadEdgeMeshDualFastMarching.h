@@ -37,8 +37,8 @@ namespace itk
 * "distance" to the seed is smaller the distance to the other one).
 * \note The distance between 2 faces is defined by TMetric.
 * */
-template <class TMesh,
-          class TMetric = QuadEdgeMeshDualSquaredEuclideanMetric<TMesh> >
+template <typename TMesh,
+          typename TMetric = QuadEdgeMeshDualSquaredEuclideanMetric<TMesh> >
 class QuadEdgeMeshDualFastMarching :
   public QuadEdgeMeshFunctionBase<TMesh,
                                   std::list<typename TMesh::CellIdentifier> >

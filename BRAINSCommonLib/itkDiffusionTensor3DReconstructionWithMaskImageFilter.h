@@ -119,9 +119,9 @@ namespace itk
  * \ingroup Multithreaded  TensorObjects
  */
 
-template <class TReferenceImagePixelType,
-          class TGradientImagePixelType = TReferenceImagePixelType,
-          class TTensorPixelType = double>
+template <typename TReferenceImagePixelType,
+          typename TGradientImagePixelType = TReferenceImagePixelType,
+          typename TTensorPixelType = double>
 class DiffusionTensor3DReconstructionWithMaskImageFilter :
   public         ImageToImageFilter<Image<TReferenceImagePixelType, 3>,
                                     Image<DiffusionTensor3D<TTensorPixelType>, 3> >

@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>
 ::QuadEdgeMeshClampScalarsFilter()
 {
@@ -39,13 +39,13 @@ QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>
   this->m_ClampMax = false;
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>
 ::~QuadEdgeMeshClampScalarsFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>
 ::GenerateData()

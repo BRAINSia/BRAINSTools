@@ -43,8 +43,8 @@
 namespace itk
 {
 template <
-  class TInputImage,
-  class TCoordRep = float // ,typename TComponent = float
+  typename TInputImage,
+  typename TCoordRep = float // ,typename TComponent = float
   >
 class TensorInterpolateImageFunction :
   public         ImageFunction<

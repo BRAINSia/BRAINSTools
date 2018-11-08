@@ -46,7 +46,7 @@ namespace itk
   * \brief Abstract base class for attribute vector used by Hammer
   *
   */
-template <class TValueType, unsigned int VLength = 3>
+template <typename TValueType, unsigned int VLength = 3>
 class HammerAttributeVector :
   public         FixedArray<TValueType, VLength>
 {

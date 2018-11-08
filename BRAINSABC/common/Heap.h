@@ -36,7 +36,7 @@
 /**
  * \class Heap
  */
-template <class T>
+template <typename T>
 class Heap
 {
 public:
@@ -80,15 +80,15 @@ private:
 };
 
 // Get the first k sorted elements using heap sort
-template <class T>
+template <typename T>
 T * heapFirstK(std::vector<T> & array, unsigned int n, unsigned int k);
 
 // Get the k-th element using heap sort
-template <class T>
+template <typename T>
 T heapKthElement(std::vector<T> & array, unsigned int n, unsigned int k);
 
 // Get median using heap sort
-template <class T>
+template <typename T>
 T heapMedian(std::vector<T> & array, unsigned int n);
 
 #ifndef MU_MANUAL_INSTANTIATION

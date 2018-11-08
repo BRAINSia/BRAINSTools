@@ -24,7 +24,7 @@
 
 namespace itk
 {
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
 ::QuadEdgeMeshAddScalarsFilter()
 {
@@ -35,13 +35,13 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
   this->SetNthOutput( 0, OutputMeshType::New() );
 }
 
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
 ::~QuadEdgeMeshAddScalarsFilter()
 {
 }
 
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 void
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
 ::SetInput1(const InputMeshType1 * mesh)
@@ -54,7 +54,7 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
     }
 }
 
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 void
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
 ::SetInput2(const InputMeshType2 * mesh)
@@ -67,7 +67,7 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
     }
 }
 
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 const typename
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>::InputMeshType1
 * QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
@@ -79,7 +79,7 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>::InputMeshTy
   return inputMesh;
   }
 
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 const typename
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>::InputMeshType2
 * QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
@@ -91,7 +91,7 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>::InputMeshTy
   return inputMesh;
   }
 
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 void
 QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
 ::GenerateData()

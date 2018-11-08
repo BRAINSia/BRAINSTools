@@ -35,7 +35,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 class ReplaceDestinationPointsQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
 {

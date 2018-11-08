@@ -57,7 +57,7 @@
 #include <BRAINSCommonLib.h>
 #include "BRAINSMeasureSurfaceCLP.h"
 
-template <class T>
+template <typename T>
 const T & min( const T & a, const T & b )
 {
   return ( a < b ) ? a : b;     // or: return comp(a,b)?a:b; for the comp

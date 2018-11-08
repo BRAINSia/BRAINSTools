@@ -23,7 +23,7 @@
 
 #include "AtlasCropImageSource.h"
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 AtlasCropImageSource<TInputImage, TProbabilityImage>
 ::AtlasCropImageSource()
 {
@@ -37,7 +37,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
   m_SlabMode = false;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 bool
 AtlasCropImageSource<TInputImage, TProbabilityImage>
 ::CheckBounds()
@@ -66,7 +66,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
   return true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 AtlasCropImageSource<TInputImage, TProbabilityImage>
 ::UseProbabilities(ProbabilityImageList probs)
@@ -191,7 +191,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
   // m_CropInfo.size =
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename AtlasCropImageSource<TInputImage, TProbabilityImage>
 ::InputImagePointer
 AtlasCropImageSource<TInputImage, TProbabilityImage>
@@ -249,7 +249,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
   return output;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename AtlasCropImageSource<TInputImage, TProbabilityImage>
 ::InputImagePointer
 AtlasCropImageSource<TInputImage, TProbabilityImage>

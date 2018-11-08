@@ -38,7 +38,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh, class TInputPointSet, class TOutputMesh>
+template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
 class QuadEdgeMeshGenerateDeformationFieldFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

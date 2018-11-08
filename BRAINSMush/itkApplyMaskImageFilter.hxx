@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 ApplyMaskImageFilter<TInputImage, TOutputImage>
 ::ApplyMaskImageFilter()
 {
@@ -34,7 +34,7 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>
   m_InvertMask = false;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ApplyMaskImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -45,7 +45,7 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>
   os << m_InvertMask << std::endl;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ApplyMaskImageFilter<TInputImage, TOutputImage>
 ::SetMaskImage(const InputImageType *reference)
@@ -54,7 +54,7 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>
                                     const_cast<InputImageType *>( reference ) );
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 const typename ApplyMaskImageFilter<TInputImage, TOutputImage>
 ::InputImageType
 * ApplyMaskImageFilter<TInputImage, TOutputImage>
@@ -69,7 +69,7 @@ const typename ApplyMaskImageFilter<TInputImage, TOutputImage>
     this->ProcessObject::GetInput(1) );
   }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ApplyMaskImageFilter<TInputImage, TOutputImage>
 ::GenerateData()

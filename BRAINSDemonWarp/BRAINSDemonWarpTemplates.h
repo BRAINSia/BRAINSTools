@@ -166,7 +166,7 @@ struct BRAINSDemonWarpAppParameters
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template <class InPixelType, class OutPixelType>
+template <typename InPixelType, typename OutPixelType>
 void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
   constexpr int dims = 3;
@@ -572,14 +572,14 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template <class InPixelType, class OutPixelType>
+template <typename InPixelType, typename OutPixelType>
 void ProcessAppType(const struct BRAINSDemonWarpAppParameters & command)
 {
   ThirionFunction<InPixelType, OutPixelType>(command);
 }
 
 // This function processes the output data type.
-template <class PixelType>
+template <typename PixelType>
 void
 ProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
 {
@@ -638,7 +638,7 @@ ProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
     }
 }
 
-template <class InPixelType, class OutPixelType>
+template <typename InPixelType, typename OutPixelType>
 void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
   constexpr int dims = 3;
@@ -985,14 +985,14 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template <class InPixelType, class OutPixelType>
+template <typename InPixelType, typename OutPixelType>
 void VectorProcessAppType(const struct BRAINSDemonWarpAppParameters & command)
 {
   VectorThirionFunction<InPixelType, OutPixelType>(command);
 }
 
 // This function processes the output data type.
-template <class PixelType>
+template <typename PixelType>
 void
 VectorProcssOutputType(struct BRAINSDemonWarpAppParameters & command)
 {
@@ -1047,7 +1047,7 @@ VectorProcssOutputType(struct BRAINSDemonWarpAppParameters & command)
 }
 
 // This function processes the output data type.
-template <class PixelType>
+template <typename PixelType>
 void
 VectorProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
 {

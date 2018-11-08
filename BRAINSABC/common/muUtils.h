@@ -30,7 +30,7 @@
 
 #define muAlloc(n, T) muAlloc_func<T>(n, __FILE__, __LINE__)
 
-template <class T>
+template <typename T>
 T *
 muAlloc_func(unsigned int n, const char *s, int line)
 {
@@ -43,7 +43,7 @@ muAlloc_func(unsigned int n, const char *s, int line)
   return array;
 }
 
-template <class TImage>
+template <typename TImage>
 typename TImage::Pointer
 readImage(const char *fn)
 {
@@ -56,7 +56,7 @@ readImage(const char *fn)
   return reader->GetOutput();
 }
 
-template <class TImage>
+template <typename TImage>
 void
 writeImage(const char *fn, const TImage *ip)
 {
@@ -70,7 +70,7 @@ writeImage(const char *fn, const TImage *ip)
   writer->Update();
 }
 
-// template <class TImage>
+// template <typename TImage>
 // void
 // writeImageAsByte
 // {

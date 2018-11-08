@@ -34,7 +34,7 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
 namespace {
 
-template <class T>
+template <typename T>
 vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 {
 #if VTK_MAJOR_VERSION <= 5

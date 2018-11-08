@@ -24,20 +24,20 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
 ::DeformationFieldFromTransformMeshFilter()
 {
   this->m_Transform = NULL;
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
 ::~DeformationFieldFromTransformMeshFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
 ::GenerateOutputInformation()
@@ -60,7 +60,7 @@ DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
   outputMesh->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
 ::GenerateData()
@@ -113,7 +113,7 @@ DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
 ::PrintSelf(std::ostream& os, Indent indent) const

@@ -25,7 +25,7 @@
 #include "itkConstantBoundaryCondition.h"
 #include "itkIO.h"
 
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 TransformResample(
   typename InputImageType::ConstPointer inputImage,
@@ -58,7 +58,7 @@ TransformResample(
   return returnval;
 }
 
-template <class InputImageType, class OutputImageType, class DisplacementImageType>
+template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
 typename OutputImageType::Pointer
 TransformWarp(
   InputImageType const *const inputImage,
@@ -92,7 +92,7 @@ TransformWarp(
   return returnval;
 }
 
-template <class InputImageType>
+template <typename InputImageType>
 typename itk::InterpolateImageFunction<InputImageType,
                                        typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::
 Pointer

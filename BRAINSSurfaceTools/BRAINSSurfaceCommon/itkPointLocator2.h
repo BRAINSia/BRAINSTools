@@ -33,7 +33,7 @@ namespace itk
  * point, by using constructing a Kd-Tree structure for the PointSet.
  *
  */
-template <class TPointSet>
+template <typename TPointSet>
 class PointLocator2 : public Object
 {
 public:

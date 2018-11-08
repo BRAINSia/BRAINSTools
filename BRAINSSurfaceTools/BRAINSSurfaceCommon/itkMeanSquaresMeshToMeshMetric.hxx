@@ -31,7 +31,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::MeanSquaresMeshToMeshMetric()
 {
@@ -41,7 +41,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 /**
  * Get the match Measure
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 typename MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>::MeasureType
 MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::GetValue( const TransformParametersType & parameters ) const
@@ -116,7 +116,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 /**
  * Get the Derivative Measure
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::GetDerivative( const TransformParametersType & parameters,
@@ -215,7 +215,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 /*
  * Get both the match Measure and theDerivative Measure
  */
-template <class TFixedMesh, class TMovingMesh>
+template <typename TFixedMesh, typename TMovingMesh>
 void
 MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 ::GetValueAndDerivative(const TransformParametersType & parameters,

@@ -42,7 +42,7 @@ TODO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
 #include "GenericTransformImage.h"
 
 // A filter to debug the min/max values
-template <class TImage>
+template <typename TImage>
 void PrintImageMinAndMax(TImage * inputImage)
 {
 //  typename TImage::PixelType resultMaximum:

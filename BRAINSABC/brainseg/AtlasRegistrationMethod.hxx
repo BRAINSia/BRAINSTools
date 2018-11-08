@@ -53,7 +53,7 @@ itk::Transform<double, 3, 3>::Pointer MakeRigidIdentity(void)
   return genericTransform;
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::AtlasRegistrationMethod() : m_WarpGrid(3, 0),
   m_UseNonLinearInterpolation(true),
@@ -70,14 +70,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_AtlasToSubjectInitialTransform = nullptr;
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::~AtlasRegistrationMethod()
 {
   m_IntraSubjectTransforms.clear();
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::SetSuffix(std::string suffix)
@@ -86,7 +86,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_RegistrationUpdateNeeded = true;
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList)
@@ -97,7 +97,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_RegistrationUpdateNeeded = true;
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::SetIntraSubjectOriginalImageList(MapOfFloatImageVectors &NewIntraSubjectOriginalImageList)
@@ -118,7 +118,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_RegistrationUpdateNeeded = true;
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::Update()
@@ -136,7 +136,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     }
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterIntraSubjectImages()
@@ -312,7 +312,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     }
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::AverageIntraSubjectRegisteredImages()
@@ -367,7 +367,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     }
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterAtlasToSubjectImages()
@@ -709,7 +709,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     }
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterImages()
@@ -747,7 +747,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_DoneRegistration = true;
 }
 
-template <class TOutputPixel, class TProbabilityPixel>
+template <typename TOutputPixel, typename TProbabilityPixel>
 typename AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::ProbabilityImagePointer
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>

@@ -22,7 +22,7 @@
 #include "ExtractSingleLargestRegion.h"
 #include "tbb/tbb.h"
 
-template <class TProbabilityImage>
+template <typename TProbabilityImage>
 void ZeroNegativeValuesInPlace(std::vector<typename TProbabilityImage::Pointer> & priors)
 {
   const unsigned int numPriors = priors.size();
@@ -46,7 +46,7 @@ void ZeroNegativeValuesInPlace(std::vector<typename TProbabilityImage::Pointer> 
     }
 }
 
-template <class TProbabilityImage>
+template <typename TProbabilityImage>
 void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> & ProbList)
 {
   const unsigned int numProbs = ProbList.size();
@@ -97,7 +97,7 @@ void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> &
     }
 }
 
-template <class TInputImage>
+template <typename TInputImage>
 std::vector<typename TInputImage::Pointer>
 DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)
 {
@@ -119,7 +119,7 @@ DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)
 }
 
 
-template <class TProbabilityImage>
+template <typename TProbabilityImage>
 typename ByteImageType::Pointer ComputeForegroundProbMask(
   const std::vector<typename TProbabilityImage::Pointer> & probList, const std::vector<bool> & IsForegroundPriorVector )
 {

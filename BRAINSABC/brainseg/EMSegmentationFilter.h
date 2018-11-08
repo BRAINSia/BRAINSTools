@@ -41,7 +41,7 @@ class AtlasDefinition;
 /**
  * \class EMSegmentationFilter
  */
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 class EMSegmentationFilter : public itk::ProcessObject
 {
 public:

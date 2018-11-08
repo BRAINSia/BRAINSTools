@@ -40,7 +40,7 @@ typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
 typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
 typedef itk::AffineTransform<double,3>::Pointer           AffineTransformPointer;
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ExtractImage(
   typename InputImageType::Pointer & inputImage,
   unsigned int InputImageTimeIndex)
@@ -81,7 +81,7 @@ typename ImageType::Pointer ExtractImage(
   return extractImage;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer DoMedian(typename ImageType::Pointer & input,
                                      typename ImageType::SizeType indexRadius)
 {

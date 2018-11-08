@@ -48,8 +48,8 @@
 #include <sstream>
 
 #include <cstdlib>
-// template <class inputPixelType,class outputPixelType,class priorPixelType>
-template <class priorPixelType, class inputPixelType>
+// template <typename inputPixelType,typename outputPixelType,typename priorPixelType>
+template <typename priorPixelType, typename inputPixelType>
 int simpleRunEMS( std::string t1Volume,
                   std::string t2Volume,
                   std::string pdVolume,

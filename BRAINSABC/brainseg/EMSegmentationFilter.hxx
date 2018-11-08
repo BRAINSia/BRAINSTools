@@ -82,7 +82,7 @@ static const FloatingPrecision KNN_InclusionThreshold = 0.85F;
 
 
 ///////////////////////////////////////////////// Posterior computation by kNN //////////////////////////////////////////////
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::kNNCore( SampleType * trainSampleSet,
@@ -172,7 +172,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   muLogMacro(<< "--------------------------------" << std::endl);
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename TProbabilityImage::Pointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::assignVectorToImage(const typename TProbabilityImage::Pointer prior,
@@ -205,7 +205,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return post;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputekNNPosteriors(const ProbabilityImageVectorType & Priors,
@@ -587,7 +587,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::EMSegmentationFilter()
 {
@@ -672,13 +672,13 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   // m_ClassToPriorMapping.clear();
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::~EMSegmentationFilter()
 {
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::CheckInput()
@@ -816,7 +816,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetInputImages(const MapOfInputImageVectors newInputImages)
@@ -834,7 +834,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetRawInputImages(const MapOfInputImageVectors newInputImages)
@@ -852,7 +852,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetOriginalAtlasImages(const MapOfInputImageVectors newAtlasImages)
@@ -869,7 +869,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugPosteriors(const unsigned int ComputeIterationID,
                        const std::string ClassifierID,
@@ -908,7 +908,7 @@ void EMSegmentationFilter<TInputImage, TProbabilityImage>
   return;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetPriors(ProbabilityImageVectorType priors)
@@ -923,7 +923,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetPriorWeights(VectorType w)
@@ -950,7 +950,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetPriorLabelCodeVector(IntVectorType ng)
@@ -974,7 +974,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetPriorUseForBiasVector(const BoolVectorType& ng)
@@ -998,7 +998,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SetPriorIsForegroundPriorVector(const BoolVectorType& ng)
@@ -1022,7 +1022,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_UpdateRequired = true;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::
 ByteImagePointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>
@@ -1033,7 +1033,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return m_DirtyThresholdedLabels;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::
 ByteImagePointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>
@@ -1044,7 +1044,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return m_CleanedLabels;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::
 ByteImagePointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>
@@ -1054,7 +1054,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return m_DirtyLabels;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 std::vector<
   typename EMSegmentationFilter<TInputImage, TProbabilityImage>::
   ProbabilityImagePointer>
@@ -1064,7 +1064,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return m_Posteriors;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::GetCorrected()
@@ -1072,7 +1072,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return m_CorrectedImages;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::GetRawCorrected()
@@ -1081,7 +1081,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 }
 
 // HACK -- THIS METHOD IS NEVER CALLED
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::CheckLoopAgainstFilterOutput(ByteImagePointer &loopImg, ByteImagePointer & filterImg)
@@ -1109,7 +1109,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 std::vector<RegionStats>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputeDistributions(const ByteImageVectorType & SubjectCandidateRegions,
@@ -1185,7 +1185,7 @@ static double ComputeCovarianceDeterminant( const vnl_matrix<FloatingPrecision> 
   return detcov;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename TProbabilityImage::Pointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputeOnePosterior(const FloatingPrecision priorScale,
@@ -1324,7 +1324,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return post;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputeEMPosteriors(const ProbabilityImageVectorType & Priors,
@@ -1361,7 +1361,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return Posteriors;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputePosteriors(const ProbabilityImageVectorType & Priors,
@@ -1460,7 +1460,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
 
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugLabels(const unsigned int CurrentEMIteration) const
@@ -1504,7 +1504,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugCorrectedImages(const MapOfInputImageVectors &correctImageList,
@@ -1542,7 +1542,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 FloatingPrecision
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputeLogLikelihood() const
@@ -1591,7 +1591,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
  * \param referenceImage is the image to be used for defining the tissueRegion of iterest.
  * \param safetyRegion is the amount to dilate so that there is not such a tight region.
  */
-template <class TInputImage, class TByteImage>
+template <typename TInputImage, typename TByteImage>
 typename TByteImage::Pointer
 ComputeTissueRegion(const typename TInputImage::Pointer referenceImage, const unsigned int safetyRegion)
 {
@@ -1606,7 +1606,7 @@ ComputeTissueRegion(const typename TInputImage::Pointer referenceImage, const un
   return tissueRegion;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugHeadRegion(const unsigned int CurrentEMIteration) const
@@ -1627,7 +1627,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WarpImageList(ProbabilityImageVectorType &originalList,
@@ -1657,7 +1657,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return warpedList;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WarpImageList(MapOfInputImageVectors &originalList,
@@ -1688,7 +1688,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return warpedList;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugWarpedAtlasImages(const unsigned int CurrentEMIteration) const
@@ -1731,7 +1731,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::GenerateWarpedAtlasImages(void)
@@ -1743,7 +1743,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return m_WarpedAtlasImages;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::UpdateIntensityBasedClippingOfPriors(const unsigned int CurrentEMIteration,
@@ -1976,7 +1976,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   return subjectCandidateRegions;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ForceToOne(ProbabilityImageVectorType &WarpedPriorsList)
@@ -2072,7 +2072,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugWarpedAtlasPriors(const unsigned int CurrentEMIteration) const
@@ -2108,7 +2108,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugBlendClippedPriors( const unsigned int CurrentEMIteration) const
@@ -2139,7 +2139,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::UpdateTransformation(const unsigned int /*CurrentEMIteration*/)
@@ -2323,7 +2323,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WritePartitionTable(const unsigned int CurrentEMIteration) const
@@ -2362,7 +2362,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   muLogMacro( << oss.str() );
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WriteDebugForegroundMask(const ByteImageType::Pointer & currForgroundBrainMask,
@@ -2382,7 +2382,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl );
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::Update()
@@ -2415,7 +2415,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
  * completing the iterative parts of the processing.
  */
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::EMLoop()
@@ -2717,7 +2717,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   this->WritePartitionTable(0 + 100);
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::CorrectBias(const unsigned int degree,

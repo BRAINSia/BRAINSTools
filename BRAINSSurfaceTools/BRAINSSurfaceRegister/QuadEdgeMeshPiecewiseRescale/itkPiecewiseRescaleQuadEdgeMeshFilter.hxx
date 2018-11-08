@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::PiecewiseRescaleQuadEdgeMeshFilter()
 {
@@ -43,13 +43,13 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
   this->m_InputMinimum = NumericTraits<InputPixelType>::max();
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::~PiecewiseRescaleQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::SetInputMesh( const InputMeshType * mesh )
@@ -62,7 +62,7 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 const typename
 PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::InputMeshType
 * PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
@@ -75,7 +75,7 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::InputMeshType
   return inputMesh;
   }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 ::GenerateData()

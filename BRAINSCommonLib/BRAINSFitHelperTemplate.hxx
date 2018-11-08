@@ -138,8 +138,8 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
     }
 }
 
-template <class FixedImageType, class MovingImageType, class TransformType,
-          class SpecificInitializerType, typename DoCenteredInitializationMetricType>
+template <typename FixedImageType, typename MovingImageType, typename TransformType,
+          typename SpecificInitializerType, typename DoCenteredInitializationMetricType>
 typename TransformType::Pointer
 DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume,
                           typename MovingImageType::Pointer & orientedMovingVolume,
@@ -518,7 +518,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
   return initialITKTransform;
 }
 
-template <class FixedImageType, class MovingImageType>
+template <typename FixedImageType, typename MovingImageType>
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplate() :
   m_FixedVolume(nullptr),
   m_FixedVolume2(nullptr),
@@ -573,8 +573,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_SplineGridSize[2] = 12;
 }
 
-template <class FixedImageType, class MovingImageType>
-template <class TransformType, class OptimizerType, class FitCommonCodeMetricType>
+template <typename FixedImageType, typename MovingImageType>
+template <typename TransformType, typename OptimizerType, typename FitCommonCodeMetricType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   int numberOfIterations,
@@ -676,7 +676,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
     }
 }
 
-template <class FixedImageType, class MovingImageType>
+template <typename FixedImageType, typename MovingImageType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 {
@@ -1700,7 +1700,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
   return;
 }
 
-template <class FixedImageType, class MovingImageType>
+template <typename FixedImageType, typename MovingImageType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream & os, Indent indent) const
 {
@@ -1789,7 +1789,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
     }
 }
 
-template <class FixedImageType, class MovingImageType>
+template <typename FixedImageType, typename MovingImageType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::GenerateData()
 {

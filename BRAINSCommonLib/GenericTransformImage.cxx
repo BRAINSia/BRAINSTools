@@ -117,7 +117,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
   return versorRigid;
 }
 
-template<class TInputScalarType, class TWriteScalarType>
+template<typename TInputScalarType, typename TWriteScalarType>
 int WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
                               const std::string & outputTransform,
                               const std::string & strippedOutputTransform)
@@ -240,7 +240,7 @@ template int WriteBothTransformsToDisk<float,float>(const itk::Transform<float, 
                                                       const std::string & strippedOutputTransform);
 */
 
-template<class TInputScalarType, class TWriteScalarType>
+template<typename TInputScalarType, typename TWriteScalarType>
 int WriteStrippedRigidTransformToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
                                       const std::string & strippedOutputTransform)
 {
@@ -252,7 +252,7 @@ template int WriteStrippedRigidTransformToDisk<double,double>(const itk::Transfo
 template int WriteStrippedRigidTransformToDisk<double,float>(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
                                                               const std::string & strippedOutputTransform);
 
-template<class TScalarType>
+template<typename TScalarType>
 typename itk::Transform<TScalarType, 3, 3>::Pointer ReadTransformFromDisk(const std::string & initialTransform)
 {
   typename itk::Transform<TScalarType, 3, 3>::Pointer genericTransform = nullptr;
@@ -435,7 +435,7 @@ itk::Transform<double, 3, 3>::Pointer ReadTransformFromDisk(const std::string & 
   return ReadTransformFromDisk<double>( initialTransform );
 }
 
-template<class TInputScalarType, class TWriteScalarType>
+template<typename TInputScalarType, typename TWriteScalarType>
 void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const MyTransform,
                            const std::string & TransformFilename )
 {
@@ -598,7 +598,7 @@ template void WriteTransformToDisk<double,float>( itk::Transform<double, 3, 3> c
 template void WriteTransformToDisk<float,double>( itk::Transform<float, 3, 3> const *const MyTransform, const std::string & TransformFilename );
 template void WriteTransformToDisk<float,float>( itk::Transform<float, 3, 3> const *const MyTransform, const std::string & TransformFilename );
 
-template<class TScalarType>
+template<typename TScalarType>
 void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTransform, const std::string & TransformFilename )
 {
   WriteTransformToDisk<TScalarType, TScalarType>(MyTransform, TransformFilename);

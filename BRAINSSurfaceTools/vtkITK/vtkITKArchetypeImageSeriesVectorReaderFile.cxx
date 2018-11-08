@@ -31,7 +31,7 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderFile);
 
 namespace {
 
-template <class T>
+template <typename T>
 vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 {
 #if VTK_MAJOR_VERSION <= 5
@@ -61,7 +61,7 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::PrintSelf(ostream& os, vtkInden
 }
 
 //----------------------------------------------------------------------------
-template <class T>
+template <typename T>
 void vtkITKExecuteDataFromFileVector(
   vtkITKArchetypeImageSeriesVectorReaderFile* self,
   vtkImageData *data)

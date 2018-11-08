@@ -45,7 +45,7 @@ namespace itk
 /**
  * Define the number of neighbors
  */
-template <class TInputImage, class TCoordRep>
+template <typename TInputImage, typename TCoordRep>
 const unsigned long
 TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 ::m_Neighbors = 1 << TInputImage::ImageDimension;
@@ -53,7 +53,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 /**
  * Constructor
  */
-template <class TInputImage, class TCoordRep>
+template <typename TInputImage, typename TCoordRep>
 TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 ::TensorLinearInterpolateImageFunction()
 {
@@ -62,7 +62,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 /**
  * PrintSelf
  */
-template <class TInputImage, class TCoordRep>
+template <typename TInputImage, typename TCoordRep>
 void
 TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -73,7 +73,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 /**
  * Evaluate at image index position
  */
-template <class TInputImage, class TCoordRep>
+template <typename TInputImage, typename TCoordRep>
 typename TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
 ::OutputType
 TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>

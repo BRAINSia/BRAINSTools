@@ -43,7 +43,7 @@
 #include <metaCommand.h>
 
 #define FunctorClassDeclare(name, op)                    \
-  template <class PixelType> \
+  template <typename PixelType> \
   class name                 \
   {                                                     \
 public:                                               \
@@ -65,7 +65,7 @@ private:                                              \
   };
 
 #define FunctorClassDeclare2(name, op)                   \
-  template <class PixelType> \
+  template <typename PixelType> \
   class name                 \
   {                                                     \
 public:                                               \
@@ -129,7 +129,7 @@ static std::stringstream EffectiveInputFilters;
 
 /*This function if called performs arithmetic operation with a constant value
  * to all the pixels in an input image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 DoGaussian( typename ImageType::Pointer input,  const double sigma )
 {
@@ -158,7 +158,7 @@ DoGaussian( typename ImageType::Pointer input,  const double sigma )
 }
 
 /*This function if called performs histogram equalization with the given number of match points*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 DoHisteq( typename ImageType::Pointer ref, typename ImageType::Pointer input, const int NumOfMatchPoints )
 {
@@ -176,7 +176,7 @@ DoHisteq( typename ImageType::Pointer ref, typename ImageType::Pointer input, co
 
 /*This function if called performs arithmetic operation with a constant value
  * to all the pixels in an input image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 Ifilters( typename ImageType::Pointer input,  MetaCommand command )
 {
@@ -247,7 +247,7 @@ Ifilters( typename ImageType::Pointer input,  MetaCommand command )
 
 /* This function if called performs arithmetic operation with a constant value
  * to all the pixels in tee output image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 Ofilters( typename ImageType::Pointer input, MetaCommand command )
 {
@@ -316,7 +316,7 @@ Ofilters( typename ImageType::Pointer input, MetaCommand command )
 }
 
 /*statfilters performs user specified statistical operations on the output image.*/
-template <class ImageType>
+template <typename ImageType>
 void statfilters( const typename ImageType::Pointer AccImage, MetaCommand command)
 {
   std::map<std::string, std::string> StatDescription;
@@ -561,7 +561,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
 
 /*This function is called when the user wants to write the ouput image to a file. The output image is typecasted to the
   user specified data type. */
-template <class InPixelType, class PixelType, unsigned int ImageDims>
+template <typename InPixelType, typename PixelType, unsigned int ImageDims>
 void ProcessOutputStage( const typename itk::Image<InPixelType, ImageDims>::Pointer AccImage,
                          const std::string & outputImageFilename, MetaCommand command)
 {
@@ -625,7 +625,7 @@ private:
 
 /*This function reads in the input images and writes the output image ,
  * delegating the computations to other functions*/
-template <class ImageType>
+template <typename ImageType>
 void ImageCalculatorReadWrite( MetaCommand & command )
 {
   // Replace backslash blank with a unique string

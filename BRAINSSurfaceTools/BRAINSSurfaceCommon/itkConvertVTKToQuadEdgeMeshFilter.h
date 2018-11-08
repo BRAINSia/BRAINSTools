@@ -37,7 +37,7 @@ namespace itk
  * Caveat: itkConvertVTKToQuadEdgeMeshFilter can only convert triangle meshes.
  *         Use vtkTriangleFilter to convert your mesh to a triangle mesh.
  */
-template <class TOutputMesh>
+template <typename TOutputMesh>
 class ConvertVTKToQuadEdgeMeshFilter : public MeshSource<TOutputMesh>
 {
 public:

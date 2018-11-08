@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 ::DeformQuadEdgeMeshFilter()
 {
@@ -42,13 +42,13 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
   this->m_SphereCenter.Fill(0.0);
 }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 ::~DeformQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 void
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 ::SetInputMesh( const InputMeshType * mesh )
@@ -61,7 +61,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
     }
 }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 const typename
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>::InputMeshType
 * DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
@@ -73,7 +73,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>::InputM
   return inputMesh;
   }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 void
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 ::SetReferenceMesh( const ReferenceMeshType * mesh )
@@ -86,7 +86,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
     }
 }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 const typename
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>::ReferenceMeshType
 * DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
@@ -98,7 +98,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>::Refere
   return deformationMesh;
   }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 void
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 ::SetDestinationPoints( const DestinationPointsType * points )
@@ -111,7 +111,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
     }
 }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 const typename
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>::DestinationPointsType
 * DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
@@ -123,7 +123,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>::Destin
   return destinationPoints;
   }
 
-template <class TInputMesh, class TReferenceMesh, class TDestinationPoints>
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
 void
 DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 ::GenerateData()

@@ -91,7 +91,7 @@ namespace itk
  *
  * \ingroup GeometricTransforms
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class ResampleInPlaceImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

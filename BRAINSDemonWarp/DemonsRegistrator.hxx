@@ -43,7 +43,7 @@
 namespace itk
 {
 /*This function writes the displacement fields of the Displacement.*/
-template <class TRealImage, class TOutputImage, class TFieldValue>
+template <typename TRealImage, typename TOutputImage, typename TFieldValue>
 void DemonsRegistrator<TRealImage, TOutputImage,
                        TFieldValue>::WriteDisplacementComponents()
 {
@@ -91,9 +91,9 @@ void DemonsRegistrator<TRealImage, TOutputImage,
 
 /*Constructor to initialize the parameters.*/
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator() :
   m_InitialDisplacementField(nullptr),
   m_FixedImage(nullptr),
@@ -127,9 +127,9 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator() :
 }
 
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~DemonsRegistrator()
 {
   if( m_Tag )
@@ -141,8 +141,8 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~DemonsRegistrator()
 /*Perform the registration of preprocessed images.*/
 template <
   typename TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TOutputImage,
+  typename TFieldValue>
 void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
   if( this->m_FixedLandmarkFilename != ""
@@ -369,9 +369,9 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
 // Print out the present registration level.
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue>
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue>
 void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel()
 {
   if( this->GetOutDebug() )

@@ -61,8 +61,8 @@
 namespace itk
 {
 template <
-  class TLevelSet,
-  class TTensorImage = Image<itk::DiffusionTensor3D<float>, 3> >
+  typename TLevelSet,
+  typename TTensorImage = Image<itk::DiffusionTensor3D<float>, 3> >
 // class TTensorImage=
 //
 // Image<itk::DiffusionTensor3D<float>,TLevelSet::ImageDimension>

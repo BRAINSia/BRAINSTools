@@ -34,7 +34,7 @@ extern LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage,
                                           const vnl_vector<unsigned int> & PriorLabelCodeVector);
 // Labeling using maximum a posteriori, also do brain stripping using
 // mathematical morphology and connected component
-template <class TProbabilityImage, class TByteImage,
+template <typename TProbabilityImage, typename TByteImage,
           typename TFloatingPrecision>
 void ComputeLabels(
   std::vector<typename TProbabilityImage::Pointer> & Posteriors,

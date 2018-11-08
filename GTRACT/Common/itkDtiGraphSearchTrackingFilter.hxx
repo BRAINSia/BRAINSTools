@@ -56,8 +56,8 @@
 
 namespace itk
 {
-template <class TTensorImageType, class TAnisotropyImageType,
-          class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType,
+          typename TMaskImageType>
 DtiGraphSearchTrackingFilter<TTensorImageType,
                              TAnisotropyImageType,
                              TMaskImageType>::DtiGraphSearchTrackingFilter() :
@@ -74,8 +74,8 @@ DtiGraphSearchTrackingFilter<TTensorImageType,
   this->m_RandomGenerator = RandomGeneratorType::New();
 }
 
-template <class TTensorImageType, class TAnisotropyImageType,
-          class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType,
+          typename TMaskImageType>
 typename itk::Point<double,
                     3> DtiGraphSearchTrackingFilter<TTensorImageType,
                                                     TAnisotropyImageType,
@@ -102,8 +102,8 @@ typename itk::Point<double,
   return sum;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType,
-          class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType,
+          typename TMaskImageType>
 void DtiGraphSearchTrackingFilter<
   TTensorImageType, TAnisotropyImageType, TMaskImageType>::Update()
 {

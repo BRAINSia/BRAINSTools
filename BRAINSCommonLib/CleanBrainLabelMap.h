@@ -27,7 +27,7 @@
 #include "itkAndImageFilter.h"
 #include "itkVotingBinaryHoleFillingImageFilter.h"
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename TOutputImage::Pointer
 CleanBrainLabelMap(const TInputImage *inputImage)
 {

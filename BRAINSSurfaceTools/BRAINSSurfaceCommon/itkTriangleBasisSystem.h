@@ -38,7 +38,7 @@ namespace itk
  *
  * \ingroup TriangleBasisSystems
  */
-template <class TVector, unsigned int NSubspaceDimension>
+template <typename TVector, unsigned int NSubspaceDimension>
 class TriangleBasisSystem
 {
 public:

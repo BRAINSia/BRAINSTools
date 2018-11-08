@@ -31,7 +31,7 @@
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 
-template<class ImageType>
+template<typename ImageType>
 typename ImageType::Pointer
 ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType,
                                    const typename ImageType::PixelType defaultPixelValue,
@@ -112,7 +112,7 @@ ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType
  *   same bounds it scales to as lowerQuantileValue target, so lowerQuantileValue little univariate extrapolation was done (see block comment).
  *
  * * * * */
-template <class ImageType, class LabelImageType>
+template <typename ImageType, typename LabelImageType>
 typename ImageType::Pointer StandardizeMaskIntensity(
   typename ImageType::Pointer image,
   typename LabelImageType::Pointer mask,

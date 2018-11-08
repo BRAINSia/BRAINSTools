@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 ::ReplaceDestinationPointsQuadEdgeMeshFilter()
 {
@@ -36,13 +36,13 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
   this->SetNthOutput( 0, OutputMeshType::New() );
 }
 
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 ::~ReplaceDestinationPointsQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 void
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 ::SetInputMesh( const InputMeshType * mesh )
@@ -55,7 +55,7 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
     }
 }
 
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 const typename
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::InputMeshType
 * ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
@@ -67,7 +67,7 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::InputMes
   return referenceMesh;
   }
 
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 void
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 ::SetDestinationPoints( const InputPointSetType * destinationPointSet )
@@ -80,7 +80,7 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
     }
 }
 
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 const typename
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::InputPointSetType
 * ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
@@ -92,7 +92,7 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::InputPoi
   return destinationPointSet;
   }
 
-template <class TInputMesh, class TInputPointSet>
+template <typename TInputMesh, typename TInputPointSet>
 void
 ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 ::GenerateData()

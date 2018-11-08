@@ -27,7 +27,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 BlendImageFilter<TInputImage, TOutputImage>
 ::BlendImageFilter() : m_Blend1(1.0), m_Blend2(1.0)
 {
@@ -36,7 +36,7 @@ BlendImageFilter<TInputImage, TOutputImage>
 /**
  * GenerateData Performs the accumulation
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BlendImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -72,7 +72,7 @@ BlendImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BlendImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {

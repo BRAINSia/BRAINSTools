@@ -78,7 +78,7 @@ extern void ValidateTransformRankOrdering(const std::vector<std::string> & trans
 
 namespace itk
 {
-template <class FixedImageType, class MovingImageType>
+template <typename FixedImageType, typename MovingImageType>
 class BRAINSFitHelperTemplate : public Object
 {
 public:
@@ -268,14 +268,14 @@ protected:
     * the registration. */
   void  GenerateData();
 
-  template<class TransformType>
+  template<typename TransformType>
   typename TransformType::Pointer
   CollapseLinearTransforms(const CompositeTransformType * compositeTransform);
 
   /** instantiate and call the Registration Helper */
-  template <class TransformType,
-            class OptimizerType,
-            class FitCommonCodeMetricType>
+  template <typename TransformType,
+            typename OptimizerType,
+            typename FitCommonCodeMetricType>
   void FitCommonCode(int numberOfIterations,
                      double minimumStepLength,
                      typename CompositeTransformType::Pointer & initialITKTransform);

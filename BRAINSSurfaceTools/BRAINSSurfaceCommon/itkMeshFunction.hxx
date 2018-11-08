@@ -26,7 +26,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh, class TOutput>
+template <typename TInputMesh, typename TOutput>
 MeshFunction<TInputMesh, TOutput>
 ::MeshFunction()
 {
@@ -36,7 +36,7 @@ MeshFunction<TInputMesh, TOutput>
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh, class TOutput>
+template <typename TInputMesh, typename TOutput>
 void
 MeshFunction<TInputMesh, TOutput>
 ::PrintSelf( std::ostream& os, Indent indent) const
@@ -49,7 +49,7 @@ MeshFunction<TInputMesh, TOutput>
 /**
  * Initialize by setting the input mesh
  */
-template <class TInputMesh, class TOutput>
+template <typename TInputMesh, typename TOutput>
 void
 MeshFunction<TInputMesh, TOutput>
 ::SetInputMesh( const InputMeshType * ptr )
@@ -65,7 +65,7 @@ MeshFunction<TInputMesh, TOutput>
 /**
  * Return the input mesh
  */
-template <class TInputMesh, class TOutput>
+template <typename TInputMesh, typename TOutput>
 const typename MeshFunction<TInputMesh, TOutput>::InputMeshType
 * MeshFunction<TInputMesh, TOutput>
 ::GetInputMesh() const

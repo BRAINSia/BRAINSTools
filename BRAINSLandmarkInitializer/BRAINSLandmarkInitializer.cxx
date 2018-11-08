@@ -67,7 +67,7 @@ static void CheckLandmarks( const LandmarksMapType & ldmk, const LandmarkWeightM
     }
 }
 
-template<class TTransformType>
+template<typename TTransformType>
 int
 InitializeTransform( int argc, char *argv[] )
 {

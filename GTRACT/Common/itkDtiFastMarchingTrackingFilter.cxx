@@ -75,7 +75,7 @@ namespace itk
 /*
  *
  */
-template <class TTensorImageType, class TAnisotropyImageType, class TCostImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>
 ::DtiFastMarchingTrackingFilter()
 {
@@ -94,7 +94,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
 /*
  *
  */
-template <class TTensorImageType, class TAnisotropyImageType, class TCostImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
 DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -105,7 +105,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   os << indent << "Input Anisotropy Image: " << m_AnisotropyImage.GetPointer()   << std::endl;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TCostImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
 DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>
 ::InitializeSeeds()
@@ -135,7 +135,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
 /*
  *
  */
-template <class TTensorImageType, class TAnisotropyImageType, class TCostImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
 DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>
 ::Update()
@@ -169,7 +169,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
  *
  */
 
-template <class TTensorImageType, class TAnisotropyImageType, class TCostImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
 DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>
 ::GradientDescent( CostIndexType & index)

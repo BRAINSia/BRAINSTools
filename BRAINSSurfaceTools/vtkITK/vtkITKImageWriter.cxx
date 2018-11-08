@@ -42,7 +42,7 @@
 vtkStandardNewMacro(vtkITKImageWriter);
 
 // helper function
-template <class  TPixelType, int Dimension>
+template <typename  TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* MeasurementFrameMatrix=nullptr) {
 
@@ -230,7 +230,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 }
 
 //----------------------------------------------------------------------------
-template <class  TPixelType>
+template <typename  TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {

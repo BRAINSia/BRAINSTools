@@ -32,7 +32,7 @@ namespace itk
   *the thresholds.
   *
   */
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 class ComputeHistogramQuantileThresholds :
   public         Object
 {

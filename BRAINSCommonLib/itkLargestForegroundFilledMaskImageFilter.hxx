@@ -44,7 +44,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 ::LargestForegroundFilledMaskImageFilter() :
   m_OtsuPercentileLowerThreshold(0.01),
@@ -57,13 +57,13 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 ::~LargestForegroundFilledMaskImageFilter()
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -82,7 +82,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
      << m_OutsideValue << std::endl;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 ::ImageMinMax(typename TInputImage::PixelType & imageMin,
@@ -96,7 +96,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   imageMin = minmaxFilter->GetMinimum();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
 ::GenerateData()

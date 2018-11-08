@@ -262,10 +262,10 @@ private:
 
   ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelper);
 
-  template <class TLocalCostMetric>
+  template <typename TLocalCostMetric>
   void SetupRegistration(GenericMetricType *localCostMetric);
 
-  template <class TLocalCostMetric>
+  template <typename TLocalCostMetric>
   void RunRegistration();
 
   FixedImagePointer  m_FixedVolume;
@@ -325,7 +325,7 @@ private:
   bool                                       m_WriteOutputTransformInFloat;
 };  // end BRAINSFitHelper class
 
-template <class TLocalCostMetric>
+template <typename TLocalCostMetric>
 void
 BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
 {
@@ -472,7 +472,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
   this->m_Helper = static_cast<itk::Object *>(myHelper.GetPointer() );
 }
 
-template <class TLocalCostMetric>
+template <typename TLocalCostMetric>
 void
 BRAINSFitHelper::RunRegistration()
 {

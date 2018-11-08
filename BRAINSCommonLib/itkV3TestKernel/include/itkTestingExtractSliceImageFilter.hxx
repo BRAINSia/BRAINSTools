@@ -30,7 +30,7 @@ namespace Testing
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::ExtractSliceImageFilter() :
 #ifdef ITKV3_COMPATIBILITY
@@ -44,7 +44,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -56,7 +56,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
   os << indent << "DirectionCollaspeStrategy: " << m_DirectionCollaspeStrategy << std::endl;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::CallCopyOutputRegionToInputRegion(InputImageRegionType & destRegion,
@@ -67,7 +67,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
   extractImageRegionCopier(destRegion, srcRegion, m_ExtractionRegion);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::SetExtractionRegion(InputImageRegionType extractRegion)
@@ -113,7 +113,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
  *
  * \sa ProcessObject::GenerateOutputInformaton()
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::GenerateOutputInformation()
@@ -272,7 +272,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
  * parameter "outputRegionForThread"
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -312,7 +312,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::SetInput(const TInputImage *input)
@@ -324,7 +324,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 const TInputImage *
 ExtractSliceImageFilter<TInputImage, TOutputImage>
 ::GetInput(void) const

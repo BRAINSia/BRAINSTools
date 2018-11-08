@@ -27,7 +27,7 @@ namespace itk
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::LabelExtracterImageFilter()
 {
@@ -36,7 +36,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::SetChange( const InputPixelType & original, const OutputPixelType & result )
@@ -53,7 +53,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::SetChangeMap( const ChangeMapType & changeMap )
@@ -66,7 +66,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::ClearChangeMap()
@@ -79,7 +79,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

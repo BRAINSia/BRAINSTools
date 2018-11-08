@@ -26,7 +26,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::ResampleDestinationPointsQuadEdgeMeshFilter()
 {
@@ -45,13 +45,13 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
   this->m_SphereRadius = 1.0;
 }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::~ResampleDestinationPointsQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::SetFixedMesh( const FixedMeshType * mesh )
@@ -64,7 +64,7 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
     }
 }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 const typename
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::FixedMeshType
 * ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
@@ -76,7 +76,7 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
   return referenceMesh;
   }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::SetReferenceMesh( const ReferenceMeshType * mesh )
@@ -89,7 +89,7 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
     }
 }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 const typename
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::ReferenceMeshType
 * ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
@@ -101,7 +101,7 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
   return referenceMesh;
   }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::ProjectPointToSphereSurface( OutputPointType & point ) const
@@ -115,7 +115,7 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
   point = this->m_SphereCenter + vectorToCenter;
 }
 
-template <class TInputMesh, class TFixedMesh, class TReferenceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::GenerateData()

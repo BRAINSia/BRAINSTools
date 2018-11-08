@@ -59,7 +59,7 @@
 
 namespace itk
 {
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::DtiTrackingFilterBase()
 {
@@ -79,7 +79,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   pi = 3.14159265358979323846;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::ContinuousIndexToMM(typename Self::ContinuousIndexType & index, PointType & p)
@@ -87,7 +87,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(index, p);
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::MMToContinuousIndex(PointType & p, typename Self::ContinuousIndexType & index)
@@ -95,7 +95,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p, index);
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::MMToContinuousIndex(double *pt, typename Self::ContinuousIndexType & index)
@@ -105,7 +105,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p, index);
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::StepIndexInPointSpace(typename Self::ContinuousIndexType & newIndex,
@@ -126,7 +126,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   // std::cerr << "Converted " << newpt << " to " << newIndex << std::endl;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::StepIndex(typename Self::ContinuousIndexType & newIndex,
@@ -141,7 +141,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     }
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::ApplyTensorDeflection(TVector & vin, TMatrix & fullTensorPixel, TVector & e2, TVector & vout)
@@ -154,7 +154,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   vout.normalize();
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 typename DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiFiberType
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::GetOutput()
@@ -162,7 +162,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   return m_Output;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 bool
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::IsLoop(vtkPoints *fiber, double tolerance)
@@ -187,7 +187,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   return false;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::InitializeSeeds()
@@ -234,7 +234,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   std::cerr << "Number of Seeds: " << count << std::endl;
 }
 
-template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::AddFiberToOutput( vtkPoints *currentFiber, vtkFloatArray *fiberTensors )

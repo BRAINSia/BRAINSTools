@@ -52,7 +52,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TTransformType, class TSpatialObject>
+template <typename TInputImage, typename TTransformType, typename TSpatialObject>
 CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::CreateSpatialObjectFilter()
 {
   m_Input = NULL;
@@ -60,7 +60,7 @@ CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::CreateSp
   m_Transform = NULL;
 }
 
-template <class TInputImage, class TTransformType, class TSpatialObject>
+template <typename TInputImage, typename TTransformType, typename TSpatialObject>
 void CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::Update()
 {
   SpatialObjectPointListType points;

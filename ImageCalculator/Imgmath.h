@@ -37,7 +37,7 @@
 
 /* Iadd adds 2 images at every pixel location and outputs the resulting image.*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Iadd(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
   typedef itk::AddImageFilter<ImageType, ImageType, ImageType> FilterType;
@@ -52,7 +52,7 @@ typename ImageType::Pointer Iadd(typename ImageType::Pointer input1, typename Im
 
 /* Isub subtracts 2 images at every pixel location and outputs the resulting image.*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Isub(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
   typedef itk::SubtractImageFilter<ImageType, ImageType, ImageType> FilterType;
@@ -67,7 +67,7 @@ typename ImageType::Pointer Isub(typename ImageType::Pointer input1, typename Im
 
 /* Imul multiplies 2 images at every pixel location and outputs the resulting image.*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Imul(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
   typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
@@ -82,7 +82,7 @@ typename ImageType::Pointer Imul(typename ImageType::Pointer input1, typename Im
 
 /* Idiv divides 2 images at every pixel location and outputs the resulting image.*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Idiv(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
   typedef itk::DivideImageFilter<ImageType, ImageType, ImageType> FilterType;
@@ -98,7 +98,7 @@ typename ImageType::Pointer Idiv(typename ImageType::Pointer input1, typename Im
 /* Iavg takes an image and the number of images as inputs , divides each pixel location of the image by the number of
   images outputs the resulting image.*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Iavg(typename ImageType::Pointer input1, int nimgs)
 {
   typename ImageType::Pointer image = ImageType::New();
@@ -116,7 +116,7 @@ typename ImageType::Pointer Iavg(typename ImageType::Pointer input1, int nimgs)
   return image;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer IMask(typename ImageType::Pointer input1, typename ImageType::Pointer mask )
 
 {
@@ -138,7 +138,7 @@ typename ImageType::Pointer IMask(typename ImageType::Pointer input1, typename I
 
 /*ImageMultiplyConstant multiplies the entire image with a constant value and outputs the resultant image*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ImageMultiplyConstant(typename ImageType::Pointer input1,
                                                   typename ImageType::PixelType constant)
 {
@@ -152,7 +152,7 @@ typename ImageType::Pointer ImageMultiplyConstant(typename ImageType::Pointer in
   return input1;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ImageDivideConstant(typename ImageType::Pointer input1,
                                                 typename ImageType::PixelType constant)
 {
@@ -166,7 +166,7 @@ typename ImageType::Pointer ImageDivideConstant(typename ImageType::Pointer inpu
   return input1;
 }
 
-template <class ImageType>
+template <typename ImageType>
 void ImageSqrtValue(typename ImageType::Pointer Output,
                     const typename ImageType::Pointer Input)
 {
@@ -186,7 +186,7 @@ void ImageSqrtValue(typename ImageType::Pointer Output,
   return;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 ImageSqrtValue(typename ImageType::Pointer input)
 {

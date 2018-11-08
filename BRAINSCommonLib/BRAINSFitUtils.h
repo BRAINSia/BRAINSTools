@@ -50,7 +50,7 @@ extern
 itk::ImageMaskSpatialObject<3>::ConstPointer
 ConvertMaskImageToSpatialMask(itk::Image<unsigned char,3>::ConstPointer inputImage );
 
-template <class TransformType, unsigned int VImageDimension>
+template <typename TransformType, unsigned int VImageDimension>
 void DoCenteredTransformMaskClipping(
   ImageMaskPointer & fixedMask,
   ImageMaskPointer & movingMask,
@@ -163,7 +163,7 @@ void DoCenteredTransformMaskClipping(
  * occupies a sufficient part of the range computed.
  *
  */
-template <class TInputImage, class TMaskImage>
+template <typename TInputImage, typename TMaskImage>
 void ComputeRobustMinMaxMean(
   const float Qalpha, // Remove 1% from computations by setting Qalpha=0.005
   typename TInputImage::ConstPointer image,
@@ -257,7 +257,7 @@ void ComputeRobustMinMaxMean(
 /**
  *This function produces an image where the very high and low tails of the image are clamped
  */
-template <class TInputImage, class TMaskSpatialObject>
+template <typename TInputImage, typename TMaskSpatialObject>
 typename TInputImage::Pointer ClampNoisyTailsOfImage(
   const float m_RemoveIntensityOutliers,
   typename TInputImage::ConstPointer InputImage,

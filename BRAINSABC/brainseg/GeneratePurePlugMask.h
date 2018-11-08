@@ -30,7 +30,7 @@
 #include "itkIntegrityMetricMembershipFunction.h"
 #include "itkTimeProbe.h"
 
-template <class InputImageType, class ByteImageType>
+template <typename InputImageType, typename ByteImageType>
 typename ByteImageType::Pointer
 GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & inputImages,
                      const float threshold,

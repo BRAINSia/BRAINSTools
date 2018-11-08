@@ -210,7 +210,7 @@ extern SImageType::PointType GetCenterOfHeadMass(SImageType::Pointer volume);
 extern SImageType::Pointer MakeIsoTropicReferenceImage();
 
 /*****************************************************************************/
-template <class ValuesType>
+template <typename ValuesType>
 ValuesType vectorNorm(const std::vector<ValuesType> & x)
 {
   ValuesType norm = 0.0;
@@ -245,7 +245,7 @@ ValuesType vectorNorm(const std::vector<ValuesType> & x)
  If we run removeVectorMean(y,3) before calling normalizeVector(y,3), we
  will obtain an array which has a zero mean as well as unit norm.
  */
-template <class ValuesType>
+template <typename ValuesType>
 void normalizeVector(std::vector<ValuesType> & x)
 {
   const ValuesType norm = vectorNorm(x);
@@ -292,7 +292,7 @@ void normalizeVector(std::vector<ValuesType> & x)
  The array y is represented by: myModel.AccessRPTemplate()+j*nv_myModel.AccessRPTemplate(), and n =
  nv_myModel.AccessRPTemplate()
  */
-template <class ValuesType>
+template <typename ValuesType>
 ValuesType removeVectorMean(std::vector<ValuesType> & x)
 {
   const ValuesType n = x.size();
@@ -353,7 +353,7 @@ PrefixName(const char *prefix, const std::string & name)
 #include <itkMinimumMaximumImageFilter.h>
 #include <itkScalarImageToHistogramGenerator.h>
 #include <itkOtsuMultipleThresholdsCalculator.h>
-template <class SImageType>
+template <typename SImageType>
 void ImageMinMax(typename SImageType::Pointer image,
                  typename SImageType::PixelType *imageMin, typename SImageType::PixelType *imageMax)
 {
@@ -383,7 +383,7 @@ void ImageMinMax(typename SImageType::Pointer image,
  *                100.0=100%, and 1.0=.01%.
  * @return Background threshold.
  */
-template <class SImageType>
+template <typename SImageType>
 typename SImageType::PixelType
 setLowHigh(typename SImageType::Pointer & image,
            typename SImageType::PixelType & low,
@@ -420,7 +420,7 @@ setLowHigh(typename SImageType::Pointer & image,
 #if 0 //TODO: Remove old code
 // ------------------------------
 // The following should be cleaned up and moved elsewhere
-template <class DType>
+template <typename DType>
 double
 removeVectorMean(DType *x, DType *y, int n)
 {
@@ -444,7 +444,7 @@ removeVectorMean(DType *x, DType *y, int n)
 
 extern void removeVectorMean(double *y, int n, int p);
 
-template <class DType>
+template <typename DType>
 double removeVectorMean(DType *y, int n)
 {
   double mean = 0.0;
@@ -467,7 +467,7 @@ double removeVectorMean(DType *y, int n)
 
 // ///////////////////////////////////////////////////////
 // Implements Eq. (2.2.1) of J. Cohen & P. Cohen (2nd ed.)
-template <class DType>
+template <typename DType>
 double standardDeviation(DType *x, int n)
 {
   double sx, sxx;
@@ -497,7 +497,7 @@ double standardDeviation(DType *x, int n)
 
 // Computes the Pearson correlation coefficient between x and y.
 // Implements Eq. (2.3.2) of J. Cohen & P. Cohen (2nd ed.)
-template <class DTypeX, class DTypeY>
+template <typename DTypeX, typename DTypeY>
 double pearsonCorrelation(DTypeX *x, DTypeY *y, int n)
 {
   double sx, sy, sxx, syy, sxy;
@@ -531,7 +531,7 @@ double pearsonCorrelation(DTypeX *x, DTypeY *y, int n)
 }
 
 // Implements Eq. (3.3.11) of J. Cohen & P. Cohen (2nd ed.)
-template <class DTypeY, class DTypeX>
+template <typename DTypeY, typename DTypeX>
 void partialCorrelation(DTypeY *Y, DTypeX *X1, DTypeX *X2, int n, double *pr1, double *pr2)
 {
   double rY1, rY2, r12;
@@ -610,7 +610,7 @@ double sample_variance(DType *x, int n, double *mean)
   return var;
 }
 
-template <class DType>
+template <typename DType>
 double
 independent_samples_t(DType *x1, int n1, DType *x2, int n2, int *df, double *meandiff)
 {
@@ -637,7 +637,7 @@ independent_samples_t(DType *x1, int n1, DType *x2, int n2, int *df, double *mea
   return t;
 }
 
-template <class DType>
+template <typename DType>
 double
 paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
 {
@@ -667,7 +667,7 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
 }
 #endif
 #if 0
-template<class TScalarType>
+template<typename TScalarType>
 extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  );
 #endif
 

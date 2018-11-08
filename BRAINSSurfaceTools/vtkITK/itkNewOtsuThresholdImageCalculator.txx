@@ -29,7 +29,7 @@ namespace itk
 /*
  * Constructor
  */
-template<class TInputImage>
+template<typename TInputImage>
 NewOtsuThresholdImageCalculator<TInputImage>
 ::NewOtsuThresholdImageCalculator()
 {
@@ -43,7 +43,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
 /*
  * Compute the Otsu's threshold
  */
-template<class TInputImage>
+template<typename TInputImage>
 void
 NewOtsuThresholdImageCalculator<TInputImage>
 ::Compute(void)
@@ -164,7 +164,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
                                         ( maxBinNumber + 1 ) / binMultiplier );
 }
 
-template<class TInputImage>
+template<typename TInputImage>
 void
 NewOtsuThresholdImageCalculator<TInputImage>
 ::PrintSelf( std::ostream& os, Indent indent ) const

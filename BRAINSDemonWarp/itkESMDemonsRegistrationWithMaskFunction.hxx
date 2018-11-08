@@ -28,7 +28,7 @@ namespace itk
 /**
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ESMDemonsRegistrationWithMaskFunction()
 {
@@ -83,7 +83,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
 /*
  * Standard "PrintSelf" method.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -121,7 +121,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::SetIntensityDifferenceThreshold(double threshold)
@@ -132,7 +132,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::GetIntensityDifferenceThreshold() const
@@ -143,7 +143,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
 /**
  * Set the function state values before each iteration
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::InitializeIteration()
@@ -203,7 +203,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
 /**
  * Compute update at a non boundary neighbourhood
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 typename ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::PixelType
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
@@ -494,7 +494,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
 /**
  * Update the metric and release the per-thread-global data.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ReleaseGlobalDataPointer(void *gd) const

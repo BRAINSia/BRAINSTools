@@ -28,7 +28,7 @@ namespace itk
 //
 // Constructor
 //
-template <class TOutputMesh>
+template <typename TOutputMesh>
 QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 ::QuadEdgeMeshVTKPolyDataReader()
 {
@@ -40,7 +40,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   this->ProcessObject::SetNthOutput(0, output.GetPointer() );
 }
 
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 ::GenerateData()
@@ -303,7 +303,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   inputFile.close();
 }
 
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 ::PrintSelf( std::ostream& os, Indent indent ) const

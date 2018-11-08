@@ -40,7 +40,7 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template <class TInputMesh>
+template <typename TInputMesh>
 class InterpolateMeshFunction :
   public         MeshFunction<TInputMesh,
                               typename NumericTraits<typename TInputMesh::PixelType>::RealType>

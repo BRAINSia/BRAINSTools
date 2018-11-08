@@ -39,7 +39,7 @@ namespace itk
  *
  * \ingroup   ImageFilters
  */
-template <class TOutputImage>
+template <typename TOutputImage>
 class ITK_EXPORT VTKImageToImageFilter : public ProcessObject
 {
 public:

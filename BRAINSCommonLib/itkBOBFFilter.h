@@ -26,7 +26,7 @@ namespace itk
 {
 /** \class BOBFilter
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class BOBFFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

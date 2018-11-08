@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
 ::AssignScalarValuesQuadEdgeMeshFilter()
 {
@@ -36,13 +36,13 @@ AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
   this->SetNthOutput( 0, OutputMeshType::New() );
 }
 
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
 ::~AssignScalarValuesQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 void
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
 ::SetSourceMesh( const SourceMeshType * mesh )
@@ -55,7 +55,7 @@ AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 const typename
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::SourceMeshType
 * AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
@@ -67,7 +67,7 @@ AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::Sour
   return sourceMesh;
   }
 
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 void
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
 ::SetInputMesh( const InputMeshType * mesh )
@@ -80,7 +80,7 @@ AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 const typename
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::InputMeshType
 * AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
@@ -92,7 +92,7 @@ AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::Inpu
   return inputMesh;
   }
 
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 void
 AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
 ::GenerateData()

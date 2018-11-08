@@ -52,7 +52,7 @@ namespace itk
  * \sa itkQuadEdgeMeshSplitFilter
  *
  */
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 class QuadEdgeMeshBoundarySmoothFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

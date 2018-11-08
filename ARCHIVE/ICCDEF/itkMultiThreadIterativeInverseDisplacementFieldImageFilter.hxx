@@ -26,7 +26,7 @@ namespace itk
 {
 // ----------------------------------------------------------------------------
 // Constructor
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage,
                                                         TOutputImage>::
 MultiThreadIterativeInverseDisplacementFieldImageFilter()
@@ -37,7 +37,7 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter()
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
@@ -245,7 +245,7 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
   m_Time = time.GetMean();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
@@ -264,7 +264,7 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
   this->GetMultiThreader()->SingleMethodExecute();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 ITK_THREAD_RETURN_TYPE
 MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverseThreaderCallback(void * arg)
@@ -293,7 +293,7 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
   return ITK_THREAD_RETURN_VALUE;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ThreadedComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
@@ -426,7 +426,7 @@ MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImag
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {

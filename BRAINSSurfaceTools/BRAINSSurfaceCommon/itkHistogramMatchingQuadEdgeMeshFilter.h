@@ -55,7 +55,7 @@ namespace itk
  *
  */
 /* THistogramMeasurement -- The precision level for which to do HistogramMeasurmenets */
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement = typename TInputMesh::PixelType>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement = typename TInputMesh::PixelType>
 class HistogramMatchingQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

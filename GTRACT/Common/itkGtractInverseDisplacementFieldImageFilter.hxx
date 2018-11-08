@@ -30,7 +30,7 @@ namespace itk
 /**
  * Initialize new instance
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GtractInverseDisplacementFieldImageFilter()
 {
@@ -57,7 +57,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
  *
  * \todo Add details about this class
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -76,7 +76,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 /**
  * Set the output image spacing.
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::SetOutputSpacing(const double *spacing)
@@ -89,7 +89,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 /**
  * Set the output image origin.
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::SetOutputOrigin(const double *origin)
@@ -103,7 +103,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
  * Sub-sample the input deformation field and prepare the KernelBase
  * BSpline
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrepareKernelBaseSpline()
@@ -209,7 +209,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 /**
  * GenerateData
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -280,7 +280,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
  * when we cannot assume anything about the transform being used.
  * So we do the easy thing and request the entire input image.
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -308,7 +308,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 /**
  * Inform pipeline of required output region
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateOutputInformation()
@@ -340,7 +340,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 /**
  * Verify if any of the components has been modified.
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 unsigned long
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GetMTime( void ) const

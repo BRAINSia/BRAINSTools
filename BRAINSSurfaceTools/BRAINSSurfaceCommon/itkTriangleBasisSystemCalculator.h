@@ -36,7 +36,7 @@ namespace itk
  * \sa TriangleBasisSystem
  *
  */
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 class TriangleBasisSystemCalculator : public Object
 {
 public:

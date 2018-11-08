@@ -27,7 +27,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::TriangleBasisSystemCalculator()
 {
@@ -38,14 +38,14 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 /**
  * Destructor
  */
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::~TriangleBasisSystemCalculator()
 {
   itkDebugMacro("Destructor");
 }
 
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 void
 TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs ) const
@@ -79,7 +79,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   this->CalculateBasis( pt1, pt2, pt3, bs );
 }
 
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 void
 TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::CalculateBasis(PointType pt1, PointType pt2, PointType pt3, TBasisSystem & bs ) const
@@ -110,7 +110,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   bs.SetVector( 1, u32 );
 }
 
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 void
 TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs, TBasisSystem & bt ) const
@@ -144,7 +144,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   this->CalculateBasis( pt1, pt2, pt3, bs, bt );
 }
 
-template <class TMesh, class TBasisSystem>
+template <typename TMesh, typename TBasisSystem>
 void
 TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 ::CalculateBasis(PointType pt1, PointType pt2, PointType pt3,

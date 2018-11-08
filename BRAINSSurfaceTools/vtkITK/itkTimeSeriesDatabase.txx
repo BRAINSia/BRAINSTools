@@ -14,12 +14,12 @@
 
 namespace itk {
 
-  // template<class TPixel> int TimeSeriesDatabase<TPixel>::BlockSize = 16;
-  template<class T> T TSD_MIN ( T a, T b ) { return a < b ? a : b; }
-  template<class T> T TSD_MAX ( T a, T b ) { return a > b ? a : b; }
+  // template<typename TPixel> int TimeSeriesDatabase<TPixel>::BlockSize = 16;
+  template<typename T> T TSD_MIN ( T a, T b ) { return a < b ? a : b; }
+  template<typename T> T TSD_MAX ( T a, T b ) { return a > b ? a : b; }
 
 
-template <class TPixel>
+template <typename TPixel>
 bool TimeSeriesDatabase<TPixel>::CalculateIntersection ( Size<3> BlockIndex,
                                                          typename OutputImageType::RegionType RequestedRegion,
                                                          typename OutputImageType::RegionType& BlockRegion,
@@ -50,14 +50,14 @@ bool TimeSeriesDatabase<TPixel>::CalculateIntersection ( Size<3> BlockIndex,
 
 
 
-template <class TPixel>
+template <typename TPixel>
 bool TimeSeriesDatabase<TPixel>::IsOpen () const
 {
   if ( this->m_DatabaseFiles.size() == 0 ) { return false; }
   return const_cast<std::fstream*>(this->m_DatabaseFiles[0].get())->is_open();
 }
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::Disconnect ()
 {
   for ( int idx = 0; idx < this->m_DatabaseFiles.size(); idx++ )
@@ -68,7 +68,7 @@ void TimeSeriesDatabase<TPixel>::Disconnect ()
   this->m_DatabaseFileNames.clear();
 }
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::Connect ( const char* filename )
 {
   // If we are still open, disconnect
@@ -140,20 +140,20 @@ void TimeSeriesDatabase<TPixel>::Connect ( const char* filename )
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 unsigned int TimeSeriesDatabase<TPixel>::CalculateFileIndex ( unsigned long Index, unsigned long BlocksPerFile )
 {
   return (int) Index / BlocksPerFile;
 }
 
-template <class TPixel>
+template <typename TPixel>
 unsigned int TimeSeriesDatabase<TPixel>::CalculateFileIndex ( unsigned long index )
 {
   return this->CalculateFileIndex ( index, this->m_BlocksPerFile );
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 unsigned long TimeSeriesDatabase<TPixel>::CalculateIndex ( Size<3> p, int ImagePosition, unsigned int BlocksPerImage[3] )
 {
   // Remember that we use the first 16K as our header
@@ -165,7 +165,7 @@ unsigned long TimeSeriesDatabase<TPixel>::CalculateIndex ( Size<3> p, int ImageP
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 unsigned long TimeSeriesDatabase<TPixel>::CalculateIndex ( Size<3> p, int ImagePosition )
 {
   unsigned int t[3];
@@ -175,7 +175,7 @@ unsigned long TimeSeriesDatabase<TPixel>::CalculateIndex ( Size<3> p, int ImageP
   return this->CalculateIndex ( p, ImagePosition, t );
 }
 
-template <class TPixel>
+template <typename TPixel>
 ::std::streampos TimeSeriesDatabase<TPixel>::CalculatePosition ( unsigned long index, unsigned long BlocksPerFile )
 {
   ::std::streampos position = ( index % BlocksPerFile ) * sizeof ( TPixel ) * TimeSeriesVolumeBlockSize;
@@ -183,7 +183,7 @@ template <class TPixel>
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 typename TimeSeriesDatabase<TPixel>::CacheBlock* TimeSeriesDatabase<TPixel>::GetCacheBlock ( unsigned long index )
 {
   CacheBlock* Buffer = this->m_Cache.find ( index );
@@ -201,7 +201,7 @@ typename TimeSeriesDatabase<TPixel>::CacheBlock* TimeSeriesDatabase<TPixel>::Get
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::GetVoxelTimeSeries ( typename OutputImageType::IndexType idx, ArrayType& array )
 {
   // See if the index is inside the volume
@@ -224,7 +224,7 @@ void TimeSeriesDatabase<TPixel>::GetVoxelTimeSeries ( typename OutputImageType::
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::GenerateOutputInformation ( )
 {
   typename OutputImageType::Pointer output = this->GetOutput();
@@ -234,7 +234,7 @@ void TimeSeriesDatabase<TPixel>::GenerateOutputInformation ( )
   output->SetLargestPossibleRegion ( this->m_OutputRegion );
 }
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::GenerateData()
 {
   typename OutputImageType::Pointer output = this->GetOutput();
@@ -338,7 +338,7 @@ void TimeSeriesDatabase<TPixel>::GenerateData()
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilename, const char* archetype )
 {
   // How many blocks go in each file, allowing for 1GiB per file
@@ -347,7 +347,7 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
   CreateFromFileArchetype ( TSDFilename, archetype, FileSize );
 }
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilename, const char* archetype, unsigned long FileSize )
 {
 
@@ -557,14 +557,14 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
     }
 }
 
-template <class TPixel>
+template <typename TPixel>
 float TimeSeriesDatabase<TPixel>::GetCacheSizeInMiB()
 {
   unsigned cachesize = this->m_Cache.get_maxsize();
   return (float) cachesize * sizeof ( TPixel ) * TimeSeriesVolumeBlockSize / ( 1024*1024.);
 }
 
-template <class TPixel>
+template <typename TPixel>
 void TimeSeriesDatabase<TPixel>::SetCacheSizeInMiB ( float sz )
 {
   // How many blocks is this?
@@ -575,19 +575,19 @@ void TimeSeriesDatabase<TPixel>::SetCacheSizeInMiB ( float sz )
 
 
 
-template <class TPixel>
+template <typename TPixel>
 TimeSeriesDatabase<TPixel>::TimeSeriesDatabase () : m_Cache ( 1024 ){
   this->m_Dimensions.SetSize ( 4 );
   this->m_BlocksPerImage.SetSize ( 4 );
 }
 
-template <class TPixel>
+template <typename TPixel>
 TimeSeriesDatabase<TPixel>::~TimeSeriesDatabase () {
   // m_Cache.statistics ( std::cout );
 }
 
 
-template <class TPixel>
+template <typename TPixel>
 void
 TimeSeriesDatabase<TPixel>
 ::PrintSelf(std::ostream& os, Indent indent) const

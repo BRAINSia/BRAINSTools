@@ -40,7 +40,7 @@
 namespace itk
 {
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType>
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GrowCutSegmentationImageFilter()
 {
@@ -76,7 +76,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 /**
  * Standard PrintSelf method.
  */
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -89,7 +89,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   //os << indent << "use Algorithm Speed Slow : " << m_UseSlow<< std::endl;
 }
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GenerateInputRequestedRegion()
@@ -102,7 +102,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
     }
 }
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::EnlargeOutputRequestedRegion(DataObject *output)
 {
@@ -110,7 +110,7 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   output->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::SetStateImage( const OutputImageType *l)
@@ -121,7 +121,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   //m_StateImage->Graft(this->ProcessObject::GetInput(3));
 }
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::OutputImagePointer
 GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >
 ::GetStateImage()
@@ -131,7 +131,7 @@ GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >
   return stateImage;
 }
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::SetDistancesImage( const WeightImageType* w)
@@ -143,7 +143,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   //m_DistancesImage = static_cast< WeightImageType *>(this->ProcessObject::GetInput(4));
 }
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::WeightImagePointer
 GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >
 ::GetDistancesImage()
@@ -154,7 +154,7 @@ GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >
   //return const_cast< WeightImageType*> (this->ProcessObject::GetInput(4));
 }
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::SetMaxSaturationImage( const WeightImageType* s)
@@ -167,7 +167,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 }
 
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::WeightImagePointer
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetMaxSaturationImage()
@@ -178,7 +178,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   //return const_cast< WeightImageType*> (this->ProcessObject::GetInput(5));
 }
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::OutputImagePointer
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetLabelImage()
@@ -191,7 +191,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   //return const_cast< const OutputImageType*> (this->ProcessObject::GetInput(1));
 }
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::WeightImagePointer
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetStrengthImage()
@@ -202,7 +202,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 }
 
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::WeightImagePointer
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetUpdatedStrengthImage()
@@ -210,7 +210,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   return m_WeightImage;
 }
 
-template< class TInputImage, class TOutputImage, class TWeightPixelType >
+template< typename TInputImage, typename TOutputImage, typename TWeightPixelType >
 const typename GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType >::InputImagePointer
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GetInputImage()
@@ -218,7 +218,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   return const_cast< InputImageType*> (this->GetInput(0));
 }
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::Initialize( OutputImageType *output)
@@ -253,7 +253,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
 }
 
-template<class TInputImage, class TOutputImage, class TWeightPixelType>
+template<typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType>::
 ComputeLabelVolumes(TOutputImage *outputImage, std::vector< unsigned > &volumes,
                     std::vector< unsigned > &physicalVolumes)
@@ -317,7 +317,7 @@ ComputeLabelVolumes(TOutputImage *outputImage, std::vector< unsigned > &volumes,
 
 
 
-template<class TInputImage, class TOutputImage, class TWeightPixelType>
+template<typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 bool GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>::
 InitializeStateImage( OutputImageType *stateImage)
 {
@@ -407,7 +407,7 @@ InitializeStateImage( OutputImageType *stateImage)
 
 }
 
-template<class TInputImage, class TOutputImage, class TWeightPixelType>
+template<typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>::
 InitializeDistancesImage( TInputImage *inputImage,
                           WeightImageType *distances)
@@ -445,7 +445,7 @@ InitializeDistancesImage( TInputImage *inputImage,
     }
 }
 
-template<class TInputImage, class TOutputImage, class TWeightPixelType>
+template<typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>::
 MaskSegmentedImageByWeight( float confThresh)
 {
@@ -482,7 +482,7 @@ MaskSegmentedImageByWeight( float confThresh)
 
 
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::GenerateData()
@@ -753,7 +753,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
 
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
                           ThreadIdType itkNotUsed(threadId))
@@ -1051,7 +1051,7 @@ void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 }
 
 
-template <class TInputImage, class TOutputImage, class TWeightPixelType>
+template <typename TInputImage, typename TOutputImage, typename TWeightPixelType>
 void
 GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 ::AfterThreadedGenerateData()

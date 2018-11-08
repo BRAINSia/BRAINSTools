@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TMesh>
+template <typename TMesh>
 RescaleScalarsQuadEdgeMeshFilter<TMesh>
 ::RescaleScalarsQuadEdgeMeshFilter()
 {
@@ -42,13 +42,13 @@ RescaleScalarsQuadEdgeMeshFilter<TMesh>
   this->m_InputMinimum = NumericTraits<InputPixelType>::max();
 }
 
-template <class TMesh>
+template <typename TMesh>
 RescaleScalarsQuadEdgeMeshFilter<TMesh>
 ::~RescaleScalarsQuadEdgeMeshFilter()
 {
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 RescaleScalarsQuadEdgeMeshFilter<TMesh>
 ::SetInputMesh( const InputMeshType * mesh )
@@ -61,7 +61,7 @@ RescaleScalarsQuadEdgeMeshFilter<TMesh>
     }
 }
 
-template <class TMesh>
+template <typename TMesh>
 const typename
 RescaleScalarsQuadEdgeMeshFilter<TMesh>::InputMeshType
 * RescaleScalarsQuadEdgeMeshFilter<TMesh>
@@ -74,7 +74,7 @@ RescaleScalarsQuadEdgeMeshFilter<TMesh>::InputMeshType
   return inputMesh;
   }
 
-template <class TMesh>
+template <typename TMesh>
 void
 RescaleScalarsQuadEdgeMeshFilter<TMesh>
 ::GenerateData()

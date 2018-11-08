@@ -96,7 +96,7 @@ private:
   PointStorageType m_FWeighting;
 };
 
-template <typename PointStorageType, class PointSetType>
+template <typename PointStorageType, typename PointSetType>
 class InverseConsistentLandmarks :
   public std::map<std::string, InverseConsistentLandmarkPoint<PointStorageType> >
 {

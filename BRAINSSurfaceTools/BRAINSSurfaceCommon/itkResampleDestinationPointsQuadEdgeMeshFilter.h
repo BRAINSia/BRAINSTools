@@ -38,7 +38,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputPointSet, class TFixedMesh, class TReferenceMesh, class TOutputPointSet>
+template <typename TInputPointSet, typename TFixedMesh, typename TReferenceMesh, typename TOutputPointSet>
 class ResampleDestinationPointsQuadEdgeMeshFilter :
   public MeshToMeshFilter<TInputPointSet, TOutputPointSet>
 {

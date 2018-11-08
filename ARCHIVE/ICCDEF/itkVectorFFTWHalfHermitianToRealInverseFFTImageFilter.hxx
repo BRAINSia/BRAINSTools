@@ -37,7 +37,7 @@
 
 namespace itk
 {
-template <class TPixel, unsigned int Dimension>
+template <typename TPixel, unsigned int Dimension>
 void
 VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, Dimension>::GenerateOutputInformation()
 {
@@ -121,7 +121,7 @@ VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, Dimension>::GenerateO
 //  outputPtr->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <class TPixel, unsigned int Dimension>
+template <typename TPixel, unsigned int Dimension>
 void
 VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, Dimension>::GenerateInputRequestedRegion()
 {

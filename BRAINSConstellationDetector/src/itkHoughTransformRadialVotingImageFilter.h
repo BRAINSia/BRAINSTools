@@ -92,7 +92,7 @@ namespace itk
  * \todo Update the doxygen documentation!!!
  * */
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class HoughTransformRadialVotingImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

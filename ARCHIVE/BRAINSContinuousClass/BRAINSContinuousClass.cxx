@@ -38,7 +38,7 @@
 #include "BRAINSContinuousClassCLP.h"
 #include <BRAINSCommonLib.h>
 
-template <class PixelType>
+template <typename PixelType>
 int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
                              std::string discreteVolumeName, std::string outputVolumeName)
 {

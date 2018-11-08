@@ -54,7 +54,7 @@
 #include <map>
 /** \class LLSBiasCorrector
  */
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 class LLSBiasCorrector : public itk::Object
 {
 public:

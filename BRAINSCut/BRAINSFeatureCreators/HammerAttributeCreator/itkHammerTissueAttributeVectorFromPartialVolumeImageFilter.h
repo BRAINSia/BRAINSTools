@@ -67,7 +67,7 @@ namespace itk
   *
   * \ingroup GradientFilters
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class HammerTissueAttributeVectorFromPartialVolumeImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

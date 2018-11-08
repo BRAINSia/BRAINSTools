@@ -65,7 +65,7 @@
 
 namespace itk
 {
-// template <class TCostImage >
+// template <typename TCostImage >
 FastMarchingCostFunction // < TCostImage >
 ::FastMarchingCostFunction()
 {
@@ -82,7 +82,7 @@ FastMarchingCostFunction
   // return SpaceDimension;
 }
 
-// template <class TCostImage>
+// template <typename TCostImage>
 void
 FastMarchingCostFunction // < TCostImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -92,7 +92,7 @@ FastMarchingCostFunction // < TCostImage>
   os << indent << "Input Cost Image: " << m_CostImage.GetPointer()  << std::endl;
 }
 
-// template <class TCostImage>
+// template <typename TCostImage>
 // typename FastMarchingCostFunction< TCostImage>::MeasureType
 FastMarchingCostFunction::MeasureType
 FastMarchingCostFunction
@@ -121,7 +121,7 @@ FastMarchingCostFunction
   return value;
 } // end of GetValue
 
-// template <class TCostImage>
+// template <typename TCostImage>
 void
 FastMarchingCostFunction // < TCostImage>
 ::GetDerivative( const ParametersType & parameters,

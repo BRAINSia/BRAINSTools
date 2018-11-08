@@ -45,7 +45,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh1, class TInputMesh2 = TInputMesh1>
+template <typename TInputMesh1, typename TInputMesh2 = TInputMesh1>
 class QuadEdgeMeshSimilarityCalculator :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2>
 {

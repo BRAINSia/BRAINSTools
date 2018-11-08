@@ -37,7 +37,7 @@
 #include "itkThinPlateSplineKernelTransform.h"
 #include <BRAINSCommonLib.h>
 
-template <class TScalarType,
+template <typename TScalarType,
           unsigned int NDimension>
 class BCDThinPlateSplineKernelTransform :
   public itk::ThinPlateSplineKernelTransform<TScalarType, NDimension>

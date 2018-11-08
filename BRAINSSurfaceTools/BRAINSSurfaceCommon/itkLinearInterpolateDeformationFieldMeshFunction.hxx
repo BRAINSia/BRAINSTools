@@ -29,7 +29,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh, class TDestinationPointsContainer>
+template <typename TInputMesh, typename TDestinationPointsContainer>
 LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
 ::LinearInterpolateDeformationFieldMeshFunction()
 {
@@ -38,7 +38,7 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
 /**
  * Destructor
  */
-template <class TInputMesh, class TDestinationPointsContainer>
+template <typename TInputMesh, typename TDestinationPointsContainer>
 LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
 ::~LinearInterpolateDeformationFieldMeshFunction()
 {
@@ -47,7 +47,7 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh, class TDestinationPointsContainer>
+template <typename TInputMesh, typename TDestinationPointsContainer>
 void
 LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
 ::PrintSelf( std::ostream& os, Indent indent) const
@@ -59,7 +59,7 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
  * Method provided for completness of the base class API.
  * This method is not expected to be used here.
  */
-template <class TInputMesh, class TDestinationPointsContainer>
+template <typename TInputMesh, typename TDestinationPointsContainer>
 typename
 LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>::OutputType
 LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
@@ -71,7 +71,7 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
 /**
  * Evaluate the mesh at a given point position.
  */
-template <class TInputMesh, class TDestinationPointsContainer>
+template <typename TInputMesh, typename TDestinationPointsContainer>
 bool
 LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
 ::Evaluate( const DestinationPointsContainerType * field,

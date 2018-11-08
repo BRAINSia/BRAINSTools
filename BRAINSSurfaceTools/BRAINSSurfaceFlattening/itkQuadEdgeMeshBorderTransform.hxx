@@ -24,7 +24,7 @@
 namespace itk
 {
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::QuadEdgeMeshBorderTransform()
 {
@@ -33,7 +33,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::MapPointIdentifier
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::GetBoundaryPtMap()
@@ -42,7 +42,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::InputVectorPointType
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::GetBorder()
@@ -51,7 +51,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::ComputeBoundary()
@@ -78,7 +78,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::GenerateData()
 {
   this->ComputeTransform();
@@ -86,7 +86,7 @@ void QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::GenerateData()
 
 // ----------------------------------------------------------------------------
 // *** under testing ***
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::InputEdgeListIterator
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::ComputeLongestBorder()
 {
@@ -122,7 +122,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::ComputeLongestBorder()
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::InputEdgeListIterator
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::ComputeLargestBorder()
 {
@@ -162,7 +162,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::ComputeLargestBorder()
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::DiskTransform()
@@ -232,7 +232,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::InputCoordRepType
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::RadiusMaxSquare()
@@ -264,7 +264,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>::InputPointType
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::GetMeshBarycentre()
@@ -302,7 +302,7 @@ QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::ComputeTransform()
 {
@@ -325,7 +325,7 @@ void QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 }
 
 // ----------------------------------------------------------------------------
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBorderTransform<TInputMesh, TOutputMesh>
 ::ArcLengthSquareTransform()

@@ -101,7 +101,7 @@ MaxOfImageList(const std::vector<typename TImage::Pointer> & inputImageList) // 
  * All input images and the input mask must be in the same voxel space
  ************
  */
-template <class InputImageType, class OutputImageType, class MaskImageType>
+template <typename InputImageType, typename OutputImageType, typename MaskImageType>
 typename OutputImageType::Pointer
 GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & inputImages,
                          const float LowerPercentileMatching, // Map lower quantile and below to minOutputRange

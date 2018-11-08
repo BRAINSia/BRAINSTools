@@ -41,7 +41,7 @@ namespace itk
            and if ITK_USE_FFTWD is defined, then only doubles are valid.
 */
 
-template <class TPixel, unsigned int VDimension>
+template <typename TPixel, unsigned int VDimension>
 void
 VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
 ::GenerateOutputInformation()
@@ -110,7 +110,7 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
   outputPtr->SetRegions( outputLargestPossibleRegion );
 }
 
-template <class TPixel, unsigned int VDimension>
+template <typename TPixel, unsigned int VDimension>
 void
 VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
 ::GenerateInputRequestedRegion()
@@ -130,7 +130,7 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
   input->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <class TPixel, unsigned int VDimension>
+template <typename TPixel, unsigned int VDimension>
 void
 VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
 ::EnlargeOutputRequestedRegion(DataObject *output)

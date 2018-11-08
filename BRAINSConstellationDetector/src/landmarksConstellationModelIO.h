@@ -717,7 +717,7 @@ public:
 private:
   bool m_Swapped;
 
-  template <class T>
+  template <typename T>
   void Write(std::ofstream & f, T var)
   {
     if( f.bad() || f.eof() )
@@ -727,7 +727,7 @@ private:
     f.write( reinterpret_cast<char *>( &var ), sizeof( T ) );
   }
 
-  template <class T>
+  template <typename T>
   void Read(std::ifstream & f, T & var)
   {
     if( f.bad() || f.eof() )

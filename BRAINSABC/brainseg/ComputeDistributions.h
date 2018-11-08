@@ -28,7 +28,7 @@
 typedef  itk::Image<unsigned char, 3> ByteImageType;
 typedef itk::CompensatedSummation<double> CompensatedSummationType;
 
-template <class TInputImage, class TProbabilityImage, class MatrixType>
+template <typename TInputImage, typename TProbabilityImage, typename MatrixType>
 void
 CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer> & SubjectCandidateRegions,
                               const orderedmap<std::string,std::vector<typename TInputImage::Pointer> >

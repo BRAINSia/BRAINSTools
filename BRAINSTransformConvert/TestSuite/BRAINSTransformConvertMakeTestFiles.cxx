@@ -39,7 +39,7 @@ inline int getpid()
 
 #endif
 
-template <class TTransform>
+template <typename TTransform>
 typename TTransform::Pointer
 CreateTransform()
 {

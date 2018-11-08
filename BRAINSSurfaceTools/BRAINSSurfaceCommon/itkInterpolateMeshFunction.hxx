@@ -26,7 +26,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 InterpolateMeshFunction<TInputMesh>
 ::InterpolateMeshFunction()
 {
@@ -36,7 +36,7 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Destructor
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 InterpolateMeshFunction<TInputMesh>
 ::~InterpolateMeshFunction()
 {
@@ -45,7 +45,7 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Prepare the internal data structures of the point locator
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 InterpolateMeshFunction<TInputMesh>
 ::Initialize()
@@ -54,7 +54,7 @@ InterpolateMeshFunction<TInputMesh>
   this->m_PointLocator->Initialize();
 }
 
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 InterpolateMeshFunction<TInputMesh>
 ::Search(const PointType & query,
@@ -65,7 +65,7 @@ InterpolateMeshFunction<TInputMesh>
   this->m_PointLocator->Search( point, numberOfNeighborsRequested, result );
 }
 
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 InterpolateMeshFunction<TInputMesh>
 ::Search(const PointType & query,
@@ -79,7 +79,7 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Return the pixel value by delegating to the mesh.
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 InterpolateMeshFunction<TInputMesh>
 ::GetPointData( PointIdentifier pointId, PixelType * value ) const
@@ -90,7 +90,7 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh>
+template <typename TInputMesh>
 void
 InterpolateMeshFunction<TInputMesh>
 ::PrintSelf( std::ostream& os, Indent indent) const

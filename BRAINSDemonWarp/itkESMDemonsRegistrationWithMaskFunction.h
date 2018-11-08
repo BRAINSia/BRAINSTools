@@ -57,7 +57,7 @@ namespace itk
  *
  * \ingroup ITKReview
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 class ESMDemonsRegistrationWithMaskFunction :
   public         PDEDeformableRegistrationFunction<TFixedImage,
                                                    TMovingImage, TDisplacementField>

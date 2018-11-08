@@ -32,7 +32,7 @@ namespace itk
  * Caveat: itkQuadEdgeMeshVTKPolyDataReader can only read triangle meshes.
  *         Use vtkTriangleFilter to convert your mesh to a triangle mesh.
  */
-template <class TOutputMesh>
+template <typename TOutputMesh>
 class QuadEdgeMeshVTKPolyDataReader : public MeshSource<TOutputMesh>
 {
 public:

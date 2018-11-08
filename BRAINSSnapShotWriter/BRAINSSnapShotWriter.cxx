@@ -46,7 +46,7 @@ typedef std::vector<float> PhysicalPointIndexType;
 constexpr size_t NN_INTERP = 0;
 constexpr size_t LINEAR_INTERP = 1;
 
-template<class TImageType>
+template<typename TImageType>
 ExtractIndexType GetSliceIndexToExtract(
   typename TImageType::Pointer referenceImage,
   std::vector<int> planes,
@@ -121,7 +121,7 @@ ExtractIndexType GetSliceIndexToExtract(
 /*
  * change orientation
  */
-template<class TImageType>
+template<typename TImageType>
 // input parameter type
 typename TImageType::Pointer ChangeOrientOfImage(typename TImageType::Pointer imageVolume,
                                                  itk::FixedArray<bool, 3> flipAxes)
@@ -149,9 +149,9 @@ typename TImageType::Pointer ChangeOrientOfImage(typename TImageType::Pointer im
 /*
  * template reading function
  */
-template<class TStringVectorType, // input parameter type
-  class TReaderType,       // reader type
-  class TImageVectorType>
+template<typename TStringVectorType, // input parameter type
+  typename TReaderType,       // reader type
+  typename TImageVectorType>
 // return type
 TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
 {
@@ -241,8 +241,8 @@ TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t
 /*
  * extract slices
  */
-template<class TInputImageType,
-  class TOutputImageType>
+template<typename TInputImageType,
+  typename TOutputImageType>
 typename TOutputImageType::Pointer
 ExtractSlice(typename TInputImageType::Pointer inputImage,
              int plane,
@@ -281,7 +281,7 @@ ExtractSlice(typename TInputImageType::Pointer inputImage,
 }
 
 /* scaling between 0-255 */
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 typename TOutputImage::Pointer
 Rescale(const typename TInputImage::Pointer inputImage,
         const int min,

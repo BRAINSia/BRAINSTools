@@ -18,7 +18,7 @@
 #include <vector>
 
 
-template<class TValue, class TIndex>
+template<typename TValue, typename TIndex>
 class vnl_index_sort
 {
   public:
@@ -93,7 +93,7 @@ class vnl_index_sort
   private:
     //: Implementation class - Do Not Use.
     //: Author - Ian Scott
-    template <class T, class I>
+    template <typename T, typename I>
     struct sort_index_compare_functor
     {
       const T *data;
@@ -128,7 +128,7 @@ class vnl_index_sort
     }
 
     //: get specified vector from matrix depending on direction
-    template<class T>
+    template<typename T>
     void getVector(
       const vnl_matrix<T>& fromMat,
       DirectionType direction,
@@ -150,7 +150,7 @@ class vnl_index_sort
     }
 
     //: put specified vector to matrix depending on direction
-    template<class T>
+    template<typename T>
     void putVector(
       const vnl_vector<T>& fromVect,
       DirectionType direction,

@@ -24,7 +24,7 @@
 
 namespace itk {
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
 ::NewOtsuThresholdImageFilter()
 {
@@ -35,7 +35,7 @@ NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
   m_Omega = 2;
 }
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 void
 NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -67,7 +67,7 @@ NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
   this->GraftOutput(threshold->GetOutput());
 }
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 void
 NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -75,7 +75,7 @@ NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
   const_cast<TInputImage *>(this->GetInput())->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 void
 NewOtsuThresholdImageFilter<TInputImage,TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const

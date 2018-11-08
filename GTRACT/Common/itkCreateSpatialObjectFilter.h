@@ -61,7 +61,7 @@ namespace itk
  * The output of the filter contains the resulting spatial object.
  */
 
-template <class TInputImage, class TTransformType, class TSpatialObject>
+template <typename TInputImage, typename TTransformType, typename TSpatialObject>
 class CreateSpatialObjectFilter : public itk::Object
 {
 public:

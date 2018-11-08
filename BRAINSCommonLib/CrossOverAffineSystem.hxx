@@ -25,7 +25,7 @@
 /**
   * Constructor
   */
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 CrossOverAffineSystem<TCoordinateType, NDimensions>
 ::CrossOverAffineSystem() :
   m_InhaleEncodeConversion(),
@@ -47,7 +47,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>
 /**
   * Destructor
   */
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 CrossOverAffineSystem<TCoordinateType, NDimensions>::
 ~CrossOverAffineSystem()
 {
@@ -57,7 +57,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::
 /**
   * Utility function not provided in general vector implementations.
   */
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 typename CrossOverAffineSystem<TCoordinateType, NDimensions>::VectorType
 Reciprocal(const typename CrossOverAffineSystem<TCoordinateType,
                                                 NDimensions>::VectorType & Scale)
@@ -81,7 +81,7 @@ Reciprocal(const typename CrossOverAffineSystem<TCoordinateType,
   * So in EstablishCrossOverSystemForAir16() in TransformAdaptor.hxx,
   * the two arguments are to be given from the 'inhale' point of view.
   */
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 void
 CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInScaling(const VectorType & EncodeScale,
                                                                       const VectorType & DecodeScale)
@@ -118,7 +118,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInScaling(const Vect
   * So in EstablishCrossOverSystemForAir16() in TransformAdaptor.hxx,
   * the two arguments are to be given from the 'inhale' point of view.
   */
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 void
 CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInTranslation(const VectorType & EncodeShift,
                                                                           const VectorType & DecodeShift)
@@ -152,7 +152,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInTranslation(const 
 #endif
 }
 
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 void
 CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInCentering(const PointType & EncodeCenter,
                                                                         const PointType & DecodeCenter)
@@ -184,7 +184,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInCentering(const Po
   * two entire transforms in like fashion to the more useful routines above.
   * The two arguments are to be given from the 'inhale' point of view.
   */
-template <class TCoordinateType, unsigned int NDimensions>
+template <typename TCoordinateType, unsigned int NDimensions>
 void
 CrossOverAffineSystem<TCoordinateType, NDimensions>::EncloseInAffineTransforms(AffineTransformPointer Encode,
                                                                                AffineTransformPointer Decode)

@@ -38,7 +38,7 @@ namespace itk
 {
 
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::BRAINSConstellationDetector2()
   {
@@ -90,7 +90,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_ResultsDir = "./";
   }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::GenerateData()
@@ -413,7 +413,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->GraftOutput(this->m_OutputImage);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

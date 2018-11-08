@@ -56,7 +56,7 @@ typedef itk::Image<InternalPixelType, 3> TBRAINSResampleInternalImageType;
 typedef TBRAINSResampleInternalImageType                                       TBRAINSResampleReferenceImageType;
 
 // A filter to debug the min/max values
-template <class TImage>
+template <typename TImage>
 void PrintImageMinAndMax(TImage *inputImage)
 {
   typedef typename itk::StatisticsImageFilter<TImage> StatisticsFilterType;

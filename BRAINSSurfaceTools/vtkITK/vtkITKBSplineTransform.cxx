@@ -734,7 +734,7 @@ vtkITKBSplineTransformHelperImpl<O>
   return BSpline->GetFixedParameters().data_block();
 }
 
-template <class T, unsigned O>
+template <typename T, unsigned O>
 void
 ForwardTransformHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                         const T in[3], T out[3] )
@@ -784,7 +784,7 @@ vtkITKBSplineTransformHelperImpl<O>
   ForwardTransformHelper<float, O>( this, in, out );
 }
 
-template <class T, unsigned O>
+template <typename T, unsigned O>
 void
 ForwardTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                                   const T in[3], T out[3],
@@ -889,7 +889,7 @@ vtkITKBSplineTransformHelperImpl<O>
   ForwardTransformDerivativeHelper<float, O>( this, in, out, derivative );
 }
 
-template <class T, unsigned O>
+template <typename T, unsigned O>
 void
 InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                              const T in[3], T out[3] )
@@ -958,7 +958,7 @@ vtkITKBSplineTransformHelperImpl<O>
   InverseTransformPointHelper<double, O>( this, in, out );
 }
 
-template <class T, unsigned O>
+template <typename T, unsigned O>
 void
 InverseTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                                   const T in[3], T out[3], T derivative[3][3] )

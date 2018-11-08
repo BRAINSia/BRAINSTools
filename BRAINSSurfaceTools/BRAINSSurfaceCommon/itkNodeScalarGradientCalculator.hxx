@@ -27,7 +27,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::NodeScalarGradientCalculator()
 {
@@ -42,7 +42,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Destructor
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::~NodeScalarGradientCalculator()
 {
@@ -51,7 +51,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Check inputs
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::Initialize()
@@ -64,7 +64,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Check inputs
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::VerifyInputs() const
@@ -88,7 +88,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Allocate internal Containers
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::AllocateInternalContainers()
@@ -105,7 +105,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::Compute()
@@ -228,7 +228,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Initialize several containers with null values in all their elements.
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::SetContainersToNullValues()
@@ -254,7 +254,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Compute the area of each cell and store them in a container
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::ComputeAreaForAllCells()
@@ -298,7 +298,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::NormalizeDerivativesByTotalArea()
@@ -315,7 +315,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
     }
 }
 
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::ParalelTransport(
@@ -344,7 +344,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 typename NodeScalarGradientCalculator<TInputMesh, TScalar>::OutputType
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::Evaluate( const InputType & input  ) const
@@ -355,7 +355,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 /**
  * Standard "PrintSelf" method
  */
-template <class TInputMesh, class TScalar>
+template <typename TInputMesh, typename TScalar>
 void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::PrintSelf( std::ostream& os, Indent indent) const

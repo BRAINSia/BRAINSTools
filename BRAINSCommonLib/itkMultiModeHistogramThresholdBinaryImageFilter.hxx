@@ -28,7 +28,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
 ::MultiModeHistogramThresholdBinaryImageFilter() :
   m_QuantileLowerThreshold(1), // temporarily estimate how many SetInput images
@@ -42,13 +42,13 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
   m_QuantileUpperThreshold.Fill(1.0);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
 ::~MultiModeHistogramThresholdBinaryImageFilter()
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -65,7 +65,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
      << m_OutsideValue << std::endl;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
 ::GenerateData()

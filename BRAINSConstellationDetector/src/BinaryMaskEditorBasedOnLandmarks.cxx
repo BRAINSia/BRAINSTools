@@ -119,7 +119,7 @@ private:
 };
 
 // ------------------------------------------------------------------------ //
-template <class TImageType>
+template <typename TImageType>
 void
 CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume,
                                      ThreeLandmarksForPlane * currentPlane,
@@ -148,7 +148,7 @@ CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume
 }
 
 // ------------------------------------------------------------------------ //
-template <class TImageType>
+template <typename TImageType>
 void
 CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume,
                                      const LandmarkPointType & _landmark,

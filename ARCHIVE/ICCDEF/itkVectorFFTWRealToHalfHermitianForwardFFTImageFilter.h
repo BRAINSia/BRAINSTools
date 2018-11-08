@@ -44,7 +44,7 @@ namespace itk
  * \ingroup
  */
 
-template <class TPixel, unsigned int VDimension = 3>
+template <typename TPixel, unsigned int VDimension = 3>
 class VectorFFTWRealToHalfHermitianForwardFFTImageFilter :
   public         ImageToImageFilter<Image<TPixel, VDimension>,
                                     Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension> >

@@ -36,7 +36,7 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template <class TInputMesh>
+template <typename TInputMesh>
 class LinearInterpolateMeshFunction :
   public         InterpolateMeshFunction<TInputMesh>
 {
@@ -89,7 +89,7 @@ public:
                                               const VectorType & u12, const VectorType & u32,
                                               DerivativeType & derivative);
 
-  template <class TArray, class TMatrix>
+  template <typename TArray, typename TMatrix>
   static void GetJacobianFromVectorAndBasis(const TArray & pixelArray1, const TArray & pixelArray2,
                                             const TArray & pixelArray3, const VectorType & u12, const VectorType & u32,
                                             TMatrix & jacobian);

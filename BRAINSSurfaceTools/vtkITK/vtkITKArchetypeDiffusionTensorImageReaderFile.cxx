@@ -52,7 +52,7 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::PrintSelf(ostream& os, vtkIn
 }
 
 //----------------------------------------------------------------------------
-template <class T>
+template <typename T>
 void vtkITKExecuteDataFromFileDiffusionTensor3D(
   vtkITKArchetypeDiffusionTensorImageReaderFile* self,
   vtkFloatArray* tensors,

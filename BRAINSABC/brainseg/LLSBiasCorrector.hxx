@@ -47,7 +47,7 @@
 //
 // //////////////////////////////////////////////////////////////////////////////
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::LLSBiasCorrector()
 {
@@ -71,14 +71,14 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   m_XStd[2] = 1.0;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::~LLSBiasCorrector()
 {
   m_ForegroundBrainMask = nullptr;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::CheckInputs()
@@ -124,7 +124,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::ComputeDistributions()
@@ -145,7 +145,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
                                                                            true);
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::SetListOfClassStatistics(const std::vector<RegionStats> & regionStats)
@@ -153,7 +153,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   this->m_ListOfClassStatistics = regionStats;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::SetMaxDegree(unsigned int n)
@@ -177,7 +177,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #endif
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::SetSampleSpacing(double s)
@@ -201,7 +201,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::SetForegroundBrainMask(ByteImageType *mask)
@@ -210,7 +210,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   this->Initialize();
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::Initialize() {
@@ -398,7 +398,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   }
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 void
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::SetProbabilities(const std::vector<ProbabilityImagePointer> & probs,
@@ -432,7 +432,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   m_CandidateRegions = candidateRegions;
 }
 
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 typename LLSBiasCorrector<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::CorrectImages(const unsigned int CurrentIterationID)

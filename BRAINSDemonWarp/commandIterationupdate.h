@@ -44,7 +44,7 @@
 #include "itkFastSymmetricForcesDemonsRegistrationFilter.h"
 #include "itkDiffeomorphicDemonsRegistrationWithMaskFilter.h"
 
-template <class TPixel = float, unsigned int VImageDimension = 3>
+template <typename TPixel = float, unsigned int VImageDimension = 3>
 class CommandIterationUpdate : public itk::Command
 {
 public:

@@ -44,7 +44,7 @@ namespace itk
 /**
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::OtsuHistogramMatchingImageFilter() :
   m_NumberOfHistogramLevels(256),
@@ -70,7 +70,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /*
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -107,7 +107,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /*
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::SetReferenceImage(const InputImageType *reference)
@@ -119,7 +119,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /*
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 const typename OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::InputImageType
 * OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
@@ -142,7 +142,7 @@ const typename OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THist
   * This filter requires all of the input images to be
   * in the buffer.
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::GenerateInputRequestedRegion()
@@ -162,7 +162,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /**
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::BeforeThreadedGenerateData()
@@ -252,7 +252,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /**
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::AfterThreadedGenerateData()
@@ -286,7 +286,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /**
   *
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -367,7 +367,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 /**
   * Construct a histogram from an image.
   */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::ConstructHistogram(

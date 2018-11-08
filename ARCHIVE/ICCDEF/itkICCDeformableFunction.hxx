@@ -55,7 +55,7 @@ namespace itk
 /**
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ICCDeformableFunction()
 {
@@ -119,7 +119,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 /*
  * Standard "PrintSelf" method.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -153,7 +153,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::SetIntensityDifferenceThreshold(double threshold)
@@ -164,7 +164,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 /**
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::GetIntensityDifferenceThreshold() const
@@ -175,7 +175,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 /**
  * Set the function state values before each iteration
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::InitializeIteration()
@@ -468,7 +468,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
  * Compute update at a non boundary neighbourhood
  */
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeMetric( void * gd)
@@ -541,7 +541,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 //   std::cout<<"SumOfSquaredDifference"<<globalData->m_SumOfSquaredDifference<<std::endl;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 typename ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::PixelType
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
@@ -557,7 +557,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 /**
  * Update the metric and release the per-thread-global data.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ReleaseGlobalDataPointer( void *gd ) const

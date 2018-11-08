@@ -31,7 +31,7 @@
 // selectable at runtime.
 //
 
-template <class TInputImageType>
+template <typename TInputImageType>
 // TODO:  Input and outputs should be templated separately?
 typename TInputImageType::Pointer DenoiseFiltering(
   typename TInputImageType::Pointer img,

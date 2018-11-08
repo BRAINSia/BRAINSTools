@@ -35,7 +35,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 ::ResampleInPlaceImageFilter() :
   m_OutputImage( nullptr ),
@@ -47,7 +47,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 /**
  * Set/Get input image, required
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 ::SetInputImage( const InputImageType * image )
@@ -55,7 +55,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
   this->SetInput( 0, image );
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 const typename ResampleInPlaceImageFilter<TInputImage, TOutputImage>::InputImageType
 * ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 ::GetInputImage() const
@@ -66,7 +66,7 @@ const typename ResampleInPlaceImageFilter<TInputImage, TOutputImage>::InputImage
 /**
  * GenerateData Performs the in-place resampling
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -109,7 +109,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
   this->GraftOutput( m_OutputImage );
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 ResampleInPlaceImageFilter<TInputImage, TOutputImage>::PrintSelf( std::ostream& os, Indent indent ) const
 {

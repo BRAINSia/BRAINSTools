@@ -120,7 +120,7 @@ typename TImage::Pointer ReadImage(const std::string & fileName)
   *
   */
 
-template <class ImageType1, class ImageType2>
+template <typename ImageType1, typename ImageType2>
 bool
 ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
                                     typename ImageType2::Pointer & inputImage2)
@@ -133,7 +133,7 @@ ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
   return same;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer & inputImage,
             itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
@@ -152,7 +152,7 @@ OrientImage(typename ImageType::ConstPointer & inputImage,
   return returnval;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer & inputImage,
             const typename ImageType::DirectionType & dirCosines)
@@ -163,7 +163,7 @@ OrientImage(typename ImageType::ConstPointer & inputImage,
              dirCosines) );
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage,
             const typename ImageType::DirectionType & dirCosines)
@@ -175,7 +175,7 @@ OrientImage(typename ImageType::Pointer & inputImage,
              dirCosines) );
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage,
             itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
@@ -184,7 +184,7 @@ OrientImage(typename ImageType::Pointer & inputImage,
   return OrientImage<ImageType>(constImg, orient);
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 ReadImageAndOrient(const std::string & filename,
                    itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
@@ -197,7 +197,7 @@ ReadImageAndOrient(const std::string & filename,
   return image;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 ReadImageAndOrient(const std::string & filename,
                    const DirectionType & dir)
@@ -221,7 +221,7 @@ typename TReadImageType::Pointer ReadImageCoronal(const std::string & fileName)
  * We know that the image is not going to change
  * so make sure that the API indicates that.
  */
-template <class ImageType>
+template <typename ImageType>
 void
 WriteConstImage(const typename ImageType::ConstPointer image,
                 const std::string & filename)
@@ -249,7 +249,7 @@ WriteConstImage(const typename ImageType::ConstPointer image,
  * with more restricted write access
  * as necessary.
  */
-template <class ImageType>
+template <typename ImageType>
 void
 WriteImage(const typename ImageType::Pointer image,
            const std::string & filename)
@@ -269,7 +269,7 @@ WriteImage(const typename ImageType::Pointer image,
   *
   * @return typename OutputImageType::Pointer
   */
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 TypeCast(const typename InputImageType::Pointer & input)
 {
@@ -294,7 +294,7 @@ TypeCast(const typename InputImageType::Pointer & input)
   *        image
   * \return A new image of the specified type and scale.
   */
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 ScaleAndCast(const typename InputImageType::Pointer & image,
              const typename OutputImageType::PixelType OutputMin,
@@ -333,7 +333,7 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
   *
   * @return typename OutputImageType::Pointer
   */
-template <class InputImageType, class OutputImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 PreserveCast(const typename InputImageType::Pointer image)
 {
@@ -357,7 +357,7 @@ PreserveCast(const typename InputImageType::Pointer image)
     }
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 CopyImage(const typename ImageType::Pointer & input)
 {
@@ -371,7 +371,7 @@ CopyImage(const typename ImageType::Pointer & input)
 /** Common code for allocating an image, allowing the region and spacing to be
    * explicitly set.
    */
-template <class TemplateImageType, class OutputImageType>
+template <typename TemplateImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 AllocateImageFromRegionAndSpacing(const typename TemplateImageType::RegionType & region,
                                   const typename TemplateImageType::SpacingType & spacing)
@@ -386,7 +386,7 @@ AllocateImageFromRegionAndSpacing(const typename TemplateImageType::RegionType &
   return rval;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 AllocateImageFromRegionAndSpacing(const typename ImageType::RegionType & region,
                                   const typename ImageType::SpacingType & spacing)
@@ -399,7 +399,7 @@ AllocateImageFromRegionAndSpacing(const typename ImageType::RegionType & region,
  * using TemplateImageType as the source of size and spacing...
  *
  */
-template <class TemplateImageType, class OutputImageType>
+template <typename TemplateImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 AllocateImageFromExample(
   const typename TemplateImageType::Pointer & TemplateImage)
@@ -413,7 +413,7 @@ AllocateImageFromExample(
 
 //
 // convenience function where template and output images type are the same
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 AllocateImageFromExample(const typename ImageType::Pointer & TemplateImage)
 {

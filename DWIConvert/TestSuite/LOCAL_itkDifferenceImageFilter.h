@@ -36,7 +36,7 @@ namespace itk
  * \ingroup IntensityImageFilters   MultiThreaded
  * \ingroup ITKTestKernel
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class LOCAL_DifferenceImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

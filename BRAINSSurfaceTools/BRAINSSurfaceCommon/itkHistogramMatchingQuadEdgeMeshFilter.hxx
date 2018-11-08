@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::HistogramMatchingQuadEdgeMeshFilter()
 {
@@ -52,13 +52,13 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
   m_OutputHistogram = HistogramType::New();
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::~HistogramMatchingQuadEdgeMeshFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::SetReferenceMesh( const InputMeshType * reference )
@@ -71,7 +71,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
     }
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 const typename
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>::InputMeshType
 * HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
@@ -83,7 +83,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
   return reference;
   }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::SetSourceMesh( const InputMeshType * source )
@@ -91,7 +91,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
   this->SetInput( source );
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 const typename HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>::InputMeshType
 * HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::GetSourceMesh( void ) const
@@ -99,7 +99,7 @@ const typename HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THis
   return this->GetInput();
   }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::BeforeTransform()
@@ -181,7 +181,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
     }
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::Transform()
@@ -244,7 +244,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
     }
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::GenerateData()
@@ -253,7 +253,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
   this->Transform();
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::ComputeMinMax(
@@ -288,7 +288,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
     }
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::ConstructHistogram(
@@ -346,7 +346,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
     }
 }
 
-template <class TInputMesh, class TOutputMesh, class THistogramMeasurement>
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement>
 void
 HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasurement>
 ::PrintSelf(std::ostream& os, Indent indent) const

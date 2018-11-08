@@ -53,7 +53,7 @@ namespace itk
   * values specified by the user (defaults to 1 and 0 respectively).
   *
   */
-template <class TInputImage, class TOutputImage = TInputImage>
+template <typename TInputImage, typename TOutputImage = TInputImage>
 class LargestForegroundFilledMaskImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

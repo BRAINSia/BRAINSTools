@@ -56,7 +56,7 @@ void vtkITKImageGrowCutHandleProgressEvent(itk::Object *caller,
 
 //-----------------------------------------------------------------------------
 //// 3D filter
-template<class IT1, class OT>
+template<typename IT1, typename OT>
 void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   IT1 *inPtr1, OT *inPtr2, OT *inPtr3,
   OT *output, double &ObjectSize,
@@ -334,7 +334,7 @@ vtkITKGrowCutSegmentationImageFilter::vtkITKGrowCutSegmentationImageFilter()
 
 //-----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
-template< class IT1>
+template< typename IT1>
 void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
           vtkImageData *input1,
           vtkImageData *input2,
@@ -342,7 +342,7 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
           vtkImageData *outData,
           IT1 *)
 #else
-template< class IT1>
+template< typename IT1>
 void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
           vtkImageData *input1,
           vtkImageData *input2,

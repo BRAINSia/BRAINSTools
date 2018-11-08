@@ -244,7 +244,7 @@ public:
   // given a particular attribute name, collect that
   // attributes. Only works on homogenous compound objects,
   // i.e. lists of a particular type
-  template <class T>
+  template <typename T>
   // type
   StringVectorType CollectAttValues(const char *attributeName) const
   {
@@ -273,7 +273,7 @@ public:
   //
   // given an attribute with a particular value, return the
   // list element matching that value
-  template <class T>
+  template <typename T>
   // list element type
   const T * GetMatching(const char *attName, const char *attValue) const
   {
@@ -298,7 +298,7 @@ public:
   //
   // given an attribute with a particular value, return the
   // list element matching that value
-  template <class T>
+  template <typename T>
   // list element type
   T * GetMatching(const char *attName, const char *attValue)
   {

@@ -31,7 +31,7 @@ namespace itk
 /*
   *
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 BOBFFilter<TInputImage, TOutputImage>
 ::BOBFFilter() :
   m_Lower(NumericTraits<InputPixelType>::NonpositiveMin() ),
@@ -46,7 +46,7 @@ BOBFFilter<TInputImage, TOutputImage>
 /*
   *
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BOBFFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -57,7 +57,7 @@ BOBFFilter<TInputImage, TOutputImage>
 /*
   *
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BOBFFilter<TInputImage, TOutputImage>::SetInputMask(
   const typename BOBFFilter<TInputImage, TOutputImage>
@@ -66,7 +66,7 @@ BOBFFilter<TInputImage, TOutputImage>::SetInputMask(
   this->SetNthInput( 1, const_cast<TInputImage *>( image ) );
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 const typename BOBFFilter<TInputImage, TOutputImage>
 ::InputImageType
 * BOBFFilter<TInputImage, TOutputImage>
@@ -76,7 +76,7 @@ const typename BOBFFilter<TInputImage, TOutputImage>
          ( this->ProcessObject::GetInput(1) );
   }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
 {
   OutputImagePointer     OutputPtr = this->GetOutput();

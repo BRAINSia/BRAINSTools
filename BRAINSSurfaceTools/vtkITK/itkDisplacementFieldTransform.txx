@@ -26,7 +26,7 @@
 namespace itk
 {
 // Constructor with default arguments
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::DisplacementFieldTransform() : Superclass(SpaceDimension, 0)
 {
@@ -95,13 +95,13 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Destructor
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::~DisplacementFieldTransform()
 {}
 
 // Get the number of parameters
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 unsigned int
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::GetNumberOfParameters(void) const
@@ -113,7 +113,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Set the parameters
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetIdentity()
@@ -133,7 +133,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Set the parameters
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetParameters( const ParametersType & parameters )
@@ -161,7 +161,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Set the Fixed Parameters
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetFixedParameters( const ParametersType & passedParameters )
@@ -276,7 +276,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Wrap flat parameters as images
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::WrapAsImages()
@@ -314,7 +314,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Set the parameters by value
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetParametersByValue( const ParametersType & parameters )
@@ -340,7 +340,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Get the parameters
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::ParametersType &
@@ -358,7 +358,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Get the parameters
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::ParametersType &
@@ -392,7 +392,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Set the coefficients using input images
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetImage( ImagePointer image )
@@ -430,7 +430,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Print self
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -444,7 +444,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Transform a point
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 bool
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::InsideValidRegion(
@@ -461,7 +461,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Transform a point
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::OutputPointType
 DisplacementFieldTransform<TScalarType, NDimensions>
@@ -498,7 +498,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 }
 
 // Compute the Jacobian in one position
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::JacobianType &
@@ -606,7 +606,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   return this->m_Jacobian;
 }
 
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::TransformPointToContinuousIndex( const InputPointType & point, ContinuousIndexType & index ) const
@@ -634,7 +634,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 /**
  * Evaluate at image index position
  */
-template<class TScalarType, unsigned int NDimensions>
+template<typename TScalarType, unsigned int NDimensions>
 typename DisplacementFieldTransform<TScalarType, NDimensions>::OutputVectorType
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::LinearInterpolateAtIndex( const ContinuousIndexType & index ) const

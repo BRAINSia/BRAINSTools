@@ -22,7 +22,7 @@
 
 namespace itk
 {
-template <class TMesh>
+template <typename TMesh>
 PointLocator2<TMesh>
 ::PointLocator2()
 {
@@ -30,13 +30,13 @@ PointLocator2<TMesh>
   this->m_KdTreeGenerator = TreeGeneratorType::New();
 }
 
-template <class TMesh>
+template <typename TMesh>
 PointLocator2<TMesh>
 ::~PointLocator2()
 {
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 PointLocator2<TMesh>
 ::Initialize()
@@ -75,7 +75,7 @@ PointLocator2<TMesh>
   this->m_Tree = this->m_KdTreeGenerator->GetOutput();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 PointLocator2<TMesh>
 ::Search(const PointType & query,
@@ -85,7 +85,7 @@ PointLocator2<TMesh>
   this->m_Tree->Search( query, numberOfNeighborsRequested, result );
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 PointLocator2<TMesh>
 ::Search(const PointType & query,
@@ -98,7 +98,7 @@ PointLocator2<TMesh>
 /**
  * Print out internals
  */
-template <class TMesh>
+template <typename TMesh>
 void
 PointLocator2<TMesh>
 ::PrintSelf(std::ostream& os, Indent indent) const

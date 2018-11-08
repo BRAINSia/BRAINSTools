@@ -43,7 +43,7 @@ namespace
 {
 #define DIMENSION 4
 
-template <class PixelType>
+template <typename PixelType>
 std::vector<std::vector<double> >
 RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
 {
@@ -81,7 +81,7 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
   return rval;
 }
 
-template <class PixelType>
+template <typename PixelType>
 int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, PixelType, bool CheckDWIData )
 {
   int rval(EXIT_SUCCESS);

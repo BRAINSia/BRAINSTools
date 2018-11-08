@@ -26,7 +26,7 @@ namespace itk
 //
 // Constructor
 //
-template <class TOutputMesh>
+template <typename TOutputMesh>
 ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 ::ConvertVTKToQuadEdgeMeshFilter()
 {
@@ -41,7 +41,7 @@ ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 //
 // Set the polydata
 //
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 ::SetPolyData(vtkPolyData * polyData)
@@ -52,7 +52,7 @@ ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 //
 // Get the polydata
 //
-template <class TOutputMesh>
+template <typename TOutputMesh>
 vtkPolyData *
 ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 ::GetPolyData()
@@ -60,7 +60,7 @@ ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
   return m_inputPolyData;
 }
 
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 ::GenerateData()

@@ -26,7 +26,7 @@
 
 namespace itk
 {
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 BRAINSHoughEyeDetector<TInputImage, TOutputImage>
 ::BRAINSHoughEyeDetector()
 {
@@ -66,7 +66,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
   this->m_InvVersorTransform  = VersorTransformType::New();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BRAINSHoughEyeDetector<TInputImage, TOutputImage>
 ::GenerateData()
@@ -389,7 +389,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 BRAINSHoughEyeDetector<TInputImage, TOutputImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const

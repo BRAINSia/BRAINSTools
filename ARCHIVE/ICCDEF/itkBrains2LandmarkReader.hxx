@@ -31,7 +31,7 @@
 
 namespace itk
 {
-template <class TPixelType, unsigned Dimension>
+template <typename TPixelType, unsigned Dimension>
 Brains2LandmarkReader<TPixelType, Dimension>
 ::Brains2LandmarkReader()
 {
@@ -41,7 +41,7 @@ Brains2LandmarkReader<TPixelType, Dimension>
   m_ReferenceImage = ImageType::New();
 }
 
-template <class TPixelType, unsigned Dimension>
+template <typename TPixelType, unsigned Dimension>
 void Brains2LandmarkReader<TPixelType, Dimension>
 ::Update()
 {

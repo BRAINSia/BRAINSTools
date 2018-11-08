@@ -24,7 +24,7 @@ namespace itk
  *
  * \ingroup Operators
  */
-template <class TInputImage>
+template <typename TInputImage>
 class NewOtsuThresholdImageCalculator : public Object
 {
 public:

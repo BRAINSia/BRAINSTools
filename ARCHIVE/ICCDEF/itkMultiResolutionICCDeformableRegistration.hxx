@@ -41,7 +41,7 @@ namespace itk
 /**
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::MultiResolutionICCDeformableRegistration()
 {
@@ -82,7 +82,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /*
  * Set the moving image image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::SetMovingImage(
@@ -94,7 +94,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /*
  * Get the moving image image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::MovingImageType
 * MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
@@ -107,7 +107,7 @@ const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImag
 /*
  * Set the fixed image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::SetFixedImage(
@@ -119,7 +119,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /*
  * Get the fixed image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::FixedImageType
 * MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
@@ -132,7 +132,7 @@ const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImag
 /*
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 std::vector<SmartPointer<DataObject> >::size_type
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GetNumberOfValidRequiredInputs() const
@@ -155,7 +155,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /**
  * Set the number of multi-resolution levels
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::SetNumberOfLevels(
@@ -181,7 +181,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /**
  * Standard PrintSelf method.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -223,7 +223,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
  * registrator and field_expander.
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GenerateData()
@@ -462,7 +462,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
   m_RegistrationFilter->GetOutput(1)->ReleaseData();
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::StopRegistration()
@@ -471,7 +471,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
   m_StopRegistrationFlag = true;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 bool
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::Halt()
@@ -501,7 +501,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GenerateOutputInformation()
@@ -530,7 +530,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GenerateInputRequestedRegion()
@@ -566,7 +566,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 void
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::EnlargeOutputRequestedRegion(
@@ -586,7 +586,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TRealType>
 ProcessObject::DataObjectPointer
 MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx)

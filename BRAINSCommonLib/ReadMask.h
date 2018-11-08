@@ -22,7 +22,7 @@
 #include "itkIO.h"
 #include "itkImageMaskSpatialObject.h"
 
-template <class MaskType, unsigned VDimension>
+template <typename MaskType, unsigned VDimension>
 typename MaskType::Pointer
 ReadImageMask(const std::string & filename,
               typename itk::ImageBase<VDimension> * /*referenceImage*/)

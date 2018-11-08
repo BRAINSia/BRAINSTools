@@ -37,7 +37,7 @@
 
 /** \class AtlasCropImageSource
  */
-template <class TInputImage, class TProbabilityImage>
+template <typename TInputImage, typename TProbabilityImage>
 class AtlasCropImageSource : public itk::Object
 {
 public:

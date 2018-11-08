@@ -40,21 +40,21 @@
 
 namespace itk
 {
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::MixtureStatisticCostFunction()
 {
   m_MeasurePointer = new MeasureType();
 }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::~MixtureStatisticCostFunction()
 {
   delete m_MeasurePointer;
 }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 typename MixtureStatisticCostFunction<TFirstImage, TSecondImage>::MeasureType
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::GetValue(const ParametersType & parameters) const
@@ -87,7 +87,7 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>
   return m_Measure;
 }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 typename MixtureStatisticCostFunction<TFirstImage, TSecondImage>::MeasureType
 * MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::GetValue(ParametersType & parameters)
@@ -96,7 +96,7 @@ typename MixtureStatisticCostFunction<TFirstImage, TSecondImage>::MeasureType
   return m_MeasurePointer;
   }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 unsigned int
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::GetNumberOfParameters() const
@@ -105,7 +105,7 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>
   return 2;
 }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 unsigned int
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::GetNumberOfValues() const
@@ -114,7 +114,7 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>
   return 2;
 }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 void
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::Initialize(short label)
@@ -163,7 +163,7 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>
     }
 }
 
-template <class TFirstImage, class TSecondImage>
+template <typename TFirstImage, typename TSecondImage>
 void
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 ::PrintSelf(std::ostream & os, Indent indent) const

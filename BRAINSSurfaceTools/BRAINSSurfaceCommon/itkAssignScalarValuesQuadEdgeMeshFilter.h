@@ -35,7 +35,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh, class TSourceMesh, class TOutputMesh>
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 class AssignScalarValuesQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

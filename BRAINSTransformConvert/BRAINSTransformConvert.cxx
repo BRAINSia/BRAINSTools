@@ -40,7 +40,7 @@
 // BSpline 5
 // BSplineROI 5
 
-template<class TScalarType>
+template<typename TScalarType>
 inline
 bool
 IsSameClass(const itk::Transform< TScalarType, 3, 3 > *result,
@@ -49,7 +49,7 @@ IsSameClass(const itk::Transform< TScalarType, 3, 3 > *result,
   return strcmp(result->GetNameOfClass(), source->GetNameOfClass() ) == 0;
 }
 
-template<class TScalarType>
+template<typename TScalarType>
 inline
 bool
 IsClass(const itk::Transform< TScalarType, 3, 3 > *xfrm, const char *className)
@@ -57,7 +57,7 @@ IsClass(const itk::Transform< TScalarType, 3, 3 > *xfrm, const char *className)
   return strcmp(xfrm->GetNameOfClass(), className) == 0;
 }
 
-template<class TScalarType>
+template<typename TScalarType>
 void
 TransformConvertError(const itk::Transform< TScalarType, 3, 3 > *inputXfrm,
                       const std::string & targetClassName)
@@ -72,7 +72,7 @@ TransformConvertError(const itk::Transform< TScalarType, 3, 3 > *inputXfrm,
 //
 // Convert from any type derived from MatrixOffsetTransformType to
 // AffineTransform.
-template<class TScalarType>
+template<typename TScalarType>
 bool
 ExtractTransform(typename itk::AffineTransform< TScalarType, 3 >::Pointer &result,
                  const itk::Transform< TScalarType, 3, 3 > *source)
@@ -102,7 +102,7 @@ ExtractTransform(typename itk::AffineTransform< TScalarType, 3 >::Pointer &resul
 
 //
 // versor rigid 3d case.
-template<class TScalarType>
+template<typename TScalarType>
 bool
 ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & result,
                  const itk::Transform< TScalarType, 3, 3 > *source)
@@ -141,7 +141,7 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
 
 //
 // scale versor case
-template<class TScalarType>
+template<typename TScalarType>
 bool
 ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & result,
                  const itk::Transform< TScalarType, 3, 3 > *source)
@@ -178,7 +178,7 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
 
 //
 // scale skew versor case
-template<class TScalarType>
+template<typename TScalarType>
 bool
 ExtractTransform(typename itk::ScaleSkewVersor3DTransform< TScalarType >::Pointer & result,
                  const itk::Transform< TScalarType, 3, 3 > *source)
@@ -221,7 +221,7 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform< TScalarType >::Pointe
     return EXIT_FAILURE;                          \
     }
 
-template<class TScalarType>
+template<typename TScalarType>
 int
 DoConversion( int argc, char *argv[] )
 {

@@ -37,7 +37,7 @@ namespace Testing
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::StretchIntensityImageFilter()
 {
@@ -54,7 +54,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -72,7 +72,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::BeforeThreadedGenerateData()
@@ -135,7 +135,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
 /**
  * ThreadedGenerateData Performs the pixel-wise addition
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -178,7 +178,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::SetInput(const TInputImage *input)
@@ -190,7 +190,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 const TInputImage *
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::GetInput(void) const

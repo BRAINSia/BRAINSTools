@@ -26,7 +26,7 @@ namespace itk
 /**
  *
  */
-template <class TOutputMesh>
+template <typename TOutputMesh>
 IcosahedralRegularSphereMeshSource<TOutputMesh>
 ::IcosahedralRegularSphereMeshSource()
 {
@@ -44,7 +44,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
 /*
  *
  */
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 IcosahedralRegularSphereMeshSource<TOutputMesh>
 ::GenerateData()
@@ -284,7 +284,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
     }
 }
 
-template <class TOutputMesh>
+template <typename TOutputMesh>
 typename IcosahedralRegularSphereMeshSource<TOutputMesh>::PointType
 IcosahedralRegularSphereMeshSource<TOutputMesh>
 ::Divide( const PointType & p1, const PointType & p2) const
@@ -315,7 +315,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
   return result;
 }
 
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 IcosahedralRegularSphereMeshSource<TOutputMesh>
 ::AddCell( OutputMeshType * mesh, const unsigned long * pointIds, unsigned long idx)
@@ -326,7 +326,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
   mesh->SetCell(idx, testCell );
 }
 
-template <class TOutputMesh>
+template <typename TOutputMesh>
 void
 IcosahedralRegularSphereMeshSource<TOutputMesh>
 ::PrintSelf( std::ostream& os, Indent indent ) const

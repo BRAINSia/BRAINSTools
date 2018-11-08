@@ -30,9 +30,9 @@ namespace itk
   * mesh must be homeomorph to a sphere.
   * \note No test is perform on the topology of the input mesh.
 */
-template <class TInputMesh,
-          class TOutputMesh,
-          class TInitializationFilter>
+template <typename TInputMesh,
+          typename TOutputMesh,
+          typename TInitializationFilter>
 class QuadEdgeMeshSphericalParameterization :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {

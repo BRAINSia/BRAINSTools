@@ -49,7 +49,7 @@ namespace Statistics
   *
   * \brief TODO
   */
-template <class TImageType, class TMaskType>
+template <typename TImageType, typename TMaskType>
 class ScalarImagePortionToHistogramGenerator : public Object
 {
 public:

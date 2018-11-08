@@ -24,7 +24,7 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshBoundarySmoothFilter()
 {
   this->SetNumberOfRequiredInputs( 2 );
@@ -36,13 +36,13 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshBoundaryS
   m_Iterations = 10;
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::
 ~QuadEdgeMeshBoundarySmoothFilter()
 {
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
 ::SetInputMesh1( const InputMeshType * mesh1 )
@@ -55,7 +55,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 const typename
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::InputMeshType
 * QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
@@ -67,7 +67,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::InputMeshType
   return inputMesh1;
   }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
 ::SetInputMesh2( const InputMeshType * mesh2 )
@@ -80,7 +80,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
     }
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 const typename
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::InputMeshType
 * QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
@@ -92,7 +92,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::InputMeshType
   return inputMesh2;
   }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::OutputMeshType
 * QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
@@ -105,7 +105,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::OutputMeshType
   return outputMesh1;
   }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 typename
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::OutputMeshType
 * QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
@@ -118,7 +118,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::OutputMeshType
   return outputMesh2;
   }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
@@ -159,7 +159,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>::GenerateData()
   this->SetNthOutput( 1, mesh2 );
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 int
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
 ::AdjustBoundary( OutputMeshType * deleteMesh, OutputMeshType * addMesh)
@@ -305,7 +305,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
   return numChange;
 }
 
-template <class TInputMesh, class TOutputMesh>
+template <typename TInputMesh, typename TOutputMesh>
 void
 QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
 ::CopyInputMeshesToOutputMeshes()

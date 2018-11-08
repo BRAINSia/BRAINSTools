@@ -143,7 +143,7 @@ int CompareNoCase( const std::string & s, const std::string & s2 )
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template <class InPixelType, class OutPixelType>
+template <typename InPixelType, typename OutPixelType>
 void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 {
   constexpr int dims = 3;
@@ -422,14 +422,14 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template <class InPixelType, class OutPixelType>
+template <typename InPixelType, typename OutPixelType>
 void ProcessAppType(const struct ICCDEFWarpAppParameters & command)
 {
   ThirionFunction<InPixelType, OutPixelType>(command);
 }
 
 // This function processes the output data type.
-template <class PixelType>
+template <typename PixelType>
 void
 ProcessOutputType(struct ICCDEFWarpAppParameters & command)
 {

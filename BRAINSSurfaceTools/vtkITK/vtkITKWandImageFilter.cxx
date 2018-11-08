@@ -39,7 +39,7 @@ vtkITKWandImageFilter::~vtkITKWandImageFilter()
 }
 
 
-template <class T>
+template <typename T>
 void vtkITKWandExecute(vtkITKWandImageFilter *self, vtkImageData* input,
                 vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)

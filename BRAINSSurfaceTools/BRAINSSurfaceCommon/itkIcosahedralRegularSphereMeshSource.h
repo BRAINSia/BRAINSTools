@@ -39,7 +39,7 @@ namespace itk
  * German Cancer Research Center, Heidelberg.
  *
  */
-template <class TOutputMesh>
+template <typename TOutputMesh>
 class IcosahedralRegularSphereMeshSource : public MeshSource<TOutputMesh>
 {
 public:

@@ -57,7 +57,7 @@ namespace itk
   *
   * \ingroup IntensityImageFilters
   */
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 class BRAINSROIAutoImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

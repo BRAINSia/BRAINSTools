@@ -71,7 +71,7 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
     }
 };
 
-template <class T>
+template <typename T>
 void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
                 vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)

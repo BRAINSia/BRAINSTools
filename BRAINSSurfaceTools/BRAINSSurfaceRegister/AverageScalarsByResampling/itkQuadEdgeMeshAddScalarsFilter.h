@@ -37,7 +37,7 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <class TInputMesh1, class TInputMesh2, class TOutputMesh>
+template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
 class QuadEdgeMeshAddScalarsFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh1>
 {

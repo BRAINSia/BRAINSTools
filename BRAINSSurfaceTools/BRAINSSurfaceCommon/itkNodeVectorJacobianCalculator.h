@@ -36,7 +36,7 @@ namespace itk
  * \ingroup MeshFunctions
  *
  * */
-template <class TInputMesh, class TVectorContainer>
+template <typename TInputMesh, typename TVectorContainer>
 class NodeVectorJacobianCalculator :
   public         FunctionBase<typename TInputMesh::PointIdentifier,
                               Matrix<

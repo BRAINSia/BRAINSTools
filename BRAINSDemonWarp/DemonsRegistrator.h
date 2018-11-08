@@ -63,9 +63,9 @@ namespace itk
   *   - x,y,z components of displacement fields.
   */
 template <
-  class TRealImage,
-  class TOutputImage,
-  class TFieldValue = typename TRealImage::PixelType
+  typename TRealImage,
+  typename TOutputImage,
+  typename TFieldValue = typename TRealImage::PixelType
   >
 class DemonsRegistrator : public Object
 {

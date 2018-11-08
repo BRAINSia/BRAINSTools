@@ -57,7 +57,7 @@ public:
     return landmarksConstellationModelBase::GetRadii();
   }
 
-  template <class type>
+  template <typename type>
   void Read(std::ifstream & s, type & var)
   {
     if( s.bad() )

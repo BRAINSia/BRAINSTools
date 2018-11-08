@@ -37,7 +37,7 @@
 
 namespace itk
 {
-template <class TMesh>
+template <typename TMesh>
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {
@@ -73,13 +73,13 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_SelfStopMode = false;
 }
 
-template <class TMesh>
+template <typename TMesh>
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::~MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {
 }
 
-template <class TMesh>
+template <typename TMesh>
 DataObject::Pointer
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::MakeOutput(size_t idx)
@@ -97,7 +97,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   return output.GetPointer();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::SetFixedMesh( const MeshType * fixedMesh )
@@ -110,7 +110,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->Modified();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::SetMovingMesh( const MeshType * movingMesh )
@@ -123,7 +123,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->Modified();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::SetFixedMesh( unsigned int level, const MeshType * fixedMesh )
@@ -138,7 +138,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->Modified();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::SetMovingMesh( unsigned int level, const MeshType * movingMesh )
@@ -153,7 +153,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->Modified();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::GenerateData()
@@ -174,7 +174,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
     }
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::InitializeRigidRegistrationParameters()
@@ -207,7 +207,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
     }
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::InitializeDemonsRegistrationParameters()
@@ -261,7 +261,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_FinalDestinationPoints = DestinationPointSetType::New();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::PrepareCoarsestResolutionMeshes()
@@ -276,7 +276,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_CurrentLevelInitialFixedMesh = fixedMesh;
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::PrepareNextResolutionLevelMeshes()
@@ -299,7 +299,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_NextLevelMovingMesh = movingMesh;
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::ComputeRigidRegistration()
@@ -375,7 +375,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_RigidTransform->SetParameters( finalParameters );
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::RigidlyTransformPointsOfFixedMesh()
@@ -399,7 +399,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_CurrentLevelRigidlyMappedFixedMesh->Modified();
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::SetRigidTransformToIdentity()
@@ -407,7 +407,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_RigidTransform->SetIdentity();
 }
 
-template <class TMesh>
+template <typename TMesh>
 typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>::RegistrationModeType
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::GetRegistrationMode() const
@@ -415,7 +415,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   return this->m_RegistrationMode;
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::ComputeDemonsRegistration()
@@ -463,7 +463,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
     }
 }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::DeformNextResolutionLevelFixedMesh()
@@ -519,7 +519,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_CurrentLevelMovingMesh = this->m_NextLevelMovingMesh;
 }
 
-template <class TMesh>
+template <typename TMesh>
 const typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>::DestinationPointSetType
 * MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::GetCurrentDestinationPoints() const
@@ -527,7 +527,7 @@ const typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMe
   return this->m_DemonsRegistrationFilter->GetFinalDestinationPoints();
   }
 
-template <class TMesh>
+template <typename TMesh>
 void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::PrintSelf(std::ostream& os, Indent indent) const

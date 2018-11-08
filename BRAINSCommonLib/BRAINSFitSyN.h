@@ -31,7 +31,7 @@ typedef  RegistrationHelperType::ImageType              ImageType;
 typedef  RegistrationHelperType::CompositeTransformType CompositeTransformType;
 }
 
-template <class FixedImageType, class MovingimageType>
+template <typename FixedImageType, typename MovingimageType>
 typename SyN::CompositeTransformType::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,

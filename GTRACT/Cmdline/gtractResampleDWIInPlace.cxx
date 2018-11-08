@@ -66,7 +66,7 @@
  * \param InputImage The image to be duplicated and modified to incorporate the rigid transform.
  * \return an image with the same voxels values as the input, but with differnt physical space representation.
  */
-template <class IOImageType>
+template <typename IOImageType>
 typename IOImageType::Pointer
 SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>::ConstPointer RigidTransform,
                                     const IOImageType *InputImage)

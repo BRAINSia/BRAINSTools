@@ -60,7 +60,7 @@
 #include <cmath>
 
 /* Iadd adds 2 images at every pixel location and outputs the resulting image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Iadd(const typename ImageType::Pointer input1,
                                  typename ImageType::Pointer input2)
 {
@@ -75,7 +75,7 @@ typename ImageType::Pointer Iadd(const typename ImageType::Pointer input1,
 
 /* Isub subtracts 2 images at every pixel location and outputs the resulting
   * image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
 {
@@ -90,7 +90,7 @@ typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
 
 /* Imul multiplies 2 images at every pixel location and outputs the resulting
   * image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
 {
@@ -105,7 +105,7 @@ typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
 
 /* Idiv divides 2 images at every pixel location and outputs the resulting
   * image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
 {
@@ -121,7 +121,7 @@ typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
 /* Imax does the numerical generalization of OR on 2 (non-negative) images at
   * every pixel location
   * and outputs the resulting image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
 {
@@ -137,7 +137,7 @@ typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
 /* Imin does the numerical generalization of AND on 2 (non-negative) images at
   * every pixel location
   * and outputs the resulting image.*/
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Imin(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
 {
@@ -153,7 +153,7 @@ typename ImageType::Pointer Imin(const typename ImageType::Pointer input1,
 /* Iavg takes an image and the number of images as inputs , divides each pixel
   location of the image by the number of images outputs the resulting image.*/
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer Iavg(typename ImageType::Pointer input1, int nimgs)
 {
   typename ImageType::Pointer image = ImageType::New();
@@ -171,7 +171,7 @@ typename ImageType::Pointer Iavg(typename ImageType::Pointer input1, int nimgs)
   return image;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer IMask(typename ImageType::Pointer input1,
                                   typename ImageType::Pointer mask)
 {
@@ -193,7 +193,7 @@ typename ImageType::Pointer IMask(typename ImageType::Pointer input1,
   return image;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ImageAddConstant(
   const typename ImageType::Pointer input,
   const double shiftvalue)
@@ -217,7 +217,7 @@ typename ImageType::Pointer ImageAddConstant(
   return outImage;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ImageMultiplyConstant(
   const typename ImageType::Pointer input,
   const double scalevalue)
@@ -237,7 +237,7 @@ typename ImageType::Pointer ImageMultiplyConstant(
   * at every pixel location and outputs the resulting image.  For finding the
   *binary mask image Not,
   * referencevalue should be 1;  however there is no defaulting to 1 here. */
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ImageComplementConstant(
   const typename ImageType::Pointer input,
   const double referencevalue)
@@ -260,7 +260,7 @@ typename ImageType::Pointer ImageComplementConstant(
   return outImage;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer ImageDivideConstant(
   typename ImageType::Pointer input,
   const double denominator)
@@ -270,7 +270,7 @@ typename ImageType::Pointer ImageDivideConstant(
   return DivImage;
 }
 
-template <class ImageType>
+template <typename ImageType>
 void ImageSqrtValue(typename ImageType::Pointer Output,
                     const typename ImageType::Pointer Input)
 {
@@ -290,7 +290,7 @@ void ImageSqrtValue(typename ImageType::Pointer Output,
   return;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::Pointer
 ImageSqrtValue(const typename ImageType::Pointer input)
 {

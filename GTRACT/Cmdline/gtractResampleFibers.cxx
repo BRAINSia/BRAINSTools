@@ -79,7 +79,7 @@
 #include "BRAINSThreadControl.h"
 #include <BRAINSCommonLib.h>
 
-template <class TImageType>
+template <typename TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
   typename TImageType::DirectionType imageDir = image->GetDirection();

@@ -27,7 +27,7 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include <math.h>
+#include <cmath>
 
 #include <map>
 #include "genus0.h"

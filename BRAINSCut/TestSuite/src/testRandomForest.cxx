@@ -32,7 +32,7 @@
 
 using namespace cv; // OpenCV API is in the C++ "cv" namespace
 
-#include <stdio.h>
+#include <cstdio>
 
 /******************************************************************************/
 // global definitions (for speed and ease of use)

@@ -41,7 +41,7 @@ int main( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  unsigned int numInputs = atoi(argv[1]);
+  unsigned int numInputs = std::stoi(argv[1]);
 
   typedef float MeshPixelType;
   constexpr unsigned int Dimension = 3;

@@ -754,7 +754,7 @@ loadLLSModel(std::string llsModelFilename,
         }
       else
         {
-        numParameters = atoi( line.c_str() );
+        numParameters = std::stoi( line.c_str() );
         }
 
       LandmarkIO::MatrixType coefficients; // linear model coefficients

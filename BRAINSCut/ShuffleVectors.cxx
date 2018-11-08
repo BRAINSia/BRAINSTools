@@ -44,7 +44,7 @@ main(int argc, char **argv)
   //Shuffled the vector:
   ShuffleVectors * my_ShuffleVector = new ShuffleVectors (  std::string( argv[1] ),
                                                           std::string( argv[2] ),
-                                                          atoi( argv[3] ) );
+                                                          std::stoi( argv[3] ) );
   my_ShuffleVector -> ReadHeader();
   my_ShuffleVector -> Shuffling();
   my_ShuffleVector -> WriteHeader();

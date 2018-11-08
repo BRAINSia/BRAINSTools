@@ -73,7 +73,7 @@ std::string GetXmlLabelName( std::string fileName, int label )
         // std::cout << (*lt)->GetName() << std::endl;
         // std::cout << (*lt)->GetPath() << std::endl;
         std::string attributeValue = (*lt)->GetAttribute("index");
-        int         currentLabel = atoi( attributeValue.c_str() );
+        int         currentLabel = std::stoi( attributeValue.c_str() );
         if( currentLabel == label )
           {
           itk::DOMTextNode::Pointer textNode = (*lt)->GetTextChild(0);
@@ -104,7 +104,7 @@ std::string GetAntsLabelName( std::string fileName, int label )
       labelFile >> x2 >> y2 >> z2;
       std::getline(labelFile, txtLabel);
 
-      int currentLabel = atoi( value.c_str() );
+      int currentLabel = std::stoi( value.c_str() );
       if( currentLabel == label )
         {
         unsigned first = txtLabel.find('"');

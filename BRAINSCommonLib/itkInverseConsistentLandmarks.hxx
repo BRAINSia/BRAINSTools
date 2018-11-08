@@ -561,7 +561,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const int NumberOfPoints = atoi(buffer);
+  const int NumberOfPoints = std::stoi(buffer);
   for( int p = 0; p < NumberOfPoints; ++p )
     {
     // Extract Landmark Name
@@ -706,7 +706,7 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
     {
     return false;
     }
-  const int NumberOfPoints = atoi(buffer);
+  const int NumberOfPoints = std::stoi(buffer);
 
   // Assigning the dimensions from the parameters
   ImageDims[0] = XDim;

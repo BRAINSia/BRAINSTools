@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
   unsigned int NoHistBins = 50;
   if ( argc > 4)
     {
-    NoHistBins = atoi( argv[4] );
+    NoHistBins = std::stoi( argv[4] );
     }
 
   metric->SetNumberOfHistogramBins( NoHistBins );
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
   unsigned long NoOfSamples = 14000;
   if ( argc > 5)
     {
-    NoOfSamples = atoi( argv[5] );
+    NoOfSamples = std::stoi( argv[5] );
     }
 
   const unsigned long numberOfAllSamples = fixedImage->GetBufferedRegion().GetNumberOfPixels();

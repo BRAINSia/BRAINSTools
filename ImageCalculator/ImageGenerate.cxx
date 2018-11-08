@@ -112,15 +112,15 @@ ProcessArgs(int argc, char * *argv,
         }
       if( argc >= numdims )
         {
-        x = atoi(argv[1]);
-        y = atoi(argv[2]);
+        x = std::stoi(argv[1]);
+        y = std::stoi(argv[2]);
         if( numdims > 2 )
           {
-          z = atoi(argv[3]);
+          z = std::stoi(argv[3]);
           }
         if( numdims > 3 )
           {
-          t = atoi(argv[4]);
+          t = std::stoi(argv[4]);
           }
         argv += numdims;
         argc -= numdims;

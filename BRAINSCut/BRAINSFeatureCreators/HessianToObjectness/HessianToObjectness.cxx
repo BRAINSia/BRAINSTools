@@ -51,7 +51,7 @@ int main( int argc, char* argv[] )
   }
   if( argc > 9 )
   {
-    structure = atoi( argv[9] );
+    structure = std::stoi( argv[9] );
   }
   if( argc >10)
   {

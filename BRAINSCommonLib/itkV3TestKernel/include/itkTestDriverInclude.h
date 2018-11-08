@@ -221,7 +221,7 @@ int ProcessArguments(int *ac, ArgumentStringType *av, ProcessedOutputType * proc
         usage();
         return 1;
         }
-      regressionTestParameters.numberOfPixelsTolerance = atoi( (*av)[i + 1]);
+      regressionTestParameters.numberOfPixelsTolerance = std::stoi( (*av)[i + 1]);
       *av += 2;
       *ac -= 2;
       }
@@ -232,7 +232,7 @@ int ProcessArguments(int *ac, ArgumentStringType *av, ProcessedOutputType * proc
         usage();
         return 1;
         }
-      regressionTestParameters.radiusTolerance = atoi( (*av)[i + 1]);
+      regressionTestParameters.radiusTolerance = std::stoi( (*av)[i + 1]);
       (*av) += 2;
       *ac -= 2;
       }

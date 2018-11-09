@@ -108,6 +108,8 @@ template <typename TTensorImageType, typename TAnisotropyImageType, typename TMa
 class DtiTrackingFilterBase : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiTrackingFilterBase);
+
   /** Standard class typedefs. */
   typedef DtiTrackingFilterBase    Self;
   typedef itk::Object              Superclass;
@@ -203,8 +205,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiTrackingFilterBase);
-
 protected:
   bool IsLoop(vtkPoints *fiber, double tolerance = 0.001);
 

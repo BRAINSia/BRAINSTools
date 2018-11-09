@@ -29,6 +29,8 @@ class StreamToRead :
   public FileToRead<FileStreamType *>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(StreamToRead);
+
   typedef StreamToRead               Self;
   typedef FileToRead<std::fstream *> Superclass;
   typedef Superclass::OutputType     OutputType;
@@ -43,8 +45,6 @@ public:
   ~StreamToRead() override;
 protected:
   StreamToRead() ITK_DELETED_FUNCTION;
-  ITK_DISALLOW_COPY_AND_ASSIGN(StreamToRead);
-
 private:
   OutputType m_F;
 };

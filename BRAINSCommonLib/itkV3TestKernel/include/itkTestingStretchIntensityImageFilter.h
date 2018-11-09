@@ -40,6 +40,8 @@ template <typename  TInputImage, typename  TOutputImage = TInputImage>
 class StretchIntensityImageFilter : public ImageSource<TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(StretchIntensityImageFilter);
+
   /** Standard class typedefs. */
   typedef StretchIntensityImageFilter Self;
   typedef ImageSource<TOutputImage>   Superclass;
@@ -115,8 +117,6 @@ protected:
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(StretchIntensityImageFilter);
-
   RealType m_Scale;
   RealType m_Shift;
 

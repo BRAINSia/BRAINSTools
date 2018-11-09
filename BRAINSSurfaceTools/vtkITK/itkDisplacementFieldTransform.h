@@ -34,6 +34,8 @@ class DisplacementFieldTransform :
     public Transform<TScalarType, NDimensions, NDimensions>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DisplacementFieldTransform);
+
   /** Standard class typedefs. */
   typedef DisplacementFieldTransform                       Self;
   typedef Transform<TScalarType, NDimensions, NDimensions> Superclass;
@@ -229,8 +231,6 @@ protected:
     const InputPointType & point, ContinuousIndexType & index ) const;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(DisplacementFieldTransform);
 
   /** Typedefs for specifying the extend to the grid. */
   typedef ImageRegion<Self::SpaceDimension> RegionType;

@@ -29,6 +29,7 @@ namespace itk
 class VTK_ITK_EXPORT EncodedTransformFileReader : public TransformFileReader
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileReader);
 
   /** SmartPointer typedef support */
   typedef EncodedTransformFileReader Self;
@@ -49,8 +50,6 @@ public:
   void Update();
 
 protected:
-  ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileReader);
-
   EncodedTransformFileReader();
   virtual ~EncodedTransformFileReader();
 };

@@ -41,6 +41,8 @@ class QuadEdgeMeshClampScalarsFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshClampScalarsFilter);
+
   typedef QuadEdgeMeshClampScalarsFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TOutputMesh>                     Superclass;
@@ -91,8 +93,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshClampScalarsFilter);
 
   bool m_ClampMin;
   bool m_ClampMax;

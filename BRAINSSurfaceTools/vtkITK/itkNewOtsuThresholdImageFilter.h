@@ -43,6 +43,8 @@ class NewOtsuThresholdImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageFilter);
+
   /** Standard Self typedef */
   typedef NewOtsuThresholdImageFilter Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
@@ -110,8 +112,6 @@ protected:
   void GenerateData () override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageFilter);
-
   InputPixelType      m_Threshold;
   OutputPixelType     m_InsideValue;
   OutputPixelType     m_OutsideValue;

@@ -67,6 +67,8 @@ class DtiGraphSearchTrackingFilter : public itk::DtiTrackingFilterBase<TTensorIm
                                                                        TMaskImageType>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGraphSearchTrackingFilter);
+
   /** Standard class typedefs. */
   typedef DtiGraphSearchTrackingFilter                                                       Self;
   typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
@@ -103,8 +105,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGraphSearchTrackingFilter);
-
   RandomGeneratorPointer m_RandomGenerator;
 
   float        m_AnisotropyBranchingValue;

@@ -43,6 +43,8 @@ class ResampleDestinationPointsQuadEdgeMeshFilter :
   public MeshToMeshFilter<TInputPointSet, TOutputPointSet>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleDestinationPointsQuadEdgeMeshFilter);
+
   typedef ResampleDestinationPointsQuadEdgeMeshFilter Self;
   typedef MeshToMeshFilter<
       TInputPointSet, TOutputPointSet>                   Superclass;
@@ -144,8 +146,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleDestinationPointsQuadEdgeMeshFilter);
 
   void ProjectPointToSphereSurface( OutputPointType & point ) const;
 

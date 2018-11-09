@@ -37,6 +37,8 @@ template <typename TPointSet>
 class PointLocator2 : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(PointLocator2);
+
   /** Standard class typedefs. */
   typedef PointLocator2            Self;
   typedef Object                   Superclass;
@@ -99,8 +101,6 @@ protected:
   virtual void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(PointLocator2);
-
   PointSetConstPointer m_PointSet;
   SampleAdaptorPointer m_SampleAdaptor;
   TreeGeneratorPointer m_KdTreeGenerator;

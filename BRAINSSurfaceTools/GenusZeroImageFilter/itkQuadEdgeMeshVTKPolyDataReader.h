@@ -36,6 +36,8 @@ template <typename TOutputMesh>
 class QuadEdgeMeshVTKPolyDataReader : public MeshSource<TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshVTKPolyDataReader);
+
   /** Standard "Self" typedef. */
   typedef QuadEdgeMeshVTKPolyDataReader Self;
   typedef MeshSource<TOutputMesh>       Superclass;
@@ -98,9 +100,6 @@ protected:
 
   /** Filename to read */
   std::string m_FileName;
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshVTKPolyDataReader);
-
 };
 
 } // end namespace itk

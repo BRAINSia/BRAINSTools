@@ -71,6 +71,7 @@ template <
 class IccdefRegistrator : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefRegistrator);
 
   /** Standard class typedefs. */
   typedef IccdefRegistrator        Self;
@@ -213,8 +214,6 @@ protected:
   IccdefRegistrator();
   ~IccdefRegistrator() override;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefRegistrator);
-
   void WriteDisplacementComponents(TDisplacementField *, std::string);
 
   typename TDisplacementField::Pointer m_InitialDisplacementField;

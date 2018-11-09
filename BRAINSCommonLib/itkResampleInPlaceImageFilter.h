@@ -96,6 +96,8 @@ class ResampleInPlaceImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleInPlaceImageFilter);
+
   /** Standard class typedefs */
   typedef ResampleInPlaceImageFilter                    Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
@@ -155,8 +157,6 @@ protected:
   void PrintSelf( std::ostream& os, Indent indent ) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleInPlaceImageFilter);
-
   OutputImagePointer         m_OutputImage;
   RigidTransformConstPointer m_RigidTransform;
 };

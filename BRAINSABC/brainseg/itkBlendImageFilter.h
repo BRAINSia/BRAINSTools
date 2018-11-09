@@ -29,6 +29,8 @@ template <typename TInputImage, typename TOutputImage>
 class BlendImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BlendImageFilter);
+
   /** Standard class typedefs. */
   typedef BlendImageFilter                              Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
@@ -96,8 +98,6 @@ protected:
       override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BlendImageFilter);
-
   double m_Blend1, m_Blend2;
 };
 } // end namespace itk

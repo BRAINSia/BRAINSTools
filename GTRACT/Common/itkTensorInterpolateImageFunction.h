@@ -53,6 +53,8 @@ class TensorInterpolateImageFunction :
     TCoordRep>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(TensorInterpolateImageFunction);
+
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Standard class typedefs. */
@@ -139,9 +141,6 @@ protected:
   {
     Superclass::PrintSelf( os, indent );
   }
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TensorInterpolateImageFunction);
 };
 } // namespace itk
 

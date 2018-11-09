@@ -93,6 +93,8 @@ class NaryLabelImageFilter :
                          Functor::NaryLabel<typename TInputImage::PixelType, typename TOutputImage::PixelType> >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NaryLabelImageFilter);
+
   /** Standard class typedefs. */
   typedef NaryLabelImageFilter Self;
   typedef NaryFunctorImageFilter<TInputImage, TOutputImage,
@@ -170,8 +172,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NaryLabelImageFilter);
-
   InputImagePixelType  m_BackgroundValue;
   OutputImagePixelType m_Shift;
   bool                 m_IgnoreCollision;

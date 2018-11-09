@@ -41,6 +41,8 @@ template <typename TOutputMesh>
 class ConvertVTKToQuadEdgeMeshFilter : public MeshSource<TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ConvertVTKToQuadEdgeMeshFilter);
+
   /** Standard "Self" typedef. */
   typedef ConvertVTKToQuadEdgeMeshFilter Self;
   typedef MeshSource<TOutputMesh>        Superclass;
@@ -93,8 +95,6 @@ protected:
   void GenerateData() override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ConvertVTKToQuadEdgeMeshFilter);
-
   vtkPolyData * m_inputPolyData;
 };
 } // end namespace itk

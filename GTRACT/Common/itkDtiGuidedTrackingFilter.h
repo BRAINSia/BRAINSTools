@@ -70,6 +70,8 @@ class DtiGuidedTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageTy
                                                                   TMaskImageType>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGuidedTrackingFilter);
+
   /** Standard class typedefs. */
   typedef DtiGuidedTrackingFilter                                                            Self;
   typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
@@ -103,8 +105,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGuidedTrackingFilter);
-
   bool GuideDirection(typename Self::ContinuousIndexType, GuideFiberType, const float, TVector &);
 
   GuideFiberType m_GuideFiber;

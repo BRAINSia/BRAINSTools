@@ -58,6 +58,7 @@ template <typename TInputImage, typename TOutputImage>
 class IccdefPreprocessor : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefPreprocessor);
 
   /** Standard class typedefs. */
   typedef IccdefPreprocessor       Self;
@@ -178,8 +179,6 @@ protected:
   {
   };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefPreprocessor);
-
   typename InputImageType::Pointer m_InputFixedImage;
   typename InputImageType::Pointer m_InputMovingImage;
   typename OutputImageType::Pointer m_OutputFixedImage;

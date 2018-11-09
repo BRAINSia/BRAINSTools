@@ -53,6 +53,8 @@ class MeshFunction :
   public         FunctionBase<typename TInputMesh::PointType, TOutput>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeshFunction);
+
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
 
@@ -106,8 +108,6 @@ protected:
 
   /** Const pointer to the input image. */
   InputMeshConstPointer m_Mesh;
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeshFunction);
 };
 } // end namespace itk
 

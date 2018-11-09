@@ -38,6 +38,8 @@ class ResampleQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleQuadEdgeMeshFilter);
+
   typedef ResampleQuadEdgeMeshFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TOutputMesh>                           Superclass;
@@ -131,8 +133,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleQuadEdgeMeshFilter);
 
   virtual void CopyReferenceMeshToOutputMesh();
 

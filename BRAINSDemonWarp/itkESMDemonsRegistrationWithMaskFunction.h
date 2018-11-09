@@ -63,6 +63,8 @@ class ESMDemonsRegistrationWithMaskFunction :
                                                    TMovingImage, TDisplacementField>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ESMDemonsRegistrationWithMaskFunction);
+
   /** Standard class typedefs. */
   typedef ESMDemonsRegistrationWithMaskFunction Self;
   typedef PDEDeformableRegistrationFunction<
@@ -276,8 +278,6 @@ protected:
     double m_SumOfSquaredChange;
     };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ESMDemonsRegistrationWithMaskFunction);
-
   /** Cache fixed image information. */
   PointType     m_FixedImageOrigin;
   SpacingType   m_FixedImageSpacing;

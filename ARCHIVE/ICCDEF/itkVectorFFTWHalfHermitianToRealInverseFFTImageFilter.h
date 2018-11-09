@@ -46,6 +46,8 @@ class VectorFFTWHalfHermitianToRealInverseFFTImageFilter :
                             Image<TPixel, VDimension> >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorFFTWHalfHermitianToRealInverseFFTImageFilter);
+
   /** Standard class typedefs.*/
   typedef Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension> TInputImageType;
   typedef Image<TPixel, VDimension>                                              TOutputImageType;
@@ -116,8 +118,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VectorFFTWHalfHermitianToRealInverseFFTImageFilter);
-
   bool         m_PlanComputed;
   fftwf_plan   m_Plan;
   unsigned int m_LastImageSize;

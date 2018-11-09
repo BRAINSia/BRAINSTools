@@ -62,6 +62,8 @@ class BRAINSROIAutoImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSROIAutoImageFilter);
+
   /** Extract dimension from input and output image. */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
@@ -173,8 +175,6 @@ protected:
   void GenerateData() override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSROIAutoImageFilter);
-
   double           m_OtsuPercentileThreshold;
   double           m_ThresholdCorrectionFactor;
   double           m_ClosingSize;

@@ -28,6 +28,8 @@ template <typename TInputImage>
 class NewOtsuThresholdImageCalculator : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageCalculator);
+
   /** Standard class typedefs. */
   typedef NewOtsuThresholdImageCalculator Self;
   typedef Object  Superclass;
@@ -75,8 +77,6 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageCalculator);
-
   PixelType            m_Threshold;
   unsigned long        m_NumberOfHistogramBins;
   double m_Omega;

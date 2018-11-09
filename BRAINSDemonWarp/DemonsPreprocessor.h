@@ -53,6 +53,7 @@ template <typename TInputImage, typename TOutputImage>
 class DemonsPreprocessor : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsPreprocessor);
 
   /** Standard class typedefs. */
   typedef DemonsPreprocessor       Self;
@@ -171,8 +172,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsPreprocessor);
-
   typename InputImageType::Pointer m_InputFixedImage;
   typename InputImageType::Pointer m_InputMovingImage;
   typename OutputImageType::Pointer m_OutputFixedImage;

@@ -47,6 +47,8 @@ class DeformQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DeformQuadEdgeMeshFilter);
+
   typedef DeformQuadEdgeMeshFilter                                 Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh> Superclass;
   typedef SmartPointer<Self>                                       Pointer;
@@ -115,8 +117,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(DeformQuadEdgeMeshFilter);
 
   InterpolatorPointerType m_Interpolator;
 

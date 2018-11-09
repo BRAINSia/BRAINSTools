@@ -43,6 +43,8 @@ class QuadEdgeMeshGenerateDeformationFieldFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshGenerateDeformationFieldFilter);
+
   typedef QuadEdgeMeshGenerateDeformationFieldFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TOutputMesh>                           Superclass;
@@ -100,8 +102,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshGenerateDeformationFieldFilter);
 
   /** Center of spherical mesh. We assume that both the Fixed and
    * Moving meshes have spherical geometry and that they share the same

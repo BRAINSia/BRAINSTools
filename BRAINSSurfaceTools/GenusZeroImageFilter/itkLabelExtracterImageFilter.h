@@ -126,6 +126,8 @@ class ITK_EXPORT LabelExtracterImageFilter :
                             typename TOutputImage::PixelType> >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(LabelExtracterImageFilter);
+
   /** Standard class typedefs. */
   typedef LabelExtracterImageFilter Self;
   typedef UnaryFunctorImageFilter<TInputImage, TOutputImage,
@@ -173,10 +175,6 @@ protected:
   }
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(LabelExtracterImageFilter);
-
 };
 } // end namespace itk
 

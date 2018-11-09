@@ -46,6 +46,8 @@ class InterpolateMeshFunction :
                               typename NumericTraits<typename TInputMesh::PixelType>::RealType>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(InterpolateMeshFunction);
+
   /** Standard class typedefs. */
   typedef InterpolateMeshFunction Self;
   typedef MeshFunction<TInputMesh,
@@ -116,8 +118,6 @@ protected:
   void GetPointData( PointIdentifier pointId, PixelType * value ) const;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(InterpolateMeshFunction);
-
   PointLocatorPointer m_PointLocator;
 };
 } // end namespace itk

@@ -54,6 +54,7 @@ template <typename TInputImage, typename TOutputImage>
 class VDemonsPreprocessor : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsPreprocessor);
 
   /** Standard class typedefs. */
   typedef VDemonsPreprocessor      Self;
@@ -196,8 +197,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsPreprocessor);
-
   std::vector<InputImagePointer>  m_InputFixedImage;
   std::vector<InputImagePointer>  m_InputMovingImage;
   std::vector<OutputImagePointer> m_OutputFixedImage;

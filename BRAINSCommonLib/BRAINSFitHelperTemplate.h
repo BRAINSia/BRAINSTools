@@ -82,6 +82,8 @@ template <typename FixedImageType, typename MovingImageType>
 class BRAINSFitHelperTemplate : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelperTemplate);
+
   /** Standard class typedefs. */
   typedef BRAINSFitHelperTemplate  Self;
   typedef ProcessObject            Superclass;
@@ -280,8 +282,6 @@ protected:
                      double minimumStepLength,
                      typename CompositeTransformType::Pointer & initialITKTransform);
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelperTemplate);
 
   FixedImagePointer  m_FixedVolume;
   FixedImagePointer  m_FixedVolume2; // For multi-modal SyN

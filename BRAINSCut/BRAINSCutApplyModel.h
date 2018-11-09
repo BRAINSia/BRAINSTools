@@ -28,6 +28,8 @@ typedef LabelImageType::Pointer              LabelImagePointerType;
 class BRAINSCutApplyModel
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSCutApplyModel);
+
   BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler );
   BRAINSCutApplyModel();
   ~BRAINSCutApplyModel();
@@ -78,7 +80,6 @@ public:
 
 protected:
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSCutApplyModel);
   BRAINSCutDataHandler*                        m_myDataHandler;
   BRAINSCutConfiguration::ApplyDataSetListType m_applyDataSetList;
 

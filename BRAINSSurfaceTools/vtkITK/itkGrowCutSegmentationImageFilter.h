@@ -62,6 +62,8 @@ template<typename TInputImage,
 {
 
  public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(GrowCutSegmentationImageFilter);
+
   /** Standard class typedefs. */
   typedef GrowCutSegmentationImageFilter Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage> Superclass;
@@ -286,8 +288,6 @@ template<typename TInputImage,
 
 
  private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(GrowCutSegmentationImageFilter);
 
   bool InitializeStateImage( OutputImageType *state );
 

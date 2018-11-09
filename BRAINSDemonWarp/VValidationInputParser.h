@@ -56,6 +56,7 @@ template <typename TImage>
 class VValidationInputParser : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VValidationInputParser);
 
   /** Standard class typedefs. */
   typedef VValidationInputParser   Self;
@@ -180,8 +181,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VValidationInputParser);
-
   std::vector<std::string> m_TheMovingImageFilename;
   std::vector<std::string> m_TheFixedImageFilename;
   std::string              m_InitialDisplacementFieldFilename;

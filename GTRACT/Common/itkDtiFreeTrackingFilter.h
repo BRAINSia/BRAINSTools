@@ -66,6 +66,8 @@ class DtiFreeTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType
                                                                 TMaskImageType>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFreeTrackingFilter);
+
   /** Standard class typedefs. */
   typedef DtiFreeTrackingFilter                                                              Self;
   typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
@@ -93,8 +95,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFreeTrackingFilter);
-
   double m_CurvatureThreshold;
 };  // end of class
 } // end namespace itk

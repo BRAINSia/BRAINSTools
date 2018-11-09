@@ -37,6 +37,8 @@ class DifferenceImageFilter :
   public         Testing::ComparisonImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DifferenceImageFilter);
+
   /** Standard class typedefs. */
   typedef DifferenceImageFilter                                     Self;
   typedef Testing::ComparisonImageFilter<TInputImage, TOutputImage> Superclass;
@@ -66,8 +68,6 @@ public:
   }
 
 protected:
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DifferenceImageFilter);
 };
 } // end namespace itk
 #else

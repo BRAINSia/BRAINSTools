@@ -50,6 +50,8 @@ class QuadEdgeMeshSimilarityCalculator :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshSimilarityCalculator);
+
   typedef QuadEdgeMeshSimilarityCalculator                           Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2> Superclass;
   typedef SmartPointer<Self>                                         Pointer;
@@ -120,8 +122,6 @@ protected:
   QuadEdgeMeshSimilarityCalculator();
   ~QuadEdgeMeshSimilarityCalculator();
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshSimilarityCalculator);
 
   InputPixelType1 m_LabelValue;
 

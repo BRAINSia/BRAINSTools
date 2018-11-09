@@ -45,6 +45,8 @@ class NodeVectorJacobianCalculator :
                                 TInputMesh::PointDimension> >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NodeVectorJacobianCalculator);
+
   /** Standard class typedefs. */
   typedef NodeVectorJacobianCalculator Self;
   typedef FunctionBase<typename TInputMesh::PointIdentifier,
@@ -178,8 +180,6 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NodeVectorJacobianCalculator);
-
   typename InputMeshType::ConstPointer                         m_InputMesh;
   typename TVectorContainer::ConstPointer                      m_VectorContainer;
   typename BasisSystemListType::ConstPointer                   m_BasisSystemList;

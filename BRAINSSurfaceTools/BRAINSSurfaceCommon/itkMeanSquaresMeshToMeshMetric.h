@@ -50,6 +50,7 @@ class MeanSquaresMeshToMeshMetric :
   public         MeshToMeshMetric<TFixedMesh, TMovingMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeanSquaresMeshToMeshMetric);
 
   /** Standard class typedefs. */
   typedef MeanSquaresMeshToMeshMetric               Self;
@@ -105,8 +106,6 @@ protected:
   {
   };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeanSquaresMeshToMeshMetric);
-
   mutable unsigned int m_NumberOfPixelsCounted;
 };
 } // end namespace itk

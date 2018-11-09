@@ -52,6 +52,7 @@ class MixtureStatisticCostFunction :
   public MultipleValuedCostFunction
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(MixtureStatisticCostFunction);
 
   /** Standard typedefs. */
   typedef MixtureStatisticCostFunction Self;
@@ -153,8 +154,6 @@ protected:
 
   mutable ImageMaskPointer m_ImageMask;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MixtureStatisticCostFunction);
-
   double m_DesiredMean;
   double m_DesiredVariance;
 

@@ -52,6 +52,8 @@ template <typename TCoordinateType,
 class CrossOverAffineSystem : public itk::LightProcessObject
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(CrossOverAffineSystem);
+
   /** Standard class typedefs. */
   typedef CrossOverAffineSystem         Self;
   typedef itk::LightProcessObject       Superclass;
@@ -142,8 +144,6 @@ protected:
   mutable AffineTransformPointer m_InhaleDecodeConversion;
   mutable AffineTransformPointer m_ExhaleEncodeConversion;
   mutable AffineTransformPointer m_ExhaleDecodeConversion;
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(CrossOverAffineSystem);
 };
 
 #ifndef ITK_MANUAL_INSTANTIATION

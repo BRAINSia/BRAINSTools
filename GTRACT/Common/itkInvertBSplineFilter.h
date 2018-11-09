@@ -67,6 +67,8 @@ namespace itk
 class GTRACT_COMMON_EXPORT InvertBSplineFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(InvertBSplineFilter);
+
   /** Standard class typedefs. */
   typedef InvertBSplineFilter      Self;
   typedef itk::Object              Superclass;
@@ -132,8 +134,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(InvertBSplineFilter);
-
   /*** Input and Output Objects ***/
   BsplineTransformTypePointer m_Input;
   TransformTypePointer        m_Output;

@@ -63,6 +63,8 @@ namespace itk
 class GTRACT_COMMON_EXPORT GtractParameterIO : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(GtractParameterIO);
+
   typedef GtractParameterIO             Self;
   typedef itk::Object                   Superclass;
   typedef itk::SmartPointer<Self>       Pointer;
@@ -88,8 +90,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GtractParameterIO);
-
   TMatrix     m_Directions;
   float       m_Bvalue;
   int         m_NumberOfDirections;

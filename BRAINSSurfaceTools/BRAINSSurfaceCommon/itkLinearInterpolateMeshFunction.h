@@ -41,6 +41,8 @@ class LinearInterpolateMeshFunction :
   public         InterpolateMeshFunction<TInputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateMeshFunction);
+
   /** Standard class typedefs. */
   typedef LinearInterpolateMeshFunction       Self;
   typedef InterpolateMeshFunction<TInputMesh> Superclass;
@@ -134,8 +136,6 @@ protected:
   const RealType & GetInterpolationWeight( unsigned int ) const;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateMeshFunction);
-
   mutable VectorType m_V12;
   mutable VectorType m_V32;
 

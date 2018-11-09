@@ -31,6 +31,8 @@ class BOBFFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BOBFFilter);
+
   /** Standard class typedefs. */
   typedef BOBFFilter                                    Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
@@ -127,8 +129,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BOBFFilter);
-
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
   // std::vector<IndexType> m_Seeds;

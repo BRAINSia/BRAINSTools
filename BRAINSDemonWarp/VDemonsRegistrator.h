@@ -72,6 +72,7 @@ template <
 class VDemonsRegistrator : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsRegistrator);
 
   /** Standard class typedefs. */
   typedef VDemonsRegistrator       Self;
@@ -262,8 +263,6 @@ protected:
   VDemonsRegistrator();
   ~VDemonsRegistrator() override;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsRegistrator);
-
   void WriteDisplacementComponents();
 
   typename TDisplacementField::Pointer m_InitialDisplacementField;

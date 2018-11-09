@@ -72,6 +72,8 @@ namespace itk
 class GTRACT_COMMON_EXPORT AnatomicalVersorRigidFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalVersorRigidFilter);
+
   /** Standard class typedefs. */
   typedef AnatomicalVersorRigidFilter Self;
   typedef itk::Object                 Superclass;
@@ -149,8 +151,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalVersorRigidFilter);
-
 // Input and Output Image
   RegisterImagePointer m_FixedImage;
   RegisterImagePointer m_MovingImage;

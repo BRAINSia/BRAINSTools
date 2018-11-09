@@ -43,6 +43,8 @@ class ComparisonImageFilter :
   public         ImageSource<TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ComparisonImageFilter);
+
   /** Standard class typedefs. */
   typedef ComparisonImageFilter     Self;
   typedef ImageSource<TOutputImage> Superclass;
@@ -135,8 +137,6 @@ protected:
   Array<AccumulateType> m_ThreadDifferenceSum;
   Array<SizeValueType>  m_ThreadNumberOfPixels;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ComparisonImageFilter);
-
   bool m_IgnoreBoundaryPixels;
 };
 } // end namespace Testing

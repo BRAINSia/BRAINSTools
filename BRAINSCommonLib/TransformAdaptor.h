@@ -50,6 +50,7 @@ template <typename TCoordinateType, unsigned int NDimensions,
 class TransformAdaptor : public LightProcessObject
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(TransformAdaptor);
 
   /** Standard class typedefs. */
   typedef TransformAdaptor         Self;
@@ -150,8 +151,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TransformAdaptor);
-
   InputImagePointer m_FixedImage;
   InputImagePointer m_MovingImage;
 

@@ -25,6 +25,7 @@ namespace itk
 class VTK_ITK_EXPORT EncodedTransformFileWriter : public TransformFileWriter
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileWriter);
 
   /** SmartPointer typedef support */
   typedef EncodedTransformFileWriter Self;
@@ -51,8 +52,6 @@ public:
   void Update();
 
 protected:
-  ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileWriter);
-
   EncodedTransformFileWriter();
   virtual ~EncodedTransformFileWriter();
 private:

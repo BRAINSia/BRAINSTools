@@ -43,6 +43,8 @@ template <typename TOutputImage>
 class ITK_EXPORT VTKImageToImageFilter : public ProcessObject
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VTKImageToImageFilter);
+
   /** Standard class typedefs. */
   typedef VTKImageToImageFilter    Self;
   typedef ProcessObject            Superclass;
@@ -85,8 +87,6 @@ protected:
   VTKImageToImageFilter();
   virtual ~VTKImageToImageFilter();
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VTKImageToImageFilter);
-
   ImporterFilterPointer m_Importer;
   vtkImageExport *      m_Exporter;
 };

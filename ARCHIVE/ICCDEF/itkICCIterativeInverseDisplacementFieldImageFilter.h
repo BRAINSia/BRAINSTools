@@ -56,6 +56,8 @@ class ICCIterativeInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ICCIterativeInverseDisplacementFieldImageFilter);
+
   /** Standard class typedefs. */
   typedef ICCIterativeInverseDisplacementFieldImageFilter Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage>   Superclass;
@@ -151,8 +153,6 @@ protected:
     OutputImagePointer outputPtr;
     };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ICCIterativeInverseDisplacementFieldImageFilter);
-
   static ITK_THREAD_RETURN_TYPE ComputeInverseThreaderCallback(void * arg);
 };
 } // end namespace itk

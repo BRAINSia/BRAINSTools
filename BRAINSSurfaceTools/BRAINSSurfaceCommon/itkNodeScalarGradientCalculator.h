@@ -45,6 +45,8 @@ class NodeScalarGradientCalculator :
                                 TInputMesh::PointDimension> >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NodeScalarGradientCalculator);
+
   /** Standard class typedefs. */
   typedef NodeScalarGradientCalculator Self;
   typedef FunctionBase<typename TInputMesh::PointIdentifier,
@@ -171,8 +173,6 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NodeScalarGradientCalculator);
-
   typename InputMeshType::ConstPointer                 m_InputMesh;
   typename TPointDataContainer::ConstPointer           m_DataContainer;
   typename BasisSystemListType::ConstPointer           m_BasisSystemList;

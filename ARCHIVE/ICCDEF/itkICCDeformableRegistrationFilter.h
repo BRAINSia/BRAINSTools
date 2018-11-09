@@ -55,6 +55,8 @@ class ICCDeformableRegistrationFilter :
                                                  TDisplacementField>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableRegistrationFilter);
+
   /** Standard class typedefs. */
   typedef ICCDeformableRegistrationFilter Self;
   typedef PDEDeformableRegistrationFilter<
@@ -305,8 +307,6 @@ protected:
     float normalizer_Regularization;
     };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableRegistrationFilter);
-
   /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
     * this method will throw an exception if the function is not of the expected type. */
   ICCDeformableFunctionType *  GetForwardRegistrationFunctionType();

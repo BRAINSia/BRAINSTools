@@ -75,6 +75,8 @@ typedef enum ENUM_TENSOR_SHAPE_TYPE TensorShapeType;
 class EigenVectorToColorImageFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(EigenVectorToColorImageFilter);
+
   /** Standard class typedefs. */
   typedef EigenVectorToColorImageFilter Self;
   typedef itk::Object                   Superclass;
@@ -118,8 +120,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(EigenVectorToColorImageFilter);
-
 // Input and Output Image
   InputImagePointer  m_Input;
   OutputImagePointer m_Output;

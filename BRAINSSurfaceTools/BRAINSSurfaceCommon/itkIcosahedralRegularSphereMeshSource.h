@@ -43,6 +43,8 @@ template <typename TOutputMesh>
 class IcosahedralRegularSphereMeshSource : public MeshSource<TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(IcosahedralRegularSphereMeshSource);
+
   /** Standard "Self" typedef. */
   typedef IcosahedralRegularSphereMeshSource Self;
   typedef itk::MeshSource<TOutputMesh>       Superclass;
@@ -113,8 +115,6 @@ protected:
 
   /** model scales */
   VectorType m_Scale;
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IcosahedralRegularSphereMeshSource);
 };
 } // end namespace itk
 

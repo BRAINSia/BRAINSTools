@@ -366,6 +366,8 @@ template <typename TTransformType, typename TOptimizer, typename TFixedImage,
 class MultiModal3DMutualRegistrationHelper : public ProcessObject
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(MultiModal3DMutualRegistrationHelper);
+
   /** Standard class typedefs. */
   typedef MultiModal3DMutualRegistrationHelper Self;
   typedef ProcessObject                        Superclass;
@@ -516,8 +518,6 @@ protected:
   void  GenerateData() override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MultiModal3DMutualRegistrationHelper);
-
   FixedImagePointer  m_FixedImage;
   MovingImagePointer m_MovingImage;
   FixedImagePointer  m_FixedImage2;

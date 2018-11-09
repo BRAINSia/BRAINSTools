@@ -40,6 +40,8 @@ class DeformationFieldFromTransformMeshFilter :
   public MeshToMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DeformationFieldFromTransformMeshFilter);
+
   typedef DeformationFieldFromTransformMeshFilter Self;
   typedef MeshToMeshFilter<
       TInputMesh, TOutputMesh>                         Superclass;
@@ -90,8 +92,6 @@ protected:
   void GenerateData();
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(DeformationFieldFromTransformMeshFilter);
 
   TransformPointerType m_Transform;             // Coordinate transform to use
 };

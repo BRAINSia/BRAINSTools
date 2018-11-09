@@ -54,6 +54,8 @@ template <typename TOutputImage>
 class RandomImageSource : public ImageSource<TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(RandomImageSource);
+
   /** Standard class typedefs. */
   typedef RandomImageSource         Self;
   typedef ImageSource<TOutputImage> Superclass;
@@ -130,8 +132,6 @@ protected:
   virtual void GenerateOutputInformation();
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(RandomImageSource);
-
   SizeType    m_Size;       // size of the output image
   SpacingType m_Spacing;    // spacing
   PointType   m_Origin;     // origin

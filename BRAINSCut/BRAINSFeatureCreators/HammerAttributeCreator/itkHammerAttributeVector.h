@@ -51,6 +51,8 @@ class HammerAttributeVector :
   public         FixedArray<TValueType, VLength>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(HammerAttributeVector);
+
   /** Standard class typedefs. */
   typedef HammerAttributeVector           Self;
   typedef FixedArray<TValueType, VLength> Superclass;
@@ -119,9 +121,6 @@ protected:
   HammerAttributeVector();
   // virtual ~HammerAttributeVector();
   void PrintSelf(std::ostream & os, Indent indent) const;
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(HammerAttributeVector);
 };
 
 template <typename TValueType, unsigned int VLength>

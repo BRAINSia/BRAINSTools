@@ -65,6 +65,8 @@ template <typename TInputImage, typename TTransformType, typename TSpatialObject
 class CreateSpatialObjectFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(CreateSpatialObjectFilter);
+
   /** Standard class typedefs. */
   typedef CreateSpatialObjectFilter Self;
   typedef itk::Object               Superclass;
@@ -117,8 +119,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(CreateSpatialObjectFilter);
-
   void LoadImage();
 
   void ExtractROI();

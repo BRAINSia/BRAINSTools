@@ -79,6 +79,8 @@ typedef enum ENUM_ANISOTROPY_TYPE AnisotropyType;
 class GTRACT_COMMON_EXPORT TensorToAnisotropyImageFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(TensorToAnisotropyImageFilter);
+
   /** Standard class typedefs. */
   typedef TensorToAnisotropyImageFilter Self;
   typedef itk::Object                   Superclass;
@@ -138,8 +140,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TensorToAnisotropyImageFilter);
-
   void computVoxelIsotropy();
 
   void computSimpleVoxelAnisotropy();

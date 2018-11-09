@@ -75,6 +75,8 @@ namespace itk
 class GTRACT_COMMON_EXPORT AnatomicalBSplineFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalBSplineFilter);
+
   /** Standard class typedefs. */
   typedef AnatomicalBSplineFilter  Self;
   typedef itk::Object              Superclass;
@@ -189,8 +191,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalBSplineFilter);
-
   /*** Input and Output Objects ***/
   RegisterImagePointer m_FixedImage;
   RegisterImagePointer m_MovingImage;

@@ -39,6 +39,8 @@ class NearestNeighborInterpolateMeshFunction :
   public         InterpolateMeshFunction<TInputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NearestNeighborInterpolateMeshFunction);
+
   /** Standard class typedefs. */
   typedef NearestNeighborInterpolateMeshFunction Self;
   typedef InterpolateMeshFunction<TInputMesh>    Superclass;
@@ -87,9 +89,6 @@ protected:
   ~NearestNeighborInterpolateMeshFunction();
 
   void PrintSelf(std::ostream& os, Indent indent) const override;
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NearestNeighborInterpolateMeshFunction);
 };
 } // end namespace itk
 

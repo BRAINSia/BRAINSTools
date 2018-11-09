@@ -84,6 +84,8 @@ class VectorESMDemonsRegistrationFunction :
                                                    TMovingImage, TDisplacementField>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorESMDemonsRegistrationFunction);
+
   /** Standard class typedefs. */
   typedef VectorESMDemonsRegistrationFunction Self;
   typedef PDEDeformableRegistrationFunction<
@@ -311,8 +313,6 @@ protected:
     double m_SumOfSquaredChange;
     };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VectorESMDemonsRegistrationFunction);
-
   VectorFixedImagePointer  m_FixedImage;
   VectorMovingImagePointer m_MovingImage;
 

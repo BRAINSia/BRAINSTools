@@ -41,6 +41,8 @@ class PiecewiseRescaleQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(PiecewiseRescaleQuadEdgeMeshFilter);
+
   typedef PiecewiseRescaleQuadEdgeMeshFilter                        Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh> Superclass;
   typedef SmartPointer<Self>                                        Pointer;
@@ -97,8 +99,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(PiecewiseRescaleQuadEdgeMeshFilter);
 
   OutputPixelType m_OutputMinimum;
   OutputPixelType m_OutputMaximum;

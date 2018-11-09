@@ -86,6 +86,8 @@ class IdentityResampleByFFT :
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(IdentityResampleByFFT);
+
   /** Standard class typedefs. */
   typedef IdentityResampleByFFT                             Self;
   typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
@@ -256,9 +258,6 @@ protected:
                                              outputRegionForThread,
                                              ThreadIdType threadId);
 
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IdentityResampleByFFT);
 };
 } // end namespace itk
 

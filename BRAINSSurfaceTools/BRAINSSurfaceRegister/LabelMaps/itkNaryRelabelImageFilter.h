@@ -51,6 +51,8 @@ class NaryRelabelImageFilter :
 
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(NaryRelabelImageFilter);
+
   /** Standard class typedefs. */
   typedef NaryRelabelImageFilter                        Self;
   typedef InPlaceImageFilter<TInputImage, TOutputImage> Superclass;
@@ -107,8 +109,6 @@ protected:
   void PrintSelf( std::ostream& os, Indent indent) const override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NaryRelabelImageFilter);
-
   InputImagePixelType m_BackgroundValue;
   bool                m_IgnoreCollision;
 };

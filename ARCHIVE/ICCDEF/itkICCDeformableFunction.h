@@ -45,6 +45,8 @@ class ICCDeformableFunction :
                                                    TMovingImage, TDisplacementField>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableFunction);
+
   /** Standard class typedefs. */
   typedef ICCDeformableFunction Self;
   typedef PDEDeformableRegistrationFunction<
@@ -389,8 +391,6 @@ protected:
     double m_SumOfSquaredChange;
     };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableFunction);
-
   /** Cache fixed image information. */
   MovingPointType m_FixedImageOrigin;
   SpacingType     m_FixedImageSpacing;

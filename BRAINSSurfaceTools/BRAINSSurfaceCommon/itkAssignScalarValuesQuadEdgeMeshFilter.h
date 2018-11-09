@@ -40,6 +40,8 @@ class AssignScalarValuesQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(AssignScalarValuesQuadEdgeMeshFilter);
+
   typedef AssignScalarValuesQuadEdgeMeshFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TOutputMesh>                     Superclass;
@@ -82,7 +84,6 @@ protected:
 
 private:
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(AssignScalarValuesQuadEdgeMeshFilter);
 };
 }
 

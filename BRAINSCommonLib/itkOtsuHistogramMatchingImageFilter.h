@@ -82,6 +82,8 @@ class OtsuHistogramMatchingImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(OtsuHistogramMatchingImageFilter);
+
   /** Standard class typedefs. */
   typedef OtsuHistogramMatchingImageFilter              Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
@@ -207,8 +209,6 @@ protected:
                           const THistogramMeasurement maxValue);
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(OtsuHistogramMatchingImageFilter);
-
   unsigned long m_NumberOfHistogramLevels;
   unsigned long m_NumberOfMatchPoints;
   bool          m_ThresholdAtMeanIntensity;

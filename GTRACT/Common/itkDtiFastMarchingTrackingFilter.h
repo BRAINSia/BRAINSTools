@@ -73,6 +73,8 @@ class GTRACT_COMMON_EXPORT DtiFastMarchingTrackingFilter : public itk::DtiTracki
                                                                                              TMaskImageType>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
+
   /** Standard class typdedefs. */
   typedef DtiFastMarchingTrackingFilter                                                      Self;
   typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
@@ -137,8 +139,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
-
   void PrintSelf( std::ostream & os, Indent indent ) const override;
 
   void InitializeSeeds();

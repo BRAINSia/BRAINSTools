@@ -82,6 +82,8 @@ class VectorMultiResolutionPDEDeformableRegistration :
   public         ImageToImageFilter<TDisplacementField, TDisplacementField>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorMultiResolutionPDEDeformableRegistration);
+
   /** Standard class typedefs */
   typedef VectorMultiResolutionPDEDeformableRegistration Self;
   typedef ImageToImageFilter<TDisplacementField, TDisplacementField>
@@ -282,8 +284,6 @@ protected:
   virtual bool Halt();
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VectorMultiResolutionPDEDeformableRegistration);
-
   RegistrationPointer                    m_RegistrationFilter;
   FixedImagePyramidPointer               m_FixedImagePyramid;
   MovingImagePyramidPointer              m_MovingImagePyramid;

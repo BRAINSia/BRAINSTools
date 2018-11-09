@@ -40,6 +40,8 @@ class ReplaceDestinationPointsQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ReplaceDestinationPointsQuadEdgeMeshFilter);
+
   typedef ReplaceDestinationPointsQuadEdgeMeshFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TInputMesh>                            Superclass;
@@ -81,7 +83,6 @@ protected:
 
 private:
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(ReplaceDestinationPointsQuadEdgeMeshFilter);
 };
 }
 

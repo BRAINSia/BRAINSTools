@@ -30,6 +30,8 @@ template <typename TInputImage, typename TOutputImage>
 class LevelTracingImageFilter:public ImageToImageFilter<TInputImage,TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(LevelTracingImageFilter);
+
   /** Standard class typedefs. */
   typedef LevelTracingImageFilter Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage> Superclass;
@@ -112,8 +114,6 @@ protected:
   virtual void Trace( const DispatchBase &);
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(LevelTracingImageFilter);
-
   IndexType m_Seed;
   InputImagePixelType m_Max, m_Min;
   bool m_MovedSeed;

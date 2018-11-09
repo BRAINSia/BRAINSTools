@@ -60,6 +60,8 @@ class QuadEdgeMeshScalarPixelValuesSmoothingFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshScalarPixelValuesSmoothingFilter);
+
   typedef QuadEdgeMeshScalarPixelValuesSmoothingFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TOutputMesh>                           Superclass;
@@ -131,8 +133,6 @@ protected:
   void GenerateData() override;
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshScalarPixelValuesSmoothingFilter);
 
   unsigned long m_MaximumNumberOfIterations;
   double        m_Lambda;

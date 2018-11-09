@@ -70,6 +70,7 @@ template <
 class DemonsRegistrator : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsRegistrator);
 
   /** Standard class typedefs. */
   typedef DemonsRegistrator        Self;
@@ -224,8 +225,6 @@ protected:
   DemonsRegistrator();
   ~DemonsRegistrator() override;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsRegistrator);
-
   void WriteDisplacementComponents();
 
   typename TDisplacementField::Pointer m_InitialDisplacementField;

@@ -60,6 +60,8 @@ class HistogramMatchingQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(HistogramMatchingQuadEdgeMeshFilter);
+
   typedef HistogramMatchingQuadEdgeMeshFilter Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<
       TInputMesh, TOutputMesh>                     Superclass;
@@ -133,8 +135,6 @@ protected:
                            const THistogramMeasurement maxValue );
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(HistogramMatchingQuadEdgeMeshFilter);
 
   unsigned long m_NumberOfHistogramLevels;
   unsigned long m_NumberOfMatchPoints;

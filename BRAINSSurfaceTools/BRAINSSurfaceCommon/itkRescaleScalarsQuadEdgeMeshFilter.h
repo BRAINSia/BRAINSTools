@@ -42,6 +42,8 @@ class RescaleScalarsQuadEdgeMeshFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(RescaleScalarsQuadEdgeMeshFilter);
+
   typedef RescaleScalarsQuadEdgeMeshFilter               Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh> Superclass;
   typedef SmartPointer<Self>                             Pointer;
@@ -91,8 +93,6 @@ protected:
   void GenerateData();
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(RescaleScalarsQuadEdgeMeshFilter);
 
   OutputPixelType m_OutputMinimum;
   OutputPixelType m_OutputMaximum;

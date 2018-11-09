@@ -64,6 +64,8 @@ namespace itk
 class BRAINSFitHelper : public Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelper);
+
   /** Standard class typedefs. */
   typedef BRAINSFitHelper          Self;
   typedef ProcessObject            Superclass;
@@ -259,8 +261,6 @@ protected:
   void  GenerateData();
 
 private:
-
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelper);
 
   template <typename TLocalCostMetric>
   void SetupRegistration(GenericMetricType *localCostMetric);

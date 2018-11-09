@@ -41,6 +41,8 @@ class LinearInterpolateDeformationFieldMeshFunction :
   public         LinearInterpolateMeshFunction<TInputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateDeformationFieldMeshFunction);
+
   /** Standard class typedefs. */
   typedef LinearInterpolateDeformationFieldMeshFunction Self;
   typedef LinearInterpolateMeshFunction<TInputMesh>     Superclass;
@@ -97,8 +99,6 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
   typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateDeformationFieldMeshFunction);
 };
 } // end namespace itk
 

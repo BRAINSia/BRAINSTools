@@ -62,6 +62,8 @@ namespace itk
 class FastMarchingCostFunction : public SingleValuedCostFunction
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(FastMarchingCostFunction);
+
   /** Standard class typedefs */
   typedef FastMarchingCostFunction Self;
   typedef SingleValuedCostFunction Superclass;
@@ -134,7 +136,6 @@ protected:
   CostIPTypePointer   m_CostIP;
 private:
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(FastMarchingCostFunction);
 };                                        // end of class
 } // end of namespace itk
 

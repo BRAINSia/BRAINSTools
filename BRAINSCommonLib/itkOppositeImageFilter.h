@@ -95,6 +95,8 @@ class OppositeImageFilter :
                             typename TOutputImage::PixelType> >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(OppositeImageFilter);
+
   /** Standard class typedefs. */
   typedef OppositeImageFilter Self;
   typedef UnaryFunctorImageFilter<TInputImage, TOutputImage,
@@ -130,9 +132,6 @@ protected:
   {
     Superclass::PrintSelf(os, indent);
   }
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(OppositeImageFilter);
 };
 } // end namespace itk
 

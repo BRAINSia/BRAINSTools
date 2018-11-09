@@ -139,6 +139,8 @@ class DivergenceImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(DivergenceImageFilter);
+
   /** Standard class typedefs. */
   typedef DivergenceImageFilter              Self;
   typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
@@ -485,7 +487,6 @@ private:
 
   typename ImageBaseType::ConstPointer m_RealValuedInputImage;
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(DivergenceImageFilter);
 };
 } // end namespace itk
 

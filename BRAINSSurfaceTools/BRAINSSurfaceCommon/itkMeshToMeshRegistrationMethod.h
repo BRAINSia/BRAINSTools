@@ -63,6 +63,8 @@ template <typename TFixedMesh, typename TMovingMesh>
 class MeshToMeshRegistrationMethod : public ProcessObject
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);
+
   /** Standard class typedefs. */
   typedef MeshToMeshRegistrationMethod Self;
   typedef ProcessObject                Superclass;
@@ -172,8 +174,6 @@ protected:
   void  GenerateData() override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);
-
   MetricPointer          m_Metric;
   OptimizerType::Pointer m_Optimizer;
 

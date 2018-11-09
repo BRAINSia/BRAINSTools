@@ -37,6 +37,8 @@ class QuadEdgeMeshParam :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshParam);
+
   /** Basic types. */
   typedef QuadEdgeMeshParam Self;
   typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh,
@@ -174,7 +176,6 @@ protected:
 
 private:
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshParam);
 };
 } // end namespace itk
 

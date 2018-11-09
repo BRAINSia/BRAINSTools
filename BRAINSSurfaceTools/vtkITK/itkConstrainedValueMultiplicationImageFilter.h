@@ -92,6 +92,8 @@ BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
   typename TOutputImage::PixelType>   >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ConstrainedValueMultiplicationImageFilter);
+
   /** Standard class typedefs. */
   typedef ConstrainedValueMultiplicationImageFilter  Self;
   typedef BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
@@ -126,10 +128,6 @@ public:
 protected:
   ConstrainedValueMultiplicationImageFilter() {}
   virtual ~ConstrainedValueMultiplicationImageFilter() {}
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ConstrainedValueMultiplicationImageFilter);
-
 };
 
 } /// end namespace itk

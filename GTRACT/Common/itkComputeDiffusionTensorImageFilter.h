@@ -67,6 +67,8 @@ namespace itk
 class GTRACT_COMMON_EXPORT ComputeDiffusionTensorImageFilter : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ComputeDiffusionTensorImageFilter);
+
   /** Standard class typedefs. */
   typedef ComputeDiffusionTensorImageFilter Self;
   typedef itk::Object                       Superclass;
@@ -147,8 +149,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ComputeDiffusionTensorImageFilter);
-
   void computVoxelIsotropy();
 
   void computSimpleVoxelAnisotropy();

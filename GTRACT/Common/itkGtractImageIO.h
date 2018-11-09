@@ -59,6 +59,8 @@ namespace itk
 class GTRACT_COMMON_EXPORT GtractImageIO : public itk::Object
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(GtractImageIO);
+
   typedef GtractImageIO                 Self;
   typedef itk::Object                   Superclass;
   typedef itk::SmartPointer<Self>       Pointer;
@@ -134,8 +136,6 @@ protected:
   }
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GtractImageIO);
-
   Short3dImageType::Pointer m_Short3dImage;
   Short4dImageType::Pointer m_Short4dImage;
   Float3dImageType::Pointer m_Float3dImage;

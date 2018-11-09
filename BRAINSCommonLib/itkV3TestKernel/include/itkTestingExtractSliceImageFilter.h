@@ -83,6 +83,8 @@ class ExtractSliceImageFilter :
   public         ImageSource<TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(ExtractSliceImageFilter);
+
   /** Standard class typedefs. */
   typedef ExtractSliceImageFilter   Self;
   typedef ImageSource<TOutputImage> Superclass;
@@ -267,8 +269,6 @@ protected:
 
   OutputImageRegionType m_OutputImageRegion;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ExtractSliceImageFilter);
-
   DIRECTIONCOLLAPSESTRATEGY m_DirectionCollaspeStrategy;
 };
 } // end namespace Testing

@@ -50,6 +50,7 @@ class AnalyticalMeshToMeshMetric :
   public         MeshToMeshMetric<TFixedMesh, TMovingMesh>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(AnalyticalMeshToMeshMetric);
 
   /** Standard class typedefs. */
   typedef AnalyticalMeshToMeshMetric                Self;
@@ -105,8 +106,6 @@ protected:
   {
   };
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnalyticalMeshToMeshMetric);
-
   mutable unsigned int m_NumberOfPixelsCounted;
 };
 } // end namespace itk

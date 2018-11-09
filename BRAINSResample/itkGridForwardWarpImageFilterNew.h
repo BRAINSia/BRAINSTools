@@ -77,6 +77,8 @@ class GridForwardWarpImageFilterNew :
   public         ImageToImageFilter<TDisplacementField, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(GridForwardWarpImageFilterNew);
+
   /** Standard class typedefs. */
   typedef GridForwardWarpImageFilterNew                        Self;
   typedef ImageToImageFilter<TDisplacementField, TOutputImage> Superclass;
@@ -157,8 +159,6 @@ protected:
   void GenerateData() override;
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GridForwardWarpImageFilterNew);
-
   PixelType       m_BackgroundValue;
   PixelType       m_ForegroundValue;
   GridSpacingType m_GridPixelSpacing;

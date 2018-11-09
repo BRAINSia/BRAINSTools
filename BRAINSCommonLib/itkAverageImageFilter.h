@@ -57,6 +57,8 @@ class ITK_EXPORT AverageImageFilter :
     public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(AverageImageFilter);
+
   /** Standard class typedefs. */
   typedef AverageImageFilter Self;
   typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
@@ -95,9 +97,6 @@ protected:
   void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId) override;
 
   void PrintSelf(std::ostream&, Indent) const override;
-
-private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AverageImageFilter);
 };
 
 } // end namespace itk

@@ -29,17 +29,26 @@ using cmplxHHIteratorType = itk::ImageRegionIteratorWithIndex<HalfHermetianImage
  */
 static void ReshapeConvertIndex2(cmplxHHIteratorType & outputIter,
                                  const HalfHermetianImageType::SizeType &outSize,
-                                 const bool outFirstSpatialDeminsionIsOdd,
+                                 const bool
+#ifdef USE_HALF_FFTW
+                                 outFirstSpatialDeminsionIsOdd
+#endif
+                                 ,
+
                                  const HalfHermetianImageType::ConstPointer inputFreqCoeffs,
                                  const HalfHermetianImageType::SizeType & inSize,
-                                 const bool inFirstSpatialDimensionIsOdd)
+                                 const bool
+#ifdef USE_HALF_FFTW
+                                 inFirstSpatialDimensionIsOdd
+#endif
+                                 )
 {
   PrecisionType fftScale=1.0F;
   //Return if ths new index is in the outSize.  Otherwise you should truncate
   HalfHermetianImageType::IndexType inHighestFreq;
   HalfHermetianImageType::IndexType outHighestFreq;
 
-  //The nyq_OutOffset[dim] is the offest fromt he outHighestFreq to get the index of the NyquistFrequency
+  //The nyq_OutOffset[dim] is the offset from the outHighestFreq to get the index of the NyquistFrequency
   HalfHermetianImageType::IndexValueType nyq_OutOffset[HalfHermetianImageType::ImageDimension];
   HalfHermetianImageType::IndexValueType nyq_InOffset[HalfHermetianImageType::ImageDimension];
 

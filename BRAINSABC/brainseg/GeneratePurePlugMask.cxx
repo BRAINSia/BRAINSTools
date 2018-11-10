@@ -29,10 +29,10 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  typedef FloatImageType::Pointer                                             FloatImagePointer;
-  typedef std::vector<FloatImagePointer>                                      InputImageList;
-  typedef itk::ImageFileReader<FloatImageType>                                LocalReaderType;
-  typedef itk::Image<unsigned char, 3>                                        MaskImageType;
+  using FloatImagePointer = FloatImageType::Pointer;
+  using InputImageList = std::vector<FloatImagePointer>;
+  using LocalReaderType = itk::ImageFileReader<FloatImageType>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
   std::vector<std::string> inputFileNames;
   if( inputImageModalities.size() > 1 )
@@ -47,7 +47,7 @@ int main( int argc, char * argv[] )
   const unsigned int numberOfImageModalities = inputFileNames.size(); // number of modality images
 
   // Read the input modalities and set them in a vector of images
-  typedef LocalReaderType::Pointer             LocalReaderPointer;
+  using LocalReaderPointer = LocalReaderType::Pointer;
 
   InputImageList inputImageModalitiesList;
   for( unsigned int i = 0; i < numberOfImageModalities; i++ )
@@ -82,7 +82,7 @@ int main( int argc, char * argv[] )
                                                         numberOfContinuousIndexSubSamples,
                                                         false, verbose );
 
-  typedef itk::ImageFileWriter<MaskImageType> MaskWriterType;
+  using MaskWriterType = itk::ImageFileWriter<MaskImageType>;
   MaskWriterType::Pointer writer = MaskWriterType::New();
   writer->SetInput( mask );
   writer->SetFileName( outputMaskFile );

@@ -100,14 +100,14 @@ class BRAINSConstellationDetector2 :
 {
 public:
 
-  /** Standard ITK typedef */
-  typedef BRAINSConstellationDetector2               Self;
-  typedef ImageToImageFilter<SImageType, SImageType> Superclass;
-  typedef SmartPointer<Self>                         Pointer;
-  typedef SmartPointer<const Self>                   ConstPointer;
+  /** Standard ITK type alias */
+  using Self = BRAINSConstellationDetector2;
+  using Superclass = ImageToImageFilter<SImageType, SImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int Dimension = SImageType::ImageDimension;
-  typedef vnl_matrix<double>                                 MatrixType;
+  using MatrixType = vnl_matrix<double>;
 
   /** Run-time type information (and related methods) */
   itkTypeMacro(BRAINSConstellationDetector2, ImageToImageFilter);

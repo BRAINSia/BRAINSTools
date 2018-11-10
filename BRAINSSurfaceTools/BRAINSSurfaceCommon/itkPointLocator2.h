@@ -39,11 +39,11 @@ class PointLocator2 : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(PointLocator2);
 
-  /** Standard class typedefs. */
-  typedef PointLocator2            Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = PointLocator2;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -54,31 +54,31 @@ public:
   static constexpr unsigned int PointDimension = TPointSet::PointDimension;
 
   /** Typedefs related to the PointSet type */
-  typedef TPointSet                                          PointSetType;
-  typedef typename PointSetType::ConstPointer                PointSetConstPointer;
-  typedef typename PointSetType::PointType                   PointType;
-  typedef typename PointSetType::PointsContainer             PointsContainer;
-  typedef typename PointSetType::PointsContainerPointer      PointsContainerPointer;
-  typedef typename PointSetType::PointsContainerConstPointer PointsContainerConstPointer;
+  using PointSetType = TPointSet;
+  using PointSetConstPointer = typename PointSetType::ConstPointer;
+  using PointType = typename PointSetType::PointType;
+  using PointsContainer = typename PointSetType::PointsContainer;
+  using PointsContainerPointer = typename PointSetType::PointsContainerPointer;
+  using PointsContainerConstPointer = typename PointSetType::PointsContainerConstPointer;
 
-  typedef typename PointSetType::PointsContainerIterator      PointsContainerIteratorType;
-  typedef typename PointSetType::PointsContainerConstIterator PointsContainerConstIteratorType;
+  using PointsContainerIteratorType = typename PointSetType::PointsContainerIterator;
+  using PointsContainerConstIteratorType = typename PointSetType::PointsContainerConstIterator;
 
   /** Define the specific PointSet Type */
-  typedef itk::PointSet<typename TPointSet::PixelType, PointDimension> ListSamplePointSetType;
+  using ListSamplePointSetType = itk::PointSet<typename TPointSet::PixelType, PointDimension>;
 
   /** Type of the PointSet to List Adaptor. */
   /** define the sample according to the point size */
-  typedef itk::Statistics::PointSetToListSampleAdaptor<ListSamplePointSetType> SampleAdaptorType;
+  using SampleAdaptorType = itk::Statistics::PointSetToListSampleAdaptor<ListSamplePointSetType>;
 
-  typedef typename SampleAdaptorType::Pointer SampleAdaptorPointer;
+  using SampleAdaptorPointer = typename SampleAdaptorType::Pointer;
 
   /** Types fo the KdTreeGenerator */
-  typedef itk::Statistics::KdTreeGenerator<SampleAdaptorType> TreeGeneratorType;
-  typedef typename TreeGeneratorType::Pointer                 TreeGeneratorPointer;
-  typedef typename TreeGeneratorType::KdTreeType              TreeType;
-  typedef typename TreeType::ConstPointer                     TreeConstPointer;
-  typedef typename TreeType::InstanceIdentifierVectorType     InstanceIdentifierVectorType;
+  using TreeGeneratorType = itk::Statistics::KdTreeGenerator<SampleAdaptorType>;
+  using TreeGeneratorPointer = typename TreeGeneratorType::Pointer;
+  using TreeType = typename TreeGeneratorType::KdTreeType;
+  using TreeConstPointer = typename TreeType::ConstPointer;
+  using InstanceIdentifierVectorType = typename TreeType::InstanceIdentifierVectorType;
 
   /** Connect the PointSet as input */
   itkSetConstObjectMacro( PointSet, PointSetType );

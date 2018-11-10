@@ -92,7 +92,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   m_OutputSpeedImage = OutputSpeedImageType::New();
   m_EigenvectorImage =  EigenvectorImageType::New();
 
-  typedef typename LevelSetImageType::PixelType PixType;
+  using PixType = typename LevelSetImageType::PixelType;
   m_LargeValue    = static_cast<PixType>( NumericTraits<PixType>::max() / 2.0 );
   // m_LargeValue    = static_cast<PixelType>( 10000.0 );
   m_StoppingValue = static_cast<double>( m_LargeValue );
@@ -229,10 +229,10 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   m_EigenvectorImage->SetDirection( tensorImage->GetDirection() );
   m_EigenvectorImage->Allocate();
 
-  typedef itk::ImageRegionIterator<EigenvectorImageType> EigIteratorType;
+  using EigIteratorType = itk::ImageRegionIterator<EigenvectorImageType>;
   EigIteratorType eigIt( m_EigenvectorImage, m_EigenvectorImage->GetRequestedRegion() );
 
-  typedef itk::ImageRegionConstIterator<TensorImageType> TensorImageIteratorType;
+  using TensorImageIteratorType = itk::ImageRegionConstIterator<TensorImageType>;
   TensorImageIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
   for( eigIt.GoToBegin(), tensorIt.GoToBegin(); !eigIt.IsAtEnd() && !tensorIt.IsAtEnd(); ++eigIt, ++tensorIt )
     {
@@ -241,7 +241,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
     // Define type of tensor pixel
     constexpr unsigned int tensElements = 6;
-    typedef itk::Vector<float, tensElements> VectorTensorPixelType;
+    using VectorTensorPixelType = itk::Vector<float, tensElements>;
     VectorTensorPixelType tensor;
 
     TensorImagePixelType tensorPixel =  tensorImage->GetPixel(tensorIndex);
@@ -273,8 +273,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     }
 
   // set all output value to Large Value
-  typedef ImageRegionIterator<LevelSetImageType>
-    OutputIterator;
+  using OutputIterator = ImageRegionIterator<LevelSetImageType>;
 
   OutputIterator outIt( output, output->GetBufferedRegion() );
 
@@ -286,7 +285,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     }
 
   // set all speed output values to  0
-  typedef ImageRegionIterator<OutputSpeedImageType> OutputSpeedIterator;
+  using OutputSpeedIterator = ImageRegionIterator<OutputSpeedImageType>;
 
   OutputSpeedIterator speedIt( m_OutputSpeedImage, m_OutputSpeedImage->GetBufferedRegion() );
 
@@ -297,7 +296,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     speedIt.Set( outputSpeedPixel );
     }
 
-  typedef ImageRegionIterator<LabelImageType> LabelIterator;
+  using LabelIterator = ImageRegionIterator<LabelImageType>;
   LabelIterator typeIt( m_LabelImage, m_LabelImage->GetBufferedRegion() );
 
   // process input alive points
@@ -308,7 +307,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     typename NodeContainer::ConstIterator pointsIter;
     pointsIter = m_AlivePoints->Begin();
     typename NodeContainer::ConstIterator pointsEnd = m_AlivePoints->End();
-    for( ; pointsIter != pointsEnd; ++pointsIter )
+    for(; pointsIter != pointsEnd; ++pointsIter )
       {
       // get node from alive points container
       node = pointsIter.Value();
@@ -474,7 +473,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   IndexType    neighIndex = index; // index of input alive point
   AxisNodeType node;
 
-  // typedef vnl_vector_fixed<float,dimension> TVector;
+  // using TVector = vnl_vector_fixed<float,dimension>;
   TVector distance, normal;
 
   distance.fill(0);
@@ -615,7 +614,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   IndexType neighIndex = index; // index of most recent alive point
 
   // Get complete neighborhood of alive point to process as trial points
-  typedef itk::ConstNeighborhoodIterator<EigenvectorImageType> ConstNIterType;
+  using ConstNIterType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
 
   ConstNIterType::RadiusType radius;
   radius.Fill(1);
@@ -684,8 +683,8 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   AxisNodeType node;
 
-  // typedef vnl_vector_fixed<float,dimension> TVector;
-  typedef std::list<TVector> VectorListType;
+  // using TVector = vnl_vector_fixed<float,dimension>;
+  using VectorListType = std::list<TVector>;
   VectorListType    offsetList;
   TVector           sum; sum.fill(0);
   TVector           neighOffset;
@@ -694,7 +693,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   // Get complete neighborhood of trial point to calculate normal
 
-  typedef itk::ConstNeighborhoodIterator<EigenvectorImageType> ConstNIterType;
+  using ConstNIterType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
   ConstNIterType::RadiusType radius;
   radius.Fill(1);
   ConstNIterType eigNeighborIt( radius, m_EigenvectorImage, m_EigenvectorImage->GetLargestPossibleRegion() );
@@ -845,14 +844,14 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   AxisNodeType node;
 
-  // typedef vnl_vector_fixed<float,dimension> TVector;
+  // using TVector = vnl_vector_fixed<float,dimension>;
   TVector           aliveOffset;
   double            solution;
   OutputSpacingType spacing = this->GetOutput()->GetSpacing();
 
   // Get complete neighborhood of trial point to calculate normal
 
-  typedef itk::ConstNeighborhoodIterator<EigenvectorImageType> ConstNIterType;
+  using ConstNIterType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
   ConstNIterType::RadiusType radius;
   radius.Fill(1);
   ConstNIterType eigNeighborIt( radius, m_EigenvectorImage, m_EigenvectorImage->GetLargestPossibleRegion() );

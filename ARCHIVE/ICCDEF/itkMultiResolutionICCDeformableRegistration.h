@@ -90,12 +90,11 @@ class MultiResolutionICCDeformableRegistration :
   public         ImageToImageFilter<TDisplacementField, TDisplacementField>
 {
 public:
-  /** Standard class typedefs */
-  typedef MultiResolutionICCDeformableRegistration Self;
-  typedef ImageToImageFilter<TDisplacementField, TDisplacementField>
-    Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias */
+  using Self = MultiResolutionICCDeformableRegistration;
+  using Superclass = ImageToImageFilter<TDisplacementField, TDisplacementField>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -105,48 +104,48 @@ public:
                ImageToImageFilter);
 
   /** Fixed image type. */
-  typedef TFixedImage                           FixedImageType;
-  typedef typename FixedImageType::Pointer      FixedImagePointer;
-  typedef typename FixedImageType::ConstPointer FixedImageConstPointer;
+  using FixedImageType = TFixedImage;
+  using FixedImagePointer = typename FixedImageType::Pointer;
+  using FixedImageConstPointer = typename FixedImageType::ConstPointer;
 
   /** Moving image type. */
-  typedef TMovingImage                           MovingImageType;
-  typedef typename MovingImageType::Pointer      MovingImagePointer;
-  typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
+  using MovingImageType = TMovingImage;
+  using MovingImagePointer = typename MovingImageType::Pointer;
+  using MovingImageConstPointer = typename MovingImageType::ConstPointer;
 
   /** Deformation field image type. */
-  typedef TDisplacementField                      DisplacementFieldType;
-  typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
+  using DisplacementFieldType = TDisplacementField;
+  using DisplacementFieldPointer = typename DisplacementFieldType::Pointer;
 #ifdef ITKV3_COMPATIBILITY
-  typedef TDisplacementField                     DeformationFieldType;
-  typedef typename DeformationFieldType::Pointer DeformationFieldPointer;
+  using DeformationFieldType = TDisplacementField;
+  using DeformationFieldPointer = typename DeformationFieldType::Pointer;
 #endif
   /** ImageDimension. */
   static constexpr unsigned int ImageDimension = FixedImageType::ImageDimension;
 
   /** Internal float image type. */
-  typedef Image<TRealType, Self::ImageDimension> FloatImageType;
+  using FloatImageType = Image<TRealType, Self::ImageDimension>;
 
   /** The internal registration type. */
-  typedef ICCDeformableRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType> RegistrationType;
-  typedef typename RegistrationType::Pointer                                                     RegistrationPointer;
+  using RegistrationType = ICCDeformableRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType>;
+  using RegistrationPointer = typename RegistrationType::Pointer;
 
   /** The default registration type. */
-  typedef DemonsRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType> DefaultRegistrationType;
+  using DefaultRegistrationType = DemonsRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType>;
 
   /** The fixed multi-resolution image pyramid type. */
-  typedef MultiResolutionPyramidImageFilter<FixedImageType, FloatImageType> FixedImagePyramidType;
-  typedef typename FixedImagePyramidType::Pointer                           FixedImagePyramidPointer;
+  using FixedImagePyramidType = MultiResolutionPyramidImageFilter<FixedImageType, FloatImageType>;
+  using FixedImagePyramidPointer = typename FixedImagePyramidType::Pointer;
 
   /** The moving multi-resolution image pyramid type. */
-  typedef MultiResolutionPyramidImageFilter<MovingImageType, FloatImageType> MovingImagePyramidType;
-  typedef typename MovingImagePyramidType::Pointer                           MovingImagePyramidPointer;
+  using MovingImagePyramidType = MultiResolutionPyramidImageFilter<MovingImageType, FloatImageType>;
+  using MovingImagePyramidPointer = typename MovingImagePyramidType::Pointer;
 
   /** The deformation field expander type. */
-  typedef VectorResampleImageFilter<DisplacementFieldType, DisplacementFieldType> FieldExpanderType;
-  typedef typename FieldExpanderType::Pointer                                     FieldExpanderPointer;
+  using FieldExpanderType = VectorResampleImageFilter<DisplacementFieldType, DisplacementFieldType>;
+  using FieldExpanderPointer = typename FieldExpanderType::Pointer;
 
-  typedef Array<unsigned int> NumberOfIterationsType;
+  using NumberOfIterationsType = Array<unsigned int>;
 
   /** Set the fixed image. */
   virtual void SetFixedImage(const FixedImageType *ptr);

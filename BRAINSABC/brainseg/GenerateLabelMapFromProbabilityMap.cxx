@@ -50,9 +50,9 @@ main(int argc, char *argv[])
   const unsigned int numberOfProbabilityMaps = inputVolumes.size();
 
   // Define Image Type
-  typedef float ProbabilityMapPixelType;
+  using ProbabilityMapPixelType = float;
   constexpr unsigned int Dimension = 3;
-  typedef itk::Image<ProbabilityMapPixelType, Dimension> ProbabilityMapImageType;
+  using ProbabilityMapImageType = itk::Image<ProbabilityMapPixelType, Dimension>;
 
   // Label Index should start from zero and increasing order.
 
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
     std::cout << "- Read image::"
               << inputVolumes[indexInputImages]
               << std::endl;
-    typedef itk::ImageFileReader<ProbabilityMapImageType> ProbabilityImageReaderType;
+    using ProbabilityImageReaderType = itk::ImageFileReader<ProbabilityMapImageType>;
 
     ProbabilityImageReaderType::Pointer probabilityReader = ProbabilityImageReaderType::New();
 
@@ -78,8 +78,8 @@ main(int argc, char *argv[])
 
   // crerate empty label maps
   std::cout << "Create Label Map" << std::endl;
-  typedef unsigned int                             LabelMapPixelType;
-  typedef itk::Image<LabelMapPixelType, Dimension> LabelMapImageType;
+  using LabelMapPixelType = unsigned int;
+  using LabelMapImageType = itk::Image<LabelMapPixelType, Dimension>;
 
   LabelMapImageType::Pointer labelImage = LabelMapImageType::New();
 
@@ -96,12 +96,12 @@ main(int argc, char *argv[])
 
   std::cout << "start iteration " << std::endl;
   // Iterate Images
-  typedef itk::ImageRegionIterator<ProbabilityMapImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIterator<ProbabilityMapImageType>;
 
   IteratorType probabilityIterator( probabilityImages[0],
                                     probabilityImages[0]->GetLargestPossibleRegion() );
 
-  typedef itk::ImageRegionIterator<LabelMapImageType> LabelIteratorType;
+  using LabelIteratorType = itk::ImageRegionIterator<LabelMapImageType>;
   LabelIteratorType labelIterator( labelImage, labelImage->GetLargestPossibleRegion() );
   for( probabilityIterator.GoToBegin(), labelIterator.GoToBegin();
        !probabilityIterator.IsAtEnd();
@@ -125,7 +125,7 @@ main(int argc, char *argv[])
     }
 
   // Image Writer
-  typedef itk::ImageFileWriter<LabelMapImageType> LabelWriterType;
+  using LabelWriterType = itk::ImageFileWriter<LabelMapImageType>;
 
   LabelWriterType::Pointer labelWriter = LabelWriterType::New();
 

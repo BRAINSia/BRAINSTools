@@ -46,7 +46,7 @@ private:
 
   void SetupSocketConnections();
 
-  typedef std::vector<QImageDisplay *> ImageDisplayListType;
+  using ImageDisplayListType = std::vector<QImageDisplay *>;
   ImageDisplayListType m_ImageDisplayList;
   int                  m_ViewCount;
   QTcpServer*          m_Server;

@@ -43,11 +43,11 @@ class LinearInterpolateDeformationFieldMeshFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateDeformationFieldMeshFunction);
 
-  /** Standard class typedefs. */
-  typedef LinearInterpolateDeformationFieldMeshFunction Self;
-  typedef LinearInterpolateMeshFunction<TInputMesh>     Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  /** Standard class type alias. */
+  using Self = LinearInterpolateDeformationFieldMeshFunction;
+  using Superclass = LinearInterpolateMeshFunction<TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -55,27 +55,27 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(LinearInterpolateDeformationFieldMeshFunction, LinearInterpolateMeshFunction);
 
-  /** OutputType typedef support. */
-  typedef typename Superclass::OutputType OutputType;
+  /** OutputType type alias support. */
+  using OutputType = typename Superclass::OutputType;
 
-  /** InputMeshType typedef support. */
-  typedef typename Superclass::InputMeshType InputMeshType;
+  /** InputMeshType type alias support. */
+  using InputMeshType = typename Superclass::InputMeshType;
 
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
-  /** Point typedef support. */
-  typedef typename Superclass::PointType       PointType;
-  typedef typename Superclass::PointIdentifier PointIdentifier;
-  typedef typename Superclass::CellIdentifier  CellIdentifier;
+  /** Point type alias support. */
+  using PointType = typename Superclass::PointType;
+  using PointIdentifier = typename Superclass::PointIdentifier;
+  using CellIdentifier = typename Superclass::CellIdentifier;
 
-  /** RealType typedef support. */
-  typedef typename TInputMesh::PixelType PixelType;
-  typedef typename Superclass::RealType  RealType;
-  typedef typename PointType::VectorType VectorType;
+  /** RealType type alias support. */
+  using PixelType = typename TInputMesh::PixelType;
+  using RealType = typename Superclass::RealType;
+  using VectorType = typename PointType::VectorType;
 
   /** Type for the container of destination points of the deformation field. */
-  typedef TDestinationPointsContainer DestinationPointsContainerType;
+  using DestinationPointsContainerType = TDestinationPointsContainer;
 
   /**
    * Interpolate the mesh at a point position.
@@ -98,7 +98,7 @@ protected:
 
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
-  typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
+  using InstanceIdentifierVectorType = typename Superclass::InstanceIdentifierVectorType;
 };
 } // end namespace itk
 

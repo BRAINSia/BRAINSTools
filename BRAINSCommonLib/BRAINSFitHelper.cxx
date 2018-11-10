@@ -50,8 +50,8 @@ void debug_catch(void)
 itk::Image<unsigned char,3>::ConstPointer
 ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPointer inputSpatialObject )
 {
-  typedef itk::Image<unsigned char, 3>                               MaskImageType;
-  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+  using MaskImageType = itk::Image<unsigned char, 3>;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
   ImageMaskSpatialObjectType const * const temp =
     dynamic_cast<ImageMaskSpatialObjectType const *>( inputSpatialObject.GetPointer() );
 
@@ -69,7 +69,7 @@ ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPo
 itk::ImageMaskSpatialObject<3>::ConstPointer
 ConvertMaskImageToSpatialMask( itk::Image<unsigned char,3>::ConstPointer inputImage )
 {
-  typedef itk::ImageMaskSpatialObject<3> ImageMaskSpatialObjectType;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<3>;
   ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
   mask->SetImage(inputImage);
   mask->ComputeObjectToWorldTransform();
@@ -155,9 +155,9 @@ template <typename ImageType>
 typename ImageType::Pointer
 NormalizeImage(typename ImageType::Pointer inputImage)
 {
-  typedef itk::Statistics::ImageToHistogramFilter<ImageType>   HistogramFilterType;
-  typedef typename HistogramFilterType::InputBooleanObjectType InputBooleanObjectType;
-  typedef typename HistogramFilterType::HistogramSizeType      HistogramSizeType;
+  using HistogramFilterType = itk::Statistics::ImageToHistogramFilter<ImageType>;
+  using InputBooleanObjectType = typename HistogramFilterType::InputBooleanObjectType;
+  using HistogramSizeType = typename HistogramFilterType::HistogramSizeType;
 
   HistogramSizeType histogramSize( 1 );
   histogramSize[0] = 256;
@@ -175,7 +175,7 @@ NormalizeImage(typename ImageType::Pointer inputImage)
   float lowerValue = histogramFilter->GetOutput()->Quantile( 0, 0 );
   float upperValue = histogramFilter->GetOutput()->Quantile( 0, 1 );
 
-  typedef itk::IntensityWindowingImageFilter<ImageType, ImageType> IntensityWindowingImageFilterType;
+  using IntensityWindowingImageFilterType = itk::IntensityWindowingImageFilter<ImageType, ImageType>;
   typename IntensityWindowingImageFilterType::Pointer windowingFilter = IntensityWindowingImageFilterType::New();
   windowingFilter->SetInput( inputImage );
   windowingFilter->SetWindowMinimum( lowerValue );
@@ -204,7 +204,7 @@ DoHistogramEqualization( typename FixedImageType::Pointer & inputFixedImage,
                          std::string debugFileName
                          )
 {
-  typedef itk::OtsuHistogramMatchingImageFilter<FixedImageType, MovingImageType> HistogramMatchingFilterType;
+  using HistogramMatchingFilterType = itk::OtsuHistogramMatchingImageFilter<FixedImageType, MovingImageType>;
   typename HistogramMatchingFilterType::Pointer histogramfilter = HistogramMatchingFilterType::New();
   histogramfilter->SetReferenceImage( inputFixedImage );
   if( fixedBinaryVolume.IsNull() )
@@ -224,7 +224,7 @@ DoHistogramEqualization( typename FixedImageType::Pointer & inputFixedImage,
   inputMovingImage = histogramfilter->GetOutput();
   if( debugLevel > 5 )
     {
-    typedef itk::ImageFileWriter<MovingImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<MovingImageType>;
     typename WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetFileName( debugFileName );
@@ -286,7 +286,7 @@ BRAINSFitHelper::Update(void)
   if( this->m_DebugLevel > 9 )
     {
       {
-      typedef itk::ImageFileWriter<FixedImageType> WriterType;
+      using WriterType = itk::ImageFileWriter<FixedImageType>;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName("DEBUGNormalizedFixedVolume.nii.gz");
@@ -322,7 +322,7 @@ BRAINSFitHelper::Update(void)
       }
 
       {
-      typedef itk::ImageFileWriter<MovingImageType> WriterType;
+      using WriterType = itk::ImageFileWriter<MovingImageType>;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName("DEBUGNormalizedMovingVolume.nii.gz");
@@ -406,7 +406,7 @@ BRAINSFitHelper::Update(void)
   GenericMetricType::Pointer metric;
   if( this->m_CostMetricName == "MMI" )
     {
-    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> MIMetricType;
+    using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
     MIMetricType::Pointer mutualInformationMetric = MIMetricType::New();
     //The next line was a hack for early ITKv4 mattes mutual informaiton
     //that was using a lot of memory
@@ -423,7 +423,7 @@ BRAINSFitHelper::Update(void)
     }
   else if( this->m_CostMetricName == "MSE" )
     {
-    typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> MSEMetricType;
+    using MSEMetricType = itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
     MSEMetricType::Pointer meanSquareMetric = MSEMetricType::New();
     meanSquareMetric = meanSquareMetric;
     metric = meanSquareMetric;
@@ -433,7 +433,7 @@ BRAINSFitHelper::Update(void)
     }
   else if( this->m_CostMetricName == "NC" )
     {
-    typedef itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> corrMetricType;
+    using corrMetricType = itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
     corrMetricType::Pointer corrMetric = corrMetricType::New();
     metric = corrMetric;
 
@@ -442,7 +442,7 @@ BRAINSFitHelper::Update(void)
     }
   else if( this->m_CostMetricName == "MIH" )
     {
-    typedef itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> MutualInformationMetricType;
+    using MutualInformationMetricType = itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
     MutualInformationMetricType::Pointer mutualInformationMetric = MutualInformationMetricType::New();
     mutualInformationMetric = mutualInformationMetric;
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
@@ -578,7 +578,7 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
 void
 BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string & suffix) const
 {
-  typedef itk::Image<unsigned char,3> MaskImageType;
+  using MaskImageType = itk::Image<unsigned char,3>;
   std::cout << "The equivalent command line to the current run would be:" << std::endl;
 
   const std::string fixedVolumeString("DEBUGFixedVolume_" + suffix + ".nii.gz");
@@ -595,7 +595,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   if( dumpTempVolumes == true )
     {
       {
-      typedef itk::ImageFileWriter<FixedImageType> WriterType;
+      using WriterType = itk::ImageFileWriter<FixedImageType>;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName(fixedVolumeString);
@@ -612,7 +612,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
         }
       }
       {
-      typedef itk::ImageFileWriter<MovingImageType> WriterType;
+      using WriterType = itk::ImageFileWriter<MovingImageType>;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName(movingVolumeString);
@@ -630,7 +630,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       }
       if(this->m_FixedVolume2.IsNotNull() )
         {
-        typedef itk::ImageFileWriter<FixedImageType> WriterType;
+        using WriterType = itk::ImageFileWriter<FixedImageType>;
         WriterType::Pointer writer = WriterType::New();
         writer->UseCompressionOn();
         writer->SetFileName(fixedVolume2String);
@@ -648,7 +648,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
         }
       if(this->m_MovingVolume2.IsNotNull() )
         {
-        typedef itk::ImageFileWriter<MovingImageType> WriterType;
+        using WriterType = itk::ImageFileWriter<MovingImageType>;
         WriterType::Pointer writer = WriterType::New();
         writer->UseCompressionOn();
         writer->SetFileName(movingVolume2String);

@@ -66,41 +66,41 @@ class BRAINSFitHelper : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelper);
 
-  /** Standard class typedefs. */
-  typedef BRAINSFitHelper          Self;
-  typedef ProcessObject            Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = BRAINSFitHelper;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef double                         RealType;
-  typedef float                         PixelType;
-  typedef itk::Image<PixelType, 3>      FixedImageType;
-  typedef FixedImageType::ConstPointer  FixedImageConstPointer;
-  typedef FixedImageType::Pointer       FixedImagePointer;
+  using RealType = double;
+  using PixelType = float;
+  using FixedImageType = itk::Image<PixelType, 3>;
+  using FixedImageConstPointer = FixedImageType::ConstPointer;
+  using FixedImagePointer = FixedImageType::Pointer;
 
-  typedef itk::Image<PixelType, 3>      MovingImageType;
-  typedef MovingImageType::ConstPointer MovingImageConstPointer;
-  typedef MovingImageType::Pointer      MovingImagePointer;
+  using MovingImageType = itk::Image<PixelType, 3>;
+  using MovingImageConstPointer = MovingImageType::ConstPointer;
+  using MovingImagePointer = MovingImageType::Pointer;
 
   /** Constants for the image dimensions */
   static constexpr unsigned int FixedImageDimension = FixedImageType::ImageDimension;
   static constexpr unsigned int MovingImageDimension = MovingImageType::ImageDimension;
 
-  typedef itk::CompositeTransform<RealType, MovingImageDimension>       CompositeTransformType;
+  using CompositeTransformType = itk::CompositeTransform<RealType, MovingImageDimension>;
 
-  typedef SpatialObject<Self::FixedImageDimension>  FixedBinaryVolumeType;
-  typedef SpatialObject<Self::MovingImageDimension> MovingBinaryVolumeType;
-  typedef FixedBinaryVolumeType::Pointer                              FixedBinaryVolumePointer;
-  typedef MovingBinaryVolumeType::Pointer                             MovingBinaryVolumePointer;
+  using FixedBinaryVolumeType = SpatialObject<Self::FixedImageDimension>;
+  using MovingBinaryVolumeType = SpatialObject<Self::MovingImageDimension>;
+  using FixedBinaryVolumePointer = FixedBinaryVolumeType::Pointer;
+  using MovingBinaryVolumePointer = MovingBinaryVolumeType::Pointer;
 
-  typedef itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType> HelperType;
+  using HelperType = itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType>;
 
-  typedef HelperType::MetricType                             GenericMetricType;
-  typedef HelperType::MultiMetricType                        MultiMetricType;
+  using GenericMetricType = HelperType::MetricType;
+  using MultiMetricType = HelperType::MultiMetricType;
 
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>  AffineRegistrationType;
-  typedef itk::AffineTransform<RealType, 3>                                AffineTransformType;
-  typedef AffineRegistrationType::MetricSamplingStrategyType               SamplingStrategyType;
+  using AffineRegistrationType = itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>;
+  using AffineTransformType = itk::AffineTransform<RealType, 3>;
+  using SamplingStrategyType = AffineRegistrationType::MetricSamplingStrategyType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -329,7 +329,7 @@ template <typename TLocalCostMetric>
 void
 BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
 {
-  typedef typename TLocalCostMetric::FixedSampledPointSetType                    MetricSamplePointSetType;
+  using MetricSamplePointSetType = typename TLocalCostMetric::FixedSampledPointSetType;
 
   typename TLocalCostMetric::Pointer localCostMetric = dynamic_cast<TLocalCostMetric *>( costMetric );
   if( localCostMetric.IsNull() )
@@ -364,12 +364,12 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
     typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
     samplePointSet->Initialize();
 
-    typedef typename MetricSamplePointSetType::PointType SamplePointType;
+    using SamplePointType = typename MetricSamplePointSetType::PointType;
     const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
 
     const unsigned long sampleCount = static_cast<unsigned long>(std::ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
 
-    typedef typename Statistics::MersenneTwisterRandomVariateGenerator RandomizerType;
+    using RandomizerType = typename Statistics::MersenneTwisterRandomVariateGenerator;
     typename RandomizerType::Pointer randomizer = RandomizerType::New();
     randomizer->SetSeed( 1234 );
 
@@ -487,7 +487,7 @@ BRAINSFitHelper::RunRegistration()
   this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();
 /*
   // Find the final metric value based on the used metric type and returned output transform
-  // typedef typename HelperType::MetricType    GenericMetricType;
+  // using GenericMetricType = typename HelperType::MetricType;
   const typename GenericMetricType::Pointer returnMetric = myHelper->GetModifiableCostMetricObject();
   typename TLocalCostMetric::Pointer finalMetric = dynamic_cast<TLocalCostMetric *>(returnMetric.GetPointer() );
   if( finalMetric.IsNull() )

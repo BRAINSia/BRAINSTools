@@ -40,11 +40,11 @@ class ResampleQuadEdgeMeshFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ResampleQuadEdgeMeshFilter);
 
-  typedef ResampleQuadEdgeMeshFilter Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>                           Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = ResampleQuadEdgeMeshFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
+      TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( ResampleQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -52,51 +52,51 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputMesh                                 InputMeshType;
-  typedef typename InputMeshType::Pointer            InputMeshPointer;
-  typedef typename InputMeshType::PixelType          InputPixelType;
-  typedef typename InputMeshType::PointDataContainer InputPointDataContainer;
+  using InputMeshType = TInputMesh;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputPointDataContainer = typename InputMeshType::PointDataContainer;
 
-  typedef TOutputMesh                                        OutputMeshType;
-  typedef typename OutputMeshType::Pointer                   OutputMeshPointer;
-  typedef typename OutputMeshType::ConstPointer              OutputMeshConstPointer;
-  typedef typename OutputMeshType::EdgeCellType              OutputEdgeCellType;
-  typedef typename OutputMeshType::PolygonCellType           OutputPolygonCellType;
-  typedef typename OutputMeshType::PointIdList               OutputPointIdList;
-  typedef typename OutputMeshType::CellTraits                OutputCellTraits;
-  typedef typename OutputCellTraits::PointIdInternalIterator OutputPointsIdInternalIterator;
-  typedef typename OutputMeshType::QEType                    OutputQEType;
-  typedef typename OutputMeshType::PointIdentifier           OutputPointIdentifier;
-  typedef typename OutputMeshType::PointType                 OutputPointType;
-  typedef typename OutputPointType::VectorType               OutputVectorType;
-  typedef typename OutputPointType::CoordRepType             OutputCoordType;
-  typedef typename OutputMeshType::PointsContainer           OutputPointsContainer;
-  typedef typename OutputMeshType::PixelType                 OutputPixelType;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputMeshConstPointer = typename OutputMeshType::ConstPointer;
+  using OutputEdgeCellType = typename OutputMeshType::EdgeCellType;
+  using OutputPolygonCellType = typename OutputMeshType::PolygonCellType;
+  using OutputPointIdList = typename OutputMeshType::PointIdList;
+  using OutputCellTraits = typename OutputMeshType::CellTraits;
+  using OutputPointsIdInternalIterator = typename OutputCellTraits::PointIdInternalIterator;
+  using OutputQEType = typename OutputMeshType::QEType;
+  using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
+  using OutputPointType = typename OutputMeshType::PointType;
+  using OutputVectorType = typename OutputPointType::VectorType;
+  using OutputCoordType = typename OutputPointType::CoordRepType;
+  using OutputPointsContainer = typename OutputMeshType::PointsContainer;
+  using OutputPixelType = typename OutputMeshType::PixelType;
 
-  typedef typename OutputMeshType::PointsContainerConstPointer    OutputPointsContainerConstPointer;
-  typedef typename OutputMeshType::PointsContainerPointer         OutputPointsContainerPointer;
-  typedef typename OutputMeshType::PointsContainerIterator        OutputPointsContainerIterator;
-  typedef typename OutputMeshType::PointsContainerConstIterator   OutputPointsContainerConstIterator;
-  typedef typename OutputMeshType::CellsContainerPointer          OutputCellsContainerPointer;
-  typedef typename OutputMeshType::CellsContainerConstPointer     OutputCellsContainerConstPointer;
-  typedef typename OutputMeshType::CellsContainerIterator         OutputCellsContainerIterator;
-  typedef typename OutputMeshType::CellsContainerConstIterator    OutputCellsContainerConstIterator;
-  typedef typename OutputMeshType::PointDataContainer             OutputPointDataContainer;
-  typedef typename OutputMeshType::PointDataContainerPointer      OutputPointDataContainerPointer;
-  typedef typename OutputMeshType::PointDataContainerConstPointer OutputPointDataContainerConstPointer;
-  typedef typename OutputMeshType::CellDataContainer              OutputCellDataContainer;
+  using OutputPointsContainerConstPointer = typename OutputMeshType::PointsContainerConstPointer;
+  using OutputPointsContainerPointer = typename OutputMeshType::PointsContainerPointer;
+  using OutputPointsContainerIterator = typename OutputMeshType::PointsContainerIterator;
+  using OutputPointsContainerConstIterator = typename OutputMeshType::PointsContainerConstIterator;
+  using OutputCellsContainerPointer = typename OutputMeshType::CellsContainerPointer;
+  using OutputCellsContainerConstPointer = typename OutputMeshType::CellsContainerConstPointer;
+  using OutputCellsContainerIterator = typename OutputMeshType::CellsContainerIterator;
+  using OutputCellsContainerConstIterator = typename OutputMeshType::CellsContainerConstIterator;
+  using OutputPointDataContainer = typename OutputMeshType::PointDataContainer;
+  using OutputPointDataContainerPointer = typename OutputMeshType::PointDataContainerPointer;
+  using OutputPointDataContainerConstPointer = typename OutputMeshType::PointDataContainerConstPointer;
+  using OutputCellDataContainer = typename OutputMeshType::CellDataContainer;
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  /** Transform typedef. */
-  typedef Transform<double,
+  /** Transform type alias. */
+  using TransformType = Transform<double,
                     Self::PointDimension,
-                    Self::PointDimension>         TransformType;
-  typedef typename TransformType::ConstPointer TransformPointerType;
+                    Self::PointDimension>;
+  using TransformPointerType = typename TransformType::ConstPointer;
 
-  /** Interpolator typedef. */
-  typedef InterpolateMeshFunction<InputMeshType> InterpolatorType;
-  typedef typename InterpolatorType::Pointer     InterpolatorPointerType;
+  /** Interpolator type alias. */
+  using InterpolatorType = InterpolateMeshFunction<InputMeshType>;
+  using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set Mesh whose grid will define the geometry and topology of the output Mesh.
    *  In a registration scenario, this will typically be the Fixed mesh. */

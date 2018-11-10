@@ -39,11 +39,11 @@ class DifferenceImageFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DifferenceImageFilter);
 
-  /** Standard class typedefs. */
-  typedef DifferenceImageFilter                                     Self;
-  typedef Testing::ComparisonImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
+  /** Standard class type alias. */
+  using Self = DifferenceImageFilter;
+  using Superclass = Testing::ComparisonImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -51,13 +51,13 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(DifferenceImageFilter, Testing::ComparisonImageFilter);
 
-  /** Some convenient typedefs. */
-  typedef TInputImage                                       InputImageType;
-  typedef TOutputImage                                      OutputImageType;
-  typedef typename OutputImageType::PixelType               OutputPixelType;
-  typedef typename OutputImageType::RegionType              OutputImageRegionType;
-  typedef typename NumericTraits<OutputPixelType>::RealType RealType;
-  typedef typename NumericTraits<RealType>::AccumulateType  AccumulateType;
+  /** Some convenient type alias. */
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+  using OutputPixelType = typename OutputImageType::PixelType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using RealType = typename NumericTraits<OutputPixelType>::RealType;
+  using AccumulateType = typename NumericTraits<RealType>::AccumulateType;
 
   DifferenceImageFilter()
   {

@@ -376,7 +376,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
       ss >> str;
       name = name + "resolution" + str;
 
-      typedef ImageFileWriter<TDisplacementField> WriteImageType;
+      using WriteImageType = ImageFileWriter<TDisplacementField>;
       typename WriteImageType::Pointer writer12 = WriteImageType::New();
       writer12->SetInput(tempField12);
       writer12->SetFileName("forward/" + name + "_forward.nii.gz");

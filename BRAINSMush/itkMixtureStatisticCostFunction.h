@@ -54,11 +54,11 @@ class MixtureStatisticCostFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(MixtureStatisticCostFunction);
 
-  /** Standard typedefs. */
-  typedef MixtureStatisticCostFunction Self;
-  typedef MultipleValuedCostFunction   Superclass;
-  typedef SmartPointer<Self>           Pointer;
-  typedef SmartPointer<const Self>     ConstPointer;
+  /** Standard type alias. */
+  using Self = MixtureStatisticCostFunction;
+  using Superclass = MultipleValuedCostFunction;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro(MixtureStatisticCostFunction, MultipleValuedCostFunction);
@@ -67,29 +67,29 @@ public:
   itkNewMacro(Self);
 
   /**  Type of the First Image. */
-  typedef TFirstImage                           FirstImageType;
-  typedef typename TFirstImage::PixelType       FirstImagePixelType;
-  typedef typename FirstImageType::ConstPointer FirstImageConstPointer;
+  using FirstImageType = TFirstImage;
+  using FirstImagePixelType = typename TFirstImage::PixelType;
+  using FirstImageConstPointer = typename FirstImageType::ConstPointer;
 
   /**  Type of the Second Image. */
-  typedef TSecondImage                           SecondImageType;
-  typedef typename TFirstImage::PixelType        SecondImagePixelType;
-  typedef typename SecondImageType::ConstPointer SecondImageConstPointer;
-  typedef typename SecondImageType::RegionType   SecondImageRegionType;
+  using SecondImageType = TSecondImage;
+  using SecondImagePixelType = typename TFirstImage::PixelType;
+  using SecondImageConstPointer = typename SecondImageType::ConstPointer;
+  using SecondImageRegionType = typename SecondImageType::RegionType;
 
   /** Constants for the image dimensions */
   static constexpr unsigned int FirstImageDimension = TFirstImage::ImageDimension;
   static constexpr unsigned int SecondImageDimension = TSecondImage::ImageDimension;
 
   /** Array Typedefs. */
-  typedef Superclass::ParametersType ParametersType;
-  typedef Superclass::MeasureType    MeasureType;
-  typedef Superclass::DerivativeType DerivativeType;
+  using ParametersType = Superclass::ParametersType;
+  using MeasureType = Superclass::MeasureType;
+  using DerivativeType = Superclass::DerivativeType;
 
   /**  Type for the mask of the first image. Only pixels that are "inside"
     * this mask will be considered for the computation of the metric */
-  typedef itk::Image<signed short, 3>      ImageMaskType;
-  typedef typename  ImageMaskType::Pointer ImageMaskPointer;
+  using ImageMaskType = itk::Image<signed short, 3>;
+  using ImageMaskPointer = typename  ImageMaskType::Pointer;
 
   /** Connect the First Image.  */
   itkSetConstObjectMacro(FirstImage, FirstImageType);

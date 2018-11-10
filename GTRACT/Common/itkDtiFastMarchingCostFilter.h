@@ -74,10 +74,10 @@ class DtiFastMarchingCostFilter :
 public:
 
   /** Standard class typdedefs. */
-  typedef DtiFastMarchingCostFilter Self;
-  typedef ImageSource<TLevelSet>    Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  using Self = DtiFastMarchingCostFilter;
+  using Superclass = ImageSource<TLevelSet>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -86,18 +86,18 @@ public:
   itkTypeMacro(DtiFastMarchingCostFilter, ImageToImageFilter);
 
   /** Typedef support of level set method types for output image. */
-  typedef LevelSetTypeDefault<TLevelSet>              LevelSetType;
-  typedef typename LevelSetType::LevelSetImageType    LevelSetImageType;
-  typedef typename LevelSetType::LevelSetPointer      LevelSetPointer;
-  typedef typename LevelSetType::PixelType            PixelType;
-  typedef typename LevelSetType::NodeType             NodeType;
-  typedef typename LevelSetType::NodeContainer        NodeContainer;
-  typedef typename LevelSetType::NodeContainerPointer NodeContainerPointer;
-  typedef typename LevelSetImageType::SizeType        OutputSizeType;
-  typedef typename LevelSetImageType::RegionType      OutputRegionType;
-  typedef typename LevelSetImageType::SpacingType     OutputSpacingType;
-  typedef typename LevelSetImageType::PointType       OutputPointType;
-  typedef typename LevelSetImageType::DirectionType   OutputDirectionType;
+  using LevelSetType = LevelSetTypeDefault<TLevelSet>;
+  using LevelSetImageType = typename LevelSetType::LevelSetImageType;
+  using LevelSetPointer = typename LevelSetType::LevelSetPointer;
+  using PixelType = typename LevelSetType::PixelType;
+  using NodeType = typename LevelSetType::NodeType;
+  using NodeContainer = typename LevelSetType::NodeContainer;
+  using NodeContainerPointer = typename LevelSetType::NodeContainerPointer;
+  using OutputSizeType = typename LevelSetImageType::SizeType;
+  using OutputRegionType = typename LevelSetImageType::RegionType;
+  using OutputSpacingType = typename LevelSetImageType::SpacingType;
+  using OutputPointType = typename LevelSetImageType::PointType;
+  using OutputDirectionType = typename LevelSetImageType::DirectionType;
 
   class AxisNodeType : public NodeType
   {
@@ -123,34 +123,34 @@ private:
 
   enum { dimension = 3 };
 
-  typedef vnl_vector_fixed<float, dimension> TVector;
+  using TVector = vnl_vector_fixed<float, dimension>;
 
-  /** Index typedef support. */
-  typedef Index<dimension> IndexType;
+  /** Index type alias support. */
+  using IndexType = Index<dimension>;
 
   /** Typedef support of input Tensor Image Type */
-  typedef TTensorImage                            TensorImageType;
-  typedef typename TensorImageType::Pointer       TensorImagePointer;
-  typedef typename TensorImageType::ConstPointer  TensorImageConstPointer;
-  typedef typename TensorImageType::RegionType    TensorImageRegionType;
-  typedef typename TensorImageType::SizeType      TensorImageSizeType;
-  typedef typename TensorImageType::SpacingType   TensorImageSpacingType;
-  typedef typename TensorImageType::PointType     TensorImagePointType;
-  typedef typename TensorImageType::PixelType     TensorImagePixelType;
-  typedef typename TensorImageType::IndexType     TensorImageIndexType;
-  typedef typename TensorImageType::DirectionType TensorImageDirectionType;
+  using TensorImageType = TTensorImage;
+  using TensorImagePointer = typename TensorImageType::Pointer;
+  using TensorImageConstPointer = typename TensorImageType::ConstPointer;
+  using TensorImageRegionType = typename TensorImageType::RegionType;
+  using TensorImageSizeType = typename TensorImageType::SizeType;
+  using TensorImageSpacingType = typename TensorImageType::SpacingType;
+  using TensorImagePointType = typename TensorImageType::PointType;
+  using TensorImagePixelType = typename TensorImageType::PixelType;
+  using TensorImageIndexType = typename TensorImageType::IndexType;
+  using TensorImageDirectionType = typename TensorImageType::DirectionType;
 
   /** Typedef support of input Anisotropy Image Type */
 
-  typedef itk::Image<float, dimension>                 AnisotropyImageType;
-  typedef typename  AnisotropyImageType::Pointer       AnisotropyImagePointer;
-  typedef typename  AnisotropyImageType::ConstPointer  AnisotropyImageConstPointer;
-  typedef typename  AnisotropyImageType::RegionType    AnisotropyImageRegionType;
-  typedef typename  AnisotropyImageType::SizeType      AnisotropyImageSizeType;
-  typedef typename  AnisotropyImageType::SpacingType   AnisotropyImageSpacingType;
-  typedef typename  AnisotropyImageType::PointType     AnisotropyImagePointType;
-  typedef typename  AnisotropyImageType::PixelType     AnisotropyImagePixelType;
-  typedef typename  AnisotropyImageType::DirectionType AnisotropyImageDirectionType;
+  using AnisotropyImageType = itk::Image<float, dimension>;
+  using AnisotropyImagePointer = typename  AnisotropyImageType::Pointer;
+  using AnisotropyImageConstPointer = typename  AnisotropyImageType::ConstPointer;
+  using AnisotropyImageRegionType = typename  AnisotropyImageType::RegionType;
+  using AnisotropyImageSizeType = typename  AnisotropyImageType::SizeType;
+  using AnisotropyImageSpacingType = typename  AnisotropyImageType::SpacingType;
+  using AnisotropyImagePointType = typename  AnisotropyImageType::PointType;
+  using AnisotropyImagePixelType = typename  AnisotropyImageType::PixelType;
+  using AnisotropyImageDirectionType = typename  AnisotropyImageType::DirectionType;
 
   /** Enum of Fast Marching algorithm point types. FarPoints represent far
    * away points; TrialPoints represent points within a narrowband of the
@@ -158,22 +158,22 @@ private:
    * been processed. */
   enum LabelType { FarPoint, AlivePoint, TrialPoint };
 
-  /** LabelImage typedef support. */
-  typedef Image<unsigned char, dimension> LabelImageType;
+  /** LabelImage type alias support. */
+  using LabelImageType = Image<unsigned char, dimension>;
 
-  /** LabelImagePointer typedef support. */
-  typedef typename LabelImageType::Pointer LabelImagePointer;
+  /** LabelImagePointer type alias support. */
+  using LabelImagePointer = typename LabelImageType::Pointer;
 
-  /** OutputSpeedImage typedef support. */
-  typedef itk::Image<float, dimension>             OutputSpeedImageType;
-  typedef typename OutputSpeedImageType::Pointer   OutputSpeedImagePointer;
-  typedef typename OutputSpeedImageType::PixelType SpeedImagePixelType;
+  /** OutputSpeedImage type alias support. */
+  using OutputSpeedImageType = itk::Image<float, dimension>;
+  using OutputSpeedImagePointer = typename OutputSpeedImageType::Pointer;
+  using SpeedImagePixelType = typename OutputSpeedImageType::PixelType;
 
-  typedef itk::Vector<float, 3>               EigenvectorPixelType;
-  typedef itk::Image<EigenvectorPixelType, 3> EigenvectorImageType;
-  // typedef itk::Image<EigenvectorPixelType, dimension> EigenvectorImageType;
-  typedef typename EigenvectorImageType::Pointer               EigenvectorImagePointer;
-  typedef itk::ConstNeighborhoodIterator<EigenvectorImageType> ConstNeighborhoodIteratorType;
+  using EigenvectorPixelType = itk::Vector<float, 3>;
+  using EigenvectorImageType = itk::Image<EigenvectorPixelType, 3>;
+  // using EigenvectorImageType = itk::Image<EigenvectorPixelType, dimension>;
+  using EigenvectorImagePointer = typename EigenvectorImageType::Pointer;
+  using ConstNeighborhoodIteratorType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
 
   /** Set the container of Alive Points representing the initial front.
    * Alive points are represented as a VectorContainer of LevelSetNodes. */
@@ -341,7 +341,7 @@ protected:
   itkGetConstReferenceMacro( LargeValue, PixelType );
 
   OutputRegionType m_BufferedRegion;
-  typedef typename LevelSetImageType::IndexType LevelSetIndexType;
+  using LevelSetIndexType = typename LevelSetImageType::IndexType;
   LevelSetIndexType m_StartIndex;
   LevelSetIndexType m_LastIndex;
 
@@ -379,9 +379,9 @@ private:
   /** Trial points are stored in a min-heap. This allow efficient access
    * to the trial point with minimum value which is the next grid point
    * the algorithm processes. */
-  typedef std::vector<AxisNodeType>                                      HeapContainer;
-  typedef std::greater<AxisNodeType>                                     NodeComparer;
-  typedef std::priority_queue<AxisNodeType, HeapContainer, NodeComparer> HeapType;
+  using HeapContainer = std::vector<AxisNodeType>;
+  using NodeComparer = std::greater<AxisNodeType>;
+  using HeapType = std::priority_queue<AxisNodeType, HeapContainer, NodeComparer>;
 
   HeapType m_TrialHeap;
 

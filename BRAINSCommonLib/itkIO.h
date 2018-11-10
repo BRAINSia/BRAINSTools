@@ -39,8 +39,8 @@
 
 namespace itkUtil
 {
-typedef itk::SpatialOrientationAdapter SOAdapterType;
-typedef SOAdapterType::DirectionType   DirectionType;
+using SOAdapterType = itk::SpatialOrientationAdapter;
+using DirectionType = SOAdapterType::DirectionType;
 
 /**
   *
@@ -61,10 +61,10 @@ typename TImage::Pointer ReadImage(const std::string & fileName)
     itk::GDCMSeriesFileNames::Pointer FileNameGenerator = itk::GDCMSeriesFileNames::New();
     FileNameGenerator->SetUseSeriesDetails(true);
     FileNameGenerator->SetDirectory(dicomDir);
-    typedef const std::vector<std::string> ContainerType;
+    using ContainerType = const std::vector<std::string>;
     const ContainerType & seriesUIDs = FileNameGenerator->GetSeriesUIDs();
 
-    typedef typename itk::ImageSeriesReader<TImage> ReaderType;
+    using ReaderType = typename itk::ImageSeriesReader<TImage>;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileNames( FileNameGenerator->GetFileNames(seriesUIDs[0]) );
     reader->SetImageIO(dicomIO);
@@ -89,7 +89,7 @@ typename TImage::Pointer ReadImage(const std::string & fileName)
     }
   else
     {
-    typedef itk::ImageFileReader<TImage> ReaderType;
+    using ReaderType = itk::ImageFileReader<TImage>;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( fileName.c_str() );
     try
@@ -226,7 +226,7 @@ void
 WriteConstImage(const typename ImageType::ConstPointer image,
                 const std::string & filename)
 {
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   typename  WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetFileName( filename.c_str() );
@@ -273,8 +273,8 @@ template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 TypeCast(const typename InputImageType::Pointer & input)
 {
-  typedef itk::CastImageFilter<InputImageType,
-                               OutputImageType> CastToRealFilterType;
+  using CastToRealFilterType = itk::CastImageFilter<InputImageType,
+                               OutputImageType>;
   typename CastToRealFilterType::Pointer toReal = CastToRealFilterType::New();
   toReal->SetInput(input);
   toReal->Update();
@@ -300,8 +300,8 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
              const typename OutputImageType::PixelType OutputMin,
              const typename OutputImageType::PixelType OutputMax)
 {
-  typedef itk::RescaleIntensityImageFilter<InputImageType,
-                                           OutputImageType> R2CRescaleFilterType;
+  using R2CRescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType,
+                                           OutputImageType>;
   typename R2CRescaleFilterType::Pointer RealToProbMapCast =
     R2CRescaleFilterType::New();
   RealToProbMapCast->SetOutputMinimum(OutputMin);
@@ -361,7 +361,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 CopyImage(const typename ImageType::Pointer & input)
 {
-  typedef itk::ImageDuplicator<ImageType> ImageDupeType;
+  using ImageDupeType = itk::ImageDuplicator<ImageType>;
   typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
   MyDuplicator->SetInputImage(input);
   MyDuplicator->Update();

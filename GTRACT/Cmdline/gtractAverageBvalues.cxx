@@ -102,15 +102,15 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  typedef signed short                   PixelType;
-  typedef itk::VectorImage<PixelType, 3> NrrdImageType;
-  typedef itk::Image<PixelType, 3>       IndexImageType;
+  using PixelType = signed short;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
+  using IndexImageType = itk::Image<PixelType, 3>;
 
-  typedef float                             AvgPixelType;
-  typedef itk::VectorImage<AvgPixelType, 3> NrrdAvgImageType;
+  using AvgPixelType = float;
+  using NrrdAvgImageType = itk::VectorImage<AvgPixelType, 3>;
 
-  typedef itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   FileReaderType::Pointer imageReader = FileReaderType::New();
   imageReader->SetFileName( inputVolume );
 
@@ -167,13 +167,13 @@ int main(int argc, char *argv[])
   outputImage->SetVectorLength( numUniqueDirections );
   outputImage->Allocate();
 
-  typedef itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType> ExtractImageFilterType;
+  using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
   ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
   extractImageFilter->SetInput( imageReader->GetOutput() );
 
-  typedef itk::ImageRegionConstIterator<IndexImageType> ConstIndexImageIteratorType;
-  typedef itk::ImageRegionIterator<NrrdAvgImageType>    VectorImageIteratorType;
-  typedef itk::ImageRegionIterator<NrrdImageType>       VectorOutputImageIteratorType;
+  using ConstIndexImageIteratorType = itk::ImageRegionConstIterator<IndexImageType>;
+  using VectorImageIteratorType = itk::ImageRegionIterator<NrrdAvgImageType>;
+  using VectorOutputImageIteratorType = itk::ImageRegionIterator<NrrdImageType>;
   for( int i = 0; i < vectorLength; i++ )
     {
     int currentIndex = lut[i];
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 
   outputImage->SetMetaDataDictionary( metaDataValidator.GetMetaDataDictionary() );
 
-  typedef itk::ImageFileWriter<NrrdImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<NrrdImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

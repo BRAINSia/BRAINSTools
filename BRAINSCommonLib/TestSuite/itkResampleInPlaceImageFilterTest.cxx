@@ -51,19 +51,19 @@ int main( int argc, char * argv[] )
 
   // Image, filter, transform typedef
   constexpr unsigned int LocalImageDimension = 3;
-  typedef short PixelType;
+  using PixelType = short;
 
-  typedef itk::Image<PixelType, LocalImageDimension> ImageType;
-  typedef ImageType::Pointer                         ImagePointer;
-  typedef ImageType::PointType                       ImagePointType;
-  typedef ImageType::DirectionType                   ImageDirectionType;
-  typedef ImageType::SpacingType                     ImageSpacingType;
+  using ImageType = itk::Image<PixelType, LocalImageDimension>;
+  using ImagePointer = ImageType::Pointer;
+  using ImagePointType = ImageType::PointType;
+  using ImageDirectionType = ImageType::DirectionType;
+  using ImageSpacingType = ImageType::SpacingType;
 
-  typedef itk::ImageRegionConstIterator<ImageType> ImageConstIterator;
-  typedef itk::ImageFileReader<ImageType>          ReaderType;
-  typedef itk::VersorRigid3DTransform<double>      TransformType;
+  using ImageConstIterator = itk::ImageRegionConstIterator<ImageType>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using TransformType = itk::VersorRigid3DTransform<double>;
 
-  typedef itk::ResampleInPlaceImageFilter<ImageType, ImageType> FilterType;
+  using FilterType = itk::ResampleInPlaceImageFilter<ImageType, ImageType>;
 
   // Read in input test image
   ImagePointer inputImage;
@@ -149,7 +149,7 @@ int main( int argc, char * argv[] )
     ++it2;
     }
 
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( argv[3] );
   writer->SetInput( outputImage );

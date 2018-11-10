@@ -44,11 +44,11 @@ class QuadEdgeMeshAddScalarsFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshAddScalarsFilter);
 
-  typedef QuadEdgeMeshAddScalarsFilter Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh1, TInputMesh1>                         Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = QuadEdgeMeshAddScalarsFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
+      TInputMesh1, TInputMesh1>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshAddScalarsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -56,11 +56,11 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputMesh1 InputMeshType1;
+  using InputMeshType1 = TInputMesh1;
 
-  typedef TInputMesh2 InputMeshType2;
+  using InputMeshType2 = TInputMesh2;
 
-  typedef TOutputMesh OutputMeshType;
+  using OutputMeshType = TOutputMesh;
 
   /** Set/Get the input mesh 1. */
   void SetInput1( const InputMeshType1 * mesh );

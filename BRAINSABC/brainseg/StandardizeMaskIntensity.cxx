@@ -22,10 +22,10 @@
 
 int main( int argc, char *argv[] )
 {
-  typedef itk::Image<float, 3>         ImageType;
-  typedef itk::Image<unsigned char, 3> MaskImageType;
+  using ImageType = itk::Image<float, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
 
   ReaderType::Pointer imageReader = ReaderType::New();
   imageReader->SetFileName(argv[1]);
@@ -36,7 +36,7 @@ int main( int argc, char *argv[] )
                                       // argv[2] );
   if( argc == 4 )
     {
-    typedef itk::ImageFileReader<MaskImageType> MaskReaderType;
+    using MaskReaderType = itk::ImageFileReader<MaskImageType>;
     MaskReaderType::Pointer maskReader = MaskReaderType::New();
     maskReader->SetFileName(argv[3]);
     maskReader->Update();
@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
     return 2;
     }
 
-  typedef itk::ImageFileWriter<ImageType> FloatWriterType;
+  using FloatWriterType = itk::ImageFileWriter<ImageType>;
   FloatWriterType::Pointer writer = FloatWriterType::New();
 
   writer->SetInput(result);

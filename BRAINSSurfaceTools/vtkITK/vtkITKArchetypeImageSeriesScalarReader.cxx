@@ -99,7 +99,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     case typeN: \
     {\
       typedef itk::Image<type,3> image##typeN;\
-      typedef itk::ImageSource<image##typeN> FilterType; \
+      using FilterType = itk::ImageSource<image##typeN>; \
       FilterType::Pointer filter; \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
           itk::ImageSeriesReader<image##typeN>::New(); \
@@ -138,7 +138,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     case typeN: \
     {\
       typedef itk::Image<type,3> image2##typeN;\
-      typedef itk::ImageSource<image2##typeN> FilterType; \
+      using FilterType = itk::ImageSource<image2##typeN>; \
       FilterType::Pointer filter; \
       itk::ImageFileReader<image2##typeN>::Pointer reader2##typeN = \
             itk::ImageFileReader<image2##typeN>::New(); \

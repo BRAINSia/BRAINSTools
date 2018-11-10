@@ -74,11 +74,11 @@ class VDemonsRegistrator : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsRegistrator);
 
-  /** Standard class typedefs. */
-  typedef VDemonsRegistrator       Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = VDemonsRegistrator;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(VDemonsRegistrator, Object);
@@ -87,65 +87,64 @@ public:
   itkNewMacro(Self);
 
   /** Fixed Image Type. */
-  typedef TRealImage                        RealImageType;
-  typedef typename RealImageType::PixelType RealPixelType;
+  using RealImageType = TRealImage;
+  using RealPixelType = typename RealImageType::PixelType;
 
   /** Moving Image Type. */
-  typedef typename TOutputImage::PixelType            PixelType;
-  typedef typename RealImageType::Pointer             ImagePointer;
-  typedef typename itk::VectorImage<RealPixelType, 3> VectorImageType;
+  using PixelType = typename TOutputImage::PixelType;
+  using ImagePointer = typename RealImageType::Pointer;
+  using VectorImageType = typename itk::VectorImage<RealPixelType, 3>;
 
-  typedef Array<float> WeightFactorType;
+  using WeightFactorType = Array<float>;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TRealImage::ImageDimension;
 
   /** Type to hold the number of checker boxes per dimension */
-  typedef FixedArray<unsigned int, TRealImage::ImageDimension>
-    PatternArrayType;
+  using PatternArrayType = FixedArray<unsigned int, TRealImage::ImageDimension>;
 
   /** Set Checker pattern */
   itkSetMacro(CheckerBoardPattern, PatternArrayType);
   itkGetConstReferenceMacro(CheckerBoardPattern, PatternArrayType);
 
   /** Displacement field value type. */
-  typedef TFieldValue FieldValueType;
+  using FieldValueType = TFieldValue;
 
   /** Displacement field pixel type. */
-  typedef Vector<FieldValueType,
-                 Self::ImageDimension> FieldPixelType;
+  using FieldPixelType = Vector<FieldValueType,
+                 Self::ImageDimension>;
 
   /** Displacement field type. */
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
 
   /** Fixed Image Pyramid Type. */
-  typedef RecursiveMultiResolutionPyramidImageFilter<
+  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
       RealImageType,
-      RealImageType>    FixedImagePyramidType;
+      RealImageType>;
 
   /** Moving Image Pyramid Type. */
-  typedef RecursiveMultiResolutionPyramidImageFilter<
+  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
       RealImageType,
-      RealImageType>   MovingImagePyramidType;
+      RealImageType>;
 
   /** Registration Method. */
-  typedef MultiResolutionPDEDeformableRegistration<
+  using RegistrationType = MultiResolutionPDEDeformableRegistration<
       RealImageType,
       RealImageType,
-      TDisplacementField, float>    RegistrationType;
+      TDisplacementField, float>;
 
-  typedef VectorMultiResolutionPDEDeformableRegistration<
+  using VectorRegistrationType = VectorMultiResolutionPDEDeformableRegistration<
       VectorImageType,
       VectorImageType,
-      TDisplacementField, float>    VectorRegistrationType;
+      TDisplacementField, float>;
 
   /** UnsignedIntArray type. */
-  typedef Array<unsigned int> UnsignedIntArray;
+  using UnsignedIntArray = Array<unsigned int>;
 
   /** ShrinkFactorsArray type. */
-  typedef FixedArray<unsigned int,
-                     Self::ImageDimension> ShrinkFactorsArray;
+  using ShrinkFactorsArray = FixedArray<unsigned int,
+                     Self::ImageDimension>;
 
   /** Set the intial deformation field **/
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
@@ -234,9 +233,8 @@ public:
   itkGetMacro(InterpolationMode, std::string);
   itkSetMacro(InterpolationMode, std::string);
 
-  typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-                                               TDisplacementField>
-    BaseRegistrationFilterType;
+  using BaseRegistrationFilterType = itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
+                                               TDisplacementField>;
   void SetRegistrationFilter(
     typename BaseRegistrationFilterType::Pointer filter)
   {
@@ -244,10 +242,9 @@ public:
     //      this->m_VectorRegistration->SetRegistrationFilter(filter);
   }
 
-  typedef itk::VectorDiffeomorphicDemonsRegistrationFilter<VectorImageType,
+  using VectorRegistrationFilterType = itk::VectorDiffeomorphicDemonsRegistrationFilter<VectorImageType,
                                                            VectorImageType,
-                                                           TDisplacementField>
-    VectorRegistrationFilterType;
+                                                           TDisplacementField>;
   void SetVectorRegistrationFilter(
     typename VectorRegistrationFilterType::Pointer filter)
   {

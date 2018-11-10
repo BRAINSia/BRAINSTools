@@ -34,9 +34,9 @@ class EMSParameters : public itk::Object
 {
 public:
 
-  typedef EMSParameters                 Self;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  using Self = EMSParameters;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   itkNewMacro(Self);
 

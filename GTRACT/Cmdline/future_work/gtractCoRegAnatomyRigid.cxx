@@ -88,12 +88,12 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  //  typedef signed short                      PixelType;
-  typedef float                          PixelType;
-  typedef itk::VectorImage<PixelType, 3> VectorImageType;
+  //  using PixelType = signed short;
+  using PixelType = float;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
 
-  typedef itk::ImageFileReader<VectorImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > VectorImageReaderType;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName( inputVolume );
 
@@ -107,8 +107,8 @@ int main(int argc, char * *argv)
     throw;
     }
 
-  typedef itk::Image<PixelType, 3>                  AnatomicalImageType;
-  typedef itk::ImageFileReader<AnatomicalImageType> AnatomicalImageReaderType;
+  using AnatomicalImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<AnatomicalImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName( inputAnatomicalVolume );
 
@@ -127,8 +127,8 @@ int main(int argc, char * *argv)
   // anatomicalReader->GetOutput()->Print(std::cout, tabbed);
 
   /* Extract the Vector Image Index for Registration */
-  typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, AnatomicalImageType> VectorSelectFilterType;
-  typedef VectorSelectFilterType::Pointer                                                VectorSelectFilterPointer;
+  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, AnatomicalImageType>;
+  using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
   VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
   selectIndexImageFilter->SetIndex( vectorIndex );
@@ -144,7 +144,7 @@ int main(int argc, char * *argv)
     }
 
   /* The Threshold Image Filter is used to produce the brain clipping mask. */
-  typedef itk::ThresholdImageFilter<AnatomicalImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::ThresholdImageFilter<AnatomicalImageType>;
   constexpr PixelType              imageThresholdBelow  = 100;
   ThresholdFilterType::Pointer brainOnlyFilter = ThresholdFilterType::New();
   brainOnlyFilter->SetInput( selectIndexImageFilter->GetOutput() );
@@ -159,7 +159,7 @@ int main(int argc, char * *argv)
     throw;
     }
 
-  typedef itk::BRAINSFitHelper RegisterFilterType;
+  using RegisterFilterType = itk::BRAINSFitHelper;
   RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
 
   std::vector<double> minStepLength;

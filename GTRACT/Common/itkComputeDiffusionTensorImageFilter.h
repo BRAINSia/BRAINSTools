@@ -69,37 +69,37 @@ class GTRACT_COMMON_EXPORT ComputeDiffusionTensorImageFilter : public itk::Objec
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ComputeDiffusionTensorImageFilter);
 
-  /** Standard class typedefs. */
-  typedef ComputeDiffusionTensorImageFilter Self;
-  typedef itk::Object                       Superclass;
-  typedef SmartPointer<Self>                Pointer;
-  typedef SmartPointer<const Self>          ConstPointer;
+  /** Standard class type alias. */
+  using Self = ComputeDiffusionTensorImageFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Some convenient typedefs. */
+  /** Some convenient type alias. */
 
   /** Input Image Types */
-  typedef itk::Image<signed short, 4>   InputImageType;
-  typedef InputImageType::Pointer       InputImagePointer;
-  typedef InputImageType::ConstPointer  InputImageConstPointer;
-  typedef InputImageType::RegionType    InputImageRegionType;
-  typedef InputImageType::SizeType      InputImageSizeType;
-  typedef InputImageType::SpacingType   InputImageSpacingType;
-  typedef InputImageType::PointType     InputImagePointType;
-  typedef InputImageType::PixelType     InputImagePixelType;
-  typedef InputImageType::DirectionType InputImageDirectionType;
-  typedef InputImageType::IndexType     InputImageIndexType;
+  using InputImageType = itk::Image<signed short, 4>;
+  using InputImagePointer = InputImageType::Pointer;
+  using InputImageConstPointer = InputImageType::ConstPointer;
+  using InputImageRegionType = InputImageType::RegionType;
+  using InputImageSizeType = InputImageType::SizeType;
+  using InputImageSpacingType = InputImageType::SpacingType;
+  using InputImagePointType = InputImageType::PointType;
+  using InputImagePixelType = InputImageType::PixelType;
+  using InputImageDirectionType = InputImageType::DirectionType;
+  using InputImageIndexType = InputImageType::IndexType;
 
   /** Output Image Types */
-  typedef itk::Vector<float, 6>          OutputPixelType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
-  typedef OutputImageType::Pointer       OutputImagePointer;
-  typedef OutputImageType::ConstPointer  OutputImageConstPointer;
-  typedef OutputImageType::RegionType    OutputImageRegionType;
-  typedef OutputImageType::PixelType     OutputImagePixelType;
-  typedef OutputImageType::IndexType     OutputImageIndexType;
-  typedef OutputImageType::SizeType      OutputImageSizeType;
-  typedef OutputImageType::SpacingType   OutputImageSpacingType;
-  typedef OutputImageType::PointType     OutputImagePointType;
+  using OutputPixelType = itk::Vector<float, 6>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
+  using OutputImagePointer = OutputImageType::Pointer;
+  using OutputImageConstPointer = OutputImageType::ConstPointer;
+  using OutputImageRegionType = OutputImageType::RegionType;
+  using OutputImagePixelType = OutputImageType::PixelType;
+  using OutputImageIndexType = OutputImageType::IndexType;
+  using OutputImageSizeType = OutputImageType::SizeType;
+  using OutputImageSpacingType = OutputImageType::SpacingType;
+  using OutputImagePointType = OutputImageType::PointType;
 
   /** ImageDimension constants * /
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;

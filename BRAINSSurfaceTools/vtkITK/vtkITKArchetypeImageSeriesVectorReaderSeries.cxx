@@ -72,9 +72,9 @@ void vtkITKExecuteDataFromSeriesVector(
   vtkITKArchetypeImageSeriesVectorReaderSeries* self,
   vtkImageData* data)
 {
-  typedef T VectorPixelType;
-  typedef itk::VectorImage<VectorPixelType,3> image;
-  typedef itk::ImageSource<image> FilterType;
+  using VectorPixelType = T;
+  using image = itk::VectorImage<VectorPixelType,3>;
+  using FilterType = itk::ImageSource<image>;
   typename FilterType::Pointer filter;
   typename itk::ImageSeriesReader<image>::Pointer reader =
     itk::ImageSeriesReader<image>::New();

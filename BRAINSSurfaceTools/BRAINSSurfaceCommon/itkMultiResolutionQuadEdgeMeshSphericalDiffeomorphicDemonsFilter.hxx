@@ -179,7 +179,7 @@ void
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::InitializeRigidRegistrationParameters()
 {
-  typedef RigidOptimizerType::ScalesType ScalesType;
+  using ScalesType = RigidOptimizerType::ScalesType;
 
   const unsigned int numberOfTransformParameters =
     this->m_RigidTransform->GetNumberOfParameters();
@@ -322,9 +322,9 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 
 #endif
 
-  typedef MeshToMeshRegistrationMethod<MeshType, MeshType> RegistrationType;
+  using RegistrationType = MeshToMeshRegistrationMethod<MeshType, MeshType>;
 
-  typedef MeanSquaresMeshToMeshMetric<MeshType, MeshType> MetricType;
+  using MetricType = MeanSquaresMeshToMeshMetric<MeshType, MeshType>;
 
   typename RegistrationType::Pointer   registration  = RegistrationType::New();
   // registration->InPlaceOn();
@@ -338,7 +338,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 
   registration->SetTransform( this->m_RigidTransform );
 
-  typedef LinearInterpolateMeshFunction<MeshType> InterpolatorType;
+  using InterpolatorType = LinearInterpolateMeshFunction<MeshType>;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
@@ -347,7 +347,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   const unsigned int numberOfTransformParameters =
     this->m_RigidTransform->GetNumberOfParameters();
 
-  typedef typename TransformType::ParametersType ParametersType;
+  using ParametersType = typename TransformType::ParametersType;
   ParametersType parameters( numberOfTransformParameters );
 
   parameters = this->m_RigidTransform->GetParameters();
@@ -486,7 +486,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   //
   //   Deform fixed new mesh using current fixed mesh and destination points
   //
-  typedef DeformQuadEdgeMeshFilter<MeshType, MeshType, DestinationPointSetType> DeformFilterType;
+  using DeformFilterType = DeformQuadEdgeMeshFilter<MeshType, MeshType, DestinationPointSetType>;
 
   typename DeformFilterType::Pointer deformFilter = DeformFilterType::New();
 

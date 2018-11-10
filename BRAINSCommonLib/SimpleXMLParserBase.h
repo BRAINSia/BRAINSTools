@@ -50,7 +50,7 @@ XERCES_CPP_NAMESPACE_USE
 class SimpleXMLParserBase
 {
 public:
-  typedef XercesDOMParser ParserType;
+  using ParserType = XercesDOMParser;
   SimpleXMLParserBase() : m_Parser(0)
   {
   }

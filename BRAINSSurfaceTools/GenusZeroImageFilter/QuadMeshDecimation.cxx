@@ -5,14 +5,14 @@
 #include "itkQuadEdgeMesh.h"
 #include "itkQuadEdgeMeshDecimationCriteria.h"
 
-typedef double Coord;
+using Coord = double;
 constexpr unsigned int Dimension = 3;
 
 // Declaration of the type of Mesh
-typedef itk::QuadEdgeMesh<Coord, Dimension> MeshType;
+using MeshType = itk::QuadEdgeMesh<Coord, Dimension>;
 // Declaration of the stopping criterion
 // By default the cost function is to be minimized
-typedef itk::NumberOfFacesCriterion<MeshType> CriterionType;
+using CriterionType = itk::NumberOfFacesCriterion<MeshType>;
 
 #include "itkSquaredEdgeLengthDecimationQuadEdgeMeshFilter.h"
 typedef itk::SquaredEdgeLengthDecimationQuadEdgeMeshFilter
@@ -30,7 +30,7 @@ int main( int argc, char * argv [] )
   PARSE_ARGS;
 
   // Here read a mesh from a file
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputSurface );
 
@@ -57,7 +57,7 @@ int main( int argc, char * argv [] )
 
   decimate->Update();
 
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( decimate->GetOutput() );
   writer->SetFileName(outputSurface);

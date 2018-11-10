@@ -43,11 +43,11 @@ class QuadEdgeMeshClampScalarsFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshClampScalarsFilter);
 
-  typedef QuadEdgeMeshClampScalarsFilter Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>                     Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = QuadEdgeMeshClampScalarsFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
+      TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshClampScalarsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -55,19 +55,19 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef typename  Superclass::OutputMeshType           OutputMeshType;
-  typedef typename  OutputMeshType::Pointer              OutputMeshPointer;
-  typedef typename  OutputMeshType::PixelType            OutputPixelType;
-  typedef typename  Superclass::OutputPointDataContainer OutputPointDataContainer;
-  typedef typename  OutputPointDataContainer::Pointer    OutputPointDataContainerPointer;
-  typedef typename  OutputPointDataContainer::Iterator   OutputPointDataContainerIterator;
+  using OutputMeshType = typename  Superclass::OutputMeshType;
+  using OutputMeshPointer = typename  OutputMeshType::Pointer;
+  using OutputPixelType = typename  OutputMeshType::PixelType;
+  using OutputPointDataContainer = typename  Superclass::OutputPointDataContainer;
+  using OutputPointDataContainerPointer = typename  OutputPointDataContainer::Pointer;
+  using OutputPointDataContainerIterator = typename  OutputPointDataContainer::Iterator;
 
-  typedef typename  Superclass::InputMeshType              InputMeshType;
-  typedef typename  InputMeshType::Pointer                 InputMeshPointer;
-  typedef typename  InputMeshType::PixelType               InputPixelType;
-  typedef typename  Superclass::InputPointDataContainer    InputPointDataContainer;
-  typedef typename  InputPointDataContainer::ConstPointer  InputPointDataContainerConstPointer;
-  typedef typename  InputPointDataContainer::ConstIterator InputPointDataContainerConstIterator;
+  using InputMeshType = typename  Superclass::InputMeshType;
+  using InputMeshPointer = typename  InputMeshType::Pointer;
+  using InputPixelType = typename  InputMeshType::PixelType;
+  using InputPointDataContainer = typename  Superclass::InputPointDataContainer;
+  using InputPointDataContainerConstPointer = typename  InputPointDataContainer::ConstPointer;
+  using InputPointDataContainerConstIterator = typename  InputPointDataContainer::ConstIterator;
 
   /** Set/Get ClampMin. */
   itkSetMacro( ClampMin, bool );

@@ -82,16 +82,16 @@
 // ////////////////////////////////////////////////////////////////////////
 
 /*
-typedef itk::PointSet<vtkFloatingPointType,3>          PointSetType;
-//typedef PointSetType::PointType                        PointType;
-typedef std::list<FiberPointType>                      FiberType;
-typedef std::list<FiberType>                           FiberListType;
-typedef std::list<vtkPolyData *>                       VTKFiberListType;
-typedef double                                     TensorElementType;
-typedef itk::DiffusionTensor3D<TensorElementType>   TensorPixelType;
-typedef itk::Image<TensorPixelType,3>               TensorImageType;
-typedef unsigned char                             MaskPixelType;
-typedef itk::Image<MaskPixelType,3>                 MaskImageType;
+using PointSetType = itk::PointSet<vtkFloatingPointType,3>;
+//using PointType = PointSetType::PointType;
+using FiberType = std::list<FiberPointType>;
+using FiberListType = std::list<FiberType>;
+using VTKFiberListType = std::list<vtkPolyData *>;
+using TensorElementType = double;
+using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
+using TensorImageType = itk::Image<TensorPixelType,3>;
+using MaskPixelType = unsigned char;
+using MaskImageType = itk::Image<MaskPixelType,3>;
 */
 
 namespace itk
@@ -110,56 +110,56 @@ class DtiTrackingFilterBase : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DtiTrackingFilterBase);
 
-  /** Standard class typedefs. */
-  typedef DtiTrackingFilterBase    Self;
-  typedef itk::Object              Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = DtiTrackingFilterBase;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Some convenient typedefs. */
-  typedef TTensorImageType                        TensorImageType;
-  typedef typename TensorImageType::Pointer       TensorImagePointer;
-  typedef typename TensorImageType::ConstPointer  TensorImageConstPointer;
-  typedef typename TensorImageType::RegionType    TensorImageRegionType;
-  typedef typename TensorImageType::SizeType      TensorImageSizeType;
-  typedef typename TensorImageType::SpacingType   TensorImageSpacingType;
-  typedef typename TensorImageType::PointType     TensorImagePointType;
-  typedef typename TensorImageType::PixelType     TensorImagePixelType;
-  typedef typename TensorImageType::DirectionType TensorImageDirectionType;
+  /** Some convenient type alias. */
+  using TensorImageType = TTensorImageType;
+  using TensorImagePointer = typename TensorImageType::Pointer;
+  using TensorImageConstPointer = typename TensorImageType::ConstPointer;
+  using TensorImageRegionType = typename TensorImageType::RegionType;
+  using TensorImageSizeType = typename TensorImageType::SizeType;
+  using TensorImageSpacingType = typename TensorImageType::SpacingType;
+  using TensorImagePointType = typename TensorImageType::PointType;
+  using TensorImagePixelType = typename TensorImageType::PixelType;
+  using TensorImageDirectionType = typename TensorImageType::DirectionType;
 
-  typedef TAnisotropyImageType                        AnisotropyImageType;
-  typedef typename AnisotropyImageType::Pointer       AnisotropyImagePointer;
-  typedef typename AnisotropyImageType::ConstPointer  AnisotropyImageConstPointer;
-  typedef typename AnisotropyImageType::RegionType    AnisotropyImageRegionType;
-  typedef typename AnisotropyImageType::SizeType      AnisotropyImageSizeType;
-  typedef typename AnisotropyImageType::SpacingType   AnisotropyImageSpacingType;
-  typedef typename AnisotropyImageType::PointType     AnisotropyImagePointType;
-  typedef typename AnisotropyImageType::PixelType     AnisotropyImagePixelType;
-  typedef typename AnisotropyImageType::DirectionType AnisotropyImageDirectionType;
+  using AnisotropyImageType = TAnisotropyImageType;
+  using AnisotropyImagePointer = typename AnisotropyImageType::Pointer;
+  using AnisotropyImageConstPointer = typename AnisotropyImageType::ConstPointer;
+  using AnisotropyImageRegionType = typename AnisotropyImageType::RegionType;
+  using AnisotropyImageSizeType = typename AnisotropyImageType::SizeType;
+  using AnisotropyImageSpacingType = typename AnisotropyImageType::SpacingType;
+  using AnisotropyImagePointType = typename AnisotropyImageType::PointType;
+  using AnisotropyImagePixelType = typename AnisotropyImageType::PixelType;
+  using AnisotropyImageDirectionType = typename AnisotropyImageType::DirectionType;
 
-  typedef TMaskImageType                        MaskImageType;
-  typedef typename MaskImageType::Pointer       MaskImagePointer;
-  typedef typename MaskImageType::ConstPointer  MaskImageConstPointer;
-  typedef typename MaskImageType::RegionType    MaskImageRegionType;
-  typedef typename MaskImageType::SizeType      MaskImageSizeType;
-  typedef typename MaskImageType::SpacingType   MaskImageSpacingType;
-  typedef typename MaskImageType::PointType     MaskImagePointType;
-  typedef typename MaskImageType::PixelType     MaskImagePixelType;
-  typedef typename MaskImageType::DirectionType MaskImageDirectionType;
+  using MaskImageType = TMaskImageType;
+  using MaskImagePointer = typename MaskImageType::Pointer;
+  using MaskImageConstPointer = typename MaskImageType::ConstPointer;
+  using MaskImageRegionType = typename MaskImageType::RegionType;
+  using MaskImageSizeType = typename MaskImageType::SizeType;
+  using MaskImageSpacingType = typename MaskImageType::SpacingType;
+  using MaskImagePointType = typename MaskImageType::PointType;
+  using MaskImagePixelType = typename MaskImageType::PixelType;
+  using MaskImageDirectionType = typename MaskImageType::DirectionType;
 
-  typedef itk::LinearInterpolateImageFunction<MaskImageType, double>         MaskIPType;
-  typedef itk::LinearInterpolateImageFunction<AnisotropyImageType, double>   ScalarIPType;
-  typedef itk::TensorLinearInterpolateImageFunction<TensorImageType, double> VectorIPType;
+  using MaskIPType = itk::LinearInterpolateImageFunction<MaskImageType, double>;
+  using ScalarIPType = itk::LinearInterpolateImageFunction<AnisotropyImageType, double>;
+  using VectorIPType = itk::TensorLinearInterpolateImageFunction<TensorImageType, double>;
 
-  typedef typename itk::ContinuousIndex<double, 3> ContinuousIndexType;
+  using ContinuousIndexType = typename itk::ContinuousIndex<double, 3>;
 
-  typedef itk::Point<double, 3>          PointType;
-  typedef std::list<ContinuousIndexType> SeedListType;
-  typedef std::list<BranchPointType>     BranchListType;
-  typedef std::list<TVector>             DirectionListType;
+  using PointType = itk::Point<double, 3>;
+  using SeedListType = std::list<ContinuousIndexType>;
+  using BranchListType = std::list<BranchPointType>;
+  using DirectionListType = std::list<TVector>;
 
-  typedef itk::PointSet<double, 3>       PointSetType;
-  typedef vtkPolyData *                  DtiFiberType;
+  using PointSetType = itk::PointSet<double, 3>;
+  using DtiFiberType = vtkPolyData *;
 
   /** ImageDimension constants * /
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;

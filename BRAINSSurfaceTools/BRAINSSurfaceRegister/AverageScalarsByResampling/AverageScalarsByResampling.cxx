@@ -89,12 +89,12 @@ int main( int argc, char * argv [] )
   std::cout << "Output surface: " << templateSurfaceWithAverageScalars << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  typedef double MeshPixelType;
+  using MeshPixelType = double;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> InputMeshReaderType;
+  using InputMeshReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
 
   // read input fixed mesh
   InputMeshReaderType::Pointer fixedMeshReader = InputMeshReaderType::New();
@@ -108,16 +108,16 @@ int main( int argc, char * argv [] )
   InputMeshReaderType::Pointer referenceMeshReader = InputMeshReaderType::New();
 
   // set up Interpolators Filter
-  typedef itk::IdentityTransform<double> TransformType;
+  using TransformType = itk::IdentityTransform<double>;
 
   TransformType::Pointer transform = TransformType::New();
 
-  typedef itk::LinearInterpolateMeshFunction<MeshType> LinearInterpolatorType;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
 
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
 
   // set up Reample filter
-  typedef itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType> ResamplingFilterType;
+  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
 
   ResamplingFilterType::Pointer resampleFilter = ResamplingFilterType::New();
 
@@ -125,16 +125,16 @@ int main( int argc, char * argv [] )
   resampleFilter->SetInterpolator( interpolator );
 
   // set up Add Scalar Filter
-  typedef itk::QuadEdgeMeshAddScalarsFilter<
-      MeshType, MeshType, MeshType> AddScalarsFilterType;
+  using AddScalarsFilterType = itk::QuadEdgeMeshAddScalarsFilter<
+      MeshType, MeshType, MeshType>;
 
   AddScalarsFilterType::Pointer addFilter = AddScalarsFilterType::New();
 
   // set up Assign Scalar Filter
-  typedef itk::AssignScalarValuesQuadEdgeMeshFilter<
+  using AssignFilterType = itk::AssignScalarValuesQuadEdgeMeshFilter<
       MeshType,
       MeshType,
-      MeshType>    AssignFilterType;
+      MeshType>;
 
   AssignFilterType::Pointer assignFilter  = AssignFilterType::New();
 
@@ -197,11 +197,11 @@ int main( int argc, char * argv [] )
 
   // divide the sum of scalars with numSubs
   // iterate through pointData of output
-  typedef MeshType::PointDataContainer ScalarContainer;
+  using ScalarContainer = MeshType::PointDataContainer;
 
   ScalarContainer * scalars = outputMesh->GetPointData();
 
-  typedef ScalarContainer::Iterator scalarIterator;
+  using scalarIterator = ScalarContainer::Iterator;
 
   scalarIterator scalarItr = scalars->Begin();
   scalarIterator scalarEnd = scalars->End();
@@ -216,7 +216,7 @@ int main( int argc, char * argv [] )
     }
 
   // write out deformation field
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
 
   writer->SetInput( outputMesh );

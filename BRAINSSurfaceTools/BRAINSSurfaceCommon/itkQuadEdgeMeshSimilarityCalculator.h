@@ -52,10 +52,10 @@ class QuadEdgeMeshSimilarityCalculator :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshSimilarityCalculator);
 
-  typedef QuadEdgeMeshSimilarityCalculator                           Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2> Superclass;
-  typedef SmartPointer<Self>                                         Pointer;
-  typedef SmartPointer<const Self>                                   ConstPointer;
+  using Self = QuadEdgeMeshSimilarityCalculator;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshSimilarityCalculator, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -63,38 +63,38 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputMesh1                                     InputMeshType1;
-  typedef typename InputMeshType1::PointType              InputPointType1;
-  typedef typename InputMeshType1::PixelType              InputPixelType1;
-  typedef typename InputMeshType1::PointIdentifier        PointIdentifier1;
-  typedef typename InputMeshType1::PointsContainer        InputPointsContainer1;
-  typedef typename InputMeshType1::PointsContainerPointer InputPointsContainerPointer1;
-  typedef typename InputMeshType1::PointDataContainer     InputPointDataContainer1;
+  using InputMeshType1 = TInputMesh1;
+  using InputPointType1 = typename InputMeshType1::PointType;
+  using InputPixelType1 = typename InputMeshType1::PixelType;
+  using PointIdentifier1 = typename InputMeshType1::PointIdentifier;
+  using InputPointsContainer1 = typename InputMeshType1::PointsContainer;
+  using InputPointsContainerPointer1 = typename InputMeshType1::PointsContainerPointer;
+  using InputPointDataContainer1 = typename InputMeshType1::PointDataContainer;
 
-  typedef TInputMesh2                                     InputMeshType2;
-  typedef typename InputMeshType2::PointType              InputPointType2;
-  typedef typename InputMeshType2::PixelType              InputPixelType2;
-  typedef typename InputMeshType2::PointIdentifier        PointIdentifier2;
-  typedef typename InputMeshType2::PointsContainer        InputPointsContainer2;
-  typedef typename InputMeshType2::PointsContainerPointer InputPointsContainerPointer2;
-  typedef typename InputMeshType2::PointDataContainer     InputPointDataContainer2;
+  using InputMeshType2 = TInputMesh2;
+  using InputPointType2 = typename InputMeshType2::PointType;
+  using InputPixelType2 = typename InputMeshType2::PixelType;
+  using PointIdentifier2 = typename InputMeshType2::PointIdentifier;
+  using InputPointsContainer2 = typename InputMeshType2::PointsContainer;
+  using InputPointsContainerPointer2 = typename InputMeshType2::PointsContainerPointer;
+  using InputPointDataContainer2 = typename InputMeshType2::PointDataContainer;
 
-  typedef typename InputMeshType1::CellType       CellType1;
-  typedef typename InputMeshType1::CellTraits     CellTraits1;
-  typedef typename InputMeshType1::CellsContainer CellsContainer1;
-  typedef typename CellsContainer1::Iterator      CellsContainerIterator1;
-  typedef typename CellsContainer1::ConstIterator CellsContainerConstIterator1;
-  typedef typename CellTraits1::PointIdIterator   PointIdIterator1;
+  using CellType1 = typename InputMeshType1::CellType;
+  using CellTraits1 = typename InputMeshType1::CellTraits;
+  using CellsContainer1 = typename InputMeshType1::CellsContainer;
+  using CellsContainerIterator1 = typename CellsContainer1::Iterator;
+  using CellsContainerConstIterator1 = typename CellsContainer1::ConstIterator;
+  using PointIdIterator1 = typename CellTraits1::PointIdIterator;
 
-  typedef typename InputMeshType2::CellType       CellType2;
-  typedef typename InputMeshType2::CellTraits     CellTraits2;
-  typedef typename InputMeshType2::CellsContainer CellsContainer2;
-  typedef typename CellsContainer2::Iterator      CellsContainerIterator2;
-  typedef typename CellsContainer2::ConstIterator CellsContainerConstIterator2;
-  typedef typename CellTraits2::PointIdIterator   PointIdIterator2;
+  using CellType2 = typename InputMeshType2::CellType;
+  using CellTraits2 = typename InputMeshType2::CellTraits;
+  using CellsContainer2 = typename InputMeshType2::CellsContainer;
+  using CellsContainerIterator2 = typename CellsContainer2::Iterator;
+  using CellsContainerConstIterator2 = typename CellsContainer2::ConstIterator;
+  using PointIdIterator2 = typename CellTraits2::PointIdIterator;
 
-  typedef TriangleHelper<InputPointType1>     TriangleType;
-  typedef typename TriangleType::CoordRepType AreaType;
+  using TriangleType = TriangleHelper<InputPointType1>;
+  using AreaType = typename TriangleType::CoordRepType;
 
   /** Set/Get the mesh1 that has the labels. */
   void SetInputMesh1( const InputMeshType1 * mesh1 );

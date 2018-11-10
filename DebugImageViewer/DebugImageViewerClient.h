@@ -32,8 +32,8 @@
 
 namespace DebugImageViewerUtil
 {
-typedef itk::SpatialOrientationAdapter SOAdapterType;
-typedef SOAdapterType::DirectionType   DirectionType;
+using SOAdapterType = itk::SpatialOrientationAdapter;
+using DirectionType = SOAdapterType::DirectionType;
 
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
@@ -41,8 +41,8 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
              const typename OutputImageType::PixelType OutputMin,
              const typename OutputImageType::PixelType OutputMax)
 {
-  typedef itk::RescaleIntensityImageFilter<InputImageType,
-                                           OutputImageType> R2CRescaleFilterType;
+  using R2CRescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType,
+                                           OutputImageType>;
   typename R2CRescaleFilterType::Pointer RealToProbMapCast
     = R2CRescaleFilterType::New();
   RealToProbMapCast->SetOutputMinimum(OutputMin);
@@ -216,10 +216,10 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
     {
     return;
     }
-  typedef itk::Image<unsigned char, 3>   TransferImageType;
-  typedef TransferImageType::SizeType    SizeType;
-  typedef TransferImageType::SpacingType SpacingType;
-  typedef TransferImageType::PointType   PointType;
+  using TransferImageType = itk::Image<unsigned char, 3>;
+  using SizeType = TransferImageType::SizeType;
+  using SpacingType = TransferImageType::SpacingType;
+  using PointType = TransferImageType::PointType;
   //
   // make sure image is in a known image type
   TransferImageType::Pointer xferImage
@@ -287,9 +287,8 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image,
     }
   //
   // assume ImageType is a vector type.
-  typedef typename ImageType::PixelType::ComponentType ScalarPixelType;
-  typedef typename itk::Image<ScalarPixelType, ImageType::ImageDimension>
-    ScalarImageType;
+  using ScalarPixelType = typename ImageType::PixelType::ComponentType;
+  using ScalarImageType = typename itk::Image<ScalarPixelType, ImageType::ImageDimension>;
   typename ScalarImageType::Pointer scalarImage
     = DebugImageViewerUtil::AllocateImageFromExample<ImageType, ScalarImageType>
         (image);
@@ -297,7 +296,7 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image,
   sourceIt( image, image->GetLargestPossibleRegion() );
   typename itk::ImageRegionIterator<ScalarImageType>
   destIt( scalarImage, scalarImage->GetLargestPossibleRegion() );
-  for( ; !sourceIt.IsAtEnd(); ++sourceIt, ++destIt )
+  for(; !sourceIt.IsAtEnd(); ++sourceIt, ++destIt )
     {
     destIt.Set(sourceIt.Get()[vectorIndex]);
     }

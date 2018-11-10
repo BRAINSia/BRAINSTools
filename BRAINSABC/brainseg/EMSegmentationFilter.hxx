@@ -104,8 +104,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 
   // Create KdTree for train samples
-  typedef itk::Statistics::KdTreeGenerator< SampleType > TreeGeneratorType;
-  typedef TreeGeneratorType::KdTreeType                  TreeType;
+  using TreeGeneratorType = itk::Statistics::KdTreeGenerator< SampleType >;
+  using TreeType = TreeGeneratorType::KdTreeType;
   TreeGeneratorType::Pointer treeGenerator = TreeGeneratorType::New();
   treeGenerator->SetSample( trainSampleSet );
   treeGenerator->SetBucketSize( 16 );
@@ -257,8 +257,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   //
   const size_t numberOfSamples = numClasses * KNN_SamplesPerLabel;
 
-  typedef std::vector<ByteImageType::IndexType> IndexVectorType;
-  typedef std::map<typename ByteImageType::PixelType, IndexVectorType >  LabelMapSamplesType;
+  using IndexVectorType = std::vector<ByteImageType::IndexType>;
+  using LabelMapSamplesType = std::map<typename ByteImageType::PixelType, IndexVectorType >;
   LabelMapSamplesType SampledLabelsMap;
   std::map<typename ByteImageType::PixelType, size_t> reverseLabelToIndex;
 
@@ -388,7 +388,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
        // Here we find out that the prior with maximum value belongs to background or foreground
        double maxPriorClassValue = Priors[0]->GetPixel( *vit );
        unsigned int       indexMaxPosteriorClassValue = 0;
-       for( unsigned int iclass = 1; iclass < labelClasses.size() ; ++iclass)
+       for( unsigned int iclass = 1; iclass < labelClasses.size(); ++iclass)
          {
          const double currentPriorClassValue = Priors[iclass]->GetPixel( *vit );
          if( currentPriorClassValue > maxPriorClassValue )
@@ -403,7 +403,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
        // Since input priors have the same voxel lattice as input thresholded label map,
        // we can evaluate the priors value directly at index location.
        //
-       for( unsigned int c_indx = 0; c_indx<labelClasses.size() ; ++c_indx) // Add 15 more features from priors (EM posteriors)
+       for( unsigned int c_indx = 0; c_indx<labelClasses.size(); ++c_indx) // Add 15 more features from priors (EM posteriors)
          {
          //mv.push_back( Priors[c_indx]->GetPixel( *vit ) );
          // foreground and background classes should be added exclusively
@@ -577,7 +577,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const typename InputImageType::SizeType finalPosteriorSize = Posteriors[0]->GetLargestPossibleRegion().GetSize();
   muLogMacro(<< "Size of return posteriors: " << finalPosteriorSize  << std::endl);
   /*
-  typedef itk::ImageFileWriter<TProbabilityImage> PostImageWriterType;
+  using PostImageWriterType = itk::ImageFileWriter<TProbabilityImage>;
   typename PostImageWriterType::Pointer posetriorwriter = PostImageWriterType::New();
   posetriorwriter->SetInput(Posteriors[14]);
   posetriorwriter->SetFileName("DEBUG_WHITE_MATTER.nii.gz");
@@ -890,7 +890,7 @@ void EMSegmentationFilter<TInputImage, TProbabilityImage>
     write_posteriors_level_stream << write_posteriors_level;
     for( unsigned int iprob = 0; iprob < numPosteriors; iprob++ )
       {
-      typedef itk::ImageFileWriter<TProbabilityImage> ProbabilityImageWriterType;
+      using ProbabilityImageWriterType = itk::ImageFileWriter<TProbabilityImage>;
       typename ProbabilityImageWriterType::Pointer writer = ProbabilityImageWriterType::New();
 
       std::stringstream template_index_stream("");
@@ -1086,7 +1086,7 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::CheckLoopAgainstFilterOutput(ByteImagePointer &loopImg, ByteImagePointer & filterImg)
 {
-  typedef typename itk::ImageRegionConstIterator<ByteImageType> IterType;
+  using IterType = typename itk::ImageRegionConstIterator<ByteImageType>;
 
   IterType     maskIter(loopImg, loopImg->GetLargestPossibleRegion() );
   IterType     dilIter(filterImg, filterImg->GetLargestPossibleRegion() );
@@ -1141,8 +1141,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       {
       // Multiply each SubjectCandidateRegion to the resampledPurePlugsMask,
       // since only pure samples should be used for distributions computations.
-      typedef itk::MultiplyImageFilter<ByteImageType, ByteImageType>
-        MultiplyImageFilterType;
+      using MultiplyImageFilterType = itk::MultiplyImageFilter<ByteImageType, ByteImageType>;
       typename MultiplyImageFilterType::Pointer multiplyFilter
         = MultiplyImageFilterType::New();
       multiplyFilter->SetInput1( resampledPurePlugsMask );
@@ -1412,7 +1411,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       write_label_image_level_stream << IterationID;
       const std::string fn = this->m_OutputDebugDir + "/KNNLabelsImage_Level_"
                              + write_label_image_level_stream.str() + ".nii.gz";
-      typedef itk::ImageFileWriter<ByteImageType> LabelImageWriterType;
+      using LabelImageWriterType = itk::ImageFileWriter<ByteImageType>;
       typename LabelImageWriterType::Pointer cleanLabelWriter = LabelImageWriterType::New();
       cleanLabelWriter->SetInput( dirtyThresholdedLabels );
       cleanLabelWriter->SetFileName(fn);
@@ -1436,15 +1435,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
     // Merge KNN and EMPosteriors here by averaging.
     //
-    for(size_t pp = 0 ; pp < KNNPosteriors.size(); ++pp )
+    for(size_t pp = 0; pp < KNNPosteriors.size(); ++pp )
       {
-      typedef itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage> MultiplyFilterType;
+      using MultiplyFilterType = itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage>;
       typename MultiplyFilterType::Pointer filter = MultiplyFilterType::New();
       filter->SetInput(0,EMPosteriors[pp]);
       filter->SetInput(1,KNNPosteriors[pp]);
       filter->Update();
 
-      typedef itk::SqrtImageFilter<TProbabilityImage,TProbabilityImage> SqrtFilterType;
+      using SqrtFilterType = itk::SqrtImageFilter<TProbabilityImage,TProbabilityImage>;
       typename SqrtFilterType::Pointer sqrtFilter = SqrtFilterType::New();
       sqrtFilter->SetInput( filter->GetOutput() );
       sqrtFilter->Update();
@@ -1471,7 +1470,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     std::stringstream CurrentEMIteration_stream("");
     CurrentEMIteration_stream << CurrentEMIteration;
     {
-    typedef itk::ImageFileWriter<ByteImageType> LabelImageWriterType;
+    using LabelImageWriterType = itk::ImageFileWriter<ByteImageType>;
     typename LabelImageWriterType::Pointer writer = LabelImageWriterType::New();
 
     const std::string fn = this->m_OutputDebugDir + "/LABELS_LEVEL_" + CurrentEMIteration_stream.str() + ".nii.gz";
@@ -1489,7 +1488,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     std::stringstream CurrentEMIteration_stream("");
     CurrentEMIteration_stream << CurrentEMIteration;
     {
-    typedef itk::ImageFileWriter<ByteImageType> LabelImageWriterType;
+    using LabelImageWriterType = itk::ImageFileWriter<ByteImageType>;
     typename LabelImageWriterType::Pointer writer = LabelImageWriterType::New();
 
     const std::string fn = this->m_OutputDebugDir + "/LABELSDIRTY_LEVEL_" + CurrentEMIteration_stream.str()
@@ -1522,7 +1521,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
         imIt != mapIt->second.end(); ++imIt)
       {
-      typedef itk::ImageFileWriter<InputImageType> WriterType;
+      using WriterType = itk::ImageFileWriter<InputImageType>;
       typename WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       std::stringstream template_index_stream("");
@@ -1595,7 +1594,7 @@ template <typename TInputImage, typename TByteImage>
 typename TByteImage::Pointer
 ComputeTissueRegion(const typename TInputImage::Pointer referenceImage, const unsigned int safetyRegion)
 {
-  typedef itk::BRAINSROIAutoImageFilter<TInputImage, TByteImage> ROIAutoType;
+  using ROIAutoType = itk::BRAINSROIAutoImageFilter<TInputImage, TByteImage>;
   typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
   ROIFilter->SetInput(referenceImage);
   ROIFilter->SetClosingSize(15);
@@ -1614,7 +1613,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   std::stringstream CurrentEMIteration_stream("");
   CurrentEMIteration_stream << CurrentEMIteration;
   { // DEBUG:  This code is for debugging purposes only;
-  typedef itk::ImageFileWriter<ByteImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ByteImageType>;
   typename WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
 
@@ -1641,7 +1640,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
   std::vector<typename TInputImage::Pointer> warpedList(originalList.size() );
 
-  typedef itk::ResampleImageFilter<TInputImage, TInputImage> ResamplerType;
+  using ResamplerType = itk::ResampleImageFilter<TInputImage, TInputImage>;
   for( unsigned int vIndex = 0; vIndex < originalList.size(); vIndex++ )
     {
     typename ResamplerType::Pointer warper = ResamplerType::New();
@@ -1664,7 +1663,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                 const InputImagePointer referenceOutput,
                 const GenericTransformType::Pointer warpTransform)
 {
-  typedef itk::ResampleImageFilter<TInputImage, TInputImage> ResamplerType;
+  using ResamplerType = itk::ResampleImageFilter<TInputImage, TInputImage>;
 
   MapOfInputImageVectors warpedList;
 
@@ -1712,7 +1711,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
             imIt != mapIt->second.end(); ++imIt)
           {
-          typedef itk::ImageFileWriter<InputImageType> WriterType;
+          using WriterType = itk::ImageFileWriter<InputImageType>;
           typename WriterType::Pointer writer = WriterType::New();
           writer->UseCompressionOn();
 
@@ -1772,7 +1771,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                           std::ostringstream logMessage("\n*********************************************\n");
                           typename ByteImageType::Pointer probThreshImage = nullptr;
 
-                          typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
+                          using ProbThresholdType = itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType>;
                           typename ProbThresholdType::Pointer probThresh = ProbThresholdType::New();
                           probThresh->SetInput(WarpedPriorsList[i]);
                           probThresh->SetInsideValue(1);
@@ -1800,7 +1799,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                             logMessage << "Writing Subject Candidate Region: " << fn << std::endl;
                             logMessage << std::endl;
 
-                            typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+                            using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
                             typename ByteWriterType::Pointer writer = ByteWriterType::New();
                             writer->SetInput(probThreshImage);
                             writer->SetFileName(fn.c_str());
@@ -1817,8 +1816,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
                           const unsigned int numberOfModes = TotalMapSize(intensityImagesList);
 
-                          typedef typename itk::MultiModeHistogramThresholdBinaryImageFilter<InputImageType,
-                              ByteImageType> ThresholdRegionFinderType;
+                          using ThresholdRegionFinderType = typename itk::MultiModeHistogramThresholdBinaryImageFilter<InputImageType,
+                              ByteImageType>;
                           typename ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
                           typename ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
                           typename ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
@@ -1873,7 +1872,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                             logMessage << "Writing Subject Candidate Region: " << fn << std::endl;
                             logMessage << std::endl;
 
-                            typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+                            using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
                             typename ByteWriterType::Pointer writer = ByteWriterType::New();
                             writer->SetInput(thresholdRegionFinder->GetOutput());
                             writer->SetFileName(fn.c_str());
@@ -1963,7 +1962,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       muLogMacro( << "Writing Final Subject Candidate Region: " << fn << std::endl );
       muLogMacro( << std::endl );
 
-      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
       typename ByteWriterType::Pointer writer = ByteWriterType::New();
       writer->SetInput(subjectCandidateRegions[i]);
       writer->SetFileName(fn.c_str() );
@@ -2043,7 +2042,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       // break things apart artificially.
       std::cout << "\nBlending Priors with Posteriors with formula: " << (blendPosteriorPercentage)
                 << "*Posterior + " << (1.0 - blendPosteriorPercentage) << "*Prior" << std::endl;
-      typedef itk::BlendImageFilter<TProbabilityImage, TProbabilityImage> BlenderType;
+      using BlenderType = itk::BlendImageFilter<TProbabilityImage, TProbabilityImage>;
       typename BlenderType::Pointer myBlender = BlenderType::New();
       myBlender->SetInput1(ProbList1[k]);
       myBlender->SetInput2(ProbList2[k]);
@@ -2091,7 +2090,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       {
       for( unsigned int vIndex = 0; vIndex < this->m_WarpedPriors.size(); vIndex++ )
         {
-        typedef itk::ImageFileWriter<InputImageType> WriterType;
+        using WriterType = itk::ImageFileWriter<InputImageType>;
         typename WriterType::Pointer writer = WriterType::New();
         writer->UseCompressionOn();
 
@@ -2120,7 +2119,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     { // DEBUG:  This code is for debugging purposes only;
     for( unsigned int k = 0; k < m_WarpedPriors.size(); k++ )
       {
-      typedef itk::ImageFileWriter<InputImageType> WriterType;
+      using WriterType = itk::ImageFileWriter<InputImageType>;
       typename WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
 
@@ -2168,7 +2167,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           && atIt != this->m_OriginalAtlasImages[imMapIt->first].end();
         ++imIt, ++atIt)
       {
-      typedef itk::BRAINSFitHelper HelperType;
+      using HelperType = itk::BRAINSFitHelper;
       HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
       atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); //Use 5% of samples
       atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
@@ -2201,8 +2200,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         const bool histogramMatch = false;
         if( histogramMatch )
           {
-          typedef itk::HistogramMatchingImageFilter<InputImageType,
-            InputImageType> HistogramMatchingFilterType;
+          using HistogramMatchingFilterType = itk::HistogramMatchingImageFilter<InputImageType,
+            InputImageType>;
           typename HistogramMatchingFilterType::Pointer histogramfilter
             = HistogramMatchingFilterType::New();
 
@@ -2222,7 +2221,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           atlasToSubjectRegistrationHelper->SetMovingVolume((*atIt));
           preprocessMovingString = "";
           }
-        typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+        using ROIAutoType = itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> >;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*atIt));
         ROIFilter->SetClosingSize(15);
@@ -2230,7 +2229,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         ROIFilter->Update();
         atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
 
-        typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+        using ROIAutoType = itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> >;
         ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*imIt));
         ROIFilter->SetClosingSize(15);
@@ -2295,7 +2294,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
           }
 
-        typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
+        using CompositeTransformType = itk::CompositeTransform<double, 3>;
         CompositeTransformType::Pointer templateGenericCompositeTransform =
                                   dynamic_cast<CompositeTransformType *>( m_TemplateGenericTransform.GetPointer() );
         if( templateGenericCompositeTransform.IsNull() )
@@ -2371,7 +2370,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   std::stringstream CurrentEMIteration_stream("");
 
   CurrentEMIteration_stream << CurrentEMIteration;
-  typedef itk::ImageFileWriter<ByteImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ByteImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
 
@@ -2460,7 +2459,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       if( this->m_DebugLevel > 6 )
         {
         const std::string fn = this->m_OutputDebugDir + "/DEBUG_PURE_PLUGS_MASK.nii.gz";
-        typedef typename itk::ImageFileWriter<ByteImageType> MaskWriterType;
+        using MaskWriterType = typename itk::ImageFileWriter<ByteImageType>;
         typename MaskWriterType::Pointer maskwriter = MaskWriterType::New();
         maskwriter->SetInput( this->m_PurePlugsMask );
         maskwriter->SetFileName(fn);
@@ -2770,8 +2769,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         // Inside "LLSBiasCorrector", biasCandidateRegions are
         // passed to CombinedComputeDistributions where only
         // pure samples should be used for distributions computations.
-        typedef itk::MultiplyImageFilter<ByteImageType, ByteImageType>
-          MultiplyImageFilterType;
+        using MultiplyImageFilterType = itk::MultiplyImageFilter<ByteImageType, ByteImageType>;
         typename MultiplyImageFilterType::Pointer multiplyFilter
           = MultiplyImageFilterType::New();
         multiplyFilter->SetInput1( resampledPurePlugsMask );
@@ -2789,8 +2787,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   itk::TimeProbe BiasCorrectorTimer;
   BiasCorrectorTimer.Start();
-  typedef LLSBiasCorrector<CorrectIntensityImageType, FloatImageType> BiasCorrectorType;
-  typedef BiasCorrectorType::Pointer                                  BiasCorrectorPointer;
+  using BiasCorrectorType = LLSBiasCorrector<CorrectIntensityImageType, FloatImageType>;
+  using BiasCorrectorPointer = BiasCorrectorType::Pointer;
 
   BiasCorrectorPointer biascorr = BiasCorrectorType::New();
   biascorr->SetMaxDegree(degree);

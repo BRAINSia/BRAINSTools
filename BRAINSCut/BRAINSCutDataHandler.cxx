@@ -264,7 +264,7 @@ BRAINSCutDataHandler
 ::GetDeformedSpatialLocationImages( std::map<std::string, WorkingImagePointer>& warpedSpatialLocationImages,
                                     DataSet& subject)
 {
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   std::string atlasSubjectRegistrationFilename = GetAtlasToSubjectRegistrationFilename( subject );
 
   DisplacementFieldType::Pointer deformation = GetDeformationField( atlasSubjectRegistrationFilename );
@@ -275,8 +275,7 @@ BRAINSCutDataHandler
   // transform was ignored.
   if(deformation.IsNotNull())
     {
-    typedef itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>
-      DisplacementFieldTransformType;
+    using DisplacementFieldTransformType = itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>;
     DisplacementFieldTransformType::Pointer dispXfrm = DisplacementFieldTransformType::New();
     dispXfrm->SetDisplacementField(deformation);
     genericTransform = dispXfrm.GetPointer();
@@ -363,7 +362,7 @@ BRAINSCutDataHandler
 ::GetDeformedROIs( std::map<std::string, WorkingImagePointer>& warpedROIs,
                    DataSet& subject)
 {
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   std::string atlasSubjectRegistrationFilename = GetAtlasToSubjectRegistrationFilename( subject );
 
   /** Get the transformation file
@@ -378,8 +377,7 @@ BRAINSCutDataHandler
   // transform was ignored.
   if(deformation.IsNotNull())
     {
-    typedef itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>
-      DisplacementFieldTransformType;
+    using DisplacementFieldTransformType = itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>;
     DisplacementFieldTransformType::Pointer dispXfrm = DisplacementFieldTransformType::New();
     dispXfrm->SetDisplacementField(deformation);
     genericTransform = dispXfrm.GetPointer();

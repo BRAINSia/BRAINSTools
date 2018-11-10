@@ -40,7 +40,7 @@ public:
   LandmarkPointType B;
   LandmarkPointType C;
 
-  typedef itk::Point<double, 3> VectorType;
+  using VectorType = itk::Point<double, 3>;
 
   void SetNormal()
   {
@@ -125,7 +125,7 @@ CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume
                                      ThreeLandmarksForPlane * currentPlane,
                                      const std::string & direction )
 {
-  typedef itk::ImageRegionIterator<TImageType> ImageRegionIteratorType;
+  using ImageRegionIteratorType = itk::ImageRegionIterator<TImageType>;
   ImageRegionIteratorType it(  *_imageVolume,
                                (*_imageVolume)->GetRequestedRegion() );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
@@ -189,7 +189,7 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
     myDirection = UNKOWN_DIRECTION;
     }
 
-  typedef itk::ImageRegionIterator<TImageType> ImageRegionIteratorType;
+  using ImageRegionIteratorType = itk::ImageRegionIterator<TImageType>;
   ImageRegionIteratorType it(  *_imageVolume,
                                (*_imageVolume)->GetRequestedRegion() );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
@@ -282,12 +282,12 @@ int main( int argc, char * argv[] )
     }
 
   // read inputBinaryVolume
-  typedef unsigned char PixelType;
+  using PixelType = unsigned char;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType, Dimension> ImageType;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName( inputBinaryVolume );
@@ -301,7 +301,7 @@ int main( int argc, char * argv[] )
   LandmarksMapType landmarksSet = ReadSlicer3toITKLmk( inputLandmarksFilename );
 
   // duplicate image
-  typedef itk::ImageDuplicator<ImageType> ImageDuplicatorType;
+  using ImageDuplicatorType = itk::ImageDuplicator<ImageType>;
   ImageDuplicatorType::Pointer duplicator = ImageDuplicatorType::New();
   duplicator->SetInputImage( inputVolume );
   duplicator->Update();
@@ -309,7 +309,7 @@ int main( int argc, char * argv[] )
   ImageType::Pointer outputVolume =  duplicator->GetOutput();
 
   // cut by landmarks
-  typedef std::vector<std::string>::const_iterator stringVectorIteratorType;
+  using stringVectorIteratorType = std::vector<std::string>::const_iterator;
   for( stringVectorIteratorType ldmkIt = inputLandmarkNames.begin(),
        dircIt = setCutDirectionForLandmark.begin();
        ldmkIt < inputLandmarkNames.end();
@@ -334,13 +334,13 @@ int main( int argc, char * argv[] )
 
   // string vector to read in a vector of three elements.
   // ex) (LE, RE, PC) --> plane for left and right eyes with posterior commissure.
-  typedef std::vector<std::string> LandMarkForPlaneType;
+  using LandMarkForPlaneType = std::vector<std::string>;
 
   // a set of plane description
   // ex) 1: (LE, RE, PC)
   //     2: (AC, PC, LE)
   //     3: ....
-  typedef std::vector<ThreeLandmarksForPlane>  PlaneLandmarkSetType;
+  using PlaneLandmarkSetType = std::vector<ThreeLandmarksForPlane>;
 
   PlaneLandmarkSetType myLandmarkSetForPlanes;
 
@@ -406,7 +406,7 @@ int main( int argc, char * argv[] )
 
   // write output volume
 
-  typedef itk::ImageFileWriter<ImageType> OutputImageWriterType;
+  using OutputImageWriterType = itk::ImageFileWriter<ImageType>;
   OutputImageWriterType::Pointer writer = OutputImageWriterType::New();
 
   writer->SetInput( outputVolume );

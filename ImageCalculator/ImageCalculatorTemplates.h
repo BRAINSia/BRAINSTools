@@ -133,13 +133,13 @@ template <typename ImageType>
 typename ImageType::Pointer
 DoGaussian( typename ImageType::Pointer input,  const double sigma )
 {
-  typedef itk::Image<float, ImageType::ImageDimension> InternalImageType;
+  using InternalImageType = itk::Image<float, ImageType::ImageDimension>;
   // Cast to float
-  typedef itk::CastImageFilter<ImageType, InternalImageType> ToFloatCasterType;
+  using ToFloatCasterType = itk::CastImageFilter<ImageType, InternalImageType>;
   typename ToFloatCasterType::Pointer toFloatCaster = ToFloatCasterType::New();
   toFloatCaster->SetInput(input);
 
-  typedef itk::DiscreteGaussianImageFilter<InternalImageType, InternalImageType> FilterType;
+  using FilterType = itk::DiscreteGaussianImageFilter<InternalImageType, InternalImageType>;
   /*============Filter the inputVolume using DiscreteGaussianImageFilter
    *   Include setting the x and y directions of the input images and setting order
    *     to be zero, and including normalizing Gaussian filter==================*/
@@ -149,7 +149,7 @@ DoGaussian( typename ImageType::Pointer input,  const double sigma )
   filter->SetInput(toFloatCaster->GetOutput() );
   filter->Update();
 
-  typedef itk::CastImageFilter<InternalImageType, ImageType> FromFloatCasterType;
+  using FromFloatCasterType = itk::CastImageFilter<InternalImageType, ImageType>;
   typename FromFloatCasterType::Pointer fromFloatCaster = FromFloatCasterType::New();
   fromFloatCaster->SetInput(filter->GetOutput() );
   fromFloatCaster->Update();
@@ -162,7 +162,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 DoHisteq( typename ImageType::Pointer ref, typename ImageType::Pointer input, const int NumOfMatchPoints )
 {
-  typedef itk::HistogramMatchingImageFilter<ImageType, ImageType> HistogramMatchingFilterType;
+  using HistogramMatchingFilterType = itk::HistogramMatchingImageFilter<ImageType, ImageType>;
   typename HistogramMatchingFilterType::Pointer matchingFilter = HistogramMatchingFilterType::New();
   matchingFilter->SetSourceImage( input );
   matchingFilter->SetReferenceImage( ref );
@@ -180,7 +180,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 Ifilters( typename ImageType::Pointer input,  MetaCommand command )
 {
-  typedef typename ImageType::PixelType PixelType;
+  using PixelType = typename ImageType::PixelType;
 
   typename ImageType::Pointer IntermediateImage = input;
   /*Multiplies a constant value to all the pixels of the Input image.*/
@@ -251,7 +251,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 Ofilters( typename ImageType::Pointer input, MetaCommand command )
 {
-  typedef typename ImageType::PixelType PixelType;
+  using PixelType = typename ImageType::PixelType;
   std::stringstream EffectiveOutputFilters;
   typename ImageType::Pointer IntermediateImage = input;
   /*Multiplies a constant value to all the pixels of the Output image.*/
@@ -323,13 +323,13 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
   std::map<std::string, float>       StatValues;
 
   // The statistics image filter calclates all the statistics of AccImage
-  typedef itk::StatisticsImageFilter<ImageType> StatsFilterType;
+  using StatsFilterType = itk::StatisticsImageFilter<ImageType>;
   typename StatsFilterType::Pointer Statsfilter = StatsFilterType::New();
   Statsfilter->SetInput(AccImage);
   Statsfilter->Update();
 
   // The absolute Image filter calculates the absolute value of the pixels.
-  typedef itk::AbsImageFilter<ImageType, ImageType> AbsFilterType;
+  using AbsFilterType = itk::AbsImageFilter<ImageType, ImageType>;
   typename AbsFilterType::Pointer Absfilter = AbsFilterType::New();
   Absfilter->SetInput(AccImage);
   Absfilter->Update();
@@ -339,11 +339,11 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
 
   bool havestatmask = false;
   // If user gives an Input Mask Calculate the statistics of the image in the mask
-  typedef itk::Image<unsigned int, ImageType::ImageDimension> UIntImageType;
-  typedef itk::ImageFileReader<UIntImageType>                 ReaderType;
+  using UIntImageType = itk::Image<unsigned int, ImageType::ImageDimension>;
+  using ReaderType = itk::ImageFileReader<UIntImageType>;
   typename ReaderType::Pointer reader = ReaderType::New();
 
-  typedef itk::LabelStatisticsImageFilter<ImageType, UIntImageType> LabelFilterType;
+  using LabelFilterType = itk::LabelStatisticsImageFilter<ImageType, UIntImageType>;
   typename LabelFilterType::Pointer MaskStatsfilter = LabelFilterType::New();
   typename LabelFilterType::Pointer MaskAbsStatsfilter = LabelFilterType::New();
 
@@ -565,12 +565,12 @@ template <typename InPixelType, typename PixelType, unsigned int ImageDims>
 void ProcessOutputStage( const typename itk::Image<InPixelType, ImageDims>::Pointer AccImage,
                          const std::string & outputImageFilename, MetaCommand command)
 {
-  typedef itk::Image<InPixelType, ImageDims>                    InputImageType;
-  typedef itk::Image<PixelType, ImageDims>                      OutputImageType;
-  typedef itk::CastImageFilter<InputImageType, OutputImageType> CastToOutputFilterType;
+  using InputImageType = itk::Image<InPixelType, ImageDims>;
+  using OutputImageType = itk::Image<PixelType, ImageDims>;
+  using CastToOutputFilterType = itk::CastImageFilter<InputImageType, OutputImageType>;
   typename CastToOutputFilterType::Pointer ToOutputTypeFilter = CastToOutputFilterType::New();
 
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
   ToOutputTypeFilter->SetInput( AccImage );
   ToOutputTypeFilter->Update();
 
@@ -641,8 +641,8 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     ReplaceSubWithSub(InputList[i], "BACKSLASH_BLANK", " ");
     }
 
-  typedef itk::ImageFileReader<ImageType> ReaderType;
-  typedef typename ImageType::PixelType   PixelType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using PixelType = typename ImageType::PixelType;
   // Read the first Image
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(InputList.at(0).c_str() );

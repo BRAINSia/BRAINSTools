@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
     }
 
   constexpr unsigned int dimension = 3;
-  typedef float                                PixelType;
-  typedef itk::Image<float, dimension>         InputImage;
-  typedef itk::Image<unsigned char, dimension> OutputImage;
+  using PixelType = float;
+  using InputImage = itk::Image<float, dimension>;
+  using OutputImage = itk::Image<unsigned char, dimension>;
 
   itk::ImageFileReader<InputImage>::Pointer input = itk::ImageFileReader<InputImage>::New();
   input->SetFileName(inputVolume);

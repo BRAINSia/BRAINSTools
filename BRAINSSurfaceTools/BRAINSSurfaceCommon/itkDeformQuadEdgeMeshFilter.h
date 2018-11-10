@@ -49,10 +49,10 @@ class DeformQuadEdgeMeshFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DeformQuadEdgeMeshFilter);
 
-  typedef DeformQuadEdgeMeshFilter                                 Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh> Superclass;
-  typedef SmartPointer<Self>                                       Pointer;
-  typedef SmartPointer<const Self>                                 ConstPointer;
+  using Self = DeformQuadEdgeMeshFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( DeformQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -60,18 +60,18 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputMesh                                      InputMeshType;
-  typedef TReferenceMesh                                  ReferenceMeshType;
-  typedef TInputMesh                                      OutputMeshType;
-  typedef TDestinationPoints                              DestinationPointsType;
-  typedef typename DestinationPointsType::PointsContainer DestinationPointsContainerType;
+  using InputMeshType = TInputMesh;
+  using ReferenceMeshType = TReferenceMesh;
+  using OutputMeshType = TInputMesh;
+  using DestinationPointsType = TDestinationPoints;
+  using DestinationPointsContainerType = typename DestinationPointsType::PointsContainer;
 
-  typedef typename InputMeshType::PointType InputPointType;
+  using InputPointType = typename InputMeshType::PointType;
 
-  /** Interpolator typedef. */
-  typedef LinearInterpolateDeformationFieldMeshFunction<
-      ReferenceMeshType, DestinationPointsContainerType>    InterpolatorType;
-  typedef typename InterpolatorType::Pointer InterpolatorPointerType;
+  /** Interpolator type alias. */
+  using InterpolatorType = LinearInterpolateDeformationFieldMeshFunction<
+      ReferenceMeshType, DestinationPointsContainerType>;
+  using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set/Get the mesh that will be deformed. */
   void SetInputMesh( const InputMeshType * mesh );

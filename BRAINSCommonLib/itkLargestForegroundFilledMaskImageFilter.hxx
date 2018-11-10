@@ -129,7 +129,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   this->AllocateOutputs();
 
   // This is to help with noisy data that has a few spurious very high/ very low values.
-  typedef ComputeHistogramQuantileThresholds<TInputImage, TOutputImage> ImageCalcType;
+  using ImageCalcType = ComputeHistogramQuantileThresholds<TInputImage, TOutputImage>;
   typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
   ImageCalc->SetImage( this->GetInput() );
 
@@ -150,8 +150,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     {
     // ##The Otsu thresholding stuff below should not be part of the new class,
     // it shout really be a separate function.
-    typedef itk::Statistics::ImageToHistogramFilter<TInputImage> HistogramGeneratorType;
-    typedef typename HistogramGeneratorType::HistogramType       HistogramType;
+    using HistogramGeneratorType = itk::Statistics::ImageToHistogramFilter<TInputImage>;
+    using HistogramType = typename HistogramGeneratorType::HistogramType;
 
     typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
     histGenerator->SetInput( this->GetInput() );
@@ -160,7 +160,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     histGenerator->SetHistogramSize( hsize );
     histGenerator->SetAutoMinimumMaximum( true );
 
-    typedef itk::OtsuThresholdCalculator<HistogramType> OtsuImageCalcType;
+    using OtsuImageCalcType = itk::OtsuThresholdCalculator<HistogramType>;
     typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
     OtsuImageCalc->SetInput( histGenerator->GetOutput() );
     OtsuImageCalc->Update();
@@ -173,9 +173,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     threshold_low_foreground = otsuThresholdResult;
     }
 
-  typedef BinaryThresholdImageFilter<TInputImage,
-                                     IntegerImageType>
-    InputThresholdFilterType;
+  using InputThresholdFilterType = BinaryThresholdImageFilter<TInputImage,
+                                     IntegerImageType>;
   typename InputThresholdFilterType::Pointer threshold =
     InputThresholdFilterType::New();
   threshold->SetInput( this->GetInput() );
@@ -191,16 +190,16 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
             << static_cast<int>( threshold_hi_foreground ) << "]"
             << std::endl;
 
-  typedef ConnectedComponentImageFilter<IntegerImageType,
-                                        IntegerImageType> FilterType;
+  using FilterType = ConnectedComponentImageFilter<IntegerImageType,
+                                        IntegerImageType>;
   typename FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
   //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
   //  watcher.QuietOn();
   labelConnectedComponentsFilter->SetInput( threshold->GetOutput() );
   // labelConnectedComponentsFilter->Update();
 
-  typedef RelabelComponentImageFilter<IntegerImageType,
-                                      IntegerImageType> RelabelType;
+  using RelabelType = RelabelComponentImageFilter<IntegerImageType,
+                                      IntegerImageType>;
   typename RelabelType::Pointer relabel = RelabelType::New();
   relabel->SetInput( labelConnectedComponentsFilter->GetOutput() );
 
@@ -214,8 +213,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     std::cerr << excep << std::endl;
     }
 
-  typedef BinaryThresholdImageFilter<IntegerImageType,
-                                     IntegerImageType> ThresholdFilterType;
+  using ThresholdFilterType = BinaryThresholdImageFilter<IntegerImageType,
+                                     IntegerImageType>;
   // unsigned short numObjects = relabel->GetNumberOfObjects();
   // std::cout << "Removed " << numObjects - 1 << " smaller objects." <<
   // std::endl;
@@ -228,13 +227,12 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   LargestFilter->SetUpperThreshold(1);
   LargestFilter->Update();
 
-  typedef BinaryBallStructuringElement<typename IntegerImageType::
+  using myKernelType = BinaryBallStructuringElement<typename IntegerImageType::
                                        PixelType,
-                                       IntegerImageType::ImageDimension>
-    myKernelType;
+                                       IntegerImageType::ImageDimension>;
 
-  typedef BinaryErodeImageFilter<IntegerImageType, IntegerImageType,
-                                 myKernelType> ErodeFilterType;
+  using ErodeFilterType = BinaryErodeImageFilter<IntegerImageType, IntegerImageType,
+                                 myKernelType>;
   typename ErodeFilterType::Pointer ErodeFilter = ErodeFilterType::New();
     {
     myKernelType dilateBall;
@@ -261,8 +259,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     erodeBall.SetRadius(erodeBallSize);
     erodeBall.CreateStructuringElement();
 
-    typedef BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
-                                    myKernelType> DilateFilterType;
+    using DilateFilterType = BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
+                                    myKernelType>;
     typename DilateFilterType::Pointer DilateFilter = DilateFilterType::New();
 
     // DilateFilter->SetForegroundValue(1);
@@ -291,9 +289,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   // background labeled image, and then choose one of those locations as the
   // seed.
   // For now just choose all the corners as seed points
-  typedef ConnectedThresholdImageFilter<IntegerImageType,
-                                        IntegerImageType>
-    seededConnectedThresholdFilterType;
+  using seededConnectedThresholdFilterType = ConnectedThresholdImageFilter<IntegerImageType,
+                                        IntegerImageType>;
   typename seededConnectedThresholdFilterType::Pointer
   seededConnectedThresholdFilter = seededConnectedThresholdFilterType::New();
 
@@ -351,8 +348,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     if( m_DilateSize > 0.0 )
       {
       // Dilate to get some background to better drive BSplineRegistration
-      typedef itk::BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
-                                           myKernelType> DilateType;
+      using DilateType = itk::BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
+                                           myKernelType>;
 
       myKernelType dilateBall;
       typename myKernelType::SizeType dilateBallSize;
@@ -378,7 +375,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
       }
     }
 
-  typedef CastImageFilter<IntegerImageType, OutputImageType> outputCasterType;
+  using outputCasterType = CastImageFilter<IntegerImageType, OutputImageType>;
   typename outputCasterType::Pointer outputCaster = outputCasterType::New();
   outputCaster->SetInput(dilateMask);
 

@@ -47,7 +47,7 @@ template <typename TImage>
 typename TImage::Pointer
 readImage(const char *fn)
 {
-  typedef itk::ImageFileReader<TImage> ReaderType;
+  using ReaderType = itk::ImageFileReader<TImage>;
   typename ReaderType::Pointer reader = ReaderType::New();
 
   reader->SetFileName(fn);
@@ -60,7 +60,7 @@ template <typename TImage>
 void
 writeImage(const char *fn, const TImage *ip)
 {
-  typedef itk::ImageFileWriter<TImage> WriterType;
+  using WriterType = itk::ImageFileWriter<TImage>;
   typename WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
 
@@ -75,7 +75,7 @@ writeImage(const char *fn, const TImage *ip)
 // writeImageAsByte
 // {
 //  typedef itk::Cast
-//  typedef itk::ImageFileWriter<TImage> WriterType;
+//  using WriterType = itk::ImageFileWriter<TImage>;
 // }
 
 // void

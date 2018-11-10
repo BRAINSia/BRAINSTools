@@ -114,7 +114,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   // Initialize the seed points
   // ////////////////////////////////////////////////////////////////////////
 
-  typedef itk::ImageRegionConstIterator<MaskImageType> ConstMaskIteratorType;
+  using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
   ConstMaskIteratorType maskIt( m_StartingRegion, m_StartingRegion->GetLargestPossibleRegion() );
   int                   count = 0;
   for( maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt )

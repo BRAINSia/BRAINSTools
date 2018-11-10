@@ -36,17 +36,17 @@ public:
 protected:
 
   /// To/from ITK
-  typedef float InputImagePixelType;
-  typedef float OutputImagePixelType;
-  typedef itk::Image<InputImagePixelType, 2> InputImageType;
-  typedef itk::Image<OutputImagePixelType, 2> OutputImageType;
+  using InputImagePixelType = float;
+  using OutputImagePixelType = float;
+  using InputImageType = itk::Image<InputImagePixelType, 2>;
+  using OutputImageType = itk::Image<OutputImagePixelType, 2>;
 
-  typedef itk::VTKImageImport<InputImageType> ImageImportType;
-  typedef itk::VTKImageExport<OutputImageType> ImageExportType;
+  using ImageImportType = itk::VTKImageImport<InputImageType>;
+  using ImageExportType = itk::VTKImageExport<OutputImageType>;
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
 
-  typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
+  using GenericFilterType = itk::ImageToImageFilter<InputImageType,OutputImageType>;
   GenericFilterType::Pointer m_Filter;
 
   vtkITKImageToImageFilter2DFF ( GenericFilterType* filter )

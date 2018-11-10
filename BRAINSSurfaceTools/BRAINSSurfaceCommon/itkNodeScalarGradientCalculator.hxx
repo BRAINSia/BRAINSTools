@@ -233,7 +233,7 @@ void
 NodeScalarGradientCalculator<TInputMesh, TScalar>
 ::SetContainersToNullValues()
 {
-  typedef typename DerivativeType::ValueType DerivativeValueType;
+  using DerivativeValueType = typename DerivativeType::ValueType;
 
   DerivativeType nullDerivative;
   nullDerivative.Fill( NumericTraits<DerivativeValueType>::ZeroValue() );
@@ -333,7 +333,7 @@ NodeScalarGradientCalculator<TInputMesh, TScalar>
 
   double angle = std::atan2( scaledSinus, scaledCosinus );
 
-  typedef Versor<double> VersorType;
+  using VersorType = Versor<double>;
 
   VersorType versor;
   versor.Set( axis, angle );

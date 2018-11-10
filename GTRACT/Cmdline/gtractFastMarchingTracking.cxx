@@ -136,10 +136,10 @@ int main(int argc, char *argv[])
     }
 
   /* Read Tensor Image */
-  typedef double                                    TensorElementType;
-  typedef itk::DiffusionTensor3D<TensorElementType> TensorPixelType;
-  typedef itk::Image<TensorPixelType, 3>            TensorImageType;
-  typedef itk::ImageFileReader<TensorImageType>     TensorImageReaderType;
+  using TensorElementType = double;
+  using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
 
@@ -157,9 +157,9 @@ int main(int argc, char *argv[])
   AdaptOriginAndDirection<TensorImageType>( tensorImage );
 
   /* Read Cost Image */
-  typedef float                               PixelType;
-  typedef itk::Image<PixelType, 3>            CostImageType;
-  typedef itk::ImageFileReader<CostImageType> CostImageReaderType;
+  using PixelType = float;
+  using CostImageType = itk::Image<PixelType, 3>;
+  using CostImageReaderType = itk::ImageFileReader<CostImageType>;
   CostImageReaderType::Pointer costImageReader = CostImageReaderType::New();
   costImageReader->SetFileName( inputCostVolume );
 
@@ -177,8 +177,8 @@ int main(int argc, char *argv[])
   AdaptOriginAndDirection<CostImageType>( costImage );
 
   /* Read Anisotropy Image */
-  typedef itk::Image<PixelType, 3>                  AnisotropyImageType;
-  typedef itk::ImageFileReader<AnisotropyImageType> AnisotropyImageReaderType;
+  using AnisotropyImageType = itk::Image<PixelType, 3>;
+  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(  inputAnisotropyVolume );
 
@@ -196,9 +196,9 @@ int main(int argc, char *argv[])
   AdaptOriginAndDirection<AnisotropyImageType>( anisotropyImage );
 
   /* Read the Mask Seed Region */
-  typedef signed short                        MaskPixelType;
-  typedef itk::Image<MaskPixelType, 3>        MaskImageType;
-  typedef itk::ImageFileReader<MaskImageType> MaskImageReaderType;
+  using MaskPixelType = signed short;
+  using MaskImageType = itk::Image<MaskPixelType, 3>;
+  using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
   MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName( inputStartingSeedsLabelMapVolume );
 
@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
     }
 
   /* Threshold Starting Label Map */
-  typedef itk::ThresholdImageFilter<MaskImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
   ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput( startingSeedImageReader->GetOutput() );
   startingThresholdFilter->SetLower( static_cast<MaskPixelType>( startingSeedsLabel ) );
@@ -224,8 +224,8 @@ int main(int argc, char *argv[])
   AdaptOriginAndDirection<MaskImageType>( startingSeedMask );
 
   /*Set the Parameters and Run the DtiFastMarchingTrackingFilter */
-  typedef itk::DtiFastMarchingTrackingFilter<TensorImageType, AnisotropyImageType, CostImageType,
-                                             MaskImageType> TrackingFilterType;
+  using TrackingFilterType = itk::DtiFastMarchingTrackingFilter<TensorImageType, AnisotropyImageType, CostImageType,
+                                             MaskImageType>;
   TrackingFilterType::Pointer trackFilter = TrackingFilterType::New();
 
   trackFilter->SetCostImage( costImage );

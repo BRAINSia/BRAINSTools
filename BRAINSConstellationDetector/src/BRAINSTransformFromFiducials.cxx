@@ -40,10 +40,10 @@
 
 namespace
 {
-typedef  itk::Point<double, 3>              ImagePointType;
-typedef  std::vector<ImagePointType>        PointList;
-typedef itk::VersorRigid3DTransform<double> VersorRigidTransformType;
-typedef itk::Similarity3DTransform<double>  SimilarityTransformType;
+using ImagePointType = itk::Point<double, 3>;
+using PointList = std::vector<ImagePointType>;
+using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
+using SimilarityTransformType = itk::Similarity3DTransform<double>;
 
 // Function to convert a point from std::vector to itk::Point
 // this also performs the RAS -> LPS conversion necessary
@@ -122,8 +122,8 @@ static SimilarityTransformType::Pointer DoIt_Similarity(PointList fixedPoints, P
   // workaround a bug in older versions of ITK
   similarityTransform->SetScale(1.0);
 
-  typedef itk::LandmarkBasedTransformInitializer<SimilarityTransformType,
-                                                 itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+  using InitializerType = itk::LandmarkBasedTransformInitializer<SimilarityTransformType,
+                                                 itk::Image<short, 3>, itk::Image<short, 3> >;
   InitializerType::Pointer initializer = InitializerType::New();
 
   // This expects a VersorRigid3D.  The similarity transform works because
@@ -151,8 +151,8 @@ static VersorRigidTransformType::Pointer DoIt_Rigid(PointList fixedPoints, Point
 
   rigidTransform->SetIdentity();
 
-  typedef itk::LandmarkBasedTransformInitializer<VersorRigidTransformType,
-                                                 itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+  using InitializerType = itk::LandmarkBasedTransformInitializer<VersorRigidTransformType,
+                                                 itk::Image<short, 3>, itk::Image<short, 3> >;
   InitializerType::Pointer initializer = InitializerType::New();
 
   // This expects a VersorRigid3D.  The similarity transform works because
@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
         std::cerr << "Must supply both fixed and moving landmark files" << std::endl;
         return EXIT_FAILURE;
         }
-      typedef std::map<std::string, ImagePointType> LocalLandmarksMapType;
+      using LocalLandmarksMapType = std::map<std::string, ImagePointType>;
 
       // NOTE: ReadSlicer3toITKLmk returns points in LPS system
       LocalLandmarksMapType fixedLandmarkMap = ReadSlicer3toITKLmk( fixedLandmarksFile );
@@ -244,7 +244,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   GenericTransformType::Pointer genericTransform = nullptr;
 
   if( transformType == "Rigid" )

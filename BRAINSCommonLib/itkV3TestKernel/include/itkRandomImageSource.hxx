@@ -242,7 +242,7 @@ RandomImageSource<TOutputImage>
   // Support progress methods/callbacks
   ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
-  typedef typename TOutputImage::PixelType scalarType;
+  using scalarType = typename TOutputImage::PixelType;
   typename TOutputImage::Pointer image = this->GetOutput(0);
 
   ImageRegionIterator<TOutputImage> it(image, outputRegionForThread);
@@ -254,7 +254,7 @@ RandomImageSource<TOutputImage>
 
   double dMin = static_cast<double>( m_Min );
   double dMax = static_cast<double>( m_Max );
-  for( ; !it.IsAtEnd(); ++it )
+  for(; !it.IsAtEnd(); ++it )
     {
     sample_seed = ( sample_seed * 16807 ) % 2147483647L;
     u = static_cast<double>( sample_seed ) / 2147483711UL;

@@ -65,7 +65,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 
   const CellType * cell = cells->ElementAt( cellIndex );
 
-  typedef typename CellType::PointIdentifier PointIdentifier;
+  using PointIdentifier = typename CellType::PointIdentifier;
 
   const PointIdentifier * pointIds = cell->GetPointIds();
 
@@ -130,7 +130,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
 
   const CellType * cell = cells->ElementAt( cellIndex );
 
-  typedef typename CellType::PointIdentifier PointIdentifier;
+  using PointIdentifier = typename CellType::PointIdentifier;
 
   const PointIdentifier * pointIds = cell->GetPointIds();
 

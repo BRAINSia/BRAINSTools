@@ -44,9 +44,9 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 
   m_OutputDirection.SetIdentity();
 
-  typedef ThinPlateSplineKernelTransform<
+  using DefaultTransformType = ThinPlateSplineKernelTransform<
       double,
-      Self::ImageDimension >  DefaultTransformType;
+      Self::ImageDimension >;
 
   m_KernelTransform = DefaultTransformType::New();
 
@@ -109,8 +109,8 @@ void
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrepareKernelBaseSpline()
 {
-  typedef typename KernelTransformType::PointsContainer LandmarkContainer;
-  typedef typename LandmarkContainer::Pointer           LandmarkContainerPointer;
+  using LandmarkContainer = typename KernelTransformType::PointsContainer;
+  using LandmarkContainerPointer = typename LandmarkContainer::Pointer;
 
   // Source contains points with physical coordinates of the
   // destination displacement fields (the inverse field)
@@ -120,9 +120,9 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   // displacement in the inverse direction.
   LandmarkContainerPointer target = LandmarkContainer::New();
 
-  typedef itk::VectorResampleImageFilter<
+  using ResamplerType = itk::VectorResampleImageFilter<
       InputImageType,
-      InputImageType> ResamplerType;
+      InputImageType>;
 
   typename ResamplerType::Pointer resampler = ResamplerType::New();
 
@@ -133,9 +133,9 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 
   typename InputImageType::SpacingType spacing = inputImage->GetSpacing();
 
-  typedef typename InputImageType::RegionType InputRegionType;
-  typedef typename InputImageType::SizeType   InputSizeType;
-  typedef typename InputImageType::IndexType  InputIndexType;
+  using InputRegionType = typename InputImageType::RegionType;
+  using InputSizeType = typename InputImageType::SizeType;
+  using InputIndexType = typename InputImageType::IndexType;
 
   InputRegionType region;
 
@@ -166,7 +166,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 
   const InputImageType *sampledInput = resampler->GetOutput();
 
-  typedef ImageRegionConstIteratorWithIndex<InputImageType> IteratorType;
+  using IteratorType = ImageRegionConstIteratorWithIndex<InputImageType>;
 
   unsigned int landmarkId = 0;
 
@@ -228,8 +228,8 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   outputPtr->Allocate();
 
   // Create an iterator that will walk the output region for this thread.
-  typedef ImageRegionIteratorWithIndex<
-      TOutputImage> OutputIterator;
+  using OutputIterator = ImageRegionIteratorWithIndex<
+      TOutputImage>;
 
   OutputImageRegionType region = outputPtr->GetRequestedRegion();
 
@@ -239,8 +239,8 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   // to an output pixel
   IndexType outputIndex;         // Index to current output pixel
 
-  typedef typename KernelTransformType::InputPointType  InputPointType;
-  typedef typename KernelTransformType::OutputPointType OutputPointType;
+  using InputPointType = typename KernelTransformType::InputPointType;
+  using OutputPointType = typename KernelTransformType::OutputPointType;
 
   InputPointType outputPoint;    // Coordinates of current output pixel
 

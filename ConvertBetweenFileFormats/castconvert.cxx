@@ -180,15 +180,15 @@ int  main(  int  argc,  char *argv[] )
 
     /** Initial image type. */
     constexpr unsigned int Dimension = 3;
-    typedef short PixelType;
+    using PixelType = short;
 
-    /** Some typedef's. */
-    typedef itk::Image<PixelType, Dimension> ImageType;
-    typedef itk::ImageFileReader<ImageType>  ReaderType;
-    typedef itk::ImageIOBase                 ImageIOBaseType;
-    typedef itk::GDCMImageIO                 GDCMImageIOType;
-    typedef itk::GDCMSeriesFileNames         GDCMNamesGeneratorType;
-    typedef std::vector<std::string>         FileNamesContainerType;
+    /** Some type alias's. */
+    using ImageType = itk::Image<PixelType, Dimension>;
+    using ReaderType = itk::ImageFileReader<ImageType>;
+    using ImageIOBaseType = itk::ImageIOBase;
+    using GDCMImageIOType = itk::GDCMImageIO;
+    using GDCMNamesGeneratorType = itk::GDCMSeriesFileNames;
+    using FileNamesContainerType = std::vector<std::string>;
 
     /** Create a testReader. */
     ReaderType::Pointer testReader = ReaderType::New();

@@ -39,7 +39,7 @@
 #include <csignal>
 #include <algorithm>
 
-typedef unsigned int LOOPITERTYPE;
+using LOOPITERTYPE = unsigned int;
 
 //  std::isnan(value) || std::isinf(value) )
 #if 1  // Runtime performance penalty that can be used to find faulty code
@@ -126,22 +126,22 @@ public:
   using std::map<Key, T, firstInOrderingOfStrings>::operator[];
 };
 
-typedef double                          FloatingPrecision;
-typedef itk::Image<unsigned char, 3>    ByteImageType;
-typedef itk::Image<float, 3>            FloatImageType;
-typedef FloatImageType::Pointer         FloatImagePointerType;
-typedef itk::Image<signed short int, 3> ShortImageType;
+using FloatingPrecision = double;
+using ByteImageType = itk::Image<unsigned char, 3>;
+using FloatImageType = itk::Image<float, 3>;
+using FloatImagePointerType = FloatImageType::Pointer;
+using ShortImageType = itk::Image<signed short int, 3>;
 
-typedef itk::Image<float, 3> CorrectIntensityImageType;
+using CorrectIntensityImageType = itk::Image<float, 3>;
 
-typedef orderedmap<std::string,std::string> ImageByTypeMap;
+using ImageByTypeMap = orderedmap<std::string,std::string>;
 
-typedef std::vector<FloatImagePointerType>        FloatImageVector;
-typedef orderedmap<std::string, FloatImageVector> MapOfFloatImageVectors;
+using FloatImageVector = std::vector<FloatImagePointerType>;
+using MapOfFloatImageVectors = orderedmap<std::string, FloatImageVector>;
 
-typedef itk::Transform<double, 3, 3>               GenericTransformType;
-typedef std::vector<GenericTransformType::Pointer> TransformList;
-typedef orderedmap<std::string,TransformList>      MapOfTransformLists;
+using GenericTransformType = itk::Transform<double, 3, 3>;
+using TransformList = std::vector<GenericTransformType::Pointer>;
+using MapOfTransformLists = orderedmap<std::string,TransformList>;
 
 /** A utiliy class for holding statistical information
  * for all image channels for a given tissue class type
@@ -149,9 +149,9 @@ typedef orderedmap<std::string,TransformList>      MapOfTransformLists;
 class RegionStats
 {
 public:
-  typedef vnl_matrix<FloatingPrecision>         MatrixType;
-  typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
-  typedef orderedmap<std::string,double>        MeanMapType;
+  using MatrixType = vnl_matrix<FloatingPrecision>;
+  using MatrixInverseType = vnl_matrix_inverse<FloatingPrecision>;
+  using MeanMapType = orderedmap<std::string,double>;
   RegionStats() : m_Means(), m_Covariance(), m_Weighting(0.0)
   {
   }
@@ -210,9 +210,9 @@ NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
 {
   muLogMacro(<< "\nNormalize input intensity images..." << std::endl);
 
-  typedef typename itk::Statistics::ImageToHistogramFilter<ImageType>     HistogramFilterType;
-  typedef typename HistogramFilterType::InputBooleanObjectType            InputBooleanObjectType;
-  typedef typename HistogramFilterType::HistogramSizeType                 HistogramSizeType;
+  using HistogramFilterType = typename itk::Statistics::ImageToHistogramFilter<ImageType>;
+  using InputBooleanObjectType = typename HistogramFilterType::InputBooleanObjectType;
+  using HistogramSizeType = typename HistogramFilterType::HistogramSizeType;
 
   HistogramSizeType histogramSize( 1 );
   histogramSize[0] = 256;
@@ -230,7 +230,7 @@ NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
   float lowerValue = histogramFilter->GetOutput()->Quantile( 0, 0 );
   float upperValue = histogramFilter->GetOutput()->Quantile( 0, 1 );
 
-  typedef typename itk::IntensityWindowingImageFilter<ImageType, ImageType> IntensityWindowingImageFilterType;
+  using IntensityWindowingImageFilterType = typename itk::IntensityWindowingImageFilter<ImageType, ImageType>;
   typename IntensityWindowingImageFilterType::Pointer windowingFilter = IntensityWindowingImageFilterType::New();
   windowingFilter->SetInput( inputImage );
   windowingFilter->SetWindowMinimum( lowerValue );
@@ -326,7 +326,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 CopyImage(const typename ImageType::Pointer & input )
 {
-  typedef itk::ImageDuplicator<ImageType> ImageDupeType;
+  using ImageDupeType = itk::ImageDuplicator<ImageType>;
   typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
   MyDuplicator->SetInputImage(input);
   MyDuplicator->Update();

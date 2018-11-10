@@ -69,16 +69,14 @@ void itkSimpleDiffeomorphicRegistration::InitializePreprocessor()
 
 void itkSimpleDiffeomorphicRegistration::Initialization()
 {
-  typedef itk::DiffeomorphicDemonsRegistrationWithMaskFilter<TRealImage,
+  using RegistrationFilterType = itk::DiffeomorphicDemonsRegistrationWithMaskFilter<TRealImage,
                                                              TRealImage,
-                                                             TDisplacementField>
-    RegistrationFilterType;
+                                                             TDisplacementField>;
   RegistrationFilterType::Pointer filter = RegistrationFilterType::New();
-  typedef itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-                                               TDisplacementField>
-    BaseRegistrationFilterType;
+  using BaseRegistrationFilterType = itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
+                                               TDisplacementField>;
   BaseRegistrationFilterType::Pointer actualfilter;
-  // typedef RegistrationFilterType::GradientType TGradientType;
+  // using TGradientType = RegistrationFilterType::GradientType;
   TRealImage::Pointer movingBinaryVolumeImage;
   TRealImage::Pointer fixedBinaryVolumeImage;
   constexpr double otsuPercentileThreshold = 0.01;
@@ -91,7 +89,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   //     m_MovingImage,
   //     otsuPercentileThreshold,
   //     closingSize);
-  typedef itk::LargestForegroundFilledMaskImageFilter<TRealImage> LFFMaskFilterType;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TRealImage>;
   LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   LFF->SetInput(m_FixedImage);
   LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
@@ -105,19 +103,19 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   LFF->UpdateLargestPossibleRegion();
   movingBinaryVolumeImage = LFF->GetOutput();
 
-  typedef unsigned char                                   MaskPixelType;
-  typedef itk::Image<MaskPixelType, DIM>                  MaskImageType;
-  typedef itk::CastImageFilter<TRealImage, MaskImageType> CastImageFilter;
+  using MaskPixelType = unsigned char;
+  using MaskImageType = itk::Image<MaskPixelType, DIM>;
+  using CastImageFilter = itk::CastImageFilter<TRealImage, MaskImageType>;
 
-  typedef itk::SpatialObject<DIM> ImageMaskType;
-  typedef ImageMaskType::Pointer  ImageMaskPointer;
+  using ImageMaskType = itk::SpatialObject<DIM>;
+  using ImageMaskPointer = ImageMaskType::Pointer;
 
   CastImageFilter::Pointer castFixedMaskImage = CastImageFilter::New();
   castFixedMaskImage->SetInput(fixedBinaryVolumeImage);
   castFixedMaskImage->Update();
 
   // convert mask image to mask
-  typedef itk::ImageMaskSpatialObject<DIM> ImageMaskSpatialObjectType;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<DIM>;
   ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
   fixedMask->SetImage( castFixedMaskImage->GetOutput() );
   fixedMask->ComputeObjectToWorldTransform();
@@ -143,7 +141,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   actualfilter = filter;
   m_DemonsRegistrator->SetRegistrationFilter(actualfilter);
 
-  typedef itk::Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = itk::Array<unsigned int>;
   IterationsArrayType numberOfIterations;
   numberOfIterations.SetSize(NumberOfLevels);
   numberOfIterations.SetElement(0, NumberOfIteration0);
@@ -152,7 +150,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   numberOfIterations.SetElement(3, NumberOfIteration3);
   numberOfIterations.SetElement(4, NumberOfIteration4);
 
-  typedef itk::FixedArray<unsigned int, 3> ShrinkFactorsType;
+  using ShrinkFactorsType = itk::FixedArray<unsigned int, 3>;
   ShrinkFactorsType theMovingImageShrinkFactors;
   ShrinkFactorsType theFixedImageShrinkFactors;
   for( int i = 0; i < 3; i++ )

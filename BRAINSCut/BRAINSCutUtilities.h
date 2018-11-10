@@ -37,13 +37,13 @@
 // #include "opencv2/flann/flann.hpp" **opencv 2
 #include "opencv2/flann.hpp"
 
-// typedef CvANN_MLP_Revision OpenCVMLPType;
-//typedef CvANN_MLP OpenCVMLPType;
-typedef cv::ml::ANN_MLP OpenCVMLPType;
+// using OpenCVMLPType = CvANN_MLP_Revision;
+//using OpenCVMLPType = CvANN_MLP;
+using OpenCVMLPType = cv::ml::ANN_MLP;
 
 /** Training data set definition */
 
-typedef float scalarType;
+using scalarType = float;
 
 struct pairedTrainingSetType
   {
@@ -75,30 +75,30 @@ static const float        FLOAT_TOLERANCE = 0.01;
 */
 constexpr unsigned char DIMENSION = 3;
 
-typedef double                                 ReadInPixelType;
-typedef itk::Image<ReadInPixelType, DIMENSION> ReadInImageType;
-typedef ReadInImageType::Pointer               ReadInImagePointer;
+using ReadInPixelType = double;
+using ReadInImageType = itk::Image<ReadInPixelType, DIMENSION>;
+using ReadInImagePointer = ReadInImageType::Pointer;
 
-typedef float                                   WorkingPixelType;
-typedef itk::Image<WorkingPixelType, DIMENSION> WorkingImageType;
-typedef WorkingImageType::Pointer               WorkingImagePointer;
+using WorkingPixelType = float;
+using WorkingImageType = itk::Image<WorkingPixelType, DIMENSION>;
+using WorkingImagePointer = WorkingImageType::Pointer;
 
-typedef std::vector<WorkingImagePointer> WorkingImageVectorType;
+using WorkingImageVectorType = std::vector<WorkingImagePointer>;
 
 /* Deformations */
-typedef double                                        DeformationScalarType;
-typedef itk::Vector<DeformationScalarType, DIMENSION> DeformationPixelType;
-typedef itk::Image<DeformationPixelType, DIMENSION>   DisplacementFieldType;
+using DeformationScalarType = double;
+using DeformationPixelType = itk::Vector<DeformationScalarType, DIMENSION>;
+using DisplacementFieldType = itk::Image<DeformationPixelType, DIMENSION>;
 
-typedef WorkingImageType::IndexType WorkingIndexType;
+using WorkingIndexType = WorkingImageType::IndexType;
 
-typedef std::vector<WorkingPixelType> InputVectorType;
-typedef std::vector<WorkingPixelType> OutputVectorType;
+using InputVectorType = std::vector<WorkingPixelType>;
+using OutputVectorType = std::vector<WorkingPixelType>;
 
 // HACK TODO:  Regina int below should be unsigned int to avoid negative index numbers
-typedef std::map<int, InputVectorType>  InputVectorMapType; // < index ,feature vector > pair
-typedef std::map<int, OutputVectorType> OutputVectorMapType;
-typedef std::map<int, scalarType>       PredictValueMapType;
+using InputVectorMapType = std::map<int, InputVectorType>; // < index ,feature vector > pair
+using OutputVectorMapType = std::map<int, OutputVectorType>;
+using PredictValueMapType = std::map<int, scalarType>;
 
 std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
 

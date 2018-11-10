@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef signed short CodePixelType;
+  using CodePixelType = signed short;
 
-  typedef itk::Image<CodePixelType, 3>        CodeImageType;
-  typedef itk::ImageFileReader<CodeImageType> CodeImageReaderType;
+  using CodeImageType = itk::Image<CodePixelType, 3>;
+  using CodeImageReaderType = itk::ImageFileReader<CodeImageType>;
   CodeImageReaderType::Pointer codeImageReader = CodeImageReaderType::New();
   codeImageReader->SetFileName( inputCodeVolume );
 
@@ -106,10 +106,10 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef signed short PixelType;
+  using PixelType = signed short;
 
-  typedef itk::Image<PixelType, 3>        ImageType;
-  typedef itk::ImageFileReader<ImageType> ReferenceImageReaderType;
+  using ImageType = itk::Image<PixelType, 3>;
+  using ReferenceImageReaderType = itk::ImageFileReader<ImageType>;
   ReferenceImageReaderType::Pointer referenceImageReader = ReferenceImageReaderType::New();
   referenceImageReader->SetFileName( inputReferenceVolume );
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::OrientImageFilter<CodeImageType, ImageType> OrientFilterType;
+  using OrientFilterType = itk::OrientImageFilter<CodeImageType, ImageType>;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput( referenceImageReader->GetOutput() );
   orientImageFilter->SetDesiredCoordinateDirection( codeImageReader->GetOutput()->GetDirection() );
@@ -139,13 +139,13 @@ int main(int argc, char *argv[])
     }
 
   // Read the transform
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
-  typedef itk::NearestNeighborInterpolateImageFunction<CodeImageType, double> InterpolatorFunctionType;
+  using InterpolatorFunctionType = itk::NearestNeighborInterpolateImageFunction<CodeImageType, double>;
   InterpolatorFunctionType::Pointer interpolatorFunction = InterpolatorFunctionType::New();
 
-  typedef itk::ResampleImageFilter<CodeImageType, CodeImageType> ResampleFilterType;
+  using ResampleFilterType = itk::ResampleImageFilter<CodeImageType, CodeImageType>;
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
     {
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::OrientImageFilter<CodeImageType, CodeImageType> OrientCodeFilterType;
+  using OrientCodeFilterType = itk::OrientImageFilter<CodeImageType, CodeImageType>;
   OrientCodeFilterType::Pointer orientCodeImageFilter = OrientCodeFilterType::New();
   orientCodeImageFilter->SetInput( resample->GetOutput() );
   orientCodeImageFilter->SetDesiredCoordinateDirection( codeImageReader->GetOutput()->GetDirection() );
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
   CodeImageType::Pointer resampledImage = orientCodeImageFilter->GetOutput();
   resampledImage->SetMetaDataDictionary( codeImageReader->GetOutput()->GetMetaDataDictionary() );
 
-  typedef itk::ImageFileWriter<CodeImageType> ImageFileWriterType;
+  using ImageFileWriterType = itk::ImageFileWriter<CodeImageType>;
   ImageFileWriterType::Pointer ImageWriter =  ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName( outputVolume );

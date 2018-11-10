@@ -37,19 +37,19 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef  double        InputPixelType;
-  typedef  unsigned char OutputPixelType;
+  using InputPixelType = double;
+  using OutputPixelType = unsigned char;
 
   constexpr unsigned char Dim = 3;
 
-  typedef itk::Image<InputPixelType,  Dim> InputImageType;
-  typedef itk::Image<OutputPixelType, Dim> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType,  Dim>;
+  using OutputImageType = itk::Image<OutputPixelType, Dim>;
 
-  typedef itk::BinaryThresholdImageFilter<
-      InputImageType, OutputImageType>  FilterType;
+  using FilterType = itk::BinaryThresholdImageFilter<
+      InputImageType, OutputImageType>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   FilterType::Pointer filter = FilterType::New();

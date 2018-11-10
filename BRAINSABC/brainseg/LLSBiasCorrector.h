@@ -59,10 +59,10 @@ class LLSBiasCorrector : public itk::Object
 {
 public:
 
-  /** Standard class typedefs. */
-  typedef LLSBiasCorrector              Self;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = LLSBiasCorrector;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -71,50 +71,50 @@ public:
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   // Image types
-  typedef TInputImage                       InputImageType;
-  typedef typename TInputImage::Pointer     InputImagePointer;
-  typedef typename TInputImage::IndexType   InputImageIndexType;
-  typedef typename TInputImage::PixelType   InputImagePixelType;
-  typedef typename TInputImage::RegionType  InputImageRegionType;
-  typedef typename TInputImage::SizeType    InputImageSizeType;
-  typedef typename TInputImage::SpacingType InputImageSpacingType;
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename TInputImage::Pointer;
+  using InputImageIndexType = typename TInputImage::IndexType;
+  using InputImagePixelType = typename TInputImage::PixelType;
+  using InputImageRegionType = typename TInputImage::RegionType;
+  using InputImageSizeType = typename TInputImage::SizeType;
+  using InputImageSpacingType = typename TInputImage::SpacingType;
 
-  typedef std::vector<InputImagePointer> InputImageVector;
-  typedef orderedmap<std::string,InputImageVector> MapOfInputImageVectors;
+  using InputImageVector = std::vector<InputImagePointer>;
+  using MapOfInputImageVectors = orderedmap<std::string,InputImageVector>;
 
-  typedef itk::Image<unsigned char, Self::ImageDimension> ByteImageType;
-  typedef typename ByteImageType::Pointer                                   ByteImagePointer;
-  typedef typename ByteImageType::IndexType                                 ByteImageIndexType;
-  typedef typename ByteImageType::OffsetType                                ByteImageOffsetType;
-  typedef typename ByteImageType::PixelType                                 ByteImagePixelType;
-  typedef typename ByteImageType::RegionType                                ByteImageRegionType;
-  typedef typename ByteImageType::SizeType                                  ByteImageSizeType;
+  using ByteImageType = itk::Image<unsigned char, Self::ImageDimension>;
+  using ByteImagePointer = typename ByteImageType::Pointer;
+  using ByteImageIndexType = typename ByteImageType::IndexType;
+  using ByteImageOffsetType = typename ByteImageType::OffsetType;
+  using ByteImagePixelType = typename ByteImageType::PixelType;
+  using ByteImageRegionType = typename ByteImageType::RegionType;
+  using ByteImageSizeType = typename ByteImageType::SizeType;
 
-  typedef TProbabilityImage                         ProbabilityImageType;
-  typedef typename ProbabilityImageType::Pointer    ProbabilityImagePointer;
-  typedef typename ProbabilityImageType::IndexType  ProbabilityImageIndexType;
-  typedef typename ProbabilityImageType::PixelType  ProbabilityImagePixelType;
-  typedef typename ProbabilityImageType::RegionType ProbabilityImageRegionType;
-  typedef typename ProbabilityImageType::SizeType   ProbabilityImageSizeType;
+  using ProbabilityImageType = TProbabilityImage;
+  using ProbabilityImagePointer = typename ProbabilityImageType::Pointer;
+  using ProbabilityImageIndexType = typename ProbabilityImageType::IndexType;
+  using ProbabilityImagePixelType = typename ProbabilityImageType::PixelType;
+  using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
+  using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
 
-  typedef itk::Image<float, 3>          InternalImageType;
-  typedef InternalImageType::Pointer    InternalImagePointer;
-  typedef InternalImageType::IndexType  InternalImageIndexType;
-  typedef InternalImageType::PixelType  InternalImagePixelType;
-  typedef InternalImageType::RegionType InternalImageRegionType;
-  typedef InternalImageType::SizeType   InternalImageSizeType;
+  using InternalImageType = itk::Image<float, 3>;
+  using InternalImagePointer = InternalImageType::Pointer;
+  using InternalImageIndexType = InternalImageType::IndexType;
+  using InternalImagePixelType = InternalImageType::PixelType;
+  using InternalImageRegionType = InternalImageType::RegionType;
+  using InternalImageSizeType = InternalImageType::SizeType;
 
-  typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double > InputImageNNInterpolationType;
-  typedef itk::NearestNeighborInterpolateImageFunction< ByteImageType, double > MaskNNInterpolationType;
+  using InputImageNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< InputImageType, double >;
+  using MaskNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< ByteImageType, double >;
 
-  typedef double ScalarType;
+  using ScalarType = double;
 
-  typedef vnl_matrix<ScalarType> MatrixType;
-  typedef vnl_vector<ScalarType> VectorType;
+  using MatrixType = vnl_matrix<ScalarType>;
+  using VectorType = vnl_vector<ScalarType>;
 
-  typedef vnl_matrix_inverse<ScalarType> MatrixInverseType;
-  typedef vnl_qr<ScalarType>             MatrixQRType;
-  typedef vnl_svd<ScalarType>            MatrixSVDType;
+  using MatrixInverseType = vnl_matrix_inverse<ScalarType>;
+  using MatrixQRType = vnl_qr<ScalarType>;
+  using MatrixSVDType = vnl_svd<ScalarType>;
 
   // The maximum polynomial degree of the bias field estimate
   void SetMaxDegree(unsigned int);

@@ -52,8 +52,8 @@ namespace itk
     const double lOtsuPercentileThreshold
   )
     {
-    typedef ResampleInPlaceImageFilter<SImageType, SImageType> ResampleIPFilterType;
-    typedef ResampleIPFilterType::Pointer                      ResampleIPFilterPointer;
+    using ResampleIPFilterType = ResampleInPlaceImageFilter<SImageType, SImageType>;
+    using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
 
     const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - lACLowerBound;
       {
@@ -81,7 +81,7 @@ namespace itk
       //  HACK -- chopping based on AcLowerBound
       //  This is ugly code that could be re-written much simpler.
       //
-      typedef itk::ImageRegionIteratorWithIndex<SImageType> IteratorType;
+      using IteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
       constexpr double thousand = 1000.0;   // we need a DOUBLE constant, not a
       // FLOAT constant, for exact switch
       // comparisons.
@@ -105,7 +105,7 @@ namespace itk
           {
           //  No double opportunity when generating both kinds of images.
           constexpr unsigned int closingSize = 7;
-          typedef itk::LargestForegroundFilledMaskImageFilter<SImageType> LFFMaskFilterType;
+          using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
           LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
           LFF->SetInput(lOutputResampledImage);
           LFF->SetOtsuPercentileThreshold(lOtsuPercentileThreshold);
@@ -134,9 +134,9 @@ namespace itk
           }
         // Map the ZeroOne image through the inverse zero-centered transform
         // to make the clipping factor image:
-        typedef itk::NearestNeighborInterpolateImageFunction<SImageType, double> NearestNeighborInterpolatorType;
+        using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<SImageType, double>;
         NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
-        typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
+        using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
         ResampleFilterType::Pointer ResampleFilter = ResampleFilterType::New();
         ResampleFilter->SetInput(ZeroOneImage);
         ResampleFilter->SetInterpolator(interpolator);
@@ -154,7 +154,7 @@ namespace itk
         SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
 
         // Multiply the raw input image by the clipping factor image:
-        typedef itk::MultiplyImageFilter<SImageType, SImageType> MultiplyFilterType;
+        using MultiplyFilterType = itk::MultiplyImageFilter<SImageType, SImageType>;
         MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
         MultiplyFilter->SetInput1(lImageToBeResampled);
         MultiplyFilter->SetInput2(lClippingFactorImage);

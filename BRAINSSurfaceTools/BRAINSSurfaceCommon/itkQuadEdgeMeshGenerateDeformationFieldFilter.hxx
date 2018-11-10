@@ -116,7 +116,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
     itkExceptionMacro("Input PointSet is missing");
     }
 
-  typedef typename InputPointSetType::PointsContainer DestinationPointsContainer;
+  using DestinationPointsContainer = typename InputPointSetType::PointsContainer;
 
   const DestinationPointsContainer * destinationPoints = inputPointSet->GetPoints();
 
@@ -136,21 +136,21 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
 
   ProgressReporter progress(this, 0, numberOfPoints);
 
-  typedef typename DestinationPointsContainer::ConstIterator DestinationPointIterator;
+  using DestinationPointIterator = typename DestinationPointsContainer::ConstIterator;
 
   DestinationPointIterator destinationPointItr = destinationPoints->Begin();
   DestinationPointIterator destinationPointEnd = destinationPoints->End();
 
-  typedef typename InputMeshType::PointsContainer      SourcePointContainer;
-  typedef typename SourcePointContainer::ConstIterator SourcePointIterator;
+  using SourcePointContainer = typename InputMeshType::PointsContainer;
+  using SourcePointIterator = typename SourcePointContainer::ConstIterator;
 
   const SourcePointContainer * sourcePoints = inputMesh->GetPoints();
 
   SourcePointIterator sourcePointItr = sourcePoints->Begin();
 
-  typedef typename OutputMeshType::PointDataContainer    DisplacementVectorContainer;
-  typedef typename DisplacementVectorContainer::Pointer  DisplacementVectorContainerPointer;
-  typedef typename DisplacementVectorContainer::Iterator DisplacementVectorIterator;
+  using DisplacementVectorContainer = typename OutputMeshType::PointDataContainer;
+  using DisplacementVectorContainerPointer = typename DisplacementVectorContainer::Pointer;
+  using DisplacementVectorIterator = typename DisplacementVectorContainer::Iterator;
 
   DisplacementVectorContainerPointer displacementVectors = DisplacementVectorContainer::New();
 
@@ -158,7 +158,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
 
   DisplacementVectorIterator displacementVectorItr = displacementVectors->Begin();
 
-  typedef typename InputMeshType::PointType::VectorType VectorType;
+  using VectorType = typename InputMeshType::PointType::VectorType;
 
   while( destinationPointItr != destinationPointEnd )
     {

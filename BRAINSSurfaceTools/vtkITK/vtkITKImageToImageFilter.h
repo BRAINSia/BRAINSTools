@@ -258,8 +258,8 @@ public:
       }
   };
 
-  typedef itk::SimpleMemberCommand<vtkITKImageToImageFilter> MemberCommand;
-  typedef MemberCommand::Pointer MemberCommandPointer;
+  using MemberCommand = itk::SimpleMemberCommand<vtkITKImageToImageFilter>;
+  using MemberCommandPointer = MemberCommand::Pointer;
 
   itk::ProcessObject::Pointer m_Process;
   MemberCommandPointer m_ProgressCommand;

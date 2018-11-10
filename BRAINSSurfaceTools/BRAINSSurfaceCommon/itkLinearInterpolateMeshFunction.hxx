@@ -240,7 +240,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 
     const InputMeshType * mesh = this->GetInputMesh();
 
-    typedef typename InputMeshType::QEPrimal EdgeType;
+    using EdgeType = typename InputMeshType::QEPrimal;
     //
     // Find the edge connected to the closest point.
     //
@@ -297,7 +297,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 
   const InputMeshType * mesh = this->GetInputMesh();
 
-  typedef typename InputMeshType::QEPrimal EdgeType;
+  using EdgeType = typename InputMeshType::QEPrimal;
 
   //
   // Find the edge connected to the closest point.
@@ -323,7 +323,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 {
   const InputMeshType * mesh = this->GetInputMesh();
 
-  typedef typename InputMeshType::PointsContainer PointsContainer;
+  using PointsContainer = typename InputMeshType::PointsContainer;
 
   const PointsContainer * points = mesh->GetPoints();
 

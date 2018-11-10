@@ -34,21 +34,21 @@ int STAPLE(unsigned int argc, char *argv[] )
   itk::TimeProbe timer;
   timer.Start();
 
-  typedef itk::Image<unsigned int, ImageDimension> LabelImageType;
+  using LabelImageType = itk::Image<unsigned int, ImageDimension>;
 
-  typedef itk::MultiLabelSTAPLEImageFilter<LabelImageType, LabelImageType> FilterType;
+  using FilterType = itk::MultiLabelSTAPLEImageFilter<LabelImageType, LabelImageType>;
 
   typename FilterType::Pointer filter = FilterType::New();
 
-  typedef std::vector<std::string>                  StringVectorType;
-  typedef typename StringVectorType::const_iterator StringVectorIteratorType;
+  using StringVectorType = std::vector<std::string>;
+  using StringVectorIteratorType = typename StringVectorType::const_iterator;
 
   StringVectorIteratorType currentLabel = inputLabelVolume.begin();
   for( unsigned int i = 0;
        i < inputLabelVolume.size();
        i++, ++currentLabel )
     {
-    typedef itk::ImageFileReader<LabelImageType> ReaderType;
+    using ReaderType = itk::ImageFileReader<LabelImageType>;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( *currentLabel );
     reader->Update();
@@ -89,7 +89,7 @@ int STAPLE(unsigned int argc, char *argv[] )
 //    std::cout << "\t" << i << ": " << priors[i] << "\n";
 //    }
 
-  typedef itk::ImageFileWriter<LabelImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<LabelImageType>;
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputVolume );
   writer->SetInput( filter->GetOutput() );

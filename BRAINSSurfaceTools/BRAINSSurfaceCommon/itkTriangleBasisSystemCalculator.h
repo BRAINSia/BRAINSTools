@@ -40,11 +40,11 @@ template <typename TMesh, typename TBasisSystem>
 class TriangleBasisSystemCalculator : public Object
 {
 public:
-  /** Standard class typedefs. */
-  typedef TriangleBasisSystemCalculator Self;
-  typedef Object                        Superclass;
-  typedef SmartPointer<Self>            Pointer;
-  typedef SmartPointer<const Self>      ConstPointer;
+  /** Standard class type alias. */
+  using Self = TriangleBasisSystemCalculator;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -52,14 +52,14 @@ public:
   /** Standard part of every itk Object. */
   itkTypeMacro(TriangleBasisSystemCalculator, Object);
 
-  typedef TBasisSystem                       BasisSystemType;
-  typedef TMesh                              MeshType;
-  typedef typename MeshType::ConstPointer    MeshConstPointer;
-  typedef typename MeshType::CellType        CellType;
-  typedef typename MeshType::PointType       PointType;
-  typedef typename MeshType::CellsContainer  CellsContainer;
-  typedef typename MeshType::PointsContainer PointsContainer;
-  typedef typename PointType::VectorType     VectorType;
+  using BasisSystemType = TBasisSystem;
+  using MeshType = TMesh;
+  using MeshConstPointer = typename MeshType::ConstPointer;
+  using CellType = typename MeshType::CellType;
+  using PointType = typename MeshType::PointType;
+  using CellsContainer = typename MeshType::CellsContainer;
+  using PointsContainer = typename MeshType::PointsContainer;
+  using VectorType = typename PointType::VectorType;
 
   /** Set/Get the mesh for which the basis system will be computed. */
   itkSetConstObjectMacro( InputMesh, MeshType );

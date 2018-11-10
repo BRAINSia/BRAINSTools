@@ -51,7 +51,7 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
 
   itk::MetaDataDictionary & dict = img->GetMetaDataDictionary();
 
-  for( unsigned curGradientVec = 0; ; ++curGradientVec )
+  for( unsigned curGradientVec = 0;; ++curGradientVec )
     {
     std::stringstream labelSS;
     labelSS << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << curGradientVec;
@@ -63,7 +63,7 @@ RecoverGVector(typename itk::Image<PixelType, DIMENSION>::Pointer & img)
       }
     std::stringstream   valSS(valString);
     std::vector<double> vec;
-    for( ; ; )
+    for(;; )
       {
       double curVal;
       valSS >> curVal;
@@ -86,8 +86,8 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
 {
   int rval(EXIT_SUCCESS);
 
-  typedef itk::VectorImage<PixelType, DIMENSION> ImageType;
-  typedef itk::ImageFileReader<ImageType>        FileReaderType;
+  using ImageType = itk::VectorImage<PixelType, DIMENSION>;
+  using FileReaderType = itk::ImageFileReader<ImageType>;
 
   typename FileReaderType::Pointer firstReader = FileReaderType::New();
   typename FileReaderType::Pointer secondReader = FileReaderType::New();
@@ -147,7 +147,7 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
       }
     }
 #else
-  typedef itk::SubtractImageFilter<ImageType> SubtractFilterType;
+  using SubtractFilterType = itk::SubtractImageFilter<ImageType>;
   typename SubtractFilterType::Pointer subtractFilter =
     SubtractFilterType::New();
   subtractFilter->SetInput1(firstReader->GetOutput() );
@@ -156,7 +156,7 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
 
   typename ImageType::Pointer subtractImage = subtractFilter->GetOutput();
 
-  typedef itk::StatisticsImageFilter<ImageType> StatisticsFilterType;
+  using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
   typename StatisticsFilterType::Pointer statisticsFilter =
     StatisticsFilterType::New();
   statisticsFilter->SetInput(subtractImage);
@@ -177,7 +177,7 @@ int DoIt( const std::string & inputVolume1, const std::string & inputVolume2, Pi
     std::cerr << "Image Data Differs -- min diff "
               << statisticsFilter->GetMinimum() << " max diff "
               << statisticsFilter->GetMaximum() << std::endl;
-    typedef typename itk::ImageFileWriter<ImageType> ImageWriter;
+    using ImageWriter = typename itk::ImageFileWriter<ImageType>;
     typename ImageWriter::Pointer writer = ImageWriter::New();
     writer->SetInput(subtractImage);
     std::string filename =
@@ -244,7 +244,7 @@ void GetImageType(std::string fileName,
                   itk::ImageIOBase::IOPixelType & pixelType,
                   itk::ImageIOBase::IOComponentType & componentType)
 {
-  typedef itk::Image<short, 3> ImageType;
+  using ImageType = itk::Image<short, 3>;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
     itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str() );

@@ -42,14 +42,14 @@ template <typename PixelType>
 int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
                              std::string discreteVolumeName, std::string outputVolumeName)
 {
-  // typedef float PixelType;
+  // using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef typename itk::Image<PixelType,  Dimension>    ImageType;
-  typedef typename itk::Image<unsigned int, Dimension>  ShortImageType;
-  typedef typename itk::ImageFileReader<ImageType>      ReaderType;
-  typedef typename itk::ImageFileReader<ShortImageType> ShortReaderType;
-  typedef typename itk::ImageFileWriter<ImageType>      WriterType;
+  using ImageType = typename itk::Image<PixelType,  Dimension>;
+  using ShortImageType = typename itk::Image<unsigned int, Dimension>;
+  using ReaderType = typename itk::ImageFileReader<ImageType>;
+  using ShortReaderType = typename itk::ImageFileReader<ShortImageType>;
+  using WriterType = typename itk::ImageFileWriter<ImageType>;
 
   static constexpr typename ShortImageType::PixelType grayMatterDiscreteValue  = 2;
   static constexpr typename ShortImageType::PixelType basalGrayMatterDiscreteValue  = 3;
@@ -92,7 +92,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   // Use the labelStatistics filter to count the number of voxels for each tissue type.
   // Need this for the logistic regression problem later.
 
-  typedef itk::LabelStatisticsImageFilter<ShortImageType, ShortImageType> LabelStatisticsFilterType;
+  using LabelStatisticsFilterType = itk::LabelStatisticsImageFilter<ShortImageType, ShortImageType>;
   LabelStatisticsFilterType::Pointer labelStatisticsFilter = LabelStatisticsFilterType::New();
   labelStatisticsFilter->SetInput(discreteVolume);
   labelStatisticsFilter->SetLabelInput(discreteVolume);
@@ -130,7 +130,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   unsigned int whiteVsCSFSampleCount = 0;
   unsigned int veinousBloodVsAllSampleCount = 0;
 
-  typedef itk::ImageRegionConstIterator<ImageType> ImageRegionConstIteratorType;
+  using ImageRegionConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
   ImageRegionConstIteratorType imgItr( t1Volume, t1Volume->GetRequestedRegion() );
 
   LogisticRegressionSample<PixelType> tempSample = LogisticRegressionSample<PixelType>(featureCount);
@@ -215,7 +215,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   logisticRegressionWhiteVsGray.TrainModel();
   logisticRegressionVeinousBloodVsAll.TrainModel();
 
-  typedef typename itk::ImageDuplicator<ImageType> ImageDuplicatorType;
+  using ImageDuplicatorType = typename itk::ImageDuplicator<ImageType>;
   typename ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
   t1DuplicateImageFilter->SetInputImage(t1Reader->GetOutput() );
   t1DuplicateImageFilter->Update();
@@ -365,7 +365,7 @@ int main(int argc, char * argv [])
     exit(1);
     }
 
-  typedef float PixelType;
+  using PixelType = float;
 
   ContinuousClassification<PixelType>(inputT1Volume, inputT2Volume, inputDiscreteVolume, outputVolume);
 

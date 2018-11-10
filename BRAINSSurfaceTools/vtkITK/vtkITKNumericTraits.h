@@ -16,13 +16,13 @@ namespace itk
 template <>
 class NumericTraits<__int64> : public std::numeric_limits<__int64> {
 public:
-  typedef __int64 ValueType;
-  typedef __int64 PrintType;
-  typedef unsigned __int64 AbsType;
-  typedef __int64 AccumulateType;
-  typedef double RealType;
-  typedef RealType ScalarRealType;
-  typedef float FloatType;
+  using ValueType = __int64;
+  using PrintType = __int64;
+  using AbsType = unsigned __int64;
+  using AccumulateType = __int64;
+  using RealType = double;
+  using ScalarRealType = RealType;
+  using FloatType = float;
   static const __int64 VTK_ITK_EXPORT Zero;
   static const __int64 VTK_ITK_EXPORT One;
 
@@ -41,13 +41,13 @@ public:
 template <>
 class NumericTraits<unsigned __int64> : public std::numeric_limits<unsigned __int64> {
 public:
-  typedef unsigned __int64 ValueType;
-  typedef unsigned __int64 PrintType;
-  typedef unsigned __int64 AbsType;
-  typedef unsigned __int64 AccumulateType;
-  typedef double RealType;
-  typedef RealType ScalarRealType;
-  typedef float FloatType;
+  using ValueType = unsigned __int64;
+  using PrintType = unsigned __int64;
+  using AbsType = unsigned __int64;
+  using AccumulateType = unsigned __int64;
+  using RealType = double;
+  using ScalarRealType = RealType;
+  using FloatType = float;
   static const unsigned __int64 VTK_ITK_EXPORT Zero;
   static const unsigned __int64 VTK_ITK_EXPORT One;
 

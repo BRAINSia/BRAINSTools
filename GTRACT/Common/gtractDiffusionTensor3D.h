@@ -97,11 +97,11 @@ template <typename TComponent>
 class gtractDiffusionTensor3D : public DiffusionTensor3D<TComponent>
 {
 public:
-  /** Standard class typedefs. */
-  typedef gtractDiffusionTensor3D                   Self;
-  typedef itk::DiffusionTensor3D<TComponent>        Superclass;
-  typedef typename Superclass::RealValueType        RealValueType;
-  typedef typename Superclass::EigenValuesArrayType EigenValuesArrayType;
+  /** Standard class type alias. */
+  using Self = gtractDiffusionTensor3D;
+  using Superclass = itk::DiffusionTensor3D<TComponent>;
+  using RealValueType = typename Superclass::RealValueType;
+  using EigenValuesArrayType = typename Superclass::EigenValuesArrayType;
   /** Get the Volume Ratio from the Tensor. */
   RealValueType GetVolumeRatio() const;
 

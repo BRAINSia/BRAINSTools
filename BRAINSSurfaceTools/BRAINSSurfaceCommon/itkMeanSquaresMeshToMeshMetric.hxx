@@ -65,7 +65,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
   this->SetTransformParameters( parameters );
 
-  typedef typename InterpolatorType::PointType InterpolationPointType;
+  using InterpolationPointType = typename InterpolatorType::PointType;
   InterpolationPointType pointToEvaluate;
 
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )
@@ -145,7 +145,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
   derivative = DerivativeType( ParametersDimension );
   derivative.Fill( NumericTraits<typename DerivativeType::ValueType>::ZeroValue() );
 
-  typedef typename InterpolatorType::PointType InterpolationPointType;
+  using InterpolationPointType = typename InterpolatorType::PointType;
   InterpolationPointType pointToEvaluate;
 
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )
@@ -246,7 +246,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
   derivative = DerivativeType( ParametersDimension );
   derivative.Fill( NumericTraits<typename DerivativeType::ValueType>::ZeroValue() );
 
-  typedef typename InterpolatorType::PointType InterpolationPointType;
+  using InterpolationPointType = typename InterpolatorType::PointType;
   InterpolationPointType pointToEvaluate;
 
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )

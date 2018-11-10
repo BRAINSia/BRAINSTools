@@ -47,12 +47,12 @@ class ICCDeformableFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableFunction);
 
-  /** Standard class typedefs. */
-  typedef ICCDeformableFunction Self;
-  typedef PDEDeformableRegistrationFunction<
-      TFixedImage, TMovingImage, TDisplacementField>    Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = ICCDeformableFunction;
+  using Superclass = PDEDeformableRegistrationFunction<
+      TFixedImage, TMovingImage, TDisplacementField>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -62,21 +62,21 @@ public:
                 PDEDeformableRegistrationFunction );
 
   /** MovingImage image type. */
-  typedef typename Superclass::MovingImageType    MovingImageType;
-  typedef typename Superclass::MovingImagePointer MovingImagePointer;
-  typedef typename MovingImageType::PixelType     MovingPixelType;
+  using MovingImageType = typename Superclass::MovingImageType;
+  using MovingImagePointer = typename Superclass::MovingImagePointer;
+  using MovingPixelType = typename MovingImageType::PixelType;
 
   /** FixedImage image type. */
-  typedef typename Superclass::FixedImageType    FixedImageType;
-  typedef typename Superclass::FixedImagePointer FixedImagePointer;
-  typedef typename FixedImageType::IndexType     IndexType;
-  typedef typename FixedImageType::SizeType      SizeType;
-  typedef typename FixedImageType::SpacingType   SpacingType;
-  typedef typename FixedImageType::DirectionType DirectionType;
-  typedef typename FixedImageType::PixelType     FixedPixelType;
+  using FixedImageType = typename Superclass::FixedImageType;
+  using FixedImagePointer = typename Superclass::FixedImagePointer;
+  using IndexType = typename FixedImageType::IndexType;
+  using SizeType = typename FixedImageType::SizeType;
+  using SpacingType = typename FixedImageType::SpacingType;
+  using DirectionType = typename FixedImageType::DirectionType;
+  using FixedPixelType = typename FixedImageType::PixelType;
 
   /** Deformation field type. */
-  typedef typename Superclass::DisplacementFieldType DisplacementFieldType;
+  using DisplacementFieldType = typename Superclass::DisplacementFieldType;
   typedef typename Superclass::DisplacementFieldTypePointer
     DisplacementFieldTypePointer;
 
@@ -84,60 +84,58 @@ public:
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
 
   /** Inherit some enums from the superclass. */
-  typedef typename Superclass::PixelType        PixelType;
-  typedef typename Superclass::RadiusType       RadiusType;
-  typedef typename Superclass::NeighborhoodType NeighborhoodType;
-  typedef typename Superclass::FloatOffsetType  FloatOffsetType;
-  typedef typename Superclass::TimeStepType     TimeStepType;
+  using PixelType = typename Superclass::PixelType;
+  using RadiusType = typename Superclass::RadiusType;
+  using NeighborhoodType = typename Superclass::NeighborhoodType;
+  using FloatOffsetType = typename Superclass::FloatOffsetType;
+  using TimeStepType = typename Superclass::TimeStepType;
 
   /** Interpolator type. */
-  typedef double CoordRepType;
-  typedef InterpolateImageFunction<
-      MovingImageType, CoordRepType>                   InterpolatorMovingType;
-  typedef typename InterpolatorMovingType::Pointer   InterpolatorMovingPointer;
-  typedef typename InterpolatorMovingType::PointType MovingPointType;
+  using CoordRepType = double;
+  using InterpolatorMovingType = InterpolateImageFunction<
+      MovingImageType, CoordRepType>;
+  using InterpolatorMovingPointer = typename InterpolatorMovingType::Pointer;
+  using MovingPointType = typename InterpolatorMovingType::PointType;
 
-  typedef LinearInterpolateImageFunction<
-      MovingImageType, CoordRepType>                   DefaultMovingInterpolatorType;
+  using DefaultMovingInterpolatorType = LinearInterpolateImageFunction<
+      MovingImageType, CoordRepType>;
 
-  typedef LinearInterpolateImageFunction<
-      FixedImageType, CoordRepType>                   DefaultFixedInterpolatorType;
+  using DefaultFixedInterpolatorType = LinearInterpolateImageFunction<
+      FixedImageType, CoordRepType>;
 
   /** Warper type */
-  typedef WarpImageFilter<
+  using WarperMovingType = WarpImageFilter<
       MovingImageType,
-      MovingImageType, DisplacementFieldType>           WarperMovingType;
-  typedef typename WarperMovingType::Pointer WarperMovingPointer;
+      MovingImageType, DisplacementFieldType>;
+  using WarperMovingPointer = typename WarperMovingType::Pointer;
 
-  typedef unsigned char                                                MaskPixelType;
-  typedef Image<MaskPixelType, Self::ImageDimension> MaskImageType;
-  typedef typename MaskImageType::Pointer                              MaskImagePointer;
+  using MaskPixelType = unsigned char;
+  using MaskImageType = Image<MaskPixelType, Self::ImageDimension>;
+  using MaskImagePointer = typename MaskImageType::Pointer;
 
-  typedef WarpImageFilter<MaskImageType,
-                          MaskImageType, DisplacementFieldType>           MaskWarperType;
-  typedef typename MaskWarperType::Pointer MaskWarperPointer;
+  using MaskWarperType = WarpImageFilter<MaskImageType,
+                          MaskImageType, DisplacementFieldType>;
+  using MaskWarperPointer = typename MaskWarperType::Pointer;
 
-  typedef std::complex<MovingPixelType> ComplexPixelType;
-  typedef itk::Vector<ComplexPixelType,
-                      Self::ImageDimension>             DisplacementFieldFFTPixelType;
-  typedef itk::Image<ComplexPixelType, Self::ImageDimension>              ComplexImageType;
-  typedef itk::Image<DisplacementFieldFFTPixelType, Self::ImageDimension> DisplacementFieldFFTType;
+  using ComplexPixelType = std::complex<MovingPixelType>;
+  using DisplacementFieldFFTPixelType = itk::Vector<ComplexPixelType,
+                      Self::ImageDimension>;
+  using ComplexImageType = itk::Image<ComplexPixelType, Self::ImageDimension>;
+  using DisplacementFieldFFTType = itk::Image<DisplacementFieldFFTPixelType, Self::ImageDimension>;
 
-  typedef typename DisplacementFieldFFTType::Pointer DisplacementFieldFFTPointer;
-  typedef typename ComplexImageType::Pointer         ComplexImagePointer;
+  using DisplacementFieldFFTPointer = typename DisplacementFieldFFTType::Pointer;
+  using ComplexImagePointer = typename ComplexImageType::Pointer;
 
-  typedef VectorFFTWRealToHalfHermitianForwardFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             Self::ImageDimension>
-    FFTWRealToComplexType;
-  typedef VectorFFTWHalfHermitianToRealInverseFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             Self::ImageDimension>
-    FFTWComplexToRealType;
+  using FFTWRealToComplexType = VectorFFTWRealToHalfHermitianForwardFFTImageFilter<typename TDisplacementField::PixelType,
+                                                             Self::ImageDimension>;
+  using FFTWComplexToRealType = VectorFFTWHalfHermitianToRealInverseFFTImageFilter<typename TDisplacementField::PixelType,
+                                                             Self::ImageDimension>;
 
-  typedef SubtractImageFilter<FixedImageType, FixedImageType, FixedImageType> SubtractImageType;
-  typedef DerivativeImageFilter<MovingImageType, MovingImageType>             DerivativeType;
-  typedef ImageRegionIterator<DisplacementFieldType>                          IterationDisplacementFieldType;
-  typedef ImageRegionIterator<FixedImageType>                                 IterationImageType;
-  typedef ImageRegionConstIterator<FixedImageType>                            ConstIterationImageType;
+  using SubtractImageType = SubtractImageFilter<FixedImageType, FixedImageType, FixedImageType>;
+  using DerivativeType = DerivativeImageFilter<MovingImageType, MovingImageType>;
+  using IterationDisplacementFieldType = ImageRegionIterator<DisplacementFieldType>;
+  using IterationImageType = ImageRegionIterator<FixedImageType>;
+  using ConstIterationImageType = ImageRegionConstIterator<FixedImageType>;
 //  typedef SubtractImageFilter<DisplacementFieldType,  DisplacementFieldType, DisplacementFieldType>
 // SubtractDisplacementFieldType;
 //  typedef SubtractImageFilter<DisplacementFieldFFTType, DisplacementFieldFFTType, DisplacementFieldFFTType>
@@ -146,21 +144,21 @@ public:
 // MultiplyByConstantImageType;
 //  typedef MultiplyByConstantImageFilter<DisplacementFieldFFTType, float, DisplacementFieldFFTType>
 // MultiplyByConstantFFTType;
-  typedef AddImageFilter<DisplacementFieldType, DisplacementFieldType, DisplacementFieldType> AddImageType;
-  typedef Image<float, Self::ImageDimension>                                FloatImageType;
+  using AddImageType = AddImageFilter<DisplacementFieldType, DisplacementFieldType, DisplacementFieldType>;
+  using FloatImageType = Image<float, Self::ImageDimension>;
 
   // typename TDisplacementField::PixelType
   /** Covariant vector type. */
-  typedef CovariantVector<double, Self::ImageDimension> CovariantVectorType;
+  using CovariantVectorType = CovariantVector<double, Self::ImageDimension>;
 
-  typedef SpatialObject<Self::ImageDimension> MaskType;
-  typedef typename MaskType::Pointer                            MaskPointer;
+  using MaskType = SpatialObject<Self::ImageDimension>;
+  using MaskPointer = typename MaskType::Pointer;
 
-  typedef LandmarkSpatialObject<Self::ImageDimension> LandmarkType;
-  typedef typename LandmarkType::Pointer                                LandmarkPointer;
+  using LandmarkType = LandmarkSpatialObject<Self::ImageDimension>;
+  using LandmarkPointer = typename LandmarkType::Pointer;
 
-  typedef PointSet<MovingPixelType, Self::ImageDimension> PointSetType;
-  typedef typename PointSetType::Pointer                                    PointSetPointer;
+  using PointSetType = PointSet<MovingPixelType, Self::ImageDimension>;
+  using PointSetPointer = typename PointSetType::Pointer;
   /** Set the moving image interpolator. */
   void SetMovingImageInterpolator( InterpolatorMovingType * ptr )
   {
@@ -380,7 +378,7 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
   /** FixedImage image neighborhood iterator type. */
-  typedef ConstNeighborhoodIterator<FixedImageType> FixedImageNeighborhoodIteratorType;
+  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator<FixedImageType>;
 
   /** A global data type for this class of equation. Used to store
    * iterators for the fixed image. */

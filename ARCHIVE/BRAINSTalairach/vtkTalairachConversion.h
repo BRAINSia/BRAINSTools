@@ -34,9 +34,9 @@ public:
   static vtkTalairachConversion * New();
 
   /* Declare image type */
-  typedef unsigned char PixelType;
+  using PixelType = unsigned char;
   static constexpr int Dimension = 3;
-  typedef itk::Image<PixelType, Dimension> ImageType;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   /* Define the Hemisphere Types */
   enum { right = 0, left = 1, both = 2 };

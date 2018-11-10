@@ -34,9 +34,9 @@ public slots:
   void viewChanged(const QString & newView);
 
 public:
-  typedef itk::Image<float, 3>         ReadImageType;
-  typedef itk::Image<unsigned char, 3> ImageType;
-  typedef ImageType::Pointer           ImagePointer;
+  using ReadImageType = itk::Image<float, 3>;
+  using ImageType = itk::Image<unsigned char, 3>;
+  using ImagePointer = ImageType::Pointer;
   QImageDisplay(QWidget *parent = 0);
   void SetImage(const std::string & fileName);
 

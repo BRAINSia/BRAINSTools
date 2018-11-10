@@ -25,13 +25,13 @@ main(int argc, char * *argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  typedef itk::AffineTransform<double, 3> TransformationType;
+  using TransformationType = itk::AffineTransform<double, 3>;
 
   TransformationType::Pointer transform = TransformationType::New();
 
   transform->SetIdentity();
 
-  typedef itk::TransformFileWriter WriterType;
+  using WriterType = itk::TransformFileWriter;
   WriterType::Pointer writer =  WriterType::New();
 
   writer->SetFileName("./identityTransformation.mat");

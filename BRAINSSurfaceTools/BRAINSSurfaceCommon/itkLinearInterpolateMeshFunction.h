@@ -43,11 +43,11 @@ class LinearInterpolateMeshFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateMeshFunction);
 
-  /** Standard class typedefs. */
-  typedef LinearInterpolateMeshFunction       Self;
-  typedef InterpolateMeshFunction<TInputMesh> Superclass;
-  typedef SmartPointer<Self>                  Pointer;
-  typedef SmartPointer<const Self>            ConstPointer;
+  /** Standard class type alias. */
+  using Self = LinearInterpolateMeshFunction;
+  using Superclass = InterpolateMeshFunction<TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -55,25 +55,25 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(LinearInterpolateMeshFunction, InterpolateMeshFunction);
 
-  /** OutputType typedef support. */
-  typedef typename Superclass::OutputType OutputType;
+  /** OutputType type alias support. */
+  using OutputType = typename Superclass::OutputType;
 
-  /** InputMeshType typedef support. */
-  typedef typename Superclass::InputMeshType InputMeshType;
+  /** InputMeshType type alias support. */
+  using InputMeshType = typename Superclass::InputMeshType;
 
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
-  /** Point typedef support. */
-  typedef typename Superclass::PointType       PointType;
-  typedef typename Superclass::PointIdentifier PointIdentifier;
-  typedef typename Superclass::CellIdentifier  CellIdentifier;
+  /** Point type alias support. */
+  using PointType = typename Superclass::PointType;
+  using PointIdentifier = typename Superclass::PointIdentifier;
+  using CellIdentifier = typename Superclass::CellIdentifier;
 
-  /** RealType typedef support. */
-  typedef typename TInputMesh::PixelType      PixelType;
-  typedef typename Superclass::RealType       RealType;
-  typedef typename Superclass::DerivativeType DerivativeType;
-  typedef typename PointType::VectorType      VectorType;
+  /** RealType type alias support. */
+  using PixelType = typename TInputMesh::PixelType;
+  using RealType = typename Superclass::RealType;
+  using DerivativeType = typename Superclass::DerivativeType;
+  using VectorType = typename PointType::VectorType;
 
   /**
    * Interpolate the mesh at a point position.
@@ -96,7 +96,7 @@ public:
                                             const TArray & pixelArray3, const VectorType & u12, const VectorType & u32,
                                             TMatrix & jacobian);
 
-  typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
+  using InstanceIdentifierVectorType = typename Superclass::InstanceIdentifierVectorType;
 
   /** Find the triangle that contains the input point. Return the point Ids of the triangle vertices. */
   virtual bool FindTriangle( const PointType& point, InstanceIdentifierVectorType & pointIds ) const;
@@ -146,8 +146,8 @@ private:
 
   static constexpr unsigned int SurfaceDimension = 2;
 
-  typedef TriangleBasisSystem<VectorType, SurfaceDimension>                  TriangleBasisSystemType;
-  typedef TriangleBasisSystemCalculator<TInputMesh, TriangleBasisSystemType> TriangleBasisSystemCalculatorType;
+  using TriangleBasisSystemType = TriangleBasisSystem<VectorType, SurfaceDimension>;
+  using TriangleBasisSystemCalculatorType = TriangleBasisSystemCalculator<TInputMesh, TriangleBasisSystemType>;
 
   typename TriangleBasisSystemCalculatorType::Pointer m_TriangleBasisSystemCalculator;
 

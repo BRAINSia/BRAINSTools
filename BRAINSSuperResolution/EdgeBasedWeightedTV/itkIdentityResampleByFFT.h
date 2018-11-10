@@ -88,18 +88,18 @@ class IdentityResampleByFFT :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(IdentityResampleByFFT);
 
-  /** Standard class typedefs. */
-  typedef IdentityResampleByFFT                             Self;
-  typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
-  typedef SmartPointer< Self >                            Pointer;
-  typedef SmartPointer< const Self >                      ConstPointer;
+  /** Standard class type alias. */
+  using Self = IdentityResampleByFFT;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
-  typedef TInputImage                           InputImageType;
-  typedef TOutputImage                          OutputImageType;
-  typedef typename InputImageType::Pointer      InputImagePointer;
-  typedef typename InputImageType::ConstPointer InputImageConstPointer;
-  typedef typename OutputImageType::Pointer     OutputImagePointer;
-  typedef typename InputImageType::RegionType   InputImageRegionType;
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -112,40 +112,39 @@ public:
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
 
   /** base type for images of the current ImageDimension */
-  typedef ImageBase< Self::ImageDimension > ImageBaseType;
+  using ImageBaseType = ImageBase< Self::ImageDimension >;
 
-  /** Image size typedef. */
-  typedef Size< Self::ImageDimension > SizeType;
+  /** Image size type alias. */
+  using SizeType = Size< Self::ImageDimension >;
 
-  /** Image index typedef. */
-  typedef typename TOutputImage::IndexType IndexType;
+  /** Image index type alias. */
+  using IndexType = typename TOutputImage::IndexType;
 
-  /** Image point typedef. */
-  typedef typename InterpolatorType::PointType PointType;
-  //typedef typename TOutputImage::PointType            PointType;
+  /** Image point type alias. */
+  using PointType = typename InterpolatorType::PointType;
+  //using PointType = typename TOutputImage::PointType;
 
-  /** Image pixel value typedef. */
-  typedef typename TOutputImage::PixelType PixelType;
-  typedef typename TInputImage::PixelType  InputPixelType;
+  /** Image pixel value type alias. */
+  using PixelType = typename TOutputImage::PixelType;
+  using InputPixelType = typename TInputImage::PixelType;
 
-  typedef DefaultConvertPixelTraits<PixelType> PixelConvertType;
+  using PixelConvertType = DefaultConvertPixelTraits<PixelType>;
 
-  typedef typename PixelConvertType::ComponentType PixelComponentType;
+  using PixelComponentType = typename PixelConvertType::ComponentType;
 
   /** Input pixel continuous index typdef */
-  typedef ContinuousIndex< TTransformPrecisionType, ImageDimension >
-  ContinuousInputIndexType;
+  using ContinuousInputIndexType = ContinuousIndex< TTransformPrecisionType, ImageDimension >;
 
   /** Typedef to describe the output image region type. */
-  typedef typename TOutputImage::RegionType OutputImageRegionType;
+  using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** Image spacing,origin and direction typedef */
-  typedef typename TOutputImage::SpacingType   SpacingType;
-  typedef typename TOutputImage::PointType     OriginPointType;
-  typedef typename TOutputImage::DirectionType DirectionType;
+  /** Image spacing,origin and direction type alias */
+  using SpacingType = typename TOutputImage::SpacingType;
+  using OriginPointType = typename TOutputImage::PointType;
+  using DirectionType = typename TOutputImage::DirectionType;
 
   /** Typedef the reference image type to be the ImageBase of the OutputImageType */
-  typedef ImageBase<ImageDimension> ReferenceImageBaseType;
+  using ReferenceImageBaseType = ImageBase<ImageDimension>;
 
   itkSetMacro(Size, SizeType);
   itkGetConstReferenceMacro(Size, SizeType);

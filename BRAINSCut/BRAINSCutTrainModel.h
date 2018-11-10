@@ -27,7 +27,7 @@ public:
   BRAINSCutTrainModel( BRAINSCutDataHandler & dataHandler );
   virtual ~BRAINSCutTrainModel();
 
-  typedef cv::ml::RTrees CvRTrees;
+  using CvRTrees = cv::ml::RTrees;
 
   /** train */
   void InitializeNeuralNetwork();

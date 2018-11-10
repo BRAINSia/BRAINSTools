@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
     std::cout << "==============================================================" << std::endl;
     }
 
-  typedef itk::VersorRigid3DTransform<double> RigidTransformType;
+  using RigidTransformType = itk::VersorRigid3DTransform<double>;
   // Read the transform
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
   GenericTransformType::Pointer forwardTransform = itk::ReadTransformFromDisk(inputTransform);
   RigidTransformType::Pointer   reverseTransform = RigidTransformType::New();

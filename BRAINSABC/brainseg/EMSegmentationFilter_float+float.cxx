@@ -20,6 +20,6 @@
 
 #include "itkImage.h"
 
-typedef itk::Image<float, 3> FloatImageType;
+using FloatImageType = itk::Image<float, 3>;
 
 template class EMSegmentationFilter<FloatImageType, FloatImageType>;

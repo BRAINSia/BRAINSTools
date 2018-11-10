@@ -65,11 +65,11 @@ class MeshToMeshRegistrationMethod : public ProcessObject
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);
 
-  /** Standard class typedefs. */
-  typedef MeshToMeshRegistrationMethod Self;
-  typedef ProcessObject                Superclass;
-  typedef SmartPointer<Self>           Pointer;
-  typedef SmartPointer<const Self>     ConstPointer;
+  /** Standard class type alias. */
+  using Self = MeshToMeshRegistrationMethod;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -78,41 +78,41 @@ public:
   itkTypeMacro(MeshToMeshRegistrationMethod, ProcessObject);
 
   /**  Type of the Fixed Mesh. */
-  typedef          TFixedMesh                  FixedMeshType;
-  typedef typename FixedMeshType::ConstPointer FixedMeshConstPointer;
+  using FixedMeshType = TFixedMesh;
+  using FixedMeshConstPointer = typename FixedMeshType::ConstPointer;
 
   /**  Type of the Moving Mesh. */
-  typedef          TMovingMesh                  MovingMeshType;
-  typedef typename MovingMeshType::ConstPointer MovingMeshConstPointer;
+  using MovingMeshType = TMovingMesh;
+  using MovingMeshConstPointer = typename MovingMeshType::ConstPointer;
 
   /**  Type of the metric. */
-  typedef MeshToMeshMetric<FixedMeshType,
-                           MovingMeshType>   MetricType;
-  typedef typename MetricType::Pointer MetricPointer;
+  using MetricType = MeshToMeshMetric<FixedMeshType,
+                           MovingMeshType>;
+  using MetricPointer = typename MetricType::Pointer;
 
   /**  Type of the Transform . */
-  typedef  typename MetricType::TransformType TransformType;
-  typedef  typename TransformType::Pointer    TransformPointer;
+  using TransformType = typename MetricType::TransformType;
+  using TransformPointer = typename TransformType::Pointer;
 
   /**  Type of the Interpolator. */
-  typedef  typename MetricType::InterpolatorType InterpolatorType;
-  typedef  typename InterpolatorType::Pointer    InterpolatorPointer;
+  using InterpolatorType = typename MetricType::InterpolatorType;
+  using InterpolatorPointer = typename InterpolatorType::Pointer;
 
   /** Type for the output: Using Decorator pattern for enabling
    *  the Transform to be passed in the data pipeline */
-  typedef  DataObjectDecorator<TransformType>        TransformOutputType;
-  typedef typename TransformOutputType::Pointer      TransformOutputPointer;
-  typedef typename TransformOutputType::ConstPointer TransformOutputConstPointer;
+  using TransformOutputType = DataObjectDecorator<TransformType>;
+  using TransformOutputPointer = typename TransformOutputType::Pointer;
+  using TransformOutputConstPointer = typename TransformOutputType::ConstPointer;
 
   /**  Type of the optimizer. */
-  typedef   SingleValuedNonLinearOptimizer OptimizerType;
+  using OptimizerType = SingleValuedNonLinearOptimizer;
 
   /** Type of the Transformation parameters This is the same type used to
    *  represent the search space of the optimization algorithm */
-  typedef  typename MetricType::TransformParametersType ParametersType;
+  using ParametersType = typename MetricType::TransformParametersType;
 
   /** Smart Pointer type to a DataObject. */
-  typedef typename DataObject::Pointer DataObjectPointer;
+  using DataObjectPointer = typename DataObject::Pointer;
 
   /** Set/Get the Fixed Mesh. */
   itkSetConstObjectMacro( FixedMesh, FixedMeshType );

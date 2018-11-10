@@ -38,20 +38,20 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
                      bool areInputsNormalized,
                      bool verbose = false) // verbose was only used for debugging purposes, should always be false.
 {
-  typedef typename itk::NearestNeighborInterpolateImageFunction<
-    InputImageType, double >                                               InputImageNNInterpolationType;
-  typedef std::vector<typename InputImageNNInterpolationType::Pointer>     InputImageInterpolatorVector;
-  typedef std::vector<typename InputImageType::Pointer>                    InputImageVector;
-  typedef itk::Array< double >                                             MeasurementVectorType;
-  typedef itk::Statistics::ListSample< MeasurementVectorType >             SampleType;
-  typedef itk::Statistics::IntegrityMetricMembershipFunction< SampleType > IntegrityMetricType;
+  using InputImageNNInterpolationType = typename itk::NearestNeighborInterpolateImageFunction<
+    InputImageType, double >;
+  using InputImageInterpolatorVector = std::vector<typename InputImageNNInterpolationType::Pointer>;
+  using InputImageVector = std::vector<typename InputImageType::Pointer>;
+  using MeasurementVectorType = itk::Array< double >;
+  using SampleType = itk::Statistics::ListSample< MeasurementVectorType >;
+  using IntegrityMetricType = itk::Statistics::IntegrityMetricMembershipFunction< SampleType >;
 
-  typedef itk::Image< double, 3 >                                             RealImageType;
-  typedef itk::CastImageFilter< InputImageType, RealImageType >               CastToRealFilterType;
-  typedef itk::CastImageFilter< RealImageType, ByteImageType >                CastToByteFilterType;
-  typedef itk::CannyEdgeDetectionImageFilter< RealImageType, RealImageType >  CannyFilterType;
-  typedef typename itk::NearestNeighborInterpolateImageFunction<
-    ByteImageType, double >                                                   MaskNNInterpolationType;
+  using RealImageType = itk::Image< double, 3 >;
+  using CastToRealFilterType = itk::CastImageFilter< InputImageType, RealImageType >;
+  using CastToByteFilterType = itk::CastImageFilter< RealImageType, ByteImageType >;
+  using CannyFilterType = itk::CannyEdgeDetectionImageFilter< RealImageType, RealImageType >;
+  using MaskNNInterpolationType = typename itk::NearestNeighborInterpolateImageFunction<
+    ByteImageType, double >;
 
 
   muLogMacro(<< "\nGenerating pure plug mask..." << std::endl);
@@ -155,7 +155,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   edgeMaskInterp->SetInputImage( edgeMask );
 
   // Write to disk for debug
-  typedef itk::ImageFileWriter<ByteImageType> EdgeMaskWriterType;
+  using EdgeMaskWriterType = itk::ImageFileWriter<ByteImageType>;
   typename EdgeMaskWriterType::Pointer edgewriter = EdgeMaskWriterType::New();
   edgewriter->SetInput( edgeMask );
   edgewriter->SetFileName("DEBUG_Canny_Edge_Mask.nii.gz");
@@ -198,7 +198,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   stepSize[2] = 1.0/numberOfSubSamples[2];
 
   // Now iterate through the mask image
-  typedef typename itk::ImageRegionIteratorWithIndex< ByteImageType > MaskItType;
+  using MaskItType = typename itk::ImageRegionIteratorWithIndex< ByteImageType >;
   MaskItType maskIt( mask, mask->GetLargestPossibleRegion() );
   maskIt.GoToBegin();
 

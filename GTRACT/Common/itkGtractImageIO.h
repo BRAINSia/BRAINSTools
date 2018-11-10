@@ -61,21 +61,21 @@ class GTRACT_COMMON_EXPORT GtractImageIO : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(GtractImageIO);
 
-  typedef GtractImageIO                 Self;
-  typedef itk::Object                   Superclass;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  using Self = GtractImageIO;
+  using Superclass = itk::Object;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   itkNewMacro(Self);
   itkTypeMacro(GtractImageIO, itk::Object);
 
-  typedef itk::Image<signed short, 3>    Short3dImageType;
-  typedef itk::Image<signed short, 4>    Short4dImageType;
-  typedef itk::Image<float, 3>           Float3dImageType;
-  typedef itk::RGBAPixel<unsigned char>  RGBPixelType;
-  typedef itk::Image<RGBPixelType, 3>    Rgb3dImageType;
-  typedef itk::Vector<float, 6>          TensorPixelType;
-  typedef itk::Image<TensorPixelType, 3> TensorImageType;
+  using Short3dImageType = itk::Image<signed short, 3>;
+  using Short4dImageType = itk::Image<signed short, 4>;
+  using Float3dImageType = itk::Image<float, 3>;
+  using RGBPixelType = itk::RGBAPixel<unsigned char>;
+  using Rgb3dImageType = itk::Image<RGBPixelType, 3>;
+  using TensorPixelType = itk::Vector<float, 6>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
 
   /*** Get/Set the Images for I/O Routines ***/
   itkSetObjectMacro(Short3dImage, Short3dImageType);

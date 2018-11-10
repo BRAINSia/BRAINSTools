@@ -58,33 +58,33 @@ public:
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
 
-  /** Standard class typedefs. */
-  typedef MeshFunction Self;
-  typedef FunctionBase<
-      typename TInputMesh::PointType, TOutput>           Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = MeshFunction;
+  using Superclass = FunctionBase<
+      typename TInputMesh::PointType, TOutput>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(MeshFunction, FunctionBase);
 
-  /** InputMeshType typedef support. */
-  typedef TInputMesh InputMeshType;
+  /** InputMeshType type alias support. */
+  using InputMeshType = TInputMesh;
 
-  /** InputPixel typedef support */
-  typedef typename InputMeshType::PixelType InputPixelType;
+  /** InputPixel type alias support */
+  using InputPixelType = typename InputMeshType::PixelType;
 
-  /** InputMeshPointer typedef support */
-  typedef typename InputMeshType::ConstPointer InputMeshConstPointer;
+  /** InputMeshPointer type alias support */
+  using InputMeshConstPointer = typename InputMeshType::ConstPointer;
 
-  /** OutputType typedef support. */
-  typedef TOutput OutputType;
+  /** OutputType type alias support. */
+  using OutputType = TOutput;
 
-  /** CoordRepType typedef support. */
-  typedef typename InputMeshType::CoordRepType CoordRepType;
+  /** CoordRepType type alias support. */
+  using CoordRepType = typename InputMeshType::CoordRepType;
 
   /** Point Type. */
-  typedef typename InputMeshType::PointType PointType;
+  using PointType = typename InputMeshType::PointType;
 
   /** Set the input mesh.
    * \warning this method caches information.  If the Mesh has changed, user

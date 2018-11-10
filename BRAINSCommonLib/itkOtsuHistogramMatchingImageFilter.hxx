@@ -297,8 +297,8 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   OutputImagePointer     output = this->GetOutput();
 
   // Transform the source image and write to output.
-  typedef ImageRegionConstIterator<InputImageType> InputConstIterator;
-  typedef ImageRegionIterator<OutputImageType>     OutputIterator;
+  using InputConstIterator = ImageRegionConstIterator<InputImageType>;
+  using OutputIterator = ImageRegionIterator<OutputImageType>;
 
   InputConstIterator inIter(input, outputRegionForThread);
 
@@ -327,7 +327,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 
       {
       unsigned int j = 0;
-      for( ; j < m_NumberOfMatchPoints + 2; ++j )
+      for(; j < m_NumberOfMatchPoints + 2; ++j )
         {
         if( srcValue < m_QuantileTable[0][j] )
           {
@@ -399,12 +399,12 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   typename HistogramType::MeasurementVectorType measurement;
   measurement.SetSize(1);
 
-  typedef typename HistogramType::MeasurementType MeasurementType;
+  using MeasurementType = typename HistogramType::MeasurementType;
   measurement[0] = NumericTraits<MeasurementType>::ZeroValue();
 
     {
     // put each image pixel into the histogram
-    typedef ImageRegionConstIteratorWithIndex<InputImageType> ConstIterator;
+    using ConstIterator = ImageRegionConstIteratorWithIndex<InputImageType>;
     ConstIterator iter( image, image->GetBufferedRegion() );
 
     iter.GoToBegin();

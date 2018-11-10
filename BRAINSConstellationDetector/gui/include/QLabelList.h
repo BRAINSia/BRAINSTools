@@ -46,7 +46,7 @@ class QLabelList : public QListWidget
 {
   Q_OBJECT
 
-  typedef std::map<QString, std::vector<double> > LandmarksMapType;
+  using LandmarksMapType = std::map<QString, std::vector<double> >;
 public:
 
   QLabelList( QWidget *myParent = nullptr ) :
@@ -107,7 +107,7 @@ public slots:
   // respond to mouse signal from itself
   void cancelHighlight( QListWidgetItem * ); // haven't find a direct way of
 
-  // disabling highlight ;(
+  // disabling highlight;(
 
   void deleteListItemMouseSlot( QListWidgetItem * );
 

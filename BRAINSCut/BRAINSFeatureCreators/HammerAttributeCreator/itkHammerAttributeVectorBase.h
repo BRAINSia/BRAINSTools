@@ -53,9 +53,9 @@ class HammerAttributeVectorBase :
 {
 public:
 
-  typedef HammerAttributeVectorBase                     Self;
-  typedef typename itk::FixedArray<TValueType, VLength> SuperClass;
-  typedef FixedArray<TValueType, VLength>               VectorType;
+  using Self = HammerAttributeVectorBase;
+  using SuperClass = typename itk::FixedArray<TValueType, VLength>;
+  using VectorType = FixedArray<TValueType, VLength>;
 
   /** Length constant */
   unsigned int GetLength() const

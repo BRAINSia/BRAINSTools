@@ -68,7 +68,7 @@ main(int argc, char * *argv)
   float floatManualVolume = GetVolume( manualVolume );
 
   /* set up similarity index computation */
-  typedef itk::SimilarityIndexImageFilter<LabelImageType, LabelImageType> SimilarityIndexFilterType;
+  using SimilarityIndexFilterType = itk::SimilarityIndexImageFilter<LabelImageType, LabelImageType>;
   SimilarityIndexFilterType::Pointer similarityIndexFilter = SimilarityIndexFilterType::New();
 
   similarityIndexFilter->SetInput1( manualVolume );
@@ -95,7 +95,7 @@ main(int argc, char * *argv)
 inline LabelImagePointerType
 ThresholdLabelImageToOneValue( LabelImagePointerType inputMaskVolume)
 {
-  typedef itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType> ThresholdType;
+  using ThresholdType = itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType>;
   ThresholdType::Pointer thresholder = ThresholdType::New();
 
   thresholder->SetInput( inputMaskVolume );
@@ -111,7 +111,7 @@ ThresholdLabelImageToOneValue( LabelImagePointerType inputMaskVolume)
 inline WorkingImagePointer
 ReadWorkingImageByFilename( std::string filename )
 {
-  typedef itk::ImageFileReader<WorkingImageType> WorkingImageReaderType;
+  using WorkingImageReaderType = itk::ImageFileReader<WorkingImageType>;
   WorkingImageReaderType::Pointer reader = WorkingImageReaderType::New();
 
   reader->SetFileName( filename );
@@ -124,7 +124,7 @@ ReadWorkingImageByFilename( std::string filename )
 inline LabelImagePointerType
 ReadBinaryImageByFilename( std::string filename )
 {
-  typedef itk::ImageFileReader<LabelImageType> BinaryImageReaderType;
+  using BinaryImageReaderType = itk::ImageFileReader<LabelImageType>;
   BinaryImageReaderType::Pointer reader = BinaryImageReaderType::New();
 
   reader->SetFileName( filename );
@@ -139,7 +139,7 @@ GetVolume( LabelImagePointerType image)
 {
   unsigned char labelValue = 1;
 
-  typedef itk::LabelStatisticsImageFilter<LabelImageType, LabelImageType> MeasureFilterType;
+  using MeasureFilterType = itk::LabelStatisticsImageFilter<LabelImageType, LabelImageType>;
 
   MeasureFilterType::Pointer manualVolumeMeasrueFilter = MeasureFilterType::New();
 

@@ -34,17 +34,17 @@ main(int argc, char * *argv)
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef float PixelType;
+  using PixelType = float;
   constexpr unsigned int Dim = 3;
-  typedef  itk::Image<PixelType, Dim> ImageType;
+  using ImageType = itk::Image<PixelType, Dim>;
 
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer classified_imageReader = ImageReaderType::New();
 
   classified_imageReader->SetFileName( inputCassifiedVolume );
 
-  typedef itk::ThresholdImageFilter<ImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::ThresholdImageFilter<ImageType>;
 
   ThresholdFilterType::Pointer classified_gradientFilter = ThresholdFilterType::New();
 
@@ -55,11 +55,11 @@ main(int argc, char * *argv)
 
   // writer setting
   std::cout << "Writing output ... " << std::endl;
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  typedef itk::RescaleIntensityImageFilter<ImageType, ImageType> RescaleFilterType;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
   rescaler->SetOutputMinimum(0);
   rescaler->SetOutputMaximum(255);

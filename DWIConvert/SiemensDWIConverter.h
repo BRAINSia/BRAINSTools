@@ -29,7 +29,7 @@ public:
   SiemensDWIConverter(DCMTKFileVector &allHeaders,
                       DWIConverter::FileNamesContainer &inputFileNames,
                       const bool useBMatrixGradientDirections,
-                      const double smallGradientThreshold) ;
+                      const double smallGradientThreshold);
   ~SiemensDWIConverter() override;
 
   template <typename T>
@@ -38,7 +38,7 @@ public:
   class CSAItem : public std::vector<std::string >
   {
   public:
-      typedef std::vector<std::string> SuperClass;
+      using SuperClass = std::vector<std::string>;
 
       itk::uint32_t vm;
       std::string vr;

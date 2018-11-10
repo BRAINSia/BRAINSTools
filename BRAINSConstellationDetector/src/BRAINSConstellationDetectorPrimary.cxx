@@ -104,7 +104,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   // Input image is read as a double image;
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
-  typedef itk::ImageFileReader<DImageType3D> AtlasReaderType;
+  using AtlasReaderType = itk::ImageFileReader<DImageType3D>;
   AtlasReaderType::Pointer reader = AtlasReaderType::New();
   reader->SetFileName( this->m_inputVolume );
   try
@@ -125,7 +125,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
                                                           1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                                                           0, MAX_IMAGE_OUTPUT_VALUE);
 
-  typedef itk::CastImageFilter<DImageType3D, SImageType> CasterType;
+  using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
   CasterType::Pointer caster = CasterType::New();
   caster->SetInput( rescaledInputVolume );
   caster->Update();

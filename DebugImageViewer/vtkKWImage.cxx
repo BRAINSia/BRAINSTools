@@ -48,11 +48,11 @@ class PipelineCreator
 {
 public:
 
-  typedef itk::ImageBase<3>           ImageBaseType;
-  typedef ImageBaseType::Pointer      ImageBasePointer;
-  typedef itk::ProcessObject          ExporterBaseType;
-  typedef itk::ProcessObject::Pointer ExporterBasePointer;
-  typedef itk::Image<TPixel, 3>       ImageType;
+  using ImageBaseType = itk::ImageBase<3>;
+  using ImageBasePointer = ImageBaseType::Pointer;
+  using ExporterBaseType = itk::ProcessObject;
+  using ExporterBasePointer = itk::ProcessObject::Pointer;
+  using ImageType = itk::Image<TPixel, 3>;
 
   static void CreateExporter( ImageBasePointer    & imageBase,
                               ExporterBasePointer & exporter,
@@ -63,8 +63,8 @@ public:
 
     if( image )
       {
-      typedef itk::VTKImageExport<ImageType>     ExportFilterType;
-      typedef typename ExportFilterType::Pointer ExportFilterPointer;
+      using ExportFilterType = itk::VTKImageExport<ImageType>;
+      using ExportFilterPointer = typename ExportFilterType::Pointer;
       ExportFilterPointer itkExporter = ExportFilterType::New();
       itkExporter->SetInput( image );
 

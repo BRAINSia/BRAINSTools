@@ -125,8 +125,8 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
   const unsigned int MeshDimension = FixedMeshType::MeshDimension;
 
-  typedef  itk::MeshRegionConstIteratorWithIndex<
-      FixedMeshType> FixedIteratorType;
+  using FixedIteratorType = itk::MeshRegionConstIteratorWithIndex<
+      FixedMeshType>;
 
   FixedIteratorType ti( fixedMesh, this->GetFixedMeshRegion() );
 
@@ -176,9 +176,8 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
       // Get the gradient by NearestNeighboorInterpolation:
       // which is equivalent to round up the point components.
-      typedef typename OutputPointType::CoordRepType CoordRepType;
-      typedef ContinuousIndex<CoordRepType, MovingMeshType::MeshDimension>
-        MovingMeshContinuousIndexType;
+      using CoordRepType = typename OutputPointType::CoordRepType;
+      using MovingMeshContinuousIndexType = ContinuousIndex<CoordRepType, MovingMeshType::MeshDimension>;
 
       MovingMeshContinuousIndexType tempIndex;
       this->m_MovingMesh->TransformPhysicalPointToContinuousIndex( transformedPoint, tempIndex );

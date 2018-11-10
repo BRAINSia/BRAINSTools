@@ -36,10 +36,10 @@ class QuadEdgeMeshSphericalDiffeomorphicDemonsFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TFixedMesh, TOutputMesh>
 {
 public:
-  typedef QuadEdgeMeshSphericalDiffeomorphicDemonsFilter            Self;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TFixedMesh, TOutputMesh> Superclass;
+  using Self = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TFixedMesh, TOutputMesh>;
 
   /** Method that instantiates a new object */
   itkNewMacro( Self );
@@ -49,66 +49,65 @@ public:
   itkTypeMacro( QuadEdgeMeshSphericalDiffeomorphicDemonsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
 
   /** Input types. */
-  typedef TFixedMesh                                       FixedMeshType;
-  typedef TMovingMesh                                      MovingMeshType;
-  typedef typename  FixedMeshType::Pointer                 FixedMeshPointer;
-  typedef typename  FixedMeshType::ConstPointer            FixedMeshConstPointer;
-  typedef typename  FixedMeshType::PointType               PointType;
-  typedef typename  FixedMeshType::PixelType               FixedPixelType;
-  typedef typename  FixedMeshType::PointsContainer         FixedPointsContainer;
-  typedef typename  FixedPointsContainer::Iterator         FixedPointsIterator;
-  typedef typename  FixedPointsContainer::ConstIterator    FixedPointsConstIterator;
-  typedef typename  FixedMeshType::PointDataContainer      FixedPointDataContainer;
-  typedef typename  FixedPointDataContainer::ConstIterator FixedPointDataConstIterator;
-  typedef typename  MovingMeshType::ConstPointer           MovingMeshConstPointer;
+  using FixedMeshType = TFixedMesh;
+  using MovingMeshType = TMovingMesh;
+  using FixedMeshPointer = typename  FixedMeshType::Pointer;
+  using FixedMeshConstPointer = typename  FixedMeshType::ConstPointer;
+  using PointType = typename  FixedMeshType::PointType;
+  using FixedPixelType = typename  FixedMeshType::PixelType;
+  using FixedPointsContainer = typename  FixedMeshType::PointsContainer;
+  using FixedPointsIterator = typename  FixedPointsContainer::Iterator;
+  using FixedPointsConstIterator = typename  FixedPointsContainer::ConstIterator;
+  using FixedPointDataContainer = typename  FixedMeshType::PointDataContainer;
+  using FixedPointDataConstIterator = typename  FixedPointDataContainer::ConstIterator;
+  using MovingMeshConstPointer = typename  MovingMeshType::ConstPointer;
 
   static constexpr unsigned int PointDimension = FixedMeshType::PointDimension;
 
   /** Output types. */
-  typedef TOutputMesh                                    OutputMeshType;
-  typedef typename  OutputMeshType::Pointer              OutputMeshPointer;
-  typedef typename  Superclass::OutputPointDataContainer OutputPointDataContainer;
-  typedef typename OutputPointDataContainer::Pointer     OutputPointDataContainerPointer;
-  typedef typename OutputPointDataContainer::Iterator    OutputPointDataContainerIterator;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename  OutputMeshType::Pointer;
+  using OutputPointDataContainer = typename  Superclass::OutputPointDataContainer;
+  using OutputPointDataContainerPointer = typename OutputPointDataContainer::Pointer;
+  using OutputPointDataContainerIterator = typename OutputPointDataContainer::Iterator;
 
   /** Declaration of internal types, some of which are exposed for monitoring purposes */
-  typedef typename PointType::VectorType                    VectorType;
-  typedef TriangleBasisSystem<VectorType, 2>                BasisSystemType;
-  typedef typename FixedMeshType::PointIdentifier           PointIdentifier;
-  typedef VectorContainer<PointIdentifier, BasisSystemType> BasisSystemContainerType;
-  typedef typename BasisSystemContainerType::Pointer        BasisSystemContainerPointer;
-  typedef typename BasisSystemContainerType::Iterator       BasisSystemContainerIterator;
-  typedef typename FixedMeshType::Traits                    FixedMeshTraits;
-  typedef PointSet<FixedPixelType, PointDimension, FixedMeshTraits>
-    DestinationPointSetType;
-  typedef typename DestinationPointSetType::PointsContainer     DestinationPointContainerType;
-  typedef typename DestinationPointContainerType::Pointer       DestinationPointContainerPointer;
-  typedef typename DestinationPointContainerType::Iterator      DestinationPointIterator;
-  typedef typename DestinationPointContainerType::ConstIterator DestinationPointConstIterator;
-  typedef VectorContainer<PointIdentifier, double>              NodeSigmaContainerType;
-  typedef typename NodeSigmaContainerType::Pointer              NodeSigmaContainerPointer;
-  typedef typename NodeSigmaContainerType::Iterator             NodeSigmaContainerIterator;
-  typedef typename NodeSigmaContainerType::ConstPointer         NodeSigmaContainerConstPointer;
-  typedef typename NodeSigmaContainerType::ConstIterator        NodeSigmaContainerConstIterator;
+  using VectorType = typename PointType::VectorType;
+  using BasisSystemType = TriangleBasisSystem<VectorType, 2>;
+  using PointIdentifier = typename FixedMeshType::PointIdentifier;
+  using BasisSystemContainerType = VectorContainer<PointIdentifier, BasisSystemType>;
+  using BasisSystemContainerPointer = typename BasisSystemContainerType::Pointer;
+  using BasisSystemContainerIterator = typename BasisSystemContainerType::Iterator;
+  using FixedMeshTraits = typename FixedMeshType::Traits;
+  using DestinationPointSetType = PointSet<FixedPixelType, PointDimension, FixedMeshTraits>;
+  using DestinationPointContainerType = typename DestinationPointSetType::PointsContainer;
+  using DestinationPointContainerPointer = typename DestinationPointContainerType::Pointer;
+  using DestinationPointIterator = typename DestinationPointContainerType::Iterator;
+  using DestinationPointConstIterator = typename DestinationPointContainerType::ConstIterator;
+  using NodeSigmaContainerType = VectorContainer<PointIdentifier, double>;
+  using NodeSigmaContainerPointer = typename NodeSigmaContainerType::Pointer;
+  using NodeSigmaContainerIterator = typename NodeSigmaContainerType::Iterator;
+  using NodeSigmaContainerConstPointer = typename NodeSigmaContainerType::ConstPointer;
+  using NodeSigmaContainerConstIterator = typename NodeSigmaContainerType::ConstIterator;
 
-  typedef Vector<double, 3>                                    VelocityVectorType;
-  typedef VectorContainer<PointIdentifier, VelocityVectorType> VelocityVectorContainer;
-  typedef typename VelocityVectorContainer::Pointer            VelocityVectorPointer;
-  typedef typename VelocityVectorContainer::Iterator           VelocityVectorIterator;
-  typedef typename VelocityVectorContainer::ConstPointer       VelocityVectorConstPointer;
-  typedef typename VelocityVectorContainer::ConstIterator      VelocityVectorConstIterator;
+  using VelocityVectorType = Vector<double, 3>;
+  using VelocityVectorContainer = VectorContainer<PointIdentifier, VelocityVectorType>;
+  using VelocityVectorPointer = typename VelocityVectorContainer::Pointer;
+  using VelocityVectorIterator = typename VelocityVectorContainer::Iterator;
+  using VelocityVectorConstPointer = typename VelocityVectorContainer::ConstPointer;
+  using VelocityVectorConstIterator = typename VelocityVectorContainer::ConstIterator;
 
-  typedef Vector<double, 3>                                   TangentVectorType;
-  typedef VectorContainer<PointIdentifier, TangentVectorType> TangentVectorContainer;
-  typedef typename TangentVectorContainer::Pointer            TangentVectorPointer;
-  typedef typename TangentVectorContainer::Iterator           TangentVectorIterator;
-  typedef typename TangentVectorContainer::ConstPointer       TangentVectorConstPointer;
-  typedef typename TangentVectorContainer::ConstIterator      TangentVectorConstIterator;
+  using TangentVectorType = Vector<double, 3>;
+  using TangentVectorContainer = VectorContainer<PointIdentifier, TangentVectorType>;
+  using TangentVectorPointer = typename TangentVectorContainer::Pointer;
+  using TangentVectorIterator = typename TangentVectorContainer::Iterator;
+  using TangentVectorConstPointer = typename TangentVectorContainer::ConstPointer;
+  using TangentVectorConstIterator = typename TangentVectorContainer::ConstIterator;
 
-  typedef VectorContainer<PointIdentifier, double>            ShortestLengthContainerType;
-  typedef typename ShortestLengthContainerType::Pointer       ShortestLengthContainerPointer;
-  typedef typename ShortestLengthContainerType::Iterator      ShortestLengthContainerIterator;
-  typedef typename ShortestLengthContainerType::ConstIterator ShortestLengthContainerConstIterator;
+  using ShortestLengthContainerType = VectorContainer<PointIdentifier, double>;
+  using ShortestLengthContainerPointer = typename ShortestLengthContainerType::Pointer;
+  using ShortestLengthContainerIterator = typename ShortestLengthContainerType::Iterator;
+  using ShortestLengthContainerConstIterator = typename ShortestLengthContainerType::ConstIterator;
 
   /** Set/Get the Fixed mesh. */
   void SetFixedMesh( const FixedMeshType * fixedMesh );
@@ -379,20 +378,20 @@ private:
   /** Coefficient that controls the degree of smoothing applied to the tangent field. */
   double m_Lambda;
 
-  typedef TriangleListBasisSystemCalculator<
-      FixedMeshType, BasisSystemType> TriangleListBasisSystemCalculatorType;
+  using TriangleListBasisSystemCalculatorType = TriangleListBasisSystemCalculator<
+      FixedMeshType, BasisSystemType>;
 
   /** Helper class that will compute basis systems at every triangle of the Fixed Mesh. */
   typename TriangleListBasisSystemCalculatorType::Pointer m_TriangleListBasisSystemCalculator;
 
   /** Types definitions for the container of values resampled from the Moving
    * mesh into the coordinates of the Fixed mesh nodes. */
-  typedef typename MovingMeshType::PixelType                    MovingPixelType;
-  typedef typename NumericTraits<MovingPixelType>::RealType     MovingPixelRealType;
-  typedef VectorContainer<PointIdentifier, MovingPixelRealType> ResampledMovingValuesContainerType;
-  typedef typename ResampledMovingValuesContainerType::Iterator ResampledMovingValuesContainerIterator;
+  using MovingPixelType = typename MovingMeshType::PixelType;
+  using MovingPixelRealType = typename NumericTraits<MovingPixelType>::RealType;
+  using ResampledMovingValuesContainerType = VectorContainer<PointIdentifier, MovingPixelRealType>;
+  using ResampledMovingValuesContainerIterator = typename ResampledMovingValuesContainerType::Iterator;
 
-  typedef typename NumericTraits<FixedPixelType>::RealType FixedPixelRealType;
+  using FixedPixelRealType = typename NumericTraits<FixedPixelType>::RealType;
 
   /** Container that stores values resampled from the Moving mesh field at the
    * coordinates resulting from mapping the fixed mesh nodes through the current
@@ -400,13 +399,13 @@ private:
   typename ResampledMovingValuesContainerType::Pointer          m_ResampledMovingValuesContainer;
 
   /** Interpolator type for bringing scalar values from the Moving Mesh into the Fixed Mesh. */
-  typedef LinearInterpolateMeshFunction<MovingMeshType> ScalarInterpolatorType;
+  using ScalarInterpolatorType = LinearInterpolateMeshFunction<MovingMeshType>;
 
   /** Interpolator object that will bring scalar values from the Moving Mesh into the Fixed Mesh. */
   typename ScalarInterpolatorType::Pointer                      m_ScalarInterpolator;
 
   /** Interpolator for the deformation field values on the grid of the Fixed mesh. */
-  typedef LinearInterpolateDeformationFieldMeshFunction<FixedMeshType> DeformationInterpolatorType;
+  using DeformationInterpolatorType = LinearInterpolateDeformationFieldMeshFunction<FixedMeshType>;
 
   /** Interpolator object that will compute deformation destination points on the fixed mesh grid. */
   typename DeformationInterpolatorType::Pointer                 m_DeformationInterpolator;
@@ -414,15 +413,15 @@ private:
   /** Helper class that will compute the gradient of resampled Moving mesh
    * values at every node of the Fixed mesh with respect to the coordinate system
    * of that node in the fixed mesh. */
-  typedef NodeScalarGradientCalculator<
-      FixedMeshType, ResampledMovingValuesContainerType>         NodeScalarGradientCalculatorType;
+  using NodeScalarGradientCalculatorType = NodeScalarGradientCalculator<
+      FixedMeshType, ResampledMovingValuesContainerType>;
   typename NodeScalarGradientCalculatorType::Pointer            m_NodeScalarGradientCalculator;
 
   /** Helper class that will compute the Jacobian of destination points
    * at every node of the Fixed mesh with respect to the coordinate system
    * of that node in the fixed mesh. */
-  typedef NodeVectorJacobianCalculator<
-      FixedMeshType, DestinationPointContainerType>              NodeVectorJacobianCalculatorType;
+  using NodeVectorJacobianCalculatorType = NodeVectorJacobianCalculator<
+      FixedMeshType, DestinationPointContainerType>;
   typename NodeVectorJacobianCalculatorType::Pointer            m_NodeVectorJacobianCalculator;
 
   /** Center of spherical mesh. We assume that both the Fixed and

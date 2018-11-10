@@ -104,17 +104,17 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef signed short                         OutputPixelType;
-  typedef float                                PixelType;
-  typedef itk::VectorImage<PixelType, 3>       NrrdImageType;
-  typedef itk::VectorImage<OutputPixelType, 3> OutputImageType;
-  typedef itk::Image<PixelType, 3>             InputIndexImageType;
-  typedef itk::Image<OutputPixelType, 3>       OutputIndexImageType;
-  typedef itk::AffineTransform<double, 3>      LocalAffineTransformType;
-  typedef itk::VersorRigid3DTransform<double>  RigidTransformType;
+  using OutputPixelType = signed short;
+  using PixelType = float;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
+  using OutputImageType = itk::VectorImage<OutputPixelType, 3>;
+  using InputIndexImageType = itk::Image<PixelType, 3>;
+  using OutputIndexImageType = itk::Image<OutputPixelType, 3>;
+  using LocalAffineTransformType = itk::AffineTransform<double, 3>;
+  using RigidTransformType = itk::VersorRigid3DTransform<double>;
 
-  typedef itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   FileReaderType::Pointer movingImageReader = FileReaderType::New();
   movingImageReader->SetFileName( movingVolume );
   movingImageReader->Update();
@@ -129,14 +129,14 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  // typedef itk::VectorIndexSelectionCastImageFilter< NrrdImageType,
-  // IndexImageType > InputImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<NrrdImageType, InputIndexImageType> ExtractImageFilterType;
+  // using InputImageType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType,
+  // IndexImageType >;
+  using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, InputIndexImageType>;
   ExtractImageFilterType::Pointer movingImageExtractionFilter = ExtractImageFilterType::New();
   movingImageExtractionFilter->SetInput(movingImageReader->GetOutput() );
 
-  typedef itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   FileReaderType::Pointer fixedImageReader = FileReaderType::New();
   fixedImageReader->SetFileName( fixedVolume );
   fixedImageReader->Update();
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
   /* Pointer Used to Hold the Resulting Coregistered Image */
   OutputImageType::Pointer RegisteredImage;
 
-  typedef itk::BRAINSFitHelper RegisterFilterType;
+  using RegisterFilterType = itk::BRAINSFitHelper;
   RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
 
   std::vector<double> minStepLength;
@@ -185,8 +185,8 @@ int main(int argc, char *argv[])
   RegisteredImage->SetMetaDataDictionary( movingImageReader->GetOutput()->GetMetaDataDictionary() );
   RegisteredImage->Allocate();
 
-  typedef itk::ImageRegionConstIterator<OutputIndexImageType> ConstIteratorType;
-  typedef itk::ImageRegionIterator<OutputImageType>           IteratorType;
+  using ConstIteratorType = itk::ImageRegionConstIterator<OutputIndexImageType>;
+  using IteratorType = itk::ImageRegionIterator<OutputImageType>;
 
   IteratorType               ot( RegisteredImage, RegisteredImage->GetRequestedRegion() );
   OutputImageType::PixelType vectorImagePixel;
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
       std::cout << ex << std::endl;
       throw;
       }
-    typedef itk::Transform<double, 3, 3> GenericTransformType;
+    using GenericTransformType = itk::Transform<double, 3, 3>;
     // restore writing out transform if specified on command line.
     if( outputTransform.size() != 0 )
       {
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
 #endif
       xfrmWriter->Update();
       }
-    typedef itk::ResampleImageFilter<InputIndexImageType, OutputIndexImageType, double> ResampleFilterType;
+    using ResampleFilterType = itk::ResampleImageFilter<InputIndexImageType, OutputIndexImageType, double>;
     ResampleFilterType::Pointer resampler = ResampleFilterType::New();
     resampler->SetTransform( registerImageFilter->GetCurrentGenericTransform() );
     resampler->SetInput( movingImageExtractionFilter->GetOutput() );
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
     itk::EncapsulateMetaData<std::string>(RegisteredImage->GetMetaDataDictionary(), KeyString, NrrdValue);
     }
 
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

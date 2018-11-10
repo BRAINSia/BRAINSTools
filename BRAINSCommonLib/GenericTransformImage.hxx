@@ -35,7 +35,7 @@ TransformResample(
            typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
   typename itk::Transform<double, 3, 3>::ConstPointer transform)
 {
-  typedef typename itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleImageFilter;
+  using ResampleImageFilter = typename itk::ResampleImageFilter<InputImageType, OutputImageType>;
   typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
   resample->SetInput(inputImage);
   resample->SetTransform(transform.GetPointer());
@@ -69,7 +69,7 @@ TransformWarp(
   ::Pointer interp,
   typename DisplacementImageType::Pointer displacementField)
 {
-  typedef typename itk::WarpImageFilter<InputImageType, OutputImageType, DisplacementImageType> WarpImageFilter;
+  using WarpImageFilter = typename itk::WarpImageFilter<InputImageType, OutputImageType, DisplacementImageType>;
   typename WarpImageFilter::Pointer warp = WarpImageFilter::New();
   warp->SetInput(inputImage);
   warp->SetDisplacementField(displacementField);
@@ -98,113 +98,98 @@ typename itk::InterpolateImageFunction<InputImageType,
 Pointer
 GetInterpolatorFromString(const std::string & interpolationMode)
 {
-  typedef typename itk::NumericTraits<typename InputImageType::PixelType>::RealType TInterpolatorPrecisionType;
-  typedef typename itk::ConstantBoundaryCondition<InputImageType>                   BoundaryConditionType;
+  using TInterpolatorPrecisionType = typename itk::NumericTraits<typename InputImageType::PixelType>::RealType;
+  using BoundaryConditionType = typename itk::ConstantBoundaryCondition<InputImageType>;
   //
   // WindowRadius set to 3 to match default for Slicer
   static constexpr unsigned int SlicerWindowedSincWindowRadius = 3;
 
   if( interpolationMode == "NearestNeighbor" )
     {
-    typedef typename itk::NearestNeighborInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
-      InterpolatorType;
+    using InterpolatorType = typename itk::NearestNeighborInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "Linear" )
     {
-    typedef typename itk::LinearInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
-      InterpolatorType;
+    using InterpolatorType = typename itk::LinearInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "BSpline" )
     {
-    typedef typename itk::BSplineInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
-      InterpolatorType;
+    using InterpolatorType = typename itk::BSplineInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "WindowedSinc" )
     {
     static constexpr unsigned int WindowedSincHammingWindowRadius = 5;
-    typedef typename itk::Function::HammingWindowFunction<WindowedSincHammingWindowRadius,
+    using WindowFunctionType = typename itk::Function::HammingWindowFunction<WindowedSincHammingWindowRadius,
                                                           TInterpolatorPrecisionType,
-                                                          TInterpolatorPrecisionType>
-      WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                          TInterpolatorPrecisionType>;
+    using InterpolatorType = typename itk::WindowedSincInterpolateImageFunction<InputImageType,
                                                                WindowedSincHammingWindowRadius,
                                                                WindowFunctionType,
                                                                BoundaryConditionType,
-                                                               TInterpolatorPrecisionType>
-      InterpolatorType;
+                                                               TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "Hamming" )
     {
-    typedef typename itk::Function::HammingWindowFunction<SlicerWindowedSincWindowRadius,
+    using WindowFunctionType = typename itk::Function::HammingWindowFunction<SlicerWindowedSincWindowRadius,
                                                           TInterpolatorPrecisionType,
-                                                          TInterpolatorPrecisionType>
-      WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                          TInterpolatorPrecisionType>;
+    using InterpolatorType = typename itk::WindowedSincInterpolateImageFunction<InputImageType,
                                                                SlicerWindowedSincWindowRadius,
                                                                WindowFunctionType,
                                                                BoundaryConditionType,
-                                                               TInterpolatorPrecisionType>
-      InterpolatorType;
+                                                               TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "Cosine" )
     {
-    typedef typename itk::Function::CosineWindowFunction<SlicerWindowedSincWindowRadius,
+    using WindowFunctionType = typename itk::Function::CosineWindowFunction<SlicerWindowedSincWindowRadius,
                                                          TInterpolatorPrecisionType,
-                                                         TInterpolatorPrecisionType>
-      WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                         TInterpolatorPrecisionType>;
+    using InterpolatorType = typename itk::WindowedSincInterpolateImageFunction<InputImageType,
                                                                SlicerWindowedSincWindowRadius,
                                                                WindowFunctionType,
                                                                BoundaryConditionType,
-                                                               TInterpolatorPrecisionType>
-      InterpolatorType;
+                                                               TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "Welch" )
     {
-    typedef typename itk::Function::WelchWindowFunction<SlicerWindowedSincWindowRadius,
+    using WindowFunctionType = typename itk::Function::WelchWindowFunction<SlicerWindowedSincWindowRadius,
                                                         TInterpolatorPrecisionType,
-                                                        TInterpolatorPrecisionType>
-      WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                        TInterpolatorPrecisionType>;
+    using InterpolatorType = typename itk::WindowedSincInterpolateImageFunction<InputImageType,
                                                                SlicerWindowedSincWindowRadius,
                                                                WindowFunctionType,
                                                                BoundaryConditionType,
-                                                               TInterpolatorPrecisionType>
-      InterpolatorType;
+                                                               TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "Lanczos" )
     {
-    typedef typename itk::Function::LanczosWindowFunction<SlicerWindowedSincWindowRadius,
+    using WindowFunctionType = typename itk::Function::LanczosWindowFunction<SlicerWindowedSincWindowRadius,
                                                           TInterpolatorPrecisionType,
-                                                          TInterpolatorPrecisionType>
-      WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                          TInterpolatorPrecisionType>;
+    using InterpolatorType = typename itk::WindowedSincInterpolateImageFunction<InputImageType,
                                                                SlicerWindowedSincWindowRadius,
                                                                WindowFunctionType,
                                                                BoundaryConditionType,
-                                                               TInterpolatorPrecisionType>
-      InterpolatorType;
+                                                               TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else if( interpolationMode == "Blackman" )
     {
-    typedef typename itk::Function::BlackmanWindowFunction<SlicerWindowedSincWindowRadius,
+    using WindowFunctionType = typename itk::Function::BlackmanWindowFunction<SlicerWindowedSincWindowRadius,
                                                            TInterpolatorPrecisionType,
-                                                           TInterpolatorPrecisionType>
-      WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                           TInterpolatorPrecisionType>;
+    using InterpolatorType = typename itk::WindowedSincInterpolateImageFunction<InputImageType,
                                                                SlicerWindowedSincWindowRadius,
                                                                WindowFunctionType,
                                                                BoundaryConditionType,
-                                                               TInterpolatorPrecisionType>
-      InterpolatorType;
+                                                               TInterpolatorPrecisionType>;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else
@@ -252,8 +237,8 @@ typename OutputImageType::Pointer GenericTransformImage(
       *     values are  1.0
       */
 
-    typedef itk::BinaryThresholdImageFilter<InputImageType,
-                                            InputImageType> FloatThresholdFilterType;
+    using FloatThresholdFilterType = itk::BinaryThresholdImageFilter<InputImageType,
+                                            InputImageType>;
     typename FloatThresholdFilterType::Pointer initialFilter =
       FloatThresholdFilterType::New();
     initialFilter->SetInput(OperandImage);
@@ -269,8 +254,8 @@ typename OutputImageType::Pointer GenericTransformImage(
       }
     initialFilter->Update();
       {
-      typedef itk::SignedMaurerDistanceMapImageFilter<InputImageType,
-                                                      InputImageType> DistanceFilterType;
+      using DistanceFilterType = itk::SignedMaurerDistanceMapImageFilter<InputImageType,
+                                                      InputImageType>;
       typename DistanceFilterType::Pointer DistanceFilter = DistanceFilterType::New();
       DistanceFilter->SetInput( initialFilter->GetOutput() );
       // DistanceFilter->SetNarrowBandwidth( m_BandWidth );
@@ -321,11 +306,11 @@ typename OutputImageType::Pointer GenericTransformImage(
     {
     if( interpolationMode == "ResampleInPlace" )
       {
-      typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
-      typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
+      using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType>;
+      using ResampleIPFilterPointer = typename ResampleIPFilterType::Pointer;
 
-      typedef itk::CompositeTransform<double, 3>    CompositeTransformType;
-      typedef itk::VersorRigid3DTransform<double>   VersorRigid3DTransformType;
+      using CompositeTransformType = itk::CompositeTransform<double, 3>;
+      using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 
       VersorRigid3DTransformType::Pointer tempInitializerITKTransform = VersorRigid3DTransformType::New();
 
@@ -425,12 +410,12 @@ typename OutputImageType::Pointer GenericTransformImage(
     {
     // A special case for dealing with binary images
     // where signed distance maps are warped and thresholds created
-    typedef short int                             MaskPixelType;
-    typedef typename itk::Image<MaskPixelType, 3> BinFlagOnMaskImageType;
+    using MaskPixelType = short int;
+    using BinFlagOnMaskImageType = typename itk::Image<MaskPixelType, 3>;
 
     // Now Threshold and write out image
-    typedef typename itk::BinaryThresholdImageFilter<InputImageType,
-                                                     BinFlagOnMaskImageType> BinaryThresholdFilterType;
+    using BinaryThresholdFilterType = typename itk::BinaryThresholdImageFilter<InputImageType,
+                                                     BinFlagOnMaskImageType>;
     typename BinaryThresholdFilterType::Pointer finalFilter = BinaryThresholdFilterType::New();
     finalFilter->SetInput(TransformedImage);
 
@@ -453,7 +438,7 @@ typename OutputImageType::Pointer GenericTransformImage(
 
     finalFilter->Update();
 
-    typedef typename itk::CastImageFilter<BinFlagOnMaskImageType, InputImageType> CastImageFilter;
+    using CastImageFilter = typename itk::CastImageFilter<BinFlagOnMaskImageType, InputImageType>;
     typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( finalFilter->GetOutput() );
     castFilter->Update();

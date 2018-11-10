@@ -31,7 +31,7 @@
 class DataSet : public ElementParser
 {
 public:
-  typedef ElementParser SuperClass;
+  using SuperClass = ElementParser;
 
   int PrintSelf(std::ostream & os, int indent) const override
   {
@@ -40,7 +40,7 @@ public:
     return indent + 2;
   }
 
-  typedef SuperClass::StringVectorType StringVectorType;
+  using StringVectorType = SuperClass::StringVectorType;
 
   DataSet() : ElementParser("DataSet")
   {

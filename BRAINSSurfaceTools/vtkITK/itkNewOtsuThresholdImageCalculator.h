@@ -30,11 +30,11 @@ class NewOtsuThresholdImageCalculator : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageCalculator);
 
-  /** Standard class typedefs. */
-  typedef NewOtsuThresholdImageCalculator Self;
-  typedef Object  Superclass;
-  typedef SmartPointer<Self>   Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  /** Standard class type alias. */
+  using Self = NewOtsuThresholdImageCalculator;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -43,16 +43,16 @@ public:
   itkTypeMacro(NewOtsuThresholdImageCalculator, Object);
 
   /** Type definition for the input image. */
-  typedef TInputImage  ImageType;
+  using ImageType = TInputImage;
 
   /** Pointer type for the image. */
-  typedef typename TInputImage::Pointer  ImagePointer;
+  using ImagePointer = typename TInputImage::Pointer;
 
   /** Const Pointer type for the image. */
-  typedef typename TInputImage::ConstPointer ImageConstPointer;
+  using ImageConstPointer = typename TInputImage::ConstPointer;
 
   /** Type definition for the input image pixel type. */
-  typedef typename TInputImage::PixelType PixelType;
+  using PixelType = typename TInputImage::PixelType;
 
   /** Set the input image. */
   itkSetConstObjectMacro(Image,ImageType);

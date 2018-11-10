@@ -10,9 +10,9 @@ using namespace std;
 template <unsigned long int ImageDimension>
 void DumpImageInfo(const std::string filename)
 {
-    typedef double PixelType;
-    typedef itk::Image<PixelType,ImageDimension> ImageType;
-    typedef typename itk::ImageFileReader<ImageType> ReaderType;
+    using PixelType = double;
+    using ImageType = itk::Image<PixelType,ImageDimension>;
+    using ReaderType = typename itk::ImageFileReader<ImageType>;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(filename);
     reader->Update();

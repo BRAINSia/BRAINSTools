@@ -48,7 +48,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
 
   const OutputImageRegionType & outputRegionForThread = this->GetOutput()->GetRequestedRegion();
 
-  typedef ImageRegionConstIterator<TInputImage> ImageRegionConstIteratorType;
+  using ImageRegionConstIteratorType = ImageRegionConstIterator<TInputImage>;
   std::vector<ImageRegionConstIteratorType *> inputIterators;
   // create the iterators for the input images
   for( unsigned int i = 0; i < this->GetNumberOfInputs(); ++i )
@@ -66,7 +66,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
   ProgressReporter progress(this, 0, outputRegionForThread.GetNumberOfPixels() * 2 * inputIterators.size() );
 
   // found the labels in the input images and compute their new value
-  typedef std::vector<std::map<InputImagePixelType, OutputImagePixelType> > TranslatorType;
+  using TranslatorType = std::vector<std::map<InputImagePixelType, OutputImagePixelType> >;
   TranslatorType translator;
   translator.resize( inputIterators.size() );
 

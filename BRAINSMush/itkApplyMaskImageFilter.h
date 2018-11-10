@@ -29,11 +29,11 @@ class ApplyMaskImageFilter :
 {
 public:    /* define methods available to everyone */
 
-  /** Standard class typedefs */
-  typedef ApplyMaskImageFilter                          Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  /** Standard class type alias */
+  using Self = ApplyMaskImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** method for creation through the object factory */
   itkNewMacro(Self);
@@ -45,19 +45,19 @@ public:    /* define methods available to everyone */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-  /** typedef to describe the output image region type */
-  typedef typename TOutputImage::RegionType OutputImageRegionType;
+  /** type alias to describe the output image region type */
+  using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** inherited typedefs */
-  typedef typename Superclass::InputImageType         InputImageType;
-  typedef typename Superclass::InputImagePointer      InputImagePointer;
-  typedef typename Superclass::InputImageConstPointer InputImageConstPointer;
-  typedef typename Superclass::OutputImageType        OutputImageType;
-  typedef typename Superclass::OutputImagePointer     OutputImagePointer;
+  /** inherited type alias */
+  using InputImageType = typename Superclass::InputImageType;
+  using InputImagePointer = typename Superclass::InputImagePointer;
+  using InputImageConstPointer = typename Superclass::InputImageConstPointer;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using OutputImagePointer = typename Superclass::OutputImagePointer;
 
-  /** pixel related typedefs */
-  typedef typename InputImageType::PixelType  InputPixelType;
-  typedef typename OutputImageType::PixelType OutputPixelType;
+  /** pixel related type alias */
+  using InputPixelType = typename InputImageType::PixelType;
+  using OutputPixelType = typename OutputImageType::PixelType;
 
   itkSetMacro(InvertMask, bool);
   itkGetMacro(InvertMask, bool);

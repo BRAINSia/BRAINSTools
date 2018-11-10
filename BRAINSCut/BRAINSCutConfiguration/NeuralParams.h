@@ -26,7 +26,7 @@
 class NeuralParams : public XMLElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  using SuperClass = XMLElementParser;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);

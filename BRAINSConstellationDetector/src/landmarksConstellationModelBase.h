@@ -22,9 +22,9 @@
 class landmarksConstellationModelBase
 {
 protected:
-  typedef std::map<std::string, float> ValMapType;
-  typedef ValMapType::const_iterator   ValMapConstIterator;
-  typedef ValMapType::iterator         ValMapIterator;
+  using ValMapType = std::map<std::string, float>;
+  using ValMapConstIterator = ValMapType::const_iterator;
+  using ValMapIterator = ValMapType::iterator;
 public:
   landmarksConstellationModelBase() :
     m_NumDataSets(0),

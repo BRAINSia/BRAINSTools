@@ -99,27 +99,27 @@ int main( int argc, char* * argv )
   std::cout << "------------------------------------------------------" << std::endl;
 
   // ** TYPEDEF **
-  typedef double Coord;
+  using Coord = double;
 
-  typedef itk::QuadEdgeMesh<Coord, 3> MeshType;
-  typedef MeshType::Pointer           MeshPointer;
-  typedef MeshType::CellIdentifier    CellIdentifier;
-  typedef MeshType::PointIdentifier   PointIdentifier;
-  typedef MeshType::QEPrimal          QEPrimal;
+  using MeshType = itk::QuadEdgeMesh<Coord, 3>;
+  using MeshPointer = MeshType::Pointer;
+  using CellIdentifier = MeshType::CellIdentifier;
+  using PointIdentifier = MeshType::PointIdentifier;
+  using QEPrimal = MeshType::QEPrimal;
 
-  typedef MeshType::PointsContainerConstIterator PointsContainerConstIterator;
+  using PointsContainerConstIterator = MeshType::PointsContainerConstIterator;
 
-  typedef itk::VTKPolyDataReader<MeshType> ReaderType;
-  typedef itk::VTKPolyDataWriter<MeshType> WriterType;
+  using ReaderType = itk::VTKPolyDataReader<MeshType>;
+  using WriterType = itk::VTKPolyDataWriter<MeshType>;
 
-  typedef VNLIterativeSparseSolverTraits<Coord> SolverTraits;
+  using SolverTraits = VNLIterativeSparseSolverTraits<Coord>;
 
-  typedef itk::QuadEdgeMeshToSphereFilter<
-      MeshType, MeshType, SolverTraits>                  FilterType;
+  using FilterType = itk::QuadEdgeMeshToSphereFilter<
+      MeshType, MeshType, SolverTraits>;
 
-  typedef itk::VersorTransform<Coord>                                 TransformType;
-  typedef TransformType::VersorType                                   VersorType;
-  typedef itk::TransformMeshFilter<MeshType, MeshType, TransformType> TransformMeshType;
+  using TransformType = itk::VersorTransform<Coord>;
+  using VersorType = TransformType::VersorType;
+  using TransformMeshType = itk::TransformMeshFilter<MeshType, MeshType, TransformType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputSurfaceFile.c_str() );
@@ -225,10 +225,10 @@ int main( int argc, char* * argv )
     }
   else
     {
-    typedef MeshType::CellsContainerConstPointer CellsContainerConstPointer;
+    using CellsContainerConstPointer = MeshType::CellsContainerConstPointer;
     CellsContainerConstPointer cells = mesh->GetCells();
 
-    typedef MeshType::CellsContainerConstIterator CellsContainerConstIterator;
+    using CellsContainerConstIterator = MeshType::CellsContainerConstIterator;
     CellsContainerConstIterator c_It = cells->begin();
 
     seedList.push_back(c_It.Index() );
@@ -266,7 +266,7 @@ int main( int argc, char* * argv )
 
     // caculate the angle
     MeshType::PointType polarPOnSphere = sphere0->GetPoint(polarPId);
-    typedef itk::Vector<Coord, 2> NewVectorType;
+    using NewVectorType = itk::Vector<Coord, 2>;
     NewVectorType polarPOnSphere2D;
     polarPOnSphere2D[0] = polarPOnSphere[0];
     polarPOnSphere2D[1] = polarPOnSphere[1];

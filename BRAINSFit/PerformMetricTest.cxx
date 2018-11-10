@@ -48,20 +48,20 @@ int main(int argc, char* argv[])
                          "Missing inputMovingImage parameter");
 
   constexpr unsigned int Dimension = 3;
-  typedef  float           PixelType;
+  using PixelType = float;
 
-  typedef itk::Image< PixelType, Dimension > FixedImageType;
-  typedef itk::Image< PixelType, Dimension > MovingImageType;
+  using FixedImageType = itk::Image< PixelType, Dimension >;
+  using MovingImageType = itk::Image< PixelType, Dimension >;
 
-  typedef itk::ImageFileReader< FixedImageType  >  FixedImageReaderType;
-  typedef itk::ImageFileReader< MovingImageType >  MovingImageReaderType;
+  using FixedImageReaderType = itk::ImageFileReader< FixedImageType  >;
+  using MovingImageReaderType = itk::ImageFileReader< MovingImageType >;
 
-  typedef itk::BSplineTransform< double, Dimension > TransformType;
+  using TransformType = itk::BSplineTransform< double, Dimension >;
 
-  typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>   MIMetricType;
-  typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType>               MSEMetricType;
-  typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType>                          GenericMetricType;
-  typedef GenericMetricType::FixedSampledPointSetType                                         MetricSamplePointSetType;
+  using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>;
+  using MSEMetricType = itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType>;
+  using GenericMetricType = itk::ImageToImageMetricv4<FixedImageType, MovingImageType>;
+  using MetricSamplePointSetType = GenericMetricType::FixedSampledPointSetType;
 
   // Read input images
   FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
 
   MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
-  typedef MetricSamplePointSetType::PointType SamplePointType;
+  using SamplePointType = MetricSamplePointSetType::PointType;
   unsigned long index = 0;
 
   const unsigned long sampleCount = static_cast<unsigned long>( std::ceil( 1.0 / samplingPercentage ) );

@@ -369,10 +369,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 {
   const PointIdentifier numberOfNodes = this->m_FixedMeshAtInitialDestinationPoints->GetNumberOfPoints();
 
-  typedef typename TFixedMesh::PointsContainer PointsContainer;
+  using PointsContainer = typename TFixedMesh::PointsContainer;
   const PointsContainer * points = this->m_FixedMeshAtInitialDestinationPoints->GetPoints();
 
-  typedef typename TFixedMesh::QEPrimal EdgeType;
+  using EdgeType = typename TFixedMesh::QEPrimal;
   for( PointIdentifier pointId1 = 0; pointId1 < numberOfNodes; pointId1++ )
     {
     const EdgeType * edge = this->m_FixedMeshAtInitialDestinationPoints->FindEdge( pointId1 );
@@ -646,12 +646,12 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
   ResampledMovingValuesContainerIterator resampledArrayItr =
     this->m_ResampledMovingValuesContainer->Begin();
 
-  typedef vnl_matrix_fixed<double, 3, 3> VnlMatrix33Type;
-  typedef vnl_vector_fixed<double, 2>    VnlVector2Type;
-  typedef vnl_vector_fixed<double, 3>    VnlVector3Type;
-  typedef vnl_matrix_fixed<double, 3, 2> VnlMatrix32Type;
-  typedef vnl_matrix_fixed<double, 2, 3> VnlMatrix23Type;
-  typedef vnl_matrix_fixed<double, 2, 2> VnlMatrix22Type;
+  using VnlMatrix33Type = vnl_matrix_fixed<double, 3, 3>;
+  using VnlVector2Type = vnl_vector_fixed<double, 2>;
+  using VnlVector3Type = vnl_vector_fixed<double, 3>;
+  using VnlMatrix32Type = vnl_matrix_fixed<double, 3, 2>;
+  using VnlMatrix23Type = vnl_matrix_fixed<double, 2, 3>;
+  using VnlMatrix22Type = vnl_matrix_fixed<double, 2, 2>;
 
   VnlMatrix33Type Gn;
   VnlMatrix33Type Gn2;
@@ -674,7 +674,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 
   VectorType vectorToCenter;
 
-  typedef typename NodeVectorJacobianCalculatorType::OutputType JacobianType;
+  using JacobianType = typename NodeVectorJacobianCalculatorType::OutputType;
 
   JacobianType destinationJacobian;
 
@@ -704,7 +704,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 
     Gn2 = Gn * Gn;
 
-    typedef typename NodeScalarGradientCalculatorType::DerivativeType DerivativeType;
+    using DerivativeType = typename NodeScalarGradientCalculatorType::DerivativeType;
     DerivativeType derivative = this->m_NodeScalarGradientCalculator->Evaluate( pointId );
 
     destinationJacobian = this->m_NodeVectorJacobianCalculator->Evaluate( pointId );
@@ -828,7 +828,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 {
   double shortestLength = NumericTraits<double>::max();
 
-  typedef typename FixedMeshType::QEPrimal EdgeType;
+  using EdgeType = typename FixedMeshType::QEPrimal;
 
   const FixedPointsContainer * points = this->m_FixedMeshAtInitialDestinationPoints->GetPoints();
 
@@ -1143,7 +1143,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 
   for( unsigned int iter = 0; iter < this->m_MaximumNumberOfSmoothingIterations; ++iter )
     {
-    typedef typename OutputMeshType::QEPrimal EdgeType;
+    using EdgeType = typename OutputMeshType::QEPrimal;
 
     TangentVectorIterator tangentItr = this->m_TangentVectorField->Begin();
     TangentVectorIterator tangentEnd = this->m_TangentVectorField->End();
@@ -1152,7 +1152,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 
     FixedPointsConstIterator pointItr = points->Begin();
 
-    typedef typename NumericTraits<TangentVectorType>::AccumulateType AccumulatePixelType;
+    using AccumulatePixelType = typename NumericTraits<TangentVectorType>::AccumulateType;
 
     while( tangentItr != tangentEnd )
       {
@@ -1224,7 +1224,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 
   double angle = std::atan2( scaledSinus, scaledCosinus );
 
-  typedef Versor<double> VersorType;
+  using VersorType = Versor<double>;
 
   VersorType versor;
   versor.Set( axis, angle );
@@ -1246,7 +1246,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
 
   FixedPointsConstIterator pointItr = points->Begin();
 
-  typedef Versor<double> VersorType;
+  using VersorType = Versor<double>;
   VersorType versor;
 
   const double normEpsilon = itk::NumericTraits<double>::min();

@@ -27,7 +27,7 @@
 #include "linear_model_matlab.h"
 
 #if MX_API_VER < 0x07030000
-typedef int mwIndex;
+using mwIndex = int;
 #endif
 
 #define CMD_LEN 2048

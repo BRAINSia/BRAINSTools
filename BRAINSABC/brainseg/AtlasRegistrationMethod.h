@@ -88,8 +88,8 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
     return inputImageList[0];
     }
 
-  typedef itk::BinaryThresholdImageFilter<TImage,TImage> BinaryThreshImageFilterType;
-  typedef itk::MultiplyImageFilter<TImage,TImage> MultiplyFilterType;
+  using BinaryThreshImageFilterType = itk::BinaryThresholdImageFilter<TImage,TImage>;
+  using MultiplyFilterType = itk::MultiplyImageFilter<TImage,TImage>;
   typename BinaryThreshImageFilterType::Pointer firstBinary = BinaryThreshImageFilterType::New();
   firstBinary->SetLowerThreshold( 0 );
   firstBinary->SetUpperThreshold( 0 );
@@ -114,7 +114,7 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
   averageMask = multIF->GetOutput();
   }
 
-  typedef itk::AverageImageFilter<TImage,TImage> AvgFilterType;
+  using AvgFilterType = itk::AverageImageFilter<TImage,TImage>;
   typename AvgFilterType::Pointer filter = AvgFilterType::New();
   typename TImage::Pointer referenceScaleImg = inputImageList[0];
   filter->SetInput(0,referenceScaleImg);
@@ -142,63 +142,63 @@ class AtlasRegistrationMethod : public itk::Object
 {
 public:
 
-  /** Standard class typedefs. */
-  typedef AtlasRegistrationMethod       Self;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = AtlasRegistrationMethod;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   // Image types
-  typedef itk::Image<TOutputPixel, 3>          OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename OutputImageType::IndexType  OutputImageIndexType;
-  typedef typename OutputImageType::OffsetType OutputImageOffsetType;
-  typedef typename OutputImageType::PixelType  OutputImagePixelType;
-  typedef typename OutputImageType::SizeType   OutputImageSizeType;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  using OutputImageType = itk::Image<TOutputPixel, 3>;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageIndexType = typename OutputImageType::IndexType;
+  using OutputImageOffsetType = typename OutputImageType::OffsetType;
+  using OutputImagePixelType = typename OutputImageType::PixelType;
+  using OutputImageSizeType = typename OutputImageType::SizeType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 
-  typedef itk::Image<TProbabilityPixel, 3>          ProbabilityImageType;
-  typedef typename ProbabilityImageType::Pointer    ProbabilityImagePointer;
-  typedef typename ProbabilityImageType::IndexType  ProbabilityImageIndexType;
-  typedef typename ProbabilityImageType::OffsetType ProbabilityImageOffsetType;
-  typedef typename ProbabilityImageType::PixelType  ProbabilityImagePixelType;
-  typedef typename ProbabilityImageType::SizeType   ProbabilityImageSizeType;
-  typedef typename ProbabilityImageType::RegionType ProbabilityImageRegionType;
+  using ProbabilityImageType = itk::Image<TProbabilityPixel, 3>;
+  using ProbabilityImagePointer = typename ProbabilityImageType::Pointer;
+  using ProbabilityImageIndexType = typename ProbabilityImageType::IndexType;
+  using ProbabilityImageOffsetType = typename ProbabilityImageType::OffsetType;
+  using ProbabilityImagePixelType = typename ProbabilityImageType::PixelType;
+  using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
+  using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
 
-  typedef itk::Image<float, 3>                   InternalImageType;
-  typedef typename InternalImageType::Pointer    InternalImagePointer;
-  typedef typename InternalImageType::IndexType  InternalImageIndexType;
-  typedef typename InternalImageType::OffsetType InternalImageOffsetType;
-  typedef typename InternalImageType::PixelType  InternalImagePixelType;
-  typedef typename InternalImageType::RegionType InternalImageRegionType;
-  typedef typename InternalImageType::SizeType   InternalImageSizeType;
+  using InternalImageType = itk::Image<float, 3>;
+  using InternalImagePointer = typename InternalImageType::Pointer;
+  using InternalImageIndexType = typename InternalImageType::IndexType;
+  using InternalImageOffsetType = typename InternalImageType::OffsetType;
+  using InternalImagePixelType = typename InternalImageType::PixelType;
+  using InternalImageRegionType = typename InternalImageType::RegionType;
+  using InternalImageSizeType = typename InternalImageType::SizeType;
 
-  typedef itk::Image<unsigned char, 3>       ByteImageType;
-  typedef typename ByteImageType::Pointer    ByteImagePointer;
-  typedef typename ByteImageType::IndexType  ByteImageIndexType;
-  typedef typename ByteImageType::OffsetType ByteImageOffsetType;
-  typedef typename ByteImageType::PixelType  ByteImagePixelType;
-  typedef typename ByteImageType::RegionType ByteImageRegionType;
-  typedef typename ByteImageType::SizeType   ByteImageSizeType;
+  using ByteImageType = itk::Image<unsigned char, 3>;
+  using ByteImagePointer = typename ByteImageType::Pointer;
+  using ByteImageIndexType = typename ByteImageType::IndexType;
+  using ByteImageOffsetType = typename ByteImageType::OffsetType;
+  using ByteImagePixelType = typename ByteImageType::PixelType;
+  using ByteImageRegionType = typename ByteImageType::RegionType;
+  using ByteImageSizeType = typename ByteImageType::SizeType;
 
-  typedef itk::Transform<double, 3, 3>         GenericTransformType;
-  typedef itk::CompositeTransform<double, 3>   CompositeTransformType;
-  typedef CompositeTransformType::Pointer      CompositeTransformPointer;
-  typedef std::vector<ProbabilityImagePointer> ProbabilityImageList;
-  typedef std::vector<OutputImagePointer>      OutputImageList;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
+  using CompositeTransformType = itk::CompositeTransform<double, 3>;
+  using CompositeTransformPointer = CompositeTransformType::Pointer;
+  using ProbabilityImageList = std::vector<ProbabilityImagePointer>;
+  using OutputImageList = std::vector<OutputImagePointer>;
 
-  typedef itk::Array<unsigned char> FlagArrayType;
+  using FlagArrayType = itk::Array<unsigned char>;
 
-  typedef std::vector<std::string> StringVector;
-  typedef orderedmap<std::string,StringVector > MapOfStringVectors;
+  using StringVector = std::vector<std::string>;
+  using MapOfStringVectors = orderedmap<std::string,StringVector >;
 
-  typedef std::vector<InternalImagePointer> FloatImageVector;
-  typedef orderedmap<std::string, FloatImageVector> MapOfFloatImageVectors;
+  using FloatImageVector = std::vector<InternalImagePointer>;
+  using MapOfFloatImageVectors = orderedmap<std::string, FloatImageVector>;
 
-  typedef std::vector<GenericTransformType::Pointer> TransformList;
-  typedef orderedmap<std::string,TransformList>        MapOfTransformLists;
+  using TransformList = std::vector<GenericTransformType::Pointer>;
+  using MapOfTransformLists = orderedmap<std::string,TransformList>;
 
   void SetSuffix(std::string suffix);
 

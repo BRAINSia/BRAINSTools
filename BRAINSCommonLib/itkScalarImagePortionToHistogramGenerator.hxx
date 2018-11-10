@@ -99,7 +99,7 @@ void
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 ::SetHistogramMin(RealPixelType minimumValue)
 {
-  typedef typename GeneratorType::HistogramMeasurementVectorType MeasurementVectorType;
+  using MeasurementVectorType = typename GeneratorType::HistogramMeasurementVectorType;
   MeasurementVectorType minVector(1);
 
   minVector[0] = minimumValue;
@@ -111,7 +111,7 @@ void
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 ::SetHistogramMax(RealPixelType maximumValue)
 {
-  typedef typename GeneratorType::HistogramMeasurementVectorType MeasurementVectorType;
+  using MeasurementVectorType = typename GeneratorType::HistogramMeasurementVectorType;
   MeasurementVectorType maxVector(1);
 
   maxVector[0] = maximumValue;

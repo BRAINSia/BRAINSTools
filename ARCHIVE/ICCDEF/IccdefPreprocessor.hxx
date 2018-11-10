@@ -71,7 +71,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
 
   // resacle the image intensity to [0,255.0]
 #if 1
-  typedef itk::MinimumMaximumImageFilter<InputImageType> MinimumMaximumImageType;
+  using MinimumMaximumImageType = itk::MinimumMaximumImageFilter<InputImageType>;
   typename MinimumMaximumImageType::Pointer fixedMMImage = MinimumMaximumImageType::New();
   fixedMMImage->SetInput(this->m_InputFixedImage);
   fixedMMImage->Update();
@@ -82,7 +82,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
 
   // itk::NumericTraits< typename OutputImageType::PixelType >::max()
   // InputPixelType fixedMaximum = fixedMMImage->GetMaximum();
-  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType> RescaleIntensityImageType;
+  using RescaleIntensityImageType = itk::RescaleIntensityImageFilter<InputImageType, InputImageType>;
   if( fixedMMImage->GetMaximum() > (InputPixelType) itk::NumericTraits<unsigned char>::max()
       || fixedMMImage->GetMinimum() < (InputPixelType) itk::NumericTraits<unsigned char>::min() )
     {
@@ -153,9 +153,9 @@ IccdefPreprocessor<TInputImage, TOutputImage>
     //
     // read in the initial ITKTransform
     //
-    typedef itk::TransformFileReader TransformReaderType;
+    using TransformReaderType = itk::TransformFileReader;
     typename TransformReaderType::Pointer affineReader =  TransformReaderType::New();
-    typedef typename TransformReaderType::TransformType BaseTransformType;
+    using BaseTransformType = typename TransformReaderType::TransformType;
     BaseTransformType * baseTransform(nullptr);
 
     std::cout << "Read ITK transform from text file: " << m_InitialTransformFilename << std::endl;
@@ -181,8 +181,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       }
 
     //  #######Now use TransformToDisplacementFieldSource
-    typedef itk::TransformToDisplacementFieldFilter<TDisplacementField, double> DisplacementFieldGeneratorType;
-    typedef typename DisplacementFieldGeneratorType::TransformType              TransformType; // Only a templated base
+    using DisplacementFieldGeneratorType = itk::TransformToDisplacementFieldFilter<TDisplacementField, double>;
+    using TransformType = typename DisplacementFieldGeneratorType::TransformType; // Only a templated base
                                                                                                // class.
 
     std::cout << "Number of transforms = " << transforms->size() << std::endl;
@@ -253,7 +253,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
                                                                           m_InputFixedImage->GetDirection() );
 
     // Warp the moving image with the initial deformation field
-    typedef itk::WarpImageFilter<TInputImage, TInputImage, TDisplacementField> WarpImageType;
+    using WarpImageType = itk::WarpImageFilter<TInputImage, TInputImage, TDisplacementField>;
     typename WarpImageType::Pointer warper = WarpImageType::New();
     warper->SetInput(m_InputMovingImage);
     warper->SetOutputOrigin(m_InputFixedImage->GetOrigin() );
@@ -277,8 +277,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
   if( m_MedianFilterSize[0] > 0  ||  m_MedianFilterSize[1] > 0 ||  m_MedianFilterSize[2] > 0 )
     {
     std::cout << "Using Medican fileter..." << std::endl;
-    typedef typename itk::MedianImageFilter<TInputImage,
-                                            TInputImage> MedianImageFilterType;
+    using MedianImageFilterType = typename itk::MedianImageFilter<TInputImage,
+                                            TInputImage>;
     typename MedianImageFilterType::Pointer medianFilter
       = MedianImageFilterType::New();
     medianFilter->SetRadius(m_MedianFilterSize);
@@ -311,8 +311,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
 
   if( this->GetUseHistogramMatching() )
     {
-    typedef HistogramMatchingImageFilter<OutputImageType,
-                                         OutputImageType> HistogramMatchingFilterType;
+    using HistogramMatchingFilterType = HistogramMatchingImageFilter<OutputImageType,
+                                         OutputImageType>;
     typename HistogramMatchingFilterType::Pointer histogramfilter
       = HistogramMatchingFilterType::New();
     if( this->GetOutDebug() )
@@ -366,7 +366,7 @@ typename IccdefPreprocessor<TInputImage,
 {
   InputImagePointer Mask = itkUtil::ReadImage<InputImageType>(MaskName);
 
-  typedef BOBFFilter<InputImageType, InputImageType> BOBFFilterType;
+  using BOBFFilterType = BOBFFilter<InputImageType, InputImageType>;
   typename BOBFFilterType::Pointer BOBFfilter = BOBFFilterType::New();
   if( this->GetOutDebug() )
     {

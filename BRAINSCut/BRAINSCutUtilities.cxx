@@ -34,7 +34,7 @@ SmoothImage( const WorkingImagePointer& image, const float GaussianValue)
   /*std::cout<<"Smooth Image with Gaussian value of :: "
            << GaussianValue
            <<std::endl;*/
-  typedef itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType> SmoothingFilterType;
+  using SmoothingFilterType = itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType>;
   SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
 
   smoothingFilter->SetInput( image);
@@ -74,7 +74,7 @@ DisplacementFieldType::Pointer GetDeformationField( std::string filename)
     std::cout << "Return null deformation. Use transformation instead." << std::endl;
     return nullptr;
     }
-  typedef itk::ImageFileReader<DisplacementFieldType> DeformationReaderType;
+  using DeformationReaderType = itk::ImageFileReader<DisplacementFieldType>;
   DeformationReaderType::Pointer deformationReader = DeformationReaderType::New();
   deformationReader->SetFileName( filename );
   deformationReader->Update();

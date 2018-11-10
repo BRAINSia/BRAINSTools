@@ -55,8 +55,8 @@ void ApplyField<TDisplacementField, TInputImage,
     std::cout << "ERROR:  No Input image give.! " << std::endl;
     }
 
-  typedef WarpImageFilter<InputImageType, OutputImageType,
-                          TDisplacementField> WarperType;
+  using WarperType = WarpImageFilter<InputImageType, OutputImageType,
+                          TDisplacementField>;
   typename WarperType::Pointer warper = WarperType::New();
   warper->SetInput(m_InputImage);
   warper->SetDeformationField(m_DisplacementField);

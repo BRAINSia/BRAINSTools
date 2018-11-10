@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
-  typedef itk::FindCenterOfBrainFilter<SImageType>                        FindCenterFilter;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(image);
   findCenterFilter->SetAxis(2);

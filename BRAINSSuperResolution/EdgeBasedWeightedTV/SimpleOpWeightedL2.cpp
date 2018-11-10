@@ -55,7 +55,7 @@ sitk::Image ReshapeFFT(
   /* NEEED ITK ITERATORS HERE */
   HalfHermetianImageType::Pointer itkoutputFreqCoeffs = ConvertToITK<HalfHermetianImageType>(outputFreqCoeffs);
   HalfHermetianImageType::Pointer itkinputFreqCoeffs = ConvertToITK<HalfHermetianImageType>(inputFreqCoeffs);
-  typedef itk::ImageRegionIterator<HalfHermetianImageType> cmplxHHIteratorType;
+  using cmplxHHIteratorType = itk::ImageRegionIterator<HalfHermetianImageType>;
   cmplxHHIteratorType outputHHIter(itkoutputFreqCoeffs, itkoutputFreqCoeffs->GetLargestPossibleRegion());
 
   MoveFFTCoeffs(itkoutputFreqCoeffs, FirstDimensionIsOdd, itkinputFreqCoeffs, inFirstSpatialDeminsionIsOdd);
@@ -79,7 +79,7 @@ sitk::Image A_fhp(sitk::Image inHRRealImage,
   //==========================
   // NEED ITK HERE
   // Transfer FFT coeficients to new space
-  //typedef itk::ImageRegionIterator<HalfHermetianImageType> cmplxHHIteratorType;
+  //using cmplxHHIteratorType = itk::ImageRegionIterator<HalfHermetianImageType>;
   sitk::Image outputFreqCoeffs = ReshapeFFT(desiredOutputRef, inputImage_cmplHH, inputFirstDimIsOdd);
   return outputFreqCoeffs;
 }
@@ -130,7 +130,7 @@ sitk::Image At_fhp(sitk::Image inLRCoeffs,
 sitk::Image GetGradient(sitk::Image inputImage) {
 #if 1
   GradientVarVecType::Pointer gradient_of_p = GradientVarVecType::New();
-  typedef itk::PeriodicBoundaryCondition<FloatImageType> FloatBoundaryType;
+  using FloatBoundaryType = itk::PeriodicBoundaryCondition<FloatImageType>;
   gradient_of_p->OverrideBoundaryCondition(new FloatBoundaryType);
   FloatImageType::Pointer itkinputImage = dynamic_cast<FloatImageType *>(inputImage.GetITKBase());
   gradient_of_p->SetInput(itkinputImage);
@@ -170,7 +170,7 @@ sitk::Image GetDivergence(sitk::Image inputImage) {
   VarVecImageType::Pointer itkinputImage = dynamic_cast<VarVecImageType *>(inputImage.GetITKBase());
 
   DivergenceVarVecType::Pointer divergence_of_gradient_of_p = DivergenceVarVecType::New();
-  typedef itk::PeriodicBoundaryCondition<VarVecImageType> CVBoundaryType;
+  using CVBoundaryType = itk::PeriodicBoundaryCondition<VarVecImageType>;
   divergence_of_gradient_of_p->OverrideBoundaryCondition(new CVBoundaryType);
   divergence_of_gradient_of_p->SetInput(itkinputImage);
   divergence_of_gradient_of_p->SetUseImageSpacingOff();
@@ -213,9 +213,9 @@ static sitk::Image ComputeInvTwoMuPlusGamma(sitk::Image edgemask, const Precisio
 
 sitk::Image MultiplyVectorByScalarImage(sitk::Image viSITK, sitk::Image siSITK) {
   sitk::Image outSITK(viSITK);
-  typedef itk::VectorImage<PrecisionType, 3> VIType;
+  using VIType = itk::VectorImage<PrecisionType, 3>;
   VIType::Pointer out = dynamic_cast<VIType *>(outSITK.GetITKBase());
-  typedef itk::Image<PrecisionType, 3> SIType;
+  using SIType = itk::Image<PrecisionType, 3>;
   SIType::Pointer si = dynamic_cast<SIType *>(siSITK.GetITKBase());
 
   itk::ImageRegionIterator<VIType> outIt(out, out->GetLargestPossibleRegion());

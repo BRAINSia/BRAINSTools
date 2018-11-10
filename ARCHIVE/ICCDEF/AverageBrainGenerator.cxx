@@ -87,10 +87,10 @@ int AverageBrainGenerator(int argc, char *argv[])
     }
 
   constexpr unsigned int Dimension = 3;
-  typedef float                                   PixelType;
-  typedef itk::Image<PixelType, Dimension>        ImageType;
-  typedef itk::Vector<PixelType, Dimension>       VectorPixelType;
-  typedef itk::Image<VectorPixelType,  Dimension> DisplacementFieldType;
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, Dimension>;
+  using VectorPixelType = itk::Vector<PixelType, Dimension>;
+  using DisplacementFieldType = itk::Image<VectorPixelType,  Dimension>;
   DisplacementFieldType::Pointer DisplacementField = DisplacementFieldType::New();
 
   ImageType::Pointer templateImage;
@@ -140,14 +140,14 @@ int AverageBrainGenerator(int argc, char *argv[])
               {
               // Compute the average displacement
               std::cout << subDir->GetFile(j) << std::endl;
-              typedef itk::ImageFileReader<DisplacementFieldType> DFReaderType;
+              using DFReaderType = itk::ImageFileReader<DisplacementFieldType>;
               DFReaderType::Pointer df_Reader = DFReaderType::New();
               std::string           fileName = path + "/" + subDir->GetFile(j);
               df_Reader->SetFileName(fileName);
               df_Reader->Update();
 
-              typedef itk::AddImageFilter<DisplacementFieldType, DisplacementFieldType,
-                                          DisplacementFieldType> AddImageType;
+              using AddImageType = itk::AddImageFilter<DisplacementFieldType, DisplacementFieldType,
+                                          DisplacementFieldType>;
               AddImageType::Pointer adder = AddImageType::New();
               adder->SetInput1(DisplacementField);
               adder->SetInput2(df_Reader->GetOutput() );
@@ -171,15 +171,15 @@ int AverageBrainGenerator(int argc, char *argv[])
     std::cout << "NEED at least 3 data sets to make an average!" << std::endl;
     }
 
-  typedef itk::MultiplyImageFilter<DisplacementFieldType, itk::Image<float,Dimension> , DisplacementFieldType> MultiplyImageType;
+  using MultiplyImageType = itk::MultiplyImageFilter<DisplacementFieldType, itk::Image<float,Dimension> , DisplacementFieldType>;
   MultiplyImageType::Pointer multi = MultiplyImageType::New();
   multi->SetInput(DisplacementField);
   multi->SetConstant(1.0 / static_cast<float>(numberOfFields + 1) );
   multi->Update();
 
   // Compute the inverse of the average deformation field
-  typedef itk::ICCIterativeInverseDisplacementFieldImageFilter<DisplacementFieldType,
-                                                               DisplacementFieldType> InverseDisplacementFieldImageType;
+  using InverseDisplacementFieldImageType = itk::ICCIterativeInverseDisplacementFieldImageFilter<DisplacementFieldType,
+                                                               DisplacementFieldType>;
   InverseDisplacementFieldImageType::Pointer inverse = InverseDisplacementFieldImageType::New();
   inverse->SetInput(multi->GetOutput() );
   inverse->SetStopValue(1.0e-6);
@@ -188,7 +188,7 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   // Write the displacement in each direction
 
-  typedef itk::VectorIndexSelectionCastImageFilter<DisplacementFieldType, ImageType> ComponentFilterType;
+  using ComponentFilterType = itk::VectorIndexSelectionCastImageFilter<DisplacementFieldType, ImageType>;
   ComponentFilterType::Pointer adaptor = ComponentFilterType::New();
   adaptor->SetInput(inverse->GetOutput() );
 
@@ -200,7 +200,7 @@ int AverageBrainGenerator(int argc, char *argv[])
     adaptor->SetIndex( extiter );
     adaptor->Update();
 
-    typedef itk::ImageFileWriter<ImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<ImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(adaptor->GetOutput() );
     writer->SetFileName(componentFilename);
@@ -208,7 +208,7 @@ int AverageBrainGenerator(int argc, char *argv[])
     }
 
   // Warp the templateImage with the avergae displacement
-  typedef itk::WarpImageFilter<ImageType, ImageType, DisplacementFieldType> WarpImageType;
+  using WarpImageType = itk::WarpImageFilter<ImageType, ImageType, DisplacementFieldType>;
   WarpImageType::Pointer warper = WarpImageType::New();
 
   warper->SetInput(templateImage);
@@ -221,14 +221,14 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   if( pixelType == "uchar" )
     {
-    typedef unsigned char                                 NewPixelType;
-    typedef itk::Image<NewPixelType, Dimension>           NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType> CastImageFilter;
+    using NewPixelType = unsigned char;
+    using NewImageType = itk::Image<NewPixelType, Dimension>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( warper->GetOutput() );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<NewImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(castFilter->GetOutput() );
     writer->SetFileName(outputVolume);
@@ -237,14 +237,14 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   else if( pixelType == "short" )
     {
-    typedef short                                         NewPixelType;
-    typedef itk::Image<NewPixelType, Dimension>           NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType> CastImageFilter;
+    using NewPixelType = short;
+    using NewImageType = itk::Image<NewPixelType, Dimension>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( warper->GetOutput() );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<NewImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(castFilter->GetOutput() );
     writer->SetFileName(outputVolume);
@@ -253,14 +253,14 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   else if( pixelType == "ushort" )
     {
-    typedef unsigned short                                NewPixelType;
-    typedef itk::Image<NewPixelType, Dimension>           NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType> CastImageFilter;
+    using NewPixelType = unsigned short;
+    using NewImageType = itk::Image<NewPixelType, Dimension>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( warper->GetOutput() );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<NewImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(castFilter->GetOutput() );
     writer->SetFileName(outputVolume);
@@ -269,14 +269,14 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   else if( pixelType == "int" )
     {
-    typedef int                                           NewPixelType;
-    typedef itk::Image<NewPixelType, Dimension>           NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType> CastImageFilter;
+    using NewPixelType = int;
+    using NewImageType = itk::Image<NewPixelType, Dimension>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( warper->GetOutput() );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<NewImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(castFilter->GetOutput() );
     writer->SetFileName(outputVolume);
@@ -285,14 +285,14 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   else if( pixelType == "uint" )
     {
-    typedef unsigned int                                  NewPixelType;
-    typedef itk::Image<NewPixelType, Dimension>           NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType> CastImageFilter;
+    using NewPixelType = unsigned int;
+    using NewImageType = itk::Image<NewPixelType, Dimension>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( warper->GetOutput() );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<NewImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(castFilter->GetOutput() );
     writer->SetFileName(outputVolume);
@@ -301,7 +301,7 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   else if( pixelType == "float" )
     {
-    typedef itk::ImageFileWriter<ImageType> ImageWriteType;
+    using ImageWriteType = itk::ImageFileWriter<ImageType>;
     ImageWriteType::Pointer writer = ImageWriteType::New();
     writer->SetInput(warper->GetOutput() );
     writer->SetFileName(outputVolume);

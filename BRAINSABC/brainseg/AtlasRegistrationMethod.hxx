@@ -180,7 +180,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         }
       else // when m_ImageLinearTransformChoice == "Rigid"
         {
-        typedef itk::BRAINSFitHelper HelperType;
+        using HelperType = itk::BRAINSFitHelper;
         HelperType::Pointer intraSubjectRegistrationHelper = HelperType::New();
         intraSubjectRegistrationHelper->SetSamplingPercentage(0.05); //Sample 5% of image
         intraSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
@@ -201,7 +201,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         constexpr int closingSize = 15;
         intraSubjectRegistrationHelper->SetMovingVolume((*intraImIt).GetPointer());
         muLogMacro( << "Generating MovingImage Mask (Intrasubject  " << i << ")" <<  std::endl );
-        typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+        using ROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> >;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*intraImIt));
         ROIFilter->SetClosingSize(closingSize);
@@ -213,7 +213,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         intraSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
         if( this->m_DebugLevel > 7 )
           {
-          typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+          using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
           ByteWriterType::Pointer writer = ByteWriterType::New();
           writer->UseCompressionOn();
 
@@ -231,7 +231,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         if( m_InputImageTissueRegion.IsNull() || m_InputSpatialObjectTissueRegion.IsNull() )
           {
           muLogMacro( << "Generating FixedImage Mask (Intrasubject)" <<  std::endl );
-          typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
+          using LocalROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> >;
           ROIFilter = LocalROIAutoType::New();
           ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
           ROIFilter->SetClosingSize(closingSize);
@@ -243,7 +243,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           m_InputSpatialObjectTissueRegion = ROIFilter->GetSpatialObjectROI();
           if( this->m_DebugLevel > 7 )
             {
-            typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+            using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
             ByteWriterType::Pointer writer = ByteWriterType::New();
             writer->UseCompressionOn();
 
@@ -421,7 +421,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     }
   else /***** We actaully need to run a registration ******/
     {
-    typedef itk::BRAINSFitHelper HelperType;
+    using HelperType = itk::BRAINSFitHelper;
     HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
       { // Set common parameters
       atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); //Sample 5% of image
@@ -511,7 +511,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
     constexpr int dilateSize = 10;
     constexpr int closingSize = 15;
-    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
+    using LocalROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> >;
     typename LocalROIAutoType::Pointer  ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetFirstAtlasOriginalImage());
     ROIFilter->SetClosingSize(closingSize);
@@ -521,7 +521,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     if( this->m_DebugLevel > 7 )
       {
       ByteImageType::Pointer movingMaskImage = ROIFilter->GetOutput();
-      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
       ByteWriterType::Pointer writer = ByteWriterType::New();
       writer->UseCompressionOn();
 
@@ -536,7 +536,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       }
 
     muLogMacro( << "Generating FixedImage Mask (Subject)" <<   std::endl );
-    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
+    using LocalROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> >;
     ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
     ROIFilter->SetClosingSize(closingSize);
@@ -546,7 +546,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     if( this->m_DebugLevel > 7 )
       {
       ByteImageType::Pointer fixedMaskImage = ROIFilter->GetOutput();
-      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
       ByteWriterType::Pointer writer = ByteWriterType::New();
       writer->UseCompressionOn();
 
@@ -762,11 +762,10 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   outimg->SetRegions(img->GetLargestPossibleRegion() );
   outimg->Allocate();
 
-  typedef itk::ImageRegionIterator<InternalImageType> InternalIteratorType;
+  using InternalIteratorType = itk::ImageRegionIterator<InternalImageType>;
   InternalIteratorType inputIter(img, img->GetLargestPossibleRegion() );
 
-  typedef itk::ImageRegionIterator<ProbabilityImageType>
-    ProbabilityIteratorType;
+  using ProbabilityIteratorType = itk::ImageRegionIterator<ProbabilityImageType>;
   ProbabilityIteratorType outputIter(outimg,
                                      outimg->GetLargestPossibleRegion() );
 

@@ -103,18 +103,18 @@ int main(int argc, char *argv[])
     std::cout << "=====================================================" << std::endl;
     }
 
-  typedef float                                                          PixelType;
-  typedef itk::Image<PixelType, 3>                                       AnisotropyImageType;
-  typedef itk::Image<PixelType, 3>                                       CostImageType;
-  typedef itk::Image<PixelType, 3>                                       SpeedImageType;
-  typedef double                                                         TensorElementType;
-  typedef itk::DiffusionTensor3D<TensorElementType>                      TensorPixelType;
-  typedef itk::Image<TensorPixelType, 3>                                 TensorImageType;
-  typedef TensorImageType::IndexType                                     seedIndexType;
-  typedef itk::DtiFastMarchingCostFilter<CostImageType, TensorImageType> FloatFMType;
+  using PixelType = float;
+  using AnisotropyImageType = itk::Image<PixelType, 3>;
+  using CostImageType = itk::Image<PixelType, 3>;
+  using SpeedImageType = itk::Image<PixelType, 3>;
+  using TensorElementType = double;
+  using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using seedIndexType = TensorImageType::IndexType;
+  using FloatFMType = itk::DtiFastMarchingCostFilter<CostImageType, TensorImageType>;
 
   // Read Tensor Image to set principal eigenvector image
-  typedef itk::ImageFileReader<TensorImageType> TensorImageReaderType;
+  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
   TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
 
   // Read Anisotropy Image
-  typedef itk::ImageFileReader<AnisotropyImageType> AnisotropyImageReaderType;
+  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(  inputAnisotropyVolume );
 
@@ -147,9 +147,9 @@ int main(int argc, char *argv[])
 
   AnisotropyImageType::Pointer anisotropyImage = anisotropyImageReader->GetOutput();
 
-  typedef signed short                        MaskPixelType;
-  typedef itk::Image<MaskPixelType, 3>        MaskImageType;
-  typedef itk::ImageFileReader<MaskImageType> MaskImageReaderType;
+  using MaskPixelType = signed short;
+  using MaskImageType = itk::Image<MaskPixelType, 3>;
+  using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
   MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName( inputStartingSeedsLabelMapVolume );
 
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     }
 
   /* Threshold Starting Label Map */
-  typedef itk::ThresholdImageFilter<MaskImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
   ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput( startingSeedImageReader->GetOutput() );
   startingThresholdFilter->SetLower( static_cast<MaskPixelType>( startingSeedsLabel ) );
@@ -174,16 +174,16 @@ int main(int argc, char *argv[])
   MaskImageType::Pointer startingSeedMask = startingThresholdFilter->GetOutput();
 
   /* Now Generate the Seed points for the Fast Marching Algorithm */
-  typedef itk::ImageRegionConstIterator<MaskImageType> ConstMaskIteratorType;
+  using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
   ConstMaskIteratorType maskIt( startingSeedMask, startingSeedMask->GetLargestPossibleRegion() );
-  typedef itk::ImageRegionConstIterator<AnisotropyImageType> ConstAnisotropyIteratorType;
+  using ConstAnisotropyIteratorType = itk::ImageRegionConstIterator<AnisotropyImageType>;
   ConstAnisotropyIteratorType anisoIt( anisotropyImage, anisotropyImage->GetLargestPossibleRegion() );
 
-  typedef FloatFMType::NodeType      NodeType; // NodeType is float type
-  typedef FloatFMType::NodeContainer NodeContainer;
-  typedef CostImageType::IndexType   seedIndexType;
-  typedef std::list<seedIndexType>   SeedListType;
-  typedef std::list<float>           SeedValueListType;
+  using NodeType = FloatFMType::NodeType; // NodeType is float type
+  using NodeContainer = FloatFMType::NodeContainer;
+  using seedIndexType = CostImageType::IndexType;
+  using SeedListType = std::list<seedIndexType>;
+  using SeedValueListType = std::list<float>;
   SeedValueListType seedValueList;
 
   SeedListType seedList;
@@ -255,14 +255,14 @@ int main(int argc, char *argv[])
     marcher->Update();
 
     /* Save the Cost and Speed Images */
-    typedef itk::ImageFileWriter<CostImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<CostImageType>;
     WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetInput( marcher->GetOutput() );
     writer->SetFileName( outputCostVolume );
     writer->Write();
 
-    typedef itk::ImageFileWriter<SpeedImageType> SpeedWriterType;
+    using SpeedWriterType = itk::ImageFileWriter<SpeedImageType>;
     SpeedWriterType::Pointer writer2 = SpeedWriterType::New();
     writer2->UseCompressionOn();
     writer2->SetInput( marcher->GetOutputSpeedImage() );

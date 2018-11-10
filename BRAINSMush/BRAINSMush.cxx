@@ -93,7 +93,7 @@ int main(int argc, char * *argv)
   /* ------------------------------------------------------------------------------------
    * Load Images
    */
-  typedef itk::Image<float, 3> ImageType;
+  using ImageType = itk::Image<float, 3>;
 
   ImageType::Pointer firstImage = LoadImage( inputFirstVolume.c_str() );
 
@@ -208,7 +208,7 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   /* ------------------------------------------------------------------------------------
    * Write out MUSH Image
    */
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->UseCompressionOn();
   writer->SetInput(mixtureImage);
@@ -235,7 +235,7 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   std::cout << "---------------------------------------------------"
             << std::endl << std::endl;
 
-  // typedef itk::ImageFileWriter<MaskImageType> MaskImageWriterType;
+  // using MaskImageWriterType = itk::ImageFileWriter<MaskImageType>;
   MaskImageWriterType::Pointer maskWriter = MaskImageWriterType::New();
   maskWriter->UseCompressionOn();
 
@@ -305,8 +305,8 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
     std::cout << "Performing Initial Binary Threshold..." << std::endl;
     std::cout << "---------------------------------------------------"
               << std::endl << std::endl;
-    typedef itk::BinaryThresholdImageFilter<MaskImageType,
-                                            MaskImageType> BinaryThresholdMaskFilterType;
+    using BinaryThresholdMaskFilterType = itk::BinaryThresholdImageFilter<MaskImageType,
+                                            MaskImageType>;
     BinaryThresholdMaskFilterType::Pointer threshToBrainCoreMask =
       BinaryThresholdMaskFilterType::New();
     threshToBrainCoreMask->SetInput(maskImage);
@@ -326,9 +326,9 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
       // return EXIT_FAILURE;
       }
 
-    typedef itk::BinaryErodeImageFilter<MaskImageType,
+    using binaryErodeFilterType = itk::BinaryErodeImageFilter<MaskImageType,
                                         MaskImageType,
-                                        StructuringElementType> binaryErodeFilterType;
+                                        StructuringElementType>;
 
     int erosionValue = 7;
     std::cout << "---------------------------------------------------"
@@ -364,8 +364,8 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
      * Obtain mean of image; calculate lower and upper bounds
      */
 
-    typedef itk::LabelStatisticsImageFilter<ImageType,
-                                            MaskImageType> LabelFilterType;
+    using LabelFilterType = itk::LabelStatisticsImageFilter<ImageType,
+                                            MaskImageType>;
     LabelFilterType::Pointer labelFilter = LabelFilterType::New();
     labelFilter->SetInput(mixtureImage);
     labelFilter->SetLabelInput( initialMaskImage->GetOutput() );
@@ -381,7 +381,7 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
       // return EXIT_FAILURE;
       }
 
-    // typedef LabelFilterType::RealType  StatisticRealType;
+    // using StatisticRealType = LabelFilterType::RealType;
     mean =  labelFilter->GetMean(1);
 
     // these definitions use magic numbers obtained through manual thresholding
@@ -403,8 +403,8 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   std::cout << "Performing Initial Binary Threshold..." << std::endl;
   std::cout << "---------------------------------------------------"
             << std::endl << std::endl;
-  typedef itk::BinaryThresholdImageFilter<ImageType,
-                                          MaskImageType> BinaryThresholdFilterType;
+  using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ImageType,
+                                          MaskImageType>;
   BinaryThresholdFilterType::Pointer threshToHeadMask =
     BinaryThresholdFilterType::New();
   threshToHeadMask->SetInput(mixtureImage);
@@ -424,13 +424,13 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
     // return EXIT_FAILURE;
     }
 
-  typedef itk::BinaryDilateImageFilter<MaskImageType,
+  using BinaryDilateFilterType = itk::BinaryDilateImageFilter<MaskImageType,
                                        MaskImageType,
-                                       StructuringElementType> BinaryDilateFilterType;
+                                       StructuringElementType>;
 
-  typedef itk::BinaryErodeImageFilter<MaskImageType,
+  using BinaryImageErodeFilterType = itk::BinaryErodeImageFilter<MaskImageType,
                                       MaskImageType,
-                                      StructuringElementType> BinaryImageErodeFilterType;
+                                      StructuringElementType>;
 
   double ClosingSize = 6;
 
@@ -493,8 +493,8 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   std::cout << "Performing Special Binary Threshold..." << std::endl;
   std::cout << "---------------------------------------------------"
             << std::endl << std::endl;
-  typedef itk::BinaryThresholdImageFilter<MaskImageType,
-                                          MaskImageType> BinaryThresholdMaskFilterType;
+  using BinaryThresholdMaskFilterType = itk::BinaryThresholdImageFilter<MaskImageType,
+                                          MaskImageType>;
   BinaryThresholdMaskFilterType::Pointer threshToBrainCoreMask =
     BinaryThresholdMaskFilterType::New();
   threshToBrainCoreMask->SetInput( binaryErodeFilter->GetOutput() );
@@ -523,12 +523,11 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   std::cout << "---------------------------------------------------"
             << std::endl << std::endl;
 
-  typedef itk::ConnectedComponentImageFilter<MaskImageType,
-                                             MaskImageType> ConnectedComponentFilterType;
-  typedef itk::RelabelComponentImageFilter<MaskImageType,
-                                           MaskImageType> RelabelComponentFilterType;
-  typedef itk::ThresholdImageFilter<MaskImageType>
-    ThresholdFilterType;
+  using ConnectedComponentFilterType = itk::ConnectedComponentImageFilter<MaskImageType,
+                                             MaskImageType>;
+  using RelabelComponentFilterType = itk::RelabelComponentImageFilter<MaskImageType,
+                                           MaskImageType>;
+  using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
 
   ConnectedComponentFilterType::Pointer filter = ConnectedComponentFilterType::New();
   RelabelComponentFilterType::Pointer   relabel = RelabelComponentFilterType::New();
@@ -649,7 +648,7 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   // resultImage = FindLargestForgroundFilledMask<MaskImageType>( dilatedOutput,
   //                                                               0,
   //                                                               5 );
-  typedef itk::LargestForegroundFilledMaskImageFilter<MaskImageType> LFFMaskFilterType;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<MaskImageType>;
   LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   LFF->SetInput(dilatedOutput);
   LFF->SetOtsuPercentileThreshold(0);
@@ -691,7 +690,7 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
 
   //------------------------------------------------------------------------------------
   //Write out MUSH Image
-  typedef itk::ImageFileWriter < ImageType > ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter < ImageType >;
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->UseCompressionOn();
   writer->SetInput( mixtureImage );
@@ -714,7 +713,7 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
   std::cout << "Calculating thresholds..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
-  //typedef itk::ImageFileWriter<MaskImageType> MaskImageWriterType;
+  //using MaskImageWriterType = itk::ImageFileWriter<MaskImageType>;
   MaskImageWriterType::Pointer maskWriter = MaskImageWriterType::New();
   maskWriter->UseCompressionOn();
 
@@ -773,9 +772,9 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
 
 
 
-    typedef itk::BinaryErodeImageFilter < MaskImageType,
+    using binaryErodeFilterType = itk::BinaryErodeImageFilter < MaskImageType,
                                           MaskImageType,
-                                          StructuringElementType > binaryErodeFilterType;
+                                          StructuringElementType >;
 
     int erosionValue = 7;
     std::cout << "---------------------------------------------------" << std::endl;
@@ -809,7 +808,7 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
     //------------------------------------------------------------------------------------
     //Obtain mean of image; calculate lower and upper bounds
 
-    typedef itk::LabelStatisticsImageFilter < ImageType, MaskImageType > LabelFilterType;
+    using LabelFilterType = itk::LabelStatisticsImageFilter < ImageType, MaskImageType >;
     LabelFilterType::Pointer labelFilter = LabelFilterType::New();
     labelFilter->SetInput( mixtureImage );
     labelFilter->SetLabelInput( initialMaskImage->GetOutput() );
@@ -825,7 +824,7 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
       //return EXIT_FAILURE;
     }
 
-    //typedef LabelFilterType::RealType  StatisticRealType;
+    //using StatisticRealType = LabelFilterType::RealType;
     mean =  labelFilter->GetMean( 1 );
 
     //these definitions use magic numbers obtained through manual thresholding and experimentation
@@ -843,7 +842,7 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Performing Initial Binary Threshold..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
-  typedef itk::BinaryThresholdImageFilter <ImageType, MaskImageType> BinaryThresholdFilterType;
+  using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter <ImageType, MaskImageType>;
   BinaryThresholdFilterType::Pointer threshToHeadMask = BinaryThresholdFilterType::New();
   threshToHeadMask->SetInput( mixtureImage );
   threshToHeadMask->SetLowerThreshold( lower );
@@ -862,12 +861,12 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
     //return EXIT_FAILURE;
   }
 
-  typedef itk::BinaryDilateImageFilter < MaskImageType,
+  using BinaryDilateFilterType = itk::BinaryDilateImageFilter < MaskImageType,
                                          MaskImageType,
-                                         StructuringElementType > BinaryDilateFilterType;
-  typedef itk::BinaryErodeImageFilter < MaskImageType,
+                                         StructuringElementType >;
+  using BinaryImageErodeFilterType = itk::BinaryErodeImageFilter < MaskImageType,
                                         MaskImageType,
-                                        StructuringElementType > BinaryImageErodeFilterType;
+                                        StructuringElementType >;
 
   double ClosingSize = 10;
 
@@ -896,12 +895,12 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
   std::cout << "Obtaining Largest Filled Region..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
-  typedef itk::ConnectedComponentImageFilter< MaskImageType, MaskImageType > ConnectedComponentFilterType;
-  typedef itk::RelabelComponentImageFilter  < MaskImageType, MaskImageType > RelabelComponentFilterType;
-  typedef itk::ConnectedThresholdImageFilter< MaskImageType, MaskImageType > ConnectedThresholdFilterType;
-  typedef itk::ThresholdImageFilter < MaskImageType > ThresholdFilterType;
+  using ConnectedComponentFilterType = itk::ConnectedComponentImageFilter< MaskImageType, MaskImageType >;
+  using RelabelComponentFilterType = itk::RelabelComponentImageFilter  < MaskImageType, MaskImageType >;
+  using ConnectedThresholdFilterType = itk::ConnectedThresholdImageFilter< MaskImageType, MaskImageType >;
+  using ThresholdFilterType = itk::ThresholdImageFilter < MaskImageType >;
   //alternate definition to allow for binary thresholding of a mask image
-  typedef itk::BinaryThresholdImageFilter < MaskImageType, MaskImageType > MaskBinaryThresholdFilterType;
+  using MaskBinaryThresholdFilterType = itk::BinaryThresholdImageFilter < MaskImageType, MaskImageType >;
 
   BinaryThresholdFilterType::Pointer threshold = BinaryThresholdFilterType::New();
   ConnectedComponentFilterType::Pointer filter = ConnectedComponentFilterType::New();
@@ -1021,7 +1020,7 @@ void PreliminaryGenerateBrainVolume ( ImageType::Pointer &firstImage,
   ConnectedThresholdFilterType::Pointer ConnectedThresholdFilter = ConnectedThresholdFilterType::New();
   {
     const MaskImageType::IndexType SeedLocation = { {seed[0], seed[1], seed[2]} };
-    ConnectedThresholdFilter->SetSeed( SeedLocation) ;
+    ConnectedThresholdFilter->SetSeed( SeedLocation);
   }
   ConnectedThresholdFilter->SetReplaceValue( 1 );
   ConnectedThresholdFilter->SetUpper( 1 );
@@ -1168,8 +1167,8 @@ ImageType::Pointer MixtureOptimizer(ImageType::Pointer & firstImage,
                                     double desiredVariance,
                                     std::string outputWeightsFile)
 {
-  typedef itk::MixtureStatisticCostFunction<ImageType,
-                                            ImageType> MixtureStatisticCostFunctionType;
+  using MixtureStatisticCostFunctionType = itk::MixtureStatisticCostFunction<ImageType,
+                                            ImageType>;
   MixtureStatisticCostFunctionType::Pointer twoByTwoCostFunction =
     MixtureStatisticCostFunctionType::New();
   twoByTwoCostFunction->SetDesiredMean(desiredMean);
@@ -1191,7 +1190,7 @@ ImageType::Pointer MixtureOptimizer(ImageType::Pointer & firstImage,
     / twoByTwoCostFunction->GetNumberOfMaskVoxels();
   double jointFactor = 1.0 / ( firstMean + secondMean );
 
-  typedef itk::LevenbergMarquardtOptimizer LevenbergMarquardtOptimizerType;
+  using LevenbergMarquardtOptimizerType = itk::LevenbergMarquardtOptimizer;
   LevenbergMarquardtOptimizerType::Pointer twoByTwoOptimizer =
     LevenbergMarquardtOptimizerType::New();
   twoByTwoOptimizer->SetUseCostFunctionGradient(false);
@@ -1276,7 +1275,7 @@ ImageType::Pointer MixtureOptimizer(ImageType::Pointer & firstImage,
   ConstIteratorType firstIt( firstImage, firstImage->GetRequestedRegion() );
   ConstIteratorType secondIt( secondImage, secondImage->GetRequestedRegion() );
 
-  typedef itk::ImageRegionIterator<ImageType> MixtureIteratorType;
+  using MixtureIteratorType = itk::ImageRegionIterator<ImageType>;
   MixtureIteratorType mixtureIt( mixtureImage, mixtureImage->GetRequestedRegion() );
   for( mixtureIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin();
        !mixtureIt.IsAtEnd();

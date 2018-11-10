@@ -108,7 +108,7 @@ benefits more from readability than speed.
 // will exit on the first error.
 // If false, the program will
 // continue and use "* * *" as the missing data.
-typedef std::vector<std::pair<std::string, std::string> > SubjectFilenameVector;
+using SubjectFilenameVector = std::vector<std::pair<std::string, std::string> >;
 
 // C L A S S E S //////////////////////////////////////////////////////////////
 
@@ -157,7 +157,7 @@ static std::string get_subjectid(const std::string& content)
   int start = content.length() - 1;
   int end = start;
 
-  for( ; start >= 0; start-- )
+  for(; start >= 0; start-- )
     {
     if( content[start] == '_' )
       {
@@ -238,7 +238,7 @@ SubjectFilenameVector get_subject_filename_tuples(const std::string& file_glob_s
 }
 
 // A map between the read in filename and the LandmarksMapType
-typedef std::map<std::string, LandmarksMapType> FileToLandmarksMapType;
+using FileToLandmarksMapType = std::map<std::string, LandmarksMapType>;
 
 // ----------
 // Get the data for the individual matrices for each landmark type
@@ -382,7 +382,7 @@ int main(int argc, char* argv[])
   const FileToLandmarksMapType allFileToLandmarkMap =
     get_allFileToLandmarkMap(subjects);
 
-  typedef std::vector<std::pair<std::string, std::vector<std::string> > > LandmarkClassMapsTypes;
+  using LandmarkClassMapsTypes = std::vector<std::pair<std::string, std::vector<std::string> > >;
 
   const LandmarkClassMapsTypes landmark_types = get_landmark_types(landmarkTypesFile);
 
@@ -552,7 +552,7 @@ int main(int argc, char* argv[])
                                                  - 1].second)
           - (byClassLandmarkMatrix["baseLandmarks"][0].second) ).transpose();
 
-      // instead of  " Xi = [Xi ; lmkVec] " we write:
+      // instead of  " Xi = [Xi; lmkVec] " we write:
       vnl_matrix<double> Xi_temp = Xi;
       Xi.set_size(Xi.rows() + lmkVec.rows(), Xi.columns() );
       Xi.update(Xi_temp, 0, 0);

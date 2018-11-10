@@ -98,11 +98,11 @@ class ResampleInPlaceImageFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ResampleInPlaceImageFilter);
 
-  /** Standard class typedefs */
-  typedef ResampleInPlaceImageFilter                    Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  /** Standard class type alias */
+  using Self = ResampleInPlaceImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory */
   itkNewMacro( Self );
@@ -110,17 +110,17 @@ public:
   /** Run-time type information (and related methods) */
   itkTypeMacro( ResampleInPlaceImageFilter, ImageToImageFilter );
 
-  /** input/output image typedefs */
-  typedef TInputImage                         InputImageType;
-  typedef typename InputImageType::Pointer    InputImagePointer;
-  typedef typename InputImageType::RegionType InputImageRegionType;
-  typedef typename InputImageType::PixelType  InputImagePixelType;
-  typedef typename InputImageType::PointType  InputImagePointType;
+  /** input/output image type alias */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputImagePixelType = typename InputImageType::PixelType;
+  using InputImagePointType = typename InputImageType::PointType;
 
-  typedef TOutputImage                         OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
-  typedef typename OutputImageType::PixelType  OutputImagePixelType;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using OutputImagePixelType = typename OutputImageType::PixelType;
 
   /** ImageDimension constants */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
@@ -133,9 +133,9 @@ public:
                   (Concept::Convertible<InputImagePixelType, OutputImagePixelType> ) );
 #endif
 
-  /** Transform typedef */
-  typedef VersorRigid3DTransform<double>            RigidTransformType;
-  typedef typename RigidTransformType::ConstPointer RigidTransformConstPointer;
+  /** Transform type alias */
+  using RigidTransformType = VersorRigid3DTransform<double>;
+  using RigidTransformConstPointer = typename RigidTransformType::ConstPointer;
 
   /** Set/Get rigid transform. The default is an identity transform */
   itkSetConstObjectMacro( RigidTransform, RigidTransformType );

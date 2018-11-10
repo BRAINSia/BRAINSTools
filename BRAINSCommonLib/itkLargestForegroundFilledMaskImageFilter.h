@@ -59,22 +59,22 @@ class LargestForegroundFilledMaskImageFilter :
 {
 public:
 
-  /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                           InputImageType;
-  typedef typename InputImageType::ConstPointer InputImagePointer;
-  typedef typename InputImageType::RegionType   InputImageRegionType;
-  typedef typename InputImageType::PixelType    InputPixelType;
+  /** Convenient type alias for simplifying declarations. */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputPixelType = typename InputImageType::PixelType;
 
-  typedef TOutputImage                         OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
-  typedef typename OutputImageType::PixelType  OutputPixelType;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using OutputPixelType = typename OutputImageType::PixelType;
 
-  typedef LargestForegroundFilledMaskImageFilter                 Self;
-  typedef ImageToImageFilter<InputImageType, OutputImageType>    Superclass;
-  typedef SmartPointer<Self>                                     Pointer;
-  typedef Image<unsigned short, OutputImageType::ImageDimension> IntegerImageType;
-  typedef typename IntegerImageType::PixelType                   IntegerPixelType;
+  using Self = LargestForegroundFilledMaskImageFilter;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using IntegerImageType = Image<unsigned short, OutputImageType::ImageDimension>;
+  using IntegerPixelType = typename IntegerImageType::PixelType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

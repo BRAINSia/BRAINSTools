@@ -70,35 +70,35 @@ enum ENUM_TENSOR_SHAPE_TYPE
   PRIMARY_EIGENVECTOR = 2,
   TENSOR_SHAPE = 3
   };
-typedef enum ENUM_TENSOR_SHAPE_TYPE TensorShapeType;
+using TensorShapeType = enum ENUM_TENSOR_SHAPE_TYPE;
 
 class EigenVectorToColorImageFilter : public itk::Object
 {
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(EigenVectorToColorImageFilter);
 
-  /** Standard class typedefs. */
-  typedef EigenVectorToColorImageFilter Self;
-  typedef itk::Object                   Superclass;
-  typedef SmartPointer<Self>            Pointer;
-  typedef SmartPointer<const Self>      ConstPointer;
+  /** Standard class type alias. */
+  using Self = EigenVectorToColorImageFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Some convenient typedefs. */
-  typedef itk::Vector<float, 6>         InputPixelType;
-  typedef itk::Image<InputPixelType, 3> InputImageType;
-  typedef InputImageType::Pointer       InputImagePointer;
-  typedef InputImageType::ConstPointer  InputImageConstPointer;
-  typedef InputImageType::RegionType    InputImageRegionType;
-  typedef InputImageType::SizeType      InputImageSizeType;
-  typedef InputImageType::SpacingType   InputImageSpacingType;
-  typedef InputImageType::PointType     InputImagePointType;
-  typedef InputImageType::PixelType     InputImagePixelType;
-  typedef InputImageType::DirectionType InputImageDirectionType;
+  /** Some convenient type alias. */
+  using InputPixelType = itk::Vector<float, 6>;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using InputImagePointer = InputImageType::Pointer;
+  using InputImageConstPointer = InputImageType::ConstPointer;
+  using InputImageRegionType = InputImageType::RegionType;
+  using InputImageSizeType = InputImageType::SizeType;
+  using InputImageSpacingType = InputImageType::SpacingType;
+  using InputImagePointType = InputImageType::PointType;
+  using InputImagePixelType = InputImageType::PixelType;
+  using InputImageDirectionType = InputImageType::DirectionType;
 
-  typedef itk::RGBAPixel<unsigned char>  OutputPixelType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
-  typedef OutputImageType::Pointer       OutputImagePointer;
-  typedef OutputImageType::RegionType    OutputImageRegionType;
+  using OutputPixelType = itk::RGBAPixel<unsigned char>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
+  using OutputImagePointer = OutputImageType::Pointer;
+  using OutputImageRegionType = OutputImageType::RegionType;
 
 
 /** Standard New method. */

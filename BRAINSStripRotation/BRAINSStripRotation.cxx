@@ -27,7 +27,7 @@ template<typename TPrecision>
 itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char,3>::DirectionType &dir)
 {
-  typedef itk::VersorTransform<TPrecision> TransformType;
+  using TransformType = itk::VersorTransform<TPrecision>;
   typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval
@@ -41,7 +41,7 @@ template<typename TPrecision>
 itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char,2>::DirectionType &dir)
 {
-  typedef itk::CenteredRigid2DTransform<TPrecision> TransformType;
+  using TransformType = itk::CenteredRigid2DTransform<TPrecision>;
   typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval
@@ -56,7 +56,7 @@ ReadAndSplitImage(const std::string &inputVolume,
                   const std::string &outputVolume,
                   const std::string &transform)
 {
-  typedef TImage ImageType;
+  using ImageType = TImage;
   typename ImageType::Pointer inputImage;
   try
     {
@@ -94,13 +94,13 @@ ReadAndSplitImage(const std::string &inputVolume,
               << std::endl;
     return 1;
     }
-  typedef typename ImageType::DirectionType::ValueType XFRMPrecisionType;
+  using XFRMPrecisionType = typename ImageType::DirectionType::ValueType;
 
   std::cerr << "sizeof(XFRMPrecisionType = " << sizeof(XFRMPrecisionType) << std::endl;
 
-  typedef itk::TransformFileWriterTemplate<XFRMPrecisionType> TransformFileWriterType;
+  using TransformFileWriterType = itk::TransformFileWriterTemplate<XFRMPrecisionType>;
 
-  typedef typename TransformFileWriterType::TransformType TransformType;
+  using TransformType = typename TransformFileWriterType::TransformType;
 
   typename TransformFileWriterType::Pointer xfrmWriter = TransformFileWriterType::New();
 

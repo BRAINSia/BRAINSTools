@@ -95,7 +95,7 @@ void Duplicate(ImageTypePointer & Y, ImageTypePointer &YminusL)
 
 FloatImageType::Pointer ComputeSqrtMu(FloatImageType::Pointer mu)
 {
-  typedef itk::SqrtImageFilter<FloatImageType,FloatImageType> SqrtType;
+  using SqrtType = itk::SqrtImageFilter<FloatImageType,FloatImageType>;
   SqrtType::Pointer sqrtFilter = SqrtType::New();
   sqrtFilter->SetInput(mu);
   sqrtFilter->Update();
@@ -198,11 +198,11 @@ PrecisionType lambda, uvec ind_samples, frowvec res, int Niter, double tol, Prec
  */
 FloatImageType::Pointer OpWeightedL2(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edgemask)
 {
-  const PrecisionType lambda = 1e-3F ;
+  const PrecisionType lambda = 1e-3F;
   constexpr int Niter = 100;
-  const PrecisionType gam = 1.0F ;
+  const PrecisionType gam = 1.0F;
 
-  //typedef itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType> GMType;
+  //using GMType = itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType>;
 
   //The optimal filter for modeling the measurement operator is low pass filter in this case
   // NOTE: That the A operator is a projection operator, so A^{T}A = A, That is to say that applying
@@ -240,7 +240,7 @@ FloatImageType::Pointer OpWeightedL2(FloatImageType::Pointer norm01_lowres, Floa
   FloatImageType::Pointer divIm = GetDivergence(gradIm);
   HalfHermetianImageType::Pointer DtDhat = GetForwardFFT(divIm);
   // TODO:  ALL SAME TO HERE!
-  typedef HalfHermetianImageType::PixelType FCType;
+  using FCType = HalfHermetianImageType::PixelType;
   HalfHermetianImageType::Pointer TwoTimesAtAhatPlusLamGamDtDhat = CreateEmptyImage<HalfHermetianImageType>(DtDhat);
   {
     HalfHermetianImageType::Pointer TwoTimesAtAhat = GetLowpassOperator(norm01_lowres,p_image, 2.0F);
@@ -258,7 +258,7 @@ FloatImageType::Pointer OpWeightedL2(FloatImageType::Pointer norm01_lowres, Floa
 #define USE_BLAS_WRAPPERS
 #ifdef USE_BLAS_WRAPPERS
 #else
-  typedef itk::AddImageFilter<CVImageType,CVImageType> CVImageAdder;
+  using CVImageAdder = itk::AddImageFilter<CVImageType,CVImageType>;
   CVImageAdder::Pointer dxPlusL = CVImageAdder::New();
 #endif
 

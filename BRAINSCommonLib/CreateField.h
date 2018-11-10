@@ -38,10 +38,10 @@ template <typename TImage, typename T2Image>
 class CreateField : public Object
 {
 public:
-  typedef CreateField              Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = CreateField;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkTypeMacro(MIMApplication, Object);
 
@@ -53,10 +53,10 @@ public:
   itkGetStringMacro(Image2Filename);
   itkSetStringMacro(ParameterFilename);
 
-  typedef TImage                      ImageType;
-  typedef typename ImageType::Pointer ImagePointer;
+  using ImageType = TImage;
+  using ImagePointer = typename ImageType::Pointer;
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;
-  typedef Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = Array<unsigned int>;
   itkGetConstObjectMacro(ImageOne, ImageType);
   itkGetConstObjectMacro(ImageTwo, ImageType);
   itkSetObjectMacro(ImageOne, ImageType);
@@ -68,17 +68,17 @@ public:
   itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   itkGetMacro(NumberOfLevels, unsigned short);
-  typedef FixedArray<unsigned int,
-                     Self::ImageDimension> ShrinkFactorsType;
+  using ShrinkFactorsType = FixedArray<unsigned int,
+                     Self::ImageDimension>;
   itkGetMacro(Image1ShrinkFactors, ShrinkFactorsType);
   itkSetMacro(Image1ShrinkFactors, ShrinkFactorsType);
   itkGetMacro(Image2ShrinkFactors, ShrinkFactorsType);
   itkSetMacro(Image2ShrinkFactors, ShrinkFactorsType);
   itkGetConstReferenceMacro(NumberOfIterations, IterationsArrayType);
 
-  typedef TImage                             InputImageType;
-  typedef typename InputImageType::PixelType InputPixelType;
-  typedef T2Image                            OutputImageType;
+  using InputImageType = TImage;
+  using InputPixelType = typename InputImageType::PixelType;
+  using OutputImageType = T2Image;
   itkGetConstObjectMacro(FixedImage, OutputImageType);
   itkGetConstObjectMacro(MovingImage, OutputImageType);
   itkGetMacro(FixedImageMinimum, InputPixelType);
@@ -88,19 +88,18 @@ public:
     FixedImageType;
   typedef T2Image
     MovingImageType;
-  typedef Vector<float,
-                 Self::ImageDimension> FieldPixelType;
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
-  typedef RecursiveMultiResolutionPyramidImageFilter<FixedImageType,
-                                                     FixedImageType>                         FixedImagePyramidType;
-  typedef RecursiveMultiResolutionPyramidImageFilter<MovingImageType,
-                                                     MovingImageType>                        MovingImagePyramidType;
-  typedef MultiResolutionPDEDeformableRegistration<FixedImageType,
-                                                   MovingImageType, TDisplacementField>     RegistrationType;
+  using FieldPixelType = Vector<float,
+                 Self::ImageDimension>;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
+  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<FixedImageType,
+                                                     FixedImageType>;
+  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<MovingImageType,
+                                                     MovingImageType>;
+  using RegistrationType = MultiResolutionPDEDeformableRegistration<FixedImageType,
+                                                   MovingImageType, TDisplacementField>;
 
-  typedef Array<unsigned int>
-    UnsignedIntArray;
+  using UnsignedIntArray = Array<unsigned int>;
   itkSetClampMacro( NumberOfLevels, unsigned short, 1,
                     NumericTraits<unsigned short>::max() );
   itkSetMacro(NumberOfIterations, UnsignedIntArray);
@@ -139,7 +138,7 @@ private:
   unsigned long m_Tag;
   typename RegistrationType::Pointer m_Registration;
 
-  typedef typename OutputImageType::Pointer OutputImagePointer;
+  using OutputImagePointer = typename OutputImageType::Pointer;
   void NormalizeImage(InputImageType *input, OutputImagePointer & output, InputPixelType & min);
 };
 }

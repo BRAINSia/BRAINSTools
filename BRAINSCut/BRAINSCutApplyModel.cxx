@@ -152,7 +152,7 @@ BRAINSCutApplyModel
     ReadRandomForestModelFile();
     }
 
-  typedef BRAINSCutConfiguration::ApplyDataSetListType::iterator ApplySubjectIteratorType;
+  using ApplySubjectIteratorType = BRAINSCutConfiguration::ApplyDataSetListType::iterator;
 
   m_normalization = this->m_myDataHandler->GetNormalizationMethod();
   for( ApplySubjectIteratorType subjectIt = m_applyDataSetList.begin();
@@ -179,7 +179,7 @@ BRAINSCutApplyModel
   this->m_myDataHandler->ReadImagesOfSubjectInOrder(imagesOfInterest, subject);
 
   /** Warp probability map(ROI) onto the subject*/
-  typedef std::map<std::string, WorkingImagePointer> DeformedROIMapType;
+  using DeformedROIMapType = std::map<std::string, WorkingImagePointer>;
   DeformedROIMapType deformedROIs;
 
   this->m_myDataHandler->GetDeformedROIs(deformedROIs, subject);
@@ -280,7 +280,7 @@ BRAINSCutApplyModel
 
           if( roiIDsOrderNumber == 0 )
             {
-            typedef itk::ImageDuplicator<LabelImageType> DuplicatorType;
+            using DuplicatorType = itk::ImageDuplicator<LabelImageType>;
             DuplicatorType::Pointer labelDuplicator = DuplicatorType::New();
             labelDuplicator->SetInputImage( mask );
             labelDuplicator->Update();
@@ -399,7 +399,7 @@ BRAINSCutApplyModel
 {
   try
     {
-    typedef itk::ImageRegionIterator<LabelImageType> RegionIteratorType;
+    using RegionIteratorType = itk::ImageRegionIterator<LabelImageType>;
 
     RegionIteratorType itOut( ambiguousMap, ambiguousMap->GetLargestPossibleRegion() );
     RegionIteratorType itIn( currentLabel, currentLabel->GetLargestPossibleRegion() );
@@ -408,7 +408,7 @@ BRAINSCutApplyModel
     itIn.GoToBegin();
     itOut.GoToBegin();
     itCompare.GoToBegin();
-    for( ; !itIn.IsAtEnd(); ++itCompare, ++itIn, ++itOut )
+    for(; !itIn.IsAtEnd(); ++itCompare, ++itIn, ++itOut )
       {
       if( itIn.Get() != 0  && itIn.Get() != itCompare.Get() )
         {
@@ -438,14 +438,14 @@ BRAINSCutApplyModel
 {
   try
     {
-    typedef itk::ImageRegionIterator<LabelImageType> RegionIteratorType;
+    using RegionIteratorType = itk::ImageRegionIterator<LabelImageType>;
 
     RegionIteratorType itOut( resultLabel, resultLabel->GetLargestPossibleRegion() );
     RegionIteratorType itIn( currentLabel, currentLabel->GetLargestPossibleRegion() );
 
     itIn.GoToBegin();
     itOut.GoToBegin();
-    for( ; !itIn.IsAtEnd(); ++itIn, ++itOut )
+    for(; !itIn.IsAtEnd(); ++itIn, ++itOut )
       {
       if( !itIn.Get() )
         {
@@ -522,7 +522,7 @@ LabelImagePointerType
 BRAINSCutApplyModel
 ::ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue  )
 {
-  typedef itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType>;
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
   if( thresholdValue < 0.0F )
@@ -550,7 +550,7 @@ BRAINSCutApplyModel
 {
   std::cout << "Clip image ..." << std::endl;
 
-  typedef itk::MultiplyImageFilter<WorkingImageType, WorkingImageType> ClipImageFilterType;
+  using ClipImageFilterType = itk::MultiplyImageFilter<WorkingImageType, WorkingImageType>;
   ClipImageFilterType::Pointer clipper = ClipImageFilterType::New();
   clipper->SetInput1( image );
   clipper->SetInput2( mask );
@@ -563,7 +563,7 @@ LabelImagePointerType
 BRAINSCutApplyModel
 ::ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue  )
 {
-  typedef itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType>;
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
   if( thresholdValue < 0.0F )
@@ -589,7 +589,7 @@ LabelImagePointerType
 BRAINSCutApplyModel
 ::ExtractLabel( const LabelImagePointerType& image, unsigned char thresholdValue  )
 {
-  typedef itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType>;
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
   thresholder->SetInput( image );
@@ -610,7 +610,7 @@ BRAINSCutApplyModel
 {
   /*  Opening */
   // #include <itkBinaryOpeningByReconstructionImageFilter.h> consider this
-  typedef itk::BinaryBallStructuringElement<LabelImageType::PixelType, DIMENSION> KernelType;
+  using KernelType = itk::BinaryBallStructuringElement<LabelImageType::PixelType, DIMENSION>;
   KernelType           ball;
   KernelType::SizeType ballSize;
 
@@ -618,9 +618,9 @@ BRAINSCutApplyModel
   ballSize.Fill(1);
   ball.SetRadius( ballSize );
   ball.CreateStructuringElement();
-  typedef itk::BinaryMorphologicalOpeningImageFilter<LabelImageType,
+  using OpeningFilterType = itk::BinaryMorphologicalOpeningImageFilter<LabelImageType,
                                                      LabelImageType,
-                                                     KernelType> OpeningFilterType;
+                                                     KernelType>;
   OpeningFilterType::Pointer openingFilter = OpeningFilterType::New();
   openingFilter->SetInput( image );
   openingFilter->SetKernel( ball );
@@ -639,14 +639,13 @@ BRAINSCutApplyModel
   try
     {
     /* relabel images if they are disconnected */
-    typedef itk::ConnectedComponentImageFilter<LabelImageType, LabelImageType>
-      ConnectedBinaryImageFilterType;
+    using ConnectedBinaryImageFilterType = itk::ConnectedComponentImageFilter<LabelImageType, LabelImageType>;
     ConnectedBinaryImageFilterType::Pointer relabler = ConnectedBinaryImageFilterType::New();
 
     relabler->SetInput( image );
 
     /* relable images from the largest to smallest size */
-    typedef itk::RelabelComponentImageFilter<LabelImageType, LabelImageType> RelabelInOrderFilterType;
+    using RelabelInOrderFilterType = itk::RelabelComponentImageFilter<LabelImageType, LabelImageType>;
     RelabelInOrderFilterType::Pointer relabelInOrder = RelabelInOrderFilterType::New();
 
     relabelInOrder->SetInput( relabler->GetOutput() );
@@ -674,7 +673,7 @@ BRAINSCutApplyModel
 ::FillHole( LabelImagePointerType& mask,
             const unsigned char labelValue)
 {
-  typedef itk::BinaryFillholeImageFilter<LabelImageType> FillHoleFilterType;
+  using FillHoleFilterType = itk::BinaryFillholeImageFilter<LabelImageType>;
 
   FillHoleFilterType::Pointer filler = FillHoleFilterType::New();
   filler->SetInput( mask );
@@ -690,7 +689,7 @@ BRAINSCutApplyModel
            const unsigned char labelValue )
 {
   // NOTE: Consider this filter :#include <itkBinaryFillholeImageFilter.h>
-  typedef itk::BinaryBallStructuringElement<LabelImageType::PixelType, DIMENSION> KernelType;
+  using KernelType = itk::BinaryBallStructuringElement<LabelImageType::PixelType, DIMENSION>;
   KernelType           ball;
   KernelType::SizeType ballSize;
 
@@ -701,9 +700,9 @@ BRAINSCutApplyModel
   ball.CreateStructuringElement();
 
   /* Closing */
-  typedef itk::BinaryMorphologicalClosingImageFilter<LabelImageType,
+  using ClosingFilterType = itk::BinaryMorphologicalClosingImageFilter<LabelImageType,
                                                      LabelImageType,
-                                                     KernelType> ClosingFilterType;
+                                                     KernelType>;
   ClosingFilterType::Pointer closingFilter = ClosingFilterType::New();
   closingFilter->SetInput( mask );
   closingFilter->SetKernel( ball );

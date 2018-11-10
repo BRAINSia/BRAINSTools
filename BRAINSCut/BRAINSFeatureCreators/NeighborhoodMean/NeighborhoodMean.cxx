@@ -47,17 +47,17 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef float PixelType;
-  // typedef unsigned long       PixelType;
+  using PixelType = float;
+  // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension> ImageType;
-  typedef itk::ImageFileReader<ImageType>   ReaderType;
+  using ImageType = itk::Image<PixelType,  Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer imageReader = ReaderType::New();
 
   imageReader->SetFileName( inputVolume.c_str() );
 
-  typedef itk::MeanImageFilter<ImageType, ImageType> MeanFilterType;
+  using MeanFilterType = itk::MeanImageFilter<ImageType, ImageType>;
   MeanFilterType::Pointer meanFilter = MeanFilterType::New();
 
   MeanFilterType::InputSizeType radius;
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetFileName(outputVolume);

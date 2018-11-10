@@ -113,7 +113,7 @@ void MakeDebugJointHistogram(const std::string & debugOutputDirectory, const typ
 
   nonZeroAverage /= static_cast<float>(nonZeroCount);
 
-  typedef itk::Image<unsigned short, 2> PNGImageType;
+  using PNGImageType = itk::Image<unsigned short, 2>;
   typename PNGImageType::Pointer myOut = PNGImageType::New();
   myOut->CopyInformation(myHistogram);
   myOut->SetRegions(myHistogram->GetLargestPossibleRegion() );
@@ -151,17 +151,17 @@ template <typename TOptimizer, typename TTransform, typename TImage>
 class CommandIterationUpdate : public itk::Command
 {
 public:
-  typedef  CommandIterationUpdate Self;
-  typedef  itk::Command           Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
+  using Self = CommandIterationUpdate;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
   itkNewMacro(Self);
 
-  typedef          TOptimizer  OptimizerType;
+  using OptimizerType = TOptimizer;
   typedef const OptimizerType *OptimizerPointer;
 
-  typedef const typename OptimizerType::ParametersType OptimizerParametersType;
+  using OptimizerParametersType = const typename OptimizerType::ParametersType;
 
-  typedef typename itk::MattesMutualInformationImageToImageMetricv4<TImage, TImage> MattesMutualInformationMetricType;
+  using MattesMutualInformationMetricType = typename itk::MattesMutualInformationImageToImageMetricv4<TImage, TImage>;
   void SetDisplayDeformedImage(bool x)
   {
     m_DisplayDeformedImage = x;
@@ -205,9 +205,9 @@ public:
 
   typename TImage::Pointer Transform(typename TTransform::Pointer & xfrm)
   {
-    typedef typename itk::LinearInterpolateImageFunction<TImage, double> InterpolatorType;
+    using InterpolatorType = typename itk::LinearInterpolateImageFunction<TImage, double>;
     typename InterpolatorType::Pointer interp = InterpolatorType::New();
-    typedef typename itk::ResampleImageFilter<TImage, TImage> ResampleImageFilter;
+    using ResampleImageFilter = typename itk::ResampleImageFilter<TImage, TImage>;
     typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
     resample->SetInput(m_MovingImage);
     resample->SetTransform(xfrm);
@@ -283,14 +283,14 @@ public:
       {
       // Special BUG work around for MMI metric
       // that does not work in multi-threaded mode
-      // typedef itk::MattesMutualInformationImageToImageMetricv4<TImage,TImage> MattesMutualInformationMetricType;
+      // using MattesMutualInformationMetricType = itk::MattesMutualInformationImageToImageMetricv4<TImage,TImage>;
       static int TransformIterationCounter = 0;
       typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
         dynamic_cast<MattesMutualInformationMetricType *>(this->m_ObserverCostMetricObject.GetPointer() );
       if( test_MMICostMetric.IsNotNull() )
         {
-        typedef typename MattesMutualInformationMetricType::PDFValueType PDFValueType;
-        typedef itk::Image<PDFValueType, 2>                              JointPDFType;
+        using PDFValueType = typename MattesMutualInformationMetricType::PDFValueType;
+        using JointPDFType = itk::Image<PDFValueType, 2>;
         const typename JointPDFType::Pointer myHistogram = test_MMICostMetric->GetJointPDF();
         MakeDebugJointHistogram<JointPDFType>(debugOutputDirectory, myHistogram, TransformIterationCounter,
                                               optimizer->GetCurrentIteration() );
@@ -368,11 +368,11 @@ class MultiModal3DMutualRegistrationHelper : public ProcessObject
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(MultiModal3DMutualRegistrationHelper);
 
-  /** Standard class typedefs. */
-  typedef MultiModal3DMutualRegistrationHelper Self;
-  typedef ProcessObject                        Superclass;
-  typedef SmartPointer<Self>                   Pointer;
-  typedef SmartPointer<const Self>             ConstPointer;
+  /** Standard class type alias. */
+  using Self = MultiModal3DMutualRegistrationHelper;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -380,21 +380,21 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(MultiModal3DMutualRegistrationHelper, ProcessObject);
 
-  typedef          TFixedImage                  FixedImageType;
-  typedef typename FixedImageType::ConstPointer FixedImageConstPointer;
-  typedef typename FixedImageType::Pointer      FixedImagePointer;
+  using FixedImageType = TFixedImage;
+  using FixedImageConstPointer = typename FixedImageType::ConstPointer;
+  using FixedImagePointer = typename FixedImageType::Pointer;
 
-  typedef          TMovingImage                  MovingImageType;
-  typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
-  typedef typename MovingImageType::Pointer      MovingImagePointer;
+  using MovingImageType = TMovingImage;
+  using MovingImageConstPointer = typename MovingImageType::ConstPointer;
+  using MovingImagePointer = typename MovingImageType::Pointer;
 
-  typedef          TTransformType         TransformType;
-  typedef typename TransformType::Pointer TransformPointer;
+  using TransformType = TTransformType;
+  using TransformPointer = typename TransformType::Pointer;
 
   /** Type for the output: Using Decorator pattern for enabling
     *  the Transform to be passed in the data pipeline */
-  typedef DataObjectDecorator<TransformType>    TransformOutputType;
-  typedef typename TransformOutputType::Pointer TransformOutputPointer;
+  using TransformOutputType = DataObjectDecorator<TransformType>;
+  using TransformOutputPointer = typename TransformOutputType::Pointer;
   typedef typename TransformOutputType::ConstPointer
     TransformOutputConstPointer;
 
@@ -402,40 +402,40 @@ public:
   static constexpr unsigned int FixedImageDimension = FixedImageType::ImageDimension;
   static constexpr unsigned int MovingImageDimension = MovingImageType::ImageDimension;
 
-  typedef typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
+  using MultiMetricType = typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
                                                      MovingImageDimension,
                                                      FixedImageType,
-                                                     double>                  MultiMetricType;
-  typedef typename itk::ImageToImageMetricv4< FixedImageType,
+                                                     double>;
+  using ImageMetricType = typename itk::ImageToImageMetricv4< FixedImageType,
                                               MovingImageType,
                                               FixedImageType,
-                                              double >                        ImageMetricType;
+                                              double >;
 
-  typedef itk::CompositeTransform<double, MovingImageDimension>     CompositeTransformType;
+  using CompositeTransformType = itk::CompositeTransform<double, MovingImageDimension>;
 
-  typedef          TOptimizer                    OptimizerType;
-  typedef const OptimizerType *                  OptimizerPointer;
-  typedef typename OptimizerType::ScalesType     OptimizerScalesType;
-  typedef typename OptimizerType::ParametersType OptimizerParametersType;
+  using OptimizerType = TOptimizer;
+  using OptimizerPointer = const OptimizerType *;
+  using OptimizerScalesType = typename OptimizerType::ScalesType;
+  using OptimizerParametersType = typename OptimizerType::ParametersType;
 
-  typedef itk::GradientDescentOptimizerBasev4Template< double > GenericOptimizerType;
+  using GenericOptimizerType = itk::GradientDescentOptimizerBasev4Template< double >;
 
-  typedef ImageRegistrationMethodv4< FixedImageType,
-                                     MovingImageType >       RegistrationType;
-  typedef typename RegistrationType::Pointer                 RegistrationPointer;
+  using RegistrationType = ImageRegistrationMethodv4< FixedImageType,
+                                     MovingImageType >;
+  using RegistrationPointer = typename RegistrationType::Pointer;
 
-  typedef itk::AffineTransform<double, 3>                                  AffineTransformType;
-  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType> AffineRegistrationType;
-  typedef typename AffineRegistrationType::MetricSamplingStrategyType      SamplingStrategyType;
+  using AffineTransformType = itk::AffineTransform<double, 3>;
+  using AffineRegistrationType = itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType>;
+  using SamplingStrategyType = typename AffineRegistrationType::MetricSamplingStrategyType;
 
-  typedef itk::CenteredTransformInitializer<
+  using TransformInitializerType = itk::CenteredTransformInitializer<
       TransformType,
       FixedImageType,
-      MovingImageType>    TransformInitializerType;
+      MovingImageType>;
 
-  typedef itk::ResampleImageFilter<
+  using ResampleFilterType = itk::ResampleImageFilter<
       MovingImageType,
-      FixedImageType>     ResampleFilterType;
+      FixedImageType>;
 
   /** Initialize by setting the interconnects between the components. */
   virtual void Initialize(void); // throw ( ExceptionObject );

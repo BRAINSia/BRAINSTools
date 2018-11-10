@@ -37,33 +37,30 @@
 // TODO:  Need to make return types an input template type.
 namespace AssignRigid
 {
-typedef itk::AffineTransform<double, 3> AffineTransformType;
-typedef AffineTransformType::Pointer    AffineTransformPointer;
+using AffineTransformType = itk::AffineTransform<double, 3>;
+using AffineTransformPointer = AffineTransformType::Pointer;
 
-typedef vnl_matrix_fixed<double, 4, 4> VnlTransformMatrixType44;
+using VnlTransformMatrixType44 = vnl_matrix_fixed<double, 4, 4>;
 
-typedef itk::Matrix<double, 3, 3> Matrix3D;
-typedef  itk::Versor<double>      VersorType;
+using Matrix3D = itk::Matrix<double, 3, 3>;
+using VersorType = itk::Versor<double>;
 
-typedef AffineTransformType::MatrixType       MatrixType;
-typedef AffineTransformType::InputPointType   PointType;
-typedef AffineTransformType::OutputVectorType VectorType;
+using MatrixType = AffineTransformType::MatrixType;
+using PointType = AffineTransformType::InputPointType;
+using VectorType = AffineTransformType::OutputVectorType;
 
-typedef itk::VersorRigid3DTransform<double>
-  VersorRigid3DTransformType;
+using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 typedef VersorRigid3DTransformType::Pointer
   VersorRigid3DTransformPointer;
 typedef VersorRigid3DTransformType::ParametersType
   VersorRigid3DParametersType;
 
-typedef itk::ScaleVersor3DTransform<double>
-  ScaleVersor3DTransformType;
-typedef ScaleVersor3DTransformType::Pointer ScaleVersor3DTransformPointer;
+using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
+using ScaleVersor3DTransformPointer = ScaleVersor3DTransformType::Pointer;
 typedef ScaleVersor3DTransformType::ParametersType
   ScaleVersor3DParametersType;
 
-typedef itk::ScaleSkewVersor3DTransform<double>
-  ScaleSkewVersor3DTransformType;
+using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
 typedef ScaleSkewVersor3DTransformType::Pointer
   ScaleSkewVersor3DTransformPointer;
 typedef ScaleSkewVersor3DTransformType::ParametersType

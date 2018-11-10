@@ -34,7 +34,7 @@ unsigned int imageDim(32);
 
 int main(int, char *argv[])
 {
-  typedef itk::Image<unsigned char, 3> ImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
   ImageType::RegionType            region;
   ImageType::RegionType::IndexType index;
   index[0] = index[1] = index[2] = 0;
@@ -84,8 +84,8 @@ int main(int, char *argv[])
     }
   theMaskImage->FillBuffer(0);
 
-  typedef itk::Point<double, 3>                    PointType;
-  typedef itk::SphereSpatialFunction<3, PointType> SphereFunctionType;
+  using PointType = itk::Point<double, 3>;
+  using SphereFunctionType = itk::SphereSpatialFunction<3, PointType>;
   PointType                   pt;
   SphereFunctionType::Pointer sphereFunc = SphereFunctionType::New();
   sphereFunc->SetRadius(static_cast<double>( imageDim ) / 4.0);

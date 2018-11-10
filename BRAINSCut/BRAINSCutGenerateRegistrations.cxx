@@ -132,7 +132,7 @@ BRAINSCutGenerateRegistrations
   // BRAINSFit takes only float type images!
   // For now, BRAINSCut only uses float type, so it is safe!!!!!!
 
-  typedef itk::BRAINSFitHelper BSplineRegistrationHelperType;
+  using BSplineRegistrationHelperType = itk::BRAINSFitHelper;
   BSplineRegistrationHelperType::Pointer BSplineRegistrationHelper =
     BSplineRegistrationHelperType::New();
 
@@ -198,7 +198,7 @@ BRAINSCutGenerateRegistrations
 
   BSplineRegistrationHelper->SetMovingVolume( movingVolume );
 
-  typedef itk::Image<unsigned char, 3> LocalBinaryImageType;
+  using LocalBinaryImageType = itk::Image<unsigned char, 3>;
 
   // - Fixed Image Binary Mask
 
@@ -206,8 +206,8 @@ BRAINSCutGenerateRegistrations
       FixedBinaryImageFilename == "na" ||
       FixedBinaryImageFilename == "" )
     {
-    typedef itk::BRAINSROIAutoImageFilter<WorkingImageType,
-                                          LocalBinaryImageType> ROIAutoFilterType;
+    using ROIAutoFilterType = itk::BRAINSROIAutoImageFilter<WorkingImageType,
+                                          LocalBinaryImageType>;
 
     ROIAutoFilterType::Pointer fixedVolumeROIFilter = ROIAutoFilterType::New();
 
@@ -221,12 +221,12 @@ BRAINSCutGenerateRegistrations
     }
   else
     {
-    typedef itk::ImageFileReader<LocalBinaryImageType> BinaryImageReaderType;
+    using BinaryImageReaderType = itk::ImageFileReader<LocalBinaryImageType>;
     BinaryImageReaderType::Pointer binaryFixedImageReader = BinaryImageReaderType::New();
     binaryFixedImageReader->SetFileName( FixedBinaryImageFilename );
     binaryFixedImageReader->Update();
 
-    typedef itk::ImageMaskSpatialObject<3> binarySpatialObjectType;
+    using binarySpatialObjectType = itk::ImageMaskSpatialObject<3>;
     binarySpatialObjectType::Pointer binaryFixedObject
       = binarySpatialObjectType::New();
     binaryFixedObject->SetImage( binaryFixedImageReader->GetOutput() );
@@ -240,8 +240,8 @@ BRAINSCutGenerateRegistrations
       MovingBinaryImageFilename == "na" ||
       MovingBinaryImageFilename == "" )
     {
-    typedef itk::BRAINSROIAutoImageFilter<WorkingImageType,
-                                          LocalBinaryImageType> ROIAutoFilterType;
+    using ROIAutoFilterType = itk::BRAINSROIAutoImageFilter<WorkingImageType,
+                                          LocalBinaryImageType>;
 
     ROIAutoFilterType::Pointer movingVolumeROIFilter = ROIAutoFilterType::New();
 
@@ -254,13 +254,13 @@ BRAINSCutGenerateRegistrations
     }
   else
     {
-    typedef itk::ImageFileReader<LocalBinaryImageType> BinaryImageReaderType;
+    using BinaryImageReaderType = itk::ImageFileReader<LocalBinaryImageType>;
     BinaryImageReaderType::Pointer binaryMovingImageReader =
       BinaryImageReaderType::New();
     binaryMovingImageReader->SetFileName( MovingBinaryImageFilename );
     binaryMovingImageReader->Update();
 
-    typedef itk::ImageMaskSpatialObject<3> binarySpatialObjectType;
+    using binarySpatialObjectType = itk::ImageMaskSpatialObject<3>;
     binarySpatialObjectType::Pointer binaryMovingObject
       = binarySpatialObjectType::New();
     binaryMovingObject->SetImage( binaryMovingImageReader->GetOutput() );
@@ -318,7 +318,7 @@ BRAINSCutGenerateRegistrations
       GetInterpolatorFromString<WorkingImageType>("Linear").GetPointer(),
       BSplineRegistrationHelper->GetCurrentGenericTransform().GetPointer() );
 
-  typedef itk::ImageFileWriter<WorkingImageType> DeformedVolumeWriterType;
+  using DeformedVolumeWriterType = itk::ImageFileWriter<WorkingImageType>;
 
   DeformedVolumeWriterType::Pointer deformedVolumeWriter = DeformedVolumeWriterType::New();
 

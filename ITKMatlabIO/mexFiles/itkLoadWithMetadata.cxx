@@ -64,8 +64,8 @@ template<typename TPixel>
 void
 Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer &vecImage,
            typename itk::Image<TPixel, 4>::Pointer &scalarImage) {
-  typedef itk::VectorImage<TPixel, 3> TVecImage;
-  typedef itk::Image<TPixel, 4> TScalarImage;
+  using TVecImage = itk::VectorImage<TPixel, 3>;
+  using TScalarImage = itk::Image<TPixel, 4>;
   //
   // this does a full, correct job of creating the corresponding 4D
   // image from the 3D Vector Image, even though all we care about in
@@ -114,7 +114,7 @@ Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer &vecImage,
   typename TVecImage::IndexType vecIndex;
   typename TScalarImage::IndexType volIndex;
 
-  typedef typename TScalarImage::IndexType::IndexValueType IndexValueType;
+  using IndexValueType = typename TScalarImage::IndexType::IndexValueType;
 
   // convert from vector image to 4D volume image
   for (volIndex[3] = 0; volIndex[3] < static_cast<IndexValueType>(size[3]); ++volIndex[3]) {
@@ -138,7 +138,7 @@ Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer &vecImage,
 */
 template<typename TImage>
 void CopyImageData(typename TImage::Pointer &im, void *target, unsigned long numPixels) {
-  typedef typename TImage::PixelType PixelType;
+  using PixelType = typename TImage::PixelType;
   const PixelType *data = static_cast<PixelType *>(im->GetBufferPointer());
   std::copy(data, data + numPixels, static_cast<PixelType *>(target));
 }
@@ -146,7 +146,7 @@ void CopyImageData(typename TImage::Pointer &im, void *target, unsigned long num
 template<>
 void CopyImageData<itk::VectorImage<double, 3> >(itk::VectorImage<double, 3>::Pointer &im,
                                                  void *target, unsigned long numPixels) {
-  typedef itk::Image<double, 4> ScalarImageType;
+  using ScalarImageType = itk::Image<double, 4>;
   ScalarImageType::Pointer newImage;
   Reorganize<double>(im, newImage);
   CopyImageData<ScalarImageType>(newImage, target, numPixels);
@@ -155,7 +155,7 @@ void CopyImageData<itk::VectorImage<double, 3> >(itk::VectorImage<double, 3>::Po
 template<>
 void CopyImageData<itk::VectorImage<float, 3> >(itk::VectorImage<float, 3>::Pointer &im,
                                                 void *target, unsigned long numPixels) {
-  typedef itk::Image<float, 4> ScalarImageType;
+  using ScalarImageType = itk::Image<float, 4>;
   ScalarImageType::Pointer newImage;
   Reorganize<float>(im, newImage);
   CopyImageData<ScalarImageType>(newImage, target, numPixels);
@@ -164,7 +164,7 @@ void CopyImageData<itk::VectorImage<float, 3> >(itk::VectorImage<float, 3>::Poin
 template<>
 void CopyImageData<itk::VectorImage<short, 3> >(itk::VectorImage<short, 3>::Pointer &im,
                                                 void *target, unsigned long numPixels) {
-  typedef itk::Image<short, 4> ScalarImageType;
+  using ScalarImageType = itk::Image<short, 4>;
   ScalarImageType::Pointer newImage;
   Reorganize<short>(im, newImage);
   CopyImageData<ScalarImageType>(newImage, target, numPixels);
@@ -174,14 +174,14 @@ void CopyImageData<itk::VectorImage<short, 3> >(itk::VectorImage<short, 3>::Poin
 template<typename TImage>
 void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
 
-  typedef TImage ImageType;
-  typedef typename TImage::PixelType PixelType;
+  using ImageType = TImage;
+  using PixelType = typename TImage::PixelType;
   const itk::MetaDataDictionary &thisDic = im->GetMetaDataDictionary();
 
   //determine if image contains bvalue & gradients
   double bValue(0.0);
   std::string bValueString;
-  typedef std::vector<std::vector<double> > GradientListType;
+  using GradientListType = std::vector<std::vector<double> >;
   GradientListType gradients;
 
   if (itk::ExposeMetaData<std::string>(thisDic, "DWMRI_b-value", bValueString)) {
@@ -470,8 +470,8 @@ void BuildMatlabStruct(mxArray *&structMx, typename TImage::Pointer im) {
 /** do the actual load */
 template<typename TImage>
 void LoadDWIImage(const std::string &filename, mxArray *&structMx) {
-  typedef TImage ImageType;
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ImageType = TImage;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename);
   try {

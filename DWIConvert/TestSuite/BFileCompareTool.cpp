@@ -6,7 +6,7 @@
 #include <cstdlib>
 using namespace std;
 
-typedef std::vector< std::vector< double > > DataVector;
+using DataVector = std::vector< std::vector< double > >;
 
 static constexpr int USAGE_FAILURE_CODE = 1;
 static constexpr int FILE_READ_FAILURE_CODE = 2;

@@ -45,44 +45,44 @@ class BRAINSHoughEyeDetector :
 {
 public:
 
-  /** Standard ITK typedef */
-  typedef BRAINSHoughEyeDetector                        Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  /** Standard ITK type alias */
+  using Self = BRAINSHoughEyeDetector;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int Dimension = TInputImage::ImageDimension;
 
-  /** Input image typedef */
-  typedef typename TInputImage::Pointer         InputImagePointer;
-  typedef typename TInputImage::ConstPointer    InputImageConstPointer;
-  typedef typename TInputImage::IndexType       InputIndexType;
-  typedef typename TInputImage::PixelType       InputPixelType;
-  typedef typename TInputImage::SizeType        InputSizeType;
-  typedef typename TInputImage::RegionType      InputRegionType;
-  typedef typename TInputImage::SpacingType     InputSpacingType;
-  typedef typename TInputImage::PointType       InputPointType;
-  typedef typename TInputImage::DirectionType   InputDirectionType;
-  typedef ImageRegionConstIterator<TInputImage> InputImageConstIterator;
+  /** Input image type alias */
+  using InputImagePointer = typename TInputImage::Pointer;
+  using InputImageConstPointer = typename TInputImage::ConstPointer;
+  using InputIndexType = typename TInputImage::IndexType;
+  using InputPixelType = typename TInputImage::PixelType;
+  using InputSizeType = typename TInputImage::SizeType;
+  using InputRegionType = typename TInputImage::RegionType;
+  using InputSpacingType = typename TInputImage::SpacingType;
+  using InputPointType = typename TInputImage::PointType;
+  using InputDirectionType = typename TInputImage::DirectionType;
+  using InputImageConstIterator = ImageRegionConstIterator<TInputImage>;
 
-  /** Output image typedef */
-  typedef typename TOutputImage::Pointer    OutputImagePointer;
-  typedef typename TOutputImage::PixelType  OutputPixelType;
-  typedef typename TOutputImage::RegionType OutputImageRegionType;
-  typedef typename TOutputImage::PointType  OutputPointType;
+  /** Output image type alias */
+  using OutputImagePointer = typename TOutputImage::Pointer;
+  using OutputPixelType = typename TOutputImage::PixelType;
+  using OutputImageRegionType = typename TOutputImage::RegionType;
+  using OutputPointType = typename TOutputImage::PointType;
 
-  typedef ImageRegionIterator<TOutputImage>          OutputImageIterator;
-  typedef ImageRegionIteratorWithIndex<TOutputImage> OutputImageIteratorWithIndex;
+  using OutputImageIterator = ImageRegionIterator<TOutputImage>;
+  using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex<TOutputImage>;
 
-  /* Transform and filter typedef */
-  typedef VersorRigid3DTransform<double>                 VersorTransformType;
-  typedef typename VersorTransformType::OutputVectorType VersorVectorType;
+  /* Transform and filter type alias */
+  using VersorTransformType = VersorRigid3DTransform<double>;
+  using VersorVectorType = typename VersorTransformType::OutputVectorType;
 
-  typedef ImageFileWriter<TInputImage>                                     WriterType;
-  typedef HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage> HoughFilterType;
-  typedef typename HoughFilterType::SpheresListType                        SpheresListType;
-  typedef typename SpheresListType::const_iterator                         SphereIterator;
-  typedef typename HoughFilterType::Pointer                                HoughFilterPointer;
+  using WriterType = ImageFileWriter<TInputImage>;
+  using HoughFilterType = HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>;
+  using SpheresListType = typename HoughFilterType::SpheresListType;
+  using SphereIterator = typename SpheresListType::const_iterator;
+  using HoughFilterPointer = typename HoughFilterType::Pointer;
 
   /** Run-time type information (and related methods) */
   itkTypeMacro(BRAINSHoughEyeDetector, ImageToImageFilter);

@@ -46,10 +46,10 @@ class EMSegmentationFilter : public itk::ProcessObject
 {
 public:
 
-  // Standard class typedefs
-  typedef EMSegmentationFilter          Self;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  // Standard class type alias
+  using Self = EMSegmentationFilter;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   // Method for creation through the object factory
   itkNewMacro(Self);
@@ -57,69 +57,69 @@ public:
   // The dimension of the image we're working with
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  typedef double CoordinateRepType;
+  using CoordinateRepType = double;
 
-  typedef orderedmap<std::string,  orderedmap<std::string, AtlasDefinition::BoundsType> > RangeDBType;
+  using RangeDBType = orderedmap<std::string,  orderedmap<std::string, AtlasDefinition::BoundsType> >;
   // Image types
-  typedef TInputImage                       InputImageType;
-  typedef typename TInputImage::Pointer     InputImagePointer;
-  typedef typename TInputImage::IndexType   InputImageIndexType;
-  typedef typename TInputImage::OffsetType  InputImageOffsetType;
-  typedef typename TInputImage::PixelType   InputImagePixelType;
-  typedef typename TInputImage::RegionType  InputImageRegionType;
-  typedef typename TInputImage::SizeType    InputImageSizeType;
-  typedef typename TInputImage::SpacingType InputImageSpacingType;
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename TInputImage::Pointer;
+  using InputImageIndexType = typename TInputImage::IndexType;
+  using InputImageOffsetType = typename TInputImage::OffsetType;
+  using InputImagePixelType = typename TInputImage::PixelType;
+  using InputImageRegionType = typename TInputImage::RegionType;
+  using InputImageSizeType = typename TInputImage::SizeType;
+  using InputImageSpacingType = typename TInputImage::SpacingType;
 
-  typedef std::vector<InputImagePixelType> BackgroundValueVector;
+  using BackgroundValueVector = std::vector<InputImagePixelType>;
 
-  typedef std::vector<InputImagePointer> InputImageVector;
-  typedef orderedmap<std::string, InputImageVector> MapOfInputImageVectors;
+  using InputImageVector = std::vector<InputImagePointer>;
+  using MapOfInputImageVectors = orderedmap<std::string, InputImageVector>;
 
-  typedef typename ByteImageType::Pointer    ByteImagePointer;
-  typedef typename ByteImageType::IndexType  ByteImageIndexType;
-  typedef typename ByteImageType::OffsetType ByteImageOffsetType;
-  typedef typename ByteImageType::PixelType  ByteImagePixelType;
-  typedef typename ByteImageType::RegionType ByteImageRegionType;
-  typedef typename ByteImageType::SizeType   ByteImageSizeType;
-  typedef std::vector<ByteImagePointer>      ByteImageVectorType;
+  using ByteImagePointer = typename ByteImageType::Pointer;
+  using ByteImageIndexType = typename ByteImageType::IndexType;
+  using ByteImageOffsetType = typename ByteImageType::OffsetType;
+  using ByteImagePixelType = typename ByteImageType::PixelType;
+  using ByteImageRegionType = typename ByteImageType::RegionType;
+  using ByteImageSizeType = typename ByteImageType::SizeType;
+  using ByteImageVectorType = std::vector<ByteImagePointer>;
 
-  typedef itk::Image<short, Self::ImageDimension> ShortImageType;
-  typedef typename ShortImageType::Pointer                          ShortImagePointer;
-  typedef typename ShortImageType::IndexType                        ShortImageIndexType;
-  typedef typename ShortImageType::OffsetType                       ShortImageOffsetType;
-  typedef typename ShortImageType::PixelType                        ShortImagePixelType;
-  typedef typename ShortImageType::RegionType                       ShortImageRegionType;
-  typedef typename ShortImageType::SizeType                         ShortImageSizeType;
+  using ShortImageType = itk::Image<short, Self::ImageDimension>;
+  using ShortImagePointer = typename ShortImageType::Pointer;
+  using ShortImageIndexType = typename ShortImageType::IndexType;
+  using ShortImageOffsetType = typename ShortImageType::OffsetType;
+  using ShortImagePixelType = typename ShortImageType::PixelType;
+  using ShortImageRegionType = typename ShortImageType::RegionType;
+  using ShortImageSizeType = typename ShortImageType::SizeType;
 
-  typedef TProbabilityImage                          ProbabilityImageType;
-  typedef typename ProbabilityImageType::Pointer     ProbabilityImagePointer;
-  typedef typename ProbabilityImageType::IndexType   ProbabilityImageIndexType;
-  typedef typename ProbabilityImageType::OffsetType  ProbabilityImageOffsetType;
-  typedef typename ProbabilityImageType::PixelType   ProbabilityImagePixelType;
-  typedef typename ProbabilityImageType::RegionType  ProbabilityImageRegionType;
-  typedef typename ProbabilityImageType::SizeType    ProbabilityImageSizeType;
-  typedef typename ProbabilityImageType::SpacingType ProbabilityImageSpacingType;
-  typedef std::vector<ProbabilityImagePointer>       ProbabilityImageVectorType;
+  using ProbabilityImageType = TProbabilityImage;
+  using ProbabilityImagePointer = typename ProbabilityImageType::Pointer;
+  using ProbabilityImageIndexType = typename ProbabilityImageType::IndexType;
+  using ProbabilityImageOffsetType = typename ProbabilityImageType::OffsetType;
+  using ProbabilityImagePixelType = typename ProbabilityImageType::PixelType;
+  using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
+  using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
+  using ProbabilityImageSpacingType = typename ProbabilityImageType::SpacingType;
+  using ProbabilityImageVectorType = std::vector<ProbabilityImagePointer>;
 
-  typedef vnl_vector<FloatingPrecision>         VectorType;
-  typedef vnl_vector<unsigned int>              IntVectorType;
-  typedef std::vector<bool>                     BoolVectorType;
-  typedef vnl_matrix<FloatingPrecision>         MatrixType;
-  typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
+  using VectorType = vnl_vector<FloatingPrecision>;
+  using IntVectorType = vnl_vector<unsigned int>;
+  using BoolVectorType = std::vector<bool>;
+  using MatrixType = vnl_matrix<FloatingPrecision>;
+  using MatrixInverseType = vnl_matrix_inverse<FloatingPrecision>;
 
-  typedef itk::BSplineTransform<CoordinateRepType, 3, 3 > BSplineTransformType;
-  typedef BSplineTransformType::Pointer                   BSplineTransformPointer;
+  using BSplineTransformType = itk::BSplineTransform<CoordinateRepType, 3, 3 >;
+  using BSplineTransformPointer = BSplineTransformType::Pointer;
 
-  typedef itk::Transform<double, 3, 3>  GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
-  typedef itk::Array< FloatingPrecision >                       MeasurementVectorType;
-  typedef itk::Statistics::ListSample< MeasurementVectorType >  SampleType;
+  using MeasurementVectorType = itk::Array< FloatingPrecision >;
+  using SampleType = itk::Statistics::ListSample< MeasurementVectorType >;
 
-  typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double > InputImageNNInterpolationType;
-  typedef itk::NearestNeighborInterpolateImageFunction< ByteImageType, double >  MaskNNInterpolationType;
+  using InputImageNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< InputImageType, double >;
+  using MaskNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< ByteImageType, double >;
 
-  typedef std::vector<typename InputImageNNInterpolationType::Pointer> InputImageInterpolatorVector;
-  typedef orderedmap<std::string, InputImageInterpolatorVector>        MapOfInputImageInterpolatorVectors;
+  using InputImageInterpolatorVector = std::vector<typename InputImageNNInterpolationType::Pointer>;
+  using MapOfInputImageInterpolatorVectors = orderedmap<std::string, InputImageInterpolatorVector>;
 
   itkSetMacro(UseKNN, bool);
   itkGetMacro(UseKNN, bool);

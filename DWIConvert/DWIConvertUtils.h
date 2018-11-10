@@ -40,11 +40,11 @@
 
 #include <cmath>
 
-typedef short                          PixelValueType;
+using PixelValueType = short;
 /*
  * The Volume4DType is a scalar image with diemensions cols,rows,3Dslices,NumGradients
  */
-typedef itk::Image<PixelValueType, 4>  Volume4DType;
+using Volume4DType = itk::Image<PixelValueType, 4>;
 
 template <typename TArg>
 int

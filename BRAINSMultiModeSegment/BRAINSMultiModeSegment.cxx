@@ -52,8 +52,8 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  typedef itk::Image<signed short, 3>  ImageType;
-  typedef itk::Image<unsigned char, 3> MaskImageType;
+  using ImageType = itk::Image<signed short, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
   const unsigned int numberOfModes = inputVolumes.size();
-  typedef itk::MultiModeHistogramThresholdBinaryImageFilter<ImageType, MaskImageType> ThresholdRegionFinderType;
+  using ThresholdRegionFinderType = itk::MultiModeHistogramThresholdBinaryImageFilter<ImageType, MaskImageType>;
   ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
   ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
 
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
       if( RegionMaskVolume.IsNull() )  // USE ROIAUTO if no explicit mask is
       // specified on command line.
         {
-        typedef itk::BRAINSROIAutoImageFilter<ImageType, MaskImageType> ROIAutoType;
+        using ROIAutoType = itk::BRAINSROIAutoImageFilter<ImageType, MaskImageType>;
         ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(ImageInput);
         ROIFilter->Update();

@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
   FFTWInit(""); //Just use the default in the home account
   itk::TimeProbe tp;
   tp.Start();
-  typedef itk::ImageFileReader<FloatImageType> ReaderType;
-  typedef itk::ImageFileWriter<FloatImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<FloatImageType>;
+  using WriterType = itk::ImageFileWriter<FloatImageType>;
 
   const std::string edgeFileName = argv[2];
   ReaderType::Pointer edgeReader = ReaderType::New();

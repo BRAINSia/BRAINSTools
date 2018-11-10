@@ -26,7 +26,7 @@ class BooleanValue :
   public XMLContents<bool>
 {
 public:
-  typedef XMLContents<bool> SuperClass;
+  using SuperClass = XMLContents<bool>;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -35,7 +35,7 @@ public:
     return indent + 2;
   }
 
-  typedef bool ReturnType;
+  using ReturnType = bool;
   BooleanValue(const std::string & name, const ReturnType value) :
     XMLContents<ReturnType>(name),
     m_Value(value)

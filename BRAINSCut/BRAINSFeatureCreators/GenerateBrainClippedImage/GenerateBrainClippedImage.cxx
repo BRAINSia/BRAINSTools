@@ -36,11 +36,11 @@ main(int argc, char * *argv)
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  typedef float PixelType;
+  using PixelType = float;
   constexpr unsigned int Dim = 3;
-  typedef  itk::Image<PixelType, Dim> ImageType;
+  using ImageType = itk::Image<PixelType, Dim>;
 
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer imgReader = ImageReaderType::New();
   ImageReaderType::Pointer mskReader = ImageReaderType::New();
@@ -48,8 +48,7 @@ main(int argc, char * *argv)
   imgReader->SetFileName(inputImg);
   mskReader->SetFileName(inputMsk);
 
-  typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType>
-    ImageMultiplyFilterType;
+  using ImageMultiplyFilterType = itk::MultiplyImageFilter<ImageType, ImageType, ImageType>;
   ImageMultiplyFilterType::Pointer imgMultiplyFilter =
     ImageMultiplyFilterType::New();
 
@@ -58,7 +57,7 @@ main(int argc, char * *argv)
 
   // writer setting
   std::cout << "Writing output ... " << std::endl;
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
   std::cout << "* origin of input   ::" << imgReader->GetOutput()->GetOrigin()

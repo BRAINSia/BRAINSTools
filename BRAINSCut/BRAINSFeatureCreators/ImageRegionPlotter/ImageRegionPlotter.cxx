@@ -98,7 +98,7 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
 
   // Fine Maximum of Intensity
 
-  typedef typename itk::MinimumMaximumImageCalculator<TImageType> MaxCalculatorType;
+  using MaxCalculatorType = typename itk::MinimumMaximumImageCalculator<TImageType>;
 
   typename MaxCalculatorType::Pointer minmaxFilter = MaxCalculatorType::New();
 
@@ -166,7 +166,7 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
   outputImage->Allocate();
   outputImage->FillBuffer( 0.0);
 
-  typedef typename itk::ImageRegionIterator<TImageType> IteratorType;
+  using IteratorType = typename itk::ImageRegionIterator<TImageType>;
 
   IteratorType input_iterator( inputImage,
                                inputImage->GetLargestPossibleRegion() );
@@ -194,9 +194,9 @@ main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   // define image with type of voxel
-  typedef double PixelType;
+  using PixelType = double;
   constexpr int Dimension = 3;
-  typedef itk::Image<PixelType, Dimension> ImageType;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   // there has to be two input volumes and label volume
   if( (!inputLabelVolume.empty() ) && ( !inputVolume1.empty() ) &&
@@ -209,7 +209,7 @@ main(int argc, char *argv[])
               << "* Label Image Filename : " << inputLabelVolume << std::endl;
 
     // Image Reader for inputVolumes
-    typedef itk::ImageFileReader<ImageType> ImageReaderType;
+    using ImageReaderType = itk::ImageFileReader<ImageType>;
 
     ImageReaderType::Pointer imageReader1 = ImageReaderType::New();
     imageReader1->SetFileName( inputVolume1 );
@@ -223,9 +223,9 @@ main(int argc, char *argv[])
 
     // Rescale input images between 0-4095
 
-    typedef unsigned int                                                     ProcessingPixelType;
-    typedef itk::Image<ProcessingPixelType, Dimension>                       ProcessingImageType;
-    typedef itk::RescaleIntensityImageFilter<ImageType, ProcessingImageType> RescalerType;
+    using ProcessingPixelType = unsigned int;
+    using ProcessingImageType = itk::Image<ProcessingPixelType, Dimension>;
+    using RescalerType = itk::RescaleIntensityImageFilter<ImageType, ProcessingImageType>;
 
     constexpr unsigned int MIN = 0;
     constexpr unsigned int MAX = 4095;
@@ -243,7 +243,7 @@ main(int argc, char *argv[])
     image2Rescaler->SetOutputMaximum( MAX );
 
     // read in input label image
-    typedef itk::ImageFileReader<ProcessingImageType> LabelReaderType;
+    using LabelReaderType = itk::ImageFileReader<ProcessingImageType>;
     LabelReaderType::Pointer labelReader = LabelReaderType::New();
 
     labelReader->SetFileName( inputLabelVolume );
@@ -255,8 +255,8 @@ main(int argc, char *argv[])
 
     // - binary image type used for ROI
 
-    typedef unsigned char                          BinaryPixelType;
-    typedef itk::Image<BinaryPixelType, Dimension> ROIImageType;
+    using BinaryPixelType = unsigned char;
+    using ROIImageType = itk::Image<BinaryPixelType, Dimension>;
 
     ROIImageType::ConstPointer roiVolume;
 
@@ -265,13 +265,13 @@ main(int argc, char *argv[])
     if( !inputBinaryROIVolume.empty() )
       {
       std::cout << "* Input Binary ROI Filename "  << inputBinaryROIVolume << std::endl;
-      typedef itk::ImageFileReader<ROIImageType> ROIReaderType;
+      using ROIReaderType = itk::ImageFileReader<ROIImageType>;
       ROIReaderType::Pointer roiReader = ROIReaderType::New();
 
       roiReader->SetFileName( inputBinaryROIVolume );
       roiReader->Update();
 
-      typedef itk::BinaryThresholdImageFilter<ROIImageType, ROIImageType> ThresholdType;
+      using ThresholdType = itk::BinaryThresholdImageFilter<ROIImageType, ROIImageType>;
       ThresholdType::Pointer thresholder = ThresholdType::New();
 
       thresholder->SetInput( roiReader->GetOutput() );
@@ -285,8 +285,8 @@ main(int argc, char *argv[])
     else
       {
       // case 2: use ROIAUTO without any given binary image
-      typedef itk::BRAINSROIAutoImageFilter<ProcessingImageType,
-                                            ROIImageType> ROIAutoType;
+      using ROIAutoType = itk::BRAINSROIAutoImageFilter<ProcessingImageType,
+                                            ROIImageType>;
 
       ROIAutoType::Pointer image1_ROIFilter = ROIAutoType::New();
 
@@ -308,8 +308,8 @@ main(int argc, char *argv[])
       // ProcessingImageType ,
       //                                                               MaskType>
       //                                                 histogramGeneratorType;
-      typedef itk::LabelStatisticsImageFilter<ProcessingImageType,
-                                              ROIImageType> histogramGeneratorType;
+      using histogramGeneratorType = itk::LabelStatisticsImageFilter<ProcessingImageType,
+                                              ROIImageType>;
 
       histogramGeneratorType::Pointer histogramGenerator1 = histogramGeneratorType::New();
 
@@ -362,14 +362,13 @@ main(int argc, char *argv[])
 
     // TODO [useIntensityForHistogram] used, produce intensity based histogram
     // as well
-    typedef itk::ImageRegionIterator<ProcessingImageType> ConstIteratorType;
+    using ConstIteratorType = itk::ImageRegionIterator<ProcessingImageType>;
     ConstIteratorType label_iterator( labelReader->GetOutput(),
                                       labelReader->GetOutput()->GetLargestPossibleRegion() );
 
     // Rescale Input Images
-    typedef itk::Image<unsigned int, 3> OutputImageType;
-    typedef itk::RescaleIntensityImageFilter<ProcessingImageType, OutputImageType>
-      RescaleFilterType;
+    using OutputImageType = itk::Image<unsigned int, 3>;
+    using RescaleFilterType = itk::RescaleIntensityImageFilter<ProcessingImageType, OutputImageType>;
 
     RescaleFilterType::Pointer rescaler1 = RescaleFilterType::New();
 
@@ -406,7 +405,7 @@ main(int argc, char *argv[])
     rescaler2->Update();
 
     // Start Iterator
-    typedef std::map<int, int> LabelMapType;
+    using LabelMapType = std::map<int, int>;
     LabelMapType labelIndex;
     int          new_key = 0;
 

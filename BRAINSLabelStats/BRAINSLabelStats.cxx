@@ -199,8 +199,8 @@ int main(int argc, char *argv[])
     std::cout << "=====================================================" << std::endl;
     }
 
-  typedef itk::Image<float, 3>            ImageType;
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageType = itk::Image<float, 3>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName( imageVolume );
   imageReader->UpdateLargestPossibleRegion();
@@ -214,8 +214,8 @@ int main(int argc, char *argv[])
   imageSpacing = imageReader->GetOutput()->GetSpacing();
   imageOrigin = imageReader->GetOutput()->GetOrigin();
 
-  typedef itk::Image<short, 3>            LabelType;
-  typedef itk::ImageFileReader<LabelType> LabelReaderType;
+  using LabelType = itk::Image<short, 3>;
+  using LabelReaderType = itk::ImageFileReader<LabelType>;
   LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName( labelVolume );
   labelReader->UpdateLargestPossibleRegion();
@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
     }
   else if( minMaxType == "image" )
     {
-    typedef itk::MinimumMaximumImageFilter<ImageType> MinMaxFilterType;
+    using MinMaxFilterType = itk::MinimumMaximumImageFilter<ImageType>;
     MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
     minMaxFilter->SetInput( imageReader->GetOutput() );
     minMaxFilter->UpdateLargestPossibleRegion();
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::LabelStatisticsImageFilter<ImageType, LabelType> StatsFilterType;
+  using StatsFilterType = itk::LabelStatisticsImageFilter<ImageType, LabelType>;
   StatsFilterType::Pointer statsFilter = StatsFilterType::New();
   statsFilter->SetInput( imageReader->GetOutput() );
   statsFilter->SetLabelInput( labelReader->GetOutput() );
@@ -296,8 +296,8 @@ int main(int argc, char *argv[])
     }
   statsFilter->UpdateLargestPossibleRegion();
 
-  typedef StatsFilterType::ValidLabelValuesContainerType ValidLabelValuesType;
-  typedef StatsFilterType::LabelPixelType                LabelPixelType;
+  using ValidLabelValuesType = StatsFilterType::ValidLabelValuesContainerType;
+  using LabelPixelType = StatsFilterType::LabelPixelType;
   for( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
     {
     std::cout << outputPrefixColumnNames[i] << ", ";

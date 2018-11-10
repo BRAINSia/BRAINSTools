@@ -57,10 +57,10 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
-  typedef itk::VersorRigid3DTransform<double>           VersorRigid3DTransformType;
-  typedef itk::ScaleVersor3DTransform<double>           ScaleVersor3DTransformType;
-  typedef itk::ScaleSkewVersor3DTransform<double>       ScaleSkewVersor3DTransformType;
+  using BSplineDeformableTransformType = itk::BSplineDeformableTransform<double, 3, 3>;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
+  using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
+  using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
   VersorRigid3DTransformType::Pointer versorRigidTransform
     = CreateTransform<VersorRigid3DTransformType>();
   VersorRigid3DTransformType::InputPointType center;
@@ -115,7 +115,7 @@ int main(int argc, char * *argv)
   scaleSkewVersorName += "/ScaleSkewVersorTransform.txt";
   itk::WriteTransformToDisk<double>(scaleSkewVersorTransform, scaleSkewVersorName);
 
-  typedef itk::AffineTransform<double, 3>                      AffineTransformType;
+  using AffineTransformType = itk::AffineTransform<double, 3>;
   AffineTransformType::Pointer affineTransform =
     CreateTransform<AffineTransformType>();
 
@@ -139,7 +139,7 @@ int main(int argc, char * *argv)
   affineName += "/AffineTransform.txt";
   itk::WriteTransformToDisk<double>(affineTransform, affineName);
 
-  typedef itk::Image<signed short, 3> ImageType;
+  using ImageType = itk::Image<signed short, 3>;
   ImageType::RegionType            region;
   ImageType::RegionType::SizeType  size;
   ImageType::RegionType::IndexType index;

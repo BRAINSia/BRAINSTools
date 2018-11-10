@@ -100,18 +100,18 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  typedef signed short                   PixelType;
-  typedef itk::VectorImage<PixelType, 3> NrrdImageType;
-  typedef itk::Image<PixelType, 3>       IndexImageType;
+  using PixelType = signed short;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
+  using IndexImageType = itk::Image<PixelType, 3>;
 
-  typedef itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
 
   DWIMetaDataDictionaryValidator currentMetaDataValidator;
   DWIMetaDataDictionaryValidator resultMetaDataValidator;
   DWIMetaDataDictionaryValidator::GradientTableType resultGradTable;
 
-  typedef itk::ComposeImageFilter<IndexImageType> VectorImageFilterType;
+  using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
 
   int                            vectorIndex = 0;
@@ -164,8 +164,8 @@ int main(int argc, char *argv[])
     double bValueScale = currentBvalue / baselineBvalue;
     for( unsigned int j = 0; j < imageReader->GetOutput()->GetVectorLength(); j++ )
       {
-      typedef itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType> VectorSelectFilterType;
-      typedef VectorSelectFilterType::Pointer                                         VectorSelectFilterPointer;
+      using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
+      using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
       VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
       selectIndexImageFilter->SetIndex( j );
       selectIndexImageFilter->SetInput( imageReader->GetOutput() );
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::ImageFileWriter<NrrdImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<NrrdImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

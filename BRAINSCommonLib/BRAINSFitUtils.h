@@ -70,7 +70,7 @@ void DoCenteredTransformMaskClipping(
   typename TransformType::InputPointType rotationCenter = transform->GetCenter();
   typename TransformType::OutputVectorType translationVector = transform->GetTranslation();
 
-  typedef itk::Image<unsigned char, 3> MaskImageType;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
   typename MaskImageType::PointType fixedCenter;
   typename MaskImageType::PointType movingCenter;
@@ -84,7 +84,7 @@ void DoCenteredTransformMaskClipping(
     {
     const typename MaskImageType::ConstPointer tempOutputFixedVolumeROI =
       ExtractConstPointerToImageMaskFromImageSpatialObject(fixedMask.GetPointer() );
-    typedef itk::ImageDuplicator<MaskImageType> DuplicatorType;
+    using DuplicatorType = itk::ImageDuplicator<MaskImageType>;
     typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(tempOutputFixedVolumeROI);
     duplicator->Update();
@@ -94,7 +94,7 @@ void DoCenteredTransformMaskClipping(
     {
     const typename MaskImageType::ConstPointer tempOutputMovingVolumeROI =
       ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask.GetPointer() );
-    typedef itk::ImageDuplicator<MaskImageType> DuplicatorType;
+    using DuplicatorType = itk::ImageDuplicator<MaskImageType>;
     typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(tempOutputMovingVolumeROI);
     duplicator->Update();
@@ -113,7 +113,7 @@ void DoCenteredTransformMaskClipping(
   //  Here we will set the appropriate parts of the f/m MaskImages to zeros....
   typename MaskImageType::PixelType zero = 0;
   typename MaskImageType::PointType location;
-  typedef itk::ImageRegionIteratorWithIndex<MaskImageType> MaskIteratorType;
+  using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
 
   MaskIteratorType fixedIter( fixedMaskImage, fixedMaskImage->GetLargestPossibleRegion() );
   fixedIter.GoToBegin();
@@ -139,7 +139,7 @@ void DoCenteredTransformMaskClipping(
     ++movingIter;
     }
 
-  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
 
   typename ImageMaskSpatialObjectType::Pointer  fixedMaskSpatialObject = ImageMaskSpatialObjectType::New();
   fixedMaskSpatialObject->SetImage(fixedMaskImage);
@@ -263,7 +263,7 @@ typename TInputImage::Pointer ClampNoisyTailsOfImage(
   typename TInputImage::ConstPointer InputImage,
   typename TMaskSpatialObject::ConstPointer mask)
 {
-  typedef itk::ImageDuplicator<TInputImage> DuplicatorType;
+  using DuplicatorType = itk::ImageDuplicator<TInputImage>;
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(InputImage);
   duplicator->Update();

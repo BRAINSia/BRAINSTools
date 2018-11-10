@@ -44,7 +44,7 @@
 
 #define muReadMacro(type, filename, image)                      \
     {                                                             \
-    typedef itk::ImageFileReader<type> ReaderType;              \
+    using ReaderType = itk::ImageFileReader<type>;              \
     typename ReaderType::Pointer reader = ReaderType::New();    \
     reader->SetFileName(filename);                              \
     reader->Update();                                           \
@@ -53,7 +53,7 @@
 
 #define muWriteMacro(type, filename, image)                     \
     {                                                             \
-    typedef itk::ImageFileWriter<type> WriterType;              \
+    using WriterType = itk::ImageFileWriter<type>;              \
     typename WriterType::Pointer writer = WriterType::New();    \
     writer->UseCompressionOn();                                 \
     writer->SetFileName(filename);                              \

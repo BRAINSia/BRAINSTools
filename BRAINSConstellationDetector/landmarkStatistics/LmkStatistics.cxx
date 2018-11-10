@@ -76,13 +76,13 @@ int main( int argc, char * argv[] )
 
   unsigned int numNamedLandmarks = 0;
   double       d0, d1, d2, dist;
-  typedef std::map<std::string, std::vector<double> > LandmarksDistanceMapType;
+  using LandmarksDistanceMapType = std::map<std::string, std::vector<double> >;
   LandmarksDistanceMapType      LandmarksDistanceMap;
   std::map<std::string, double> LandmarksAverageMap;  // for average
   std::map<std::string, double> LandmarksVarianceMap; // for variance
   std::map<std::string, double> LandmarksSTDMap;      // for standard deviation
 
-  typedef std::vector<std::map<std::string, LandmarkPointType> > LandmarksMapTypeVec;
+  using LandmarksMapTypeVec = std::vector<std::map<std::string, LandmarkPointType> >;
   LandmarksMapTypeVec LandmarksMapVector;
 
   // LandmarksMapType is as "std::map<std::string, LandmarkPointType>" which means a map between landmarks and their

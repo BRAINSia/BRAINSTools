@@ -44,8 +44,8 @@ class InverseConsistentLandmarkPoint : public itk::Point<PointStorageType,
                                                          VDimension>
 {
 public:
-  typedef InverseConsistentLandmarkPoint           Self;
-  typedef itk::Point<PointStorageType, VDimension> Superclass;
+  using Self = InverseConsistentLandmarkPoint;
+  using Superclass = itk::Point<PointStorageType, VDimension>;
 
   InverseConsistentLandmarkPoint(void)
   {
@@ -101,14 +101,14 @@ class InverseConsistentLandmarks :
   public std::map<std::string, InverseConsistentLandmarkPoint<PointStorageType> >
 {
 public:
-  typedef InverseConsistentLandmarks                       Self;
-  typedef InverseConsistentLandmarkPoint<PointStorageType> PointType;
+  using Self = InverseConsistentLandmarks;
+  using PointType = InverseConsistentLandmarkPoint<PointStorageType>;
 
-  typedef std::map<std::string, PointType> Superclass;
-  typedef SmartPointer<Self>               Pointer;
-  typedef SmartPointer<const Self>         ConstPointer;
+  using Superclass = std::map<std::string, PointType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef typename PointSetType::Pointer PointSetTypePointer;
+  using PointSetTypePointer = typename PointSetType::Pointer;
 
   typedef enum
     {
@@ -126,12 +126,12 @@ public:
 
   InverseConsistentLandmarks & operator=(const InverseConsistentLandmarks & rhs);
 
-  typedef typename itk::Image<unsigned char, 3> ImageType;
+  using ImageType = typename itk::Image<unsigned char, 3>;
   PointSetTypePointer GetPointSet(typename ImageType::PointType Origin)
   {
-    typedef typename PointSetType::PointIdentifier PointIdentifierType;
-    typedef typename PointSetType::PointType       PointSetPointType;
-    typedef typename Self::const_iterator          LocalConstIterator;
+    using PointIdentifierType = typename PointSetType::PointIdentifier;
+    using PointSetPointType = typename PointSetType::PointType;
+    using LocalConstIterator = typename Self::const_iterator;
 
     PointSetTypePointer pointSet = PointSetType::New();
     PointIdentifierType PointID =

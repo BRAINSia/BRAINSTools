@@ -43,16 +43,16 @@ int main(int argc, char *argv[])
   // Image, filter typedef
   constexpr unsigned int LocalImageDimension = 3;
 
-  typedef short PixelType;
+  using PixelType = short;
 
-  typedef itk::Image<PixelType, LocalImageDimension> ImageType;
-  typedef ImageType::PointType                       ImagePointType;
+  using ImageType = itk::Image<PixelType, LocalImageDimension>;
+  using ImagePointType = ImageType::PointType;
 
-  typedef itk::ImageFileReader<ImageType>         ReaderType;
-  typedef itk::ImageFileWriter<ImageType>         WriterType;
-  typedef itk::FindCenterOfBrainFilter<ImageType> FindCenterFilter;
-  typedef itk::BRAINSHoughEyeDetector<
-      ImageType, ImageType>                             HoughEyeDetectorType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<ImageType>;
+  using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector<
+      ImageType, ImageType>;
 
   // Read input image
   if( argc < 3 )

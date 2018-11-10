@@ -26,7 +26,7 @@ int main(int argc, char * *argv)
     std::cerr << "Usage: BRAINSCleanMask inputLabelMap outputLabelMap" << std::endl;
     return 1;
     }
-  typedef itk::Image<unsigned char, 3> ImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
 
   std::string inputName(argv[1]), outputName(argv[2]);
 

@@ -30,7 +30,7 @@ main(int argc, char * *argv)
 
   std::string input1Name(argv[1]), input2Name(argv[2]);
 
-  typedef itk::Image<short, 3> ImageType;
+  using ImageType = itk::Image<short, 3>;
 
   ImageType::Pointer image1, image2;
 
@@ -63,7 +63,7 @@ main(int argc, char * *argv)
     exit(1);
     }
 
-  typedef itk::ImageRegionIterator<ImageType> ImageIteratorType;
+  using ImageIteratorType = itk::ImageRegionIterator<ImageType>;
   ImageIteratorType it1(image1, image1->GetLargestPossibleRegion() );
   ImageIteratorType it2(image2, image2->GetLargestPossibleRegion() );
 

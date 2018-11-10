@@ -5,12 +5,12 @@
 #include <map>
 #include <string>
 
-typedef itk::SpatialObject<3>      SpatialObjectType;
-typedef SpatialObjectType::Pointer ImageMaskPointer;
+using SpatialObjectType = itk::SpatialObject<3>;
+using ImageMaskPointer = SpatialObjectType::Pointer;
 
-typedef itk::Point<double, 3>                    LandmarkPointType;
-typedef std::map<std::string, LandmarkPointType> LandmarksMapType;
-typedef std::map<std::string, float>             LandmarkWeightMapType;
-typedef std::map<std::string, double>            LandmarksWeightMapType;
+using LandmarkPointType = itk::Point<double, 3>;
+using LandmarksMapType = std::map<std::string, LandmarkPointType>;
+using LandmarkWeightMapType = std::map<std::string, float>;
+using LandmarksWeightMapType = std::map<std::string, double>;
 
 #endif //BRAINSTypes_H__

@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
   inputImageIO->SetFileName( inputImageName );
   inputImageIO->ReadImageInformation();
 
-  typedef itk::ImageIOBase::IOComponentType                                            IOComponentType;
+  using IOComponentType = itk::ImageIOBase::IOComponentType;
   const IOComponentType realComponentType = inputImageIO->GetComponentType();
   const std::string realComponentType_string = inputImageIO->GetComponentTypeAsString( realComponentType );
 

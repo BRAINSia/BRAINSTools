@@ -42,10 +42,10 @@ class QuadEdgeMeshToSphereFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  typedef QuadEdgeMeshToSphereFilter                                Self;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh> Superclass;
+  using Self = QuadEdgeMeshToSphereFilter;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshToSphereFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -53,42 +53,42 @@ public:
   itkNewMacro( Self );
 
   /** Input types. */
-  typedef TInputMesh                              InputMeshType;
-  typedef typename InputMeshType::Pointer         InputMeshPointer;
-  typedef typename InputMeshType::ConstPointer    InputMeshConstPointer;
-  typedef typename InputMeshType::CoordRepType    InputCoordRepType;
-  typedef typename InputMeshType::PointType       InputPointType;
-  typedef typename InputPointType::VectorType     InputPointVectorType;
-  typedef typename InputMeshType::PointIdentifier InputPointIdentifier;
-  typedef typename InputMeshType::QEType          InputQEType;
-  typedef typename InputMeshType::VectorType      InputVectorType;
-  typedef typename InputMeshType::EdgeListType    InputEdgeListType;
-  typedef typename InputMeshType::PixelType       InputPixelType;
-  typedef typename InputMeshType::Traits          InputTraits;
+  using InputMeshType = TInputMesh;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputMeshConstPointer = typename InputMeshType::ConstPointer;
+  using InputCoordRepType = typename InputMeshType::CoordRepType;
+  using InputPointType = typename InputMeshType::PointType;
+  using InputPointVectorType = typename InputPointType::VectorType;
+  using InputPointIdentifier = typename InputMeshType::PointIdentifier;
+  using InputQEType = typename InputMeshType::QEType;
+  using InputVectorType = typename InputMeshType::VectorType;
+  using InputEdgeListType = typename InputMeshType::EdgeListType;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputTraits = typename InputMeshType::Traits;
 
-  typedef typename InputMeshType::PointsContainer InputPointsContainer;
+  using InputPointsContainer = typename InputMeshType::PointsContainer;
   typedef typename InputMeshType::PointsContainerConstIterator
     InputPointsContainerConstIterator;
 
   typedef typename InputMeshType::CellsContainerConstIterator
     InputCellsContainerConstIterator;
-  typedef typename InputMeshType::EdgeCellType    InputEdgeCellType;
-  typedef typename InputMeshType::PolygonCellType InputPolygonCellType;
-  typedef typename InputMeshType::PointIdList     InputPointIdList;
-  typedef typename InputMeshType::CellIdentifier  InputCellIdentifier;
+  using InputEdgeCellType = typename InputMeshType::EdgeCellType;
+  using InputPolygonCellType = typename InputMeshType::PolygonCellType;
+  using InputPointIdList = typename InputMeshType::PointIdList;
+  using InputCellIdentifier = typename InputMeshType::CellIdentifier;
 
-  typedef std::vector<InputCellIdentifier> SeedVectorType;
+  using SeedVectorType = std::vector<InputCellIdentifier>;
 
   /** Output types. */
-  typedef TOutputMesh                              OutputMeshType;
-  typedef typename OutputMeshType::Pointer         OutputMeshPointer;
-  typedef typename OutputMeshType::ConstPointer    OutputMeshConstPointer;
-  typedef typename OutputMeshType::CoordRepType    OutputCoordRepType;
-  typedef typename OutputMeshType::PointType       OutputPointType;
-  typedef typename OutputMeshType::PointIdentifier OutputPointIdentifier;
-  typedef typename OutputMeshType::QEType          OutputQEType;
-  typedef typename OutputMeshType::VectorType      OutputVectorType;
-  typedef typename OutputQEType::IteratorGeom      OutputQEIterator;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputMeshConstPointer = typename OutputMeshType::ConstPointer;
+  using OutputCoordRepType = typename OutputMeshType::CoordRepType;
+  using OutputPointType = typename OutputMeshType::PointType;
+  using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
+  using OutputQEType = typename OutputMeshType::QEType;
+  using OutputVectorType = typename OutputMeshType::VectorType;
+  using OutputQEIterator = typename OutputQEType::IteratorGeom;
   typedef typename OutputMeshType::PointsContainerPointer
     OutputPointsContainerPointer;
   typedef typename OutputMeshType::PointsContainerIterator
@@ -96,28 +96,25 @@ public:
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  typedef TSolverTraits SolverTraits;
+  using SolverTraits = TSolverTraits;
 
-  typedef QuadEdgeMeshSplitFilter<InputMeshType,
-                                  OutputMeshType>                                SplitFilterType;
-  typedef typename SplitFilterType::Pointer SplitFilterPointer;
+  using SplitFilterType = QuadEdgeMeshSplitFilter<InputMeshType,
+                                  OutputMeshType>;
+  using SplitFilterPointer = typename SplitFilterType::Pointer;
 
-  typedef QuadEdgeMeshBoundarySmoothFilter<InputMeshType,
-                                           OutputMeshType>
-    BoundarySmoothFilterType;
-  typedef typename BoundarySmoothFilterType::Pointer BoundarySmoothFilterPointer;
+  using BoundarySmoothFilterType = QuadEdgeMeshBoundarySmoothFilter<InputMeshType,
+                                           OutputMeshType>;
+  using BoundarySmoothFilterPointer = typename BoundarySmoothFilterType::Pointer;
 
-  typedef QuadEdgeMeshBorderTransform<OutputMeshType, OutputMeshType>
-    BorderTransformType;
+  using BorderTransformType = QuadEdgeMeshBorderTransform<OutputMeshType, OutputMeshType>;
   typedef typename BorderTransformType::Pointer
     BorderTransformPointer;
 
-  typedef QuadEdgeMeshParam<OutputMeshType, OutputMeshType, SolverTraits>
-    ParametrizationType;
+  using ParametrizationType = QuadEdgeMeshParam<OutputMeshType, OutputMeshType, SolverTraits>;
   typedef typename ParametrizationType::Pointer
     ParametrizationPointer;
 
-  typedef MatrixCoefficients<OutputMeshType> CoefficientsComputation;
+  using CoefficientsComputation = MatrixCoefficients<OutputMeshType>;
 
   /**
    * \brief Provide matrix coefficients method for planar parameterization.

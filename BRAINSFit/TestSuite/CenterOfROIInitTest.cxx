@@ -39,17 +39,17 @@ static std::string myGetEnv(std::string p)
 
 int main(int, char * *)
 {
-  typedef unsigned char                                             MaskPixelType;
-  typedef float                                                     PixelType;
-  typedef itk::Image<PixelType, 3>                                  ImageType;
-  typedef itk::Image<MaskPixelType, 3>                              LocalMaskImageType;
-  typedef itk::EllipseSpatialObject<3>                              EllipseSOType;
-  typedef itk::SpatialObjectToImageFilter<EllipseSOType, ImageType> SOToImageFilter;
-  typedef itk::BRAINSFitHelper                                      HelperType;
-  typedef EllipseSOType::TransformType                              TransformType;
-  typedef itk::ImageMaskSpatialObject<3>                            ImageMaskSOType;
-  typedef itk::CastImageFilter<ImageType, LocalMaskImageType>       CastType;
-  typedef itk::CompositeTransform<double, 3>                        CompositeTransformType;
+  using MaskPixelType = unsigned char;
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, 3>;
+  using LocalMaskImageType = itk::Image<MaskPixelType, 3>;
+  using EllipseSOType = itk::EllipseSpatialObject<3>;
+  using SOToImageFilter = itk::SpatialObjectToImageFilter<EllipseSOType, ImageType>;
+  using HelperType = itk::BRAINSFitHelper;
+  using TransformType = EllipseSOType::TransformType;
+  using ImageMaskSOType = itk::ImageMaskSpatialObject<3>;
+  using CastType = itk::CastImageFilter<ImageType, LocalMaskImageType>;
+  using CompositeTransformType = itk::CompositeTransform<double, 3>;
 
   ImageType::SizeType   size;
   size.Fill(100);
@@ -107,7 +107,7 @@ int main(int, char * *)
 std::cout << eImage->GetSpacing() << std::endl;
 std::cout << eTfmImage->GetSpacing() << std::endl;
 
-  typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
   VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
 
   // images and masks passed to helper are identical, but only masks will be used
@@ -150,7 +150,7 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
   myHelper->Update();
 
 
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform().GetPointer();
 
   const CompositeTransformType::ConstPointer genericCompositeTransform =

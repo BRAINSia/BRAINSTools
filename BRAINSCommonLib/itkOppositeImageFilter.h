@@ -97,14 +97,13 @@ class OppositeImageFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(OppositeImageFilter);
 
-  /** Standard class typedefs. */
-  typedef OppositeImageFilter Self;
-  typedef UnaryFunctorImageFilter<TInputImage, TOutputImage,
+  /** Standard class type alias. */
+  using Self = OppositeImageFilter;
+  using Superclass = UnaryFunctorImageFilter<TInputImage, TOutputImage,
                                   Functor::Opposite<typename TInputImage::PixelType,
-                                                    typename TOutputImage::PixelType> >
-    Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+                                                    typename TOutputImage::PixelType> >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

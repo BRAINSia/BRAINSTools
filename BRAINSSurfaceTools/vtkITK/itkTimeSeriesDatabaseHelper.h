@@ -348,7 +348,7 @@ namespace itk {
           finds = finds_hit = removed = 0;
         }
 
-        typedef unsigned long ulong;
+        using ulong = unsigned long;
 
         ulong finds;
         ulong finds_hit;

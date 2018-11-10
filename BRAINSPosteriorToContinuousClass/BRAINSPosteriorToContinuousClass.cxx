@@ -68,16 +68,16 @@ int main(int argc, char * *argv)
     exit(1);
     }
 
-  typedef float         PixelType;
-  typedef unsigned char OutputPixelType;
+  using PixelType = float;
+  using OutputPixelType = unsigned char;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension>         ImageType;
-  typedef itk::Image<OutputPixelType,  Dimension>   OutputImageType;
-  typedef itk::ImageFileReader<ImageType>           ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType>     WriterType;
-  typedef itk::ImageRegionConstIterator<ImageType>  ImageRegionConstIteratorType;
-  typedef itk::ImageRegionIterator<OutputImageType> ImageRegionIteratorType;
+  using ImageType = itk::Image<PixelType,  Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType,  Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  using ImageRegionConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
+  using ImageRegionIteratorType = itk::ImageRegionIterator<OutputImageType>;
 
   ReaderType::Pointer wmReader = ReaderType::New();
   ReaderType::Pointer basalGmReader = ReaderType::New();

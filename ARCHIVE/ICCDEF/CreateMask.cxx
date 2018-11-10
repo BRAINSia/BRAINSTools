@@ -56,20 +56,20 @@ int CreateMask(int argc, char *argv[])
     }
 
   constexpr unsigned int Dimension = 3;
-  typedef float                            PixelType;
-  typedef itk::Image<PixelType, Dimension> ImageType;
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   ImageType::Pointer inputImage
     = itkUtil::ReadImage<ImageType>( inputVolume );
 
-  typedef itk::LargestForegroundFilledMaskImageFilter<ImageType> MaskFilterType;
+  using MaskFilterType = itk::LargestForegroundFilledMaskImageFilter<ImageType>;
   MaskFilterType::Pointer LFF = MaskFilterType::New();
   LFF->SetInput(inputImage);
   LFF->SetOtsuPercentileThreshold(threshold);
   LFF->SetClosingSize(closingSize);
   LFF->Update();
 
-  typedef itk::ImageFileWriter<ImageType> ImageWriteType;
+  using ImageWriteType = itk::ImageFileWriter<ImageType>;
   ImageWriteType::Pointer writer = ImageWriteType::New();
   writer->SetInput(LFF->GetOutput() );
   writer->SetFileName(outputVolume);

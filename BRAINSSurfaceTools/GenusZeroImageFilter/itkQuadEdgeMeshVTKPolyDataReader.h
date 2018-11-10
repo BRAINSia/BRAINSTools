@@ -38,11 +38,11 @@ class QuadEdgeMeshVTKPolyDataReader : public MeshSource<TOutputMesh>
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshVTKPolyDataReader);
 
-  /** Standard "Self" typedef. */
-  typedef QuadEdgeMeshVTKPolyDataReader Self;
-  typedef MeshSource<TOutputMesh>       Superclass;
-  typedef SmartPointer<Self>            Pointer;
-  typedef SmartPointer<const Self>      ConstPointer;
+  /** Standard "Self" type alias. */
+  using Self = QuadEdgeMeshVTKPolyDataReader;
+  using Superclass = MeshSource<TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -51,19 +51,19 @@ public:
   itkTypeMacro(QuadEdgeMeshVTKPolyDataReader, MeshSource);
 
   /** Hold on to the type information specified by the template parameters. */
-  typedef TOutputMesh                         OutputMeshType;
-  typedef typename OutputMeshType::MeshTraits MeshTraits;
-  typedef typename OutputMeshType::PointType  PointType;
-  typedef typename MeshTraits::PixelType      PixelType;
+  using OutputMeshType = TOutputMesh;
+  using MeshTraits = typename OutputMeshType::MeshTraits;
+  using PointType = typename OutputMeshType::PointType;
+  using PixelType = typename MeshTraits::PixelType;
 
-  /** Some convenient typedefs. */
-  typedef typename OutputMeshType::Pointer         OutputMeshPointer;
-  typedef typename OutputMeshType::CellTraits      CellTraits;
-  typedef typename OutputMeshType::CellIdentifier  CellIdentifier;
-  typedef typename OutputMeshType::CellType        CellType;
-  typedef typename OutputMeshType::CellAutoPointer CellAutoPointer;
-  typedef typename OutputMeshType::PointIdentifier PointIdentifier;
-  typedef typename CellTraits::PointIdIterator     PointIdIterator;
+  /** Some convenient type alias. */
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using CellTraits = typename OutputMeshType::CellTraits;
+  using CellIdentifier = typename OutputMeshType::CellIdentifier;
+  using CellType = typename OutputMeshType::CellType;
+  using CellAutoPointer = typename OutputMeshType::CellAutoPointer;
+  using PointIdentifier = typename OutputMeshType::PointIdentifier;
+  using PointIdIterator = typename CellTraits::PointIdIterator;
 
   typedef typename OutputMeshType::PointsContainerPointer
     PointsContainerPointer;
@@ -72,14 +72,14 @@ public:
     PointsContainer;
 
   /** Define the triangular cell types which form the surface  */
-  typedef TriangleCell<CellType> TriangleCellType;
+  using TriangleCellType = TriangleCell<CellType>;
 
   typedef typename TriangleCellType::SelfAutoPointer
     TriangleCellAutoPointer;
 
-  typedef std::pair<unsigned long, unsigned long>    IndexPairType;
-  typedef MapContainer<IndexPairType, unsigned long> PointMapType;
-  typedef typename PointType::VectorType             VectorType;
+  using IndexPairType = std::pair<unsigned long, unsigned long>;
+  using PointMapType = MapContainer<IndexPairType, unsigned long>;
+  using VectorType = typename PointType::VectorType;
 
   /** Set the resolution level to be used for generating cells in the
    * Sphere. High values of this parameter will produce sphere with more

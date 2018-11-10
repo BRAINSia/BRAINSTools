@@ -21,8 +21,8 @@
 
 #include "BRAINSCutDataHandler.h"
 
-// typedef CvANN_MLP_Revision neuralNetType;
-typedef cv::ml::ANN_MLP neuralNetType;
+// using neuralNetType = CvANN_MLP_Revision;
+using neuralNetType = cv::ml::ANN_MLP;
 
 namespace
 {
@@ -33,12 +33,12 @@ class findUINT64Type
 template <>
 class findUINT64Type<4>
 {
-public: typedef unsigned long long unsigned64;
+public: using unsigned64 = unsigned long long;
 };
 template <>
 class findUINT64Type<8>
 {
-public:  typedef unsigned long unsigned64;
+public:  using unsigned64 = unsigned long;
 };
 }
 

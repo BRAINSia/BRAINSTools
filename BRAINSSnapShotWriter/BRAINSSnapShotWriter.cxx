@@ -37,11 +37,11 @@
  * extracting slice numbers in index
  */
 
-typedef std::vector<size_t> ExtractIndexType;
+using ExtractIndexType = std::vector<size_t>;
 
-typedef std::vector<int> IndexType;
-typedef std::vector<int> PercentIndexType;
-typedef std::vector<float> PhysicalPointIndexType;
+using IndexType = std::vector<int>;
+using PercentIndexType = std::vector<int>;
+using PhysicalPointIndexType = std::vector<float>;
 
 constexpr size_t NN_INTERP = 0;
 constexpr size_t LINEAR_INTERP = 1;
@@ -126,7 +126,7 @@ template<typename TImageType>
 typename TImageType::Pointer ChangeOrientOfImage(typename TImageType::Pointer imageVolume,
                                                  itk::FixedArray<bool, 3> flipAxes)
 {
-  typedef itk::FlipImageFilter<TImageType> FlipImageFilterType;
+  using FlipImageFilterType = itk::FlipImageFilter<TImageType>;
 
   typename FlipImageFilterType::Pointer flipFilter =
     FlipImageFilterType::New();
@@ -155,16 +155,16 @@ template<typename TStringVectorType, // input parameter type
 // return type
 TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
 {
-  typedef typename TReaderType::Pointer ReaderPointer;
-  typedef typename TReaderType::OutputImageType::Pointer OutputImagePointerType;
-  typedef typename TReaderType::OutputImageType OutImageType;
-  typedef itk::ResampleImageFilter<OutImageType, OutImageType> ResampleType;
+  using ReaderPointer = typename TReaderType::Pointer;
+  using OutputImagePointerType = typename TReaderType::OutputImageType::Pointer;
+  using OutImageType = typename TReaderType::OutputImageType;
+  using ResampleType = itk::ResampleImageFilter<OutImageType, OutImageType>;
 
-  typedef itk::NearestNeighborInterpolateImageFunction<OutImageType, double> NNIterpType;
+  using NNIterpType = itk::NearestNeighborInterpolateImageFunction<OutImageType, double>;
   typename NNIterpType::Pointer myNNIterp = NNIterpType::New();
-  typedef itk::LinearInterpolateImageFunction<OutImageType, double> LinearIterpType;
+  using LinearIterpType = itk::LinearInterpolateImageFunction<OutImageType, double>;
   typename LinearIterpType::Pointer myLinearIterp = LinearIterpType::New();
-  typedef itk::IdentityTransform<double, 3> TransformType;
+  using TransformType = itk::IdentityTransform<double, 3>;
   typename TransformType::Pointer myIdentityTransform = TransformType::New();
 
   TImageVectorType imageVector;
@@ -254,8 +254,8 @@ ExtractSlice(typename TInputImageType::Pointer inputImage,
     exit(EXIT_FAILURE);
   }
   /* extract 2D plain */
-  typedef itk::Testing::ExtractSliceImageFilter<TInputImageType,
-    TOutputImageType> ExtractVolumeFilterType;
+  using ExtractVolumeFilterType = itk::Testing::ExtractSliceImageFilter<TInputImageType,
+    TOutputImageType>;
 
   typename ExtractVolumeFilterType::Pointer extractVolumeFilter = ExtractVolumeFilterType::New();
 
@@ -287,8 +287,8 @@ Rescale(const typename TInputImage::Pointer inputImage,
         const int min,
         const int max)
 {
-  typedef itk::RescaleIntensityImageFilter<TInputImage,
-    TInputImage> RescaleFilterType;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<TInputImage,
+    TInputImage>;
 
   typename RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
 
@@ -296,8 +296,8 @@ Rescale(const typename TInputImage::Pointer inputImage,
   rescaler->SetOutputMinimum(min);
   rescaler->SetOutputMaximum(max);
 
-  typedef typename itk::CastImageFilter<TInputImage,
-    TOutputImage> CastingFilterType;
+  using CastingFilterType = typename itk::CastImageFilter<TInputImage,
+    TOutputImage>;
 
   typename CastingFilterType::Pointer caster = CastingFilterType::New();
   caster->SetInput(rescaler->GetOutput());
@@ -351,22 +351,22 @@ main(int argc, char **argv)
   const size_t numberOfImgs = inputVolumes.size();
 
   /* type definition */
-  typedef itk::Image<double, 3> Image3DVolumeType;
-  typedef itk::Image<double, 2> Image2DVolumeType;
-  typedef itk::Image<unsigned char, 3> Image3DBinaryType;
+  using Image3DVolumeType = itk::Image<double, 3>;
+  using Image2DVolumeType = itk::Image<double, 2>;
+  using Image3DBinaryType = itk::Image<unsigned char, 3>;
 
-  typedef std::vector<std::string> ImageFilenameVectorType;
-  typedef std::vector<Image3DVolumeType::Pointer> Image3DVolumeVectorType;
-  typedef std::vector<Image3DBinaryType::Pointer> Image3DBinaryVectorType;
+  using ImageFilenameVectorType = std::vector<std::string>;
+  using Image3DVolumeVectorType = std::vector<Image3DVolumeType::Pointer>;
+  using Image3DBinaryVectorType = std::vector<Image3DBinaryType::Pointer>;
 
-  typedef itk::ImageFileReader<Image3DVolumeType> Image3DVolumeReaderType;
+  using Image3DVolumeReaderType = itk::ImageFileReader<Image3DVolumeType>;
 
-  typedef itk::ImageFileReader<Image3DBinaryType> Image3DBinaryReaderType;
+  using Image3DBinaryReaderType = itk::ImageFileReader<Image3DBinaryType>;
 
-  typedef itk::Image<unsigned char, 2> OutputGreyImageType;
+  using OutputGreyImageType = itk::Image<unsigned char, 2>;
 
-  typedef itk::RGBPixel<unsigned char> RGBPixelType;
-  typedef itk::Image<RGBPixelType, 2> OutputRGBImageType;
+  using RGBPixelType = itk::RGBPixel<unsigned char>;
+  using OutputRGBImageType = itk::Image<RGBPixelType, 2>;
 
   /* read in image volumes */
   Image3DVolumeVectorType image3DVolumes = ReadImageVolumes<ImageFilenameVectorType,
@@ -428,14 +428,14 @@ main(int argc, char **argv)
     }
   }
   /* compose color image */
-  typedef itk::LabelOverlayImageFilter<OutputGreyImageType,
+  using LabelOverlayFilter = itk::LabelOverlayImageFilter<OutputGreyImageType,
     OutputGreyImageType,
-    OutputRGBImageType> LabelOverlayFilter;
+    OutputRGBImageType>;
 
-  typedef itk::ComposeImageFilter<OutputGreyImageType,
-    OutputRGBImageType> RGBComposeFilter;
+  using RGBComposeFilter = itk::ComposeImageFilter<OutputGreyImageType,
+    OutputRGBImageType>;
 
-  typedef std::vector<OutputRGBImageType::Pointer> OutputRGBImageVectorType;
+  using OutputRGBImageVectorType = std::vector<OutputRGBImageType::Pointer>;
 
   OutputRGBImageVectorType rgbSlices;
   for (unsigned int plane = 0; plane < inputPlaneDirection.size(); plane++)
@@ -503,7 +503,7 @@ main(int argc, char **argv)
   }
 
   /* tile the images */
-  typedef itk::TileImageFilter<OutputRGBImageType, OutputRGBImageType> TileFilterType;
+  using TileFilterType = itk::TileImageFilter<OutputRGBImageType, OutputRGBImageType>;
 
   TileFilterType::Pointer tileFilter = TileFilterType::New();
 
@@ -524,7 +524,7 @@ main(int argc, char **argv)
   }
 
   /* write out 2D image */
-  typedef itk::ImageFileWriter<OutputRGBImageType> RGBFileWriterType;
+  using RGBFileWriterType = itk::ImageFileWriter<OutputRGBImageType>;
 
   RGBFileWriterType::Pointer rgbFileWriter = RGBFileWriterType::New();
 

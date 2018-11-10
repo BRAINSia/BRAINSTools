@@ -98,7 +98,7 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
   // the halving of the input size hides the actual size of the input.
   // to get the same size image out of the IFFT, need to send it as
   // Metadata.
-  typedef typename TOutputImageType::SizeType::SizeValueType SizeScalarType;
+  using SizeScalarType = typename TOutputImageType::SizeType::SizeValueType;
   itk::MetaDataDictionary & OutputDic = outputPtr->GetMetaDataDictionary();
   itk::EncapsulateMetaData<SizeScalarType>(OutputDic,
                                            std::string("FFT_Actual_RealImage_Size"),

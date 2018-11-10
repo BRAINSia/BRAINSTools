@@ -15,8 +15,8 @@ class MaskFromLandmarksFilter
   : public itk::ImageToImageFilter< TInputImage, TInputMask>
 {
 public:
-  typedef MaskFromLandmarksFilter Self;
-  typedef itk::SmartPointer<Self> Pointer;
+  using Self = MaskFromLandmarksFilter;
+  using Pointer = itk::SmartPointer<Self>;
 
  // constexpr unsigned int Dimension = 3;
 
@@ -41,14 +41,14 @@ protected:
 
   void GenerateData() override
   {
-    typedef TInputMask ImageMaskType;
-    typedef ImageMaskType OutputImageType;
+    using ImageMaskType = TInputMask;
+    using OutputImageType = ImageMaskType;
 
-    typedef typename OutputImageType::Pointer      ImagePointer;
-    typedef typename TInputImage::ConstPointer ImageConstPointer;
+    using ImagePointer = typename OutputImageType::Pointer;
+    using ImageConstPointer = typename TInputImage::ConstPointer;
 
     LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(m_LandmarksFileName);
-    typedef itk::Point<double, 3> PointType;
+    using PointType = itk::Point<double, 3>;
 
     PointType rightEye   = myLandmarks.find("RE")->second;
     PointType leftEye    = myLandmarks.find("LE")->second;
@@ -71,7 +71,7 @@ protected:
       }
     // find the a,b,c for the plane equation ax + by + c = 0
     // first get two vectors in the plane u and v
-    typedef itk::Vector<double,3> VectorType;
+    using VectorType = itk::Vector<double,3>;
     VectorType u = rightEye - leftEye;
     VectorType v = dens_axis - leftEye;
     if(m_Debug || m_Verbose)
@@ -135,10 +135,10 @@ protected:
     outputImage->SetRegions(inputImage->GetLargestPossibleRegion());
     outputImage->Allocate();
 
-    typedef itk::ImageRegionConstIterator<TInputImage> ImageConstIterator;
+    using ImageConstIterator = itk::ImageRegionConstIterator<TInputImage>;
     ImageConstIterator inputIterator(inputImage, inputImage->GetLargestPossibleRegion());
 
-    typedef itk::ImageRegionIterator<ImageMaskType> MaskIteratorType;
+    using MaskIteratorType = itk::ImageRegionIterator<ImageMaskType>;
     MaskIteratorType outputIterator(outputImage, outputImage->GetLargestPossibleRegion());
 
     inputIterator.GoToBegin();

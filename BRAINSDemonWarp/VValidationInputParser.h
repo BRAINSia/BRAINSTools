@@ -58,11 +58,11 @@ class VValidationInputParser : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(VValidationInputParser);
 
-  /** Standard class typedefs. */
-  typedef VValidationInputParser   Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = VValidationInputParser;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(VValidationInputParser, Object);
@@ -71,29 +71,29 @@ public:
   itkNewMacro(Self);
 
   /** Image Type. */
-  typedef TImage                      ImageType;
-  typedef typename ImageType::Pointer ImagePointer;
+  using ImageType = TImage;
+  using ImagePointer = typename ImageType::Pointer;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;
 
   /** Displacement field value type. */
-  typedef float FieldValueType;
+  using FieldValueType = float;
 
   /** Displacement field pixel type. */
-  typedef Vector<FieldValueType,
-                 Self::ImageDimension> FieldPixelType;
+  using FieldPixelType = Vector<FieldValueType,
+                 Self::ImageDimension>;
 
   /** Displacement field type. */
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
 
   /** ShrinkFactors type. */
-  typedef FixedArray<unsigned int,
-                     Self::ImageDimension> ShrinkFactorsType;
+  using ShrinkFactorsType = FixedArray<unsigned int,
+                     Self::ImageDimension>;
 
   /** IterationArray type. */
-  typedef Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = Array<unsigned int>;
 
   /** Set the atlas patient. */
   void SetTheMovingImageFilename(std::vector<std::string> & names)

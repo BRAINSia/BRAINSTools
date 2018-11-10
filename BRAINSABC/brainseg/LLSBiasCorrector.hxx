@@ -287,7 +287,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
   m_Basis.set_size(numEquations, numCoefficients);
 
-  typedef typename  std::vector<ProbabilityImageIndexType>::const_iterator IterType ;
+  using  IterType = typename  std::vector<ProbabilityImageIndexType>::const_iterator;
   {
   // Coordinate scaling and offset parameters
   vnl_vector_fixed<unsigned long long int,3> local_XMu =
@@ -897,7 +897,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
       if( this->m_DebugLevel > 7 )
         { // DEBUG:  This code is for debugging purposes only;
-        typedef itk::ImageFileWriter<InputImageType> WriterType;
+        using WriterType = itk::ImageFileWriter<InputImageType>;
         typename WriterType::Pointer writer = WriterType::New();
         writer->UseCompressionOn();
 

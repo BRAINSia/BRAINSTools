@@ -49,9 +49,9 @@ void MinimumDistanceBetweenFiberGroups(VTKFiberListType fiberList1,
                                        VTKFiberListType fiberList2,
                                        TVector & dis)
 {
-  typedef itk::IdentityTransform<double> TransformType;
+  using TransformType = itk::IdentityTransform<double>;
   TransformType::Pointer transform = TransformType::New();
-  typedef itk::EuclideanDistancePointMetric<PointSetType, PointSetType> DistanceType;
+  using DistanceType = itk::EuclideanDistancePointMetric<PointSetType, PointSetType>;
   DistanceType::TransformParametersType parameter( transform->GetNumberOfParameters() );
   parameter.fill(0);
 

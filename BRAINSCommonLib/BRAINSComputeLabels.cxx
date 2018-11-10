@@ -4,7 +4,7 @@
 LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage,
                                    const vnl_vector<unsigned int> & PriorLabelCodeVector)
 {
-  typedef itk::LabelStatisticsImageFilter<ByteImageType,ByteImageType> LabelStatisticsImageFilterType;
+  using LabelStatisticsImageFilterType = itk::LabelStatisticsImageFilter<ByteImageType,ByteImageType>;
   LabelStatisticsImageFilterType::Pointer labelStatisticsImageFilter = LabelStatisticsImageFilterType::New();
   labelStatisticsImageFilter->SetLabelInput(labelsImage);
   labelStatisticsImageFilter->SetInput(labelsImage);

@@ -79,9 +79,9 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
   //LPS to RAI as FSL desires images to be formatted for viewing purposes.
   // This conversion makes FSLView display the images in
   // a way that is most easily interpretable.
-  typedef itk::FlipImageFilter<Volume4DType> FlipperType;
+  using FlipperType = itk::FlipImageFilter<Volume4DType>;
   FlipperType::Pointer myFlipper = FlipperType::New();
-  myFlipper->SetInput( image4D ) ;
+  myFlipper->SetInput( image4D );
   FlipperType::FlipAxesArrayType arrayAxisFlip;
   for(size_t i=0; i< Volume4DType::ImageDimension; ++i)
   {
@@ -94,7 +94,7 @@ Volume4DType::Pointer DWIConverter::OrientForFSLConventions( const bool toFSL)
     arrayAxisFlip[i] = ( DicomDesiredDirectionFlipsWRTLPS[i]*direction(i,i) < -0.5 ); // i.e. a negative magnitude greater than 0.5
     }
     //This is necesssary to ensure that the BVEC file is consistent with FSL orientation assumptions
-    for(size_t g =0 ; g < this->m_DiffusionVectors.size(); ++g)
+    for(size_t g =0; g < this->m_DiffusionVectors.size(); ++g)
     {
       this->m_DiffusionVectors[g][i]  *= ( arrayAxisFlip[i] ? -1 : 1 );
     }
@@ -673,7 +673,7 @@ size_t DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderNa
 {
   constexpr size_t NUMEXT = 2;
   const char * const extList [NUMEXT] = {".nii.gz", ".nii"};
-  for(size_t i = 0 ; i < NUMEXT; ++i)
+  for(size_t i = 0; i < NUMEXT; ++i)
   {
     const size_t extensionPos = outputVolumeHeaderName.find(extList[i]);
     if( extensionPos != std::string::npos )

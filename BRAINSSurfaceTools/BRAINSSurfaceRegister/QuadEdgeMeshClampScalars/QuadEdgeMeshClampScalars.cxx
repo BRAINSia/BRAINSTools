@@ -66,18 +66,18 @@ int main( int argc, char * argv [] )
   std::cout << "[ " << outputMin << " " << outputMax << " ]" << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  typedef float MeshPixelType;
+  using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
 
   ReaderType::Pointer inputReader = ReaderType::New();
   inputReader->SetFileName( inputSurfaceFile.c_str() );
   inputReader->Update();
 
-  typedef itk::QuadEdgeMeshClampScalarsFilter<MeshType, MeshType> FilterType;
+  using FilterType = itk::QuadEdgeMeshClampScalarsFilter<MeshType, MeshType>;
 
   FilterType::Pointer filter  = FilterType::New();
 
@@ -91,7 +91,7 @@ int main( int argc, char * argv [] )
 
   filter->Update();
 
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( filter->GetOutput() );
   writer->SetFileName( outputSurfaceFile.c_str() );

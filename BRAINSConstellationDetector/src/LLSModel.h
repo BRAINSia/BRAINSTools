@@ -33,10 +33,10 @@ class LLSModel
 public:
   LLSModel();
   ~LLSModel();
-  typedef std::map<std::string, std::vector<double> > LLSMeansType;
-  typedef vnl_matrix<double>                          MatrixType;
-  typedef std::map<std::string, MatrixType>           LLSMatricesType;
-  typedef std::map<std::string, double>               LLSSearchRadiiType;
+  using LLSMeansType = std::map<std::string, std::vector<double> >;
+  using MatrixType = vnl_matrix<double>;
+  using LLSMatricesType = std::map<std::string, MatrixType>;
+  using LLSSearchRadiiType = std::map<std::string, double>;
 
   void SetFileName(const std::string & fileName);
 
@@ -48,11 +48,11 @@ public:
 
   void SetLLSMeans(const LLSMeansType & llsMeans);
 
-  const LLSMeansType & GetLLSMeans() const ;
+  const LLSMeansType & GetLLSMeans() const;
 
   void SetLLSMatrices(const LLSMatricesType & llsMatrices);
 
-  const LLSMatricesType & GetLLSMatrices() const ;
+  const LLSMatricesType & GetLLSMatrices() const;
 
   void SetSearchRadii(const LLSSearchRadiiType & llsSearchRadii);
 

@@ -65,7 +65,7 @@ RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)
   // First just make RGB Image with greyscale values.
   itk::ImageRegionIterator<RGBImageType> rgbIt( rgbImage, rgbImage->GetLargestPossibleRegion() );
   itk::ImageRegionIterator<SImageType>   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-  for( ; !sIt.IsAtEnd(); ++rgbIt, ++sIt )
+  for(; !sIt.IsAtEnd(); ++rgbIt, ++sIt )
     {
     unsigned char charVal( ShortToUChar(sIt.Value(), minPixel, maxPixel) );
     RGBPixelType  pixel;
@@ -203,7 +203,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer in,
 
     itk::ImageRegionIterator<RGBImageType> rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
     itk::ImageRegionIterator<SImageType>   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-    for( ; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
+    for(; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
       {
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
@@ -282,7 +282,7 @@ MakePointBranded3DImage(SImageType::ConstPointer in,
   double                radius = 3.0;
 
   itk::ImageRegionIterator<SImageType> sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-  for( ; !sIt.IsAtEnd(); ++sIt )
+  for(; !sIt.IsAtEnd(); ++sIt )
     {
     SImageType::IndexType index = sIt.GetIndex();
     SImageType::PointType p;
@@ -355,7 +355,7 @@ MakeBranded2DImage(SImageType::ConstPointer in,
 
     itk::ImageRegionIterator<RGBImageType> rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
     itk::ImageRegionIterator<SImageType>   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-    for( ; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
+    for(; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
       {
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
@@ -437,9 +437,9 @@ WriteMRMLFile(std::string outputMRML,
   constexpr unsigned int LocalImageDimension = 3;
   itk::NumberToString<double>     doubleToString;
 
-  typedef short                                      PixelType;
-  typedef itk::Image<PixelType, LocalImageDimension> ImageType;
-  typedef itk::ImageFileReader<ImageType>            ReaderType;
+  using PixelType = short;
+  using ImageType = itk::Image<PixelType, LocalImageDimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
 
   std::string mrmlFullFilename =
     itksys::SystemTools::CollapseFullPath( outputMRML.c_str() );

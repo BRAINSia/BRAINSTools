@@ -85,7 +85,7 @@ struct ICCDEFWarpAppParameters
   // itk::Index<3> neighborhoodForBOBF;
 
   /** IterationArray type. */
-  typedef itk::Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = itk::Array<unsigned int>;
   unsigned long numberOfHistogramLevels;
   unsigned long numberOfMatchPoints;
   unsigned short numberOfLevels;
@@ -148,10 +148,10 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 {
   constexpr int dims = 3;
 
-  typedef itk::Image<InPixelType, dims>              ImageType;
-  typedef itk::Image<float, dims>                    TRealImage;
-  typedef itk::Image<OutPixelType, dims>             OutputImageType;
-  typedef itk::Image<itk::Vector<float, dims>, dims> TDisplacementField;
+  using ImageType = itk::Image<InPixelType, dims>;
+  using TRealImage = itk::Image<float, dims>;
+  using OutputImageType = itk::Image<OutPixelType, dims>;
+  using TDisplacementField = itk::Image<itk::Vector<float, dims>, dims>;
   // If optional landmark files given, will use landmark registration to
   // generate
   // a deformation field to prime the thirion demons registration.
@@ -203,8 +203,8 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 
   itksys::SystemTools::ChangeDirectory(command.outputPrefix.c_str() );
 
-  typedef itk::SpatialObject<dims>        ImageMaskType;
-  typedef typename ImageMaskType::Pointer ImageMaskPointer;
+  using ImageMaskType = itk::SpatialObject<dims>;
+  using ImageMaskPointer = typename ImageMaskType::Pointer;
 
   ImageMaskPointer fixedMask = nullptr;
   ImageMaskPointer movingMask = nullptr;
@@ -220,8 +220,8 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 
   // Set up the demons filter
 
-  typedef typename itk::ICCDeformableRegistrationFilter<TRealImage, TRealImage,
-                                                        TDisplacementField> ActualRegistrationFilterType;
+  using ActualRegistrationFilterType = typename itk::ICCDeformableRegistrationFilter<TRealImage, TRealImage,
+                                                        TDisplacementField>;
   ActualRegistrationFilterType::Pointer filter
     = ActualRegistrationFilterType::New();
 
@@ -265,7 +265,7 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
       movingVolume = itkUtil::OrientImage<TRealImage>(movingVolume,
                                                       itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
 
-      typedef itk::Brains2LandmarkReader<InPixelType, dims> Brains2LandmarkReaderType;
+      using Brains2LandmarkReaderType = itk::Brains2LandmarkReader<InPixelType, dims>;
       typename Brains2LandmarkReaderType::Pointer fixedLandmarkReader = Brains2LandmarkReaderType::New();
       fixedLandmarkReader->SetFileName(command.fixedLandmark.c_str() );
       fixedLandmarkReader->SetReferenceImage(fixedVolume);
@@ -632,7 +632,7 @@ int main(int argc, char *argv[])
       << "                      Inverse Weight: " << command.inverseWeight   << std::endl
       << "               Regularization Weight: " << command.regularizationWeight   << std::endl
       << "                     landmark Weight: " << command.landmarkWeight   << std::endl;
-    ;
+;
     }
 
   bool violated = false;

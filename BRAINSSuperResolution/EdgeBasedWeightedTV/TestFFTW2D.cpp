@@ -43,16 +43,16 @@ void DumpImage2D(IMTYPE out, const std::string ImageName)
 
 int main(int argc, char * argv[])
 {
-  typedef double ScalarType;
-  typedef std::complex<ScalarType> ComplexType;
+  using ScalarType = double;
+  using ComplexType = std::complex<ScalarType>;
   constexpr size_t DIMENSION = 2;
 
-  typedef itk::Image<ComplexType,DIMENSION> CImageType;
-  typedef itk::Image<ScalarType ,DIMENSION> SImageType;
+  using CImageType = itk::Image<ComplexType,DIMENSION>;
+  using SImageType = itk::Image<ScalarType ,DIMENSION>;
 
-  typedef itk::FFTWComplexToComplexFFTImageFilter<CImageType> FFTC2C;
-  typedef itk::FFTWForwardFFTImageFilter<SImageType>          FFFTR2C;
-  typedef itk::FFTWInverseFFTImageFilter<CImageType>          IFFTC2R;
+  using FFTC2C = itk::FFTWComplexToComplexFFTImageFilter<CImageType>;
+  using FFFTR2C = itk::FFTWForwardFFTImageFilter<SImageType>;
+  using IFFTC2R = itk::FFTWInverseFFTImageFilter<CImageType>;
 
   CImageType::Pointer CR = CImageType::New();
   {
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
   itk::ImageRegionIteratorWithIndex<CImageType> cIter(CR,CR->GetLargestPossibleRegion());
   while(!cIter.IsAtEnd())
   {
-    for(int dim = 0 ; dim < CImageType::ImageDimension; ++dim)
+    for(int dim = 0; dim < CImageType::ImageDimension; ++dim)
     {
       if( cIter.GetIndex()[dim] < (CR->GetLargestPossibleRegion().GetSize()[dim]*1)/3
         || cIter.GetIndex()[dim] > (CR->GetLargestPossibleRegion().GetSize()[dim]*2)/3 )

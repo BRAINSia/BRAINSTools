@@ -39,12 +39,12 @@ int main( int argc, char * argv[] )
   const std::string input4Dimage(  argv[1]  );
   const std::string outputPrefix( argv[2] );
 
-  typedef float                               PixelValueType;
-  typedef itk::Image<PixelValueType, 4>       Volume4DType;
-  typedef itk::Image<PixelValueType, 3>       Volume3DType;
+  using PixelValueType = float;
+  using Volume4DType = itk::Image<PixelValueType, 4>;
+  using Volume3DType = itk::Image<PixelValueType, 3>;
 
   std::cout << "- Read image: " << input4Dimage << std::endl;
-  typedef itk::ImageFileReader<Volume4DType> Image4DReaderType;
+  using Image4DReaderType = itk::ImageFileReader<Volume4DType>;
   Image4DReaderType::Pointer image4DReader = Image4DReaderType::New();
   image4DReader->SetFileName( input4Dimage );
   try
@@ -68,7 +68,7 @@ int main( int argc, char * argv[] )
 
   const unsigned int volumeCount = inputSize[3];
 
-  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
+  using ExtractFilterType = itk::ExtractImageFilter< Volume4DType, Volume3DType >;
 
   for( size_t componentNumber = 0; componentNumber < volumeCount; ++componentNumber )
     {
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] )
 
     std::cout << "- Write image: " << fn << std::endl;
 
-    typedef itk::ImageFileWriter<Volume3DType> Image3DWriterType;
+    using Image3DWriterType = itk::ImageFileWriter<Volume3DType>;
     Image3DWriterType::Pointer image3DWriter = Image3DWriterType::New();
     image3DWriter->SetFileName( fn );
     image3DWriter->SetInput( extracter->GetOutput() );

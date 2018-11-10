@@ -24,16 +24,16 @@ int main(int argc, char *argv[]) {
 
   const bool checkDeformedArea = !checkNonDeformedArea;
 
-  typedef float                                                                           InputPixelType;
+  using InputPixelType = float;
   constexpr int Dimension = 3;
 
-  typedef itk::Image<InputPixelType, Dimension>                                           ImageType;
-  typedef itk::Image<unsigned char, Dimension>                                            MaskImageType;
+  using ImageType = itk::Image<InputPixelType, Dimension>;
+  using MaskImageType = itk::Image<unsigned char, Dimension>;
 
-  typedef itk::ImageFileReader<ImageType>                                                 ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
 
-  typedef itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>        AbsValDiffFilterType;
-  typedef itk::StatisticsImageFilter<ImageType> StatisticsFilterType;
+  using AbsValDiffFilterType = itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>;
+  using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
 
   ReaderType::Pointer originalReader = ReaderType::New();
   originalReader->SetFileName(inputOriginal);
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
   ReaderType::Pointer defacedReader = ReaderType::New();
   defacedReader->SetFileName(inputRefaced);
 
-  typedef MaskFromLandmarksFilter<ImageType, MaskImageType> MaskImageFromLandmarksFilterType;
-  typedef itk::MultiplyImageFilter<MaskImageType, ImageType, ImageType> MaskMultiplierType;
+  using MaskImageFromLandmarksFilterType = MaskFromLandmarksFilter<ImageType, MaskImageType>;
+  using MaskMultiplierType = itk::MultiplyImageFilter<MaskImageType, ImageType, ImageType>;
 
   // setup original image masked for deformation area
   MaskImageFromLandmarksFilterType::Pointer areaMaskFilterOriginal = MaskImageFromLandmarksFilterType::New();

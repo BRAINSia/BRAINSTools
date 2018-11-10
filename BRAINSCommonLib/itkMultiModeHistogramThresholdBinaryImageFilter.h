@@ -41,24 +41,24 @@ public:
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-  /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                           InputImageType;
-  typedef typename InputImageType::ConstPointer InputImagePointer;
-  typedef typename InputImageType::RegionType   InputImageRegionType;
-  typedef typename InputImageType::PixelType    InputPixelType;
+  /** Convenient type alias for simplifying declarations. */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputPixelType = typename InputImageType::PixelType;
 
-  typedef TOutputImage                         OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
-  typedef typename OutputImageType::PixelType  OutputPixelType;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using OutputPixelType = typename OutputImageType::PixelType;
 
-  typedef MultiModeHistogramThresholdBinaryImageFilter        Self;
-  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef TOutputImage                                        IntegerImageType;
-  typedef typename IntegerImageType::PixelType                IntegerPixelType;
+  using Self = MultiModeHistogramThresholdBinaryImageFilter;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using IntegerImageType = TOutputImage;
+  using IntegerPixelType = typename IntegerImageType::PixelType;
 
-  typedef Array<double> ThresholdArrayType;
+  using ThresholdArrayType = Array<double>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

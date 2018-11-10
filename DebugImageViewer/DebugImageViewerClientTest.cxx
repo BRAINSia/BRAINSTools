@@ -23,7 +23,7 @@
 
 int main(int argc, char * *argv)
 {
-  typedef itk::Image<float, 3> ImageType;
+  using ImageType = itk::Image<float, 3>;
 
   if( argc != 3 )
     {

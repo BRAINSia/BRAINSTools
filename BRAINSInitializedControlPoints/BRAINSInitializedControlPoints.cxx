@@ -85,10 +85,10 @@ int main(int argc, char* argv[])
     throw;
     }
 
-  typedef float PixelType;
+  using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType, Dimension> FixedVolumeType;
+  using FixedVolumeType = itk::Image<PixelType, Dimension>;
 
   // Verify that the spline grid sizes are greater than 3
     {
@@ -105,11 +105,11 @@ int main(int argc, char* argv[])
   FixedVolumeType::Pointer fixedImage = nullptr;
   try
     {
-    typedef itk::ImageFileReader<FixedVolumeType> FixedVolumeReaderType;
+    using FixedVolumeReaderType = itk::ImageFileReader<FixedVolumeType>;
     FixedVolumeReaderType::Pointer fixedVolumeReader = FixedVolumeReaderType::New();
     fixedVolumeReader->SetFileName(inputVolume);
     fixedVolumeReader->Update();
-    typedef itk::PermuteAxesImageFilter<FixedVolumeType> PermuterType;
+    using PermuterType = itk::PermuteAxesImageFilter<FixedVolumeType>;
     PermuterType::PermuteOrderArrayType myOrdering;
     myOrdering[0] = permuteOrder[0];
     myOrdering[1] = permuteOrder[1];
@@ -127,12 +127,12 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::BSplineTransform<float, 3, 3> BSplineTransformType;
+  using BSplineTransformType = itk::BSplineTransform<float, 3, 3>;
   BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
   initialBSplineTransform->SetIdentity();
 
-  typedef itk::BSplineTransformInitializer
-    <BSplineTransformType, FixedVolumeType> InitializerType;
+  using InitializerType = itk::BSplineTransformInitializer
+    <BSplineTransformType, FixedVolumeType>;
   InitializerType::Pointer transformInitializer = InitializerType::New();
 
   transformInitializer->SetTransform(initialBSplineTransform);
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
   std::cout << "coefficientImage\n" << coefficientImage << std::endl;
   std::cout << "initialBSplineTransform\n" << initialBSplineTransform << std::endl;
 
-  typedef itk::ImageRegionIterator<BSplineTransformType::ImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIterator<BSplineTransformType::ImageType>;
 
   IteratorType coefItr( coefficientImage, coefficientImage->GetLargestPossibleRegion() );
   coefItr.GoToBegin();
@@ -188,7 +188,7 @@ int main(int argc, char* argv[])
     ++coefItr;
     }
 
-  typedef itk::ImageFileWriter<FixedVolumeType> FixedVolumeWriterType;
+  using FixedVolumeWriterType = itk::ImageFileWriter<FixedVolumeType>;
   FixedVolumeWriterType::Pointer permutedWriter = FixedVolumeWriterType::New();
   permutedWriter->SetInput(fixedImage);
   permutedWriter->SetFileName(outputVolume);

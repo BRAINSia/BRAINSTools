@@ -50,11 +50,11 @@ int main( int argc, char *argv[] )
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   constexpr unsigned int Dimension = 3;
-  typedef   signed short                            ScalarPixelType;
-  typedef   itk::Image<ScalarPixelType,  Dimension> ScalarImageType;
+  using ScalarPixelType = signed short;
+  using ScalarImageType = itk::Image<ScalarPixelType,  Dimension>;
 
   // Read the image defining the space for the inverse field
-  typedef itk::ImageFileReader<ScalarImageType> ScalarReaderType;
+  using ScalarReaderType = itk::ImageFileReader<ScalarImageType>;
 
   ScalarReaderType::Pointer scalarReader = ScalarReaderType::New();
   scalarReader->SetFileName( baseImage );
@@ -70,12 +70,12 @@ int main( int argc, char *argv[] )
     }
 
   // Read the deformationfield field
-  typedef   float                                       VectorComponentType;
-  typedef   itk::Vector<VectorComponentType, Dimension> VectorType;
+  using VectorComponentType = float;
+  using VectorType = itk::Vector<VectorComponentType, Dimension>;
 
-  typedef itk::Image<VectorType,  Dimension> DisplacementFieldType;
+  using DisplacementFieldType = itk::Image<VectorType,  Dimension>;
 
-  typedef itk::ImageFileReader<DisplacementFieldType> VectorReaderType;
+  using VectorReaderType = itk::ImageFileReader<DisplacementFieldType>;
 
   VectorReaderType::Pointer vectorReader = VectorReaderType::New();
   vectorReader->SetFileName( deformationImage );
@@ -116,7 +116,7 @@ int main( int argc, char *argv[] )
     }
 
   // Write an image for regression testing
-  typedef itk::ImageFileWriter<DisplacementFieldType> WriterType;
+  using WriterType = itk::ImageFileWriter<DisplacementFieldType>;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();

@@ -68,7 +68,7 @@ itk::ImageIOBase::IOComponentType typeMtoITK(const mxClassID mtype) {
 /** need a specialization that only calls
 * SetNumberOfComponentsPerPixel for VectorImages
  */
-typedef itk::VectorImage<double, 3> DWIImage;
+using DWIImage = itk::VectorImage<double, 3>;
 
 //TODO: Remove this code
 
@@ -88,8 +88,8 @@ void SetNumberOfComponentsPerPixel<DWIImage>(DWIImage::Pointer im, unsigned numC
 template<typename TImage>
 void
 WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *filename) {
-  typedef TImage ImageType;
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using ImageType = TImage;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   const unsigned int numDims = msm.GetNumberOfDimensions("data");
   const mwSize *const mSize = msm.GetDimensions("data");
@@ -215,7 +215,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
     const double *const mxMeasurementFrame_temp = (double *) mxGetData(mxMeasurementFrame);
     const mwSize *const measurementFrameSize = msm.GetDimensions("data");
     if (mxMeasurementFrame != 0) {
-      typedef std::vector<std::vector<double> > MeasurementMatType;
+      using MeasurementMatType = std::vector<std::vector<double> >;
       MeasurementMatType measurementFrame;
       std::string measurementFrameFieldName = "NRRD_";
       measurementFrameFieldName += airEnumStr(nrrdField, nrrdField_measurement_frame);
@@ -336,8 +336,8 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager &msm, const char *fil
 template<typename TImage>
 void
 WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
-    typedef TImage ImageType;
-    typedef itk::ImageFileWriter<ImageType> WriterType;
+    using ImageType = TImage;
+    using WriterType = itk::ImageFileWriter<ImageType>;
 
     const unsigned int numDims = msm.GetNumberOfDimensions("data");
     const mwSize *const mSize = msm.GetDimensions("data");
@@ -476,7 +476,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
         const double *const mxMeasurementFrame_temp = (double *) mxGetData(mxMeasurementFrame);
         const mwSize *const measurementFrameSize = msm.GetDimensions("data");
         if (mxMeasurementFrame != 0) {
-            typedef std::vector<std::vector<double> > MeasurementMatType;
+            using MeasurementMatType = std::vector<std::vector<double> >;
             MeasurementMatType measurementFrame;
             std::string measurementFrameFieldName = "NRRD_";
             measurementFrameFieldName += airEnumStr(nrrdField, nrrdField_measurement_frame);
@@ -590,7 +590,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
 template<typename TScalar>
 void
 WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *voxelTypeName) {
-  typedef typename itk::Image<TScalar, 4> ImageType;
+  using ImageType = typename itk::Image<TScalar, 4>;
   std::string _fname(filename);
   std::string ext = itksys::SystemTools::GetFilenameLastExtension(_fname);
   std::string dataFilename;
@@ -753,7 +753,7 @@ WriteDWINrrd(const MatlabStructManager &msm, const char *filename, const char *v
     if (mxMeasurementFrame != 0) {
       const mwSize *const measurementFrameSize = msm.GetDimensions("data");
       const double *const mxMeasurementFrame_temp = (double *) mxGetData(mxMeasurementFrame);
-      typedef std::vector<std::vector<double> > MeasurementMatType;
+      using MeasurementMatType = std::vector<std::vector<double> >;
       MeasurementMatType measurementFrame;
       for (unsigned int i = 0, count = 0; i < 3; ++i) {
         // if the saved measurement frame is N-d and weire at N+1-D...

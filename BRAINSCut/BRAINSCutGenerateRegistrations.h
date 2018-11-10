@@ -21,8 +21,8 @@
 
 #include "BRAINSCutDataHandler.h"
 
-typedef itk::Image<unsigned char, DIMENSION> BinaryImageType;
-typedef BinaryImageType::Pointer             BinaryImagePointer;
+using BinaryImageType = itk::Image<unsigned char, DIMENSION>;
+using BinaryImagePointer = BinaryImageType::Pointer;
 
 class BRAINSCutGenerateRegistrations
 {

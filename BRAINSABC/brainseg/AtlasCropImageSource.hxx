@@ -118,8 +118,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
     }
 
   // Go through image and update bounds
-  typedef itk::ImageRegionIteratorWithIndex<ProbabilityImageType>
-    IteratorType;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<ProbabilityImageType>;
 
   IteratorType it( probs[0], probs[0]->GetLargestPossibleRegion() );
 
@@ -232,7 +231,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
     offt[i] = m_LowerBound[i];
     }
 
-  typedef itk::ImageRegionIteratorWithIndex<InputImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<InputImageType>;
 
   IteratorType inIt( img, img->GetLargestPossibleRegion() );
 
@@ -289,7 +288,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>
     offt[i] = m_LowerBound[i];
     }
 
-  typedef itk::ImageRegionIteratorWithIndex<InputImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<InputImageType>;
 
   IteratorType outIt(output, cropRegion);
 

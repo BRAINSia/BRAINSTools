@@ -45,11 +45,11 @@ class ResampleDestinationPointsQuadEdgeMeshFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ResampleDestinationPointsQuadEdgeMeshFilter);
 
-  typedef ResampleDestinationPointsQuadEdgeMeshFilter Self;
-  typedef MeshToMeshFilter<
-      TInputPointSet, TOutputPointSet>                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = ResampleDestinationPointsQuadEdgeMeshFilter;
+  using Superclass = MeshToMeshFilter<
+      TInputPointSet, TOutputPointSet>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( ResampleDestinationPointsQuadEdgeMeshFilter, MeshToMeshFilter );
@@ -57,39 +57,39 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputPointSet                              InputPointSetType;
-  typedef typename InputPointSetType::Pointer         InputPointSetPointer;
-  typedef typename InputPointSetType::PointsContainer InputPointsContainer;
+  using InputPointSetType = TInputPointSet;
+  using InputPointSetPointer = typename InputPointSetType::Pointer;
+  using InputPointsContainer = typename InputPointSetType::PointsContainer;
 
-  typedef TFixedMesh                        FixedMeshType;
-  typedef typename FixedMeshType::PointType FixedMeshPointType;
+  using FixedMeshType = TFixedMesh;
+  using FixedMeshPointType = typename FixedMeshType::PointType;
 
-  typedef TReferenceMesh                                   ReferenceMeshType;
-  typedef typename ReferenceMeshType::PointsContainer      ReferencePointsContainer;
-  typedef typename ReferencePointsContainer::ConstIterator ReferencePointsContainerConstIterator;
+  using ReferenceMeshType = TReferenceMesh;
+  using ReferencePointsContainer = typename ReferenceMeshType::PointsContainer;
+  using ReferencePointsContainerConstIterator = typename ReferencePointsContainer::ConstIterator;
 
-  typedef TOutputPointSet                              OutputPointSetType;
-  typedef typename OutputPointSetType::Pointer         OutputPointSetPointer;
-  typedef typename OutputPointSetType::ConstPointer    OutputPointSetConstPointer;
-  typedef typename OutputPointSetType::PointType       OutputPointType;
-  typedef typename OutputPointSetType::PointsContainer OutputPointsContainer;
+  using OutputPointSetType = TOutputPointSet;
+  using OutputPointSetPointer = typename OutputPointSetType::Pointer;
+  using OutputPointSetConstPointer = typename OutputPointSetType::ConstPointer;
+  using OutputPointType = typename OutputPointSetType::PointType;
+  using OutputPointsContainer = typename OutputPointSetType::PointsContainer;
 
-  typedef typename OutputPointSetType::PointsContainerConstPointer OutputPointsContainerConstPointer;
-  typedef typename OutputPointSetType::PointsContainerPointer      OutputPointsContainerPointer;
-  typedef typename OutputPointSetType::PointsContainerIterator     OutputPointsContainerIterator;
+  using OutputPointsContainerConstPointer = typename OutputPointSetType::PointsContainerConstPointer;
+  using OutputPointsContainerPointer = typename OutputPointSetType::PointsContainerPointer;
+  using OutputPointsContainerIterator = typename OutputPointSetType::PointsContainerIterator;
 
   static constexpr unsigned int PointDimension = OutputPointSetType::PointDimension;
 
-  /** Transform typedef. */
-  typedef Transform<double,
+  /** Transform type alias. */
+  using TransformType = Transform<double,
                     Self::PointDimension,
-                    Self::PointDimension>         TransformType;
-  typedef typename TransformType::ConstPointer TransformPointerType;
+                    Self::PointDimension>;
+  using TransformPointerType = typename TransformType::ConstPointer;
 
-  /** Interpolator typedef. */
-  typedef LinearInterpolateDeformationFieldMeshFunction<
-      ReferenceMeshType, InputPointsContainer>             InterpolatorType;
-  typedef typename InterpolatorType::Pointer InterpolatorPointerType;
+  /** Interpolator type alias. */
+  using InterpolatorType = LinearInterpolateDeformationFieldMeshFunction<
+      ReferenceMeshType, InputPointsContainer>;
+  using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Fixed

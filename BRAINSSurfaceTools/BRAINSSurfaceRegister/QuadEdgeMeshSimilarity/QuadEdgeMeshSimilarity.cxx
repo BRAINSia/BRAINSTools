@@ -133,12 +133,12 @@ int main( int argc, char * argv [] )
   // convert vtk polydata to itk QuadEdgeMesh
   // use integer as pixelType of QuadEdgeMesh
 
-  typedef int MeshPixelType;
+  using MeshPixelType = int;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::ConvertVTKToQuadEdgeMeshFilter<MeshType> convertFilterType;
+  using convertFilterType = itk::ConvertVTKToQuadEdgeMeshFilter<MeshType>;
 
   convertFilterType::Pointer convertor1 = convertFilterType::New();
   convertor1->SetPolyData(inputSurface1);
@@ -149,7 +149,7 @@ int main( int argc, char * argv [] )
   convertor2->Update();
 
   // set up QuadEdgeMesh similarity calculator
-  typedef itk::QuadEdgeMeshSimilarityCalculator<MeshType, MeshType> SimilarityCalculatorType;
+  using SimilarityCalculatorType = itk::QuadEdgeMeshSimilarityCalculator<MeshType, MeshType>;
 
   SimilarityCalculatorType::Pointer similarityCalculator = SimilarityCalculatorType::New();
 

@@ -38,14 +38,14 @@ main(int argc, char * *argv)
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  typedef float PixelType;
+  using PixelType = float;
   constexpr unsigned int Dim = 3;
-  typedef  itk::Image<PixelType, Dim> ImageType;
+  using ImageType = itk::Image<PixelType, Dim>;
 
-  typedef unsigned char                    OutputPixelType;
-  typedef itk::Image<OutputPixelType, Dim> OutputImageType;
+  using OutputPixelType = unsigned char;
+  using OutputImageType = itk::Image<OutputPixelType, Dim>;
 
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer t1_imageReader = ImageReaderType::New();
   ImageReaderType::Pointer t2_imageReader = ImageReaderType::New();
@@ -53,8 +53,8 @@ main(int argc, char * *argv)
   t1_imageReader->SetFileName(inputVolume1);
   t2_imageReader->SetFileName(inputVolume2);
 
-  typedef itk::GradientMagnitudeImageFilter<ImageType,
-                                            ImageType> GradientFilterType;
+  using GradientFilterType = itk::GradientMagnitudeImageFilter<ImageType,
+                                            ImageType>;
 
   GradientFilterType::Pointer t1_gradientFilter = GradientFilterType::New();
   GradientFilterType::Pointer t2_gradientFilter = GradientFilterType::New();
@@ -64,7 +64,7 @@ main(int argc, char * *argv)
   t1_gradientFilter->Update();
   t2_gradientFilter->Update();
 
-  typedef itk::MinimumMaximumImageCalculator<ImageType> MinMaxCalculatorType;
+  using MinMaxCalculatorType = itk::MinimumMaximumImageCalculator<ImageType>;
   MinMaxCalculatorType::Pointer t1_myMinMax = MinMaxCalculatorType::New();
   MinMaxCalculatorType::Pointer t2_myMinMax = MinMaxCalculatorType::New();
   t1_myMinMax->SetImage( t1_gradientFilter->GetOutput() );
@@ -72,8 +72,7 @@ main(int argc, char * *argv)
   t1_myMinMax->Compute();
   t2_myMinMax->Compute();
 
-  typedef itk::Statistics::ScalarImageToHistogramGenerator<ImageType>
-    HistogramGeneratorType;
+  using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator<ImageType>;
   typedef HistogramGeneratorType::HistogramType
     HistogramType;
   HistogramGeneratorType::Pointer t1_HistogramGenerator =
@@ -106,8 +105,8 @@ main(int argc, char * *argv)
   // Now linear rescale gradient intensity values so that 10%=25/2 and 90%=230/2
   // so that when the two images are
   // added together they will fit into unsigned char
-  typedef itk::IntensityWindowingImageFilter<ImageType,
-                                             OutputImageType> RescalerType;
+  using RescalerType = itk::IntensityWindowingImageFilter<ImageType,
+                                             OutputImageType>;
   RescalerType::Pointer t1_rescaler = RescalerType::New();
   t1_rescaler->SetInput( t1_gradientFilter->GetOutput() );
   t1_rescaler->SetOutputMinimum(0);
@@ -137,13 +136,12 @@ main(int argc, char * *argv)
                                  * ( 1.0 - UpperPercentileMatching ) );
 
   // Type for Adder
-  typedef itk::AddImageFilter<OutputImageType, OutputImageType,
-                              OutputImageType> AddFilterType;
+  using AddFilterType = itk::AddImageFilter<OutputImageType, OutputImageType,
+                              OutputImageType>;
   AddFilterType::Pointer myAdder = AddFilterType::New();
   // Type for Maximum
-  typedef itk::MaximumImageFilter<OutputImageType, OutputImageType,
-                                  OutputImageType>
-    MaximumFilterType;
+  using MaximumFilterType = itk::MaximumImageFilter<OutputImageType, OutputImageType,
+                                  OutputImageType>;
   MaximumFilterType::Pointer myMax = MaximumFilterType::New();
   if( MaximumGradient == false )
     {
@@ -179,12 +177,12 @@ main(int argc, char * *argv)
     }
   // writer setting
   std::cout << "Writing output ... " << std::endl;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  typedef itk::IntensityWindowingImageFilter<OutputImageType,
-                                             OutputImageType> RescaleFilterType;
+  using RescaleFilterType = itk::IntensityWindowingImageFilter<OutputImageType,
+                                             OutputImageType>;
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
   rescaler->SetOutputMinimum(0);
   rescaler->SetOutputMaximum(255);

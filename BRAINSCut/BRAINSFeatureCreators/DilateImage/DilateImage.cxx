@@ -52,14 +52,14 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef float PixelType;
-  // typedef unsigned long       PixelType;
+  using PixelType = float;
+  // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension>   ImageType;
-  typedef itk::ImageFileReader<ImageType>     ReaderType;
-  typedef itk::Image<char,  Dimension>        MaskImageType;
-  typedef itk::ImageFileReader<MaskImageType> MaskReaderType;
+  using ImageType = itk::Image<PixelType,  Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using MaskImageType = itk::Image<char,  Dimension>;
+  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
 
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -69,12 +69,12 @@ int main(int argc, char *argv[])
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  typedef itk::MaskImageFilter<ImageType, MaskImageType, ImageType> MaskFilterType;
+  using MaskFilterType = itk::MaskImageFilter<ImageType, MaskImageType, ImageType>;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  typedef itk::BinaryBallStructuringElement<PixelType, Dimension> StructuringElementType;
+  using StructuringElementType = itk::BinaryBallStructuringElement<PixelType, Dimension>;
 
-  typedef itk::GrayscaleDilateImageFilter<ImageType, ImageType, StructuringElementType> DilateFilterType;
+  using DilateFilterType = itk::GrayscaleDilateImageFilter<ImageType, ImageType, StructuringElementType>;
   DilateFilterType::Pointer grayscaleDilateFilter = DilateFilterType::New();
 
   StructuringElementType structuringElement;
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     }
 
   // Output Dilated Image
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetFileName(outputVolume);

@@ -43,21 +43,21 @@ template <typename TPixelType, unsigned Dimension>
 class Brains2LandmarkReader : public LightProcessObject
 {
 public:
-  typedef Brains2LandmarkReader    Self;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = Brains2LandmarkReader;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef float PixelType;
-  typedef float PointType;
+  using PixelType = float;
+  using PointType = float;
 
-  typedef PointSet<PointType, Dimension>  PointSetType;
-  typedef PointSet<TPixelType, Dimension> InputPointSetType;
+  using PointSetType = PointSet<PointType, Dimension>;
+  using InputPointSetType = PointSet<TPixelType, Dimension>;
 
-  typedef Image<PixelType, Dimension> ImageType;
-  typedef typename ImageType::Pointer ImagePointer;
+  using ImageType = Image<PixelType, Dimension>;
+  using ImagePointer = typename ImageType::Pointer;
 
   itkNewMacro(Self);
-  typedef Object Superclass;
+  using Superclass = Object;
   itkTypeMacro(Brains2LandmarkReader, LightProcessObject);
 
   itkSetStringMacro(FileName);

@@ -43,23 +43,23 @@ int main(int argc, char* argv[])
     }
 
   constexpr unsigned int Dimension = 3;
-  typedef  float           PixelType;
-  typedef itk::Image< PixelType, Dimension > FixedImageType;
-  typedef itk::Image< PixelType, Dimension > MovingImageType;
+  using PixelType = float;
+  using FixedImageType = itk::Image< PixelType, Dimension >;
+  using MovingImageType = itk::Image< PixelType, Dimension >;
 
-  typedef itk::ImageFileReader< FixedImageType  >  FixedImageReaderType;
+  using FixedImageReaderType = itk::ImageFileReader< FixedImageType  >;
   FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
   fixedReader->SetFileName( argv[1] );
   FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
   fixedReader->Update();
 
-  typedef itk::ImageFileReader< MovingImageType  >  MovingImageReaderType;
+  using MovingImageReaderType = itk::ImageFileReader< MovingImageType  >;
   MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
   movingReader->SetFileName( argv[2] );
   MovingImageType::Pointer movingImage = movingReader->GetOutput();
   movingReader->Update();
 
-  typedef itk::BSplineTransform< double, Dimension > TransformType;
+  using TransformType = itk::BSplineTransform< double, Dimension >;
   TransformType::Pointer transform = TransformType::New();
 
   if( argc > 3 )
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     transform->SetIdentity();
     }
 
-  typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>     MIMetricType;
+  using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>;
   MIMetricType::Pointer metric = MIMetricType::New();
 
   metric->SetVirtualDomainFromImage( fixedImage );
@@ -117,10 +117,10 @@ int main(int argc, char* argv[])
   std::cout << "numberOfAllSamples: " << numberOfAllSamples << std::endl;
   std::cout << "Sampling percentage: " << samplingPercentage << std::endl;
 
-  typedef MIMetricType::FixedSampledPointSetType          MetricSamplePointSetType;
+  using MetricSamplePointSetType = MIMetricType::FixedSampledPointSetType;
   MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
-  typedef MetricSamplePointSetType::PointType SamplePointType;
+  using SamplePointType = MetricSamplePointSetType::PointType;
   unsigned long index = 0;
 
   const unsigned long sampleCount = static_cast<unsigned long>( std::ceil( 1.0 / samplingPercentage ) );

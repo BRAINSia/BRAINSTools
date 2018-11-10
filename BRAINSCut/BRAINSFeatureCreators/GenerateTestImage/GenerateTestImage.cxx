@@ -33,10 +33,10 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   constexpr unsigned int dimension = 3;
-  typedef itk::Image<double, dimension>        InputImageType;
-  typedef itk::Image<unsigned char, dimension> OutputImageType;
+  using InputImageType = itk::Image<double, dimension>;
+  using OutputImageType = itk::Image<unsigned char, dimension>;
   // Create input image
-  typedef itk::ImageFileReader<InputImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<InputImageType>;
 
   ImageReaderType::Pointer inputImageReader = ImageReaderType::New();
   inputImageReader->SetFileName(inputVolume);
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
   std::cout << "Input size: " << inputSize << std::endl;
 
   // Resclaer
-  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType> RescalerType;
+  using RescalerType = itk::RescaleIntensityImageFilter<InputImageType, InputImageType>;
   RescalerType::Pointer rescaler = RescalerType::New();
 
   rescaler->SetInput( inputImage );
@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
       * (static_cast<double>(inputSize[i]) / static_cast<double>(outputSize[i]) );
     }
 
-  typedef itk::IdentityTransform<double, dimension>                TransformType;
-  typedef itk::ResampleImageFilter<InputImageType, InputImageType> ResampleImageFilterType;
+  using TransformType = itk::IdentityTransform<double, dimension>;
+  using ResampleImageFilterType = itk::ResampleImageFilter<InputImageType, InputImageType>;
   ResampleImageFilterType::Pointer resample = ResampleImageFilterType::New();
 
   resample->SetInput( rescaler->GetOutput() );
@@ -92,14 +92,14 @@ int main(int argc, char *argv[])
   std::cout << "Output size: " << resample->GetOutput()->GetLargestPossibleRegion().GetSize() << std::endl;
 
   // casting
-  typedef itk::CastImageFilter<InputImageType, OutputImageType> CasterType;
+  using CasterType = itk::CastImageFilter<InputImageType, OutputImageType>;
 
   CasterType::Pointer caster = CasterType::New();
 
   caster->SetInput( resample->GetOutput() );
 
   // writing
-  typedef itk::ImageFileWriter<InputImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<InputImageType>;
   std::cout << "Writing output... " << std::endl;
   WriterType::Pointer outputWriter = WriterType::New();
   outputWriter->SetFileName( outputVolume );

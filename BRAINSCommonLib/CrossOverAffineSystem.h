@@ -54,11 +54,11 @@ class CrossOverAffineSystem : public itk::LightProcessObject
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(CrossOverAffineSystem);
 
-  /** Standard class typedefs. */
-  typedef CrossOverAffineSystem         Self;
-  typedef itk::LightProcessObject       Superclass;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = CrossOverAffineSystem;
+  using Superclass = itk::LightProcessObject;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** New method for creating an object using a factory. */
   itkNewMacro(Self);
@@ -71,7 +71,7 @@ public:
   static constexpr unsigned int AffineDimension = NDimensions + 1;
 
   /** Type of the scalar representing coordinate and vector elements. */
-  typedef  TCoordinateType ScalarType;
+  using ScalarType = TCoordinateType;
 
   typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions
                            + 1> VnlTransformMatrixType44;
@@ -79,35 +79,32 @@ public:
   //  VnlTransformMatrixType33;
 
   /** Affine conversion type for this class */
-  typedef itk::AffineTransform<TCoordinateType,
-                               NDimensions>                                         AffineTransformType;
-  typedef typename AffineTransformType::Pointer          AffineTransformPointer;
-  typedef typename AffineTransformType::MatrixType       MatrixType;
-  typedef typename AffineTransformType::InputPointType   PointType;
-  typedef typename AffineTransformType::OutputVectorType VectorType;
-  typedef typename VectorType::ValueType                 ValueType;
+  using AffineTransformType = itk::AffineTransform<TCoordinateType,
+                               NDimensions>;
+  using AffineTransformPointer = typename AffineTransformType::Pointer;
+  using MatrixType = typename AffineTransformType::MatrixType;
+  using PointType = typename AffineTransformType::InputPointType;
+  using VectorType = typename AffineTransformType::OutputVectorType;
+  using ValueType = typename VectorType::ValueType;
 
   /** Quaternion conversion types for this class */
-  typedef itk::VersorTransform<TCoordinateType>        VersorTransformType;
-  typedef typename VersorTransformType::Pointer        VersorTransformPointer;
-  typedef typename VersorTransformType::ParametersType VersorParametersType;
+  using VersorTransformType = itk::VersorTransform<TCoordinateType>;
+  using VersorTransformPointer = typename VersorTransformType::Pointer;
+  using VersorParametersType = typename VersorTransformType::ParametersType;
 
-  typedef itk::VersorRigid3DTransform<TCoordinateType>
-    VersorRigid3DTransformType;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<TCoordinateType>;
   typedef typename VersorRigid3DTransformType::Pointer
     VersorRigid3DTransformPointer;
   typedef typename VersorRigid3DTransformType::ParametersType
     VersorRigid3DParametersType;
 
-  typedef itk::ScaleVersor3DTransform<TCoordinateType>
-    ScaleVersor3DTransformType;
+  using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<TCoordinateType>;
   typedef typename ScaleVersor3DTransformType::Pointer
     ScaleVersor3DTransformPointer;
   typedef typename ScaleVersor3DTransformType::ParametersType
     ScaleVersor3DParametersType;
 
-  typedef itk::ScaleSkewVersor3DTransform<TCoordinateType>
-    ScaleSkewVersor3DTransformType;
+  using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<TCoordinateType>;
   typedef typename ScaleSkewVersor3DTransformType::Pointer
     ScaleSkewVersor3DTransformPointer;
   typedef typename ScaleSkewVersor3DTransformType::ParametersType

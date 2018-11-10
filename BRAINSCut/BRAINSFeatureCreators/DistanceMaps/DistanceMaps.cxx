@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef float PixelType;
-  // typedef unsigned long       PixelType;
+  using PixelType = float;
+  // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension>    LabelImageType;
-  typedef itk::Image<char,  Dimension>         MaskImageType;
-  typedef itk::ImageFileReader<LabelImageType> ReaderType;
-  typedef itk::ImageFileReader<MaskImageType>  MaskReaderType;
+  using LabelImageType = itk::Image<PixelType,  Dimension>;
+  using MaskImageType = itk::Image<char,  Dimension>;
+  using ReaderType = itk::ImageFileReader<LabelImageType>;
+  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
 
   ReaderType::Pointer     labelReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -65,13 +65,13 @@ int main(int argc, char *argv[])
   labelReader->SetFileName( inputLabelVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  typedef itk::MaskImageFilter<LabelImageType, MaskImageType, LabelImageType> MaskFilterType;
+  using MaskFilterType = itk::MaskImageFilter<LabelImageType, MaskImageType, LabelImageType>;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  typedef itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType> BinaryThresholdFilterType;
+  using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType>;
   BinaryThresholdFilterType::Pointer binaryFilter = BinaryThresholdFilterType::New();
 
-  typedef itk::SignedMaurerDistanceMapImageFilter<LabelImageType, LabelImageType> DistanceMapFilterType;
+  using DistanceMapFilterType = itk::SignedMaurerDistanceMapImageFilter<LabelImageType, LabelImageType>;
   DistanceMapFilterType::Pointer distanceMapFilter = DistanceMapFilterType::New();
   distanceMapFilter->SetInsideIsPositive(true); // Makes all distances positive
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::ImageFileWriter<DistanceMapFilterType::OutputImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<DistanceMapFilterType::OutputImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetFileName(outputVolume);

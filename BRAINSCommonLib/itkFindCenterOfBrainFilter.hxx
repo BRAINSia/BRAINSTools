@@ -127,14 +127,14 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   //  This will find maximum Superior physical location of all image voxels.
   double maxSIDirection;
     {
-    typedef itk::ImageRegionIteratorWithIndex<MaskImageType> MaskIteratorType;
+    using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
     MaskIteratorType ItPixel( LFFimage, LFFimage->GetLargestPossibleRegion() );
 
     typename MaskImageType::PointType PixelPhysicalPoint;
     ItPixel.GoToBegin();
     LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
     maxSIDirection = PixelPhysicalPoint[m_Axis];
-    for( ; !ItPixel.IsAtEnd(); ++ItPixel )
+    for(; !ItPixel.IsAtEnd(); ++ItPixel )
       {
       LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
       if( PixelPhysicalPoint[m_Axis] > maxSIDirection )
@@ -157,7 +157,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   distanceMap->Allocate();
   distanceMap->FillBuffer(0.0);
     {
-    typedef itk::ImageRegionIteratorWithIndex<MaskImageType> TInputIteratorType;
+    using TInputIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
     TInputIteratorType ItPixel( LFFimage, LFFimage->GetLargestPossibleRegion() );
 
     //    typedef itk::ImageRegionIterator< DistanceImageType >
@@ -220,7 +220,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
           * foreground region.
           */
           {
-          typedef typename itk::ImageMomentsCalculator<MaskImageType> momentsCalculatorType;
+          using momentsCalculatorType = typename itk::ImageMomentsCalculator<MaskImageType>;
           typename momentsCalculatorType::Pointer moments = momentsCalculatorType::New();
           moments->SetImage(LFFimage);
           moments->Compute();
@@ -336,7 +336,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
       id->Update();
       this->m_ClippedImageMask = id->GetOutput();
       }
-    typedef typename itk::ImageRegionIteratorWithIndex<MaskImageType> MaskImageIteratorType;
+    using MaskImageIteratorType = typename itk::ImageRegionIteratorWithIndex<MaskImageType>;
     MaskImageIteratorType ClippedMaskPixel( this->m_ClippedImageMask,
                                             this->m_ClippedImageMask->GetLargestPossibleRegion() );
 
@@ -347,7 +347,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
       this->m_TrimmedImage = id->GetOutput();
       }
 
-    typedef typename itk::ImageRegionIteratorWithIndex<TInputImage> TInputIteratorType;
+    using TInputIteratorType = typename itk::ImageRegionIteratorWithIndex<TInputImage>;
     TInputIteratorType ClippedImagePixel( this->m_TrimmedImage, this->m_TrimmedImage->GetLargestPossibleRegion() );
 
     ClippedImagePixel.GoToBegin();
@@ -381,12 +381,12 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   // //////////////////////////////////////////////////////////////////////
   //  This will use the clipped LFFimage image to get the head center of mass.
     {
-    typedef typename itk::ImageMomentsCalculator<TInputImage> momentsCalculatorType;
+    using momentsCalculatorType = typename itk::ImageMomentsCalculator<TInputImage>;
     typename momentsCalculatorType::Pointer moments = momentsCalculatorType::New();
     moments->SetImage(this->m_TrimmedImage);
       {
       // convert mask image to mask
-      typedef typename itk::ImageMaskSpatialObject<TInputImage::ImageDimension> LFFImageMaskSpatialObjectType;
+      using LFFImageMaskSpatialObjectType = typename itk::ImageMaskSpatialObject<TInputImage::ImageDimension>;
       typename LFFImageMaskSpatialObjectType::Pointer mask = LFFImageMaskSpatialObjectType::New();
       mask->SetImage(this->m_ClippedImageMask);
       mask->ComputeObjectToWorldTransform();

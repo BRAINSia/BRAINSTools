@@ -42,11 +42,11 @@ class DeformationFieldFromTransformMeshFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DeformationFieldFromTransformMeshFilter);
 
-  typedef DeformationFieldFromTransformMeshFilter Self;
-  typedef MeshToMeshFilter<
-      TInputMesh, TOutputMesh>                         Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = DeformationFieldFromTransformMeshFilter;
+  using Superclass = MeshToMeshFilter<
+      TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( DeformationFieldFromTransformMeshFilter, MeshToMeshFilter );
@@ -54,23 +54,23 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputMesh                                           InputMeshType;
-  typedef typename InputMeshType::ConstPointer                 InputMeshConstPointer;
-  typedef typename InputMeshType::PointsContainerConstIterator InputPointsContainerConstIterator;
+  using InputMeshType = TInputMesh;
+  using InputMeshConstPointer = typename InputMeshType::ConstPointer;
+  using InputPointsContainerConstIterator = typename InputMeshType::PointsContainerConstIterator;
 
-  typedef TOutputMesh                      OutputMeshType;
-  typedef typename OutputMeshType::Pointer OutputMeshPointer;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
 
-  typedef typename OutputMeshType::PointsContainerIterator      OutputPointsContainerIterator;
-  typedef typename OutputMeshType::PointsContainerConstIterator OutputPointsContainerConstIterator;
+  using OutputPointsContainerIterator = typename OutputMeshType::PointsContainerIterator;
+  using OutputPointsContainerConstIterator = typename OutputMeshType::PointsContainerConstIterator;
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  /** Transform typedef. */
-  typedef Transform<double,
+  /** Transform type alias. */
+  using TransformType = Transform<double,
                     Self::PointDimension,
-                    Self::PointDimension>         TransformType;
-  typedef typename TransformType::ConstPointer TransformPointerType;
+                    Self::PointDimension>;
+  using TransformPointerType = typename TransformType::ConstPointer;
 
   /** Set the coordinate transformation.  Set the coordinate transform that
    * will map the points of the input mesh to points of the output PointSet.

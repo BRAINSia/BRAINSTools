@@ -124,19 +124,19 @@ class findUINT64Type
 template <>
 class findUINT64Type<4>
 {
-public: typedef unsigned long long unsigned64;
+public: using unsigned64 = unsigned long long;
 };
 template <>
 class findUINT64Type<8>
 {
-public:  typedef unsigned long unsigned64;
+public:  using unsigned64 = unsigned long;
 };
 }
 
 void
 ShuffleVectors::ShuffleOrder(std::vector<std::ios::off_type> & rval) const
 {
-  typedef findUINT64Type<sizeof(unsigned long)>::unsigned64 unsigned64;
+  using unsigned64 = findUINT64Type<sizeof(unsigned long)>::unsigned64;
   vnl_random randgen;
 #define randgen64()                                      \
   ( ( static_cast<unsigned64>( randgen.lrand32() ) << 32 ) \

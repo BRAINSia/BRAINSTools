@@ -36,11 +36,11 @@ class DisplacementFieldTransform :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DisplacementFieldTransform);
 
-  /** Standard class typedefs. */
-  typedef DisplacementFieldTransform                       Self;
-  typedef Transform<TScalarType, NDimensions, NDimensions> Superclass;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
+  /** Standard class type alias. */
+  using Self = DisplacementFieldTransform;
+  using Superclass = Transform<TScalarType, NDimensions, NDimensions>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** New macro for creation of through the object factory.*/
   itkNewMacro( Self );
@@ -52,37 +52,37 @@ public:
   static constexpr unsigned int SpaceDimension = NDimensions;
 
   /** Standard scalar type for this class. */
-  typedef typename Superclass::ScalarType ScalarType;
+  using ScalarType = typename Superclass::ScalarType;
 
   /** Standard parameters container. */
-  typedef typename Superclass::ParametersType ParametersType;
+  using ParametersType = typename Superclass::ParametersType;
 
   /** Standard Jacobian container. */
-  typedef typename Superclass::JacobianType JacobianType;
+  using JacobianType = typename Superclass::JacobianType;
 
   /** Standard vector type for this class. */
-  typedef Vector<TScalarType,
-                 Self::SpaceDimension> InputVectorType;
-  typedef Vector<TScalarType,
-                 Self::SpaceDimension> OutputVectorType;
+  using InputVectorType = Vector<TScalarType,
+                 Self::SpaceDimension>;
+  using OutputVectorType = Vector<TScalarType,
+                 Self::SpaceDimension>;
 
   /** Standard covariant vector type for this class. */
-  typedef CovariantVector<TScalarType,
-                          Self::SpaceDimension> InputCovariantVectorType;
-  typedef CovariantVector<TScalarType,
-                          Self::SpaceDimension> OutputCovariantVectorType;
+  using InputCovariantVectorType = CovariantVector<TScalarType,
+                          Self::SpaceDimension>;
+  using OutputCovariantVectorType = CovariantVector<TScalarType,
+                          Self::SpaceDimension>;
 
   /** Standard vnl_vector type for this class. */
-  typedef vnl_vector_fixed<TScalarType,
-                           Self::SpaceDimension> InputVnlVectorType;
-  typedef vnl_vector_fixed<TScalarType,
-                           Self::SpaceDimension> OutputVnlVectorType;
+  using InputVnlVectorType = vnl_vector_fixed<TScalarType,
+                           Self::SpaceDimension>;
+  using OutputVnlVectorType = vnl_vector_fixed<TScalarType,
+                           Self::SpaceDimension>;
 
   /** Standard coordinate point type for this class. */
-  typedef Point<TScalarType,
-                Self::SpaceDimension> InputPointType;
-  typedef Point<TScalarType,
-                Self::SpaceDimension> OutputPointType;
+  using InputPointType = Point<TScalarType,
+                Self::SpaceDimension>;
+  using OutputPointType = Point<TScalarType,
+                Self::SpaceDimension>;
 
   /** This method sets the parameters of the transform.
    *
@@ -145,10 +145,10 @@ public:
   virtual const ParametersType & GetFixedParameters(void) const;
 
   /** Parameters as SpaceDimension number of images. */
-  typedef typename ParametersType::ValueType                                     InternalPixelType;
-  typedef VectorImage<InternalPixelType, Self::SpaceDimension> ImageType;
-  typedef typename ImageType::Pointer                                            ImagePointer;
-  typedef typename ImageType::PixelType                                          PixelType;
+  using InternalPixelType = typename ParametersType::ValueType;
+  using ImageType = VectorImage<InternalPixelType, Self::SpaceDimension>;
+  using ImagePointer = typename ImageType::Pointer;
+  using PixelType = typename ImageType::PixelType;
 
   /** Get the array of coefficient images. */
   virtual ImagePointer GetImage()
@@ -170,8 +170,8 @@ public:
 
   OutputPointType  TransformPoint(const InputPointType  & point ) const;
 
-  typedef typename ContinuousIndex<ScalarType,
-                                   Self::SpaceDimension> ContinuousIndexType;
+  using ContinuousIndexType = typename ContinuousIndex<ScalarType,
+                                   Self::SpaceDimension>;
 
   /** Method to transform a vector -
    *  not applicable for this type of transform. */
@@ -233,13 +233,13 @@ protected:
 private:
 
   /** Typedefs for specifying the extend to the grid. */
-  typedef ImageRegion<Self::SpaceDimension> RegionType;
+  using RegionType = ImageRegion<Self::SpaceDimension>;
 
-  typedef typename RegionType::IndexType                      IndexType;
-  typedef typename RegionType::SizeType                       SizeType;
-  typedef typename ImageType::SpacingType                     SpacingType;
-  typedef typename ImageType::DirectionType                   DirectionType;
-  typedef typename ImageType::PointType                       OriginType;
+  using IndexType = typename RegionType::IndexType;
+  using SizeType = typename RegionType::SizeType;
+  using SpacingType = typename ImageType::SpacingType;
+  using DirectionType = typename ImageType::DirectionType;
+  using OriginType = typename ImageType::PointType;
 
   DirectionType m_PointToIndex;
   DirectionType m_IndexToPoint;
@@ -248,10 +248,10 @@ private:
   ImagePointer m_CoefficientImage;
 
   /** Jacobian as SpaceDimension number of images. */
-  typedef typename JacobianType::ValueType JacobianInternalPixelType;
-  typedef VectorImage<JacobianInternalPixelType,
-                      Self::SpaceDimension> JacobianImageType;
-  typedef typename JacobianImageType::PixelType JacobianPixelType;
+  using JacobianInternalPixelType = typename JacobianType::ValueType;
+  using JacobianImageType = VectorImage<JacobianInternalPixelType,
+                      Self::SpaceDimension>;
+  using JacobianPixelType = typename JacobianImageType::PixelType;
 
   typename JacobianImageType::Pointer m_JacobianImage[NDimensions];
 

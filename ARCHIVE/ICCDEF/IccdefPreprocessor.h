@@ -60,11 +60,11 @@ class IccdefPreprocessor : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(IccdefPreprocessor);
 
-  /** Standard class typedefs. */
-  typedef IccdefPreprocessor       Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = IccdefPreprocessor;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(IccdefPreprocessor, Object);
@@ -73,15 +73,15 @@ public:
   itkNewMacro(Self);
 
   /** Input Image Type. */
-  typedef TInputImage InputImageType;
+  using InputImageType = TInputImage;
   /** Output Image Type. */
-  typedef TOutputImage OutputImageType;
+  using OutputImageType = TOutputImage;
 
   /** Input image pixel type. */
-  typedef typename InputImageType::PixelType  InputPixelType;
-  typedef typename OutputImageType::PixelType PixelType;
-  typedef typename OutputImageType::IndexType IndexType;
-  typedef typename OutputImageType::SizeType  SizeType;
+  using InputPixelType = typename InputImageType::PixelType;
+  using PixelType = typename OutputImageType::PixelType;
+  using IndexType = typename OutputImageType::IndexType;
+  using SizeType = typename OutputImageType::SizeType;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -95,17 +95,17 @@ public:
   itkGetStringMacro(TheFixedImageFilename);
 
   /** Deformation field value type. */
-  typedef float FieldValueType;
+  using FieldValueType = float;
 
-  typedef itk::Image<unsigned char, Self::ImageDimension> TImageType;
+  using TImageType = itk::Image<unsigned char, Self::ImageDimension>;
 
   /** Deformation field pixel type. */
-  typedef Vector<FieldValueType,
-                 Self::ImageDimension> FieldPixelType;
+  using FieldPixelType = Vector<FieldValueType,
+                 Self::ImageDimension>;
 
   /** Deformation field type. */
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
 
   /** Set the initial Deformation Field. */
   itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
@@ -135,18 +135,18 @@ public:
   itkGetMacro( MovingImageMinimum, InputPixelType );
 
   /** Transform Types. */
-  typedef VersorRigid3DTransform<double>                                  VersorRigid3DTransformType;
-  typedef ScaleSkewVersor3DTransform<double>                              ScaleSkewVersor3DTransformType;
-  typedef AffineTransform<double, Self::ImageDimension> AffineTransformType;
+  using VersorRigid3DTransformType = VersorRigid3DTransform<double>;
+  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform<double>;
+  using AffineTransformType = AffineTransform<double, Self::ImageDimension>;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int SplineOrder = 3;
 
-  typedef double CoordinateRepType;
-  typedef typename itk::BSplineTransform<
+  using CoordinateRepType = double;
+  using BSplineTransformType = typename itk::BSplineTransform<
       CoordinateRepType,
       Self::ImageDimension,
-      Self::SplineOrder> BSplineTransformType;
+      Self::SplineOrder>;
 
   /*BOBF macros*/
   /**Set Target Mask filename*/
@@ -202,8 +202,8 @@ private:
   PixelType m_DefaultPixelValue;
   bool      m_OutDebug;
   SizeType  m_MedianFilterSize;
-  typedef typename OutputImageType::Pointer OutputImagePointer;
-  typedef typename InputImageType::Pointer  InputImagePointer;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using InputImagePointer = typename InputImageType::Pointer;
 
   bool        m_UseHistogramMatching;
   std::string m_TheMovingImageFilename;

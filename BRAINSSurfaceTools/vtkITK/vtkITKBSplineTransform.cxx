@@ -5,8 +5,8 @@
 class vtkITKBSplineTransformHelper
 {
 public:
-  typedef itk::Array<double>                        ParametersType;
-  typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;
+  using ParametersType = itk::Array<double>;
+  using BulkTransformType = vtkITKBSplineTransform::BulkTransformType;
   virtual ~vtkITKBSplineTransformHelper() {}
   virtual unsigned GetOrder() const = 0;
 
@@ -59,7 +59,7 @@ template <unsigned O>
 class vtkITKBSplineTransformHelperImpl : public vtkITKBSplineTransformHelper
 {
 public:
-  typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
+  using BSplineType = itk::BSplineDeformableTransform<double, 3, O>;
 
   vtkITKBSplineTransformHelperImpl();
 
@@ -739,7 +739,7 @@ void
 ForwardTransformHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                         const T in[3], T out[3] )
 {
-  typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
+  using BSplineType = itk::BSplineDeformableTransform<double, 3, O>;
   typename BSplineType::InputPointType inputPoint;
 
   inputPoint[0] = in[0];
@@ -828,7 +828,7 @@ ForwardTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
   // matrix by the constant matrix above.  That produces the
   // transformed Jacobian.
 
-  typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
+  using BSplineType = itk::BSplineDeformableTransform<double, 3, O>;
   typename BSplineType::InputPointType inputPoint;
 
   inputPoint[0] = in[0];
@@ -894,9 +894,9 @@ void
 InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                              const T in[3], T out[3] )
 {
-  typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
-  typedef typename BSplineType::OutputPointType         OutputPointType;
-  typedef typename BSplineType::InputPointType          InputPointType;
+  using BSplineType = itk::BSplineDeformableTransform<double, 3, O>;
+  using OutputPointType = typename BSplineType::OutputPointType;
+  using InputPointType = typename BSplineType::InputPointType;
 
   // iterative inverse bSpline transform
   int const       MaxIterationNumber = 10;
@@ -963,9 +963,9 @@ void
 InverseTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O> *helper,
                                   const T in[3], T out[3], T derivative[3][3] )
 {
-  typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
-  typedef typename BSplineType::InputPointType          InputPointType;
-  typedef typename BSplineType::JacobianType            JacobianType;
+  using BSplineType = itk::BSplineDeformableTransform<double, 3, O>;
+  using InputPointType = typename BSplineType::InputPointType;
+  using JacobianType = typename BSplineType::JacobianType;
 
   InverseTransformPointHelper<T, O>( helper, in, out );
 

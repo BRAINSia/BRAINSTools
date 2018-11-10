@@ -20,7 +20,7 @@ class VTK_ITK_EXPORT vtkITKBSplineTransform : public vtkWarpTransform
 {
 public:
   //BTX
-  typedef itk::AffineTransform<double, 3> BulkTransformType;
+  using BulkTransformType = itk::AffineTransform<double, 3>;
   //ETX
   static vtkITKBSplineTransform * New();
 

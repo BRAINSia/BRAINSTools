@@ -85,7 +85,7 @@ DWIMetaDataDictionaryValidator::RotationMatrixType DWIMetaDataDictionaryValidato
 void DWIMetaDataDictionaryValidator::SetMeasurementFrame(const RotationMatrixType & input)
 {
   std::string       key = "NRRD_measurement frame";
-  typedef std::vector<std::vector<double> > MFTYPE;
+  using MFTYPE = std::vector<std::vector<double> >;
   MFTYPE dictInput;
   dictInput.resize(input.RowDimensions);
   for(size_t r=0; r < input.RowDimensions; ++r)
@@ -270,7 +270,7 @@ std::vector<std::string> DWIMetaDataDictionaryValidator::GenericGetStringVector(
                                                                                 const std::string defaultValue) const
 {
   std::vector<std::string> values(numElements);
-  for(size_t index=0; index< values.size() ; ++index)
+  for(size_t index=0; index< values.size(); ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
     std::string temp("0.0");
@@ -291,7 +291,7 @@ std::vector<double> DWIMetaDataDictionaryValidator::GenericGetDoubleVector(const
                                                                            const double defaultValue) const
 {
   std::vector<double> values(numElements);
-  for(size_t index=0; index< values.size() ; ++index)
+  for(size_t index=0; index< values.size(); ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
     double temp=0.0;

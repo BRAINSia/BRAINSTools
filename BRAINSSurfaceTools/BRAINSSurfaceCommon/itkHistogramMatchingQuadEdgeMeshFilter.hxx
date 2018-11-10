@@ -194,10 +194,10 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
   OutputPointDataContainerPointer     outputDataPoint = output->GetPointData();
 
   // Transform the source mesh and write to output.
-  typedef typename InputPointDataContainer::ConstIterator InputPointDataIterator;
+  using InputPointDataIterator = typename InputPointDataContainer::ConstIterator;
   InputPointDataIterator in_Itr = inputDataPoint->Begin();
 
-  typedef typename OutputPointDataContainer::Iterator OutputPointDataIterator;
+  using OutputPointDataIterator = typename OutputPointDataContainer::Iterator;
   OutputPointDataIterator out_Itr = outputDataPoint->Begin();
   OutputPointDataIterator out_End = outputDataPoint->End();
 
@@ -263,7 +263,7 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
 {
   InputPointDataContainerConstPointer pointData = mesh->GetPointData();
 
-  typedef typename InputPointDataContainer::ConstIterator PointDataIterator;
+  using PointDataIterator = typename InputPointDataContainer::ConstIterator;
 
   PointDataIterator itr = pointData->Begin();
   PointDataIterator end = pointData->End();
@@ -321,12 +321,12 @@ HistogramMatchingQuadEdgeMeshFilter<TInputMesh, TOutputMesh, THistogramMeasureme
 
   measurement.SetSize(1);
 
-  typedef typename HistogramType::MeasurementType MeasurementType;
+  using MeasurementType = typename HistogramType::MeasurementType;
   measurement[0] = NumericTraits<MeasurementType>::ZeroValue();
 
     {
     // put each mesh scalar into the histogram
-    typedef typename InputPointDataContainer::ConstIterator PointDataIterator;
+    using PointDataIterator = typename InputPointDataContainer::ConstIterator;
     PointDataIterator itr = mesh->GetPointData()->Begin();
     PointDataIterator end = mesh->GetPointData()->End();
 

@@ -44,7 +44,7 @@
 #include "landmarksConstellationAlignerCLP.h"
 
 // D E F I N E S //////////////////////////////////////////////////////////////
-typedef SImageType::PointType                      ImagePointType;
+using ImagePointType = SImageType::PointType;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
 RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
@@ -105,7 +105,7 @@ int main( int argc, char *argv[] )
 
     // converting the original landmark file to the aligned landmark file
     LandmarksMapType::const_iterator olit = origLandmarks.begin();
-    for( ; olit != origLandmarks.end(); ++olit )
+    for(; olit != origLandmarks.end(); ++olit )
       {
       alignedLandmarks[olit->first] = invFinalTransform->TransformPoint( olit->second );
       }

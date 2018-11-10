@@ -84,11 +84,11 @@ bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
     failureStatus = true;
     }
 
-  typedef itk::ImageRegionConstIterator< ImageType >  firstVectorImageIterator;
+  using firstVectorImageIterator = itk::ImageRegionConstIterator< ImageType >;
   firstVectorImageIterator  itr1( first, first->GetLargestPossibleRegion() );
   itr1.GoToBegin();
 
-  typedef itk::ImageRegionConstIterator< ImageType >  secondVectorImageIterator;
+  using secondVectorImageIterator = itk::ImageRegionConstIterator< ImageType >;
   secondVectorImageIterator itr2( second, second->GetLargestPossibleRegion() );
   itr2.GoToBegin();
 
@@ -115,9 +115,9 @@ int DoIt( int argc, char * argv[], PixelType )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef itk::VectorImage<PixelType, DIMENSION>       DiffusionImageType;
+  using DiffusionImageType = itk::VectorImage<PixelType, DIMENSION>;
 
-  typedef itk::ImageFileReader<DiffusionImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<DiffusionImageType>;
   typename FileReaderType::Pointer firstReader = FileReaderType::New();
   typename FileReaderType::Pointer secondReader = FileReaderType::New();
   firstReader->SetFileName( inputVolume1.c_str() );
@@ -134,7 +134,7 @@ int DoIt( int argc, char * argv[], PixelType )
   //const double gradientToleranceForSameness = 1;
   constexpr float bValueTolerance = .05;
 
-  typedef itk::MetaDataDictionary DictionaryType;
+  using DictionaryType = itk::MetaDataDictionary;
   const DictionaryType & firstDictionary = firstReader->GetMetaDataDictionary();
   DWIMetaDataDictionaryValidator firstValidator;
   firstValidator.SetMetaDataDictionary(firstDictionary);
@@ -172,7 +172,7 @@ int DoIt( int argc, char * argv[], PixelType )
 
   DWIMetaDataDictionaryValidator::GradientTableType fGD = firstValidator.GetGradientTable();
   DWIMetaDataDictionaryValidator::GradientTableType sGD = secondValidator.GetGradientTable();
-  for(size_t idx = 0; idx < fGD.size() ; ++idx)
+  for(size_t idx = 0; idx < fGD.size(); ++idx)
   {
     DWIMetaDataDictionaryValidator::GradientTableType::value_type ufVec = fGD[idx];
     DWIMetaDataDictionaryValidator::GradientTableType::value_type usVec = sGD[idx];
@@ -206,7 +206,7 @@ void GetImageType(std::string fileName,
                   itk::ImageIOBase::IOPixelType & pixelType,
                   itk::ImageIOBase::IOComponentType & componentType)
 {
-  typedef itk::Image<short, 3> ImageType;
+  using ImageType = itk::Image<short, 3>;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
     itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str() );

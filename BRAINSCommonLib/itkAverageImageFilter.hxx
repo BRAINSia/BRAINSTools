@@ -42,8 +42,8 @@ AverageImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
                         ThreadIdType itkNotUsed(threadId))
 {
-  typedef ImageRegionConstIterator< TInputImage > IteratorType;
-  typedef ImageRegionIterator< TOutputImage> OutIteratorType;
+  using IteratorType = ImageRegionConstIterator< TInputImage >;
+  using OutIteratorType = ImageRegionIterator< TOutputImage>;
 
   typename TOutputImage::Pointer output = this->GetOutput();
 

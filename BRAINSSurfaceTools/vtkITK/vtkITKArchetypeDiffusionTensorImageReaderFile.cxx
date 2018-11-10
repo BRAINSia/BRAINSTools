@@ -58,11 +58,11 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   vtkFloatArray* tensors,
   vtkImageData *data)
 {
-  typedef itk::DiffusionTensor3D<T> DiffusionTensor3DPixelType;
-  typedef itk::Image<DiffusionTensor3DPixelType,3> ImageType;
-  typedef itk::ImageSource<ImageType> FilterType;
+  using DiffusionTensor3DPixelType = itk::DiffusionTensor3D<T>;
+  using ImageType = itk::Image<DiffusionTensor3DPixelType,3>;
+  using FilterType = itk::ImageSource<ImageType>;
   typename FilterType::Pointer filter;
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(self->GetFileName(0));
   if (self->GetUseNativeCoordinateOrientation())
@@ -101,7 +101,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   tensors->SetNumberOfComponents(9);
   tensors->SetNumberOfTuples(data->GetNumberOfPoints());
   //tensors->Modified();
-  for ( it.GoToBegin(); !it.IsAtEnd() ; ++it )
+  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
     {
     const itk::Index<3u> index = it.GetIndex();
     vtkIdType position = data->FindPoint(index[0], index[1], index[2]);

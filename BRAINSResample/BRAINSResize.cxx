@@ -35,15 +35,15 @@ int Resample(const std::string & inputVolume, const std::string & outputVolume, 
   typename ImageType::SizeType    size(region.GetSize() );
   typename ImageType::SpacingType spacing(inputImage->GetSpacing() );
 
-  typedef typename itk::ResampleImageFilter<ImageType, ImageType> FilterType;
+  using FilterType = typename itk::ResampleImageFilter<ImageType, ImageType>;
   typename FilterType::Pointer filter(FilterType::New() );
 
-  typedef typename itk::IdentityTransform<double, ImageType::ImageDimension> TransformType;
+  using TransformType = typename itk::IdentityTransform<double, ImageType::ImageDimension>;
   typename TransformType::Pointer transform(TransformType::New() );
   transform->SetIdentity();
   filter->SetTransform(transform);
 
-  typedef typename itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
+  using InterpolatorType = typename itk::LinearInterpolateImageFunction<ImageType, double>;
   typename InterpolatorType::Pointer interpolator(InterpolatorType::New() );
   filter->SetInterpolator(interpolator);
   for( unsigned i = 0; i < 3; i++ )

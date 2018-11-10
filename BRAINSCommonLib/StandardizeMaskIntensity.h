@@ -38,16 +38,15 @@ ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType
                                    const typename ImageType::ConstPointer & inputImage,
                                    const typename itk::ImageBase<3>::ConstPointer & referenceImage)
 {
-  typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleType;
-  typedef typename ResampleType::Pointer                 ResamplePointer;
+  using ResampleType = itk::ResampleImageFilter<ImageType, ImageType>;
+  using ResamplePointer = typename ResampleType::Pointer;
   ResamplePointer resampler = ResampleType::New();
   resampler->SetInput( inputImage );
     //resampler->SetTransform(); // default transform is identity
 
   if( resamplerInterpolatorType == "BSpline" )
     {
-    typedef typename itk::BSplineInterpolateImageFunction<ImageType, double, double>
-    SplineInterpolatorType;
+    using SplineInterpolatorType = typename itk::BSplineInterpolateImageFunction<ImageType, double, double>;
 
       // Spline interpolation, only available for input images, not
       // atlas
@@ -58,11 +57,10 @@ ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType
     }
   else if( resamplerInterpolatorType == "WindowedSinc" )
     {
-    typedef typename itk::ConstantBoundaryCondition<ImageType>
-    BoundaryConditionType;
+    using BoundaryConditionType = typename itk::ConstantBoundaryCondition<ImageType>;
     static constexpr unsigned int WindowedSincHammingWindowRadius = 5;
-    typedef itk::Function::HammingWindowFunction<
-    WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
+    using WindowFunctionType = itk::Function::HammingWindowFunction<
+    WindowedSincHammingWindowRadius, double, double>;
     typedef typename itk::WindowedSincInterpolateImageFunction
     <ImageType,
     WindowedSincHammingWindowRadius,
@@ -75,16 +73,14 @@ ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType
     }
   else if( resamplerInterpolatorType == "NearestNeighbor" )
     {
-    typedef typename itk::NearestNeighborInterpolateImageFunction<ImageType, double>
-    NearestNeighborInterpolatorType;
+    using NearestNeighborInterpolatorType = typename itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
     typename NearestNeighborInterpolatorType::Pointer nearestNeighborInt
     = NearestNeighborInterpolatorType::New();
     resampler->SetInterpolator(nearestNeighborInt);
     }
   else // Default to m_UseNonLinearInterpolation == "Linear"
     {
-    typedef typename itk::LinearInterpolateImageFunction<ImageType, double>
-    LinearInterpolatorType;
+    using LinearInterpolatorType = typename itk::LinearInterpolateImageFunction<ImageType, double>;
     typename LinearInterpolatorType::Pointer linearInt
     = LinearInterpolatorType::New();
     resampler->SetInterpolator(linearInt);
@@ -128,7 +124,7 @@ typename ImageType::Pointer StandardizeMaskIntensity(
   // 0.0 <= lFract < uFract <= 1.0
   // clipMin <= lowerPeggedValue < upperPeggedValue <= clipMax
 
-  typedef typename itk::MinimumMaximumImageCalculator<ImageType> MinimumMaximumImageCalculator;
+  using MinimumMaximumImageCalculator = typename itk::MinimumMaximumImageCalculator<ImageType>;
   typename MinimumMaximumImageCalculator::Pointer wholeStatistics = MinimumMaximumImageCalculator::New();
   wholeStatistics->SetImage(image);
   wholeStatistics->Compute();
@@ -176,7 +172,7 @@ typename ImageType::Pointer StandardizeMaskIntensity(
     internalMask = thresholdFilter->GetOutput();
     }
 
-  typedef typename itk::LabelStatisticsImageFilter<ImageType, LabelImageType> LabelStatisticsImageFilter;
+  using LabelStatisticsImageFilter = typename itk::LabelStatisticsImageFilter<ImageType, LabelImageType>;
   typename LabelStatisticsImageFilter::Pointer maskedStatistics = LabelStatisticsImageFilter::New();
   maskedStatistics->SetInput(image); // i.clipMin., image.
   maskedStatistics->SetLabelInput(internalMask);
@@ -198,14 +194,14 @@ typename ImageType::Pointer StandardizeMaskIntensity(
   // to fake out ITK developers and get both
   // jobs done at once.  Fortunately, we may use itkHistogram's Quantile
   // routine:
-  typedef typename itk::IntensityWindowingImageFilter<ImageType> IntensityWindowingImageFilter;
+  using IntensityWindowingImageFilter = typename itk::IntensityWindowingImageFilter<ImageType>;
   typename IntensityWindowingImageFilter::Pointer intensityMapper = IntensityWindowingImageFilter::New();
   intensityMapper->SetInput( maskedStatistics->GetOutput() ); // i.clipMin.,
                                                               // image.
   // NOTE:  The math below is to extend the range to the clipping region.
   //
   //
-  typedef typename itk::NumericTraits<typename ImageType::PixelType>::ScalarRealType Real;
+  using Real = typename itk::NumericTraits<typename ImageType::PixelType>::ScalarRealType;
   const Real lowerQuantileValue = hist->Quantile(0, lFract);
   const Real upperQuantileValue = hist->Quantile(0, uFract);
     {

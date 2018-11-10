@@ -770,8 +770,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   // approximating a viscuous problem as opposed to an elastic problem
 
   // Compute inverse consistency
-  typedef SubtractImageFilter<DisplacementFieldType,
-                              DisplacementFieldType, DisplacementFieldType> SubtractDisplacementFieldType;
+  using SubtractDisplacementFieldType = SubtractImageFilter<DisplacementFieldType,
+                              DisplacementFieldType, DisplacementFieldType>;
   typename SubtractDisplacementFieldType::Pointer sub12 = SubtractDisplacementFieldType::New();
   sub12->SetInput1(m_UpdateBuffers[0]);
   sub12->SetInput2(m_InverseUpdateBuffers[1]);
@@ -1206,8 +1206,8 @@ double
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeMinJac(DisplacementFieldPointer& deffield)
 {
-  typedef itk::DisplacementFieldJacobianDeterminantFilter<
-      TDisplacementField, typename TFixedImage::PixelType, TFixedImage> JacobianFilterType;
+  using JacobianFilterType = itk::DisplacementFieldJacobianDeterminantFilter<
+      TDisplacementField, typename TFixedImage::PixelType, TFixedImage>;
   typename JacobianFilterType::Pointer m_JacobianFilter = JacobianFilterType::New();
   m_JacobianFilter->SetUseImageSpacing( true );
   m_JacobianFilter->ReleaseDataFlagOn();

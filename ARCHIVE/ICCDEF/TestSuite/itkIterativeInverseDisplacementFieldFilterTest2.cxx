@@ -33,10 +33,10 @@ int itkIterativeInverseDisplacementFieldFilterTest2(int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef  float PixelType;
+  using PixelType = float;
   constexpr unsigned int dims = 3;
-  typedef itk::Image<itk::Vector<PixelType, dims>, dims> ImageType;
-  typedef itk::ImageFileWriter<ImageType>                WriterType;
+  using ImageType = itk::Image<itk::Vector<PixelType, dims>, dims>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   const ImageType::SizeType  imageSize = {{16, 16, 16}};
   const ImageType::IndexType imageIndex = {{0, 0, 0}};
@@ -63,7 +63,7 @@ int itkIterativeInverseDisplacementFieldFilterTest2(int argc, char *argv[] )
     ++it;
     }
 
-  typedef itk::ICCIterativeInverseDisplacementFieldImageFilter<ImageType, ImageType> InverseDisplacementFieldImageType;
+  using InverseDisplacementFieldImageType = itk::ICCIterativeInverseDisplacementFieldImageFilter<ImageType, ImageType>;
   InverseDisplacementFieldImageType::Pointer inverse1 = InverseDisplacementFieldImageType::New();
   inverse1->SetInput(img);
   inverse1->SetStopValue(1.0e-7);

@@ -57,11 +57,11 @@ static void PrintDictionaryHelper(const itk::MetaDataDictionary & dictPrint)
     if( it->first.find("NRRD_measurement frame") != std::string::npos )
       {
       std::cout << ' ' << it->first << ":=" << std::endl;
-      typedef std::vector<std::vector<double> > msrFrameType;
+      using msrFrameType = std::vector<std::vector<double> >;
       const itk::MetaDataObject<msrFrameType> * msrFrameMetaDataObject =
                                                     dynamic_cast<const itk::MetaDataObject<msrFrameType> * >(it->second.GetPointer());
       const msrFrameType outMsr = msrFrameMetaDataObject->GetMetaDataObjectValue();
-      for(size_t i = 0 ; i< outMsr.size(); ++i)
+      for(size_t i = 0; i< outMsr.size(); ++i)
         {
         std::cout << "  ";
         for(size_t j=0; j< outMsr[i].size(); ++j)
@@ -80,8 +80,8 @@ static void PrintDictionaryHelper(const itk::MetaDataDictionary & dictPrint)
 }
 
 // Create a vector image
-typedef short                           PixelType;
-typedef itk::VectorImage<PixelType, 3>  VectorImageType;
+using PixelType = short;
+using VectorImageType = itk::VectorImage<PixelType, 3>;
 
 static VectorImageType::Pointer CreateVolume(const size_t numOfComponents)
 {
@@ -120,7 +120,7 @@ static VectorImageType::Pointer CreateVolume(const size_t numOfComponents)
   start.Fill(3);
   size.Fill(4);
   VectorImageType::RegionType subRegion( start, size );
-  typedef itk::ImageRegionIterator< VectorImageType > IteratorType;
+  using IteratorType = itk::ImageRegionIterator< VectorImageType >;
   IteratorType it( nrrdVolume, subRegion );
   it.GoToBegin();
   while( !it.IsAtEnd() )
@@ -178,7 +178,7 @@ int main( int argc, char *argv[] )
     if(tempCenterings != outCenterings)
       {
       std::cout << "ERROR: outCenterings not preserved" << std::endl;
-      for(size_t i = 0 ; i < outCenterings.size(); ++i)
+      for(size_t i = 0; i < outCenterings.size(); ++i)
         {
         std::cout << "Out outCenterings " << outCenterings[i] << std::endl;
         }
@@ -199,7 +199,7 @@ int main( int argc, char *argv[] )
       }
     else
       {
-      for(size_t i = 0 ; i < outThicknesses.size(); ++i)
+      for(size_t i = 0; i < outThicknesses.size(); ++i)
          {
          if( std::isnan(outThicknesses[i]) )
            {
@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
     if( thicknessPass == false )
       {
       std::cout << "ERROR: outThicknesses not preserved" << std::endl;
-      for(size_t i = 0 ; i < outThicknesses.size(); ++i)
+      for(size_t i = 0; i < outThicknesses.size(); ++i)
         {
         std::cout << "Output Thicknesses " << outThicknesses[i] << std::endl;
         }
@@ -245,7 +245,7 @@ int main( int argc, char *argv[] )
     if(msrFrame != outMsr)
       {
       std::cout << "ERROR: outMsr not preserved" << std::endl;
-      for(size_t i = 0 ; i< outMsr.RowDimensions; ++i)
+      for(size_t i = 0; i< outMsr.RowDimensions; ++i)
         {
         for(size_t j=0; j< outMsr.ColumnDimensions; ++j)
            {
@@ -325,7 +325,7 @@ int main( int argc, char *argv[] )
     if(GradientTable != outGT)
       {
       std::cout << "ERROR: outGT not preserved! Output outGT:" << std::endl;
-      for(size_t i = 0 ; i< outGT.size(); ++i)
+      for(size_t i = 0; i< outGT.size(); ++i)
         {
         for(size_t j=0; j< outGT[i].size(); ++j)
           {
@@ -347,7 +347,7 @@ int main( int argc, char *argv[] )
     nrrdVolume->SetMetaDataDictionary(bldValidator.GetMetaDataDictionary());
 
     // Write Nrrd volume to disk
-    typedef itk::ImageFileWriter<VectorImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<VectorImageType>;
     WriterType::Pointer nrrdWriter = WriterType::New();
     nrrdWriter->UseCompressionOn();
     nrrdWriter->UseInputMetaDataDictionaryOn();
@@ -372,7 +372,7 @@ int main( int argc, char *argv[] )
     //  --Write replicated reference image using the new meta data
     //  --Compare the replicated image with input reference volume
     {
-    typedef itk::ImageFileReader<VectorImageType> ReaderType;
+    using ReaderType = itk::ImageFileReader<VectorImageType>;
     ReaderType::Pointer nrrdReader = ReaderType::New();
     nrrdReader->SetFileName( argv[2] );
     nrrdReader->Update();
@@ -423,7 +423,7 @@ int main( int argc, char *argv[] )
     refVolume->SetMetaDataDictionary(manualVolumeValidator.GetMetaDataDictionary());
 
     // Write Nrrd volume to disk
-    typedef itk::ImageFileWriter<VectorImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<VectorImageType>;
     WriterType::Pointer nrrdWriter = WriterType::New();
     nrrdWriter->UseCompressionOn();
     nrrdWriter->UseInputMetaDataDictionaryOn();

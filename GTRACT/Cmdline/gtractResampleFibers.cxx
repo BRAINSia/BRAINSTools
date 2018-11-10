@@ -134,13 +134,13 @@ int main( int argc, char *argv[] )
   constexpr unsigned int Dimension = 3;
 
   // Some required typedef's
-  typedef itk::Matrix<double, Dimension, Dimension> MatrixType;
-  typedef MatrixType::InternalMatrixType            vnlMatrixType;
+  using MatrixType = itk::Matrix<double, Dimension, Dimension>;
+  using vnlMatrixType = MatrixType::InternalMatrixType;
 
-  typedef   float                                       VectorComponentType;
-  typedef   itk::Vector<VectorComponentType, Dimension> VectorPixelType;
-  typedef   itk::Image<VectorPixelType,  Dimension>     DisplacementFieldType;
-  typedef   itk::ImageFileReader<DisplacementFieldType> FieldReaderType;
+  using VectorComponentType = float;
+  using VectorPixelType = itk::Vector<VectorComponentType, Dimension>;
+  using DisplacementFieldType = itk::Image<VectorPixelType,  Dimension>;
+  using FieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
 
   FieldReaderType::Pointer forwardFieldReader = FieldReaderType::New();
   forwardFieldReader->SetFileName( inputForwardDeformationFieldVolume );
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
   DisplacementFieldType::Pointer reverseDeformationField = reverseFieldReader->GetOutput();
   // AdaptOriginAndDirection<DisplacementFieldType>( reverseDeformationField );
 
-  typedef itk::OrientImageFilter<DisplacementFieldType, DisplacementFieldType> OrientFilterType;
+  using OrientFilterType = itk::OrientImageFilter<DisplacementFieldType, DisplacementFieldType>;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput( reverseDeformationField );
   orientImageFilter->SetDesiredCoordinateDirection( forwardDeformationField->GetDirection() );
@@ -207,8 +207,8 @@ int main( int argc, char *argv[] )
 
   // Define Neighbourhood Iterator for computing the Jacobian on the fly
 
-  typedef itk::ConstantBoundaryCondition<DisplacementFieldType>                        boundaryConditionType;
-  typedef itk::ConstNeighborhoodIterator<DisplacementFieldType, boundaryConditionType> ConstNeighborhoodIteratorType;
+  using boundaryConditionType = itk::ConstantBoundaryCondition<DisplacementFieldType>;
+  using ConstNeighborhoodIteratorType = itk::ConstNeighborhoodIterator<DisplacementFieldType, boundaryConditionType>;
   ConstNeighborhoodIteratorType::RadiusType radius;
   radius[0] = 1; radius[1] = 1; radius[2] = 1;
 
@@ -219,8 +219,8 @@ int main( int argc, char *argv[] )
   DisplacementFieldType::PointType physicalPoint;
   DisplacementFieldType::IndexType indexPoint;
 
-  typedef double                                                                         CoordRepType;
-  typedef itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordRepType> InterpolatorType;
+  using CoordRepType = double;
+  using InterpolatorType = itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordRepType>;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
   interpolator->SetInputImage( orientImageFilter->GetOutput() );
 
@@ -234,7 +234,7 @@ int main( int argc, char *argv[] )
     fiberPoints->GetPoint(i, fiberPoint);
 
     /* Map Point */
-    typedef itk::Point<double, 3> PointType;
+    using PointType = itk::Point<double, 3>;
     PointType currentLocation;
     currentLocation[0] = fiberPoint[0];
     currentLocation[1] = fiberPoint[1];

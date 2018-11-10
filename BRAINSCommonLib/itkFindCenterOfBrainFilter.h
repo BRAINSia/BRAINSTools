@@ -33,31 +33,28 @@ class FindCenterOfBrainFilter :
   public         ImageToImageFilter<TInputImage, TInputImage>
 {
 public:
-  typedef FindCenterOfBrainFilter                      Self;
-  typedef ImageToImageFilter<TInputImage, TInputImage> Superclass;
-  typedef SmartPointer<Self>                           Pointer;
-  typedef SmartPointer<const Self>                     ConstPointer;
+  using Self = FindCenterOfBrainFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TInputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   itkNewMacro(Self);
   itkTypeMacro(FindCenterOfBrain, Superclass);
 
-  typedef TInputImage                     ImageType;
-  typedef TMaskImage                      MaskImageType;
-  typedef typename MaskImageType::Pointer MaskImagePointer;
-  typedef typename ImageType::Pointer     InputImagePointer;
-  typedef typename ImageType::PixelType   PixelType;
-  typedef typename ImageType::PointType   PointType;
-  typedef typename ImageType::SizeType    SizeType;
-  typedef typename ImageType::SpacingType SpacingType;
-  typedef typename ImageType::IndexType   IndexType;
-  typedef typename itk::ImageRegionIteratorWithIndex<ImageType>
-    ImageIteratorType;
-  typedef typename itk::ImageRegionConstIteratorWithIndex<ImageType>
-    ImageConstIteratorType;
-  typedef LargestForegroundFilledMaskImageFilter<ImageType, MaskImageType>
-    LFFMaskFilterType;
-  typedef typename itk::Image<float, 3>       DistanceImageType;
-  typedef typename DistanceImageType::Pointer DistanceImagePointer;
-  /** Image related typedefs. */
+  using ImageType = TInputImage;
+  using MaskImageType = TMaskImage;
+  using MaskImagePointer = typename MaskImageType::Pointer;
+  using InputImagePointer = typename ImageType::Pointer;
+  using PixelType = typename ImageType::PixelType;
+  using PointType = typename ImageType::PointType;
+  using SizeType = typename ImageType::SizeType;
+  using SpacingType = typename ImageType::SpacingType;
+  using IndexType = typename ImageType::IndexType;
+  using ImageIteratorType = typename itk::ImageRegionIteratorWithIndex<ImageType>;
+  using ImageConstIteratorType = typename itk::ImageRegionConstIteratorWithIndex<ImageType>;
+  using LFFMaskFilterType = LargestForegroundFilledMaskImageFilter<ImageType, MaskImageType>;
+  using DistanceImageType = typename itk::Image<float, 3>;
+  using DistanceImagePointer = typename DistanceImageType::Pointer;
+  /** Image related type alias. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   itkSetMacro(Maximize, bool);

@@ -80,7 +80,7 @@ void GtractImageIO::SetDicomSeriesUID( std::string UID)
 
 void GtractImageIO::Load3dShortImage()
 {
-  typedef itk::ImageFileReader<Short3dImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<Short3dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
   reader->SetFileName( m_FileName.c_str() );
@@ -91,7 +91,7 @@ void GtractImageIO::Load3dShortImage()
 
 void GtractImageIO::Load4dShortImage()
 {
-  typedef itk::ImageFileReader<Short4dImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<Short4dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
   reader->SetFileName( m_FileName.c_str() );
@@ -102,7 +102,7 @@ void GtractImageIO::Load4dShortImage()
 
 void GtractImageIO::Load3dFloatImage()
 {
-  typedef itk::ImageFileReader<Float3dImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<Float3dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
   reader->SetFileName( m_FileName.c_str() );
@@ -113,7 +113,7 @@ void GtractImageIO::Load3dFloatImage()
 
 void GtractImageIO::Load3dRgbImage()
 {
-  typedef itk::ImageFileReader<Rgb3dImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<Rgb3dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
   reader->SetFileName( m_FileName.c_str() );
@@ -124,7 +124,7 @@ void GtractImageIO::Load3dRgbImage()
 
 void GtractImageIO::LoadTensorImage()
 {
-  typedef itk::ImageFileReader<TensorImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<TensorImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
   reader->SetFileName( m_FileName.c_str() );
@@ -135,7 +135,7 @@ void GtractImageIO::LoadTensorImage()
 
 void GtractImageIO::Save3dShortImage()
 {
-  typedef itk::ImageFileWriter<Short3dImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<Short3dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
@@ -147,7 +147,7 @@ void GtractImageIO::Save3dShortImage()
 
 void GtractImageIO::Save4dShortImage()
 {
-  typedef itk::ImageFileWriter<Short4dImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<Short4dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
@@ -159,7 +159,7 @@ void GtractImageIO::Save4dShortImage()
 
 void GtractImageIO::Save3dFloatImage()
 {
-  typedef itk::ImageFileWriter<Float3dImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<Float3dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
@@ -171,7 +171,7 @@ void GtractImageIO::Save3dFloatImage()
 
 void GtractImageIO::Save3dRgbImage()
 {
-  typedef itk::ImageFileWriter<Rgb3dImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<Rgb3dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
@@ -183,7 +183,7 @@ void GtractImageIO::Save3dRgbImage()
 
 void GtractImageIO::SaveTensorImage()
 {
-  typedef itk::ImageFileWriter<TensorImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<TensorImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
@@ -195,7 +195,7 @@ void GtractImageIO::SaveTensorImage()
 
 void GtractImageIO::Load3dDICOMSeries()
 {
-  typedef itk::ImageSeriesReader<Short3dImageType> ReaderType;
+  using ReaderType = itk::ImageSeriesReader<Short3dImageType>;
   ReaderType::Pointer       reader = ReaderType::New();
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
 
@@ -217,7 +217,7 @@ void GtractImageIO::Load3dDICOMSeries()
 
 void GtractImageIO::Load4dDICOMSeries()
 {
-  typedef itk::ImageSeriesReader<Short4dImageType> ReaderType;
+  using ReaderType = itk::ImageSeriesReader<Short4dImageType>;
   ReaderType::Pointer       reader = ReaderType::New();
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
 

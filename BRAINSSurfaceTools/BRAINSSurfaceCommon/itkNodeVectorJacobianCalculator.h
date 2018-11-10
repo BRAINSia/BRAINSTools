@@ -47,15 +47,15 @@ class NodeVectorJacobianCalculator :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(NodeVectorJacobianCalculator);
 
-  /** Standard class typedefs. */
-  typedef NodeVectorJacobianCalculator Self;
-  typedef FunctionBase<typename TInputMesh::PointIdentifier,
+  /** Standard class type alias. */
+  using Self = NodeVectorJacobianCalculator;
+  using Superclass = FunctionBase<typename TInputMesh::PointIdentifier,
                        Matrix<
                          typename NumericTraits<typename TVectorContainer::Element::ValueType>::RealType,
                          TInputMesh::PointDimension,
-                         TInputMesh::PointDimension> >  Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+                         TInputMesh::PointDimension> >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -66,57 +66,56 @@ public:
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
 
-  /** Point typedef support. */
-  typedef TInputMesh                              InputMeshType;
-  typedef typename InputMeshType::PointType       PointType;
-  typedef typename PointType::VectorType          VectorType;
-  typedef typename InputMeshType::PixelType       PixelType;
-  typedef typename InputMeshType::PointsContainer PointsContainer;
-  typedef typename PointsContainer::ConstIterator PointIterator;
+  /** Point type alias support. */
+  using InputMeshType = TInputMesh;
+  using PointType = typename InputMeshType::PointType;
+  using VectorType = typename PointType::VectorType;
+  using PixelType = typename InputMeshType::PixelType;
+  using PointsContainer = typename InputMeshType::PointsContainer;
+  using PointIterator = typename PointsContainer::ConstIterator;
 
-  typedef TriangleBasisSystem<VectorType, 2>                       TriangleBasisSystemType;
-  typedef typename InputMeshType::CellIdentifier                   CellIdentifier;
-  typedef VectorContainer<CellIdentifier, TriangleBasisSystemType> BasisSystemListType;
-  typedef typename BasisSystemListType::ConstIterator              BasisSystemListIterator;
+  using TriangleBasisSystemType = TriangleBasisSystem<VectorType, 2>;
+  using CellIdentifier = typename InputMeshType::CellIdentifier;
+  using BasisSystemListType = VectorContainer<CellIdentifier, TriangleBasisSystemType>;
+  using BasisSystemListIterator = typename BasisSystemListType::ConstIterator;
 
-  typedef typename InputMeshType::CellType       CellType;
-  typedef typename InputMeshType::CellTraits     CellTraits;
-  typedef typename InputMeshType::CellsContainer CellsContainer;
-  typedef typename CellsContainer::Iterator      CellsContainerIterator;
-  typedef typename CellsContainer::ConstIterator CellsContainerConstIterator;
-  typedef typename CellTraits::PointIdIterator   PointIdIterator;
+  using CellType = typename InputMeshType::CellType;
+  using CellTraits = typename InputMeshType::CellTraits;
+  using CellsContainer = typename InputMeshType::CellsContainer;
+  using CellsContainerIterator = typename CellsContainer::Iterator;
+  using CellsContainerConstIterator = typename CellsContainer::ConstIterator;
+  using PointIdIterator = typename CellTraits::PointIdIterator;
 
-  typedef TriangleHelper<PointType>                 TriangleHelperType;
-  typedef typename TriangleHelperType::CoordRepType AreaType;
-  typedef VectorContainer<CellIdentifier, AreaType> AreaListType;
-  typedef typename AreaListType::Iterator           AreaListIterator;
-  typedef typename AreaListType::ConstIterator      AreaListConstIterator;
+  using TriangleHelperType = TriangleHelper<PointType>;
+  using AreaType = typename TriangleHelperType::CoordRepType;
+  using AreaListType = VectorContainer<CellIdentifier, AreaType>;
+  using AreaListIterator = typename AreaListType::Iterator;
+  using AreaListConstIterator = typename AreaListType::ConstIterator;
 
-  typedef TriangleListBasisSystemCalculator<InputMeshType, TriangleBasisSystemType>
-    TriangleListBasisSystemCalculatorType;
+  using TriangleListBasisSystemCalculatorType = TriangleListBasisSystemCalculator<InputMeshType, TriangleBasisSystemType>;
 
-  typedef LinearInterpolateMeshFunction<InputMeshType> InterpolatorType;
+  using InterpolatorType = LinearInterpolateMeshFunction<InputMeshType>;
 
-  typedef PointLocator2<TInputMesh>                  PointLocatorType;
-  typedef typename PointLocatorType::Pointer         PointLocatorPointer;
-  typedef typename InterpolatorType::PointIdentifier PointIdentifier;
+  using PointLocatorType = PointLocator2<TInputMesh>;
+  using PointLocatorPointer = typename PointLocatorType::Pointer;
+  using PointIdentifier = typename InterpolatorType::PointIdentifier;
 
-  typedef typename InterpolatorType::RealType       RealType;
-  typedef typename InterpolatorType::DerivativeType DerivativeType;
+  using RealType = typename InterpolatorType::RealType;
+  using DerivativeType = typename InterpolatorType::DerivativeType;
 
-  typedef typename TVectorContainer::Element               ArrayType;
-  typedef typename ArrayType::ValueType                    ArrayValueType;
-  typedef typename NumericTraits<ArrayValueType>::RealType JacobianComponentType;
+  using ArrayType = typename TVectorContainer::Element;
+  using ArrayValueType = typename ArrayType::ValueType;
+  using JacobianComponentType = typename NumericTraits<ArrayValueType>::RealType;
 
-  typedef Matrix<
+  using JacobianType = Matrix<
       JacobianComponentType,
       Self::MeshDimension,
-      Self::MeshDimension>                               JacobianType;
+      Self::MeshDimension>;
 
-  typedef VectorContainer<CellIdentifier, JacobianType> JacobianListType;
+  using JacobianListType = VectorContainer<CellIdentifier, JacobianType>;
 
-  typedef typename PointType::CoordRepType               CoordRepType;
-  typedef VectorContainer<PointIdentifier, CoordRepType> CoordRepListType;
+  using CoordRepType = typename PointType::CoordRepType;
+  using CoordRepListType = VectorContainer<PointIdentifier, CoordRepType>;
 
   /** Set/Get the input mesh. */
   itkSetConstObjectMacro( InputMesh, InputMeshType );
@@ -128,8 +127,8 @@ public:
 
   /** Definition of input type and output type. The input type is actually a
    * point identifier, while the output type is a gradient of the scalar values. */
-  typedef typename Superclass::OutputType OutputType;
-  typedef typename Superclass::InputType  InputType;
+  using OutputType = typename Superclass::OutputType;
+  using InputType = typename Superclass::InputType;
 
   /** Initialize internal variables. This method MUST be called first, before
    * calling the Compute() method. In a normal usage, the Initialize() method
@@ -187,7 +186,7 @@ private:
   typename CoordRepListType::Pointer                           m_PointAreaAccumulatorList;
   typename JacobianListType::Pointer                           m_PointJacobianAccumulatorList;
 
-  typedef  typename JacobianListType::Iterator JacobianListIterator;
+  using JacobianListIterator = typename JacobianListType::Iterator;
 
   /** Check that all necessary inputs are connected. */
   virtual void VerifyInputs( void ) const;

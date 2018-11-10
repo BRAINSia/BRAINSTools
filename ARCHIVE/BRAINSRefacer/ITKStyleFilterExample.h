@@ -19,7 +19,7 @@
  *
  * int main()
  * {
- *   typedef ITKStyleFilterExample <ImageType> TestFilter;
+ *   using TestFilter = ITKStyleFilterExample <ImageType>;
  *   TestFilter::Pointer myTest = TestFilter::New();
  *   myTest->SetInput(subject);
  *   myTest->GetOutput();
@@ -33,8 +33,8 @@ class ITKStyleFilterExample
   : public itk::ImageToImageFilter< TInputImage, TInputImage>
 {
 public:
-  typedef ITKStyleFilterExample Self;
-  typedef itk::SmartPointer <Self> Pointer;
+  using Self = ITKStyleFilterExample;
+  using Pointer = itk::SmartPointer <Self>;
 
   itkNewMacro(Self);
   itkTypeMacro(Self, ImageToImageFilter);

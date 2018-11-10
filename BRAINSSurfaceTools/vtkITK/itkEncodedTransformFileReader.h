@@ -31,20 +31,20 @@ class VTK_ITK_EXPORT EncodedTransformFileReader : public TransformFileReader
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileReader);
 
-  /** SmartPointer typedef support */
-  typedef EncodedTransformFileReader Self;
-  typedef SmartPointer<Self>         Pointer;
+  /** SmartPointer type alias support */
+  using Self = EncodedTransformFileReader;
+  using Pointer = SmartPointer<Self>;
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  typedef TransformFileReader           Superclass;
+  using Superclass = TransformFileReader;
   itkTypeMacro(EncodedTransformFileReader, TransformFileReader);
-  typedef Superclass::TransformType     TransformType;
-  typedef Superclass::ParametersType    ParametersType;
-  typedef Superclass::TransformPointer  TransformPointer;
-  typedef Superclass::TransformListType TransformListType;
+  using TransformType = Superclass::TransformType;
+  using ParametersType = Superclass::ParametersType;
+  using TransformPointer = Superclass::TransformPointer;
+  using TransformListType = Superclass::TransformListType;
 
   /** Read in the transform */
   void Update();

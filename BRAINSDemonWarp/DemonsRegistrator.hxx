@@ -51,10 +51,10 @@ void DemonsRegistrator<TRealImage, TOutputImage,
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
-  typedef itk::Image<FieldValueType,
-                     3>                  ComponentImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
-                                                   ComponentImageType> ComponentFilterType;
+  using ComponentImageType = itk::Image<FieldValueType,
+                     3>;
+  using ComponentFilterType = itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
+                                                   ComponentImageType>;
 
   std::string CurrentComponentFilename;
   try
@@ -162,14 +162,14 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
     {
     // Setup an registration observer
-    typedef SimpleMemberCommand<Self> CommandType;
+    using CommandType = SimpleMemberCommand<Self>;
     typename CommandType::Pointer command = CommandType::New();
     command->SetCallbackFunction(this, &Self::StartNewLevel);
 
     m_Tag = m_Registration->AddObserver(IterationEvent(), command);
 
-    typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-        TDisplacementField, double> FieldInterpolatorType;
+    using FieldInterpolatorType = VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
+        TDisplacementField, double>;
 
     typename FieldInterpolatorType::Pointer VectorInterpolator =
       FieldInterpolatorType::New();
@@ -333,7 +333,7 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     /*Write the checkerboard image of the fixed image and the output image.*/
     if( this->m_CheckerBoardFilename != std::string("") && this->m_CheckerBoardFilename != std::string("none") )
       {
-      typedef itk::CheckerBoardImageFilter<RealImageType> Checkerfilter;
+      using Checkerfilter = itk::CheckerBoardImageFilter<RealImageType>;
       typename Checkerfilter::Pointer checker = Checkerfilter::New();
       if( this->GetUseHistogramMatching() == true )
         {

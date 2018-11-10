@@ -93,7 +93,7 @@ typename TRealImage::Pointer LinearRegressionIntensityMatching(
   }
   itk::ImageRegionConstIterator<TRealImage> ItRescaledImage( RescaleToReferenceDynamicRange,
     RescaleToReferenceDynamicRange->GetRequestedRegion() );
-  typedef typename TRealImage::PixelType RescaleRealType;
+  using RescaleRealType = typename TRealImage::PixelType;
   //Get average of values in Reference image
   itk::ImageRegionConstIterator<TRealImage> ItRefImg( ReferenceImage, ReferenceImage->GetRequestedRegion() );
   RescaleRealType avgOut = 0.0;

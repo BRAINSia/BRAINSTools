@@ -139,8 +139,7 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
 
   // if a mask is present, iterate through mask image and skip zero voxels
   bool useMask(this->m_MaskImage.IsNotNull() );
-  typedef ImageRegionConstIterator<MaskImageType>
-    MaskItType;
+  using MaskItType = ImageRegionConstIterator<MaskImageType>;
   MaskItType maskIt;
   if( useMask )
     {
@@ -157,15 +156,14 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
 
   if( m_GradientImageTypeEnumeration == GradientIsInManyImages )
     {
-    typedef ImageRegionConstIterator<ReferenceImageType>
-      ItType;
+    using ItType = ImageRegionConstIterator<ReferenceImageType>;
     ReferenceImageType *refImage =
       static_cast<ReferenceImageType *>(this->ProcessObject::GetInput(0) );
     ItType
       it(refImage, outputRegionForThread);
     it.GoToBegin();
 
-    typedef ImageRegionConstIterator<GradientImageType> GradientIteratorType;
+    using GradientIteratorType = ImageRegionConstIterator<GradientImageType>;
     std::vector<GradientIteratorType *> gradientItContainer;
     for( unsigned int i = 1; i <= m_NumberOfGradientDirections; ++i )
       {
@@ -263,8 +261,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
   // The gradients are specified in a single multi-component image
   else if( m_GradientImageTypeEnumeration == GradientIsInASingleImage )
     {
-    typedef ImageRegionConstIterator<GradientImagesType> GradientIteratorType;
-    typedef typename GradientImagesType::PixelType       GradientVectorType;
+    using GradientIteratorType = ImageRegionConstIterator<GradientImagesType>;
+    using GradientVectorType = typename GradientImagesType::PixelType;
     typename GradientImagesType::Pointer gradientImagePointer = nullptr;
 
     // Would have liked a dynamic_cast here, but seems SGI doesn't like it

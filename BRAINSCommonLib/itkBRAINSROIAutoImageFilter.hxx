@@ -62,7 +62,7 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
 
-  typedef itk::LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage> LFFMaskFilterType;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>;
   typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   // Register the filter with the with progress accumulator using
   // equal weight proportion

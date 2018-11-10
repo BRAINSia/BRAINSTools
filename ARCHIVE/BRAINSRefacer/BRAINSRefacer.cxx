@@ -101,12 +101,12 @@ int main(int argc, char **argv)
     }
 
   //Basic typedef's
-  typedef double ProcessPixelType;
+  using ProcessPixelType = double;
   constexpr unsigned int Dimension = 3;
-  typedef itk::Image<ProcessPixelType, Dimension> ProcessImageType;
+  using ProcessImageType = itk::Image<ProcessPixelType, Dimension>;
 
   //Read in subject image
-  typedef itk::ImageFileReader<ProcessImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ProcessImageType>;
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName(inputImage);
   ProcessImageType::Pointer subject = imageReader->GetOutput();
@@ -118,18 +118,18 @@ int main(int argc, char **argv)
   imageReaderIOBase->ReadImageInformation();
   // Note that in ImageIOBase pixel type refers to vector/scalar
   // component type refers to INT, LONG, FLOAT, etc.
-  typedef itk::ImageIOBase::IOComponentType IOComponentType;
+  using IOComponentType = itk::ImageIOBase::IOComponentType;
   const IOComponentType originalComponentType_ENUM = imageReaderIOBase->GetComponentType();
 
 
-  typedef itk::Image<unsigned char, Dimension> ImageMaskType;
+  using ImageMaskType = itk::Image<unsigned char, Dimension>;
   ImageMaskType::Pointer brainMask = ImageMaskType::New();
 
   //Read in the atlas label file
-  typedef itk::Image<ProcessPixelType, Dimension> LabelAtlasType;
-  typedef itk::ImageFileReader<LabelAtlasType> LabelAtlasReaderType;
+  using LabelAtlasType = itk::Image<ProcessPixelType, Dimension>;
+  using LabelAtlasReaderType = itk::ImageFileReader<LabelAtlasType>;
   LabelAtlasReaderType::Pointer labelAtlasReader = LabelAtlasReaderType::New();
-//  typedef itk::BinaryThresholdImageFilter<LabelAtlasType, ImageMaskType> MaskFilterType;
+//  using MaskFilterType = itk::BinaryThresholdImageFilter<LabelAtlasType, ImageMaskType>;
  // MaskFilterType::Pointer maskFilter = MaskFilterType::New();
   LabelAtlasType::Pointer labelAtlasReaderOutput = LabelAtlasType::New();
 
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
     //Read in the landmarks file
     LandmarksMapType myLandmarks = ReadSlicer3toITKLmk(landmarks);
 
-    typedef MaskFromLandmarksFilter<ProcessImageType, ImageMaskType> MaskFromLandmarksFilterType;
+    using MaskFromLandmarksFilterType = MaskFromLandmarksFilter<ProcessImageType, ImageMaskType>;
     MaskFromLandmarksFilterType::Pointer masker = MaskFromLandmarksFilterType::New();
     std::cout << "Generating mask from landmarks ..." <<std::endl;
     masker->SetInput(subject);
@@ -159,7 +159,7 @@ int main(int argc, char **argv)
     labelAtlasReader->SetFileName(labelmap);
     labelAtlasReaderOutput = labelAtlasReader->GetOutput();
 
-    typedef MaskFromLabelMapFilter<ProcessImageType, LabelAtlasType, ImageMaskType> MaskFromLabelMapFilterType;
+    using MaskFromLabelMapFilterType = MaskFromLabelMapFilter<ProcessImageType, LabelAtlasType, ImageMaskType>;
     MaskFromLabelMapFilterType::Pointer maskFilter = MaskFromLabelMapFilterType::New();
     maskFilter->SetReferenceImage(subject);
     maskFilter->SetInputAtlas(labelAtlasReader->GetOutput());
@@ -172,7 +172,7 @@ int main(int argc, char **argv)
     WriteImage<ImageMaskType>(outputMask, brainMask);
     }
   //Get a distance map to the Brain region:
-  typedef itk::SignedMaurerDistanceMapImageFilter<ImageMaskType, ProcessImageType> DistanceMapFilter;
+  using DistanceMapFilter = itk::SignedMaurerDistanceMapImageFilter<ImageMaskType, ProcessImageType>;
 
   DistanceMapFilter::Pointer distanceMapFilter = DistanceMapFilter::New();
   std::cout << "Calculating distance map ..." << std::endl;
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
   distanceMapFilter->Update();
 
   //make the distance map unsigned:
-  typedef itk::ThresholdImageFilter<ProcessImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::ThresholdImageFilter<ProcessImageType>;
   ThresholdFilterType::Pointer distanceThreshold = ThresholdFilterType::New();
   distanceThreshold->SetInput(distanceMapFilter->GetOutput());
   distanceThreshold->SetLower(0.0);
@@ -198,7 +198,7 @@ int main(int argc, char **argv)
   distanceThreshold->Update();
 
   //Try to scale distance map
-  typedef itk::MultiplyImageFilter<ProcessImageType, ProcessImageType, ProcessImageType> ScalingFilterType;
+  using ScalingFilterType = itk::MultiplyImageFilter<ProcessImageType, ProcessImageType, ProcessImageType>;
   ScalingFilterType::Pointer distanceMapScaler = ScalingFilterType::New();
   std::cout << "Scaling distance map ..." <<std::endl;
   distanceMapScaler->SetInput(myDistanceMapPreScaled);
@@ -210,13 +210,13 @@ int main(int argc, char **argv)
   //Perform some kind of BSpline on Image
   constexpr int BSplineOrder = 3;
 
-  typedef CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType> Test;
+  using Test = CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder> BSplineCreator; //, BSTransformType>;
   BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();
-  typedef itk::BSplineTransform<ProcessPixelType, Dimension, BSplineOrder> BSTransformType;
+  using BSTransformType = itk::BSplineTransform<ProcessPixelType, Dimension, BSplineOrder>;
   BSTransformType::Pointer bSpline = BSTransformType::New();
 
   //Stuff for reading in bspline transform
-  typedef itk::TransformFileReaderTemplate< double > TransformReaderType;
+  using TransformReaderType = itk::TransformFileReaderTemplate< double >;
   TransformReaderType::Pointer transformReader = TransformReaderType::New();
 
 
@@ -262,7 +262,7 @@ int main(int argc, char **argv)
       return EXIT_FAILURE;
       }
     const TransformReaderType::TransformListType * transforms = transformReader->GetTransformList();
-    typedef itk::CompositeTransform<double, 3> ReadCompositeTransformType;
+    using ReadCompositeTransformType = itk::CompositeTransform<double, 3>;
     TransformReaderType::TransformListType::const_iterator comp_it = transforms->begin();
     if( strcmp((*comp_it)->GetNameOfClass(), "BSplineTransform") != 0 )
       {
@@ -281,10 +281,10 @@ int main(int argc, char **argv)
     }
 
 
-  typedef itk::Vector<ProcessPixelType, Dimension > VectorPixelType;
-  typedef itk::Image< VectorPixelType, Dimension> DisplacementFieldProcessImageType;
+  using VectorPixelType = itk::Vector<ProcessPixelType, Dimension >;
+  using DisplacementFieldProcessImageType = itk::Image< VectorPixelType, Dimension>;
 
-  typedef CombineBSplineWithDisplacement<ProcessImageType, DisplacementFieldProcessImageType, ProcessPixelType, 3,3> CombinerType;
+  using CombinerType = CombineBSplineWithDisplacement<ProcessImageType, DisplacementFieldProcessImageType, ProcessPixelType, 3,3>;
 
   CombinerType::Pointer combiner = CombinerType::New();
 
@@ -303,7 +303,7 @@ int main(int argc, char **argv)
     {
     WriteImage(smoothDisplacementName, composedDisplacementField_rawPtr);
     }
-  typedef itk::DisplacementFieldTransform<ProcessPixelType, Dimension> FinalTransformType;
+  using FinalTransformType = itk::DisplacementFieldTransform<ProcessPixelType, Dimension>;
   FinalTransformType::Pointer finalTransform = FinalTransformType::New();
   finalTransform->SetDisplacementField(composedDisplacementField_rawPtr);
 
@@ -313,10 +313,10 @@ int main(int argc, char **argv)
     }
 
   // Apply transform to image with resampler:
-  typedef itk::ResampleImageFilter<ProcessImageType, ProcessImageType> ResampleFilterType;
+  using ResampleFilterType = itk::ResampleImageFilter<ProcessImageType, ProcessImageType>;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
-  typedef itk::LinearInterpolateImageFunction<ProcessImageType, ProcessPixelType > InterpolatorType;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ProcessImageType, ProcessPixelType >;
   InterpolatorType::Pointer interpolater = InterpolatorType::New();
 
   ProcessImageType::RegionType subjectRegion = subject->GetBufferedRegion();
@@ -338,7 +338,7 @@ int main(int argc, char **argv)
   if( debug_Refacer )
     {
     //Get the difference image
-    typedef itk::SubtractImageFilter<ProcessImageType, ProcessImageType> SubtractFilter;
+    using SubtractFilter = itk::SubtractImageFilter<ProcessImageType, ProcessImageType>;
     SubtractFilter::Pointer subtractFilter = SubtractFilter::New();
     subtractFilter->SetInput1(subject);
     subtractFilter->SetInput2(resampler->GetOutput());

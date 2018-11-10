@@ -42,25 +42,25 @@ int main( int argc, char * argv[] )
   BRAINSRegisterAlternateIO();
   constexpr unsigned int Dimension = 3;
 
-  typedef float         InputPixelType;
-  typedef unsigned char OutputPixelType;
+  using InputPixelType = float;
+  using OutputPixelType = unsigned char;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
-  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType,  Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
-  typedef itk::BinaryThresholdImageFilter<InputImageType, OutputImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<InputImageType, OutputImageType>;
 
-  typedef itk::BinaryBallStructuringElement<
+  using StructuringElementType = itk::BinaryBallStructuringElement<
       InputPixelType,
-      Dimension>             StructuringElementType;
+      Dimension>;
 
-  typedef itk::BinaryDilateImageFilter<
+  using DilateFilterType = itk::BinaryDilateImageFilter<
       OutputImageType,
       OutputImageType,
-      StructuringElementType>  DilateFilterType;
+      StructuringElementType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writingFilter = WriterType::New();

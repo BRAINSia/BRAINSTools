@@ -57,38 +57,38 @@ public:
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  /** Standard class typedefs. */
-  typedef TensorInterpolateImageFunction Self;
-  typedef ImageFunction<TInputImage,
-                        SymmetricSecondRankTensor<double, 3>, TCoordRep> Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = TensorInterpolateImageFunction;
+  using Superclass = ImageFunction<TInputImage,
+                        SymmetricSecondRankTensor<double, 3>, TCoordRep>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(TensorInterpolateImageFunction, ImageFunction);
 
-  /** InputImageType typedef support. */
-  typedef typename Superclass::InputImageType                  InputImageType;
-  typedef typename InputImageType::PixelType                   PixelType;
-  typedef itk::SymmetricSecondRankTensor<double, 3>::ValueType ValueType;
+  /** InputImageType type alias support. */
+  using InputImageType = typename Superclass::InputImageType;
+  using PixelType = typename InputImageType::PixelType;
+  using ValueType = itk::SymmetricSecondRankTensor<double, 3>::ValueType;
 
-  // typedef typename PixelType::ValueType       ValueType;
-  typedef typename NumericTraits<ValueType>::RealType RealType;
+  // using ValueType = typename PixelType::ValueType;
+  using RealType = typename NumericTraits<ValueType>::RealType;
 
-  /** Point typedef support. */
-  typedef typename Superclass::PointType PointType;
+  /** Point type alias support. */
+  using PointType = typename Superclass::PointType;
 
-  /** Index typedef support. */
-  typedef typename Superclass::IndexType IndexType;
+  /** Index type alias support. */
+  using IndexType = typename Superclass::IndexType;
 
-  /** ContinuousIndex typedef support. */
-  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
+  /** ContinuousIndex type alias support. */
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
 
   /** Output type is SymmetricSecondRankTensor<TComponent,Dimension>. */
-  typedef typename Superclass::OutputType OutputType;
+  using OutputType = typename Superclass::OutputType;
 
-  /** CoordRep typedef support. */
-  typedef TCoordRep CoordRepType;
+  /** CoordRep type alias support. */
+  using CoordRepType = TCoordRep;
   OutputType Evaluate( const PointType & point ) const override
   {
     ContinuousIndexType index;

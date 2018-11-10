@@ -44,10 +44,10 @@ class RescaleScalarsQuadEdgeMeshFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(RescaleScalarsQuadEdgeMeshFilter);
 
-  typedef RescaleScalarsQuadEdgeMeshFilter               Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh> Superclass;
-  typedef SmartPointer<Self>                             Pointer;
-  typedef SmartPointer<const Self>                       ConstPointer;
+  using Self = RescaleScalarsQuadEdgeMeshFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( RescaleScalarsQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -55,15 +55,15 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TMesh                                                  InputMeshType;
-  typedef typename InputMeshType::PixelType                      InputPixelType;
-  typedef typename InputMeshType::PointDataContainer             InputPointDataContainer;
-  typedef typename InputMeshType::PointDataContainerConstPointer InputPointDataContainerConstPointer;
+  using InputMeshType = TMesh;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputPointDataContainer = typename InputMeshType::PointDataContainer;
+  using InputPointDataContainerConstPointer = typename InputMeshType::PointDataContainerConstPointer;
 
-  typedef TMesh                                              OutputMeshType;
-  typedef typename OutputMeshType::PixelType                 OutputPixelType;
-  typedef typename OutputMeshType::PointDataContainer        OutputPointDataContainer;
-  typedef typename OutputMeshType::PointDataContainerPointer OutputPointDataContainerPointer;
+  using OutputMeshType = TMesh;
+  using OutputPixelType = typename OutputMeshType::PixelType;
+  using OutputPointDataContainer = typename OutputMeshType::PointDataContainer;
+  using OutputPointDataContainerPointer = typename OutputMeshType::PointDataContainerPointer;
 
   /** Set/Get the mesh that will be deformed. */
   void SetInputMesh( const InputMeshType * mesh );

@@ -145,7 +145,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetModifiableUnNormalizedFixedImage() );
 
 #if defined(BRAINS_DEBUG_IMAGE_WRITE)
-  typedef typename Superclass::PreprocessorType::OutputImageType PPOutputImageType;
+  using PPOutputImageType = typename Superclass::PreprocessorType::OutputImageType;
   DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputFixedImage(), PreprocessorFixedImage);
   DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputMovingImage(), PreprocessorMovingImage);
   DebugOutputWName(PPOutputImageType,

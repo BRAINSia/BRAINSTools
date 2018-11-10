@@ -27,7 +27,12 @@ if(APPLE)
   #  10.x == Mac OSX 10.6 (Snow Leopard)
   #  11.x == Mac OSX 10.7 (Lion)
   #  12.x == Mac OSX 10.8 (Mountain Lion)
-  if (DARWIN_MAJOR_VERSION LESS "13")
+  #  13.x == Mac OSX 10.9 (Yosemite)
+  #  14.x == Mac OSX 10.10 (El Capitan)
+  #  15.x == Mac OSX 10.12 (Sierra)    # Sept 2016 -- Improve C++11 support by default, for TBB
+  #  17.x == Mac OSX 10.13 (High Sierra)
+  #  18.x == Mac OSX 10.14 (Mojave)
+  if (DARWIN_MAJOR_VERSION LESS "13")  #https://en.wikipedia.org/wiki/Darwin_(operating_system)
     message(FATAL_ERROR "Only Mac OSX >= 10.9 are supported !")
   endif()
 

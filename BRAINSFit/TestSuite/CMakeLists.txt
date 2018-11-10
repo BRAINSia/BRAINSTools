@@ -1119,189 +1119,189 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
-  set(SyNCompareIntensityTol 9.0)
-  set(SyNCompareRadius 0)
-  set(SyNComparePixelTol 3000) # Roughly 0.5% of the head on a 64^3 image
-
-  set(BRAINSFitTestName BRAINSFitTest_SyNRotationMasks)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSFitTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{${TestData_DIR}/smoothed.benchmark.test.nii.gz}
-              ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
-    --compareIntensityTolerance 9
-    --compareRadiusTolerance 1
-    --compareNumberOfPixelsTolerance 1000
-
-    BRAINSFitTest
-    --costMetric MMI
-    --failureExitCode -1
-    --writeTransformOnFailure
-    --numberOfIterations 2500
-    --numberOfHistogramBins 200
-    --samplingPercentage 0.5
-    --translationScale 250
-    --minimumStepLength 0.001
-    --outputVolumePixelType uchar
-    --transformType Affine,SyN
-    --maskProcessingMode ROI
-    --initializeTransformMode useCenterOfHeadAlign
-    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
-    --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
-    --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-    --debugLevel 50
-  )
-
-  set(BRAINSFitTestName BRAINSFitTest_SyNRotationNoMasks)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSFitTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{${TestData_DIR}/smoothed.benchmark.test.nii.gz}
-              ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
-    --compareIntensityTolerance 9
-    --compareRadiusTolerance 1
-    --compareNumberOfPixelsTolerance 1000
-
-    BRAINSFitTest
-    --costMetric MMI
-    --failureExitCode -1
-    --writeTransformOnFailure
-    --numberOfIterations 2500
-    --numberOfHistogramBins 200
-    --samplingPercentage 0.5
-    --translationScale 250
-    --minimumStepLength 0.001
-    --outputVolumePixelType uchar
-    --transformType Affine,SyN
-    --initializeTransformMode useCenterOfHeadAlign
-    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  )
-
-  #========== Scaling ============
-  set(BenchmarkName ${TestData_DIR}/benchmark/BRAINSFit_SyNScale)
-
-  set(SyNScalingTestName BRAINSFit_SyNScaleMasks)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNScalingTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{${BenchmarkName}.benchmark.nii.gz}
-              ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
-    --compareIntensityTolerance ${SyNCompareIntensityTol}
-    --compareRadiusTolerance ${SyNCompareRadius}
-    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
-
-    BRAINSFitTest
-    --costMetric MMI
-    --failureExitCode -1
-    --writeTransformOnFailure
-    --numberOfIterations 2500
-    --numberOfHistogramBins 200
-    --samplingPercentage 0.5
-    --translationScale 250
-    --minimumStepLength 0.001
-    --outputVolumePixelType uchar
-    --useSyN
-    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleVersorScaleNoMasks.${XFRM_EXT}}
-    --maskProcessingMode ROI
-    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
-    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
-    --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.${XFRM_EXT}
-  )
-
-  set(SyNScalingTestName BRAINSFit_SyNScaleNoMasks)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNScalingTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{${BenchmarkName}.benchmark.nii.gz}
-              ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
-    --compareIntensityTolerance ${SyNCompareIntensityTol}
-    --compareRadiusTolerance ${SyNCompareRadius}
-    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
-
-    BRAINSFitTest
-    --costMetric MMI
-    --failureExitCode -1
-    --writeTransformOnFailure
-    --numberOfIterations 2500
-    --numberOfHistogramBins 200
-    --samplingPercentage 0.5
-    --translationScale 250
-    --minimumStepLength 0.001
-    --outputVolumePixelType uchar
-    --useSyN
-    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleVersorScaleNoMasks.${XFRM_EXT}}
-    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.${XFRM_EXT}
-  )
-
-  #========== Skew ============
-  set(BenchmarkName ${TestData_DIR}/benchmark/BRAINSFit_SyNScaleSkew)
-
-  set(SyNSkewTestName BRAINSFit_SyNScaleSkewVersorScaleMasks)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNSkewTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{${BenchmarkName}.benchmark.nii.gz} #DATA{${TestData_DIR}/test.nii.gz}
-              ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
-    --compareIntensityTolerance ${SyNCompareIntensityTol}
-    --compareRadiusTolerance ${SyNCompareRadius}
-    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
-
-    BRAINSFitTest
-    --costMetric MMI
-    --failureExitCode -1
-    --writeTransformOnFailure
-    --numberOfIterations 2500
-    --numberOfHistogramBins 200
-    --samplingPercentage 0.5
-    --translationScale 250
-    --minimumStepLength 0.001
-    --outputVolumePixelType uchar
-    --useSyN
-    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleSkewVersorScaleNoMasks.${XFRM_EXT}}
-    --maskProcessingMode ROI
-    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
-    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
-    --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.${XFRM_EXT}
-  )
-
-  set(SyNSkewTestName BRAINSFit_SyNScaleSkewVersorScaleNoMasks)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNSkewTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{${BenchmarkName}.benchmark.nii.gz} # DATA{${TestData_DIR}/test.nii.gz}
-              ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
-    --compareIntensityTolerance ${SyNCompareIntensityTol}
-    --compareRadiusTolerance ${SyNCompareRadius}
-    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
-
-    BRAINSFitTest
-    --costMetric MMI
-    --failureExitCode -1
-    --writeTransformOnFailure
-    --numberOfIterations 2500
-    --numberOfHistogramBins 200
-    --samplingPercentage 0.5
-    --translationScale 250
-    --minimumStepLength 0.001
-    --outputVolumePixelType uchar
-    --useSyN
-    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleSkewVersorScaleNoMasks.${XFRM_EXT}}
-    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.${XFRM_EXT}
-  )
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
+#  set(SyNCompareIntensityTol 9.0)
+#  set(SyNCompareRadius 0)
+#  set(SyNComparePixelTol 3000) # Roughly 0.5% of the head on a 64^3 image
+#
+#  set(BRAINSFitTestName BRAINSFitTest_SyNRotationMasks)
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSFitTestName}
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+#    --compare DATA{${TestData_DIR}/smoothed.benchmark.test.nii.gz}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
+#    --compareIntensityTolerance 9
+#    --compareRadiusTolerance 1
+#    --compareNumberOfPixelsTolerance 1000
+#
+#    BRAINSFitTest
+#    --costMetric MMI
+#    --failureExitCode -1
+#    --writeTransformOnFailure
+#    --numberOfIterations 2500
+#    --numberOfHistogramBins 200
+#    --samplingPercentage 0.5
+#    --translationScale 250
+#    --minimumStepLength 0.001
+#    --outputVolumePixelType uchar
+#    --transformType Affine,SyN
+#    --maskProcessingMode ROI
+#    --initializeTransformMode useCenterOfHeadAlign
+#    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#    --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+#    --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+#    --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
+#    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
+#    --debugLevel 50
+#  )
+#
+#  set(BRAINSFitTestName BRAINSFitTest_SyNRotationNoMasks)
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSFitTestName}
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+#    --compare DATA{${TestData_DIR}/smoothed.benchmark.test.nii.gz}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
+#    --compareIntensityTolerance 9
+#    --compareRadiusTolerance 1
+#    --compareNumberOfPixelsTolerance 1000
+#
+#    BRAINSFitTest
+#    --costMetric MMI
+#    --failureExitCode -1
+#    --writeTransformOnFailure
+#    --numberOfIterations 2500
+#    --numberOfHistogramBins 200
+#    --samplingPercentage 0.5
+#    --translationScale 250
+#    --minimumStepLength 0.001
+#    --outputVolumePixelType uchar
+#    --transformType Affine,SyN
+#    --initializeTransformMode useCenterOfHeadAlign
+#    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#    --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.result.nii.gz
+#    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
+#  )
+#
+#  #========== Scaling ============
+#  set(BenchmarkName ${TestData_DIR}/benchmark/BRAINSFit_SyNScale)
+#
+#  set(SyNScalingTestName BRAINSFit_SyNScaleMasks)
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNScalingTestName}
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+#    --compare DATA{${BenchmarkName}.benchmark.nii.gz}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
+#    --compareIntensityTolerance ${SyNCompareIntensityTol}
+#    --compareRadiusTolerance ${SyNCompareRadius}
+#    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
+#
+#    BRAINSFitTest
+#    --costMetric MMI
+#    --failureExitCode -1
+#    --writeTransformOnFailure
+#    --numberOfIterations 2500
+#    --numberOfHistogramBins 200
+#    --samplingPercentage 0.5
+#    --translationScale 250
+#    --minimumStepLength 0.001
+#    --outputVolumePixelType uchar
+#    --useSyN
+#    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleVersorScaleNoMasks.${XFRM_EXT}}
+#    --maskProcessingMode ROI
+#    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#    --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+#    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+#    --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
+#    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.${XFRM_EXT}
+#  )
+#
+#  set(SyNScalingTestName BRAINSFit_SyNScaleNoMasks)
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNScalingTestName}
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+#    --compare DATA{${BenchmarkName}.benchmark.nii.gz}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
+#    --compareIntensityTolerance ${SyNCompareIntensityTol}
+#    --compareRadiusTolerance ${SyNCompareRadius}
+#    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
+#
+#    BRAINSFitTest
+#    --costMetric MMI
+#    --failureExitCode -1
+#    --writeTransformOnFailure
+#    --numberOfIterations 2500
+#    --numberOfHistogramBins 200
+#    --samplingPercentage 0.5
+#    --translationScale 250
+#    --minimumStepLength 0.001
+#    --outputVolumePixelType uchar
+#    --useSyN
+#    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleVersorScaleNoMasks.${XFRM_EXT}}
+#    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.result.nii.gz
+#    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNScalingTestName}.${XFRM_EXT}
+#  )
+#
+#  #========== Skew ============
+#  set(BenchmarkName ${TestData_DIR}/benchmark/BRAINSFit_SyNScaleSkew)
+#
+#  set(SyNSkewTestName BRAINSFit_SyNScaleSkewVersorScaleMasks)
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNSkewTestName}
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+#    --compare DATA{${BenchmarkName}.benchmark.nii.gz} #DATA{${TestData_DIR}/test.nii.gz}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
+#    --compareIntensityTolerance ${SyNCompareIntensityTol}
+#    --compareRadiusTolerance ${SyNCompareRadius}
+#    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
+#
+#    BRAINSFitTest
+#    --costMetric MMI
+#    --failureExitCode -1
+#    --writeTransformOnFailure
+#    --numberOfIterations 2500
+#    --numberOfHistogramBins 200
+#    --samplingPercentage 0.5
+#    --translationScale 250
+#    --minimumStepLength 0.001
+#    --outputVolumePixelType uchar
+#    --useSyN
+#    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleSkewVersorScaleNoMasks.${XFRM_EXT}}
+#    --maskProcessingMode ROI
+#    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#    --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+#    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+#    --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
+#    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.${XFRM_EXT}
+#  )
+#
+#  set(SyNSkewTestName BRAINSFit_SyNScaleSkewVersorScaleNoMasks)
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${SyNSkewTestName}
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+#    --compare DATA{${BenchmarkName}.benchmark.nii.gz} # DATA{${TestData_DIR}/test.nii.gz}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
+#    --compareIntensityTolerance ${SyNCompareIntensityTol}
+#    --compareRadiusTolerance ${SyNCompareRadius}
+#    --compareNumberOfPixelsTolerance ${SyNComparePixelTol}
+#
+#    BRAINSFitTest
+#    --costMetric MMI
+#    --failureExitCode -1
+#    --writeTransformOnFailure
+#    --numberOfIterations 2500
+#    --numberOfHistogramBins 200
+#    --samplingPercentage 0.5
+#    --translationScale 250
+#    --minimumStepLength 0.001
+#    --outputVolumePixelType uchar
+#    --useSyN
+#    --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_0.05_BRAINSFitTest_ScaleSkewVersorScaleNoMasks.${XFRM_EXT}}
+#    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#    --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
+#    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.${XFRM_EXT}
+#  )
+#endif()
 
 
 # Start of broken metric tests

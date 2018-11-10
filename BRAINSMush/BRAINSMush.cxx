@@ -93,8 +93,6 @@ int main(int argc, char * *argv)
   /* ------------------------------------------------------------------------------------
    * Load Images
    */
-  using ImageType = itk::Image<float, 3>;
-
   ImageType::Pointer firstImage = LoadImage( inputFirstVolume.c_str() );
 
   ImageType::Pointer secondImage = LoadImage( inputSecondVolume.c_str() );

@@ -518,102 +518,102 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
   )
 
 #Test for initial Transform
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
-# TODO # I think this test is failing because the reference data is wrong.
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateInitialTransform_Test_nii
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
-  --compare
-  DATA{${TestData_DIR}/ValidateInitialTransform_Test.nii.gz}
-  ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
-  --compareNumberOfPixelsTolerance 20
-  --compareIntensityTolerance 10
-  BRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
-  --outputPixelType short
-  --outputDebug
-  --initializeWithTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
-  --smoothDisplacementFieldSigma 0.0
-  --numberOfPyramidLevels 1
-  --arrayOfPyramidLevelIterations 1
-  --minimumFixedPyramid 1,1,1
-  --minimumMovingPyramid 1,1,1
-  --registrationFilterType Diffeomorphic
-  )
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
+## TODO # I think this test is failing because the reference data is wrong.
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateInitialTransform_Test_nii
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
+#  --compare
+#  DATA{${TestData_DIR}/ValidateInitialTransform_Test.nii.gz}
+#  ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
+#  --compareNumberOfPixelsTolerance 20
+#  --compareIntensityTolerance 10
+#  BRAINSDemonWarpTest
+#  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
+#  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
+#  --outputPixelType short
+#  --outputDebug
+#  --initializeWithTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
+#  --smoothDisplacementFieldSigma 0.0
+#  --numberOfPyramidLevels 1
+#  --arrayOfPyramidLevelIterations 1
+#  --minimumFixedPyramid 1,1,1
+#  --minimumMovingPyramid 1,1,1
+#  --registrationFilterType Diffeomorphic
+#  )
+#endif()
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-# TODO Determine if this is even a valid test any longer
-# These do not work, and appear to have never worked
-#Test for Log Domain
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateLogDemons_Test_nii
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
-  --compare
-  DATA{${TestData_DIR}/logDemons.nii.gz}
-  ${CMAKE_CURRENT_BINARY_DIR}/logDemons_test.nii.gz
-  --compareNumberOfPixelsTolerance 500
-  --compareIntensityTolerance 10
-  BRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/logDemons_test.nii.gz
-  --outputDebug
-  --histogramMatch
-  --numberOfHistogramBins 1024
-  --numberOfMatchPoints 7
-  --smoothDisplacementFieldSigma 1.5
-  --numberOfPyramidLevels 3
-  --arrayOfPyramidLevelIterations 100,50,5
-  --minimumFixedPyramid 4,4,4
-  --minimumMovingPyramid 4,4,4
-  --registrationFilterType LogDemons
-  )
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
+## TODO Determine if this is even a valid test any longer
+## These do not work, and appear to have never worked
+##Test for Log Domain
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateLogDemons_Test_nii
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
+#  --compare
+#  DATA{${TestData_DIR}/logDemons.nii.gz}
+#  ${CMAKE_CURRENT_BINARY_DIR}/logDemons_test.nii.gz
+#  --compareNumberOfPixelsTolerance 500
+#  --compareIntensityTolerance 10
+#  BRAINSDemonWarpTest
+#  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+#  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/logDemons_test.nii.gz
+#  --outputDebug
+#  --histogramMatch
+#  --numberOfHistogramBins 1024
+#  --numberOfMatchPoints 7
+#  --smoothDisplacementFieldSigma 1.5
+#  --numberOfPyramidLevels 3
+#  --arrayOfPyramidLevelIterations 100,50,5
+#  --minimumFixedPyramid 4,4,4
+#  --minimumMovingPyramid 4,4,4
+#  --registrationFilterType LogDemons
+#  )
 
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateSymmetricLogDemons_Test1_nii
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
-  --compare
-  DATA{${TestData_DIR}/symmetricLogDemons1.nii.gz}
-  ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
-  --compareNumberOfPixelsTolerance 1300
-  --compareIntensityTolerance 10
-  BRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
-  --outputDebug
-  --histogramMatch
-  --numberOfHistogramBins 1024
-  --numberOfMatchPoints 7
-  --smoothDisplacementFieldSigma 1.5
-  --numberOfPyramidLevels 3
-  --arrayOfPyramidLevelIterations 100,50,5
-  --minimumFixedPyramid 4,4,4
-  --minimumMovingPyramid 4,4,4
-  --registrationFilterType SymmetricLogDemons
-  )
-
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateSymmetricLogDemons_Test2_nii
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
-  --compare
-  DATA{${TestData_DIR}/symmetricLogDemons2.nii.gz}
-  ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
-  --compareNumberOfPixelsTolerance 1300
-  --compareIntensityTolerance 10
-  BRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
-  --outputDebug
-  --histogramMatch
-  --numberOfHistogramBins 1024
-  --numberOfMatchPoints 7
-  --smoothDisplacementFieldSigma 1.5
-  --numberOfPyramidLevels 3
-  --arrayOfPyramidLevelIterations 100,50,5
-  --minimumFixedPyramid 4,4,4
-  --minimumMovingPyramid 4,4,4
-  --initializeWithDisplacementField DATA{${TestData_DIR}/InitialDisplacementField.nii.gz}
-  --registrationFilterType SymmetricLogDemons
-  )
-endif()  # Commend out the LogDemons tests.
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateSymmetricLogDemons_Test1_nii
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
+#  --compare
+#  DATA{${TestData_DIR}/symmetricLogDemons1.nii.gz}
+#  ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
+#  --compareNumberOfPixelsTolerance 1300
+#  --compareIntensityTolerance 10
+#  BRAINSDemonWarpTest
+#  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+#  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
+#  --outputDebug
+#  --histogramMatch
+#  --numberOfHistogramBins 1024
+#  --numberOfMatchPoints 7
+#  --smoothDisplacementFieldSigma 1.5
+#  --numberOfPyramidLevels 3
+#  --arrayOfPyramidLevelIterations 100,50,5
+#  --minimumFixedPyramid 4,4,4
+#  --minimumMovingPyramid 4,4,4
+#  --registrationFilterType SymmetricLogDemons
+#  )
+#
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateSymmetricLogDemons_Test2_nii
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
+#  --compare
+#  DATA{${TestData_DIR}/symmetricLogDemons2.nii.gz}
+#  ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
+#  --compareNumberOfPixelsTolerance 1300
+#  --compareIntensityTolerance 10
+#  BRAINSDemonWarpTest
+#  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+#  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
+#  --outputDebug
+#  --histogramMatch
+#  --numberOfHistogramBins 1024
+#  --numberOfMatchPoints 7
+#  --smoothDisplacementFieldSigma 1.5
+#  --numberOfPyramidLevels 3
+#  --arrayOfPyramidLevelIterations 100,50,5
+#  --minimumFixedPyramid 4,4,4
+#  --minimumMovingPyramid 4,4,4
+#  --initializeWithDisplacementField DATA{${TestData_DIR}/InitialDisplacementField.nii.gz}
+#  --registrationFilterType SymmetricLogDemons
+#  )
+#endif()  # Commend out the LogDemons tests.

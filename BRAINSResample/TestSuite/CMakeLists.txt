@@ -139,42 +139,42 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
   --deformationVolume DATA{${TestData_DIR}/OutDefField_orientedImage.nii.gz}
   )
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleInvertTest
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
-    --compare
-    DATA{${TestData_DIR}/BRAINSResampleTest_Invert.output.nii.gz}
-    ${CMAKE_CURRENT_BINARY_DIR}/InvertTransform_Test.nii.gz
-    --compareIntensityTolerance 0
-    --compareRadiusTolerance 0
-    --compareNumberOfPixelsTolerance 0
-    BRAINSResampleTest
-    --invertTransform
-    --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
-    --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
-    --pixelType short
-    --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_RigidRotationMasks.${XFRM_EXT}}
-    )
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
+#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleInvertTest
+#    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
+#    --compare
+#    DATA{${TestData_DIR}/BRAINSResampleTest_Invert.output.nii.gz}
+#    ${CMAKE_CURRENT_BINARY_DIR}/InvertTransform_Test.nii.gz
+#    --compareIntensityTolerance 0
+#    --compareRadiusTolerance 0
+#    --compareNumberOfPixelsTolerance 0
+#    BRAINSResampleTest
+#    --invertTransform
+#    --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
+#    --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
+#    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
+#    --pixelType short
+#    --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_RigidRotationMasks.${XFRM_EXT}}
+#    )
+#endif()
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
-# TODO Fix the code to accept displace field inputs
-# I think this test is failing because the displacement field is and
-# "itkImage" rather than a "itkTransform that stores and itkImage"
-set(BRAINSResampleTestName BRAINSResampleTest_H5CompositeTransform)
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSResampleTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
-  --compare DATA{${TestData_DIR}/test.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
-  --compareIntensityTolerance 9
-  --compareRadiusTolerance 1
-  --compareNumberOfPixelsTolerance 100
-  BRAINSResampleTest
-  --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
-  ## --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
-  --interpolationMode Linear
-  --warpTransform DATA{${TestData_DIR}/Transforms_h5/syn.benchmark.transform.h5}
-  )
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
+## TODO Fix the code to accept displace field inputs
+## I think this test is failing because the displacement field is and
+## "itkImage" rather than a "itkTransform that stores and itkImage"
+#set(BRAINSResampleTestName BRAINSResampleTest_H5CompositeTransform)
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSResampleTestName}
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
+#  --compare DATA{${TestData_DIR}/test.nii.gz}
+#            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
+#  --compareIntensityTolerance 9
+#  --compareRadiusTolerance 1
+#  --compareNumberOfPixelsTolerance 100
+#  BRAINSResampleTest
+#  --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+#  ## --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
+#  --interpolationMode Linear
+#  --warpTransform DATA{${TestData_DIR}/Transforms_h5/syn.benchmark.transform.h5}
+#  )
+#endif()

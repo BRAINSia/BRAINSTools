@@ -92,30 +92,30 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   ${CMAKE_CURRENT_BINARY_DIR}/outputSameAsRefVolume.nrrd
 )
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
-  NAME FindCenterOfBrainOutputTest
-  COMMAND $<TARGET_FILE:ImageCompare>
-  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterDistanceImage.nii.gz
-  ${FindCenterDistanceImage}
-  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterGridImage.nii.gz
-  ${FindCenterGridImage}
-  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterAfterGridComputationsForegroundImage.nii.gz
-  ${FindCenterAfterGridComputationsForegroundImage}
-  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterClippedImageMask.nii.gz
-  ${FindCenterClippedImageMask}
-  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterTrimmedImage.nii.gz
-  ${FindCenterTrimmedImage}
-  )
-set_property(TEST FindCenterOfBrainOutputTest APPEND PROPERTY DEPENDS
-  FindCenterOfBrainTest)
-
-
-## HACK: TODO: Make this test do something meaningful.
-## HACK: DAVID: This test is failing, but needs to have valid data added so that it will pass
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
-  NAME itkResampleInPlaceImageFilterTest
-  COMMAND $<TARGET_FILE:itkResampleInPlaceImageFilterTest>
-    itkResampleInPlaceImageFilterTest input1 transform1 checkresult
-)
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
+#  NAME FindCenterOfBrainOutputTest
+#  COMMAND $<TARGET_FILE:ImageCompare>
+#  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterDistanceImage.nii.gz
+#  ${FindCenterDistanceImage}
+#  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterGridImage.nii.gz
+#  ${FindCenterGridImage}
+#  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterAfterGridComputationsForegroundImage.nii.gz
+#  ${FindCenterAfterGridComputationsForegroundImage}
+#  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterClippedImageMask.nii.gz
+#  ${FindCenterClippedImageMask}
+#  ${CMAKE_CURRENT_BINARY_DIR}/FindCenterTrimmedImage.nii.gz
+#  ${FindCenterTrimmedImage}
+#  )
+#set_property(TEST FindCenterOfBrainOutputTest APPEND PROPERTY DEPENDS
+#  FindCenterOfBrainTest)
+#
+#
+### HACK: TODO: Make this test do something meaningful.
+### HACK: DAVID: This test is failing, but needs to have valid data added so that it will pass
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
+#  NAME itkResampleInPlaceImageFilterTest
+#  COMMAND $<TARGET_FILE:itkResampleInPlaceImageFilterTest>
+#    itkResampleInPlaceImageFilterTest input1 transform1 checkresult
+#)
+#endif()

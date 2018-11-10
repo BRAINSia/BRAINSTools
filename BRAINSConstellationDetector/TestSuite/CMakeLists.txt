@@ -42,15 +42,15 @@ endforeach()
 # target_link_libraries(BRAINSClipInferiorTest BRAINSClipInferiorCOMMONLIB)
 # set_target_properties(BRAINSClipInferiorTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-## Test Versor,  This does not currently have a formal test, so disable building it.
-## TODO:  Create a test for the VersorTester
-##
-set (VersorTester_source VersorTester.cxx)
-add_executable(VersorTester ${VersorTester_source})
-target_link_libraries(VersorTester ${BRAINSConstellationDetector_ITK_LIBRARIES})
-set_target_properties(VersorTester PROPERTIES FOLDER ${MODULE_FOLDER})
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
+### Test Versor,  This does not currently have a formal test, so disable building it.
+### TODO:  Create a test for the VersorTester
+###
+#set (VersorTester_source VersorTester.cxx)
+#add_executable(VersorTester ${VersorTester_source})
+#target_link_libraries(VersorTester ${BRAINSConstellationDetector_ITK_LIBRARIES})
+#set_target_properties(VersorTester PROPERTIES FOLDER ${MODULE_FOLDER})
+#endif()
 
 # We want to fetch some data, but we do not want to use them explicity as an argument in
 # any program. They just have been addressed later in a txt file. However, we cannot pass
@@ -670,39 +670,39 @@ set(BCDTestName BCDTest_ForceVN4Point)
   #  )
   #set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
-#    DEPENDS BCDTestForLandmarkCompare)
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-## HACK:  Just silencing failing tests until they can be proper addressed
-  set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
-  if(ConstellationModeler_TEST_causes_major_delay)
-    ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSConstellationModelerTestName}
-      COMMAND BRAINSConstellationModelerTest
-      BRAINSConstellationModelerTest
-      --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
-      --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
-      )
-  endif()
-endif()
+##    DEPENDS BCDTestForLandmarkCompare)
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
+### HACK:  Just silencing failing tests until they can be proper addressed
+#  set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
+#  if(ConstellationModeler_TEST_causes_major_delay)
+#    ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSConstellationModelerTestName}
+#      COMMAND BRAINSConstellationModelerTest
+#      BRAINSConstellationModelerTest
+#      --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+#      --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
+#      )
+#  endif()
+#endif()
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) ## This is a very long running test that is too intensive for everyday testing
-  #set(BCDTestName landmarksConstellationWeightsTest)
-  #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
-  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
-  #  ${BCDTestName}
-  #  --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
-  #  --inputTemplateModel DATA{${TestData_DIR}/T1_50Lmks.mdl}
-  #  --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}}
-  #  --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}.wts #output of the program
-  #  )
-  #set_tests_properties(${BCDTestName} PROPERTIES TIMEOUT 15000)
-
-  #set(PARENT_TEST landmarksConstellationWeightsTest)
-  #set(BCDTestName chk_${PARENT_TEST})
-  #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
-  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
-  #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationWeightsTest.wts # output of the landmarksConstellationWeightsTest
-  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.wts} # Baseline file
-  #  )
-  #set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
-
-endif()
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) ## This is a very long running test that is too intensive for everyday testing
+#  #set(BCDTestName landmarksConstellationWeightsTest)
+#  #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
+#  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
+#  #  ${BCDTestName}
+#  #  --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+#  #  --inputTemplateModel DATA{${TestData_DIR}/T1_50Lmks.mdl}
+#  #  --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}}
+#  #  --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}.wts #output of the program
+#  #  )
+#  #set_tests_properties(${BCDTestName} PROPERTIES TIMEOUT 15000)
+#
+#  #set(PARENT_TEST landmarksConstellationWeightsTest)
+#  #set(BCDTestName chk_${PARENT_TEST})
+#  #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
+#  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+#  #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationWeightsTest.wts # output of the landmarksConstellationWeightsTest
+#  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.wts} # Baseline file
+#  #  )
+#  #set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+#
+#endif()

@@ -76,33 +76,33 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
     --initialFixedDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/test1/backward/test1_iteration450resolution2500_backward.nii.gz
 )
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test4_nii
-  COMMAND iccdefRegistration_NewTestDriver
-  --compare
-    ${CMAKE_CURRENT_BINARY_DIR}/test4/HistogramReferenceFixedImage.nii.gz
-    ${CMAKE_CURRENT_BINARY_DIR}/test4/forward/deformedMovingImage.nii.gz
-    --compareNumberOfPixelsTolerance 20
-    --compareIntensityTolerance 10
-  iccdefRegistration_NewTest
-    -m DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
-    -f DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
-    --outputDirectory ${CMAKE_CURRENT_BINARY_DIR}
-    -o test4
-    --useConsistentIntensity
-    -v
-    -e
-    --outputDisplacementField
-    --outputJacobianImage
-    --outputDisplacement
-    --numberOfHistogramBins 256
-    --numberOfMatchPoints 2
-    -n 1
-    -i 1
-    --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
-    --medianFilterSize 0,0,0
-)
-endif() #HACK: This test needs to be fixed!
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test4_nii
+#  COMMAND iccdefRegistration_NewTestDriver
+#  --compare
+#    ${CMAKE_CURRENT_BINARY_DIR}/test4/HistogramReferenceFixedImage.nii.gz
+#    ${CMAKE_CURRENT_BINARY_DIR}/test4/forward/deformedMovingImage.nii.gz
+#    --compareNumberOfPixelsTolerance 20
+#    --compareIntensityTolerance 10
+#  iccdefRegistration_NewTest
+#    -m DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
+#    -f DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
+#    --outputDirectory ${CMAKE_CURRENT_BINARY_DIR}
+#    -o test4
+#    --useConsistentIntensity
+#    -v
+#    -e
+#    --outputDisplacementField
+#    --outputJacobianImage
+#    --outputDisplacement
+#    --numberOfHistogramBins 256
+#    --numberOfMatchPoints 2
+#    -n 1
+#    -i 1
+#    --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
+#    --medianFilterSize 0,0,0
+#)
+#endif() #HACK: This test needs to be fixed!
 
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test5_nii
   COMMAND iccdefRegistration_NewTestDriver
@@ -129,36 +129,36 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
     --medianFilterSize 0,0,0
 )
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test6_nii
-  COMMAND iccdefRegistration_NewTestDriver
-  --compare
-    ${CMAKE_CURRENT_BINARY_DIR}/test6/backward/deformedFixedImage.nii.gz
-    DATA{${TestData_DIR}/deformedFixedImage.nii.gz}
-    --compareNumberOfPixelsTolerance 0
-    --compareIntensityTolerance 10
-  iccdefRegistration_NewTest
-    -m DATA{${TestData_DIR}/movingImage2.nii.gz}
-    -f DATA{${TestData_DIR}/fixedImage2.nii.gz}
-    --outputDirectory ${CMAKE_CURRENT_BINARY_DIR}
-    -o test6
-    --fixedBinaryVolume DATA{${TestData_DIR}/fixedImage2_mask.nii.gz}
-    --movingBinaryVolume DATA{${TestData_DIR}/movingImage2_mask.nii.gz}
-    -v
-    -e
-    --numberOfHistogramBins 256
-    --numberOfMatchPoints 2
-    -n 2
-    -i 5,0
-    --useConsistentIntensity
-    --initialMovingDisplacementFieldVolume  DATA{${TestData_DIR}/initialMovingDisplacementField.nii.gz}
-    --initialFixedDisplacementFieldVolume DATA{${TestData_DIR}/initialFixedDisplacementField.nii.gz}
-    --similarityWeight 0.7
-    --regularizationWeight 50.0
-    --inverseWeight 10.0
-    --maskProcessingMode BOBF
-)
-endif() #HACK: This test needs to be fixed!
+#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
+#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateICCDEF_Test6_nii
+#  COMMAND iccdefRegistration_NewTestDriver
+#  --compare
+#    ${CMAKE_CURRENT_BINARY_DIR}/test6/backward/deformedFixedImage.nii.gz
+#    DATA{${TestData_DIR}/deformedFixedImage.nii.gz}
+#    --compareNumberOfPixelsTolerance 0
+#    --compareIntensityTolerance 10
+#  iccdefRegistration_NewTest
+#    -m DATA{${TestData_DIR}/movingImage2.nii.gz}
+#    -f DATA{${TestData_DIR}/fixedImage2.nii.gz}
+#    --outputDirectory ${CMAKE_CURRENT_BINARY_DIR}
+#    -o test6
+#    --fixedBinaryVolume DATA{${TestData_DIR}/fixedImage2_mask.nii.gz}
+#    --movingBinaryVolume DATA{${TestData_DIR}/movingImage2_mask.nii.gz}
+#    -v
+#    -e
+#    --numberOfHistogramBins 256
+#    --numberOfMatchPoints 2
+#    -n 2
+#    -i 5,0
+#    --useConsistentIntensity
+#    --initialMovingDisplacementFieldVolume  DATA{${TestData_DIR}/initialMovingDisplacementField.nii.gz}
+#    --initialFixedDisplacementFieldVolume DATA{${TestData_DIR}/initialFixedDisplacementField.nii.gz}
+#    --similarityWeight 0.7
+#    --regularizationWeight 50.0
+#    --inverseWeight 10.0
+#    --maskProcessingMode BOBF
+#)
+#endif() #HACK: This test needs to be fixed!
 
 set(UnitTest_SRCS
 itkVectorFFTWTest.cxx

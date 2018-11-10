@@ -383,7 +383,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::VerifyInputInformation()
+::VerifyInputInformation() const
 {
   // Do nothing, since images to be registered will not be in the same space
 }

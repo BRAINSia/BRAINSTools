@@ -179,7 +179,7 @@ protected:
   /** override to do nothing since by definition input image spaces
    *  won't match
    */
-  void VerifyInputInformation() override;
+  void VerifyInputInformation() const override;
 
 private:
   VectorDiffeomorphicDemonsRegistrationFilter(const Self &); // purposefully not

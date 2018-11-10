@@ -666,7 +666,7 @@ template <typename TFixedImage, typename TMovingImage, typename TDisplacementFie
 void
 VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
                                                TDisplacementField, TRealType>
-::VerifyInputInformation()
+::VerifyInputInformation() const
 {
   // Do nothing, since images to be registered will not be in the same space
 }

@@ -372,7 +372,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
 DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
-::VerifyInputInformation()
+::VerifyInputInformation() const
 {
   // Do nothing, since images to be registered will not be in the same space
 }

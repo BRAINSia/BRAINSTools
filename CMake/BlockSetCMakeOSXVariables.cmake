@@ -58,7 +58,8 @@ if(APPLE)
   set(OSX_SDK_1010_NAME "Yosemite")
   set(OSX_SDK_1011_NAME "El Capitan")
   set(OSX_SDK_1012_NAME "Sierra")
-  set(OSX_SDK_1012_NAME "High Sierra")
+  set(OSX_SDK_1013_NAME "High Sierra")
+  set(OSX_SDK_1014_NAME "Mojave")
 
   set(OSX_SDK_ROOTS
     /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs

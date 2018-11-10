@@ -247,7 +247,7 @@ protected:
    * specified by the parameter "outputRegionForThread"
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
-  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
+  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
                                     ThreadIdType threadId) override;
 
   /** Default implementation for resampling that works for any

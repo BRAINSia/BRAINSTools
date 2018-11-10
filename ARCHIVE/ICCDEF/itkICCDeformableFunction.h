@@ -442,7 +442,7 @@ private:
   ComplexImagePointer m_SmoothFilter;
 
   /** Mutex lock to protect modification to metric. */
-  mutable SimpleFastMutexLock m_MetricCalculationLock;
+  mutable std::mutex m_MetricCalculationLock;
   MaskPointer                 m_MovingMask;
   MaskPointer                 m_FixedMask;
   PointSetPointer             m_FixedLandmark;

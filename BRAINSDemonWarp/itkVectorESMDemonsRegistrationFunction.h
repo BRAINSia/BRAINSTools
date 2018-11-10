@@ -358,7 +358,7 @@ private:
   mutable double        m_SumOfSquaredChange;
 
   /** Mutex lock to protect modification to metric. */
-  mutable SimpleFastMutexLock m_MetricCalculationLock;
+  mutable std::mutex m_MetricCalculationLock;
 
   std::vector<WarperPointer>                        m_MovingImageWarperVector;
   std::vector<InterpolatorPointer>                  m_MovingImageInterpolatorVector;

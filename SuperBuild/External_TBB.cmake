@@ -49,6 +49,9 @@ ExternalProject_Add(${proj}
 #TODO:  Will need to wrap configuration files for compilers
 #       that have non-default names
 #set(TBB_MAKE_ARGS "compiler=${CMAKE_CXX_COMPILER}")
+if(APPLE)
+  set(TBB_MAKE_ARGS "CXXFLAGS=\"-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}\"")
+endif()
 
 ## Following instructions from for source package integration
 ## https://github.com/01org/tbb/tree/tbb_2018/cmake#source-package-integration

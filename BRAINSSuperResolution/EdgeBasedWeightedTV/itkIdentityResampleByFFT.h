@@ -237,7 +237,7 @@ protected:
    *
    * \sa ProcessObject::VerifyInputInformation
    */
-  virtual void VerifyInputInformation() override { }
+  void VerifyInputInformation() const override { }
 
   /** IdentityResampleByFFT can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()

@@ -246,7 +246,7 @@ public:
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration();
 
-  void VerifyInputInformation() override;
+  void VerifyInputInformation() const override;
 
 protected:
   VectorMultiResolutionPDEDeformableRegistration();

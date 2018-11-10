@@ -44,9 +44,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/Utils
   )
   ### --- End Project specific additions
-  ##set(${proj}_REPOSITORY ${git_protocol}://github.com/Kitware/KWStyle.git)
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/KWStyle.git)
-  set(${proj}_GIT_TAG 0cdca9fa1eba11e19af53a1a14234a1dfb7a2515)
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/Kitware/KWStyle.git)
+  set(${proj}_GIT_TAG 13f7a5dbbaab7aecd6fe7576e1fa8bc9ba0e14a1)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

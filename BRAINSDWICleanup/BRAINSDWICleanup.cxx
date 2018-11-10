@@ -27,15 +27,15 @@
 #include <vector>
 #include <list>
 
-typedef signed short                        PixelType;
-typedef itk::VectorImage<PixelType, 3>      NrrdImageType;
-typedef itk::Image<PixelType, 3>            SingleComponentImageType;
-typedef itk::ImageFileReader<NrrdImageType,
-                             itk::DefaultConvertPixelTraits<PixelType> > ReaderType;
+using PixelType = signed short;
+using NrrdImageType = itk::VectorImage<PixelType, 3>;
+using SingleComponentImageType = itk::Image<PixelType, 3>;
+using ReaderType = itk::ImageFileReader<NrrdImageType,
+                             itk::DefaultConvertPixelTraits<PixelType> >;
 
-typedef itk::ImageFileWriter<NrrdImageType> WriterType;
+using WriterType = itk::ImageFileWriter<NrrdImageType>;
 
-typedef std::vector<std::string> GradStringVector;
+using GradStringVector = std::vector<std::string>;
 
 template <typename TImage>
 TImage *AllocVecImage(const itk::ImageBase<TImage::ImageDimension> *templateImage, unsigned long vecSize)

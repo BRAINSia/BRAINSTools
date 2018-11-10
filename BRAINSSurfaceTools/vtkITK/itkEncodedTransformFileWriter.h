@@ -27,18 +27,18 @@ class VTK_ITK_EXPORT EncodedTransformFileWriter : public TransformFileWriter
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileWriter);
 
-  /** SmartPointer typedef support */
-  typedef EncodedTransformFileWriter Self;
-  typedef SmartPointer<Self>         Pointer;
+  /** SmartPointer type alias support */
+  using Self = EncodedTransformFileWriter;
+  using Pointer = SmartPointer<Self>;
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  typedef TransformFileWriter          Superclass;
+  using Superclass = TransformFileWriter;
   itkTypeMacro(EncodedTransformFileWriter, TransformFileWriter);
-  typedef Superclass::TransformType    TransformType;
-  typedef Superclass::TransformPointer TransformPointer;
+  using TransformType = Superclass::TransformType;
+  using TransformPointer = Superclass::TransformPointer;
 
   /** Set/Get the input transform to write */
   void SetInput(const TransformType *transform);

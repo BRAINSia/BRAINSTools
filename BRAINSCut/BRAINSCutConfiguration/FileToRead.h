@@ -26,7 +26,7 @@ class FileToRead :
   public FileSystemDescriptor<OutputType>
 {
 public:
-  typedef FileSystemDescriptor<OutputType> SuperClass;
+  using SuperClass = FileSystemDescriptor<OutputType>;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);

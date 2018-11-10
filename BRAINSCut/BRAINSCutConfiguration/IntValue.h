@@ -25,7 +25,7 @@ class IntValue :
   public NumericValue<long>
 {
 public:
-  typedef NumericValue<long> SuperClass;
+  using SuperClass = NumericValue<long>;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent = SuperClass::PrintSelf(os, indent);
@@ -34,7 +34,7 @@ public:
     return indent + 2;
   }
 
-  typedef long ReturnType;
+  using ReturnType = long;
   IntValue(const std::string & name, ReturnType value) :
     NumericValue<ReturnType>(name, value)
   {

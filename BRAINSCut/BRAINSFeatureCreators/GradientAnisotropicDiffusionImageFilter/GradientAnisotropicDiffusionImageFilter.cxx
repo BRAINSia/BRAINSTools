@@ -42,17 +42,17 @@ int main( int argc, char * argv[] )
   // PARSE_ARG brings following:
   //  input/outputVolume, timeStep, conductance, numberOfIterations
 
-  typedef    float InputPixelType;
-  typedef    float OutputPixelType;
+  using InputPixelType = float;
+  using OutputPixelType = float;
   constexpr int Dimension = 3;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
-  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
+  using InputImageType = itk::Image<InputPixelType,  Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
 
-  typedef itk::ImageFileReader<InputImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
 
-  typedef itk::GradientAnisotropicDiffusionImageFilter<
-      InputImageType, OutputImageType>  FilterType;
+  using FilterType = itk::GradientAnisotropicDiffusionImageFilter<
+      InputImageType, OutputImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   ReaderType::Pointer reader = ReaderType::New();
@@ -67,16 +67,16 @@ int main( int argc, char * argv[] )
   filter->Update();
 
   //  The output of the filter is rescaled here and then sent to a writer.
-  typedef unsigned char                         WritePixelType;
-  typedef itk::Image<WritePixelType, Dimension> WriteImageType;
-  typedef itk::RescaleIntensityImageFilter<
-      OutputImageType, WriteImageType> RescaleFilterType;
+  using WritePixelType = unsigned char;
+  using WriteImageType = itk::Image<WritePixelType, Dimension>;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<
+      OutputImageType, WriteImageType>;
 
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
   rescaler->SetOutputMinimum(   0 );
   rescaler->SetOutputMaximum( 255 );
 
-  typedef itk::ImageFileWriter<WriteImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<WriteImageType>;
 
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputVolume );

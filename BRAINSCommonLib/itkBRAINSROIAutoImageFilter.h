@@ -68,15 +68,15 @@ public:
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-  /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage  InputImageType;
-  typedef TOutputImage OutputImageType;
+  /** Convenient type alias for simplifying declarations. */
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
 
-  /** Standard class typedefs. */
-  typedef BRAINSROIAutoImageFilter                            Self;
-  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  /** Standard class type alias. */
+  using Self = BRAINSROIAutoImageFilter;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -84,17 +84,17 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(BRAINSROIAutoImageFilter, ImageToImageFilter);
 
-  /** Image typedef support. */
-  typedef typename InputImageType::PixelType  InputPixelType;
-  typedef typename OutputImageType::PixelType OutputPixelType;
+  /** Image type alias support. */
+  using InputPixelType = typename InputImageType::PixelType;
+  using OutputPixelType = typename OutputImageType::PixelType;
 
-  typedef typename InputImageType::RegionType  InputImageRegionType;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 
-  typedef typename InputImageType::SizeType InputSizeType;
+  using InputSizeType = typename InputImageType::SizeType;
 
-  typedef itk::Image<unsigned char, 3>                            UCHARIMAGE;
-  typedef itk::ImageMaskSpatialObject<UCHARIMAGE::ImageDimension> ImageMaskSpatialObjectType;
+  using UCHARIMAGE = itk::Image<unsigned char, 3>;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<UCHARIMAGE::ImageDimension>;
 
   /** */
   itkSetMacro(OtsuPercentileThreshold, double);
@@ -119,7 +119,7 @@ public:
                                         // the mask once, note that this is made
                                         // null when GenerateData is called.
       {
-      typedef itk::CastImageFilter<OutputImageType, UCHARIMAGE> CastImageFilter;
+      using CastImageFilter = itk::CastImageFilter<OutputImageType, UCHARIMAGE>;
       typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput( this->GetOutput() );
       castFilter->Update();

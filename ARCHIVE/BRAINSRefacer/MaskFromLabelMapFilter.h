@@ -12,10 +12,10 @@ template< typename TImage, typename TAtlas, typename TOutputMask>
 class MaskFromLabelMapFilter : public itk::ImageToImageFilter< TImage, TOutputMask >
   {
 public:
-  /** Standard class typedefs. */
-  typedef MaskFromLabelMapFilter             Self;
-  typedef itk::ImageToImageFilter< TImage, TImage > Superclass;
-  typedef itk::SmartPointer< Self >        Pointer;
+  /** Standard class type alias. */
+  using Self = MaskFromLabelMapFilter;
+  using Superclass = itk::ImageToImageFilter< TImage, TImage >;
+  using Pointer = itk::SmartPointer< Self >;
 
   itkNewMacro(Self);
   itkTypeMacro(ImageFilterMultipleInputsDifferentType, ImageToImageFilter);
@@ -44,10 +44,10 @@ protected:
     typename NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
 
     constexpr int Dimension = 3;
-    typedef itk::IdentityTransform<double, Dimension> IdentityTransformType;
+    using IdentityTransformType = itk::IdentityTransform<double, Dimension>;
     typename IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
 
-    typedef itk::ResampleImageFilter<TAtlas, TAtlas> maskResamplerType;
+    using maskResamplerType = itk::ResampleImageFilter<TAtlas, TAtlas>;
     typename maskResamplerType::Pointer maskResampler = maskResamplerType::New();
 
     std::cout << "Resampling atlas map:" << std::endl;
@@ -58,7 +58,7 @@ protected:
     maskResampler->UseReferenceImageOn();
     maskResampler->Update();
 
-    typedef itk::BinaryThresholdImageFilter<TAtlas, TOutputMask> MaskFilterType;
+    using MaskFilterType = itk::BinaryThresholdImageFilter<TAtlas, TOutputMask>;
     typename MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
     maskFilter->SetInput(maskResampler->GetOutput());

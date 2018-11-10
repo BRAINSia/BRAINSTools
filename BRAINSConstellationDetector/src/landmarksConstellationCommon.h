@@ -106,26 +106,26 @@ extern bool globalverboseFlag;
 namespace // avoid 'shadows declaration' warnings.
 {
 //RM typedef float                 vertexType[4][3];
-typedef itk::Image<short, 3>  SImageType;
-typedef itk::Image<double, 3> DImageType3D;
-typedef itk::Image<float, 3>  FImageType3D;
-//RM typedef itk::Image<short,2> SImageType2D;
-//RM typedef itk::Image<double, 2> DImageType2D;
-//RM typedef itk::Image<float, 2>  FImageType2D;
+using SImageType = itk::Image<short, 3>;
+using DImageType3D = itk::Image<double, 3>;
+using FImageType3D = itk::Image<float, 3>;
+//RM using SImageType2D = itk::Image<short,2>;
+//RM using DImageType2D = itk::Image<double, 2>;
+//RM using FImageType2D = itk::Image<float, 2>;
 
-typedef itk::Image<unsigned char, 3> ByteImageType;
+using ByteImageType = itk::Image<unsigned char, 3>;
 
-typedef SImageType::PointType                   SImagePointType;
+using SImagePointType = SImageType::PointType;
 
-typedef itk::RGBPixel<unsigned char> RGBPixelType;
-typedef itk::Image<RGBPixelType, 3>  RGBImageType;
-typedef itk::Image<RGBPixelType, 2>  RGB2DImageType;
+using RGBPixelType = itk::RGBPixel<unsigned char>;
+using RGBImageType = itk::Image<RGBPixelType, 3>;
+using RGB2DImageType = itk::Image<RGBPixelType, 2>;
 
-typedef itk::Euler3DTransform<double>       RigidTransformType;
-typedef itk::VersorRigid3DTransform<double> VersorTransformType;
+using RigidTransformType = itk::Euler3DTransform<double>;
+using VersorTransformType = itk::VersorRigid3DTransform<double>;
 
-typedef itk::MultiResolutionPyramidImageFilter<SImageType, SImageType> PyramidFilterType;
-typedef itk::LinearInterpolateImageFunction<SImageType, double>        LinearInterpolatorType;
+using PyramidFilterType = itk::MultiResolutionPyramidImageFilter<SImageType, SImageType>;
+using LinearInterpolatorType = itk::LinearInterpolateImageFunction<SImageType, double>;
 }
 
 #include "landmarksConstellationModelIO.h"
@@ -182,8 +182,8 @@ extern SImageType::PointType::VectorType initialAC(const SImageType::PointType &
                                                    const double RPAC_over_RPPCMean);
 #endif
 
-//RM typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
-//RM typedef RandomGeneratorType::Pointer                           RandomGeneratorPointer;
+//RM using RandomGeneratorType = itk::Statistics::MersenneTwisterRandomVariateGenerator;
+//RM using RandomGeneratorPointer = RandomGeneratorType::Pointer;
 //RM extern RandomGeneratorPointer _RandomGenerator;
 //RM extern double GetRandomZeroOneDouble(void);
 
@@ -394,7 +394,7 @@ setLowHigh(typename SImageType::Pointer & image,
   typename SImageType::PixelType imageMax;
   ImageMinMax<SImageType>(image, &imageMin, &imageMax);
 
-  typedef itk::Statistics::ScalarImageToHistogramGenerator<SImageType> HistogramGeneratorType;
+  using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator<SImageType>;
   typename HistogramGeneratorType::Pointer histogramGenerator = HistogramGeneratorType::New();
   histogramGenerator->SetInput(image);
   histogramGenerator->SetNumberOfBins(imageMax - imageMin + 1);
@@ -402,10 +402,10 @@ setLowHigh(typename SImageType::Pointer & image,
   histogramGenerator->SetHistogramMin(imageMin);
   histogramGenerator->SetHistogramMax(imageMax);
   histogramGenerator->Compute();
-  typedef typename HistogramGeneratorType::HistogramType HistogramType;
+  using HistogramType = typename HistogramGeneratorType::HistogramType;
   const HistogramType *histogram = histogramGenerator->GetOutput();
 
-  typedef itk::OtsuMultipleThresholdsCalculator<HistogramType> OtsuCalcType;
+  using OtsuCalcType = itk::OtsuMultipleThresholdsCalculator<HistogramType>;
   typename OtsuCalcType::Pointer OtsuCalc = OtsuCalcType::New();
   OtsuCalc->SetInputHistogram(histogram);
   OtsuCalc->SetNumberOfThresholds(1);

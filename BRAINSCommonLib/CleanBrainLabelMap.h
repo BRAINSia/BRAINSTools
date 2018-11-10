@@ -31,8 +31,8 @@ template <typename TInputImage, typename TOutputImage>
 typename TOutputImage::Pointer
 CleanBrainLabelMap(const TInputImage *inputImage)
 {
-  typedef typename
-    itk::BinaryThresholdImageFilter<TInputImage, TInputImage> BinaryThresholdFilterType;
+  using BinaryThresholdFilterType = typename
+    itk::BinaryThresholdImageFilter<TInputImage, TInputImage>;
 
   typename BinaryThresholdFilterType::Pointer binaryThresholdFilter =
     BinaryThresholdFilterType::New();
@@ -42,18 +42,17 @@ CleanBrainLabelMap(const TInputImage *inputImage)
   binaryThresholdFilter->Update();
   typename TInputImage::Pointer emsBrainMask(binaryThresholdFilter->GetOutput() );
 
-  typedef typename itk::FlatStructuringElement<TInputImage::ImageDimension> KernelType;
+  using KernelType = typename itk::FlatStructuringElement<TInputImage::ImageDimension>;
   typename KernelType::RadiusType erodeRadius = { { 2, 2, 2 } };
   KernelType erodeKernel = KernelType::Ball(erodeRadius);
 
-  typedef typename itk::BinaryErodeImageFilter<TInputImage, TInputImage, KernelType> BinaryErodeFilterType;
+  using BinaryErodeFilterType = typename itk::BinaryErodeImageFilter<TInputImage, TInputImage, KernelType>;
   typename BinaryErodeFilterType::Pointer erodeFilter = BinaryErodeFilterType::New();
 
   erodeFilter->SetInput(emsBrainMask);
   erodeFilter->SetKernel(erodeKernel);
 
-  typedef typename itk::RelabelComponentImageFilter<TInputImage, TInputImage>
-    RelabelComponentFilterType;
+  using RelabelComponentFilterType = typename itk::RelabelComponentImageFilter<TInputImage, TInputImage>;
   typename RelabelComponentFilterType::Pointer relabelFilter =
     RelabelComponentFilterType::New();
   relabelFilter->SetInput(erodeFilter->GetOutput() );
@@ -62,20 +61,20 @@ CleanBrainLabelMap(const TInputImage *inputImage)
   typename KernelType::RadiusType dilateRadius = { { 4, 4, 4 } };
   KernelType dilateKernel = KernelType::Ball(dilateRadius);
 
-  typedef typename itk::BinaryDilateImageFilter<TInputImage, TInputImage, KernelType> BinaryDilateFilterType;
+  using BinaryDilateFilterType = typename itk::BinaryDilateImageFilter<TInputImage, TInputImage, KernelType>;
   typename BinaryDilateFilterType::Pointer dilateFilter = BinaryDilateFilterType::New();
 
   dilateFilter->SetKernel(dilateKernel);
   dilateFilter->SetInput(relabelFilter->GetOutput() );
 
-  typedef typename itk::AndImageFilter<TInputImage, TInputImage, TInputImage> AndFilterType;
+  using AndFilterType = typename itk::AndImageFilter<TInputImage, TInputImage, TInputImage>;
   typename AndFilterType::Pointer andFilter = AndFilterType::New();
   andFilter->SetInput1(emsBrainMask);
   andFilter->SetInput2(dilateFilter->GetOutput() );
 
   typename TInputImage::SizeType holeFillingRadius = { { 3, 3, 3 } };
 
-  typedef typename itk::VotingBinaryHoleFillingImageFilter<TInputImage, TOutputImage> HoleFillingFilterType;
+  using HoleFillingFilterType = typename itk::VotingBinaryHoleFillingImageFilter<TInputImage, TOutputImage>;
   typename HoleFillingFilterType::Pointer holeFillingFilter =
     HoleFillingFilterType::New();
   holeFillingFilter->SetInput(andFilter->GetOutput() );

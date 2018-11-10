@@ -27,7 +27,7 @@ class StringValue :
   public XMLContents<const std::string>
 {
 public:
-  typedef XMLContents<const std::string> SuperClass;
+  using SuperClass = XMLContents<const std::string>;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -36,7 +36,7 @@ public:
     return indent + 2;
   }
 
-  typedef const std::string ReturnType;
+  using ReturnType = const std::string;
   StringValue(ReturnType & name, ReturnType & value) :
     XMLContents<ReturnType>(name),
     m_Value(value)

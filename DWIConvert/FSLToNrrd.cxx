@@ -29,10 +29,10 @@
 #include <itkComposeImageFilter.h>
 #include "DWIMetaDataDictionaryValidator.h"
 
-typedef short                               PixelValueType;
-typedef itk::Image<PixelValueType, 4>       Volume4DType;
-typedef itk::Image<PixelValueType, 3>       Volume3DType;
-typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+using PixelValueType = short;
+using Volume4DType = itk::Image<PixelValueType, 4>;
+using Volume3DType = itk::Image<PixelValueType, 3>;
+using VectorVolumeType = itk::VectorImage<PixelValueType, 3>;
 
 int
 FSLToNrrd(const std::string & inputVolume,
@@ -171,9 +171,9 @@ FSLToNrrd(const std::string & inputVolume,
   ////////
   // "inputVol" is read as a 4D image. Here we convert that to a VectorImageType:
   //
-  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
+  using ExtractFilterType = itk::ExtractImageFilter< Volume4DType, Volume3DType >;
 
-  typedef itk::ComposeImageFilter<Volume3DType, VectorVolumeType> ComposeImageFilterType;
+  using ComposeImageFilterType = itk::ComposeImageFilter<Volume3DType, VectorVolumeType>;
   ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
 
   for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
@@ -264,7 +264,7 @@ FSLToNrrd(const std::string & inputVolume,
   // Add metaDataDictionary to Nrrd volume
   nrrdVolume->SetMetaDataDictionary(nrrdVolumeValidator.GetMetaDataDictionary());
   // Write Nrrd volume to disk
-  typedef itk::ImageFileWriter<VectorVolumeType> WriterType;
+  using WriterType = itk::ImageFileWriter<VectorVolumeType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

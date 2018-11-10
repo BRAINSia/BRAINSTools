@@ -27,12 +27,12 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef itk::Image<float, 3>         ProbabilityImageType;
-  typedef double                       FloatingPointPrecision;
+  using ProbabilityImageType = itk::Image<float, 3>;
+  using FloatingPointPrecision = double;
 
-  typedef std::vector<ProbabilityImageType::Pointer> ProbabilityImageVectorType;
-  typedef std::vector<bool>                          BoolVectorType;
-  typedef vnl_vector<unsigned int>                   UnsignedIntVectorType;
+  using ProbabilityImageVectorType = std::vector<ProbabilityImageType::Pointer>;
+  using BoolVectorType = std::vector<bool>;
+  using UnsignedIntVectorType = vnl_vector<unsigned int>;
 
   if( inputProbabilityVolume.size() < 1 )
     {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
   ProbabilityImageVectorType Posteriors;
   for( unsigned i = 0; i < inputProbabilityVolume.size(); ++i )
     {
-    typedef itk::ImageFileReader<ProbabilityImageType> ImageReaderType;
+    using ImageReaderType = itk::ImageFileReader<ProbabilityImageType>;
     ImageReaderType::Pointer reader = ImageReaderType::New();
     reader->SetFileName(inputProbabilityVolume[i]);
     ProbabilityImageType::Pointer current;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     }
   else
     {
-    typedef itk::ImageFileReader<ByteImageType> ImageReaderType;
+    using ImageReaderType = itk::ImageFileReader<ByteImageType>;
     ImageReaderType::Pointer reader = ImageReaderType::New();
     reader->SetFileName(nonAirRegionMask);
     try

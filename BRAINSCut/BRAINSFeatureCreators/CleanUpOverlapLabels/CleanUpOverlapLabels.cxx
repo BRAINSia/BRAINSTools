@@ -49,13 +49,13 @@ int main( int argc, char * argv[] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  typedef  unsigned char BinaryPixelType;
+  using BinaryPixelType = unsigned char;
 
   constexpr unsigned char Dim = 3;
 
-  typedef itk::Image<BinaryPixelType,  Dim> InputBinaryImageType;
+  using InputBinaryImageType = itk::Image<BinaryPixelType,  Dim>;
 
-  typedef itk::ImageFileReader<InputBinaryImageType> InputBinaryVolumeReaderType;
+  using InputBinaryVolumeReaderType = itk::ImageFileReader<InputBinaryImageType>;
 
   std::vector<InputBinaryImageType::Pointer> inputBinaryVolumeVector;
   std::vector<std::string>::iterator         inputBinaryVolumeStringIt;
@@ -73,7 +73,7 @@ int main( int argc, char * argv[] )
 
   // Add all labels
 
-  typedef itk::ImageDuplicator<InputBinaryImageType> ImageDuplicatorType;
+  using ImageDuplicatorType = itk::ImageDuplicator<InputBinaryImageType>;
 
   ImageDuplicatorType::Pointer imageCopier = ImageDuplicatorType::New();
   imageCopier->SetInputImage( inputBinaryVolumeVector.front() );
@@ -81,8 +81,8 @@ int main( int argc, char * argv[] )
 
   InputBinaryImageType::Pointer sumVolume = imageCopier->GetModifiableOutput();
 
-  typedef itk::AddImageFilter<InputBinaryImageType, InputBinaryImageType,
-                              InputBinaryImageType> AddImageFilterType;
+  using AddImageFilterType = itk::AddImageFilter<InputBinaryImageType, InputBinaryImageType,
+                              InputBinaryImageType>;
 
   AddImageFilterType::Pointer adder = AddImageFilterType::New();
   for( unsigned int i = 1; // should start from second image
@@ -98,8 +98,8 @@ int main( int argc, char * argv[] )
 
   // threshold summed image
 
-  typedef itk::BinaryThresholdImageFilter<InputBinaryImageType,
-                                          InputBinaryImageType>  ThresholdFilterType;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<InputBinaryImageType,
+                                          InputBinaryImageType>;
 
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
   thresholder->SetInput( sumVolume );
@@ -112,13 +112,13 @@ int main( int argc, char * argv[] )
 
   // process one label at a time
 
-  typedef itk::AndImageFilter<InputBinaryImageType, InputBinaryImageType,
-                              InputBinaryImageType> AndImageFilterType;
+  using AndImageFilterType = itk::AndImageFilter<InputBinaryImageType, InputBinaryImageType,
+                              InputBinaryImageType>;
 
-  typedef itk::XorImageFilter<InputBinaryImageType, InputBinaryImageType,
-                              InputBinaryImageType> XORImageFilterType;
+  using XORImageFilterType = itk::XorImageFilter<InputBinaryImageType, InputBinaryImageType,
+                              InputBinaryImageType>;
 
-  typedef itk::ImageFileWriter<InputBinaryImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<InputBinaryImageType>;
   for( unsigned int i = 0;
        i < inputBinaryVolumeVector.size();
        ++i )

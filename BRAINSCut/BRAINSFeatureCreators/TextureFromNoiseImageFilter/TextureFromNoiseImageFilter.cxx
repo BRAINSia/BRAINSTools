@@ -31,16 +31,16 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef float PixelType;
+  using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension> ImageType;
-  typedef itk::ImageFileReader<ImageType>   ReaderType;
+  using ImageType = itk::Image<PixelType,  Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer imageReader = ReaderType::New();
 
   imageReader->SetFileName( inputVolume.c_str() );
 
-  typedef itk::NoiseImageFilter<ImageType, ImageType> NoiseImageFilterType;
+  using NoiseImageFilterType = itk::NoiseImageFilter<ImageType, ImageType>;
   NoiseImageFilterType::Pointer noiseFilter = NoiseImageFilterType::New();
 
   try
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetFileName(outputVolume);

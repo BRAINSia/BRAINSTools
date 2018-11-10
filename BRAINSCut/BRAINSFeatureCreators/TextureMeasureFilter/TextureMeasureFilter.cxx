@@ -53,9 +53,9 @@ int main( int argc, char *argv[] )
 
   constexpr unsigned int Dimension = 3;
 
-  typedef   double                              InputPixelType;
-  typedef itk::Image<InputPixelType, Dimension> InputImageType;
-  typedef itk::ImageFileReader<InputImageType>  InputImageReaderType;
+  using InputPixelType = double;
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
 
   InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
 
@@ -72,8 +72,7 @@ int main( int argc, char *argv[] )
     }
 
   /** Convert Type to unsigned char */
-  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType>
-    RescaleFilterType;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType, InputImageType>;
 
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
 
@@ -82,24 +81,22 @@ int main( int argc, char *argv[] )
   rescaler->SetOutputMinimum(0);
 
   /** read ROI mask */
-  typedef unsigned char                            InternalPixelType;
-  typedef itk::Image<InternalPixelType, Dimension> InternalImageType;
-  typedef itk::CastImageFilter<InputImageType, InternalImageType>
-    CasterType;
+  using InternalPixelType = unsigned char;
+  using InternalImageType = itk::Image<InternalPixelType, Dimension>;
+  using CasterType = itk::CastImageFilter<InputImageType, InternalImageType>;
 
   CasterType::Pointer caster = CasterType::New();
 
   caster->SetInput( inputImageReader->GetOutput() );
 
-  typedef itk::ImageFileReader<InputImageType> BinaryImageReaderType;
+  using BinaryImageReaderType = itk::ImageFileReader<InputImageType>;
 
   BinaryImageReaderType::Pointer binaryImageReader = BinaryImageReaderType::New();
 
   binaryImageReader->SetFileName( inputMaskVolume);
 
   /** make sure binary mask */
-  typedef itk::BinaryThresholdImageFilter<InputImageType, InternalImageType>
-    BinaryFilterType;
+  using BinaryFilterType = itk::BinaryThresholdImageFilter<InputImageType, InternalImageType>;
   BinaryFilterType::Pointer binaryFilter = BinaryFilterType::New();
 
   binaryFilter->SetInput( binaryImageReader->GetOutput() );
@@ -109,8 +106,7 @@ int main( int argc, char *argv[] )
 
   /** texture Computation */
 
-  typedef itk::Statistics::ScalarImageToTextureFeaturesFilter<InternalImageType>
-    TextureFilterType;
+  using TextureFilterType = itk::Statistics::ScalarImageToTextureFeaturesFilter<InternalImageType>;
 
   TextureFilterType::FeatureNameVectorPointer requestedFeatures =
     TextureFilterType::FeatureNameVector::New();

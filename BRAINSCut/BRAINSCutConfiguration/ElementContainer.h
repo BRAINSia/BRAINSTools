@@ -72,8 +72,8 @@ class XMLContents :
   public ElementContainer
 {
 public:
-  typedef ElementContainer SuperClass;
-  typedef TOutputType      OutputType;
+  using SuperClass = ElementContainer;
+  using OutputType = TOutputType;
   int PrintSelf(std::ostream &, int indent) const override
   {
     // SuperClass::PrintSelf(os);

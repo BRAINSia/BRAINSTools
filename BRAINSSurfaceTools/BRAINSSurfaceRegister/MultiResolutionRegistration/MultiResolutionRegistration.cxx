@@ -138,22 +138,22 @@ int main( int argc, char * argv [] )
   std::cout << "Significance Res4: " << metricSignificance[3] << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  typedef float MeshPixelType;
+  using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
-      MeshType>  MultiResolutionDemonsFilterType;
+  using MultiResolutionDemonsFilterType = itk::MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
+      MeshType>;
 
   MultiResolutionDemonsFilterType::Pointer multiResDemonsFilter =
     MultiResolutionDemonsFilterType::New();
 
-  typedef MultiResolutionDemonsFilterType::DestinationPointSetType DestinationPointSetType;
+  using DestinationPointSetType = MultiResolutionDemonsFilterType::DestinationPointSetType;
 
   multiResDemonsFilter->SetNumberOfResolutionLevels( resolutionLevels );
 
-  typedef MultiResolutionDemonsFilterType::IntegerArrayType IntegerArrayType;
+  using IntegerArrayType = MultiResolutionDemonsFilterType::IntegerArrayType;
 
   IntegerArrayType smoothingIterations(resolutionLevels);
 
@@ -182,7 +182,7 @@ int main( int argc, char * argv [] )
 
   multiResDemonsFilter->SetRigidRegistrationIterations( rigidRegIterations );
 
-  typedef MultiResolutionDemonsFilterType::DoubleArrayType DoubleArrayType;
+  using DoubleArrayType = MultiResolutionDemonsFilterType::DoubleArrayType;
   DoubleArrayType rigidStepLength(resolutionLevels);
 
   rigidStepLength[0] = 1e-2;
@@ -192,7 +192,7 @@ int main( int argc, char * argv [] )
 
   multiResDemonsFilter->SetRigidRegistrationStepLength( rigidStepLength );
 
-  typedef MultiResolutionDemonsFilterType::DoubleArrayType DoubleArrayType;
+  using DoubleArrayType = MultiResolutionDemonsFilterType::DoubleArrayType;
 
   constexpr double shortestEdgeLengthAtIC4 = 6.92;
   constexpr double shortestEdgeLengthAtIC5 = 3.46;
@@ -225,7 +225,7 @@ int main( int argc, char * argv [] )
 
   multiResDemonsFilter->SetMetricSignificances(significance);
 
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
 
   std::vector<ReaderType::Pointer> fixedMeshReader(resolutionLevels);
   std::vector<ReaderType::Pointer> movingMeshReader(resolutionLevels);
@@ -266,8 +266,8 @@ int main( int argc, char * argv [] )
 
   multiResDemonsFilter->Update();
 
-  typedef itk::DeformQuadEdgeMeshFilter<
-      MeshType, MeshType, DestinationPointSetType>  DeformMeshFilterType;
+  using DeformMeshFilterType = itk::DeformQuadEdgeMeshFilter<
+      MeshType, MeshType, DestinationPointSetType>;
 
   DeformMeshFilterType::Pointer deformFilter = DeformMeshFilterType::New();
 
@@ -279,7 +279,7 @@ int main( int argc, char * argv [] )
   deformFilter->SetSphereRadius( radius );
   deformFilter->SetSphereCenter( center );
 
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
 
   writer->SetFileName( deformedFileNameRes4.c_str() );
@@ -295,8 +295,8 @@ int main( int argc, char * argv [] )
   writer->Update();
 
   // upsample finalDestinationPoints
-  typedef itk::ResampleDestinationPointsQuadEdgeMeshFilter<
-      DestinationPointSetType, MeshType, MeshType, DestinationPointSetType> UpsampleDestinationPointsFilterType;
+  using UpsampleDestinationPointsFilterType = itk::ResampleDestinationPointsQuadEdgeMeshFilter<
+      DestinationPointSetType, MeshType, MeshType, DestinationPointSetType>;
 
   UpsampleDestinationPointsFilterType::Pointer upsampleDestinationPoints =
     UpsampleDestinationPointsFilterType::New();
@@ -310,15 +310,15 @@ int main( int argc, char * argv [] )
   upsampleDestinationPoints->SetSphereRadius(radius);
   upsampleDestinationPoints->Update();
 
-  typedef MeshType::PointType   PointType;
-  typedef PointType::VectorType VectorType;
+  using PointType = MeshType::PointType;
+  using VectorType = PointType::VectorType;
 
-  typedef itk::QuadEdgeMeshTraits<VectorType, Dimension, bool, bool> VectorPointSetTraits;
+  using VectorPointSetTraits = itk::QuadEdgeMeshTraits<VectorType, Dimension, bool, bool>;
 
-  typedef itk::QuadEdgeMesh<VectorType, Dimension, VectorPointSetTraits> MeshWithVectorsType;
+  using MeshWithVectorsType = itk::QuadEdgeMesh<VectorType, Dimension, VectorPointSetTraits>;
 
-  typedef itk::QuadEdgeMeshGenerateDeformationFieldFilter<
-      MeshType, DestinationPointSetType, MeshWithVectorsType>   DeformationFilterType;
+  using DeformationFilterType = itk::QuadEdgeMeshGenerateDeformationFieldFilter<
+      MeshType, DestinationPointSetType, MeshWithVectorsType>;
 
   DeformationFilterType::Pointer deformationFilter = DeformationFilterType::New();
 
@@ -327,7 +327,7 @@ int main( int argc, char * argv [] )
   deformationFilter->Update();
 
   // write out deformation field
-  typedef itk::QuadEdgeMeshVectorDataVTKPolyDataWriter<MeshWithVectorsType> VectorMeshWriterType;
+  using VectorMeshWriterType = itk::QuadEdgeMeshVectorDataVTKPolyDataWriter<MeshWithVectorsType>;
   VectorMeshWriterType::Pointer vectorMeshWriter = VectorMeshWriterType::New();
 
   vectorMeshWriter->SetInput( deformationFilter->GetOutput() );

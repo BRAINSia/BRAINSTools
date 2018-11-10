@@ -74,53 +74,53 @@ class GTRACT_COMMON_EXPORT AnatomicalVersorRigidFilter : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalVersorRigidFilter);
 
-  /** Standard class typedefs. */
-  typedef AnatomicalVersorRigidFilter Self;
-  typedef itk::Object                 Superclass;
-  typedef SmartPointer<Self>          Pointer;
-  typedef SmartPointer<const Self>    ConstPointer;
+  /** Standard class type alias. */
+  using Self = AnatomicalVersorRigidFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Fixed Image typedefs. */
-  typedef itk::Image<signed short, 3>      RegisterImageType;
-  typedef RegisterImageType::Pointer       RegisterImagePointer;
-  typedef RegisterImageType::ConstPointer  RegisterImageConstPointer;
-  typedef RegisterImageType::RegionType    RegisterImageRegionType;
-  typedef RegisterImageType::SizeType      RegisterImageSizeType;
-  typedef RegisterImageType::SpacingType   RegisterImageSpacingType;
-  typedef RegisterImageType::PointType     RegisterImagePointType;
-  typedef RegisterImageType::PixelType     RegisterImagePixelType;
-  typedef RegisterImageType::DirectionType RegisterImageDirectionType;
-  typedef RegisterImageType::IndexType     RegisterImageIndexType;
+  /** Fixed Image type alias. */
+  using RegisterImageType = itk::Image<signed short, 3>;
+  using RegisterImagePointer = RegisterImageType::Pointer;
+  using RegisterImageConstPointer = RegisterImageType::ConstPointer;
+  using RegisterImageRegionType = RegisterImageType::RegionType;
+  using RegisterImageSizeType = RegisterImageType::SizeType;
+  using RegisterImageSpacingType = RegisterImageType::SpacingType;
+  using RegisterImagePointType = RegisterImageType::PointType;
+  using RegisterImagePixelType = RegisterImageType::PixelType;
+  using RegisterImageDirectionType = RegisterImageType::DirectionType;
+  using RegisterImageIndexType = RegisterImageType::IndexType;
 
-  /** Output Transform typedefs. */
-  typedef itk::VersorRigid3DTransform<double>  TransformType;
-  typedef itk::VersorRigid3DTransformOptimizer OptimizerType;
-  typedef itk::MattesMutualInformationImageToImageMetric<
+  /** Output Transform type alias. */
+  using TransformType = itk::VersorRigid3DTransform<double>;
+  using OptimizerType = itk::VersorRigid3DTransformOptimizer;
+  using MetricType = itk::MattesMutualInformationImageToImageMetric<
       RegisterImageType,
-      RegisterImageType>        MetricType;
+      RegisterImageType>;
 
-  typedef itk::LinearInterpolateImageFunction<
+  using InterpolatorType = itk::LinearInterpolateImageFunction<
       RegisterImageType,
-      double>         InterpolatorType;
+      double>;
 
-  typedef itk::ImageRegistrationMethod<
+  using RegistrationType = itk::ImageRegistrationMethod<
       RegisterImageType,
-      RegisterImageType>        RegistrationType;
+      RegisterImageType>;
 
   typedef itk::CenteredTransformInitializer<TransformType,
                                             RegisterImageType,
                                             RegisterImageType
                                             >  TransformInitializerType;
-  typedef TransformType::Pointer            TransformTypePointer;
-  typedef TransformType::VersorType         VersorType;
-  typedef VersorType::VectorType            VectorType;
-  typedef MetricType::Pointer               MetricTypePointer;
-  typedef OptimizerType::Pointer            OptimizerTypePointer;
-  typedef OptimizerType::ParametersType     OptimizerParameterType;
-  typedef OptimizerType::ScalesType         OptimizerScalesType;
-  typedef InterpolatorType::Pointer         InterpolatorTypePointer;
-  typedef RegistrationType::Pointer         RegistrationTypePointer;
-  typedef TransformInitializerType::Pointer TransformInitializerTypePointer;
+  using TransformTypePointer = TransformType::Pointer;
+  using VersorType = TransformType::VersorType;
+  using VectorType = VersorType::VectorType;
+  using MetricTypePointer = MetricType::Pointer;
+  using OptimizerTypePointer = OptimizerType::Pointer;
+  using OptimizerParameterType = OptimizerType::ParametersType;
+  using OptimizerScalesType = OptimizerType::ScalesType;
+  using InterpolatorTypePointer = InterpolatorType::Pointer;
+  using RegistrationTypePointer = RegistrationType::Pointer;
+  using TransformInitializerTypePointer = TransformInitializerType::Pointer;
 
   /** Standard New method. */
   itkNewMacro(Self);

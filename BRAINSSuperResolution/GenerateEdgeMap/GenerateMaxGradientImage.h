@@ -56,7 +56,7 @@ template <typename TImage>
 typename TImage::Pointer
 MaxOfImageList(const std::vector<typename TImage::Pointer> & inputImageList) // inputImageList = rescaledGradientImageList
 {
-  typedef itk::MaximumImageFilter<TImage, TImage, TImage>   MaximumFilterType;
+  using MaximumFilterType = itk::MaximumImageFilter<TImage, TImage, TImage>;
 
   if( inputImageList.empty() )
     {
@@ -114,12 +114,12 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
   std::cout << "[LowerQuantile UpperQuantile] = [" << LowerPercentileMatching << " " << UpperPercentileMatching << "]" << std::endl;
   std::cout << "[minOutputRange maxOutputRange] [" << minOutputRange << " " << maxOutputRange << "]" << std::endl;
 
-  typedef itk::GradientMagnitudeImageFilter<InputImageType, InputImageType>   GradientFilterType;
-  typedef itk::MinimumMaximumImageCalculator<InputImageType>                  MinMaxCalculatorType;
-  typedef itk::LabelStatisticsImageFilter<InputImageType, MaskImageType>      LabelStatisticsImageFilter;
-  typedef typename itk::IntensityWindowingImageFilter<InputImageType,
-                                                      OutputImageType>        WindowRescalerType;
-  typedef std::vector<typename OutputImageType::Pointer>                      RescaledImageGradientVectorType;
+  using GradientFilterType = itk::GradientMagnitudeImageFilter<InputImageType, InputImageType>;
+  using MinMaxCalculatorType = itk::MinimumMaximumImageCalculator<InputImageType>;
+  using LabelStatisticsImageFilter = itk::LabelStatisticsImageFilter<InputImageType, MaskImageType>;
+  using WindowRescalerType = typename itk::IntensityWindowingImageFilter<InputImageType,
+                                                      OutputImageType>;
+  using RescaledImageGradientVectorType = std::vector<typename OutputImageType::Pointer>;
 
   itk::TimeProbe MaxGradientImageTimer;
   MaxGradientImageTimer.Start();
@@ -200,8 +200,8 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
   typename OutputImageType::Pointer maxGradientImage = MaxOfImageList<OutputImageType>(rescaledGradientImageList);
 /*
   // Another rescaling was needed if we were computing summed gradient image.
-  typedef itk::IntensityWindowingImageFilter<OutputImageType,
-                                             OutputImageType>           RescaleFilterType;
+  using RescaleFilterType = itk::IntensityWindowingImageFilter<OutputImageType,
+                                             OutputImageType>;
   typename RescaleFilterType::Pointer outputRescaler = RescaleFilterType::New();
   outputRescaler->SetOutputMinimum(0);
   outputRescaler->SetOutputMaximum(255);

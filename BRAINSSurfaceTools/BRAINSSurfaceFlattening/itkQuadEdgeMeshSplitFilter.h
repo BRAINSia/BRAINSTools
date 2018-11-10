@@ -33,22 +33,22 @@ class QuadEdgeMeshSplitFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  typedef QuadEdgeMeshSplitFilter                                   Self;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh> Superclass;
+  using Self = QuadEdgeMeshSplitFilter;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Input types. */
-  typedef TInputMesh                              InputMeshType;
-  typedef typename InputMeshType::Pointer         InputMeshPointer;
-  typedef typename InputMeshType::ConstPointer    InputMeshConstPointer;
-  typedef typename InputMeshType::CoordRepType    InputCoordRepType;
-  typedef typename InputMeshType::PointType       InputPointType;
-  typedef typename InputMeshType::PointIdentifier InputPointIdentifier;
-  typedef typename InputMeshType::QEType          InputQEType;
-  typedef typename InputMeshType::VectorType      InputVectorType;
-  typedef typename InputMeshType::CellType        InputCellType;
-  typedef typename InputMeshType::CellIdentifier  InputCellIdentifier;
+  using InputMeshType = TInputMesh;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputMeshConstPointer = typename InputMeshType::ConstPointer;
+  using InputCoordRepType = typename InputMeshType::CoordRepType;
+  using InputPointType = typename InputMeshType::PointType;
+  using InputPointIdentifier = typename InputMeshType::PointIdentifier;
+  using InputQEType = typename InputMeshType::QEType;
+  using InputVectorType = typename InputMeshType::VectorType;
+  using InputCellType = typename InputMeshType::CellType;
+  using InputCellIdentifier = typename InputMeshType::CellIdentifier;
 
   typedef typename InputMeshType::PointsContainerConstPointer
     InputPointsContainerConstPointer;
@@ -59,50 +59,49 @@ public:
   typedef typename InputMeshType::CellsContainerConstIterator
     InputCellsContainerConstIterator;
 
-  typedef typename InputMeshType::EdgeCellType    InputEdgeCellType;
-  typedef typename InputMeshType::PolygonCellType InputPolygonCellType;
-  typedef typename InputMeshType::PointIdList     InputPointIdList;
-  typedef typename InputMeshType::CellTraits      InputCellTraits;
+  using InputEdgeCellType = typename InputMeshType::EdgeCellType;
+  using InputPolygonCellType = typename InputMeshType::PolygonCellType;
+  using InputPointIdList = typename InputMeshType::PointIdList;
+  using InputCellTraits = typename InputMeshType::CellTraits;
   typedef typename InputCellTraits::PointIdInternalIterator
     InputPointsIdInternalIterator;
-//    typedef typename InputQEPrimal::IteratorGeom    InputQEIterator;
-  typedef std::vector<InputCellIdentifier> SeedVectorType;
+//    using InputQEIterator = typename InputQEPrimal::IteratorGeom;
+  using SeedVectorType = std::vector<InputCellIdentifier>;
 
-  typedef QuadEdgeMeshPolygonCell<InputCellType>     InputPolygonType;
-  typedef typename InputPolygonType::SelfAutoPointer InputPolygonAutoPointer;
+  using InputPolygonType = QuadEdgeMeshPolygonCell<InputCellType>;
+  using InputPolygonAutoPointer = typename InputPolygonType::SelfAutoPointer;
 
-  typedef std::list<InputPolygonType *> PolygonSetType;
+  using PolygonSetType = std::list<InputPolygonType *>;
 
-  typedef std::map<InputPolygonType *, InputCoordRepType>
-    FaceAreaMapType;
+  using FaceAreaMapType = std::map<InputPolygonType *, InputCoordRepType>;
 
-  typedef TriangleHelper<InputPointType> TriangleType;
+  using TriangleType = TriangleHelper<InputPointType>;
 
-  typedef QuadEdgeMeshDualFastMarching<InputMeshType> FMMType;
-  typedef typename FMMType::Pointer                   FMMPointer;
-  typedef typename FMMType::ClusterType               FMMClusterType;
-  typedef typename FMMType::ClusterIterator           FMMClusterIterator;
-  typedef typename FMMType::SeedVectorType            FMMSeedVectorType;
+  using FMMType = QuadEdgeMeshDualFastMarching<InputMeshType>;
+  using FMMPointer = typename FMMType::Pointer;
+  using FMMClusterType = typename FMMType::ClusterType;
+  using FMMClusterIterator = typename FMMType::ClusterIterator;
+  using FMMSeedVectorType = typename FMMType::SeedVectorType;
 
   /** Output types. */
-  typedef TOutputMesh                              OutputMeshType;
-  typedef typename OutputMeshType::Pointer         OutputMeshPointer;
-  typedef typename OutputMeshType::ConstPointer    OutputMeshConstPointer;
-  typedef typename OutputMeshType::CoordRepType    OutputCoordRepType;
-  typedef typename OutputMeshType::PointType       OutputPointType;
-  typedef typename OutputMeshType::PointIdentifier OutputPointIdentifier;
-  typedef typename OutputMeshType::PointIdList     OutputPointIdList;
-  typedef typename OutputMeshType::QEType          OutputQEType;
-  typedef typename OutputMeshType::VectorType      OutputVectorType;
-  typedef typename OutputMeshType::CellType        OutputCellType;
-//    typedef typename OutputQEPrimal::IteratorGeom     OutputQEIterator;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputMeshConstPointer = typename OutputMeshType::ConstPointer;
+  using OutputCoordRepType = typename OutputMeshType::CoordRepType;
+  using OutputPointType = typename OutputMeshType::PointType;
+  using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
+  using OutputPointIdList = typename OutputMeshType::PointIdList;
+  using OutputQEType = typename OutputMeshType::QEType;
+  using OutputVectorType = typename OutputMeshType::VectorType;
+  using OutputCellType = typename OutputMeshType::CellType;
+//    using OutputQEIterator = typename OutputQEPrimal::IteratorGeom;
   typedef typename OutputMeshType::PointsContainerPointer
     OutputPointsContainerPointer;
   typedef typename OutputMeshType::PointsContainerIterator
     OutputPointsContainerIterator;
 
-  typedef QuadEdgeMeshPolygonCell<OutputCellType>     OutputPolygonType;
-  typedef typename OutputPolygonType::SelfAutoPointer OutputPolygonAutoPointer;
+  using OutputPolygonType = QuadEdgeMeshPolygonCell<OutputCellType>;
+  using OutputPolygonAutoPointer = typename OutputPolygonType::SelfAutoPointer;
 public:
   itkNewMacro( Self );
   itkTypeMacro( QuadEdgeMeshSplitFilter, QuadEdgeMeshToQuadEdgeMeshFilter );

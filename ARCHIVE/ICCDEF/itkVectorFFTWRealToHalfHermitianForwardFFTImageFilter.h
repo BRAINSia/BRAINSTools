@@ -52,14 +52,14 @@ class VectorFFTWRealToHalfHermitianForwardFFTImageFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(VectorFFTWRealToHalfHermitianForwardFFTImageFilter);
 
-  /** Standard class typedefs. */
-  typedef Image<TPixel, VDimension>                                              TInputImageType;
-  typedef Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension> TOutputImageType;
+  /** Standard class type alias. */
+  using TInputImageType = Image<TPixel, VDimension>;
+  using TOutputImageType = Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension>;
 
-  typedef VectorFFTWRealToHalfHermitianForwardFFTImageFilter    Self;
-  typedef ImageToImageFilter<TInputImageType, TOutputImageType> Superclass;
-  typedef SmartPointer<Self>                                    Pointer;
-  typedef SmartPointer<const Self>                              ConstPointer;
+  using Self = VectorFFTWRealToHalfHermitianForwardFFTImageFilter;
+  using Superclass = ImageToImageFilter<TInputImageType, TOutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -67,9 +67,9 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(VectorFFTWRealToHalfHermitianForwardFFTImageFilter,
                ImageToImageFilter);
-  /** Image type typedef support. */
-  typedef TInputImageType              ImageType;
-  typedef typename ImageType::SizeType ImageSizeType;
+  /** Image type type alias support. */
+  using ImageType = TInputImageType;
+  using ImageSizeType = typename ImageType::SizeType;
   void GenerateOutputInformation() override; // figure out allocation for output image
 
   void GenerateInputRequestedRegion() override;

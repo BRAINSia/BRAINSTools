@@ -696,7 +696,7 @@ void vtkTalairachConversion::ProcessBOX(bool _left)
 
     // std::cout << "Region Size: " << gridSize << std::endl;
     // std::cout << "============================================" << std::endl;
-    typedef itk::ImageRegionIteratorWithIndex<ImageType> IteratorType;
+    using IteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
     IteratorType itr(this->MaskImage, testRegion);
     for( itr.GoToBegin(); !itr.IsAtEnd(); ++itr )
       {

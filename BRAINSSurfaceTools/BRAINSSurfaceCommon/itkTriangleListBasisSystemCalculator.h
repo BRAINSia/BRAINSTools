@@ -42,11 +42,11 @@ template <typename TMesh, typename TBasisSystem>
 class TriangleListBasisSystemCalculator : public Object
 {
 public:
-  /** Standard class typedefs. */
-  typedef TriangleListBasisSystemCalculator Self;
-  typedef Object                            Superclass;
-  typedef SmartPointer<Self>                Pointer;
-  typedef SmartPointer<const Self>          ConstPointer;
+  /** Standard class type alias. */
+  using Self = TriangleListBasisSystemCalculator;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -54,20 +54,20 @@ public:
   /** Standard part of every itk Object. */
   itkTypeMacro(TriangleListBasisSystemCalculator, Object);
 
-  typedef TBasisSystem                                  BasisSystemType;
-  typedef typename TMesh::CellIdentifier                CellIdentifier;
-  typedef VectorContainer<CellIdentifier, TBasisSystem> BasisSystemListType;
-  typedef typename BasisSystemListType::ConstIterator   BasisSystemListIterator;
-  typedef typename BasisSystemListType::Pointer         BasisSystemListPointer;
+  using BasisSystemType = TBasisSystem;
+  using CellIdentifier = typename TMesh::CellIdentifier;
+  using BasisSystemListType = VectorContainer<CellIdentifier, TBasisSystem>;
+  using BasisSystemListIterator = typename BasisSystemListType::ConstIterator;
+  using BasisSystemListPointer = typename BasisSystemListType::Pointer;
 
-  typedef TMesh                                  MeshType;
-  typedef typename MeshType::PointType           PointType;
-  typedef typename MeshType::CellType            CellType;
-  typedef typename PointType::VectorType         VectorType;
-  typedef typename MeshType::ConstPointer        MeshConstPointer;
-  typedef typename MeshType::CellsContainer      CellsContainer;
-  typedef typename CellsContainer::Iterator      CellsContainerIterator;
-  typedef typename CellsContainer::ConstIterator CellsContainerConstIterator;
+  using MeshType = TMesh;
+  using PointType = typename MeshType::PointType;
+  using CellType = typename MeshType::CellType;
+  using VectorType = typename PointType::VectorType;
+  using MeshConstPointer = typename MeshType::ConstPointer;
+  using CellsContainer = typename MeshType::CellsContainer;
+  using CellsContainerIterator = typename CellsContainer::Iterator;
+  using CellsContainerConstIterator = typename CellsContainer::ConstIterator;
 
   /** Set/Get the input mesh. */
   itkSetConstObjectMacro( InputMesh, MeshType );

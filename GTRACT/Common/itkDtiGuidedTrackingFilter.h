@@ -72,11 +72,11 @@ class DtiGuidedTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageTy
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DtiGuidedTrackingFilter);
 
-  /** Standard class typedefs. */
-  typedef DtiGuidedTrackingFilter                                                            Self;
-  typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
-  typedef SmartPointer<Self>                                                                 Pointer;
-  typedef SmartPointer<const Self>                                                           ConstPointer;
+  /** Standard class type alias. */
+  using Self = DtiGuidedTrackingFilter;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   typedef vtkPolyData *GuideFiberType;
 

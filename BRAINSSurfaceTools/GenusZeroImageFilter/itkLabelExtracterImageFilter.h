@@ -64,7 +64,7 @@ public:
   {
   }
 
-  typedef std::map<TInput, TOutput> ChangeMapType;
+  using ChangeMapType = std::map<TInput, TOutput>;
 
   bool operator!=( const LabelExtracter & other ) const
   {
@@ -128,15 +128,15 @@ class ITK_EXPORT LabelExtracterImageFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(LabelExtracterImageFilter);
 
-  /** Standard class typedefs. */
-  typedef LabelExtracterImageFilter Self;
-  typedef UnaryFunctorImageFilter<TInputImage, TOutputImage,
+  /** Standard class type alias. */
+  using Self = LabelExtracterImageFilter;
+  using Superclass = UnaryFunctorImageFilter<TInputImage, TOutputImage,
                                   Functor::LabelExtracter<
                                     typename TInputImage::PixelType,
                                     typename TOutputImage::PixelType>
-                                  >  Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+                                  >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
 /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -145,11 +145,11 @@ public:
   itkTypeMacro(LabelExtracterImageFilter, UnaryFunctorImageFilter);
 
 /** Pixel types. */
-  typedef typename TInputImage::PixelType  InputPixelType;
-  typedef typename TOutputImage::PixelType OutputPixelType;
+  using InputPixelType = typename TInputImage::PixelType;
+  using OutputPixelType = typename TOutputImage::PixelType;
 
 /** Type of the change map to use for change requests */
-  typedef std::map<InputPixelType, OutputPixelType> ChangeMapType;
+  using ChangeMapType = std::map<InputPixelType, OutputPixelType>;
 
 /** Set up a change of a single label */
   void SetChange( const InputPixelType & original, const OutputPixelType & result );

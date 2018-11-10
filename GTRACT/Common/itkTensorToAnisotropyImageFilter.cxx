@@ -107,7 +107,7 @@ void
 TensorToAnisotropyImageFilter
 ::computVoxelIsotropy()
 {
-  typedef itk::ImageRegionIteratorWithIndex<OutputImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
   IteratorType it( m_Output, m_Output->GetLargestPossibleRegion() );
 
   OutputImageIndexType index;
@@ -129,7 +129,7 @@ void
 TensorToAnisotropyImageFilter
 ::computSimpleVoxelAnisotropy()
 {
-  typedef itk::ImageRegionIteratorWithIndex<OutputImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
   IteratorType it( m_Output, m_Output->GetLargestPossibleRegion() );
 
   OutputImageIndexType index;
@@ -186,7 +186,7 @@ TensorToAnisotropyImageFilter
 ::computNeighborhoodVoxelAnisotropy()
 {
   m_Output->FillBuffer(0.0);
-  typedef itk::ConstNeighborhoodIterator<InputImageType> NeighborhoodIteratorType;
+  using NeighborhoodIteratorType = itk::ConstNeighborhoodIterator<InputImageType>;
   NeighborhoodIteratorType it;
 
   NeighborhoodIteratorType::RadiusType radius;
@@ -194,7 +194,7 @@ TensorToAnisotropyImageFilter
   radius[2] = 0;
 
   // boundary condition
-  typedef itk::NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType> FaceCalculatorType;
+  using FaceCalculatorType = itk::NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>;
   FaceCalculatorType               faceCalculator;
   FaceCalculatorType::FaceListType faceList;
   faceList = faceCalculator(m_Input, m_Input->GetLargestPossibleRegion(), radius);

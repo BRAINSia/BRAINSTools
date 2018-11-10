@@ -82,8 +82,8 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>
   OutputImagePointer     outputVolume = this->GetOutput();
 
   // mask the image
-  typedef ImageRegionConstIterator<InputImageType> InputConstIterator;
-  typedef ImageRegionIterator<OutputImageType>     OutputIterator;
+  using InputConstIterator = ImageRegionConstIterator<InputImageType>;
+  using OutputIterator = ImageRegionIterator<OutputImageType>;
 
   InputConstIterator itImage( inputImage,
                               inputImage->GetRequestedRegion() );

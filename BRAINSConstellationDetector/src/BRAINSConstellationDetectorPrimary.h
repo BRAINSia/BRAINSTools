@@ -51,21 +51,21 @@ class BRAINSConstellationDetectorPrimary
 public:
 
   // Image, filter, transform typedef
-  typedef short                                 PixelType;
-  typedef itk::Image<PixelType, 3>              ImageType;
-  typedef ImageType::Pointer                    ImagePointerType;
-  typedef ImageType::PointType                  ImagePointType;
-  typedef ImageType::SpacingType                ImageSpacingType;
-  typedef ImageType::SizeType                   ImageSizeType;
-  typedef ImageType::DirectionType              ImageDirectionType;
-  typedef ImageType::IndexType                  ImageIndexType;
+  using PixelType = short;
+  using ImageType = itk::Image<PixelType, 3>;
+  using ImagePointerType = ImageType::Pointer;
+  using ImagePointType = ImageType::PointType;
+  using ImageSpacingType = ImageType::SpacingType;
+  using ImageSizeType = ImageType::SizeType;
+  using ImageDirectionType = ImageType::DirectionType;
+  using ImageIndexType = ImageType::IndexType;
 
-  typedef itk::ImageFileReader<ImageType>                         ReaderType;
-  typedef itk::ImageFileWriter<ImageType>                         WriterType;
-  typedef itk::FindCenterOfBrainFilter<ImageType>                 FindCenterFilter;
-  typedef itk::BRAINSHoughEyeDetector<ImageType, ImageType>       HoughEyeDetectorType;
-  typedef itk::TransformFileWriter                                TransformWriterType;
-  typedef itk::VersorRigid3DTransform<double>                     VersorTransformType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<ImageType>;
+  using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector<ImageType, ImageType>;
+  using TransformWriterType = itk::TransformFileWriter;
+  using VersorTransformType = itk::VersorRigid3DTransform<double>;
   std::string pathOut;
   std::string errorMsg;
 

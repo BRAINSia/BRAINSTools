@@ -29,25 +29,25 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-  typedef double                                                                    InputPixelType;
+  using InputPixelType = double;
   constexpr int Dimension = 3;
 
-  typedef itk::Image<InputPixelType, Dimension>                                     ImageType;
+  using ImageType = itk::Image<InputPixelType, Dimension>;
 
-  typedef itk::ImageFileReader<ImageType>                                           ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
 
-  typedef itk::LabelObject< InputPixelType, Dimension >                             LabelObjectType;
-  typedef itk::LabelMap< LabelObjectType >                                          LabelMapType;
-  typedef itk::LabelImageToLabelMapFilter<ImageType, LabelMapType>                  ImageToMapType;
+  using LabelObjectType = itk::LabelObject< InputPixelType, Dimension >;
+  using LabelMapType = itk::LabelMap< LabelObjectType >;
+  using ImageToMapType = itk::LabelImageToLabelMapFilter<ImageType, LabelMapType>;
 
-  typedef itk::LabelMapMaskImageFilter<LabelMapType, ImageType>                     LabelMaskFilterType;
+  using LabelMaskFilterType = itk::LabelMapMaskImageFilter<LabelMapType, ImageType>;
 
-  typedef itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>  AbsValDiffFilterType;
-  typedef itk::StatisticsImageFilter<ImageType>                                     StatisticsFilterType;
+  using AbsValDiffFilterType = itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>;
+  using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
 
   typedef itk::NearestNeighborInterpolateImageFunction<ImageType, double>           NN_InterpolatorType;
-  typedef itk::IdentityTransform<double, Dimension>                                 IdentityTransformType;
-  typedef itk::ResampleImageFilter<ImageType, ImageType>                            labelResamplerType;
+  using IdentityTransformType = itk::IdentityTransform<double, Dimension>;
+  using labelResamplerType = itk::ResampleImageFilter<ImageType, ImageType>;
 
 
     // load in images

@@ -47,70 +47,70 @@ class MeshToMeshMetric : public SingleValuedCostFunction
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshMetric);
 
-  /** Standard class typedefs. */
-  typedef MeshToMeshMetric         Self;
-  typedef SingleValuedCostFunction Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = MeshToMeshMetric;
+  using Superclass = SingleValuedCostFunction;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Type used for representing point components  */
-  typedef typename TFixedMesh::CoordRepType CoordinateRepresentationType;
+  using CoordinateRepresentationType = typename TFixedMesh::CoordRepType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(MeshToMeshMetric, SingleValuedCostFunction);
 
   /**  Type of the moving Mesh. */
-  typedef TMovingMesh                           MovingMeshType;
-  typedef typename TMovingMesh::PixelType       MovingMeshPixelType;
-  typedef typename MovingMeshType::ConstPointer MovingMeshConstPointer;
+  using MovingMeshType = TMovingMesh;
+  using MovingMeshPixelType = typename TMovingMesh::PixelType;
+  using MovingMeshConstPointer = typename MovingMeshType::ConstPointer;
 
   /**  Type of the fixed Mesh. */
-  typedef TFixedMesh                           FixedMeshType;
-  typedef typename FixedMeshType::ConstPointer FixedMeshConstPointer;
+  using FixedMeshType = TFixedMesh;
+  using FixedMeshConstPointer = typename FixedMeshType::ConstPointer;
 
   /** Constants for the pointset dimensions */
   static constexpr unsigned int MovingMeshDimension = TMovingMesh::PointDimension;
   static constexpr unsigned int FixedMeshDimension = TFixedMesh::PointDimension;
 
-  typedef typename FixedMeshType::PointsContainer::ConstIterator    PointIterator;
-  typedef typename FixedMeshType::PointDataContainer::ConstIterator PointDataIterator;
+  using PointIterator = typename FixedMeshType::PointsContainer::ConstIterator;
+  using PointDataIterator = typename FixedMeshType::PointDataContainer::ConstIterator;
 
   /**  Type of the Transform Base class */
-  typedef typename NumericTraits<CoordinateRepresentationType>::RealType TransformComputationType;
-  typedef Transform<TransformComputationType,
+  using TransformComputationType = typename NumericTraits<CoordinateRepresentationType>::RealType;
+  using TransformType = Transform<TransformComputationType,
                     Self::MovingMeshDimension,
-                    Self::FixedMeshDimension> TransformType;
+                    Self::FixedMeshDimension>;
 
-  typedef typename TransformType::Pointer         TransformPointer;
-  typedef typename TransformType::InputPointType  InputPointType;
-  typedef typename TransformType::OutputPointType OutputPointType;
-  typedef typename TransformType::ParametersType  TransformParametersType;
-  typedef typename TransformType::JacobianType    TransformJacobianType;
+  using TransformPointer = typename TransformType::Pointer;
+  using InputPointType = typename TransformType::InputPointType;
+  using OutputPointType = typename TransformType::OutputPointType;
+  using TransformParametersType = typename TransformType::ParametersType;
+  using TransformJacobianType = typename TransformType::JacobianType;
 
   /**  Type of the Interpolator Base class */
-  typedef InterpolateMeshFunction<MovingMeshType>   InterpolatorType;
-  typedef typename InterpolatorType::Pointer        InterpolatorPointer;
-  typedef typename InterpolatorType::RealType       RealDataType;
-  typedef typename InterpolatorType::DerivativeType DerivativeDataType;
+  using InterpolatorType = InterpolateMeshFunction<MovingMeshType>;
+  using InterpolatorPointer = typename InterpolatorType::Pointer;
+  using RealDataType = typename InterpolatorType::RealType;
+  using DerivativeDataType = typename InterpolatorType::DerivativeType;
 
   /**  Type of the measure. */
-  typedef Superclass::MeasureType MeasureType;
+  using MeasureType = Superclass::MeasureType;
 
   /**  Type of the derivative. */
-  typedef Superclass::DerivativeType DerivativeType;
+  using DerivativeType = Superclass::DerivativeType;
 
   /**  Type of the parameters. */
-  typedef Superclass::ParametersType ParametersType;
+  using ParametersType = Superclass::ParametersType;
 
   /**  Type for the mask of the fixed image. Only pixels that are "inside"
        this mask will be considered for the computation of the metric */
-  typedef SpatialObject<Self::FixedMeshDimension> FixedMaskType;
-  typedef typename  FixedMaskType::ConstPointer                     FixedMaskPointer;
+  using FixedMaskType = SpatialObject<Self::FixedMeshDimension>;
+  using FixedMaskPointer = typename  FixedMaskType::ConstPointer;
 
   /**  Type for the mask of the moving image. Only pixels that are "inside"
        this mask will be considered for the computation of the metric */
-  typedef SpatialObject<Self::MovingMeshDimension> MovingMaskType;
-  typedef typename  MovingMaskType::ConstPointer                     MovingMaskPointer;
+  using MovingMaskType = SpatialObject<Self::MovingMeshDimension>;
+  using MovingMaskPointer = typename  MovingMaskType::ConstPointer;
 
   /** Connect the Fixed Pointset.  */
   itkSetConstObjectMacro( FixedMesh, FixedMeshType );

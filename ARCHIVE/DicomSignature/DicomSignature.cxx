@@ -102,11 +102,11 @@ std::vector<std::string> Tokenize(const std::string& str, const std::string& del
   return tokens;
 }
 
-typedef itk::MetaDataDictionary DictionaryType;
+using DictionaryType = itk::MetaDataDictionary;
 
 static std::string GetDicomString(const std::string Key, const  DictionaryType & dictionary)
 {
-  typedef itk::MetaDataObject<std::string> MetaDataStringType;
+  using MetaDataStringType = itk::MetaDataObject<std::string>;
   const DictionaryType::ConstIterator end = dictionary.End();
   DictionaryType::ConstIterator       tagItr = dictionary.Find( Key );
   if( tagItr != end )
@@ -141,7 +141,7 @@ std::string GetDigestString(EVP_MD_CTX & mdctx)
 
   std::ostringstream myDigest("");
   // myDigest << digestMode << "_";
-  //  myDigest << std::setfill('0') << std::setw(2) ;//<< std::oct;
+  //  myDigest << std::setfill('0') << std::setw(2);//<< std::oct;
   // printf("DIGEST: ");
   for( unsigned int i = 0; i < md_len; i++ )
     {
@@ -169,18 +169,18 @@ int main(int argc, char *argv[])
   // Then we declare the pixel type and image dimension, and use them for
   // instantiating the image type to be read.
 
-  typedef float InputPixelType;
+  using InputPixelType = float;
   constexpr unsigned int InputDimension = 2;
 
   const std::string fileNamePath = ::itksys::SystemTools::GetFilenamePath(inputVolume);
   const std::string fileNameName = ::itksys::SystemTools::GetFilenameName(inputVolume);
 
-  typedef itk::Image<InputPixelType, InputDimension> InputImageType;
+  using InputImageType = itk::Image<InputPixelType, InputDimension>;
 
   // With the image type we can instantiate the type of the reader, create one,
   // and set the filename of the image to be read.
 
-  typedef itk::ImageFileReader<InputImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(inputVolume);
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
   // to
   // the ImageFileReader.
 
-  typedef itk::GDCMImageIO ImageIOType;
+  using ImageIOType = itk::GDCMImageIO;
   ImageIOType::Pointer gdcmImageIO = ImageIOType::New();
   reader->SetImageIO(gdcmImageIO);
 

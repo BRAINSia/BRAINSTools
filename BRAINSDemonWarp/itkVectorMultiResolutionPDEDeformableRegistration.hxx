@@ -284,7 +284,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 
   // Seperate the VectorInputImage to scalar Image
 
-  typedef VectorIndexSelectionCastImageFilter<TFixedImage, FloatImageType> VectorIndexSelectionType;
+  using VectorIndexSelectionType = VectorIndexSelectionCastImageFilter<TFixedImage, FloatImageType>;
   // Create the image pyramids.
   for( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
     {
@@ -344,8 +344,8 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     // First smooth it
     tempField = inputPtr;
 
-    typedef RecursiveGaussianImageFilter<DisplacementFieldType,
-                                         DisplacementFieldType> GaussianFilterType;
+    using GaussianFilterType = RecursiveGaussianImageFilter<DisplacementFieldType,
+                                         DisplacementFieldType>;
     typename GaussianFilterType::Pointer smoother =
       GaussianFilterType::New();
     for( unsigned int dim = 0;
@@ -423,7 +423,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
       m_RegistrationFilter->SetInitialDisplacementField(tempField);
       }
 
-    typedef itk::ComposeImageFilter<FloatImageType> ImageToVectorImageType;
+    using ImageToVectorImageType = itk::ComposeImageFilter<FloatImageType>;
     typename ImageToVectorImageType::Pointer vectorFixedImage =
       ImageToVectorImageType::New();
     typename ImageToVectorImageType::Pointer vectorMovingImage =

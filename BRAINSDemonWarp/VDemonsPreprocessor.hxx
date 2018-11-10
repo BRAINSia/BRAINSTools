@@ -79,8 +79,8 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
     {
     for( unsigned int i = 0; i < m_InputFixedImage.size(); ++i )
       {
-      typedef typename itk::MedianImageFilter<TInputImage,
-                                              TInputImage> MedianImageFilterType;
+      using MedianImageFilterType = typename itk::MedianImageFilter<TInputImage,
+                                              TInputImage>;
       typename MedianImageFilterType::Pointer medianFilter =
         MedianImageFilterType::New();
       medianFilter->SetRadius(m_MedianFilterSize);
@@ -126,8 +126,8 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
 
     if( this->GetUseHistogramMatching() )
       {
-      typedef HistogramMatchingImageFilter<OutputImageType,
-                                           OutputImageType> HistogramMatchingFilterType;
+      using HistogramMatchingFilterType = HistogramMatchingImageFilter<OutputImageType,
+                                           OutputImageType>;
       typename HistogramMatchingFilterType::Pointer histogramfilter =
         HistogramMatchingFilterType::New();
       if( this->GetOutDebug() )
@@ -269,7 +269,7 @@ typename VDemonsPreprocessor<TInputImage,
       }
     }
 
-  typedef BOBFFilter<OutputImageType, OutputImageType> BOBFFilterType;
+  using BOBFFilterType = BOBFFilter<OutputImageType, OutputImageType>;
   typename BOBFFilterType::Pointer BOBFfilter = BOBFFilterType::New();
   if( this->GetOutDebug() )
     {

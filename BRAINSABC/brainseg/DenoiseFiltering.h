@@ -53,7 +53,7 @@ typename TInputImageType::Pointer DenoiseFiltering(
       << ",TimeStep=" << PrefilteringTimeStep << ")  gridSize=(" << ")" << std::endl;
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-      typedef itk::GradientAnisotropicDiffusionImageFilter<TInputImageType, TInputImageType> AnisoFilterType;
+      using AnisoFilterType = itk::GradientAnisotropicDiffusionImageFilter<TInputImageType, TInputImageType>;
       typename AnisoFilterType::Pointer anisofilt = AnisoFilterType::New();
 
       anisofilt->SetInput(img);
@@ -73,7 +73,7 @@ typename TInputImageType::Pointer DenoiseFiltering(
       << ",TimeStep=" << PrefilteringTimeStep << ")  gridSize=(" << ")" << std::endl;
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
-      typedef itk::CurvatureFlowImageFilter<TInputImageType, TInputImageType> CurvatureFilterType;
+      using CurvatureFilterType = itk::CurvatureFlowImageFilter<TInputImageType, TInputImageType>;
       typename CurvatureFilterType::Pointer cfilt = CurvatureFilterType::New();
       cfilt->SetInput(img);
       cfilt->SetNumberOfIterations(PrefilteringIterations);

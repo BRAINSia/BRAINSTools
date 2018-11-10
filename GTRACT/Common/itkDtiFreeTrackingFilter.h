@@ -68,11 +68,11 @@ class DtiFreeTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DtiFreeTrackingFilter);
 
-  /** Standard class typedefs. */
-  typedef DtiFreeTrackingFilter                                                              Self;
-  typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
-  typedef SmartPointer<Self>                                                                 Pointer;
-  typedef SmartPointer<const Self>                                                           ConstPointer;
+  /** Standard class type alias. */
+  using Self = DtiFreeTrackingFilter;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Standard New method. */
   itkNewMacro(Self);

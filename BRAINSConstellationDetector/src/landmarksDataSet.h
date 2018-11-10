@@ -48,8 +48,8 @@ class landmarksDataSet :  // public PointMapType
 private:
   typedef enum { eof, bad, shortLine } err_flags;
 public:
-  typedef itk::Point<double, 3>            PointType;
-  typedef std::map<std::string, PointType> Superclass;
+  using PointType = itk::Point<double, 3>;
+  using Superclass = std::map<std::string, PointType>;
 
   landmarksDataSet()
   {

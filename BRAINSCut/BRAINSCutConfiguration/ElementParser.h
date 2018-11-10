@@ -36,7 +36,7 @@ class ElementParser :
   public ElementContainer
 {
 private:
-  typedef ElementContainer SuperClass;
+  using SuperClass = ElementContainer;
   void toLower(std::string & s) const
   {
     for( unsigned i = 0; i < s.size(); i++ )
@@ -46,10 +46,10 @@ private:
   }
 
 public:
-  typedef std::map<std::string, ElementContainer *> MapType;
-  typedef MapType::iterator                         iterator;
+  using MapType = std::map<std::string, ElementContainer *>;
+  using iterator = MapType::iterator;
   typedef MapType::const_iterator                   const_iterator;
-  typedef std::vector<std::string>                  StringVectorType;
+  using StringVectorType = std::vector<std::string>;
 
   ElementParser(const char *name) :
     ElementContainer(name)

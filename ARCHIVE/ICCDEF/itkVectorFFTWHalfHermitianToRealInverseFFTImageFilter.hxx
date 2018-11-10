@@ -89,7 +89,7 @@ VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, Dimension>::GenerateO
   MetaDataDictionary & InputDic =
     const_cast<MetaDataDictionary &>(inputPtr->GetMetaDataDictionary() );
 
-  typedef typename TInputImageType::SizeType::SizeValueType SizeScalarType;
+  using SizeScalarType = typename TInputImageType::SizeType::SizeValueType;
 
   SizeScalarType x = 0;
 
@@ -214,7 +214,7 @@ VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, VDimension>::Generate
          this->m_OutputBuffer,
          total_outputSize * sizeof(float) * 3);
 
-  typedef ImageRegionIterator<TOutputImageType> IteratorType;
+  using IteratorType = ImageRegionIterator<TOutputImageType>;
 
   IteratorType it(outputPtr, outputPtr->GetLargestPossibleRegion() );
 

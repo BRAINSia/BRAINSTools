@@ -31,37 +31,37 @@ extern sitk::Image SimpleOpWeightedL2(sitk::Image & norm01_lowres, sitk::Image &
 #endif
 
 
-//typedef double PrecisionType;
-typedef float PrecisionType;
+//using PrecisionType = double;
+using PrecisionType = float;
 
 #define CURR_IMG_DIM 3
 
-typedef itk::Image<PrecisionType, CURR_IMG_DIM> FloatImageType;
-typedef itk::ImageBase<CURR_IMG_DIM> ImageBaseType;
+using FloatImageType = itk::Image<PrecisionType, CURR_IMG_DIM>;
+using ImageBaseType = itk::ImageBase<CURR_IMG_DIM>;
 
 //#define USE_HALF_FFTW
 #ifdef USE_HALF_FFTW
-//typedef itk::FFTWRealToHalfHermitianForwardFFTImageFilter< FloatImageType > FloatFFTWFullFFTType;
-//typedef itk::FFTWHalfHermitianToRealInverseFFTImageFilter< FloatFFTWFullFFTType::OutputImageType > FloatFFTWFullIFFTType;
-//typedef FloatFFTWFullFFTType::OutputImageType HalfHermetianImageType;
+//using FloatFFTWFullFFTType = itk::FFTWRealToHalfHermitianForwardFFTImageFilter< FloatImageType >;
+//using FloatFFTWFullIFFTType = itk::FFTWHalfHermitianToRealInverseFFTImageFilter< FloatFFTWFullFFTType::OutputImageType >;
+//using HalfHermetianImageType = FloatFFTWFullFFTType::OutputImageType;
 #else
-typedef itk::FFTWForwardFFTImageFilter< FloatImageType > FloatFFTWFullFFTType;
-typedef itk::FFTWInverseFFTImageFilter< FloatFFTWFullFFTType::OutputImageType > FloatFFTWFullIFFTType;
-typedef FloatFFTWFullFFTType::OutputImageType HalfHermetianImageType;
+using FloatFFTWFullFFTType = itk::FFTWForwardFFTImageFilter< FloatImageType >;
+using FloatFFTWFullIFFTType = itk::FFTWInverseFFTImageFilter< FloatFFTWFullFFTType::OutputImageType >;
+using HalfHermetianImageType = FloatFFTWFullFFTType::OutputImageType;
 
-typedef itk::FFTWComplexToComplexFFTImageFilter< FloatFFTWFullFFTType::OutputImageType > ComplexFFTWFullIFFT;
-typedef itk::ComplexToRealImageFilter< FloatFFTWFullFFTType::OutputImageType, FloatImageType> C2FType;
+using ComplexFFTWFullIFFT = itk::FFTWComplexToComplexFFTImageFilter< FloatFFTWFullFFTType::OutputImageType >;
+using C2FType = itk::ComplexToRealImageFilter< FloatFFTWFullFFTType::OutputImageType, FloatImageType>;
 #endif
 
-typedef itk::CovariantVector < PrecisionType, CURR_IMG_DIM >  CVType;
-typedef itk::Image< CVType, CURR_IMG_DIM > CVImageType;
-typedef rtk::ForwardDifferenceGradientImageFilter<FloatImageType,PrecisionType ,PrecisionType, CVImageType> GradientType;
-typedef rtk::BackwardDifferenceDivergenceImageFilter<CVImageType,FloatImageType > DivergenceType;
+using CVType = itk::CovariantVector < PrecisionType, CURR_IMG_DIM >;
+using CVImageType = itk::Image< CVType, CURR_IMG_DIM >;
+using GradientType = rtk::ForwardDifferenceGradientImageFilter<FloatImageType,PrecisionType ,PrecisionType, CVImageType>;
+using DivergenceType = rtk::BackwardDifferenceDivergenceImageFilter<CVImageType,FloatImageType >;
 
-typedef itk::VectorImage< PrecisionType, CURR_IMG_DIM > VarVecImageType;
-typedef VarVecImageType::PixelType VarVecType;
-typedef rtk::ForwardDifferenceGradientImageFilter<FloatImageType,PrecisionType ,PrecisionType, VarVecImageType> GradientVarVecType;
-typedef rtk::BackwardDifferenceDivergenceImageFilter<VarVecImageType,FloatImageType > DivergenceVarVecType;
+using VarVecImageType = itk::VectorImage< PrecisionType, CURR_IMG_DIM >;
+using VarVecType = VarVecImageType::PixelType;
+using GradientVarVecType = rtk::ForwardDifferenceGradientImageFilter<FloatImageType,PrecisionType ,PrecisionType, VarVecImageType>;
+using DivergenceVarVecType = rtk::BackwardDifferenceDivergenceImageFilter<VarVecImageType,FloatImageType >;
 
 template<typename ImageType>
 typename ImageType::Pointer CreateEmptyImage(typename itk::ImageBase<ImageType::ImageDimension> * in)

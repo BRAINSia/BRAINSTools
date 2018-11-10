@@ -37,10 +37,10 @@
 
 namespace LandmarkIO
 {
-typedef vnl_matrix<double>                   MatrixType;
-typedef itk::VersorRigid3DTransform<double>  VersorTransformType;
-typedef VersorTransformType::MatrixType      VersorTransformMatrixType;
-typedef itk::ImageDuplicator<SImageType>     DuplicatorType;
+using MatrixType = vnl_matrix<double>;
+using VersorTransformType = itk::VersorRigid3DTransform<double>;
+using VersorTransformMatrixType = VersorTransformType::MatrixType;
+using DuplicatorType = itk::ImageDuplicator<SImageType>;
 }
 
 extern void MakeBrandeddebugImage(SImageType::ConstPointer in, const landmarksConstellationModelIO & mDef,

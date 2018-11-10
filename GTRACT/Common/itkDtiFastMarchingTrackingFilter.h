@@ -76,10 +76,10 @@ public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
 
   /** Standard class typdedefs. */
-  typedef DtiFastMarchingTrackingFilter                                                      Self;
-  typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
-  typedef SmartPointer<Self>                                                                 Pointer;
-  typedef SmartPointer<const Self>                                                           ConstPointer;
+  using Self = DtiFastMarchingTrackingFilter;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -88,31 +88,30 @@ public:
   itkTypeMacro(DtiFastMarchingTrackingFilter, itk::DtiTrackingFilterBase);
 
   /** Typedef support of input Cost Image Type */
-  typedef TCostImageType                        CostImageType;
-  typedef typename CostImageType::Pointer       CostImagePointer;
-  typedef typename CostImageType::ConstPointer  CostImageConstPointer;
-  typedef typename CostImageType::RegionType    CostImageRegionType;
-  typedef typename CostImageType::SizeType      CostImageSizeType;
-  typedef typename CostImageType::SpacingType   CostImageSpacingType;
-  typedef typename CostImageType::PointType     CostImagePointType;
-  typedef typename CostImageType::PixelType     CostImagePixelType;
-  typedef typename CostImageType::DirectionType CostImageDirectionType;
+  using CostImageType = TCostImageType;
+  using CostImagePointer = typename CostImageType::Pointer;
+  using CostImageConstPointer = typename CostImageType::ConstPointer;
+  using CostImageRegionType = typename CostImageType::RegionType;
+  using CostImageSizeType = typename CostImageType::SizeType;
+  using CostImageSpacingType = typename CostImageType::SpacingType;
+  using CostImagePointType = typename CostImageType::PointType;
+  using CostImagePixelType = typename CostImageType::PixelType;
+  using CostImageDirectionType = typename CostImageType::DirectionType;
 
-  typedef typename itk::LinearInterpolateImageFunction<CostImageType, double> CostIPType;
-  typedef typename CostIPType::ContinuousIndexType                            ContinuousIndexType;
+  using CostIPType = typename itk::LinearInterpolateImageFunction<CostImageType, double>;
+  using ContinuousIndexType = typename CostIPType::ContinuousIndexType;
 
   // Setup the CostFunction
 
-  typedef itk::FastMarchingCostFunction    CostFunctionType;
-  typedef CostFunctionType::Pointer        CostFunctionPointer;
-  typedef CostFunctionType::ParametersType ParametersType;
+  using CostFunctionType = itk::FastMarchingCostFunction;
+  using CostFunctionPointer = CostFunctionType::Pointer;
+  using ParametersType = CostFunctionType::ParametersType;
 
-  typedef itk::RegularStepGradientDescentOptimizer OptimizerType;
-  typedef OptimizerType::ScalesType                ScalesType;
-  typedef OptimizerType::DerivativeType            DerivativeType;
+  using OptimizerType = itk::RegularStepGradientDescentOptimizer;
+  using ScalesType = OptimizerType::ScalesType;
+  using DerivativeType = OptimizerType::DerivativeType;
 
-  typedef typename std::list<ContinuousIndexType>
-    StartPointsListType;
+  using StartPointsListType = typename std::list<ContinuousIndexType>;
 
   itkSetObjectMacro( CostFN, CostFunctionType );
   itkGetConstObjectMacro( CostFN, CostFunctionType );

@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef float AnisotropyPixelType;
+  using AnisotropyPixelType = float;
 
-  typedef itk::Image<AnisotropyPixelType, 3>        AnisotropyImageType;
-  typedef itk::ImageFileReader<AnisotropyImageType> AnisotropyImageReaderType;
+  using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
+  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName( inputAnisotropyVolume );
 
@@ -106,10 +106,10 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef signed short PixelType;
+  using PixelType = signed short;
 
-  typedef itk::Image<PixelType, 3>        ImageType;
-  typedef itk::ImageFileReader<ImageType> AnatomicalImageReaderType;
+  using ImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName( inputAnatomicalVolume );
 
@@ -124,11 +124,11 @@ int main(int argc, char *argv[])
     }
 
   // Read the transform
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
-  typedef itk::Image<float, 3>                                               AnisotropyImageType;
-  typedef itk::ResampleImageFilter<AnisotropyImageType, AnisotropyImageType> ResampleFilterType;
+  using AnisotropyImageType = itk::Image<float, 3>;
+  using ResampleFilterType = itk::ResampleImageFilter<AnisotropyImageType, AnisotropyImageType>;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
     {
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
   AnisotropyImageType::Pointer resampledImage = resample->GetOutput();
   resampledImage->SetMetaDataDictionary( anatomicalReader->GetOutput()->GetMetaDataDictionary() );
 
-  typedef itk::ImageFileWriter<AnisotropyImageType> ImageFileWriterType;
+  using ImageFileWriterType = itk::ImageFileWriter<AnisotropyImageType>;
   ImageFileWriterType::Pointer ImageWriter =  ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName( outputVolume );

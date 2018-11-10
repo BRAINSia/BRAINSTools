@@ -90,8 +90,8 @@ void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
   OutputPtr->CopyInformation(InputImage);
   OutputPtr->Allocate();
 
-  typedef ImageRegionConstIterator<TInputImage> InputIterator;
-  typedef ImageRegionIterator<TOutputImage>     OutputIterator;
+  using InputIterator = ImageRegionConstIterator<TInputImage>;
+  using OutputIterator = ImageRegionIterator<TOutputImage>;
 
   OutputIterator outItr( OutputPtr, OutputPtr->GetLargestPossibleRegion() );
 

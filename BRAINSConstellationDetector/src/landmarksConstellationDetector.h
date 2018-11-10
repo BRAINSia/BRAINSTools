@@ -43,9 +43,9 @@
 
 class landmarksConstellationDetector
 {
-  typedef vnl_matrix<double>                           MatrixType;
-  typedef vnl_vector<double>                           VectorType;
-  typedef std::map<std::string, float>                 ValMapType;
+  using MatrixType = vnl_matrix<double>;
+  using VectorType = vnl_vector<double>;
+  using ValMapType = std::map<std::string, float>;
 public:
   landmarksConstellationDetector() :
     m_mspQualityLevel(1),
@@ -340,6 +340,6 @@ private:
 //TODO:  Move out of class all together
 void WriteManualFixFiles(const std::string &EMSP_Fiducial_file_name, SImageType * const mspVolume,
                          const std::string &resultDir, const LandmarksMapType & errorLmks,
-                         const std::string & failureMessage, const bool throwException) ;
+                         const std::string & failureMessage, const bool throwException);
 
 #endif // __landmarksConstellationDetector__h

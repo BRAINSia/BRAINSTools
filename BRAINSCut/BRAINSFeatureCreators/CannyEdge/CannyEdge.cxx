@@ -64,15 +64,15 @@ int main(int argc, char *argv[])
   std::cout << "UpperThreshold = " << upperThreshold << std::endl;
   std::cout << "LowerThreshold = " << lowerThreshold << std::endl;
 
-  typedef float CharPixelType;            //  IO
-  typedef float RealPixelType;            //  Operations
+  using CharPixelType = float;            //  IO
+  using RealPixelType = float;            //  Operations
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<CharPixelType, Dimension> CharImageType;
-  typedef itk::Image<RealPixelType, Dimension> RealImageType;
+  using CharImageType = itk::Image<CharPixelType, Dimension>;
+  using RealImageType = itk::Image<RealPixelType, Dimension>;
 
-  typedef itk::ImageFileReader<CharImageType> ReaderType;
-  typedef itk::ImageFileWriter<CharImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<CharImageType>;
+  using WriterType = itk::ImageFileWriter<CharImageType>;
 
   //  Software Guide : BeginLatex
   //  This filter operates on image of pixel type float. It is then necessary
@@ -83,10 +83,10 @@ int main(int argc, char *argv[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::CastImageFilter<CharImageType, RealImageType> CastToRealFilterType;
+  using CastToRealFilterType = itk::CastImageFilter<CharImageType, RealImageType>;
   // Software Guide : EndCodeSnippet
 
-  typedef itk::RescaleIntensityImageFilter<RealImageType, CharImageType> RescaleFilter;
+  using RescaleFilter = itk::RescaleIntensityImageFilter<RealImageType, CharImageType>;
 
   //  Software Guide : BeginLatex
   //  The \doxygen{CannyEdgeDetectionImageFilter} is instantiated using the
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
   //  \index{itk::CannyEdgeDetectionImageFilter|textbf}
   //  Software Guide : EndLatex
 
-  typedef itk::CannyEdgeDetectionImageFilter<RealImageType, RealImageType> CannyFilter;
+  using CannyFilter = itk::CannyEdgeDetectionImageFilter<RealImageType, RealImageType>;
 
   // Setting the IO
 

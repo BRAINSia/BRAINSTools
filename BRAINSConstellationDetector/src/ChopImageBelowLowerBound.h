@@ -58,7 +58,7 @@ void ChopImageBelowLowerBound(typename ImageType::Pointer inputVolume,
 {
   // And now, we are going to chop out everything inferior to
   // PhysicalLowerBound:
-  typedef typename itk::ImageRegionIterator<ImageType> IteratorType;
+  using IteratorType = typename itk::ImageRegionIterator<ImageType>;
   IteratorType ItPixel( inputVolume, inputVolume->GetLargestPossibleRegion() );
   typename ImageType::PointType PixelPhysicalPoint;
   while( !ItPixel.IsAtEnd() )

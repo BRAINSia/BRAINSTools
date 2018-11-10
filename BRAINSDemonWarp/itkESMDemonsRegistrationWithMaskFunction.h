@@ -65,13 +65,13 @@ class ESMDemonsRegistrationWithMaskFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ESMDemonsRegistrationWithMaskFunction);
 
-  /** Standard class typedefs. */
-  typedef ESMDemonsRegistrationWithMaskFunction Self;
-  typedef PDEDeformableRegistrationFunction<
-      TFixedImage, TMovingImage, TDisplacementField>    Superclass;
+  /** Standard class type alias. */
+  using Self = ESMDemonsRegistrationWithMaskFunction;
+  using Superclass = PDEDeformableRegistrationFunction<
+      TFixedImage, TMovingImage, TDisplacementField>;
 
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -81,20 +81,20 @@ public:
                PDEDeformableRegistrationFunction);
 
   /** MovingImage image type. */
-  typedef typename Superclass::MovingImageType    MovingImageType;
-  typedef typename Superclass::MovingImagePointer MovingImagePointer;
-  typedef typename MovingImageType::PixelType     MovingPixelType;
+  using MovingImageType = typename Superclass::MovingImageType;
+  using MovingImagePointer = typename Superclass::MovingImagePointer;
+  using MovingPixelType = typename MovingImageType::PixelType;
 
   /** FixedImage image type. */
-  typedef typename Superclass::FixedImageType    FixedImageType;
-  typedef typename Superclass::FixedImagePointer FixedImagePointer;
-  typedef typename FixedImageType::IndexType     IndexType;
-  typedef typename FixedImageType::SizeType      SizeType;
-  typedef typename FixedImageType::SpacingType   SpacingType;
-  typedef typename FixedImageType::DirectionType DirectionType;
+  using FixedImageType = typename Superclass::FixedImageType;
+  using FixedImagePointer = typename Superclass::FixedImagePointer;
+  using IndexType = typename FixedImageType::IndexType;
+  using SizeType = typename FixedImageType::SizeType;
+  using SpacingType = typename FixedImageType::SpacingType;
+  using DirectionType = typename FixedImageType::DirectionType;
 
   /** Deformation field type. */
-  typedef typename Superclass::DisplacementFieldType DisplacementFieldType;
+  using DisplacementFieldType = typename Superclass::DisplacementFieldType;
   typedef typename Superclass::DisplacementFieldTypePointer
     DisplacementFieldTypePointer;
 
@@ -102,38 +102,37 @@ public:
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
 
   /** Inherit some enums from the superclass. */
-  typedef typename Superclass::PixelType        PixelType;
-  typedef typename Superclass::RadiusType       RadiusType;
-  typedef typename Superclass::NeighborhoodType NeighborhoodType;
-  typedef typename Superclass::FloatOffsetType  FloatOffsetType;
-  typedef typename Superclass::TimeStepType     TimeStepType;
+  using PixelType = typename Superclass::PixelType;
+  using RadiusType = typename Superclass::RadiusType;
+  using NeighborhoodType = typename Superclass::NeighborhoodType;
+  using FloatOffsetType = typename Superclass::FloatOffsetType;
+  using TimeStepType = typename Superclass::TimeStepType;
 
   /** Interpolator type. */
-  typedef double CoordRepType;
-  typedef InterpolateImageFunction<
-      MovingImageType, CoordRepType>                   InterpolatorType;
-  typedef typename InterpolatorType::Pointer   InterpolatorPointer;
-  typedef typename InterpolatorType::PointType PointType;
-  typedef LinearInterpolateImageFunction<
-      MovingImageType, CoordRepType>                   DefaultInterpolatorType;
+  using CoordRepType = double;
+  using InterpolatorType = InterpolateImageFunction<
+      MovingImageType, CoordRepType>;
+  using InterpolatorPointer = typename InterpolatorType::Pointer;
+  using PointType = typename InterpolatorType::PointType;
+  using DefaultInterpolatorType = LinearInterpolateImageFunction<
+      MovingImageType, CoordRepType>;
 
   /** Warper type */
-  typedef WarpImageFilter<
+  using WarperType = WarpImageFilter<
       MovingImageType,
-      MovingImageType, DisplacementFieldType>           WarperType;
+      MovingImageType, DisplacementFieldType>;
 
-  typedef typename WarperType::Pointer WarperPointer;
+  using WarperPointer = typename WarperType::Pointer;
 
   /** Covariant vector type. */
-  typedef CovariantVector<double, Self::ImageDimension> CovariantVectorType;
+  using CovariantVectorType = CovariantVector<double, Self::ImageDimension>;
 
   /** Fixed image gradient calculator type. */
-  typedef CentralDifferenceImageFunction<FixedImageType> GradientCalculatorType;
-  typedef typename GradientCalculatorType::Pointer       GradientCalculatorPointer;
+  using GradientCalculatorType = CentralDifferenceImageFunction<FixedImageType>;
+  using GradientCalculatorPointer = typename GradientCalculatorType::Pointer;
 
   /** Moving image gradient (unwarped) calculator type. */
-  typedef CentralDifferenceImageFunction<MovingImageType, CoordRepType>
-    MovingImageGradientCalculatorType;
+  using MovingImageGradientCalculatorType = CentralDifferenceImageFunction<MovingImageType, CoordRepType>;
   typedef typename MovingImageGradientCalculatorType::Pointer
     MovingImageGradientCalculatorPointer;
 
@@ -233,10 +232,10 @@ public:
     return m_UseGradientType;
   }
 
-  typedef Point<CoordRepType,
-                Self::ImageDimension>         MovingImagePointType;
-  typedef SpatialObject<Self::ImageDimension> MaskType;
-  typedef typename MaskType::Pointer                            MaskPointer;
+  using MovingImagePointType = Point<CoordRepType,
+                Self::ImageDimension>;
+  using MaskType = SpatialObject<Self::ImageDimension>;
+  using MaskPointer = typename MaskType::Pointer;
 
   virtual void SetMovingImageMask(MaskType *mask)
   {
@@ -267,7 +266,7 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** FixedImage image neighborhood iterator type. */
-  typedef ConstNeighborhoodIterator<FixedImageType> FixedImageNeighborhoodIteratorType;
+  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator<FixedImageType>;
 
   /** A global data type for this class of equation. Used to store
    * iterators for the fixed image. */

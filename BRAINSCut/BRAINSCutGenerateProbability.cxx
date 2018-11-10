@@ -50,7 +50,7 @@ BRAINSCutGenerateProbability
 inline WorkingImageType::Pointer
 AddImageToAccumulator( WorkingImageType::Pointer & image, WorkingImageType::Pointer & accumulator )
 {
-  typedef itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType>;
   ThresholdFilterType::Pointer threshold = ThresholdFilterType::New();
 
   threshold->SetInput( image );
@@ -59,7 +59,7 @@ AddImageToAccumulator( WorkingImageType::Pointer & image, WorkingImageType::Poin
   threshold->SetLowerThreshold( 0.1F);
   threshold->Update();
 
-  typedef itk::AddImageFilter<WorkingImageType, WorkingImageType, WorkingImageType> AddType;
+  using AddType = itk::AddImageFilter<WorkingImageType, WorkingImageType, WorkingImageType>;
   AddType::Pointer adder = AddType::New();
 
   adder->SetInput1( threshold->GetOutput() );

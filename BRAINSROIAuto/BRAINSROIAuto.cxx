@@ -55,9 +55,9 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSROIAutoCLP.h"
 #include "BRAINSThreadControl.h"
-typedef itk::Image<signed int, 3>    VolumeImageType;
-typedef itk::Image<unsigned char, 3> VolumeMaskType;
-typedef itk::SpatialObject<3>        SOImageMaskType;
+using VolumeImageType = itk::Image<signed int, 3>;
+using VolumeMaskType = itk::Image<unsigned char, 3>;
+using SOImageMaskType = itk::SpatialObject<3>;
 
 /**
   * This file contains utility functions that are common to a few of the
@@ -72,10 +72,10 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
                                const bool MaskImage,
                                const bool CropImage)
 {
-  typedef typename itk::Image<PixelType, VolumeImageType::ImageDimension> WriteOutImageType;
+  using WriteOutImageType = typename itk::Image<PixelType, VolumeImageType::ImageDimension>;
   typename WriteOutImageType::Pointer finalOutput;
     {
-    typedef itk::CastImageFilter<VolumeImageType, WriteOutImageType> CasterType;
+    using CasterType = itk::CastImageFilter<VolumeImageType, WriteOutImageType>;
     typename CasterType::Pointer myCaster = CasterType::New();
     myCaster->SetInput(image);
     myCaster->Update();
@@ -83,7 +83,7 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
     }
   if( MaskImage )
     {
-    typedef typename itk::MultiplyImageFilter<VolumeMaskType, WriteOutImageType, WriteOutImageType> MultiplierType;
+    using MultiplierType = typename itk::MultiplyImageFilter<VolumeMaskType, WriteOutImageType, WriteOutImageType>;
 
     typename MultiplierType::Pointer clipper = MultiplierType::New();
     clipper->SetInput1(mask);
@@ -127,7 +127,7 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
       }
     VolumeMaskType::RegionType desiredRegion(minIndex, desiredSize);
 
-    typedef itk::ExtractImageFilter<WriteOutImageType, WriteOutImageType> ExtractorType;
+    using ExtractorType = itk::ExtractImageFilter<WriteOutImageType, WriteOutImageType>;
     typename ExtractorType::Pointer myExtractor = ExtractorType::New();
     myExtractor->SetExtractionRegion(desiredRegion);
     myExtractor->SetInput(finalOutput);
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
   VolumeImageType::Pointer ImageInput =
     itkUtil::ReadImage<VolumeImageType>(inputVolume);
 
-  typedef itk::BRAINSROIAutoImageFilter<VolumeImageType, VolumeMaskType> ROIAutoType;
+  using ROIAutoType = itk::BRAINSROIAutoImageFilter<VolumeImageType, VolumeMaskType>;
   ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
   ROIFilter->SetInput(ImageInput);
   ROIFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);

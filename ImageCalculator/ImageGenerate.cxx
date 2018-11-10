@@ -38,8 +38,8 @@ enum PixelTypes
   Crap
   };
 
-typedef std::complex<float>          ThreeVectorComplexPixelType;
-typedef itk::RGBPixel<unsigned char> RGBPixelType;
+using ThreeVectorComplexPixelType = std::complex<float>;
+using RGBPixelType = itk::RGBPixel<unsigned char>;
 
 std::map<PixelTypes, const char *> typenames;
 void typenamesInit()
@@ -200,13 +200,13 @@ int MakeImage(const std::string & filename,
               const unsigned tdim,
               const PixelType value)
 {
-  typedef typename itk::Image<PixelType, dim>          ImageType;
-  typedef typename ImageType::Pointer                  ImagePointerType;
-  typedef typename ImageType::RegionType               RegionType;
-  typedef typename RegionType::SizeType                SizeType;
-  typedef typename itk::ImageRegionIterator<ImageType> IteratorType;
-  typedef itk::ImageFileWriter<ImageType>              ImageFileWriterType;
-  typedef typename ImageFileWriterType::Pointer        ImageFileWriterPointerType;
+  using ImageType = typename itk::Image<PixelType, dim>;
+  using ImagePointerType = typename ImageType::Pointer;
+  using RegionType = typename ImageType::RegionType;
+  using SizeType = typename RegionType::SizeType;
+  using IteratorType = typename itk::ImageRegionIterator<ImageType>;
+  using ImageFileWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageFileWriterPointerType = typename ImageFileWriterType::Pointer;
   try
     {
     SizeType size;

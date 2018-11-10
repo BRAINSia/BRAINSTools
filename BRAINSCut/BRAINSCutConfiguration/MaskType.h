@@ -24,7 +24,7 @@
 class MaskType : public ElementParser
 {
 public:
-  typedef ElementParser SuperClass;
+  using SuperClass = ElementParser;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);

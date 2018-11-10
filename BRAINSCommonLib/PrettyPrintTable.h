@@ -38,8 +38,8 @@ class PrettyPrintTable
 {
 public:
 private:
-  typedef std::vector<std::string> rowType;
-  typedef std::vector<rowType>     tableType;
+  using rowType = std::vector<std::string>;
+  using tableType = std::vector<rowType>;
 
   tableType    m_Table;
   unsigned int m_Pad;
@@ -124,7 +124,7 @@ public:
 
   void Print(std::ostream & output)
   {
-    typedef std::vector<unsigned int> ColWidthsType;
+    using ColWidthsType = std::vector<unsigned int>;
     ColWidthsType colWidths(m_Table[0].size(), 0);
     // find largest columns
     for( unsigned i = 0; i < m_Table.size(); ++i )
@@ -168,7 +168,7 @@ public:
           // print column fill + pad
           limit = colWidths[j] + this->m_Pad;
           }
-        for( ; k < limit; ++k )
+        for(; k < limit; ++k )
           {
           output << " ";
           }

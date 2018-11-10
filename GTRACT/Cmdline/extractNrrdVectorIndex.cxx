@@ -91,11 +91,11 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  typedef signed short                   PixelType;
-  typedef itk::VectorImage<PixelType, 3> NrrdImageType;
+  using PixelType = signed short;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
 
-  typedef itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   FileReaderType::Pointer reader = FileReaderType::New();
   reader->SetFileName( inputVolume );
   reader->Update();
@@ -108,9 +108,9 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  typedef itk::Image<PixelType, 3>                                                IndexImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType> VectorSelectFilterType;
-  typedef VectorSelectFilterType::Pointer                                         VectorSelectFilterPointer;
+  using IndexImageType = itk::Image<PixelType, 3>;
+  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
+  using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
   VectorSelectFilterPointer SelectIndexImageFilter = VectorSelectFilterType::New();
   SelectIndexImageFilter->SetIndex( vectorIndex );
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 #undef EncapsulateMD // (image, flag)
   // else, leave it AsAcquired.
 
-  typedef itk::ImageFileWriter<IndexImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<IndexImageType>;
   WriterType::Pointer imageWriter = WriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetInput( indexImage );

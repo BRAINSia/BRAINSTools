@@ -66,18 +66,18 @@ class GtractInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  /** Standard class typedefs. */
-  typedef GtractInverseDisplacementFieldImageFilter     Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  /** Standard class type alias. */
+  using Self = GtractInverseDisplacementFieldImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef TInputImage                           InputImageType;
-  typedef typename InputImageType::Pointer      InputImagePointer;
-  typedef typename InputImageType::ConstPointer InputImageConstPointer;
-  typedef typename InputImageType::RegionType   InputImageRegionType;
-  typedef TOutputImage                          OutputImageType;
-  typedef typename OutputImageType::Pointer     OutputImagePointer;
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -88,33 +88,33 @@ public:
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
 
-  /** Transform typedef.
+  /** Transform type alias.
    *
    * \todo Check that input and output images have the same number of
      * dimensions; this is required for consistency.  */
-  typedef KernelTransform<
-      double, Self::ImageDimension> KernelTransformType;
-  typedef typename KernelTransformType::Pointer KernelTransformPointerType;
+  using KernelTransformType = KernelTransform<
+      double, Self::ImageDimension>;
+  using KernelTransformPointerType = typename KernelTransformType::Pointer;
 
-  /** Image size typedef. */
-  typedef typename OutputImageType::SizeType SizeType;
+  /** Image size type alias. */
+  using SizeType = typename OutputImageType::SizeType;
 
-  /** Image index typedef. */
-  typedef typename OutputImageType::IndexType IndexType;
+  /** Image index type alias. */
+  using IndexType = typename OutputImageType::IndexType;
 
-  /** Image pixel value typedef. */
-  typedef typename TOutputImage::PixelType    OutputPixelType;
-  typedef typename OutputPixelType::ValueType OutputPixelComponentType;
+  /** Image pixel value type alias. */
+  using OutputPixelType = typename TOutputImage::PixelType;
+  using OutputPixelComponentType = typename OutputPixelType::ValueType;
 
   /** Typedef to describe the output image region type. */
-  typedef typename TOutputImage::RegionType OutputImageRegionType;
+  using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** Image spacing typedef */
-  typedef typename TOutputImage::SpacingType SpacingType;
-  typedef typename TOutputImage::PointType   OriginPointType;
+  /** Image spacing type alias */
+  using SpacingType = typename TOutputImage::SpacingType;
+  using OriginPointType = typename TOutputImage::PointType;
 
-  /** Image direction typedef */
-  typedef typename TOutputImage::DirectionType DirectionType;
+  /** Image direction type alias */
+  using DirectionType = typename TOutputImage::DirectionType;
 
   /** Set the coordinate transformation.
    * Set the KernelBase spline used for resampling the deformation grid.

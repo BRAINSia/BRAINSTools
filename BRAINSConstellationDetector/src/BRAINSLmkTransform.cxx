@@ -43,12 +43,12 @@ class BCDThinPlateSplineKernelTransform :
   public itk::ThinPlateSplineKernelTransform<TScalarType, NDimension>
 {
 public:
-  /** Standard class typedefs. */
-  typedef BCDThinPlateSplineKernelTransform Self;
-  typedef itk::ThinPlateSplineKernelTransform<TScalarType,
-                                              NDimension> Superclass;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = BCDThinPlateSplineKernelTransform;
+  using Superclass = itk::ThinPlateSplineKernelTransform<TScalarType,
+                                              NDimension>;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -82,9 +82,9 @@ public:
  */
 
 constexpr unsigned int ImageDimension = 3;
-typedef short                                 PixelType;
-typedef itk::Image<PixelType, ImageDimension> ImageType;
-typedef std::vector<ImageType::PointType>     LandmarksVectorType;
+using PixelType = short;
+using ImageType = itk::Image<PixelType, ImageDimension>;
+using LandmarksVectorType = std::vector<ImageType::PointType>;
 
 LandmarksVectorType LoadLandmarks( std::string filename );
 
@@ -103,21 +103,21 @@ int main( int argc, char * argv[] )
                              << "inputMovingVolume, and inputReferenceVolume.");
     }
 
-  // typedefs
-  typedef double CoordinateRepType;
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
-  typedef BCDThinPlateSplineKernelTransform<
-      CoordinateRepType, ImageDimension>           TPSTransformType;
-  typedef itk::AffineTransform<
-      CoordinateRepType, ImageDimension>           AffineTransformType;
-  typedef TPSTransformType::PointSetType PointSetType;
-  typedef itk::TransformFileWriter       TransformWriterType;
-  typedef PointSetType::PointIdentifier  PointIdType;
-  typedef itk::ResampleImageFilter<
-      ImageType, ImageType>                       ResamplerType;
-  typedef itk::LinearInterpolateImageFunction<
-      ImageType, double>                           InterpolatorType;
+  // type alias
+  using CoordinateRepType = double;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using TPSTransformType = BCDThinPlateSplineKernelTransform<
+      CoordinateRepType, ImageDimension>;
+  using AffineTransformType = itk::AffineTransform<
+      CoordinateRepType, ImageDimension>;
+  using PointSetType = TPSTransformType::PointSetType;
+  using TransformWriterType = itk::TransformFileWriter;
+  using PointIdType = PointSetType::PointIdentifier;
+  using ResamplerType = itk::ResampleImageFilter<
+      ImageType, ImageType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<
+      ImageType, double>;
 
   // Read in landmarks
   PointSetType::Pointer sourceLandmarks = PointSetType::New();

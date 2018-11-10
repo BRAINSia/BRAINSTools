@@ -70,10 +70,10 @@ int main(int argc, char *argv[])
     std::cout << "==============================================================" << std::endl;
     }
 
-  typedef signed short PixelType;
+  using PixelType = signed short;
 
-  typedef itk::Image<PixelType, 3>        ImageType;
-  typedef itk::ImageFileReader<ImageType> AnatomicalImageReaderType;
+  using ImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName( inputReferenceVolume );
   try
@@ -92,10 +92,10 @@ int main(int argc, char *argv[])
   std::cout << "Using Image: " << ExampleImage << std::endl;
 
   // Read the transform
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
-  typedef itk::InvertBSplineFilter InvertFilterType;
+  using InvertFilterType = itk::InvertBSplineFilter;
   std::cout << "Running Inversion using TPS" << std::endl;
   InvertFilterType::Pointer invertTransformFilter = InvertFilterType::New();
     {

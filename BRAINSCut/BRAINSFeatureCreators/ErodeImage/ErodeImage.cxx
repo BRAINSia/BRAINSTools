@@ -56,14 +56,14 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef float PixelType;
-  // typedef unsigned long       PixelType;
+  using PixelType = float;
+  // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension>   ImageType;
-  typedef itk::Image<char,  Dimension>        MaskImageType;
-  typedef itk::ImageFileReader<ImageType>     ReaderType;
-  typedef itk::ImageFileReader<MaskImageType> MaskReaderType;
+  using ImageType = itk::Image<PixelType,  Dimension>;
+  using MaskImageType = itk::Image<char,  Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
 
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -71,12 +71,12 @@ int main(int argc, char *argv[])
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  typedef itk::MaskImageFilter<ImageType, MaskImageType, ImageType> MaskFilterType;
+  using MaskFilterType = itk::MaskImageFilter<ImageType, MaskImageType, ImageType>;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  typedef itk::BinaryBallStructuringElement<PixelType, Dimension> StructuringElementType;
+  using StructuringElementType = itk::BinaryBallStructuringElement<PixelType, Dimension>;
 
-  typedef itk::GrayscaleErodeImageFilter<ImageType, ImageType, StructuringElementType> ErodeFilterType;
+  using ErodeFilterType = itk::GrayscaleErodeImageFilter<ImageType, ImageType, StructuringElementType>;
   ErodeFilterType::Pointer grayscaleErodeFilter = ErodeFilterType::New();
 
   StructuringElementType structuringElement;
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetFileName(outputVolume);

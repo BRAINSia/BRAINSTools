@@ -42,9 +42,9 @@ std::string globalResultsDir(".");       // A global variable to define where
 int globalImagedebugLevel(1000);         // A global variable to determine the
                                          // level of debugging to perform.
 
-typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > reflectionFunctorType;
+using reflectionFunctorType = Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> >;
 
-typedef itk::RecursiveGaussianImageFilter<SImageType, SImageType>  GaussianFilterType;
+using GaussianFilterType = itk::RecursiveGaussianImageFilter<SImageType, SImageType>;
 
 void DoMultiQualityReflection(SImageType::Pointer &image,
                               RigidTransformType::Pointer &Tmsp,
@@ -143,7 +143,7 @@ void CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string
 
     {
     itk::ImageRegionIteratorWithIndex<SImageType> mspIt( MSPImage, MSPImage->GetLargestPossibleRegion() );
-    for( ; !mspIt.IsAtEnd(); ++mspIt )
+    for(; !mspIt.IsAtEnd(); ++mspIt )
       {
       const SImageType::IndexType Index = mspIt.GetIndex();
       SImageType::PointType       Location;
@@ -174,7 +174,7 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
   SImageType::PointType CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
     {
     itk::ImageRegionIteratorWithIndex<SImageType> mspIt( MSPImage, MSPImage->GetLargestPossibleRegion() );
-    for( ; !mspIt.IsAtEnd(); ++mspIt )
+    for(; !mspIt.IsAtEnd(); ++mspIt )
       {
       const SImageType::IndexType Index = mspIt.GetIndex();
       SImageType::PointType       Location;
@@ -490,7 +490,7 @@ SImageType::Pointer CreateTestCenteredRotatedImage2(const RigidTransformType::Po
   return image_Point_TestRotated;
 }
 
-// typedef landmarksDataSet::PointType PointType;
+// using PointType = landmarksDataSet::PointType;
 
 void MakeLabelImage(SImageType::Pointer in,
                     const SImageType::PointType & RP,

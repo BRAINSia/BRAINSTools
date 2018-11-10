@@ -53,11 +53,11 @@ template <typename TImageType, typename TMaskType>
 class ScalarImagePortionToHistogramGenerator : public Object
 {
 public:
-  /** Standard typedefs */
-  typedef ScalarImagePortionToHistogramGenerator Self;
-  typedef Object                                 Superclass;
-  typedef SmartPointer<Self>                     Pointer;
-  typedef SmartPointer<const Self>               ConstPointer;
+  /** Standard type alias */
+  using Self = ScalarImagePortionToHistogramGenerator;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ScalarImagePortionToHistogramGenerator, Object);
@@ -65,20 +65,20 @@ public:
   /** standard New() method support */
   itkNewMacro(Self);
 
-  typedef TImageType                                  ImageType;
-  typedef typename TImageType::PixelType              PixelType;
-  typedef typename NumericTraits<PixelType>::RealType RealPixelType;
+  using ImageType = TImageType;
+  using PixelType = typename TImageType::PixelType;
+  using RealPixelType = typename NumericTraits<PixelType>::RealType;
 
-  typedef itk::Statistics::Histogram<double>   HistogramType;
-  typedef typename HistogramType::Pointer      HistogramPointer;
-  typedef typename HistogramType::ConstPointer HistogramConstPointer;
+  using HistogramType = itk::Statistics::Histogram<double>;
+  using HistogramPointer = typename HistogramType::Pointer;
+  using HistogramConstPointer = typename HistogramType::ConstPointer;
 
-  typedef itk::Statistics::ImageToListSampleFilter<ImageType, TMaskType> ListSampleGeneratorType;
-  typedef typename ListSampleGeneratorType::Pointer                      ListSampleGeneratorPointer;
-  typedef typename ListSampleGeneratorType::ListSampleType               ListSampleType;
+  using ListSampleGeneratorType = itk::Statistics::ImageToListSampleFilter<ImageType, TMaskType>;
+  using ListSampleGeneratorPointer = typename ListSampleGeneratorType::Pointer;
+  using ListSampleType = typename ListSampleGeneratorType::ListSampleType;
 
-  typedef itk::Statistics::SampleToHistogramFilter<ListSampleType, HistogramType> GeneratorType;
-  typedef typename GeneratorType::Pointer                                         GeneratorPointer;
+  using GeneratorType = itk::Statistics::SampleToHistogramFilter<ListSampleType, HistogramType>;
+  using GeneratorPointer = typename GeneratorType::Pointer;
 public:
 
   /** Triggers the Computation of the histogram */

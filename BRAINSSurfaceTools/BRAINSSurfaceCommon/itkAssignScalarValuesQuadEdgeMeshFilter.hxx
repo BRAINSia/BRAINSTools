@@ -122,7 +122,7 @@ AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>
 
   OutputPointDataContainerIterator outputDataItr = outputPointData->Begin();
 
-  typedef typename SourcePointDataContainer::ConstIterator SourcePointDataIterator;
+  using SourcePointDataIterator = typename SourcePointDataContainer::ConstIterator;
   SourcePointDataIterator sourceDataItr = sourcePointData->Begin();
   SourcePointDataIterator sourceDataEnd = sourcePointData->End();
 

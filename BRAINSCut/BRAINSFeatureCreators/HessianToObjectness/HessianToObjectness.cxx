@@ -59,16 +59,16 @@ int main( int argc, char* argv[] )
   }
 
   constexpr unsigned int Dimension = 3;
-  typedef float PixelType;
-  typedef itk::Image< PixelType, Dimension > ImageType;
-  typedef itk::SymmetricSecondRankTensor< double, Dimension > HessianPixelType;
+  using PixelType = float;
+  using ImageType = itk::Image< PixelType, Dimension >;
+  using HessianPixelType = itk::SymmetricSecondRankTensor< double, Dimension >;
 
-  typedef itk::Image< HessianPixelType, Dimension > HessianImageType;
-  typedef itk::ImageFileReader< ImageType > ReaderType;
+  using HessianImageType = itk::Image< HessianPixelType, Dimension >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName );
 
-  typedef itk::HessianToObjectnessMeasureImageFilter< HessianImageType, ImageType > ObjectnessFilterType;
+  using ObjectnessFilterType = itk::HessianToObjectnessMeasureImageFilter< HessianImageType, ImageType >;
   ObjectnessFilterType::Pointer objectnessFilter = ObjectnessFilterType::New();
   objectnessFilter->SetBrightObject( bright );
   objectnessFilter->SetScaleObjectnessMeasure( false );
@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
   objectnessFilter->SetGamma( gamma );
   objectnessFilter->SetObjectDimension(structure);
 
-  typedef itk::MultiScaleHessianBasedMeasureImageFilter< ImageType, HessianImageType, ImageType > MultiScaleEnhancementFilterType;
+  using MultiScaleEnhancementFilterType = itk::MultiScaleHessianBasedMeasureImageFilter< ImageType, HessianImageType, ImageType >;
   MultiScaleEnhancementFilterType::Pointer multiScaleEnhancementFilter =
   MultiScaleEnhancementFilterType::New();
   multiScaleEnhancementFilter->SetInput( reader->GetOutput() );
@@ -88,7 +88,7 @@ int main( int argc, char* argv[] )
   multiScaleEnhancementFilter->SetNumberOfSigmaSteps( numberOfSigmaSteps );
   multiScaleEnhancementFilter->Update();
 
-  typedef itk::ImageFileWriter< ImageType > WriterType;
+  using WriterType = itk::ImageFileWriter< ImageType >;
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName );
   writer->SetInput( multiScaleEnhancementFilter->GetOutput() );

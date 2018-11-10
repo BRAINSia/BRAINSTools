@@ -48,7 +48,7 @@ defineTemplateIndexLocations
   const float h,
   std::vector<SImageType::PointType::VectorType> & indexLocations)
 {
-  typedef SImageType::PointType::VectorType::ComponentType CoordType;
+  using CoordType = SImageType::PointType::VectorType::ComponentType;
 
   // Reserve space that will be needed
   indexLocations.reserve( static_cast<unsigned int>( 4 * r * r * h ) );
@@ -77,24 +77,24 @@ defineTemplateIndexLocations
 class landmarksConstellationModelIO : public landmarksConstellationModelBase
 {
 private:
-  typedef landmarksConstellationModelIO Self;
-  typedef enum { readFail, writeFail }  ioErr;
+  using Self = landmarksConstellationModelIO;
+  using ioErr = enum { readFail, writeFail };
   typedef enum { file_signature = 0x12345678,
                  swapped_file_signature = 0x78563412 } fileSig;
 public:
-  typedef std::vector<SImageType::PointType::VectorType> IndexLocationVectorType;
-  typedef std::vector<float>                             FloatVectorType;
-  typedef std::vector<FloatVectorType>                   Float2DVectorType;
-  typedef std::vector<Float2DVectorType>                 Float3DVectorType;
+  using IndexLocationVectorType = std::vector<SImageType::PointType::VectorType>;
+  using FloatVectorType = std::vector<float>;
+  using Float2DVectorType = std::vector<FloatVectorType>;
+  using Float3DVectorType = std::vector<Float2DVectorType>;
 
-  typedef FloatVectorType::iterator       FloatVectorIterator;
-  typedef FloatVectorType::const_iterator ConstFloatVectorIterator;
+  using FloatVectorIterator = FloatVectorType::iterator;
+  using ConstFloatVectorIterator = FloatVectorType::const_iterator;
 
-  typedef Float2DVectorType::iterator       Float2DVectorIterator;
-  typedef Float2DVectorType::const_iterator ConstFloat2DVectorIterator;
+  using Float2DVectorIterator = Float2DVectorType::iterator;
+  using ConstFloat2DVectorIterator = Float2DVectorType::const_iterator;
 
-  typedef Float3DVectorType::iterator       Float3DVectorIterator;
-  typedef Float3DVectorType::const_iterator ConstFloat3DVectorIterator;
+  using Float3DVectorIterator = Float3DVectorType::iterator;
+  using ConstFloat3DVectorIterator = Float3DVectorType::const_iterator;
 public:
 
   landmarksConstellationModelIO()
@@ -518,9 +518,9 @@ public:
 
     for( int j = 0; meanIt != DID.mean.end(); ++meanIt, j++ )
       {
-      typedef itk::Image<float, 3>        FloatImageType;
-      typedef FloatImageType::RegionType  FloatImageRegion;
-      typedef FloatImageType::SpacingType FloatImageSpacing;
+      using FloatImageType = itk::Image<float, 3>;
+      using FloatImageRegion = FloatImageType::RegionType;
+      using FloatImageSpacing = FloatImageType::SpacingType;
       FloatImageSpacing spacing;
       spacing[0] = spacing[1] = spacing[2] = 1.0;
       FloatImageRegion region;

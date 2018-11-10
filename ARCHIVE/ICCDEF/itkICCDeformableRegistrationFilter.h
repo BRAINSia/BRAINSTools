@@ -57,12 +57,12 @@ class ICCDeformableRegistrationFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableRegistrationFilter);
 
-  /** Standard class typedefs. */
-  typedef ICCDeformableRegistrationFilter Self;
-  typedef PDEDeformableRegistrationFilter<
-      TFixedImage, TMovingImage, TDisplacementField>      Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = ICCDeformableRegistrationFilter;
+  using Superclass = PDEDeformableRegistrationFilter<
+      TFixedImage, TMovingImage, TDisplacementField>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -72,52 +72,52 @@ public:
                 PDEDeformableRegistrationFilter );
 
   /** FixedImage image type. */
-  typedef typename Superclass::FixedImageType    FixedImageType;
-  typedef typename Superclass::FixedImagePointer FixedImagePointer;
+  using FixedImageType = typename Superclass::FixedImageType;
+  using FixedImagePointer = typename Superclass::FixedImagePointer;
 
   /** MovingImage image type. */
-  typedef typename Superclass::MovingImageType    MovingImageType;
-  typedef typename Superclass::MovingImagePointer MovingImagePointer;
+  using MovingImageType = typename Superclass::MovingImageType;
+  using MovingImagePointer = typename Superclass::MovingImagePointer;
 
   /** Deformation field type. */
-  typedef typename Superclass::DisplacementFieldType    DisplacementFieldType;
-  typedef typename Superclass::DisplacementFieldPointer DisplacementFieldPointer;
+  using DisplacementFieldType = typename Superclass::DisplacementFieldType;
+  using DisplacementFieldPointer = typename Superclass::DisplacementFieldPointer;
 
-  typedef DisplacementFieldType OutputImageType;
+  using OutputImageType = DisplacementFieldType;
 
   /** Inherit some enums from the superclass. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
-  typedef unsigned char                                                MaskPixelType;
-  typedef Image<MaskPixelType, Self::ImageDimension> MaskImageType;
-  typedef typename MaskImageType::Pointer                              MaskImagePointer;
+  using MaskPixelType = unsigned char;
+  using MaskImageType = Image<MaskPixelType, Self::ImageDimension>;
+  using MaskImagePointer = typename MaskImageType::Pointer;
 
-  typedef SpatialObject<Self::ImageDimension> MaskType;
-  typedef typename MaskType::Pointer                            MaskPointer;
+  using MaskType = SpatialObject<Self::ImageDimension>;
+  using MaskPointer = typename MaskType::Pointer;
 
-  typedef typename DataObject::Pointer DataObjectPointer;
+  using DataObjectPointer = typename DataObject::Pointer;
 
-  typedef LandmarkSpatialObject<Self::ImageDimension> LandmarkType;
-  typedef typename LandmarkType::Pointer                                LandmarkPointer;
+  using LandmarkType = LandmarkSpatialObject<Self::ImageDimension>;
+  using LandmarkPointer = typename LandmarkType::Pointer;
 
-  typedef PointSet<typename MovingImageType::PixelType, Self::ImageDimension> PointSetType;
-  typedef typename PointSetType::Pointer                                                        PointSetPointer;
+  using PointSetType = PointSet<typename MovingImageType::PixelType, Self::ImageDimension>;
+  using PointSetPointer = typename PointSetType::Pointer;
 
-  typedef std::complex<float>                     ComplexPixelType;
-  typedef Vector<ComplexPixelType, 3>             DisplacementFieldFFTPixelType;
-  typedef Image<ComplexPixelType, 3>              ComplexImageType;
-  typedef Image<DisplacementFieldFFTPixelType, 3> DisplacementFieldFFTType;
+  using ComplexPixelType = std::complex<float>;
+  using DisplacementFieldFFTPixelType = Vector<ComplexPixelType, 3>;
+  using ComplexImageType = Image<ComplexPixelType, 3>;
+  using DisplacementFieldFFTType = Image<DisplacementFieldFFTPixelType, 3>;
 
-  typedef VectorFFTWHalfHermitianToRealInverseFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             3> FFTWComplexToRealImageType;
-  typedef VectorFFTWRealToHalfHermitianForwardFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             3> FFTWRealToComplexImageType;
+  using FFTWComplexToRealImageType = VectorFFTWHalfHermitianToRealInverseFFTImageFilter<typename TDisplacementField::PixelType,
+                                                             3>;
+  using FFTWRealToComplexImageType = VectorFFTWRealToHalfHermitianForwardFFTImageFilter<typename TDisplacementField::PixelType,
+                                                             3>;
   typedef typename FFTWComplexToRealImageType::Pointer
     FFTWComplexToRealImagePointer;
   typedef typename FFTWRealToComplexImageType::Pointer
     FFTWRealToComplexImagePointer;
 
-  typedef typename DisplacementFieldFFTType::Pointer DisplacementFieldFFTPointer;
-  typedef typename ComplexImageType::Pointer         ComplexImagePointer;
+  using DisplacementFieldFFTPointer = typename DisplacementFieldFFTType::Pointer;
+  using ComplexImagePointer = typename ComplexImageType::Pointer;
 
   /** FiniteDifferenceFunction type. */
   typedef typename
@@ -127,14 +127,14 @@ public:
   typedef typename
     FiniteDifferenceFunctionType::TimeStepType             TimeStepType;
 
-  typedef WarpImageFilter<MaskImageType,
-                          MaskImageType, DisplacementFieldType>            MaskWarperType;
-  typedef typename MaskWarperType::Pointer MaskWarperPointer;
+  using MaskWarperType = WarpImageFilter<MaskImageType,
+                          MaskImageType, DisplacementFieldType>;
+  using MaskWarperPointer = typename MaskWarperType::Pointer;
 
   /** DemonsRegistrationFilterFunction type. */
-  typedef ICCDeformableFunction<
+  using ICCDeformableFunctionType = ICCDeformableFunction<
       FixedImageType,
-      MovingImageType, DisplacementFieldType>                 ICCDeformableFunctionType;
+      MovingImageType, DisplacementFieldType>;
   typedef typename
     ICCDeformableFunctionType::GradientType        GradientType;
 
@@ -289,8 +289,8 @@ protected:
    * \returns A FiniteDifferenceObject pointer. */
   itkSetObjectMacro(BackwardDifferenceFunction, FiniteDifferenceFunctionType);
 
-  typedef typename DisplacementFieldFFTType::RegionType ThreadRegionType;
-  typedef ThreadRegionType                              OutputImageRegionType;
+  using ThreadRegionType = typename DisplacementFieldFFTType::RegionType;
+  using OutputImageRegionType = ThreadRegionType;
   virtual void ThreadedComputeLinearElastic(DisplacementFieldFFTPointer &, float normalizer,
                                             const ThreadRegionType & regionToProcess, int threadId);
 
@@ -323,31 +323,31 @@ private:
 
   unsigned int SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType& splitRegion) override;
 
-  /** Exp and composition typedefs */
-  typedef MultiplyImageFilter<DisplacementFieldType,
+  /** Exp and composition type alias */
+  using MultiplyByConstantType = MultiplyImageFilter<DisplacementFieldType,
                               Image<TimeStepType, DisplacementFieldType::ImageDimension> ,
-                              DisplacementFieldType> MultiplyByConstantType;
+                              DisplacementFieldType>;
 
-  typedef ExponentialDisplacementFieldImageFilter<
-      DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;
+  using FieldExponentiatorType = ExponentialDisplacementFieldImageFilter<
+      DisplacementFieldType, DisplacementFieldType>;
 
-  typedef WarpVectorImageFilter<
+  using VectorWarperType = WarpVectorImageFilter<
       DisplacementFieldType,
-      DisplacementFieldType, DisplacementFieldType>        VectorWarperType;
+      DisplacementFieldType, DisplacementFieldType>;
 
-  typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      DisplacementFieldType, double>                      FieldInterpolatorType;
+  using FieldInterpolatorType = VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
+      DisplacementFieldType, double>;
 
-  typedef AddImageFilter<
+  using AdderType = AddImageFilter<
       DisplacementFieldType,
-      DisplacementFieldType, DisplacementFieldType>        AdderType;
+      DisplacementFieldType, DisplacementFieldType>;
 
-  typedef typename MultiplyByConstantType::Pointer   MultiplyByConstantPointer;
-  typedef typename FieldExponentiatorType::Pointer   FieldExponentiatorPointer;
-  typedef typename VectorWarperType::Pointer         VectorWarperPointer;
-  typedef typename FieldInterpolatorType::Pointer    FieldInterpolatorPointer;
-  typedef typename FieldInterpolatorType::OutputType FieldInterpolatorOutputType;
-  typedef typename AdderType::Pointer                AdderPointer;
+  using MultiplyByConstantPointer = typename MultiplyByConstantType::Pointer;
+  using FieldExponentiatorPointer = typename FieldExponentiatorType::Pointer;
+  using VectorWarperPointer = typename VectorWarperType::Pointer;
+  using FieldInterpolatorPointer = typename FieldInterpolatorType::Pointer;
+  using FieldInterpolatorOutputType = typename FieldInterpolatorType::OutputType;
+  using AdderPointer = typename AdderType::Pointer;
   typename ICCDeformableFunctionType::Pointer           m_DifferenceFunction;
   typename FiniteDifferenceFunctionType::Pointer        m_BackwardDifferenceFunction;
 

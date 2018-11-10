@@ -104,7 +104,7 @@ ValidationInputParser<TImage>
   // m_InitialCoefficientFilename << std::endl;
   if( m_InitialDisplacementFieldFilename != "" )
     {
-    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
+    using FieldReaderType = itk::ImageFileReader<TDisplacementField>;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
     fieldReader->SetFileName( m_InitialDisplacementFieldFilename.c_str() );
     try
@@ -129,8 +129,8 @@ ValidationInputParser<TImage>
   else if( m_InitialTransformFilename != "" )
     {
     //  #######Now use TransformToDisplacementFieldSource
-    typedef itk::TransformToDisplacementFieldFilter<TDisplacementField, double> DisplacementFieldGeneratorType;
-    typedef typename DisplacementFieldGeneratorType::TransformType TransformType;
+    using DisplacementFieldGeneratorType = itk::TransformToDisplacementFieldFilter<TDisplacementField, double>;
+    using TransformType = typename DisplacementFieldGeneratorType::TransformType;
     // Only a templated base class.
 
     typename TransformType::Pointer trsf = ReadTransformFromDisk(m_InitialTransformFilename);

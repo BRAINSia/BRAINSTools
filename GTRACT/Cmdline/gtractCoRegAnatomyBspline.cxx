@@ -113,12 +113,12 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  // typedef signed short                      PixelType;
-  typedef float                          PixelType;
-  typedef itk::VectorImage<PixelType, 3> VectorImageType;
+  // using PixelType = signed short;
+  using PixelType = float;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
 
-  typedef itk::ImageFileReader<VectorImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > VectorImageReaderType;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName( inputVolume );
 
@@ -132,8 +132,8 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::Image<PixelType, 3>                  AnatomicalImageType;
-  typedef itk::ImageFileReader<AnatomicalImageType> AnatomicalImageReaderType;
+  using AnatomicalImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<AnatomicalImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName( inputAnatomicalVolume );
 
@@ -148,8 +148,8 @@ int main(int argc, char *argv[])
     }
 
   /* Extract the Vector Image Index for Registration */
-  typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, AnatomicalImageType> VectorSelectFilterType;
-  typedef VectorSelectFilterType::Pointer                                                VectorSelectFilterPointer;
+  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, AnatomicalImageType>;
+  using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
   VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
   selectIndexImageFilter->SetIndex( vectorIndex );
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::OrientImageFilter<AnatomicalImageType, AnatomicalImageType> OrientFilterType;
+  using OrientFilterType = itk::OrientImageFilter<AnatomicalImageType, AnatomicalImageType>;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
   //  orientImageFilter->SetInput(brainOnlyFilter->GetOutput() );
   orientImageFilter->SetInput( selectIndexImageFilter->GetOutput() );
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::BRAINSFitHelper RegisterFilterType;
+  using RegisterFilterType = itk::BRAINSFitHelper;
   RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
 
   // std::vector<double> minStepLength;
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
   std::vector<int> iterations;
   iterations.push_back(numberOfIterations);
 
-  // typedef itk::AnatomicalBSplineFilter RegisterFilterType;
+  // using RegisterFilterType = itk::AnatomicalBSplineFilter;
   // RegisterFilterType::Pointer registerImageFilter =
   // RegisterFilterType::New();
 

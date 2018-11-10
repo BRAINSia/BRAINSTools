@@ -32,8 +32,8 @@ DisplacementFieldPointerType
 TransformToDisplacementField(itk::ImageBase<DisplacementFieldPointerType::ObjectType::ImageDimension> *templateImage,
                              TransformPointerType xfrm)
 {
-  typedef typename DisplacementFieldPointerType::ObjectType OutputType;
-  typedef typename itk::TransformToDisplacementFieldFilter<OutputType, double> TodefType;
+  using OutputType = typename DisplacementFieldPointerType::ObjectType;
+  using TodefType = typename itk::TransformToDisplacementFieldFilter<OutputType, double>;
   typename TodefType::Pointer todef( TodefType::New() );
   todef->SetUseReferenceImage(true);
   todef->SetReferenceImage(templateImage);

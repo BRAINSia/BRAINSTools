@@ -24,10 +24,10 @@
 
 int main(int, char * *)
 {
-  typedef float                           PixelType;
-  typedef itk::Image<PixelType, 3>        ImageType;
-  typedef itk::ImageFileReader<ImageType> ReaderType;
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, 3>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   std::string filename ("/Users/johnsonhj/Dropbox/DATA/ANTSDENOISE_FAILURE/input.nii.gz");
   ReaderType::Pointer myReader = ReaderType::New();
@@ -37,14 +37,14 @@ int main(int, char * *)
 
 
 #if 1
-  typedef itk::Statistics::ScalarImageToTextureFeaturesFilter< ImageType> TextureFilterType;
+  using TextureFilterType = itk::Statistics::ScalarImageToTextureFeaturesFilter< ImageType>;
   TextureFilterType::Pointer texFilter = TextureFilterType::New();
   texFilter->SetInput(myImage);
   texFilter->SetMaskImage( myImage );
   texFilter->SetFastCalculations( false );
 
   //Test Set/Get Requested features
-  typedef TextureFilterType::TextureFeaturesFilterType   TextureFeaturesFilterType;
+  using TextureFeaturesFilterType = TextureFilterType::TextureFeaturesFilterType;
 
   TextureFilterType::FeatureNameVectorPointer requestedFeatures =
       TextureFilterType::FeatureNameVector::New();

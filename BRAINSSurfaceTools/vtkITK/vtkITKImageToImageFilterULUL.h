@@ -37,15 +37,15 @@ public:
 protected:
 
   /// To/from ITK
-  typedef itk::Image<unsigned long, 3> InputImageType;
-  typedef itk::Image<unsigned long, 3> OutputImageType;
+  using InputImageType = itk::Image<unsigned long, 3>;
+  using OutputImageType = itk::Image<unsigned long, 3>;
 
-  typedef itk::VTKImageImport<InputImageType> ImageImportType;
-  typedef itk::VTKImageExport<OutputImageType> ImageExportType;
+  using ImageImportType = itk::VTKImageImport<InputImageType>;
+  using ImageExportType = itk::VTKImageExport<OutputImageType>;
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
 
-  typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
+  using GenericFilterType = itk::ImageToImageFilter<InputImageType,OutputImageType>;
   GenericFilterType::Pointer m_Filter;
 
   vtkITKImageToImageFilterULUL ( GenericFilterType* filter )

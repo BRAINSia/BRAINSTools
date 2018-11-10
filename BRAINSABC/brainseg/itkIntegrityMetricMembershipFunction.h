@@ -57,41 +57,41 @@ class IntegrityMetricMembershipFunction:
   public Object
 {
 public:
-  /** Standard class typedefs */
-  typedef IntegrityMetricMembershipFunction     Self;
-  typedef Object                                Superclass;
-  typedef SmartPointer< Self >                  Pointer;
-  typedef SmartPointer< const Self >            ConstPointer;
+  /** Standard class type alias */
+  using Self = IntegrityMetricMembershipFunction;
+  using Superclass = Object;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Strandard macros */
   itkTypeMacro(IntegrityMetricMembershipFunction, Object);
   itkNewMacro(Self);
 
-  typedef TSample                                                     SampleType;
+  using SampleType = TSample;
 
   /** Type of each measurement vector in sample */
-  typedef typename SampleType::MeasurementVectorType                  MeasurementVectorType;
+  using MeasurementVectorType = typename SampleType::MeasurementVectorType;
 
   /** Type of the length of each measurement vector */
-  typedef typename SampleType::MeasurementVectorSizeType              MeasurementVectorSizeType;
+  using MeasurementVectorSizeType = typename SampleType::MeasurementVectorSizeType;
 
   /** Type of measurement vector component value */
-  typedef typename SampleType::MeasurementType                        MeasurementType;
+  using MeasurementType = typename SampleType::MeasurementType;
 
   /** Type of a measurement vector, holding floating point values */
-  typedef typename NumericTraits< MeasurementVectorType >::RealType   MeasurementVectorRealType;
+  using MeasurementVectorRealType = typename NumericTraits< MeasurementVectorType >::RealType;
 
   /** Type of a floating point measurement component value */
-  typedef typename NumericTraits< MeasurementType >::RealType         MeasurementRealType;
+  using MeasurementRealType = typename NumericTraits< MeasurementType >::RealType;
 
   /** Type of the mean vector.  */
-  typedef MeasurementVectorRealType                    MeanVectorType;
+  using MeanVectorType = MeasurementVectorRealType;
 
   /** Type of the covariance matrix */
-  typedef VariableSizeMatrix< MeasurementRealType >    CovarianceMatrixType;
+  using CovarianceMatrixType = VariableSizeMatrix< MeasurementRealType >;
 
   /** Type of the output distance vector */
-  typedef vnl_vector<double>                           DistanceVectorType;
+  using DistanceVectorType = vnl_vector<double>;
 
   /** Set threshold */
   itkSetMacro(Threshold, float);

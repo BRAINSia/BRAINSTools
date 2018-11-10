@@ -37,7 +37,7 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::Image<unsigned char, 3> ImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
 
   ImageType::Pointer input;
   try

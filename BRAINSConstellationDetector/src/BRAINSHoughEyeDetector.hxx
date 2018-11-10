@@ -377,7 +377,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     /** The output image will have exact the same index contents
      but with modified image info so that the index-to-physical mapping
      makes the image in the physical space aligned */
-    typedef itk::ResampleInPlaceImageFilter<TInputImage, TOutputImage> ResampleIPFilterType;
+    using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<TInputImage, TOutputImage>;
 
     typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
     resampleIPFilter->SetInputImage( image );

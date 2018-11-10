@@ -57,10 +57,10 @@ public:
 
   vtkTypeRevisionMacro(vtkKWImage, vtkObject);
 
-  typedef itk::ImageBase<3>                 ImageBaseType;
-  typedef ImageBaseType::Pointer            ImagePointer;
-  typedef ImageBaseType::ConstPointer       ImageConstPointer;
-  typedef itk::ImageIOBase::IOComponentType ITKScalarPixelType;
+  using ImageBaseType = itk::ImageBase<3>;
+  using ImagePointer = ImageBaseType::Pointer;
+  using ImageConstPointer = ImageBaseType::ConstPointer;
+  using ITKScalarPixelType = itk::ImageIOBase::IOComponentType;
 
   // Set the untyped ITK image
   void SetITKImageBase( ImageBaseType * );

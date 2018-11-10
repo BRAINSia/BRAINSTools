@@ -152,8 +152,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                           std::string & initializeTransformMode,
                           typename DoCenteredInitializationMetricType::Pointer & CostMetricObject )
 {
-  typedef itk::Image<unsigned char, 3>                               MaskImageType;
-  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+  using MaskImageType = itk::Image<unsigned char, 3>;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
 
   typename TransformType::Pointer initialITKTransform = TransformType::New();
   initialITKTransform->SetIdentity();
@@ -162,8 +162,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     {
     // useGeometryAlign assumes objects are center in field of view, with
     // different
-    typedef itk::CenteredTransformInitializer<TransformType, FixedImageType,
-                                              MovingImageType> OrdinaryInitializerType;
+    using OrdinaryInitializerType = itk::CenteredTransformInitializer<TransformType, FixedImageType,
+                                              MovingImageType>;
     typename OrdinaryInitializerType::Pointer CenteredInitializer =
       OrdinaryInitializerType::New();
 
@@ -177,8 +177,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
            || initializeTransformMode == "useCenterOfHeadAlign")
     {
 
-    typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> CROIImageMaskSpatialObjectType;
-    typedef itk::Image<unsigned char, 3>                                         CROIMaskImageType;
+    using CROIImageMaskSpatialObjectType = typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension>;
+    using CROIMaskImageType = itk::Image<unsigned char, 3>;
     typename MovingImageType::PointType movingCenter;
     typename FixedImageType::PointType fixedCenter;
 
@@ -191,9 +191,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                                  << initializeTransformMode);
         }
 
-      typedef itk::StatisticsLabelObject< unsigned char, 3 > LabelObjectType;
-      typedef itk::LabelImageToStatisticsLabelMapFilter< MaskImageType, MaskImageType >
-        LabelStatisticsFilterType;
+      using LabelObjectType = itk::StatisticsLabelObject< unsigned char, 3 >;
+      using LabelStatisticsFilterType = itk::LabelImageToStatisticsLabelMapFilter< MaskImageType, MaskImageType >;
 
       typename CROIImageMaskSpatialObjectType::Pointer movingImageMask(
         dynamic_cast<CROIImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
@@ -234,10 +233,9 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       }
     else if( initializeTransformMode == "useCenterOfHeadAlign" )
       {
-      typedef itk::Image<unsigned char, 3> CHMMaskImageType;
+      using CHMMaskImageType = itk::Image<unsigned char, 3>;
 
-      typedef typename itk::FindCenterOfBrainFilter<MovingImageType>
-        MovingFindCenterFilter;
+      using MovingFindCenterFilter = typename itk::FindCenterOfBrainFilter<MovingImageType>;
       typename MovingFindCenterFilter::Pointer movingFindCenter =
         MovingFindCenterFilter::New();
       movingFindCenter->SetInput(orientedMovingVolume);
@@ -265,8 +263,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         movingMask = p;
         }
 
-      typedef typename itk::FindCenterOfBrainFilter<FixedImageType>
-        FixedFindCenterFilter;
+      using FixedFindCenterFilter = typename itk::FindCenterOfBrainFilter<FixedImageType>;
       typename FixedFindCenterFilter::Pointer fixedFindCenter =
         FixedFindCenterFilter::New();
       fixedFindCenter->SetInput(orientedFixedVolume);
@@ -312,7 +309,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       scaleValue[i] = movingHeadScaleGuessRatio;
       }
 
-    typedef itk::Euler3DTransform<double> EulerAngle3DTransformType;
+    using EulerAngle3DTransformType = itk::Euler3DTransform<double>;
     typename EulerAngle3DTransformType::Pointer bestEulerAngles3D = EulerAngle3DTransformType::New();
     bestEulerAngles3D->SetCenter(rotationCenter);
     bestEulerAngles3D->SetTranslation(translationVector);
@@ -362,7 +359,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         }
         if( 0 )
           {
-          typedef itk::ResampleImageFilter<FixedImageType, MovingImageType, double> ResampleFilterType;
+          using ResampleFilterType = itk::ResampleImageFilter<FixedImageType, MovingImageType, double>;
           typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
           resampler->SetTransform(currentEulerAngles3D);
@@ -373,7 +370,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
           // here.
           typename FixedImageType::Pointer ResampledImage = resampler->GetOutput();
 
-          typedef itk::CheckerBoardImageFilter<FixedImageType> Checkerfilter;
+          using Checkerfilter = itk::CheckerBoardImageFilter<FixedImageType>;
           typename Checkerfilter::Pointer checker = Checkerfilter::New();
           unsigned int array[3] = { 36, 36, 36 };
 
@@ -396,7 +393,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                   ( currentEulerAngles3D->GetParameters()[0] ) * 180 / itk::Math::pi, current_cc);
 
           {
-          typedef typename itk::ImageFileWriter<FixedImageType> WriterType;
+          using WriterType = typename itk::ImageFileWriter<FixedImageType>;
           typename WriterType::Pointer writer = WriterType::New();
           writer->UseCompressionOn();
           writer->SetFileName(filename);
@@ -428,7 +425,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     }
 #endif
     }
-    typedef itk::VersorRigid3DTransform<double>              VersorRigid3DTransformType;
+    using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
     typename VersorRigid3DTransformType::Pointer quickSetVersor = VersorRigid3DTransformType::New();
     quickSetVersor->SetCenter( bestEulerAngles3D->GetCenter() );
     quickSetVersor->SetTranslation( bestEulerAngles3D->GetTranslation() );
@@ -439,7 +436,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       }
 #ifdef DEBUGGING_PRINT_IMAGES
       {
-      typedef itk::ResampleImageFilter<FixedImageType, MovingImageType, double> ResampleFilterType;
+      using ResampleFilterType = itk::ResampleImageFilter<FixedImageType, MovingImageType, double>;
       typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
       resampler->SetTransform(quickSetVersor);
@@ -449,7 +446,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       resampler->Update();              //  Explicit Update() required here.
       typename FixedImageType::Pointer ResampledImage = resampler->GetOutput();
 
-      typedef itk::CheckerBoardImageFilter<FixedImageType> Checkerfilter;
+      using Checkerfilter = itk::CheckerBoardImageFilter<FixedImageType>;
       typename Checkerfilter::Pointer checker = Checkerfilter::New();
       unsigned int array[3] = { 18, 18, 18 };
 
@@ -472,7 +469,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
               ( bestEulerAngles3D->GetParameters()[0] ) * 180 / itk::Math::pi, max_cc);
 
         {
-        typedef typename itk::ImageFileWriter<FixedImageType> WriterType;
+        using WriterType = typename itk::ImageFileWriter<FixedImageType>;
         typename WriterType::Pointer writer = WriterType::New();
         wirter->UseCompressionOn();
         writer->SetFileName(filename);
@@ -680,9 +677,9 @@ template <typename FixedImageType, typename MovingImageType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 {
-  typedef itk::Image<unsigned char, 3>                               MaskImageType;
-  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
-  typedef itk::VersorRigid3DTransform<double>                        VersorRigid3DTransformType;
+  using MaskImageType = itk::Image<unsigned char, 3>;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 
   // The m_CostMetricObject should be a multi metric type.
   typename MultiMetricType::Pointer multiMetric =
@@ -757,10 +754,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
   if( m_CurrentGenericTransform.IsNull() && localInitializeTransformMode != "Off" )
       // Use CenteredVersorTranformInitializer
   {
-  typedef itk::VersorRigid3DTransform<double> TransformType;
+  using TransformType = itk::VersorRigid3DTransform<double>;
   std::cout << "Initializing transform with " << localInitializeTransformMode << std::endl;
-  typedef itk::CenteredVersorTransformInitializer<FixedImageType,
-  MovingImageType> InitializerType;
+  using InitializerType = itk::CenteredVersorTransformInitializer<FixedImageType,
+  MovingImageType>;
 
   TransformType::Pointer initialITKTransform =
   DoCenteredInitialization<FixedImageType,
@@ -822,11 +819,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     if( currentTransformType == "Rigid" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef itk::RegularStepGradientDescentOptimizerv4<double> OptimizerType;
+      using OptimizerType = itk::RegularStepGradientDescentOptimizerv4<double>;
       //
       // Process the initialITKTransform as VersorRigid3DTransform:
       //
-      typedef VersorRigid3DTransformType TransformType;
+      using TransformType = VersorRigid3DTransformType;
       TransformType::Pointer initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
 
@@ -908,8 +905,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "ScaleVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef itk::ScaleVersor3DTransform<double>                          TransformType; // NumberOfEstimatedParameter = 9;
-      typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
+      using TransformType = itk::ScaleVersor3DTransform<double>; // NumberOfEstimatedParameter = 9;
+      using OptimizerType = itk::RegularStepGradientDescentOptimizerv4<double>;
       //
       // Process the initialITKTransform as ScaleVersor3DTransform:
       //
@@ -1002,8 +999,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "ScaleSkewVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef itk::ScaleSkewVersor3DTransform<double>                       TransformType;  // NumberOfEstimatedParameter = 15;
-      typedef itk::RegularStepGradientDescentOptimizerv4<double>   OptimizerType;
+      using TransformType = itk::ScaleSkewVersor3DTransform<double>;  // NumberOfEstimatedParameter = 15;
+      using OptimizerType = itk::RegularStepGradientDescentOptimizerv4<double>;
       //
       // Process the initialITKTransform as ScaleSkewVersor3D:
       //
@@ -1098,8 +1095,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "Affine" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef itk::AffineTransform<double, Dimension>                      TransformType;
-      typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double>  OptimizerType;
+      using TransformType = itk::AffineTransform<double, Dimension>;
+      using OptimizerType = itk::ConjugateGradientLineSearchOptimizerv4Template<double>;
       //
       // Process the initialITKTransform
       //
@@ -1194,9 +1191,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       {
       constexpr unsigned int SpaceDimension = 3;
       constexpr unsigned int SplineOrder = 3;
-      typedef itk::BSplineTransform<double, SpaceDimension, SplineOrder> BSplineTransformType;
+      using BSplineTransformType = itk::BSplineTransform<double, SpaceDimension, SplineOrder>;
 
-      typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> BSplineRegistrationType;
+      using BSplineRegistrationType = itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>;
       typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
 
 
@@ -1209,7 +1206,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           ImageMaskSpatialObjectType::Pointer movingImageMask =
           dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
 
-          typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double> ResampleFilterType;
+          using ResampleFilterType = itk::ResampleImageFilter<MaskImageType, MaskImageType, double>;
           ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
           if( m_CurrentGenericTransform.IsNotNull() )
@@ -1222,7 +1219,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           if( m_FixedBinaryVolume.GetPointer() != nullptr )
             {
-            typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
+            using AddFilterType = itk::AddImageFilter<MaskImageType, MaskImageType>;
             ImageMaskSpatialObjectType::Pointer fixedImageMask =
             dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
             AddFilterType::Pointer adder = AddFilterType::New();
@@ -1285,8 +1282,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         meshSize[i] = m_SplineGridSize[i];
         }
 
-      typedef itk::BSplineTransformInitializer< BSplineTransformType,
-                                                FixedImageType>         InitializerType;
+      using InitializerType = itk::BSplineTransformInitializer< BSplineTransformType,
+                                                FixedImageType>;
       typename InitializerType::Pointer transformInitializer = InitializerType::New();
 
       transformInitializer->SetTransform( bsplineTx );
@@ -1310,10 +1307,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bsplineRegistration->InPlaceOn(); // So bsplineTx is also the output transform
                                         //  of the registration filter.
 
-      typedef typename itk::LBFGSBOptimizerv4                  LBFGSBOptimizerType;
-      typedef typename LBFGSBOptimizerType::Pointer            LBFGSBOptimizerTypePointer;
-      typedef typename LBFGSBOptimizerType::BoundSelectionType OptimizerBoundSelectionType;
-      typedef typename LBFGSBOptimizerType::BoundValueType     OptimizerBoundValueType;
+      using LBFGSBOptimizerType = typename itk::LBFGSBOptimizerv4;
+      using LBFGSBOptimizerTypePointer = typename LBFGSBOptimizerType::Pointer;
+      using OptimizerBoundSelectionType = typename LBFGSBOptimizerType::BoundSelectionType;
+      using OptimizerBoundValueType = typename LBFGSBOptimizerType::BoundValueType;
 
       LBFGSBOptimizerTypePointer      LBFGSBoptimizer     = LBFGSBOptimizerType::New();
 
@@ -1362,14 +1359,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       std::cout << " - Maximum Number of Evaluations    : " << m_MaximumNumberOfEvaluations << std::endl;
       std::cout << " - Maximum Number of Iterations     : " << localNumberOfIterations[currentTransformIndex] << std::endl << std::endl;
 
-      typedef itk::Image<float, 3> RegisterImageType;
+      using RegisterImageType = itk::Image<float, 3>;
 
       // TODO: pass this option by commandline
       const bool ObserveIterations = true;
       if( ObserveIterations == true )
         {
-        typedef BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>
-        CommandIterationUpdateType;
+        using CommandIterationUpdateType = BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>;
         typename CommandIterationUpdateType::Pointer observer =
         CommandIterationUpdateType::New();
         observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
@@ -1392,9 +1388,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           {
           std::cout << "\nMoving image is warped by initial transform, "
                     << "before it is passed to the BSpline registration.\n" << std::endl;
-          typedef float                                                                     VectorComponentType;
-          typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
-          typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
+          using VectorComponentType = float;
+          using VectorPixelType = itk::Vector<VectorComponentType, 3>;
+          using DisplacementFieldType = itk::Image<VectorPixelType,  3>;
           typename MovingImageType::Pointer warpedMoving1 =
                                               GenericTransformImage<
                                                      MovingImageType,
@@ -1640,7 +1636,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             if( oneToEndTransformFileType == "DisplacementFieldTransform"
                && endTransformFileType == "DisplacementFieldTransform")
               {
-              typedef itk::DisplacementFieldTransform<double, 3>                  DisplacementFieldTransformType;
+              using DisplacementFieldTransformType = itk::DisplacementFieldTransform<double, 3>;
               DisplacementFieldTransformType::Pointer oneToEndTransform =
                 static_cast<DisplacementFieldTransformType *>( oneToEndTransformGeneric.GetPointer() );
               DisplacementFieldTransformType::Pointer endTransform =
@@ -1655,7 +1651,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                 }
               }
             std::cout << "Writing the registration state: " << this->m_SaveState << std::endl;
-            typedef itk::TransformFileWriterTemplate<double>                TransformWriterType;
+            using TransformWriterType = itk::TransformFileWriterTemplate<double>;
             typename TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
             transformWriter->SetFileName( this->m_SaveState );
             transformWriter->AddTransform( internalSyNSavedState.GetPointer() );

@@ -64,11 +64,11 @@ class FastMarchingCostFunction : public SingleValuedCostFunction
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(FastMarchingCostFunction);
 
-  /** Standard class typedefs */
-  typedef FastMarchingCostFunction Self;
-  typedef SingleValuedCostFunction Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias */
+  using Self = FastMarchingCostFunction;
+  using Superclass = SingleValuedCostFunction;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(FastMarchingCostFunction, SingleValuedCostFunction);
@@ -76,34 +76,34 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Some convenient typedefs. */
-  typedef itk::Image<float, 3>         CostImageType;
-  typedef CostImageType::Pointer       CostImagePointer;
-  typedef CostImageType::ConstPointer  CostImageConstPointer;
-  typedef CostImageType::RegionType    CostImageRegionType;
-  typedef CostImageType::SizeType      CostImageSizeType;
-  typedef CostImageType::SpacingType   CostImageSpacingType;
-  typedef CostImageType::PointType     CostImagePointType;
-  typedef CostImageType::PixelType     CostImagePixelType;
-  typedef CostImageType::IndexType     CostImageIndexType;
-  typedef CostImageType::DirectionType CostImageDirectionType;
+  /** Some convenient type alias. */
+  using CostImageType = itk::Image<float, 3>;
+  using CostImagePointer = CostImageType::Pointer;
+  using CostImageConstPointer = CostImageType::ConstPointer;
+  using CostImageRegionType = CostImageType::RegionType;
+  using CostImageSizeType = CostImageType::SizeType;
+  using CostImageSpacingType = CostImageType::SpacingType;
+  using CostImagePointType = CostImageType::PointType;
+  using CostImagePixelType = CostImageType::PixelType;
+  using CostImageIndexType = CostImageType::IndexType;
+  using CostImageDirectionType = CostImageType::DirectionType;
 
-  typedef itk::LinearInterpolateImageFunction<CostImageType, float> CostIPType;      //
+  using CostIPType = itk::LinearInterpolateImageFunction<CostImageType, float>;      //
                                                                                      //
                                                                                      // ScalarIPType;
-  typedef  CostIPType::Pointer CostIPTypePointer;
+  using CostIPTypePointer = CostIPType::Pointer;
 
   /** ImageDimension constants */
   static constexpr unsigned int CostImageDimension = 3;
 
   /*  A position in the optimization space. */
-  typedef Superclass::ParametersType ParametersType;
+  using ParametersType = Superclass::ParametersType;
 
   /*  std::cost function derivative (gradient). */
-  typedef Superclass::DerivativeType DerivativeType;
+  using DerivativeType = Superclass::DerivativeType;
 
   /*  std::cost function value. */
-  typedef Superclass::MeasureType MeasureType;
+  using MeasureType = Superclass::MeasureType;
 
   /** Set/Get input Cost Image  */
   itkSetObjectMacro( CostImage, CostImageType );

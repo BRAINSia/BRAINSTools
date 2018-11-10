@@ -27,9 +27,9 @@
 #define BLAS_INCLUDE
 
 /* Data types specific to BLAS implementation */
-typedef struct { float r, i; }  fcomplex;
-typedef struct { double r, i; } dcomplex;
-typedef int                     blasbool;
+using fcomplex = struct { float r, i; };
+using dcomplex = struct { double r, i; };
+using blasbool = int;
 
 #include "blasp.h"    /* Prototypes for all BLAS functions */
 

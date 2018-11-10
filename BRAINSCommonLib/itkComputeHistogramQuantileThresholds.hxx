@@ -99,8 +99,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 {
   this->ImageMinMax(this->m_ImageMin, this->m_ImageMax);
 
-  typedef Statistics::ScalarImagePortionToHistogramGenerator<TInputImage, TMaskImage>
-    HistogramGeneratorType;
+  using HistogramGeneratorType = Statistics::ScalarImagePortionToHistogramGenerator<TInputImage, TMaskImage>;
   typename HistogramGeneratorType::Pointer histogramGenerator =
     HistogramGeneratorType::New();
   histogramGenerator->SetInput( this->GetImage() );
@@ -116,7 +115,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
   histogramGenerator->SetHistogramMax(m_ImageMax);
 
   histogramGenerator->Compute();
-  typedef typename HistogramGeneratorType::HistogramType HistogramType;
+  using HistogramType = typename HistogramGeneratorType::HistogramType;
   HistogramType *histogram = const_cast<HistogramType *>( histogramGenerator->GetOutput() );
   //  If the number of non-zero bins is <= 2, then it is a binary image, and
   // Otsu won't do:

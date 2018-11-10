@@ -196,7 +196,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
   m_FixedImageSpacing = this->GetFixedImage()->GetSpacing();
   m_FixedImageDirection = this->GetFixedImage()->GetDirection();
 // std::cout<<"Function!"<<std::endl;
-  typedef ImageMaskSpatialObject<Self::ImageDimension> ImageMaskSpatialObjectType;
+  using ImageMaskSpatialObjectType = ImageMaskSpatialObject<Self::ImageDimension>;
   if( this->GetMovingImageMask() && this->GetFixedImageMask() )
     {
     m_MovingMaskImageWarper->SetOutputOrigin( this->m_FixedImageOrigin );
@@ -210,7 +210,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     // itkUtil::WriteImage<MaskImageType>(m_WarpedMaskImage, "deformedMask.nii.gz");
     }
 
-  typedef MaskImageFilter<MovingImageType, MaskImageType, MovingImageType> MaskFilterType;
+  using MaskFilterType = MaskImageFilter<MovingImageType, MaskImageType, MovingImageType>;
   typename MaskFilterType::Pointer mask = MaskFilterType::New();
 
   // Warped the moving and fixed image with two deformation fields
@@ -257,7 +257,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     typename FloatImageType::Pointer tempZ = derivative->GetOutput();
     tempZ->DisconnectPipeline();
 
-//  m_SimilarityWeight *= 4.0 * m_MaximumUpdateStepLength ;
+//  m_SimilarityWeight *= 4.0 * m_MaximumUpdateStepLength;
 //  typename TFixedImage::SizeType size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
 
 //  std::cout<<"m_SimilarityWeight:"<<m_SimilarityWeight<<std::endl;
@@ -335,8 +335,8 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
       // Kerneltransform needs pointset, thus, get points from landmark, then warp points, save point to pointset
       // first read points from Landmark
       // typename LandmarkType::PointListType list;
-      typedef ThinPlateSplineKernelTransform<float, ImageDimension> KernelTransformType;
-      typedef typename KernelTransformType::PointSetType            KernelPointSetType;
+      using KernelTransformType = ThinPlateSplineKernelTransform<float, ImageDimension>;
+      using KernelPointSetType = typename KernelTransformType::PointSetType;
       typename DisplacementFieldType::IndexType pixelIndex;
       typename DisplacementFieldType::IndexType pixelIndex1;
       typename MovingImageType::PointType movingPoint;
@@ -453,8 +453,8 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
   m_UpdateBuffer->DisconnectPipeline();
 
   // compute the inverse deformation field
-  typedef ICCIterativeInverseDisplacementFieldImageFilter<TDisplacementField,
-                                                          TDisplacementField> InverseDisplacementFieldImageType;
+  using InverseDisplacementFieldImageType = ICCIterativeInverseDisplacementFieldImageFilter<TDisplacementField,
+                                                          TDisplacementField>;
   typename InverseDisplacementFieldImageType::Pointer  inverse = InverseDisplacementFieldImageType::New();
   inverse->SetInput(m_UpdateBuffer);
   inverse->SetStopValue(1.0e-6);
@@ -480,9 +480,9 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
   // is applied on the update field, we cannot compute the newMappedCenterPoint here; and even
   // if we could, this would be an often unnecessary time-consuming task.
 
-  // typedef ImageRegionConstIterator<TFixedImage> ConstIterationImageType;
+  // using ConstIterationImageType = ImageRegionConstIterator<TFixedImage>;
   ConstIterationImageType it_f(this->GetFixedImage(), this->GetFixedImage()->GetRequestedRegion() );
-  // typedef ImageRegionIterator<TFixedImage> IterationImageType;
+  // using IterationImageType = ImageRegionIterator<TFixedImage>;
   IterationImageType it_m(this->m_MovingImageWarper->GetOutput(),
                           this->m_MovingImageWarper->GetOutput()->GetRequestedRegion() );
 

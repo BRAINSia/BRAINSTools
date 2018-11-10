@@ -72,22 +72,22 @@
 namespace
 { // put in anon namespace so they don't collide with other files.
 constexpr unsigned int LocalImageDimension = 3;
-typedef short LocalPixelType;
+using LocalPixelType = short;
 }
 
-typedef itk::Image<LocalPixelType, LocalImageDimension> ImageType;
-typedef ImageType::Pointer                         ImagePointerType;
-typedef ImageType::PointType                       ImagePointType;
-typedef ImageType::SpacingType                     ImageSpacingType;
-typedef ImageType::SizeType                        ImageSizeType;
-typedef ImageType::DirectionType                   ImageDirectionType;
-typedef ImageType::IndexType                       ImageIndexType;
-typedef ImagePointType::CoordRepType               ImageCoordType;
+using ImageType = itk::Image<LocalPixelType, LocalImageDimension>;
+using ImagePointerType = ImageType::Pointer;
+using ImagePointType = ImageType::PointType;
+using ImageSpacingType = ImageType::SpacingType;
+using ImageSizeType = ImageType::SizeType;
+using ImageDirectionType = ImageType::DirectionType;
+using ImageIndexType = ImageType::IndexType;
+using ImageCoordType = ImagePointType::CoordRepType;
 
-typedef itk::ImageFileReader<ImageType>       ReaderType;
-typedef itk::ImageFileWriter<ImageType>       WriterType;
-typedef itk::StatisticsImageFilter<ImageType> StatisticsFilterType;
-typedef itk::ImageToVTKImageFilter<ImageType> ConnectorType;
+using ReaderType = itk::ImageFileReader<ImageType>;
+using WriterType = itk::ImageFileWriter<ImageType>;
+using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
+using ConnectorType = itk::ImageToVTKImageFilter<ImageType>;
 
 int main(int argc, char *argv[])
 {

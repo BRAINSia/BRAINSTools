@@ -22,8 +22,8 @@
 #include "BRAINSCutDataHandler.h"
 #include "FeatureInputVector.h"
 
-typedef itk::Image<unsigned char, DIMENSION> LabelImageType;
-typedef LabelImageType::Pointer              LabelImagePointerType;
+using LabelImageType = itk::Image<unsigned char, DIMENSION>;
+using LabelImagePointerType = LabelImageType::Pointer;
 
 class BRAINSCutApplyModel
 {

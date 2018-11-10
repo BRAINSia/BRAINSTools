@@ -76,26 +76,26 @@ public:
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TInputImage::ImageDimension;
 
-  /** Standard class typedefs. */
-  typedef HammerTissueAttributeVectorImageFilter Self;
+  /** Standard class type alias. */
+  using Self = HammerTissueAttributeVectorImageFilter;
 
-  /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                          InputImageType;
-  typedef typename InputImageType::Pointer     InputImagePointer;
-  typedef TOutputImage                         OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename InputImageType::IndexType   InputIndexType;
-  typedef typename InputImageType::SpacingType InputSpacingType;
-  typedef typename InputImageType::RegionType  InputRegionType;
+  /** Convenient type alias for simplifying declarations. */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using InputIndexType = typename InputImageType::IndexType;
+  using InputSpacingType = typename InputImageType::SpacingType;
+  using InputRegionType = typename InputImageType::RegionType;
 
   /** types for neighborhood iterator */
-  typedef ConstNeighborhoodIterator<InputImageType>     NeighborhoodIteratorType;
-  typedef typename NeighborhoodIteratorType::OffsetType NeighborOffsetType;
+  using NeighborhoodIteratorType = ConstNeighborhoodIterator<InputImageType>;
+  using NeighborOffsetType = typename NeighborhoodIteratorType::OffsetType;
 
-  /** Standard class typedefs. */
-  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  /** Standard class type alias. */
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -103,10 +103,10 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(HammerTissueAttributeVectorImageFilter, ImageToImageFilter);
 
-  /** Image typedef support. */
-  typedef typename InputImageType::PixelType   InputPixelType;
-  typedef typename OutputImageType::PixelType  OutputValueType;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  /** Image type alias support. */
+  using InputPixelType = typename InputImageType::PixelType;
+  using OutputValueType = typename OutputImageType::PixelType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 
   /** Use the image spacing information in calculations. Use this option if you
     *  want derivatives in physical space. Default is UseImageSpacingOn. */

@@ -15,9 +15,9 @@
 
 int main(int argc, char * *argv)
 {
-  typedef itk::Image<unsigned char, 3>    ImageType;
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageType = itk::Image<unsigned char, 3>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
 
   ImageReaderType::Pointer classImageReader = ImageReaderType::New();
   classImageReader->SetFileName(argv[1]);
@@ -55,7 +55,7 @@ int main(int argc, char * *argv)
   brainImageReader->SetFileName(argv[9]);
   brainImageReader->Update();
 
-  typedef itk::BinaryThresholdImageFilter<ImageType, ImageType> BinaryFilterType;
+  using BinaryFilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   BinaryFilterType::Pointer binaryClassFilter = BinaryFilterType::New();
   binaryClassFilter->SetInput( classImageReader->GetOutput() );
   binaryClassFilter->SetLowerThreshold(9);
@@ -88,7 +88,7 @@ int main(int argc, char * *argv)
   binaryLeftCaudateFilter->SetInsideValue(1);
   binaryLeftCaudateFilter->Update();
 
-  typedef itk::OrImageFilter<ImageType, ImageType, ImageType> OrFilterType;
+  using OrFilterType = itk::OrImageFilter<ImageType, ImageType, ImageType>;
   OrFilterType::Pointer caudateFilter = OrFilterType::New();
   caudateFilter->SetInput1(binaryRightCaudateFilter->GetOutput() );
   caudateFilter->SetInput2(binaryLeftCaudateFilter->GetOutput() );
@@ -146,19 +146,19 @@ int main(int argc, char * *argv)
   subcorticalFilter->SetInput2(thalamusFilter->GetOutput() );
   subcorticalFilter->Update();
 
-  typedef itk::AndImageFilter<ImageType, ImageType, ImageType> AndFilterType;
+  using AndFilterType = itk::AndImageFilter<ImageType, ImageType, ImageType>;
   AndFilterType::Pointer andFilter = AndFilterType::New();
   andFilter->SetInput1( binaryVentFilter->GetOutput() );
   andFilter->SetInput2( binaryClassFilter->GetOutput() );
   andFilter->Update();
 
-  typedef itk::BinaryBallStructuringElement<unsigned char, 3> KernelType;
+  using KernelType = itk::BinaryBallStructuringElement<unsigned char, 3>;
   KernelType ballKernel;
   ballKernel.SetRadius(1);
 
   // unsigned long radius[3] = {1,1,1};
 
-  typedef itk::BinaryDilateImageFilter<ImageType, ImageType, KernelType> DilateFilterType;
+  using DilateFilterType = itk::BinaryDilateImageFilter<ImageType, ImageType, KernelType>;
   DilateFilterType::Pointer dilateFilter = DilateFilterType::New();
   dilateFilter->SetInput( andFilter->GetOutput() );
   dilateFilter->SetKernel(ballKernel);
@@ -185,13 +185,13 @@ int main(int argc, char * *argv)
   rescaleVentFilter->SetInsideValue(230);
   rescaleVentFilter->Update();
 
-  typedef itk::MaximumImageFilter<ImageType, ImageType, ImageType> MaximumFilterType;
+  using MaximumFilterType = itk::MaximumImageFilter<ImageType, ImageType, ImageType>;
   MaximumFilterType::Pointer maximumFilter =  MaximumFilterType::New();
   maximumFilter->SetInput1( rescaleVentFilter->GetOutput() );
   maximumFilter->SetInput2( classImageReader->GetOutput() );
   maximumFilter->Update();
 
-  typedef itk::MedianImageFilter<ImageType, ImageType> MedianFilterType;
+  using MedianFilterType = itk::MedianImageFilter<ImageType, ImageType>;
   itk::Size<3> radius;
   radius.Fill(1);
   MedianFilterType::Pointer medianFilter = MedianFilterType::New();
@@ -199,7 +199,7 @@ int main(int argc, char * *argv)
   medianFilter->SetRadius(radius);
   medianFilter->Update();
 
-  typedef itk::GradientAnisotropicDiffusionImageFilter<ImageType, ImageType> AnisotropicDiffusionType;
+  using AnisotropicDiffusionType = itk::GradientAnisotropicDiffusionImageFilter<ImageType, ImageType>;
   AnisotropicDiffusionType::Pointer anisoFilter = AnisotropicDiffusionType::New();
   anisoFilter->SetInput( medianFilter->GetOutput() );
   anisoFilter->SetNumberOfIterations(5);
@@ -229,7 +229,7 @@ int main(int argc, char * *argv)
   binaryWhiteFilter->SetInsideValue(1);
   binaryWhiteFilter->Update();
 
-  typedef itk::BinaryErodeImageFilter<ImageType, ImageType, KernelType> ErodeFilterType;
+  using ErodeFilterType = itk::BinaryErodeImageFilter<ImageType, ImageType, KernelType>;
   ErodeFilterType::Pointer erodeFilter = ErodeFilterType::New();
   erodeFilter->SetInput( binaryBrainFilter->GetOutput() );
   erodeFilter->SetKernel(ballKernel);
@@ -238,7 +238,7 @@ int main(int argc, char * *argv)
   erodeFilter->SetErodeValue(1);
   erodeFilter->Update();
 
-  typedef itk::XorImageFilter<ImageType, ImageType, ImageType> XorFilterType;
+  using XorFilterType = itk::XorImageFilter<ImageType, ImageType, ImageType>;
   XorFilterType::Pointer xorBrainFilter = XorFilterType::New();
   xorBrainFilter->SetInput1( binaryBrainFilter->GetOutput() );
   xorBrainFilter->SetInput2( erodeFilter->GetOutput() );

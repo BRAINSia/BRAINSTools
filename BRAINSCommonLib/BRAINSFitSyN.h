@@ -25,10 +25,10 @@
 
 namespace SyN
 {
-typedef  double                                         RealType;
-typedef  ants::RegistrationHelper<SyN::RealType,3>      RegistrationHelperType;
-typedef  RegistrationHelperType::ImageType              ImageType;
-typedef  RegistrationHelperType::CompositeTransformType CompositeTransformType;
+using RealType = double;
+using RegistrationHelperType = ants::RegistrationHelper<SyN::RealType,3>;
+using ImageType = RegistrationHelperType::ImageType;
+using CompositeTransformType = RegistrationHelperType::CompositeTransformType;
 }
 
 template <typename FixedImageType, typename MovingimageType>
@@ -172,13 +172,13 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     //
     // Add the first metric with the first mandatory fixed and moving volumes
     //
-    typedef itk::CastImageFilter<FixedImageType,SyN::ImageType> FixedCasterType;
+    using FixedCasterType = itk::CastImageFilter<FixedImageType,SyN::ImageType>;
     typename FixedCasterType::Pointer fixedCaster = FixedCasterType::New();
     fixedCaster->SetInput( infixedImage );
     fixedCaster->Update();
     typename SyN::ImageType::Pointer dblFixedImage = fixedCaster->GetOutput();
 
-    typedef itk::CastImageFilter<MovingimageType,SyN::ImageType> MovingCasterType;
+    using MovingCasterType = itk::CastImageFilter<MovingimageType,SyN::ImageType>;
     typename MovingCasterType::Pointer movingCaster = MovingCasterType::New();
     movingCaster->SetInput( inmovingImage );
     movingCaster->Update();

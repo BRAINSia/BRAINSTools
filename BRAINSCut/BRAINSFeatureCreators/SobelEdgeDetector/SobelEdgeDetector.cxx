@@ -38,21 +38,21 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef float CharPixelType;            //  IO
-  typedef float RealPixelType;            //  Operations
+  using CharPixelType = float;            //  IO
+  using RealPixelType = float;            //  Operations
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<CharPixelType, Dimension> CharImageType;
-  typedef itk::Image<RealPixelType, Dimension> RealImageType;
+  using CharImageType = itk::Image<CharPixelType, Dimension>;
+  using RealImageType = itk::Image<RealPixelType, Dimension>;
 
-  typedef itk::ImageFileReader<CharImageType> ReaderType;
-  typedef itk::ImageFileWriter<CharImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<CharImageType>;
+  using WriterType = itk::ImageFileWriter<CharImageType>;
 
-  typedef itk::CastImageFilter<CharImageType, RealImageType> CastToRealFilterType;
+  using CastToRealFilterType = itk::CastImageFilter<CharImageType, RealImageType>;
 
-  typedef itk::RescaleIntensityImageFilter<RealImageType, CharImageType> RescaleFilter;
+  using RescaleFilter = itk::RescaleIntensityImageFilter<RealImageType, CharImageType>;
 
-  typedef itk::SobelEdgeDetectionImageFilter<RealImageType, RealImageType> CannyFilter;
+  using CannyFilter = itk::SobelEdgeDetectionImageFilter<RealImageType, RealImageType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();

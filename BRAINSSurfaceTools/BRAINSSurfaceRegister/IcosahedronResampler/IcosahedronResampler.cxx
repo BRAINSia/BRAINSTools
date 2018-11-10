@@ -75,34 +75,34 @@ int main( int argc, char * argv [] )
   std::cout << "Interpolation Type: " << interpolateType << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  typedef itk::QuadEdgeMesh<float, 3> MeshType;
+  using MeshType = itk::QuadEdgeMesh<float, 3>;
 
   // read original mesh
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
 
   ReaderType::Pointer inputReader = ReaderType::New();
   inputReader->SetFileName( inputSurfaceFile.c_str() );
   inputReader->Update();
 
   // writer type
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
 
   WriterType::Pointer writer = WriterType::New();
 
   // define reample type
-  typedef itk::IdentityTransform<double> TransformType;
+  using TransformType = itk::IdentityTransform<double>;
 
   TransformType::Pointer transform = TransformType::New();
 
-  typedef itk::LinearInterpolateMeshFunction<MeshType>          LinearInterpolatorType;
-  typedef itk::NearestNeighborInterpolateMeshFunction<MeshType> NearestInterpolatorType;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
+  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction<MeshType>;
 
   LinearInterpolatorType::Pointer interpolator_l = LinearInterpolatorType::New();
   interpolator_l->SetUseNearestNeighborInterpolationAsBackup(false);
 
   NearestInterpolatorType::Pointer interpolator_n = NearestInterpolatorType::New();
 
-  typedef itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType> ResamplingFilterType;
+  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
 
   ResamplingFilterType::Pointer resampler = ResamplingFilterType::New();
 
@@ -119,12 +119,12 @@ int main( int argc, char * argv [] )
     }
 
   // sphere source type
-  typedef itk::IcosahedralRegularSphereMeshSource<MeshType> SphereMeshSourceType;
+  using SphereMeshSourceType = itk::IcosahedralRegularSphereMeshSource<MeshType>;
 
   SphereMeshSourceType::Pointer sphereMeshSource = SphereMeshSourceType::New();
 
-  typedef SphereMeshSourceType::PointType PointType;
-  typedef PointType::VectorType           VectorType;
+  using PointType = SphereMeshSourceType::PointType;
+  using VectorType = PointType::VectorType;
 
   PointType center;
   center.Fill( 0.0 );

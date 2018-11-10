@@ -35,10 +35,10 @@ class MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
 {
 public:
-  typedef MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter Self;
-  typedef SmartPointer<Self>                                            Pointer;
-  typedef SmartPointer<const Self>                                      ConstPointer;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>                Superclass;
+  using Self = MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>;
 
   /** Method that instantiates a new object */
   itkNewMacro( Self );
@@ -49,8 +49,8 @@ public:
     MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
 
   /** Using a unique mesh type. */
-  typedef  TMesh                        MeshType;
-  typedef typename  MeshType::PointType PointType;
+  using MeshType = TMesh;
+  using PointType = typename  MeshType::PointType;
 
   /** Set the Fixed mesh. */
   void SetFixedMesh( const MeshType * fixedMesh );
@@ -91,31 +91,31 @@ public:
   /**  Create the Output of the proper type for that output number */
   virtual DataObject::Pointer MakeOutput(size_t idx) override;
 
-  typedef VersorTransform<double> TransformType;
+  using TransformType = VersorTransform<double>;
 
   itkGetConstObjectMacro( RigidTransform, TransformType );
 
-  typedef VersorTransformOptimizer RigidOptimizerType;
+  using RigidOptimizerType = VersorTransformOptimizer;
 
   itkGetConstObjectMacro( RigidOptimizer, RigidOptimizerType );
 
-  typedef QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
-      MeshType, MeshType, MeshType>  DemonsRegistrationFilterType;
+  using DemonsRegistrationFilterType = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
+      MeshType, MeshType, MeshType>;
 
-  typedef DemonsRegistrationFilterType DeformationFilterType;
+  using DeformationFilterType = DemonsRegistrationFilterType;
 
-  typedef typename DemonsRegistrationFilterType::DestinationPointSetType DestinationPointSetType;
+  using DestinationPointSetType = typename DemonsRegistrationFilterType::DestinationPointSetType;
 
   itkGetConstObjectMacro( DemonsRegistrationFilter, DemonsRegistrationFilterType );
 
   itkGetConstObjectMacro( FinalDestinationPoints, DestinationPointSetType );
 
-  typedef typename MeshType::PointsContainer         PointsContainer;
-  typedef typename PointsContainer::Pointer          PointsContainerPointer;
-  typedef typename MeshType::PointsContainerIterator PointsContainerIterator;
+  using PointsContainer = typename MeshType::PointsContainer;
+  using PointsContainerPointer = typename PointsContainer::Pointer;
+  using PointsContainerIterator = typename MeshType::PointsContainerIterator;
 
-  typedef Array<unsigned int> IntegerArrayType;
-  typedef Array<double>       DoubleArrayType;
+  using IntegerArrayType = Array<unsigned int>;
+  using DoubleArrayType = Array<double>;
 
   /** Schedule of smoothing iterations to be used at every resolution level. */
   itkSetMacro( SmoothingIterations, IntegerArrayType );
@@ -175,8 +175,8 @@ public:
   itkGetConstObjectMacro( CurrentLevelInitialFixedMesh, MeshType );
 
 #ifdef USE_VTK
-  typedef MultiResolutionDeformableAndAffineRegistrationMonitor<
-      Self, DestinationPointSetType>  RegistrationMonitorType;
+  using RegistrationMonitorType = MultiResolutionDeformableAndAffineRegistrationMonitor<
+      Self, DestinationPointSetType>;
 
   void SetRegistrationMonitor( RegistrationMonitorType * monitor )
   {

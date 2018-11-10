@@ -106,7 +106,7 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
     itkExceptionMacro("Input PointSet is missing");
     }
 
-  typedef typename InputPointSetType::PointsContainer DestinationPointsContainer;
+  using DestinationPointsContainer = typename InputPointSetType::PointsContainer;
 
   const DestinationPointsContainer * destinationPoints = inputPointSet->GetPoints();
 
@@ -126,13 +126,13 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 
   ProgressReporter progress(this, 0, numberOfPoints);
 
-  typedef typename DestinationPointsContainer::ConstIterator DestinationPointIterator;
+  using DestinationPointIterator = typename DestinationPointsContainer::ConstIterator;
 
   DestinationPointIterator destinationPointItr = destinationPoints->Begin();
   DestinationPointIterator destinationPointEnd = destinationPoints->End();
 
-  typedef typename OutputMeshType::PointsContainer OutputPointContainer;
-  typedef typename OutputPointContainer::Iterator  OutputPointIterator;
+  using OutputPointContainer = typename OutputMeshType::PointsContainer;
+  using OutputPointIterator = typename OutputPointContainer::Iterator;
 
   OutputPointContainer * outputPoints = outputMesh->GetPoints();
 

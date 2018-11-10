@@ -48,48 +48,45 @@ template <typename TPixel = float, unsigned int VImageDimension = 3>
 class CommandIterationUpdate : public itk::Command
 {
 public:
-  typedef  CommandIterationUpdate  Self;
-  typedef  itk::Command            Superclass;
-  typedef  itk::SmartPointer<Self> Pointer;
+  using Self = CommandIterationUpdate;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
-  typedef itk::Image<TPixel, VImageDimension>          InternalImageType;
-  typedef itk::Vector<TPixel, VImageDimension>         VectorPixelType;
-  typedef itk::Image<VectorPixelType, VImageDimension> DisplacementFieldType;
-  typedef itk::Image<VectorPixelType, VImageDimension> VelocityFieldType;
+  using InternalImageType = itk::Image<TPixel, VImageDimension>;
+  using VectorPixelType = itk::Vector<TPixel, VImageDimension>;
+  using DisplacementFieldType = itk::Image<VectorPixelType, VImageDimension>;
+  using VelocityFieldType = itk::Image<VectorPixelType, VImageDimension>;
 
-  typedef itk::DemonsRegistrationFilter<
+  using DemonsRegistrationFilterType = itk::DemonsRegistrationFilter<
       InternalImageType, InternalImageType,
-      DisplacementFieldType>   DemonsRegistrationFilterType;
+      DisplacementFieldType>;
 
-  typedef itk::DiffeomorphicDemonsRegistrationFilter<
+  using DiffeomorphicDemonsRegistrationFilterType = itk::DiffeomorphicDemonsRegistrationFilter<
       InternalImageType, InternalImageType,
-      DisplacementFieldType>   DiffeomorphicDemonsRegistrationFilterType;
+      DisplacementFieldType>;
 
-  typedef itk::DiffeomorphicDemonsRegistrationWithMaskFilter<
+  using DiffeomorphicDemonsRegistrationWithMaskFilterType = itk::DiffeomorphicDemonsRegistrationWithMaskFilter<
       InternalImageType, InternalImageType,
-      DisplacementFieldType>   DiffeomorphicDemonsRegistrationWithMaskFilterType;
+      DisplacementFieldType>;
 
-  typedef itk::FastSymmetricForcesDemonsRegistrationFilter<
+  using FastSymmetricForcesDemonsRegistrationFilterType = itk::FastSymmetricForcesDemonsRegistrationFilter<
       InternalImageType, InternalImageType,
-      DisplacementFieldType>   FastSymmetricForcesDemonsRegistrationFilterType;
+      DisplacementFieldType>;
 
-  typedef itk::MultiResolutionPDEDeformableRegistration<
+  using MultiResRegistrationFilterType = itk::MultiResolutionPDEDeformableRegistration<
       InternalImageType, InternalImageType,
-      DisplacementFieldType, TPixel>   MultiResRegistrationFilterType;
+      DisplacementFieldType, TPixel>;
 
-  typedef itk::DisplacementFieldJacobianDeterminantFilter<
-      DisplacementFieldType, TPixel, InternalImageType> JacobianFilterType;
+  using JacobianFilterType = itk::DisplacementFieldJacobianDeterminantFilter<
+      DisplacementFieldType, TPixel, InternalImageType>;
 
-  typedef itk::MinimumMaximumImageCalculator<InternalImageType>
-    MinMaxFilterType;
+  using MinMaxFilterType = itk::MinimumMaximumImageCalculator<InternalImageType>;
 
-  typedef itk::WarpHarmonicEnergyCalculator<DisplacementFieldType>
-    HarmonicEnergyCalculatorType;
+  using HarmonicEnergyCalculatorType = itk::WarpHarmonicEnergyCalculator<DisplacementFieldType>;
 
-  typedef itk::VectorCentralDifferenceImageFunction<DisplacementFieldType>
-    WarpGradientCalculatorType;
+  using WarpGradientCalculatorType = itk::VectorCentralDifferenceImageFunction<DisplacementFieldType>;
 
-  typedef typename WarpGradientCalculatorType::OutputType WarpGradientType;
+  using WarpGradientType = typename WarpGradientCalculatorType::OutputType;
 
   itkNewMacro(Self);
 private:
@@ -195,8 +192,7 @@ public:
       double tmp;
       if( m_TrueField )
         {
-        typedef itk::ImageRegionConstIteratorWithIndex<DisplacementFieldType>
-          FieldIteratorType;
+        using FieldIteratorType = itk::ImageRegionConstIteratorWithIndex<DisplacementFieldType>;
         FieldIteratorType currIter(
           deffield, deffield->GetLargestPossibleRegion() );
         FieldIteratorType trueIter(

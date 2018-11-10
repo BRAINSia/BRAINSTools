@@ -54,9 +54,9 @@ main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   // define image with type of voxel
-  typedef double PixelType;
+  using PixelType = double;
   constexpr unsigned long int Dimension  = 3;
-  typedef itk::Image<PixelType, 3> InputImageType;
+  using InputImageType = itk::Image<PixelType, 3>;
 
   // there has to be two input volumes and label volume
   if( ( inputVolumeInXAxis.empty() ) || (inputVolumeInYAxis.empty() ) )
@@ -71,7 +71,7 @@ main(int argc, char *argv[])
             << "* InputImage Filename "  << inputVolumeInYAxis  << std::endl;
 
   // Image Reader for inputVolumes
-  typedef itk::ImageFileReader<InputImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<InputImageType>;
 
   ImageReaderType::Pointer imageReader1 = ImageReaderType::New();
   imageReader1->SetFileName( inputVolumeInXAxis );
@@ -80,15 +80,15 @@ main(int argc, char *argv[])
   imageReader2->SetFileName( inputVolumeInYAxis );
 
   // Read Binary Images
-  typedef double                                 BinaryPixelType;
-  typedef itk::Image<BinaryPixelType, Dimension> BinaryImageType;
+  using BinaryPixelType = double;
+  using BinaryImageType = itk::Image<BinaryPixelType, Dimension>;
 
   BinaryImageType::Pointer binaryImageInX = BinaryImageType::New();
   BinaryImageType::Pointer binaryImageInY = BinaryImageType::New();
 
   if( (!inputMaskVolumeInXAxis.empty() ) && (!inputMaskVolumeInYAxis.empty() ) )
     {
-    typedef itk::ImageFileReader<BinaryImageType> BinaryImageReaderType;
+    using BinaryImageReaderType = itk::ImageFileReader<BinaryImageType>;
 
     BinaryImageReaderType::Pointer binaryImageReaderInX = BinaryImageReaderType::New();
     binaryImageReaderInX->SetFileName( inputMaskVolumeInXAxis );
@@ -113,8 +113,7 @@ main(int argc, char *argv[])
     }
 
   // Rescale Input Images
-  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType>
-    RescaleFilterType;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType, InputImageType>;
 
   RescaleFilterType::Pointer rescaler1 = RescaleFilterType::New();
 
@@ -252,7 +251,7 @@ main(int argc, char *argv[])
     }
   outputFileStream.close();
   // - Write Histogram Image
-  typedef itk::Image<unsigned int, 2> HistogramImageType;
+  using HistogramImageType = itk::Image<unsigned int, 2>;
   HistogramImageType::Pointer histogramImg = HistogramImageType::New();
 
   HistogramImageType::IndexType start;
@@ -275,7 +274,7 @@ main(int argc, char *argv[])
 
   // * Iterator For Image
 
-  typedef itk::ImageRegionIterator<HistogramImageType> HistIteratorType;
+  using HistIteratorType = itk::ImageRegionIterator<HistogramImageType>;
   HistIteratorType hit( histogramImg,
                         histogramImg->GetLargestPossibleRegion() );
   for( hit.GoToBegin(); !hit.IsAtEnd();     ++hit )
@@ -286,10 +285,9 @@ main(int argc, char *argv[])
 
   // Histogram Image Rescale to 0-255
 
-  typedef itk::Image<unsigned char, 2> HistogramWritingType;
-  typedef itk::RescaleIntensityImageFilter<HistogramImageType,
-                                           HistogramWritingType>
-    HistogramRescaleFilterType;
+  using HistogramWritingType = itk::Image<unsigned char, 2>;
+  using HistogramRescaleFilterType = itk::RescaleIntensityImageFilter<HistogramImageType,
+                                           HistogramWritingType>;
 
   HistogramRescaleFilterType::Pointer histogramRescaler
     = HistogramRescaleFilterType::New();
@@ -300,9 +298,8 @@ main(int argc, char *argv[])
   histogramRescaler->SetOutputMinimum(0);
 
   // Invert Intensity so that background is white
-  typedef itk::InvertIntensityImageFilter<HistogramWritingType,
-                                          HistogramWritingType>
-    InvertIntensityFilterType;
+  using InvertIntensityFilterType = itk::InvertIntensityImageFilter<HistogramWritingType,
+                                          HistogramWritingType>;
   InvertIntensityFilterType::Pointer invertFilter =
     InvertIntensityFilterType::New();
 
@@ -311,7 +308,7 @@ main(int argc, char *argv[])
   invertFilter->Update();
 
   //  Histogram Writer
-  typedef itk::ImageFileWriter<HistogramWritingType> HistogramWriter;
+  using HistogramWriter = itk::ImageFileWriter<HistogramWritingType>;
 
   HistogramWriter::Pointer histogramWriter  = HistogramWriter::New();
 

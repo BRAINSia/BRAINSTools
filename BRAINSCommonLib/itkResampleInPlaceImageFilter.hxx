@@ -81,7 +81,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 
     {
     /** make a cast copied version of the input image **/
-    typedef CastImageFilter<InputImageType, OutputImageType> DuplicatorType;
+    using DuplicatorType = CastImageFilter<InputImageType, OutputImageType>;
     typename DuplicatorType::Pointer CastFilter = DuplicatorType::New();
     CastFilter->SetInput( this->GetInput() );
     CastFilter->Update();
@@ -98,7 +98,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
                                                 - FMTxfm->GetTranslation() ) // NewOrigin = [R^-1] * ( O - C - T ) + C
                             + FMTxfm->GetCenter().GetVectorFromOrigin();
   itk::Point<double,3> newOriginPoint;
-  for(int i =0; i < 3 ; ++i)
+  for(int i =0; i < 3; ++i)
   {
    newOriginPoint[i]=newOriginVector[i];
   }

@@ -96,10 +96,10 @@ ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
       {
       muLogMacro(<< "ResamplingInPlace input image " << inputImageMapIter->first << " #" << i
                  << " to the physical space of the first image." << std::endl);
-      typedef itk::ResampleInPlaceImageFilter<FloatImageType, FloatImageType>  ResampleIPFilterType;
-      typedef ResampleIPFilterType::Pointer                                    ResampleIPFilterPointer;
+      using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<FloatImageType, FloatImageType>;
+      using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
 
-      typedef itk::VersorRigid3DTransform<double>   VersorRigid3DTransformType;
+      using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
       const VersorRigid3DTransformType::ConstPointer tempRigidTransform =
         dynamic_cast<VersorRigid3DTransformType const *>( (*xfrmIt).GetPointer() );
       if( tempRigidTransform.IsNull() )
@@ -152,7 +152,7 @@ ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
         // Zero the mask region outside FOV and also the intensities with
         // outside
         // FOV code
-        typedef itk::ImageRegionIterator<FloatImageType> InternalIteratorType;
+        using InternalIteratorType = itk::ImageRegionIterator<FloatImageType>;
         InternalIteratorType    tmpIt( tmp, tmp->GetLargestPossibleRegion() );
 
         //TODO:  This code below with masking does not make sense.
@@ -166,7 +166,7 @@ ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
         intraSubjectFOVIntersectionMask->Allocate();
         intraSubjectFOVIntersectionMask->FillBuffer(1);
 
-        typedef itk::ImageRegionIterator<ByteImageType> MaskIteratorType;
+        using MaskIteratorType = itk::ImageRegionIterator<ByteImageType>;
         MaskIteratorType maskIt( intraSubjectFOVIntersectionMask,
                                 intraSubjectFOVIntersectionMask->GetLargestPossibleRegion() );
         maskIt.GoToBegin();

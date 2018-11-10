@@ -103,15 +103,15 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
   // fieldPtr->GetRequestedRegion().GetSize();
 
   // iterator for the output image
-  typedef ImageRegionIteratorWithIndex<OutputImageType> OutputImageIteratorWithIndex;
+  using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex<OutputImageType>;
   OutputImageIteratorWithIndex iter( outputPtr, outputPtr->GetRequestedRegion() );
 
   // iterator for the deformation field
-  typedef ImageRegionConstIterator<DisplacementFieldType> DeformationFieldIterator;
+  using DeformationFieldIterator = ImageRegionConstIterator<DisplacementFieldType>;
   DeformationFieldIterator fieldIt( fieldPtr, outputPtr->GetRequestedRegion() );
 
   // Bresenham line iterator
-  typedef LineIterator<OutputImageType> LineIteratorType;
+  using LineIteratorType = LineIterator<OutputImageType>;
 
   IndexType index;
   IndexType refIndex;

@@ -62,7 +62,7 @@ TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 
   this->m_BasisSystemList->Reserve( this->m_InputMesh->GetCells()->Size() );
 
-  typedef TriangleBasisSystemCalculator<TMesh, TBasisSystem> TriangleBasisSystemCalculatorType;
+  using TriangleBasisSystemCalculatorType = TriangleBasisSystemCalculator<TMesh, TBasisSystem>;
 
   typename TriangleBasisSystemCalculatorType::Pointer basisCalculator =
     TriangleBasisSystemCalculatorType::New();

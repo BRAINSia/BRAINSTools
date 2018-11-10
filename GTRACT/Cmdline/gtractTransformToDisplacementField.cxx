@@ -64,11 +64,11 @@ int main(int argc, char *argv[])
   std::cout << "Reference Image: " <<  inputReferenceVolume << std::endl;
   std::cout << "Output Displacement Field: " << outputDeformationFieldVolume << std::endl;
 
-  typedef itk::Vector<float, 3>                    DeformationPixelType;
-  typedef itk::Image<DeformationPixelType, 3>      DisplacementFieldType;
-  typedef DisplacementFieldType                    ImageType;
-  typedef itk::ImageFileWriter<ImageType>          WriterType;
-  typedef itk::Image<signed short, 3>              ReferenceImageType;
+  using DeformationPixelType = itk::Vector<float, 3>;
+  using DisplacementFieldType = itk::Image<DeformationPixelType, 3>;
+  using ImageType = DisplacementFieldType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using ReferenceImageType = itk::Image<signed short, 3>;
 
   ReferenceImageType::Pointer image;
   try
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     }
 
   // Read the transform
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
   DisplacementFieldType::Pointer displacementField =

@@ -29,14 +29,13 @@ filterFloatImages(
   unsigned int iters,
   double dt)
 {
-  typedef itk::Image<float, 3> FloatImageType;
+  using FloatImageType = itk::Image<float, 3>;
 
   if( method.compare("GradientAnisotropicDiffusion") == 0 )
     {
     std::cout << "Gradient Anisotropic Diffusion" << std::endl;
-    typedef itk::GradientAnisotropicDiffusionImageFilter
-      <FloatImageType, FloatImageType>
-      AnisoFilterType;
+    using AnisoFilterType = itk::GradientAnisotropicDiffusionImageFilter
+      <FloatImageType, FloatImageType>;
     for( unsigned i = 0; i < images.size(); i++ )
       {
       AnisoFilterType::Pointer anisofilt = AnisoFilterType::New();
@@ -55,8 +54,8 @@ filterFloatImages(
   else
     {
     std::cout << "K flow" << std::endl;
-    typedef itk::CurvatureFlowImageFilter
-      <FloatImageType, FloatImageType> CurvatureFilterType;
+    using CurvatureFilterType = itk::CurvatureFlowImageFilter
+      <FloatImageType, FloatImageType>;
     for( unsigned int k = 0; k < images.size(); k++ )
       {
       CurvatureFilterType::Pointer cfilt = CurvatureFilterType::New();

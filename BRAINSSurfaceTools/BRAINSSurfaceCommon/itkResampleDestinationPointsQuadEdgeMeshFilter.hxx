@@ -106,7 +106,7 @@ void
 ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>
 ::ProjectPointToSphereSurface( OutputPointType & point ) const
 {
-  typedef typename OutputPointType::VectorType VectorType;
+  using VectorType = typename OutputPointType::VectorType;
 
   VectorType vectorToCenter( point - this->m_SphereCenter );
 
@@ -176,8 +176,8 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
 
   OutputPointsContainerIterator outputPointItr = points->Begin();
 
-  typedef typename TransformType::InputPointType InputPointType;
-  typedef typename InterpolatorType::PointType   TransformInputPointType;
+  using InputPointType = typename TransformType::InputPointType;
+  using TransformInputPointType = typename InterpolatorType::PointType;
 
   InputPointType inputPoint;
 

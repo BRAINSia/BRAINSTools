@@ -91,7 +91,7 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
   // Visit all nodes of the input mesh
   //
   InputPointDataContainerConstPointer inputPointData = inputMesh->GetPointData();
-  typedef typename InputPointDataContainer::ConstIterator InputPointDataIterator;
+  using InputPointDataIterator = typename InputPointDataContainer::ConstIterator;
 
   InputPointDataIterator inputPointDataItr = inputPointData->Begin();
   InputPointDataIterator inputPointDataEnd = inputPointData->End();
@@ -160,7 +160,7 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
   // and change the scalars
   OutputPointDataContainer * pointData = outputMesh->GetPointData();
 
-  typedef typename OutputPointDataContainer::Iterator PointDataIterator;
+  using PointDataIterator = typename OutputPointDataContainer::Iterator;
 
   PointDataIterator pointDataItr = pointData->Begin();
   PointDataIterator pointDataEnd = pointData->End();

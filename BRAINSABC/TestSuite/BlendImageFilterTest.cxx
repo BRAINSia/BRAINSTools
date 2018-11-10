@@ -24,13 +24,13 @@
 
 int main(int, char * *)
 {
-  typedef itk::Image<float, 2> ImageType;
+  using ImageType = itk::Image<float, 2>;
 
   std::cout << "Create input image using RandomImageSource" << std::endl;
   ImageType::Pointer images[2];
   for( unsigned i = 0; i < 2; i++ )
     {
-    typedef itk::RandomImageSource<ImageType> SourceType;
+    using SourceType = itk::RandomImageSource<ImageType>;
     SourceType::Pointer      source = SourceType::New();
     ImageType::SizeValueType size[2] = {64, 64};
     source->SetSize( size );
@@ -39,8 +39,7 @@ int main(int, char * *)
     source->Update();
     images[i] = source->GetOutput();
     }
-  typedef itk::BlendImageFilter<ImageType, ImageType>
-    BlendImageFilterType;
+  using BlendImageFilterType = itk::BlendImageFilter<ImageType, ImageType>;
   BlendImageFilterType::Pointer filter =
     BlendImageFilterType::New();
   filter->SetInput1(images[0]);
@@ -56,7 +55,7 @@ int main(int, char * *)
       images[1]->GetLargestPossibleRegion() ),
   itBlend(blendImage,
           blendImage->GetLargestPossibleRegion() );
-  for( ; !it1.IsAtEnd() && !it2.IsAtEnd() && !itBlend.IsAtEnd();
+  for(; !it1.IsAtEnd() && !it2.IsAtEnd() && !itBlend.IsAtEnd();
        ++it1, ++it2, ++itBlend )
     {
     float blend = (it1.Get() * 0.2) + (it2.Get() * 0.8);

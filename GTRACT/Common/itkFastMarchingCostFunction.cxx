@@ -144,7 +144,7 @@ FastMarchingCostFunction // < TCostImage>
     std::cout << "Warning initial point is outside of region " << std::endl;
     }
 
-  typedef vnl_vector_fixed<float, CostImageDimension> FVector;
+  using FVector = vnl_vector_fixed<float, CostImageDimension>;
   FVector offset;
 
   FVector sum; sum.fill(0);

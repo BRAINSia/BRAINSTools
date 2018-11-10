@@ -25,8 +25,8 @@
 #define EXPP(x) std::exp( ( x ) )
 #define LOGP(x) std::log( ( x ) )
 
-typedef  itk::Image<unsigned char, 3> ByteImageType;
-typedef itk::CompensatedSummation<double> CompensatedSummationType;
+using ByteImageType = itk::Image<unsigned char, 3>;
+using CompensatedSummationType = itk::CompensatedSummation<double>;
 
 template <typename TInputImage, typename TProbabilityImage, typename MatrixType>
 void
@@ -47,10 +47,10 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                               const bool logConvertValues
                               )
 {
-  typedef std::vector<typename TInputImage::Pointer> InputImageVector;
-  typedef orderedmap<std::string,InputImageVector>   MapOfInputImageVectors;
+  using InputImageVector = std::vector<typename TInputImage::Pointer>;
+  using MapOfInputImageVectors = orderedmap<std::string,InputImageVector>;
 
-  typedef itk::NearestNeighborInterpolateImageFunction< TInputImage, double > InputImageNNInterpolationType;
+  using InputImageNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< TInputImage, double >;
 
   const LOOPITERTYPE numClasses =     PosteriorsList.size();
   const LOOPITERTYPE numModalities = InputImageMap.size();

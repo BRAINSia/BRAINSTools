@@ -58,14 +58,14 @@ main(int argc, char *argv[])
               << "- writeHistogram: " << writeHistogram << std::endl;
     }
   // define image with type of voxel
-  typedef float PixelType;
+  using PixelType = float;
   constexpr unsigned int Dimension = 3;
-  typedef itk::Image<PixelType, Dimension> ImageType;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   /*
    * Reader
    */
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer referenceImageReader = ImageReaderType::New();
   referenceImageReader->SetFileName( referenceVolume);
@@ -78,7 +78,7 @@ main(int argc, char *argv[])
    * image for histogram matching filter
    */
 
-  typedef itk::ImageMaskSpatialObject<Dimension> MaskSpatialObjectType;
+  using MaskSpatialObjectType = itk::ImageMaskSpatialObject<Dimension>;
   MaskSpatialObjectType::Pointer referenceMaskSpatialObject = nullptr;
   MaskSpatialObjectType::Pointer inputMaskSpatialObject = nullptr;
 
@@ -87,10 +87,10 @@ main(int argc, char *argv[])
     /*
      * Binary Image Read
      */
-    typedef unsigned char                          BinaryPixelType;
-    typedef itk::Image<BinaryPixelType, Dimension> BinaryImageType;
+    using BinaryPixelType = unsigned char;
+    using BinaryImageType = itk::Image<BinaryPixelType, Dimension>;
 
-    typedef itk::ImageFileReader<BinaryImageType> BinaryImageReaderType;
+    using BinaryImageReaderType = itk::ImageFileReader<BinaryImageType>;
 
     BinaryImageReaderType::Pointer referenceBinaryImageReader =
       BinaryImageReaderType::New();
@@ -134,7 +134,7 @@ main(int argc, char *argv[])
 
   std::string histogramDataFilename = writeHistogram + ".dat";
   // Define Writer Here
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->SetFileName( outputVolume );
 
@@ -153,8 +153,8 @@ main(int argc, char *argv[])
   if( histogramAlgorithm == "simpleITKHistogramMatch" )
     {
     std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;
-    typedef itk::HistogramMatchingImageFilter<ImageType,
-                                              ImageType> SimpleHistogramMatchingType;
+    using SimpleHistogramMatchingType = itk::HistogramMatchingImageFilter<ImageType,
+                                              ImageType>;
     SimpleHistogramMatchingType::Pointer SHFilter = SimpleHistogramMatchingType::New();
 
     SHFilter->SetReferenceImage( referenceImageReader->GetOutput() );
@@ -177,7 +177,7 @@ main(int argc, char *argv[])
     // ---------------------------------------------------------------------------
     // //
 
-    typedef SimpleHistogramMatchingType::HistogramType HistogramType;
+    using HistogramType = SimpleHistogramMatchingType::HistogramType;
 
     HistogramType::ConstPointer srcHG = SHFilter->GetSourceHistogram();
     HistogramType::ConstPointer refHG = SHFilter->GetReferenceHistogram();
@@ -216,8 +216,8 @@ main(int argc, char *argv[])
   else if( histogramAlgorithm == "OtsuHistogramMatching" )
     {
     std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;
-    typedef itk::OtsuHistogramMatchingImageFilter<ImageType,
-                                                  ImageType> OtsuHistogramMatchingType;
+    using OtsuHistogramMatchingType = itk::OtsuHistogramMatchingImageFilter<ImageType,
+                                                  ImageType>;
     OtsuHistogramMatchingType::Pointer OHFilter = OtsuHistogramMatchingType::New();
 
     OHFilter->SetReferenceImage( referenceImageReader->GetOutput() );
@@ -251,7 +251,7 @@ main(int argc, char *argv[])
     // ---------------------------------------------------------------------------
     // //
 
-    typedef  OtsuHistogramMatchingType::HistogramType HistogramType;
+    using HistogramType = OtsuHistogramMatchingType::HistogramType;
     HistogramType::ConstPointer srcHG = OHFilter->GetSourceHistogram();
     HistogramType::ConstPointer refHG = OHFilter->GetReferenceHistogram();
     HistogramType::ConstPointer outHG = OHFilter->GetOutputHistogram();

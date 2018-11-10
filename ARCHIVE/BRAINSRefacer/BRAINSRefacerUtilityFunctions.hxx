@@ -11,7 +11,7 @@ template< typename TImageType >
 void WriteImage(std::string filename, TImageType *image)
 {
   std::cout << "Writing Image: " << filename << std::endl;
-  typedef itk::ImageFileWriter<TImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<TImageType>;
   typename FileWriterType::Pointer fileWriter = FileWriterType::New();
 
   fileWriter->SetInput(image);
@@ -25,7 +25,7 @@ template< typename TImageType >
 void WriteSmartImage(std::string filename, typename TImageType::Pointer image)
 {
   std::cout << "Writing Image: " << filename << std::endl;
-  typedef itk::ImageFileWriter<TImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<TImageType>;
   typename FileWriterType::Pointer fileWriter = FileWriterType::New();
 
   fileWriter->SetInput(image);
@@ -40,7 +40,7 @@ template< typename TTransformType >
 void WriteTransform(std::string transformFileName, TTransformType transform )
 {
   std::cout << "Writing Transform: " << transformFileName << std::endl;
-  typedef itk::TransformFileWriter TransformWriterType;
+  using TransformWriterType = itk::TransformFileWriter;
   TransformWriterType::Pointer transformWriter = TransformWriterType::New();
 
   transformWriter->SetInput(transform);
@@ -81,56 +81,56 @@ int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image
     //INTEGER like types  --- round and write
     case itk::ImageIOBase::SHORT:
       {
-      typedef itk::Image<short, TDimension> OutputType;
+      using OutputType = itk::Image<short, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::UCHAR:
       {
-      typedef itk::Image<unsigned char, TDimension> OutputType;
+      using OutputType = itk::Image<unsigned char, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::CHAR:
       {
-      typedef itk::Image<char, TDimension> OutputType;
+      using OutputType = itk::Image<char, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::USHORT:
       {
-      typedef itk::Image<unsigned short, TDimension> OutputType;
+      using OutputType = itk::Image<unsigned short, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::UINT:
       {
-      typedef itk::Image<unsigned int, TDimension> OutputType;
+      using OutputType = itk::Image<unsigned int, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::INT:
       {
-      typedef itk::Image<int, TDimension> OutputType;
+      using OutputType = itk::Image<int, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::ULONG:
       {
-      typedef itk::Image<unsigned long, TDimension> OutputType;
+      using OutputType = itk::Image<unsigned long, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::LONG:
       {
-      typedef itk::Image<long, TDimension> OutputType;
+      using OutputType = itk::Image<long, TDimension>;
       RoundAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
@@ -139,14 +139,14 @@ int ConvertAndSave(std::string fileName, typename TInputImageType::Pointer image
       //FLOAT LIKE TYPES --- cast and write
     case itk::ImageIOBase::FLOAT:
       {
-      typedef itk::Image<float, TDimension> OutputType;
+      using OutputType = itk::Image<float, TDimension>;
       CastAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }
 
     case itk::ImageIOBase::DOUBLE:
       {
-      typedef itk::Image<double, TDimension> OutputType;
+      using OutputType = itk::Image<double, TDimension>;
       CastAndWriteImage<TInputImageType, OutputType>(fileName, image);
       break;
       }

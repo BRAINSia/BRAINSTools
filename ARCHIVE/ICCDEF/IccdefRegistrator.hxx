@@ -55,15 +55,15 @@ template <
 void IccdefRegistrator<TRealImage, TOutputImage,
                        TFieldValue>::WriteDisplacementComponents(TDisplacementField * df, std::string prefix)
 {
-//  typedef itk::Image<float, 3> OutputImageType;
+//  using OutputImageType = itk::Image<float, 3>;
   this->m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
-  typedef itk::Image<FieldValueType,
-                     3>                  ComponentImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
-                                                   ComponentImageType> ComponentFilterType;
+  using ComponentImageType = itk::Image<FieldValueType,
+                     3>;
+  using ComponentFilterType = itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
+                                                   ComponentImageType>;
 
   std::string CurrentComponentFilename;
   try
@@ -127,14 +127,14 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 
   this->m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::ZeroValue();
   // Setup an registration observer
-  typedef SimpleMemberCommand<Self> CommandType;
+  using CommandType = SimpleMemberCommand<Self>;
   typename CommandType::Pointer command = CommandType::New();
   command->SetCallbackFunction(this, &Self::StartNewLevel);
 
   this->m_Tag = this->m_Registration->AddObserver(IterationEvent(), command);
 
-  typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      TDisplacementField, double> FieldInterpolatorType;
+  using FieldInterpolatorType = VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
+      TDisplacementField, double>;
 
   typename FieldInterpolatorType::Pointer VectorInterpolator12
     = FieldInterpolatorType::New();
@@ -207,7 +207,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_InitialFixedDisplacementFieldFilename != std::string("none")
       && this->m_InitialFixedDisplacementFieldFilename != std::string("") )
     {
-    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
+    using FieldReaderType = itk::ImageFileReader<TDisplacementField>;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
     fieldReader->SetFileName( this->m_InitialFixedDisplacementFieldFilename.c_str() );
     try
@@ -226,7 +226,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_InitialMovingDisplacementFieldFilename != std::string("none")
       && this->m_InitialMovingDisplacementFieldFilename != std::string("") )
     {
-    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
+    using FieldReaderType = itk::ImageFileReader<TDisplacementField>;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
     fieldReader->SetFileName( this->m_InitialMovingDisplacementFieldFilename.c_str() );
     try
@@ -328,8 +328,8 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
   if( this->GetOutputJacobianImage() )
     {
-    typedef itk::DisplacementFieldJacobianDeterminantFilter<
-        TDisplacementField, FieldValueType, TRealImage> JacobianFilterType;
+    using JacobianFilterType = itk::DisplacementFieldJacobianDeterminantFilter<
+        TDisplacementField, FieldValueType, TRealImage>;
 
     typename JacobianFilterType::Pointer localForwardJacobianFilter = JacobianFilterType::New();
     localForwardJacobianFilter->SetUseImageSpacing( true );
@@ -353,8 +353,8 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     typename RealImageType::Pointer DeformedMovingImagePtr(nullptr);
     typename RealImageType::Pointer DeformedFixedImagePtr(nullptr);
 
-    typedef WarpImageFilter<RealImageType, RealImageType,
-                            TDisplacementField> WarperType;
+    using WarperType = WarpImageFilter<RealImageType, RealImageType,
+                            TDisplacementField>;
     typename WarperType::Pointer warper = WarperType::New();
     if( this->GetUseHistogramMatching() == true )
       {

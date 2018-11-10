@@ -100,11 +100,11 @@ int main( int argc, char * argv[] )
 
   // define image type
   constexpr unsigned char dimension = 3;
-  typedef unsigned char                    PixelType;
-  typedef itk::Image<PixelType, dimension> ImageType;
+  using PixelType = unsigned char;
+  using ImageType = itk::Image<PixelType, dimension>;
 
   // read Inputimage
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
   ImageReaderType::Pointer imagereader = ImageReaderType::New();
 
   imagereader->SetFileName(labelMapFile.c_str() );
@@ -122,13 +122,13 @@ int main( int argc, char * argv[] )
   double                         point[3];
 
   ImageType::IndexType pixelindex;
-  typedef itk::ImageRegionConstIterator<ImageType> ConstIteratorType;
+  using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
 
   ImageType::RegionType            subregion;
   ImageType::RegionType::IndexType substart;
   ImageType::RegionType::SizeType  subsize;
 
-  typedef itk::Point<double, ImageType::ImageDimension> PointType;
+  using PointType = itk::Point<double, ImageType::ImageDimension>;
   PointType impoint;
   for( int i = 0; i < npoints; i++ )
     {

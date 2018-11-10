@@ -69,42 +69,42 @@ class GTRACT_COMMON_EXPORT InvertBSplineFilter : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(InvertBSplineFilter);
 
-  /** Standard class typedefs. */
-  typedef InvertBSplineFilter      Self;
-  typedef itk::Object              Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = InvertBSplineFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int transformDimension = 3;
-  typedef double CoordinateRepresentationType;
+  using CoordinateRepresentationType = double;
 
-  /** Fixed Image typedefs. */
-  typedef itk::Image<signed short, transformDimension> ImageType;
-  typedef ImageType::Pointer                           ImageTypePointer;
-  typedef ImageType::ConstPointer                      ImageConstPointer;
-  typedef ImageType::RegionType                        ImageRegionType;
-  typedef ImageType::SizeType                          ImageSizeType;
-  typedef ImageType::SpacingType                       ImageSpacingType;
-  typedef ImageType::PointType                         ImagePointType;
-  typedef ImageType::PixelType                         ImagePixelType;
-  typedef ImageType::DirectionType                     ImageDirectionType;
-  typedef ImageType::IndexType                         ImageIndexType;
+  /** Fixed Image type alias. */
+  using ImageType = itk::Image<signed short, transformDimension>;
+  using ImageTypePointer = ImageType::Pointer;
+  using ImageConstPointer = ImageType::ConstPointer;
+  using ImageRegionType = ImageType::RegionType;
+  using ImageSizeType = ImageType::SizeType;
+  using ImageSpacingType = ImageType::SpacingType;
+  using ImagePointType = ImageType::PointType;
+  using ImagePixelType = ImageType::PixelType;
+  using ImageDirectionType = ImageType::DirectionType;
+  using ImageIndexType = ImageType::IndexType;
 
-  /** B-Spline Transform typedefs */
+  /** B-Spline Transform type alias */
   static constexpr unsigned int SplineOrder = 3;
-  typedef itk::BSplineTransform<
+  using BsplineTransformType = itk::BSplineTransform<
       CoordinateRepresentationType,
       transformDimension,
-      SplineOrder>     BsplineTransformType;
-  typedef BsplineTransformType::Pointer BsplineTransformTypePointer;
+      SplineOrder>;
+  using BsplineTransformTypePointer = BsplineTransformType::Pointer;
 
-  /** Output Transform typedefs. */
-  typedef itk::ThinPlateR2LogRSplineKernelTransform<CoordinateRepresentationType,
-                                                    transformDimension>  TransformType;
-  typedef TransformType::Pointer                                       TransformTypePointer;
-  typedef itk::Point<CoordinateRepresentationType, transformDimension> PointType;
-  typedef TransformType::PointSetType                                  PointSetType;
-  typedef PointSetType::PointIdentifier                                PointIdType;
+  /** Output Transform type alias. */
+  using TransformType = itk::ThinPlateR2LogRSplineKernelTransform<CoordinateRepresentationType,
+                                                    transformDimension>;
+  using TransformTypePointer = TransformType::Pointer;
+  using PointType = itk::Point<CoordinateRepresentationType, transformDimension>;
+  using PointSetType = TransformType::PointSetType;
+  using PointIdType = PointSetType::PointIdentifier;
 
   /** Standard New method. */
   itkNewMacro(Self);

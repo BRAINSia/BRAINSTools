@@ -80,12 +80,12 @@ class VectorDiffeomorphicDemonsRegistrationFilter :
                                                  TDisplacementField>
 {
 public:
-  /** Standard class typedefs. */
-  typedef VectorDiffeomorphicDemonsRegistrationFilter Self;
-  typedef PDEDeformableRegistrationFilter<
-      TFixedImage, TMovingImage, TDisplacementField>      Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = VectorDiffeomorphicDemonsRegistrationFilter;
+  using Superclass = PDEDeformableRegistrationFilter<
+      TFixedImage, TMovingImage, TDisplacementField>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -95,34 +95,34 @@ public:
                PDEDeformableRegistrationFilter);
 
   /** FixedImage image type. */
-  typedef TFixedImage                           FixedImageType;
-  typedef typename FixedImageType::Pointer      FixedImagePointer;
-  typedef typename FixedImageType::ConstPointer FixedImageConstPointer;
+  using FixedImageType = TFixedImage;
+  using FixedImagePointer = typename FixedImageType::Pointer;
+  using FixedImageConstPointer = typename FixedImageType::ConstPointer;
 
   /** MovingImage image type. */
-  typedef TMovingImage                           MovingImageType;
-  typedef typename MovingImageType::Pointer      MovingImagePointer;
-  typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
+  using MovingImageType = TMovingImage;
+  using MovingImagePointer = typename MovingImageType::Pointer;
+  using MovingImageConstPointer = typename MovingImageType::ConstPointer;
 
   /** Displacement field type. */
-  typedef typename Superclass::DisplacementFieldType    DisplacementFieldType;
-  typedef typename Superclass::DisplacementFieldPointer DisplacementFieldPointer;
+  using DisplacementFieldType = typename Superclass::DisplacementFieldType;
+  using DisplacementFieldPointer = typename Superclass::DisplacementFieldPointer;
 #ifdef ITKV3_COMPATIBILITY
-  typedef typename Superclass::DeformationFieldType    DeformationFieldType;
-  typedef typename Superclass::DeformationFieldPointer DeformationFieldPointer;
+  using DeformationFieldType = typename Superclass::DeformationFieldType;
+  using DeformationFieldPointer = typename Superclass::DeformationFieldPointer;
 #endif
 
   /** FiniteDifferenceFunction type. */
-  typedef typename Superclass::FiniteDifferenceFunctionType FiniteDifferenceFunctionType;
+  using FiniteDifferenceFunctionType = typename Superclass::FiniteDifferenceFunctionType;
 
   /** Take timestep type from the FiniteDifferenceFunction. */
-  typedef typename FiniteDifferenceFunctionType::TimeStepType TimeStepType;
+  using TimeStepType = typename FiniteDifferenceFunctionType::TimeStepType;
 
   /** DemonsRegistrationFilterFunction type. */
-  typedef VectorESMDemonsRegistrationFunction<FixedImageType, MovingImageType,
-                                              DisplacementFieldType> DemonsRegistrationFunctionType;
+  using DemonsRegistrationFunctionType = VectorESMDemonsRegistrationFunction<FixedImageType, MovingImageType,
+                                              DisplacementFieldType>;
 
-  typedef typename DemonsRegistrationFunctionType::GradientType GradientType;
+  using GradientType = typename DemonsRegistrationFunctionType::GradientType;
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
@@ -194,31 +194,31 @@ private:
 
   const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType() const;
 
-  /** Exp and composition typedefs */
-  typedef MultiplyImageFilter<DisplacementFieldType,
+  /** Exp and composition type alias */
+  using MultiplyByConstantType = MultiplyImageFilter<DisplacementFieldType,
                                         Image<TimeStepType,DisplacementFieldType::ImageDimension> ,
-                                        DisplacementFieldType>                              MultiplyByConstantType;
+                                        DisplacementFieldType>;
 
-  typedef ExponentialDisplacementFieldImageFilter<
-      DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;
+  using FieldExponentiatorType = ExponentialDisplacementFieldImageFilter<
+      DisplacementFieldType, DisplacementFieldType>;
 
-  typedef WarpVectorImageFilter<
+  using VectorWarperType = WarpVectorImageFilter<
       DisplacementFieldType,
-      DisplacementFieldType, DisplacementFieldType>        VectorWarperType;
+      DisplacementFieldType, DisplacementFieldType>;
 
-  typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      DisplacementFieldType, double>                      FieldInterpolatorType;
+  using FieldInterpolatorType = VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
+      DisplacementFieldType, double>;
 
-  typedef AddImageFilter<
+  using AdderType = AddImageFilter<
       DisplacementFieldType,
-      DisplacementFieldType, DisplacementFieldType>        AdderType;
+      DisplacementFieldType, DisplacementFieldType>;
 
-  typedef typename MultiplyByConstantType::Pointer   MultiplyByConstantPointer;
-  typedef typename FieldExponentiatorType::Pointer   FieldExponentiatorPointer;
-  typedef typename VectorWarperType::Pointer         VectorWarperPointer;
-  typedef typename FieldInterpolatorType::Pointer    FieldInterpolatorPointer;
-  typedef typename FieldInterpolatorType::OutputType FieldInterpolatorOutputType;
-  typedef typename AdderType::Pointer                AdderPointer;
+  using MultiplyByConstantPointer = typename MultiplyByConstantType::Pointer;
+  using FieldExponentiatorPointer = typename FieldExponentiatorType::Pointer;
+  using VectorWarperPointer = typename VectorWarperType::Pointer;
+  using FieldInterpolatorPointer = typename FieldInterpolatorType::Pointer;
+  using FieldInterpolatorOutputType = typename FieldInterpolatorType::OutputType;
+  using AdderPointer = typename AdderType::Pointer;
 
   MultiplyByConstantPointer m_Multiplier;
   FieldExponentiatorPointer m_Exponentiator;

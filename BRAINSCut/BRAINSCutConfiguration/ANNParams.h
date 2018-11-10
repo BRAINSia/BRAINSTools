@@ -31,7 +31,7 @@
 class ANNParams : public ElementParser
 {
 public:
-  typedef ElementParser SuperClass;
+  using SuperClass = ElementParser;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);

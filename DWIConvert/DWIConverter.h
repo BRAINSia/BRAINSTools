@@ -75,23 +75,23 @@ public:
    * If each volume is 3DSlices, and their are NumGradients, then
    * the last direction of the unwrapped direction is (3DSlices*NumGradients).
    */
-  typedef itk::Image<PixelValueType, 3>  Volume3DUnwrappedType;
+  using Volume3DUnwrappedType = itk::Image<PixelValueType, 3>;
 
-  typedef Volume3DUnwrappedType::SpacingType            SpacingType;
-  typedef itk::ImageSeriesReader<Volume3DUnwrappedType> ReaderType;
-  typedef ReaderType::FileNamesContainer                FileNamesContainer;
-  typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
+  using SpacingType = Volume3DUnwrappedType::SpacingType;
+  using ReaderType = itk::ImageSeriesReader<Volume3DUnwrappedType>;
+  using FileNamesContainer = ReaderType::FileNamesContainer;
+  using VectorVolumeType = itk::VectorImage<PixelValueType, 3>;
 
 
-  typedef itk::ImageFileReader<Volume3DUnwrappedType>   SingleFileReaderType;
-  typedef itk::Matrix<double, 3, 3>                     RotationMatrixType;
-  typedef itk::Vector<double, 3>                        PointType;
+  using SingleFileReaderType = itk::ImageFileReader<Volume3DUnwrappedType>;
+  using RotationMatrixType = itk::Matrix<double, 3, 3>;
+  using PointType = itk::Vector<double, 3>;
 
-  typedef std::map<std::string,std::string> CommonDicomFieldMapType;
+  using CommonDicomFieldMapType = std::map<std::string,std::string>;
   DWIConverter( const FileNamesContainer &inputFileNames );
   virtual ~DWIConverter();
 
-  virtual void LoadFromDisk() = 0 ;
+  virtual void LoadFromDisk() = 0;
 
   RotationMatrixType GetSpacingMatrix() const;
 
@@ -127,7 +127,7 @@ public:
  void SetBValues( const std::vector<double> & inBValues );
  double GetMaxBValue() const;
 
- Volume3DUnwrappedType::Pointer GetDiffusionVolume() const ;
+ Volume3DUnwrappedType::Pointer GetDiffusionVolume() const;
 
  SpacingType GetSpacing() const;
  double GetThickness() const;

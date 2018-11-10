@@ -40,16 +40,16 @@ public:
   /** Extract dimension from input and output image. */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
 
-  /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                           InputImageType;
-  typedef typename InputImageType::ConstPointer InputImagePointer;
-  typedef typename InputImageType::RegionType   InputImageRegionType;
-  typedef typename InputImageType::PixelType    InputPixelType;
+  /** Convenient type alias for simplifying declarations. */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputPixelType = typename InputImageType::PixelType;
 
-  typedef ComputeHistogramQuantileThresholds Self;
-  typedef Object                             Superclass;
-  typedef SmartPointer<Self>                 Pointer;
-  typedef typename TMaskImage::PixelType     MaskPixelType;
+  using Self = ComputeHistogramQuantileThresholds;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using MaskPixelType = typename TMaskImage::PixelType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

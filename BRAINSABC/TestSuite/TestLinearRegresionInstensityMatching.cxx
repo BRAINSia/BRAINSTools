@@ -9,8 +9,8 @@
 
 int main(int argc, char * argv[])
 {
-  typedef itk::Image<float, 3> ImageType;
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ImageType = itk::Image<float, 3>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   ImageType::Pointer ref = ReaderType::New();
   ImageType::Pointer rescale =
 

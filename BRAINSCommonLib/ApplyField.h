@@ -33,19 +33,19 @@ template <typename TDisplacementField, typename TInputImage,
 class ApplyField : public Object
 {
 public:
-  typedef ApplyField               Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = ApplyField;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkTypeMacro(MIMApplication, Object);
 
   itkNewMacro(Self);
 
-  typedef TInputImage                         InputImageType;
-  typedef TOutputImage                        OutputImageType;
-  typedef typename OutputImageType::PixelType PixelType;
-  typedef typename InputImageType::Pointer    ImagePointer;
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+  using PixelType = typename OutputImageType::PixelType;
+  using ImagePointer = typename InputImageType::Pointer;
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 

@@ -69,14 +69,14 @@ class DtiGraphSearchTrackingFilter : public itk::DtiTrackingFilterBase<TTensorIm
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(DtiGraphSearchTrackingFilter);
 
-  /** Standard class typedefs. */
-  typedef DtiGraphSearchTrackingFilter                                                       Self;
-  typedef itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType> Superclass;
-  typedef SmartPointer<Self>                                                                 Pointer;
-  typedef SmartPointer<const Self>                                                           ConstPointer;
+  /** Standard class type alias. */
+  using Self = DtiGraphSearchTrackingFilter;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
-  typedef RandomGeneratorType::Pointer                           RandomGeneratorPointer;
+  using RandomGeneratorType = itk::Statistics::MersenneTwisterRandomVariateGenerator;
+  using RandomGeneratorPointer = RandomGeneratorType::Pointer;
 
   /** Standard New method. */
   itkNewMacro(Self);

@@ -27,14 +27,14 @@
 class ProcessDescription : public CompoundObjectBase
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  using SuperClass = CompoundObjectBase;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
     return indent + 2;
   }
 
-  typedef std::list<DataSet *> TrainDataSetListType;
+  using TrainDataSetListType = std::list<DataSet *>;
   ProcessDescription() : CompoundObjectBase("BRAINSCutProcessDescription")
   {
     this->Add(new DataSetList, "DataSetList");

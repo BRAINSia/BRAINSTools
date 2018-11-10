@@ -58,7 +58,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
 
 
   // compute image max and min
-  typedef MinimumMaximumImageCalculator<TInputImage> RangeCalculator;
+  using RangeCalculator = MinimumMaximumImageCalculator<TInputImage>;
   typename RangeCalculator::Pointer rangeCalculator = RangeCalculator::New();
   rangeCalculator->SetImage( m_Image );
   rangeCalculator->Compute();
@@ -83,7 +83,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
   double binMultiplier = (double) m_NumberOfHistogramBins /
     (double) ( imageMax - imageMin );
 
-  typedef ImageRegionConstIteratorWithIndex<TInputImage> Iterator;
+  using Iterator = ImageRegionConstIteratorWithIndex<TInputImage>;
   Iterator iter( m_Image, m_Image->GetBufferedRegion() );
 
   while ( !iter.IsAtEnd() )

@@ -59,9 +59,9 @@ template <typename ReaderType, typename WriterType>
 void PrintInfo( ReaderType reader, WriterType writer )
 {
   /** Typedef's. */
-  typedef itk::ImageIOBase                     ImageIOBaseType;
-  typedef itk::ImageIORegion                   ImageIORegionType;
-  typedef typename ImageIORegionType::SizeType SizeType;
+  using ImageIOBaseType = itk::ImageIOBase;
+  using ImageIORegionType = itk::ImageIORegion;
+  using SizeType = typename ImageIORegionType::SizeType;
 
   /** Get IOBase of the reader and extract information. */
   ImageIOBaseType::Pointer imageIOBaseIn = reader->GetModifiableImageIO();
@@ -121,14 +121,14 @@ template <typename InputImageType, typename OutputImageType>
 void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string  outputFileName )
 {
   /** Typedef the correct reader, caster and writer. */
-  typedef typename itk::ImageSeriesReader<InputImageType> SeriesReaderType;
-  typedef typename itk::ShiftScaleImageFilter<InputImageType, OutputImageType> ShiftScaleFilterType;
-  typedef typename itk::ImageFileWriter<OutputImageType> ImageWriterType;
+  using SeriesReaderType = typename itk::ImageSeriesReader<InputImageType>;
+  using ShiftScaleFilterType = typename itk::ShiftScaleImageFilter<InputImageType, OutputImageType>;
+  using ImageWriterType = typename itk::ImageFileWriter<OutputImageType>;
 
   /** Typedef dicom stuff. */
-  typedef itk::GDCMImageIO         GDCMImageIOType;
-  typedef itk::GDCMSeriesFileNames GDCMNamesGeneratorType;
-  typedef std::vector<std::string> FileNamesContainerType;
+  using GDCMImageIOType = itk::GDCMImageIO;
+  using GDCMNamesGeneratorType = itk::GDCMSeriesFileNames;
+  using FileNamesContainerType = std::vector<std::string>;
 
   /** Create the dicom ImageIO. */
   typename GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
@@ -160,7 +160,7 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string 
 #ifdef VTK_FOUND
   if( outputFileName.rfind(".vti") == (outputFileName.size() - 4) )
     {
-    typedef itk::ImageToVTKImageFilter<OutputImageType> ITKToVTKFilterType;
+    using ITKToVTKFilterType = itk::ImageToVTKImageFilter<OutputImageType>;
     typename ITKToVTKFilterType::Pointer itktovtk = ITKToVTKFilterType::New();
     caster->Update();
     itktovtk->SetInput( caster->GetOutput() );
@@ -195,11 +195,11 @@ template <typename InputImageType, typename OutputImageType>
 void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
 {
   /**  Typedef the correct reader, caster and writer. */
-  typedef typename itk::ImageFileReader<InputImageType> ImageReaderType;
-  typedef typename itk::ShiftScaleImageFilter<InputImageType, OutputImageType> ShiftScaleFilterType;
-  typedef typename itk::ImageFileWriter<OutputImageType> ImageWriterType;
+  using ImageReaderType = typename itk::ImageFileReader<InputImageType>;
+  using ShiftScaleFilterType = typename itk::ShiftScaleImageFilter<InputImageType, OutputImageType>;
+  using ImageWriterType = typename itk::ImageFileWriter<OutputImageType>;
 #ifdef VTK_FOUND
-  typedef itk::VTKImageToImageFilter<InputImageType> VTKToITKFilterType;
+  using VTKToITKFilterType = itk::VTKImageToImageFilter<InputImageType>;
   typename VTKToITKFilterType::Pointer vtktoitk = NULL;
 #endif
   typename ImageReaderType::Pointer reader = ImageReaderType::New();
@@ -239,7 +239,7 @@ void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
 if( outputFileName.rfind(".vti") == (outputFileName.size() - 4) )
   {
   // Handle .vti files as well.
-  typedef itk::ImageToVTKImageFilter<OutputImageType> ITKToVTKFilterType;
+  using ITKToVTKFilterType = itk::ImageToVTKImageFilter<OutputImageType>;
   typename ITKToVTKFilterType::Pointer itktovtk = ITKToVTKFilterType::New();
   caster->Update();
   itktovtk->SetInput( caster->GetOutput() );
@@ -297,8 +297,8 @@ ReadVTICastWriteImage( std::string inputFileName,
                        std::string outputFileName,
                        TInputPixelType, TOutputPixelType )
 {
-  typedef itk::Image<TInputPixelType,  3> InputImageType;
-  typedef itk::Image<TOutputPixelType, 3> OutputImageType;
+  using InputImageType = itk::Image<TInputPixelType,  3>;
+  using OutputImageType = itk::Image<TOutputPixelType, 3>;
   ReadCastWriteImage<InputImageType, OutputImageType>(
     inputFileName, outputFileName );
   return 1;
@@ -358,8 +358,8 @@ ReadVTICastWriteImage( std::string,
 #define callCorrectReadDicomWriterMacro(typeIn, typeOut) \
   if( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut ) \
     { \
-    typedef  itk::Image<typeIn, 3>  InputImageType; \
-    typedef  itk::Image<typeOut, 3> OutputImageType; \
+    using InputImageType = itk::Image<typeIn, 3>; \
+    using OutputImageType = itk::Image<typeOut, 3>; \
     ReadDicomSeriesCastWriteImage<InputImageType, OutputImageType>( inputDirectoryName, outputFileName ); \
     }
 
@@ -372,8 +372,8 @@ ReadVTICastWriteImage( std::string,
     { \
     if( !ReadVTICastWriteImage<typeOut>( inputFileName, outputFileName, dim ) ) \
       { \
-      typedef  itk::Image<typeIn, dim>  InputImageType; \
-      typedef  itk::Image<typeOut, dim> OutputImageType; \
+      using InputImageType = itk::Image<typeIn, dim>; \
+      using OutputImageType = itk::Image<typeOut, dim>; \
       ReadCastWriteImage<InputImageType, OutputImageType>( inputFileName, outputFileName ); \
       } \
     }

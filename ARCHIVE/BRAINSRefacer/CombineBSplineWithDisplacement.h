@@ -18,21 +18,21 @@ class CombineBSplineWithDisplacement
   : public itk::ImageToImageFilter<TReferenceImageType, TOutputVectorImageType>
 {
 public:
-  typedef CombineBSplineWithDisplacement Self;
-  typedef itk::SmartPointer< Self > Pointer;
+  using Self = CombineBSplineWithDisplacement;
+  using Pointer = itk::SmartPointer< Self >;
 
   itkNewMacro(Self);
   itkTypeMacro(Self, ImageToImageFilter)
 
-  typedef TReferenceImageType ImageType;
-  typedef typename ImageType::Pointer ImageTypePointer;
+  using ImageType = TReferenceImageType;
+  using ImageTypePointer = typename ImageType::Pointer;
 
-  typedef itk::BSplineTransform< PixelType,NDimension,NBSplineOrder> BSplineType;
-  typedef typename BSplineType::Pointer BSplinePointer;
+  using BSplineType = itk::BSplineTransform< PixelType,NDimension,NBSplineOrder>;
+  using BSplinePointer = typename BSplineType::Pointer;
 
-  typedef itk::Vector<PixelType, NDimension > VectorPixelType;
-  typedef itk::Image< VectorPixelType, NDimension> DisplacementFieldImageType;
-  typedef typename DisplacementFieldImageType::Pointer DisplacementFieldPointer;
+  using VectorPixelType = itk::Vector<PixelType, NDimension >;
+  using DisplacementFieldImageType = itk::Image< VectorPixelType, NDimension>;
+  using DisplacementFieldPointer = typename DisplacementFieldImageType::Pointer;
 
   itkSetMacro(Verbose, bool)
   itkSetMacro(Debug, bool)
@@ -66,7 +66,7 @@ protected:
     const TReferenceImageType * subject = this->GetInput();
     BSplinePointer bSpline = this->GetBSplineInput();
 
-    typedef itk::TransformToDisplacementFieldFilter< DisplacementFieldImageType, PixelType> TransformToDisplacementFilterType;
+    using TransformToDisplacementFilterType = itk::TransformToDisplacementFieldFilter< DisplacementFieldImageType, PixelType>;
     typename TransformToDisplacementFilterType::Pointer bSplineDisplacementFieldGenerator = TransformToDisplacementFilterType::New();
     bSplineDisplacementFieldGenerator->UseReferenceImageOn();
     bSplineDisplacementFieldGenerator->SetReferenceImage(subject);
@@ -82,7 +82,7 @@ protected:
       }
     //multiply the displacement field by the distance map to get the "smooth displacement that doesn't affect the brain
     //first extrace scalar elemnts from vector image
-    typedef typename itk::VectorIndexSelectionCastImageFilter<DisplacementFieldImageType, ImageType> ImageExtractionFilterType;
+    using ImageExtractionFilterType = typename itk::VectorIndexSelectionCastImageFilter<DisplacementFieldImageType, ImageType>;
     typename ImageExtractionFilterType::Pointer xTractDisplacementFilter = ImageExtractionFilterType::New();
     typename ImageExtractionFilterType::Pointer yTractDisplacementFilter = ImageExtractionFilterType::New();
     typename ImageExtractionFilterType::Pointer zTractDisplacementFilter = ImageExtractionFilterType::New();
@@ -106,7 +106,7 @@ protected:
       std::cout<<"Multiplying bSplineDisplacement by Distance map"<<std::endl;
       }
 
-    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyFilterType;
+    using MultiplyFilterType = itk::MultiplyImageFilter<ImageType, ImageType, ImageType>;
     typename MultiplyFilterType::Pointer xMult = MultiplyFilterType::New();
     typename MultiplyFilterType::Pointer yMult = MultiplyFilterType::New();
     typename MultiplyFilterType::Pointer zMult = MultiplyFilterType::New();
@@ -133,7 +133,7 @@ protected:
       std::cout<<"Composing new image from displacement and bSpline product components"<<std::endl;
       }
 
-    typedef itk::ComposeImageFilter<ImageType, DisplacementFieldImageType> ComposeFilterType;
+    using ComposeFilterType = itk::ComposeImageFilter<ImageType, DisplacementFieldImageType>;
     typename ComposeFilterType::Pointer composeDisplacements = ComposeFilterType::New();
     composeDisplacements->SetInput(0, xMult->GetOutput());
     composeDisplacements->SetInput(1, yMult->GetOutput());
@@ -147,11 +147,11 @@ protected:
    //This is what I want to do but i end up iterating this->SetOutput( composeDisplacements->GetOutput() );
     //There has got to be a better way to do this
     std::cout<<"Finished generating data for combinebsplinewithdisplacement"<<std::endl;
-    //typedef itk::ImageIteratorWithIndex<DisplacementFieldImageType> ConstIter;
-    typedef itk::ImageIteratorWithIndex<DisplacementFieldImageType> Iter;
+    //using ConstIter = itk::ImageIteratorWithIndex<DisplacementFieldImageType>;
+    using Iter = itk::ImageIteratorWithIndex<DisplacementFieldImageType>;
 
     DisplacementFieldPointer composedImage = composeDisplacements->GetOutput();
-    typedef typename DisplacementFieldImageType::RegionType OutputRegionType;
+    using OutputRegionType = typename DisplacementFieldImageType::RegionType;
     OutputRegionType outputRegion = composedImage->GetLargestPossibleRegion(); //Getbuffered largestpossible
     DisplacementFieldPointer outputImage = this->GetOutput();
     composeDisplacements->Update();

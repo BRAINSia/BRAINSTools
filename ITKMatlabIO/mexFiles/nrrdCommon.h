@@ -39,7 +39,7 @@
 class MatlabStructManager
 {
 public:
-  typedef std::map<std::string, int> FieldMapType;
+  using FieldMapType = std::map<std::string, int>;
   MatlabStructManager(const mxArray * const structMx)
     : m_structMx(structMx)
   {

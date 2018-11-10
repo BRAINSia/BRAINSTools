@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
     //      Max gradient, Magnitude.
 
   }
-  typedef itk::Image<float, 3> FeatureImageType;
-  typedef itk::Image<unsigned int, 3> LabelImageType;
+  using FeatureImageType = itk::Image<float, 3>;
+  using LabelImageType = itk::Image<unsigned int, 3>;
 
   const int sample_length{std::atoi(argv[1])};
   const float sample_spacing{static_cast<float>(std::atof(argv[2]))};
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   }
 
 
-  typedef itk::ImageFileReader<LabelImageType> LabelReaderType;
+  using LabelReaderType = itk::ImageFileReader<LabelImageType>;
 
   LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName(lblImageFN);
@@ -60,9 +60,9 @@ int main(int argc, char *argv[])
   LabelImageType::Pointer labelImage{labelReader->GetOutput()};
   labelReader = nullptr;
 
-  typedef itk::ImageFileReader<FeatureImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<FeatureImageType>;
 
-  typedef itk::LinearInterpolateImageFunction<FeatureImageType> InterpolatorType;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<FeatureImageType>;
 
   std::vector<FeatureImageType::Pointer> imVector;
   std::vector<InterpolatorType::Pointer> imInterpolatorVector;
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     imInterpolatorVector.push_back(interp);
   }
 
-  typedef itk::GradientImageFilter<FeatureImageType, double, double> GradientFilterType;
+  using GradientFilterType = itk::GradientImageFilter<FeatureImageType, double, double>;
   GradientFilterType::OutputImageType::Pointer gradientImage;
   if (gradient_mode == 1)
   {

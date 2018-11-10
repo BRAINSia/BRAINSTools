@@ -70,11 +70,11 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  typedef signed short                   PixelType;
-  typedef double                         TensorPixelType;
-  typedef itk::VectorImage<PixelType, 3> VectorImageType;
-  typedef itk::Image<PixelType, 3>       IndexImageType;
-  typedef itk::Image<unsigned char, 3>   MaskImageType;
+  using PixelType = signed short;
+  using TensorPixelType = double;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
+  using IndexImageType = itk::Image<PixelType, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
   IndexImageType::SizeType MedianFilterSize;
   MedianFilterSize[0] = medianFilterSize[0];
   MedianFilterSize[1] = medianFilterSize[1];
@@ -110,8 +110,8 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileReader<VectorImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > VectorImageReaderType;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName( inputVolume );
 
@@ -129,9 +129,9 @@ int main(int argc, char *argv[])
 
   if( maskProcessingMode == "ROIAUTO" )
     {
-    typedef itk::Image<PixelType, 3> LocalIndexImageType;
-    typedef itk::VectorIndexSelectionCastImageFilter
-      <VectorImageType, LocalIndexImageType> VectorSelectFilterType;
+    using LocalIndexImageType = itk::Image<PixelType, 3>;
+    using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter
+      <VectorImageType, LocalIndexImageType>;
     VectorSelectFilterType::Pointer SelectIndexImageFilter =
       VectorSelectFilterType::New();
     SelectIndexImageFilter->SetIndex(b0Index);
@@ -145,10 +145,9 @@ int main(int argc, char *argv[])
       std::cerr << e << std::endl;
       return EXIT_FAILURE;
       }
-    ;
+;
     LocalIndexImageType::Pointer b0Image(SelectIndexImageFilter->GetOutput() );
-    typedef itk::BRAINSROIAutoImageFilter<LocalIndexImageType, MaskImageType>
-      ROIAutoType;
+    using ROIAutoType = itk::BRAINSROIAutoImageFilter<LocalIndexImageType, MaskImageType>;
     ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
     ROIFilter->SetInput(b0Image);
     ROIFilter->SetClosingSize(9.0);  // default TODO Make parameter
@@ -194,19 +193,19 @@ int main(int argc, char *argv[])
     }
 
   /* Process Invidual B-value Images and Reassemble the Vector Image */
-  typedef itk::DiffusionTensor3DReconstructionWithMaskImageFilter<PixelType, PixelType,
-                                                                  TensorPixelType> TensorFilterType;
+  using TensorFilterType = itk::DiffusionTensor3DReconstructionWithMaskImageFilter<PixelType, PixelType,
+                                                                  TensorPixelType>;
   typedef TensorFilterType::GradientDirectionContainerType
     DirectionContainerType;
   DirectionContainerType::Pointer gradientDirectionContainer = DirectionContainerType::New();
 
-  typedef itk::ComposeImageFilter<IndexImageType> VectorImageFilterType;
+  using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
   int                            vectorIndex = 0;
   for( unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); i++ )
     {
-    typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, IndexImageType> VectorSelectFilterType;
-    typedef VectorSelectFilterType::Pointer                                           VectorSelectFilterPointer;
+    using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, IndexImageType>;
+    using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
     VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
     selectIndexImageFilter->SetIndex( i );
@@ -224,7 +223,7 @@ int main(int argc, char *argv[])
     IndexImageType::Pointer baseImage;
     if( MedianFilterSize[0] > 0  ||  MedianFilterSize[1] > 0  ||  MedianFilterSize[2] > 0 )
       {
-      typedef itk::MedianImageFilter<IndexImageType, IndexImageType> MedianFilterType;
+      using MedianFilterType = itk::MedianImageFilter<IndexImageType, IndexImageType>;
       MedianFilterType::Pointer filter = MedianFilterType::New();
       filter->SetInput( selectIndexImageFilter->GetOutput() );
       filter->SetRadius( MedianFilterSize );
@@ -240,11 +239,11 @@ int main(int argc, char *argv[])
     IndexImageType::Pointer bvalueImage;
     if( resampleIsotropic )
       {
-      typedef itk::ResampleImageFilter<IndexImageType, IndexImageType> ResampleFilterType;
+      using ResampleFilterType = itk::ResampleImageFilter<IndexImageType, IndexImageType>;
       ResampleFilterType::Pointer resampler = ResampleFilterType::New();
       resampler->SetInput( baseImage );
 
-      typedef itk::LinearInterpolateImageFunction<IndexImageType, double> InterpolatorType;
+      using InterpolatorType = itk::LinearInterpolateImageFunction<IndexImageType, double>;
       InterpolatorType::Pointer interpolator = InterpolatorType::New();
       resampler->SetInterpolator( interpolator );
       resampler->SetDefaultPixelValue( 0 );
@@ -260,14 +259,14 @@ int main(int argc, char *argv[])
 
       IndexImageType::SizeType    inputSize  = baseImage->GetLargestPossibleRegion().GetSize();
       IndexImageType::SpacingType inputSpacing  = baseImage->GetSpacing();
-      typedef IndexImageType::SizeType::SizeValueType SizeValueType;
+      using SizeValueType = IndexImageType::SizeType::SizeValueType;
       IndexImageType::SizeType size;
       size[0] = static_cast<SizeValueType>( inputSize[0] * inputSpacing[0] / voxelSize );
       size[1] = static_cast<SizeValueType>( inputSize[1] * inputSpacing[1] / voxelSize );
       size[2] = static_cast<SizeValueType>( inputSize[2] * inputSpacing[2] / voxelSize );
       resampler->SetSize( size );
 
-      typedef itk::IdentityTransform<double, 3> TransformType;
+      using TransformType = itk::IdentityTransform<double, 3>;
       TransformType::Pointer transform = TransformType::New();
       transform->SetIdentity();
       resampler->SetTransform( transform );
@@ -355,10 +354,10 @@ int main(int argc, char *argv[])
 
   tensorFilter->GetOutput()->SetMetaDataDictionary(newMeta);
 
-  typedef TensorFilterType::TensorImageType TensorImageType;
+  using TensorImageType = TensorFilterType::TensorImageType;
   TensorImageType::Pointer tensorImage = tensorFilter->GetOutput();
 
-  typedef itk::ImageFileWriter<TensorImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<TensorImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->SetInput( tensorImage );

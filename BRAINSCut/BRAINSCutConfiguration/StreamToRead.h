@@ -23,7 +23,7 @@
 #include <fstream>
 #include "itkMacro.h" //Needed for override
 
-typedef std::fstream FileStreamType;
+using FileStreamType = std::fstream;
 
 class StreamToRead :
   public FileToRead<FileStreamType *>
@@ -31,9 +31,9 @@ class StreamToRead :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(StreamToRead);
 
-  typedef StreamToRead               Self;
-  typedef FileToRead<std::fstream *> Superclass;
-  typedef Superclass::OutputType     OutputType;
+  using Self = StreamToRead;
+  using Superclass = FileToRead<std::fstream *>;
+  using OutputType = Superclass::OutputType;
 
   OutputType GetValue() const override;
 

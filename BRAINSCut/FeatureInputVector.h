@@ -24,7 +24,7 @@
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkGradientImageFilter.h>
 
-typedef unsigned int hashKeyType;
+using hashKeyType = unsigned int;
 /*
  * Note
  * - this class is to compute input vector of ONE subject for a given ROI
@@ -56,33 +56,33 @@ public:
     };
 
   /** type definition */
-  typedef itk::GradientImageFilter<WorkingImageType,
+  using GradientFilterType = itk::GradientImageFilter<WorkingImageType,
                                    WorkingPixelType,
-                                   WorkingPixelType> GradientFilterType;
+                                   WorkingPixelType>;
 
   typedef itk::Image<itk::CovariantVector<WorkingPixelType, DIMENSION>, DIMENSION>::Pointer
     GradientImageType;
 
-  typedef itk::Image<unsigned char, DIMENSION> BinaryImageType;
+  using BinaryImageType = itk::Image<unsigned char, DIMENSION>;
 
-  typedef itk::LinearInterpolateImageFunction<WorkingImageType,
-                                              WorkingPixelType> ImageLinearInterpolatorType;
+  using ImageLinearInterpolatorType = itk::LinearInterpolateImageFunction<WorkingImageType,
+                                              WorkingPixelType>;
 
   /* min/max */
-  typedef std::pair<scalarType, scalarType> minmaxPairType;
-  typedef std::vector<minmaxPairType>       minmaxPairVectorType;
+  using minmaxPairType = std::pair<scalarType, scalarType>;
+  using minmaxPairVectorType = std::vector<minmaxPairType>;
 
   /* normalizationParameters */
-  typedef unsigned int ImageTypeNo;
-  typedef std::string  ROITypeString;
-  typedef std::string  StatisticsString;
+  using ImageTypeNo = unsigned int;
+  using ROITypeString = std::string;
+  using StatisticsString = std::string;
 
-  typedef std::map<ROITypeString,
-                   std::map<ImageTypeNo, std::map<StatisticsString, scalarType> > > NormalizationParameterType;
+  using NormalizationParameterType = std::map<ROITypeString,
+                   std::map<ImageTypeNo, std::map<StatisticsString, scalarType> > >;
 
   /* normalizationParameters */
-  typedef std::map<std::string, scalarType>          normParamROIMapType;   // ( 'min', v1),('max',v2),..
-  typedef std::map<std::string, normParamROIMapType> normParamType;
+  using normParamROIMapType = std::map<std::string, scalarType>;   // ( 'min', v1),('max',v2),..
+  using normParamType = std::map<std::string, normParamROIMapType>;
 
   /** set functions */
   void SetGradientSize( unsigned int length);

@@ -121,7 +121,7 @@ ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>
 
     if( dataArray != nullptr )
       {
-      typedef typename OutputMeshType::PointDataContainer PointDataContainer;
+      using PointDataContainer = typename OutputMeshType::PointDataContainer;
 
       outputMesh->SetPointData( PointDataContainer::New() );
       outputMesh->GetPointData()->Reserve( numberOfPoints );

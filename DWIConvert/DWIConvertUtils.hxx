@@ -81,8 +81,8 @@ ReadScalarVolume( typename TImage::Pointer & img, const std::string & fname, boo
     }
     if (imageIO->GetComponentType() != ioType)
     {
-      typedef itk::Image<double, TImage::ImageDimension> DoubleImageType;
-      typedef itk::ImageFileReader<DoubleImageType> DoubleImageReaderType;
+      using DoubleImageType = itk::Image<double, TImage::ImageDimension>;
+      using DoubleImageReaderType = itk::ImageFileReader<DoubleImageType>;
       typename DoubleImageReaderType::Pointer doubleReader = DoubleImageReaderType::New();
       doubleReader->SetFileName( fname.c_str());
       try
@@ -98,7 +98,7 @@ ReadScalarVolume( typename TImage::Pointer & img, const std::string & fname, boo
         std::cerr << excp << std::endl;
         return EXIT_FAILURE;
       }
-      typedef itk::RescaleIntensityImageFilter<DoubleImageType,TImage> RescaleIntensityType;
+      using RescaleIntensityType = itk::RescaleIntensityImageFilter<DoubleImageType,TImage>;
       typename RescaleIntensityType::Pointer rescaler = RescaleIntensityType::New();
       rescaler->SetInput(doubleReader->GetOutput());
       rescaler->SetOutputMinimum( itk::NumericTraits< typename TImage::PixelType >::Zero );
@@ -154,8 +154,8 @@ ReadVectorVolume( typename TImage::Pointer & img, const std::string & fname, boo
     }
     if (imageIO->GetComponentType() != ioType)
     {
-      typedef itk::VectorImage<double, TImage::ImageDimension> DoubleImageType;
-      typedef itk::ImageFileReader<DoubleImageType> DoubleImageReaderType;
+      using DoubleImageType = itk::VectorImage<double, TImage::ImageDimension>;
+      using DoubleImageReaderType = itk::ImageFileReader<DoubleImageType>;
       typename DoubleImageReaderType::Pointer doubleReader = DoubleImageReaderType::New();
       doubleReader->SetFileName( fname.c_str());
       try

@@ -59,14 +59,14 @@ int main( int argc, char *argv[] )
   LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
   LandmarksMapType transformedLandmarks;
 
-  typedef itk::TransformFileReader ReaderType;
+  using ReaderType = itk::TransformFileReader;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputTransformFile );
   reader->Update();
 
   ReaderType::TransformListType *transformList = reader->GetModifiableTransformList();
 
-  typedef itk::CompositeTransform<double, 3> BRAINSCompositeTransformType;
+  using BRAINSCompositeTransformType = itk::CompositeTransform<double, 3>;
 
   BRAINSCompositeTransformType::Pointer inputCompTrans =
   dynamic_cast<BRAINSCompositeTransformType *>( transformList->front().GetPointer() );

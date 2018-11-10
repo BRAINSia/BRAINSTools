@@ -51,9 +51,9 @@ class HammerTissueAttributeVector :
 {
 public:
 
-  typedef HammerTissueAttributeVector                 Self;
-  typedef HammerAttributeVectorBase<unsigned char, 5> Superclass;
-  typedef Superclass::VectorType                      VectorType;
+  using Self = HammerTissueAttributeVector;
+  using Superclass = HammerAttributeVectorBase<unsigned char, 5>;
+  using VectorType = Superclass::VectorType;
 
   /** Length constant */
   unsigned int GetLength() const

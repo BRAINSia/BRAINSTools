@@ -63,14 +63,14 @@ int main( int argc, char * argv [] )
   std::cout << "Interpolation Type: " << interpolateType << std::endl;
   std::cout << "-----------------------------------------------" << std::endl;
 
-  typedef double PixelType;
+  using PixelType = double;
   constexpr unsigned int Dimension = 3;
 
   // Declaration of the type of Mesh
-  typedef itk::QuadEdgeMesh<PixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<PixelType, Dimension>;
 
   // Here read a mesh from a file
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
   ReaderType::Pointer inputReader = ReaderType::New();
   inputReader->SetFileName( inputMeshFile.c_str() );
   inputReader->Update();
@@ -79,17 +79,17 @@ int main( int argc, char * argv [] )
   refReader->SetFileName( refMeshFile.c_str() );
   refReader->Update();
 
-  typedef itk::IdentityTransform<double, Dimension> TransformType;
+  using TransformType = itk::IdentityTransform<double, Dimension>;
   TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
 
-  typedef itk::LinearInterpolateMeshFunction<MeshType> LinearInterpolatorType;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
   LinearInterpolatorType::Pointer interpolator_l = LinearInterpolatorType::New();
 
-  typedef itk::NearestNeighborInterpolateMeshFunction<MeshType> NearestInterpolatorType;
+  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction<MeshType>;
   NearestInterpolatorType::Pointer interpolator_n = NearestInterpolatorType::New();
 
-  typedef itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType> MeshFilterType;
+  using MeshFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
   MeshFilterType::Pointer filter = MeshFilterType::New();
   filter->SetReferenceMesh(refReader->GetOutput() );
   filter->SetInput(inputReader->GetOutput() );
@@ -107,7 +107,7 @@ int main( int argc, char * argv [] )
 
   filter->Update();
 
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( filter->GetOutput() );
   writer->SetFileName( outputMeshFile.c_str() );

@@ -60,14 +60,14 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  //  typedef signed short       PixelType;
-  typedef float PixelType;
+  //  using PixelType = signed short;
+  using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension>   ImageType;
-  typedef itk::ImageFileReader<ImageType>     ReaderType;
-  typedef itk::Image<char,  Dimension>        MaskImageType;
-  typedef itk::ImageFileReader<MaskImageType> MaskReaderType;
+  using ImageType = itk::Image<PixelType,  Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using MaskImageType = itk::Image<char,  Dimension>;
+  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
 
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -75,13 +75,13 @@ int main(int argc, char *argv[])
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  typedef itk::MaskImageFilter<ImageType, MaskImageType, ImageType> MaskFilterType;
+  using MaskFilterType = itk::MaskImageFilter<ImageType, MaskImageType, ImageType>;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  typedef itk::ConstrainedValueDifferenceImageFilter<ImageType, ImageType, ImageType> DifferenceFilterType;
+  using DifferenceFilterType = itk::ConstrainedValueDifferenceImageFilter<ImageType, ImageType, ImageType>;
   DifferenceFilterType::Pointer differenceFilter = DifferenceFilterType::New();
 
-  typedef itk::ImageDuplicator<ImageType> ImageDuplicatorType;
+  using ImageDuplicatorType = itk::ImageDuplicator<ImageType>;
   ImageDuplicatorType::Pointer duplicateImageFilter = ImageDuplicatorType::New();
 
   try
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageRegionIterator<ImageType> ImageRegionIteratorType;
+  using ImageRegionIteratorType = itk::ImageRegionIterator<ImageType>;
   ImageRegionIteratorType imgItr( maskFilter->GetOutput(), maskFilter->GetOutput()->GetRequestedRegion() );
   unsigned long           xMax = maskFilter->GetOutput()->GetLargestPossibleRegion().GetSize()[0];
   for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileWriter<ImageType> FileWriterType;
+  using FileWriterType = itk::ImageFileWriter<ImageType>;
   FileWriterType::Pointer imageWriter = FileWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetInput( differenceFilter->GetOutput() );

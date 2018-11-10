@@ -40,21 +40,21 @@ template<typename TOptimizerType>
 class Rigid3DCenterReflectorFunctor : public itk::ObjectToObjectMetricBase
 {
 public:
-  typedef Rigid3DCenterReflectorFunctor   Self;
-  typedef itk::ObjectToObjectMetricBase   Superclass;
-  typedef itk::SmartPointer<Self>         Pointer;
-  typedef itk::SmartPointer<const Self>   ConstPointer;
+  using Self = Rigid3DCenterReflectorFunctor;
+  using Superclass = itk::ObjectToObjectMetricBase;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
   itkNewMacro( Self );
 
   enum { SpaceDimension=3 };
 
-  typedef Superclass::ParametersType      ParametersType;
-  typedef Superclass::DerivativeType      DerivativeType;
-  typedef Superclass::MeasureType         MeasureType;
+  using ParametersType = Superclass::ParametersType;
+  using DerivativeType = Superclass::DerivativeType;
+  using MeasureType = Superclass::MeasureType;
 
-  typedef TOptimizerType                        OptimizerType;
-  typedef typename OptimizerType::Pointer       OptimizerPointer;
-  typedef itk::CompensatedSummation< double >   CompensatedSummationType;
+  using OptimizerType = TOptimizerType;
+  using OptimizerPointer = typename OptimizerType::Pointer;
+  using CompensatedSummationType = itk::CompensatedSummation< double >;
 
   Rigid3DCenterReflectorFunctor() :
   m_params(),
@@ -527,7 +527,7 @@ public:
 
   SImageType::Pointer GetMSPCenteredImage(void)
   {
-    typedef itk::StatisticsImageFilter<SImageType> StatisticsFilterType;
+    using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
     StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
     statisticsFilter->SetInput(this->m_OriginalImage);
     statisticsFilter->Update();
@@ -595,7 +595,7 @@ private:
     return this->m_CenterOfHeadMass;
   }
 
-  typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
+  using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
 
   ParametersType                    m_params;
   SImageType::Pointer               m_OriginalImage;

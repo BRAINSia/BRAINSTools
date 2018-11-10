@@ -50,8 +50,8 @@ void
 Reorganize(typename itk::VectorImage<TPixel,3>::Pointer &vecImage,
            typename itk::Image<TPixel,4>::Pointer &scalarImage)
 {
-    typedef itk::VectorImage<TPixel,3> TVecImage;
-    typedef itk::Image<TPixel,4> TScalarImage;
+    using TVecImage = itk::VectorImage<TPixel,3>;
+    using TScalarImage = itk::Image<TPixel,4>;
     //
     // this does a full, correct job of creating the corresponding 4D
     // image from the 3D Vector Image, even though all we care about in
@@ -108,7 +108,7 @@ Reorganize(typename itk::VectorImage<TPixel,3>::Pointer &vecImage,
     typename TVecImage::IndexType    vecIndex;
     typename TScalarImage::IndexType volIndex;
 
-    typedef typename TScalarImage::IndexType::IndexValueType IndexValueType;
+    using IndexValueType = typename TScalarImage::IndexType::IndexValueType;
 
     // convert from vector image to 4D volume image
     for( volIndex[3] = 0; volIndex[3] < static_cast<IndexValueType>(size[3]); ++volIndex[3] )
@@ -137,7 +137,7 @@ Reorganize(typename itk::VectorImage<TPixel,3>::Pointer &vecImage,
 template<typename TImage>
 void CopyImageData(typename TImage::Pointer &im, void *target, unsigned long numPixels)
 {
-    typedef typename TImage::PixelType PixelType;
+    using PixelType = typename TImage::PixelType;
     const PixelType *data = static_cast<PixelType *>(im->GetBufferPointer());
     std::copy(data,data + numPixels,static_cast<PixelType *>(target));
 }
@@ -146,7 +146,7 @@ template<>
 void CopyImageData<itk::VectorImage<double,3> >( itk::VectorImage<double,3>::Pointer &im,
                                                 void *target, unsigned long numPixels)
 {
-    typedef itk::Image<double,4> ScalarImageType;
+    using ScalarImageType = itk::Image<double,4>;
     ScalarImageType::Pointer newImage;
     Reorganize<double>(im,newImage);
     CopyImageData<ScalarImageType>(newImage,target,numPixels);
@@ -156,7 +156,7 @@ template<>
 void CopyImageData<itk::VectorImage<float,3> >( itk::VectorImage<float,3>::Pointer &im,
                                                void *target, unsigned long numPixels)
 {
-    typedef itk::Image<float,4> ScalarImageType;
+    using ScalarImageType = itk::Image<float,4>;
     ScalarImageType::Pointer newImage;
     Reorganize<float>(im,newImage);
     CopyImageData<ScalarImageType>(newImage,target,numPixels);
@@ -166,7 +166,7 @@ template<>
 void CopyImageData<itk::VectorImage<short,3> >( itk::VectorImage<short,3>::Pointer &im,
                                                void *target, unsigned long numPixels)
 {
-    typedef itk::Image<short,4> ScalarImageType;
+    using ScalarImageType = itk::Image<short,4>;
     ScalarImageType::Pointer newImage;
     Reorganize<short>(im,newImage);
     CopyImageData<ScalarImageType>(newImage,target,numPixels);
@@ -179,8 +179,8 @@ template <typename TImage>
 void
 BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::string & filename)
 {
-    typedef TImage ImageType;
-    typedef typename TImage::PixelType PixelType;
+    using ImageType = TImage;
+    using PixelType = typename TImage::PixelType;
 
     DEBUG_PRINT(std::string("filename = ") + filename, nl);
 
@@ -193,7 +193,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
     // determine if image contains bvalue & gradients.
     double      bValue(0.0);
     std::string bValueString;
-    typedef std::vector<std::vector<double> > GradientListType;
+    using GradientListType = std::vector<std::vector<double> >;
     GradientListType gradients;
 
     if( itk::ExposeMetaData<std::string>(thisDic, "DWMRI_b-value", bValueString) == true )
@@ -206,7 +206,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
         gradTag << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << gradCount;
         gradCount++;
         std::string gradString;
-        for( ; itk::ExposeMetaData<std::string>(thisDic, gradTag.str(), gradString) != false; ++gradCount )
+        for(; itk::ExposeMetaData<std::string>(thisDic, gradTag.str(), gradString) != false; ++gradCount )
         {
             DEBUG_PRINT(gradTag.str().c_str() ); DEBUG_PRINT("=");
             DEBUG_PRINT(gradString, nl);
@@ -508,8 +508,8 @@ void
 LoadDWIImage(const std::string &filename,
              mxArray *& structMx)
 {
-    typedef TImage ImageType;
-    typedef itk::ImageFileReader<ImageType> ReaderType;
+    using ImageType = TImage;
+    using ReaderType = itk::ImageFileReader<ImageType>;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(filename);
     try

@@ -65,10 +65,10 @@ class GTRACT_COMMON_EXPORT GtractParameterIO : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(GtractParameterIO);
 
-  typedef GtractParameterIO             Self;
-  typedef itk::Object                   Superclass;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  using Self = GtractParameterIO;
+  using Superclass = itk::Object;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
   itkTypeMacro(gtractParameterIO, itk::Object);
   itkNewMacro(Self);
 

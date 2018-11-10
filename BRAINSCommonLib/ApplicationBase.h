@@ -38,11 +38,11 @@ class ApplicationBase : public Object
 {
 public:
 
-  /** Standard class typedefs. */
-  typedef ApplicationBase          Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = ApplicationBase;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(MIMApplication, Object);
@@ -51,16 +51,16 @@ public:
   itkNewMacro(Self);
 
   /** Input parser type. */
-  typedef TParser                      ParserType;
-  typedef typename ParserType::Pointer ParserPointer;
+  using ParserType = TParser;
+  using ParserPointer = typename ParserType::Pointer;
 
   /** Preprocessor type. */
-  typedef TPreprocessor                      PreprocessorType;
-  typedef typename PreprocessorType::Pointer PreprocessorPointer;
+  using PreprocessorType = TPreprocessor;
+  using PreprocessorPointer = typename PreprocessorType::Pointer;
 
   /** Registrator type. */
-  typedef TRegistrator                      RegistratorType;
-  typedef typename RegistratorType::Pointer RegistratorPointer;
+  using RegistratorType = TRegistrator;
+  using RegistratorPointer = typename RegistratorType::Pointer;
 
   /** Set Debug mode */
   itkSetMacro(OutDebug, bool);

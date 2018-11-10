@@ -67,19 +67,19 @@
 
 //
 // filter types
-typedef AtlasRegistrationMethod<float, float> AtlasRegType;
+using AtlasRegType = AtlasRegistrationMethod<float, float>;
 
-typedef EMSegmentationFilter<AtlasRegType::OutputImageType,
-                             AtlasRegType::ProbabilityImageType> SegFilterType;
+using SegFilterType = EMSegmentationFilter<AtlasRegType::OutputImageType,
+                             AtlasRegType::ProbabilityImageType>;
 //
 // image types
-typedef AtlasRegType::OutputImageType FloatImageType;
-typedef AtlasRegType::ByteImageType   ByteImageType;
-typedef itk::Image<short, 3>          ShortImageType;
+using FloatImageType = AtlasRegType::OutputImageType;
+using ByteImageType = AtlasRegType::ByteImageType;
+using ShortImageType = itk::Image<short, 3>;
 
-typedef FloatImageType::Pointer FloatImagePointer;
-typedef ByteImageType::Pointer  ByteImagePointer;
-typedef ShortImageType::Pointer ShortImagePointer;
+using FloatImagePointer = FloatImageType::Pointer;
+using ByteImagePointer = ByteImageType::Pointer;
+using ShortImagePointer = ShortImageType::Pointer;
 
 #undef MU_MANUAL_INSTANTIATION
 
@@ -139,8 +139,7 @@ RescaleFunctionLocal( AtlasRegType::MapOfFloatImageVectors& localList)
     for(auto imIt = elem.second.begin();
         imIt != elem.second.end(); ++imIt)
       {
-      typedef itk::RescaleIntensityImageFilter<FloatImageType, FloatImageType>
-        RescaleType;
+      using RescaleType = itk::RescaleIntensityImageFilter<FloatImageType, FloatImageType>;
       RescaleType::Pointer rescaler = RescaleType::New();
       rescaler->SetOutputMinimum(1);
       rescaler->SetOutputMaximum(MAX_IMAGE_OUTPUT_VALUE);
@@ -169,7 +168,7 @@ CreateTypedMap(const AtlasRegType::StringVector &keys, const AtlasRegType::Strin
   AtlasRegType::MapOfStringVectors rval;
   auto keyIt(keys.begin());
   auto valueIt(values.begin());
-  for( ; keyIt != keys.end() && valueIt != values.end(); ++keyIt, ++valueIt)
+  for(; keyIt != keys.end() && valueIt != values.end(); ++keyIt, ++valueIt)
     {
     rval[(*keyIt)].push_back((*valueIt));
     }
@@ -191,8 +190,8 @@ int main(int argc, char * *argv)
   // of this application:  itk::DataObject::GlobalReleaseDataFlagOn();
   itk::OutputWindow::SetInstance( itk::TextOutput::New() );
 
-  typedef itk::ImageFileReader<ByteImageType>                  ReaderType;
-  typedef ReaderType::Pointer                                  ReaderPointer;
+  using ReaderType = itk::ImageFileReader<ByteImageType>;
+  using ReaderPointer = ReaderType::Pointer;
 
 
   // Check the parameters for valid values
@@ -255,7 +254,7 @@ int main(int argc, char * *argv)
                 << std::endl );
     return EXIT_FAILURE;
     }
-  ;
+;
   atlasDefinitionParser.DebugPrint();
 
   AtlasRegType::MapOfStringVectors inputVolumeMap =
@@ -547,8 +546,8 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
-  typedef LocalReaderType::Pointer             LocalReaderPointer;
+  using LocalReaderType = itk::ImageFileReader<FloatImageType>;
+  using LocalReaderPointer = LocalReaderType::Pointer;
   FloatImageType::Pointer KeyImageFirstRead=nullptr;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
@@ -615,7 +614,7 @@ int main(int argc, char * *argv)
       if( debuglevel > 1 )
         {
         // DEBUG:  This code is for debugging purposes only;
-        typedef itk::ImageFileWriter<FloatImageType> WriterType;
+        using WriterType = itk::ImageFileWriter<FloatImageType>;
         WriterType::Pointer writer = WriterType::New();
         writer->UseCompressionOn();
 
@@ -648,8 +647,8 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
-  typedef LocalReaderType::Pointer             LocalReaderPointer;
+  using LocalReaderType = itk::ImageFileReader<FloatImageType>;
+  using LocalReaderPointer = LocalReaderType::Pointer;
 
 
   for(auto mapIt = templateVolumes.begin();
@@ -686,7 +685,7 @@ int main(int argc, char * *argv)
       }
     if( debuglevel > 7 )
       {
-      typedef itk::ImageFileWriter<FloatImageType> FloatWriterType;
+      using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
       FloatWriterType::Pointer writer = FloatWriterType::New();
 
       std::stringstream write_atlas_index_stream("");
@@ -835,7 +834,7 @@ int main(int argc, char * *argv)
 
   if( !restoreState.empty() )
     {
-    typedef AtlasRegType::CompositeTransformType  CompositeTransformType;
+    using CompositeTransformType = AtlasRegType::CompositeTransformType;
     CompositeTransformType::Pointer restoreStateTransform;
     try
       {
@@ -933,8 +932,8 @@ int main(int argc, char * *argv)
       {
       muLogMacro(<< "Writing registered template...\n");
 
-      typedef itk::ResampleImageFilter<FloatImageType, FloatImageType> ResampleType;
-      typedef ResampleType::Pointer                                    ResamplePointer;
+      using ResampleType = itk::ResampleImageFilter<FloatImageType, FloatImageType>;
+      using ResamplePointer = ResampleType::Pointer;
       ResamplePointer resampler = ResampleType::New();
 
       resampler->SetInput(GetMapVectorFirstElement(atlasOriginalImageList));
@@ -944,13 +943,12 @@ int main(int argc, char * *argv)
         (*(intraSubjectRegisteredRawImageMap[atlasOriginalImageList.begin()->first].begin()));
       resampler->SetDefaultPixelValue(0);
       resampler->Update();
-      typedef itk::CastImageFilter<FloatImageType, ShortImageType>
-        ShortRescaleType;
+      using ShortRescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
       ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
       rescaler->SetInput( resampler->GetOutput() );
       rescaler->Update();
 
-      typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+      using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
       ShortWriterType::Pointer writer = ShortWriterType::New();
 
       std::string fn
@@ -966,8 +964,7 @@ int main(int argc, char * *argv)
 
       for(unsigned i = 0; i < elem.second.size(); ++i)
         {
-        typedef itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>
-          ShortRescaleType;
+        using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>;
 
         ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
         rescaler->SetOutputMinimum(0);
@@ -979,7 +976,7 @@ int main(int argc, char * *argv)
           + GetStrippedImageFileNameExtension(inputVolumeMap[elem.first][i])
           + std::string("_registered") + suffstr;
 
-        typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+        using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
         ShortWriterType::Pointer writer = ShortWriterType::New();
 
         writer->SetInput( rescaler->GetOutput() );
@@ -1051,8 +1048,8 @@ int main(int argc, char * *argv)
     unsigned int                   AirIndex = 10000;
     for( unsigned int i = 0; i < PriorNames.size(); i++ )
       {
-      typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
-      typedef LocalReaderType::Pointer             LocalReaderPointer;
+      using LocalReaderType = itk::ImageFileReader<FloatImageType>;
+      using LocalReaderPointer = LocalReaderType::Pointer;
       LocalReaderPointer priorReader = LocalReaderType::New();
       const std::string curPriorAtlasName = FindPathFromAtlasXML(
         atlasDefinitionParser.GetPriorFilename(PriorNames[i]),
@@ -1173,9 +1170,9 @@ int main(int argc, char * *argv)
         {
         for( unsigned i = 0; i < mapIt->second.size(); i++ )
           {
-          // typedef itk::RescaleIntensityImageFilter<FloatImageType,
-          // ShortImageType> ShortRescaleType;
-          typedef itk::CastImageFilter<FloatImageType, ShortImageType> RescaleType;
+          // using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType,
+          // ShortImageType>;
+          using RescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
           RescaleType::Pointer caster = RescaleType::New();
 
           caster->SetInput(mapIt->second[i]);
@@ -1184,7 +1181,7 @@ int main(int argc, char * *argv)
           //  = outputDir + GetStrippedImageFileNameExtension(names[i]) + std::string("_corrected")
           //    + suffstr;
 
-          typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+          using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
           ShortWriterType::Pointer writer = ShortWriterType::New();
 
           writer->SetInput( caster->GetOutput() );
@@ -1209,7 +1206,7 @@ int main(int argc, char * *argv)
 
       FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second);
       // Write out average image.
-      typedef itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType> RescaleType;
+      using RescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>;
       RescaleType::Pointer rescaleInstensityFilter = RescaleType::New();
       rescaleInstensityFilter->SetOutputMinimum(0);
       rescaleInstensityFilter->SetOutputMaximum(4096);
@@ -1220,7 +1217,7 @@ int main(int argc, char * *argv)
 
       muLogMacro(<< "Writing averaged corrected input images... " << avgFileName << std::endl );
 
-      typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+      using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
       ShortWriterType::Pointer writer = ShortWriterType::New();
 
       writer->SetInput( rescaleInstensityFilter->GetOutput() );
@@ -1237,8 +1234,7 @@ int main(int argc, char * *argv)
         {
         for( unsigned int index = 0; index < elem.second.size(); index++ )
           {
-          typedef itk::RescaleIntensityImageFilter<FloatImageType, ByteImageType>
-            ByteRescaleType;
+          using ByteRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ByteImageType>;
 
           ByteRescaleType::Pointer rescaler = ByteRescaleType::New();
           rescaler->SetOutputMinimum(0);
@@ -1246,7 +1242,7 @@ int main(int argc, char * *argv)
           rescaler->SetInput(elem.second[index]);
           rescaler->Update();
 
-          typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+          using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
           ByteWriterType::Pointer writer = ByteWriterType::New();
 
           const std::string fn = outputDir
@@ -1282,7 +1278,7 @@ int main(int argc, char * *argv)
     // Write the labels
     muLogMacro(<< "Writing labels...\n");
     {
-    typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+    using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
     ByteWriterType::Pointer writer = ByteWriterType::New();
 
     writer->SetInput( segfilter->GetOutput() );
@@ -1303,7 +1299,7 @@ int main(int argc, char * *argv)
     writer->Update();
     }
     {
-    typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+    using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
     ByteWriterType::Pointer writer = ByteWriterType::New();
 
     std::string fn;
@@ -1378,7 +1374,7 @@ int main(int argc, char * *argv)
                 PriorNames[probabilityIndex].c_str() );
         fn = buf;
         }
-      typedef itk::ImageFileWriter<FloatImageType> FloatWriterType;
+      using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
       FloatWriterType::Pointer writer = FloatWriterType::New();
 
       FloatImageType::Pointer currPosterior = segfilter->GetPosteriors()[probabilityIndex];

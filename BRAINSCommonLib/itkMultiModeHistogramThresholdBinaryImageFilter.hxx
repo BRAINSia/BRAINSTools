@@ -78,7 +78,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
   for( unsigned int j = 0; j < NumInputs; ++j )
     {
     // Compute the quantile regions for linearizing the percentages.
-    typedef ComputeHistogramQuantileThresholds<TInputImage, TOutputImage> ImageCalcType;
+    using ImageCalcType = ComputeHistogramQuantileThresholds<TInputImage, TOutputImage>;
     typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
     ImageCalc->SetImage( this->GetInput(j) );
 
@@ -113,9 +113,8 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
               << thresholdLowerLinearRegion_foreground << ", " << thresholdUpperLinearRegion << " ]"
               << std::endl;
 
-    typedef BinaryThresholdImageFilter<InputImageType,
-                                       IntegerImageType>
-      ThresholdFilterType;
+    using ThresholdFilterType = BinaryThresholdImageFilter<InputImageType,
+                                       IntegerImageType>;
     typename ThresholdFilterType::Pointer threshold =
       ThresholdFilterType::New();
     threshold->SetInput( this->GetInput(j) );
@@ -176,7 +175,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
       }
     else
       {
-      typedef MultiplyImageFilter<IntegerImageType, IntegerImageType> IntersectMasksFilterType;
+      using IntersectMasksFilterType = MultiplyImageFilter<IntegerImageType, IntegerImageType>;
       if( accumulate->GetLargestPossibleRegion().GetSize() != thresholdImage->GetLargestPossibleRegion().GetSize() )
         {
         itkExceptionMacro(<< "Image data size mismatch " << accumulate->GetLargestPossibleRegion().GetSize() << " != "
@@ -208,7 +207,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
       }
     }
 
-  typedef CastImageFilter<IntegerImageType, OutputImageType> outputCasterType;
+  using outputCasterType = CastImageFilter<IntegerImageType, OutputImageType>;
   typename outputCasterType::Pointer outputCaster = outputCasterType::New();
   outputCaster->SetInput(accumulate);
 

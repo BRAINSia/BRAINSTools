@@ -58,7 +58,7 @@ VValidationInputParser<TImage>
 ::VValidationInputParser()
 {
   //      m_TheMovingImageFilename = "";
-  //      m_TheFixedImageFilename = "" ;
+  //      m_TheFixedImageFilename = "";
 
   m_ParameterFilename = "";
 
@@ -113,7 +113,7 @@ VValidationInputParser<TImage>
   // m_InitialCoefficientFilename << std::endl;
   if( m_InitialDisplacementFieldFilename != "" )
     {
-    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
+    using FieldReaderType = itk::ImageFileReader<TDisplacementField>;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
     fieldReader->SetFileName( m_InitialDisplacementFieldFilename.c_str() );
     try
@@ -142,8 +142,8 @@ VValidationInputParser<TImage>
     //  reads and converts a brains2 .xfrm file.
 
     // read brains2 transform file
-    typedef B2AffineTransform<ImageType>                  B2AffineTransformType;
-    typedef typename B2AffineTransformType::TransformType AffineTransformType;
+    using B2AffineTransformType = B2AffineTransform<ImageType>;
+    using AffineTransformType = typename B2AffineTransformType::TransformType;
     B2AffineTransformType transform;
     transform.Read(m_InitialTransformFilename);
     typename AffineTransformType::Pointer inputAffineTransform =
@@ -161,14 +161,14 @@ VValidationInputParser<TImage>
 
     // convert brains2 transform, which is in index, to ITK transform, which is
     // in mm
-    typedef itk::AffineTransform<double, 3> ITKAffineTransformType;
-    typedef itk::Vector<double, 3>          VectorType;
+    using ITKAffineTransformType = itk::AffineTransform<double, 3>;
+    using VectorType = itk::Vector<double, 3>;
     VectorType const fixedImageScaleReciprocal( Reciprocal<double, 3>(
                                                   transform.GetFixedImageSpacing() ) );
 
     VectorType const movingImageScale( transform.GetMovingImageSpacing() );
 
-    typedef CrossOverAffineSystem<double, 3> CrossOverAffineSystemType;
+    using CrossOverAffineSystemType = CrossOverAffineSystem<double, 3>;
     CrossOverAffineSystemType::Pointer crossOverAffineSystem =
       CrossOverAffineSystemType::New();
     crossOverAffineSystem->EncloseInScaling(fixedImageScaleReciprocal,

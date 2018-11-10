@@ -93,7 +93,7 @@ class XMLContents :
   public ProcessObjectBase
 {
 public:
-  typedef ProcessObjectBase SuperClass;
+  using SuperClass = ProcessObjectBase;
   virtual int PrintSelf(std::ostream &, int indent) const
   {
     // SuperClass::PrintSelf(os);

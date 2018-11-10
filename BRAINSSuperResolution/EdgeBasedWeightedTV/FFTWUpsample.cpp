@@ -14,7 +14,7 @@
 
 #include <itkPeriodicBoundaryCondition.h>
 
-typedef itk::ImageRegionIteratorWithIndex<HalfHermetianImageType> cmplxHHIteratorType;
+using cmplxHHIteratorType = itk::ImageRegionIteratorWithIndex<HalfHermetianImageType>;
 
 /**
  * @author Hans J. Johnson
@@ -70,7 +70,7 @@ static void ReshapeConvertIndex2(cmplxHHIteratorType & outputIter,
   HalfHermetianImageType::IndexType inputIndex = outputIndex;
 
   //First find shifted index location
-  for(size_t dim = 0 ; dim < HalfHermetianImageType::ImageDimension; ++dim )
+  for(size_t dim = 0; dim < HalfHermetianImageType::ImageDimension; ++dim )
   {
 #ifdef USE_HALF_FFTW
     if( dim == 0 && outputIndex[dim] == outHighestFreq[dim] + nyq_OutOffset[dim])
@@ -138,9 +138,9 @@ void testIndexConversion()
     const HalfHermetianImageType::SizeType outSize = {5,8,8};
     HalfHermetianImageType::IndexType oIndex;
     size_t count = 0;
-    for(size_t k = 0 ; k < inSize[2]; ++k)
-      for(size_t j = 0 ; j < inSize[1]; ++j)
-        for(size_t i = 0 ; i < inSize[0]; ++i)
+    for(size_t k = 0; k < inSize[2]; ++k)
+      for(size_t j = 0; j < inSize[1]; ++j)
+        for(size_t i = 0; i < inSize[0]; ++i)
         {
           oIndex[0] = i;
           oIndex[1] = j;
@@ -161,9 +161,9 @@ void testIndexConversion()
     const HalfHermetianImageType::SizeType outSize = { 3, 4, 4};
     HalfHermetianImageType::IndexType oIndex;
     size_t count = 0;
-    for(size_t k = 0 ; k < inSize[2]; ++k)
-      for(size_t j = 0 ; j < inSize[1]; ++j)
-        for(size_t i = 0 ; i < inSize[0]; ++i)
+    for(size_t k = 0; k < inSize[2]; ++k)
+      for(size_t j = 0; j < inSize[1]; ++j)
+        for(size_t i = 0; i < inSize[0]; ++i)
         {
           oIndex[0] = i;
           oIndex[1] = j;
@@ -238,7 +238,7 @@ HalfHermetianImageType::Pointer GetForwardFFT(FloatImageType::Pointer inputImage
   HalfHermetianImageType::Pointer outputCoeffs = fft->GetOutput();
   if (FFTScaler != 1.0F)
   {
-    typedef itk::MultiplyImageFilter<HalfHermetianImageType, HalfHermetianImageType> MultType;
+    using MultType = itk::MultiplyImageFilter<HalfHermetianImageType, HalfHermetianImageType>;
     MultType::Pointer multFilt = MultType::New();
     multFilt->SetInput(outputCoeffs);
     multFilt->SetInPlace(true);
@@ -289,7 +289,7 @@ FloatImageType::Pointer GetInverseFFT(HalfHermetianImageType::Pointer inputFFTCo
   //Bring metatda allong for ride
   if (FFTScaler != 1.0F)
   {
-    typedef itk::MultiplyImageFilter<FloatImageType, FloatImageType> MultType;
+    using MultType = itk::MultiplyImageFilter<FloatImageType, FloatImageType>;
     MultType::Pointer multFilt = MultType::New();
     multFilt->SetInput(referenceImageBaseOut);
     //HACK multFilt->SetInPlace(true);
@@ -447,7 +447,7 @@ CVImageType::Pointer GetGradient(FloatImageType::Pointer inputImage)
 {
 #if 1
   GradientType::Pointer gradient_of_p = GradientType::New();
-  typedef itk::PeriodicBoundaryCondition<FloatImageType> FloatBoundaryType;
+  using FloatBoundaryType = itk::PeriodicBoundaryCondition<FloatImageType>;
   gradient_of_p->OverrideBoundaryCondition( new FloatBoundaryType );
   gradient_of_p->SetInput(inputImage);
   gradient_of_p->SetUseImageDirection(false);
@@ -482,7 +482,7 @@ CVImageType::Pointer GetGradient(FloatImageType::Pointer inputImage)
 DivergenceType::OutputImageType::Pointer GetDivergence(CVImageType::Pointer inputImage)
 {
   DivergenceType::Pointer divergence_of_gradient_of_p = DivergenceType::New();
-  typedef itk::PeriodicBoundaryCondition<CVImageType> CVBoundaryType;
+  using CVBoundaryType = itk::PeriodicBoundaryCondition<CVImageType>;
   divergence_of_gradient_of_p->OverrideBoundaryCondition(new CVBoundaryType);
   divergence_of_gradient_of_p->SetInput(inputImage);
   divergence_of_gradient_of_p->SetUseImageSpacingOff();
@@ -500,13 +500,13 @@ DivergenceType::OutputImageType::Pointer GetDivergence(CVImageType::Pointer inpu
 
 void WriteComplexImages(HalfHermetianImageType::Pointer cmplxIn, const std::string prefix)
 {
-  typedef itk::ComplexToRealImageFilter<HalfHermetianImageType,FloatImageType> C2RType;
+  using C2RType = itk::ComplexToRealImageFilter<HalfHermetianImageType,FloatImageType>;
   C2RType::Pointer c2r = C2RType::New();
   c2r->SetInput(cmplxIn);
   c2r->Update();
   WriteFile(c2r->GetOutput(),prefix+"_real.nii");
 #if 1
-  typedef itk::ComplexToImaginaryImageFilter<HalfHermetianImageType,FloatImageType> C2IType;
+  using C2IType = itk::ComplexToImaginaryImageFilter<HalfHermetianImageType,FloatImageType>;
   C2IType::Pointer c2i = C2IType::New();
   c2i->SetInput(cmplxIn);
   c2i->Update();
@@ -517,7 +517,7 @@ void WriteComplexImages(HalfHermetianImageType::Pointer cmplxIn, const std::stri
 
 HalfHermetianImageType::Pointer  ReadComplexImages(const std::string prefix)
 {
-  typedef itk::ImageFileReader<FloatImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<FloatImageType>;
   FileReaderType::Pointer fr = FileReaderType::New();
   fr->SetFileName(prefix+"_real.nii");
   fr->Update();
@@ -544,7 +544,7 @@ HalfHermetianImageType::Pointer  ReadComplexImages(const std::string prefix)
 #include <itkRescaleIntensityImageFilter.h>
 FloatImageType::Pointer NormalizeDataComponent(FloatImageType::Pointer arr)
 {
-  typedef itk::RescaleIntensityImageFilter<FloatImageType,FloatImageType> RescalerType;
+  using RescalerType = itk::RescaleIntensityImageFilter<FloatImageType,FloatImageType>;
   RescalerType::Pointer rescaler = RescalerType::New();
   rescaler->SetInput(arr);
   rescaler->SetOutputMaximum(1.0);

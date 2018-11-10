@@ -162,12 +162,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     typename ImageMetricType::Pointer firstMetricComponent =
                   dynamic_cast<ImageMetricType *>( multiMetric->GetMetricQueue()[0].GetPointer() );
 
-    typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
+    using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType>;
     typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
     scalesEstimator->SetMetric( firstMetricComponent );
     scalesEstimator->SetTransformForward( true );
 
-    typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double> ConjugateGradientDescentOptimizerType;
+    using ConjugateGradientDescentOptimizerType = itk::ConjugateGradientLineSearchOptimizerv4Template<double>;
     typename ConjugateGradientDescentOptimizerType::Pointer affineOptimizer = ConjugateGradientDescentOptimizerType::New();
     // Set the parameters of ConjugateGradient optimizer
     affineOptimizer->SetLowerLimit( 0 );
@@ -195,7 +195,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 #if 0
     std::cout << "Versor transform fixed parameters are set from fixed image's center of mass ... " << std::endl;
 #endif
-    typedef typename itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
+    using FixedImageCalculatorType = typename itk::ImageMomentsCalculator< FixedImageType >;
     typename FixedImageCalculatorType::Pointer fixedCalculator = FixedImageCalculatorType::New();
     fixedCalculator->SetImage( m_FixedImage );
     fixedCalculator->Compute();
@@ -272,7 +272,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     std::cout << "Initializer, optimizerScales: " << optimizerScales << "." << std::endl;
 #endif
 
-    typedef itk::RegularStepGradientDescentOptimizerv4<double> VersorOptimizerType;
+    using VersorOptimizerType = itk::RegularStepGradientDescentOptimizerv4<double>;
     typename VersorOptimizerType::Pointer versorOptimizer = VersorOptimizerType::New();
 
     versorOptimizer->SetScales( optimizerScales );
@@ -312,7 +312,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 
   std::vector<unsigned int>  factors( numberOfLevels );
   factors[0] = 1;
-  typedef typename RegistrationType::ShrinkFactorsPerDimensionContainerType ShrinkFactorsPerDimensionContainerType;
+  using ShrinkFactorsPerDimensionContainerType = typename RegistrationType::ShrinkFactorsPerDimensionContainerType;
   std::vector<ShrinkFactorsPerDimensionContainerType> shrinkFactorsPerDimensionForAllLevels;
   for( unsigned int n = 0; n < numberOfLevels; n++ )
     {
@@ -357,8 +357,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   //
   if( this->m_ObserveIterations == true )
     {
-    typedef BRAINSFit::CommandIterationUpdate<TOptimizer, TTransformType, TMovingImage>
-      CommandIterationUpdateType;
+    using CommandIterationUpdateType = BRAINSFit::CommandIterationUpdate<TOptimizer, TTransformType, TMovingImage>;
     typename CommandIterationUpdateType::Pointer observer =
       CommandIterationUpdateType::New();
     observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
@@ -368,7 +367,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     observer->SetFixedImage(m_FixedImage);
     observer->SetTransform(m_Transform);
 
-    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
+    using MattesMutualInformationMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>;
     typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
       dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
     if( test_MMICostMetric.IsNotNull() )

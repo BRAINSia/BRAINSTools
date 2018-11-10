@@ -62,11 +62,11 @@ class HistogramMatchingQuadEdgeMeshFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(HistogramMatchingQuadEdgeMeshFilter);
 
-  typedef HistogramMatchingQuadEdgeMeshFilter Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>                     Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = HistogramMatchingQuadEdgeMeshFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
+      TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( HistogramMatchingQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -74,22 +74,22 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef typename  Superclass::InputMeshType                     InputMeshType;
-  typedef typename  InputMeshType::PixelType                      InputPixelType;
-  typedef typename  InputMeshType::ConstPointer                   InputMeshConstPointer;
-  typedef typename  InputMeshType::PointDataContainer             InputPointDataContainer;
-  typedef typename  InputMeshType::PointDataContainerConstPointer InputPointDataContainerConstPointer;
+  using InputMeshType = typename  Superclass::InputMeshType;
+  using InputPixelType = typename  InputMeshType::PixelType;
+  using InputMeshConstPointer = typename  InputMeshType::ConstPointer;
+  using InputPointDataContainer = typename  InputMeshType::PointDataContainer;
+  using InputPointDataContainerConstPointer = typename  InputMeshType::PointDataContainerConstPointer;
 
-  typedef typename  Superclass::OutputMeshType           OutputMeshType;
-  typedef typename  OutputMeshType::PixelType            OutputPixelType;
-  typedef typename  OutputMeshType::Pointer              OutputMeshPointer;
-  typedef typename  Superclass::OutputPointDataContainer OutputPointDataContainer;
-  typedef typename  OutputPointDataContainer::Pointer    OutputPointDataContainerPointer;
+  using OutputMeshType = typename  Superclass::OutputMeshType;
+  using OutputPixelType = typename  OutputMeshType::PixelType;
+  using OutputMeshPointer = typename  OutputMeshType::Pointer;
+  using OutputPointDataContainer = typename  Superclass::OutputPointDataContainer;
+  using OutputPointDataContainerPointer = typename  OutputPointDataContainer::Pointer;
 
-  /** Histogram related typedefs. */
-  typedef Statistics::Histogram<THistogramMeasurement> HistogramType;
+  /** Histogram related type alias. */
+  using HistogramType = Statistics::Histogram<THistogramMeasurement>;
 
-  typedef typename HistogramType::Pointer HistogramPointer;
+  using HistogramPointer = typename HistogramType::Pointer;
 
   /** Set/Get the source mesh. */
   void SetSourceMesh( const InputMeshType * source );
@@ -150,10 +150,10 @@ private:
   HistogramPointer m_ReferenceHistogram;
   HistogramPointer m_OutputHistogram;
 
-  typedef vnl_matrix<double> TableType;
+  using TableType = vnl_matrix<double>;
   TableType m_QuantileTable;
 
-  typedef vnl_vector<double> GradientArrayType;
+  using GradientArrayType = vnl_vector<double>;
   GradientArrayType m_Gradients;
   double            m_LowerGradient;
   double            m_UpperGradient;

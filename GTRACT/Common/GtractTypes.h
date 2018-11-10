@@ -41,8 +41,8 @@
 #include <vnl/vnl_vector.h>
 #include <itkContinuousIndex.h>
 
-typedef vnl_matrix<float> TMatrix;
-typedef vnl_vector<float> TVector;
+using TMatrix = vnl_matrix<float>;
+using TVector = vnl_vector<float>;
 
 class BranchPointType
 {

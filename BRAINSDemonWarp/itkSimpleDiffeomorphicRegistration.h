@@ -45,12 +45,12 @@
 class itkSimpleDiffeomorphicRegistration : public itk::Object
 {
 public:
-  typedef itk::Image<float, DIM> TRealImage;
-  typedef itk::DemonsPreprocessor<TRealImage,
-                                  TRealImage> DemonsPreprocessorType;
-  typedef itk::DemonsRegistrator<TRealImage, TRealImage,
-                                 float> DemonsRegistratorType;
-  typedef itk::Image<itk::Vector<float, DIM>, DIM> TDisplacementField;
+  using TRealImage = itk::Image<float, DIM>;
+  using DemonsPreprocessorType = itk::DemonsPreprocessor<TRealImage,
+                                  TRealImage>;
+  using DemonsRegistratorType = itk::DemonsRegistrator<TRealImage, TRealImage,
+                                 float>;
+  using TDisplacementField = itk::Image<itk::Vector<float, DIM>, DIM>;
 
   itkSimpleDiffeomorphicRegistration();
   itkSetObjectMacro(FixedImage, TRealImage);

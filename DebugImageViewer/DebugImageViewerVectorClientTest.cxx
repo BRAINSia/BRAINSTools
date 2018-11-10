@@ -24,7 +24,7 @@
 
 int main(int argc, char * *argv)
 {
-  typedef itk::Image<itk::Vector<float, 3>, 3> ImageType;
+  using ImageType = itk::Image<itk::Vector<float, 3>, 3>;
 
   if( argc != 2 )
     {

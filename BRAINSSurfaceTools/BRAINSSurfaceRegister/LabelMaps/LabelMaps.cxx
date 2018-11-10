@@ -59,13 +59,13 @@ int main( int argc, char * argv[] )
 
   // define image type
   constexpr int dimension = 3;
-  typedef unsigned char                    PixelType;
-  typedef itk::Image<PixelType, dimension> ImageType;
+  using PixelType = unsigned char;
+  using ImageType = itk::Image<PixelType, dimension>;
 
   // read Inputimage
-  typedef itk::ImageFileReader<ImageType> InputReaderType;
+  using InputReaderType = itk::ImageFileReader<ImageType>;
 
-  typedef itk::NaryRelabelImageFilter<ImageType, ImageType> FilterType;
+  using FilterType = itk::NaryRelabelImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   for( int i = 0; i < nLabels; i++ )
     {
@@ -83,7 +83,7 @@ int main( int argc, char * argv[] )
 
   itk::SimpleFilterWatcher watcher(filter, "filter");
 
-  typedef itk::ImageFileWriter<ImageType> OutputWriterType;
+  using OutputWriterType = itk::ImageFileWriter<ImageType>;
   OutputWriterType::Pointer Writer = OutputWriterType::New();
   Writer->SetInput( filter->GetOutput() );
   Writer->SetFileName( outputImageFile.c_str() );

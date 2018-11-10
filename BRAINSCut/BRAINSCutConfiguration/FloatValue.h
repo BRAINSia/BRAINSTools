@@ -25,7 +25,7 @@ class FloatValue :
   public NumericValue<double>
 {
 public:
-  typedef NumericValue<double> SuperClass;
+  using SuperClass = NumericValue<double>;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -34,7 +34,7 @@ public:
     return indent + 2;
   }
 
-  typedef double ReturnType;
+  using ReturnType = double;
   FloatValue(const std::string & name, ReturnType value) :
     NumericValue<ReturnType>(name, value)
   {

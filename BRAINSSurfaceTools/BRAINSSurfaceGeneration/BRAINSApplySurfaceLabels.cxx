@@ -82,8 +82,8 @@ int main( int argc, char * *argv )
   std::cout << "-----------------------------------------------\n";
 
   // Read Label Map
-  typedef itk::Image<signed short, 3>        LabelMapType;
-  typedef itk::ImageFileReader<LabelMapType> LabelMapReaderType;
+  using LabelMapType = itk::Image<signed short, 3>;
+  using LabelMapReaderType = itk::ImageFileReader<LabelMapType>;
 
   LabelMapReaderType::Pointer labelMapReader = LabelMapReaderType::New();
   labelMapReader->SetFileName( inputLabelMap.c_str() );

@@ -74,13 +74,13 @@ int main( int argc, char * argv [] )
   std::cout << " and number of match points of " << numberOfMatchPoints << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  typedef float MeshPixelType;
+  using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> SourceReaderType;
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReferenceReaderType;
+  using SourceReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
+  using ReferenceReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
 
   SourceReaderType::Pointer srcReader = SourceReaderType::New();
   srcReader->SetFileName( inputSurfaceFile.c_str() );
@@ -91,7 +91,7 @@ int main( int argc, char * argv [] )
   srcReader->Update();
   refReader->Update();
 
-  typedef itk::HistogramMatchingQuadEdgeMeshFilter<MeshType, MeshType> FilterType;
+  using FilterType = itk::HistogramMatchingQuadEdgeMeshFilter<MeshType, MeshType>;
 
   FilterType::Pointer filter  = FilterType::New();
 
@@ -101,7 +101,7 @@ int main( int argc, char * argv [] )
   filter->SetNumberOfMatchPoints( numberOfMatchPoints );
   filter->Update();
 
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( filter->GetOutput() );
   writer->SetFileName(outputSurfaceFile.c_str() );

@@ -138,7 +138,7 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
 
   const DestinationPointsContainerType * destinationPointsContainer = destinationPoints->GetPoints();
 
-  typedef typename OutputMeshType::PointsContainer OutputPointsContainer;
+  using OutputPointsContainer = typename OutputMeshType::PointsContainer;
 
   OutputPointsContainer * outputPoints = outputMesh->GetPoints();
 
@@ -162,13 +162,13 @@ DeformQuadEdgeMeshFilter<TInputMesh, TReferenceMesh, TDestinationPoints>
   this->m_Interpolator->SetInputMesh( referenceMesh );
   this->m_Interpolator->Initialize();
 
-  typedef typename OutputPointsContainer::Iterator OutputPointIterator;
+  using OutputPointIterator = typename OutputPointsContainer::Iterator;
 
   OutputPointIterator outputPointItr = outputPoints->Begin();
   OutputPointIterator outputPointEnd = outputPoints->End();
 
-  typedef typename InterpolatorType::PointType PointType;
-  typedef typename PointType::VectorType       VectorType;
+  using PointType = typename InterpolatorType::PointType;
+  using VectorType = typename PointType::VectorType;
 
   PointType evaluatedPoint;
   PointType inputPoint;

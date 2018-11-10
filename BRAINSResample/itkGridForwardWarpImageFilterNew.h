@@ -79,11 +79,11 @@ class GridForwardWarpImageFilterNew :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(GridForwardWarpImageFilterNew);
 
-  /** Standard class typedefs. */
-  typedef GridForwardWarpImageFilterNew                        Self;
-  typedef ImageToImageFilter<TDisplacementField, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                                   Pointer;
-  typedef SmartPointer<const Self>                             ConstPointer;
+  /** Standard class type alias. */
+  using Self = GridForwardWarpImageFilterNew;
+  using Superclass = ImageToImageFilter<TDisplacementField, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -92,24 +92,24 @@ public:
   itkTypeMacro(GridForwardWarpImageFilterNew, ImageToImageFilter);
 
   /** Typedef to describe the output image region type. */
-  typedef typename TOutputImage::RegionType OutputImageRegionType;
+  using OutputImageRegionType = typename TOutputImage::RegionType;
 
   /** Inherit some types from the superclass. */
-  typedef typename Superclass::OutputImageType    OutputImageType;
-  typedef typename Superclass::OutputImagePointer OutputImagePointer;
-  typedef typename OutputImageType::IndexType     IndexType;
-  typedef typename OutputImageType::SizeType      SizeType;
-  typedef typename OutputImageType::PixelType     PixelType;
-  typedef typename OutputImageType::SpacingType   SpacingType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using OutputImagePointer = typename Superclass::OutputImagePointer;
+  using IndexType = typename OutputImageType::IndexType;
+  using SizeType = typename OutputImageType::SizeType;
+  using PixelType = typename OutputImageType::PixelType;
+  using SpacingType = typename OutputImageType::SpacingType;
 
   /** Determine the image dimension. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
   static constexpr unsigned int DisplacementFieldDimension = TDisplacementField::ImageDimension;
 
-  /** Displacement field typedef support. */
-  typedef TDisplacementField                           DisplacementFieldType;
-  typedef typename DisplacementFieldType::ConstPointer DeformationFieldConstPointer;
-  typedef typename DisplacementFieldType::PixelType    DisplacementType;
+  /** Displacement field type alias support. */
+  using DisplacementFieldType = TDisplacementField;
+  using DeformationFieldConstPointer = typename DisplacementFieldType::ConstPointer;
+  using DisplacementType = typename DisplacementFieldType::PixelType;
 
   /** Set the background value */
   itkSetMacro(BackgroundValue, PixelType);
@@ -132,7 +132,7 @@ public:
     * For example, if you want only Z-dir warped lines in a 2D X-dir view, then
     * set grid spacing to 0,-8,8.
     */
-  typedef FixedArray<int, ImageDimension> GridSpacingType;
+  using GridSpacingType = FixedArray<int, ImageDimension>;
   itkSetMacro(GridPixelSpacing, GridSpacingType);
   /** Get the foreground value */
   itkGetConstMacro(GridPixelSpacing, GridSpacingType);

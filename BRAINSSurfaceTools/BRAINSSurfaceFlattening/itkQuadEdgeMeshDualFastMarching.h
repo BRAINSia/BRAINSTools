@@ -44,49 +44,48 @@ class QuadEdgeMeshDualFastMarching :
                                   std::list<typename TMesh::CellIdentifier> >
 {
 public:
-  typedef QuadEdgeMeshDualFastMarching Self;
-  typedef QuadEdgeMeshFunctionBase<
+  using Self = QuadEdgeMeshDualFastMarching;
+  using Superclass = QuadEdgeMeshFunctionBase<
       TMesh,
-      std::list<typename TMesh::CellIdentifier> >
-    Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+      std::list<typename TMesh::CellIdentifier> >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkNewMacro( Self );
 
   itkTypeMacro( QuadEdgeMeshDualFastMarching, QuadEdgeMeshFunctionBase );
 
-  typedef TMesh                              MeshType;
-  typedef typename MeshType::ConstPointer    MeshConstPointer;
-  typedef typename MeshType::PointType       PointType;
-  typedef typename MeshType::CellType        CellType;
-  typedef typename MeshType::CellIdentifier  CellIdentifier;
-  typedef typename MeshType::CellAutoPointer CellAutoPointer;
+  using MeshType = TMesh;
+  using MeshConstPointer = typename MeshType::ConstPointer;
+  using PointType = typename MeshType::PointType;
+  using CellType = typename MeshType::CellType;
+  using CellIdentifier = typename MeshType::CellIdentifier;
+  using CellAutoPointer = typename MeshType::CellAutoPointer;
   typedef typename MeshType::CellsContainerConstPointer
     CellsContainerConstPointer;
   typedef typename MeshType::CellsContainerConstIterator
     CellsContainerConstIterator;
-  typedef typename MeshType::PointIdIterator PointIdIterator;
-  typedef typename MeshType::PointIdentifier PointIdentifier;
-  typedef typename MeshType::QEType          QEType;
+  using PointIdIterator = typename MeshType::PointIdIterator;
+  using PointIdentifier = typename MeshType::PointIdentifier;
+  using QEType = typename MeshType::QEType;
 
-  typedef TriangleHelper<PointType> TriangleType;
+  using TriangleType = TriangleHelper<PointType>;
 
-  typedef QuadEdgeMeshPolygonCell<CellType>     PolygonType;
-  typedef typename PolygonType::SelfAutoPointer PolygonAutoPointer;
+  using PolygonType = QuadEdgeMeshPolygonCell<CellType>;
+  using PolygonAutoPointer = typename PolygonType::SelfAutoPointer;
 
-  typedef TMetric                        MetricType;
-  typedef typename MetricType::ValueType MetricValueType;
+  using MetricType = TMetric;
+  using MetricValueType = typename MetricType::ValueType;
 
-  typedef typename Superclass::OutputType CellIdentifierListType;
+  using CellIdentifierListType = typename Superclass::OutputType;
 
-  typedef CellIdentifierListType               ClusterType;
-  typedef typename ClusterType::iterator       ClusterIterator;
-  typedef std::vector<ClusterType>             ClusterVectorType;
-  typedef typename ClusterVectorType::iterator ClusterVectorIterator;
+  using ClusterType = CellIdentifierListType;
+  using ClusterIterator = typename ClusterType::iterator;
+  using ClusterVectorType = std::vector<ClusterType>;
+  using ClusterVectorIterator = typename ClusterVectorType::iterator;
 
-  typedef std::vector<CellIdentifier>       SeedVectorType;
-  typedef typename SeedVectorType::iterator SeedVectorIterator;
+  using SeedVectorType = std::vector<CellIdentifier>;
+  using SeedVectorIterator = typename SeedVectorType::iterator;
 public:
 
   struct Item
@@ -122,16 +121,14 @@ public:
     }
     };
 
-  typedef MinPriorityQueueElementWrapper<Item, MetricValueType,
-                                         CellIdentifier>
-    PriorityQueueItemType;
-  typedef PriorityQueueContainer<PriorityQueueItemType,
+  using PriorityQueueItemType = MinPriorityQueueElementWrapper<Item, MetricValueType,
+                                         CellIdentifier>;
+  using PriorityQueueType = PriorityQueueContainer<PriorityQueueItemType,
                                  PriorityQueueItemType,
-                                 MetricValueType, long>   PriorityQueueType;
-  typedef typename PriorityQueueType::Pointer PriorityQueuePointer;
-  typedef std::map<CellIdentifier, std::list<PriorityQueueItemType> >
-    QueueMapType;
-  typedef typename QueueMapType::iterator QueueMapIterator;
+                                 MetricValueType, long>;
+  using PriorityQueuePointer = typename PriorityQueueType::Pointer;
+  using QueueMapType = std::map<CellIdentifier, std::list<PriorityQueueItemType> >;
+  using QueueMapIterator = typename QueueMapType::iterator;
 
   itkSetConstObjectMacro( Mesh, MeshType );
   itkGetConstObjectMacro( Mesh, MeshType );

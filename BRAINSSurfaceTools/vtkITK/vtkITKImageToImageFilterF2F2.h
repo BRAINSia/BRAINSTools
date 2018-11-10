@@ -58,24 +58,24 @@ public:
 protected:
 
   /// To/from ITK
-  typedef itk::Vector<float,2> InputImagePixelType;
-  typedef itk::Vector<float,2> OutputImagePixelType;
-  typedef itk::Image<InputImagePixelType, 3> InputImageType;
-  typedef itk::Image<OutputImagePixelType, 3> OutputImageType;
+  using InputImagePixelType = itk::Vector<float,2>;
+  using OutputImagePixelType = itk::Vector<float,2>;
+  using InputImageType = itk::Image<InputImagePixelType, 3>;
+  using OutputImageType = itk::Image<OutputImagePixelType, 3>;
 
-  typedef itk::Image<float, 3> JoinImageType;
-  typedef itk::VTKImageImport<JoinImageType> ImageImportType;
-  typedef itk::VTKImageExport<JoinImageType> ImageExportType;
+  using JoinImageType = itk::Image<float, 3>;
+  using ImageImportType = itk::VTKImageImport<JoinImageType>;
+  using ImageExportType = itk::VTKImageExport<JoinImageType>;
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
   ImageImportType::Pointer itkImporter1;
   ImageExportType::Pointer itkExporter1;
 
-  typedef itk::JoinImageFilter<JoinImageType, JoinImageType> JoinFilterType;
+  using JoinFilterType = itk::JoinImageFilter<JoinImageType, JoinImageType>;
 
-  typedef itk::SplitImageFilter<OutputImageType, JoinImageType> SplitFilterType;
+  using SplitFilterType = itk::SplitImageFilter<OutputImageType, JoinImageType>;
 
-  typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
+  using GenericFilterType = itk::ImageToImageFilter<InputImageType,OutputImageType>;
   GenericFilterType::Pointer m_Filter;
 
   vtkImageImport* vtkImporter1;

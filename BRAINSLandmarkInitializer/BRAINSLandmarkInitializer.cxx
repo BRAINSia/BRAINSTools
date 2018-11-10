@@ -88,15 +88,15 @@ InitializeTransform( int argc, char *argv[] )
   CheckLandmarks( movingLandmarks, landmarkWeightMap );
 
   /** Landmark Initializaer */
-  typedef double PixelType;
+  using PixelType = double;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType, Dimension>           ImageType;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   ImageType::Pointer referenceImage = nullptr;
   if( !inputReferenceImageFilename.empty() )
     {
-    typedef itk::ImageFileReader<ImageType> ReaderType;
+    using ReaderType = itk::ImageFileReader<ImageType>;
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( inputReferenceImageFilename );
     try
@@ -112,24 +112,24 @@ InitializeTransform( int argc, char *argv[] )
       }
     }
 
-  typedef TTransformType                             LocalTransformType;
+  using LocalTransformType = TTransformType;
   typename LocalTransformType::Pointer transform =
     LocalTransformType::New();
 
-  typedef itk::LandmarkBasedTransformInitializer<LocalTransformType,
+  using LandmarkBasedInitializerType = itk::LandmarkBasedTransformInitializer<LocalTransformType,
                                                  ImageType,
-                                                 ImageType> LandmarkBasedInitializerType;
+                                                 ImageType>;
 
   typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer =
     LandmarkBasedInitializerType::New();
 
-  typedef typename LandmarkBasedInitializerType::LandmarkWeightType LandmarkWeightContainerType;
+  using LandmarkWeightContainerType = typename LandmarkBasedInitializerType::LandmarkWeightType;
   LandmarkWeightContainerType landmarkWgts;
 
-  typedef typename LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
+  using LandmarkContainerType = typename LandmarkBasedInitializerType::LandmarkPointContainer;
   LandmarkContainerType fixedLmks;
   LandmarkContainerType movingLmks;
-  typedef LandmarksMapType::const_iterator LandmarkConstIterator;
+  using LandmarkConstIterator = LandmarksMapType::const_iterator;
   for( LandmarkConstIterator fixedIt = fixedLandmarks.begin();
        fixedIt != fixedLandmarks.end();
        ++fixedIt )
@@ -205,25 +205,25 @@ main(int argc, char *argv[])
     exit(EXIT_FAILURE);
     }
 
-  typedef double ParameterValueType;
+  using ParameterValueType = double;
   constexpr unsigned int Dimension = 3;
 
   if( outputTransformType == "AffineTransform" )
     {
-    typedef itk::AffineTransform<ParameterValueType, Dimension> AffineTransformType;
+    using AffineTransformType = itk::AffineTransform<ParameterValueType, Dimension>;
     return InitializeTransform<AffineTransformType>( argc, argv );
     }
   else if( outputTransformType == "BSplineTransform" )
     {
     constexpr static unsigned int SplineOrder  = 3;
-    typedef itk::BSplineTransform< ParameterValueType,
+    using BSplineTransformType = itk::BSplineTransform< ParameterValueType,
                                    Dimension,
-                                   SplineOrder>                  BSplineTransformType;
+                                   SplineOrder>;
     return InitializeTransform<BSplineTransformType>( argc, argv );
     }
   else if( outputTransformType == "VersorRigid3DTransform" )
     {
-    typedef itk::VersorRigid3DTransform< ParameterValueType >    VersorRigid3DTransformType;
+    using VersorRigid3DTransformType = itk::VersorRigid3DTransform< ParameterValueType >;
     return InitializeTransform<VersorRigid3DTransformType>( argc, argv );
     }
   else

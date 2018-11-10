@@ -48,35 +48,35 @@ class InterpolateMeshFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(InterpolateMeshFunction);
 
-  /** Standard class typedefs. */
-  typedef InterpolateMeshFunction Self;
-  typedef MeshFunction<TInputMesh,
+  /** Standard class type alias. */
+  using Self = InterpolateMeshFunction;
+  using Superclass = MeshFunction<TInputMesh,
                        typename NumericTraits<
-                         typename TInputMesh::PixelType>::RealType>     Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+                         typename TInputMesh::PixelType>::RealType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(InterpolateMeshFunction, MeshFunction);
 
-  /** OutputType typedef support. */
-  typedef typename Superclass::OutputType OutputType;
+  /** OutputType type alias support. */
+  using OutputType = typename Superclass::OutputType;
 
-  /** InputMeshType typedef support. */
-  typedef typename Superclass::InputMeshType      InputMeshType;
-  typedef typename InputMeshType::PointIdentifier PointIdentifier;
-  typedef typename InputMeshType::CellIdentifier  CellIdentifier;
+  /** InputMeshType type alias support. */
+  using InputMeshType = typename Superclass::InputMeshType;
+  using PointIdentifier = typename InputMeshType::PointIdentifier;
+  using CellIdentifier = typename InputMeshType::CellIdentifier;
 
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
-  /** Point typedef support. */
-  typedef typename Superclass::PointType PointType;
+  /** Point type alias support. */
+  using PointType = typename Superclass::PointType;
 
-  /** RealType typedef support. */
-  typedef typename TInputMesh::PixelType                PixelType;
-  typedef typename NumericTraits<PixelType>::RealType   RealType;
-  typedef itk::CovariantVector<RealType, MeshDimension> DerivativeType;
+  /** RealType type alias support. */
+  using PixelType = typename TInputMesh::PixelType;
+  using RealType = typename NumericTraits<PixelType>::RealType;
+  using DerivativeType = itk::CovariantVector<RealType, MeshDimension>;
 
   /**
    * Interpolate the mesh at a point position.
@@ -102,10 +102,10 @@ protected:
 
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
-  typedef PointLocator2<TInputMesh>          PointLocatorType;
-  typedef typename PointLocatorType::Pointer PointLocatorPointer;
+  using PointLocatorType = PointLocator2<TInputMesh>;
+  using PointLocatorPointer = typename PointLocatorType::Pointer;
 
-  typedef typename PointLocatorType::InstanceIdentifierVectorType InstanceIdentifierVectorType;
+  using InstanceIdentifierVectorType = typename PointLocatorType::InstanceIdentifierVectorType;
 
   /** Searches the k-nearest neighbors */
   void Search(const PointType & query, unsigned int numberOfNeighborsRequested,

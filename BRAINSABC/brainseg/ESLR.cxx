@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  typedef itk::Image<unsigned char, 3>        ByteImageType;
-  typedef itk::ImageFileReader<ByteImageType> ReaderType;
+  using ByteImageType = itk::Image<unsigned char, 3>;
+  using ReaderType = itk::ImageFileReader<ByteImageType>;
 
   ReaderType::Pointer myReader = ReaderType::New();
   myReader->SetFileName(inputVolume);
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
       }
     }
 
-  typedef itk::ImageFileWriter<ByteImageType> OutputWriterType;
+  using OutputWriterType = itk::ImageFileWriter<ByteImageType>;
   OutputWriterType::Pointer writer = OutputWriterType::New();
 
   writer->SetInput(  myCleanRegion );

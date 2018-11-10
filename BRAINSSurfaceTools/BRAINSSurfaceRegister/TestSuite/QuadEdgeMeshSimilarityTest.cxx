@@ -38,14 +38,14 @@ int main( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  typedef int MeshPixelType;
+  using MeshPixelType = int;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> InputMeshType1;
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> InputMeshType2;
+  using InputMeshType1 = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using InputMeshType2 = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType1> InputReaderType1;
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType2> InputReaderType2;
+  using InputReaderType1 = itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType1>;
+  using InputReaderType2 = itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType2>;
 
   InputReaderType1::Pointer inputMeshReader1 = InputReaderType1::New();
   inputMeshReader1->SetFileName( argv[1] );
@@ -64,7 +64,7 @@ int main( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  typedef itk::QuadEdgeMeshSimilarityCalculator<InputMeshType1, InputMeshType2> SimilarityCalculatorType;
+  using SimilarityCalculatorType = itk::QuadEdgeMeshSimilarityCalculator<InputMeshType1, InputMeshType2>;
 
   SimilarityCalculatorType::Pointer similarityCalculator = SimilarityCalculatorType::New();
 

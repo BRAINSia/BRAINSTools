@@ -12,11 +12,11 @@ int main( int argc, char ** argv )
     }
 
 
-  typedef unsigned int PixelType;
+  using PixelType = unsigned int;
   constexpr unsigned int Dimension = 3;
-  typedef itk::Image< PixelType, Dimension >    LabelType;
+  using LabelType = itk::Image< PixelType, Dimension >;
 
-  typedef itk::ImageFileReader< LabelType >  ReaderType;
+  using ReaderType = itk::ImageFileReader< LabelType >;
 
   ReaderType::Pointer reader1 = ReaderType::New();
   ReaderType::Pointer reader2 = ReaderType::New();
@@ -29,7 +29,7 @@ int main( int argc, char ** argv )
   reader1->SetFileName( inputBinaryFilename1 );
   reader2->SetFileName( inputBinaryFilename2 );
 
-  typedef itk::LabelOverlapMeasuresImageFilter< LabelType > OverlapFilterType;
+  using OverlapFilterType = itk::LabelOverlapMeasuresImageFilter< LabelType >;
   OverlapFilterType::Pointer filter = OverlapFilterType::New();
 
   filter->SetSourceImage( reader1->GetOutput() );

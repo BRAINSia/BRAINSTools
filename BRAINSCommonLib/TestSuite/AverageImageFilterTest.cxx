@@ -13,18 +13,18 @@ int main( int , char * [] )
 {
   const unsigned int numTestImages(4);
   const unsigned int testImageDim(4);
-  typedef itk::Image<float,2> FloatImage2DType;
+  using FloatImage2DType = itk::Image<float,2>;
 
-  typedef itk::AverageImageFilter<FloatImage2DType,FloatImage2DType> AverageImageFilterType;
-  typedef itk::SubtractImageFilter<FloatImage2DType> SubtractFilterType;
-  typedef itk::StatisticsImageFilter<FloatImage2DType> StatFilterType;
+  using AverageImageFilterType = itk::AverageImageFilter<FloatImage2DType,FloatImage2DType>;
+  using SubtractFilterType = itk::SubtractImageFilter<FloatImage2DType>;
+  using StatFilterType = itk::StatisticsImageFilter<FloatImage2DType>;
 
-  typedef std::vector<FloatImage2DType::Pointer> FloatImageVector;
+  using FloatImageVector = std::vector<FloatImage2DType::Pointer>;
 
 
-  typedef itk::ImageRegionConstIterator<FloatImage2DType> FloatImageConstIterator;
-  typedef itk::ImageRegionIterator<FloatImage2DType> FloatImageIterator;
-  typedef std::vector<FloatImageConstIterator> FloatImageConstIteratorVector;
+  using FloatImageConstIterator = itk::ImageRegionConstIterator<FloatImage2DType>;
+  using FloatImageIterator = itk::ImageRegionIterator<FloatImage2DType>;
+  using FloatImageConstIteratorVector = std::vector<FloatImageConstIterator>;
 
   FloatImage2DType::SizeType randomSize;
   randomSize[1] = randomSize[0] = testImageDim;

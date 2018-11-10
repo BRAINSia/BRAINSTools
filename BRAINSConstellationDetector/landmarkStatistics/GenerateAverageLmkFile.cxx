@@ -79,7 +79,7 @@ int main( int argc, char * argv[] )
 
   std::map<std::string, LandmarkPointType> LandmarksAverageMap;
 
-  typedef std::vector<std::map<std::string, LandmarkPointType> > LandmarksMapTypeVec;
+  using LandmarksMapTypeVec = std::vector<std::map<std::string, LandmarkPointType> >;
   LandmarksMapTypeVec LandmarksMapVector;
 
   // LandmarksMapType is as "std::map<std::string, LandmarkPointType>" which means a map between landmarks and their

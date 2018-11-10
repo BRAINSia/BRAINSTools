@@ -53,12 +53,12 @@ class HammerAttributeVector :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(HammerAttributeVector);
 
-  /** Standard class typedefs. */
-  typedef HammerAttributeVector           Self;
-  typedef FixedArray<TValueType, VLength> Superclass;
-  typedef SmartPointer<Self>              Pointer;
-  typedef SmartPointer<const Self>        ConstPointer;
-  typedef FixedArray<TValueType, VLength> VectorType;
+  /** Standard class type alias. */
+  using Self = HammerAttributeVector;
+  using Superclass = FixedArray<TValueType, VLength>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using VectorType = FixedArray<TValueType, VLength>;
 
   /** Length constant */
   static constexpr unsigned int Length = VLength;
@@ -67,7 +67,7 @@ public:
   static constexpr unsigned int Dimension = VLength;
 
   /** The element type stored at each location in the FixedArray. */
-  typedef TValueType ValueType;
+  using ValueType = TValueType;
 
   /** A type representing the C-array version of this FixedArray. */
   typedef ValueType CArray[VLength];

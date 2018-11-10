@@ -52,11 +52,11 @@ class TransformAdaptor : public LightProcessObject
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(TransformAdaptor);
 
-  /** Standard class typedefs. */
-  typedef TransformAdaptor         Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = TransformAdaptor;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(TransformAdaptor, Object);
@@ -65,9 +65,9 @@ public:
   itkNewMacro(Self);
 
   /** Input Image Type. */
-  typedef TInputImage                       InputImageType;
-  typedef typename InputImageType::Pointer  InputImagePointer;
-  typedef typename InputImageType::SizeType InputImageSizeType;
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageSizeType = typename InputImageType::SizeType;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -80,8 +80,8 @@ public:
                            + 1> VnlTransformMatrixType44;
 
   /** Affine transform type. */
-  typedef AffineTransform<TCoordinateType,
-                          Self::ImageDimension> AffineTransformType;
+  using AffineTransformType = AffineTransform<TCoordinateType,
+                          Self::ImageDimension>;
   typedef typename AffineTransformType::Pointer
     AffineTransformPointer;
   typedef typename AffineTransformType::MatrixType
@@ -94,8 +94,8 @@ public:
     ValueType;
 
   /** CrossOverAffineSystem type. */
-  typedef CrossOverAffineSystem<TCoordinateType,
-                                Self::ImageDimension> CrossOverAffineSystemType;
+  using CrossOverAffineSystemType = CrossOverAffineSystem<TCoordinateType,
+                                Self::ImageDimension>;
   typedef typename CrossOverAffineSystemType::Pointer
     CrossOverAffineSystemPointer;
 

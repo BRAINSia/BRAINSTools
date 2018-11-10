@@ -28,7 +28,7 @@
 class BRAINSCutConfiguration : public ElementParser
 {
 public:
-  typedef ElementParser SuperClass;
+  using SuperClass = ElementParser;
   BRAINSCutConfiguration();
 
   int PrintSelf(std::ostream & os, int indent) const override
@@ -37,8 +37,8 @@ public:
     return indent + 2;
   }
 
-  typedef std::list<DataSet *> TrainDataSetListType;
-  typedef std::list<DataSet *> ApplyDataSetListType;
+  using TrainDataSetListType = std::list<DataSet *>;
+  using ApplyDataSetListType = std::list<DataSet *>;
 
   void AddDataSet(DataSet *newSet);
 

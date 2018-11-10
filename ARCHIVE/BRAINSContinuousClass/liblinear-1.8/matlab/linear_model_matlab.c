@@ -23,7 +23,7 @@
 #include "mex.h"
 
 #if MX_API_VER < 0x07030000
-typedef int mwIndex;
+using mwIndex = int;
 #endif
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))

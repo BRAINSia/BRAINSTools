@@ -71,8 +71,8 @@ class XMLContents :
   public XMLElementContainer
 {
 public:
-  typedef XMLElementContainer SuperClass;
-  typedef TOutputType         OutputType;
+  using SuperClass = XMLElementContainer;
+  using OutputType = TOutputType;
   virtual int PrintSelf(std::ostream &, int indent) const
   {
     // SuperClass::PrintSelf(os);

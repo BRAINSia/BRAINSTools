@@ -78,13 +78,13 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
     {
     std::cout << " Smoothing Iteration " << iter << std::endl;
 
-    typedef typename OutputMeshType::QEPrimal EdgeType;
+    using EdgeType = typename OutputMeshType::QEPrimal;
 
     OutputPointDataContainerPointer newPointDataContainer = OutputPointDataContainer::New();
 
     newPointDataContainer->Reserve( pointData->Size() );
 
-    typedef typename NumericTraits<OutputPixelType>::AccumulateType AccumulatePixelType;
+    using AccumulatePixelType = typename NumericTraits<OutputPixelType>::AccumulateType;
     for( unsigned int pointId = 0; pointId < numberOfPoints; pointId++ )
       {
       const OutputPixelType & centralPixelValue = pointData->GetElement( pointId );

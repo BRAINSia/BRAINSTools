@@ -23,10 +23,10 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-  typedef itk::Image<unsigned char, 3>    ImageType;
-  typedef itk::Image<float, 3>            FloatImageType;
-  typedef itk::ImageFileReader<ImageType> ImageReaderType;
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageType = itk::Image<unsigned char, 3>;
+  using FloatImageType = itk::Image<float, 3>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
 
   ImageReaderType::Pointer classImageReader = ImageReaderType::New();
   classImageReader->SetFileName( tissueClassVolume );
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
   clipImageReader->SetFileName( clipVolume );
   clipImageReader->Update();
 
-  typedef itk::BinaryThresholdImageFilter<ImageType, ImageType> BinaryFilterType;
+  using BinaryFilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   BinaryFilterType::Pointer binaryVentFilter = BinaryFilterType::New();
   binaryVentFilter->SetInput( ventImageReader->GetOutput() );
   binaryVentFilter->SetLowerThreshold(1);
@@ -102,13 +102,13 @@ int main(int argc, char *argv[])
   binaryClipFilter->Update();
 
   // Invert clip region
-  typedef itk::NotImageFilter<ImageType, ImageType> NotFilterType;
+  using NotFilterType = itk::NotImageFilter<ImageType, ImageType>;
   NotFilterType::Pointer invertFilter = NotFilterType::New();
   invertFilter->SetInput( binaryClipFilter->GetOutput() );
   invertFilter->Update();
 
   // Combine Brain region and inverse of clip region
-  typedef itk::AndImageFilter<ImageType, ImageType, ImageType> AndFilterType;
+  using AndFilterType = itk::AndImageFilter<ImageType, ImageType, ImageType>;
   AndFilterType::Pointer brainRegionFilter = AndFilterType::New();
   brainRegionFilter->SetInput1(binaryBrainFilter->GetOutput() );
   brainRegionFilter->SetInput2(invertFilter->GetOutput() );
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
   binaryLeftCaudateFilter->SetInsideValue(1);
   binaryLeftCaudateFilter->Update();
 
-  typedef itk::OrImageFilter<ImageType, ImageType, ImageType> OrFilterType;
+  using OrFilterType = itk::OrImageFilter<ImageType, ImageType, ImageType>;
   OrFilterType::Pointer caudateFilter = OrFilterType::New();
   caudateFilter->SetInput1(binaryRightCaudateFilter->GetOutput() );
   caudateFilter->SetInput2(binaryLeftCaudateFilter->GetOutput() );
@@ -237,14 +237,14 @@ int main(int argc, char *argv[])
   rescaleVentFilter->SetInsideValue(230);
   rescaleVentFilter->Update();
 
-  typedef itk::MaximumImageFilter<ImageType, ImageType, ImageType> MaximumFilterType;
+  using MaximumFilterType = itk::MaximumImageFilter<ImageType, ImageType, ImageType>;
   MaximumFilterType::Pointer maximumFilter =  MaximumFilterType::New();
   maximumFilter->SetInput1( rescaleVentFilter->GetOutput() );
   maximumFilter->SetInput2( classImageReader->GetOutput() );
   maximumFilter->Update();
 
   /* Now clip the image to the Hemispheres and Brain*/
-  typedef itk::MaskImageFilter<ImageType, ImageType> MaskFilterType;
+  using MaskFilterType = itk::MaskImageFilter<ImageType, ImageType>;
   MaskFilterType::Pointer maskLeftFilter = MaskFilterType::New();
   maskLeftFilter->SetInput1( maximumFilter->GetOutput() );
   maskLeftFilter->SetInput2( leftHemisphereReader->GetOutput() );
@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 
   if( medianFilter )
     {
-    typedef itk::MedianImageFilter<ImageType, ImageType> MedianFilterType;
+    using MedianFilterType = itk::MedianImageFilter<ImageType, ImageType>;
     itk::Size<3> radius;
     radius.SetElement(0, medianFilterSize[0]);
     radius.SetElement(1, medianFilterSize[0]);
@@ -296,12 +296,12 @@ int main(int argc, char *argv[])
 
   if( anisoDiffusionFilter )
     {
-    typedef itk::CastImageFilter<ImageType, FloatImageType> CastFloatType;
+    using CastFloatType = itk::CastImageFilter<ImageType, FloatImageType>;
     CastFloatType::Pointer leftFloatCast = CastFloatType::New();
     leftFloatCast->SetInput( leftTissueClass );
     leftFloatCast->Update();
 
-    typedef itk::GradientAnisotropicDiffusionImageFilter<FloatImageType, FloatImageType> AnisotropicDiffusionType;
+    using AnisotropicDiffusionType = itk::GradientAnisotropicDiffusionImageFilter<FloatImageType, FloatImageType>;
     AnisotropicDiffusionType::Pointer anisoLeftFilter = AnisotropicDiffusionType::New();
     anisoLeftFilter->SetInput( leftFloatCast->GetOutput() );
     anisoLeftFilter->SetNumberOfIterations( iterations );
@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
     anisoLeftFilter->SetConductanceParameter( conductance );
     anisoLeftFilter->Update();
 
-    typedef itk::CastImageFilter<FloatImageType, ImageType> CastImageType;
+    using CastImageType = itk::CastImageFilter<FloatImageType, ImageType>;
     CastImageType::Pointer leftImageCast = CastImageType::New();
     leftImageCast->SetInput( anisoLeftFilter->GetOutput() );
     leftImageCast->Update();
@@ -341,12 +341,12 @@ int main(int argc, char *argv[])
   binaryLeftBrainFilter->SetInsideValue(1);
   binaryLeftBrainFilter->Update();
 
-  typedef itk::ConnectedComponentImageFilter<ImageType, ImageType> ConnectedComponentFilterType;
+  using ConnectedComponentFilterType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
   ConnectedComponentFilterType::Pointer leftConnectedRegions = ConnectedComponentFilterType::New();
   leftConnectedRegions->SetInput( binaryLeftBrainFilter->GetOutput() );
   leftConnectedRegions->Update();
 
-  typedef itk::RelabelComponentImageFilter<ImageType, ImageType> RelabelImageFilterType;
+  using RelabelImageFilterType = itk::RelabelComponentImageFilter<ImageType, ImageType>;
   RelabelImageFilterType::Pointer relabelLeftFilter = RelabelImageFilterType::New();
   relabelLeftFilter->SetInput( leftConnectedRegions->GetOutput() );
   relabelLeftFilter->Update();

@@ -71,8 +71,8 @@ typename IOImageType::Pointer
 SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>::ConstPointer RigidTransform,
                                     const IOImageType *InputImage)
 {
-  typedef itk::ResampleInPlaceImageFilter<IOImageType, IOImageType> ResampleIPFilterType;
-  typedef typename ResampleIPFilterType::Pointer                    ResampleIPFilterPointer;
+  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<IOImageType, IOImageType>;
+  using ResampleIPFilterPointer = typename ResampleIPFilterType::Pointer;
 
   ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
   resampleIPFilter->SetInputImage( InputImage );
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::NumberToString<double>                                        doubleConvert;
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
   bool debug = true;
   if( debug )
@@ -137,12 +137,12 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  typedef signed short                        PixelType;
-  typedef itk::VectorImage<PixelType, 3>      NrrdImageType;
-  typedef itk::VersorRigid3DTransform<double> RigidTransformType;
-  typedef itk::Image<PixelType, 3>            SingleComponentImageType;
-  typedef itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
+  using PixelType = signed short;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
+  using RigidTransformType = itk::VersorRigid3DTransform<double>;
+  using SingleComponentImageType = itk::Image<PixelType, 3>;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   FileReaderType::Pointer imageReader = FileReaderType::New();
   imageReader->SetFileName( inputVolume );
   try
@@ -186,12 +186,12 @@ int main(int argc, char *argv[])
     if ( warpDWITransform.find(".nii") != std::string::npos )
       {
       // Read ReferenceVolume and DeformationVolume
-      typedef double                                                VectorComponentType;
-      typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
-      typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
-      typedef itk::DisplacementFieldTransform<VectorComponentType,3> DisplacementFieldTransformType;
+      using VectorComponentType = double;
+      using VectorPixelType = itk::Vector<VectorComponentType, 3>;
+      using DisplacementFieldType = itk::Image<VectorPixelType,  3>;
+      using DisplacementFieldTransformType = itk::DisplacementFieldTransform<VectorComponentType,3>;
 
-      typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
+      using DefFieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
       DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
       fieldImageReader->SetFileName( warpDWITransform );
       fieldImageReader->Update();
@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
   paddedImage->Allocate();
 
   NrrdImageType::Pointer finalImage;
-  typedef itk::ImageRegionIterator<NrrdImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIterator<NrrdImageType>;
   IteratorType InIt( resampleImage, resampleImage->GetRequestedRegion() );
   for( InIt.GoToBegin(); !InIt.IsAtEnd(); ++InIt )
     {
@@ -411,27 +411,26 @@ int main(int argc, char *argv[])
   if(referenceVolume != "")
     {
     //For each component, extract, resample to list, and finally compose back into a vector image.
-    typedef itk::ImageFileReader<SingleComponentImageType> ReferenceFileReaderType;
+    using ReferenceFileReaderType = itk::ImageFileReader<SingleComponentImageType>;
     ReferenceFileReaderType::Pointer referenceImageReader = ReferenceFileReaderType::New();
     referenceImageReader->SetFileName(referenceVolume);
     referenceImageReader->Update();
 
     const size_t lengthOfPixelVector = paddedImage->GetVectorLength();
 
-    typedef itk::ComposeImageFilter<SingleComponentImageType, NrrdImageType> ComposeCovariantVectorImageFilterType;
+    using ComposeCovariantVectorImageFilterType = itk::ComposeImageFilter<SingleComponentImageType, NrrdImageType>;
     ComposeCovariantVectorImageFilterType::Pointer composer= ComposeCovariantVectorImageFilterType::New();
 
-    typedef itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >
-        VectorIndexSelectionCastImageFilterType;
+    using VectorIndexSelectionCastImageFilterType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >;
     VectorIndexSelectionCastImageFilterType::Pointer vectorImageToImageSelector = VectorIndexSelectionCastImageFilterType::New();
     vectorImageToImageSelector->SetInput(paddedImage);
-    for(size_t componentToExtract = 0 ; componentToExtract < lengthOfPixelVector; ++componentToExtract )
+    for(size_t componentToExtract = 0; componentToExtract < lengthOfPixelVector; ++componentToExtract )
       {
       vectorImageToImageSelector->SetIndex( componentToExtract );
       vectorImageToImageSelector->Update();
 
       // Resample to a new space with basic linear/identity transform.
-      typedef itk::ResampleImageFilter<SingleComponentImageType,SingleComponentImageType> ComponentResamplerType;
+      using ComponentResamplerType = itk::ResampleImageFilter<SingleComponentImageType,SingleComponentImageType>;
       ComponentResamplerType::Pointer componentResampler = ComponentResamplerType::New();
       componentResampler->SetOutputParametersFromImage(referenceImageReader->GetOutput());
       componentResampler->SetInput(vectorImageToImageSelector->GetOutput());
@@ -457,7 +456,7 @@ int main(int argc, char *argv[])
     }
 
   // Write out resampled in place DWI
-  typedef itk::ImageFileWriter<NrrdImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<NrrdImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
@@ -475,15 +474,14 @@ int main(int argc, char *argv[])
     {
     constexpr size_t B0Index = 0;
 
-    typedef itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >
-      VectorIndexSelectionCastImageFilterType;
+    using VectorIndexSelectionCastImageFilterType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >;
     VectorIndexSelectionCastImageFilterType::Pointer vectorImageToImageSelector = VectorIndexSelectionCastImageFilterType::New();
     vectorImageToImageSelector->SetInput(finalImage);
     vectorImageToImageSelector->SetIndex( B0Index );
     vectorImageToImageSelector->Update();
 
     // Write out resampled in place DWI
-    typedef itk::ImageFileWriter<SingleComponentImageType> B0WriterType;
+    using B0WriterType = itk::ImageFileWriter<SingleComponentImageType>;
     B0WriterType::Pointer B0Writer = B0WriterType::New();
     B0Writer->UseCompressionOn();
     B0Writer->SetInput( vectorImageToImageSelector->GetOutput() );

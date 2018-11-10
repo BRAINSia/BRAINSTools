@@ -30,10 +30,10 @@ class AtlasDefinition
 {
 public:
   //  static const char * tissueTypes[];
-  typedef std::vector<std::string>           TissueTypeVector;
-  typedef std::map<std::string, std::string> TemplateMap;
-  typedef std::vector<float>                 FloatVector;
-  typedef std::vector<int>                   IntVector;
+  using TissueTypeVector = std::vector<std::string>;
+  using TemplateMap = std::map<std::string, std::string>;
+  using FloatVector = std::vector<float>;
+  using IntVector = std::vector<int>;
   /** \class BoundsType */
   class BoundsType
   {
@@ -72,7 +72,7 @@ private:
     double m_Low;
     double m_High;
   };
-  typedef std::map<std::string, BoundsType> BoundsMapType;
+  using BoundsMapType = std::map<std::string, BoundsType>;
 
   AtlasDefinition();
   void InitFromXML(const std::string & XMLFilename);
@@ -364,7 +364,7 @@ private:
     bool          m_IsForegroundPrior;
     BoundsMapType m_BoundsMap;
   };
-  typedef std::map<std::string, Prior> PriorMapType;
+  using PriorMapType = std::map<std::string, Prior>;
   PriorMapType m_PriorMap;
   //
   // XML Parsing variables

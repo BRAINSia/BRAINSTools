@@ -62,11 +62,11 @@ class QuadEdgeMeshScalarPixelValuesSmoothingFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshScalarPixelValuesSmoothingFilter);
 
-  typedef QuadEdgeMeshScalarPixelValuesSmoothingFilter Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>                           Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = QuadEdgeMeshScalarPixelValuesSmoothingFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
+      TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshScalarPixelValuesSmoothingFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -74,28 +74,28 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputMesh                                 InputMeshType;
-  typedef typename InputMeshType::Pointer            InputMeshPointer;
-  typedef typename InputMeshType::PixelType          InputPixelType;
-  typedef typename InputMeshType::PointDataContainer InputPointDataContainer;
+  using InputMeshType = TInputMesh;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputPointDataContainer = typename InputMeshType::PointDataContainer;
 
-  typedef TOutputMesh                                        OutputMeshType;
-  typedef typename OutputMeshType::Pointer                   OutputMeshPointer;
-  typedef typename OutputMeshType::EdgeCellType              OutputEdgeCellType;
-  typedef typename OutputMeshType::PolygonCellType           OutputPolygonCellType;
-  typedef typename OutputMeshType::QEType                    OutputQEType;
-  typedef typename OutputMeshType::PointIdentifier           OutputPointIdentifier;
-  typedef typename OutputMeshType::PointType                 OutputPointType;
-  typedef typename OutputPointType::VectorType               OutputVectorType;
-  typedef typename OutputPointType::CoordRepType             OutputCoordType;
-  typedef typename OutputMeshType::PointsContainer           OutputPointsContainer;
-  typedef typename OutputMeshType::PointsContainerPointer    OutputPointsContainerPointer;
-  typedef typename OutputMeshType::PointsContainerIterator   OutputPointsContainerIterator;
-  typedef typename OutputMeshType::CellsContainerPointer     OutputCellsContainerPointer;
-  typedef typename OutputMeshType::CellsContainerIterator    OutputCellsContainerIterator;
-  typedef typename OutputMeshType::PointDataContainer        OutputPointDataContainer;
-  typedef typename OutputMeshType::PointDataContainerPointer OutputPointDataContainerPointer;
-  typedef typename OutputMeshType::PixelType                 OutputPixelType;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputEdgeCellType = typename OutputMeshType::EdgeCellType;
+  using OutputPolygonCellType = typename OutputMeshType::PolygonCellType;
+  using OutputQEType = typename OutputMeshType::QEType;
+  using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
+  using OutputPointType = typename OutputMeshType::PointType;
+  using OutputVectorType = typename OutputPointType::VectorType;
+  using OutputCoordType = typename OutputPointType::CoordRepType;
+  using OutputPointsContainer = typename OutputMeshType::PointsContainer;
+  using OutputPointsContainerPointer = typename OutputMeshType::PointsContainerPointer;
+  using OutputPointsContainerIterator = typename OutputMeshType::PointsContainerIterator;
+  using OutputCellsContainerPointer = typename OutputMeshType::CellsContainerPointer;
+  using OutputCellsContainerIterator = typename OutputMeshType::CellsContainerIterator;
+  using OutputPointDataContainer = typename OutputMeshType::PointDataContainer;
+  using OutputPointDataContainerPointer = typename OutputMeshType::PointDataContainerPointer;
+  using OutputPixelType = typename OutputMeshType::PixelType;
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 

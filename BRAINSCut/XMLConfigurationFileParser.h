@@ -29,7 +29,7 @@ class StringMap :
   public std::map<std::string, std::string>
 {
 public:
-  typedef std::map<std::string, std::string> Superclass;
+  using Superclass = std::map<std::string, std::string>;
   typedef Superclass::const_iterator         const_iterator;
   std::string Get(const char *eleType,
                   const char *key)

@@ -160,7 +160,7 @@ int main( int argc, char * argv[])
 
   //=================================================
 #if 0
-  typedef itk::Image<float,3> Image2D;
+  using Image2D = itk::Image<float,3>;
   Image2D::Pointer im2 = Image2D::New();
   Image2D::RegionType region;
   Image2D::RegionType::SizeType size;
@@ -175,21 +175,21 @@ int main( int argc, char * argv[])
   idx.Fill(IM2DSIZE/2);
   idx.Fill(0);
   im2->SetPixel(idx,1.0F);
-  //typedef itk::GradientImageFilter<Image2D> GradientType;
-  typedef rtk::ForwardDifferenceGradientImageFilter<Image2D> GradientType;
+  //using GradientType = itk::GradientImageFilter<Image2D>;
+  using GradientType = rtk::ForwardDifferenceGradientImageFilter<Image2D>;
   GradientType::Pointer grad = GradientType::New();
   grad->SetInput(im2);
   grad ->UseImageSpacingOff();
-  typedef itk::PeriodicBoundaryCondition<Image2D> FloatBoundaryType;
+  using FloatBoundaryType = itk::PeriodicBoundaryCondition<Image2D>;
   grad->OverrideBoundaryCondition( new FloatBoundaryType );
   grad->Update();
   GradientType::OutputImageType::Pointer gradIm = grad->GetOutput();
-  //typedef itk::DivergenceImageFilter<GradientType::OutputImageType> DivergenceType;
-  typedef rtk::BackwardDifferenceDivergenceImageFilter<GradientType::OutputImageType> DivergenceType;
+  //using DivergenceType = itk::DivergenceImageFilter<GradientType::OutputImageType>;
+  using DivergenceType = rtk::BackwardDifferenceDivergenceImageFilter<GradientType::OutputImageType>;
   DivergenceType::Pointer div = DivergenceType::New();
   div->SetInput(gradIm);
   div->SetUseImageSpacing(false);
-  typedef itk::PeriodicBoundaryCondition<GradientType::OutputImageType> CVBoundaryType;
+  using CVBoundaryType = itk::PeriodicBoundaryCondition<GradientType::OutputImageType>;
   div->OverrideBoundaryCondition(new CVBoundaryType);
   div->Update();
   DivergenceType::OutputImageType::Pointer divIm = div->GetOutput();
@@ -207,8 +207,8 @@ int main( int argc, char * argv[])
 
   // testIndexConversion();
   // return EXIT_SUCCESS;
-  typedef itk::ImageFileReader<FloatImageType> ReaderType;
-  typedef itk::ImageFileWriter<FloatImageType> WriterType;
+  using ReaderType = itk::ImageFileReader<FloatImageType>;
+  using WriterType = itk::ImageFileWriter<FloatImageType>;
 
   const std::string hriFileName = "/Users/johnsonhj/src/20160711_SuperResolution_MatlabExample/input_nrrd/dwi_b0_hr.nii";
   ReaderType::Pointer hriReader = ReaderType::New();
@@ -290,7 +290,7 @@ int main( int argc, char * argv[])
   const float FFTScaler = std::pow(
     static_cast<float>(hri->GetLargestPossibleRegion().GetNumberOfPixels()) / static_cast<float>(lri->GetLargestPossibleRegion().GetNumberOfPixels()),
     6.0F);
-  typedef itk::ImageRegionIteratorWithIndex<HalfHermetianImageType> cmplxHHIteratorType;
+  using cmplxHHIteratorType = itk::ImageRegionIteratorWithIndex<HalfHermetianImageType>;
   cmplxHHIteratorType lriIter(lri_cmplHH,lri_cmplHH->GetLargestPossibleRegion());
 
   const HalfHermetianImageType::SizeType lriSize = lri->GetLargestPossibleRegion().GetSize();

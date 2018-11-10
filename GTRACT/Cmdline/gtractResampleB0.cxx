@@ -102,11 +102,11 @@ int main(int argc, char *argv[])
   }
 
 
-  typedef signed short PixelType;
+  using PixelType = signed short;
 
-  typedef itk::VectorImage<PixelType, 3> VectorImageType;
-  typedef itk::ImageFileReader<VectorImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> > VectorImageReaderType;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType,
+                               itk::DefaultConvertPixelTraits<PixelType> >;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName( inputVolume );
 
@@ -120,8 +120,8 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::Image<PixelType, 3>        ImageType;
-  typedef itk::ImageFileReader<ImageType> AnatomicalImageReaderType;
+  using ImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName( inputAnatomicalVolume );
 
@@ -136,10 +136,10 @@ int main(int argc, char *argv[])
     }
 
   // Read the transform
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
-  typedef itk::VectorImage<PixelType, 3> VectorImageType;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
   VectorImageType::Pointer    dwiImage = vectorImageReader->GetOutput();
   VectorImageType::RegionType fixedRegion = dwiImage->GetLargestPossibleRegion();
   VectorImageType::SizeType   fixedSize = fixedRegion.GetSize();
@@ -157,8 +157,8 @@ int main(int argc, char *argv[])
   fixedRegion.SetIndex(fixedIndex);
 
   /* Extract the Vector Image Index for Registration */
-  typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ImageType> VectorSelectFilterType;
-  typedef VectorSelectFilterType::Pointer                                      VectorSelectFilterPointer;
+  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, ImageType>;
+  using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
   VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
   selectIndexImageFilter->SetIndex( vectorIndex );
   selectIndexImageFilter->SetInput( dwiImage );
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
+  using ResampleFilterType = itk::ResampleImageFilter<ImageType, ImageType>;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
   ImageType::Pointer resampledImage = resample->GetOutput();
   resampledImage->SetMetaDataDictionary( anatomicalReader->GetOutput()->GetMetaDataDictionary() );
 
-  typedef itk::ImageFileWriter<ImageType> ImageFileWriterType;
+  using ImageFileWriterType = itk::ImageFileWriter<ImageType>;
   ImageFileWriterType::Pointer ImageWriter =  ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName( outputVolume );

@@ -28,8 +28,8 @@
 
 #include "itkLabelStatisticsImageFilter.h"
 
-typedef std::map<size_t,size_t> LabelCountMapType;
-typedef itk::Image<unsigned char, 3>       ByteImageType;
+using LabelCountMapType = std::map<size_t,size_t>;
+using ByteImageType = itk::Image<unsigned char, 3>;
 extern LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage,
                                           const vnl_vector<unsigned int> & PriorLabelCodeVector);
 // Labeling using maximum a posteriori, also do brain stripping using
@@ -79,7 +79,7 @@ void ComputeLabels(
       }
     DirtyLabels->FillBuffer(0);
     foregroundMask->FillBuffer(0);
-    typedef unsigned int LocalLOOPITERTYPE;
+    using LocalLOOPITERTYPE = unsigned int;
     const typename TByteImage::SizeType size = DirtyLabels->GetLargestPossibleRegion().GetSize();
       {
       for( LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; kk++ )
@@ -147,7 +147,7 @@ void ComputeLabels(
                     << "\n            because too few samples found."
                     << "\n           " <<  currentLabelCount << " < " <<  minLabelSizeAllowed << std::endl;
           //Multiply this prior by 1.1 to increase it's importance.
-          typedef itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage> MultiplyFilterType;
+          using MultiplyFilterType = itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage>;
           typename MultiplyFilterType::Pointer filter = MultiplyFilterType::New();
           filter->SetInput1( Posteriors[reverseLabelMap[it->first]] );
           filter->SetInput2(1.1); //Multiply by 1.1 to increase it's importance

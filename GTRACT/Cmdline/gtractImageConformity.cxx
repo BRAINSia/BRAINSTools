@@ -91,10 +91,10 @@ int main(int argc, char *argv[])
   }
 
 
-  typedef signed short PixelType;
+  using PixelType = signed short;
 
-  typedef itk::Image<PixelType, 3>                SpecimenImageType;
-  typedef itk::ImageFileReader<SpecimenImageType> SpecimenImageReaderType;
+  using SpecimenImageType = itk::Image<PixelType, 3>;
+  using SpecimenImageReaderType = itk::ImageFileReader<SpecimenImageType>;
   SpecimenImageReaderType::Pointer specimenImageReader = SpecimenImageReaderType::New();
   specimenImageReader->SetFileName( inputVolume );
 
@@ -108,8 +108,8 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::Image<PixelType, 3>                 ReferenceImageType;
-  typedef itk::ImageFileReader<ReferenceImageType> ReferenceImageReaderType;
+  using ReferenceImageType = itk::Image<PixelType, 3>;
+  using ReferenceImageReaderType = itk::ImageFileReader<ReferenceImageType>;
   ReferenceImageReaderType::Pointer referenceImageReader = ReferenceImageReaderType::New();
   referenceImageReader->SetFileName( inputReferenceVolume );
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  typedef itk::OrientImageFilter<SpecimenImageType, ReferenceImageType> OrientFilterType;
+  using OrientFilterType = itk::OrientImageFilter<SpecimenImageType, ReferenceImageType>;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput( specimenImageReader->GetOutput() );
   orientImageFilter->SetDesiredCoordinateDirection( referenceImageReader->GetOutput()->GetDirection() );
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
   reorientedImage->SetMetaDataDictionary( specimenImageReader->GetOutput()->GetMetaDataDictionary() );
 
-  typedef itk::ImageFileWriter<ReferenceImageType> ImageFileWriterType;
+  using ImageFileWriterType = itk::ImageFileWriter<ReferenceImageType>;
   ImageFileWriterType::Pointer ImageWriter =  ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName( outputVolume );

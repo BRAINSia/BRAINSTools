@@ -37,11 +37,11 @@ class ICCApplicationBase : public Object
 {
 public:
 
-  /** Standard class typedefs. */
-  typedef ICCApplicationBase       Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = ICCApplicationBase;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(MIMApplication, Object);
@@ -50,12 +50,12 @@ public:
   itkNewMacro(Self);
 
   /** Preprocessor type. */
-  typedef TPreprocessor                      PreprocessorType;
-  typedef typename PreprocessorType::Pointer PreprocessorPointer;
+  using PreprocessorType = TPreprocessor;
+  using PreprocessorPointer = typename PreprocessorType::Pointer;
 
   /** Registrator type. */
-  typedef TRegistrator                      RegistratorType;
-  typedef typename RegistratorType::Pointer RegistratorPointer;
+  using RegistratorType = TRegistrator;
+  using RegistratorPointer = typename RegistratorType::Pointer;
 
   /**Set Debug mode*/
   itkSetMacro(OutDebug, bool);

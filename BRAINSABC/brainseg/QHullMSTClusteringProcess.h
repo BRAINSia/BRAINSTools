@@ -54,10 +54,10 @@ public:
   QHullMSTClusteringProcess();
   ~QHullMSTClusteringProcess();
 
-  typedef vnl_vector<float> VertexType;
-  typedef MSTEdge           EdgeType;
+  using VertexType = vnl_vector<float>;
+  using EdgeType = MSTEdge;
 
-  typedef std::vector<VertexType> VertexList;
+  using VertexList = std::vector<VertexType>;
 
   void SetInputVertices(const VertexList & l);
 

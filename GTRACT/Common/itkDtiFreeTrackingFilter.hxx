@@ -86,8 +86,8 @@ void
 DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::Update()
 {
-  typedef typename Self::TensorImageType::PixelType::EigenValuesArrayType   EigenValuesArrayType;
-  typedef typename Self::TensorImageType::PixelType::EigenVectorsMatrixType EigenVectorsMatrixType;
+  using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
+  using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
   float anisotropy(0), anisotropySum(0);
 

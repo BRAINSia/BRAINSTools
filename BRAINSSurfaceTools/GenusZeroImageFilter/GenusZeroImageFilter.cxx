@@ -62,11 +62,11 @@ int main(int argc, char * argv[])
   vtkTransformPolyDataFilter *      transformer = nullptr;
   vtkPolyDataWriter *               writer = nullptr;
 
-  typedef itk::Image<unsigned short, 3>                                  ImageType;
-  typedef itk::VTKImageToImageFilter<ImageType>                          VTKToITKImageFilterType;
-  typedef itk::ImageToVTKImageFilter<ImageType>                          ITKToVTKImageFilterType;
-  typedef itk::ScalarConnectedComponentImageFilter<ImageType, ImageType> ConnectedComponentImageFilterType;
-  typedef itk::LabelExtracterImageFilter<ImageType, ImageType>           LabelExtracterImageFilterType;
+  using ImageType = itk::Image<unsigned short, 3>;
+  using VTKToITKImageFilterType = itk::VTKImageToImageFilter<ImageType>;
+  using ITKToVTKImageFilterType = itk::ImageToVTKImageFilter<ImageType>;
+  using ConnectedComponentImageFilterType = itk::ScalarConnectedComponentImageFilter<ImageType, ImageType>;
+  using LabelExtracterImageFilterType = itk::LabelExtracterImageFilter<ImageType, ImageType>;
   // check for the input file
   FILE * infile;
   infile = fopen(inputVolume.c_str(), "r");
@@ -321,7 +321,7 @@ int main(int argc, char * argv[])
 
       std::map<int, int> ccsMap;
 
-      typedef itk::ImageRegionConstIterator<ImageType> ConstIteratorType;
+      using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
       ImageType::ConstPointer ccs  = connectedComponentFilter->GetOutput();
 
       ConstIteratorType it( ccs, ccs->GetLargestPossibleRegion() );

@@ -85,8 +85,7 @@ typename itk::Point<double,
   // Get the Center point for the Ending Region
   // ///////////////////////////////////////////////////////////////////////
 
-  typedef itk::ImageMomentsCalculator<typename Self::MaskImageType>
-    MomentsCalculatorType;
+  using MomentsCalculatorType = itk::ImageMomentsCalculator<typename Self::MaskImageType>;
   typename MomentsCalculatorType::Pointer centerOfMassFilter
     = MomentsCalculatorType::New();
   centerOfMassFilter->SetImage(this->m_EndingRegion);

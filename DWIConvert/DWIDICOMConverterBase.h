@@ -18,8 +18,8 @@
 class DWIDICOMConverterBase : public DWIConverter {
  public:
 
-  typedef itk::DCMTKSeriesFileNames           InputNamesGeneratorType;
-  typedef std::vector<itk::DCMTKFileReader *> DCMTKFileVector;
+  using InputNamesGeneratorType = itk::DCMTKSeriesFileNames;
+  using DCMTKFileVector = std::vector<itk::DCMTKFileReader *>;
 
   DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
                           const FileNamesContainer &inputFileNames,

@@ -41,11 +41,11 @@ class NearestNeighborInterpolateMeshFunction :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(NearestNeighborInterpolateMeshFunction);
 
-  /** Standard class typedefs. */
-  typedef NearestNeighborInterpolateMeshFunction Self;
-  typedef InterpolateMeshFunction<TInputMesh>    Superclass;
-  typedef SmartPointer<Self>                     Pointer;
-  typedef SmartPointer<const Self>               ConstPointer;
+  /** Standard class type alias. */
+  using Self = NearestNeighborInterpolateMeshFunction;
+  using Superclass = InterpolateMeshFunction<TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -53,23 +53,23 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(NearestNeighborInterpolateMeshFunction, InterpolateMeshFunction);
 
-  /** OutputType typedef support. */
-  typedef typename Superclass::OutputType OutputType;
+  /** OutputType type alias support. */
+  using OutputType = typename Superclass::OutputType;
 
-  /** InputMeshType typedef support. */
-  typedef typename Superclass::InputMeshType InputMeshType;
+  /** InputMeshType type alias support. */
+  using InputMeshType = typename Superclass::InputMeshType;
 
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = Superclass::MeshDimension;
 
-  /** Point typedef support. */
-  typedef typename Superclass::PointType       PointType;
-  typedef typename Superclass::PointIdentifier PointIdentifier;
+  /** Point type alias support. */
+  using PointType = typename Superclass::PointType;
+  using PointIdentifier = typename Superclass::PointIdentifier;
 
-  /** RealType typedef support. */
-  typedef typename TInputMesh::PixelType      PixelType;
-  typedef typename Superclass::RealType       RealType;
-  typedef typename Superclass::DerivativeType DerivativeType;
+  /** RealType type alias support. */
+  using PixelType = typename TInputMesh::PixelType;
+  using RealType = typename Superclass::RealType;
+  using DerivativeType = typename Superclass::DerivativeType;
 
   /**
    * Interpolate the mesh at a point position
@@ -83,7 +83,7 @@ public:
 
   virtual void EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const override;
 
-  typedef typename Superclass::InstanceIdentifierVectorType InstanceIdentifierVectorType;
+  using InstanceIdentifierVectorType = typename Superclass::InstanceIdentifierVectorType;
 protected:
   NearestNeighborInterpolateMeshFunction();
   ~NearestNeighborInterpolateMeshFunction();

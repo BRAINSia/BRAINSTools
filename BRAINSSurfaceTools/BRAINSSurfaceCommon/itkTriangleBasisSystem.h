@@ -42,7 +42,7 @@ template <typename TVector, unsigned int NSubspaceDimension>
 class TriangleBasisSystem
 {
 public:
-  typedef TVector VectorType;
+  using VectorType = TVector;
 
   /** Set/Get the vector at index k. */
   void SetVector( unsigned int k, const VectorType & v );

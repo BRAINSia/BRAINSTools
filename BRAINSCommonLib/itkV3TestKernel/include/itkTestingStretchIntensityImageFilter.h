@@ -42,15 +42,15 @@ class StretchIntensityImageFilter : public ImageSource<TOutputImage>
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(StretchIntensityImageFilter);
 
-  /** Standard class typedefs. */
-  typedef StretchIntensityImageFilter Self;
-  typedef ImageSource<TOutputImage>   Superclass;
-  typedef SmartPointer<Self>          Pointer;
-  typedef SmartPointer<const Self>    ConstPointer;
+  /** Standard class type alias. */
+  using Self = StretchIntensityImageFilter;
+  using Superclass = ImageSource<TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef typename TOutputImage::PixelType                 OutputPixelType;
-  typedef typename TInputImage::PixelType                  InputPixelType;
-  typedef typename NumericTraits<InputPixelType>::RealType RealType;
+  using OutputPixelType = typename TOutputImage::PixelType;
+  using InputPixelType = typename TInputImage::PixelType;
+  using RealType = typename NumericTraits<InputPixelType>::RealType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -101,8 +101,8 @@ protected:
   /** Print internal ivars */
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
-  typedef typename TInputImage::RegionType           InputImageRegionType;
+  using OutputImageRegionType = typename Superclass::OutputImageRegionType;
+  using InputImageRegionType = typename TInputImage::RegionType;
 
   /** UnaryFunctorImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData() routine

@@ -225,12 +225,12 @@ int main( int argc, char * *argv )
     }
 
   // convert vtkPolyData to itkQuadEdgeMesh
-  typedef float MeshPixelType;
+  using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> MeshType;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::ConvertVTKToQuadEdgeMeshFilter<MeshType> convertFilterType;
+  using convertFilterType = itk::ConvertVTKToQuadEdgeMeshFilter<MeshType>;
   convertFilterType::Pointer convertor = convertFilterType::New();
   convertor->SetPolyData(surface);
   convertor->Update();
@@ -243,13 +243,13 @@ int main( int argc, char * *argv )
     {
     std::cout << "Decimate the surface." << std::endl;
 
-    typedef itk::NumberOfFacesCriterion<MeshType> CriterionType;
+    using CriterionType = itk::NumberOfFacesCriterion<MeshType>;
     CriterionType::Pointer criterion = CriterionType::New();
     criterion->SetTopologicalChange( false );
     criterion->SetNumberOfElements( numberOfElements );
 
-    typedef itk::SquaredEdgeLengthDecimationQuadEdgeMeshFilter<MeshType, MeshType,
-                                                               CriterionType> DecimationType;
+    using DecimationType = itk::SquaredEdgeLengthDecimationQuadEdgeMeshFilter<MeshType, MeshType,
+                                                               CriterionType>;
     DecimationType::Pointer decimator = DecimationType::New();
     decimator->SetInput( convertor->GetOutput() );
     decimator->SetCriterion( criterion );
@@ -265,7 +265,7 @@ int main( int argc, char * *argv )
 
     itk::OnesMatrixCoefficients<MeshType> coeff0;
 
-    typedef itk::SmoothingQuadEdgeMeshFilter<MeshType, MeshType> SmoothingType;
+    using SmoothingType = itk::SmoothingQuadEdgeMeshFilter<MeshType, MeshType>;
     SmoothingType::Pointer smoother = SmoothingType::New();
     smoother->SetInput( mesh );
     smoother->SetNumberOfIterations( numIterations );
@@ -278,7 +278,7 @@ int main( int argc, char * *argv )
     }
 
   // write the output surface
-  typedef itk::VTKPolyDataWriter<MeshType> WriterType;
+  using WriterType = itk::VTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( mesh );
   writer->SetFileName( outputSurface.c_str() );

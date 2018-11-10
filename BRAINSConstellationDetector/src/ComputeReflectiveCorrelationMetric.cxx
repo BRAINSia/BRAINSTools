@@ -65,7 +65,7 @@ int main( int argc, char * argv[] ) {
   // Input image is read as a double image;
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
-  typedef itk::ImageFileReader<DImageType3D> ReaderType;
+  using ReaderType = itk::ImageFileReader<DImageType3D>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(inputVolume);
   try
@@ -85,7 +85,7 @@ int main( int argc, char * argv[] ) {
                                                             1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                                                             0, MAX_IMAGE_OUTPUT_VALUE);
 
-  typedef itk::CastImageFilter<DImageType3D, SImageType>  CasterType;
+  using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
   CasterType::Pointer caster = CasterType::New();
   caster->SetInput(rescaledInputVolume);
   caster->Update();
@@ -96,7 +96,7 @@ int main( int argc, char * argv[] ) {
 
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
-  typedef itk::FindCenterOfBrainFilter<SImageType>                        FindCenterFilter;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(originalImage);
   findCenterFilter->SetAxis(2);
@@ -107,8 +107,8 @@ int main( int argc, char * argv[] ) {
   findCenterFilter->Update();
   SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
 
-  typedef Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> > ReflectionFunctorType;
-  typedef ReflectionFunctorType::ParametersType                           ParametersType;
+  using ReflectionFunctorType = Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4<double> >;
+  using ParametersType = ReflectionFunctorType::ParametersType;
 
   ReflectionFunctorType::Pointer reflectionFunctor = ReflectionFunctorType::New();
   reflectionFunctor->SetCenterOfHeadMass(centerOfHeadMass);

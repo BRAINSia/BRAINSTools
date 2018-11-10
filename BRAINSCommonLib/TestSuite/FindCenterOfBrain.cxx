@@ -42,9 +42,9 @@ int main(int argc, char * *argv)
     std::cerr << "FindCenterOfBrain: missing input image name" << std::endl;
     return 1;
     }
-  typedef itk::Image<unsigned char, 3>            ImageType;
-  typedef itk::FindCenterOfBrainFilter<ImageType> FindCenterFilterType;
-  typedef FindCenterFilterType::MaskImageType     MaskImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
+  using FindCenterFilterType = itk::FindCenterOfBrainFilter<ImageType>;
+  using MaskImageType = FindCenterFilterType::MaskImageType;
 
   ImageType::Pointer inputImage = itkUtil::ReadImage<ImageType>(InputVolume);
   if( inputImage.IsNull() )

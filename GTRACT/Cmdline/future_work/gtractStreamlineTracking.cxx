@@ -123,10 +123,10 @@ int main(int argc, char * *argv)
     std::cout << "==============================================================" << std::endl;
     }
 
-  typedef double                                    TensorElementType;
-  typedef itk::DiffusionTensor3D<TensorElementType> TensorPixelType;
-  typedef itk::Image<TensorPixelType, 3>            TensorImageType;
-  typedef itk::ImageFileReader<TensorImageType>     TensorImageReaderType;
+  using TensorElementType = double;
+  using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
 
@@ -145,9 +145,9 @@ int main(int argc, char * *argv)
 
   // std::cout <<  "Tensor Image : " << tensorImage << std::endl;
 
-  typedef float                                     AnisotropyPixelType;
-  typedef itk::Image<AnisotropyPixelType, 3>        AnisotropyImageType;
-  typedef itk::ImageFileReader<AnisotropyImageType> AnisotropyImageReaderType;
+  using AnisotropyPixelType = float;
+  using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
+  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName( inputAnisotropyVolume );
 
@@ -166,9 +166,9 @@ int main(int argc, char * *argv)
 
   // std::cout <<  "Anisotropy Image : " << anisotropyImage << std::endl;
 
-  typedef signed short                        MaskPixelType;
-  typedef itk::Image<MaskPixelType, 3>        MaskImageType;
-  typedef itk::ImageFileReader<MaskImageType> MaskImageReaderType;
+  using MaskPixelType = signed short;
+  using MaskImageType = itk::Image<MaskPixelType, 3>;
+  using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
   MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName( inputStartingSeedsLabelMapVolume );
 
@@ -183,7 +183,7 @@ int main(int argc, char * *argv)
     }
 
   /* Threshold Starting Label Map */
-  typedef itk::ThresholdImageFilter<MaskImageType> ThresholdFilterType;
+  using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
   ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput( startingSeedImageReader->GetOutput() );
   startingThresholdFilter->SetLower( static_cast<MaskPixelType>( startingSeedsLabel ) );
@@ -221,8 +221,8 @@ int main(int argc, char * *argv)
 
   std::cerr << "Streamline Tracking" << std::endl;
 
-  typedef itk::DtiStreamlineTrackingFilter<TensorImageType, AnisotropyImageType,
-                                           MaskImageType> StreamTrackingFilterType;
+  using StreamTrackingFilterType = itk::DtiStreamlineTrackingFilter<TensorImageType, AnisotropyImageType,
+                                           MaskImageType>;
   StreamTrackingFilterType::Pointer streamlineTrackingFilter = StreamTrackingFilterType::New();
   streamlineTrackingFilter->SetAnisotropyImage( anisotropyImage );
   streamlineTrackingFilter->SetTensorImage( tensorImage  );

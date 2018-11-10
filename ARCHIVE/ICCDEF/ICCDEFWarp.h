@@ -42,20 +42,20 @@ class ICCDEFWarp : public ICCApplicationBase<
 {
 public:
 
-  /** Standard class typedefs. */
-  typedef ICCDEFWarp Self;
-  typedef ICCApplicationBase<
+  /** Standard class type alias. */
+  using Self = ICCDEFWarp;
+  using Superclass = ICCApplicationBase<
       IccdefPreprocessor<TImage, TRealImage>,
       IccdefRegistrator<TRealImage, TRealImage,
                         typename TRealImage::PixelType>
-      > Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+      >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Deformation field pixel type. */
-  typedef float                     FieldValueType;
-  typedef Vector<FieldValueType, 3> FieldPixelType;
-  typedef Image<FieldPixelType, 3>  TDisplacementField;
+  using FieldValueType = float;
+  using FieldPixelType = Vector<FieldValueType, 3>;
+  using TDisplacementField = Image<FieldPixelType, 3>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ICCDEFWarp, ICCApplicationBase);
@@ -64,24 +64,24 @@ public:
   itkNewMacro(Self);
 
   /** Image types. */
-  typedef TImage     ImageType;
-  typedef TRealImage RealImageType;
+  using ImageType = TImage;
+  using RealImageType = TRealImage;
 
   /** Image dimension. */
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;
 
   /** Type to hold the number of checker boxes per dimension */
-  typedef FixedArray<unsigned int, TImage::ImageDimension> PatternArrayType;
+  using PatternArrayType = FixedArray<unsigned int, TImage::ImageDimension>;
 
-  typedef typename ImageType::PixelType PixelType;
-  typedef typename ImageType::IndexType IndexType;
-  typedef typename ImageType::SizeType  SizeType;
+  using PixelType = typename ImageType::PixelType;
+  using IndexType = typename ImageType::IndexType;
+  using SizeType = typename ImageType::SizeType;
 
   /** ShrinkFactors type. */
-  typedef FixedArray<unsigned int, TImage::ImageDimension> ShrinkFactorsType;
+  using ShrinkFactorsType = FixedArray<unsigned int, TImage::ImageDimension>;
 
   /** IterationArray type. */
-  typedef Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = Array<unsigned int>;
 
   /** Set the atlas patient ID. */
   itkSetStringMacro(TheMovingImageFilename);
@@ -190,9 +190,8 @@ public:
     m_NumberOfIterations = iterations;
   }
 
-  typedef ICCDeformableRegistrationFilter<RealImageType, RealImageType,
-                                          TDisplacementField>
-    BaseRegistrationFilterType;
+  using BaseRegistrationFilterType = ICCDeformableRegistrationFilter<RealImageType, RealImageType,
+                                          TDisplacementField>;
   void SetRegistrationFilter(
     BaseRegistrationFilterType * filter)
   {

@@ -111,22 +111,22 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
     itkExceptionMacro("The inputs does not have the same number of points");
     }
 
-  typedef typename InputMeshType1::PointDataContainer DisplacementVectorContainer1;
-  typedef typename InputMeshType2::PointDataContainer DisplacementVectorContainer2;
-  typedef typename OutputMeshType::PointDataContainer OutputDisplacementVectorContainer;
+  using DisplacementVectorContainer1 = typename InputMeshType1::PointDataContainer;
+  using DisplacementVectorContainer2 = typename InputMeshType2::PointDataContainer;
+  using OutputDisplacementVectorContainer = typename OutputMeshType::PointDataContainer;
 
   const DisplacementVectorContainer1 * displacementVectors1 = inputMesh1->GetPointData();
   const DisplacementVectorContainer2 * displacementVectors2 = inputMesh2->GetPointData();
 
   OutputDisplacementVectorContainer * outputDisplacementVectors = outputMesh->GetPointData();
 
-  typedef typename OutputDisplacementVectorContainer::Iterator OutputDisplacementVectorIterator;
+  using OutputDisplacementVectorIterator = typename OutputDisplacementVectorContainer::Iterator;
 
   OutputDisplacementVectorIterator outputItr = outputDisplacementVectors->Begin();
   OutputDisplacementVectorIterator outputEnd = outputDisplacementVectors->End();
 
-  typedef typename DisplacementVectorContainer1::ConstIterator InputIterator1;
-  typedef typename DisplacementVectorContainer2::ConstIterator InputIterator2;
+  using InputIterator1 = typename DisplacementVectorContainer1::ConstIterator;
+  using InputIterator2 = typename DisplacementVectorContainer2::ConstIterator;
 
   InputIterator1 inputItr1 = displacementVectors1->Begin();
   InputIterator2 inputItr2 = displacementVectors2->Begin();

@@ -45,13 +45,13 @@
 #include "HammerAttributeCreatorCLP.h"
 #include <BRAINSCommonLib.h>
 
-typedef itk::Image<float, 3>               ImageType;
-typedef itk::HammerTissueAttributeVector   AttributeVectorType;
-typedef itk::Image<AttributeVectorType, 3> AttributeImageType;
+using ImageType = itk::Image<float, 3>;
+using AttributeVectorType = itk::HammerTissueAttributeVector;
+using AttributeImageType = itk::Image<AttributeVectorType, 3>;
 #if PARTIALVOLUME  > 0
-typedef itk::HammerTissueAttributeVectorFromPartialVolumeImageFilter<ImageType, AttributeImageType> AttributeFilterType;
+using AttributeFilterType = itk::HammerTissueAttributeVectorFromPartialVolumeImageFilter<ImageType, AttributeImageType>;
 #else
-typedef itk::HammerTissueAttributeVectorImageFilter<ImageType, AttributeImageType> AttributeFilterType;
+using AttributeFilterType = itk::HammerTissueAttributeVectorImageFilter<ImageType, AttributeImageType>;
 #endif
 
 static void WriteAttributeComponent(const std::string& filename, AttributeImageType::Pointer avImg, const int idx)

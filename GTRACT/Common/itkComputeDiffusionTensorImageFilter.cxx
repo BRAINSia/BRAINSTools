@@ -71,7 +71,7 @@ ComputeDiffusionTensorImageFilter
 {
   if( m_UseMedianFilter == true )
     {
-    typedef itk::MedianImageFilter<InputImageType, InputImageType> MedianFilterType;
+    using MedianFilterType = itk::MedianImageFilter<InputImageType, InputImageType>;
     MedianFilterType::Pointer filter = MedianFilterType::New();
     filter->SetInput( m_Input );
     filter->SetRadius( m_MedianFilterSize );
@@ -114,7 +114,7 @@ ComputeDiffusionTensorImageFilter
   m_Output->SetOrigin( TensorOrigin );
   m_Output->Allocate();
 
-  typedef itk::ImageLinearConstIteratorWithIndex<InputImageType> ADCIteratorType;
+  using ADCIteratorType = itk::ImageLinearConstIteratorWithIndex<InputImageType>;
   ADCIteratorType ADC_It( m_InternalImage, m_InternalImage->GetRequestedRegion() );
 
   ADC_It.SetDirection(3);

@@ -25,7 +25,7 @@ class NumericValue :
   public XMLContents<T>
 {
 public:
-  typedef XMLContents<T> SuperClass;
+  using SuperClass = XMLContents<T>;
   int PrintSelf(std::ostream &, int indent) const override
   {
     // indent+=SuperClass::PrintSelf(os, indent);

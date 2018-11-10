@@ -86,8 +86,8 @@ ExtractTransform(typename itk::AffineTransform< TScalarType, 3 >::Pointer &resul
     return true;
     }
 
-  typedef itk::AffineTransform< TScalarType, 3 > LocalAffineTransformType;
-  typedef typename LocalAffineTransformType::Superclass MatrixOffsetTransformType;
+  using LocalAffineTransformType = itk::AffineTransform< TScalarType, 3 >;
+  using MatrixOffsetTransformType = typename LocalAffineTransformType::Superclass;
   const MatrixOffsetTransformType *matBasePtr = dynamic_cast<const MatrixOffsetTransformType *>(source);
   if( matBasePtr == nullptr )
     {
@@ -118,7 +118,7 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
 
   // this looks like it should be a convertible transform but
   // I'm not sure.
-  typedef itk::TranslationTransform<TScalarType, 3> TransTransformType;
+  using TransTransformType = itk::TranslationTransform<TScalarType, 3>;
   if( IsClass(source, "TranslationTransform") )
     {
     const TransTransformType *translationXfrm = dynamic_cast<const TransTransformType *>(source);
@@ -129,7 +129,7 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
   // versor == rotation only
   if( IsClass(source, "VersorTransform") )
     {
-    typedef itk::VersorTransform<TScalarType> VersorTransformType;
+    using VersorTransformType = itk::VersorTransform<TScalarType>;
     const VersorTransformType *versorXfrm = dynamic_cast<const VersorTransformType *>(source);
 
     result->SetRotation( versorXfrm->GetVersor() );
@@ -155,7 +155,7 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
     return true;
     }
 
-  typedef itk::VersorRigid3DTransform<TScalarType> LocalVersorRigid3DTransformType;
+  using LocalVersorRigid3DTransformType = itk::VersorRigid3DTransform<TScalarType>;
   if( IsClass(source, "VersorRigid3DTransform") )
     {
     const LocalVersorRigid3DTransformType *versorRigidXfrm =
@@ -192,7 +192,7 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform< TScalarType >::Pointe
     }
 
   // is it the parent?
-  typedef itk::ScaleVersor3DTransform<TScalarType> LocalScaleVersor3DTransformType;
+  using LocalScaleVersor3DTransformType = itk::ScaleVersor3DTransform<TScalarType>;
   if( IsClass(source, "ScaleVersor3DTransform") )
     {
     const LocalScaleVersor3DTransformType *scaleVersorXfrm =
@@ -228,16 +228,16 @@ DoConversion( int argc, char *argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef itk::Transform< TScalarType, 3, 3 >                       GenericTransformType;
-  typedef itk::BSplineDeformableTransform < TScalarType, 3, 3>      BSplineTransformType;
+  using GenericTransformType = itk::Transform< TScalarType, 3, 3 >;
+  using BSplineTransformType = itk::BSplineDeformableTransform < TScalarType, 3, 3>;
 
-  typedef itk::AffineTransform< TScalarType, 3 >            LocalAffineTransformType;
-  typedef itk::VersorRigid3DTransform< TScalarType >        LocalVersorRigid3DTransformType;
-  typedef itk::ScaleVersor3DTransform< TScalarType >        LocalScaleVersor3DTransformType;
-  typedef itk::ScaleSkewVersor3DTransform< TScalarType >    LocalScaleSkewVersor3DTransformType;
+  using LocalAffineTransformType = itk::AffineTransform< TScalarType, 3 >;
+  using LocalVersorRigid3DTransformType = itk::VersorRigid3DTransform< TScalarType >;
+  using LocalScaleVersor3DTransformType = itk::ScaleVersor3DTransform< TScalarType >;
+  using LocalScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform< TScalarType >;
 
   // read the input transform
-  typedef itk::TransformFileReaderTemplate<TScalarType>  TransformFileReaderType;
+  using TransformFileReaderType = itk::TransformFileReaderTemplate<TScalarType>;
   typename TransformFileReaderType::Pointer reader = TransformFileReaderType::New();
   reader->SetFileName(inputTransform.c_str() );
   reader->Update();
@@ -282,7 +282,7 @@ DoConversion( int argc, char *argv[] )
     CHECK_PARAMETER_IS_SET(displacementVolume,
                            "Missing displacementVolume needed for Displacement Field output");
 
-    typedef itk::Image<short, 3> ReferenceImageType;
+    using ReferenceImageType = itk::Image<short, 3>;
     ReferenceImageType::Pointer referenceImage = itkUtil::ReadImage<ReferenceImageType>(referenceVolume);
     if( referenceImage.IsNull() )
       {
@@ -290,12 +290,12 @@ DoConversion( int argc, char *argv[] )
       return EXIT_FAILURE;
       }
     // Allocate Displacement Field
-    typedef itk::Vector<float, 3>     VectorType;
-    typedef itk::Image<VectorType, 3> DisplacementFieldType;
+    using VectorType = itk::Vector<float, 3>;
+    using DisplacementFieldType = itk::Image<VectorType, 3>;
     DisplacementFieldType::Pointer displacementField =
       itkUtil::AllocateImageFromExample<ReferenceImageType, DisplacementFieldType>(referenceImage);
 
-    typedef itk::ImageRegionIterator<DisplacementFieldType> DisplacementIteratorType;
+    using DisplacementIteratorType = itk::ImageRegionIterator<DisplacementFieldType>;
     for( DisplacementIteratorType it(displacementField, displacementField->GetLargestPossibleRegion() );
          !it.IsAtEnd(); ++it )
       {
@@ -323,11 +323,11 @@ DoConversion( int argc, char *argv[] )
     {
     if( outputTransformType == "Same" )
       {
-      typedef itk::CompositeTransform<TScalarType,3>                                      CompositeTransformType;
-      typedef itk::DisplacementFieldTransform<TScalarType, 3>                             DisplacementFieldTransformType;
-      typedef typename DisplacementFieldTransformType::DisplacementFieldType              DisplacementFieldType;
-      typedef typename itk::ComposeDisplacementFieldsImageFilter<DisplacementFieldType,
-                                                                 DisplacementFieldType>   ComposerType;
+      using CompositeTransformType = itk::CompositeTransform<TScalarType,3>;
+      using DisplacementFieldTransformType = itk::DisplacementFieldTransform<TScalarType, 3>;
+      using DisplacementFieldType = typename DisplacementFieldTransformType::DisplacementFieldType;
+      using ComposerType = typename itk::ComposeDisplacementFieldsImageFilter<DisplacementFieldType,
+                                                                 DisplacementFieldType>;
 
       typename CompositeTransformType::Pointer compToWrite;
 
@@ -464,7 +464,7 @@ DoConversion( int argc, char *argv[] )
     {
     if( outputTransformType == "Same" )
       {
-      typedef typename itk::TransformFileWriterTemplate<TScalarType> TransformWriterType;
+      using TransformWriterType = typename itk::TransformFileWriterTemplate<TScalarType>;
       typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
       transformWriter->SetFileName(outputTransform);
 #if ITK_VERSION_MAJOR >= 5

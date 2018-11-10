@@ -83,7 +83,7 @@ SImageType::PointType TrimForegroundInDirection(SImageType::Pointer & foreground
                                                 double otsuPercentileThreshold, unsigned int closingSize,
                                                 double headSizeLowerLimit, SImageType::PixelType BackgroundFillValue)
 {
-  typedef itk::FindCenterOfBrainFilter<SImageType> FindCenterFilter;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(volOrig);
   findCenterFilter->SetAxis(axis);

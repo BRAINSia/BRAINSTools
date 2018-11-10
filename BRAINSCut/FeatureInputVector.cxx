@@ -285,7 +285,7 @@ FeatureInputVector
 
   SetGradientImage( ROIName );
 
-  typedef itk::ImageRegionIterator<WorkingImageType> ImageRegionIteratorType;
+  using ImageRegionIteratorType = itk::ImageRegionIterator<WorkingImageType>;
 
   InputVectorMapType currentFeatureVector;
 
@@ -333,8 +333,8 @@ FeatureInputVector
   constexpr unsigned char defaultLabel = 1;
 
   /* threshold roi */
-  typedef itk::BinaryThresholdImageFilter<WorkingImageType,
-                                          BinaryImageType> ThresholdType;
+  using ThresholdType = itk::BinaryThresholdImageFilter<WorkingImageType,
+                                          BinaryImageType>;
 
   ThresholdType::Pointer thresholder = ThresholdType::New();
 
@@ -356,7 +356,7 @@ FeatureInputVector
     currentMinMaxVector.push_back( eachMinMax );
 
     // better do here
-    typedef itk::LabelStatisticsImageFilter<WorkingImageType, BinaryImageType> StatisticCalculatorType;
+    using StatisticCalculatorType = itk::LabelStatisticsImageFilter<WorkingImageType, BinaryImageType>;
     StatisticCalculatorType::Pointer statisticCalculator = StatisticCalculatorType::New();
 
     statisticCalculator->SetInput( *eachTypeOfImage );
@@ -570,7 +570,7 @@ inline std::pair<scalarType, scalarType>
 FeatureInputVector
 ::SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage, const WorkingImagePointer& Image )
 {
-  typedef itk::LabelStatisticsImageFilter<WorkingImageType, BinaryImageType> StatisticCalculatorType;
+  using StatisticCalculatorType = itk::LabelStatisticsImageFilter<WorkingImageType, BinaryImageType>;
   StatisticCalculatorType::Pointer statisticCalculator = StatisticCalculatorType::New();
 
   statisticCalculator->SetInput( Image );

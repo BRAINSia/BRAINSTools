@@ -27,18 +27,18 @@ int main( int argc, char * argv[] )
 {
   constexpr unsigned int LocalImageDimension = 3;
 
-  typedef short                                            InputPixelType;
-  typedef double                                           OutputPixelType;
-  typedef itk::Image<InputPixelType, LocalImageDimension>  InputImageType;
-  typedef itk::Image<OutputPixelType, LocalImageDimension> OutputImageType;
+  using InputPixelType = short;
+  using OutputPixelType = double;
+  using InputImageType = itk::Image<InputPixelType, LocalImageDimension>;
+  using OutputImageType = itk::Image<OutputPixelType, LocalImageDimension>;
 
-  typedef itk::HoughTransformRadialVotingImageFilter<InputImageType, OutputImageType> HoughFilterType;
-  typedef HoughFilterType::SpheresListType                                            SpheresListType;
-  typedef HoughFilterType::Pointer                                                    HoughFilterPointer;
+  using HoughFilterType = itk::HoughTransformRadialVotingImageFilter<InputImageType, OutputImageType>;
+  using SpheresListType = HoughFilterType::SpheresListType;
+  using HoughFilterPointer = HoughFilterType::Pointer;
   HoughFilterPointer houghFilter = HoughFilterType::New();
 
 // Reader type
-  typedef itk::ImageFileReader<InputImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( argv[1] );
 // reader->Update();
@@ -87,7 +87,7 @@ writer->SetUseCompression( true );
 */
 
 // writer type
-  typedef  itk::ImageFileWriter<OutputImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(argv[2]);
   writer->SetInput( houghFilter->GetOutput() );

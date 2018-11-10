@@ -74,37 +74,37 @@ enum ENUM_ANISOTROPY_TYPE
   COHERENCE_INDEX = 6,
   LATTICE_INDEX = 7
   };
-typedef enum ENUM_ANISOTROPY_TYPE AnisotropyType;
+using AnisotropyType = enum ENUM_ANISOTROPY_TYPE;
 
 class GTRACT_COMMON_EXPORT TensorToAnisotropyImageFilter : public itk::Object
 {
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(TensorToAnisotropyImageFilter);
 
-  /** Standard class typedefs. */
-  typedef TensorToAnisotropyImageFilter Self;
-  typedef itk::Object                   Superclass;
-  typedef SmartPointer<Self>            Pointer;
-  typedef SmartPointer<const Self>      ConstPointer;
+  /** Standard class type alias. */
+  using Self = TensorToAnisotropyImageFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Some convenient typedefs. */
-  typedef itk::Vector<float, 6>         InputPixelType;
-  typedef itk::Image<InputPixelType, 3> InputImageType;
-  typedef InputImageType::Pointer       InputImagePointer;
-  typedef InputImageType::ConstPointer  InputImageConstPointer;
-  typedef InputImageType::RegionType    InputImageRegionType;
-  typedef InputImageType::SizeType      InputImageSizeType;
-  typedef InputImageType::SpacingType   InputImageSpacingType;
-  typedef InputImageType::PointType     InputImagePointType;
-  typedef InputImageType::PixelType     InputImagePixelType;
-  typedef InputImageType::DirectionType InputImageDirectionType;
+  /** Some convenient type alias. */
+  using InputPixelType = itk::Vector<float, 6>;
+  using InputImageType = itk::Image<InputPixelType, 3>;
+  using InputImagePointer = InputImageType::Pointer;
+  using InputImageConstPointer = InputImageType::ConstPointer;
+  using InputImageRegionType = InputImageType::RegionType;
+  using InputImageSizeType = InputImageType::SizeType;
+  using InputImageSpacingType = InputImageType::SpacingType;
+  using InputImagePointType = InputImageType::PointType;
+  using InputImagePixelType = InputImageType::PixelType;
+  using InputImageDirectionType = InputImageType::DirectionType;
 
-  typedef itk::Image<float, 3>          OutputImageType;
-  typedef OutputImageType::Pointer      OutputImagePointer;
-  typedef OutputImageType::ConstPointer OutputImageConstPointer;
-  typedef OutputImageType::RegionType   OutputImageRegionType;
-  typedef OutputImageType::PixelType    OutputImagePixelType;
-  typedef OutputImageType::IndexType    OutputImageIndexType;
+  using OutputImageType = itk::Image<float, 3>;
+  using OutputImagePointer = OutputImageType::Pointer;
+  using OutputImageConstPointer = OutputImageType::ConstPointer;
+  using OutputImageRegionType = OutputImageType::RegionType;
+  using OutputImagePixelType = OutputImageType::PixelType;
+  using OutputImageIndexType = OutputImageType::IndexType;
 
   /** ImageDimension constants * /
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;

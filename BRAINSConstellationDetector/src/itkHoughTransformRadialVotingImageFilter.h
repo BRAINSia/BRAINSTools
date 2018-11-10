@@ -98,75 +98,73 @@ class HoughTransformRadialVotingImageFilter :
 {
 public:
 
-  /** Standard "Self" typedef. */
-  typedef HoughTransformRadialVotingImageFilter Self;
-  /** Standard "Superclass" typedef. */
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  /** Smart pointer typedef support. */
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard "Self" type alias. */
+  using Self = HoughTransformRadialVotingImageFilter;
+  /** Standard "Superclass" type alias. */
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  /** Smart pointer type alias support. */
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  /** Input Image typedef */
-  typedef TInputImage                             InputImageType;
-  typedef typename InputImageType::Pointer        InputImagePointer;
-  typedef typename InputImageType::ConstPointer   InputImageConstPointer;
-  typedef typename InputImageType::IndexType      InputIndexType;
-  typedef typename InputIndexType::IndexValueType InputIndexValueType;
-  typedef typename InputImageType::PixelType      InputPixelType;
-  typedef typename InputImageType::SizeType       InputSizeType;
-  typedef typename InputSizeType::SizeValueType   InputSizeValueType;
-  typedef typename InputImageType::RegionType     InputRegionType;
-  typedef typename InputImageType::SpacingType    InputSpacingType;
-  typedef typename InputImageType::PointType      InputPointType;
-  typedef typename InputPointType::CoordRepType   InputCoordType;
+  /** Input Image type alias */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using InputIndexType = typename InputImageType::IndexType;
+  using InputIndexValueType = typename InputIndexType::IndexValueType;
+  using InputPixelType = typename InputImageType::PixelType;
+  using InputSizeType = typename InputImageType::SizeType;
+  using InputSizeValueType = typename InputSizeType::SizeValueType;
+  using InputRegionType = typename InputImageType::RegionType;
+  using InputSpacingType = typename InputImageType::SpacingType;
+  using InputPointType = typename InputImageType::PointType;
+  using InputCoordType = typename InputPointType::CoordRepType;
 
-  /** Output Image typedef */
-  typedef TOutputImage                         OutputImageType;
-  typedef typename OutputImageType::Pointer    OutputImagePointer;
-  typedef typename OutputImageType::PixelType  OutputPixelType;
-  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  /** Output Image type alias */
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputPixelType = typename OutputImageType::PixelType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
 
-  typedef Image<InputCoordType, ImageDimension>      InternalImageType;
-  typedef typename InternalImageType::Pointer        InternalImagePointer;
-  typedef typename InternalImageType::IndexType      InternalIndexType;
-  typedef typename InternalIndexType::IndexValueType InternalIndexValueType;
-  typedef typename InternalImageType::PixelType      InternalPixelType;
-  typedef typename InternalImageType::RegionType     InternalRegionType;
-  typedef typename InternalImageType::SizeType       InternalSizeType;
-  typedef typename InternalSizeType::SizeValueType   InternalSizeValueType;
-  typedef typename InternalImageType::SpacingType    InternalSpacingType;
+  using InternalImageType = Image<InputCoordType, ImageDimension>;
+  using InternalImagePointer = typename InternalImageType::Pointer;
+  using InternalIndexType = typename InternalImageType::IndexType;
+  using InternalIndexValueType = typename InternalIndexType::IndexValueType;
+  using InternalPixelType = typename InternalImageType::PixelType;
+  using InternalRegionType = typename InternalImageType::RegionType;
+  using InternalSizeType = typename InternalImageType::SizeType;
+  using InternalSizeValueType = typename InternalSizeType::SizeValueType;
+  using InternalSpacingType = typename InternalImageType::SpacingType;
 
-  /** Sphere typedef */
-  typedef EllipseSpatialObject<ImageDimension> SphereType;
-  typedef typename SphereType::Pointer         SpherePointer;
-  typedef typename SphereType::VectorType      SphereVectorType;
-  typedef std::list<SpherePointer>             SpheresListType;
+  /** Sphere type alias */
+  using SphereType = EllipseSpatialObject<ImageDimension>;
+  using SpherePointer = typename SphereType::Pointer;
+  using SphereVectorType = typename SphereType::VectorType;
+  using SpheresListType = std::list<SpherePointer>;
 
-  typedef ImageRegionIterator<InternalImageType> InternalIteratorType;
-  typedef ImageRegionIterator<OutputImageType>   OutputIteratorType;
+  using InternalIteratorType = ImageRegionIterator<InternalImageType>;
+  using OutputIteratorType = ImageRegionIterator<OutputImageType>;
 
-  typedef DiscreteGaussianImageFilter<OutputImageType, InternalImageType>
-    GaussianFilterType;
+  using GaussianFilterType = DiscreteGaussianImageFilter<OutputImageType, InternalImageType>;
   typedef typename GaussianFilterType::Pointer
     GaussianFilterPointer;
 
-  typedef itk::Statistics::GaussianDistribution  GaussianFunctionType;
-  typedef typename GaussianFunctionType::Pointer GaussianFunctionPointer;
+  using GaussianFunctionType = itk::Statistics::GaussianDistribution;
+  using GaussianFunctionPointer = typename GaussianFunctionType::Pointer;
 
-  typedef GaussianDerivativeImageFunction<InputImageType, InputCoordType>
-    DoGFunctionType;
+  using DoGFunctionType = GaussianDerivativeImageFunction<InputImageType, InputCoordType>;
   typedef typename DoGFunctionType::Pointer
     DoGFunctionPointer;
   typedef typename DoGFunctionType::VectorType
     DoGVectorType;
 
-  typedef MinimumMaximumImageCalculator<InternalImageType> MinMaxCalculatorType;
-  typedef typename MinMaxCalculatorType::Pointer           MinMaxCalculatorPointer;
+  using MinMaxCalculatorType = MinimumMaximumImageCalculator<InternalImageType>;
+  using MinMaxCalculatorPointer = typename MinMaxCalculatorType::Pointer;
 
-  typedef CastImageFilter<InternalImageType, OutputImageType> CastFilterType;
-  typedef typename CastFilterType::Pointer                    CastFilterPointer;
+  using CastFilterType = CastImageFilter<InternalImageType, OutputImageType>;
+  using CastFilterPointer = typename CastFilterType::Pointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(HoughTransformRadialVotingImageFilter, ImageToImageFilter);

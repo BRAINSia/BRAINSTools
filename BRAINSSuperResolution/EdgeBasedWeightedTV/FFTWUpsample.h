@@ -37,7 +37,7 @@ extern DivergenceType::OutputImageType::Pointer GetDivergence(CVImageType::Point
 template<typename ImageType>
 typename ImageType::Pointer DeepImageCopy(typename ImageType::Pointer in)
 {
-  typedef itk::ImageDuplicator<ImageType> ImDupType;
+  using ImDupType = itk::ImageDuplicator<ImageType>;
   typename ImDupType::Pointer imDup = ImDupType::New();
   imDup->SetInputImage(in);
   imDup->Update();
@@ -49,7 +49,7 @@ typename ImageType::Pointer DeepImageCopy(typename ImageType::Pointer in)
 template<typename ImageType>
 void WriteFile(ImageType * img, const std::string outfilename)
 {
-  typedef typename itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = typename itk::ImageFileWriter<ImageType>;
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(outfilename);
   writer->SetInput(img);

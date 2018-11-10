@@ -62,7 +62,7 @@ private:
                                                              // image to be
                                                              // warped.
       {
-      typedef typename itk::ImageFileReader<WarperImageType> ReaderType;
+      using ReaderType = typename itk::ImageFileReader<WarperImageType>;
       typename ReaderType::Pointer imageReader = ReaderType::New();
 
       imageReader->SetFileName(ImageName);
@@ -70,9 +70,9 @@ private:
       PrincipalOperandImage = imageReader->GetOutput();
       }
 
-    typedef double                                        VectorComponentType;
-    typedef typename itk::Vector<VectorComponentType, 3> VectorPixelType;
-    typedef typename itk::Image<VectorPixelType,  3>     LocalDisplacementFieldType;
+    using VectorComponentType = double;
+    using VectorPixelType = typename itk::Vector<VectorComponentType, 3>;
+    using LocalDisplacementFieldType = typename itk::Image<VectorPixelType,  3>;
 
     // An empty SmartPointer constructor sets up someImage.IsNull() to represent
     // a
@@ -80,7 +80,7 @@ private:
     typename LocalDisplacementFieldType::Pointer DisplacementField;
     // An empty SmartPointer constructor sets up someTransform.IsNull() to
     // represent a not-supplied state:
-    typedef  itk::Transform<double, 3, 3> GenericTransformType;
+    using GenericTransformType = itk::Transform<double, 3, 3>;
     typename GenericTransformType::Pointer genericTransform;
     // typename WarperImageType::Pointer ReferenceImage;
     // if there is no *mat file.
@@ -94,7 +94,7 @@ private:
     // call
     if( !useTransform )  // that is, it's a warp by deformation field:
       {
-      typedef typename itk::ImageFileReader<LocalDisplacementFieldType> DefFieldReaderType;
+      using DefFieldReaderType = typename itk::ImageFileReader<LocalDisplacementFieldType>;
       typename DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
       fieldImageReader->SetFileName(RegistrationFilename);
       fieldImageReader->Update();
@@ -105,8 +105,7 @@ private:
       // field and reference image have same dimensions.
 
       // and---  ReferenceImage.IsNull() represents the delayed default
-      typedef itk::DisplacementFieldTransform<DeformationScalarType,LocalDisplacementFieldType::ImageDimension>
-        DisplacementFieldTransformType;
+      using DisplacementFieldTransformType = itk::DisplacementFieldTransform<DeformationScalarType,LocalDisplacementFieldType::ImageDimension>;
       typename DisplacementFieldTransformType::Pointer dispXfrm =
         DisplacementFieldTransformType::New();
       dispXfrm->SetDisplacementField(DisplacementField.GetPointer());

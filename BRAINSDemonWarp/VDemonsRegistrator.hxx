@@ -58,10 +58,10 @@ void VDemonsRegistrator<TRealImage, TOutputImage,
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
-  typedef itk::Image<FieldValueType,
-                     3>                  ComponentImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
-                                                   ComponentImageType> ComponentFilterType;
+  using ComponentImageType = itk::Image<FieldValueType,
+                     3>;
+  using ComponentFilterType = itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
+                                                   ComponentImageType>;
 
   std::string CurrentComponentFilename;
   try
@@ -126,15 +126,15 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
 
   m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::ZeroValue();
   // Setup an registration observer
-  typedef SimpleMemberCommand<Self> CommandType;
+  using CommandType = SimpleMemberCommand<Self>;
   typename CommandType::Pointer command = CommandType::New();
   command->SetCallbackFunction(this, &Self::StartNewLevel);
 
   m_Tag = m_Registration->AddObserver(IterationEvent(), command);
   m_VectorTag = m_VectorRegistration->AddObserver(IterationEvent(), command);
 
-  typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      TDisplacementField, double> FieldInterpolatorType;
+  using FieldInterpolatorType = VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
+      TDisplacementField, double>;
 
   typename FieldInterpolatorType::Pointer VectorInterpolator =
     FieldInterpolatorType::New();
@@ -185,12 +185,12 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
   // Setup the registrator
 
-  typedef itk::MultiplyImageFilter<RealImageType, itk::Image<float,RealImageType::ImageDimension>,
-    RealImageType> MultiplyByConstantImageType;
+  using MultiplyByConstantImageType = itk::MultiplyImageFilter<RealImageType, itk::Image<float,RealImageType::ImageDimension>,
+    RealImageType>;
 
   if( m_FixedImage.size() > 1 )
     {
-    typedef itk::ComposeImageFilter<RealImageType> ImageToVectorImageType;
+    using ImageToVectorImageType = itk::ComposeImageFilter<RealImageType>;
     typename ImageToVectorImageType::Pointer fixedVectorImage =
       ImageToVectorImageType::New();
     typename ImageToVectorImageType::Pointer movingVectorImage =
@@ -454,7 +454,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     /*Write the checkerboard image of the fixed image and the output image.*/
     if( this->m_CheckerBoardFilename != std::string("none") )
       {
-      typedef itk::CheckerBoardImageFilter<RealImageType> Checkerfilter;
+      using Checkerfilter = itk::CheckerBoardImageFilter<RealImageType>;
       typename Checkerfilter::Pointer checker = Checkerfilter::New();
       if( this->GetUseHistogramMatching() == true )
         {

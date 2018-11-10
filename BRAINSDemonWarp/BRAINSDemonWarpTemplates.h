@@ -145,10 +145,10 @@ struct BRAINSDemonWarpAppParameters
   bool histogramMatch;
 
   /** ShrinkFactors type. */
-  typedef itk::FixedArray<unsigned int, 3> ShrinkFactorsType;
+  using ShrinkFactorsType = itk::FixedArray<unsigned int, 3>;
 
   /** IterationArray type. */
-  typedef itk::Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = itk::Array<unsigned int>;
   unsigned long numberOfHistogramLevels;
   unsigned long numberOfMatchPoints;
   unsigned short numberOfLevels;
@@ -159,7 +159,7 @@ struct BRAINSDemonWarpAppParameters
   std::vector<std::string> vectorMovingVolume;
   std::vector<std::string> vectorFixedVolume;
   bool makeBOBF;
-  typedef itk::Array<float> WeightFactorsType;
+  using WeightFactorsType = itk::Array<float>;
   WeightFactorsType weightFactors;
   std::string interpolationMode;
   };
@@ -171,16 +171,16 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
   constexpr int dims = 3;
 
-  typedef itk::Image<InPixelType, dims>              ImageType;
-  typedef itk::Image<float, dims>                    TRealImage;
-  typedef itk::Image<OutPixelType, dims>             OutputImageType;
-  typedef itk::Image<itk::Vector<float, dims>, dims> TDisplacementField;
+  using ImageType = itk::Image<InPixelType, dims>;
+  using TRealImage = itk::Image<float, dims>;
+  using OutputImageType = itk::Image<OutPixelType, dims>;
+  using TDisplacementField = itk::Image<itk::Vector<float, dims>, dims>;
 
-  typedef unsigned char                                   MaskPixelType;
-  typedef itk::Image<MaskPixelType, dims>                 MaskImageType;
-  typedef itk::CastImageFilter<TRealImage, MaskImageType> CastImageFilter;
+  using MaskPixelType = unsigned char;
+  using MaskImageType = itk::Image<MaskPixelType, dims>;
+  using CastImageFilter = itk::CastImageFilter<TRealImage, MaskImageType>;
 
-  typedef itk::ImageMaskSpatialObject<dims>               ImageMaskSpatialObjectType;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<dims>;
 
   //
   // If optional landmark files given, will use landmark registration to
@@ -210,25 +210,23 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     }
     {
     // Set up the demons filter
-    typedef typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-                                                          TDisplacementField>
-      BaseRegistrationFilterType;
+    using BaseRegistrationFilterType = typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
+                                                          TDisplacementField>;
     // BaseRegistrationFilterType::Pointer filter =
     //   BaseRegistrationFilterType::New();
     typename BaseRegistrationFilterType::Pointer filter;
 
     if( command.registrationFilterType == "Demons" )
       {
-      typedef typename itk::DemonsRegistrationFilter<TRealImage, TRealImage,
-                                                     TDisplacementField>
-        ActualRegistrationFilterType;
+      using ActualRegistrationFilterType = typename itk::DemonsRegistrationFilter<TRealImage, TRealImage,
+                                                     TDisplacementField>;
       ActualRegistrationFilterType::Pointer actualfilter =
         ActualRegistrationFilterType::New();
       // TODO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
       // actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       // NOTE: GRADIENT TYPE NOT AVAILABLE IN DemonsRegistrationFilter
-      // typedef ActualRegistrationFilterType::GradientType GradientType;
+      // using GradientType = ActualRegistrationFilterType::GradientType;
       // actualfilter->SetUseGradientType(
       // static_cast<GradientType>(command.gradientType) );
       // actualfilter->SetUseMovingImageGradient(true);
@@ -236,13 +234,13 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
       }
     else if( command.registrationFilterType == "Diffeomorphic" )
       {
-      typedef typename itk::DiffeomorphicDemonsRegistrationWithMaskFilter<
+      using ActualRegistrationFilterType = typename itk::DiffeomorphicDemonsRegistrationWithMaskFilter<
           TRealImage, TRealImage,
-          TDisplacementField>   ActualRegistrationFilterType;
+          TDisplacementField>;
       typename ActualRegistrationFilterType::Pointer actualfilter =
         ActualRegistrationFilterType::New();
 
-      typedef  typename ActualRegistrationFilterType::GradientType GradientType;
+      using GradientType = typename ActualRegistrationFilterType::GradientType;
       actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
       actualfilter->SetUseGradientType( static_cast<GradientType>( command.
                                                                    gradientType ) );
@@ -262,7 +260,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         typename  TRealImage::Pointer fixedBinaryVolumeImage;
         constexpr double otsuPercentileThreshold = 0.01;
         constexpr int closingSize = 7;
-        // typedef itk::Image<signed long, dims> LargeIntegerImage;
+        // using LargeIntegerImage = itk::Image<signed long, dims>;
 
         typename  TRealImage::Pointer fixedVolume =
           itkUtil::ReadImage<TRealImage>( command.fixedVolume.c_str() );
@@ -271,7 +269,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         //       fixedVolume,
         //       otsuPercentileThreshold,
         //       closingSize);
-        typedef itk::LargestForegroundFilledMaskImageFilter<TRealImage> LFFMaskFilterType;
+        using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TRealImage>;
         LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
         LFF->SetInput(fixedVolume);
         LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
@@ -341,9 +339,9 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     else if( command.registrationFilterType == "FastSymmetricForces" )
       {
       // s <- s + u (ITK basic implementation)
-      typedef typename itk::FastSymmetricForcesDemonsRegistrationFilter<
-          TRealImage, TRealImage, TDisplacementField> ActualRegistrationFilterType;
-      typedef typename ActualRegistrationFilterType::GradientType GradientType;
+      using ActualRegistrationFilterType = typename itk::FastSymmetricForcesDemonsRegistrationFilter<
+          TRealImage, TRealImage, TDisplacementField>;
+      using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter =
         ActualRegistrationFilterType::New();
       // TODO:  Review this value setting.
@@ -359,9 +357,8 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     // s <- s o (Id + u) (Diffeomorphic demons)
     // This is simply a crude diffeomorphic demons
     // where the exponential is computed in 0 iteration
-    typedef typename itk::DiffeomorphicDemonsRegistrationFilter  < TRealImage, TRealImage, TDisplacementField>
-    ActualRegistrationFilterType;
-    typedef typename ActualRegistrationFilterType::GradientType GradientType;
+    using ActualRegistrationFilterType = typename itk::DiffeomorphicDemonsRegistrationFilter  < TRealImage, TRealImage, TDisplacementField>;
+    using GradientType = typename ActualRegistrationFilterType::GradientType;
     ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
     //TODO:  HACK: Make sure that MaxLength and GradientTypes are set.
     actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
@@ -643,11 +640,11 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
   constexpr int dims = 3;
 
-  typedef itk::Image<InPixelType, dims>              ImageType;
-  typedef itk::Image<float, dims>                    TRealImage;
-  typedef itk::VectorImage<float, dims>              TVectorImage;
-  typedef itk::Image<OutPixelType, dims>             OutputImageType;
-  typedef itk::Image<itk::Vector<float, dims>, dims> TDisplacementField;
+  using ImageType = itk::Image<InPixelType, dims>;
+  using TRealImage = itk::Image<float, dims>;
+  using TVectorImage = itk::VectorImage<float, dims>;
+  using OutputImageType = itk::Image<OutPixelType, dims>;
+  using TDisplacementField = itk::Image<itk::Vector<float, dims>, dims>;
   //
   // If optional landmark files given, will use landmark registration to
   // generate
@@ -661,9 +658,8 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   typename  AppType::Pointer app = AppType::New();
 
   // Set up the demons filter
-  typedef typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-                                                        TDisplacementField>
-    BaseRegistrationFilterType;
+  using BaseRegistrationFilterType = typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
+                                                        TDisplacementField>;
   // BaseRegistrationFilterType::Pointer filter =
   //   BaseRegistrationFilterType::New();
   typename BaseRegistrationFilterType::Pointer filter;
@@ -678,9 +674,8 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     {
     if( command.vectorMovingVolume.size() == 1 )
       {
-      typedef typename itk::DemonsRegistrationFilter<TRealImage, TRealImage,
-                                                     TDisplacementField>
-        ActualRegistrationFilterType;
+      using ActualRegistrationFilterType = typename itk::DemonsRegistrationFilter<TRealImage, TRealImage,
+                                                     TDisplacementField>;
       ActualRegistrationFilterType::Pointer actualfilter =
         ActualRegistrationFilterType::New();
       filter = actualfilter;
@@ -698,11 +693,10 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     //    std::cout << "Use Diffeomorphic Registration" << std::endl;
     if( command.vectorMovingVolume.size() == 1 )
       {
-      typedef typename itk::DiffeomorphicDemonsRegistrationFilter<TRealImage,
+      using ActualRegistrationFilterType = typename itk::DiffeomorphicDemonsRegistrationFilter<TRealImage,
                                                                   TRealImage,
-                                                                  TDisplacementField>
-        ActualRegistrationFilterType;
-      typedef  typename ActualRegistrationFilterType::GradientType GradientType;
+                                                                  TDisplacementField>;
+      using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter =
         ActualRegistrationFilterType::New();
       // TODO:  Review this value setting with Insight Journal Diffeomorphic
@@ -714,10 +708,9 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
       }
     else
       {
-      typedef typename itk::VectorDiffeomorphicDemonsRegistrationFilter<
-          TVectorImage, TVectorImage, TDisplacementField>
-        ActualRegistrationFilterType;
-      typedef  typename ActualRegistrationFilterType::GradientType GradientType;
+      using ActualRegistrationFilterType = typename itk::VectorDiffeomorphicDemonsRegistrationFilter<
+          TVectorImage, TVectorImage, TDisplacementField>;
+      using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer VDDfilter =
         ActualRegistrationFilterType::New();
       // TODO:  Review this value setting with Insight Journal Diffeomorphic
@@ -767,9 +760,9 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     // s <- s + u (ITK basic implementation)
     if( command.vectorMovingVolume.size() == 1 )
       {
-      typedef typename itk::FastSymmetricForcesDemonsRegistrationFilter<
-          TRealImage, TRealImage, TDisplacementField> ActualRegistrationFilterType;
-      typedef typename ActualRegistrationFilterType::GradientType GradientType;
+      using ActualRegistrationFilterType = typename itk::FastSymmetricForcesDemonsRegistrationFilter<
+          TRealImage, TRealImage, TDisplacementField>;
+      using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter =
         ActualRegistrationFilterType::New();
       // TODO:  Review this value setting.

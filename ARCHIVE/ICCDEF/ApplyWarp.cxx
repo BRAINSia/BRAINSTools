@@ -47,7 +47,7 @@ void PrintImageMinAndMax(TImage * inputImage)
 {
 //  typename TImage::PixelType resultMaximum:
 //  typename TImage::PixelType resultMinimum;
-  typedef typename itk::StatisticsImageFilter<TImage> StatisticsFilterType;
+  using StatisticsFilterType = typename itk::StatisticsImageFilter<TImage>;
   typename StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
   statsFilter->SetInput( inputImage );
   statsFilter->Update();
@@ -105,8 +105,8 @@ int ApplyWarp(int argc, char *argv[])
       }
     }
 
-  typedef itk::Image<float, 3> ImageType;
-  typedef itk::Image<float, 3> RefImageType;
+  using ImageType = itk::Image<float, 3>;
+  using RefImageType = itk::Image<float, 3>;
   ImageType::Pointer PrincipalOperandImage;  // One name for the image to be warped.
     {
 
@@ -124,9 +124,9 @@ int ApplyWarp(int argc, char *argv[])
 
   // Read ReferenceVolume and DeformationVolume
 
-  typedef float                                                                     VectorComponentType;
-  typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
-  typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
+  using VectorComponentType = float;
+  using VectorPixelType = itk::Vector<VectorComponentType, 3>;
+  using DisplacementFieldType = itk::Image<VectorPixelType,  3>;
 
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
   DisplacementFieldType::Pointer DisplacementField;
@@ -220,15 +220,15 @@ int ApplyWarp(int argc, char *argv[])
     {
     // A special case for dealing with binary images
     // where signed distance maps are warped and thresholds created
-    typedef short int                                                           MaskPixelType;
-    typedef itk::Image<MaskPixelType,  3> MaskImageType;
-    typedef itk::CastImageFilter<ImageType, MaskImageType>                      CastImageFilter;
+    using MaskPixelType = short int;
+    using MaskImageType = itk::Image<MaskPixelType,  3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, MaskImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update();
 
     MaskImageType::Pointer outputImage = castFilter->GetOutput();
-    typedef itk::ImageFileWriter<MaskImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<MaskImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
@@ -236,14 +236,14 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( pixelType == "uchar" )
     {
-    typedef unsigned char                                                     NewPixelType;
-    typedef itk::Image<NewPixelType, 3> NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
+    using NewPixelType = unsigned char;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
@@ -251,14 +251,14 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( pixelType == "short" )
     {
-    typedef signed short                                                      NewPixelType;
-    typedef itk::Image<NewPixelType, 3> NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
+    using NewPixelType = signed short;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
@@ -266,14 +266,14 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( pixelType == "ushort" )
     {
-    typedef unsigned short                                                    NewPixelType;
-    typedef itk::Image<NewPixelType, 3> NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
+    using NewPixelType = unsigned short;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
@@ -281,14 +281,14 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( pixelType == "int" )
     {
-    typedef int                                                               NewPixelType;
-    typedef itk::Image<NewPixelType, 3> NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
+    using NewPixelType = int;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
@@ -296,14 +296,14 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( pixelType == "uint" )
     {
-    typedef unsigned int                                                      NewPixelType;
-    typedef itk::Image<NewPixelType, 3> NewImageType;
-    typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
+    using NewPixelType = unsigned int;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update();
-    ;
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
+;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
@@ -311,7 +311,7 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( pixelType == "float" )
     {
-    typedef itk::ImageFileWriter<ImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<ImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( TransformedImage );

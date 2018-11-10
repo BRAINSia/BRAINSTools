@@ -38,12 +38,12 @@ int main( int argc, char * argv[] )
 
   constexpr unsigned int Dim = 3;
 
-  typedef itk::Image<float, Dim>                  FloatImageType;
-  typedef FloatImageType::Pointer                 FloatImagePointer;
-  typedef std::vector<FloatImagePointer>          InputImageList;
-  typedef itk::ImageFileReader<FloatImageType>    ImageReaderType;
-  typedef itk::Image<unsigned char, Dim>          CharImageType;
-  typedef itk::ImageFileReader<CharImageType>     MaskReaderType;
+  using FloatImageType = itk::Image<float, Dim>;
+  using FloatImagePointer = FloatImageType::Pointer;
+  using InputImageList = std::vector<FloatImagePointer>;
+  using ImageReaderType = itk::ImageFileReader<FloatImageType>;
+  using CharImageType = itk::Image<unsigned char, Dim>;
+  using MaskReaderType = itk::ImageFileReader<CharImageType>;
 
   if( outputEdgeMap.compare( "" ) == 0 &&
       outputMaximumGradientImage.compare( "" ) == 0 )
@@ -67,7 +67,7 @@ int main( int argc, char * argv[] )
   const unsigned int numberOfMRImages = inputMRFileNames.size(); // number of modality images
 
   // Read the input MR modalities and set them in a vector of images
-  typedef ImageReaderType::Pointer             LocalReaderPointer;
+  using LocalReaderPointer = ImageReaderType::Pointer;
 
   InputImageList inputMRImageModalitiesList;
   for( unsigned int i = 0; i < numberOfMRImages; i++ )
@@ -115,7 +115,7 @@ int main( int argc, char * argv[] )
 
   if( outputMaximumGradientImage.compare( "" ) != 0 )
     {
-    typedef itk::ImageFileWriter<CharImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<CharImageType>;
     WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetFileName( outputMaximumGradientImage );
@@ -133,7 +133,7 @@ int main( int argc, char * argv[] )
     }
 
   // EdgeMap is created as the inverse of Maximum Gradient Image
-  typedef itk::DivideImageFilter <FloatImageType, CharImageType, FloatImageType> DivideImageFilterType;
+  using DivideImageFilterType = itk::DivideImageFilter <FloatImageType, CharImageType, FloatImageType>;
 
   DivideImageFilterType::Pointer divideImageFilter = DivideImageFilterType::New ();
   divideImageFilter->SetInput1( 1.0 );
@@ -143,7 +143,7 @@ int main( int argc, char * argv[] )
 
   if( outputEdgeMap.compare( "" ) != 0 )
     {
-    typedef itk::ImageFileWriter<FloatImageType> WriterType;
+    using WriterType = itk::ImageFileWriter<FloatImageType>;
     WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetFileName( outputEdgeMap );

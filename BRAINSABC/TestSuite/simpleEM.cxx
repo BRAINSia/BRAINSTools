@@ -69,20 +69,20 @@ int simpleRunEMS( std::string t1Volume,
   std::string T2FileName(t2Volume);
   std::string PDFileName(pdVolume);
 
-  typedef itk::Image<float, 3>         FloatImageType;
-  typedef itk::Image<unsigned char, 3> ByteImageType;
-  typedef itk::Image<short, 3>         ShortImageType;
+  using FloatImageType = itk::Image<float, 3>;
+  using ByteImageType = itk::Image<unsigned char, 3>;
+  using ShortImageType = itk::Image<short, 3>;
 
-  typedef FloatImageType::Pointer FloatImagePointer;
-  typedef ByteImageType::Pointer  ByteImagePointer;
-  typedef ShortImageType::Pointer ShortImagePointer;
+  using FloatImagePointer = FloatImageType::Pointer;
+  using ByteImagePointer = ByteImageType::Pointer;
+  using ShortImagePointer = ShortImageType::Pointer;
 
-  typedef itk::Image<inputPixelType, 3>                                    InputImageType;
-  typedef itk::ImageFileReader<InputImageType>                             InputImageReaderType;
-  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType> RescaleImageFilterType;
-  typedef typename InputImageType::Pointer                                 InputImagePointer;
+  using InputImageType = itk::Image<inputPixelType, 3>;
+  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
+  using RescaleImageFilterType = itk::RescaleIntensityImageFilter<InputImageType, InputImageType>;
+  using InputImagePointer = typename InputImageType::Pointer;
 
-  typedef itk::ImageFileReader<InputImageType> templateReaderType;
+  using templateReaderType = itk::ImageFileReader<InputImageType>;
   typename templateReaderType::Pointer templateReader = templateReaderType::New();
   templateReader->SetFileName(templateVolume);
   templateReader->Update();
@@ -167,7 +167,7 @@ int simpleRunEMS( std::string t1Volume,
   //  typename InputImageType::Pointer HeadOutlineMaskImage =
   // FindLargestForgroundFilledMask<InputImageType>( images[0],
   // otsuPercentileThreshold, closingSize );
-  typedef itk::LargestForegroundFilledMaskImageFilter<InputImageType> LFFMaskFilterType;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<InputImageType>;
   typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   LFF->SetInput(images[0]);
   LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
@@ -184,9 +184,9 @@ int simpleRunEMS( std::string t1Volume,
   std::vector<std::string> PriorsList(priorsList);
   std::vector<double>      PriorWeights(priorsWeightList);
 
-  typedef itk::Image<priorPixelType, 3>        PriorImageType;
-  typedef itk::ImageFileReader<PriorImageType> PriorImageReaderType;
-  typedef typename PriorImageType::Pointer     PriorImagePointer;
+  using PriorImageType = itk::Image<priorPixelType, 3>;
+  using PriorImageReaderType = itk::ImageFileReader<PriorImageType>;
+  using PriorImagePointer = typename PriorImageType::Pointer;
 
   std::vector<PriorImagePointer> priors;
 
@@ -216,7 +216,7 @@ int simpleRunEMS( std::string t1Volume,
       }
     }
 
-  typedef EMSegmentationFilter<InputImageType, PriorImageType> SegFilterType;
+  using SegFilterType = EMSegmentationFilter<InputImageType, PriorImageType>;
   typename SegFilterType::VectorType priorweights( PriorWeights.size() );
   for( unsigned int i = 0; i < PriorWeights.size(); i++ )
     {
@@ -257,7 +257,7 @@ int simpleRunEMS( std::string t1Volume,
   // Write the labels
   std::cerr << "Writing labels...\n";
     {
-    typedef itk::ImageFileWriter<ByteImageType> OutputWriterType;
+    using OutputWriterType = itk::ImageFileWriter<ByteImageType>;
     OutputWriterType::Pointer writer = OutputWriterType::New();
 
     writer->SetInput( segfilter->GetOutput() );
@@ -274,7 +274,7 @@ int simpleRunEMS( std::string t1Volume,
     std::vector<InputImagePointer> imgset = segfilter->GetCorrected();
     for( unsigned i = 0; i < imgset.size(); i++ )
       {
-      typedef itk::CastImageFilter<InputImageType, ShortImageType> CasterType;
+      using CasterType = itk::CastImageFilter<InputImageType, ShortImageType>;
       typename CasterType::Pointer caster = CasterType::New();
       typename itk::MultiplyImageFilter<InputImageType,
                                         InputImageType>::Pointer multiplyFilter
@@ -286,7 +286,7 @@ int simpleRunEMS( std::string t1Volume,
       caster->Update();
       std::string fn = std::string(inputImageFilenames[i] + "_corrected.nii.gz");
 
-      typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+      using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
       ShortWriterType::Pointer writer = ShortWriterType::New();
 
       writer->SetInput( caster->GetOutput() );
@@ -300,7 +300,7 @@ int simpleRunEMS( std::string t1Volume,
     std::vector<ShortImagePointer> probset = segfilter->GetShortPosteriors();
     for( unsigned int i = 0; i < ( probset.size() - 3 ); i++ )
       {
-      typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+      using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
       ShortWriterType::Pointer writer = ShortWriterType::New();
       writer->SetInput(    probset[i]    );
       writer->SetFileName(priorImageFileNames[i] + "_posterior.nii.gz");

@@ -74,9 +74,9 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
 
   constexpr int dimension = 3;
-  typedef itk::ContinuousIndex<double, 3>      ContinuousIndexType;
-  typedef itk::Image<unsigned char, dimension> ImageType;
-  typedef itk::ImageFileReader<ImageType>      ImageReaderType;
+  using ContinuousIndexType = itk::ContinuousIndex<double, 3>;
+  using ImageType = itk::Image<unsigned char, dimension>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
   ImageReaderType::Pointer reader = ImageReaderType::New();
   reader->SetFileName(inputVolume);
   reader->Update();
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     // Check input landmark file to see whether it has required input points
     CheckLandmarks( inputLmks );
 
-    typedef LandmarksMapType::const_iterator LandmarkConstIterator;
+    using LandmarkConstIterator = LandmarksMapType::const_iterator;
     for( LandmarkConstIterator lmkIt = inputLmks.begin(); lmkIt != inputLmks.end(); ++lmkIt )
       {
       if( lmkIt->first == "AC" )

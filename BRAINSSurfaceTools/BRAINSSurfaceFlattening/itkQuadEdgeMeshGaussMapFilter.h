@@ -36,11 +36,10 @@ class QuadEdgeMeshGaussMapFilter :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  typedef QuadEdgeMeshGaussMapFilter Self;
-  typedef SmartPointer<Self>         Pointer;
-  typedef SmartPointer<const Self>   ConstPointer;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
-    Superclass;
+  using Self = QuadEdgeMeshGaussMapFilter;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshGaussMapFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -48,39 +47,39 @@ public:
   itkNewMacro( Self );
 
   /** Input types. */
-  typedef TInputMesh                              InputMeshType;
-  typedef typename InputMeshType::Pointer         InputMeshPointer;
-  typedef typename InputMeshType::ConstPointer    InputMeshConstPointer;
-  typedef typename InputMeshType::CoordRepType    InputCoordRepType;
-  typedef typename InputMeshType::PointType       InputPointType;
-  typedef typename InputPointType::VectorType     InputPointVectorType;
-  typedef typename InputMeshType::PointIdentifier InputPointIdentifier;
-  typedef typename InputMeshType::QEType          InputQEType;
-  typedef typename InputMeshType::VectorType      InputVectorType;
-  typedef typename InputMeshType::EdgeListType    InputEdgeListType;
-  typedef typename InputMeshType::PixelType       InputPixelType;
-  typedef typename InputMeshType::Traits          InputTraits;
+  using InputMeshType = TInputMesh;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputMeshConstPointer = typename InputMeshType::ConstPointer;
+  using InputCoordRepType = typename InputMeshType::CoordRepType;
+  using InputPointType = typename InputMeshType::PointType;
+  using InputPointVectorType = typename InputPointType::VectorType;
+  using InputPointIdentifier = typename InputMeshType::PointIdentifier;
+  using InputQEType = typename InputMeshType::QEType;
+  using InputVectorType = typename InputMeshType::VectorType;
+  using InputEdgeListType = typename InputMeshType::EdgeListType;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputTraits = typename InputMeshType::Traits;
 
-  typedef typename InputMeshType::PointsContainer InputPointsContainer;
+  using InputPointsContainer = typename InputMeshType::PointsContainer;
   typedef typename InputMeshType::PointsContainerConstIterator
     InputPointsContainerConstIterator;
 
   typedef typename InputMeshType::CellsContainerConstIterator
     InputCellsContainerConstIterator;
-  typedef typename InputMeshType::EdgeCellType    InputEdgeCellType;
-  typedef typename InputMeshType::PolygonCellType InputPolygonCellType;
-  typedef typename InputMeshType::PointIdList     InputPointIdList;
+  using InputEdgeCellType = typename InputMeshType::EdgeCellType;
+  using InputPolygonCellType = typename InputMeshType::PolygonCellType;
+  using InputPointIdList = typename InputMeshType::PointIdList;
 
   /** Output types. */
-  typedef TOutputMesh                              OutputMeshType;
-  typedef typename OutputMeshType::Pointer         OutputMeshPointer;
-  typedef typename OutputMeshType::ConstPointer    OutputMeshConstPointer;
-  typedef typename OutputMeshType::CoordRepType    OutputCoordRepType;
-  typedef typename OutputMeshType::PointType       OutputPointType;
-  typedef typename OutputMeshType::PointIdentifier OutputPointIdentifier;
-  typedef typename OutputMeshType::QEType          OutputQEType;
-  typedef typename OutputMeshType::VectorType      OutputVectorType;
-  typedef typename OutputQEType::IteratorGeom      OutputQEIterator;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputMeshConstPointer = typename OutputMeshType::ConstPointer;
+  using OutputCoordRepType = typename OutputMeshType::CoordRepType;
+  using OutputPointType = typename OutputMeshType::PointType;
+  using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
+  using OutputQEType = typename OutputMeshType::QEType;
+  using OutputVectorType = typename OutputMeshType::VectorType;
+  using OutputQEIterator = typename OutputQEType::IteratorGeom;
   typedef typename OutputMeshType::PointsContainerPointer
     OutputPointsContainerPointer;
   typedef typename OutputMeshType::PointsContainerIterator
@@ -97,9 +96,9 @@ public:
       OutputVectorType,
       bool,
       bool> OutputNormalMeshTraits;
-  typedef QuadEdgeMesh<OutputVectorType,
-                       PointDimension, OutputNormalMeshTraits> OutputNormalMeshType;
-  typedef typename OutputNormalMeshType::Pointer OutputNormalMeshPointer;
+  using OutputNormalMeshType = QuadEdgeMesh<OutputVectorType,
+                       PointDimension, OutputNormalMeshTraits>;
+  using OutputNormalMeshPointer = typename OutputNormalMeshType::Pointer;
   typedef typename OutputNormalMeshType::PointsContainerPointer
     OutputNormalMeshPointsContainerPointer;
   typedef typename OutputNormalMeshType::PointsContainerIterator
@@ -109,11 +108,10 @@ public:
   typedef typename OutputNormalMeshType::PointDataContainerIterator
     OutputNormalMeshPointDataContainerIterator;
 
-  typedef QuadEdgeMeshNormalFilter<OutputMeshType, OutputNormalMeshType>
-    NormalFilterType;
-  typedef typename NormalFilterType::Pointer NormalFilterPointer;
+  using NormalFilterType = QuadEdgeMeshNormalFilter<OutputMeshType, OutputNormalMeshType>;
+  using NormalFilterPointer = typename NormalFilterType::Pointer;
 
-  typedef MatrixCoefficients<InputMeshType> CoefficientsComputation;
+  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
 
   void SetCoefficientsMethod( CoefficientsComputation* iMethod )
   {
@@ -153,7 +151,7 @@ protected:
     unsigned int          dim( 0 );
 
     OutputNormalMeshPointDataContainerIterator it = pointdata->Begin();
-    for( ; it != pointdata->End(); ++it )
+    for(; it != pointdata->End(); ++it )
       {
       id = it->Index();
       for( dim = 0; dim < PointDimension; ++dim )

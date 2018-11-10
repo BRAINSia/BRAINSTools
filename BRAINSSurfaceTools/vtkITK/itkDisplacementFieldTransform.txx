@@ -516,7 +516,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   // NOTE: for efficiency, we only need to zero out the coefficients
   // that got fill last time this method was called.
 
-  typedef ImageRegionIterator<JacobianImageType> IteratorType;
+  using IteratorType = ImageRegionIterator<JacobianImageType>;
   IteratorType m_Iterator[SpaceDimension];
   unsigned int j;
 
@@ -663,7 +663,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   OutputVectorType output;
   output.Fill( 0.0 );
 
-  typedef NumericTraits<TScalarType>::RealType RealType;
+  using RealType = NumericTraits<TScalarType>::RealType;
   RealType totalOverlap = 0.0;
 
   for ( unsigned int counter = 0; counter < neighbors; counter++ )

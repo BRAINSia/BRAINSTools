@@ -31,13 +31,13 @@ template <typename TMesh>
 class QuadEdgeMeshDualMetric
 {
 public:
-  typedef TMesh                              MeshType;
-  typedef typename MeshType::ConstPointer    MeshConstPointer;
-  typedef typename MeshType::CellIdentifier  CellIdentifier;
-  typedef typename MeshType::CellAutoPointer CellAutoPointer;
-  typedef typename MeshType::PointIdIterator PointIdIterator;
-  typedef typename MeshType::PointType       PointType;
-  typedef typename PointType::RealType       ValueType;
+  using MeshType = TMesh;
+  using MeshConstPointer = typename MeshType::ConstPointer;
+  using CellIdentifier = typename MeshType::CellIdentifier;
+  using CellAutoPointer = typename MeshType::CellAutoPointer;
+  using PointIdIterator = typename MeshType::PointIdIterator;
+  using PointType = typename MeshType::PointType;
+  using ValueType = typename PointType::RealType;
 
   QuadEdgeMeshDualMetric() : m_Mesh( nullptr )
   {
@@ -71,18 +71,18 @@ class QuadEdgeMeshDualSquaredEuclideanMetric : public
   QuadEdgeMeshDualMetric<TMesh>
 {
 public:
-  typedef QuadEdgeMeshDualMetric<TMesh>          Superclass;
-  typedef QuadEdgeMeshDualSquaredEuclideanMetric Self;
+  using Superclass = QuadEdgeMeshDualMetric<TMesh>;
+  using Self = QuadEdgeMeshDualSquaredEuclideanMetric;
 
-  typedef typename Superclass::MeshType         MeshType;
-  typedef typename Superclass::MeshConstPointer MeshConstPointer;
-  typedef typename Superclass::CellIdentifier   CellIdentifier;
-  typedef typename Superclass::CellAutoPointer  CellAutoPointer;
-  typedef typename Superclass::PointIdIterator  PointIdIterator;
-  typedef typename Superclass::PointType        PointType;
-  typedef typename Superclass::ValueType        ValueType;
+  using MeshType = typename Superclass::MeshType;
+  using MeshConstPointer = typename Superclass::MeshConstPointer;
+  using CellIdentifier = typename Superclass::CellIdentifier;
+  using CellAutoPointer = typename Superclass::CellAutoPointer;
+  using PointIdIterator = typename Superclass::PointIdIterator;
+  using PointType = typename Superclass::PointType;
+  using ValueType = typename Superclass::ValueType;
 
-  typedef TriangleHelper<PointType> TriangleType;
+  using TriangleType = TriangleHelper<PointType>;
 
   QuadEdgeMeshDualSquaredEuclideanMetric() : Superclass()
   {
@@ -134,18 +134,18 @@ class QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric
   : public QuadEdgeMeshDualMetric<TMesh>
 {
 public:
-  typedef QuadEdgeMeshDualMetric<TMesh>                        Superclass;
-  typedef QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric Self;
+  using Superclass = QuadEdgeMeshDualMetric<TMesh>;
+  using Self = QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric;
 
-  typedef typename Superclass::MeshType         MeshType;
-  typedef typename Superclass::MeshConstPointer MeshConstPointer;
-  typedef typename Superclass::CellIdentifier   CellIdentifier;
-  typedef typename Superclass::CellAutoPointer  CellAutoPointer;
-  typedef typename Superclass::PointIdIterator  PointIdIterator;
-  typedef typename Superclass::PointType        PointType;
-  typedef typename Superclass::ValueType        ValueType;
+  using MeshType = typename Superclass::MeshType;
+  using MeshConstPointer = typename Superclass::MeshConstPointer;
+  using CellIdentifier = typename Superclass::CellIdentifier;
+  using CellAutoPointer = typename Superclass::CellAutoPointer;
+  using PointIdIterator = typename Superclass::PointIdIterator;
+  using PointType = typename Superclass::PointType;
+  using ValueType = typename Superclass::ValueType;
 
-  typedef TriangleHelper<PointType> TriangleType;
+  using TriangleType = TriangleHelper<PointType>;
 
   QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric() : Superclass()
   {

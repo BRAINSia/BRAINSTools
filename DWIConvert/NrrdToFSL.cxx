@@ -18,9 +18,9 @@
  *=========================================================================*/
 #include "DWIConvertUtils.h"
 
-typedef short                               PixelValueType;
-typedef itk::Image<PixelValueType, 4>       Volume4DType;
-typedef itk::VectorImage<PixelValueType, 3> VectorVolume4DType;
+using PixelValueType = short;
+using Volume4DType = itk::Image<PixelValueType, 4>;
+using VectorVolume4DType = itk::VectorImage<PixelValueType, 3>;
 
 Volume4DType::Pointer CreateVolume(VectorVolume4DType::Pointer & inputVol)
 {

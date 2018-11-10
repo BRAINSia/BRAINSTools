@@ -26,8 +26,8 @@ class FileSystemDescriptor :
   public XMLContents<TOutputType>
 {
 public:
-  typedef XMLContents<TOutputType> SuperClass;
-  typedef TOutputType              OutputType;
+  using SuperClass = XMLContents<TOutputType>;
+  using OutputType = TOutputType;
   int PrintSelf(std::ostream & os, int indent) const override
   {
     indent += SuperClass::PrintSelf(os, indent);

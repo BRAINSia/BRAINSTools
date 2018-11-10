@@ -86,25 +86,25 @@ class DWIMetaDataDictionaryValidator
                                              const double defaultValue) const;
  public:
   // 3D
-  typedef vnl_vector_fixed<int, 3>                   Integer3x1ArrayType;
-  typedef vnl_vector_fixed<double, 3>                Double3x1ArrayType;
-  typedef vnl_vector_fixed<std::string, 3>           String3x1ArrayType;
+  using Integer3x1ArrayType = vnl_vector_fixed<int, 3>;
+  using Double3x1ArrayType = vnl_vector_fixed<double, 3>;
+  using String3x1ArrayType = vnl_vector_fixed<std::string, 3>;
   // 4D
-  typedef vnl_vector_fixed<int, 4>                   Integer4x1ArrayType;
-  typedef vnl_vector_fixed<double, 4>                Double4ArrayType;
-  typedef vnl_vector_fixed<std::string, 4>           String4x1ArrayType;
+  using Integer4x1ArrayType = vnl_vector_fixed<int, 4>;
+  using Double4ArrayType = vnl_vector_fixed<double, 4>;
+  using String4x1ArrayType = vnl_vector_fixed<std::string, 4>;
 
-  typedef std::vector<double>                      DoubleVectorType;
-  typedef std::vector<std::string>                 StringVectorType;
-  typedef vnl_vector_fixed<double, 3>                GradientDirectionType;
-  typedef std::vector<GradientDirectionType>       GradientTableType;
-  //typedef std::vector<std::vector<double> >        MeasurementFrameType;
+  using DoubleVectorType = std::vector<double>;
+  using StringVectorType = std::vector<std::string>;
+  using GradientDirectionType = vnl_vector_fixed<double, 3>;
+  using GradientTableType = std::vector<GradientDirectionType>;
+  //using MeasurementFrameType = std::vector<std::vector<double> >;
 
-  typedef itk::Matrix<double, 3, 3>                  RotationMatrixType;
-  typedef vnl_vector_fixed<DoubleVectorType, 3>      SpaceDirectionType;
+  using RotationMatrixType = itk::Matrix<double, 3, 3>;
+  using SpaceDirectionType = vnl_vector_fixed<DoubleVectorType, 3>;
 
-  typedef itk::MetaDataDictionary &            MetaDataDictionaryType;
-  typedef const itk::MetaDataDictionary &      ConstMetaDataDictionaryType;
+  using MetaDataDictionaryType = itk::MetaDataDictionary &;
+  using ConstMetaDataDictionaryType = const itk::MetaDataDictionary &;
 
   DWIMetaDataDictionaryValidator();
   ~DWIMetaDataDictionaryValidator();

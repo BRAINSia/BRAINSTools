@@ -66,25 +66,25 @@ int main( int argc, char *argv[] )
   std::cout << "---------------------------------------------------" << std::endl;
 
   constexpr unsigned int Dimension = 3;
-  typedef float MeshPixelType;
+  using MeshPixelType = float;
 
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> InputMeshType;
-  typedef itk::QuadEdgeMesh<MeshPixelType, Dimension> OutputMeshType;
+  using InputMeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using OutputMeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  typedef itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType> ReaderType;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputSurfaceFile.c_str() );
 
-  typedef itk::QuadEdgeMeshScalarPixelValuesSmoothingFilter<
-      InputMeshType, OutputMeshType>                       FilterType;
+  using FilterType = itk::QuadEdgeMeshScalarPixelValuesSmoothingFilter<
+      InputMeshType, OutputMeshType>;
 
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetLambda( lambda );
   filter->SetMaximumNumberOfIterations( iterations );
 
-  typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<OutputMeshType> WriterType;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<OutputMeshType>;
   WriterType::Pointer writer = WriterType::New();
 
   filter->SetInput( reader->GetOutput() );

@@ -67,7 +67,7 @@ void CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::Upd
 
   m_Output  = SpatialObjectType::New();
 
-  typedef itk::ImageRegionConstIteratorWithIndex<InputImageType> IteratorType;
+  using IteratorType = itk::ImageRegionConstIteratorWithIndex<InputImageType>;
   IteratorType it( m_Input, m_Input->GetLargestPossibleRegion() );
   // int count;
   for( it.GoToBegin(); !it.IsAtEnd(); ++it )
@@ -96,9 +96,9 @@ InputImagePointer maskImage;
 
 if (m_Transform.IsNotNull())
 {
-typedef itk::ResampleImageFilter<
+using ResampleFilterType = itk::ResampleImageFilter<
 InputImageType,
-InputImageType >    ResampleFilterType;
+InputImageType >;
 
 ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 //TransformPointer inverseTransform = TTransformType::New();
@@ -122,10 +122,10 @@ maskImage = m_Image;
 
 
 
-typedef itk::ImageRegionConstIteratorWithIndex< InputImageType >  IteratorType;
+using IteratorType = itk::ImageRegionConstIteratorWithIndex< InputImageType >;
 IteratorType it(maskImage, maskImage->GetLargestPossibleRegion());
 
-typedef itk::SpatialObjectPoint<3>    BlobPointType;
+using BlobPointType = itk::SpatialObjectPoint<3>;
 SpatialObjectType::PointListType    points;
 m_Blob  = SpatialObjectType::New();
 

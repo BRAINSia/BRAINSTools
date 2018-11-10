@@ -35,13 +35,13 @@
 
 // typedef
 constexpr unsigned int PointDim = 3;
-typedef itk::Point<double, PointDim>          PointType;
-typedef std::map<std::string, PointType>      DatasetMapType;
-typedef std::map<std::string, DatasetMapType> LmkDBType;
-typedef vnl_matrix<double>                    MatrixType;
-typedef vnl_vector_fixed<double, PointDim>    VectorType;
-typedef std::map<std::string, MatrixType>     MatrixMapType;
-typedef std::map<std::string, VectorType>     VectorMapType;
+using PointType = itk::Point<double, PointDim>;
+using DatasetMapType = std::map<std::string, PointType>;
+using LmkDBType = std::map<std::string, DatasetMapType>;
+using MatrixType = vnl_matrix<double>;
+using VectorType = vnl_vector_fixed<double, PointDim>;
+using MatrixMapType = std::map<std::string, MatrixType>;
+using VectorMapType = std::map<std::string, VectorType>;
 
 /*
  * Description:

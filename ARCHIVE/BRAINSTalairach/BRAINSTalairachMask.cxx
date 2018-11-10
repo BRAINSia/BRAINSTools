@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
 
   constexpr int dimension = 3;
-  typedef itk::Image<unsigned char, dimension> ImageType;
-  typedef itk::ImageFileReader<ImageType>      ImageReaderType;
+  using ImageType = itk::Image<unsigned char, dimension>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer reader = ImageReaderType::New();
   reader->SetFileName(inputVolume);
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
   tConv->Update();
 
-  typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->SetFileName( outputVolume );
   writer->SetInput( tConv->GetImage() );

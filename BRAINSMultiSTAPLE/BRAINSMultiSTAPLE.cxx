@@ -81,9 +81,9 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  typedef itk::Image<unsigned short, 3> USImageType;
+  using USImageType = itk::Image<unsigned short, 3>;
 
-  typedef std::vector<USImageType::Pointer> ImageList;
+  using ImageList = std::vector<USImageType::Pointer>;
   ImageList inputLabelVolumes;
   for( std::vector<std::string>::const_iterator it = inputLabelVolume.begin();
        it != inputLabelVolume.end(); ++it )
@@ -130,8 +130,7 @@ int main(int argc, char *argv[])
       }
     printImageStats<USImageType>(compositeVolume);
 
-    typedef std::vector<itk::TransformFileReader::TransformPointer>
-      TransformListType;
+    using TransformListType = std::vector<itk::TransformFileReader::TransformPointer>;
 
     TransformListType inputTransforms;
 
@@ -163,7 +162,7 @@ int main(int argc, char *argv[])
       {
       std::cout << "No transforms specified, using Identity" << std::endl;
       // fake it with identity transforms
-      typedef itk::IdentityTransform<double, 3> IDTransformType;
+      using IDTransformType = itk::IdentityTransform<double, 3>;
 
       IDTransformType::Pointer                   idXfrm = IDTransformType::New();
       itk::TransformFileReader::TransformPointer baseXfrm = idXfrm.GetPointer();
@@ -177,9 +176,8 @@ int main(int argc, char *argv[])
     // NOTE see ANTS/Examples/make_interpolator_snip.tmp line 113 --
     // the sigma defaults to the image spacing apparently, but the
     // sigma can also be specified on the command line.
-    typedef std::less<itk::NumericTraits<unsigned char>::RealType> ucharLess;
-    typedef itk::LabelImageGaussianInterpolateImageFunction<USImageType, double, ucharLess>
-      InterpolationFunctionType;
+    using ucharLess = std::less<itk::NumericTraits<unsigned char>::RealType>;
+    using InterpolationFunctionType = itk::LabelImageGaussianInterpolateImageFunction<USImageType, double, ucharLess>;
     InterpolationFunctionType::Pointer interpolateFunc =
       InterpolationFunctionType::New();
     double                   sigma[3];
@@ -199,7 +197,7 @@ int main(int argc, char *argv[])
 
       itk::TransformFileReader::TransformPointer curTransformBase = (*xfrmIt);
 
-      typedef itk::ResampleImageFilter<USImageType, USImageType, double> ResampleFilterType;
+      using ResampleFilterType = itk::ResampleImageFilter<USImageType, USImageType, double>;
 
       std::cout << "Resampling " << (*nameIt) << std::flush;
 
@@ -248,7 +246,7 @@ int main(int argc, char *argv[])
       }
     }
 
-  typedef itk::MultiLabelSTAPLEImageFilter<USImageType, USImageType> STAPLEFilterType;
+  using STAPLEFilterType = itk::MultiLabelSTAPLEImageFilter<USImageType, USImageType>;
   STAPLEFilterType::Pointer STAPLEFilter = STAPLEFilterType::New();
   STAPLEFilter->SetNumberOfThreads(1);
 

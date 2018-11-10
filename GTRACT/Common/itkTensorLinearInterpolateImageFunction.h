@@ -46,11 +46,11 @@ class TensorLinearInterpolateImageFunction :
   public         TensorInterpolateImageFunction<TInputImage, TCoordRep>
 {
 public:
-  /** Standard class typedefs. */
-  typedef TensorLinearInterpolateImageFunction                   Self;
-  typedef TensorInterpolateImageFunction<TInputImage, TCoordRep> Superclass;
-  typedef SmartPointer<Self>                                     Pointer;
-  typedef SmartPointer<const Self>                               ConstPointer;
+  /** Standard class type alias. */
+  using Self = TensorLinearInterpolateImageFunction;
+  using Superclass = TensorInterpolateImageFunction<TInputImage, TCoordRep>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -59,11 +59,11 @@ public:
   itkTypeMacro(TensorLinearInterpolateImageFunction,
                TensorInterpolateImageFunction);
 
-  /** InputImageType typedef support. */
-  typedef typename Superclass::InputImageType InputImageType;
-  typedef typename Superclass::PixelType      PixelType;
-  typedef typename Superclass::ValueType      ValueType;
-  typedef typename Superclass::RealType       RealType;
+  /** InputImageType type alias support. */
+  using InputImageType = typename Superclass::InputImageType;
+  using PixelType = typename Superclass::PixelType;
+  using ValueType = typename Superclass::ValueType;
+  using RealType = typename Superclass::RealType;
 
   /** Grab the vector dimension from the superclass. */
   // static constexpr unsigned int Dimension = //    Superclass::Dimension;
@@ -71,14 +71,14 @@ public:
   /** Dimension underlying input image. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
 
-  /** Index typedef support. */
-  typedef typename Superclass::IndexType IndexType;
+  /** Index type alias support. */
+  using IndexType = typename Superclass::IndexType;
 
-  /** ContinuousIndex typedef support. */
-  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
+  /** ContinuousIndex type alias support. */
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
 
   /** Output type is Vector<double,Dimension> */
-  typedef typename Superclass::OutputType OutputType;
+  using OutputType = typename Superclass::OutputType;
 
   /** Evaluate the function at a ContinuousIndex position
    *

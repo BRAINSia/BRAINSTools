@@ -33,12 +33,12 @@ int itkVectorFFTWTest(int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef  float PixelType;
+  using PixelType = float;
   constexpr unsigned int dims = 3;
-  typedef itk::Image<itk::Vector<PixelType, dims>, dims>                                   ImageType;
-  typedef itk::VectorFFTWHalfHermitianToRealInverseFFTImageFilter<ImageType::PixelType, 3> FFTWComplexToRealImageType;
-  typedef itk::VectorFFTWRealToHalfHermitianForwardFFTImageFilter<ImageType::PixelType, 3> FFTWRealToComplexImageType;
-  typedef itk::ImageFileWriter<ImageType>                                                  WriterType;
+  using ImageType = itk::Image<itk::Vector<PixelType, dims>, dims>;
+  using FFTWComplexToRealImageType = itk::VectorFFTWHalfHermitianToRealInverseFFTImageFilter<ImageType::PixelType, 3>;
+  using FFTWRealToComplexImageType = itk::VectorFFTWRealToHalfHermitianForwardFFTImageFilter<ImageType::PixelType, 3>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   const ImageType::SizeType  imageSize = {{32, 32, 32}};
   const ImageType::IndexType imageIndex = {{0, 0, 0}};

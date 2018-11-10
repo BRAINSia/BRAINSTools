@@ -34,7 +34,7 @@ class XMLElementParser :
   public XMLElementContainer
 {
 private:
-  typedef XMLElementContainer SuperClass;
+  using SuperClass = XMLElementContainer;
   void toLower(std::string & s) const
   {
     for( unsigned i = 0; i < s.size(); i++ )
@@ -44,10 +44,10 @@ private:
   }
 
 public:
-  typedef std::map<std::string, XMLElementContainer *> MapType;
-  typedef MapType::iterator                            iterator;
+  using MapType = std::map<std::string, XMLElementContainer *>;
+  using iterator = MapType::iterator;
   typedef MapType::const_iterator                      const_iterator;
-  typedef std::vector<std::string>                     StringVectorType;
+  using StringVectorType = std::vector<std::string>;
 
   XMLElementParser(const char *name) :
     XMLElementContainer(name)

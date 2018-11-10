@@ -79,7 +79,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
   // ////////////////////////////////////////////////////////////////////////
   //  foreground = FindLargestForgroundFilledMask<SImageType>(volOrig,
   // otsuPercentileThreshold, closingSize);
-  typedef itk::LargestForegroundFilledMaskImageFilter<SImageType> LFFMaskFilterType;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
   LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   LFF->SetInput(volOrig);
   LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
@@ -135,14 +135,14 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
   // from the neck.
   double ForegroundLevel = 1;
     {
-    typedef itk::ImageRegionIteratorWithIndex<SImageType> SImageIteratorType;
+    using SImageIteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
     SImageIteratorType ItPixel( foreground, foreground->GetLargestPossibleRegion() );
 
     SImageType::PointType PixelPhysicalPoint;
     PixelPhysicalPoint.Fill(0.0);
 
     ItPixel.Begin();
-    for( ; !ItPixel.IsAtEnd(); ++ItPixel )
+    for(; !ItPixel.IsAtEnd(); ++ItPixel )
       {
       if( ItPixel.Get() != 0 )
         {
@@ -160,13 +160,13 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
   // ////////////////////////////////////////////////////////////////////////
   //  This will populate a histogram to make an increasing volume distribution.
     {
-    typedef itk::Statistics::Histogram<double, 1> HistogramType;
+    using HistogramType = itk::Statistics::Histogram<double, 1>;
 
-    typedef itk::ImageRegionIteratorWithIndex<SImageType> Iterator;
+    using Iterator = itk::ImageRegionIteratorWithIndex<SImageType>;
 
     double maxval = 0;
     double minval = std::numeric_limits<double>::max();
-    typedef itk::ImageRegionIteratorWithIndex<SImageType> SImageIteratorType;
+    using SImageIteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
     SImageIteratorType imIter( foreground, foreground->GetLargestPossibleRegion() );
     while( !imIter.IsAtEnd() )
       {
@@ -299,7 +299,7 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     double largestAreaRadius = 0;
     double MaxCrossSectionalArea = 0.0;
     std::cout << "zero bin count to be skipped = " << histoIter.GetFrequency() << std::endl;
-    for( ; ( histoIter != histogram->End() && !exitLoop ); ++histoIter )
+    for(; ( histoIter != histogram->End() && !exitLoop ); ++histoIter )
       {
       instance =  histoIter.GetInstanceIdentifier();
       index =  histogram->GetIndex(instance);
@@ -424,12 +424,12 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
   // image voxel to Background;
   //  otherwise set the result image voxel to the source image pixel value.
     {
-    typedef itk::ImageRegionIteratorWithIndex<SImageType> SImageIteratorType;
+    using SImageIteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
     SImageIteratorType ClippedImagePixel( foreground, foreground->GetLargestPossibleRegion() );
     SImageIteratorType OriginalImagePixel( volOrig, volOrig->GetLargestPossibleRegion() );
 
     ClippedImagePixel.Begin();
-    for( ; !ClippedImagePixel.IsAtEnd(); ++ClippedImagePixel )
+    for(; !ClippedImagePixel.IsAtEnd(); ++ClippedImagePixel )
       {
       if( ClippedImagePixel.Get() != 0 )
         {

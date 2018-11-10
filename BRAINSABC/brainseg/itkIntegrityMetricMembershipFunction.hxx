@@ -121,7 +121,7 @@ IntegrityMetricMembershipFunction< TSample >
     }
 
   // compute mean and covariance
-  typedef itk::Statistics::CovarianceSampleFilter< SampleType > CovarianceAlgorithmType;
+  using CovarianceAlgorithmType = itk::Statistics::CovarianceSampleFilter< SampleType >;
   typename CovarianceAlgorithmType::Pointer covarianceAlgorithm = CovarianceAlgorithmType::New();
   covarianceAlgorithm->SetInput( measurementSample );
   covarianceAlgorithm->Update();
@@ -130,10 +130,10 @@ IntegrityMetricMembershipFunction< TSample >
   this->SetCovariance( covarianceAlgorithm->GetCovarianceMatrix() );
 
   // Compute Mahalanobis and Euclidean distances for each sample and put them in vectors
-  typedef itk::Statistics::EuclideanDistanceMetric< MeasurementVectorType >  EDMetricType;
+  using EDMetricType = itk::Statistics::EuclideanDistanceMetric< MeasurementVectorType >;
   typename EDMetricType::Pointer euclideanDist = EDMetricType::New();
 
-  typedef itk::Statistics::MahalanobisDistanceMetric< MeasurementVectorType >  MDMetricType;
+  using MDMetricType = itk::Statistics::MahalanobisDistanceMetric< MeasurementVectorType >;
   typename MDMetricType::Pointer mahalanobisDist = MDMetricType::New();
   mahalanobisDist->SetMeasurementVectorSize( this->GetMeasurementVectorSize() );
   mahalanobisDist->SetCovariance( this->GetCovariance().GetVnlMatrix() );

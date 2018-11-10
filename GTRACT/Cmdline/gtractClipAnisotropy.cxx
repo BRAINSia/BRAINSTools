@@ -92,12 +92,12 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  typedef float                      PixelType;
-  typedef itk::Image<PixelType, 3>   ImageType;
-  typedef ImageType::RegionType      ImageRegionType;
-  typedef ImageRegionType::IndexType IndexType;
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, 3>;
+  using ImageRegionType = ImageType::RegionType;
+  using IndexType = ImageRegionType::IndexType;
 
-  typedef itk::ImageFileReader<ImageType> FileReaderType;
+  using FileReaderType = itk::ImageFileReader<ImageType>;
   FileReaderType::Pointer imageReader = FileReaderType::New();
   imageReader->SetFileName( inputVolume );
 
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
   ImageType::Pointer originalImage = imageReader->GetOutput();
 
-  typedef itk::ImageRegionIteratorWithIndex<ImageType> ImageIteratorType;
+  using ImageIteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
   ImageIteratorType it( originalImage, originalImage->GetLargestPossibleRegion() );
   ImageRegionType   region = originalImage->GetLargestPossibleRegion();
   int               lastSlice = region.GetSize(2) - 1;
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
       }
     }
 
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

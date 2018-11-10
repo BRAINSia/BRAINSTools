@@ -54,9 +54,9 @@ namespace itk
 itk::VersorRigid3DTransform<double>::Pointer
 ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite)
 {
-  typedef itk::VersorRigid3DTransform<double>     VersorRigid3DTransformType;
-  typedef itk::ScaleVersor3DTransform<double>     ScaleVersor3DTransformType;
-  typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
+  using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
+  using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
 
   VersorRigid3DTransformType::Pointer versorRigid = VersorRigid3DTransformType::New();
   versorRigid->SetIdentity();
@@ -87,7 +87,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
         }
       else if( transformFileType == "AffineTransform" )
         {
-        typedef itk::AffineTransform<double, 3> AffineTransformType;
+        using AffineTransformType = itk::AffineTransform<double, 3>;
         const AffineTransformType::ConstPointer tempInitializerITKTransform =
           static_cast<AffineTransformType const *>( genericTransformToWrite.GetPointer() );
         AssignRigid::ExtractVersorRigid3DTransform(versorRigid, tempInitializerITKTransform);
@@ -122,8 +122,8 @@ int WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3,
                               const std::string & outputTransform,
                               const std::string & strippedOutputTransform)
 {
-  typedef itk::VersorRigid3DTransform<TInputScalarType>  VersorRigid3DTransformType;
-  typedef itk::CompositeTransform<TInputScalarType, 3> CompositeTransformType;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<TInputScalarType>;
+  using CompositeTransformType = itk::CompositeTransform<TInputScalarType, 3>;
   // //////////////////////////////////////////////////////////////////////////
   // Write output transforms of BRAINSFit.
   /*
@@ -173,9 +173,9 @@ int WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3,
         }
       else if( transformFileType == "BSplineTransform" )
         {
-        typedef itk::BSplineTransform<TInputScalarType,
+        using BSplineTransformType = itk::BSplineTransform<TInputScalarType,
                                       3,
-                                      3> BSplineTransformType;
+                                      3>;
 
         const typename BSplineTransformType::ConstPointer tempInitializerITKTransform =
                                                   static_cast<BSplineTransformType  const *>( genericComponent.GetPointer() );
@@ -257,18 +257,18 @@ typename itk::Transform<TScalarType, 3, 3>::Pointer ReadTransformFromDisk(const 
 {
   typename itk::Transform<TScalarType, 3, 3>::Pointer genericTransform = nullptr;
 
-  typedef typename itk::ThinPlateR2LogRSplineKernelTransform<TScalarType, 3> ThinPlateSpline3DTransformType;
-  typedef typename itk::ScaleVersor3DTransform<TScalarType>                  ScaleVersor3DTransformType;
-  typedef typename itk::ScaleSkewVersor3DTransform<TScalarType>              ScaleSkewVersor3DTransformType;
-  typedef typename itk::VersorRigid3DTransform<TScalarType>                  VersorRigid3DTransformType;
-  typedef typename itk::AffineTransform<TScalarType, 3>                      AffineTransformType;
-  typedef typename itk::BSplineTransform<TScalarType, 3, 3>                  BSplineTransformType;
-  typedef typename itk::CompositeTransform<TScalarType, 3>                   BRAINSCompositeTransformType;
-  typedef typename itk::TransformFileReaderTemplate<TScalarType>             TransformFileReaderType;
+  using ThinPlateSpline3DTransformType = typename itk::ThinPlateR2LogRSplineKernelTransform<TScalarType, 3>;
+  using ScaleVersor3DTransformType = typename itk::ScaleVersor3DTransform<TScalarType>;
+  using ScaleSkewVersor3DTransformType = typename itk::ScaleSkewVersor3DTransform<TScalarType>;
+  using VersorRigid3DTransformType = typename itk::VersorRigid3DTransform<TScalarType>;
+  using AffineTransformType = typename itk::AffineTransform<TScalarType, 3>;
+  using BSplineTransformType = typename itk::BSplineTransform<TScalarType, 3, 3>;
+  using BRAINSCompositeTransformType = typename itk::CompositeTransform<TScalarType, 3>;
+  using TransformFileReaderType = typename itk::TransformFileReaderTemplate<TScalarType>;
 
   typename TransformFileReaderType::Pointer transformListReader = TransformFileReaderType::New();
 
-  typedef typename TransformFileReaderType::TransformListType TransformListType;
+  using TransformListType = typename TransformFileReaderType::TransformListType;
 
   TransformListType currentTransformList;
 
@@ -450,16 +450,16 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
     }
 
   // First check if the input transform is a displacementField transform
-  typedef itk::DisplacementFieldTransform<TInputScalarType, 3>                   InputDisplacementFieldTransformType;
+  using InputDisplacementFieldTransformType = itk::DisplacementFieldTransform<TInputScalarType, 3>;
   if( transformFileType == "DisplacementFieldTransform" ) // if it's a displacement field transform, we write that as a float displacement
     {
     const InputDisplacementFieldTransformType *dispXfrm = static_cast<const InputDisplacementFieldTransformType *>(MyTransform );
-    typedef typename InputDisplacementFieldTransformType::DisplacementFieldType    InputDisplacementFieldType;
+    using InputDisplacementFieldType = typename InputDisplacementFieldTransformType::DisplacementFieldType;
     typename InputDisplacementFieldType::ConstPointer inputDispField = dispXfrm->GetDisplacementField();
 
     // Define a float type displacement field
-    typedef itk::Vector<TWriteScalarType, 3>     VectorType;
-    typedef itk::Image<VectorType, 3> OutputDisplacementFieldType;
+    using VectorType = itk::Vector<TWriteScalarType, 3>;
+    using OutputDisplacementFieldType = itk::Image<VectorType, 3>;
     typename OutputDisplacementFieldType::Pointer outputDispField = OutputDisplacementFieldType::New();
     outputDispField->CopyInformation( inputDispField );
     outputDispField->SetRegions( inputDispField->GetLargestPossibleRegion() );
@@ -475,7 +475,7 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
       ++inIt; ++outIt;
       }
 
-    typedef itk::ImageFileWriter<OutputDisplacementFieldType>   DisplacementFieldWriter;
+    using DisplacementFieldWriter = itk::ImageFileWriter<OutputDisplacementFieldType>;
     typename DisplacementFieldWriter::Pointer dispWriter = DisplacementFieldWriter::New();
     dispWriter->SetInput(outputDispField);
     dispWriter->SetFileName(TransformFilename.c_str() );
@@ -492,7 +492,7 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
     }
   else // other transforms (not displacementField transforms)
     {
-    typedef itk::TransformFileWriterTemplate<TWriteScalarType> TransformWriterType;
+    using TransformWriterType = itk::TransformFileWriterTemplate<TWriteScalarType>;
     typename TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
     transformWriter->SetFileName( TransformFilename.c_str() );
 #if ITK_VERSION_MAJOR >= 5
@@ -528,7 +528,7 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
          ------
          Therefore, we cast the inverse transform to the AffineTransform type before it is passed to TransformFileWriter.
          */
-        typedef typename itk::MatrixOffsetTransformBase<TInputScalarType, 3, 3> GenericTransformType;
+        using GenericTransformType = typename itk::MatrixOffsetTransformBase<TInputScalarType, 3, 3>;
         // Check if MyTransform is a GenericTransformType
         if( transformFileType.find( "AffineTransform" ) != std::string::npos ||
             transformFileType == "MatrixOffsetTransformBase" ||
@@ -546,7 +546,7 @@ void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const M
           {
           typename GenericTransformType::Pointer genericTransform =
             static_cast<GenericTransformType *>( MyTransform->GetInverseTransform().GetPointer() );
-          typedef itk::AffineTransform<TInputScalarType, 3>     InverseTransformType;
+          using InverseTransformType = itk::AffineTransform<TInputScalarType, 3>;
           const typename InverseTransformType::Pointer tempInverseTransform = InverseTransformType::New();
           tempInverseTransform->SetMatrix( genericTransform->GetMatrix() );
           tempInverseTransform->SetOffset( genericTransform->GetOffset() );

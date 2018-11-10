@@ -23,7 +23,7 @@
 
 int main(int, char * *)
 {
-  typedef itk::Image<unsigned char, 3> ImageType;
+  using ImageType = itk::Image<unsigned char, 3>;
 
   int viewIndex(0);
 

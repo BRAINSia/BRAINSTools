@@ -45,11 +45,11 @@ class QuadEdgeMeshGenerateDeformationFieldFilter :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshGenerateDeformationFieldFilter);
 
-  typedef QuadEdgeMeshGenerateDeformationFieldFilter Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>                           Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = QuadEdgeMeshGenerateDeformationFieldFilter;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
+      TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshGenerateDeformationFieldFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -57,12 +57,12 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  typedef TInputPointSet InputPointSetType;
+  using InputPointSetType = TInputPointSet;
 
-  typedef TInputMesh                        InputMeshType;
-  typedef typename InputMeshType::PointType PointType;
+  using InputMeshType = TInputMesh;
+  using PointType = typename InputMeshType::PointType;
 
-  typedef TOutputMesh OutputMeshType;
+  using OutputMeshType = TOutputMesh;
 
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Input

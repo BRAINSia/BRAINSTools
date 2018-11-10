@@ -56,11 +56,11 @@ class VDemonsPreprocessor : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsPreprocessor);
 
-  /** Standard class typedefs. */
-  typedef VDemonsPreprocessor      Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = VDemonsPreprocessor;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(VDemonsPreprocessor, Object);
@@ -69,17 +69,17 @@ public:
   itkNewMacro(Self);
 
   /** Input Image Type. */
-  typedef TInputImage InputImageType;
+  using InputImageType = TInputImage;
   /** Output Image Type. */
-  typedef TOutputImage OutputImageType;
+  using OutputImageType = TOutputImage;
 
   /** Input image pixel type. */
-  typedef typename InputImageType::PixelType  InputPixelType;
-  typedef typename InputImageType::Pointer    InputImagePointer;
-  typedef typename OutputImageType::PixelType PixelType;
-  typedef typename OutputImageType::IndexType IndexType;
-  typedef typename OutputImageType::SizeType  SizeType;
-  typedef typename OutputImageType::Pointer   OutputImagePointer;
+  using InputPixelType = typename InputImageType::PixelType;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using PixelType = typename OutputImageType::PixelType;
+  using IndexType = typename OutputImageType::IndexType;
+  using SizeType = typename OutputImageType::SizeType;
+  using OutputImagePointer = typename OutputImageType::Pointer;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -97,15 +97,15 @@ public:
   }
 
   /** Displacement field value type. */
-  typedef float FieldValueType;
+  using FieldValueType = float;
 
   /** Displacement field pixel type. */
-  typedef Vector<FieldValueType,
-                 Self::ImageDimension> FieldPixelType;
+  using FieldPixelType = Vector<FieldValueType,
+                 Self::ImageDimension>;
 
   /** Displacement field type. */
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
 
   /** Set the initial Displacement Field. */
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);

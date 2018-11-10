@@ -94,16 +94,15 @@ BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ConstrainedValueMultiplicationImageFilter);
 
-  /** Standard class typedefs. */
-  typedef ConstrainedValueMultiplicationImageFilter  Self;
-  typedef BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
+  /** Standard class type alias. */
+  using Self = ConstrainedValueMultiplicationImageFilter;
+  using Superclass = BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
                                    Functor::ConstrainedValueMultiplication<
     typename TInputImage1::PixelType,
     typename TInputImage2::PixelType,
-    typename TOutputImage::PixelType> >
-                                    Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+    typename TOutputImage::PixelType> >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

@@ -67,31 +67,31 @@ class CreateSpatialObjectFilter : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(CreateSpatialObjectFilter);
 
-  /** Standard class typedefs. */
-  typedef CreateSpatialObjectFilter Self;
-  typedef itk::Object               Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  /** Standard class type alias. */
+  using Self = CreateSpatialObjectFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Some convenient typedefs. */
-  typedef TInputImage                            InputImageType;
-  typedef typename InputImageType::Pointer       InputImagePointer;
-  typedef typename InputImageType::ConstPointer  InputImageConstPointer;
-  typedef typename InputImageType::RegionType    InputImageRegionType;
-  typedef typename InputImageType::SizeType      InputImageSizeType;
-  typedef typename InputImageType::SpacingType   InputImageSpacingType;
-  typedef typename InputImageType::PointType     InputImagePointType;
-  typedef typename InputImageType::PixelType     InputImagePixelType;
-  typedef typename InputImageType::IndexType     InputImageIndexType;
-  typedef typename InputImageType::DirectionType InputImageDirectionType;
+  /** Some convenient type alias. */
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputImageSizeType = typename InputImageType::SizeType;
+  using InputImageSpacingType = typename InputImageType::SpacingType;
+  using InputImagePointType = typename InputImageType::PointType;
+  using InputImagePixelType = typename InputImageType::PixelType;
+  using InputImageIndexType = typename InputImageType::IndexType;
+  using InputImageDirectionType = typename InputImageType::DirectionType;
 
-  typedef TTransformType                  TransformType;
-  typedef typename TransformType::Pointer TransformPointer;
+  using TransformType = TTransformType;
+  using TransformPointer = typename TransformType::Pointer;
 
-  typedef TSpatialObject                            SpatialObjectType;
-  typedef typename SpatialObjectType::BlobPointType BlobPointType;
-  typedef typename SpatialObjectType::Pointer       SpatialObjectTypePointer;
-  typedef typename SpatialObjectType::PointListType SpatialObjectPointListType;
+  using SpatialObjectType = TSpatialObject;
+  using BlobPointType = typename SpatialObjectType::BlobPointType;
+  using SpatialObjectTypePointer = typename SpatialObjectType::Pointer;
+  using SpatialObjectPointListType = typename SpatialObjectType::PointListType;
 
   /** Standard New method. */
   itkNewMacro(Self);

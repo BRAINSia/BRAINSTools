@@ -23,13 +23,13 @@ class vnl_index_sort
 {
   public:
 
-   //: typedefs for vector sorting
-  typedef vnl_vector<TValue> SortVectorType;
-  typedef vnl_vector<TIndex> SortVectorIndexType;
+   //: type alias for vector sorting
+  using SortVectorType = vnl_vector<TValue>;
+  using SortVectorIndexType = vnl_vector<TIndex>;
 
-  //: typedefs for matrix sorting
-  typedef vnl_matrix<TValue> SortMatrixType;
-  typedef vnl_matrix<TIndex> SortMatrixIndexType;
+  //: type alias for matrix sorting
+  using SortMatrixType = vnl_matrix<TValue>;
+  using SortMatrixIndexType = vnl_matrix<TIndex>;
 
   //: matrix sort along rows or columns?
   enum DirectionType {ByRow, ByColumn} Direction;

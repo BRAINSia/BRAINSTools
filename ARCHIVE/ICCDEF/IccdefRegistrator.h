@@ -73,11 +73,11 @@ class IccdefRegistrator : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(IccdefRegistrator);
 
-  /** Standard class typedefs. */
-  typedef IccdefRegistrator        Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = IccdefRegistrator;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(IccdefRegistrator, Object);
@@ -86,48 +86,48 @@ public:
   itkNewMacro(Self);
 
   /** Fixed Image Type. */
-  typedef TRealImage RealImageType;
+  using RealImageType = TRealImage;
 
   /** Moving Image Type. */
-  typedef TOutputImage                        OutputImageType;
-  typedef typename OutputImageType::PixelType PixelType;
+  using OutputImageType = TOutputImage;
+  using PixelType = typename OutputImageType::PixelType;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TRealImage::ImageDimension;
 
   /** Deformation field value type. */
-  typedef TFieldValue FieldValueType;
+  using FieldValueType = TFieldValue;
 
   /** Deformation field pixel type. */
-  typedef Vector<FieldValueType,
-                 Self::ImageDimension> FieldPixelType;
+  using FieldPixelType = Vector<FieldValueType,
+                 Self::ImageDimension>;
 
   /** Deformation field type. */
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
 
   /** Fixed Image Pyramid Type. */
-  typedef RecursiveMultiResolutionPyramidImageFilter<
+  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
       RealImageType,
-      RealImageType>    FixedImagePyramidType;
+      RealImageType>;
 
   /** Moving Image Pyramid Type. */
-  typedef RecursiveMultiResolutionPyramidImageFilter<
+  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
       RealImageType,
-      RealImageType>   MovingImagePyramidType;
+      RealImageType>;
 
   /** Registration Method. */
-  typedef MultiResolutionICCDeformableRegistration<
+  using RegistrationType = MultiResolutionICCDeformableRegistration<
       RealImageType,
       RealImageType,
-      TDisplacementField>    RegistrationType;
+      TDisplacementField>;
 
   /** UnsignedIntArray type. */
-  typedef Array<unsigned int> UnsignedIntArray;
+  using UnsignedIntArray = Array<unsigned int>;
 
   /** ShrinkFactorsArray type. */
-  typedef FixedArray<unsigned int,
-                     Self::ImageDimension> ShrinkFactorsArray;
+  using ShrinkFactorsArray = FixedArray<unsigned int,
+                     Self::ImageDimension>;
 
   /** Set the intial deformation field **/
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
@@ -197,8 +197,8 @@ public:
   itkSetMacro(DefaultPixelValue, typename RealImageType::PixelType);
   itkGetMacro(DefaultPixelValue, typename RealImageType::PixelType);
 
-  typedef ICCDeformableRegistrationFilter<RealImageType, RealImageType,
-                                          TDisplacementField> BaseRegistrationFilterType;
+  using BaseRegistrationFilterType = ICCDeformableRegistrationFilter<RealImageType, RealImageType,
+                                          TDisplacementField>;
   void SetRegistrationFilter(
     BaseRegistrationFilterType * filter)
   {

@@ -37,25 +37,25 @@ class QuadEdgeMeshSphericalParameterization :
   public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  typedef QuadEdgeMeshSphericalParameterization Self;
-  typedef QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh,
-                                           TOutputMesh> Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = QuadEdgeMeshSphericalParameterization;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh,
+                                           TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Input types. */
-  typedef TInputMesh                              InputMeshType;
-  typedef typename InputMeshType::Pointer         InputMeshPointer;
-  typedef typename InputMeshType::ConstPointer    InputMeshConstPointer;
-  typedef typename InputMeshType::CoordRepType    InputCoordRepType;
-  typedef typename InputMeshType::PointType       InputPointType;
-  typedef typename InputPointType::VectorType     InputPointVectorType;
-  typedef typename InputMeshType::PointIdentifier InputPointIdentifier;
-  typedef typename InputMeshType::QEType          InputQEType;
-  typedef typename InputMeshType::VectorType      InputVectorType;
-  typedef typename InputMeshType::EdgeListType    InputEdgeListType;
-  typedef typename InputMeshType::PixelType       InputPixelType;
-  typedef typename InputMeshType::Traits          InputTraits;
+  using InputMeshType = TInputMesh;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputMeshConstPointer = typename InputMeshType::ConstPointer;
+  using InputCoordRepType = typename InputMeshType::CoordRepType;
+  using InputPointType = typename InputMeshType::PointType;
+  using InputPointVectorType = typename InputPointType::VectorType;
+  using InputPointIdentifier = typename InputMeshType::PointIdentifier;
+  using InputQEType = typename InputMeshType::QEType;
+  using InputVectorType = typename InputMeshType::VectorType;
+  using InputEdgeListType = typename InputMeshType::EdgeListType;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputTraits = typename InputMeshType::Traits;
 
   typedef typename InputMeshType::PointsContainerPointer
     InputPointsContainerPointer;
@@ -66,20 +66,20 @@ public:
 
   typedef typename InputMeshType::CellsContainerConstIterator
     InputCellsContainerConstIterator;
-  typedef typename InputMeshType::EdgeCellType    InputEdgeCellType;
-  typedef typename InputMeshType::PolygonCellType InputPolygonCellType;
-  typedef typename InputMeshType::PointIdList     InputPointIdList;
+  using InputEdgeCellType = typename InputMeshType::EdgeCellType;
+  using InputPolygonCellType = typename InputMeshType::PolygonCellType;
+  using InputPointIdList = typename InputMeshType::PointIdList;
 
   /** Output types. */
-  typedef TOutputMesh                              OutputMeshType;
-  typedef typename OutputMeshType::Pointer         OutputMeshPointer;
-  typedef typename OutputMeshType::ConstPointer    OutputMeshConstPointer;
-  typedef typename OutputMeshType::CoordRepType    OutputCoordRepType;
-  typedef typename OutputMeshType::PointType       OutputPointType;
-  typedef typename OutputMeshType::PointIdentifier OutputPointIdentifier;
-  typedef typename OutputMeshType::QEType          OutputQEType;
-  typedef typename OutputMeshType::VectorType      OutputVectorType;
-  typedef typename OutputQEType::IteratorGeom      OutputQEIterator;
+  using OutputMeshType = TOutputMesh;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputMeshConstPointer = typename OutputMeshType::ConstPointer;
+  using OutputCoordRepType = typename OutputMeshType::CoordRepType;
+  using OutputPointType = typename OutputMeshType::PointType;
+  using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
+  using OutputQEType = typename OutputMeshType::QEType;
+  using OutputVectorType = typename OutputMeshType::VectorType;
+  using OutputQEIterator = typename OutputQEType::IteratorGeom;
   typedef typename OutputMeshType::PointsContainerPointer
     OutputPointsContainerPointer;
   typedef typename OutputMeshType::PointsContainerIterator
@@ -87,13 +87,12 @@ public:
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  typedef MatrixCoefficients<InputMeshType> CoefficientsComputation;
+  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
 
-  typedef TInitializationFilter InitializationFilterType;
+  using InitializationFilterType = TInitializationFilter;
   typedef typename InitializationFilterType::Pointer
     InitializationFilterPointer;
-  typedef std::pair<OutputPointIdentifier, OutputPointIdentifier>
-    PointPairType;
+  using PointPairType = std::pair<OutputPointIdentifier, OutputPointIdentifier>;
 public:
   void SetCoefficientsMethod( CoefficientsComputation* iMethod )
   {

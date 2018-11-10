@@ -71,24 +71,24 @@ constexpr int Dimension = 3;
 
 namespace
 {
-typedef unsigned char                InputPixelType;
-typedef float                        PixelType;
-typedef itk::Image<PixelType, 3>     ImageType;
-typedef signed short                 MaskPixelType;
-typedef itk::Image<MaskPixelType, 3> MaskImageType;
-typedef MaskImageType::IndexType     MaskIndexType;
+using InputPixelType = unsigned char;
+using PixelType = float;
+using ImageType = itk::Image<PixelType, 3>;
+using MaskPixelType = signed short;
+using MaskImageType = itk::Image<MaskPixelType, 3>;
+using MaskIndexType = MaskImageType::IndexType;
 
-typedef itk::ImageFileWriter<MaskImageType> MaskImageWriterType;
+using MaskImageWriterType = itk::ImageFileWriter<MaskImageType>;
 
-typedef itk::ImageFileReader<ImageType>     ReaderType;
-typedef itk::ImageFileReader<MaskImageType> MaskReaderType;
+using ReaderType = itk::ImageFileReader<ImageType>;
+using MaskReaderType = itk::ImageFileReader<MaskImageType>;
 
-typedef itk::ImageRegionConstIterator<ImageType>     ConstIteratorType;
-typedef itk::ImageRegionIterator<MaskImageType>      MaskIteratorType;
-typedef itk::ImageRegionConstIterator<MaskImageType> ConstMaskIteratorType;
+using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
+using MaskIteratorType = itk::ImageRegionIterator<MaskImageType>;
+using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
 
-typedef itk::BinaryBallStructuringElement<InputPixelType,
-                                          BRAINSMush::Dimension> StructuringElementType;
+using StructuringElementType = itk::BinaryBallStructuringElement<InputPixelType,
+                                          BRAINSMush::Dimension>;
 }
 
 ImageType::Pointer LoadImage(std::string);

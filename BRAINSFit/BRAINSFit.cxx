@@ -31,21 +31,21 @@
 // Insight/Examples/Registration/ImageRegistration8.cxx
 // and is an improved replacement for the old (and defective)
 
-typedef float                                     BRAINSFitPixelType;
-typedef itk::Image<BRAINSFitPixelType, Dimension> FixedVolumeType;
-typedef itk::Image<BRAINSFitPixelType, Dimension> MovingVolumeType;
+using BRAINSFitPixelType = float;
+using FixedVolumeType = itk::Image<BRAINSFitPixelType, Dimension>;
+using MovingVolumeType = itk::Image<BRAINSFitPixelType, Dimension>;
 
-typedef itk::Image<BRAINSFitPixelType, MaxInputDimension> InputImageType;
-typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
-typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
-typedef itk::AffineTransform<double,3>::Pointer           AffineTransformPointer;
+using InputImageType = itk::Image<BRAINSFitPixelType, MaxInputDimension>;
+using FixedVolumeReaderType = itk::ImageFileReader<InputImageType>;
+using MovingVolumeReaderType = itk::ImageFileReader<InputImageType>;
+using AffineTransformPointer = itk::AffineTransform<double,3>::Pointer;
 
 template <typename ImageType>
 typename ImageType::Pointer ExtractImage(
   typename InputImageType::Pointer & inputImage,
   unsigned int InputImageTimeIndex)
 {
-  typedef typename itk::ExtractImageFilter<InputImageType, ImageType> ExtractImageFilterType;
+  using ExtractImageFilterType = typename itk::ExtractImageFilter<InputImageType, ImageType>;
   typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
   extractImageFilter->SetDirectionCollapseToSubmatrix();
 
@@ -85,8 +85,8 @@ template <typename ImageType>
 typename ImageType::Pointer DoMedian(typename ImageType::Pointer & input,
                                      typename ImageType::SizeType indexRadius)
 {
-  typedef typename itk::MedianImageFilter<ImageType,
-                                          ImageType> MedianFilterType;
+  using MedianFilterType = typename itk::MedianImageFilter<ImageType,
+                                          ImageType>;
   typename MedianFilterType::Pointer medianFilter = MedianFilterType::New();
 
   medianFilter->SetRadius(indexRadius);
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
     }
 #endif
-  typedef itk::Transform<double, 3, 3> GenericTransformType;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( debugLevel > 1 )
@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
       }
       {
-      typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+      using ROIAutoType = itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> >;
       ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
       ROIFilter->SetInput(extractFixedVolume);
       ROIFilter->SetClosingSize(ROIAutoClosingSize);
@@ -417,7 +417,7 @@ int main(int argc, char *argv[])
       fixedMask = ROIFilter->GetSpatialObjectROI();
       }
       {
-      typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+      using ROIAutoType = itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> >;
       ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
       ROIFilter->SetInput(extractMovingVolume);
       ROIFilter->SetClosingSize(ROIAutoClosingSize);
@@ -459,7 +459,7 @@ int main(int argc, char *argv[])
       }
     }
 
-  typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+  using CompositeTransformType = itk::CompositeTransform<double, 3>;
   CompositeTransformType::Pointer            currentGenericTransform;
   if( initialTransform != "" )
     {
@@ -476,7 +476,7 @@ int main(int argc, char *argv[])
    */
 
     {
-    typedef itk::BRAINSFitHelper HelperType;
+    using HelperType = itk::BRAINSFitHelper;
     HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume( extractFixedVolume );
@@ -568,9 +568,9 @@ int main(int argc, char *argv[])
       }
 
       {
-      typedef float                                                                     VectorComponentType;
-      typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
-      typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
+      using VectorComponentType = float;
+      using VectorPixelType = itk::Vector<VectorComponentType, 3>;
+      using DisplacementFieldType = itk::Image<VectorPixelType,  3>;
 
       resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,
@@ -623,8 +623,8 @@ int main(int argc, char *argv[])
       // itkUtil::WriteCastImage<itk::Image<float,
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<float,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
+      using WriteOutImageType = itk::Image<float,
+                         FixedVolumeType::ImageDimension>;
       WriteOutImageType::Pointer CastImage =
         ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -638,8 +638,8 @@ int main(int argc, char *argv[])
       // itkUtil::WriteCastImage<itk::Image<signed short,
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<signed short,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
+      using WriteOutImageType = itk::Image<signed short,
+                         FixedVolumeType::ImageDimension>;
       WriteOutImageType::Pointer CastImage =
         ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -653,8 +653,8 @@ int main(int argc, char *argv[])
       // itkUtil::WriteCastImage<itk::Image<unsigned short,
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<unsigned short,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
+      using WriteOutImageType = itk::Image<unsigned short,
+                         FixedVolumeType::ImageDimension>;
       WriteOutImageType::Pointer CastImage =
         ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -668,8 +668,8 @@ int main(int argc, char *argv[])
       // itkUtil::WriteCastImage<itk::Image<signed int,
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<signed int,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
+      using WriteOutImageType = itk::Image<signed int,
+                         FixedVolumeType::ImageDimension>;
       WriteOutImageType::Pointer CastImage =
         ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -683,8 +683,8 @@ int main(int argc, char *argv[])
       // itkUtil::WriteCastImage<itk::Image<unsigned int,
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<unsigned int,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
+      using WriteOutImageType = itk::Image<unsigned int,
+                         FixedVolumeType::ImageDimension>;
       WriteOutImageType::Pointer CastImage =
         ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -698,8 +698,8 @@ int main(int argc, char *argv[])
       // itkUtil::WriteCastImage<itk::Image<unsigned char,
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<unsigned char,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
+      using WriteOutImageType = itk::Image<unsigned char,
+                         FixedVolumeType::ImageDimension>;
       WriteOutImageType::Pointer CastImage =
         ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,

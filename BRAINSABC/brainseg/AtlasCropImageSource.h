@@ -42,10 +42,10 @@ class AtlasCropImageSource : public itk::Object
 {
 public:
 
-  /** Standard class typedefs. */
-  typedef AtlasCropImageSource          Self;
-  typedef itk::SmartPointer<Self>       Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = AtlasCropImageSource;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -54,26 +54,26 @@ public:
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   // Image types
-  typedef TInputImage                       InputImageType;
-  typedef typename TInputImage::Pointer     InputImagePointer;
-  typedef typename TInputImage::IndexType   InputImageIndexType;
-  typedef typename TInputImage::OffsetType  InputImageOffsetType;
-  typedef typename TInputImage::PixelType   InputImagePixelType;
-  typedef typename TInputImage::PointType   InputImagePointType;
-  typedef typename TInputImage::RegionType  InputImageRegionType;
-  typedef typename TInputImage::SizeType    InputImageSizeType;
-  typedef typename TInputImage::SpacingType InputImageSpacingType;
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename TInputImage::Pointer;
+  using InputImageIndexType = typename TInputImage::IndexType;
+  using InputImageOffsetType = typename TInputImage::OffsetType;
+  using InputImagePixelType = typename TInputImage::PixelType;
+  using InputImagePointType = typename TInputImage::PointType;
+  using InputImageRegionType = typename TInputImage::RegionType;
+  using InputImageSizeType = typename TInputImage::SizeType;
+  using InputImageSpacingType = typename TInputImage::SpacingType;
 
-  typedef TProbabilityImage                          ProbabilityImageType;
-  typedef typename ProbabilityImageType::Pointer     ProbabilityImagePointer;
-  typedef typename ProbabilityImageType::IndexType   ProbabilityImageIndexType;
-  typedef typename ProbabilityImageType::OffsetType  ProbabilityImageOffsetType;
-  typedef typename ProbabilityImageType::PixelType   ProbabilityImagePixelType;
-  typedef typename ProbabilityImageType::RegionType  ProbabilityImageRegionType;
-  typedef typename ProbabilityImageType::SizeType    ProbabilityImageSizeType;
-  typedef typename ProbabilityImageType::SpacingType ProbabilityImageSpacingType;
+  using ProbabilityImageType = TProbabilityImage;
+  using ProbabilityImagePointer = typename ProbabilityImageType::Pointer;
+  using ProbabilityImageIndexType = typename ProbabilityImageType::IndexType;
+  using ProbabilityImageOffsetType = typename ProbabilityImageType::OffsetType;
+  using ProbabilityImagePixelType = typename ProbabilityImageType::PixelType;
+  using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
+  using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
+  using ProbabilityImageSpacingType = typename ProbabilityImageType::SpacingType;
 
-  typedef std::vector<ProbabilityImagePointer> ProbabilityImageList;
+  using ProbabilityImageList = std::vector<ProbabilityImagePointer>;
 
   typedef struct
     {

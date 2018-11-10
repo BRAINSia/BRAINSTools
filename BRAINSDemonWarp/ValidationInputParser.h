@@ -34,13 +34,13 @@
 namespace itk
 {
 // 6 Parameters
-typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
+using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 // 9 Parameters
-typedef itk::ScaleVersor3DTransform<double> ScaleVersor3DTransformType;
+using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
 // 15 Parameters
-typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
+using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
 // 12 Parameters
-typedef itk::AffineTransform<double, 3> AffineTransformType;
+using AffineTransformType = itk::AffineTransform<double, 3>;
 /** \class ValidationInputParser
   *
   * This component parse an input parameter file for a simple
@@ -72,11 +72,11 @@ class ValidationInputParser : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(ValidationInputParser);
 
-  /** Standard class typedefs. */
-  typedef ValidationInputParser    Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = ValidationInputParser;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ValidationInputParser, Object);
@@ -85,41 +85,41 @@ public:
   itkNewMacro(Self);
 
   /** Image Type. */
-  typedef TImage                      ImageType;
-  typedef typename ImageType::Pointer ImagePointer;
+  using ImageType = TImage;
+  using ImagePointer = typename ImageType::Pointer;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;
   static constexpr unsigned int SplineOrder = 3;
 
   /** Transform Types. */
-  typedef VersorRigid3DTransform<double>                                  VersorRigid3DTransformType;
-  typedef ScaleSkewVersor3DTransform<double>                              ScaleSkewVersor3DTransformType;
-  typedef AffineTransform<double, Self::ImageDimension> AffineTransformType;
+  using VersorRigid3DTransformType = VersorRigid3DTransform<double>;
+  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform<double>;
+  using AffineTransformType = AffineTransform<double, Self::ImageDimension>;
 
-  typedef double CoordinateRepType;
-  typedef typename itk::BSplineTransform<
+  using CoordinateRepType = double;
+  using BSplineTransformType = typename itk::BSplineTransform<
       CoordinateRepType,
       Self::ImageDimension,
-      Self::SplineOrder> BSplineTransformType;
+      Self::SplineOrder>;
 
   /** Displacement field value type. */
-  typedef float FieldValueType;
+  using FieldValueType = float;
 
   /** Displacement field pixel type. */
-  typedef Vector<FieldValueType,
-                 Self::ImageDimension> FieldPixelType;
+  using FieldPixelType = Vector<FieldValueType,
+                 Self::ImageDimension>;
 
   /** Displacement field type. */
-  typedef Image<FieldPixelType,
-                Self::ImageDimension> TDisplacementField;
+  using TDisplacementField = Image<FieldPixelType,
+                Self::ImageDimension>;
 
   /** ShrinkFactors type. */
-  typedef FixedArray<unsigned int,
-                     Self::ImageDimension> ShrinkFactorsType;
+  using ShrinkFactorsType = FixedArray<unsigned int,
+                     Self::ImageDimension>;
 
   /** IterationArray type. */
-  typedef Array<unsigned int> IterationsArrayType;
+  using IterationsArrayType = Array<unsigned int>;
 
   /** Set the atlas patient. */
   itkSetStringMacro(TheMovingImageFilename);

@@ -124,18 +124,15 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>
 
   // measure each image and each squared image within the mask
 
-  typedef typename itk::ImageRegionConstIterator<typename Self::FirstImageType>
-    FirstConstIteratorType;
+  using FirstConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::FirstImageType>;
   FirstConstIteratorType firstIt( m_FirstImage,
                                   m_FirstImage->GetRequestedRegion() );
 
-  typedef typename itk::ImageRegionConstIterator<typename Self::SecondImageType>
-    SecondConstIteratorType;
+  using SecondConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::SecondImageType>;
   SecondConstIteratorType secondIt( m_SecondImage,
                                     m_SecondImage->GetRequestedRegion() );
 
-  typedef typename itk::ImageRegionConstIterator<typename Self::ImageMaskType>
-    MaskConstIteratorType;
+  using MaskConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::ImageMaskType>;
   MaskConstIteratorType maskIt( m_ImageMask, m_ImageMask->GetRequestedRegion() );
 
   m_NumberOfMaskVoxels = 0.0;

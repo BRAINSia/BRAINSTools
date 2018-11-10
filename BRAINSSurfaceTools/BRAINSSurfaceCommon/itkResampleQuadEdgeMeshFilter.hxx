@@ -101,8 +101,8 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
   this->m_Interpolator->SetInputMesh( this->GetInput() );
   this->m_Interpolator->Initialize();
 
-  typedef typename OutputMeshType::PointsContainer::ConstIterator PointIterator;
-  typedef typename OutputMeshType::PointDataContainer::Iterator   PointDataIterator;
+  using PointIterator = typename OutputMeshType::PointsContainer::ConstIterator;
+  using PointDataIterator = typename OutputMeshType::PointDataContainer::Iterator;
 
   PointIterator pointItr = points->Begin();
   PointIterator pointEnd = points->End();
@@ -110,7 +110,7 @@ ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
   PointDataIterator pointDataItr = pointData->Begin();
   PointDataIterator pointDataEnd = pointData->End();
 
-  typedef typename TransformType::OutputPointType MappedPointType;
+  using MappedPointType = typename TransformType::OutputPointType;
 
   OutputPointType inputPoint;
   OutputPointType pointToEvaluate;

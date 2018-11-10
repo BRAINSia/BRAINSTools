@@ -84,51 +84,51 @@ class BRAINSFitHelperTemplate : public Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelperTemplate);
 
-  /** Standard class typedefs. */
-  typedef BRAINSFitHelperTemplate  Self;
-  typedef ProcessObject            Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = BRAINSFitHelperTemplate;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  typedef double RealType;
+  using RealType = double;
 
-  typedef typename FixedImageType::ConstPointer FixedImageConstPointer;
-  typedef typename FixedImageType::Pointer      FixedImagePointer;
+  using FixedImageConstPointer = typename FixedImageType::ConstPointer;
+  using FixedImagePointer = typename FixedImageType::Pointer;
 
-  typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
-  typedef typename MovingImageType::Pointer      MovingImagePointer;
+  using MovingImageConstPointer = typename MovingImageType::ConstPointer;
+  using MovingImagePointer = typename MovingImageType::Pointer;
 
   /** Constants for the image dimensions */
   static constexpr unsigned int FixedImageDimension = FixedImageType::ImageDimension;
   static constexpr unsigned int MovingImageDimension = MovingImageType::ImageDimension;
 
-  typedef itk::ObjectToObjectMetricBaseTemplate<RealType>                       MetricType;
-  typedef typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
+  using MetricType = itk::ObjectToObjectMetricBaseTemplate<RealType>;
+  using MultiMetricType = typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
                                                      MovingImageDimension,
                                                      FixedImageType,
-                                                     RealType>                  MultiMetricType;
-  typedef typename itk::ImageToImageMetricv4< FixedImageType,
+                                                     RealType>;
+  using ImageMetricType = typename itk::ImageToImageMetricv4< FixedImageType,
                                               MovingImageType,
                                               FixedImageType,
-                                              RealType >                        ImageMetricType;
+                                              RealType >;
 
-  typedef itk::CompositeTransform<RealType, MovingImageDimension>     CompositeTransformType;
-  typedef typename CompositeTransformType::Pointer                    CompositeTransformPointer;
-  typedef IdentityTransform<RealType, MovingImageDimension>           IdentityTransformType;
+  using CompositeTransformType = itk::CompositeTransform<RealType, MovingImageDimension>;
+  using CompositeTransformPointer = typename CompositeTransformType::Pointer;
+  using IdentityTransformType = IdentityTransform<RealType, MovingImageDimension>;
 
-  typedef SpatialObject<Self::FixedImageDimension>  FixedBinaryVolumeType;
-  typedef SpatialObject<Self::MovingImageDimension> MovingBinaryVolumeType;
-  typedef typename FixedBinaryVolumeType::Pointer                     FixedBinaryVolumePointer;
-  typedef typename MovingBinaryVolumeType::Pointer                    MovingBinaryVolumePointer;
+  using FixedBinaryVolumeType = SpatialObject<Self::FixedImageDimension>;
+  using MovingBinaryVolumeType = SpatialObject<Self::MovingImageDimension>;
+  using FixedBinaryVolumePointer = typename FixedBinaryVolumeType::Pointer;
+  using MovingBinaryVolumePointer = typename MovingBinaryVolumeType::Pointer;
 
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>    AffineRegistrationType;
-  typedef itk::TranslationTransform<RealType, MovingImageDimension>          TranslationTransformType;
-  typedef itk::AffineTransform<RealType, MovingImageDimension>               AffineTransformType;
-  typedef itk::ScalableAffineTransform<RealType, MovingImageDimension>       ScalableAffineTransformType;
-  typedef typename AffineRegistrationType::MetricSamplingStrategyType        SamplingStrategyType;
+  using AffineRegistrationType = itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>;
+  using TranslationTransformType = itk::TranslationTransform<RealType, MovingImageDimension>;
+  using AffineTransformType = itk::AffineTransform<RealType, MovingImageDimension>;
+  using ScalableAffineTransformType = itk::ScalableAffineTransform<RealType, MovingImageDimension>;
+  using SamplingStrategyType = typename AffineRegistrationType::MetricSamplingStrategyType;
 
-  typedef typename AffineTransformType::Superclass                         MatrixOffsetTransformBaseType;
-  typedef typename MatrixOffsetTransformBaseType::Pointer                  MatrixOffsetTransformBasePointer;
+  using MatrixOffsetTransformBaseType = typename AffineTransformType::Superclass;
+  using MatrixOffsetTransformBasePointer = typename MatrixOffsetTransformBaseType::Pointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

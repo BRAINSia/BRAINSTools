@@ -53,10 +53,10 @@
 
 int main(int argc, char *argv[])
 {
-  typedef double                                            TensorComponentType;
-  typedef itk::gtractDiffusionTensor3D<TensorComponentType> TensorPixelType;
-  typedef itk::Image<TensorPixelType, 3>                    TensorImageType;
-  typedef itk::Image<float, 3>                              AnisotropyImageType;
+  using TensorComponentType = double;
+  using TensorPixelType = itk::gtractDiffusionTensor3D<TensorComponentType>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using AnisotropyImageType = itk::Image<float, 3>;
 
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileReader<TensorImageType> TensorImageReaderType;
+  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
 
@@ -109,10 +109,10 @@ int main(int argc, char *argv[])
   anisotropyImage->SetDirection( tensorImage->GetDirection() );
   anisotropyImage->Allocate();
 
-  typedef itk::ImageRegionIterator<AnisotropyImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIterator<AnisotropyImageType>;
   IteratorType anisoIt( anisotropyImage, anisotropyImage->GetRequestedRegion() );
 
-  typedef itk::ImageRegionConstIterator<TensorImageType> ConstIteratorType;
+  using ConstIteratorType = itk::ImageRegionConstIterator<TensorImageType>;
   ConstIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
 
   float anisotropy = 0.0;
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     anisoIt.Set( anisotropy );
     }
 
-  typedef itk::ImageFileWriter<AnisotropyImageType> WriterType;
+  using WriterType = itk::ImageFileWriter<AnisotropyImageType>;
   WriterType::Pointer anisotropyWriter = WriterType::New();
   anisotropyWriter->UseCompressionOn();
   anisotropyWriter->SetInput( anisotropyImage );

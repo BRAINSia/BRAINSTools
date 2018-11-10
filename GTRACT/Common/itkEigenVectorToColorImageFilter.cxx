@@ -70,7 +70,7 @@ EigenVectorToColorImageFilter
   m_Output->CopyInformation( m_Input );
   m_Output->Allocate();
 
-  typedef itk::ImageRegionIteratorWithIndex<OutputImageType> IteratorType;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
 
   IteratorType it( m_Output, ImageRegion );
 

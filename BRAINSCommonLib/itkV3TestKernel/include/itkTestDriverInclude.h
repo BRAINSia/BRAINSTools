@@ -69,7 +69,7 @@ int RegressionTestImage(const char *testImageFilename, const char *baselineImage
 
 std::map<std::string, int> RegressionTestBaselines(char *);
 
-typedef std::pair<char *, char *> ComparePairType;
+using ComparePairType = std::pair<char *, char *>;
 
 // A structure to hold regression test parameters
 typedef struct
@@ -82,10 +82,10 @@ typedef struct
 
 RegressionTestParameters regressionTestParameters;
 
-typedef char * * ArgumentStringType;
+using ArgumentStringType = char * *;
 
 // Types to hold parameters that should be processed later
-typedef std::vector<char *> ArgumentsList;
+using ArgumentsList = std::vector<char *>;
 
 struct ProcessedOutputType
   {
@@ -328,10 +328,10 @@ int RegressionTestImage(const char *testImageFilename,
 {
   // Use the factory mechanism to read the test and baseline files and convert
   // them to double
-  typedef itk::Image<double, ITK_TEST_DIMENSION_MAX>        ImageType;
-  typedef itk::Image<unsigned char, ITK_TEST_DIMENSION_MAX> OutputType;
-  typedef itk::Image<unsigned char, 2>                      DiffOutputType;
-  typedef itk::ImageFileReader<ImageType>                   ReaderType;
+  using ImageType = itk::Image<double, ITK_TEST_DIMENSION_MAX>;
+  using OutputType = itk::Image<unsigned char, ITK_TEST_DIMENSION_MAX>;
+  using DiffOutputType = itk::Image<unsigned char, 2>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
 
   // Read the baseline file
   ReaderType::Pointer baselineReader = ReaderType::New();
@@ -376,7 +376,7 @@ int RegressionTestImage(const char *testImageFilename,
     }
 
   // Now compare the two images
-  typedef itk::Testing::ComparisonImageFilter<ImageType, ImageType> DiffType;
+  using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
   DiffType::Pointer diff = DiffType::New();
   diff->SetValidInput( baselineReader->GetOutput() );
   diff->SetTestInput( testReader->GetOutput() );
@@ -396,10 +396,10 @@ int RegressionTestImage(const char *testImageFilename,
   // if there are discrepencies, create an diff image
   if( ( status > numberOfPixelsTolerance ) && reportErrors )
     {
-    typedef itk::Testing::StretchIntensityImageFilter<ImageType, OutputType>  RescaleType;
-    typedef itk::Testing::ExtractSliceImageFilter<OutputType, DiffOutputType> ExtractType;
-    typedef itk::ImageFileWriter<DiffOutputType>                              WriterType;
-    typedef itk::ImageRegion<ITK_TEST_DIMENSION_MAX>                          RegionType;
+    using RescaleType = itk::Testing::StretchIntensityImageFilter<ImageType, OutputType>;
+    using ExtractType = itk::Testing::ExtractSliceImageFilter<OutputType, DiffOutputType>;
+    using WriterType = itk::ImageFileWriter<DiffOutputType>;
+    using RegionType = itk::ImageRegion<ITK_TEST_DIMENSION_MAX>;
     OutputType::SizeType size; size.Fill(0);
 
     RescaleType::Pointer rescale = RescaleType::New();

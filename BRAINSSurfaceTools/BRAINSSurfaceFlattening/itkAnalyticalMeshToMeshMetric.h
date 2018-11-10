@@ -52,11 +52,11 @@ class AnalyticalMeshToMeshMetric :
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(AnalyticalMeshToMeshMetric);
 
-  /** Standard class typedefs. */
-  typedef AnalyticalMeshToMeshMetric                Self;
-  typedef MeshToMeshMetric<TFixedMesh, TMovingMesh> Superclass;
-  typedef SmartPointer<Self>                        Pointer;
-  typedef SmartPointer<const Self>                  ConstPointer;
+  /** Standard class type alias. */
+  using Self = AnalyticalMeshToMeshMetric;
+  using Superclass = MeshToMeshMetric<TFixedMesh, TMovingMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -65,26 +65,26 @@ public:
   itkTypeMacro(AnalyticalMeshToMeshMetric, MeshToMeshMetric);
 
   /** Types transferred from the base class */
-  typedef typename Superclass::TransformType           TransformType;
-  typedef typename Superclass::TransformPointer        TransformPointer;
-  typedef typename Superclass::TransformParametersType TransformParametersType;
-  typedef typename Superclass::TransformJacobianType   TransformJacobianType;
-  typedef typename Superclass::InputPointType          InputPointType;
-  typedef typename Superclass::OutputPointType         OutputPointType;
+  using TransformType = typename Superclass::TransformType;
+  using TransformPointer = typename Superclass::TransformPointer;
+  using TransformParametersType = typename Superclass::TransformParametersType;
+  using TransformJacobianType = typename Superclass::TransformJacobianType;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
 
-  typedef typename Superclass::MeasureType            MeasureType;
-  typedef typename Superclass::DerivativeType         DerivativeType;
-  typedef typename Superclass::FixedMeshType          FixedMeshType;
-  typedef typename Superclass::MovingMeshType         MovingMeshType;
-  typedef typename Superclass::FixedMeshConstPointer  FixedMeshConstPointer;
-  typedef typename Superclass::MovingMeshConstPointer MovingMeshConstPointer;
-  typedef typename Superclass::PointIterator          PointIterator;
-  typedef typename Superclass::PointDataIterator      PointDataIterator;
+  using MeasureType = typename Superclass::MeasureType;
+  using DerivativeType = typename Superclass::DerivativeType;
+  using FixedMeshType = typename Superclass::FixedMeshType;
+  using MovingMeshType = typename Superclass::MovingMeshType;
+  using FixedMeshConstPointer = typename Superclass::FixedMeshConstPointer;
+  using MovingMeshConstPointer = typename Superclass::MovingMeshConstPointer;
+  using PointIterator = typename Superclass::PointIterator;
+  using PointDataIterator = typename Superclass::PointDataIterator;
 
-  typedef typename Superclass::InterpolatorType InterpolatorType;
+  using InterpolatorType = typename Superclass::InterpolatorType;
 
-  typedef typename Superclass::RealDataType       RealDataType;
-  typedef typename Superclass::DerivativeDataType DerivativeDataType;
+  using RealDataType = typename Superclass::RealDataType;
+  using DerivativeDataType = typename Superclass::DerivativeDataType;
 
   /** Constants for the pointset dimensions */
   static constexpr unsigned int MovingMeshDimension = Superclass::MovingMeshDimension;

@@ -90,7 +90,7 @@ private:
 // one static random number generator
 random localrng;
 }
-typedef signed char schar;
+using schar = signed char;
 template <class T>
 static inline void swap(T& x, T& y)
 {
@@ -2367,11 +2367,11 @@ model * train(const problem *prob, const parameter *param)
 
       int e0 = start[0] + count[0];
       k = 0;
-      for( ; k < e0; k++ )
+      for(; k < e0; k++ )
         {
         sub_prob.y[k] = +1;
         }
-      for( ; k < sub_prob.l; k++ )
+      for(; k < sub_prob.l; k++ )
         {
         sub_prob.y[k] = -1;
         }
@@ -2388,15 +2388,15 @@ model * train(const problem *prob, const parameter *param)
         int ei = si + count[i];
 
         k = 0;
-        for( ; k < si; k++ )
+        for(; k < si; k++ )
           {
           sub_prob.y[k] = -1;
           }
-        for( ; k < ei; k++ )
+        for(; k < ei; k++ )
           {
           sub_prob.y[k] = +1;
           }
-        for( ; k < sub_prob.l; k++ )
+        for(; k < sub_prob.l; k++ )
           {
           sub_prob.y[k] = -1;
           }
@@ -2513,7 +2513,7 @@ int predict_values(const struct model *model_, const struct feature_node *x, dou
     {
     dec_values[i] = 0;
     }
-  for( ; (idx = lx->index) != -1; lx++ )
+  for(; (idx = lx->index) != -1; lx++ )
     {
     // the dimension of testing data may exceed that of training
     if( idx <= n )

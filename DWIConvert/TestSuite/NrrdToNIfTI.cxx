@@ -25,10 +25,10 @@
 #include "itkImageRegionIterator.h"
 
 const int DIMENSION(4);
-typedef unsigned short                       PixelType;
-typedef itk::Image<PixelType, DIMENSION>     Image4DType;
-typedef itk::Image<PixelType, DIMENSION - 1> Image3DType;
-typedef itk::VectorImage<PixelType, 3>       VectorImageType;
+using PixelType = unsigned short;
+using Image4DType = itk::Image<PixelType, DIMENSION>;
+using Image3DType = itk::Image<PixelType, DIMENSION - 1>;
+using VectorImageType = itk::VectorImage<PixelType, 3>;
 
 void
 ConvertVectorImageTo4DImage(const VectorImageType * img,

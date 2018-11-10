@@ -77,70 +77,70 @@ class GTRACT_COMMON_EXPORT AnatomicalBSplineFilter : public itk::Object
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalBSplineFilter);
 
-  /** Standard class typedefs. */
-  typedef AnatomicalBSplineFilter  Self;
-  typedef itk::Object              Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = AnatomicalBSplineFilter;
+  using Superclass = itk::Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
-  /** Fixed Image typedefs. */
-  typedef itk::Image<signed short, 3>      RegisterImageType;
-  typedef RegisterImageType::Pointer       RegisterImagePointer;
-  typedef RegisterImageType::ConstPointer  RegisterImageConstPointer;
-  typedef RegisterImageType::RegionType    RegisterImageRegionType;
-  typedef RegisterImageType::SizeType      RegisterImageSizeType;
-  typedef RegisterImageType::SpacingType   RegisterImageSpacingType;
-  typedef RegisterImageType::PointType     RegisterImagePointType;
-  typedef RegisterImageType::PixelType     RegisterImagePixelType;
-  typedef RegisterImageType::DirectionType RegisterImageDirectionType;
-  typedef RegisterImageType::IndexType     RegisterImageIndexType;
+  /** Fixed Image type alias. */
+  using RegisterImageType = itk::Image<signed short, 3>;
+  using RegisterImagePointer = RegisterImageType::Pointer;
+  using RegisterImageConstPointer = RegisterImageType::ConstPointer;
+  using RegisterImageRegionType = RegisterImageType::RegionType;
+  using RegisterImageSizeType = RegisterImageType::SizeType;
+  using RegisterImageSpacingType = RegisterImageType::SpacingType;
+  using RegisterImagePointType = RegisterImageType::PointType;
+  using RegisterImagePixelType = RegisterImageType::PixelType;
+  using RegisterImageDirectionType = RegisterImageType::DirectionType;
+  using RegisterImageIndexType = RegisterImageType::IndexType;
 
   static constexpr unsigned int SpaceDimension = 3;
   static constexpr unsigned int SplineOrder = 3;
-  typedef double CoordinateRepType;
-  typedef itk::BSplineDeformableTransform<
+  using CoordinateRepType = double;
+  using TransformType = itk::BSplineDeformableTransform<
       CoordinateRepType,
       SpaceDimension,
-      SplineOrder>               TransformType;
-  typedef TransformType::RegionType     TransformRegionType;
-  typedef TransformRegionType::SizeType TransformSizeType;
-  typedef TransformType::SpacingType    TransformSpacingType;
-  typedef TransformType::OriginType     TransformOriginType;
-  typedef TransformType::ParametersType TransformParametersType;
+      SplineOrder>;
+  using TransformRegionType = TransformType::RegionType;
+  using TransformSizeType = TransformRegionType::SizeType;
+  using TransformSpacingType = TransformType::SpacingType;
+  using TransformOriginType = TransformType::OriginType;
+  using TransformParametersType = TransformType::ParametersType;
 
-  typedef itk::LBFGSBOptimizer OptimizerType;
+  using OptimizerType = itk::LBFGSBOptimizer;
 
-  typedef itk::MattesMutualInformationImageToImageMetric<
+  using MetricType = itk::MattesMutualInformationImageToImageMetric<
       RegisterImageType,
-      RegisterImageType>          MetricType;
+      RegisterImageType>;
 
-  typedef itk::LinearInterpolateImageFunction<
+  using InterpolatorType = itk::LinearInterpolateImageFunction<
       RegisterImageType,
-      double>        InterpolatorType;
+      double>;
 
-  typedef itk::ImageRegistrationMethod<
+  using RegistrationType = itk::ImageRegistrationMethod<
       RegisterImageType,
-      RegisterImageType>          RegistrationType;
+      RegisterImageType>;
 
-  typedef TransformType::Pointer            TransformTypePointer;
-  typedef MetricType::Pointer               MetricTypePointer;
-  typedef OptimizerType::Pointer            OptimizerTypePointer;
-  typedef OptimizerType::ParametersType     OptimizerParameterType;
-  typedef OptimizerType::ScalesType         OptimizerScalesType;
-  typedef OptimizerType::BoundSelectionType OptimizerBoundSelectionType;
-  typedef OptimizerType::BoundValueType     OptimizerBoundValueType;
+  using TransformTypePointer = TransformType::Pointer;
+  using MetricTypePointer = MetricType::Pointer;
+  using OptimizerTypePointer = OptimizerType::Pointer;
+  using OptimizerParameterType = OptimizerType::ParametersType;
+  using OptimizerScalesType = OptimizerType::ScalesType;
+  using OptimizerBoundSelectionType = OptimizerType::BoundSelectionType;
+  using OptimizerBoundValueType = OptimizerType::BoundValueType;
 
-  typedef InterpolatorType::Pointer InterpolatorTypePointer;
-  typedef RegistrationType::Pointer RegistrationTypePointer;
+  using InterpolatorTypePointer = InterpolatorType::Pointer;
+  using RegistrationTypePointer = RegistrationType::Pointer;
 
   /** Typedef of the bulk transform. */
   /*
-  typedef itk::VersorRigid3DTransform< double >     BulkTransformType;
-  typedef BulkTransformType::Pointer           BulkTransformPointer;
+  using BulkTransformType = itk::VersorRigid3DTransform< double >;
+  using BulkTransformPointer = BulkTransformType::Pointer;
    */
-  typedef Transform<CoordinateRepType, Self::SpaceDimension,
-                    Self::SpaceDimension> BulkTransformType;
-  typedef BulkTransformType::ConstPointer BulkTransformPointer;
+  using BulkTransformType = Transform<CoordinateRepType, Self::SpaceDimension,
+                    Self::SpaceDimension>;
+  using BulkTransformPointer = BulkTransformType::ConstPointer;
   /** Standard New method. */
   itkNewMacro(Self);
 

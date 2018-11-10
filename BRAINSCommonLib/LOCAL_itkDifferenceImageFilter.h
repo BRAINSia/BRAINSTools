@@ -55,13 +55,13 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(LOCAL_DifferenceImageFilter, ImageToImageFilter);
 
-  /** Some convenient typedefs. */
-  typedef TInputImage                                       InputImageType;
-  typedef TOutputImage                                      OutputImageType;
-  typedef typename OutputImageType::PixelType               OutputPixelType;
-  typedef typename OutputImageType::RegionType              OutputImageRegionType;
-  typedef typename NumericTraits<OutputPixelType>::RealType RealType;
-  typedef typename NumericTraits<RealType>::AccumulateType  AccumulateType;
+  /** Some convenient type alias. */
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+  using OutputPixelType = typename OutputImageType::PixelType;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using RealType = typename NumericTraits<OutputPixelType>::RealType;
+  using AccumulateType = typename NumericTraits<RealType>::AccumulateType;
 
   /** Set the valid image input.  This will be input 0.  */
   virtual void SetValidInput(const InputImageType *validImage);

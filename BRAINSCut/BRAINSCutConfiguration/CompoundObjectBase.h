@@ -28,7 +28,7 @@ class CompoundObjectBase :
   public ProcessObjectBase
 {
 private:
-  typedef ProcessObjectBase SuperClass;
+  using SuperClass = ProcessObjectBase;
   void tolower(std::string & s) const
   {
     for( unsigned i = 0; i < s.size(); i++ )
@@ -38,10 +38,10 @@ private:
   }
 
 public:
-  typedef std::map<std::string, ProcessObjectBase *> MapType;
-  typedef MapType::iterator                          iterator;
+  using MapType = std::map<std::string, ProcessObjectBase *>;
+  using iterator = MapType::iterator;
   typedef MapType::const_iterator                    const_iterator;
-  typedef std::vector<std::string>                   StringVectorType;
+  using StringVectorType = std::vector<std::string>;
   CompoundObjectBase(const char *name) :
     ProcessObjectBase(name)
   {

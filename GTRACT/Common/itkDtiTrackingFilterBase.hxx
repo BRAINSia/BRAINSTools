@@ -195,10 +195,10 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   // ////////////////////////////////////////////////////////////////////////
   // Initialize the seed points
 
-  typedef typename Self::TensorImageType::PixelType::EigenValuesArrayType   EigenValuesArrayType;
-  typedef typename Self::TensorImageType::PixelType::EigenVectorsMatrixType EigenVectorsMatrixType;
+  using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
+  using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  typedef itk::ImageRegionConstIterator<MaskImageType> ConstMaskIteratorType;
+  using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
   ConstMaskIteratorType maskIt( m_StartingRegion, m_StartingRegion->GetLargestPossibleRegion() );
 
   int count = 0;

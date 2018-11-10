@@ -45,11 +45,11 @@ class ITK_EXPORT VTKImageToImageFilter : public ProcessObject
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(VTKImageToImageFilter);
 
-  /** Standard class typedefs. */
-  typedef VTKImageToImageFilter    Self;
-  typedef ProcessObject            Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  /** Standard class type alias. */
+  using Self = VTKImageToImageFilter;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -57,11 +57,11 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(VTKImageToImageFilter, ProcessObject);
 
-  /** Some typedefs. */
-  typedef TOutputImage                              OutputImageType;
-  typedef typename    OutputImageType::ConstPointer OutputImagePointer;
-  typedef VTKImageImport<OutputImageType>           ImporterFilterType;
-  typedef typename ImporterFilterType::Pointer      ImporterFilterPointer;
+  /** Some type alias. */
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename    OutputImageType::ConstPointer;
+  using ImporterFilterType = VTKImageImport<OutputImageType>;
+  using ImporterFilterPointer = typename ImporterFilterType::Pointer;
 
   /** Get the output in the form of a vtkImage.
       This call is delegated to the internal vtkImageImporter filter  */

@@ -29,12 +29,12 @@ class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkI
 
   double GetTimeStep ()
   {
-    DelegateITKOutputMacro(GetTimeStep) ;
+    DelegateITKOutputMacro(GetTimeStep);
   };
 
   double GetConductanceParameter ()
   {
-    DelegateITKOutputMacro(GetConductanceParameter) ;
+    DelegateITKOutputMacro(GetConductanceParameter);
   };
 
   unsigned int GetNumberOfIterations ()
@@ -58,7 +58,7 @@ class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkI
   };
 
 protected:
-  typedef itk::GradientAnisotropicDiffusionImageFilter<Superclass::InputImageType,Superclass::InputImageType> ImageFilterType;
+  using ImageFilterType = itk::GradientAnisotropicDiffusionImageFilter<Superclass::InputImageType,Superclass::InputImageType>;
   vtkITKGradientAnisotropicDiffusionImageFilter() : Superclass ( ImageFilterType::New() ){};
   ~vtkITKGradientAnisotropicDiffusionImageFilter() {};
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }

@@ -16,11 +16,11 @@ class CreateRandomBSpline
   : public itk::ImageToImageFilter< TInputImage, TInputImage>
 {
 public:
-  typedef CreateRandomBSpline Self;
-  typedef itk::SmartPointer <Self> Pointer;
+  using Self = CreateRandomBSpline;
+  using Pointer = itk::SmartPointer <Self>;
 
-  typedef itk::BSplineTransform<TPixelType,NDimension,NBSplineOrder> BSplineType;
-  typedef typename BSplineType::Pointer BSplinePointer;
+  using BSplineType = itk::BSplineTransform<TPixelType,NDimension,NBSplineOrder>;
+  using BSplinePointer = typename BSplineType::Pointer;
 
   itkNewMacro(Self);
   itkTypeMacro(Self, ImageToImageFilter);
@@ -53,12 +53,12 @@ public:
   }
   itkGetMacro(MersenneSeed, unsigned long)
 
-  typedef TInputImage ImageType;
-  typedef typename ImageType::Pointer ImagePointer;
-  typedef typename ImageType::PointType ImagePointType;
+  using ImageType = TInputImage;
+  using ImagePointer = typename ImageType::Pointer;
+  using ImagePointType = typename ImageType::PointType;
 
   //set up random control point creation
-  typedef itk::Statistics::MersenneTwisterRandomVariateGenerator GeneratorType;
+  using GeneratorType = itk::Statistics::MersenneTwisterRandomVariateGenerator;
 
 protected:
   CreateRandomBSpline()
@@ -88,7 +88,7 @@ protected:
       std::cout << "In function GenerateData()" << std::endl;
       }
 
-    typedef typename ImageType::RegionType ImageRegionType;
+    using ImageRegionType = typename ImageType::RegionType;
 
     constexpr unsigned int sizeVal = 400; // The image should be large enough to contain most heads, 40 cm^3 should do it
     if(sizeVal % 2 != 0)
@@ -144,7 +144,7 @@ protected:
     ImagePointer coefficientImgPA = this->GetBSplineOutput()->GetCoefficientImages()[1];
     ImagePointer coefficientImgSI = this->GetBSplineOutput()->GetCoefficientImages()[2];
 
-    typedef typename itk::ImageRegionIteratorWithIndex<ImageType> IteratorType;
+    using IteratorType = typename itk::ImageRegionIteratorWithIndex<ImageType>;
     IteratorType LRit(coefficientImgLR, coefficientImgLR->GetLargestPossibleRegion());
     IteratorType PAit(coefficientImgPA, coefficientImgPA->GetLargestPossibleRegion());
     IteratorType SIit(coefficientImgSI, coefficientImgSI->GetLargestPossibleRegion());
@@ -179,7 +179,7 @@ protected:
     LRit.GoToBegin();
     PAit.GoToBegin();
     SIit.GoToBegin();
-    for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
+    for(; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
       {
       ImagePointType pointLR;
       ImagePointType pointPA;
@@ -203,7 +203,7 @@ protected:
     LRit.GoToBegin();
     PAit.GoToBegin();
     SIit.GoToBegin();
-    for( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
+    for(; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
       {
 
       ImagePointType pointLR;
@@ -233,7 +233,7 @@ protected:
       }
 
     //We shouldn't need to set the parameters since we set the coefficient images
-    typedef typename BSplineType::CoefficientImageArray CoefficeintImages;
+    using CoefficeintImages = typename BSplineType::CoefficientImageArray;
     CoefficeintImages images;
     images[0] = coefficientImgLR;
     images[1] = coefficientImgPA;

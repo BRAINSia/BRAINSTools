@@ -142,6 +142,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_SyNFull(true),
   m_WriteOutputTransformInFloat(false)
 {
+  vnl_sample_reseed(20181112); //Trying to get random number generation consistent
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
   m_SplineGridSize[2] = 12;

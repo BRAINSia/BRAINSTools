@@ -5,61 +5,10 @@
 #include <cstdarg>
 #include "linear.h"
 #include "tron.h"
-#ifdef USE_VNL_RANDOM
-#include "vnl/vnl_random.h"
-#else
 #include <itkMersenneTwisterRandomVariateGenerator.h>
-#endif
 
 namespace
 {
-#define USE_ITK_MERSENNE_TWISTER
-#if defined(USE_VNL_RANDOM)
-class random
-{
-public:
-  random()
-  {
-    m_random.reseed(0x01234567);
-  }
-
-  int rand()
-  {
-    return static_cast<int>(m_random.lrand32() );
-  }
-
-  int rand(int limit)
-  {
-    return static_cast<int>(m_random.lrand32(limit) );
-  }
-
-private:
-  vnl_random m_random;
-};
-#elif defined(USE_SYSTEM_RAND)
-//
-// this is the original behavior in the liblinear library
-class random
-{
-public:
-  random()
-  {
-  }
-
-  int rand()
-  {
-    return static_cast<int>(rand() );
-  }
-
-  int rand(int limit)
-  {
-    return static_cast<int>(rand() % (limit + 1) );
-  }
-
-private:
-  itk::Statistics::MersenneTwisterRandomVariateGenerator m_random;
-};
-#elif defined(USE_ITK_MERSENNE_TWISTER)
 // Use itk's Mersienne Twister RNG
 class random
 {
@@ -83,9 +32,6 @@ public:
 private:
   itk::Statistics::MersenneTwisterRandomVariateGenerator::Pointer m_random;
 };
-#else
-#error "Please choose which random number generator to use"
-#endif
 
 // one static random number generator
 random localrng;

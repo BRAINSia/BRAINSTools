@@ -59,6 +59,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   m_SourceMask(nullptr),
   m_ReferenceMask(nullptr)
 {
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
   this->SetNumberOfRequiredInputs(2);
 
   m_QuantileTable.set_size(3, m_NumberOfMatchPoints + 2);

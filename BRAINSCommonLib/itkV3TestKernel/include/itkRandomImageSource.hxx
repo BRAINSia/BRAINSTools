@@ -42,6 +42,8 @@ template <typename TOutputImage>
 RandomImageSource<TOutputImage>
 ::RandomImageSource()
 {
+
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
   // Initial image is 64 wide in each direction.
   for( unsigned int i = 0; i < TOutputImage::GetImageDimension(); i++ )
     {

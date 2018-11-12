@@ -36,9 +36,11 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>
 #ifdef ITKV3_COMPATIBILITY
   m_DirectionCollaspeStrategy(DIRECTIONCOLLAPSETOGUESS)
 #else
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
   m_DirectionCollaspeStrategy(DIRECTIONCOLLAPSETOUNKOWN)
 #endif
 {
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
 }
 
 /**

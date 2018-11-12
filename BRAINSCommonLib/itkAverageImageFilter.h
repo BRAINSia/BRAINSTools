@@ -91,8 +91,10 @@ public:
 
 
 protected:
-  AverageImageFilter() {}
-  ~AverageImageFilter() override {}
+  AverageImageFilter() {
+   this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
+  }
+  ~AverageImageFilter() override = default;
 
   void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId) override;
 

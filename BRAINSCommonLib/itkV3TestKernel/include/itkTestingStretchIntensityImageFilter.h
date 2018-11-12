@@ -93,9 +93,7 @@ public:
 #endif
 protected:
   StretchIntensityImageFilter();
-  virtual ~StretchIntensityImageFilter()
-  {
-  }
+  ~StretchIntensityImageFilter() override = default;
 
   /** Process to execute before entering the multithreaded section */
   void BeforeThreadedGenerateData(void);

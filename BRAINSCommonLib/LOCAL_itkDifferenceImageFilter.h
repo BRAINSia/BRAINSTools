@@ -41,11 +41,13 @@ class LOCAL_DifferenceImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  /** Standard class typedefs. */
-  typedef LOCAL_DifferenceImageFilter                   Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  ITK_DISALLOW_COPY_AND_ASSIGN(LOCAL_DifferenceImageFilter);
+
+  /** Standard class type alias. */
+  using Self = LOCAL_DifferenceImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -89,9 +91,7 @@ public:
   itkGetConstMacro(NumberOfPixelsWithDifferences, SizeValueType);
 protected:
   LOCAL_DifferenceImageFilter();
-  ~LOCAL_DifferenceImageFilter() override
-  {
-  }
+  ~LOCAL_DifferenceImageFilter() override = default;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
@@ -125,8 +125,6 @@ protected:
   Array<AccumulateType> m_ThreadDifferenceSum;
   Array<SizeValueType>  m_ThreadNumberOfPixels;
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(LOCAL_DifferenceImageFilter);
-
   bool m_IgnoreBoundaryPixels;
 };
 } // end namespace itk

@@ -227,9 +227,7 @@ public:
 #endif
 protected:
   ExtractSliceImageFilter();
-  ~ExtractSliceImageFilter()
-  {
-  }
+  ~ExtractSliceImageFilter() override = default;
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 

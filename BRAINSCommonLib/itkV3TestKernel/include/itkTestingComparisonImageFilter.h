@@ -103,9 +103,7 @@ public:
 
 protected:
   ComparisonImageFilter();
-  virtual ~ComparisonImageFilter()
-  {
-  }
+  ~ComparisonImageFilter() override = default;
 
   virtual void PrintSelf(std::ostream & os, Indent indent) const;
 

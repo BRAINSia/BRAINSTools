@@ -137,7 +137,7 @@ void
 ShuffleVectors::ShuffleOrder(std::vector<std::ios::off_type> & rval) const
 {
   using unsigned64 = findUINT64Type<sizeof(unsigned long)>::unsigned64;
-  vnl_random randgen;
+  vnl_random randgen(98765);
 #define randgen64()                                      \
   ( ( static_cast<unsigned64>( randgen.lrand32() ) << 32 ) \
     | static_cast<unsigned64>( randgen.lrand32() ) )

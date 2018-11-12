@@ -38,6 +38,7 @@ LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
   m_ToleranceRadius(0),
   m_IgnoreBoundaryPixels(false)
 {
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
   // We require two inputs to execute.
   this->SetNumberOfRequiredInputs(2);
 }

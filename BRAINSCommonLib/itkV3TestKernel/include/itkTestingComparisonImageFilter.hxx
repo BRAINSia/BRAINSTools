@@ -34,6 +34,7 @@ template <typename TInputImage, typename TOutputImage>
 ComparisonImageFilter<TInputImage, TOutputImage>
 ::ComparisonImageFilter()
 {
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
   // We require two inputs to execute.
   this->SetNumberOfRequiredInputs(2);
 

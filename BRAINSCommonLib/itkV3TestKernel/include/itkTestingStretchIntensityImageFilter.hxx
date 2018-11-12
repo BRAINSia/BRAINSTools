@@ -41,6 +41,7 @@ template <typename TInputImage, typename TOutputImage>
 StretchIntensityImageFilter<TInputImage, TOutputImage>
 ::StretchIntensityImageFilter()
 {
+  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
   m_OutputMaximum   = NumericTraits<OutputPixelType>::max();
   m_OutputMinimum   = NumericTraits<OutputPixelType>::NonpositiveMin();
 

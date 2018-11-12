@@ -187,9 +187,7 @@ protected:
   }
 
   OtsuHistogramMatchingImageFilter();
-  ~OtsuHistogramMatchingImageFilter() override
-  {
-  }
+  ~OtsuHistogramMatchingImageFilter() override = default;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 

@@ -103,7 +103,7 @@ static void ReshapeConvertIndex2(cmplxHHIteratorType & outputIter,
     }
 
      //TODO: HACK FOR debugging
-    if(inputIndex[dim] >= inSize[dim]  || inputIndex[dim] < 0 )
+    if( static_cast<size_t>(inputIndex[dim]) >= inSize[dim]  || inputIndex[dim] < 0 )
     {
       std::cout << "XXX: " << dim << " : " << inputIndex[dim] << std::endl;
       return;
@@ -264,7 +264,11 @@ HalfHermetianImageType::Pointer GetForwardFFT(FloatImageType::Pointer inputImage
 
 
 FloatImageType::Pointer GetInverseFFT(HalfHermetianImageType::Pointer inputFFTCoeffs,
-                                      const bool referenceImageBase_ActualXDimensionIsOdd, const PrecisionType FFTScaler)
+                                      const bool
+#ifdef USE_HALF_FFTW
+                                      referenceImageBase_ActualXDimensionIsOdd
+#endif
+                                      , const PrecisionType FFTScaler)
 {
 #ifdef USE_HALF_FFTW
   static FloatFFTWFullIFFTType::Pointer ifft = FloatFFTWFullIFFTType::New();

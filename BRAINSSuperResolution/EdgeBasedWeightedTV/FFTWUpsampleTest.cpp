@@ -22,8 +22,6 @@
 #include <rtkForwardDifferenceGradientImageFilter.h>
 #include <rtkBackwardDifferenceDivergenceImageFilter.h>
 
-constexpr size_t IM2DSIZE = 3;
-
 template<typename IMTYPE>
 void DumpImage(IMTYPE out)
 {
@@ -55,16 +53,16 @@ static void FillWithIndexValue(HalfHermetianImageType::Pointer img)
   const HalfHermetianImageType::SizeType size = img->GetLargestPossibleRegion().GetSize();
   HalfHermetianImageType::IndexType idx;
 
-  for(idx[2]= 0; idx[2] < size[2]; ++idx[2]) {
-    for(idx[1]= 0; idx[1] < size[1]; ++idx[1]) {
-      for (idx[0] = 0; idx[0] < size[0]; ++idx[0]) {
+  for(idx[2]= 0; static_cast<size_t>(idx[2]) < size[2]; ++idx[2]) {
+    for(idx[1]= 0; static_cast<size_t>(idx[1]) < size[1]; ++idx[1]) {
+      for (idx[0] = 0; static_cast<size_t>(idx[0]) < size[0]; ++idx[0]) {
         img->SetPixel(idx,std::complex<float>(idx[0],idx[1]));
       }
     }
   }
 }
 
-int main( int argc, char * argv[])
+int main( int , char * [])
 {
   const std::complex<float> Zero(0.8F,0.8F);
   HalfHermetianImageType::RegionType::IndexType startIndex;

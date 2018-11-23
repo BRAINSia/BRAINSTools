@@ -412,7 +412,6 @@ BRAINSFitHelper::Update(void)
     //The next line was a hack for early ITKv4 mattes mutual informaiton
     //that was using a lot of memory
     //mutualInformationMetric->SetMaximumNumberOfThreads(std::min( 3U,itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() ) );
-    mutualInformationMetric = mutualInformationMetric;
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
     mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );
     mutualInformationMetric->SetUseFixedImageGradientFilter( gradientfilter );
@@ -426,7 +425,6 @@ BRAINSFitHelper::Update(void)
     {
     using MSEMetricType = itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
     MSEMetricType::Pointer meanSquareMetric = MSEMetricType::New();
-    meanSquareMetric = meanSquareMetric;
     metric = meanSquareMetric;
 
     this->SetupRegistration< MSEMetricType >(metric);
@@ -445,7 +443,6 @@ BRAINSFitHelper::Update(void)
     {
     using MutualInformationMetricType = itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
     MutualInformationMetricType::Pointer mutualInformationMetric = MutualInformationMetricType::New();
-    mutualInformationMetric = mutualInformationMetric;
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
     mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );
     mutualInformationMetric->SetUseFixedImageGradientFilter( gradientfilter );

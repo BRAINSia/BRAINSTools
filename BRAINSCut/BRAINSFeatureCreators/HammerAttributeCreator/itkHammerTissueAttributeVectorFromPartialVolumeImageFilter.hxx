@@ -108,7 +108,7 @@ throw (InvalidRequestedRegionError)
   unsigned long radius = 1;
   typename InputImageType::SpacingType inputSpacing = this->GetInput()->GetSpacing();
   Size<InputImageDimension> sphereRadius;
-  for( int i = 0; i < InputImageDimension; ++i )
+  for( unsigned int i = 0; i < InputImageDimension; ++i )
     {
     sphereRadius[i] = static_cast<unsigned long>( this->m_Scale / inputSpacing[i] );
     if( sphereRadius[i] > radius )
@@ -126,7 +126,7 @@ throw (InvalidRequestedRegionError)
   typename InputImageType::SizeType dummySize;
 
   dummyImage->SetSpacing(inputSpacing);
-  for( int k = 0; k < InputImageDimension; k++ )
+  for( unsigned int k = 0; k < InputImageDimension; k++ )
     {
     dummySize[k] = sphereRadius[k] + sphereRadius[k] + 1;
     dummyStart[k] = -sphereRadius[k];
@@ -145,7 +145,7 @@ throw (InvalidRequestedRegionError)
     typename InputImageType::PointType point;
     dummyImage->TransformIndexToPhysicalPoint(dummyIdx, point);
     float d = 0;
-    for( int k = 0; k < InputImageDimension; k++ )
+    for( unsigned int k = 0; k < InputImageDimension; k++ )
       {
       d += point[k] * point[k];
       }
@@ -156,7 +156,7 @@ throw (InvalidRequestedRegionError)
     else
       {
       NeighborOffsetType offset;
-      for( int k = 0; k < InputImageDimension; k++ )
+      for( unsigned int k = 0; k < InputImageDimension; k++ )
         {
         offset[k] = dummyIdx[k];
         }

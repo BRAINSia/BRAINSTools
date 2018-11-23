@@ -1,6 +1,7 @@
 /*=========================================================================
  *
- *  Copyright Insight Software Consortium
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +26,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkTestMain_h
-#define __itkTestMain_h
+#ifndef __itkBRAINSToolsTestMain_h__
+#define __itkBRAINSToolsTestMain_h__
 
 // This file is used to create TestDriver executables
 // These executables are able to register a function pointer to a string name
@@ -38,6 +39,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "itkNumericTraits.h"
 #include "itkMultiThreaderBase.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
@@ -46,15 +48,15 @@
 #include "itkSubtractImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkExtractImageFilter.h"
-#include "itkTestingComparisonImageFilter.h"
+#include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
-#include "itkIntTypes.h"
-#include "itkFloatingPointExceptions.h"
+#include "brainsiaTestingComparisonImageFilter.h"
+#include <csignal>
 
 #define ITK_TEST_DIMENSION_MAX 6
 
-using StringToTestFunctionMap = int ( *MainFuncPointer )(int, char *[]);
-std::map<std::string, MainFuncPointer>;
+typedef int (*MainFuncPointer)(int, char * [] );
+std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 
 #define REGISTER_TEST(test)       \
   extern int test(int, char *[]); \
@@ -82,10 +84,22 @@ void PrintAvailableTests()
     }
 }
 
-int main(int ac, char *av[])
+static void sigfpe_handl(int sig)
 {
-  itk::FloatingPointExceptions::Enable();
+  printf("Argggh..Division by zero ! (or other fpe): SIGNAL=%d\n", sig);
+  // ..some more
+  exit(-1);
+}
 
+// void sigint_handl(int sig)
+// {
+//     printf("Program is exiting..: SIGNAL=%d\n",sig);
+//     exit(0);
+// }
+
+int main(int ac, char* av[] )
+{
+  std::signal(SIGFPE, sigfpe_handl);
   double       intensityTolerance  = 2.0;
   unsigned int numberOfPixelsTolerance = 0;
   unsigned int radiusTolerance = 0;
@@ -303,7 +317,7 @@ int RegressionTestImage(const char *testImageFilename,
     }
 
   // Now compare the two images
-  using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
+  using DiffType = brainsia::Testing::ComparisonImageFilter<ImageType, ImageType>;
   DiffType::Pointer diff = DiffType::New();
   diff->SetValidInput( baselineReader->GetOutput() );
   diff->SetTestInput( testReader->GetOutput() );
@@ -311,7 +325,7 @@ int RegressionTestImage(const char *testImageFilename,
   diff->SetToleranceRadius(radiusTolerance);
   diff->UpdateLargestPossibleRegion();
 
-  itk::SizeValueType status = diff->GetNumberOfPixelsWithDifferences();
+  const itk::SizeValueType status = diff->GetNumberOfPixelsWithDifferences();
 
   // if there are discrepencies, create an diff image
   if( ( status > numberOfPixelsTolerance ) && reportErrors )
@@ -332,7 +346,7 @@ int RegressionTestImage(const char *testImageFilename,
     // Get the center slice of the image,  In 3D, the first slice
     // is often a black slice with little debugging information.
     OutputType::IndexType index; index.Fill(0);
-    for( unsigned int i = 2; i < ITK_TEST_DIMENSION_MAX; i++ )
+    for( unsigned int i = 2; i < ITK_TEST_DIMENSION_MAX; ++i )
       {
       index[i] = size[i] / 2; // NOTE: Integer Divide used to get approximately
                               // the center slice
@@ -348,6 +362,7 @@ int RegressionTestImage(const char *testImageFilename,
     extract->SetDirectionCollapseToSubmatrix();
     extract->SetInput( rescale->GetOutput() );
     extract->SetExtractionRegion(region);
+    extract->SetDirectionCollapseToIdentity();
 
     WriterType::Pointer writer = WriterType::New();
     writer->SetInput( extract->GetOutput() );

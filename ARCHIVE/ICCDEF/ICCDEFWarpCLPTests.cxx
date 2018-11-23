@@ -20,7 +20,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 #include <iostream>
-#include "itkTestMain.h"
+#include "itkBRAINSToolsTestMain.h"
 
 extern void RegisterTests()
 {

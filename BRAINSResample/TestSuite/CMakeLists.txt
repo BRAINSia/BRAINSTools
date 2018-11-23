@@ -61,22 +61,22 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
 #   --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
 #   )
 
-ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest6_nii
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
-  --compare
-  DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasks.result.nii.gz}
-  ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
-  --compareIntensityTolerance 13
-  --compareRadiusTolerance 1
-  --compareNumberOfPixelsTolerance 1
-  BRAINSResampleTest
-  --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
-  --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
-  --pixelType uchar
-  --interpolationMode WindowedSinc
-  --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_RigidRotationNoMasks.${XFRM_EXT}}
-  )
+# ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest6_nii
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
+#  --compare
+#  DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasks.result.nii.gz}
+#  ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
+#  --compareIntensityTolerance 13
+#  --compareRadiusTolerance 1
+#  --compareNumberOfPixelsTolerance 1
+#  BRAINSResampleTest
+#  --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+#  --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
+#  --pixelType uchar
+#  --interpolationMode WindowedSinc
+#  --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_RigidRotationNoMasks.${XFRM_EXT}}
+#  )
 
 # BSplineDeformableTransform is deprecated.
 # ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest7_nii

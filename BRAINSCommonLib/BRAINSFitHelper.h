@@ -369,7 +369,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
 
     const unsigned long sampleCount = static_cast<unsigned long>(std::ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
 
-    using RandomizerType = typename Statistics::MersenneTwisterRandomVariateGenerator;
+    using RandomizerType = Statistics::MersenneTwisterRandomVariateGenerator;
     typename RandomizerType::Pointer randomizer = RandomizerType::New();
     randomizer->SetSeed( 1234 );
 

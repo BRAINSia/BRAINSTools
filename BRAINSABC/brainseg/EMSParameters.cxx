@@ -54,11 +54,6 @@ EMSParameters
   m_ImageLinearMapType = "Rigid";
 }
 
-EMSParameters
-::~EMSParameters()
-{
-}
-
 void
 EMSParameters
 ::AddImage(std::string s, std::string orient)

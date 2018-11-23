@@ -18,7 +18,7 @@
  *=========================================================================*/
 
 #include <iostream>
-#include "itkTestMain.h"
+#include "itkBRAINSToolsTestMain.h"
 // #include "DWIConvert.cxx"
 
 /*

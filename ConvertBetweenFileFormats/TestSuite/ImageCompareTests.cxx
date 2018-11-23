@@ -22,10 +22,10 @@
 #pragma warning ( disable : 4786 )
 #endif
 #include <iostream>
-#include "itkTestMain.h"
+#include "itkBRAINSToolsTestMain.h"
 
 // A dummy method that does nothing. We intend doing a comparison which is done
-// by the itkTestMain.h. (It requires a main program, prior to the compare)
+// by the itkBRAINSToolsTestMain.h. (It requires a main program, prior to the compare)
 int Dummy(int, char *[])
 {
   return EXIT_SUCCESS;

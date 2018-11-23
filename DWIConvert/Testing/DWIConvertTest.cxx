@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "itkTestMain.h"
+#include "itkBRAINSToolsTestMain.h"
 
 #ifdef WIN32
 #define MODULE_IMPORT __declspec(dllimport)

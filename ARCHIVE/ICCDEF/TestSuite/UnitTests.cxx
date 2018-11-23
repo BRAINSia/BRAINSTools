@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 #include "vnl/vnl_sample.h"
-#include "itkTestMain.h"
+#include "itkBRAINSToolsTestMain.h"
 #include "itkConfigure.h"
 
 void RegisterTests()

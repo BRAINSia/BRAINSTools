@@ -15,16 +15,19 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __LOCAL_itkDifferenceImageFilter_h
-#define __LOCAL_itkDifferenceImageFilter_h
+#ifndef brainsiaTestingComparisonImageFilter_h
+#define brainsiaTestingComparisonImageFilter_h
 
-#include "itkImageToImageFilter.h"
-#include "itkNumericTraits.h"
 #include "itkArray.h"
+#include "itkNumericTraits.h"
+#include "itkImageToImageFilter.h"
 
-namespace itk
+namespace brainsia
 {
-/** \class LOCAL_DifferenceImageFilter
+namespace Testing
+{
+using namespace itk;
+/** \class ComparisonImageFilter
  * \brief Implements comparison between two images.
  *
  * This filter is used by the testing system to compute the difference between
@@ -36,38 +39,45 @@ namespace itk
  * \ingroup IntensityImageFilters   MultiThreaded
  * \ingroup ITKTestKernel
  */
-template <typename TInputImage, typename TOutputImage>
-class LOCAL_DifferenceImageFilter :
-  public         ImageToImageFilter<TInputImage, TOutputImage>
+template< typename TInputImage, typename TOutputImage >
+class ITK_TEMPLATE_EXPORT ComparisonImageFilter:
+  public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(LOCAL_DifferenceImageFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN(ComparisonImageFilter);
 
-  /** Standard class type alias. */
-  using Self = LOCAL_DifferenceImageFilter;
-  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  /** Standard class type aliases. */
+  using Self = ComparisonImageFilter;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(LOCAL_DifferenceImageFilter, ImageToImageFilter);
+  itkTypeMacro(ComparisonImageFilter, ImageToImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
+  using InputPixelType = typename InputImageType::PixelType;
   using OutputImageType = TOutputImage;
   using OutputPixelType = typename OutputImageType::PixelType;
   using OutputImageRegionType = typename OutputImageType::RegionType;
-  using RealType = typename NumericTraits<OutputPixelType>::RealType;
-  using AccumulateType = typename NumericTraits<RealType>::AccumulateType;
+  using RealType = typename NumericTraits< OutputPixelType >::RealType;
+  using AccumulateType = typename NumericTraits< RealType >::AccumulateType;
 
   /** Set the valid image input.  This will be input 0.  */
-  virtual void SetValidInput(const InputImageType *validImage);
+  itkSetInputMacro(ValidInput, InputImageType);
 
   /** Set the test image input.  This will be input 1.  */
-  virtual void SetTestInput(const InputImageType *testImage);
+  itkSetInputMacro(TestInput, InputImageType);
+
+  /** Verify that the origin, spacing, and direction of both images match
+  */
+  itkSetMacro(VerifyInputInformation, bool);
+  itkGetConstMacro(VerifyInputInformation, bool);
+  itkBooleanMacro(VerifyInputInformation);
 
   /** Set/Get the maximum distance away to look for a matching pixel.
       Default is 0. */
@@ -85,17 +95,21 @@ public:
   itkSetMacro(IgnoreBoundaryPixels, bool);
   itkGetConstMacro(IgnoreBoundaryPixels, bool);
 
-  /** Get parameters of the difference image after execution.  */
+  /** Get statistical attributes for those pixels which exceed the
+   * tolerance and radius parameters */
+  itkGetConstMacro(MinimumDifference, OutputPixelType);
+  itkGetConstMacro(MaximumDifference, OutputPixelType);
   itkGetConstMacro(MeanDifference, RealType);
   itkGetConstMacro(TotalDifference, AccumulateType);
   itkGetConstMacro(NumberOfPixelsWithDifferences, SizeValueType);
+
 protected:
-  LOCAL_DifferenceImageFilter();
-  ~LOCAL_DifferenceImageFilter() override = default;
+  ComparisonImageFilter();
+  ~ComparisonImageFilter() override = default;
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
-  /** LOCAL_DifferenceImageFilter can be implemented as a multithreaded
+  /** ComparisonImageFilter can be implemented as a multithreaded
    * filter.  Therefore, this implementation provides a
    * ThreadedGenerateData() routine which is called for each
    * processing thread. The output image data is allocated
@@ -103,18 +117,27 @@ protected:
    * ThreadedGenerateData().  ThreadedGenerateData can only write to
    * the portion of the output image specified by the parameter
    * "outputRegionForThread"
-   *
-   * \sa ImageToImageFilter::ThreadedGenerateData(),
-   *     ImageToImageFilter::GenerateData()  */
-  void ThreadedGenerateData(const OutputImageRegionType & threadRegion, ThreadIdType threadId) override;
+   */
+  void ThreadedGenerateData(const OutputImageRegionType & threadRegion,
+                            ThreadIdType threadId) override;
+
+  void DynamicThreadedGenerateData( const OutputImageRegionType & ) override
+  {
+    itkExceptionMacro("This class requires threadId so it must use classic multi-threading model");
+  }
 
   void BeforeThreadedGenerateData() override;
 
   void AfterThreadedGenerateData() override;
 
+  void VerifyInputInformation() ITKv5_CONST override;
+
   OutputPixelType m_DifferenceThreshold;
 
-  RealType m_MeanDifference;
+  RealType        m_MeanDifference;
+  OutputPixelType m_MinimumDifference;
+  OutputPixelType m_MaximumDifference;
+  bool            m_VerifyInputInformation;
 
   AccumulateType m_TotalDifference;
 
@@ -122,15 +145,21 @@ protected:
 
   int m_ToleranceRadius;
 
-  Array<AccumulateType> m_ThreadDifferenceSum;
-  Array<SizeValueType>  m_ThreadNumberOfPixels;
+  Array< AccumulateType >    m_ThreadDifferenceSum;
+  Array< SizeValueType >     m_ThreadNumberOfPixels;
+
+  Array< OutputPixelType >    m_ThreadMinimumDifference;
+  Array< OutputPixelType >    m_ThreadMaximumDifference;
+
 private:
   bool m_IgnoreBoundaryPixels;
 };
+} // end namespace Testing
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "LOCAL_itkDifferenceImageFilter.hxx"
+#include "brainsiaTestingComparisonImageFilter.hxx"
 #endif
+
 
 #endif

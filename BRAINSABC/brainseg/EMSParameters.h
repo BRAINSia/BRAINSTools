@@ -110,10 +110,12 @@ public:
 
   itkGetConstMacro(ImageLinearMapType, std::string);
   itkSetMacro(ImageLinearMapType, std::string);
+
+  virtual ~EMSParameters() = default;
+
 protected:
 
   EMSParameters();
-  ~EMSParameters();
 
   std::string m_Suffix;
 

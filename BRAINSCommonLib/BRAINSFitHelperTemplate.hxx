@@ -1307,7 +1307,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bsplineRegistration->InPlaceOn(); // So bsplineTx is also the output transform
                                         //  of the registration filter.
 
-      using LBFGSBOptimizerType = typename itk::LBFGSBOptimizerv4;
+      using LBFGSBOptimizerType = itk::LBFGSBOptimizerv4;
       using LBFGSBOptimizerTypePointer = typename LBFGSBOptimizerType::Pointer;
       using OptimizerBoundSelectionType = typename LBFGSBOptimizerType::BoundSelectionType;
       using OptimizerBoundValueType = typename LBFGSBOptimizerType::BoundValueType;

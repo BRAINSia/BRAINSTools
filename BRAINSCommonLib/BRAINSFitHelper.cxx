@@ -415,7 +415,7 @@ BRAINSFitHelper::Update(void)
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
     mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );
     mutualInformationMetric->SetUseFixedImageGradientFilter( gradientfilter );
-    mutualInformationMetric->SetUseFixedSampledPointSet( false );
+    mutualInformationMetric->SetUseSampledPointSet( false );
     metric = mutualInformationMetric;
 
     this->SetupRegistration< MIMetricType >(metric);
@@ -446,7 +446,7 @@ BRAINSFitHelper::Update(void)
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
     mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );
     mutualInformationMetric->SetUseFixedImageGradientFilter( gradientfilter );
-    mutualInformationMetric->SetUseFixedSampledPointSet( false );
+    mutualInformationMetric->SetUseSampledPointSet( false );
     mutualInformationMetric->SetVarianceForJointPDFSmoothing( 1.0 );
     metric = mutualInformationMetric;
 

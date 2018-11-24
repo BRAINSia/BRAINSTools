@@ -403,7 +403,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
       itkGenericExceptionMacro("samplePointSet is empty.");
       }
 
-    localCostMetric->SetUseFixedSampledPointSet( true );
+    localCostMetric->SetUseSampledPointSet( true );
     localCostMetric->SetFixedSampledPointSet( samplePointSet );
     }
 

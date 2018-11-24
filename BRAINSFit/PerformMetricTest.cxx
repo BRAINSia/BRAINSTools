@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
     }
 
   metric->SetFixedSampledPointSet( samplePointSet );
-  metric->SetUseFixedSampledPointSet( true );
+  metric->SetUseSampledPointSet( true );
 
   metric->Initialize();
 

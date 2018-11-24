@@ -115,14 +115,14 @@ public:
   };
 
   ///
-  /// Pass SetNumberOfThreads.
-  void SetNumberOfThreads(int val)
+  /// Pass SetNumberOfWorkUnits.
+  void SetNumberOfWorkUnits(int val)
   {
-    this->m_Process->SetNumberOfThreads(val);
+    this->m_Process->SetNumberOfWorkUnits(val);
   };
 
   ///
-  /// Pass SetNumberOfThreads.
+  /// Pass SetNumberOfWorkUnits.
   int GetNumberOfThreads()
   {
     return this->m_Process->GetNumberOfThreads();

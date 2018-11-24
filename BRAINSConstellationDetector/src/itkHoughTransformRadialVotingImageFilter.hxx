@@ -88,7 +88,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
   // Limiting the Hough Filter to run with single thread.
   // In a single threaded status, the increment of run time for this filter is not tremendous in compare with
   // the total run time of the BCD
-  this->SetNumberOfThreads(1);
+  this->SetNumberOfWorkUnits(1);
   this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
 }
 

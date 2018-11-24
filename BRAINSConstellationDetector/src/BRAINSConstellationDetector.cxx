@@ -104,7 +104,7 @@ int main( int argc, char *argv[] )
     }
 
   BRAINSConstellationDetectorPrimary BCD;
-  BCD.SetNumberOfThreads( numberOfThreads );
+  BCD.SetNumberOfWorkUnits( numberOfThreads );
   BCD.SetInputLandmarksEMSP( inputLandmarksEMSP );
   BCD.SetLLSModel( llsModel );
   BCD.SetInputVolume( inputVolume );

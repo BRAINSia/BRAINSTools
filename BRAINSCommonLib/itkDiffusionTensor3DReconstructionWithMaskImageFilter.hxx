@@ -47,7 +47,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
 
   // This is due to buggy code in netlib/dsvdc, that is called by vnl_svd.
   // (used to compute the psudo-inverse to find the dual tensor basis).
-  this->SetNumberOfThreads(1);
+  this->SetNumberOfWorkUnits(1);
 }
 
 template <typename TReferenceImagePixelType,

@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
 
   using STAPLEFilterType = itk::MultiLabelSTAPLEImageFilter<USImageType, USImageType>;
   STAPLEFilterType::Pointer STAPLEFilter = STAPLEFilterType::New();
-  STAPLEFilter->SetNumberOfThreads(1);
+  STAPLEFilter->SetNumberOfWorkUnits(1);
 
   if( labelForUndecidedPixels != -1 )
     {

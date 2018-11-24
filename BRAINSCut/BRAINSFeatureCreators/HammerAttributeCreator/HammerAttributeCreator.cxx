@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
   modleAttributeFilter->SetWMVolume( wmReader->GetOutput() );
 
   // not thread-safe, yet!
-  modleAttributeFilter->SetNumberOfThreads(1);
+  modleAttributeFilter->SetNumberOfWorkUnits(1);
   modleAttributeFilter->SetStrength(Strength);
   modleAttributeFilter->SetScale(Scale);
   modleAttributeFilter->Update();

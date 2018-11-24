@@ -186,11 +186,11 @@ DivergenceImageFilter< TInputImage, TRealType, TOutputImage >
   if ( m_UsePrincipleComponents == true && ImageDimension != 3 )
     {
     m_RequestedNumberOfThreads = this->GetNumberOfThreads();
-    this->SetNumberOfThreads(1);
+    this->SetNumberOfWorkUnits(1);
     }
   else
     {
-    this->SetNumberOfThreads(m_RequestedNumberOfThreads);
+    this->SetNumberOfWorkUnits(m_RequestedNumberOfThreads);
     }
   //
   // cast might not be necessary, but CastImagefilter is optimized for

@@ -86,7 +86,7 @@ public:
     this->m_writedebuggingImagesLevel = writedebuggingImagesLevel;
   }
 
-  void SetNumberOfThreads(unsigned int numberOfThreads)
+  void SetNumberOfWorkUnits(unsigned int numberOfThreads)
   {
     this->m_numberOfThreads = numberOfThreads;
   }

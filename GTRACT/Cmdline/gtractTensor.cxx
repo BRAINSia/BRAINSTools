@@ -321,7 +321,7 @@ int main(int argc, char *argv[])
   tensorFilter->SetGradientImage( gradientDirectionContainer, indexImageToVectorImageFilter->GetOutput() );
   tensorFilter->SetThreshold( backgroundSuppressingThreshold );
   tensorFilter->SetBValue(BValue);     /* Required */
-  tensorFilter->SetNumberOfThreads(1); /* Required */
+  tensorFilter->SetNumberOfWorkUnits(1); /* Required */
   if( maskImage.IsNotNull() )
     {
     tensorFilter->SetMaskImage(maskImage);

@@ -208,7 +208,7 @@ TImageVectorType ReadImageVolumes(TStringVectorType filenameVector, const size_t
         myLinearIterp->SetInputImage(orientedImage);
         //resampler->SetInterpolator(myLinearIterp);
       }
-      resampler->SetNumberOfThreads(1);
+      resampler->SetNumberOfWorkUnits(1);
       resampler->SetInput(orientedImage);
       resampler->SetReferenceImage(imageVector[0]);
       //std::cout << orientedImage << std::endl;

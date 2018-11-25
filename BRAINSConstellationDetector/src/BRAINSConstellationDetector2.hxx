@@ -41,9 +41,10 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::BRAINSConstellationDetector2()
-  {
+{
   /** Essential Parameters */
   // Inputs
+  this->m_Transform = "";
   this->m_InputTemplateModel = "";
   this->m_MspQualityLevel = 2;
   this->m_OtsuPercentileThreshold = 0.01;
@@ -55,14 +56,33 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_RescaleIntensitiesOutputRange.push_back(4000);
   this->m_BackgroundFillValueString = "0";
   this->m_InterpolationMode = "Linear";
+
   this->m_OriginalInputImage = nullptr;
+  this->m_HoughEyeTransform = nullptr;
+
+  this->m_LEPoint.Fill(-123.0);
+  this->m_REPoint.Fill(-123.0);
+  this->m_CenterOfHeadMass.Fill(-12345.0);
+
+  m_landmarksEMSP.clear();
+  m_HoughEyeFailure=false;
+
+  this->m_LlsMatrices.clear();
+  this->m_LlsMeans.clear();
+
+  this->m_ACMean.Fill(-123);
+  this->m_SearchRadii.clear();
 
   // Outputs
-  this->m_Transform = "";
   this->m_OrigToACPCVersorTransform = nullptr;
+  this->m_ACPCToOrigVersorTransform = nullptr;
+  this->m_AlignedPoints.clear();
+  this->m_OriginalPoints.clear();
+
   this->m_OutputImage = nullptr;
   this->m_OutputResampledImage = nullptr;
   this->m_OutputUntransformedClippedVolume = nullptr;
+  this->m_CleanedIntensityOriginalInputImage = nullptr;
 
   /** Advanced parameters */
   /** Manual Override */
@@ -84,10 +104,12 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_Debug = false;
   this->m_Verbose = false;
   this->m_WritedebuggingImagesLevel = 0;
-
-  // Outputs
   this->m_WriteBranded2DImage = "";
   this->m_ResultsDir = "./";
+
+  this->m_atlasVolume = "";
+  this->m_atlasLandmarks = "";
+  this->m_atlasLandmarkWeights = "";
   }
 
 template <typename TInputImage, typename TOutputImage>

@@ -200,10 +200,13 @@ public:
                    ( Concept::DivisionOperators<OutputPixelType, int> ) );
   /** End concept checking */
 #endif
+  BRAINSHoughEyeDetector(const Self &) = delete;
+  void operator=(const Self &) = delete;
+  virtual ~BRAINSHoughEyeDetector() = default;
+
 protected:
 
   BRAINSHoughEyeDetector();
-
   void GenerateData() override;
 
   /** Input Parameters */
@@ -240,24 +243,14 @@ protected:
   OutputPointType    m_LE;
   OutputPointType    m_RE;
   OutputPointType    m_RotAngle;
-  double             m_Ipd;     // adult interpupilary distance
-  bool               m_Failure; // indicating wether the detector realizes the
-                                // failure
-
+  double             m_Ipd;     // adult inter-pupilary distance
+  bool               m_Failure; // indicating whether the detector realizes the failure
   OutputPixelType m_MaxInputPixelValue;
   OutputPixelType m_MinInputPixelValue;
 
   VersorTransformType::Pointer m_VersorTransform;
   VersorTransformType::Pointer m_InvVersorTransform;
-private:
 
-  BRAINSHoughEyeDetector(const Self &)
-  {
-  }
-
-  void operator=(const Self &)
-  {
-  }
 };
 } // end namespace itk
 

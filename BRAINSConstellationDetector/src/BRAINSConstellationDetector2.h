@@ -175,9 +175,7 @@ public:
     return internalImage;
     }
 
-
   // Get Basic Outputs
-
   /** Get the versor transform */
   itkGetConstObjectMacro(OrigToACPCVersorTransform, VersorTransformType);
   itkGetConstObjectMacro(ACPCToOrigVersorTransform, VersorTransformType);
@@ -300,6 +298,10 @@ public:
   itkGetMacro(atlasLandmarks, std::string);
   itkGetMacro(atlasLandmarkWeights, std::string);
 
+  BRAINSConstellationDetector2(const Self &) = delete;
+  void operator=(const Self &) = delete;
+  ~BRAINSConstellationDetector2() override = default;
+
 protected:
 
   BRAINSConstellationDetector2();
@@ -317,8 +319,7 @@ protected:
   bool             m_CutOutHeadInOutputVolume;      // default = false
   bool             m_RescaleIntensities;            // default = false
   double           m_TrimRescaledIntensities;       // default = 4.4172
-  std::vector<int> m_RescaleIntensitiesOutputRange; // default = [40,
-                                                    // 4000]
+  std::vector<int> m_RescaleIntensitiesOutputRange; // default = [40, 4000]
   std::string m_BackgroundFillValueString;          // default = "0"
   std::string m_InterpolationMode;                  // default = "Linear"
 
@@ -336,6 +337,7 @@ protected:
   SImagePointType  m_CenterOfHeadMass;
   LandmarksMapType m_landmarksEMSP;
   bool             m_HoughEyeFailure;
+
   std::map<std::string,
            MatrixType> m_LlsMatrices;
   std::map<std::string,
@@ -381,16 +383,6 @@ protected:
   std::string m_atlasVolume; // The reference atlas image
   std::string m_atlasLandmarks; // The reference atlas landmarks
   std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
-
-private:
-
-  BRAINSConstellationDetector2(const Self &)
-  {
-  }
-
-  void operator=(const Self &)
-  {
-  }
 
 };
 

@@ -45,6 +45,8 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
   this->m_NbOfThreads         = 64;
   this->m_SamplingRatio       = .2;
   this->m_HoughEyeDetectorMode = 1;   // for T1-weighted image
+  this->m_CenterOfHeadMass.Fill(-9999.87654321);
+
   this->m_R1                  = 30;
   this->m_R2                  = 120;
   this->m_Theta               = 1.04719755; // 120 degrees 0.785398163;   //
@@ -55,11 +57,18 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
   /** Output parameters */
   this->m_AccumulatorImage    = TInputImage::New();
   this->m_RoIImage            = TInputImage::New();
+  this->m_LE.Fill(123);
+  this->m_RE.Fill(123);
+  this->m_RotAngle = 333.3333;
   this->m_Ipd                 = 0;
+  this->m_Failure             = false;
+
   this->m_MaxInputPixelValue  = 0;
   this->m_MinInputPixelValue  = 0;
   this->m_OutputImage         = TOutputImage::New();
-  this->m_Failure             = false;
+
+  this->m_MaxInputPixelValue = -1234;
+  this->m_MinInputPixelValue = 1234;
 
   /** Internal parameters */
   this->m_VersorTransform     = VersorTransformType::New();

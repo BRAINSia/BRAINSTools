@@ -31,7 +31,9 @@ set(CTEST_TEST_ARGS ${CTEST_TEST_ARGS} PARALLEL_LEVEL ${PARALLEL_LEVEL})
 
 set_from_env(workspace "AGENT_BUILDDIRECTORY" REQUIRED)
 file(TO_CMAKE_PATH "${workspace}" CTEST_DASHBOARD_ROOT)
-file(RELATIVE_PATH dashboard_source_name "${workspace}" "$ENV{BUILD_SOURCESDIRECTORY}")
+
+set_from_env(local_build_sourcesdirectory "BUILD_SOURCESDIRECTORY" REQUIRED)
+file(RELATIVE_PATH dashboard_source_name "${workspace}" "${local_build_sourcesdirectory}")
 # Make environment variables to CMake variables for CTest
 set_from_env(CTEST_CMAKE_GENERATOR "CTEST_CMAKE_GENERATOR" DEFAULT "Ninja")
 set_from_env(CTEST_BUILD_CONFIGURATION "CTEST_BUILD_CONFIGURATION" DEFAULT "Release")

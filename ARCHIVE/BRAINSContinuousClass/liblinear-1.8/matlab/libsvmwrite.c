@@ -43,7 +43,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 
 	if(fp ==NULL)
 	{
-		mexPrintf("can't open output file %s\n",filename);			
+		mexPrintf("can't open output file %s\n",filename);
 		return;
 	}
 
@@ -83,7 +83,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 
 		low = (int) jc[i], high = (int) jc[i+1];
 		for(k=low;k<high;k++)
-			fprintf(fp," %ld:%g", ir[k]+1, samples[k]);		
+			fprintf(fp," %ld:%g", ir[k]+1, samples[k]);
 
 		fprintf(fp,"\n");
 	}

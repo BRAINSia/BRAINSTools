@@ -22,7 +22,7 @@ int main()
     //load it into a new array
     cnpy::NpyArray arr = cnpy::npy_load("arr1.npy");
     std::complex<double>* loaded_data = reinterpret_cast<std::complex<double>*>(arr.data);
-    
+
     //make sure the loaded data matches the saved data
     assert(arr.word_size == sizeof(std::complex<double>));
     assert(arr.shape.size() == 3 && arr.shape[0] == Nz && arr.shape[1] == Ny && arr.shape[2] == Nx);
@@ -46,7 +46,7 @@ int main()
 
     //load the entire npz file
     cnpy::npz_t my_npz = cnpy::npz_load("out.npz");
-    
+
     //check that the loaded myVar1 matches myVar1
     cnpy::NpyArray arr_mv1 = my_npz["myVar1"];
     double* mv1 = reinterpret_cast<double*>(arr_mv1.data);

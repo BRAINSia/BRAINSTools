@@ -35,7 +35,7 @@ void exit_with_help()
 	"options:\n"
 	"-s type : set type of solver (default 1)\n"
 	"	0 -- L2-regularized logistic regression (primal)\n"
-	"	1 -- L2-regularized L2-loss support vector classification (dual)\n"	
+	"	1 -- L2-regularized L2-loss support vector classification (dual)\n"
 	"	2 -- L2-regularized L2-loss support vector classification (primal)\n"
 	"	3 -- L2-regularized L1-loss support vector classification (dual)\n"
 	"	4 -- multi-class support vector classification by Crammer and Singer\n"
@@ -73,7 +73,7 @@ static int max_line_len;
 static char* readline(FILE *input)
 {
 	int len;
-	
+
 	if(fgets(line,max_line_len,input) == NULL)
 		return NULL;
 

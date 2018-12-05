@@ -226,7 +226,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	{
 		mxGetString(prhs[4], cmd, mxGetN(prhs[4])+1);
 		if(strcmp(cmd, "col") == 0)
-		{			
+		{
 			col_format_flag = 1;
 		}
 	}

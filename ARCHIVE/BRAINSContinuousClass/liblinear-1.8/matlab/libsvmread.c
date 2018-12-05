@@ -53,7 +53,7 @@ static int max_line_len;
 static char* readline(FILE *input)
 {
 	int len;
-	
+
 	if(fgets(line,max_line_len,input) == NULL)
 		return NULL;
 
@@ -78,7 +78,7 @@ void read_problem(const char *filename, mxArray *plhs[])
 	char *endptr;
 	mwIndex *ir, *jc;
 	double *labels, *samples;
-	
+
 	if(fp == NULL)
 	{
 		mexPrintf("can't open input file %s\n",filename);

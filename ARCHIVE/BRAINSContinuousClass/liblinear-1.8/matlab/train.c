@@ -44,7 +44,7 @@ void exit_with_help()
 	"liblinear_options:\n"
 	"-s type : set type of solver (default 1)\n"
 	"	0 -- L2-regularized logistic regression (primal)\n"
-	"	1 -- L2-regularized L2-loss support vector classification (dual)\n"	
+	"	1 -- L2-regularized L2-loss support vector classification (dual)\n"
 	"	2 -- L2-regularized L2-loss support vector classification (primal)\n"
 	"	3 -- L2-regularized L1-loss support vector classification (dual)\n"
 	"	4 -- multi-class support vector classification by Crammer and Singer\n"
@@ -242,7 +242,7 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 		mexPrintf("Length of label vector does not match # of instances.\n");
 		return -1;
 	}
-	
+
 	// each column is one instance
 	labels = mxGetPr(label_vec);
 	samples = mxGetPr(instance_mat_col);

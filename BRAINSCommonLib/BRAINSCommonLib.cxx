@@ -18,6 +18,7 @@
  *=========================================================================*/
 #include <BRAINSCommonLib.h>
 #include <itkFFTWCommon.h>
+#include <iostream>
 
 void BRAINSRegisterAlternateIO(void)
 {

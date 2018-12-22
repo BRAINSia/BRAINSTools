@@ -19,7 +19,7 @@
 ################################################################################
 
 #
-# SlicerBlockSetCMakeOSXVariables
+# SlicerInitializeOSXVariables
 #
 
 #
@@ -31,6 +31,11 @@
 #       deployment target for the standard c++ library.
 #
 if(APPLE)
+  #----------------------------------------------------------------------------
+  # _CURRENT_OSX_VERSION - as a two-component string: 10.11, 10.12, 10.13, 10.14 ...
+  #
+  string(REGEX REPLACE "^([0-9]+\\.[0-9]+).*$" "\\1"
+    _CURRENT_OSX_VERSION "${CURRENT_OSX_VERSION}")
 
   # Waiting universal binaries are supported and tested, complain if
   # multiple architectures are specified.
@@ -41,7 +46,7 @@ if(APPLE)
     endif()
   endif()
 
-  # See CMake/Modules/Platform/Darwin.cmake)
+  # See CMake/Modules/Platform/Darwin.cmake and https://en.wikipedia.org/wiki/MacOS#Release_history
   #   8.x == Mac OSX 10.4 (Tiger)
   #   9.x == Mac OSX 10.5 (Leopard)
   #  10.x == Mac OSX 10.6 (Snow Leopard)
@@ -49,6 +54,10 @@ if(APPLE)
   #  12.x == Mac OSX 10.8 (Mountain Lion)
   #  13.x == Mac OSX 10.9 (Mavericks)
   #  14.x == Mac OSX 10.10 (Yosemite)
+  #  15.x == Mac OSX 10.11 (El Capitan)
+  #  16.x == Mac OSX 10.12 (Sierra)
+  #  17.x == Mac OSX 10.13 (High Sierra)
+  #  18.x == Mac OSX 10.14 (Mojave)
   set(OSX_SDK_104_NAME "Tiger")
   set(OSX_SDK_105_NAME "Leopard")
   set(OSX_SDK_106_NAME "Snow Leopard")
@@ -97,40 +106,36 @@ if(APPLE)
     endif()
   endforeach()
 
-    string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${CMAKE_OSX_SYSROOT}")
-    set(SDK_VERSION "${CMAKE_MATCH_1}")
-    ## Min version supported is 10.9
-    if( "${SDK_VERSION}" VERSION_LESS "10.9" AND CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "")
-      # add to cache to allow interactive editing after fatal error
-      set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE PATH "Deployment target needs to be explicitly set." FORCE)
-      message(FATAL_ERROR
-        "The OSX_SYSROOT is set to version ${SDK_VERSION} (>10.8) and OSX_DEPLOYMENT_TARGET is not explicitly set!\n"
-        "Since:\n"
-        " (1) the default runtime associated with >=10.9 deployment target is 'libc++'.[1]\n"
-        " (2) the default runtime associated with <=10.8 deployment target is 'libstdc++'.\n"
-        " (3) Qt support for 'macx-clang-libc++' is listed as 'unsupported' mkspecs.\n"
-        " (4) Qt binaries may be build against 'libstdc++' or 'libc++'.\n"
-        " (5) Mixing the two different runtime in binaries is unstable.\n"
-        "  [1]http://stackoverflow.com/questions/19637164/c-linking-error-after-upgrading-to-mac-os-x-10-9-xcode-5-0-1/19637199#19637199\n"
-        "--------------------------------\n"
-        "Run '$otool -L $(which qmake) |grep lib.\\*c++' to check what library Qt is built against:\n"
-        " (1) if it is libstdc++ then add '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.8' (or older) to the cmake command line.\n"
-        " (2) if it is libc++ then add '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.9' (or newer) to the cmake command line.\n"
-        )
+  if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")
+    if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
+      message(FATAL_ERROR "error: CMAKE_OSX_SYSROOT='${CMAKE_OSX_SYSROOT}' does not exist")
     endif()
+  endif()
 
     # Require minimum deployment target of 10.9. In 10.9 libc++ replaces libstdc++
     # as the default runtime. Requiring this minimum ensures that all libraries
     # use libc++.
-  set(required_deployment_target "10.9")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "${required_deployment_target}" CACHE STRING "Force deployment target to 10.9" FORCE)
-  if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${required_deployment_target})
-    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET must be ${required_deployment_target} or greater.")
+    set(required_deployment_target "10.11")
+  ## See https://doc.qt.io/qt-5.11/supported-platforms-and-configurations.html for supported versions of qt
+  ## Provide backwards compatibility levels equal to QT support (i.e. 10.14 QT 5.12 also supports 10.13, and 10.12)
+  if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    if( _CURRENT_OSX_VERSION VERSION_GREATER "10.12" )
+       set(CMAKE_OSX_DEPLOYMENT_TARGET "${_CURRENT_OSX_VERSION}" CACHE STRING "Force deployment target to 10.14" FORCE)
+    else()
+       set(CMAKE_OSX_DEPLOYMENT_TARGET "${required_deployment_target}" CACHE STRING "Force deployment target to 10.14" FORCE)
+    endif()
   endif()
 
-  if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")
-    if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
-      message(FATAL_ERROR "error: CMAKE_OSX_SYSROOT='${CMAKE_OSX_SYSROOT}' does not exist")
+  if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${required_deployment_target})
+    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET} must be ${required_deployment_target} or greater.")
+  endif()
+  if("x${CMAKE_OSX_DEPLOYMENT_TARGET}x" STREQUAL "xx")
+    string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${CMAKE_OSX_SYSROOT}")
+    set(SDK_VERSION "${CMAKE_MATCH_1}")
+    if( "${SDK_VERSION}" VERSION_LESS "10.11" )
+      message(FATAL_ERROR
+        "The ${SDK_VERSION} (<10.11) and OSX_DEPLOYMENT_TARGET are not supported!\n"
+        )
     endif()
   endif()
 endif()

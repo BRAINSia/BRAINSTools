@@ -35,27 +35,16 @@ endforeach()
 # Update CMake module path
 #------------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
-#-----------------------------------------------------------------------------
-set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often matches the superbuild name)
-set(SUPERBUILD_TOPLEVEL_PROJECT ${LOCAL_PROJECT_NAME})
-set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
-include(ExternalProject)
-include(ExternalProjectDependency) #<-- Must be after SUPERBUILD_TOPLEVEL_PROJECT and EXTERNAL_PROJECT_DIR
-include(ExternalProjectGenerateProjectDescription)
 
 #-----------------------------------------------------------------------------
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
   #       we ensure that the bitness, and C++ standard library will be properly detected.
-  include(BlockSetCMakeOSXVariables)
-  mark_as_superbuild(
-    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
-    ALL_PROJECTS
-    )
+  include(InitializeOSXVariables)
 endif()
-#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often matches the superbuild name)
 project(${LOCAL_PROJECT_NAME}
    LANGUAGES  C CXX
    DESCRIPTION "BRAINSTools see github at BRAINSia" #<-- cmake version 3.9 or greater
@@ -67,6 +56,20 @@ project(${LOCAL_PROJECT_NAME}
 #-- PROJECT_VERSION_MINOR, <PROJECT-NAME>_VERSION_MINOR
 #-- PROJECT_VERSION_PATCH, <PROJECT-NAME>_VERSION_PATCH
 #-- PROJECT_VERSION_TWEAK, <PROJECT-NAME>_VERSION_TWEAK
+#-----------------------------------------------------------------------------
+set(SUPERBUILD_TOPLEVEL_PROJECT ${LOCAL_PROJECT_NAME})
+set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
+include(ExternalProject)
+include(ExternalProjectDependency) #<-- Must be after SUPERBUILD_TOPLEVEL_PROJECT and EXTERNAL_PROJECT_DIR
+include(ExternalProjectGenerateProjectDescription)
+if(APPLE)
+  mark_as_superbuild(
+    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+    ALL_PROJECTS
+    )
+  set(CMAKE_MACOSX_RPATH 0)
+  mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)
+endif()
 if( IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/.git")
   #-----------------------------------------------------------------------------
   # Version strings need to be set outside of project so that
@@ -76,6 +79,7 @@ if( IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/.git")
   # Version information
   include(Version.cmake) ## Do introspection for fine grained versioning, and tag matching
 endif()
+#-----------------------------------------------------------------------------
 
 ## This file acts as a simple switch to initiate
 ## two completely independant CMake build environments.

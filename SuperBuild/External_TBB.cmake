@@ -20,7 +20,8 @@ set(${proj}_CMAKE_OPTIONS
   )
 
 set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
-set(${proj}_GIT_TAG 2019_U2)  # 20181110
+#set(${proj}_GIT_TAG 2019_U2)  # 20181110
+set(${proj}_GIT_TAG 2019_U3)  # 20181222
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
@@ -50,6 +51,7 @@ ExternalProject_Add(${proj}
 #       that have non-default names
 #set(TBB_MAKE_ARGS "compiler=${CMAKE_CXX_COMPILER}")
 if(APPLE)
+  #message(FATAL_ERROR "min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
   set(TBB_MAKE_ARGS "CXXFLAGS=\"-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}\"")
 endif()
 

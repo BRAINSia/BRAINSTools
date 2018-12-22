@@ -67,7 +67,7 @@ tbb_get(TBB_ROOT TBB_LOCAL_SRC_DIR
         SOURCE_CODE)
 tbb_build(TBB_ROOT ${TBB_LOCAL_SRC_DIR}
           CONFIG_DIR TBB_DIR  #Need to set TBB_DIR for the find_package, and to propogate to other packages
-          MAKE_ARGS ${TBB_MAKE_ARGS})
+          MAKE_ARGS ${TBB_MAKE_ARGS} CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER})
 
 if( APPLE )
   set( TBB_MIN_VERSION "2019.0") ## Actually 2019.0.11002 is needed for when OSX MIN version < 10.12

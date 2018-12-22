@@ -55,7 +55,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/commontk/dcmtk"
+    #"${git_protocol}://github.com/commontk/dcmtk"
+    "${git_protocol}://github.com/BRAINSia/dcmtk"
     QUIET
     )
 
@@ -65,7 +66,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     # plus the following patch:
     # * Set CMP0067 to ensure try_compile work as expected
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "e79118cd2f40b77654630a56bbb17fe0bccc354c" # v3.6.3_20180621
+    "982e037f314b7f64699f6b33215f65a0d19a5b55" # v3.6.3_20180621
     QUIET
     )
 

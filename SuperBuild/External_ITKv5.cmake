@@ -2,7 +2,7 @@
 set(proj ITKv5)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" "TBB")
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
   list(APPEND ${proj}_DEPENDENCIES "VTK")
 endif()
@@ -39,7 +39,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG 9e9eff1a314ccbdae5ed97404a61cf6caead3686 ) # 20181123
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG a03ecf25ce52c235fb2740368e935db9efd43704 ) # 20181221
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
@@ -138,6 +138,9 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DITK_USE_FFTWD:BOOL=ON
       -DITK_USE_FFTWF:BOOL=ON
       -DITK_USE_GOLD_LINKER:BOOL=OFF ## RHEL7 fails to build GDCM with gold linker
+      # TBB
+      -DModule_ITKTBB:BOOL=ON
+      -DTBB_DIR:PATH=${TBB_DIR}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}

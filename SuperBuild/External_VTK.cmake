@@ -1,11 +1,11 @@
 
 set(proj VTK)
 
-set(${proj}_REQUIRED_VERSION "v8.1.1")  #If a required version is necessary, then set this, else leave blank
+set(${proj}_REQUIRED_VERSION "v8.2.0")  #If a required version is necessary, then set this, else leave blank
 set(VTK_VERSION_MAJOR 8)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" "TBB")
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -101,7 +101,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
   set(vtk_git_protocol "https")
   set(${proj}_GIT_REPOSITORY "${vtk_git_protocol}://gitlab.kitware.com/vtk/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "v8.1.1")  # VTK 20181108
+  set(${proj}_GIT_TAG "v8.2.0.rc2")  # VTK 20181222
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -138,6 +138,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=TBB
+      # TBB
+      -DTBB_DIR:PATH=${TBB_DIR}
       INSTALL_COMMAND ""
     )
   ### --- End Project specific additions

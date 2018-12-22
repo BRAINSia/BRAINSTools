@@ -219,9 +219,6 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
    DEPENDS_VAR ${LOCAL_PROJECT_NAME}_DEPENDENCIES
 )
 
-
-#message("${MYBRAINSTools_EP_ARGS}")
-
 #------------------------------------------------------------------------------
 # Configure and build ${PROJECT_NAME}
 #------------------------------------------------------------------------------

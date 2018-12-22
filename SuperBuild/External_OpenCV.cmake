@@ -109,7 +109,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   #set(${proj}_REPOSITORY "${git_protocol}://github.com/Itseez/opencv")
   #set(${proj}_GIT_TAG "2.4.9") # USE THIS FOR UPDATED VERSION
   set(${proj}_REPOSITORY "${git_protocol}://github.com/opencv/opencv.git")
-  set(${proj}_GIT_TAG 3.4.2)  # 20181017
+  #set(${proj}_GIT_TAG 3.4.2)  # 20181017
+  set(${proj}_GIT_TAG 4.0.1)  # 20181222
   #set(${proj}_GIT_TAG "20140630_Upstream") # USE THIS FOR UPDATED VERSION for GCC 4.4.7 on RHEL6
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

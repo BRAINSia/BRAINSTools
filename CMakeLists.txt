@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9.5...3.13.2 FATAL_ERROR)
 
 #-----------------------------------------------------------------------------
 # Enable C++11
@@ -18,18 +18,6 @@ set(VALID_CXX_STANDARDS "11" "14" "17")
 if(NOT CMAKE_CXX_STANDARD IN_LIST VALID_CXX_STANDARDS )
    MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
 endif()
-
-foreach(p
-    ## Only policies introduced after the cmake_minimum_required
-    ## version need to explicitly be set to NEW.
-    CMP0070 #3.10.0 Define ``file(GENERATE)`` behavior for relative paths.
-    CMP0071 #3.10.0 Let ``AUTOMOC`` and ``AUTOUIC`` process ``GENERATED`` files.
-    CMP0067
-    )
-  if(POLICY ${p})
-    cmake_policy(SET ${p} NEW)
-  endif()
-endforeach()
 
 #-----------------------------------------------------------------------------
 # Update CMake module path

@@ -38,8 +38,9 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(git_protocol "git")
   endif()
 
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG a03ecf25ce52c235fb2740368e935db9efd43704 ) # 20181221
+  #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG forward-compatible-dcmtk-fix ) # 20181221
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 

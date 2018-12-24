@@ -209,6 +209,7 @@ mark_as_superbuild(
   PROJECTS ${LOCAL_PROJECT_NAME}
 )
 
+
 #------------------------------------------------------------------------------
 # Calling this macro last will ensure all prior calls to 'mark_as_superbuild' are
 # considered when updating the variable '${LOCAL_PROJECT_NAME}_EP_ARGS' passed to the main project
@@ -218,6 +219,20 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
    EP_ARGS_VAR MYBRAINSTools_EP_ARGS
    DEPENDS_VAR ${LOCAL_PROJECT_NAME}_DEPENDENCIES
 )
+
+#------------------------------------------------------------------------------
+# Write values to a file for demonstrating the config options
+set(WRITE_BRAINSTOOLS_ARGS "${MYBRAINSTools_EP_ARGS}")
+separate_arguments(WRITE_BRAINSTOOLS_ARGS)
+list(REMOVE_DUPLICATES WRITE_BRAINSTOOLS_ARGS)
+string(REPLACE ";" " " WRITE_BRAINSTOOLS_ARGS "${WRITE_BRAINSTOOLS_ARGS}")
+string(REPLACE "CMAKE_CACHE_ARGS" "" WRITE_BRAINSTOOLS_ARGS "${WRITE_BRAINSTOOLS_ARGS}")
+string(REPLACE "LIST_SEPARATOR.*" "" WRITE_BRAINSTOOLS_ARGS "${WRITE_BRAINSTOOLS_ARGS}")
+
+set( WRITE_BRAINSTOOLS_ARGS " cmake -DBRAINSTools_SUPERBUILD:BOOL=OFF ${WRITE_BRAINSTOOLS_ARGS}")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BRAINSToolsArgs.sh ${WRITE_BRAINSTOOLS_ARGS})
+#message(FATAL_ERROR "${cmd_string}")
+#message(FATAL_ERROR "\n${WRITE_BRAINSTOOLS_ARGS}\n")
 
 #------------------------------------------------------------------------------
 # Configure and build ${PROJECT_NAME}

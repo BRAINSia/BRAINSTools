@@ -5,7 +5,9 @@ set(${proj}_REQUIRED_VERSION "v8.2.0")  #If a required version is necessary, the
 set(VTK_VERSION_MAJOR 8)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib" "TBB")
+set(${proj}_DEPENDENCIES "zlib"
+# "TBB"
+)
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -138,9 +140,10 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=TBB
       # TBB
-      -DTBB_DIR:PATH=${TBB_DIR}
+      -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=Sequential
+      #-DVTK_SMP_IMPLEMENTATION_TYPE:STRING=TBB
+      #-DTBB_DIR:PATH=${TBB_DIR}
       INSTALL_COMMAND ""
     )
   ### --- End Project specific additions

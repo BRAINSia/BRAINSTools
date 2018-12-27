@@ -39,7 +39,6 @@ Reference materials:
 DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 =========================================================================*/
 
-
 #include "DWIConverter.h"
 
 /** the real computation goes on in DWIConverter classes, of which
@@ -50,9 +49,6 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "NRRDDWIConverter.h"
 
 #include <BRAINSCommonLib.h>
-
-
-
 
 #undef HAVE_SSTREAM
 #include "DWIConvertCLP.h"
@@ -72,7 +68,9 @@ int main(int argc, char *argv[])
       inputVolume = fslNIFTIFile;
       }
 
-    dWIConvert.setInputFileType(inputVolume, inputDicomDirectory);
+    const std::string inputPathName = inputVolume.empty() ? inputDicomDirectory : inputVolume;
+
+    dWIConvert.SetInputFileName(inputPathName);
     dWIConvert.setInputBValues (inputBValues);
     dWIConvert.setInputBVectors (inputBVectors);
     dWIConvert.setGradientVectorFile (gradientVectorFile);
@@ -88,7 +86,7 @@ int main(int argc, char *argv[])
       outputVolume = outputNiftiFile;
       }
 
-    dWIConvert.setOutputFileType(outputVolume);
+  dWIConvert.SetOutputFileName(outputVolume);
     dWIConvert.setOutputDirectory(outputDirectory);
     dWIConvert.setOutputBValues(outputBValues);
     dWIConvert.setOutputBVectors(outputBVectors);

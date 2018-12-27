@@ -14,43 +14,34 @@
 const std::string emptyString(""); //A named empty string
 
 DWIConvert::DWIConvert()
+    : m_inputFileType{}
+    , m_outputFileType{}
+    , m_inputVolume{}
+    , m_inputDicomDirectory{}
+    , m_inputBValues{}
+    , m_inputBVectors{}
+    , m_gradientVectorFile{} //deprecated
+    , m_smallGradientThreshold{0.2}
+
+    , m_fMRIOutput{false}
+    , m_allowLossyConversion{false}
+    , m_useIdentityMeasurementFrame{false}
+    , m_useBMatrixGradientDirections{false}
+
+    , m_outputVolume{}
+    , m_outputDirectory{"."}
+    ,  m_outputBValues{}
+    , m_outputBVectors{}
+
+    , m_converter{nullptr}
 {
-    m_inputVolume = emptyString;
-    m_inputDicomDirectory = emptyString;
-    m_inputBValues = emptyString;  //default: emptyString
-    m_inputBVectors = emptyString; //default: emptyString
-    m_gradientVectorFile = emptyString; //deprecated
-    m_smallGradientThreshold = 0.2; //default = 0.2
-
-
-    m_inputFileType = emptyString;
-    m_outputFileType = emptyString;
-
-    m_fMRIOutput = false; //default: false
-    m_allowLossyConversion = false; //defualt: false
-    m_useIdentityMeasurementFrame = false; //default: false
-    m_useBMatrixGradientDirections = false; //default: false
-
-    m_outputVolume = emptyString;
-    m_outputDirectory = ".";  //default: "."
-    m_outputBValues = emptyString; //default: emptyString
-    m_outputBVectors = emptyString;//default: emptyString
-
-    m_converter = nullptr;
-
 }
 
-DWIConvert::DWIConvert(const std::string& outputVolume, const std::string& inputVolume, const std::string& inputDicomDirectory)
+DWIConvert::DWIConvert(std::string inputVolume, std::string outputVolume)
+  : DWIConvert()
 {
-   DWIConvert();
-   setInputFileType(inputVolume,inputDicomDirectory);
-   setOutputFileType(outputVolume);
-}
-
-DWIConvert::DWIConvert(const std::string& inputVolume, const std::string& inputDicomDirectory)
-{
-  DWIConvert();
-  setInputFileType(inputVolume,inputDicomDirectory);
+  SetInputFileName(inputVolume);
+  SetOutputFileName(outputVolume);
 }
 
 DWIConvert::~DWIConvert(){
@@ -148,7 +139,7 @@ int DWIConvert::read()
 
 int DWIConvert::write(const std::string& outputVolume)
 {
-  setOutputFileType(outputVolume);
+  SetOutputFileName(outputVolume);
   const std::string version = "5.0.0";
   if ("FSL" == getOutputFileType())
   {
@@ -282,10 +273,25 @@ DWIConverter * DWIConvert::CreateDicomConverter(
 }
 
 
-//currently supported file types: { ".nii", ".nii.gz", ".nhdr", ".nrrd"}
-void DWIConvert::setInputFileType(const std::string& inputVolume, const std::string& inputDicomDirectory){
-  m_inputVolume = inputVolume;
-  m_inputDicomDirectory = inputDicomDirectory;
+void DWIConvert::SetInputFileName(std::string inputFilePath){
+
+  const auto isDirectory = itksys::SystemTools::FileIsDirectory(inputFilePath);
+  if( isDirectory )
+  {
+    m_inputDicomDirectory = inputFilePath;
+  }
+  else
+  {
+     const auto isRegularFile = itksys::SystemTools::FileExists(inputFilePath, true);
+     if( isRegularFile )
+     {
+       m_inputVolume = inputFilePath;
+     }
+     else
+     {
+       std::cerr << "Error: the inputVolume is neither file nor directory." << std::endl;
+     }
+  }
 
   // prefer the inputVolume field if available
   if ( (!m_inputVolume.empty()) ||
@@ -317,9 +323,9 @@ void DWIConvert::setInputFileType(const std::string& inputVolume, const std::str
 
 
 
-void DWIConvert::setOutputFileType(const std::string& outputVolume){
-  m_outputVolume = outputVolume;
-  m_outputFileType = detectOuputVolumeType(outputVolume);
+void DWIConvert::SetOutputFileName( std::string outputFilePath){
+  m_outputVolume = outputFilePath;
+  m_outputFileType = detectOuputVolumeType(outputFilePath);
 }
 
 std::string DWIConvert::getInputFileType()
@@ -489,21 +495,7 @@ bool convertInputVolumeToNrrdOrNifti(const std::string& targetType,
                                                 const std::string& inputVolume, std::string &targetVolume) {
 
   DWIConvert dwiConvert;
-  struct stat inputInfor;
-  if (-1 == itksys::SystemTools::Stat(inputVolume, &inputInfor)) {
-    std::cout << "Error: inputVolume is illegal file description. " << std::endl;
-    return false;
-  } else {
-    if (inputInfor.st_mode & S_IFDIR) {
-      dwiConvert.setInputFileType("", inputVolume);
-    }
-    else if (inputInfor.st_mode & S_IFREG) {
-      dwiConvert.setInputFileType(inputVolume, "");
-    } else {
-      std::cout << "Error: the inputVolume is neither file nor directory." << std::endl;
-      return false;
-    }
-  }
+  dwiConvert.SetInputFileName(inputVolume);
 
   if (targetType == dwiConvert.getInputFileType()) {
     targetVolume = inputVolume;
@@ -520,7 +512,7 @@ bool convertInputVolumeToNrrdOrNifti(const std::string& targetType,
       return false;
     }
 
-    dwiConvert.setOutputFileType(targetVolume);
+    dwiConvert.SetOutputFileName(targetVolume);
     int result = dwiConvert.read();
     if (EXIT_SUCCESS == result) {
       dwiConvert.write(targetVolume);

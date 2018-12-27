@@ -59,6 +59,7 @@ foreach (_tbb_component ${TBB_FIND_COMPONENTS})
     set(_tbb_debug_lib "${_tbb_lib_path}/@TBB_LIB_PREFIX@${_tbb_component}_debug.@TBB_LIB_EXT@")
 
     if (EXISTS "${_tbb_release_lib}" AND EXISTS "${_tbb_debug_lib}")
+      if(NOT TARGET TBB::${_tbb_component})
         add_library(TBB::${_tbb_component} SHARED IMPORTED)
         set_target_properties(TBB::${_tbb_component} PROPERTIES
                               IMPORTED_CONFIGURATIONS "RELEASE;DEBUG"
@@ -73,6 +74,7 @@ foreach (_tbb_component ${TBB_FIND_COMPONENTS})
 
         list(APPEND TBB_IMPORTED_TARGETS TBB::${_tbb_component})
         set(TBB_${_tbb_component}_FOUND 1)
+      endif()
     elseif (TBB_FIND_REQUIRED AND TBB_FIND_REQUIRED_${_tbb_component})
         message(FATAL_ERROR "Missed required Intel TBB component: ${_tbb_component}")
     endif()

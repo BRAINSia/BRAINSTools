@@ -89,6 +89,7 @@ public:
 
   using CommonDicomFieldMapType = std::map<std::string,std::string>;
   DWIConverter( const FileNamesContainer &inputFileNames );
+
   virtual ~DWIConverter();
 
   virtual void LoadFromDisk() = 0;

@@ -21,8 +21,7 @@ bool convertInputVolumeToNrrdOrNifti(const std::string& targetType, const std::s
 class DWIConvert {
 public:
     DWIConvert();
-    DWIConvert(const std::string& outputVolume, const std::string& inputVolume, const std::string& inputDicomDirectory);
-    DWIConvert(const std::string& inputVolume, const std::string& inputDicomDirectory);
+    DWIConvert(std::string inputVolume, std::string outputVolume="");
     ~DWIConvert();
 
     int read();
@@ -35,10 +34,10 @@ public:
     // get and set methods for private data members
     std::string getInputFileType();
     std::string getOutputFileType();
-    void setInputFileType(const std::string& inputVolume,
-                          const std::string& inputDicomDirectory);
 
-    void setOutputFileType(const std::string& outputVolume);
+    //currently supported file types: { ".nii", ".nii.gz", ".nhdr", ".nrrd"}
+    void SetInputFileName(std::string inputFilePath);
+    void SetOutputFileName(std::string outputFilePath);
 
     const std::string &getInputVolume() const;
 

@@ -235,6 +235,7 @@ set(BCDTestName BCDTest_ForceACPoint)
     --inputTemplateModel DATA{${TestData_DIR}/T1_50Lmks.mdl}
     --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_InputSpace.fcsv
     )
+   set_tests_properties(BCDTest_ForceACPoint PROPERTIES TIMEOUT 3000) ## Set extra long for dashboard testing.
 
   set(PARENT_TEST BCDTest_ForceACPoint)
   set(BCDTestName chk_${PARENT_TEST})

@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     idxOpposite[0] = xMax - idx[0];
     if( maskReader->GetOutput()->GetPixel(idx) != 0 )
       {
-      duplicateImageFilter->GetModifiableOutput()->SetPixel( idx, maskFilter->GetOutput()->GetPixel(idxOpposite) );
+      duplicateImageFilter->GetOutput()->SetPixel( idx, maskFilter->GetOutput()->GetPixel(idxOpposite) );
       }
     }
 

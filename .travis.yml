@@ -7,7 +7,6 @@ os:
   - linux
   - osx
 
-
 cache: ccache
 
 compiler:
@@ -23,37 +22,15 @@ addons:
       - cmake-data
       - valgrind
   homebrew:
-    packages: cmake
-    package:  sed
+    packages:
+      - cmake
+      - ccache
+      - sed
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then echo "need cmake 3.2"; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update && brew install ccache; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
-  - mkdir bt-bld
-  - cd bt-bld
 
-script:
-  # Minimize build time for testing
-  - cmake \
-    -DCMAKE_CXX_STANDARD:STRING=11 \
-     -DUSE_ANTS=BOOL=OFF \
-     -DUSE_BRAINSABC:BOOL=OFF \
-     -DUSE_BRAINSDWICleanup:BOOL=OFF \
-     -DUSE_BRAINSInitializedControlPoints:BOOL=OFF \
-     -DUSE_BRAINSLabelStats:BOOL=OFF \
-     -DUSE_BRAINSLandmarkInitializer:BOOL=OFF \
-     -DUSE_BRAINSROIAuto:BOOL=OFF \
-     -DUSE_BRAINSRefacer:BOOL=OFF \
-     -DUSE_BRAINSResample:BOOL=OFF \
-     -DUSE_BRAINSSnapShotWriter:BOOL=OFF \
-     -DUSE_BRAINSStripRotation:BOOL=OFF \
-     -DUSE_BRAINSTransformConvert:BOOL=OFF \
-     -DUSE_ConvertBetweenFileFormats:BOOL=OFF \
-     -DUSE_ImageCalculator:BOOL=OFF \
-     -DUSE_ReferenceAtlas:BOOL=OFF \
-    ./.. \
-    && make -j 2 && cd BRAINSTools-build/ && make test
+script: ./.travis_build_script.sh
 
 notifications:
   email:

@@ -34,6 +34,7 @@
 .emacs.desktop
 .idea
 cmake-build-*
+cmake-travis-*
 .svn
 CMakeCache.txt
 CMakeFiles/*

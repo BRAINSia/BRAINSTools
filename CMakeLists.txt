@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.9.5...3.13.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9.5)
+cmake_policy(VERSION 3.9.5...3.13.2)
 
 #-----------------------------------------------------------------------------
 # Enable C++11

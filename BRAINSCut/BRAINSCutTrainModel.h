@@ -21,6 +21,8 @@
 #include "BRAINSCutDataHandler.h"
 #include "TrainingPrameters.h"
 
+#include "opencv2/core/core_c.h"
+
 class BRAINSCutTrainModel
 {
 public:

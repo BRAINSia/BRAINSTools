@@ -31,8 +31,7 @@
 #include <itkSmoothingRecursiveGaussianImageFilter.h>
 
 /** include opencv library */
-#include "ml.h"
-#include "cxcore.h"
+#include "opencv2/ml.hpp"
 
 // #include "opencv2/flann/flann.hpp" **opencv 2
 #include "opencv2/flann.hpp"

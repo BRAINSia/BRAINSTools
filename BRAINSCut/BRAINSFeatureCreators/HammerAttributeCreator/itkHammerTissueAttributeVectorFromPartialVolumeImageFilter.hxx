@@ -205,7 +205,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
   m_N1Neighborhood.resize(6);
   for( int k = 0; k < 6; k++ )
     {
-    for( int s = 0; s < InputImageDimension; s++ )
+    for( size_t s = 0; s < InputImageDimension; s++ )
       {
       m_N1Neighborhood[k][s] = 0;
       }
@@ -364,7 +364,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
     flag_WM = 0.0F;
     for( unsigned int k = 0; k < m_N1Neighborhood.size(); k++ )
       {
-      for( int s = 0; s < InputImageDimension; s++ )
+      for( size_t s = 0; s < InputImageDimension; s++ )
         {
         neighborIdx[s] = centerIdx[s] + m_N1Neighborhood[k][s];
         }
@@ -439,7 +439,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
     GM_value = 0.0F;
     for( unsigned int t = 0; t < m_FeatureNeighborhood.size(); t++ )
       {
-      for( int s = 0; s < InputImageDimension; s++ )
+      for( size_t s = 0; s < InputImageDimension; s++ )
         {
         neighborIdx[s] = centerIdx[s] + (int)m_FeatureNeighborhood[t][s];
         }

@@ -161,7 +161,7 @@ def parseExperiment(parser, workflow_phase):
         valid_components=['FREESURFER', 'auxlmk', 'denoise', 'jointfusion_2015_wholebrain', 'landmark', 'segmentation', 'tissue_classify', 'warp_atlas_to_subject']
 
         for component in retval['components']:
-            if component != valid_components:
+            if component not in valid_components:
                 print("ERROR: Unknown workflow component: {0} not in {1}".format(component, valid_components))
                 sys.exit(-1)
 

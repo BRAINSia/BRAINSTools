@@ -30,10 +30,10 @@ cmake \
     -DUSE_ConvertBetweenFileFormats:BOOL=OFF \
     -DUSE_ImageCalculator:BOOL=OFF \
     -DUSE_ReferenceAtlas:BOOL=OFF \
-    ${SOURCE_DIR}
+     ${SOURCE_DIR}
 
 #make -j 2 # BUILD EVERYTHING: TODO: BUILD_SUPPORT_SEPARATE.
-make TBB  && make
+make TBB  && make -j2
 
-cd BRAINSTools-build/
+cd ${BUILD_DIR}/BRAINSTools-build/
 make test

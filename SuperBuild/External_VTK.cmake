@@ -6,8 +6,10 @@ set(VTK_VERSION_MAJOR 8)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib"
-# "TBB"
 )
+#if( NOT USE_SYSTEM_TBB )
+#  list(APPEND ${proj}_DEPENDENCIES "TBB" )
+#endif()
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)

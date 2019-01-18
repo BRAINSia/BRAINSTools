@@ -2,7 +2,10 @@
 set(proj ITKv5)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib" "TBB")
+set(${proj}_DEPENDENCIES "zlib" )
+if( NOT USE_SYSTEM_TBB )
+  list(APPEND ${proj}_DEPENDENCIES "TBB" )
+endif()
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
   list(APPEND ${proj}_DEPENDENCIES "VTK")
 endif()

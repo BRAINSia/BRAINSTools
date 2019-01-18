@@ -67,6 +67,7 @@ option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined versio
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)
 option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
+option(USE_SYSTEM_TBB "Build using an externally defined version of TBB" OFF)
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 
 #------------------------------------------------------------------------------
@@ -83,7 +84,8 @@ if(BUILD_STYLE_UTILS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)
 endif()
 
-if(USE_BRAINSABC OR USE_BRAINSCut)
+
+if( ( USE_BRAINSABC OR USE_BRAINSCut ) AND NOT USE_SYSTEM_TBB )
   #list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES qhull)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES TBB)
 endif()

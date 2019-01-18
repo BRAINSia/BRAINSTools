@@ -33,7 +33,8 @@ macro(DownloadAndInstallRules UNIQUE_TARGET_NAME GLOBPAT INSTDEST)
   #message(STATUS "ABCDE:  ${AtlasImageFilesMD5Names}")
   foreach(CurrentMD5Reference ${AtlasImageFilesMD5Names})
     get_filename_component(ThisImageVarName ${CurrentMD5Reference} NAME)
-    string(REPLACE  ".md5" "" CurrentOutFile ${CurrentMD5Reference})
+    string(REPLACE  ".md5" "" CurrentOutFile_tmp ${CurrentMD5Reference})
+    string(REPLACE  ".sha512" "" CurrentOutFile ${CurrentOutFile_tmp})
     ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} ${ThisImageVarName}_VAR DATA{${CurrentOutFile}})
     get_filename_component(${ThisImageVarName}_VAR_REALPATH ${${ThisImageVarName}_VAR} REALPATH)
     get_filename_component(${ThisImageVarName}_VAR_BASENAME ${${ThisImageVarName}_VAR} NAME)
@@ -68,9 +69,10 @@ DownloadAndInstallRules(AtlasProb    "${CMAKE_CURRENT_SOURCE_DIR}/probabilityMap
 DownloadAndInstallRules(AtlasSpatial "${CMAKE_CURRENT_SOURCE_DIR}/spatialImages/*.nii.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/spatialImages)
 DownloadAndInstallRules(AtlasSurface "${CMAKE_CURRENT_SOURCE_DIR}/SurfaceAtlas/*.vtk.md5" ${ATLAS_INSTALL_DIRECTORY}/SurfaceAtlas)
 DownloadAndInstallRules(AtlasBCD     "${CMAKE_CURRENT_SOURCE_DIR}/20141004_BCD/*_50Lmks.*.md5" ${ATLAS_INSTALL_DIRECTORY}/20141004_BCD)
+DownloadAndInstallRules(AtlasBCDSHA512 "${CMAKE_CURRENT_SOURCE_DIR}/20141004_BCD/*_50Lmks.*.sha512" ${ATLAS_INSTALL_DIRECTORY}/20141004_BCD)
 DownloadAndInstallRules(AtlasT1Only  "${CMAKE_CURRENT_SOURCE_DIR}/T1OnlyModels/*.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/T1OnlyModels)
 
 add_custom_target(InstallReferenceAtlas
                   DEPENDS AtlasNIFTI AtlasNRRD AtlasTxt AtlasCtbl AtlasFcsv AtlasCsv AtlasModels AtlasProb AtlasSpatial
-                          AtlasSurface AtlasBCD AtlasT1Only)
+                          AtlasSurface AtlasBCD AtlasBCDSHA512 AtlasT1Only)
 set_target_properties(InstallReferenceAtlas PROPERTIES FOLDER ${MODULE_FOLDER})

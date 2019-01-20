@@ -197,7 +197,7 @@ class DustCleanup():
         myFilter.SetForegroundValue(1.0)
         myFilter.SetKernelRadius((kernelRadius, kernelRadius, kernelRadius))
         myFilter.SetKernelType(2)  # Kernel Type=Box
-        myFilter.SetNumberOfWorkUnits(8)
+        #myFilter.SetNumberOfWorkUnits(8)
         output = myFilter.Execute(inputLabelImage)
         castedOutput = sitk.Cast(output, sitk.sitkInt16)
 

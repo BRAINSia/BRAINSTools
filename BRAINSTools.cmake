@@ -71,7 +71,7 @@ if(USE_BRAINSABC)
     set( TBB_MIN_VERSION "2017.0")
   endif()
   find_package(TBB ${TBB_MIN_VERSION} REQUIRED
-               COMPONENTS tbb tbbmalloc
+#               COMPONENTS tbb tbbmalloc
                NO_MODULE PATHS ${TBB_DIR} )
 
   # set(VTK_SMP_IMPLEMENTATION_LIBRARIES ${tbb_LIBRARY})

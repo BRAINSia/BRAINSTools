@@ -5,9 +5,15 @@ sudo: false
 
 os:
   - linux
-  - osx
+#  - osx
 
-cache: ccache
+# http://www.brianlheim.com/2017/08/20/supercollider-travisci.html
+# use ccache to speed up build times. on osx,
+# we install it during the the before_install step
+# with xcode, this requires an additional flag passed during the configuration phase.
+# see README_MACOS.md for details.
+cache:
+  - ccache
 
 compiler:
   - clang

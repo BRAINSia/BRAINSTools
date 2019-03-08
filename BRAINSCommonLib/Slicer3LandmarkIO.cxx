@@ -25,6 +25,7 @@
 #include "Slicer3LandmarkIO.h"
 #include "itkNumberToString.h"
 #include "itkImageFileReaderException.h"
+#include <cctype>
 
 //https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start (in place)

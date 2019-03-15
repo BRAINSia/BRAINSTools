@@ -37,6 +37,17 @@ Options:
 
 
 def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, PYTHON_AUX_PATHS, LABELS_CONFIG_FILE):
+    """
+    This Function takes in...
+    :param DWI_scan:
+    :param T2_scan:
+    :param labelMap_image:
+    :param BASE_DIR:
+    :param dataSink_DIR:
+    :param PYTHON_AUX_PATHS:
+    :param LABELS_CONFIG_FILE:
+    :return: None  
+    """
     print("Running the workflow ...")
 
     sessionID = os.path.basename(os.path.dirname(DWI_scan))

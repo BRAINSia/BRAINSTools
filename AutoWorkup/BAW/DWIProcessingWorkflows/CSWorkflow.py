@@ -16,12 +16,26 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 
 
 def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
+    """
+    This Function runs "compressed Sensing" in Matlab on a DWI scan, that is already correct and aligned to t2 image spaces
+    :param WFname:
+    :param PYTHON_AUX_PATHS:
+    :return: CSWF
+    """
     if PYTHON_AUX_PATHS is not None:
         Path_to_Matlab_Func = os.path.join(PYTHON_AUX_PATHS[0], 'DWIProcessingWorkflows')
         assert os.path.exists(Path_to_Matlab_Func), "Path to CS matlab function is not found: %s" % Path_to_Matlab_Func
 
     #### Utility function ####
     def runCSbyMatlab(inputScan, inputMask, CSScanFileName, Path_to_Matlab_Func):
+        """
+        This Function takes in...
+        :param inputScan:
+        :param inputMask:
+        :param CSScanFileName:
+        :param Path_to_Matlab_Func:
+        :return: outputCSFilename  
+        """
         import os
         import nipype.interfaces.matlab as matlab
         script = "runCS('" + inputScan + "','" + inputMask + "','" + CSScanFileName + "')"

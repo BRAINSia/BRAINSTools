@@ -26,6 +26,9 @@
       <description>Input moving image (this image will be transformed into the fixed image space).</description>
       <default></default>
       <channel>input</channel>
+      <reference role="parentTransform" parameter="linearTransform"/>
+      <reference role="parentTransform" parameter="strippedOutputTransform"/>
+      <reference role="parentTransform" parameter="bsplineTransform"/>
     </image>
 
     <double>
@@ -52,6 +55,8 @@
       <label>Slicer Linear Transform</label>
       <description>(optional) Output estimated transform - in case the computed transform is not BSpline. NOTE: You must set at least one output object (transform and/or output volume).</description>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
     </transform>
     <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="bspline" reference="movingVolume">
       <name>bsplineTransform</name>
@@ -59,6 +64,8 @@
       <label>Slicer BSpline Transform</label>
       <description>(optional) Output estimated transform - in case the computed transform is BSpline. NOTE: You must set at least one output object (transform and/or output volume).</description>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
     </transform>
     <image>
       <name>outputVolume</name>
@@ -66,6 +73,7 @@
       <label>Output Image Volume</label>
       <description>(optional) Output image: the moving image warped to the fixed image space. NOTE: You must set at least one output object (transform and/or output volume).</description>
       <channel>output</channel>
+      <reference role="source" parameter="movingVolume"/>
     </image>
   </parameters>
 
@@ -419,6 +427,8 @@
       <label>Stripped Output Transform</label>
       <description>Rigid component of the estimated affine transform. Can be used to rigidly register the moving image to the fixed image. NOTE:  This value is overridden if either bsplineTransform or linearTransform is set.</description>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
     </transform>
     <string-vector>
       <name>transformType</name>
@@ -434,6 +444,8 @@
       <label>Output Transform</label>
       <description>(optional) Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
       <channel>output</channel>
+      <reference role="spatialRegistrationMoving" parameter="movingVolume"/>
+      <reference role="spatialRegistrationFixed" parameter="fixedVolume"/>
     </transform>
     <boolean>
       <name>initializeRegistrationByCurrentGenericTransform</name>

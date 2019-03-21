@@ -82,7 +82,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "62105a048e4a8adcb20032fbb8df716bb72279e3"
+    "a88a246fe8122bc11e700226643fcd38dbbbc66e" # Add references for SEM descriptors
     QUIET
     )
 

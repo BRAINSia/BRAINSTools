@@ -40,7 +40,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG forward-compatible-dcmtk-fix ) # 20181221
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG b48ceb1463eb01999a85f9de4ee7607d75786a11 ) #20180321 - 1st Q19 updates
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 

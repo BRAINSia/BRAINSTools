@@ -28,6 +28,12 @@ print((sitk.Version()))
 
 
 def csv_file_writer(filename, data):
+    """
+    This function..
+    :param filename:
+    :param data:
+    :return: None
+    """
     with open(filename, 'w') as lf:
         headerdata1 = [['#Fiducial', 'List', 'file', filename],
                        ['#numPoints', '=', len(data)]]
@@ -45,6 +51,12 @@ def csv_file_writer(filename, data):
 
 
 def csv_file_reader(filename, dataList):
+    """
+    This function...
+    :param filename:
+    :param dataList:
+    :return: None
+    """
     import csv
     with open(filename) as lf:
         reader = csv.reader(lf, delimiter=',')
@@ -57,7 +69,9 @@ def csv_file_reader(filename, dataList):
             else:
                 continue
 
-
+"""
+Main function
+"""
 def main(argv):
     inputVolume = ''
     inputLabelsImage = ''

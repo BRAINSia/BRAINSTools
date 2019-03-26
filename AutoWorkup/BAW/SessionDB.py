@@ -11,7 +11,9 @@ from collections import OrderedDict
 
 
 class SessionDB(object):
+    """This class represents a..."""
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
+        """This function represents a"""
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
         self.subjectList = subject_list
@@ -31,16 +33,21 @@ class SessionDB(object):
                 _subjid=subject_filter)
 
     def open_connection(self):
+        """This function represents a """
         self.connection = lite.connect(self.dbName)
         self.cursor = self.connection.cursor()
 
     def close_connection(self):
+        """This function represents a """
         if not self.cursor is None:
             self.cursor.close()
         if not self.connection is None:
             self.connection.close()
 
     def _local_fillDB_AndClose(self, sqlCommandList):
+        """This function represents a
+        :param sqlCommandList:
+        """
         print("Filling SQLite database SessionDB.py")
         for sqlCommand in sqlCommandList:
             self.cursor.execute(sqlCommand)
@@ -48,6 +55,12 @@ class SessionDB(object):
         print("Finished filling SQLite database SessionDB.py")
 
     def MakeNewDB(self, subject_data_file, mountPrefix):
+        """
+        This function...
+        :param subject_data_file:
+        :param mountPrefix:
+        :return: None
+        """
         ## First close so that we can delete.
         self.close_connection()
         if os.path.exists(self.dbName):
@@ -124,9 +137,18 @@ class SessionDB(object):
         self.close_connection()
 
     def getSubjectFilter(self):
+        """
+        This function...
+        :return: self.MasterQueryFilter
+        """
         return self.MasterQueryFilter
 
     def makeSQLiteCommand(self, imageDict):
+        """
+        This function...
+        :param imageDict
+        :return: sqlCommand
+        """
         keys = list(imageDict.keys())
         vals = list(imageDict.values())
         col_names = ",".join(keys)
@@ -137,6 +159,11 @@ class SessionDB(object):
         return sqlCommand
 
     def getInfoFromDB(self, sqlCommand):
+        """
+        This function...
+        :param sqlCommand:
+        :return: dbInfo
+        """
         # print("getInfoFromDB({0})".format(sqlCommand))
         self.open_connection()
         self.cursor.execute(sqlCommand)
@@ -145,6 +172,12 @@ class SessionDB(object):
         return dbInfo
 
     def getFirstScan(self, sessionid, scantype):
+        """
+        This function...
+        :param sessionid:
+        :param scantype:
+        :return: filename
+        """
         sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' AND Qpos='0';".format(
             _master_query=self.MasterQueryFilter,
             _sessionid=sessionid, _scantype=scantype)
@@ -153,6 +186,11 @@ class SessionDB(object):
         return filename
 
     def getFirstT1(self, sessionid):
+        """
+        This function...
+        :param sessionid:
+        :return: filename
+        """
         scantype = 'T1-30'
         sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' AND Qpos='0';".format(
             _master_query=self.MasterQueryFilter,
@@ -164,6 +202,12 @@ class SessionDB(object):
         return filename
 
     def getFilenamesByScantype(self, sessionid, scantypelist):
+        """
+        This function...
+        :param sessionid:
+        :param scantypelist:
+        :return: returnList
+        """
         returnList = list()
         for currScanType in scantypelist:
             sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' ORDER BY Qpos ASC;".format(
@@ -175,10 +219,21 @@ class SessionDB(object):
         return returnList
 
     def findScanTypeLength(self, sessionid, scantypelist):
+        """
+        This function...
+        :param sessionid:
+        :param scantypelist:
+        :return: len(countList)
+        """
         countList = self.getFilenamesByScantype(sessionid, scantypelist)
         return len(countlist)
 
     def getT1sT2s(self, sessionid):
+        """
+        This function...
+        :param sessionid:
+        :return: returnList
+        """
         sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' ORDER BY type ASC, Qpos ASC;".format(
             _master_query=self.MasterQueryFilter,
             _sessionid=sessionid)
@@ -189,6 +244,10 @@ class SessionDB(object):
         return returnList
 
     def getAllProjects(self):
+        """
+        This function..
+        :return: returnList
+        """
         sqlCommand = "SELECT DISTINCT project FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
@@ -197,6 +256,10 @@ class SessionDB(object):
         return returnList
 
     def getAllSubjects(self):
+        """
+        This function..
+        :return: returnList
+        """
         sqlCommand = "SELECT DISTINCT subj FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
@@ -205,6 +268,10 @@ class SessionDB(object):
         return returnList
 
     def getAllSessions(self):
+        """
+        This function..
+        :return: returnList
+        """
         # print("HACK:  This is a temporary until complete re-write")
         sqlCommand = "SELECT DISTINCT session FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
@@ -214,6 +281,11 @@ class SessionDB(object):
         return returnList
 
     def getSessionsFromSubject(self, subj):
+        """
+        This function..
+        :param subj:
+        :return: returnList
+        """
         sqlCommand = "SELECT DISTINCT session FROM ({_master_query}) WHERE subj='{_subjid}';".format(
             _master_query=self.MasterQueryFilter,
             _subjid=subj)
@@ -224,6 +296,10 @@ class SessionDB(object):
         return returnList
 
     def getEverything(self):
+        """
+        This function..
+        :return: returnList
+        """
         sqlCommand = "SELECT * FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
@@ -232,6 +308,11 @@ class SessionDB(object):
         return returnList
 
     def getSubjectsFromProject(self, project):
+        """
+        This function..
+        :param project:
+        :return: returnList
+        """
         sqlCommand = "SELECT DISTINCT subj FROM ({_master_query}) WHERE project='{_projectid}';".format(
             _master_query=self.MasterQueryFilter,
             _projectid=project)
@@ -242,6 +323,11 @@ class SessionDB(object):
         return returnList
 
     def getSubjFromSession(self, session):
+        """
+        This function..
+        :param session:
+        :return: returnList[0]
+        """
         sqlCommand = "SELECT DISTINCT subj FROM ({_master_query}) WHERE session='{_sessionid}';".format(
             _master_query=self.MasterQueryFilter,
             _sessionid=session)
@@ -255,6 +341,11 @@ class SessionDB(object):
         return returnList[0]
 
     def getProjFromSession(self, session):
+        """
+        This function..
+        :param session:
+        :return: returnList[0]
+        """
         sqlCommand = "SELECT DISTINCT project FROM ({_master_query}) WHERE session='{_sessionid}';".format(
             _master_query=self.MasterQueryFilter,
             _sessionid=session)

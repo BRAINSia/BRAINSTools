@@ -4,11 +4,22 @@ import shutil  ## needed for removing directory tree
 from builtins import range
 
 def convertToList(element):
+    """
+    This funciton...
+    :param element:
+    :return: None OR [element]
+    """
     if element is None:
         return ''
     return [element]
 
 def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
+    """
+    This function...
+    :param posteriorDictionary:
+    :param candidateRegionFileName:
+    :return: outputCandidateRegionFileName
+    """
     import SimpleITK as sitk
 
     AIR_FN = posteriorDictionary['AIR']
@@ -37,6 +48,11 @@ def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileNam
 
 
 def makeListOfValidImages(imageFile):
+    """
+    This function...
+    :param imageFile:
+    :return: [] OR imageFile
+    """
     if imageFile is None:
         return []  # an empty iterable is a valid input to a data string
     else:
@@ -50,10 +66,23 @@ def makeListOfValidImages(imageFile):
 #         return imageFile
 
 def getListIndex(imageList, index):
+    """
+    This function returns the imageList value at an index
+    :param imageList:
+    :param index:
+    :return: imageList[index]
+    """
     return imageList[index]
 
 
 def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
+    """
+    This function...
+    :param t1_image:
+    :param brain_labels:
+    :param clipped_file_name:
+    :return: clipped_file
+    """
     import os
     import sys
     import SimpleITK as sitk
@@ -70,6 +99,11 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
 
 
 def UnwrapPosteriorImagesFromListOfTuplesFunction(posteriorListOfTuples):
+    """
+    This function...
+    :param posteriorListOfTuples:
+    :return: mylist
+    """
     ## Dictionary values are now being returned as unicode characters
     ## so convert back to ascii
     #print("QQQQQ {0}".format(posteriorListOfTuples))
@@ -85,6 +119,8 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
 
         dg_list_list=[['Y1/POSTERIOR_AIR.nii.gz','Y1/POSTERIOR_CAUDATE.nii.gz'],['Y2/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']]
         dictionary_of_session_list={'AIR':['Y1/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_AIR.nii.gz'], 'CAUDATE':['Y1/POSTERIOR_CAUDATE.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']}
+        :param dg_list_list:
+        :return: dicitonary_of_session_list
     """
     from os.path import basename
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -109,6 +145,11 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
 
 
 def AccumulateLikeTissuePosteriors(posteriorImages):
+    """
+    This function...
+    :param posteriorImages
+    :return: AccumulatePriorsList, AccumulatePriorsNames
+    """
     import os
     import sys
     import SimpleITK as sitk
@@ -168,7 +209,10 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
 
 
 def mkdir_p(path):
-    """ Safely make a new directory, checking if it already exists"""
+    """ Safely make a new directory, checking if it already exists
+        :param path:
+        :return: None
+    """
     try:
         os.makedirs(path)
     except OSError as exc:  # Python >2.5
@@ -179,14 +223,20 @@ def mkdir_p(path):
 
 
 def recursive_dir_rm(path):
-    """ Force recursive remove of directory """
+    """ Force recursive remove of directory
+        :param path:
+        :return: Nothing
+     """
     if os.path.exists(path):
         shutil.rmtree(path)
     return
 
 
 def make_dummy_file(fn):
-    """This function just makes a file with the correct name and time stamp"""
+    """This function just makes a file with the correct name and time stamp
+       :param fn:
+       :return: None
+    """
     import time
     mkdir_p(os.path.dirname(fn))
     ff = open(fn, 'w')

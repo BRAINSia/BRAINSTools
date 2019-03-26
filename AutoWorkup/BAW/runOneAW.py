@@ -8,7 +8,9 @@ from builtins import object
 
 
 class runOneAW(object):
+    """This class represents a..."""
     def main(self):
+        """This is the main function..."""
         self.makeOuputDir()
         self.sessionPath = os.path.join(input_arguments.experimentOutputDir, 'session.csv')
         self.configPath = os.path.join(input_arguments.experimentOutputDir, 'localAW.config')
@@ -17,12 +19,14 @@ class runOneAW(object):
         self.executeAW()
 
     def makeOuputDir(self):
+        """This funciton does..."""
         if os.path.exists(input_arguments.experimentOutputDir):
             pass
         else:
             os.mkdir(input_arguments.experimentOutputDir)
 
     def executeAW(self):
+        """This function does..."""
         bawCommand = """time python {brainsToolsScriptsDir}/AutoWorkup/baw_exp.py \
  -ExperimentConfig {configFile} \
  -pe LOCAL_ENVIRONMENT \
@@ -34,6 +38,7 @@ class runOneAW(object):
         os.system(bawCommand)
 
     def generateSessionCSV(self):
+        """This function..."""
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         sessionDict = OrderedDict()
         if input_arguments.t1 != []:

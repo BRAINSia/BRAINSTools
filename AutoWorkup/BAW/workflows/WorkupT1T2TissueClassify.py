@@ -26,7 +26,14 @@ from utilities.misc import *
 """
 
 
+
 def getListIndexOrNoneIfOutOfRange(imageList, index):
+    """
+    This function...
+    :param imageList:
+    :param index:
+    :return: imageList[index] OR None
+    """
     if index < len(imageList):
         return imageList[index]
     else:
@@ -37,6 +44,11 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
 #              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
 #              'NOTVB', 'AIR'])
 def MakePosteriorListOfTuplesFunc(posteriorImages):
+    """
+    This function...
+    :param posteriorImages:
+    :return: temp_dictionary
+    """
     #from PipeLineFunctionHelpers import POSTERIORS
     posteriorImages.sort()
     #print("AAAA {0}".format(posteriorImages))
@@ -54,6 +66,14 @@ def MakePosteriorListOfTuplesFunc(posteriorImages):
 
 
 def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRegistrationMasking):
+    """
+    This function...
+    :param WFname:
+    :param master_config:
+    :param InterpolationMode:
+    :param UseRegistrationMasking:
+    :return: tissueClassifyWF
+    """
     from nipype.interfaces import ants
 
     CLUSTER_QUEUE = master_config['queue']
@@ -230,7 +250,10 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRe
 
     def MakeInverseTransformFileName(TransformFileName):
         """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly
-          in the list outputs"""
+          in the list outputs
+          :param Transform:
+          :return: [fixed_inverse_name]
+          """
         fixed_inverse_name = TransformFileName.replace(".h5", "_Inverse.h5")
         return [fixed_inverse_name]
 

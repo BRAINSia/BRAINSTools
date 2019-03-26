@@ -9,6 +9,9 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSABCOutputS
 
 
 class GetPosteriorsFromAtlasXML(object):
+    """
+    This class represents a...
+    """
     def __init__(self, xmlFile):
         self.xmlFile = xmlFile
         self.xmlString = self.getXMLstring(self.xmlFile)

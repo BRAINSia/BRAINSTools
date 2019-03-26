@@ -16,6 +16,10 @@ def validatePath(path, allow_empty, isDirectory):
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
+    :param path:
+    :param allow_empty:
+    :param isDirectory:
+    :return full:
     """
     msg = "Path could not be found! {0}"
     if (path is None or path == '') and allow_empty:
@@ -36,6 +40,8 @@ def validatePaths(pathString):
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
+    :param pathString:
+    :return: ':'.join([validatePath(path, False, True) for path in ':'.split(pathString)])
     """
     return ':'.join([validatePath(path, False, True) for path in ':'.split(pathString)])
 
@@ -55,6 +61,9 @@ def appendPathList(new, old=None):
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
+    :param new:
+    :param old: None
+    :return:
     """
     new = validatePaths(new, False, True)
     if old is None or old == '':
@@ -64,6 +73,13 @@ def appendPathList(new, old=None):
 
 
 def file_replace(in_file, out_file, pattern, repl):
+    """
+    :param in_file:
+    :param out_file:
+    :param patterm:
+    :param repl:
+    :return: True
+    """
     # From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
     from platform import system
     if system().lower() == 'linux':
@@ -78,6 +94,11 @@ def file_replace(in_file, out_file, pattern, repl):
 
 
 def clone_atlas_dir(cachedir, atlasdir):
+    """
+    :param cachedir:
+    :param atlasdir:
+    :return: new_dir
+    """
     from distutils.dir_util import copy_tree, remove_tree
     import stat
 

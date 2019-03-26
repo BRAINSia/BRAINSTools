@@ -21,6 +21,15 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     """
     A function to create a consolidated label map and a
     csv file of volume measurements.
+    :param listOfImages:
+    :param LabelImageName:
+    :param CSVFileName:
+    :param posteriorDictionary:
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :return: os.path.abspath(LabelImageName), os.path.abspath(
+        CSVFileName), CleanedLeftCaudate, CleanedRightCaudate, CleanedLeftHippocampus, CleanedRightHippocampus, CleanedLeftPutamen, CleanedRightPutamen, CleanedLeftThalamus, CleanedRightThalamus, CleanedLeftAccumben, CleanedRightAccumben, CleanedLeftGlobus, CleanedRightGlobus
     """
 
     import SimpleITK as sitk
@@ -32,6 +41,10 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         """This function is used to clean up grey matter sub-cortical segmentations
     by removing tissue that is more than 85% chance of being either WM or CSF
     The inputs are the initial segmentation, the WM Probability, and the CSF Probability
+    :param initial_seg:
+    :param probMapOfExclusion:
+    :param percentageThreshold: 0.85
+    :return: cleanedUpSeg
     """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print(("AA", initial_seg))
@@ -44,6 +57,14 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         return cleanedUpSeg
 
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
+        """
+        This function...
+        :param initial_seg_fn:
+        :param posteriorDictionary:
+        :param WMThreshold:
+        :param CSFThreshold:
+        :return: CSF_removed
+        """
         initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8)
 
         # WM_FN = posteriorDictionary['WM']
@@ -173,6 +194,17 @@ def CreateBRAINSCutWorkflow(projectid,
                             CLUSTER_QUEUE_LONG,
                             WFName,
                             t1Only):
+    """
+    This function...
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :param CLUSTER_QUEUE:
+    :param CLUSTER_QUEUE_LONG:
+    :param WFName:
+    :param t1Only:
+    :return: cutWF
+    """
     cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume', 'T2Volume',

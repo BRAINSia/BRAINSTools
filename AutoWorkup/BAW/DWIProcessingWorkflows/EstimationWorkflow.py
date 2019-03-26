@@ -18,8 +18,18 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 
 
 def CreateEstimationWorkflow(WFname):
+    """
+    This Function takes in...
+    :param WFname:
+    :return: EstimationWF  
+    """
     #### Utility function ####
     def RunDTIProcess(dti_image):
+        """
+        This Function takes in...
+        :param dti_image:
+        :return: fa_output, md_output, RD_output, frobenius_norm_output, lambda1_output, lambda2_output, lambda3_output
+        """
         import os
         from nipype.interfaces.semtools import dtiprocess
         DTIProcess = dtiprocess()

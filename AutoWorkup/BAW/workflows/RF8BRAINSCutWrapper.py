@@ -20,6 +20,10 @@ from nipype.interfaces.base import (File, TraitedSpec, Interface, CommandLineInp
 
 
 class RF8BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
+    """
+    This class represents a...
+    :param CommandLineInputSpec:
+    """
     ### subject specific
     inputSubjectT1Filename = File(desc="Subject T1 Volume", exists=True, mandatory=True,
                                   argstr="--inputSubjectT1Filename %s")
@@ -93,6 +97,10 @@ class RF8BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
 
 
 class RF8BRAINSCutWrapperCLOutputSpec(TraitedSpec):
+    """
+    This class represents a...
+    :param TraitedSpec:
+    """
     xmlFilename = File(desc="Net configuration xml file", exists=True, mandatory=True)
 
     outputBinaryLeftCaudate = File(desc="Output binary file of left caudate", exists=True, mandatory=True)
@@ -117,10 +125,19 @@ class RF8BRAINSCutWrapper(CommandLine):
     output_spec = RF8BRAINSCutWrapperCLOutputSpec
 
     def _list_outputs(self):
+        """
+        This function...
+        :return: self.output_spec().get()
+        """
         outputs = self.output_spec().get()
         return self._outputs_from_inputs(outputs)
 
     def _outputs_from_inputs(self, outputs):
+        """
+        This function...
+        :param outputs:
+        :return: outputs
+        """
         for name in list(outputs.keys()):
             coresponding_input = getattr(self.inputs, name)
             if isdefined(coresponding_input):

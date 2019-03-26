@@ -10,6 +10,8 @@ from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
 
 def print_usage():
+    """This function prints the usage of BAW
+    """
     print("python ./BAWScreenShots.py \\\n"
           "-i  ./small_list.csv \\\n"
           "-d /Shared/sinapse/CACHE/20160202_PREDICTHD_base_Results/  \\\n"
@@ -22,6 +24,10 @@ def print_usage():
 
 
 def readInputFile(inputFilename):
+    """This function...
+    :param inputFilename:
+    :return: inputList
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     inputList = []
     with open(inputFilename) as infile:
@@ -51,6 +57,8 @@ def readInputFile(inputFilename):
 
 
 def main(argv=None):
+    """This is the main function
+    """
     inputfile = ''
     inputDirectory = ''
     inputSubDirectory = 'TissueClassify'

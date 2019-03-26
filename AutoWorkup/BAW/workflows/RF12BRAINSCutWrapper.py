@@ -22,6 +22,8 @@ from nipype.interfaces.base import (File, TraitedSpec, Interface, CommandLineInp
 
 
 class RF12BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
+    """This class represents a...
+    """
     ### subject specific
     inputSubjectT1Filename = File(desc="Subject T1 Volume", exists=True, mandatory=True,
                                   argstr="--inputSubjectT1Filename %s")
@@ -114,6 +116,8 @@ class RF12BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
 
 
 class RF12BRAINSCutWrapperCLOutputSpec(TraitedSpec):
+    """This class represents a...
+    """
     xmlFilename = File(desc="Net configuration xml file", exists=False, mandatory=False)
 
     outputBinaryLeftAccumben = File(desc="Output binary file of left accumben", exists=True, mandatory=True)
@@ -152,10 +156,19 @@ class RF12BRAINSCutWrapper(CommandLine):
     output_spec = RF12BRAINSCutWrapperCLOutputSpec
 
     def _list_outputs(self):
+        """
+        This fucntion...
+        :return: self._outputs_from_inputs(outputs)
+        """
         outputs = self.output_spec().get()
         return self._outputs_from_inputs(outputs)
 
     def _outputs_from_inputs(self, outputs):
+        """
+        This function...
+        :param outputs:
+        :return: outputs
+        """
         for name in list(outputs.keys()):
             coresponding_input = getattr(self.inputs, name)
             if isdefined(coresponding_input):

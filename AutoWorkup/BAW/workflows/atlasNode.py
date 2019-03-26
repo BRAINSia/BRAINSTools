@@ -5,7 +5,12 @@ from builtins import zip
 
 
 def MakeAtlasNode(atlasDirectory, name, atlasParts):
-    """ Make an atlas node that contains the elements requested in the atlasParts section
+    """
+        :param atlasDirectory:
+        :param name:
+        :param atlasParts:
+        :return: node
+        Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
         compartmentalization of algorithmic components.
 
@@ -144,6 +149,13 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
 
 
 def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTemplate, outDefinition):
+    """
+    :param t1_image:
+    :param deformed_list:
+    :param AtlasTemplate:
+    :param outDefinition:
+    :return: outAtlasFullPath, clean_deformed_list
+    """
     import os
     import sys
     import SimpleITK as sitk

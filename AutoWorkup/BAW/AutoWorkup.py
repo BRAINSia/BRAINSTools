@@ -6,13 +6,21 @@ def load_modules(modules):
 
     module=() {eval `/opt/modules/Modules/$MODULE_VERSION/bin/modulecmd bash $* }`
 
-    So _template_runnerning os.execvp() on it doesn't work without the correct file path to the module executable """
+    So _template_runnerning os.execvp() on it doesn't work without the correct file path to the module executable
+    :param modules:
+    :return: None
+    """
     import os
     for module in modules:
         os.system(" ".join(['module load', module]))  # os.execv(module_exe, 'bash', 'load', module])
 
 
 def setup_environment(argv):
+    """
+    This function...
+    :param argv:
+    :return: environment, experiment, pipeline, cluster
+    """
     print("Configuring environment...")
     import os
     import os.path

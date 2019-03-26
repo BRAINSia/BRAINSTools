@@ -16,10 +16,22 @@ from past.utils import old_div
 
 
 def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
+    """
+    This Function takes in...
+    :param WFname:
+    :param LABELS_CONFIG_FILE
+    :return: MeasurementWF
+    """
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     ###### UTILITY FUNCTIONS #######
     # This function returns a label map that only covers the FOV of the input DWI scan
     def CreateDWILabelMap(T2LabelMapVolume, DWIBrainMask):
+        """
+        This Function takes in...
+        :param T2LabelMapVolume:
+        :param DWIBrainMask:
+        :return: outputVolume
+        """
         import os
         import SimpleITK as sitk
         T2LabelMapVolume = sitk.ReadImage(T2LabelMapVolume, sitk.sitkUInt16.encode('ascii',
@@ -53,17 +65,41 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
 
     def MakeResamplerInFileList(FAImage, MDImage, RDImage, FrobeniusNormImage, Lambda1Image, Lambda2Image,
                                 Lambda3Image):
+    """
+    This Function takes in...
+    :param FAImage:
+    :param MDImage:
+    :param RDImage:
+    :param FrobeniusNormImage:
+    :param Lambda1Image:
+    :param Lambda2Image:
+    :param Lambda3Image:
+    :return: RISsList
+    """
         RISsList = [FAImage, MDImage, RDImage, FrobeniusNormImage, Lambda1Image, Lambda2Image, Lambda3Image]
         return RISsList
 
     # This functions computes statistics of each input RIS volume over all input labels
     # and writes the results as a CSV file
     def ComputeStatistics(inputVolume, T2LabelMapVolume, DWILabelMapVolume, labelCodesFile):
+        """
+        This Function takes in...
+        :param inputVolume:
+        :param T2LabelMapVolume:
+        :param DWILabelMapVolume:
+        :param labelCodesFile:
+        :return: CSVStatisticsFile
+        """
         import os
         import SimpleITK as sitk
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         #### Util Funcs ####
         def createLabelsDictionary(labelCodesFile):
+            """
+            This Function takes in...
+            :param labelCodesFile:
+            :return: labelsDictionary
+            """
             import csv
             labelsDictionary = OrderedDict()
             with open(labelCodesFile) as lf:
@@ -76,10 +112,24 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
             return labelsDictionary
 
         def computeVoxelVolume(inputVolume):
+            """
+            This Function takes in...
+            :param inputVolume:
+            :return: reduce(operator.mul, inputVolume.GetSpacing())
+            """
             import operator
             return reduce(operator.mul, inputVolume.GetSpacing())
 
         def ReturnStatisticsList(labelID, voxelVolume, resampledRISVolume, DWILabelMap, T2LabelMap):
+            """
+            This Function takes in...
+            :param labelID:
+            :param voxelVolume:
+            :param resampledRISVolume:
+            :param DWILabelMap:
+            :param T2LabelMap:
+            :return: statsList, totalVolume
+            """
             from past.utils import old_div
             from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
             statFilter = sitk.LabelStatisticsImageFilter()
@@ -117,6 +167,12 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
             return statsList, totalVolume
 
         def writeLabelStatistics(filename, statisticsDictionary):
+            """
+            This Function takes in...
+            :param filename:
+            :param statisticsDictionary:
+            :return: CSVStatisticsFile
+            """
             import csv
             with open(filename, 'wb') as lf:
                 headerdata = [['#Label', 'mean', 'std', 'max', 'min', 'median', 'effective_volume', 'total_volume',
@@ -149,9 +205,21 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
 
     # This function helps to pick desirable output from the output list
     def pickFromList(inputlist, item):
+        """
+        This Function takes in...
+        :param inputList:
+        :param item:
+        :return: inputList[item]
+        """
         return inputlist[item]
 
     def ResampleRISVolumes(referenceVolume, inputVolume):
+        """
+        This Function takes in...
+        :param referenceVolume:
+        :param inputVolume:
+        :return: outputVolume 
+        """
         import os
         import SimpleITK as sitk
         refVolume = sitk.ReadImage(referenceVolume)

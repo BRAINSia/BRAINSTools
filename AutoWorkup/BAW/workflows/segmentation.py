@@ -36,6 +36,16 @@ from utilities.misc import CommonANTsRegistrationSettings
 
 
 def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pipeline_name=''):
+    """
+    This function...
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :param master_config:
+    :param onlyT1: True
+    :param pipeline_name:''
+    :return: baw200
+    """
     import os.path
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio

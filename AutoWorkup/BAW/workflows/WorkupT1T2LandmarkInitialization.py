@@ -31,6 +31,17 @@ from utilities.distributed import modify_qsub_args
 
 def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, PostACPCAlignToAtlas, DoReverseInit,
                                      useEMSP=False, Debug=False):
+    """
+    This function...
+    :param WFname:
+    :param master_config:
+    :param InterpolationMode:
+    :param PostACPCAlignToAtlas:
+    :param DoReverseInit:
+    :param useEMSP: False
+    :param Debug: False
+    :return: landmarkInitializeWF
+    """
     CLUSTER_QUEUE = master_config['queue']
     CLUSTER_QUEUE_LONG = master_config['long_q']
     landmarkInitializeWF = pe.Workflow(name=WFname)

@@ -15,7 +15,11 @@ from .PipeLineFunctionHelpers import mkdir_p, make_dummy_file, recursive_dir_rm
 
 
 def normalizeWM(t1, wm_prob):
-    """This function will compute the mean value of wm and rescale the image so that the mean WM=100"""
+    """This function will compute the mean value of wm and rescale the image so that the mean WM=100
+    :param t1:
+    :param wm_prob:
+    :return: t1_new
+    """
     WM_MEAN_FINAL = 110.0
     WM_THRESHOLD = 0.66
     wm_mask = sitk.BinaryThreshold(wm_prob, WM_THRESHOLD)
@@ -29,6 +33,12 @@ def normalizeWM(t1, wm_prob):
 
 
 def IsFirstNewerThanSecond(firstFile, secondFile):
+    """
+    This function..
+    :param firstFile:
+    :param secondFile:
+    :return: True OR False
+    """
     if not os.path.exists(firstFile):
         print(("ERROR: image missing", firstFile))
         return True
@@ -44,6 +54,16 @@ def IsFirstNewerThanSecond(firstFile, secondFile):
 
 
 def run_mri_convert_script(niftiVol, mgzVol, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT):
+    """
+    This function...
+    :param niftiVol:
+    :param mgzVol:
+    :param subjects_dir:
+    :param subj_session_id:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :return: Nothing
+    """
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     mri_convert_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/mri_convert_qsub.out
@@ -80,6 +100,17 @@ exit $status
 
 def run_mri_mask_script(output_brainmask_fn_mgz, output_custom_brainmask_fn_mgz, output_nu_fn_mgz, subjects_dir,
                         subj_session_id, FREESURFER_HOME, FS_SCRIPT):
+    """
+    This function...
+    :param output_brainmask_fn_mgz:
+    :param output_custom_brainmask_fn_mgz:
+    :param output_nu_fn_mgz:
+    :param subjects_dir:
+    :param subj_session_id:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :return: Nothing
+    """
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     mri_mask_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/mri_mask_scipt_qsub.out
@@ -119,6 +150,15 @@ exit $status
 
 
 def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_session_id):
+    """
+    This function...
+    :param brainmask:
+    :param subjects_dir:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :param subj_session_id:
+    :return: Nothing
+    """
     base_subj_dir = os.path.join(subjects_dir, subj_session_id, 'mri')
     mkdir_p(base_subj_dir)
     output_brainmask_fn_mgz = os.path.join(base_subj_dir, 'brainmask.mgz')
@@ -154,11 +194,26 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
 
 
 def removeDir(path):
+    """
+    This function..
+    :param path:
+    :return: None
+    """
     if os.path.isdir(path):
         shutil.rmtree(path)
 
 
 def runAutoReconStage(subj_session_id, StageToRun, t1_fn, subjects_dir, FREESURFER_HOME, FS_SCRIPT):
+    """
+    This function...
+    :param subj_session_id:
+    :param StageToRun:
+    :param t1_fn:
+    :param subjects_dir:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :return: Nothing
+    """
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     base_subj_dir = os.path.join(subjects_dir, subj_session_id)
     orig_001_mgz_fn = os.path.join(base_subj_dir, 'mri', 'orig', '001.mgz')
@@ -206,7 +261,12 @@ exit $status
 
 def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     import sys
-    """ Create the within-subject template """
+    """ Create the within-subject template
+    :param args:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :return: Nothing
+    """
     base_template_id = args.base_template_id
     list_all_subj_session_ids = args.list_all_subj_session_ids
     subjects_dir = args.subjects_dir
@@ -293,7 +353,12 @@ exit $status
 
 
 def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
-    """ Create the longitudinal analysis """
+    """ Create the longitudinal analysis
+    :param args:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :return: Nothing
+    """
     subj_session_id = args.subj_session_id
     subjects_dir = args.subjects_dir
     base_template_id = args.base_template_id
@@ -345,7 +410,12 @@ exit $status
 
 
 def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
-    """Run all stages of AutoRecon For FreeSurfer, including the custom BAW initialization."""
+    """Run all stages of AutoRecon For FreeSurfer, including the custom BAW initialization.
+    :param args:
+    :param FREESURFER_HOME:
+    :param FS_SCRIPT:
+    :return: t1, label1, label2, args.subj_session_id
+    """
     runAutoReconStage(args.subj_session_id, 1, args.T1_files, args.subjects_dir, FREESURFER_HOME, FS_SCRIPT)
     baw_FixBrainMask(args.brainmask, args.subjects_dir, FREESURFER_HOME, FS_SCRIPT, args.subj_session_id)
     runAutoReconStage(args.subj_session_id, 2, args.T1_files, args.subjects_dir, FREESURFER_HOME, FS_SCRIPT)

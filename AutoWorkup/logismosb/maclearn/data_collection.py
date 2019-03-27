@@ -6,6 +6,11 @@ from training import linear_array_from_image_file, image_data
 
 
 def pickle_load(pickled_file):
+    """
+    This function...
+    :param pickled_file:
+    :return: output
+    """
     _file = open(pickled_file, "rb")
     output = pickle.load(_file)
     _file.close()
@@ -13,10 +18,20 @@ def pickle_load(pickled_file):
 
 
 def get_subject_id_from_t1(t1_file):
+    """
+    This function...
+    :param t1_file:
+    :return:
+    """
     return os.path.abspath(t1_file).split("/")[-3]
 
 
 def collect_training_data(training_files):
+    """
+    This function...
+    :param training_files:
+    :return:
+    """
     all_data = list()
     for t1_file, additional_files, truth_files in training_files:
         feature_data = image_data(t1_file, "T1", additional_images=additional_files)
@@ -32,6 +47,9 @@ def collect_training_data(training_files):
 
 
 def save_training_data():
+    """
+    This function...
+    """
     cache_dir = "/Shared/sinapse/CACHE/20161105_Davids_CrossValidation"
     training_files = pickle_load(os.path.join(cache_dir, "training_files.pkl"))
     training_data = collect_training_data(training_files)

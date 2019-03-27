@@ -17,6 +17,11 @@ labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus',
 
 
 def constructLabels(labels):
+    """
+    This function...
+    :param labels:
+    :return: full_labels, numbers
+    """
     numbers = list(range(1, ((len(labels) * 2) + 1)))
     full_labels = []
     index = 0
@@ -27,6 +32,11 @@ def constructLabels(labels):
 
 
 def _moduleCreateLabels(labels):
+    """
+    This function...
+    :param labels:
+    :return: OrderedDict(labelMap)
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     full_labels, numbers = constructLabels(labels)
     labelMap = zip_longest(full_labels, numbers)
@@ -36,6 +46,8 @@ def _moduleCreateLabels(labels):
 def formatLabel(label):
     """
     Assumes that the label can be split by the '_' character.
+    :param label:
+    :return: label
     """
     side, anatomy = label.split('_')
     if side.lower() in ['l', 'left']:
@@ -49,6 +61,12 @@ def formatLabel(label):
 
 
 def calculateLabelVolume(dirname, label):
+    """
+    This function...
+    :param dirname:
+    :param label:
+    :return: maskSum * size[0] * size[1] * size[2]
+    """
     labelFile = os.path.join(dirname, _config.get('Results', 'segmentations'),
                              label + '_seg_seg.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
@@ -62,6 +80,10 @@ def calculateLabelVolume(dirname, label):
 
 
 def calculateICV(dirname):
+    """
+    This function...
+    :param dirname:
+    """
     filename = os.path.join(dirname, _config.get('Results', 'partials'),
                             'fixed_brainlabels_seg.nii.gz')
     filename = check_file(filename)
@@ -69,6 +91,12 @@ def calculateICV(dirname):
 
 
 def getVolume(args=[], kwds=OrderedDict()):
+    """
+    This function...
+    :param args:
+    :param kwds:
+    :return: volume
+    """
     dirname = labels = project = subject = session = experimentDir = None
     experimentDir = _config.get('Results', 'directory')  # HACK
     for key, value in kwds:

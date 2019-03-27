@@ -56,6 +56,12 @@ if False:
 
 
 def addProbabilityMapElement(probabilityMap, maskName, outputStream):
+    """
+    This function...
+    :param probabilityMap:
+    :param maskName:
+    :param outputStream:
+    """
     outputStream.write("  <ProbabilityMap StructureID    = \"" + maskName + "\"\n")
     outputStream.write("      Gaussian       = \"1.0\"\n")
     outputStream.write("      GenerateVector = \"true\"\n")
@@ -64,6 +70,12 @@ def addProbabilityMapElement(probabilityMap, maskName, outputStream):
 
 
 def xmlGenerator(args, roi=""):
+    """
+    This function...
+    :param args:
+    :param roi:
+    :return: xmlFilename
+    """
     xmlFilename = args.xmlFilename + roi + ".xml"
     outputStream = open(xmlFilename, 'w')
     registrationID = "BSpline_ROI"

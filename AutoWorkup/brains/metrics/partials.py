@@ -18,6 +18,7 @@ _tolerance = [0.51, 1.01]
 def _formatPartialAssertString():
     """
     Returns assertion string for label
+    :return: assertString
     """
     assertString = "Partial label is not recognized: %s\nValid labels are:"
     for p in partials + accumulated:
@@ -29,6 +30,7 @@ def _formatPartialAssertString():
 def _checkLabel(label):
     """
     Verifies string is in the list of valid labels for partial volume resuls
+    :param label:
     """
     errorString = _formatPartialAssertString()
     if label.lower() == 'icv':
@@ -40,6 +42,7 @@ def _checkLabel(label):
 def _setIfAccumulated(label):
     """
     Sets _isAccumulated to True if label is in accumulated list
+    :param label:
     """
     global _isAccumulated
     if label.lower() in accumulated + ['icv']:
@@ -51,6 +54,14 @@ def _setIfAccumulated(label):
 
 
 def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolerance):
+    """
+    This function...
+    :param dirname:
+    :param label:
+    :param _isAccumulated:
+    :param tolerance:
+    :return: maskSum
+    """
     label = label.upper()
 
     maskSum = 0.0
@@ -84,6 +95,11 @@ def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolera
 
 def calculatePartialVolume(dirname, label, _isAccumulated=True):
     """
+    This function...
+    :param dirname:
+    :param label:
+    :param _isAccumulated:
+    :return: maskSum
     """
     label = label.upper()
 
@@ -115,7 +131,10 @@ def calculatePartialVolume(dirname, label, _isAccumulated=True):
 
 def getPosteriorVolume(*args, **kwds):
     """
-
+    This function...
+    :param *args:
+    :param **kwds:
+    :return: volume
     """
     dirname = labels = project = subject = session = experimentDir = None
     experimentDir = _config.get('Results', 'directory')

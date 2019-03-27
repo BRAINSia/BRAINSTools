@@ -7,6 +7,10 @@ valid_schemes = ['BRAINS', 'Nipype']
 
 
 def writeConfiguration(filename='example.config'):
+    """
+    This function...
+    :param filename:
+    """
     config = ConfigParser.SafeConfigParser()
     config.add_section("Results")
     config.set("Results", "directory", "/full/path/to/experiment/directory")
@@ -18,6 +22,10 @@ def writeConfiguration(filename='example.config'):
 
 
 def loadConfiguration(configFile='/dev/null'):
+    """
+    This function...
+    :param configFile:
+    """
     _config.read(configFile)
 
 # _config = loadConfiguration()

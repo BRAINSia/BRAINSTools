@@ -7,7 +7,8 @@ import os
 
 
 def create_ones_image(in_volume, out_file, value=1):
-    """Creates a volume filled with a scalar (1 by default)"""
+    """Creates a volume filled with a scalar (1 by default)
+    """
     import nibabel as nb
     import os
     image = nb.load(in_volume)

@@ -8,10 +8,21 @@ import os
 
 
 def read_machine_learning_config():
+    """
+    This function...
+    :return:
+    """
     return read_json_config(os.path.join("maclearn", "logismosb_maclearn_config.json"))
 
 
 def create_machine_learning_workflow(name="CreateEdgeProbabilityMap", resample=True, plugin_args=None):
+    """
+    This function...
+    :param name:
+    :param resample:
+    :param plugin_args:
+    :return:
+    """
     workflow = Workflow(name)
     input_spec = Node(IdentityInterface(["rho", "phi", "theta", "posteriors", "t1_file", "acpc_transform",
                                          "gm_classifier_file", "wm_classifier_file"]), name="input_spec")
@@ -47,18 +58,34 @@ def create_machine_learning_workflow(name="CreateEdgeProbabilityMap", resample=T
 
 
 def set_inputs(node, input_dict):
+    """
+    This function...
+    :param node:
+    :param input_dict:
+    :return:
+    """
     for key in input_dict:
         node.set_input(key, input_dict[key])
     return node
 
 
 def create_logismosb_node(name="LOGISMOSB"):
+    """
+    This function...
+    :param name:
+    :return:
+    """
     node = Node(LOGISMOSB(), name=name)
     config = read_machine_learning_config()
     return set_inputs(node, config)
 
 
 def create_workflow_to_resample_baw_files(name="ResampleBAWOutputs"):
+    """
+    This function...
+    :param name:
+    :return:
+    """
     workflow = Workflow(name)
     inputs_to_resample = ["t1_file", "t2_file", "hncma_file", "abc_file"]
     other_inputs = ["reference_file", "acpc_transform"]
@@ -80,10 +107,21 @@ def create_workflow_to_resample_baw_files(name="ResampleBAWOutputs"):
 
 
 def create_identity_interface_node(inputs, name):
+    """
+    This function...
+    :param inputs:
+    :param name:
+    :return:
+    """
     return Node(IdentityInterface(inputs), name=name)
 
 
 def create_workflow_to_mask_white_matter(name):
+    """
+    This function...
+    :param name:
+    :return:
+    """
     workflow = Workflow(name)
 
     input_spec = create_identity_interface_node(["t1_file", "white"], "input_spec")
@@ -102,6 +140,14 @@ def create_workflow_to_mask_white_matter(name):
 
 def create_logismosb_machine_learning_workflow(name="MachineLearningLOGISMOSB", resample=True, hemispheres=None,
                                                plugin_args=None):
+    """
+    This function...
+    :param name:
+    :param resample:
+    :param hemispheres:
+    :param plugin_args:
+    :return:
+    """
     workflow = Workflow(name)
     input_spec = Node(IdentityInterface(["rho", "phi", "theta", "posteriors", "t1_file", "t2_file", "acpc_transform",
                                          "gm_classifier_file", "wm_classifier_file", "orig_t1", "hncma_file",

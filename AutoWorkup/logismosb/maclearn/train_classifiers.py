@@ -4,6 +4,11 @@ import os
 
 
 def train_classifiers(data_file, cache_dir=os.path.curdir):
+    """
+    This function...
+    :param data_file:
+    :param cache_dir:
+    """
     data = read_data(data_file)
     for matter in ["WM", "GM"]:
         classifier_file = os.path.join(cache_dir, "Classifier", "{0}_matter_classifier.pkl".format(matter))

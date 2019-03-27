@@ -19,6 +19,13 @@ from training import run_training, get_labeled_region_data
 nm_dir = "/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription/"
 
 def plot_feature_importances(list_of_importances, feature_names, out_file=None, title="Feature Importances"):
+    """
+    This function...
+    :param list_of_importances:
+    :param feature_names:
+    :param out_file:
+    :param title:
+    """
     std = np.std(list_of_importances, axis=0)
     importances = np.average(list_of_importances, axis=0)
     indices = np.argsort(importances)[::-1]
@@ -52,6 +59,13 @@ def plot_feature_importances(list_of_importances, feature_names, out_file=None, 
 
 
 def plot_all_feature_importances(all_importances, feature_names, out_file=None, title=None):
+    """
+    This function...
+    :param all_importances:
+    :param feature_names:
+    :param out_file:
+    :param title:
+    """
     # get averages for all features
     imp_list = list()
     for matter in all_importances.iterkeys():
@@ -64,6 +78,13 @@ def plot_all_feature_importances(all_importances, feature_names, out_file=None, 
 def split_region_data(train_data, test_data, matter, rg_name, label, n_jobs=-1):
     """
     Splits the training and testing data and returns the region specific training and testing features plus targets
+    :param train_data:
+    :param test_data:
+    :param matter:
+    :param rg_name:
+    :param label:
+    :param n_jobs:
+    :return: train_feat, train_targets, test_feat, test_targets
     """
     print("Label Region: {0}".format(label))
     # Training
@@ -81,12 +102,27 @@ def split_region_data(train_data, test_data, matter, rg_name, label, n_jobs=-1):
 
 def train_classifier(train_features, train_targets, n_jobs=-1,
                      clf=RandomForestClassifier()):
+    """
+    This function...
+    :param train_features:
+    :param train_targets:
+    :param n_jobs:
+    :param clf:
+    :return: clf
+    """
     clf.n_jobs = n_jobs
     clf.fit(train_features, train_targets)
     return clf
 
 
 def test_classifier(clf, test_features, test_targets):
+    """
+    This function...
+    :param clf:
+    :param test_features:
+    :param test_targets:
+    :return: score_roc
+    """
     # Predictions
     probas = clf.predict_proba(test_features)
     score_roc = roc_curve(test_targets, probas[:, 1], pos_label=1)
@@ -98,6 +134,9 @@ cache_dir = "/Shared/sinapse/CACHE/20160510_EdgeDetection"
 def runcrossval(idx_split, data_file):
     """
     Runs cross validation after the data splits
+    :param idx_split:
+    :param data_file:
+    :return: test_idx, classifiers
     """
     n_jobs = 8
     print("Training Classifiers")
@@ -140,6 +179,11 @@ partial_runcrossval = partial(runcrossval, data_file=hdf5_file)
 
 
 def make_empty_dictionaries(labels):
+    """
+    This function...
+    :param labels:
+    :return: roc_scores, roc_scores_mean, roc_auc, importances
+    """
     import copy
     roc_scores = dict()
     roc_scores_mean = dict()
@@ -173,6 +217,14 @@ def make_empty_dictionaries(labels):
 
 
 def get_data(data_file, nm_dir, overwrite=False, out_dir=None):
+    """
+    This function...
+    :param data_file:
+    :param nm_dir:
+    :param overwrite:
+    :param out_dir:
+    :return: data
+    """
     # preprocessing
     if not os.path.isfile(data_file) or overwrite:
         if not out_dir:
@@ -193,6 +245,9 @@ def get_data(data_file, nm_dir, overwrite=False, out_dir=None):
 
 
 def main():
+    """
+    This function...
+    """
     overwrite = False
     nm_dir = "/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription/"
 

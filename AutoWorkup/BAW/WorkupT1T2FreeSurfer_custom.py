@@ -12,12 +12,33 @@ from . import fswrap
 
 
 def GenerateWFName(projectid, subjectid, sessionid, WFName):
+    """
+    This function...
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :param WFName:
+    :return: WFName + '_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)
+    """
     return WFName + '_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)
 
 
 def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,
                                     RunAllFSComponents=True, RunMultiMode=True,
                                     constructed_FS_SUBJECTS_DIR='/never_use_this'):
+    """
+    This function...
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :param WFname:
+    :param CLUSTER_QUEUE:
+    :param CLUSTER_QUEUE_LONG:
+    :param RunAllFSComponents: True
+    :param RunMultiMode: True
+    :param constructed_FS_SUBJECTS_DIR: '/never_use_this'
+    :return: freesurferWF
+    """
     freesurferWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFname))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_session_id', 'T1_files', 'T2_files', 'subjects_dir',
@@ -88,6 +109,17 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, WFname, CLUSTER_QUEUE,
                                     constructed_FS_SUBJECTS_DIR='/never_use_this', subcommand='template'):
     """ Construct the longitudinal workflow
     Step 1: Construct the within-subject cross-sectional template (using all subject's sessions)
+    :param projectid:
+    :param subjectid:
+    :param WFname:
+    :param CLUSTER_QUEUE:
+    :param CLUSTER_QUEUE_LONG:
+    :param RunAllFSComponents: True
+    :param RunMultiMode: True
+    :param constructed_FS_SUBJECTS_DIR: '/never_use_this'
+    :param subcommand: 'template'
+    :return: subjectTemplate_freesurferWF
+
     """
     subjectTemplate_freesurferWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, '', WFname))
     inputsSpec = pe.Node(
@@ -120,6 +152,16 @@ def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname
                                          constructed_FS_SUBJECTS_DIR='/never_use_this', subcommand='longitudinal'):
     """ Construct the longitudinal workflow
     Step 2: Construct the longitudinal subject results (for each session individually)
+    :param projectid:
+    :param subjectid:
+    :param WFname:
+    :param CLUSTER_QUEUE:
+    :param CLUSTER_QUEUE_LONG:
+    :param RunAllFSComponents: True
+    :param RunMultiMode: True
+    :param constructed_FS_SUBJECTS_DIR: '/never_use_this'
+    :param subcommand: 'template'
+    :return: long_freesurferWF
     """
     long_freesurferWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFname))
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['base_template_id', 'subj_session_id', 'subjects_dir']),

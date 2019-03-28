@@ -8,6 +8,11 @@ import json
 
 
 def get_local_file_location(relative_file_name):
+    """
+    This function...
+    :param relative_file_name:
+    :return:
+    """
     # credit: http://stackoverflow.com/questions/7165749/open-file-in-a-relative-location-in-python
     import os
     script_dir = os.path.abspath(os.path.dirname(__file__))  # <-- absolute dir the script is in
@@ -15,6 +20,11 @@ def get_local_file_location(relative_file_name):
 
 
 def read_json_config(relative_file_name):
+    """
+    This function...
+    :param relative_file_name:
+    :return:
+    """
     # HACK: read the json file in this folder
     config_file_path = get_local_file_location(relative_file_name)
     with open(config_file_path, "rb") as config_file:
@@ -23,6 +33,13 @@ def read_json_config(relative_file_name):
 
 
 def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=None):
+    """
+    This function...
+    :param name:
+    :param master_config:
+    :param plugin_args:
+    :return:
+    """
     logb_wf = Workflow(name=name)
 
     config = read_json_config("config.json")
@@ -118,6 +135,13 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
 
 
 def create_output_spec(outputs, hemisphere_names, name):
+    """
+    This function...
+    :param outputs:
+    :param hemisphere_names:
+    :param name:
+    :return:
+    """
     final_output_names = list()
     for output in outputs:
         for hemisphere in hemisphere_names:
@@ -126,7 +150,12 @@ def create_output_spec(outputs, hemisphere_names, name):
 
 
 def create_fs_compatible_logb_workflow(name="LOGISMOSB", plugin_args=None, config=None):
-    """Create a workflow to run LOGISMOS-B from FreeSurfer Inputs"""
+    """Create a workflow to run LOGISMOS-B from FreeSurfer Inputs
+    :param name:
+    :param plugin_args:
+    :param config:
+    :return:
+    """
 
     if not config:
         config = read_json_config("fs_logb_config.json")
@@ -164,6 +193,13 @@ def create_fs_compatible_logb_workflow(name="LOGISMOSB", plugin_args=None, confi
     wf.connect(inputspec, 't1_file', t1_to_nifti, 'in_file')
 
     def t2_convert(in_file=None, reference_file=None, out_file=None):
+        """
+        This function...
+        :param in_file:
+        :param reference_file:
+        :param out_file:
+        :return:
+        """
         import os
         from nipype.interfaces.freesurfer import MRIConvert
         from nipype.interfaces.traits_extension import Undefined
@@ -266,7 +302,13 @@ def create_fs_compatible_logb_workflow(name="LOGISMOSB", plugin_args=None, confi
 
 
 def create_fs_logb_workflow_for_both_hemispheres(name="FSLOGB", plugin_args=None, ml=False, config=None):
-    """Creates a workflow that connects FreeSurfer with LOGISMOS-B"""
+    """Creates a workflow that connects FreeSurfer with LOGISMOS-B
+    :param name:
+    :param plugin_args:
+    :param ml:
+    :param config:
+    :return:
+    """
 
     fslogb_wf = Workflow(name=name)
 

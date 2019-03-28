@@ -13,6 +13,11 @@ from freesurfer_utils import create_label_watershed
 
 # method to parse the labels xml info
 def parse_labels_xml(xml_file):
+    """
+    This function...
+    :param xml_file:
+    :return:
+    """
     labels_dict = dict()
     with open(xml_file, 'r') as xml_reader:
         for line in xml_reader:
@@ -27,7 +32,10 @@ def parse_labels_xml(xml_file):
 
 def parse_lookup_table(lookup_table_file):
     """Parses a lookup table to determine regions.
-    This allows the hemisphere splitting to adapt with updated lookup tables."""
+    This allows the hemisphere splitting to adapt with updated lookup tables.
+    :param lookup_table_file:
+    :return:
+    """
     labels_dict = dict()
     with open(lookup_table_file, 'r') as lookup_table:
         for line in lookup_table:
@@ -83,6 +91,11 @@ def parse_lookup_table(lookup_table_file):
 
 
 def parse_atlas_info(in_file):
+    """
+    This function...
+    :param in_file:
+    :return:
+    """
     _, ext = os.path.splitext(in_file)
     if ext == '.txt':
         return parse_lookup_table(in_file)
@@ -93,6 +106,10 @@ def parse_atlas_info(in_file):
 
 
 class WMMaskingInputSpec(BaseInterfaceInputSpec):
+    """
+    This class represents a...
+    :param BaseInterfaceInputSpec:
+    """
     atlas_file = File(
         exists=True, mandatory=True,
         desc='Label map used to divide hemispheres')
@@ -114,6 +131,10 @@ class WMMaskingInputSpec(BaseInterfaceInputSpec):
 
 
 class WMMaskingOutputSpec(TraitedSpec):
+    """
+    This class represents...
+    :param TraitedSpec:
+    """
     lh_boundary = File(
         desc="""
         Binary mask setting hard boundaries for the outer cerebral cortex
@@ -135,12 +156,17 @@ class WMMasking(BaseInterface):
     Takes in a brainslabel map from BRAINSTools AutoWorkup as well
     as a csf posterior probability map and a label map and outputs
     the wm mask to be used by LOGISMOS-B.
+    :param BaseInterface:
     """
 
     input_spec = WMMaskingInputSpec
     output_spec = WMMaskingOutputSpec
 
     def _run_interface(self, runtime):
+        """
+        This function...
+        :param runtime:
+        """
         atlas_file = self.inputs.atlas_file
         csf_file = self.inputs.posterior_files['CSF']
         brainlabels_file = self.inputs.brainlabels_file
@@ -157,14 +183,34 @@ class WMMasking(BaseInterface):
         # Helpful methods
         # method to find largest connected component
         def largest_connected_component(image, minSize=1000):
+            """
+            This function...
+            :param image:
+            :param minSize:
+            :return:
+            """
             return sitk.RelabelComponent(sitk.ConnectedComponent(image), minSize) == 1
 
         # method to fill holes in the mask
         def fill_mask_holes(image, minSize=0):
+            """
+            This function...
+            :param image:
+            :param minSize:
+            :return:
+            """
             negConnected = largest_connected_component(1 - image, minSize)
             return 1 - negConnected
 
         def fillLateralVentricle(ventricle, boundary, ventricleDilation=1, dilationFactor=1):
+            """
+            This function...
+            :param ventricle:
+            :param boundary:
+            :param ventricleDilation:
+            :param dilationFactor:
+            :return:
+            """
             ventTemp = largest_connected_component(ventricle)
             # Fill the ventricle region
             for i in range(ventricleDilation):
@@ -222,6 +268,12 @@ class WMMasking(BaseInterface):
         filled_left_template = fill_mask_holes(LeftTemplate, 1000)
 
         def create_hemisphere_splits(right_template, left_template):
+            """
+            This function...
+            :param right_template:
+            :param left_template:
+            :return:
+            """
             template = (right_template > 0) + (left_template > 0)*2
             splits = create_label_watershed(template)
             right_split = splits == 1
@@ -314,6 +366,10 @@ class WMMasking(BaseInterface):
         return runtime
 
     def _list_outputs(self):
+        """
+        This function..
+        :return:
+        """
         outputs = self._outputs().get()
         outputs['lh_boundary'] = abspath('LeftBrainLabels.nii.gz')
         outputs['rh_boundary'] = abspath('RightBrainLabels.nii.gz')
@@ -326,6 +382,11 @@ class WMMasking(BaseInterface):
 # Define a useful function for reading PolyData vtk files
 # Read a PolyData file and output a vtk PolyData object
 def readPolyData(filename):
+    """
+    This function...
+    :param filename:
+    :return:
+    """
     "Reading polydata: " + filename
     # Check which PolyData reader should be used
     if ".vtk" in filename:
@@ -342,6 +403,12 @@ def readPolyData(filename):
 
 # Find the label of a given vtk point from a label map
 def vtkPoint_to_label(point, labelmap):
+    """
+    This function...
+    :param point:
+    :parma labelmap:
+    :return:
+    """
     surfx, surfy, surfz = point
     point = (-surfx, -surfy, surfz) # must flip y axis to convert from VTK to ITK
     index = labelmap.TransformPhysicalPointToIndex(point)
@@ -356,6 +423,13 @@ def vtkPoint_to_label(point, labelmap):
 # distance transforms and watershed transforms. This algorithm is illustrated
 # in SimpleITK python code below (courtesy of Bradely Lowekamp)
 def multilabel_dilation(img, radius=1, kernel=sitk.BinaryDilateImageFilter.Ball):
+    """
+    This function...
+    :param img:
+    :param radius:
+    :param kernel:
+    :return:
+    """
     distImg = sitk.SignedMaurerDistanceMap(img != 0,
                                            insideIsPositive=False,
                                            squaredDistance=False,
@@ -366,6 +440,9 @@ def multilabel_dilation(img, radius=1, kernel=sitk.BinaryDilateImageFilter.Ball)
 
 
 class CreateGMLabelMapInputSpec(BaseInterfaceInputSpec):
+     """This class represents a...
+     :param BaseInterfaceInputSpec:
+     """
     atlas_file = File(
         exists=True, mandatory=True,
         desc='Label map used to define gray matter regions')
@@ -374,6 +451,9 @@ class CreateGMLabelMapInputSpec(BaseInterfaceInputSpec):
 
 
 class CreateGMLabelMapOutputSpec(TraitedSpec):
+    """This class represents a...
+    :param TraitedSpec:
+    """
     out_file = File(desc="gray matter label map")
 
 
@@ -381,12 +461,18 @@ class CreateGMLabelMap(BaseInterface):
 
     """
     Selects the gray matter labels and then dilates them
+    :param BaseInterface:
     """
 
     input_spec = CreateGMLabelMapInputSpec
     output_spec = CreateGMLabelMapOutputSpec
 
     def _run_interface(self, runtime):
+        """
+        This function...
+        :param runtime:
+        :return:
+        """
         atlas_file = self.inputs.atlas_file
         atlas_dict = parse_labels_xml(self.inputs.atlas_info)
         atlas_img = sitk.Cast(sitk.ReadImage(atlas_file), sitk.sitkUInt64)
@@ -403,12 +489,19 @@ class CreateGMLabelMap(BaseInterface):
         return runtime
 
     def _list_outputs(self):
+        """
+        This function...
+        :return:
+        """
         outputs = self._outputs().get()
         outputs['out_file'] = os.path.abspath('gm_labels.nii.gz')
         return outputs
 
 
 class ComputeDistanceInputSpec(BaseInterfaceInputSpec):
+     """This class represents a...
+     :param BaseInterfaceInputSpec:
+     """
     wm_file = File(exists=True, desc='vtk polydata mesh surface', mandatory=True)
     gm_file = File(exists=True, desc='vtk polydata mesh surface', mandatory=True)
     labels_file = File(exists=True, desc='label image file', mandatory=True)
@@ -418,6 +511,9 @@ class ComputeDistanceInputSpec(BaseInterfaceInputSpec):
 
 
 class ComputeDistanceOutputSpec(TraitedSpec):
+    """This class represents a...
+    :param TraitedSpec:
+    """
     out_file = File(desc="vtk polydata mesh surface with distance scalars")
 
 
@@ -426,18 +522,28 @@ class ComputeDistance(BaseInterface):
     """
     Nipype wrappers for a comparing 2 surfaces
     Compute the surface to surface distance between 2 using similar to FreeSurfer
+    :param BaseInterface:
     """
 
     input_spec = ComputeDistanceInputSpec
     output_spec = ComputeDistanceOutputSpec
 
     def _list_outputs(self):
+        """
+        This function..
+        :return:
+        """
         outputs = self._outputs().get()
         outputs['out_file'] = os.path.abspath(
             '{0}_ctx_results.csv'.format(self.inputs.hemisphere))
         return outputs
 
     def _run_interface(self, runtime):
+        """
+        This function...
+        :param runtime:
+        :return:
+        """
         labelmap = sitk.ReadImage(self.inputs.labels_file)
         uncleanwm = readPolyData(self.inputs.wm_file)
         uncleangm = readPolyData(self.inputs.gm_file)
@@ -522,6 +628,9 @@ class ComputeDistance(BaseInterface):
 
 
 class LOGISMOSBInputSpec(CommandLineInputSpec):
+     """This class represents a...
+     :param CommandLineInputSpec:
+     """
     t1_file = File(exists=True, desc='T1 scan output by BAW', argstr='--inputT1 %s', mandatory=True)
     t2_file = File(exists=True, genfile=True, desc='T2 scan output by BAW', argstr='--inputT2 %s', mandatory=False)
     mesh_file = File(exists=True, desc='final mesh of the white matter surface (must have a genus equal to 0)',
@@ -551,28 +660,51 @@ class LOGISMOSBInputSpec(CommandLineInputSpec):
 
 
 class LOGISMOSBOutputSpec(TraitedSpec):
+    """This class represents a...
+    :param TraitedSpec:
+    """
     gmsurface_file = File(desc="path/name of GM surface file")
     wmsurface_file = File(desc="path/name of WM surface file")
     profile_file = File(desc="output profile file")
 
 
 class LOGISMOSB(CommandLine):
+    """
+    This class represents a...
+    :param CommandLine:
+    """
     _cmd = 'LOGISMOS-B'
     input_spec = LOGISMOSBInputSpec
     output_spec = LOGISMOSBOutputSpec
 
     def _gen_filename(self, name):
+        """
+        This function...
+        :param name:
+        :return:
+        """
         if name == "t2_file":
             return self.inputs.t1_file
         return None
 
     def _format_arg(self, name, spec, value):
+        """
+        This function...
+        :param name:
+        :param spec:
+        :param value:
+        :return:
+        """
         if name == "t2_file" and not os.path.isfile(value):
             print "Using T1 as T2 file"
             value = self.inputs.t1_file
         return super(LOGISMOSB, self)._format_arg(name, spec, value)
 
     def _list_outputs(self):
+        """
+        This function...
+        :return:
+        """
         outputs = self.output_spec().get()
         outputs['gmsurface_file'] = os.path.abspath(self.inputs.basename + "_GMresult.vtp")
         outputs['wmsurface_file'] = os.path.abspath(self.inputs.basename + "_WMresult.vtp")
@@ -581,6 +713,9 @@ class LOGISMOSB(CommandLine):
 
 
 class BSGInputSpec(CommandLineInputSpec):
+     """This class represents a...
+     :param CommandLineInputSpec:
+     """
     in_file = File(exists=True, mandatory=True,
                    desc="binary ITK image mask file",
                    argstr="--inputImageFile %s")
@@ -607,10 +742,17 @@ class BSGInputSpec(CommandLineInputSpec):
 
 
 class BSGOutputSpec(TraitedSpec):
+     """This class represents a...
+     :param TraitedSpec:
+     """
     out_file = File(exists=True, desc="output vtk mesh surface file")
 
 
 class BRAINSSurfaceGeneration(CommandLine):
+     """This class represents a...
+     :param CommandLine:
+     :return:
+     """
     _cmd = 'BRAINSSurfaceGeneration'
     input_spec = BSGInputSpec
     output_spec = BSGOutputSpec
@@ -622,6 +764,9 @@ class BRAINSSurfaceGeneration(CommandLine):
 
 
 class Genus0InputSpec(CommandLineInputSpec):
+     """This class represents a...
+     :param CommandLineInputSpec:
+     """
     in_file = File(exists=True,
                    argstr="--inputVolume %s",
                    desc="Input the image volume to be topologically corrected",
@@ -656,15 +801,25 @@ class Genus0InputSpec(CommandLineInputSpec):
                               desc="Displays the parameters to run this command")
 
 class Genus0OutputSpec(TraitedSpec):
+    """This class represents a...
+    :param TraitedSpec:
+    """
     out_file = File(desc="white matter binary mask image (.nii.gz) or a vtk mesh")
 
 
 class GenusZeroImageFilter(CommandLine):
+    """This class represents a...
+    :param CommandLine:
+    """
     _cmd = 'GenusZeroImageFilter'
     input_spec = Genus0InputSpec
     output_spec = Genus0OutputSpec
 
     def _list_outputs(self):
+        """
+        This function...
+        :return:
+        """
         outputs = self.output_spec().get()
         if self.inputs.computeSurface:
             outputs['out_file'] = os.path.abspath(self.inputs.out_mesh)

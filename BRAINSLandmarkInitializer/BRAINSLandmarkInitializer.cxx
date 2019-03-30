@@ -35,21 +35,22 @@ static void CheckLandmarks( const LandmarksMapType & ldmk, const LandmarkWeightM
 {
   if( ldmk.size() < 4 )
     {
-    std::cerr << "At least 3 fiducual points must be specified. "
+    std::cerr << "At least 3 fiducial points must be specified. "
               << std::endl;
     exit(EXIT_FAILURE);
     }
 
-  if( ldmk.find( "AC" ) == ldmk.end() ||
-      ldmk.find( "PC" ) == ldmk.end() ||
-      ldmk.find( "LE" ) == ldmk.end() ||
-      ldmk.find( "RE" ) == ldmk.end() )
-    {
-    std::cerr << " Base four landmarks ( AC, PC, left eye(LE), and right eye(RE) ) "
-              << " has to be provided"
-              << std::endl;
-    exit(EXIT_FAILURE);
-    }
+//  if( ldmk.find( "AC" ) == ldmk.end() ||
+//      ldmk.find( "PC" ) == ldmk.end() ||
+//      ldmk.find( "LE" ) == ldmk.end() ||
+//      ldmk.find( "RE" ) == ldmk.end() )
+//    {
+//    std::cerr << " Base four landmarks ( AC, PC, left eye(LE), and right eye(RE) ) "
+//              << " has to be provided"
+//              << std::endl;
+//    exit(EXIT_FAILURE);
+//    }
+
   for( std::map<std::string, float>::const_iterator i = weightMap.begin();
        i != weightMap.end();
        ++i )
@@ -74,18 +75,23 @@ InitializeTransform( int argc, char *argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  /** Landmark Weights */
-  LandmarkWeightMapType landmarkWeightMap = ReadLandmarkWeights( inputWeightFilename );
 
   /** read in *fcsv file */
   /** check four landmarks */
   std::cout << "Reading: " << inputFixedLandmarkFilename << std::endl;
   LandmarksMapType fixedLandmarks = ReadSlicer3toITKLmk( inputFixedLandmarkFilename );
-  CheckLandmarks( fixedLandmarks, landmarkWeightMap );
 
   std::cout << "Reading: " << inputMovingLandmarkFilename << std::endl;
   LandmarksMapType movingLandmarks = ReadSlicer3toITKLmk( inputMovingLandmarkFilename );
-  CheckLandmarks( movingLandmarks, landmarkWeightMap );
+
+  /** Landmark Weights */
+  LandmarkWeightMapType landmarkWeightMap;
+  if ( ! inputWeightFilename.empty() )
+  {
+    landmarkWeightMap = ReadLandmarkWeights( inputWeightFilename );
+    CheckLandmarks( fixedLandmarks, landmarkWeightMap );
+    CheckLandmarks( movingLandmarks, landmarkWeightMap );
+  }
 
   /** Landmark Initializaer */
   using PixelType = double;

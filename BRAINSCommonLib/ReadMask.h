@@ -38,7 +38,7 @@ ReadImageMask(const std::string & filename,
   typename ReadImageMaskSpatialObjectType::Pointer mask = ReadImageMaskSpatialObjectType::New();
   mask->SetImage(OrientedMaskImage);
   //
-  mask->ComputeObjectToWorldTransform();
+  mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   // return pointer to mask
   typename MaskType::Pointer p = dynamic_cast<MaskType *>( mask.GetPointer() );
   if( p.IsNull() )

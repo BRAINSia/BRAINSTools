@@ -377,9 +377,9 @@ typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::Spher
     // Create a Line Spatial Object
     SpherePointer Sphere = SphereType::New();
     Sphere->SetId(circles);
-    Sphere->SetRadius( m_RadiusImage->GetPixel(idx) );
-    Sphere->GetObjectToParentTransform()->SetOffset(center);
-    Sphere->ComputeBoundingBox();
+    Sphere->SetRadiusInObjectSpace( m_RadiusImage->GetPixel(idx) );
+    Sphere->GetModifiableObjectToParentTransform()->SetOffset(center);
+    Sphere->Update();
 
     m_SpheresList.push_back(Sphere);
     // Remove a black disc from the hough space domain
@@ -390,7 +390,7 @@ typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::Spher
       {
       const InternalIndexValueType rad =
         static_cast<InternalIndexValueType>(
-          m_SphereRadiusRatio * Sphere->GetRadius()[i] / spacing[i] );
+          m_SphereRadiusRatio * Sphere->GetRadiusInObjectSpace()[i] / spacing[i] );
 
       if( idx[i] > static_cast<InternalIndexValueType>( rad ) )
         {

@@ -115,8 +115,8 @@ main(int argc, char *argv[])
     referenceMaskSpatialObject->SetImage( referenceBinaryImageReader->GetOutput() );
     inputMaskSpatialObject->SetImage( inputBinaryImageReader->GetOutput() );
 
-    referenceMaskSpatialObject->ComputeObjectToWorldTransform();
-    inputMaskSpatialObject->ComputeObjectToWorldTransform();
+    referenceMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
+    inputMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
     if( referenceMaskSpatialObject.IsNotNull() )
       {

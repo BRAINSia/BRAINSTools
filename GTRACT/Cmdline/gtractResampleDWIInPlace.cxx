@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
   std::cout << "Read Image" << std::endl;
 
   NrrdImageType::Pointer        resampleImage = imageReader->GetOutput();
-  NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
+  //NOT USED: NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   GenericTransformType::Pointer baseTransform = nullptr;
   if( inputTransform == "ID"  || inputTransform == "Identity" || inputTransform.size() == 0 )
     {

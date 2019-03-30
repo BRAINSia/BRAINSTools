@@ -37,8 +37,8 @@ if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
-set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG 680942c1628c8ed142c6b25a4c8b9e47aadf3e01) # 1st Q19 updates
+set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
+set(${proj}_GIT_TAG c56a0d8ccf683731d0b93f7a9358d03939d1238b) # Fixed SpatialObject API update
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

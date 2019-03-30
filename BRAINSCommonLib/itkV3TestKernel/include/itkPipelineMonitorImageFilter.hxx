@@ -100,7 +100,7 @@ PipelineMonitorImageFilter<TImageType>
     return false;
     }
   if( m_UpdatedBufferedRegions.size() &&
-      !m_UpdatedOutputLargestPossibleRegion.IsInside(m_UpdatedBufferedRegions.back() ) )
+      !m_UpdatedOutputLargestPossibleRegion.IsInsideInWorldSpace(m_UpdatedBufferedRegions.back() ) )
     {
     itkWarningMacro(<< "The input filter's BufferedRegion is not contained by LargestPossibleRegion");
     return false;

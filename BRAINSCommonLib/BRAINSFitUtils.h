@@ -143,12 +143,12 @@ void DoCenteredTransformMaskClipping(
 
   typename ImageMaskSpatialObjectType::Pointer  fixedMaskSpatialObject = ImageMaskSpatialObjectType::New();
   fixedMaskSpatialObject->SetImage(fixedMaskImage);
-  fixedMaskSpatialObject->ComputeObjectToWorldTransform();
+  fixedMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   fixedMask = fixedMaskSpatialObject.GetPointer();
 
   typename ImageMaskSpatialObjectType::Pointer  movingMaskSpatialObject = ImageMaskSpatialObjectType::New();
   movingMaskSpatialObject->SetImage(movingMaskImage);
-  movingMaskSpatialObject->ComputeObjectToWorldTransform();
+  movingMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   movingMask = movingMaskSpatialObject.GetPointer();
 }
 
@@ -190,13 +190,8 @@ void ComputeRobustMinMaxMean(
       image->TransformIndexToPhysicalPoint(fi.GetIndex(), physicalPoint);
 
       bool inCaluationRegion = true;
-      if( mask.IsNotNull() &&  ( !mask->IsInside(physicalPoint) ) )  // A null
-                                                                     // mask
-                                                                     // implies
-                                                                     // entire
-                                                                     // space is
-                                                                     // to be
-                                                                     // used.
+      if( mask.IsNotNull() &&  ( !mask->IsInsideInWorldSpace(physicalPoint) ) )
+        // A null mask implies entire space is to be used.
         {
         inCaluationRegion = false;
         }

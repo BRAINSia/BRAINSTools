@@ -1127,7 +1127,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
         typename MovingImageType::PointType fixedPoint;
         this->GetMovingImage()->TransformIndexToPhysicalPoint(index, fixedPoint);
         typename DisplacementFieldType::PixelType pixel = dfIter.Get();
-        if( !this->GetMovingImageMask()->IsInside(fixedPoint) &&  (m_WarpedFixedMask->GetPixel(index) < 1) )
+        if( !this->GetMovingImageMask()->IsInsideInWorldSpace(fixedPoint) &&  (m_WarpedFixedMask->GetPixel(index) < 1) )
         {
           pixel.Fill(0.0);
           dfIter1.Set(pixel);

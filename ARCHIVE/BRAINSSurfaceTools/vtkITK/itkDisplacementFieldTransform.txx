@@ -452,7 +452,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 {
   bool inside = true;
 
-  if ( !m_CoefficientImage->GetBufferedRegion().IsInside( index ) )
+  if ( !m_CoefficientImage->GetBufferedRegion().IsInsideInWorldSpace( index ) )
     {
     inside = false;
     }

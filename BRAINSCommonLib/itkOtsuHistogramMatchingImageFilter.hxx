@@ -425,7 +425,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
           {
           typename TInputImage::PointType physicalPoint;
           image->TransformIndexToPhysicalPoint(iter.GetIndex(), physicalPoint);
-          if( mask.IsNotNull() && mask->IsInside( physicalPoint ) )
+          if( mask.IsNotNull() && mask->IsInsideInWorldSpace( physicalPoint ) )
             {
             inMeasurementRegion = true;
             }

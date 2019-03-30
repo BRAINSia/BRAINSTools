@@ -248,7 +248,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
       typename FixedImageType::PointType fixedImageReferencePoint;
       this->GetFixedImage()->TransformIndexToPhysicalPoint(index, fixedImageReferencePoint);
 
-      if( hasFixedMask  && !this->GetFixedImageMask()->IsInside(fixedImageReferencePoint) )
+      if( hasFixedMask  && !this->GetFixedImageMask()->IsInsideInWorldSpace(fixedImageReferencePoint) )
         {
         // If not inside fixed mask
         update.Fill(0.0);
@@ -264,7 +264,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
           mappedPoint[j] = fixedImageReferencePoint[j] + displacementVector[j];
           }
 
-        if( !this->GetMovingImageMask()->IsInside(mappedPoint) )
+        if( !this->GetMovingImageMask()->IsInsideInWorldSpace(mappedPoint) )
           {
           // If not inside masked point.
           update.Fill(0.0);

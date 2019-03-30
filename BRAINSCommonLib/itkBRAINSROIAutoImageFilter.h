@@ -127,7 +127,7 @@ public:
       // convert mask image to mask
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( castFilter->GetOutput() );
-      mask->ComputeObjectToWorldTransform();
+      mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
       m_ResultMaskPointer = dynamic_cast<ImageMaskSpatialObjectType *>( mask.GetPointer() );
       if( m_ResultMaskPointer.IsNull() )
         {

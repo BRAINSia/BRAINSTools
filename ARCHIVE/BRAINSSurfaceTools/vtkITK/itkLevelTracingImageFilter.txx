@@ -243,7 +243,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 {
   // Delegate to either a version specialized for dimension or a
   // general N-dimensional version
-  if (this->GetInput()->GetRequestedRegion().IsInside( m_Seed ))
+  if (this->GetInput()->GetRequestedRegion().IsInsideInWorldSpace( m_Seed ))
     {
     this->Trace( Dispatch<InputImageDimension>() );
     }
@@ -408,7 +408,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
       offsetY = neighbors[(s + zeroIndex + 1)%8][1];
       pixTemp[0] = pix[0] + offsetX;
       pixTemp[1] = pix[1] + offsetY;
-      if(region.IsInside(pixTemp))
+      if(region.IsInsideInWorldSpace(pixTemp))
         {
         val = inputImage->GetPixel(pixTemp);
         if (val >= threshold)

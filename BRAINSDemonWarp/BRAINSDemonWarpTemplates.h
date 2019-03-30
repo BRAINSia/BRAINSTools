@@ -287,7 +287,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
         fixedMask->SetImage( castFixedMaskImage->GetOutput() );
-        fixedMask->ComputeObjectToWorldTransform();
+        fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
         typename  TRealImage::Pointer movingVolume =
           itkUtil::ReadImage<TRealImage>( command.movingVolume.c_str() );
@@ -306,7 +306,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer movingMask = ImageMaskSpatialObjectType::New();
         movingMask->SetImage( castMovingMaskImage->GetOutput() );
-        movingMask->ComputeObjectToWorldTransform();
+        movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
         actualfilter->SetFixedImageMask( dynamic_cast<SpatialObjectType *>( fixedMask.GetPointer() ) );
         actualfilter->SetMovingImageMask( dynamic_cast<SpatialObjectType *>( movingMask.GetPointer() ) );

@@ -118,7 +118,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<DIM>;
   ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
   fixedMask->SetImage( castFixedMaskImage->GetOutput() );
-  fixedMask->ComputeObjectToWorldTransform();
+  fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
   CastImageFilter::Pointer castMovingMaskImage = CastImageFilter::New();
   castMovingMaskImage->SetInput(movingBinaryVolumeImage);
@@ -128,7 +128,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
 
   ImageMaskSpatialObjectType::Pointer movingMask = ImageMaskSpatialObjectType::New();
   movingMask->SetImage( castMovingMaskImage->GetOutput() );
-  movingMask->ComputeObjectToWorldTransform();
+  movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
   filter->SetFixedImageMask( dynamic_cast<ImageMaskType *>( fixedMask.GetPointer() ) );
   filter->SetMovingImageMask( dynamic_cast<ImageMaskType *>( fixedMask.GetPointer() ) );

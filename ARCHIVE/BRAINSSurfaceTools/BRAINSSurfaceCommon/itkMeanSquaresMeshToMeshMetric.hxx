@@ -73,7 +73,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
     InputPointType inputPoint;
     inputPoint.CastFrom( pointItr.Value() );
 
-    if( this->m_FixedMask && !this->m_FixedMask->IsInside( inputPoint ) )
+    if( this->m_FixedMask && !this->m_FixedMask->IsInsideInWorldSpace( inputPoint ) )
       {
       ++pointItr;
       ++pointDataItr;
@@ -82,7 +82,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
     OutputPointType transformedPoint = this->m_Transform->TransformPoint( inputPoint );
 
-    if( this->m_MovingMask && !this->m_MovingMask->IsInside( transformedPoint ) )
+    if( this->m_MovingMask && !this->m_MovingMask->IsInsideInWorldSpace( transformedPoint ) )
       {
       ++pointItr;
       ++pointDataItr;
@@ -153,7 +153,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
     InputPointType inputPoint;
     inputPoint.CastFrom( pointItr.Value() );
 
-    if( this->m_FixedMask && !this->m_FixedMask->IsInside( inputPoint ) )
+    if( this->m_FixedMask && !this->m_FixedMask->IsInsideInWorldSpace( inputPoint ) )
       {
       ++pointItr;
       ++pointDataItr;
@@ -162,7 +162,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
     OutputPointType transformedPoint = this->m_Transform->TransformPoint( inputPoint );
 
-    if( this->m_MovingMask && !this->m_MovingMask->IsInside( transformedPoint ) )
+    if( this->m_MovingMask && !this->m_MovingMask->IsInsideInWorldSpace( transformedPoint ) )
       {
       ++pointItr;
       ++pointDataItr;
@@ -254,7 +254,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
     InputPointType inputPoint;
     inputPoint.CastFrom( pointItr.Value() );
 
-    if( this->m_FixedMask && !this->m_FixedMask->IsInside( inputPoint ) )
+    if( this->m_FixedMask && !this->m_FixedMask->IsInsideInWorldSpace( inputPoint ) )
       {
       ++pointItr;
       ++pointDataItr;
@@ -263,7 +263,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
     OutputPointType transformedPoint = this->m_Transform->TransformPoint( inputPoint );
 
-    if( this->m_MovingMask && !this->m_MovingMask->IsInside( transformedPoint ) )
+    if( this->m_MovingMask && !this->m_MovingMask->IsInsideInWorldSpace( transformedPoint ) )
       {
       ++pointItr;
       ++pointDataItr;

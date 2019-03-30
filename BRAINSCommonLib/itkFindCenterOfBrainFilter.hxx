@@ -389,7 +389,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
       using LFFImageMaskSpatialObjectType = typename itk::ImageMaskSpatialObject<TInputImage::ImageDimension>;
       typename LFFImageMaskSpatialObjectType::Pointer mask = LFFImageMaskSpatialObjectType::New();
       mask->SetImage(this->m_ClippedImageMask);
-      mask->ComputeObjectToWorldTransform();
+      mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
       typename itk::SpatialObject<TInputImage::ImageDimension>::Pointer test =
         dynamic_cast<itk::SpatialObject<TInputImage::ImageDimension> *>( mask.GetPointer() );
       if( test.IsNull() )

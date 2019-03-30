@@ -119,9 +119,9 @@ int main(int, char * *)
 
   // need to create spatial objects back from binary images
   fixedMask->SetImage(fixedImageCast->GetOutput() );
-  fixedMask->ComputeObjectToWorldTransform();
+  fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   movingMask->SetImage(movingImageCast->GetOutput() );
-  movingMask->ComputeObjectToWorldTransform();
+  movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
   std::vector<std::string> transformTypeVector;
 

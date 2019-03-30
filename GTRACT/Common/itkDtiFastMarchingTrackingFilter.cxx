@@ -155,7 +155,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
     m_StartPoints.pop_front();
 
     // check if index is within the input image region
-    if( !costImage->GetBufferedRegion().IsInside( inputIndex ) )
+    if( !costImage->GetBufferedRegion().IsInsideInWorldSpace( inputIndex ) )
       {
       continue;
       }

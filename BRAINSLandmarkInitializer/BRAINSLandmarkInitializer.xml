@@ -6,7 +6,7 @@
   <version>5.0.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Eunyoung Regina Kim, Ali Ghayoor</contributor>
+  <contributor>Eunyoung Regina Kim, Ali Ghayoor, and Hans J. Johnson</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <file>

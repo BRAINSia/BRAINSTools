@@ -149,7 +149,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
     InputPointType inputPoint;
     fixedMesh->TransformIndexToPhysicalPoint( index, inputPoint );
 
-    if( this->m_FixedMeshMask && !this->m_FixedMeshMask->IsInside( inputPoint ) )
+    if( this->m_FixedMeshMask && !this->m_FixedMeshMask->IsInsideInWorldSpace( inputPoint ) )
       {
       ++ti;
       continue;
@@ -157,7 +157,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
     OutputPointType transformedPoint = this->m_Transform->TransformPoint( inputPoint );
 
-    if( this->m_MovingMeshMask && !this->m_MovingMeshMask->IsInside( transformedPoint ) )
+    if( this->m_MovingMeshMask && !this->m_MovingMeshMask->IsInsideInWorldSpace( transformedPoint ) )
       {
       ++ti;
       continue;
@@ -256,7 +256,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
     InputPointType inputPoint;
     inputPoint.CastFrom( pointItr.Value() );
 
-    if( this->m_FixedMeshMask && !this->m_FixedMeshMask->IsInside( inputPoint ) )
+    if( this->m_FixedMeshMask && !this->m_FixedMeshMask->IsInsideInWorldSpace( inputPoint ) )
       {
       ++pointItr;
       ++pointDataItr;
@@ -265,7 +265,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
     OutputPointType transformedPoint = this->m_Transform->TransformPoint( inputPoint );
 
-    if( this->m_MovingMeshMask && !this->m_MovingMeshMask->IsInside( transformedPoint ) )
+    if( this->m_MovingMeshMask && !this->m_MovingMeshMask->IsInsideInWorldSpace( transformedPoint ) )
       {
       ++pointItr;
       ++pointDataItr;

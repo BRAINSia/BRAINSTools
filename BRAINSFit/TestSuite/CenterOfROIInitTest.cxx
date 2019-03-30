@@ -64,7 +64,7 @@ int main(int, char * *)
     ePar[0] = 10;
     ePar[1] = 20;
     ePar[2] = 40;
-    ellipse->SetRadius(ePar);
+    ellipse->SetRadiusInObjectSpace(ePar);
     }
 
   TransformType::OutputVectorType transVector;
@@ -123,11 +123,11 @@ std::cout << eTfmImage->GetSpacing() << std::endl;
   // need to create spatial objects back from binary images
   ImageMaskSOType::Pointer fixedMask = ImageMaskSOType::New();
   fixedMask->SetImage(fixedImageCast->GetOutput() );
-  fixedMask->ComputeObjectToWorldTransform();
+  fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
   ImageMaskSOType::Pointer movingMask = ImageMaskSOType::New();
   movingMask->SetImage(movingImageCast->GetOutput() );
-  movingMask->ComputeObjectToWorldTransform();
+  movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
   std::vector<std::string> transformTypeVector;
   transformTypeVector.push_back(std::string("Rigid"));

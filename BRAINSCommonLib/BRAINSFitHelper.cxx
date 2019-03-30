@@ -72,7 +72,7 @@ ConvertMaskImageToSpatialMask( itk::Image<unsigned char,3>::ConstPointer inputIm
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<3>;
   ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
   mask->SetImage(inputImage);
-  mask->ComputeObjectToWorldTransform();
+  mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   // return pointer to mask
   SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
   if( p.IsNull() )

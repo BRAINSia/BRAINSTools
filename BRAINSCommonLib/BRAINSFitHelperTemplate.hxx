@@ -254,7 +254,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
         mask->SetImage( movingFindCenter->GetClippedImageMask() );
 
-        mask->ComputeObjectToWorldTransform();
+        mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
         typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
         if( p.IsNull() )
           {
@@ -283,7 +283,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
         mask->SetImage( fixedFindCenter->GetClippedImageMask() );
 
-        mask->ComputeObjectToWorldTransform();
+        mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
         typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
         if( p.IsNull() )
           {

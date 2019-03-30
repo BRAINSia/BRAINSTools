@@ -315,7 +315,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
           cur_idx[s] = idx[s] + m_N1Neighborhood[k][s];
           }
 
-//        if(!dummyRegion.IsInside(cur_idx))
+//        if(!dummyRegion.IsInsideInWorldSpace(cur_idx))
 //          continue;
 
         currentPixel = inputImage->GetPixel(cur_idx);
@@ -366,7 +366,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
           {
           cur_idx[s] = idx[s] + m_N1Neighborhood[k][s];
           }
-//        if(!dummyRegion.IsInside(cur_idx))
+//        if(!dummyRegion.IsInsideInWorldSpace(cur_idx))
 //          continue;
         currentPixel = inputImage->GetPixel(cur_idx);
         if( currentPixel <= m_CSFValue )
@@ -405,7 +405,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
           {
           cur_idx[s] = idx[s] + m_N1Neighborhood[k][s];
           }
-//        if(!dummyRegion.IsInside(cur_idx))
+//        if(!dummyRegion.IsInsideInWorldSpace(cur_idx))
 //          continue;
         currentPixel = inputImage->GetPixel(cur_idx);
         if( currentPixel == m_VNValue )
@@ -452,7 +452,7 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
         {
         cur_idx[s] = idx[s] + (int)m_FeatureNeighborhood[t][s];
         }
-//       if(!dummyRegion.IsInside(cur_idx))
+//       if(!dummyRegion.IsInsideInWorldSpace(cur_idx))
 //         continue;
       if( cur_idx[0] < 0 || cur_idx[1] < 0 || cur_idx[2] < 0 )
         {

@@ -504,7 +504,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
       typename TFixedImage::IndexType index = it_f.GetIndex();
       typename FixedImageType::PointType fixedPoint;
       this->GetFixedImage()->TransformIndexToPhysicalPoint(index, fixedPoint);
-      if( this->GetFixedImageMask()->IsInside(fixedPoint) ||
+      if( this->GetFixedImageMask()->IsInsideInWorldSpace(fixedPoint) ||
           (m_MovingMaskImageWarper->GetOutput()->GetPixel(index) > 0) )
         {
         if( globalData )

@@ -65,7 +65,6 @@
 #include <itkSimilarity3DTransform.h>
 #include <itkVersorRigid3DTransform.h>
 
-#include "itkCylinderSpatialObject.h"
 #include "itkSpatialObjectToImageFilter.h"
 #include "itkRGBPixel.h"
 #include "itkIO.h"

@@ -14,10 +14,10 @@ set -ev
 
 while getopts ":b:p:" opt; do
   case ${opt} in
-    b ) # process option for build CACHE
+    b ) # build
       BUILD_CACHE=$OPTARG
       ;;
-    p ) # process option
+    p ) # install
       INSTALL_PREFIX=$OPTARG
       ;;
     \? ) echo "Usage: cmd [-h] [-t]"
@@ -33,7 +33,7 @@ if [ -z ${INSTALL_PREFIX+x} ]; then
     INSTALL_PREFIX=${BUILD_CACHE}/tbb-install
 fi
 
-SRC_DIR=${BUILD_CACHE}/tbb
+SRC_DIR=${BUILD_CACHE}
 
 SYSTEM_NAME=Darwin
 TBB_VERSION_FILE=${SRC_DIR}/include/tbb/tbb_stddef.h
@@ -42,14 +42,6 @@ mkdir -p ${BUILD_CACHE}
 mkdir -p ${INSTALL_PREFIX}
 
 pushd ${BUILD_CACHE}
-if [[ ! -d tbb ]]; then
-  git clone https://github.com/BRAINSia/tbb.git
-fi
-GIT_TAG=cmake-install-config-bugfix
-pushd tbb
-  git checkout ${GIT_TAG}
-popd
-
 
 python ${SRC_DIR}/build/build.py  \
        --tbbroot ${SRC_DIR} \

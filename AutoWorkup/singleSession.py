@@ -44,6 +44,12 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
     are the lists of images to be used in the auto-workup. atlas_fname_wpath is
     the path and filename of the atlas to use.
+
+    :param dataDict:
+    :param master_config:
+    :param interpMode:
+    :param pipeline_name:
+    :return:
     """
     assert 'tissue_classify' in master_config['components'] or \
            'auxlmk' in master_config['components'] or \
@@ -110,6 +116,17 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
 
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
+    """
+    This function...
+    :param sessions:
+    :param environment:
+    :param experiment:
+    :param pipeline:
+    :param cluster:
+    :param useSentinal:
+    :param dryRun:
+    :return:
+    """
     from BAW.baw_exp import OpenSubjectDatabase
     from BAW.utilities.misc import add_dict
     from collections import OrderedDict
@@ -264,6 +281,11 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 ))
 
             def allPathsExists(list_of_paths):
+                """
+                This function...
+                :param list_of_paths:
+                :return:
+                """
                 is_missing = False
                 for ff in list_of_paths:
                     if not os.path.exists(ff):
@@ -294,6 +316,15 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
 
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
+    """
+    This function...
+    :param environment:
+    :param experiment:
+    :param pipeline:
+    :param cluster:
+    :param **kwds:
+    :return:
+    """
     from BAW.utilities.configFileParser import nipype_options
 
     print("Copying Atlas directory and determining appropriate Nipype options...")

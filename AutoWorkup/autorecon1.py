@@ -11,7 +11,10 @@ def VerifyInputs(T1sList):
     ##TODO Make this its own node
     ##TODO Convert .mgz files to .nii.gz
     ##TODO Check the FOV
-    """Verify size outside of pipeline processing"""
+    """Verify size outside of pipeline processing
+    :param T1sList:
+    :return:
+    """
     print "Verifying input T1 size"
     try:
         import SimpleITK as sitk
@@ -40,6 +43,11 @@ def VerifyInputs(T1sList):
     return T1sList
 
 def mkdir_p(path):
+    """
+    This function...
+    :param path:
+    :return:
+    """
     try:
         os.makedirs(path)
     except OSError as exc:  # Python >2.5
@@ -55,6 +63,9 @@ def awk(awk_file, log_file):
     part of nipype or freesurfer.
     Future work may be done to create a method that achieves the same results using a python
     script.
+    :param awk_file:
+    :parma log_file:
+    :return:
     """
     import subprocess
     command = 'awk'
@@ -64,6 +75,9 @@ def awk(awk_file, log_file):
 def copy_file(in_file, out_file=None):
     """
     Create a function to copy a file that can be modified by a following node without changing the original file
+    :param in_file:
+    :param out_file:
+    :return:
     """
     import os
     import shutil
@@ -77,8 +91,11 @@ def copy_file(in_file, out_file=None):
 
 def copy_files(in_files, out_files):
     """
-    Create a function to copy a file that can be modified by a following node 
+    Create a function to copy a file that can be modified by a following node
     without changing the original file
+    :param in_files:
+    :param out_files:
+    :return:
     """
     import shutil
     if len(in_files) != len(out_files):
@@ -92,6 +109,13 @@ def copy_files(in_files, out_files):
     return out_files
 
 def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
+    """
+    This function..
+    :param subjects_dir:
+    :param subject_id:
+    :param in_T1s:
+    :return:
+    """
     # Create output filenames
     inputvols = list()
     iscaleout = list()
@@ -108,6 +132,11 @@ def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
     return inputvols, iscaleout, ltaout
 
 def create_AutoRecon1(config):
+    """
+    This function...
+    :param config:
+    :return:
+    """
     # AutoRecon1
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
@@ -138,13 +167,13 @@ def create_AutoRecon1(config):
             # mri_convert
             inputSpec.inputs.Raw_T2 = config['in_T2']
             T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-            T2_convert.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                      config['current_id'], 
+            T2_convert.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                      config['current_id'],
                                                       'mri', 'orig',
                                                       'T2raw.mgz')
             T2_convert.inputs.no_scale = True
             ar1_wf.connect([(inputSpec, T2_convert, [('Raw_T2', 'in_file')]),
-                            ]) 
+                            ])
 
         if config['in_FLAIR'] != None:
             # FLAIR image preparation
@@ -198,7 +227,7 @@ def create_AutoRecon1(config):
         ar1_wf.connect([(copy_ltas, concatenate_lta, [('out_file', 'in_file')]),
                         (inputSpec, concatenate_lta, [('subj_to_template_lta', 'subj_to_base')])])
 
-    
+
     # Motion Correction
     """
     When there are multiple source volumes, this step will correct for small
@@ -221,16 +250,16 @@ def create_AutoRecon1(config):
 WARNING: only one run found. This is OK, but motion
 correction cannot be performed on one run, so I'll
 copy the run to rawavg and continue."""
-        
+
     else:
         # if multiple T1 scans are given
         create_template = pe.Node(RobustTemplate(), name="Robust_Template")
         create_template.inputs.average_metric = 'median'
-        create_template.inputs.out_file = os.path.join(config['subjects_dir'], 
+        create_template.inputs.out_file = os.path.join(config['subjects_dir'],
                                                        config['current_id'], 'mri',
                                                        'rawavg.mgz')
         create_template.inputs.no_iteration = True
-            
+
         # if running longitudinally
         if config['longitudinal']:
             ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
@@ -250,17 +279,17 @@ copy the run to rawavg and continue."""
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
-    conform_template.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                    config['current_id'], 
+    conform_template.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                    config['current_id'],
                                                     'mri', 'orig.mgz')
     if config['longitudinal']:
         conform_template.inputs.out_datatype = 'uchar'
     else:
         conform_template.inputs.conform = True
         if len(config['in_T1s']) != 1:
-            conform_template.inputs.cw256 = config['cw256']    
+            conform_template.inputs.cw256 = config['cw256']
             conform_template.inputs.resample_type = 'cubic'
-            
+
     ar1_wf.connect(
         [(create_template, conform_template, [('out_file', 'in_file')])])
 
@@ -284,8 +313,8 @@ copy the run to rawavg and continue."""
     bias_correction.inputs.protocol_iterations = 1000
     bias_correction.inputs.distance = 50
     bias_correction.inputs.no_rescale = True
-    bias_correction.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                   config['current_id'], 
+    bias_correction.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                   config['current_id'],
                                                    'mri', 'orig_nu.mgz')
 
     ar1_wf.connect([(add_to_header, bias_correction, [('out_file', 'in_file')]),
@@ -303,12 +332,12 @@ copy the run to rawavg and continue."""
     else:
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
         talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
-        talairach_avi.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 
+        talairach_avi.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'],
                                                      'mri', 'transforms', 'talairach.auto.xfm')
-        
+
         ar1_wf.connect([(bias_correction, talairach_avi, [('out_file', 'in_file')]),
                     ])
-        
+
     copy_transform = pe.Node(Function(['in_file', 'out_file'],
                                       ['out_file'],
                                       copy_file),
@@ -350,16 +379,16 @@ copy the run to rawavg and continue."""
 
     mri_normalize = pe.Node(Normalize(), name="Normalize_T1")
     mri_normalize.inputs.gradient = 1
-    mri_normalize.inputs.out_file = os.path.join(config['subjects_dir'], 
+    mri_normalize.inputs.out_file = os.path.join(config['subjects_dir'],
                                                  config['current_id'], 'mri', 'T1.mgz')
     ar1_wf.connect([(bias_correction, mri_normalize, [('out_file', 'in_file')]),
                     (copy_transform, mri_normalize,
                      [('out_file', 'transform')]),
                     ])
-    
+
     # Skull Strip
     """
-    Removes the skull from mri/T1.mgz and stores the result in 
+    Removes the skull from mri/T1.mgz and stores the result in
     mri/brainmask.auto.mgz and mri/brainmask.mgz. Runs the mri_watershed program.
     """
 
@@ -375,7 +404,7 @@ copy the run to rawavg and continue."""
         mask1 = pe.Node(ApplyMask(), name="ApplyMask1")
         mask1.inputs.keep_mask_deletion_edits = True
         mask1.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'brainmask.auto.mgz')
-        
+
         ar1_wf.connect([(mri_normalize, mask1, [('out_file', 'in_file')]),
                         (copy_template_brainmask, mask1, [('out_file', 'mask_file')])])
 
@@ -386,14 +415,14 @@ copy the run to rawavg and continue."""
         ar1_wf.connect([(mask1, mask2, [('out_file', 'in_file'),
                                         ('out_file', 'out_file')]),
                         (copy_template_brainmask, mask2, [('out_file', 'mask_file')])])
-                        
-    else:    
+
+    else:
         mri_em_register = pe.Node(EMRegister(), name="EM_Register")
         mri_em_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                        'average',
                                                        'RB_all_withskull_2014-08-21.gca')
-        mri_em_register.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                       config['current_id'], 
+        mri_em_register.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                       config['current_id'],
                                                        'mri', 'transforms',
                                                        'talairach_with_skull.lta')
         mri_em_register.inputs.skull = True
@@ -410,8 +439,8 @@ copy the run to rawavg and continue."""
         watershed_skull_strip.inputs.brain_atlas = os.path.join(config['FREESURFER_HOME'],
                                                                 'average',
                                                                 'RB_all_withskull_2014-08-21.gca')
-        watershed_skull_strip.inputs.out_file = os.path.join(config['subjects_dir'], 
-                                                             config['current_id'], 
+        watershed_skull_strip.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                             config['current_id'],
                                                              'mri', 'brainmask.auto.mgz')
         ar1_wf.connect([(mri_normalize, watershed_skull_strip, [('out_file', 'in_file')]),
                         (mri_em_register, watershed_skull_strip,
@@ -431,5 +460,5 @@ copy the run to rawavg and continue."""
         ar1_wf.connect([(mask2, copy_brainmask, [('brain_vol', 'in_file')])])
     else:
         ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')])])
-        
+
     return ar1_wf

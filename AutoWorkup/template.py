@@ -43,6 +43,12 @@ from .baw_exp import OpenSubjectDatabase
 
 
 def get_processed_subjects(resultdir, input_subjects_list):
+    """
+    This function...
+    :param resultdir:
+    :param input_subjects_list:
+    :return:
+    """
     import glob
 
     required_files = ["AVG_template_headregion.nii.gz",
@@ -112,6 +118,17 @@ def get_processed_subjects(resultdir, input_subjects_list):
 
 
 def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
+    """
+    This function...
+    :param input_subjects:
+    :param cache:
+    :param resultdir:
+    :param prefix:
+    :param dbfile:
+    :param useSentinal:
+    :param shuffle:
+    :return:
+    """
     import random
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
@@ -159,6 +176,15 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
     t1s    = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz',     ...      ]
     t2s    = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz',     ...      ]
 
+    :param t1s:
+    :param t2s:
+    :param pds:
+    :param fls:
+    :param labels:
+    :param posteriors:
+    :param passive_intensities:
+    :param passive_masks:
+    :return:
     """
     # print "t1s", t1s
     # print "t2s", t2s
@@ -210,10 +236,21 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
 
 
 def xml_filename(subject):
+    """
+    This function...
+    :param subject:
+    :return:
+    """
     return 'AtlasDefinition_{0}.xml'.format(subject)
 
 
 def getSessionsFromSubjectDictionary(subject_session_dictionary, subject):
+    """
+    This function...
+    :param subject_session_dictionary:
+    :param subject:
+    :return:
+    """
     print(("#" + subject + "#" * 80 + "\n"))
     print((subject_session_dictionary[subject]))
     if len(subject_session_dictionary[subject]) == 0:
@@ -225,6 +262,15 @@ def getSessionsFromSubjectDictionary(subject_session_dictionary, subject):
 
 
 def _template_runner(argv, environment, experiment, pipeline_options, cluster):
+    """
+    This function...
+    :param argv:
+    :param environment:
+    :param experiment:
+    :param pipeline_options:
+    :param cluster:
+    :return:
+    """
     print("Getting subjects from database...")
     # subjects = argv["--subjects"].split(',')
     subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(argv['SUBJECTS'],

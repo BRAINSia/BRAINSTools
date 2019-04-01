@@ -5,7 +5,7 @@ from workflow_reconall import create_reconall, mkdir_p
 
 def help():
     print """
-This program runs FreeSurfer's recon-all as a nipype script. This allows 
+This program runs FreeSurfer's recon-all as a nipype script. This allows
 for better parallel processing for easier experimenting with new and/or
 improved processing steps.
 
@@ -24,7 +24,7 @@ Optional inputs:
 --T2 <inT2>               Input T2 image. T2 images are not used for processing, but the image will be converted
                           to .mgz format.
 
---FLAIR <inFLAIR>         Input FLAIR image. FLAIR images are not used for processing, but the image will be 
+--FLAIR <inFLAIR>         Input FLAIR image. FLAIR images are not used for processing, but the image will be
                               converted to .mgz format.
 
 --plugin <plugin>         Plugin to use when running workflow
@@ -36,12 +36,12 @@ Optional inputs:
 --cw256                   Include this flag after -autorecon1 if images have a FOV > 256.  The
                           flag causes mri_convert to conform the image to dimensions of 256^3.
 
---longbase <name>         Set the longitudinal base template. If a longitudinal 
+--longbase <name>         Set the longitudinal base template. If a longitudinal
                           base is set, no input files will be used/required.
 
---openmp <numthreads>     OpenMP parallelization (CentOS 6 distribution only!) 
-                          To enable this feature, add the flag -openmp <numthreads> 
-                          to recon-all, where <numthreads> is the number of threads 
+--openmp <numthreads>     OpenMP parallelization (CentOS 6 distribution only!)
+                          To enable this feature, add the flag -openmp <numthreads>
+                          to recon-all, where <numthreads> is the number of threads
                           you would like to run.
 
 Author:
@@ -50,6 +50,11 @@ University of Iowa
     """
 
 def procargs(argv):
+    """
+    This function...
+    :param argv:
+    :return:
+    """
     config = { 'in_T1s' : list(),
                'subject_id' : None,
                'in_T2' : None,
@@ -134,12 +139,12 @@ def procargs(argv):
         print "ERROR: Must set subject_id using -s flag"
         help()
         sys.exit(2)
-        
+
     if not config['longitudinal'] and len(config['in_T1s']) == 0:
         print "ERROR: Must have at least one input T1 image"
         help()
         sys.exit(2)
-        
+
     if config['subjects_dir'] == None:
         print "ERROR: Must set the subjects_dir before running"
         help()
@@ -148,17 +153,17 @@ def procargs(argv):
     # print the input cofigurations
     print 'Subject ID: {0}'.format(config['subject_id'])
     print 'Input T1s: {0}'.format(config['in_T1s'])
-    
+
     if config['in_T2'] != None:
         print 'Input T2: {0}'.format(config['in_T2'])
 
     if config['in_FLAIR'] != None:
         print 'Input FLAIR: {0}'.format(config['in_FLAIR'])
-        
+
     print 'Plugin: {0}'.format(config['plugin'])
     print 'Make qcache: {0}'.format(config['qcache'])
     print 'Conform to 256: {0}'.format(config['cw256'])
-    
+
     if config['queue'] != None:
         print 'Queue: {0}'.format(config['queue'])
         if config['plugin'] == 'Linear':
@@ -169,13 +174,13 @@ def procargs(argv):
             config['plugin_args'] = { 'qsub_args' :  modify_qsub_args(config['queue'],
                                                                       minmemoryGB,
                                                                       config['openmp'],
-                                                                      config['openmp']), 
+                                                                      config['openmp']),
                                       'overwrite' : True }
             print 'plugin_args: {0}'.format(config['plugin_args'])
-                
+
     if config['openmp'] != None:
         print 'OpenMP: {0}'.format(config['openmp'])
-        
+
     if config['longitudinal']:
         # set input requirements for running longitudinally
         # TODO: print errors when inputs are not set correctly
@@ -185,7 +190,9 @@ def procargs(argv):
 
 
 def checkenv():
-    """Check for the necessary FS environment variables"""
+    """Check for the necessary FS environment variables
+    :return:
+    """
     fs_home = os.environ.get('FREESURFER_HOME')
     path = os.environ.get('PATH')
     print "FREESURFER_HOME: {0}".format(fs_home)
@@ -209,7 +216,7 @@ this workflow"
         return fs_home
     sys.exit(2)
 
-    
+
 def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null', stderr='/dev/null'):
     """
     Code from BRAINSTools:
@@ -235,6 +242,14 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=8G -o /dev/null -e /dev/null test FAIL
     >>> modify_qsub_args('test', 1, 5, 7, stdout='/my/path', stderr='/my/error')
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
+
+    :param queue:
+    :param memoryGB:
+    :param minThreads:
+    :param maxThreads:
+    :param stdout:
+    :param stderr:
+    :return:
     """
     import math
     assert memoryGB <= 48 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
@@ -265,6 +280,11 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     return format_str
 
 def main(argv):
+    """
+    This function...
+    :param argv:
+    :return:
+    """
     config = procargs(argv)
     config['FREESURFER_HOME'] = checkenv()
     if config['longitudinal']:
@@ -272,12 +292,12 @@ def main(argv):
         config['current_id'] = config['long_id']
     else:
         config['current_id'] = config['subject_id']
-    
+
     # Experiment Info
     # TODO: Have user input cache directory
     ExperimentInfo = {"Atlas": {"TEMP_CACHE": os.path.join(config['subjects_dir'], config['subject_id']),
                                 "LOG_DIR": os.path.join(config['subjects_dir'], 'log')}}
-    
+
     # Create necessary output directories
     for item in ExperimentInfo["Atlas"].iteritems():
         mkdir_p(item[1])
@@ -321,4 +341,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-

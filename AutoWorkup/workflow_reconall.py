@@ -7,11 +7,16 @@ from autorecon2 import create_AutoRecon2
 from autorecon3 import create_AutoRecon3
 
 def create_reconall(config):
+    """
+    This function...
+    :param config:
+    :return:
+    """
     ar1_wf = create_AutoRecon1(config)
     ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(config)
     ar3_wf = create_AutoRecon3(config)
 
-    # Connect workflows 
+    # Connect workflows
     reconall = pe.Workflow(name="recon-all")
     if config['longitudinal']:
         # grab files from the initial single session run
@@ -23,7 +28,7 @@ def create_reconall(config):
         grab_inittp_files.inputs.field_template = dict(inputvols='%s/mri/orig/0*.mgz',
                                                        iscales='%s/mri/orig/0*-iscale.txt',
                                                        ltas='%s/mri/orig/0*.lta')
-        
+
         grab_inittp_files.inputs.template_args = dict(inputvols=[['subject_id']],
                                                       iscales=[['subject_id']],
                                                       ltas=[['subject_id']])
@@ -57,7 +62,7 @@ def create_reconall(config):
                 subj_to_template_lta=[['long_template', 'tp', 'long_template']],
                 seg_noCC=[['tp']],
                 seg_presurf=[['tp']])
-                        
+
             reconall.connect([(tp_data_source, merge_norms, [('norm', 'in{0}'.format(i))]),
                               (tp_data_grabber, merge_segs, [('seg_presurf', 'in{0}'.format(i))]),
                               (tp_data_grabber, merge_segs_noCC, [('seg_noCC', 'in{0}'.format(i))]),
@@ -73,7 +78,7 @@ def create_reconall(config):
                           (merge_template_ltas, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_to_template_ltas')]),
                           (merge_segs_noCC, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_segs_noCC')])])
 
-                        
+
 
         # datasource files from the template run
         ds_template_files = pe.Node(FreeSurferSource(), name="Datasource_Template_Files")
@@ -107,7 +112,7 @@ def create_reconall(config):
             template_rh_white='%s/surf/rh.white',
             template_lh_pial='%s/surf/lh.pial',
             template_rh_pial='%s/surf/rh.pial')
-        
+
         grab_template_files.inputs.template_args = dict(
             template_talairach_xfm=[['long_template']],
             template_talairach_lta=[['long_template']],
@@ -127,7 +132,7 @@ def create_reconall(config):
                           ])
         # end longitudinal data collection
 
-    # connect autorecon 1 - 3 
+    # connect autorecon 1 - 3
     reconall.connect([(ar1_wf, ar3_wf, [('AutoRecon1_Inputs.subject_id', 'AutoRecon3_Inputs.subject_id'),
                                         ('AutoRecon1_Inputs.subjects_dir',
                                          'AutoRecon3_Inputs.subjects_dir'),
@@ -207,4 +212,3 @@ def create_reconall(config):
                       ])
 
     return reconall
-

@@ -53,6 +53,8 @@
 #include "itkBSplineTransformParametersAdaptor.h"
 #include "itkBSplineTransformInitializer.h"
 
+#include "itkScalableAffineTransform.h"
+
 #ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
 #endif

@@ -355,7 +355,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
     {
     // In this case the registration framework does not do sampling inside the mask area.
     // It picks samples from the whole image, and those samples that are inside the mask are selected by metric.
-    // However, we want to pick all of our intented samples from the mask area, so we do sampling here.
+    // However, we want to pick all of our intended samples from the mask area, so we do sampling here.
 
     // First overwrite the sampling strategy to be none
     this->m_SamplingStrategy = AffineRegistrationType::NONE;

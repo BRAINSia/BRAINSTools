@@ -454,7 +454,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --numberOfHistogramBins 200
   --samplingPercentage 0.3
   --translationScale 250
-  --minimumStepLength 0.001
+  --minimumStepLength 0.0001
   --outputVolumePixelType uchar
   --transformType Rigid
   --initializeTransformMode useMomentsAlign

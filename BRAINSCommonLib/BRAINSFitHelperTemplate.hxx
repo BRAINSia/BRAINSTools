@@ -1245,12 +1245,57 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           itkGenericExceptionMacro( << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!");
           return;
           }
+        roiMask->Update();
 
         typename FixedImageType::PointType roiOriginPt;
         typename FixedImageType::IndexType roiOriginIdx;
-        typename FixedImageType::Pointer    roiImage = FixedImageType::New();
-        typename FixedImageType::RegionType roiRegion =
-        roiMask->GetAxisAlignedBoundingBoxRegion();
+        typename FixedImageType::Pointer   roiImage = FixedImageType::New();
+#undef USE_OLD_SPATIAL_OBJECTS_PRE20190321
+#if defined( USE_OLD_SPATIAL_OBJECTS_PRE20190321 )
+        typename FixedImageType::RegionType roiRegion = roiMask->GetAxisAlignedBoundingBoxRegion();
+#else
+        typename FixedImageType::RegionType roiRegion;
+          {
+            // Transform the corners of the bounding box
+            using BoundingBoxType = typename ImageMaskSpatialObjectType::BoundingBoxType;
+            using PointsContainer = typename BoundingBoxType::PointsContainer;
+            typename BoundingBoxType::Pointer myBB =  roiMask->GetMyBoundingBoxInObjectSpace()->DeepCopy();
+            const PointsContainer *corners = myBB->GetCorners();
+            typename PointsContainer::Pointer transformedCorners =
+                PointsContainer::New();
+            transformedCorners->Reserve(
+                static_cast<typename PointsContainer::ElementIdentifier>(
+                    corners->size() ) );
+            auto it = corners->begin();
+            auto itTrans = transformedCorners->begin();
+            while ( it != corners->end() )
+            {
+              typename FixedImageType::IndexType cIndx;
+              roiMask->GetImage()->TransformPhysicalPointToIndex(*it, cIndx);
+              typename FixedImageType::PointType pnt;
+              for( unsigned int i=0; i< FixedImageType::ImageDimension ; ++i )
+              {
+                pnt[i] = cIndx[i];
+              }
+              *itTrans = pnt;
+              ++it;
+              ++itTrans;
+            }
+            typename BoundingBoxType::Pointer indexBoundingBox =
+                BoundingBoxType::New();
+            indexBoundingBox->SetPoints(transformedCorners);
+            indexBoundingBox->ComputeBoundingBox();
+            typename FixedImageType::RegionType::IndexType indx;
+            typename FixedImageType::RegionType::SizeType size;
+            for( unsigned int i=0; i< FixedImageType::ImageDimension; ++i )
+            {
+              indx[i] = indexBoundingBox->GetMinimum()[i];
+              size[i] = indexBoundingBox->GetMaximum()[i] - indexBoundingBox->GetMinimum()[i] + 1;
+            }
+            roiRegion.SetIndex( indx );
+            roiRegion.SetSize( size );
+          }
+#endif
         typename FixedImageType::SpacingType roiSpacing =
         m_FixedVolume->GetSpacing();
 

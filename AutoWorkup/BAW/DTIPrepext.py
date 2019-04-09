@@ -4,7 +4,9 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpe
     InputMultiPath, OutputMultiPath
 from nipype.interfaces.semtools.diffusion.dtiprep import DTIPrepInputSpec, DTIPrepOutputSpec, DTIPrep
 
-
+"""
+This class represents a...
+"""
 class DTIPrepextOutputSpec(DTIPrepOutputSpec):
     outputVolume = traits.Either(File(exists=True), None)
     outputReportXML = traits.Either(File(exists=True), None)
@@ -17,12 +19,18 @@ class DTIPrepextOutputSpec(DTIPrepOutputSpec):
 # outputQCedDTI_frobeniusnorm = traits.Either(File(exists=True), None)
 # outputQCedIDWI = traits.Either(File(exists=True), None)
 
-
+"""
+This class represents a...
+"""
 class DTIPrepext(DTIPrep):
     # input_spec = DTIPrepextInputSpec
     output_spec = DTIPrepextOutputSpec
 
     def _list_outputs(self):
+        """
+        This function...
+        :return: outputs
+        """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         custom_implied_outputs_with_no_inputs = ['outputVolume',
                                                  'outputReportXML',

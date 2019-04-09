@@ -9,6 +9,9 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSABCOutputS
 
 
 class GetPosteriorsFromAtlasXML(object):
+    """
+    This class represents a...
+    """
     def __init__(self, xmlFile):
         self.xmlFile = xmlFile
         self.xmlString = self.getXMLstring(self.xmlFile)
@@ -18,12 +21,22 @@ class GetPosteriorsFromAtlasXML(object):
         self.getPosteriorFileNameList(priorTypeNameList)
 
     def getXMLstring(self, xmlFile):
+        """
+        This function...
+        :param xmlFile:
+        :return: _xmlString
+        """
         Handle = open(xmlFile)
         _xmlString = Handle.read()
         Handle.close()
         return _xmlString
 
     def getPriorTypeNameList(self, xmlString):
+        """
+        This function...
+        :param xmlString:
+        :return: posteriorFileNameList
+        """
         myelem = et.fromstring(xmlString)
         elementsList = list(myelem.getiterator())
         iterator = list(range(len(elementsList)))
@@ -59,12 +72,18 @@ class BRAINSABCextOutputSpec(BRAINSABCOutputSpec):
     posteriorImages = OutputMultiPath(File(exists=True), exists=True)
     atlasToSubjectInverseTransform = traits.Either(File(exists=True), [None])
 
-
+"""
+This class represents a...
+"""
 class BRAINSABCext(BRAINSABC):
     # input_spec= BRAINSABCextInputSpec
     output_spec = BRAINSABCextOutputSpec
 
     def _list_outputs(self):
+        """
+        This function...
+        :return: outputs
+        """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         custom_implied_outputs_with_no_inputs = ['posteriorImages',
                                                  'outputT1AverageImage',

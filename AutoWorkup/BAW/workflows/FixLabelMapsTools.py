@@ -4,12 +4,29 @@
 ##
 
 def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOfTuples, LeftHemisphereFN, outFN, OUT_DICT):
+    """
+    This funciton...
+    :param fusionFN:
+    :param FixedHeadFN:
+    :param posteriorListOfTuples:
+    :param LeftHemisphereFN:
+    :param outFN:
+    :param OUT_DICT:
+    :return: fixedFusionLabelFN
+    """
     import SimpleITK as sitk
     import os
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 
     posterior_dict = OrderedDict(posteriorListOfTuples)
     def ForceMaskInsert(inlabels, newmask, newmaskvalue):
+        """
+        This function...
+        :param inlabels:
+        :param newmask:
+        :param newmaskvalue:
+        :return: sitk.Cast(outlabels,sitk.sitkUInt32)
+        """
         inlabels = sitk.Cast(inlabels, sitk.sitkUInt32)
         newmask = sitk.Cast((newmask > 0), sitk.sitkUInt32)
         outlabels = inlabels * sitk.Cast((1 - newmask), sitk.sitkUInt32)
@@ -18,6 +35,12 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
 
     ## TODO: GetLargestLabel is copied from elsewhere
     def GetLargestLabel(inputMask, UseErosionCleaning):
+        """
+        This function...
+        :param inputMask:
+        :param UseErosionCleaning:
+        :return: (largestMask*dilateMask>0)
+        """
         LargestComponentCode = 1
         if UseErosionCleaning:
             erosionMask = sitk.ErodeObjectMorphology(inputMask, 1)
@@ -34,6 +57,13 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
         return (largestMask * dilateMask > 0)
 
     def RecodeNonLargest(outlabels, keepCode, UNKNOWN_LABEL_CODE):
+        """
+        This function...
+        :param outlabels:
+        :param keepCode:
+        :param UNKNOWN_LABEL_CODE:
+        :return: outlabels
+        """
         orig_mask = (outlabels == keepCode)
         connected_mask = GetLargestLabel(orig_mask, False)
         small_regions = (orig_mask - connected_mask)
@@ -44,7 +74,11 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
     def MinimizeSizeOfImage(outlabels):
         """This function will find the largest integer value in the labelmap, and
         cast the image to the smallest possible integer size so that no loss of data
-        results."""
+        results.
+        :param outlabels:
+        :return: outlabels
+        """
+
         measureFilt = sitk.StatisticsImageFilter()
         measureFilt.Execute(outlabels)
         imgMin = measureFilt.GetMinimum()
@@ -135,13 +169,23 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
 
 
 def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
+    """
+    This funciton...
+    :param InputFileName:
+    :param OutputFileName:
+    :param RECODE_TABLE:
+    :return: recodedFN
+    """
     import SimpleITK as sitk
     import os
 
     def MinimizeSizeOfImage(outlabels):
         """This function will find the largest integer value in the labelmap, and
         cast the image to the smallest possible integer size so that no loss of data
-        results."""
+        results.
+        :param outlabels:
+        :return: outlabels
+        """
         measureFilt = sitk.StatisticsImageFilter()
         measureFilt.Execute(outlabels)
         imgMin = measureFilt.GetMinimum()

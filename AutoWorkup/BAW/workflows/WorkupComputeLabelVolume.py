@@ -13,6 +13,12 @@ from utilities.misc import *
 
 
 def CreateVolumeMeasureWorkflow(WFname, master_config):
+    """
+    This function...
+    :param WFname:
+    :param master_config:
+    :return: volumeMeasureWF
+    """
     volumeMeasureWF = pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_t1_image',  # Input T1 image

@@ -23,6 +23,15 @@ subjectDatabaseFile = os.path.join(scripts_dir, 'subject_inputs.db')
 # ==================================
 
 def mkfsscript(session, outscript, t1list, t2list, is3T):
+    """
+    This function...
+    :param session:
+    :param outscript:
+    :param t1list:
+    :param t2list:
+    :param is3T:
+    :return: job_name
+    """
     T1_FLAGS = ''
     for t1 in t1list:
         T1_FLAGS += " -i " + t1
@@ -101,6 +110,14 @@ exit $status
 
 
 def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
+    """
+    This function...
+    :param base_tps_file:
+    :param found_sessions:
+    :param subject:
+    :param templateID:
+    :return: return_status
+    """
     return_status = True
     previous_list = list()
     if os.path.exists(base_tps_file):
@@ -152,6 +169,14 @@ def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
 
 
 def mktemplatescript(templateID, sessionList, outscript, dependantJobNames):
+    """
+    This function...
+    :param templateID:
+    :param sessionList:
+    :param outscript:
+    :param dependantJobNames:
+    :return: job_name
+    """
     timePoints = ""
     for session in sessionList:
         timePoints += " -tp " + session
@@ -199,6 +224,16 @@ exit $recon_long_stat
 
 
 def mklongscript(templateID, session, outscript, dependantJobNames, mode, is3T):
+    """
+    This function...
+    :param templateID:
+    :param session:
+    :param outscript:
+    :param dependantJobNames:
+    :param mode:
+    :param is3T:
+    :return: job_name
+    """
     if len(dependantJobNames) > 0:
         hold_jid = '#$ -hold_jid ' + ",".join(dependantJobNames)
     else:
@@ -284,6 +319,11 @@ else:
 # pickle.dump(obj, file[, protocol])
 
 def GetBaseSize(filename):
+    """
+    This function...
+    :param filename:
+    :return: base_size
+    """
     tmp = good_list
     base_size = good_list.get(filename)
     if not base_size:
@@ -296,6 +336,11 @@ def GetBaseSize(filename):
 
 
 def find_mgz(inlist):
+    """
+    This function...
+    :param inlist:
+    :return: outlist
+    """
     outlist = list()
     if len(inlist) == 0:
         return outlist

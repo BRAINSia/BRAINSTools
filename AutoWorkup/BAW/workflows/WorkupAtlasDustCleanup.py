@@ -7,6 +7,20 @@ from nipype.interfaces.utility import Function, IdentityInterface
 def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
                               useFullyConnected, forceLabelChange, noDilation,
                               inFN2=None, includeList=None, excludeList=None):
+    """
+    This function...
+    :param inFN1:
+    :param inAtlas:
+    :param outAtlast:
+    :param maxIslandCount:
+    :param useFullyConnected:
+    :param forceLabelChange:
+    :param noDilation:
+    :param inFN2: None
+    :param includeList: None
+    :param excludeList: None
+    :return: os.path.abspath(outAtlas)
+    """
     arguments = {'--inputT1Path': inFN1,
                  '--inputT2Path': inFN2,
                  '--inputAtlasPath': inAtlas,
@@ -28,6 +42,13 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
 
 
 def CreateDustCleanupWorkflow(workflowFileName, onlyT1, master_config):
+    """
+    This function...
+    :param workflowFileName:
+    :param onlyT1:
+    :param master_config:
+    :return: dustCleanupWF
+    """
     #if onlyT1:
     #    n_modality = 1
     #else:

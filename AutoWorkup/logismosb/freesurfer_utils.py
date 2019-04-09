@@ -7,7 +7,12 @@ import os
 
 
 def create_ones_image(in_volume, out_file, value=1):
-    """Creates a volume filled with a scalar (1 by default)"""
+    """Creates a volume filled with a scalar (1 by default)
+    :param in_volume:
+    :param out_file:
+    :param value:
+    :return:
+    """
     import nibabel as nb
     import os
     image = nb.load(in_volume)
@@ -21,7 +26,12 @@ def create_ones_image(in_volume, out_file, value=1):
 def recode_labelmap(in_file, out_file, recode_file):
     """This function has been adapted from BRAINSTools and serves
     as a means to recode a label map based upon an input csv
-    file."""
+    file.
+    :param in_file:
+    :param out_file:
+    :param recode_file:
+    :return:
+    """
     # rewritten by Chris Markiewicz
     import sys
     import os
@@ -84,6 +94,14 @@ def recode_labelmap(in_file, out_file, recode_file):
 # distance transforms and watershed transforms. This algorithm is illustrated
 # in SimpleITK python code below (courtesy of Bradely Lowekamp)
 def multilabel_dilation(in_file, out_file, radius=1, kernel=None):
+    """
+    This function...
+    :param in_file:
+    :param out_file:
+    :param radius:
+    :param kernel:
+    :return:
+    """
     import SimpleITK as sitk
     import os
     img = sitk.ReadImage(in_file)
@@ -97,6 +115,12 @@ def multilabel_dilation(in_file, out_file, radius=1, kernel=None):
 
 
 def create_label_watershed(labels_image, markWatershedLine=False):
+    """
+    This function..
+    :param labels_image:
+    :param markWatershedLine:
+    :return:
+    """
     import SimpleITK as sitk
     distImg = sitk.SignedMaurerDistanceMap(labels_image != 0,
                                            insideIsPositive=False,
@@ -107,31 +131,47 @@ def create_label_watershed(labels_image, markWatershedLine=False):
 
 
 class MultiLabelDilationInputSpec(BaseInterfaceInputSpec):
+    """This class represents a..."""
     in_file = traits.File(exists=True, mandatory=True)
     out_file = traits.File(mandatory=True)
     radius = traits.Int(1, use_default=True)
 
 
 class MultiLabelDilationOutputSpec(TraitedSpec):
+    """This class represents a..."""
     out_file = traits.File()
 
 
 class MultiLabelDilation(BaseInterface):
+    """This class represents a..."""
     input_spec = MultiLabelDilationInputSpec
     output_spec = MultiLabelDilationOutputSpec
 
     def _run_interface(self, runtime):
+        """
+        This function...
+        :param runtime:
+        :return:
+        """
         self.output_spec.out_file = multilabel_dilation(self.inputs.in_file, self.inputs.out_file, self.inputs.radius)
         return runtime
 
     def _list_outputs(self):
+        """
+        This function...
+        :return:
+        """
         outputs = self._outputs().get()
         outputs['out_file'] = self.output_spec.out_file
         return outputs
 
 
 def create_image_like(array, image):
-    """Takes an array and creates it into an image like the one given"""
+    """Takes an array and creates it into an image like the one given
+    :param array:
+    :param image:
+    :return:
+    """
     import SimpleITK as sitk
     image_array = sitk.GetArrayFromImage(image)
     ndims = len(array.shape)
@@ -145,7 +185,14 @@ def create_image_like(array, image):
 
 
 def split_labels(labels_file, lut_file, out_file, left_label=1, right_label=2):
-    """create a a hemisphere label map"""
+    """create a a hemisphere label map
+    :param labels_file:
+    :param lut_file:
+    :param out_file:
+    :param left_label:
+    :param right_label:
+    :return:
+    """
     # read in the LUT
     df = pd.read_csv(lut_file, index_col=0)
     left_labels = df.index[df.Left == 1].values.tolist()
@@ -179,6 +226,16 @@ def split_labels(labels_file, lut_file, out_file, left_label=1, right_label=2):
 
 
 def apply_label_split(image_file, hemi_file, hemi, out_file, left_label=1, right_label=2):
+    """
+    This function...
+    :param image_file:
+    :param hemi_file:
+    :param hemi:
+    :param out_file:
+    :param left_label:
+    :param right_label:
+    :return:
+    """
     import SimpleITK as sitk
     import os
     image = sitk.ReadImage(image_file)
@@ -196,6 +253,7 @@ def apply_label_split(image_file, hemi_file, hemi, out_file, left_label=1, right
 
 
 class SplitLabelsInputSpec(BaseInterfaceInputSpec):
+    """This class represents a..."""
     in_file = traits.File(exists=True, mandatory=True)
     labels_file = traits.File(exists=True, mandatory=True)
     lookup_table = traits.File(exists=True, mandatory=True)
@@ -204,26 +262,38 @@ class SplitLabelsInputSpec(BaseInterfaceInputSpec):
 
 
 class SplitLabelsOutputSpec(TraitedSpec):
+     """This class represents a..."""
     out_file = traits.File(exists=True)
 
 
 class SplitLabels(BaseInterface):
+    """This class represents a..."""
     input_spec = SplitLabelsInputSpec
     output_spec = SplitLabelsOutputSpec
 
     def _run_interface(self, runtime):
+        """
+        This function...
+        :param runtime:
+        :return:
+        """
         hemispheres_image_file = split_labels(self.inputs.labels_file, self.inputs.lookup_table, "hemispheres.nii.gz")
         self.output_spec.out_file = os.path.abspath(apply_label_split(self.inputs.in_file, hemispheres_image_file,
                                                                       self.inputs.hemi, self.inputs.out_file))
         return runtime
 
     def _list_outputs(self):
+        """
+        This function...
+        :return:
+        """
         outputs = self._outputs().get()
         outputs['out_file'] = self.output_spec.out_file
         return outputs
 
 
 class SurfaceMaskInputSpec(FSTraitedSpec):
+    """This class represents a..."""
     in_volume = traits.File(argstr="%s", position=-3, exist=True,
                             desc="Input volume to which mask is applied.")
     in_surface = traits.File(argstr="%s", position=-2, exist=True,
@@ -233,6 +303,7 @@ class SurfaceMaskInputSpec(FSTraitedSpec):
 
 
 class SurfaceMaskOutputSpec(TraitedSpec):
+     """This class represents a..."""
     out_file = traits.File(desc="Output masked volume.")
 
 
@@ -245,6 +316,10 @@ class SurfaceMask(FSCommand):
     output_spec = SurfaceMaskOutputSpec
 
     def _list_outputs(self):
+        """
+        This function...
+        :return:
+        """
         outputs = self._outputs().get()
         outputs["out_file"] = os.path.abspath(self.inputs.out_file)
         return outputs

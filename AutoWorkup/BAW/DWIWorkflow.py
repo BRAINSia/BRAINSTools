@@ -28,6 +28,12 @@ Options:
 # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 # remove the skull from the T2 volume
 def ExtractBRAINFromHead(RawScan, BrainLabels):
+    """
+    This function...
+    :param RawScan:
+    :param BrainLabels:
+    :return: outputVolume
+    """
     import os
     import SimpleITK as sitk
     # Remove skull from the head scan
@@ -49,17 +55,32 @@ def ExtractBRAINFromHead(RawScan, BrainLabels):
 
 
 def MakeResamplerInFileList(inputT2, inputLabelMap):
+    """
+    This function...
+    :param inputT2:
+    :param inputLabelMap:
+    :return: imagesList
+    """
     imagesList = [inputT2, inputLabelMap]
     return imagesList
 
-
-# This function helps to pick desirable output from the outputVolume list
 def pickFromList(inlist, item):
+    """
+    This funciton helps to pick desirable output from the outputVolume list
+    :param inlist:
+    :param item:
+    :return: inlist[item]
+    """
     return inlist[item]
 
 
 # Create registration mask for ANTs from resampled label map image
 def CreateAntsRegistrationMask(brainMask):
+    """
+    This function create registration mask for ANTs from resampled label map image
+    :param brainMask:
+    :return: registrationMask
+    """
     import os
     import SimpleITK as sitk
     assert os.path.exists(brainMask), "File not found: %s" % brainMask
@@ -77,6 +98,11 @@ def CreateAntsRegistrationMask(brainMask):
 
 # Save direction cosine for the input volume
 def SaveDirectionCosineToMatrix(inputVolume):
+    """
+    This function saves direction cosine for the input volume
+    :param inputVolume:
+    :return: directionCosine
+    """
     import os
     import SimpleITK as sitk
     assert os.path.exists(inputVolume), "File not found: %s" % inputVolume
@@ -86,6 +112,13 @@ def SaveDirectionCosineToMatrix(inputVolume):
 
 
 def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
+    """
+    This function...
+    :param inputB0:
+    :param inputT2:
+    :param inputLabelMap:
+    :return: imagesList
+    """
     import os
     assert os.path.exists(inputB0), "File not found: %s" % inputB0
     assert os.path.exists(inputT2), "File not found: %s" % inputT2
@@ -96,6 +129,11 @@ def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
 
 # Force DC to ID
 def ForceDCtoID(inputVolume):
+    '''
+    This function...
+    :param inputVolume:
+    :return: outputVolume
+    '''
     import os
     import SimpleITK as sitk
     inImage = sitk.ReadImage(inputVolume)
@@ -106,12 +144,23 @@ def ForceDCtoID(inputVolume):
 
 
 def pickCompositeTransfromFromList(composite_transform_as_list):
+    '''
+    This function...
+    :param composite_transform_as_list:
+    :return: composite_transform_as_list[0]
+    '''
     if isinstance(composite_transform_as_list, str):
         return composite_transform_as_list;
     return composite_transform_as_list[0]
 
 
 def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
+    """
+    This function...
+    :param inputVolume:
+    :param inputDirectionCosine:
+    :return: outputVolume
+    """
     import os
     import SimpleITK as sitk
     inImage = sitk.ReadImage(inputVolume)
@@ -122,6 +171,11 @@ def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
 
 
 def GetRigidTransformInverse(inputTransform):
+    """
+    This function...
+    :param inputTransform:
+    :return: inverseTransform
+    """
     import os
     import SimpleITK as sitk
     inputTx = sitk.ReadTransform(inputTransform)
@@ -138,6 +192,15 @@ def GetRigidTransformInverse(inputTransform):
 # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
 def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
+    """
+    This function...
+    :param DWI_scan:
+    :param T2_scan:
+    :param labelMap_image:
+    :param BASE_DIR:
+    :param dataSink_DIR:
+    :return: None
+    """
     print("Running the workflow ...")
 
     sessionID = os.path.basename(os.path.dirname(DWI_scan))

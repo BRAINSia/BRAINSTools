@@ -6,6 +6,11 @@ from collections import OrderedDict  # Need OrderedDict internally to ensure con
 
 
 def load_cluster(modules=[]):
+    """
+    This Function takes in...
+    :param modules: empty list
+    :return: ''
+    """
     if len(modules) > 0:
         module_list = []
         for module in modules:
@@ -16,6 +21,11 @@ def load_cluster(modules=[]):
 
 
 def source_virtualenv(virtualenv_dir=''):
+    """
+    This Function takes in...
+    :param virtualenv_dir: empty string
+    :return: "source {0}".format(virtualenv_dir)
+    """
     if virtualenv_dir is None:
         return ''
     assert virtualenv_dir != ''
@@ -23,6 +33,11 @@ def source_virtualenv(virtualenv_dir=''):
 
 
 def prepend_env(environment=OrderedDict()):
+    """
+    This Function takes in...
+    :param environment: OrderDict()
+    :return: '\n'.join(export_list)
+    """
     import os
     export_list = []
     for key, value in list(environment.items()):
@@ -42,6 +57,9 @@ def create_global_sge_script(cluster, environment):
     True
     >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
 
+    :param cluster:
+    param environment:
+    :return: retval
     """
     import os
     from string import Template
@@ -78,6 +96,14 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=8G -o /dev/null -e /dev/null test FAIL
     >>> modify_qsub_args('test', 1, 5, 7, stdout='/my/path', stderr='/my/error')
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
+
+    :param queue:
+    :param memoryGB:
+    :param minThreads:
+    :param maxThreads:
+    :param stdout: '/dev/null'
+    :param stderr: '/dev/null'
+    :return: format_str
 
     """
     assert memoryGB <= 48, "Memory must be supplied in GB, so anything more than 24 seems not-useful now."

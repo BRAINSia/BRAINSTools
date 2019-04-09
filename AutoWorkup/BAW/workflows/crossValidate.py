@@ -47,6 +47,9 @@ from nipype.pipeline.engine import Workflow, Node, MapNode
 
 def subsample_crossValidationSet(length, test_size):
     """
+    :param length:
+    :param test_size:
+    :return: subsample_data_index
     >>> print zip(*subsample_crossValidationSet(10, 2))  #doctest: +NORMALIZE_WHITESPACE
     [([0, 1], [2, 3, 4, 5, 6, 7, 8, 9]),
      ([2, 3], [0, 1, 4, 5, 6, 7, 8, 9]),
@@ -77,6 +80,16 @@ def subsample_crossValidationSet(length, test_size):
 
 
 def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test_size, hasHeader):
+    """
+    :param environment:
+    :param experiment:
+    :param pipeline:
+    :param cluster:
+    :param csv_file:
+    :param test_size:
+    :param hasHeader:
+    :return: None
+    """
     from utilities.misc import add_dict
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     master_config = OrderedDict()
@@ -184,13 +197,25 @@ def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test
 
 
 class CrossValidationJointFusionWorkflow(Workflow):
-    """ Nipype workflow for Multi-Label Atlas Fusion cross-validation experiment """
+    """ Nipype workflow for Multi-Label Atlas Fusion cross-validation experiment
+    :param Workflow:
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     csv_file = None
     hasHeader = None
     sample_size = None
 
     def __init__(self, csv_file=None, size=0, hasHeader=False, name='CrossValidationJointFusionWorkflow', **kwargs):
+        """
+        This function...
+        :param self:
+        :param csv_file:None
+        :param size:0
+        :param hasHeader:False
+        :param name:'CrossValidationJointFusionWorkflow'
+        :param **kwargs:
+        :return: None
+        """
         super(CrossValidationJointFusionWorkflow, self).__init__(name=name, **kwargs)
         self.csv_file = File(value=os.path.abspath(csv_file), exists=True)
         self.hasHeader = traits.Bool(hasHeader)
@@ -199,6 +224,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
 
     def create(self):  # , **kwargs):
         """ Create the nodes and connections for the workflow """
+
         # Preamble
         csvReader = CSVReader()
         csvReader.inputs.in_file = self.csv_file.default_value
@@ -263,6 +289,12 @@ class CrossValidationJointFusionWorkflow(Workflow):
     #                                                                          ('tests', 'testindex')])
     #                  ])
     def _connect_subworkflow(self, node):
+        """
+        This function...
+        :param self:
+        :param node:
+        :return: None
+        """
         self.connect(createTests, 'trains', node, 'trainindex')
         self.connect(createTests, 'tests', node, 'testindex')
         self.connect(csvReader, 'T1', node.inputspec, 'T1')
@@ -274,11 +306,25 @@ class FusionLabelWorkflow(Workflow):
     """ Subworkflow to use with MapNode """
 
     def __init__(self, name='FusionLabelWorkflow', **kwargs):
+        """
+        This function...
+        :param self:
+        :param name: 'FusionLabelWorkflow'
+        :param **kwargs:
+        :return: None
+        """
         super(FusionLabelWorkflow, self).__init__(name=name, **kwargs)
         self.create()
         # self.connect = None  # Don't allow instances to add to workflow
 
     def connect(self, *args, **kwargs):
+        """
+        This funciton...
+        :param self:
+        :param *args:
+        :param **kwargs:
+        :return: None
+        """
         try:
             super(FusionLabelWorkflow, self).connect(*args, **kwargs)
         except:
@@ -288,6 +334,11 @@ class FusionLabelWorkflow(Workflow):
             raise
 
     def create(self):
+        """
+        This function...
+        :param self:
+        :return: None
+        """
         trainT1s = Node(interface=Select(), name='trainT1s')
         trainT2s = Node(interface=Select(), name='trainT2s')
         trainLabels = Node(interface=Select(), name='trainLabels')
@@ -317,6 +368,15 @@ class FusionLabelWorkflow(Workflow):
 
 
 def main(environment, experiment, pipeline, cluster, **kwargs):
+    """
+    This function...
+    :param environment:
+    :param experiment:
+    :param pipeline:
+    :param cluster:
+    :param **kwargs:
+    :return: None
+    """
     from utilities.configFileParser import nipype_options
 
     print("Copying Atlas directory and determining appropriate Nipype options...")
@@ -333,6 +393,9 @@ def main(environment, experiment, pipeline, cluster, **kwargs):
 
 
 def _test():
+    """
+    Tests doc
+    """
     import doctest
     doctest.testmod(verbose=True)
     return 0

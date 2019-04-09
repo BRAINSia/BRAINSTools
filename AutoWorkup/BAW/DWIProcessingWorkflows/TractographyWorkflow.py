@@ -18,8 +18,18 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 
 
 def CreateTractographyWorkflow(WFname):
+    """
+    This Function takes in...
+    :param WFname:
+    :return: TractWF
+    """
     ###### UTILITY FUNCTIONS #######
     def computeNumberOfSeedsPerVoxel(inputVolume):
+        """
+        This Function takes in...
+        :param inputVolume:
+        :return: int(seedsPerVoxel)
+        """
         import operator
         import SimpleITK as sitk
         inVol = sitk.ReadImage(inputVolume)

@@ -4,6 +4,10 @@ from collections import OrderedDict  # Need OrderedDict internally to ensure con
 def run_workflow(workflow, plugin='Linear', plugin_args=OrderedDict()):
     """
     Run workflow object and catch traceback for printing to stdout
+    :param workflow:
+    :param plugin: 'Linear'
+    :param plugin_args: OrderedDict()
+    :return: False OR True
     """
     import traceback
     import sys
@@ -25,6 +29,11 @@ def print_workflow(workflow, plugin, dotfilename='workflow', graph2use='hierarch
     """
     HINT: graph2use values: ['orig', 'flat', 'hierarchical', 'exec']
     'hierarchical' is the only one that DOES NOT require pygraphviz
+    :param workflow:
+    :param plugin:
+    :param dotfilename: 'workflow'
+    :param graph2use: 'hierarchical'
+    :return: True OR False
     """
     assert plugin in ['Linear', 'MultiProc'], "'plugin' must be in ['Linear', 'MultiProc'] to print workflow"
     dotfilename = '_'.join([dotfilename, graph2use])

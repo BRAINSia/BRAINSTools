@@ -8,6 +8,11 @@ import sys
 
 
 def read_poly_data(filename):
+    """
+    This function..
+    :param filename:
+    :return:
+    """
     # Check which PolyData reader should be used
     if ".vtk" in filename:
         reader = vtk.vtkPolyDataReader()
@@ -25,6 +30,11 @@ def read_poly_data(filename):
 
 
 def ras_to_lps(point):
+    """
+    This function..
+    :param point:
+    :return:
+    """
     surf_x, surf_y, surf_z = point
     point = (-surf_x, -surf_y, surf_z)  # must flip y axis to convert from VTK to ITK
     return point
@@ -32,6 +42,12 @@ def ras_to_lps(point):
 
 # Find the label of a given vtk point from a label map
 def vtk_point_to_label(point, labelmap):
+    """
+    This function..
+    :param point:
+    :param labelmap:
+    :return:
+    """
     point = ras_to_lps(point)
     index = labelmap.TransformPhysicalPointToIndex(point)
     x = int(index[0])
@@ -41,6 +57,11 @@ def vtk_point_to_label(point, labelmap):
 
 
 def build_kd_tree(mesh):
+    """
+    This function..
+    :param mesh:
+    :return:
+    """
     kd_tree = vtk.vtkKdTreePointLocator()
     kd_tree.SetDataSet(mesh)
     kd_tree.BuildLocator()
@@ -48,6 +69,13 @@ def build_kd_tree(mesh):
 
 
 def convert_fs_surface(in_surf, out_surf, to_scanner=True):
+    """
+    This function..
+    :param in_surf:
+    :param out_surf:
+    :param to_scanner:
+    :return:
+    """
     if os.path.isfile(os.path.abspath(out_surf)):
         return os.path.abspath(out_surf)
     mris_convert = MRIsConvert()
@@ -59,39 +87,86 @@ def convert_fs_surface(in_surf, out_surf, to_scanner=True):
 
 
 def get_vtk_file_name(fs_file_name):
+    """
+    This function..
+    :param fs_file_name:
+    :return:
+    """
     fs_dir, fs_basename = os.path.split(fs_file_name)
     return os.path.join(fs_dir, fs_basename.replace(".", "_") + ".vtk")
 
 
 def fs_to_vtk(fs_surface):
+    """
+    This function..
+    :param fs_surface:
+    :return:
+    """
     output_file = get_vtk_file_name(fs_surface)
     return convert_fs_surface(fs_surface, output_file)
 
 
 def get_surf(surf_dir, hemisphere, surf):
+    """
+    This function..
+    :param surf_dir:
+    :param hemisphere:
+    :param surf:
+    :return:
+    """
     return os.path.join(surf_dir, "{0}.{1}".format(hemisphere, surf))
 
 
 def get_white(surf_dir, hemisphere):
+    """
+    This function..
+    :param surf_dir:
+    :param hemisphere:
+    :return:
+    """
     return get_surf(surf_dir, hemisphere, "white")
 
 
 def get_pial(surf_dir, hemisphere):
+    """
+    This function..
+    :param surf_dir:
+    :param hemisphere:
+    :return:
+    """
     return get_surf(surf_dir, hemisphere, "pial")
 
 
 def get_white_and_pial_fs_files(surf_dir, hemisphere):
+    """
+    This function..
+    :param surf_dir:
+    :param hemisphere:
+    :return:
+    """
     fs_white = get_white(surf_dir, hemisphere)
     fs_pial = get_pial(surf_dir, hemisphere)
     return fs_white, fs_pial
 
 
 def get_white_and_pial_vtk_files(surf_dir, hemisphere):
+    """
+    This function..
+    :param surf_dir:
+    :param hemisphere:
+    :return:
+    """
     fs_white, fs_pial = get_white_and_pial_fs_files(surf_dir, hemisphere)
     return fs_to_vtk(fs_white), fs_to_vtk(fs_pial)
 
 
 def get_white_and_pial(surf_dir, hemisphere):
+    """
+    This function..
+    :param surf_dir:
+    :param hemisphere:
+    :return:
+    """
     vtk_white, vtk_pial = get_white_and_pial_vtk_files(surf_dir, hemisphere)
     white = read_poly_data(vtk_white)
     pial = read_poly_data(vtk_pial)
@@ -99,6 +174,13 @@ def get_white_and_pial(surf_dir, hemisphere):
 
 
 def compute_thickness(wmP, kdTreegm, kdTreewm):
+    """
+    This function..
+    :param wmP:
+    :param kdTreegm:
+    :param kdTreewm:
+    :return:
+    """
     # Find the closest point to the gray matter surface point
     gmIndex = kdTreegm.FindClosestPoint(wmP)
     gmP = kdTreegm.GetDataSet().GetPoint(gmIndex)
@@ -115,12 +197,22 @@ def compute_thickness(wmP, kdTreegm, kdTreewm):
 
 
 def create_thickness_array():
+    """
+    This function..
+    :return:
+    """
     thicknesses = vtk.vtkFloatArray()
     thicknesses.SetName("thickness")
     return thicknesses
 
 
 def calculate_distance(white, pial):
+    """
+    This function..
+    :param white:
+    :param pial:
+    :return:
+    """
     # setup KdTrees for each surface
     # this will help in finding the closest points
     kd_tree_white = build_kd_tree(white)
@@ -143,10 +235,22 @@ def calculate_distance(white, pial):
 
 
 def get_surf_dir(subjects_dir, subject_id):
+    """
+    This function..
+    :param subjects_dir:
+    :param subject_id:
+    :return:
+    """
     return os.path.join(subjects_dir, subject_id, "surf")
 
 
 def write_vtk_file(polydata, file_name):
+    """
+    This function..
+    :param polydata:
+    :param file_name:
+    :return:
+    """
     writer = vtk.vtkPolyDataWriter()
     writer.SetFileName(file_name)
     writer.SetInputData(polydata)
@@ -155,6 +259,13 @@ def write_vtk_file(polydata, file_name):
 
 
 def get_thickness_file(subjects_dir, subject_id, hemisphere):
+    """
+    This function..
+    :param subjects_dir:
+    :param subjects_id:
+    :param hemisphere:
+    :return:
+    """
     surf_dir = get_surf_dir(subjects_dir, subject_id)
     white, pial = get_white_and_pial(surf_dir, hemisphere)
     thickness = calculate_distance(white, pial)
@@ -162,12 +273,25 @@ def get_thickness_file(subjects_dir, subject_id, hemisphere):
 
 
 def get_thickness_files_for_both_hemispheres(subjects_dir, subject_id):
+    """
+    This function..
+    :param subjects_dir:
+    :param subjects_id:
+    :return:
+    """
     lh_thickness = get_thickness_file(subjects_dir, subject_id, 'lh')
     rh_thickness = get_thickness_file(subjects_dir, subject_id, 'rh')
     return lh_thickness, rh_thickness
 
 
 def masked_thickness_values(thickness_file, mask_image_file, array_index=None):
+    """
+    This function..
+    :param thickness_file:
+    :param mask_file:
+    :param array_index:
+    :return:
+    """
     thickness = read_poly_data(thickness_file)
     mask = sitk.ReadImage(mask_image_file)
 
@@ -192,6 +316,11 @@ def masked_thickness_values(thickness_file, mask_image_file, array_index=None):
 
 
 def calculate_stats(values):
+    """
+    This function..
+    :param values:
+    :return:
+    """
     if values:
         values_array = np.array(values)
         return dict(mean=values_array.mean(), std=values_array.std(), min=values_array.min(), max=values_array.max())
@@ -200,6 +329,12 @@ def calculate_stats(values):
 
 
 def masked_thickness_stats(thickness_file, mask_image_file):
+    """
+    This function..
+    :param thickness_file:
+    :param mask_image_file:
+    :return:
+    """
     inside_mask_values, outside_mask_values = masked_thickness_values(thickness_file, mask_image_file)
     stats = dict()
     stats['inside'] = calculate_stats(inside_mask_values)
@@ -208,6 +343,13 @@ def masked_thickness_stats(thickness_file, mask_image_file):
 
 
 def get_thickness_stats_for_both_hemispheres(subjects_dir, subject_id, mask_file):
+    """
+    This function..
+    :param subject_id:
+    :param subjects_dir:
+    :param mask_file:
+    :return:
+    """
     stats = dict()
     lh_thickness, rh_thickness = get_thickness_files_for_both_hemispheres(subjects_dir, subject_id)
     stats['lh'] = masked_thickness_stats(lh_thickness, mask_file)
@@ -216,6 +358,9 @@ def get_thickness_stats_for_both_hemispheres(subjects_dir, subject_id, mask_file
 
 
 def main():
+    """
+    This function..
+    """
     os.environ['PATH'] += ":/Shared/sinapse/sharedopt/apps/freesurfer/Darwin/x86_64/6.0-beta/20150915/bin/"
     mask_file = "/Shared/sinapse/CACHE/20160712_AtrophySimulation_Results/2559/58661/simulation_1/atrophy_regions.nii.gz"
     subj_dir = "/Shared/sinapse/CACHE/20160713_AtrophySimulation_BAW_base_Results/PHD_024/2559_58661/79/"

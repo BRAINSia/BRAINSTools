@@ -13,6 +13,10 @@ except ImportError:
 
 
 def verify_packages(application='AutoWorkup'):
+    """
+    :param application: 'AutoWorkup'
+    :return: None
+    """
     package_version = [
         ('nipype', '0.9'),
         ('numpy', '1.8'),

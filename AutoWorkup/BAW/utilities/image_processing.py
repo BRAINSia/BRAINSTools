@@ -6,6 +6,12 @@ from builtins import range
 
 def FixWMPartitioning(brainMask, PosteriorsList):
     """"There were some errors in mis-classifications for WM/NON_WM"""
+    """
+    This Function takes in...
+    :param brainMask:
+    :param PosteriorsList:
+    :return: UpdatedPosteriorsList, MatchingFGCodeList, MatchingLabelList, nonAirRegionMask
+    """
     import SimpleITK as sitk
     import os
 
@@ -15,6 +21,7 @@ def FixWMPartitioning(brainMask, PosteriorsList):
            of the exterior topology may not be completely filled.
            Any voxel in the original mask will be guanteed to be
            in the returned mask."""
+
         return sitk.BinaryThreshold(
             inputMask +
             sitk.ErodeObjectMorphology(
@@ -57,6 +64,16 @@ def FixWMPartitioning(brainMask, PosteriorsList):
 
     def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME,
                                    NOTREGION_NAME):
+        """
+        This function takes in...
+        :param BM_FILLED:
+        :param ShiftPosteriorsList:
+        :param NOTREGION_index:
+        :param REGION_index:
+        :param REGION_NAME:
+        :param NOTREGION_NAME:
+        :return: ShiftPosteriorsList
+        """
         print(("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index],
                                                type(ShiftPosteriorsList[NOTREGION_index]))))
         NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index])

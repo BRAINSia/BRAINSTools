@@ -8,8 +8,11 @@ import textwrap
 from builtins import object
 from builtins import str
 
-
+"""This class represents a...""""
 class UpdateAutoWorkup(object):
+    """
+    This function...
+    """
     def updateAutoWorkup(self):
         newPath = self._generateNewPathName()
         newFile = csv.writer(open(newPath, 'wb'), quoting=csv.QUOTE_ALL)
@@ -36,14 +39,19 @@ class UpdateAutoWorkup(object):
                 newFile.writerow(line)
 
     def _generateNewPathName(self):
+        """
+        This function...
+        :return: newPath
+        """
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
         basename = os.path.basename(inputArguments.autoWorkupFile)
         newPath = os.path.join(dirname, "{}_{}".format(inputArguments.modality, basename))
         return newPath
 
-
 class MakeNewImageDict(object):
+    """This class represents a..."""
     def __init__(self):
+        """This function..."""
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         self.newImageDict = OrderedDict()
         self.commandList = list()
@@ -56,11 +64,17 @@ class MakeNewImageDict(object):
         self._fillDB()
 
     def _makeNewImagesFile(self):
+        """
+        This function...
+        """
         command = 'find %s -name "*_DWI_CONCAT_QCed.nrrd" |awk -F/ \'{print "%s," $5 "," $6 "," $7 "," $0}\' |tee %s' % (
             inputArguments.inputDir, inputArguments.modality, self.newImagesFilepath)
         os.system(command)
 
     def _createCommandList(self):
+        """
+        This function...
+        """
         handle = csv.reader(open(self.newImagesFilepath, 'rb'), delimiter=',', quotechar='\"')
         for row in handle:
             if handle.line_num > 1:
@@ -73,6 +87,7 @@ class MakeNewImageDict(object):
                     print(("WARNING: Wrong number of columns in csv file (should be 5): {0}".format(row)))
 
     def _makeDB(self):
+        """This function..."""
         if os.path.exists(self.dbName):
             os.remove(self.dbName)
         dbColTypes = "modality TEXT, project TEXT, subject TEXT, session TEXT, filepath TEXT"
@@ -83,6 +98,7 @@ class MakeNewImageDict(object):
         dbCur.close()
 
     def _fillDB(self):
+        """This function..."""
         con = lite.connect(self.dbName)
         dbCur = con.cursor()
         for command in self.commandList:
@@ -91,6 +107,10 @@ class MakeNewImageDict(object):
         dbCur.close()
 
     def _makeSQLiteCommand(self, imageDict):
+        """
+        This function..
+        :param imageDict:
+        """
         keys = list(imageDict.keys())
         vals = list(imageDict.values())
         col_names = ",".join(keys)
@@ -101,9 +121,20 @@ class MakeNewImageDict(object):
         return sqlCommand
 
     def _appendCommand(self, val):
+        """
+        This function...
+        :param val:
+        """
         self.commandList.append(val)
 
     def getNewImagesList(self, project, subject, session):
+        """
+        This function..
+        :param project:
+        :param subject:
+        :param session:
+        :return: newImages
+        """
         sqlQuery = self._makeDBquery(project, subject, session)
         dbInfo = self._getInfoFromDB(sqlQuery)
         newImages = list()
@@ -112,6 +143,11 @@ class MakeNewImageDict(object):
         return newImages
 
     def _getInfoFromDB(self, sqlQuery):
+        """
+        This function...
+        :param sqlQuery:
+        :return: dbInfo
+        """
         con = lite.connect(self.dbName)
         dbCur = con.cursor()
         dbCur.execute(sqlQuery)
@@ -120,6 +156,13 @@ class MakeNewImageDict(object):
         return dbInfo
 
     def _makeDBquery(self, project, subject, session):
+        """
+        This function...
+        :param project:
+        :param subject:
+        :param session:
+        :return:
+        """
         return "SELECT filepath FROM {dbTableName} WHERE modality='{modality}' AND project='{project}' AND subject='{subject}' AND session='{session}';".format(
             dbTableName=self.dbTableName, modality=inputArguments.modality, project=project, subject=subject,
             session=session)

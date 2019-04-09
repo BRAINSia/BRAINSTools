@@ -33,6 +33,14 @@ import time
 
 
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
+    """
+    This function...
+    :param ExperimentBaseDirectoryCache:
+    :param single_subject:
+    :param mountPrefix:
+    :param subject_data_file:
+    :return: ExperimentDatabase
+    """
     import os.path
     from . import SessionDB
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
@@ -53,6 +61,11 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 
 
 def DoSingleSubjectProcessing(sp_args):
+    """
+    This function...
+    :param sp_args:
+    :return: True OR False
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, \
     ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
@@ -168,6 +181,11 @@ def DoSingleSubjectProcessing(sp_args):
 
 
 def MasterProcessingController(argv=None):
+    """
+    This function...
+    :param argv: None
+    :return: 0
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     import argparse
     import configparser

@@ -40,6 +40,11 @@ from . import misc
 
 # http://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
 def str2bool(v):
+    """
+    This Function takes in...
+    :param v:
+    :return: None
+    """
     if str(v).lower() in ("yes", "true", "t", "1"):
         return True
     elif str(v).lower() in ("no", "false", "f", "0"):
@@ -48,6 +53,13 @@ def str2bool(v):
 
 
 def getASCIIFromParser(parser, region, tag):
+    """
+    This Function takes in...
+    :param parser:
+    :param region:
+    param tag:
+    :return: asciiText
+    """
     unicodeText = parser.get(region, tag)
     asciiText = unicodeText
     #asciiText = str(unicodeText.encode('utf-8', errors='strict'))
@@ -57,6 +69,11 @@ def getASCIIFromParser(parser, region, tag):
 def parseEnvironment(parser, environment):
     """ Parse the environment environment given by 'section' and return a dictionary
         Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
+
+        This Function takes in...
+        :param parser:
+        :param environment:
+        :return: restval, restval_cluster
 
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -95,7 +112,14 @@ def parseEnvironment(parser, environment):
 
 
 def create_experiment_dir(dirname, name, suffix, verify=False):
-    """ Construct directories given the base directory, the experiment name, and the suffix ['CACHE', 'Results'] """
+    """ Construct directories given the base directory, the experiment name, and the suffix ['CACHE', 'Results']
+    This Function takes in...
+    :param dirname:
+    :param name:
+    :param suffix:
+    :param verify:
+    :return: fullpath
+    """
     basename = name + '_' + suffix
     fullpath = os.path.join(dirname, basename)
     if verify:
@@ -113,7 +137,12 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
 
 
 def parseExperiment(parser, workflow_phase):
-    """ Parse the experiment section and return a dictionary """
+    """ Parse the experiment section and return a dictionary
+    This Function takes in...
+    :param parser:
+    :param workflow_phase:
+    :return: retval
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     retval = OrderedDict()
     dirname = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
@@ -194,7 +223,12 @@ def parseExperiment(parser, workflow_phase):
 
 
 def parseNIPYPE(parser):
-    """ Parse the nipype section and return a dictionary """
+    """ Parse the nipype section and return a dictionary
+    This Function takes in...
+    :param parser:
+    :return: retval
+    """
+
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     retval = OrderedDict()
     retval['ds_overwrite'] = parser.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE')
@@ -220,6 +254,13 @@ def parseNIPYPE(parser):
 
 
 def parseFile(configFile, env, workphase):
+    """
+    This Function takes in...
+    :param configFile:
+    :param env:
+    :param workphase:
+    :return: environment, experiment, pipeline, cluster
+    """
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
@@ -234,13 +275,31 @@ def parseFile(configFile, env, workphase):
 
 
 def resolveDataSinkOption(args, pipeline):
+    """
+    This Function takes in...
+    :param args:
+    :param pipeline:
+    :return: boolean
+    """
     if args["--rewrite-datasinks"] or pipeline['ds_overwrite']:  # GLOBAL_DATA_SINK_REWRITE
         return True
     return False
 
 
 class _create_DS_runner(object):
+    """
+    This class represents an...
+    :param object:
+    :return: None
+    """
     def run(self, graph, **kwargs):
+        """
+        This Function takes in...
+        :param self:
+        :param graph:
+        :param **kwargs:
+        :return: None
+        """
         for node in graph.nodes():
             if '_ds' in node.name.lower():
                 node.run()
@@ -255,6 +314,11 @@ _WFRUN_VALID_TYPES = ['SGE',
 
 
 def get_cpus(option):
+    """
+    This Function takes in...
+    :param option:
+    :return: int(old_div(total_cpus,threads))
+    """
     assert option in _WFRUN_VALID_TYPES, "Unknown wfrun option"
     from multiprocessing import cpu_count
     import os
@@ -271,6 +335,13 @@ def get_cpus(option):
 
 
 def _nipype_plugin_config(wfrun, cluster, template=''):
+    """
+    This Function takes in...
+    :param wfrun:
+    :param cluster:
+    :param template: empty string
+    :return: plugin_name, plugin_args
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(wfrun)
     if wfrun in ['SGEGraph', 'SGE']:
@@ -297,6 +368,24 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
 
 
 def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False, crashdumpTempDirName=None):
+    """
+    This Function takes in...
+    :param stop_on_first_crash: initially False
+    :param stop_on_first_rerun: initially False
+    :param crashdumpTempDirName: initially False
+    :return: {
+        'stop_on_first_crash': stop_crash,
+        'stop_on_first_rerun': stop_rerun,
+        'hash_method': 'timestamp',  # default
+        'single_thread_matlab': 'true',  # default # Multi-core 2011a  multi-core for matrix multiplication.
+        # default # relative paths should be on, require hash update when changed.
+        'use_relative_paths': 'false',
+        'remove_node_directories': 'false',  # default
+        'remove_unnecessary_outputs': 'true',  # remove any interface outputs not needed by the workflow
+        'local_hash_check': 'true',  # default
+        'job_finished_timeout': 25,
+        'crashdump_dir': crashdumpTempDirName}
+    """
     stop_crash = 'false'
     stop_rerun = 'false'
     if stop_on_first_crash:
@@ -325,6 +414,15 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
 
 
 def _nipype_logging_config(cachedir):
+    """
+    This Function takes in...
+    :param wfrun: cachedir
+    :return: {'workflow_level': 'INFO',
+            'filemanip_level': 'INFO',
+            'interface_level': 'INFO',
+            'log_directory': cachedir}
+    """
+
     return {'workflow_level': 'INFO',  # possible options:
             'filemanip_level': 'INFO',  # INFO (default) | DEBUG
             'interface_level': 'INFO',
@@ -339,6 +437,14 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     # retval = eval(default_cfg)
     # for key, value in kwds.items():
     #     retval['execution'][key] = value
+
+    :param args:
+    :param pipeline:
+    :param cluster:
+    :param experiment:
+    :param environment:
+    :return: retval
+
     """
     retval = copy.deepcopy(pipeline)
     from .distributed import create_global_sge_script

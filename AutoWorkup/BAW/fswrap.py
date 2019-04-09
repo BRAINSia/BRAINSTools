@@ -7,6 +7,7 @@ from nipype.utils.filemanip import split_filename
 
 
 class FSScriptInputSpec(CommandLineInputSpec):
+    """This class represents a..."""
     ## CROSS first cross sectional analysis
     ## BASE  second generate a subject specific base reference (template building)
     ## LONG  third use the BASE, and CROSS to generate a new better informed cross sectional result.
@@ -34,6 +35,7 @@ class FSScriptInputSpec(CommandLineInputSpec):
 
 
 class FSScriptOutputSpec(TraitedSpec):
+    """This class represents a..."""
     T1_out = File(exist=True, desc='brain.mgz')
     label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
@@ -46,6 +48,7 @@ class FSScriptOutputSpec(TraitedSpec):
 
 class FSScript(CommandLine):
     """
+    This class represents a...
     Examples
     --------
     """
@@ -59,12 +62,23 @@ class FSScript(CommandLine):
     output_spec = FSScriptOutputSpec
 
     def _format_arg(self, opt, spec, val):
+        """
+        This function...
+        :param opt:
+        :param spec:
+        :param val:
+        :return: super(FSScript, self)._format_arg(opt, spec, val)
+        """
         if opt == 'subprocess':
             if not val in ['autorecon', 'template', 'longitudinal']:
                 raise ValueException("{0} is not a valid value for 'subprocess'".format(val))
         return super(FSScript, self)._format_arg(opt, spec, val)
 
     def _list_outputs(self):
+        """
+        This function...
+        :return: outputs
+        """
         outputs = self._outputs().get()
         ## HACK: TEST
         outputs['subj_session_id'] = self.inputs.subj_session_id

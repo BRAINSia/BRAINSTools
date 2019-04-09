@@ -23,6 +23,11 @@ import shutil
 
 
 def onlyT1T2(src, names):
+    """
+    :param src:
+    :param names:
+    :return: names
+    """
     if src.endswith('TissueClassify'):
         # print "Keeping T1/T2!"
         try:
@@ -42,6 +47,14 @@ def onlyT1T2(src, names):
 
 
 def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', **kwargs):
+    """
+    :param REPORT:
+    :param EXPERIMENT:
+    :param outdir: None
+    :param OUTFILE: '/tmp/autoworkup_report.csv'
+    :param **kwargs:
+    :return: None
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     if outdir is not None:
         EXPERIMENT = EXPERIMENT.rstrip(os.path.sep)

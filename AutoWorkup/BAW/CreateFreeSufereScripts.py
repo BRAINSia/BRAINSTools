@@ -171,7 +171,16 @@ required_qcache_files = [
 
 def mkfsscript(session, outscript, t1list, t2list, is3T, useT2):
     ## TODO:  Work on staging files in/out
-
+    """
+    This function...
+    :param session:
+    :param outscript:
+    :param t1list:
+    :param t2list:
+    :param is3T:
+    :param useT2:
+    :return: job_name
+    """
     T1_FLAGS = ''
     for t1 in t1list:
         T1_FLAGS += " -i " + t1
@@ -250,6 +259,14 @@ exit $status
 
 
 def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
+    """
+    This function...
+    :param base_tps_file:
+    :param found_sessions:
+    :param subject:
+    :param templateID:
+    :return: return_status
+    """
     return_status = True
     previous_list = list()
     if os.path.exists(base_tps_file):
@@ -301,6 +318,14 @@ def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
 
 
 def mktemplatescript(templateID, sessionList, outscript, dependantJobNames):
+    """
+    This function..
+    :param templateID:
+    :param sessionList:
+    :param outscript:
+    :param dependantJobNames:
+    :return: job_name
+    """
     timePoints = ""
     for session in sessionList:
         timePoints += " -tp " + session
@@ -348,6 +373,17 @@ exit $recon_long_stat
 
 
 def mklongscript(templateID, session, outscript, dependantJobNames, mode, is3T, useT2):
+    """
+    This function..
+    :param templateID:
+    :param session:
+    :param outscript:
+    :param dependantJobNames:
+    :param mode:
+    :param is3T:
+    :param useT2:
+    :return: job_name
+    """
     if len(dependantJobNames) > 0:
         hold_jid = '#$ -hold_jid ' + ",".join(dependantJobNames)
     else:
@@ -437,6 +473,11 @@ else:
 # pickle.dump(obj, file[, protocol])
 
 def GetBaseSize(filename):
+    """
+    This function...
+    :param filename:
+    :return: base_size
+    """
     filename = getInputFileName(filename)
     tmp = good_list
     base_size = good_list.get(filename)
@@ -451,7 +492,10 @@ def GetBaseSize(filename):
 
 
 def getInputFileName(filename):
-    """ Does conversion to nifti if necessary, because NRRD files are not supported by FreeSurfer"""
+    """ Does conversion to nifti if necessary, because NRRD files are not supported by FreeSurfer
+    :param filename:
+    :return: outfn
+    """
     outfn = filename
     if filename.find('.nrrd'):
         outfn = filename.replace('.nrrd', '.nii.gz')
@@ -462,6 +506,11 @@ def getInputFileName(filename):
 
 
 def find_mgz(inlist_withNrrd):
+    """
+    This function...
+    :param inlist_withNrrd:
+    :return: outlist
+    """
     inlist = list()
     for ff in inlist_withNrrd:
         inlist.append(getInputFileName(ff))
@@ -491,6 +540,13 @@ def find_mgz(inlist_withNrrd):
 
 
 def GetMissingFilesList(subjects_dir, session_name, required_files_list):
+    """
+    This function...
+    :param subjects_dir:
+    :param session_name:
+    :param required_files_list:
+    :return: fs_full_paths, missing_files
+    """
     fs_full_paths = [os.path.join(subjects_dir, session_name, fs_file) for fs_file in required_files_list]
     missing_files = [fs_file_fpath for fs_file_fpath in fs_full_paths if not os.path.exists(fs_file_fpath)]
     return fs_full_paths, missing_files

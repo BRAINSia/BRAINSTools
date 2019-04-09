@@ -4,16 +4,32 @@ import pandas as pd
 
 
 def largest_connected_component(image, minSize=1000):
+    """
+    This function...
+    :param image:
+    ;param minSize:
+    :return:
+    """
     return sitk.RelabelComponent(sitk.ConnectedComponent(image), minSize) == 1
 
 
 def fill_mask_holes(image, minSize=0):
+    """
+    This function...
+    :param image:
+    :param minSize:
+    :return:
+    """
     negConnected = largest_connected_component(image == 0, minSize)
     return negConnected == 0
 
 
 def getedges(nm_file, between_labels=False):
-    """Method to extract edges from a neuromorphometrics label map."""
+    """Method to extract edges from a neuromorphometrics label map.
+    :param nm_file:
+    :param between_labels:
+    :return: wm_contours, gm_contours
+    """
     nm_map = sitk.ReadImage(nm_file, sitk.sitkUInt32)
 
     # define labels not to include
@@ -44,12 +60,23 @@ def getedges(nm_file, between_labels=False):
 
 
 def close_mask(mask, close_param=12):
+    """
+    This function...
+    :param mask:
+    :param close_param:
+    :return: mask_eroded, mask_dilated
+    """
     mask_dilated = sitk.BinaryDilate(mask, close_param)
     mask_eroded = sitk.BinaryErode(mask_dilated, close_param)
     return mask_eroded, mask_dilated
 
 
 def get_folds_mask(filled):
+    """
+    This function...
+    :param filled:
+    :return: label_map, out_labels
+    """
     folds_label = 100
     lh_wm_mask = (filled == 255)
     rh_wm_mask = (filled == 127)
@@ -63,6 +90,13 @@ def get_folds_mask(filled):
 
 
 def remove_cerebellum(label_map, aseg_label_map, exclude_labels=None):
+    """
+    This function...
+    :param label_map:
+    :param aseg_label_map:
+    :param exclude_labels:
+    :return: label_map * (cerebellum == 0)
+    """
     dilated_labels = MultilabelDilation(aseg_label_map, radius=4)
     if not exclude_labels:
         exclude_labels = [16, 47, 46, 7, 8]
@@ -76,6 +110,13 @@ def remove_cerebellum(label_map, aseg_label_map, exclude_labels=None):
 # distance transforms and watershed transforms. This algorithm is illustrated
 # in SimpleITK python code below (courtesy of Bradely Lowekamp)
 def MultilabelDilation(img, radius=1, kernel=None):
+    """
+    This function...
+    :param img:
+    :param radius:
+    :param kernel:
+    :return: sitk.Cast(dilatImg, wsImg.GetPixelID()) * wsImg
+    """
     if not kernel:
         kernel = sitk.BinaryDilateImageFilter.Ball
     dilatImg = sitk.BinaryDilate(img != 0, radius, kernel)
@@ -84,6 +125,12 @@ def MultilabelDilation(img, radius=1, kernel=None):
 
 
 def create_label_watershed(labels_image, markWatershedLine=False):
+    """
+    This function...
+    :param labels_image:
+    :param markWatershedLine:
+    :return: wsImg
+    """
     distImg = sitk.SignedMaurerDistanceMap(labels_image != 0,
                                            insideIsPositive=False,
                                            squaredDistance=False,
@@ -93,6 +140,11 @@ def create_label_watershed(labels_image, markWatershedLine=False):
 
 
 def cast_to_int(image):
+    """
+    This function...
+    :param image:
+    :return: image
+    """
     filt = sitk.StatisticsImageFilter()
     filt.Execute(image)
     image_min = filt.GetMinimum()
@@ -109,6 +161,13 @@ def cast_to_int(image):
 
 
 def createwatersheds(aseg_file, filled_file, dilation=6):
+    """
+    This function...
+    :param aseg_file:
+    :param filled_file:
+    :param dilation:
+    :return: wm_map, gm_map, wm_labels, gm_labels
+    """
     filled = cast_to_int(sitk.ReadImage(filled_file))
     fs = cast_to_int(sitk.ReadImage(aseg_file))
     wm_labels = [10, 11, 12]
@@ -141,11 +200,24 @@ def createwatersheds(aseg_file, filled_file, dilation=6):
 
 
 def write_image(image, out_file, overwrite=False):
+    """
+    This function...
+    :param image:
+    :param out_file:
+    :param overwrite:
+    """
     if not (os.path.isfile(out_file) and not overwrite):
         sitk.WriteImage(image, out_file)
 
 
 def write_edges(nm_file, out_dir, overwrite=False):
+    """
+    This function...
+    :param nm_file:
+    :param out_dir:
+    :param overwrite:
+    :return: get_edge_file_paths(out_dir)
+    """
     if overwrite or not check_for_edge_files(out_dir):
         wm_edges, gm_edges = getedges(nm_file)
         for edge, name in [(wm_edges, "wm"), (gm_edges, "gm")]:
@@ -154,6 +226,11 @@ def write_edges(nm_file, out_dir, overwrite=False):
 
 
 def get_edge_file_paths(out_dir):
+    """
+    This function...
+    :param out_dir:
+    :return: edge_file_paths
+    """
     edge_file_paths = dict()
     for matter in ("wm", "gm"):
         edge_file_paths[matter] = get_edge_file_name(matter, out_dir)
@@ -161,6 +238,11 @@ def get_edge_file_paths(out_dir):
 
 
 def check_for_edge_files(directory):
+    """
+    This function...
+    :param directory:
+    :return: True OR False
+    """
     edge_file_paths = get_edge_file_paths(directory)
     for matter in edge_file_paths:
         if not os.path.isfile(edge_file_paths[matter]):
@@ -169,16 +251,35 @@ def check_for_edge_files(directory):
 
 
 def get_edge_file_name(edge_name, out_dir):
+    """
+    This function...
+    :param edge_name:
+    :param out_dir:
+    :return: os.path.join(out_dir, "{0}_edge.nii.gz".format(edge_name))
+    """
     return os.path.join(out_dir, "{0}_edge.nii.gz".format(edge_name))
 
 
 def get_nm_fs_scan(nm_file, name='norm.mgz'):
+    """
+    This function...
+    :param nm_file:
+    :param name:
+    :return: nm_fs_t1
+    """
     subject_id = get_nm_subject_id(nm_file)
     nm_fs_t1 = "/Shared/johnsonhj/HDNI/20150206_FS_Neuromorphometric/{0}/mri/{1}".format(subject_id, name)
     return nm_fs_t1
 
 
 def convert_fs_scan(in_file, out_file, resample_type=None):
+    """
+    This function...
+    :param in_file:
+    :param out_file:
+    :param resample_type:
+    :return: os.path.abspath(out_file)
+    """
     if not os.path.isfile(out_file):
         from nipype.interfaces.freesurfer import MRIConvert
         convert = MRIConvert()
@@ -194,11 +295,23 @@ def convert_fs_scan(in_file, out_file, resample_type=None):
 
 
 def get_nm_subject_id(nm_file):
+    """
+    This function...
+    :param nm_file:
+    :return: subject_id
+    """
     subject_id = nm_file.split("/")[-3]
     return subject_id
 
 
 def get_nm_t1(nm_file, fs=False, cache_dir=os.getcwd()):
+    """
+    This function...
+    :param nm_file:
+    :param fs:
+    :param cache_dir:
+    :return: out_t1
+    """
     if fs:
         in_t1 = get_nm_fs_scan(nm_file)
         out_t1 = convert_fs_scan(in_t1, os.path.join(cache_dir, "t1_{0}.nii.gz".format(get_nm_subject_id(nm_file))))
@@ -213,6 +326,11 @@ def createdatacsv(in_dir, cache_dir, overwrite=False, file_list=None):
     takes in a the neuromorph directory and finds all the necessary files
     and then writes the gm_labels.nii.gz and wm_labels.nii.gz as well as
     a csv that serves as a dictionary for the files needed for this project.
+    :param in_dir:
+    :param cache_dir:
+    :param overwrite:
+    :param file_list:
+    :return: csv_filename
     """
     # Edit this code to change the training data set and to add more
     # types of input images
@@ -295,6 +413,11 @@ def createdatacsv(in_dir, cache_dir, overwrite=False, file_list=None):
 
 
 def save_data_frame(data, data_file):
+    """
+    This function...
+    :param data:
+    :param data_file:
+    """
     if data_file.endswith(".hdf5"):
         store = pd.HDFStore(data_file, "w", complib=str("zlib"), complevel=5)
         store.put("ImageData", data, data_columns=data.columns)

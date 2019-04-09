@@ -8,6 +8,9 @@ import math
 
 
 class DustCleanup():
+    """
+    This class represents a...
+    """
     def __init__(self, arguments):
         from collections import OrderedDict
         self.inputAtlasPath = arguments['--inputAtlasPath']
@@ -23,12 +26,20 @@ class DustCleanup():
         self.islandStatistics = OrderedDict({'Total': {'numberOfIslandsCleaned': 0, 'numberOfIslands': 0}})
 
     def evalInputListArg(self, inputArg):
+        """
+        This function...
+        :param inputArg:
+        :return: list(map(int, inputArg.split(','))) OR None
+        """
         if inputArg:
             return list(map(int, inputArg.split(',')))
         else:
             return None
 
     def main(self):
+        """
+        This is the main function...
+        """
         labelImage = sitk.Cast(sitk.ReadImage(self.inputAtlasPath), sitk.sitkInt16)
         inputT1VolumeImage = sitk.ReadImage(self.inputT1Path)
         if self.inputT2Path:
@@ -42,6 +53,12 @@ class DustCleanup():
         sitk.WriteImage(labelImage, self.outputAtlasPath)
 
     def getLabelsList(self, volumeImage, labelImage):
+        """
+        This function....
+        :param volumeImage:
+        :param labelImage:
+        :return: labelsList
+        """
         labelStatsObject = self.getLabelStatsObject(volumeImage, labelImage)
         labelsList = self.getLabelListFromLabelStatsObject(labelStatsObject)
         if self.excludeLabelsList:
@@ -51,6 +68,12 @@ class DustCleanup():
         return labelsList
 
     def removeLabelsFromLabelsList(self, labelsList, excludeList):
+        """
+        This function...
+        :param labelsList:
+        :param excludeList:
+        :return: labelsList
+        """
         for val in excludeList:
             try:
                 labelsList.remove(val)
@@ -60,6 +83,12 @@ class DustCleanup():
         return labelsList
 
     def verifyIncludeLabelsList(self, labelsList, includeList):
+        """
+        This function...
+        :param labelsList:
+        :param includeList:
+        :return: verifiedList
+        """
         verifiedList = list()
         for val in includeList:
             if val in labelsList:
@@ -70,6 +99,9 @@ class DustCleanup():
         return verifiedList
 
     def printIslandStatistics(self):
+        """
+        This function prints...
+        """
         print()
         "-" * 50
         print()
@@ -84,6 +116,14 @@ class DustCleanup():
             ','.join(labelStats)
 
     def relabelCurrentLabel(self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label_key):
+        """
+        This function...
+        :param labelImage:
+        :param inputT1VolumeImage:
+        :param inputT2VolumeImage:
+        :param label_key:
+        :return: labelImage
+        """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         label_key = str(label_key)  # all keys must be strings in order to sort
         self.islandStatistics[label_key] = OrderedDict({'numberOfIslandsCleaned': 0})
@@ -138,6 +178,12 @@ class DustCleanup():
         return labelImage
 
     def getRelabeldConnectedRegion(self, maskForCurrentLabel, currentIslandSize):
+        """
+        This function...
+        :param maskForCurrentLabel:
+        :param currentIslandSize:
+        :return: sitk.Mask(relabeledConnectedLabelMap, maskForCurrentLabel, outsideValue=0) OR self.runConnectedComponentsAndRelabel(maskForCurrentLabel)
+        """
         if (currentIslandSize > 1) and (not self.noDilation):
             dilationKernelRadius = self.calcDilationKernelRadius(currentIslandSize)
             dilatedMaskForCurrentLabel = self.dilateLabelMap(maskForCurrentLabel, dilationKernelRadius)
@@ -147,10 +193,20 @@ class DustCleanup():
             return self.runConnectedComponentsAndRelabel(maskForCurrentLabel)
 
     def calcDilationKernelRadius(self, currentIslandSize):
+        """
+        This function...
+        :param currentIslandSize:
+        :return: int(math.ceil(math.pow(currentIslandSize / ((4. / 3.) * math.pi), (1. / 3.))))
+        """
         # use the equation for the volume of a sphere to calculate the kernel radius value
         return int(math.ceil(math.pow(currentIslandSize / ((4. / 3.) * math.pi), (1. / 3.))))
 
     def runConnectedComponentsAndRelabel(self, binaryImage):
+        """
+        This function...
+        :param binaryImage:
+        :return: relabeledConnectedRegion
+        """
         if not self.useFullyConnectedInConnectedComponentFilter:
             connectedRegion = sitk.ConnectedComponent(binaryImage, False)
         else:
@@ -159,12 +215,23 @@ class DustCleanup():
         return relabeledConnectedRegion
 
     def getLabelStatsObject(self, volumeImage, labelImage):
+        """
+        This function...
+        :param volumeImage:
+        :param labelImage:
+        :return: labelStatsObject
+        """
         labelStatsObject = sitk.LabelStatisticsImageFilter()
         labelStatsObject.Execute(volumeImage, labelImage)
 
         return labelStatsObject
 
     def getLabelListFromLabelStatsObject(self, labelStatsObject):
+        """
+        This function...
+        :param labelStatsObject:
+        :return: list(compontentLabels)
+        """
         if sitk.Version().MajorVersion() > 0 or sitk.Version().MinorVersion() >= 9:
             compontentLabels = labelStatsObject.GetLabels()
         else:  # if sitk version < 0.9 then use older function call GetValidLabels
@@ -172,6 +239,14 @@ class DustCleanup():
         return list(compontentLabels)
 
     def getTargetLabels(self, labelImage, relabeledConnectedRegion, inputVolumeImage, currentLabel):
+        """
+        This function...
+        :param labelImage:
+        :param relabeledConnectedRegion:
+        :param inputVolumeImage:
+        :param currentLabel:
+        :return: targetLabels
+        """
         currentLabelBinaryThresholdImage = sitk.BinaryThreshold(relabeledConnectedRegion, currentLabel, currentLabel)
         castedCurrentLabelBinaryThresholdImage = sitk.Cast(currentLabelBinaryThresholdImage, sitk.sitkInt16)
 
@@ -185,11 +260,23 @@ class DustCleanup():
         return targetLabels
 
     def removeOutsideValueFromTargetLabels(self, targetLabels, outsideValue):
+        """
+        This function...
+        :param targetLabels:
+        :param outsideValue:
+        :return: targetLabels
+        """
         if outsideValue in targetLabels:
             targetLabels.remove(outsideValue)
         return targetLabels
 
     def dilateLabelMap(self, inputLabelImage, kernelRadius):
+        """
+        This function...
+        :param inputLabelImage:
+        :param kernelRadius:
+        :return: castedOutput
+        """
         myFilter = sitk.BinaryDilateImageFilter()
         myFilter.SetBackgroundValue(0.0)
         myFilter.SetBoundaryToForeground(False)
@@ -214,6 +301,13 @@ class DustCleanup():
         two islands in the comparison. The calculated value for each border label will later be
         sorted in ascending order - meaning that the smallest value has the "closest" average
         intensity to the suspicious label.
+        :param averageT1IntensitySuspiciousLabel:
+        :param averageT2IntensitySuspiciousLabel:
+        :param targetLabels:
+        :param inputT1VolumeImage:
+        :param inputT2VolumeImage:
+        :param inputLabelImage:
+        :return: squareRootDiffLabelDict
         """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         squareRootDiffLabelDict = OrderedDict()
@@ -238,6 +332,13 @@ class DustCleanup():
         return squareRootDiffLabelDict
 
     def relabelImage(self, labelImage, newRegion, newLabel):
+        """
+        This function...
+        :param labelImage:
+        :param newRegion:
+        :param newLabel:
+        :return: relabeledImage
+        """
         castedLabelImage = sitk.Cast(labelImage, sitk.sitkInt16)
         castedNewRegion = sitk.Cast(newRegion, sitk.sitkInt16)
         negatedMask = sitk.BinaryNot(castedNewRegion)
@@ -247,6 +348,11 @@ class DustCleanup():
         return relabeledImage
 
     def getDictKeysListSortedByValue(self, val):
+        """
+        This function...
+        :param val:
+        :return: sorted(val, key=val.get)
+        """
         return sorted(val, key=val.get)
 
 

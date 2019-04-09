@@ -71,7 +71,12 @@ from collections import OrderedDict  # Need OrderedDict internally to ensure con
 
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment=OrderedDict()):
     '''This is a wrapper script for running commands on an SGE cluster
-so that all the python modules and commands are pathed properly'''
+so that all the python modules and commands are pathed properly
+    :param pythonPathsList:
+    :param binPathsList:
+    :param customEnvironment: OrderedDict()
+    :return: GLOBAL_SGE_SCRIPT
+'''
 
     custEnvString = ''
     for key, value in list(customEnvironment.items()):
@@ -105,6 +110,11 @@ SGE_JOB_SCRIPT = JOB_SCRIPT
 
 
 def MergeByExtendListElements(FAImageList):
+    """
+    This function...
+    :param FAImageList:
+    :return: ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     ## Initial list with empty dictionaries
     ListOfImagesDictionaries = list()
@@ -133,12 +143,24 @@ def MergeByExtendListElements(FAImageList):
 
 
 def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
+    """
+    This function...
+    :param SESSION_TUPLE:
+    :param BASE_STRUCT:
+    :param BASE_DWI:
+    :return: MasterDWIWorkflow
+    """
     return MasterDWIWorkflow
 
 
 #############################
 def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
-    '''A function to extract file names from base parameters'''
+    '''A function to extract file names from base parameters
+    :param SESSION_TUPLE:
+    :param BASE_STRUCT:
+    :param BASE_DWI:
+    :return: PROJ_ID, SUBJ_ID, SESSION_ID, FixImage, FixMaskImage, MovingDWI
+    '''
     import os
     import glob
     PROJ_ID = SESSION_TUPLE[0]
@@ -450,6 +472,11 @@ DWIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIP
 # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
 
 def sinkContainer(_tuple):
+    """
+    This function...
+    :param _tuple:
+    :return: os.path.join(*_tuple)
+    """
     import os.path
     return os.path.join(*_tuple)
 

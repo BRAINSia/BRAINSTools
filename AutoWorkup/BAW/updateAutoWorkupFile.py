@@ -8,7 +8,12 @@ from builtins import object
 
 
 class UpdateAutoWorkup(object):
+    """This class represents a..."""
     def _getBlackList(self):
+        """
+        This function...
+        :return: blackListDict, list(blackListDict.keys())
+        """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         handle = csv.reader(open(inputArguments.blackList, 'rb'), delimiter=',', quotechar='\"')
         blackListDict = OrderedDict()
@@ -20,12 +25,19 @@ class UpdateAutoWorkup(object):
         return blackListDict, list(blackListDict.keys())
 
     def _generateNewPathName(self):
+        """
+        This function...
+        :return: newPath
+        """
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
         basename = os.path.basename(inputArguments.autoWorkupFile)
         newPath = os.path.join(dirname, "edited_{0}".format(basename))
         return newPath
 
     def updateAutoWorkup(self):
+        """
+        This function...
+        """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         newPath = self._generateNewPathName()
         newFile = csv.writer(open(newPath, 'wb'), quoting=csv.QUOTE_ALL)

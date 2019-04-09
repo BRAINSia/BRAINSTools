@@ -17,13 +17,30 @@ def brainStem(tissueLabelFilename,
               landmarkFilename,
               brainStemFilename,
               ouputTissuelLabelFilename):
+    """
+    This function...
+    :param tissueLabelFilename:
+    :param landmarkFilename:
+    :param brainStemFilename:
+    :param outputTissueLabelFilename:
+    :return: full_output_path
+    """
     import os
     import SimpleITK as sitk
 
     def cropAndResampleInPlace(inputBrainLabelFilename,
                                physBB1, physBB2, thresholdUpper, thresholdLower,
                                outputImageFilename):
-
+        """
+        This function...
+        :param inputBrainLabelFilename:
+        :param physBB1:
+        :param physBB2:
+        :param thresholdUpper:
+        :param thresholdLower:
+        :param outputImageFilename:
+        :return: os.path.abspath(outputImageFilename)
+        """
         brainLbl = sitk.ReadImage(inputBrainLabelFilename)
 
         roiBBStart_index = brainLbl.TransformPhysicalPointToIndex(physBB1)
@@ -145,6 +162,13 @@ def brainStem(tissueLabelFilename,
 
 
 def CreateBrainstemWorkflow(WFname, CLUSTER_QUEUE, outputFilename):
+    """
+    this function...
+    :param WFname:
+    :param CLUSTER_QUEUE:
+    :param outputFilename:
+    :return: brainstemWF
+    """
     brainstemWF = pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputTissueLabelFilename',

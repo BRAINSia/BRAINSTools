@@ -27,6 +27,15 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     By placing these settings in one location, we can
     review all antsRegistration settings for the
     entire pipeline in one spot.
+    :param antsRegistrationNode:
+    :param registrationTypeDescription:
+    :param output_transform_prefix:
+    :param output_warped_image:
+    :param output_inverse_warped_image:
+    :param save_state:
+    :param invert_initial_moving_transform:
+    :param initial_moving_transform:
+    :return: None
     """
     if save_state:
         antsRegistrationNode.inputs.save_state = save_state
@@ -169,9 +178,24 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
 
     #
     # make image file list
+    """
+    :param T1List:
+    :param T2List:
+    :param PDList:
+    :param FLList:
+    :param OTHERList:
+    :param postfix:
+    :param postfixBFC:
+    :param postfixUnwrapped:
+    :param PrimaryT1:
+    :param ListOutType:
+    :return: None
+    """
     def GetExtBaseName(filename):
         '''
         Get the filename without the extension.  Works for .ext and .ext.gz
+        :param filename:
+        :return: inImageList, outImageList, outBFCImageList, outUnwrappedImageList, imageTypeList
         '''
         import os
         currBaseName = os.path.basename(filename)
@@ -240,6 +264,11 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
 
 
 def GenerateSeparateImageTypeList(inFileList, inTypeList):
+    """
+    :param inFileList:
+    :param inTypeList:
+    :return: allListDict["T1"], allListDict["T2"], allListDict["PD"], allListDict["FL"], allListDict["OTHER"]
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     allListDict = OrderedDict()
     allListDict["T1"] = list()
@@ -255,6 +284,12 @@ def GenerateSeparateImageTypeList(inFileList, inTypeList):
 
 
 def add_dict(d1, d2, force=False):
+    """
+    :param d1:
+    :param d2:
+    :param force: False
+    :return: retval
+    """
     from copy import deepcopy
     retval = deepcopy(d1)
     if d2:
@@ -279,11 +314,21 @@ def add_dict(d1, d2, force=False):
 
 
 def GenerateWFName(projectid, subjectid, sessionid, processing_phase):
+    """
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :processing_phase:
+    :return: 'WF_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid) + "_" + processing_phase
+    """
     return 'WF_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid) + "_" + processing_phase
 
 
 def GenerateSubjectOutputPattern(subjectid):
-    """ This function generates output path substitutions for workflows and nodes that conform to a common standard """
+    """ This function generates output path substitutions for workflows and nodes that conform to a common standard
+    :param subjectid:
+    :return: patternList
+    """
     import os.path
 
     patternList = []
@@ -311,6 +356,11 @@ def GenerateSubjectOutputPattern(subjectid):
 
 def GenerateOutputPattern(projectid, subjectid, sessionid, DefaultNodeName):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    :param projectid:
+    :param subjectid:
+    :param sessionid:
+    :param DefaultNodeName:
+    :return: patternList
     """
     patternList = []
     find_pat = os.path.join(DefaultNodeName)

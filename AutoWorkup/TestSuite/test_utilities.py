@@ -6,6 +6,9 @@ from AutoWorkup import utilities
 
 
 def configure_env_test():
+    """
+    This function...
+    """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     config_env = os.path.join(os.path.dirname(utilities.__file__), 'configure_env.py')
     for p in range(10):

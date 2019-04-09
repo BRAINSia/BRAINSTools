@@ -1,4 +1,9 @@
 def check_file(path):
+    """
+    This function..
+    :param path:
+    :return: None or full
+    """
     import os.path
     full = os.path.abspath(path)
     if os.path.exists(full):
@@ -7,6 +12,10 @@ def check_file(path):
 
 
 def parseLabelsFile():
+    """
+    This function...
+    :return: labelDict
+    """
     import os.path
     from ..config import _config
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering

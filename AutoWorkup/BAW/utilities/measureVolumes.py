@@ -14,6 +14,8 @@ def MakeLabelDictionary(inputColorLookUpTableFilename):
     """
     Construct dictionary:
         label No.: label name
+    :param inputColorLookUpTableFilename:
+    :return: labelDictionary
     """
     # inputColorLookUpTableFilename="/Shared/johnsonhj/HDNI/ReferenceData/20150709_HDAdultAtlas/BAWHDAdultAtlas_FreeSurferConventionColorLUT_20150709.txt"
     # import csv
@@ -47,13 +49,17 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
     Get label volumes using
     1. reference volume and
     2. labeldictionary
+    :param labelVolume:
+    :param RefVolume:
+    :param labelDictionary:
+    :return: outputLabelVolumes
     """
     import SimpleITK as sitk
     import os
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     labelImg = sitk.ReadImage(labelVolume, sitk.sitkInt64)
     RefImg = sitk.ReadImage(RefVolume, sitk.sitkFloat64)
-    labelStatFilter = sitk.LabelStatisticsImageFilter()
+    labelStatFilter = sitk.LabelStoutputatisticsImageFilter()
     labelStatFilter.Execute(RefImg, labelImg)
     ImageSpacing = RefImg.GetSpacing()
 
@@ -86,6 +92,11 @@ print(labelVolDict)
 
 
 def WriteDictionaryToCSV(inputList, outputFilename):
+    """
+    :param inputList:
+    :param outputFilename:
+    :return:os.path.abspath(outputFilename)
+    """
     import csv
     import os
     csvFile = open(outputFilename, 'w')
@@ -103,10 +114,16 @@ def WriteDictionaryToCSV(inputList, outputFilename):
 """
 #Unit test::
 WriteDictionaryToCSV(labelVolDict, "~/Desktop/test.csv")
+
 """
 
 
 def WriteDictionaryToJson(inputList, outputFilename):
+    """
+    :param inputList:
+    :param outputFilename:
+    :return: (outputFilename)
+    """
     import json
     with open(outputFilename, 'w') as fp:
         json.dump(inputList, fp)
@@ -125,6 +142,13 @@ def VolumeMeasure(inputColorLookUpTableFilename,
                   labelFilename,
                   inputReferenceFilename,
                   outputFileBasename):
+    """
+    :param inputColorLookUpTableFilename:
+    :param labelFilename:
+    :param inputReferenceFilename:
+    :param outputFileBasename:
+    :return:(csvFilename, jsonFilename)
+    """
     labelDict = MakeLabelDictionary(inputColorLookUpTableFilename)
     measurementsList = GetLabelVolumes(labelFilename, inputReferenceFilename, labelDict)
     csvFilename = outputFileBasename + "CSV.csv"

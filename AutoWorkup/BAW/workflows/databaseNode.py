@@ -11,6 +11,11 @@ from nipype.interfaces.io import IOBase
 
 
 class SQLiteGrabberInputSpec(DynamicTraitedSpec, BaseInterfaceInputSpec):
+    """
+    This class represents a...
+    :param DynamicTraitedSpec:
+    :param BaseInterfaceInputSpec:
+    """
     database_file = File(exists=True, mandatory=True)
     table_name = traits.Str(mandatory=True)
     columns = traits.List(traits.Str, mandatory=True)
@@ -23,6 +28,10 @@ class SQLiteGrabberInputSpec(DynamicTraitedSpec, BaseInterfaceInputSpec):
 
 
 class SQLiteGrabberOutputSpec(TraitedSpec):
+    """
+    This class represents a...
+    :param TraitedSpec:
+    """
     results = traits.List(traits.Tuple(), desc='Results of query')
     query = traits.Str(desc='Query sent to database')
 
@@ -54,6 +63,9 @@ class SQLiteGrabber(IOBase):
     _always_run = True
 
     def __init__(self, **inputs):
+        """This function...
+        :param **inpusts:
+        """
         self._query = ''
         super(SQLiteGrabber, self).__init__(**inputs)
 
@@ -65,6 +77,9 @@ class SQLiteGrabber(IOBase):
         return self._gen_query()
 
     def _check_mandatory_inputs(self):
+        """
+        This function will...
+        """
         assert os.path.splitext(self.inputs.database_file)[-1] == '.db'
         super(SQLiteGrabber, self)._check_mandatory_inputs()
 
@@ -77,6 +92,9 @@ class SQLiteGrabber(IOBase):
         return outputs
 
     def _execute_query(self):
+        """
+        This funciton...
+        """
         conn = sqlite3.connect(self.inputs.database_file,
                                check_same_thread=False)
         c = conn.cursor()
@@ -96,6 +114,10 @@ class SQLiteGrabber(IOBase):
         return retval
 
     def _gen_query(self):
+        """
+        This function...
+        :return: Query
+        """
         # TODO: write SQL query to prevent injection attacks
         if self.inputs.distinct:
             _select = 'SELECT DISTINCT'
@@ -123,6 +145,14 @@ class SQLiteGrabber(IOBase):
 
 
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
+    """
+    This function does...
+    :param ExperimentBaseDirectoryCache:
+    :param single_subject:
+    :param mountPrefix:
+    :param subject_data_file:
+    :return: ExperimentDatabase
+    """
     import os.path
     import SessionDB
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
@@ -145,10 +175,28 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 
 
 def getAllScans(cache, subject, prefix, dbfile, session):
+    """
+    This function...
+    :param cache:
+    :param subject:
+    :param prefix:
+    :param dbfile:
+    :param session:
+    :return: None
+    """
     pass
 
 
 def MakeDatabaseNode(cache, dbfile, table_name='MasterDB', columns=['*'], constraints=[]):
+    """
+    This function...
+    :param cache:
+    :param dbfile:
+    :param table_name: 'MasterDB'
+    :param columns:['*']
+    :param constraints:[]
+    :return: node
+    """
     import os.path
     import nipype.pipeline.engine as pe  # pypeline engine
     from .databaseNode import SQLiteGrabber  # OpenSubjectDatabase
@@ -161,8 +209,19 @@ def MakeDatabaseNode(cache, dbfile, table_name='MasterDB', columns=['*'], constr
 
 
 def session_constraint(session):
+    """
+    This function...
+    :param session:
+    :return: [('session',session)]
+    """
     return [('session', session)]
 
 
 def files_constraint(session, types):
+    """
+    This function...
+    :param session:
+    :param types:
+    :return: [('session', session),('type',types)]
+    """
     return [('session', session), ('type', types)]

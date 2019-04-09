@@ -6,6 +6,11 @@ from nipype.interfaces.freesurfer import *
 
 
 def create_ba_maps_wf(config):
+    """
+    This function...
+    :param config:
+    :return:
+    """
     # Brodmann Area Maps (BA Maps) and Hinds V1 Atlas
     inputSpec = pe.Node(IdentityInterface(fields=['lh_sphere_reg',
                                                   'rh_sphere_reg',
@@ -67,15 +72,15 @@ def create_ba_maps_wf(config):
 
             if threshold:
                 label2annot.inputs.out_annot = "BA_exvivo.thresh"
-                ba_WF.connect([(stats_node, outputSpec, [('out_color', 
+                ba_WF.connect([(stats_node, outputSpec, [('out_color',
                                                           '{0}_thresh_color'.format(hemisphere)),
-                                                         ('out_table', 
+                                                         ('out_table',
                                                           '{0}_thresh_table'.format(hemisphere))])])
             else:
                 label2annot.inputs.out_annot = "BA_exvivo"
-                ba_WF.connect([(stats_node, outputSpec, [('out_color', 
+                ba_WF.connect([(stats_node, outputSpec, [('out_color',
                                                           '{0}_color'.format(hemisphere)),
-                                                         ('out_table', 
+                                                         ('out_table',
                                                           '{0}_table'.format(hemisphere))])])
 
 
@@ -93,7 +98,7 @@ def create_ba_maps_wf(config):
                                                      ]),
                            (label2annot, stats_node,
                             [('out_file', 'in_annotation')]),
-                           (inputSpec, stats_node, [('{0}_thickness'.format(hemisphere), 
+                           (inputSpec, stats_node, [('{0}_thickness'.format(hemisphere),
                                                      'thickness'),
                                                     ('subject_id',
                                                      'subject_id'),

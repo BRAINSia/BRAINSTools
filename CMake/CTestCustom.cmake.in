@@ -1,4 +1,13 @@
-
+#
+# Note that the ITK/CMakeLists.txt file configures this file
+#
+#               CMake/CTestCustom.cmake.in
+#
+# to this file
+#
+#       ${ITK_BINARY_DIR}/CTestCustom.cmake
+#
+#----------------------------------------------------------------------
 #
 # For further details regarding this file,
 # see http://www.cmake.org/Wiki/CMake_Testing_With_CTest#Customizing_CTest
@@ -334,7 +343,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # At some point this may be addressed by CMake feature request:
   # http://public.kitware.com/Bug/view.php?id=10179
   "ld.*warning.*duplicate dylib.*"
-
+    "ld: warning: text-based stub file /System/Library/Frameworks/.*Falling back to library file for linking."
   # DCMTK build warning
   "Warning: SNDFILE .*"
   )

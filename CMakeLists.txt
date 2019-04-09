@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.5)
-cmake_policy(VERSION 3.9.5...3.13.2)
+cmake_policy(VERSION 3.9.5...3.14.2)
 
 #-----------------------------------------------------------------------------
 # Enable C++11

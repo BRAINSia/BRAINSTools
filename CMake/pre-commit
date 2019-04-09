@@ -4,7 +4,5 @@ Paste the following commands into a shell:
 
   ./Utilities/SetupForDevelopment.sh
 
-See
-http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
- for more information.'
+See https://www.itk.org/Wiki/ITK/Git/Develop for more details.'
 exit 1

@@ -173,7 +173,6 @@ set(brains_modulenames
   ImageCalculator
   GTRACT
   BRAINSLabelStats
-  BRAINSCut
   BRAINSLandmarkInitializer
   BRAINSSnapShotWriter
   BRAINSDWICleanup
@@ -198,6 +197,7 @@ if(BUILD_ARCHIVE)
   BRAINSRefacer
   BRAINSTalairach
   DicomSignature
+  BRAINSCut
 )
 
 endif()

@@ -140,7 +140,6 @@ if(NOT BUILD_FOR_DASHBOARD)
 endif()
 bt_option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" ${BUILD_FOR_DASHBOARD})
 bt_option(USE_BRAINSSuperResolution          "Build BRAINSSuperResolution"          ${BUILD_FOR_DASHBOARD})
-bt_option(USE_BRAINSCut                      "Build BRAINSCut"                      ${BUILD_FOR_DASHBOARD})
 bt_option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
 
 cmake_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
@@ -154,7 +153,7 @@ bt_option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"     
 
 ## These are not yet ready for prime time.
 ## TODO: Move to ARCHIVE directory
-bt_option(BUILD_ARCHIVE                      "Build old tools from archive"        OFF)
+bt_option(BUILD_ARCHIVE                                    "Build old tools from archive"        OFF)
 bt_option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
 
 cmake_dependent_option(USE_DebugImageViewer "Build DebugImageViewer" OFF "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
@@ -168,23 +167,23 @@ bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image result
 # BRAINSSurfaceTools does not compile with modern ITK, VTK, much work would be needed to ressurect these tools
 # -- does not compile cmake_dependent_option(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 # -- mark_as_superbuild(VARS USE_BRAINSSurfaceTools:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
-
-cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
+cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSContinuousClass:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_ICCDEF "Build ICCDEF" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_ICCDEF:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
-cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
+cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSRefacer:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
-cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" ON)
+cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSTalairach:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
-cmake_dependent_option(USE_DicomSignature "Build DicomSignature is under development" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" ON)
+cmake_dependent_option(USE_DicomSignature "Build DicomSignature is under development" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_DicomSignature:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cmake_dependent_option(USE_BRAINSCut "Build BRAINSCut is outdated" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" OFF)
+mark_as_superbuild(VARS USE_BRAINSCut:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 #if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
 #  message("NOTE: Following toolkits are dependent to VTK:

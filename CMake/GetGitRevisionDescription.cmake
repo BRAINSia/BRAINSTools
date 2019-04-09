@@ -64,6 +64,7 @@ function(get_git_head_revision _refvar _hashvar)
 		RESULT_VARIABLE failed
 		OUTPUT_STRIP_TRAILING_WHITESPACE
 		)
+
 	if(NOT IS_ABSOLUTE "${GIT_DIR}")
 		set(GIT_DIR "${src_dir}/${GIT_DIR}")
 	endif()
@@ -172,4 +173,80 @@ endfunction()
 function(git_get_exact_tag _var)
 	git_describe(out --exact-match ${ARGN})
 	set(${_var} "${out}" PARENT_SCOPE)
+endfunction()
+
+function(git_head_date _var)
+    get_git_head_revision(refspec hash)
+    if(NOT GIT_FOUND)
+        set(${_var} "GIT-NOTFOUND"  PARENT_SCOPE)
+        return()
+    endif()
+    if(NOT hash)
+        set(${_var} "HEAD-HASH-NOTFOUND"  PARENT_SCOPE)
+        return()
+    endif()
+
+    set(src_dir ${PROJECT_SOURCE_DIR})
+    execute_process(COMMAND "${GIT_EXECUTABLE}" show -s --format=%ci ${hash} ${ARGN}
+        WORKING_DIRECTORY "${src_dir}"
+        RESULT_VARIABLE res
+        OUTPUT_VARIABLE out
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT res EQUAL 0)
+        set(out "${out}-${res}-NOTFOUND")
+    endif()
+
+    set(${_var} "${out}" PARENT_SCOPE)
+
+endfunction()
+
+function(git_head_date _var)
+    get_git_head_revision(refspec hash)
+    if(NOT GIT_FOUND)
+        set(${_var} "GIT-NOTFOUND"  PARENT_SCOPE)
+        return()
+    endif()
+    if(NOT hash)
+        set(${_var} "HEAD-HASH-NOTFOUND"  PARENT_SCOPE)
+        return()
+    endif()
+
+    set(src_dir ${PROJECT_SOURCE_DIR})
+    execute_process(COMMAND "${GIT_EXECUTABLE}" show -s --format=%ci ${hash} ${ARGN}
+        WORKING_DIRECTORY "${src_dir}"
+        RESULT_VARIABLE res
+        OUTPUT_VARIABLE out
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT res EQUAL 0)
+        set(out "${out}-${res}-NOTFOUND")
+    endif()
+    set(${_var} "${out}" PARENT_SCOPE)
+endfunction()
+
+function(git_head_localmods _var)
+    get_git_head_revision(refspec hash)
+    if(NOT GIT_FOUND)
+        set(${_var} "GIT-NOTFOUND"  PARENT_SCOPE)
+        return()
+    endif()
+    if(NOT hash)
+        set(${_var} "HEAD-HASH-NOTFOUND"  PARENT_SCOPE)
+        return()
+    endif()
+
+    set(src_dir ${PROJECT_SOURCE_DIR})
+    ## Determine if there are local modifications to the HEAD
+    execute_process(COMMAND ${GIT_EXECUTABLE} diff --shortstat HEAD
+        WORKING_DIRECTORY ${src_dir}
+        RESULT_VARIABLE res
+        OUTPUT_VARIABLE out
+        ERROR_VARIABLE error
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+    if(NOT res EQUAL 0)
+        set(out "${out}-${res}-NOTFOUND")
+    endif()
+    set(${_var} "${out}" PARENT_SCOPE)
 endfunction()

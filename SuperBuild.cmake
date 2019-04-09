@@ -126,8 +126,8 @@ set(proj        ${LOCAL_PROJECT_NAME})
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
 
-set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
-set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
+set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS} ${BRAINSTools_C_OPTIMIZATION_FLAGS} ${BRAINSTools_C_WARNING_FLAGS}")
+set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS} ${BRAINSTools_CXX_OPTIMIZATION_FLAGS} ${BRAINSTools_CXX_WARNING_FLAGS}")
 
 set(${LOCAL_PROJECT_NAME}_CLI_RUNTIME_DESTINATION  bin)
 set(${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION  lib)

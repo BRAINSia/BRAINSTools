@@ -20,13 +20,14 @@ if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
 endif()
 
 #-----------------------------------------------------------------------------
-# Git protocole option
+# Git protocol option
 #-----------------------------------------------------------------------------
 option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
 set(git_protocol "git")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
-  set(git_protocol "http")
+  set(git_protocol "https")
 endif()
+
 find_package(Git REQUIRED)
 
 cmake_dependent_option(${CMAKE_PROJECT_NAME}_USE_CTKAPPLAUNCHER "CTKAppLauncher used with python" ON

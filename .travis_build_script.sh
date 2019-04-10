@@ -33,7 +33,7 @@ cmake \
      ${SOURCE_DIR}
 
 #make -j 2 # BUILD EVERYTHING: TODO: BUILD_SUPPORT_SEPARATE.
-make TBB  && make -j2
+make -j 2
 
 cd ${BUILD_DIR}/BRAINSTools-build/
 make test

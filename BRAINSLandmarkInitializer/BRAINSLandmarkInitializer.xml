@@ -2,32 +2,32 @@
 <executable>
   <category>Utilities.BRAINS</category>
   <title>BRAINSLandmarkInitializer</title>
-  <description>Create transformation file (*mat) from a pair of landmarks (*fcsv) files.</description>
+  <description>Create transformation file (*.h5) from a pair of landmarks (*fcsv) files.</description>
   <version>5.0.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eunyoung Regina Kim, Ali Ghayoor, and Hans J. Johnson</contributor>
-  <acknowledgements></acknowledgements>
+  <acknowledgements>SINAPSE Lab</acknowledgements>
  <parameters>
-   <file>
+   <file fileExtensions=".fcsv">
      <name>inputFixedLandmarkFilename</name>
      <longflag>inputFixedLandmarkFilename</longflag>
      <label>input fixed landmark filename</label>
      <channel>input</channel>
-     <description>input fixed landmark. *.fcsv</description>
+     <description>input landmarks from fixed image *.fcsv</description>
      <default></default>
    </file>
 
-   <file>
+   <file fileExtensions=".fcsv">
      <name>inputMovingLandmarkFilename</name>
      <longflag>inputMovingLandmarkFilename</longflag>
      <label>input moving landmark filename</label>
      <channel>input</channel>
-     <description>input moving landmark. *.fcsv</description>
+     <description>input landmarks from moving image *.fcsv</description>
      <default></default>
    </file>
 
-   <file>
+   <file fileExtensions=".wts">
      <name>inputWeightFilename</name>
      <longflag>inputWeightFilename</longflag>
      <label>weight file name</label>
@@ -36,14 +36,14 @@
      <default></default>
    </file>
 
-   <file>
+   <transform fileExtensions=".h5,.hdf5,.mat,.txt">
      <name>outputTransformFilename</name>
      <longflag>outputTransformFilename</longflag>
      <label>output Transform file name</label>
      <channel>output</channel>
-     <description>output transform file name (ex: ./outputTransform.mat) </description>
+     <description>output transform file name (ex: ./moving2fixed.h5) that is appropriate for applying to the moving image to align with the fixed image.  The _Inverse file is also written that is approporate for placing the moving Landmarks with the fixed image. </description>
      <default></default>
-   </file>
+   </transform>
 
    <string-enumeration>
      <name>outputTransformType</name>

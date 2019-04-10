@@ -289,7 +289,13 @@ ReadSlicer3toITKLmkSlicer4(const std::string& landmarksFilename)
 LandmarksMapType
 ReadSlicer3toITKLmk( const std::string & landmarksFilename )
 {
-  std::ifstream    myfile( landmarksFilename.c_str() );
+  if ( ! itksys::SystemTools::FileExists(landmarksFilename) )
+  {
+    const std::string errorMsg = std::string("Error: Landmarks file not found at ")+landmarksFilename;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
+  }
+
+  std::ifstream myfile( landmarksFilename );
   if( !myfile.is_open() )
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;

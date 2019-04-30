@@ -1,4 +1,13 @@
+"""
+BAWScreenShots.py
+===========================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 import ast
 import getopt
@@ -25,6 +34,7 @@ def print_usage():
 
 def readInputFile(inputFilename):
     """This function...
+
     :param inputFilename:
     :return: inputList
     """

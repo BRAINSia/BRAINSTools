@@ -12,7 +12,21 @@
 #################################################################################
 
 
+"""
+ baseline.py
+============================
+Description:
+    This software is distributed WITHOUT ANY WARRANTY; without even
+    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     See the above copyright notices for more information.
 
+Author:
+    Hans J. Johnson
+    David Welch
+    
+Usage:
+
+"""
 
 import os
 from builtins import str
@@ -57,9 +71,10 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSCreateLabe
 def get_list_element(nestedList, index):
     """
     This function...
+
     :param nestedList:
     :param index:
-    :return: nestedList[index]
+    :return:
     """
     return nestedList[index]
 
@@ -70,8 +85,9 @@ def DetermineIfSegmentationShouldBeDone(master_config):
     to determine when segmentation should be run.
     This is being left so that anticipated future
     changes are easier to implement.
+
     :param master_config:
-    :return: do_BRAINSCut_Segmentation
+    :return:
     """
     do_BRAINSCut_Segmentation = False
     if master_config['workflow_phase'] == 'atlas-based-reference':
@@ -86,8 +102,9 @@ def DetermineIfSegmentationShouldBeDone(master_config):
 def getAllT1sLength(allT1s):
     """
     This function...
+
     :param allT1s:
-    :return: len(allT1s)
+    :return:
     """
     return len(allT1s)
 
@@ -102,22 +119,25 @@ def CreateLeftRightWMHemispheres(BRAINLABELSFile,
                                  WM_LeftHemisphereFileName,
                                  WM_RightHemisphereFileName):
     """
+    This function..
     :param BRAINLABELSFile:
     :param HDCMARegisteredVentricleMaskFN:
     :param LeftHemisphereMaskName:
     :param RightHemisphereMaskName:
     :param WM_LeftHemisphereFileName:
     :param WM_RightHemisphereFileName:
-    :return: WM_LeftHemisphereFileName, WM_RightHemisphereFileName
+    :return:
     """
     import SimpleITK as sitk
     import os
 
     def GetLargestLabel(inputMask, UseErosionCleaning):
         """
+        This function...
+
         :param inputMask:
         :param UseErosionCleaning:
-        :return: (largestMask * dilateMask > 0)
+        :return:
         """
         LargestComponentCode = 1
         if UseErosionCleaning:
@@ -207,9 +227,10 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
     to roll the image with circular boundaries such
     that the resulting head is not split across the
     image boundaries
+
     :param wrapped_inputfn:
     :param unwrapped_outputfn:
-    :return: unwrapped_outputfn
+    :return:
     """
     import SimpleITK as sitk
     import numpy as np
@@ -218,8 +239,9 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
     def FlipPermuteToIdentity(sitkImageIn):
         """
         This function...
+
         :param sitkImageIn:
-        :return: flipped_permuted_image
+        :return:
         """
         dc = np.array(sitkImageIn.GetDirection())
         dc = dc.reshape(3, 3)
@@ -246,9 +268,11 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
 
     def one_axis_unwrap(wrapped_image, axis):
         """
+        This function...
+
         :param wrapped_image:
         :param axis:
-        :return: outim, zRoll, slice_values
+        :return:
         """
         slice_values = list()
         sitkAxis = wrapped_image.GetDimension() - 1 - axis;
@@ -339,6 +363,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
     data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
     are the lists of images to be used in the auto-workup. atlas_fname_wpath is
     the path and filename of the atlas to use.
+
     :param projectid:
     :param subjectid:
     :param sessionid:
@@ -347,10 +372,10 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
     :param hasFLs:
     :param master_config:
     :param pipeline_name:
-    :param doDenoise: True
-    :param badT2: False
-    :param useEMSP: False
-    :return: baw201
+    :param doDenoise:
+    :param badT2:
+    :param useEMSP:
+    :return:
     """
 
     # if  not 'landmark' in master_config['components'] or not 'auxlmk' in master_config['components'] or not 'tissue_classify' in master_config['components']:

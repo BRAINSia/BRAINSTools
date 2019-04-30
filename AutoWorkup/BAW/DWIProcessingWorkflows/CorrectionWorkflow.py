@@ -4,6 +4,16 @@
 ## and aligns that to corresponding t2 image space
 ## Important outputs: CorrectedDWI_in_T2Space, DWIBrainMask
 
+"""
+CorrectionWorkflow.py
+============================
+Description:
+    The purpose of this is to...
+    
+Author:
+Usage:
+"""
+
 import nipype
 import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
@@ -19,6 +29,7 @@ from utilities.misc import CommonANTsRegistrationSettings
 def CreateCorrectionWorkflow(WFname):
     """
     This Function takes in...
+
     :param WFname:
     :return: CorrectionWF
     """
@@ -28,9 +39,10 @@ def CreateCorrectionWorkflow(WFname):
     def ExtractBRAINFromHead(RawScan, BrainLabels):
         """
         This function will remove the skull from the T2 volume
+
         :param Rawscan:
         :param BrainLabels:
-        :return: outputVolume - T2 volume without skull
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -47,9 +59,11 @@ def CreateCorrectionWorkflow(WFname):
 
     def MakeResamplerInFileList(inputT2, inputLabelMap):
         """
+        This function..
+
         :param inputT2:
         :param inputLabelMap:
-        :return: imagesList
+        :return:
         """
         imagesList = [inputT2, inputLabelMap]
         return imagesList
@@ -58,9 +72,10 @@ def CreateCorrectionWorkflow(WFname):
     def pickFromList(inlist, item):
         """
         This function will
+
         :param inlist:
         :param item:
-        :return: inlist[item]
+        :return:
         """
         return inlist[item]
 
@@ -68,8 +83,9 @@ def CreateCorrectionWorkflow(WFname):
     def CreateAntsRegistrationMask(brainMask):
         """
         This function will
+
         :param brainmask:
-        :return: registrationMask
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -89,8 +105,9 @@ def CreateCorrectionWorkflow(WFname):
     def SaveDirectionCosineToMatrix(inputVolume):
         """
         This function will return the direction cosine for the input volume
+
         :param inputVolume:
-        :return: directionCosine
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -102,10 +119,11 @@ def CreateCorrectionWorkflow(WFname):
     def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
         """
         This function will
+
         :param inputB0:
         :param inputT2:
         :param inputLabelMap:
-        :return: imagesList
+        :return:
         """
         import os
         assert os.path.exists(inputB0), "File not found: %s" % inputB0
@@ -118,8 +136,9 @@ def CreateCorrectionWorkflow(WFname):
     def ForceDCtoID(inputVolume):
         """
         This function will force DC to ID
+
         :param inputVolume:
-        :return: outputVolume
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -132,9 +151,10 @@ def CreateCorrectionWorkflow(WFname):
     def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
         """
         This function will
+
         :param inputVolume:
         :param inputDirectionCosine:
-        :return: outputVolume
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -147,8 +167,9 @@ def CreateCorrectionWorkflow(WFname):
     def GetRigidTransformInverse(inputTransform):
         """
         This function will
+
         :param inputTransform:
-        :return: inverseTransform
+        :return:
         """
         import os
         import SimpleITK as sitk

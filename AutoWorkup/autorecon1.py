@@ -1,3 +1,13 @@
+"""
+autorecon1.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import sys
 import os
 import errno
@@ -12,10 +22,11 @@ def VerifyInputs(T1sList):
     ##TODO Convert .mgz files to .nii.gz
     ##TODO Check the FOV
     """Verify size outside of pipeline processing
+
     :param T1sList:
     :return:
     """
-    print "Verifying input T1 size"
+    print("Verifying input T1 size")
     try:
         import SimpleITK as sitk
         T1Length = len(T1sList)
@@ -34,17 +45,18 @@ def VerifyInputs(T1sList):
                         T1sList[0], otherFilename))
                     sys.exit(-1)
         elif extension == None:
-            print "ERROR: Input files must be have '.mgz', '.nii', or '.nii.gz' extension"
+            print("ERROR: Input files must be have '.mgz', '.nii', or '.nii.gz' extension")
             sys.exit(-1)
     except OSError as exc:  # Python >2.5
-        print "ERROR: Could not verify input file sizes using SimpleITK"
-        print exc
+        print("ERROR: Could not verify input file sizes using SimpleITK")
+        print(exc)
         sys.exit(-1)
     return T1sList
 
 def mkdir_p(path):
     """
     This function...
+
     :param path:
     :return:
     """
@@ -63,6 +75,7 @@ def awk(awk_file, log_file):
     part of nipype or freesurfer.
     Future work may be done to create a method that achieves the same results using a python
     script.
+
     :param awk_file:
     :parma log_file:
     :return:
@@ -75,6 +88,7 @@ def awk(awk_file, log_file):
 def copy_file(in_file, out_file=None):
     """
     Create a function to copy a file that can be modified by a following node without changing the original file
+
     :param in_file:
     :param out_file:
     :return:
@@ -85,7 +99,7 @@ def copy_file(in_file, out_file=None):
         out_file = os.path.join(os.getcwd(), os.path.basename(in_file))
     if type(in_file) is list and len(in_file) == 1:
         in_file = in_file[0]
-    print "copying %s to %s" % (in_file, out_file)
+    print("copying %s to %s" % (in_file, out_file))
     shutil.copy(in_file, out_file)
     return out_file
 
@@ -93,24 +107,26 @@ def copy_files(in_files, out_files):
     """
     Create a function to copy a file that can be modified by a following node
     without changing the original file
+
     :param in_files:
     :param out_files:
     :return:
     """
     import shutil
     if len(in_files) != len(out_files):
-        print "ERROR: Length of input files must be identical to the length of \
-        outrput files to be copied"
+        print("ERROR: Length of input files must be identical to the length of \
+        outrput files to be copied")
         sys.exit(-1)
     for i, in_file in enumerate(in_files):
         out_file = out_files[i]
-        print "copying %s to %s" % (in_file, out_file)
+        print("copying %s to %s" % (in_file, out_file))
         shutil.copy(in_file, out_file)
     return out_files
 
 def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
     """
     This function..
+
     :param subjects_dir:
     :param subject_id:
     :param in_T1s:
@@ -134,6 +150,7 @@ def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
 def create_AutoRecon1(config):
     """
     This function...
+
     :param config:
     :return:
     """
@@ -246,10 +263,10 @@ def create_AutoRecon1(config):
             config['subjects_dir'], config['subject_id'], 'mri', 'rawavg.mgz')
         ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'in_file')]),
                     ])
-        print """
+        print("""
 WARNING: only one run found. This is OK, but motion
 correction cannot be performed on one run, so I'll
-copy the run to rawavg and continue."""
+copy the run to rawavg and continue.""")
 
     else:
         # if multiple T1 scans are given

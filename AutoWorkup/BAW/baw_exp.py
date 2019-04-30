@@ -10,7 +10,16 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 ##
 #################################################################################
+"""
+baw_exp.py
+===========================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 
 from future import standard_library
@@ -35,6 +44,7 @@ import time
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
     """
     This function...
+
     :param ExperimentBaseDirectoryCache:
     :param single_subject:
     :param mountPrefix:
@@ -63,8 +73,9 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 def DoSingleSubjectProcessing(sp_args):
     """
     This function...
+
     :param sp_args:
-    :return: True OR False
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, \

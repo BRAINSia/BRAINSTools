@@ -1,3 +1,13 @@
+"""
+crossvalidation.py
+===================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import os
 import pandas as pd
 from sklearn import cross_validation
@@ -11,6 +21,7 @@ import sys
 def get_idx_folds(subject_ids, num_folds):
     """
     This function...
+
     :param subject_ids:
     :param num_folds:
     :return:
@@ -23,6 +34,7 @@ def get_idx_folds(subject_ids, num_folds):
 def get_subject_id_folds(subject_ids, num_folds):
     """
     This function...
+
     :param subject_ids:
     :param num_folds:
     :return:
@@ -34,6 +46,7 @@ def get_subject_id_folds(subject_ids, num_folds):
 def get_subject_id_folds_from_data(data, num_folds):
     """
     This function...
+
     :param data:
     :param num_folds:
     :return:
@@ -45,6 +58,7 @@ def get_subject_id_folds_from_data(data, num_folds):
 def get_data_with_subject_ids(data, subject_ids):
     """
     This function...
+
     :param data:
     :param subject_ids:
     :return:
@@ -55,6 +69,7 @@ def get_data_with_subject_ids(data, subject_ids):
 def get_subject_ids(data):
     """
     This function...
+
     :param data:
     :return:
     """
@@ -64,6 +79,7 @@ def get_subject_ids(data):
 def read_data(data_file):
     """
     This function...
+
     :param data_file:
     """
     if ".hdf" in data_file:
@@ -75,9 +91,10 @@ def read_data(data_file):
 def get_training_and_testing_data(data, fold):
     """
     This function...
+
     :param data:
     :param fold:
-    :return: training_data, testing_data
+    :return:
     """
     training_data = get_data_with_subject_ids(data, fold[0])
     testing_data = get_data_with_subject_ids(data, fold[1])
@@ -87,6 +104,7 @@ def get_training_and_testing_data(data, fold):
 def get_truth_from_data(data, matter):
     """
     This function...
+
     :param data:
     :param matter:
     :return:
@@ -97,6 +115,7 @@ def get_truth_from_data(data, matter):
 def get_features_from_data(data):
     """
     This function...
+
     :param data:
     :return:
     """
@@ -106,6 +125,7 @@ def get_features_from_data(data):
 def run_cross_validation_fold(data, fold, output_dir):
     """
     This function...
+
     :param data:
     :param fold:
     :param output_dir:
@@ -135,6 +155,7 @@ def run_cross_validation_fold(data, fold, output_dir):
 def run_nfold_cross_validation(data_file, nfolds=10, output_dir=os.path.curdir):
     """
     This function...
+
     :param data_file:
     :param nfolds:
     :param output_dir:
@@ -152,12 +173,13 @@ def train_classifier(train_features, train_targets, n_jobs=-1,
                      clf=RandomForestClassifier(), out_file=None):
     """
     This function...
+
     :param train_features:
     :param train_targets:
     :param n_jobs:
     :param clf:
     :param out_file:
-    :return: clf
+    :return:
     """
     clf.n_jobs = n_jobs
     clf.fit(train_features, train_targets)
@@ -169,10 +191,11 @@ def train_classifier(train_features, train_targets, n_jobs=-1,
 def test_classifier(clf, test_features, test_targets):
     """
     This function...
+
     :param clf:
     :param test_features:
     :param test_targets:
-    :return: score_roc
+    :return:
     """
     # Predictions
     probas = clf.predict_proba(test_features)

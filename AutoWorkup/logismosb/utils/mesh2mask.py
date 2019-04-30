@@ -1,3 +1,13 @@
+"""
+mesh2mask.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import vtk, math
 import sys, os
 import SimpleITK as sitk
@@ -25,6 +35,7 @@ class Mesh2Mask(BaseInterface):
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self._outputs().get()
@@ -34,6 +45,7 @@ class Mesh2Mask(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
         :return:
         """
@@ -45,6 +57,7 @@ class Mesh2Mask(BaseInterface):
 def patch(mesh):
         """
         This function...
+
         :param mesh:
         :return:
         """
@@ -89,6 +102,7 @@ def patch(mesh):
 def preprocess_mesh(mesh, num_patches=10):
     """
     This function...
+
     :param mesh:
     :param num_patches:
     :return:
@@ -135,6 +149,7 @@ def preprocess_mesh(mesh, num_patches=10):
 def read_vtk_image(inputImage):
     """
     This function...
+
     :param inputImage:
     :return:
     """
@@ -159,10 +174,12 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
     in NIFTIimage file format. SimpleITK is used to convert images to standard orientation used
     for 3D medical images.
 
-    Inputs:
-    inputMesh == a vtkPolyData file of a 3D surface
-    outputImage == output file path for NIFTI image
-    inputImage == reference image to get desired spacing, origin, and direction.
+    :param inputMesh: a vtkPolyData file of a 3D surface
+    :param outputImage: output file path for NIFTI image
+    :param inputImage: reference image to get desired spacing, origin, and direction.
+    :param superRes:
+    :param spacing:
+    :return:
     """
 
     VTK_MAJOR_VERSION = str(vtk.vtkVersion().GetVTKVersion()).split(".")[0]
@@ -216,9 +233,9 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
         origin = image_sitk.GetOrigin()
         direction = image_sitk.GetDirection()
 
-        print direction
-        print origin
-        print spacing
+        print(direction)
+        print(origin)
+        print(spacing)
 
         # superRes slows down the script quite a bit
         if superRes:
@@ -241,7 +258,7 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
             else:
                 print("ERROR: Not sure how to handle input image direction")
                 sys.exit()
-        print origin
+        print(origin)
     else:
         if superRes:
             spacing = (spacing[0] / float(2), spacing[1] / float(2), spacing[2] / float(2))

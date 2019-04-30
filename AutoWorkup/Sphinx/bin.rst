@@ -1,14 +1,5 @@
-bin
-======
+AutoWorkup/bin
+================
 
-brains
-======
-
-common
---------------
-
-config
---------------
-
-metrics
---------------
+.. automodule:: BRAINSCutCMD
+   :members:

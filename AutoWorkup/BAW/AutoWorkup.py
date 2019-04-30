@@ -1,5 +1,14 @@
 #! /usr/bin/env python
+"""
+AutoWorkup.py
+===========================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
@@ -7,6 +16,7 @@ def load_modules(modules):
     module=() {eval `/opt/modules/Modules/$MODULE_VERSION/bin/modulecmd bash $* }`
 
     So _template_runnerning os.execvp() on it doesn't work without the correct file path to the module executable
+
     :param modules:
     :return: None
     """
@@ -18,6 +28,7 @@ def load_modules(modules):
 def setup_environment(argv):
     """
     This function...
+
     :param argv:
     :return: environment, experiment, pipeline, cluster
     """

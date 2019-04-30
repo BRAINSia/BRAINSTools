@@ -5,30 +5,30 @@ crossValidate.py
 This is used to cross validate Multi-Atlas Label Fusion using ANTs JointFusion tool
 
 Usage:
-  crossValidate.py -h | --help
-  crossValidate.py -t | --test
-  crossValidate.py --testSamplesize SIZE [--header] --sampleFile listFILE --workphase WORKPHASE [--wfrun PLGIN] --pe ENV  --ExperimentConfig FILE [--rewrite-datasinks]
+  - crossValidate.py -h | --help
+  - crossValidate.py -t | --test
+  - crossValidate.py --testSamplesize SIZE [--header] --sampleFile listFILE --workphase WORKPHASE [--wfrun PLGIN] --pe ENV  --ExperimentConfig FILE [--rewrite-datasinks]
 
 Options:
-  -h, --help    Show this help and exit
-  -t, --test    Run doctests
-  --testSamplesize=SIZE    a size of test sample. Should be less the the total size list in sample File
-  --sampleFile=listFILE        A data list including all the information.
-  --header                 Give this flag if CSV file has a header line
-  --pe=ENV                 The processing environment to use from configuration file
-  --wfrun=PLUGIN            The name of the workflow plugin option (default: 'local')
-  --ExperimentConfig=FILE   The configuration file
-  --workphase WORKPHASE The type of processing to be done [cross-validation]
-  --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
+  - -h, --help    Show this help and exit
+  - -t, --test    Run doctests
+  - --testSamplesize=SIZE    a size of test sample. Should be less the the total size list in sample File
+  - --sampleFile=listFILE        A data list including all the information.
+  - --header                 Give this flag if CSV file has a header line
+  - --pe=ENV                 The processing environment to use from configuration file
+  - --wfrun=PLUGIN            The name of the workflow plugin option (default: 'local')
+  - --ExperimentConfig=FILE   The configuration file
+  - --workphase WORKPHASE The type of processing to be done [cross-validation]
+  - --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
 
 
 PIPELINE
-        CSVreader() <--- FILE
-          -> createTests(iterables=[(sampleLists, [...]), (...)]  <--- SIZE
-          -> MapNode(workflow)
-             -> SelectTest/SampleT1s, SelectTest/SampleT2s, SelectTest/SampleLabels
-             -> JointFusion(), iterfield=[sample_list, test_list])
-             -> DataSink()
+    - CSVreader() <--- FILE
+    - -> createTests(iterables=[(sampleLists, [...]), (...)]  <--- SIZE
+    - -> MapNode(workflow)
+    - -> SelectTest/SampleT1s, SelectTest/SampleT2s, SelectTest/SampleLabels
+    - -> JointFusion(), iterfield=[sample_list, test_list])
+    - -> DataSink()
 """
 
 
@@ -47,21 +47,25 @@ from nipype.pipeline.engine import Workflow, Node, MapNode
 
 def subsample_crossValidationSet(length, test_size):
     """
+    This function...
+
     :param length:
     :param test_size:
-    :return: subsample_data_index
-    >>> print zip(*subsample_crossValidationSet(10, 2))  #doctest: +NORMALIZE_WHITESPACE
-    [([0, 1], [2, 3, 4, 5, 6, 7, 8, 9]),
-     ([2, 3], [0, 1, 4, 5, 6, 7, 8, 9]),
-     ([4, 5], [0, 1, 2, 3, 6, 7, 8, 9]),
-     ([6, 7], [0, 1, 2, 3, 4, 5, 8, 9]),
-     ([8, 9], [0, 1, 2, 3, 4, 5, 6, 7])]
-
-    >>> print zip(*subsample_crossValidationSet(9, 3))  #doctest: +NORMALIZE_WHITESPACE
-    [([0, 1, 2], [3, 4, 5, 6, 7, 8]),
-     ([3, 4, 5], [0, 1, 2, 6, 7, 8]),
-     ([6, 7, 8], [0, 1, 2, 3, 4, 5])]
+    :return:
     """
+#    >>> print zip(*subsample_crossValidationSet(10, 2))  #doctest: +NORMALIZE_WHITESPACE
+#        [([0, 1], [2, 3, 4, 5, 6, 7, 8, 9]),
+#         ([2, 3], [0, 1, 4, 5, 6, 7, 8, 9]),
+#         ([4, 5], [0, 1, 2, 3, 6, 7, 8, 9]),
+#         ([6, 7], [0, 1, 2, 3, 4, 5, 8, 9]),
+#         ([8, 9], [0, 1, 2, 3, 4, 5, 6, 7])]
+
+#    >>> print zip(*subsample_crossValidationSet(9, 3))  #doctest: +NORMALIZE_WHITESPACE
+#        [([0, 1, 2], [3, 4, 5, 6, 7, 8]),
+#         ([3, 4, 5], [0, 1, 2, 6, 7, 8]),
+#         ([6, 7, 8], [0, 1, 2, 3, 4, 5])]
+
+
     test_size = int(test_size)
     subsample_data_index = []
     base_train = list(range(test_size))
@@ -81,6 +85,8 @@ def subsample_crossValidationSet(length, test_size):
 
 def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test_size, hasHeader):
     """
+    This function...
+
     :param environment:
     :param experiment:
     :param pipeline:
@@ -88,7 +94,7 @@ def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test
     :param csv_file:
     :param test_size:
     :param hasHeader:
-    :return: None
+    :return:
     """
     from utilities.misc import add_dict
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -197,7 +203,9 @@ def writeCVSubsetFile(environment, experiment, pipeline, cluster, csv_file, test
 
 
 class CrossValidationJointFusionWorkflow(Workflow):
-    """ Nipype workflow for Multi-Label Atlas Fusion cross-validation experiment
+    """
+     Nipype workflow for Multi-Label Atlas Fusion cross-validation experiment
+
     :param Workflow:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -208,13 +216,14 @@ class CrossValidationJointFusionWorkflow(Workflow):
     def __init__(self, csv_file=None, size=0, hasHeader=False, name='CrossValidationJointFusionWorkflow', **kwargs):
         """
         This function...
+
         :param self:
-        :param csv_file:None
-        :param size:0
-        :param hasHeader:False
-        :param name:'CrossValidationJointFusionWorkflow'
+        :param csv_file:
+        :param size:
+        :param hasHeader:
+        :param name:
         :param **kwargs:
-        :return: None
+        :return:
         """
         super(CrossValidationJointFusionWorkflow, self).__init__(name=name, **kwargs)
         self.csv_file = File(value=os.path.abspath(csv_file), exists=True)
@@ -291,9 +300,10 @@ class CrossValidationJointFusionWorkflow(Workflow):
     def _connect_subworkflow(self, node):
         """
         This function...
+
         :param self:
         :param node:
-        :return: None
+        :return:
         """
         self.connect(createTests, 'trains', node, 'trainindex')
         self.connect(createTests, 'tests', node, 'testindex')
@@ -308,10 +318,11 @@ class FusionLabelWorkflow(Workflow):
     def __init__(self, name='FusionLabelWorkflow', **kwargs):
         """
         This function...
+
         :param self:
-        :param name: 'FusionLabelWorkflow'
-        :param **kwargs:
-        :return: None
+        :param name:
+        :param kwargs:
+        :return:
         """
         super(FusionLabelWorkflow, self).__init__(name=name, **kwargs)
         self.create()
@@ -320,10 +331,11 @@ class FusionLabelWorkflow(Workflow):
     def connect(self, *args, **kwargs):
         """
         This funciton...
+
         :param self:
-        :param *args:
-        :param **kwargs:
-        :return: None
+        :param args:
+        :param kwargs:
+        :return:
         """
         try:
             super(FusionLabelWorkflow, self).connect(*args, **kwargs)
@@ -336,8 +348,9 @@ class FusionLabelWorkflow(Workflow):
     def create(self):
         """
         This function...
+
         :param self:
-        :return: None
+        :return:
         """
         trainT1s = Node(interface=Select(), name='trainT1s')
         trainT2s = Node(interface=Select(), name='trainT2s')
@@ -370,12 +383,13 @@ class FusionLabelWorkflow(Workflow):
 def main(environment, experiment, pipeline, cluster, **kwargs):
     """
     This function...
+
     :param environment:
     :param experiment:
     :param pipeline:
     :param cluster:
-    :param **kwargs:
-    :return: None
+    :param kwargs:
+    :return:
     """
     from utilities.configFileParser import nipype_options
 

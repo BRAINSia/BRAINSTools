@@ -1,3 +1,13 @@
+"""
+script.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import preprocess
 import training
 import testing
@@ -21,6 +31,7 @@ nm_dir = "/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/20141116_Neuro
 def plot_feature_importances(list_of_importances, feature_names, out_file=None, title="Feature Importances"):
     """
     This function...
+
     :param list_of_importances:
     :param feature_names:
     :param out_file:
@@ -61,6 +72,7 @@ def plot_feature_importances(list_of_importances, feature_names, out_file=None, 
 def plot_all_feature_importances(all_importances, feature_names, out_file=None, title=None):
     """
     This function...
+
     :param all_importances:
     :param feature_names:
     :param out_file:
@@ -78,13 +90,14 @@ def plot_all_feature_importances(all_importances, feature_names, out_file=None, 
 def split_region_data(train_data, test_data, matter, rg_name, label, n_jobs=-1):
     """
     Splits the training and testing data and returns the region specific training and testing features plus targets
+
     :param train_data:
     :param test_data:
     :param matter:
     :param rg_name:
     :param label:
     :param n_jobs:
-    :return: train_feat, train_targets, test_feat, test_targets
+    :return:
     """
     print("Label Region: {0}".format(label))
     # Training
@@ -104,11 +117,12 @@ def train_classifier(train_features, train_targets, n_jobs=-1,
                      clf=RandomForestClassifier()):
     """
     This function...
+
     :param train_features:
     :param train_targets:
     :param n_jobs:
     :param clf:
-    :return: clf
+    :return:
     """
     clf.n_jobs = n_jobs
     clf.fit(train_features, train_targets)
@@ -118,10 +132,11 @@ def train_classifier(train_features, train_targets, n_jobs=-1,
 def test_classifier(clf, test_features, test_targets):
     """
     This function...
+
     :param clf:
     :param test_features:
     :param test_targets:
-    :return: score_roc
+    :return:
     """
     # Predictions
     probas = clf.predict_proba(test_features)
@@ -134,9 +149,10 @@ cache_dir = "/Shared/sinapse/CACHE/20160510_EdgeDetection"
 def runcrossval(idx_split, data_file):
     """
     Runs cross validation after the data splits
+
     :param idx_split:
     :param data_file:
-    :return: test_idx, classifiers
+    :return:
     """
     n_jobs = 8
     print("Training Classifiers")
@@ -181,8 +197,9 @@ partial_runcrossval = partial(runcrossval, data_file=hdf5_file)
 def make_empty_dictionaries(labels):
     """
     This function...
+
     :param labels:
-    :return: roc_scores, roc_scores_mean, roc_auc, importances
+    :return:
     """
     import copy
     roc_scores = dict()
@@ -219,11 +236,12 @@ def make_empty_dictionaries(labels):
 def get_data(data_file, nm_dir, overwrite=False, out_dir=None):
     """
     This function...
+
     :param data_file:
     :param nm_dir:
     :param overwrite:
     :param out_dir:
-    :return: data
+    :return:
     """
     # preprocessing
     if not os.path.isfile(data_file) or overwrite:

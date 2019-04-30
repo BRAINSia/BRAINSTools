@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 
+"""
+measureVolumes.py
+============================
+Description:
+    The purpose of this is to..
 
+Usage:
+
+"""
 
 
 from builtins import range
@@ -14,8 +22,9 @@ def MakeLabelDictionary(inputColorLookUpTableFilename):
     """
     Construct dictionary:
         label No.: label name
+
     :param inputColorLookUpTableFilename:
-    :return: labelDictionary
+    :return:
     """
     # inputColorLookUpTableFilename="/Shared/johnsonhj/HDNI/ReferenceData/20150709_HDAdultAtlas/BAWHDAdultAtlas_FreeSurferConventionColorLUT_20150709.txt"
     # import csv
@@ -49,10 +58,11 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
     Get label volumes using
     1. reference volume and
     2. labeldictionary
+
     :param labelVolume:
     :param RefVolume:
     :param labelDictionary:
-    :return: outputLabelVolumes
+    :return:
     """
     import SimpleITK as sitk
     import os
@@ -93,9 +103,11 @@ print(labelVolDict)
 
 def WriteDictionaryToCSV(inputList, outputFilename):
     """
+    This function...
+
     :param inputList:
     :param outputFilename:
-    :return:os.path.abspath(outputFilename)
+    :return:
     """
     import csv
     import os
@@ -120,9 +132,11 @@ WriteDictionaryToCSV(labelVolDict, "~/Desktop/test.csv")
 
 def WriteDictionaryToJson(inputList, outputFilename):
     """
+    This function..
+
     :param inputList:
     :param outputFilename:
-    :return: (outputFilename)
+    :return:
     """
     import json
     with open(outputFilename, 'w') as fp:
@@ -143,11 +157,13 @@ def VolumeMeasure(inputColorLookUpTableFilename,
                   inputReferenceFilename,
                   outputFileBasename):
     """
+    This function...
+
     :param inputColorLookUpTableFilename:
     :param labelFilename:
     :param inputReferenceFilename:
     :param outputFileBasename:
-    :return:(csvFilename, jsonFilename)
+    :return:
     """
     labelDict = MakeLabelDictionary(inputColorLookUpTableFilename)
     measurementsList = GetLabelVolumes(labelFilename, inputReferenceFilename, labelDict)

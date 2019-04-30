@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
 template.py
-=========
+================
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
@@ -45,6 +45,7 @@ from .baw_exp import OpenSubjectDatabase
 def get_processed_subjects(resultdir, input_subjects_list):
     """
     This function...
+
     :param resultdir:
     :param input_subjects_list:
     :return:
@@ -120,6 +121,7 @@ def get_processed_subjects(resultdir, input_subjects_list):
 def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
     """
     This function...
+
     :param input_subjects:
     :param cache:
     :param resultdir:
@@ -238,6 +240,7 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
 def xml_filename(subject):
     """
     This function...
+
     :param subject:
     :return:
     """
@@ -247,6 +250,7 @@ def xml_filename(subject):
 def getSessionsFromSubjectDictionary(subject_session_dictionary, subject):
     """
     This function...
+
     :param subject_session_dictionary:
     :param subject:
     :return:
@@ -264,6 +268,7 @@ def getSessionsFromSubjectDictionary(subject_session_dictionary, subject):
 def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     """
     This function...
+
     :param argv:
     :param environment:
     :param experiment:

@@ -1,7 +1,14 @@
 #!/usr/bin/env python
+"""
+WorkupT1T2TissueClassify.py
+==============================
+Description:
 
+Author:
 
+Usage:
 
+"""
 from builtins import zip
 
 import nipype.interfaces.io as nio  # Data i/o
@@ -30,9 +37,10 @@ from utilities.misc import *
 def getListIndexOrNoneIfOutOfRange(imageList, index):
     """
     This function...
+
     :param imageList:
     :param index:
-    :return: imageList[index] OR None
+    :return:
     """
     if index < len(imageList):
         return imageList[index]
@@ -46,8 +54,9 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
 def MakePosteriorListOfTuplesFunc(posteriorImages):
     """
     This function...
+
     :param posteriorImages:
-    :return: temp_dictionary
+    :return:
     """
     #from PipeLineFunctionHelpers import POSTERIORS
     posteriorImages.sort()
@@ -68,11 +77,12 @@ def MakePosteriorListOfTuplesFunc(posteriorImages):
 def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRegistrationMasking):
     """
     This function...
+
     :param WFname:
     :param master_config:
     :param InterpolationMode:
     :param UseRegistrationMasking:
-    :return: tissueClassifyWF
+    :return:
     """
     from nipype.interfaces import ants
 
@@ -251,8 +261,9 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode, UseRe
     def MakeInverseTransformFileName(TransformFileName):
         """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly
           in the list outputs
+
           :param Transform:
-          :return: [fixed_inverse_name]
+          :return:
           """
         fixed_inverse_name = TransformFileName.replace(".h5", "_Inverse.h5")
         return [fixed_inverse_name]

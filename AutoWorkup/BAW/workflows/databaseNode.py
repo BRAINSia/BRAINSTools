@@ -1,6 +1,13 @@
+"""
+databaseNode.py
+=========================
+Description:
 
+Author:
 
+Usage:
 
+"""
 import os.path
 import sqlite3
 
@@ -13,6 +20,7 @@ from nipype.interfaces.io import IOBase
 class SQLiteGrabberInputSpec(DynamicTraitedSpec, BaseInterfaceInputSpec):
     """
     This class represents a...
+
     :param DynamicTraitedSpec:
     :param BaseInterfaceInputSpec:
     """
@@ -30,6 +38,7 @@ class SQLiteGrabberInputSpec(DynamicTraitedSpec, BaseInterfaceInputSpec):
 class SQLiteGrabberOutputSpec(TraitedSpec):
     """
     This class represents a...
+
     :param TraitedSpec:
     """
     results = traits.List(traits.Tuple(), desc='Results of query')
@@ -64,6 +73,7 @@ class SQLiteGrabber(IOBase):
 
     def __init__(self, **inputs):
         """This function...
+
         :param **inpusts:
         """
         self._query = ''
@@ -116,7 +126,8 @@ class SQLiteGrabber(IOBase):
     def _gen_query(self):
         """
         This function...
-        :return: Query
+
+        :return:
         """
         # TODO: write SQL query to prevent injection attacks
         if self.inputs.distinct:
@@ -147,11 +158,12 @@ class SQLiteGrabber(IOBase):
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
     """
     This function does...
+
     :param ExperimentBaseDirectoryCache:
     :param single_subject:
     :param mountPrefix:
     :param subject_data_file:
-    :return: ExperimentDatabase
+    :return:
     """
     import os.path
     import SessionDB
@@ -177,12 +189,13 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 def getAllScans(cache, subject, prefix, dbfile, session):
     """
     This function...
+
     :param cache:
     :param subject:
     :param prefix:
     :param dbfile:
     :param session:
-    :return: None
+    :return:
     """
     pass
 
@@ -190,12 +203,13 @@ def getAllScans(cache, subject, prefix, dbfile, session):
 def MakeDatabaseNode(cache, dbfile, table_name='MasterDB', columns=['*'], constraints=[]):
     """
     This function...
+
     :param cache:
     :param dbfile:
-    :param table_name: 'MasterDB'
-    :param columns:['*']
-    :param constraints:[]
-    :return: node
+    :param table_name:
+    :param columns:
+    :param constraints:
+    :return:
     """
     import os.path
     import nipype.pipeline.engine as pe  # pypeline engine
@@ -211,8 +225,9 @@ def MakeDatabaseNode(cache, dbfile, table_name='MasterDB', columns=['*'], constr
 def session_constraint(session):
     """
     This function...
+
     :param session:
-    :return: [('session',session)]
+    :return:
     """
     return [('session', session)]
 
@@ -220,8 +235,9 @@ def session_constraint(session):
 def files_constraint(session, types):
     """
     This function...
+
     :param session:
     :param types:
-    :return: [('session', session),('type',types)]
+    :return:
     """
     return [('session', session), ('type', types)]

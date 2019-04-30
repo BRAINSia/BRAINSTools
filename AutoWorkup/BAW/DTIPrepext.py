@@ -1,3 +1,13 @@
+"""
+DTIPrepext.py
+===========================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import os
 
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, \
@@ -29,7 +39,7 @@ class DTIPrepext(DTIPrep):
     def _list_outputs(self):
         """
         This function...
-        :return: outputs
+        :return:
         """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         custom_implied_outputs_with_no_inputs = ['outputVolume',

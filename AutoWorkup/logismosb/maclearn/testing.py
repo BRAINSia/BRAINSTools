@@ -1,3 +1,13 @@
+"""
+testing.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import SimpleITK as sitk
 import os
 import numpy
@@ -6,11 +16,12 @@ import training
 def run_test(clf, sample_dict, label, out_file):
     """
     Test the classifier on the trainign data.
+
     :param clf:
     :param sample_dict:
     :param label:
     :param out_file:
-    :return: proba_file
+    :return:
     """
     # read in image data
     data = training.multimodalimagedata(sample_dict)
@@ -32,13 +43,14 @@ def run_test(clf, sample_dict, label, out_file):
 
 def predict(clf, data, in_image, out_file, index, neg_proba=False):
     """Make predictions and write predictions to an image file
+
     :param clf:
     :param data:
     :param in_image:
     :param out_file:
     :param index:
     :param neg_proba:
-    :return: out_file
+    :return:
     """
     # TODO: Add scoring to the predictions
     print("Making predictions")
@@ -80,6 +92,7 @@ def combinepredictions(predictions, in_image, out_file):
     """
     Takes in a list of the prediction images that are split by region
     and combines them to make one prediction image.
+
     :param predictions:
     :param in_image:
     :param out_file:

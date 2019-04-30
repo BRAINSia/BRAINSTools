@@ -1,3 +1,13 @@
+"""
+vesselness.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import numpy as np
 import SimpleITK as sitk
 import sys
@@ -6,9 +16,10 @@ import sys
 def divide_nonzero(array1, array2):
     """
     Divides two arrays. Returns zero when dividing by zero.
+
     :param array1:
     :param array2:
-    :return: output
+    :return:
     """
     nonzero_idx = array2 != 0
     output = np.zeros_like(array1)
@@ -19,9 +30,10 @@ def divide_nonzero(array1, array2):
 def create_image_like(data, image):
     """
     This function...
+
     :param data:
     :param image:
-    :return: new_image
+    :return:
     """
     new_image = sitk.GetImageFromArray(data)
     new_image.CopyInformation(image)
@@ -31,6 +43,7 @@ def create_image_like(data, image):
 def get_directional_images(gradient_image):
     """
     Warning: Directions are defined according to the voxel latice and not the RAS space.
+
     :param gradient_image:
     :return:
     """
@@ -44,6 +57,7 @@ def get_directional_images(gradient_image):
 def compute_directional_gradient_images(image, sigma):
     """
     This function...
+
     :param image:
     :param sigma:
     :return:
@@ -55,6 +69,7 @@ def compute_directional_gradient_images(image, sigma):
 def compute_gradient(image, sigma=0):
     """
     This function...
+
     :param image:
     :param sigma:
     :return:
@@ -97,6 +112,7 @@ def compute_hessian_matrix(image, sigma):
 def separate_eigen_values(eigen_values):
     """
     This function...
+
     :param eigen_values:
     :return:
     """
@@ -106,6 +122,7 @@ def separate_eigen_values(eigen_values):
 def compute_eigen_values_from_hessian(hessian):
     """
     This function...
+
     :param hessian:
     :return:
     """
@@ -126,6 +143,7 @@ def compute_eigen_values_from_hessian(hessian):
 def sortbyabs(a, axis=0):
     """Sort array along a given axis by the absolute value
     modified from: http://stackoverflow.com/a/11253931/4067734
+
     :param a:
     :param axis:
     :return:
@@ -138,9 +156,11 @@ def sortbyabs(a, axis=0):
 
 def compute_measures(eigen1, eigen2, eigen3):
     """
+    This function...
     RA - plate-like structures
     RB - blobl-like structures
     S - background
+
     :param eigen1:
     :param eigen2:
     :param eigen3:
@@ -155,6 +175,7 @@ def compute_measures(eigen1, eigen2, eigen3):
 def compute_plate_like_factor(Ra, alpha):
     """
     This function...
+
     :param Ra:
     :param alpha:
     :return:
@@ -165,6 +186,7 @@ def compute_plate_like_factor(Ra, alpha):
 def compute_blob_like_factor(Rb, beta):
     """
     This function...
+
     :param Rb:
     :param beta:
     :return:
@@ -175,6 +197,7 @@ def compute_blob_like_factor(Rb, beta):
 def compute_background_factor(S, c):
     """
     This function...
+
     :param S:
     :param c:
     :return:
@@ -185,6 +208,7 @@ def compute_background_factor(S, c):
 def compute_vesselness(eigen1, eigen2, eigen3, alpha, beta, c, black_white):
     """
     This function...
+
     :param eigen1:
     :param eigen2:
     :param eigen3:
@@ -204,6 +228,7 @@ def compute_vesselness(eigen1, eigen2, eigen3, alpha, beta, c, black_white):
 def compute_vesselness_image(image, sigma=0, alpha=0.5, beta=0.5, frangic=500, black_white=False):
     """
     This function...
+
     :param image:
     :param sigma:
     :param alpha:
@@ -221,6 +246,7 @@ def compute_vesselness_image(image, sigma=0, alpha=0.5, beta=0.5, frangic=500, b
 def compute_eigen_values(image, sigma):
     """
     This function...
+
     :param image:
     :param sigma:
     :return:
@@ -233,6 +259,7 @@ def compute_eigen_values(image, sigma):
 def compute_absolute_eigen_values(image, sigma):
     """
     This function...
+
     :param image:
     :param sigma:
     :return:
@@ -241,8 +268,10 @@ def compute_absolute_eigen_values(image, sigma):
 
 
 def check_eigen_values(eigen1, eigen2, eigen3):
+#Check that |eigen1| <= |eigen2| <= |eigen3|
     """
-    Check that |eigen1| <= |eigen2| <= |eigen3|
+    This function...
+
     :param eigen1:
     :param eigen2:
     :param eigen3:
@@ -258,6 +287,7 @@ def filter_out_background(voxel_data, black_white, eigen2, eigen3):
     """
     Set black_white to true if vessels are darker than the background and to false if
     vessels are brighter than the background.
+
     :param voxel_data:
     :param black_white:
     :param eigen2:
@@ -277,6 +307,7 @@ def filter_out_background(voxel_data, black_white, eigen2, eigen3):
 def compute_vesselness_image_with_smoothing(image, sigmas, alpha=0.5, beta=0.5, frangic=500, black_white=True):
     """
     This function...
+
     :param image:
     :param sigmas:
     :param alpha:

@@ -1,3 +1,13 @@
+"""
+data_collection.py
+===================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from preprocess import save_data_frame
 import os
 import pickle
@@ -8,8 +18,9 @@ from training import linear_array_from_image_file, image_data
 def pickle_load(pickled_file):
     """
     This function...
+
     :param pickled_file:
-    :return: output
+    :return:
     """
     _file = open(pickled_file, "rb")
     output = pickle.load(_file)
@@ -20,6 +31,7 @@ def pickle_load(pickled_file):
 def get_subject_id_from_t1(t1_file):
     """
     This function...
+
     :param t1_file:
     :return:
     """
@@ -29,6 +41,7 @@ def get_subject_id_from_t1(t1_file):
 def collect_training_data(training_files):
     """
     This function...
+
     :param training_files:
     :return:
     """

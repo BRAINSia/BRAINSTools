@@ -42,8 +42,9 @@ from . import misc
 def str2bool(v):
     """
     This Function takes in...
+
     :param v:
-    :return: None
+    :return:
     """
     if str(v).lower() in ("yes", "true", "t", "1"):
         return True
@@ -55,10 +56,11 @@ def str2bool(v):
 def getASCIIFromParser(parser, region, tag):
     """
     This Function takes in...
+
     :param parser:
     :param region:
-    param tag:
-    :return: asciiText
+    :param tag:
+    :return:
     """
     unicodeText = parser.get(region, tag)
     asciiText = unicodeText
@@ -73,8 +75,8 @@ def parseEnvironment(parser, environment):
         This Function takes in...
         :param parser:
         :param environment:
-        :return: restval, restval_cluster
 
+        :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     retval = OrderedDict()
@@ -114,11 +116,12 @@ def parseEnvironment(parser, environment):
 def create_experiment_dir(dirname, name, suffix, verify=False):
     """ Construct directories given the base directory, the experiment name, and the suffix ['CACHE', 'Results']
     This Function takes in...
+
     :param dirname:
     :param name:
     :param suffix:
     :param verify:
-    :return: fullpath
+    :return:
     """
     basename = name + '_' + suffix
     fullpath = os.path.join(dirname, basename)
@@ -139,9 +142,10 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
 def parseExperiment(parser, workflow_phase):
     """ Parse the experiment section and return a dictionary
     This Function takes in...
+
     :param parser:
     :param workflow_phase:
-    :return: retval
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     retval = OrderedDict()
@@ -225,8 +229,9 @@ def parseExperiment(parser, workflow_phase):
 def parseNIPYPE(parser):
     """ Parse the nipype section and return a dictionary
     This Function takes in...
+
     :param parser:
-    :return: retval
+    :return:
     """
 
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -256,10 +261,12 @@ def parseNIPYPE(parser):
 def parseFile(configFile, env, workphase):
     """
     This Function takes in...
+
     :param configFile:
     :param env:
     :param workphase:
-    :return: environment, experiment, pipeline, cluster
+    :return:
+
     """
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
@@ -277,9 +284,10 @@ def parseFile(configFile, env, workphase):
 def resolveDataSinkOption(args, pipeline):
     """
     This Function takes in...
+
     :param args:
     :param pipeline:
-    :return: boolean
+    :return:
     """
     if args["--rewrite-datasinks"] or pipeline['ds_overwrite']:  # GLOBAL_DATA_SINK_REWRITE
         return True
@@ -290,15 +298,17 @@ class _create_DS_runner(object):
     """
     This class represents an...
     :param object:
-    :return: None
+
+    :return:
     """
     def run(self, graph, **kwargs):
         """
         This Function takes in...
+
         :param self:
         :param graph:
         :param **kwargs:
-        :return: None
+        :return:
         """
         for node in graph.nodes():
             if '_ds' in node.name.lower():
@@ -316,8 +326,9 @@ _WFRUN_VALID_TYPES = ['SGE',
 def get_cpus(option):
     """
     This Function takes in...
+
     :param option:
-    :return: int(old_div(total_cpus,threads))
+    :return:
     """
     assert option in _WFRUN_VALID_TYPES, "Unknown wfrun option"
     from multiprocessing import cpu_count
@@ -337,10 +348,11 @@ def get_cpus(option):
 def _nipype_plugin_config(wfrun, cluster, template=''):
     """
     This Function takes in...
+
     :param wfrun:
     :param cluster:
     :param template: empty string
-    :return: plugin_name, plugin_args
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(wfrun)
@@ -370,21 +382,11 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
 def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False, crashdumpTempDirName=None):
     """
     This Function takes in...
-    :param stop_on_first_crash: initially False
-    :param stop_on_first_rerun: initially False
-    :param crashdumpTempDirName: initially False
-    :return: {
-        'stop_on_first_crash': stop_crash,
-        'stop_on_first_rerun': stop_rerun,
-        'hash_method': 'timestamp',  # default
-        'single_thread_matlab': 'true',  # default # Multi-core 2011a  multi-core for matrix multiplication.
-        # default # relative paths should be on, require hash update when changed.
-        'use_relative_paths': 'false',
-        'remove_node_directories': 'false',  # default
-        'remove_unnecessary_outputs': 'true',  # remove any interface outputs not needed by the workflow
-        'local_hash_check': 'true',  # default
-        'job_finished_timeout': 25,
-        'crashdump_dir': crashdumpTempDirName}
+
+    :param stop_on_first_crash:
+    :param stop_on_first_rerun:
+    :param crashdumpTempDirName:
+    :return:
     """
     stop_crash = 'false'
     stop_rerun = 'false'
@@ -416,11 +418,9 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
 def _nipype_logging_config(cachedir):
     """
     This Function takes in...
+
     :param wfrun: cachedir
-    :return: {'workflow_level': 'INFO',
-            'filemanip_level': 'INFO',
-            'interface_level': 'INFO',
-            'log_directory': cachedir}
+    :return:
     """
 
     return {'workflow_level': 'INFO',  # possible options:
@@ -443,7 +443,7 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     :param cluster:
     :param experiment:
     :param environment:
-    :return: retval
+    :return:
 
     """
     retval = copy.deepcopy(pipeline)

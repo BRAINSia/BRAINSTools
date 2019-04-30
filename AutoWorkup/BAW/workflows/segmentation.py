@@ -18,7 +18,18 @@
 # --config.set('logging', 'workflow_level', 'DEBUG')
 # --config.set('logging', 'interface_level', 'DEBUG')
 # --config.set('execution','remove_unnecessary_outputs','true')
+"""
+segmentation.py
+============================
+Description:
+    The purpose of this is to..
 
+Author:
+    David Welch
+    
+Usage:
+
+"""
 
 
 
@@ -38,13 +49,14 @@ from utilities.misc import CommonANTsRegistrationSettings
 def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pipeline_name=''):
     """
     This function...
+
     :param projectid:
     :param subjectid:
     :param sessionid:
     :param master_config:
-    :param onlyT1: True
-    :param pipeline_name:''
-    :return: baw200
+    :param onlyT1:
+    :param pipeline_name:
+    :return:
     """
     import os.path
     import nipype.pipeline.engine as pe

@@ -1,3 +1,13 @@
+"""
+workflow_reconall.py
+==========================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.io import DataGrabber, FreeSurferSource
@@ -9,6 +19,7 @@ from autorecon3 import create_AutoRecon3
 def create_reconall(config):
     """
     This function...
+
     :param config:
     :return:
     """

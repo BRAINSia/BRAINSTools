@@ -1,4 +1,13 @@
+"""
+CreateT1OnlyTrackOnFreeSufereScripts.py
+========================================
+Description:
 
+Author:
+    Hans J. Johnson
+Usage:
+
+"""
 
 
 __author__ = 'johnsonhj'
@@ -25,6 +34,7 @@ subjectDatabaseFile = os.path.join(scripts_dir, 'subject_inputs.db')
 def mkfsscript(session, outscript, t1list, t2list, is3T):
     """
     This function...
+
     :param session:
     :param outscript:
     :param t1list:
@@ -112,6 +122,7 @@ exit $status
 def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
     """
     This function...
+
     :param base_tps_file:
     :param found_sessions:
     :param subject:
@@ -171,6 +182,7 @@ def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
 def mktemplatescript(templateID, sessionList, outscript, dependantJobNames):
     """
     This function...
+
     :param templateID:
     :param sessionList:
     :param outscript:
@@ -226,6 +238,7 @@ exit $recon_long_stat
 def mklongscript(templateID, session, outscript, dependantJobNames, mode, is3T):
     """
     This function...
+
     :param templateID:
     :param session:
     :param outscript:
@@ -321,6 +334,7 @@ else:
 def GetBaseSize(filename):
     """
     This function...
+
     :param filename:
     :return: base_size
     """
@@ -338,6 +352,7 @@ def GetBaseSize(filename):
 def find_mgz(inlist):
     """
     This function...
+
     :param inlist:
     :return: outlist
     """

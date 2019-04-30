@@ -1,18 +1,28 @@
-## \author Hans J. Johnson
-## These are nodes used to fix-up label maps by merging information from
-## various different sources.
-##
+
+"""
+FixLabelMapsTools.py
+========================
+Description:
+    These are nodes used to fix-up label maps by merging information from various different sources.
+
+Author:
+    Hans J. Johnson
+    
+Usage:
+
+"""
 
 def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOfTuples, LeftHemisphereFN, outFN, OUT_DICT):
     """
     This funciton...
+
     :param fusionFN:
     :param FixedHeadFN:
     :param posteriorListOfTuples:
     :param LeftHemisphereFN:
     :param outFN:
     :param OUT_DICT:
-    :return: fixedFusionLabelFN
+    :return:
     """
     import SimpleITK as sitk
     import os
@@ -22,10 +32,11 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
     def ForceMaskInsert(inlabels, newmask, newmaskvalue):
         """
         This function...
+
         :param inlabels:
         :param newmask:
         :param newmaskvalue:
-        :return: sitk.Cast(outlabels,sitk.sitkUInt32)
+        :return:
         """
         inlabels = sitk.Cast(inlabels, sitk.sitkUInt32)
         newmask = sitk.Cast((newmask > 0), sitk.sitkUInt32)
@@ -37,9 +48,10 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
     def GetLargestLabel(inputMask, UseErosionCleaning):
         """
         This function...
+
         :param inputMask:
         :param UseErosionCleaning:
-        :return: (largestMask*dilateMask>0)
+        :return:
         """
         LargestComponentCode = 1
         if UseErosionCleaning:
@@ -59,10 +71,11 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
     def RecodeNonLargest(outlabels, keepCode, UNKNOWN_LABEL_CODE):
         """
         This function...
+
         :param outlabels:
         :param keepCode:
         :param UNKNOWN_LABEL_CODE:
-        :return: outlabels
+        :return:
         """
         orig_mask = (outlabels == keepCode)
         connected_mask = GetLargestLabel(orig_mask, False)
@@ -75,8 +88,9 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
         """This function will find the largest integer value in the labelmap, and
         cast the image to the smallest possible integer size so that no loss of data
         results.
+
         :param outlabels:
-        :return: outlabels
+        :return:
         """
 
         measureFilt = sitk.StatisticsImageFilter()
@@ -171,10 +185,11 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN, FixedHeadFN, posteriorListOf
 def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
     """
     This funciton...
+
     :param InputFileName:
     :param OutputFileName:
     :param RECODE_TABLE:
-    :return: recodedFN
+    :return:
     """
     import SimpleITK as sitk
     import os
@@ -183,8 +198,9 @@ def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
         """This function will find the largest integer value in the labelmap, and
         cast the image to the smallest possible integer size so that no loss of data
         results.
+
         :param outlabels:
-        :return: outlabels
+        :return:
         """
         measureFilt = sitk.StatisticsImageFilter()
         measureFilt.Execute(outlabels)

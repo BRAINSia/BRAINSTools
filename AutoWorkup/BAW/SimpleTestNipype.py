@@ -1,3 +1,13 @@
+"""
+SimpleTestNipype.py
+=======================
+Description:
+
+Author:
+    Hans J. Johnsons
+Usage:
+
+"""
 
 
 __author__ = 'johnsonhj'

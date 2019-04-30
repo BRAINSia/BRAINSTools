@@ -1,3 +1,13 @@
+"""
+freesurfer_utils.py
+=====================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from nipype.interfaces.base import BaseInterface, BaseInterfaceInputSpec, traits, TraitedSpec
 from nipype.interfaces.freesurfer.base import FSCommand, FSTraitedSpec
 import SimpleITK as sitk
@@ -8,6 +18,7 @@ import os
 
 def create_ones_image(in_volume, out_file, value=1):
     """Creates a volume filled with a scalar (1 by default)
+
     :param in_volume:
     :param out_file:
     :param value:
@@ -27,6 +38,7 @@ def recode_labelmap(in_file, out_file, recode_file):
     """This function has been adapted from BRAINSTools and serves
     as a means to recode a label map based upon an input csv
     file.
+
     :param in_file:
     :param out_file:
     :param recode_file:
@@ -96,6 +108,7 @@ def recode_labelmap(in_file, out_file, recode_file):
 def multilabel_dilation(in_file, out_file, radius=1, kernel=None):
     """
     This function...
+
     :param in_file:
     :param out_file:
     :param radius:
@@ -117,6 +130,7 @@ def multilabel_dilation(in_file, out_file, radius=1, kernel=None):
 def create_label_watershed(labels_image, markWatershedLine=False):
     """
     This function..
+
     :param labels_image:
     :param markWatershedLine:
     :return:
@@ -131,25 +145,35 @@ def create_label_watershed(labels_image, markWatershedLine=False):
 
 
 class MultiLabelDilationInputSpec(BaseInterfaceInputSpec):
-    """This class represents a..."""
+    """This class represents a...
+
+    :param BaseInterfaceInputSpec:
+    """
     in_file = traits.File(exists=True, mandatory=True)
     out_file = traits.File(mandatory=True)
     radius = traits.Int(1, use_default=True)
 
 
 class MultiLabelDilationOutputSpec(TraitedSpec):
-    """This class represents a..."""
+    """This class represents a...
+
+    :param TraitedSpec:
+    """
     out_file = traits.File()
 
 
 class MultiLabelDilation(BaseInterface):
-    """This class represents a..."""
+    """This class represents a...
+
+    :param BaseInterface:
+    """
     input_spec = MultiLabelDilationInputSpec
     output_spec = MultiLabelDilationOutputSpec
 
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
         :return:
         """
@@ -159,6 +183,7 @@ class MultiLabelDilation(BaseInterface):
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self._outputs().get()
@@ -168,6 +193,7 @@ class MultiLabelDilation(BaseInterface):
 
 def create_image_like(array, image):
     """Takes an array and creates it into an image like the one given
+
     :param array:
     :param image:
     :return:
@@ -186,6 +212,7 @@ def create_image_like(array, image):
 
 def split_labels(labels_file, lut_file, out_file, left_label=1, right_label=2):
     """create a a hemisphere label map
+
     :param labels_file:
     :param lut_file:
     :param out_file:
@@ -228,6 +255,7 @@ def split_labels(labels_file, lut_file, out_file, left_label=1, right_label=2):
 def apply_label_split(image_file, hemi_file, hemi, out_file, left_label=1, right_label=2):
     """
     This function...
+
     :param image_file:
     :param hemi_file:
     :param hemi:
@@ -253,7 +281,10 @@ def apply_label_split(image_file, hemi_file, hemi, out_file, left_label=1, right
 
 
 class SplitLabelsInputSpec(BaseInterfaceInputSpec):
-    """This class represents a..."""
+    """This class represents a...
+
+    :param BaseInterfaceInputSpec:
+    """
     in_file = traits.File(exists=True, mandatory=True)
     labels_file = traits.File(exists=True, mandatory=True)
     lookup_table = traits.File(exists=True, mandatory=True)
@@ -262,18 +293,25 @@ class SplitLabelsInputSpec(BaseInterfaceInputSpec):
 
 
 class SplitLabelsOutputSpec(TraitedSpec):
-     """This class represents a..."""
-    out_file = traits.File(exists=True)
+     """This class represents a...
+
+     :param TraitedSpec:
+     """
+     out_file = traits.File(exists=True)
 
 
 class SplitLabels(BaseInterface):
-    """This class represents a..."""
+    """This class represents a...
+
+    :param BaseInterface:
+    """
     input_spec = SplitLabelsInputSpec
     output_spec = SplitLabelsOutputSpec
 
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
         :return:
         """
@@ -285,6 +323,7 @@ class SplitLabels(BaseInterface):
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self._outputs().get()
@@ -293,7 +332,10 @@ class SplitLabels(BaseInterface):
 
 
 class SurfaceMaskInputSpec(FSTraitedSpec):
-    """This class represents a..."""
+    """This class represents a...
+
+    :param FSTraitedSpec:
+    """
     in_volume = traits.File(argstr="%s", position=-3, exist=True,
                             desc="Input volume to which mask is applied.")
     in_surface = traits.File(argstr="%s", position=-2, exist=True,
@@ -303,12 +345,17 @@ class SurfaceMaskInputSpec(FSTraitedSpec):
 
 
 class SurfaceMaskOutputSpec(TraitedSpec):
-     """This class represents a..."""
-    out_file = traits.File(desc="Output masked volume.")
+     """This class represents a...
+
+     :param TraitedSpec:
+     """
+     out_file = traits.File(desc="Output masked volume.")
 
 
 class SurfaceMask(FSCommand):
-    """Purpose: Produce a new volume where all pixels outside the surface are set to zero.
+    """
+    Produce a new volume where all pixels outside the surface are set to zero.
+    :param FSCommand:
     """
 
     _cmd = 'mri_surfacemask'
@@ -318,6 +365,7 @@ class SurfaceMask(FSCommand):
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self._outputs().get()

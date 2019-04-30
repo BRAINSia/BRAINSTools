@@ -1,11 +1,11 @@
 """
 BRAINSTalairachext.py
-======
+========================
+Description:
+-This script creates a landmarks fcsv file (that includes AC, PC, SLA and IRP points) to be passed to the input of BRAINSTalairach.
+-This scripts gets an input (T1/T2) volume and a label map image to find coordinates of SLA and IRP points. These two points are used by BRAINSTalairach to find a box around "cerebrum" part of the human brain.
+-Also, this script uses the output landmarks file of BCD to find the coordinates of AC and PC points.
 
-This script creates a landmarks fcsv file (that includes AC, PC, SLA and IRP points) to be passed to the input of BRAINSTalairach.
-
-This scripts gets an input (T1/T2) volume and a label map image to find coordinates of SLA and IRP points. These two points are used by BRAINSTalairach to find a box around "cerebrum" part of the human brain.
-Also, this script uses the output landmarks file of BCD to find the coordinates of AC and PC points.
 
 USAGE:
 
@@ -17,19 +17,20 @@ USAGE:
 """
 
 
-import csv
-import getopt
-import os.path
-import sys
+#import csv
+#import getopt
+#import os.path
+#import sys
 
-import SimpleITK as sitk
+#import SimpleITK as sitk
 
-print((sitk.Version()))
+#print((sitk.Version()))
 
 
 def csv_file_writer(filename, data):
     """
     This function..
+
     :param filename:
     :param data:
     :return: None
@@ -53,6 +54,7 @@ def csv_file_writer(filename, data):
 def csv_file_reader(filename, dataList):
     """
     This function...
+
     :param filename:
     :param dataList:
     :return: None

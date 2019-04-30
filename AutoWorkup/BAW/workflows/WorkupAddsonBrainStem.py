@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+"""
+WorkupAddsonBrainStem.py
+=========================
+Description:
 
+Author:
+
+Usage:
+    python WorkupAddsonBrainStem.py --landmarkFilename --brainStemFilename --tissueLabelFilename
+"""
 
 usage = """
    Usage::
@@ -19,11 +28,12 @@ def brainStem(tissueLabelFilename,
               ouputTissuelLabelFilename):
     """
     This function...
+
     :param tissueLabelFilename:
     :param landmarkFilename:
     :param brainStemFilename:
     :param outputTissueLabelFilename:
-    :return: full_output_path
+    :return:
     """
     import os
     import SimpleITK as sitk
@@ -33,13 +43,14 @@ def brainStem(tissueLabelFilename,
                                outputImageFilename):
         """
         This function...
+
         :param inputBrainLabelFilename:
         :param physBB1:
         :param physBB2:
         :param thresholdUpper:
         :param thresholdLower:
         :param outputImageFilename:
-        :return: os.path.abspath(outputImageFilename)
+        :return:
         """
         brainLbl = sitk.ReadImage(inputBrainLabelFilename)
 
@@ -164,10 +175,11 @@ def brainStem(tissueLabelFilename,
 def CreateBrainstemWorkflow(WFname, CLUSTER_QUEUE, outputFilename):
     """
     this function...
+
     :param WFname:
     :param CLUSTER_QUEUE:
     :param outputFilename:
-    :return: brainstemWF
+    :return:
     """
     brainstemWF = pe.Workflow(name=WFname)
 

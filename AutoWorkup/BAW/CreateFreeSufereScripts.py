@@ -1,4 +1,14 @@
+"""
+CreateFreeSufereScripts.py
+===========================
+Description:
 
+Author:
+    Hans J. Johnson
+
+Usage:
+
+"""
 
 
 __author__ = 'johnsonhj'
@@ -173,6 +183,7 @@ def mkfsscript(session, outscript, t1list, t2list, is3T, useT2):
     ## TODO:  Work on staging files in/out
     """
     This function...
+
     :param session:
     :param outscript:
     :param t1list:
@@ -261,6 +272,7 @@ exit $status
 def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
     """
     This function...
+
     :param base_tps_file:
     :param found_sessions:
     :param subject:
@@ -320,6 +332,7 @@ def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
 def mktemplatescript(templateID, sessionList, outscript, dependantJobNames):
     """
     This function..
+
     :param templateID:
     :param sessionList:
     :param outscript:
@@ -375,6 +388,7 @@ exit $recon_long_stat
 def mklongscript(templateID, session, outscript, dependantJobNames, mode, is3T, useT2):
     """
     This function..
+
     :param templateID:
     :param session:
     :param outscript:
@@ -475,6 +489,7 @@ else:
 def GetBaseSize(filename):
     """
     This function...
+
     :param filename:
     :return: base_size
     """
@@ -493,6 +508,7 @@ def GetBaseSize(filename):
 
 def getInputFileName(filename):
     """ Does conversion to nifti if necessary, because NRRD files are not supported by FreeSurfer
+
     :param filename:
     :return: outfn
     """
@@ -508,6 +524,7 @@ def getInputFileName(filename):
 def find_mgz(inlist_withNrrd):
     """
     This function...
+
     :param inlist_withNrrd:
     :return: outlist
     """
@@ -542,6 +559,7 @@ def find_mgz(inlist_withNrrd):
 def GetMissingFilesList(subjects_dir, session_name, required_files_list):
     """
     This function...
+
     :param subjects_dir:
     :param session_name:
     :param required_files_list:

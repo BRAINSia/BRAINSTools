@@ -2,7 +2,18 @@
 ##
 ## This workflow gets the output DWI scan of CompressSensing and runs ukfTracts
 ##
+"""
+TractogrpahyWorkflow.py
+============================
+Description:
+    The purpose of this is to...
 
+Author:
+    Ali Ghayoor
+    
+Usage:
+
+"""
 import os
 from functools import reduce
 
@@ -20,15 +31,17 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 def CreateTractographyWorkflow(WFname):
     """
     This Function takes in...
+
     :param WFname:
-    :return: TractWF
+    :return:
     """
     ###### UTILITY FUNCTIONS #######
     def computeNumberOfSeedsPerVoxel(inputVolume):
         """
         This Function takes in...
+
         :param inputVolume:
-        :return: int(seedsPerVoxel)
+        :return:
         """
         import operator
         import SimpleITK as sitk

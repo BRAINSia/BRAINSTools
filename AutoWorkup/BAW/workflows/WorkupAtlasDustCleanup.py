@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+"""
+WorkupAtlasDustCleanup.py
+===========================
+Description:
+
+Author:
+
+Usage:
+
+"""
+
 
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.utility import Function, IdentityInterface
@@ -9,6 +20,7 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
                               inFN2=None, includeList=None, excludeList=None):
     """
     This function...
+
     :param inFN1:
     :param inAtlas:
     :param outAtlast:
@@ -16,10 +28,10 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
     :param useFullyConnected:
     :param forceLabelChange:
     :param noDilation:
-    :param inFN2: None
-    :param includeList: None
-    :param excludeList: None
-    :return: os.path.abspath(outAtlas)
+    :param inFN2:
+    :param includeList:
+    :param excludeList:
+    :return:
     """
     arguments = {'--inputT1Path': inFN1,
                  '--inputT2Path': inFN2,
@@ -44,10 +56,11 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
 def CreateDustCleanupWorkflow(workflowFileName, onlyT1, master_config):
     """
     This function...
+
     :param workflowFileName:
     :param onlyT1:
     :param master_config:
-    :return: dustCleanupWF
+    :return:
     """
     #if onlyT1:
     #    n_modality = 1

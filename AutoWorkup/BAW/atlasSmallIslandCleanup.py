@@ -1,4 +1,12 @@
 """
+atlasSmallIslandCleanup.py
+============================
+Description:
+
+Author:
+
+Usage:
+
 usage: atlasSmallIslandCleanup.py --inputAtlasPath=<argument> --outputAtlasPath=<argument> --inputT1Path=<argument> [--inputT2Path=<argument>] [--includeLabelsList=<argument> | --excludeLabelsList=<argument>] --maximumIslandVoxelCount=<argument> [--useFullyConnectedInConnectedComponentFilter] [--forceSuspiciousLabelChange] [--noDilation]
 atlasSmallIslandCleanup.py -h | --help
 """

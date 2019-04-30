@@ -1,4 +1,13 @@
-""" By using
+"""
+configure_FS.py
+============================
+Description:
+    The purpose of this is to...
+Author:
+
+Usage:
+
+By using
          execfile('path/to/configure_FS', OrderedDict(env={os.environ-like dictionary})
     you will set the FreeSurfer environment driven by the configuration file.
 """

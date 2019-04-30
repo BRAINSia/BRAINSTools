@@ -1,4 +1,12 @@
+"""
+package_check.py
+============================
+Description:
+    The purpose of this is to..
 
+Usage:
+
+"""
 
 try:
     from nipype.utils.misc import package_check
@@ -14,8 +22,10 @@ except ImportError:
 
 def verify_packages(application='AutoWorkup'):
     """
-    :param application: 'AutoWorkup'
-    :return: None
+    This function...
+
+    :param application:
+    :return:
     """
     package_version = [
         ('nipype', '0.9'),

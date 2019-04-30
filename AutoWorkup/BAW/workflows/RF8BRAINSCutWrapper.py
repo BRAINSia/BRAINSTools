@@ -2,6 +2,8 @@
 # emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
 # vi: set ft=python sts=4 ts=4 sw=4 et:
 """
+RF8BRAINSCutWrapper.py
+=========================
 Date:          2012-09-05
 Author:        hans-johnson@uiowa.edu
 Purpose:       Wrap a convenience function for the BRAINSCut program in Nipype
@@ -22,6 +24,7 @@ from nipype.interfaces.base import (File, TraitedSpec, Interface, CommandLineInp
 class RF8BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
     """
     This class represents a...
+
     :param CommandLineInputSpec:
     """
     ### subject specific
@@ -99,6 +102,7 @@ class RF8BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
 class RF8BRAINSCutWrapperCLOutputSpec(TraitedSpec):
     """
     This class represents a...
+
     :param TraitedSpec:
     """
     xmlFilename = File(desc="Net configuration xml file", exists=True, mandatory=True)
@@ -127,7 +131,8 @@ class RF8BRAINSCutWrapper(CommandLine):
     def _list_outputs(self):
         """
         This function...
-        :return: self.output_spec().get()
+
+        :return:
         """
         outputs = self.output_spec().get()
         return self._outputs_from_inputs(outputs)
@@ -135,8 +140,9 @@ class RF8BRAINSCutWrapper(CommandLine):
     def _outputs_from_inputs(self, outputs):
         """
         This function...
+
         :param outputs:
-        :return: outputs
+        :return:
         """
         for name in list(outputs.keys()):
             coresponding_input = getattr(self.inputs, name)

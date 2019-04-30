@@ -1,15 +1,26 @@
+"""
+workflows.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from nipype import Workflow, IdentityInterface, Node, Function
 from nipype_interfaces import PredictEdgeProbability, CollectFeatureFiles, CreateReferenceImage, LOGISMOSBPreprocessing
 from nipype.interfaces.semtools import BRAINSResample
 from nipype.interfaces.freesurfer import MRIsConvert
-from ..workflow import LOGISMOSB, read_json_config
-from ..utils.mesh2mask import Mesh2Mask
+#from ..workflow import LOGISMOSB, read_json_config
+#from ..utils.mesh2mask import Mesh2Mask
 import os
 
 
 def read_machine_learning_config():
     """
     This function...
+
     :return:
     """
     return read_json_config(os.path.join("maclearn", "logismosb_maclearn_config.json"))
@@ -18,6 +29,7 @@ def read_machine_learning_config():
 def create_machine_learning_workflow(name="CreateEdgeProbabilityMap", resample=True, plugin_args=None):
     """
     This function...
+
     :param name:
     :param resample:
     :param plugin_args:
@@ -60,6 +72,7 @@ def create_machine_learning_workflow(name="CreateEdgeProbabilityMap", resample=T
 def set_inputs(node, input_dict):
     """
     This function...
+
     :param node:
     :param input_dict:
     :return:
@@ -72,6 +85,7 @@ def set_inputs(node, input_dict):
 def create_logismosb_node(name="LOGISMOSB"):
     """
     This function...
+
     :param name:
     :return:
     """
@@ -83,6 +97,7 @@ def create_logismosb_node(name="LOGISMOSB"):
 def create_workflow_to_resample_baw_files(name="ResampleBAWOutputs"):
     """
     This function...
+
     :param name:
     :return:
     """
@@ -109,6 +124,7 @@ def create_workflow_to_resample_baw_files(name="ResampleBAWOutputs"):
 def create_identity_interface_node(inputs, name):
     """
     This function...
+
     :param inputs:
     :param name:
     :return:
@@ -119,6 +135,7 @@ def create_identity_interface_node(inputs, name):
 def create_workflow_to_mask_white_matter(name):
     """
     This function...
+
     :param name:
     :return:
     """
@@ -142,6 +159,7 @@ def create_logismosb_machine_learning_workflow(name="MachineLearningLOGISMOSB", 
                                                plugin_args=None):
     """
     This function...
+
     :param name:
     :param resample:
     :param hemispheres:

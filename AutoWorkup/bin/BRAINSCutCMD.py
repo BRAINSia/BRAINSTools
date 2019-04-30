@@ -3,7 +3,16 @@
 # TODO
 # :: copy model file into md5 repository
 # :: connect input/output in the BAW
+"""
+BRAINSCutCMD.py
+=================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 
 import argparse
@@ -58,9 +67,11 @@ if False:
 def addProbabilityMapElement(probabilityMap, maskName, outputStream):
     """
     This function...
+
     :param probabilityMap:
     :param maskName:
     :param outputStream:
+    :return:
     """
     outputStream.write("  <ProbabilityMap StructureID    = \"" + maskName + "\"\n")
     outputStream.write("      Gaussian       = \"1.0\"\n")
@@ -72,9 +83,10 @@ def addProbabilityMapElement(probabilityMap, maskName, outputStream):
 def xmlGenerator(args, roi=""):
     """
     This function...
+
     :param args:
     :param roi:
-    :return: xmlFilename
+    :return:
     """
     xmlFilename = args.xmlFilename + roi + ".xml"
     outputStream = open(xmlFilename, 'w')

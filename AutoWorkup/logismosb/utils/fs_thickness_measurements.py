@@ -1,3 +1,13 @@
+"""
+fs_thickness_measurements.py
+==============================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import vtk
 import SimpleITK as sitk
 import numpy as np
@@ -10,6 +20,7 @@ import sys
 def read_poly_data(filename):
     """
     This function..
+
     :param filename:
     :return:
     """
@@ -32,6 +43,7 @@ def read_poly_data(filename):
 def ras_to_lps(point):
     """
     This function..
+
     :param point:
     :return:
     """
@@ -44,6 +56,7 @@ def ras_to_lps(point):
 def vtk_point_to_label(point, labelmap):
     """
     This function..
+
     :param point:
     :param labelmap:
     :return:
@@ -59,6 +72,7 @@ def vtk_point_to_label(point, labelmap):
 def build_kd_tree(mesh):
     """
     This function..
+
     :param mesh:
     :return:
     """
@@ -71,6 +85,7 @@ def build_kd_tree(mesh):
 def convert_fs_surface(in_surf, out_surf, to_scanner=True):
     """
     This function..
+
     :param in_surf:
     :param out_surf:
     :param to_scanner:
@@ -89,6 +104,7 @@ def convert_fs_surface(in_surf, out_surf, to_scanner=True):
 def get_vtk_file_name(fs_file_name):
     """
     This function..
+
     :param fs_file_name:
     :return:
     """
@@ -99,6 +115,7 @@ def get_vtk_file_name(fs_file_name):
 def fs_to_vtk(fs_surface):
     """
     This function..
+
     :param fs_surface:
     :return:
     """
@@ -109,6 +126,7 @@ def fs_to_vtk(fs_surface):
 def get_surf(surf_dir, hemisphere, surf):
     """
     This function..
+
     :param surf_dir:
     :param hemisphere:
     :param surf:
@@ -120,6 +138,7 @@ def get_surf(surf_dir, hemisphere, surf):
 def get_white(surf_dir, hemisphere):
     """
     This function..
+
     :param surf_dir:
     :param hemisphere:
     :return:
@@ -140,6 +159,7 @@ def get_pial(surf_dir, hemisphere):
 def get_white_and_pial_fs_files(surf_dir, hemisphere):
     """
     This function..
+
     :param surf_dir:
     :param hemisphere:
     :return:
@@ -152,6 +172,7 @@ def get_white_and_pial_fs_files(surf_dir, hemisphere):
 def get_white_and_pial_vtk_files(surf_dir, hemisphere):
     """
     This function..
+
     :param surf_dir:
     :param hemisphere:
     :return:
@@ -163,6 +184,7 @@ def get_white_and_pial_vtk_files(surf_dir, hemisphere):
 def get_white_and_pial(surf_dir, hemisphere):
     """
     This function..
+
     :param surf_dir:
     :param hemisphere:
     :return:
@@ -176,6 +198,7 @@ def get_white_and_pial(surf_dir, hemisphere):
 def compute_thickness(wmP, kdTreegm, kdTreewm):
     """
     This function..
+
     :param wmP:
     :param kdTreegm:
     :param kdTreewm:
@@ -199,6 +222,7 @@ def compute_thickness(wmP, kdTreegm, kdTreewm):
 def create_thickness_array():
     """
     This function..
+
     :return:
     """
     thicknesses = vtk.vtkFloatArray()
@@ -209,6 +233,7 @@ def create_thickness_array():
 def calculate_distance(white, pial):
     """
     This function..
+
     :param white:
     :param pial:
     :return:
@@ -237,6 +262,7 @@ def calculate_distance(white, pial):
 def get_surf_dir(subjects_dir, subject_id):
     """
     This function..
+
     :param subjects_dir:
     :param subject_id:
     :return:
@@ -247,6 +273,7 @@ def get_surf_dir(subjects_dir, subject_id):
 def write_vtk_file(polydata, file_name):
     """
     This function..
+
     :param polydata:
     :param file_name:
     :return:
@@ -261,6 +288,7 @@ def write_vtk_file(polydata, file_name):
 def get_thickness_file(subjects_dir, subject_id, hemisphere):
     """
     This function..
+
     :param subjects_dir:
     :param subjects_id:
     :param hemisphere:
@@ -275,6 +303,7 @@ def get_thickness_file(subjects_dir, subject_id, hemisphere):
 def get_thickness_files_for_both_hemispheres(subjects_dir, subject_id):
     """
     This function..
+
     :param subjects_dir:
     :param subjects_id:
     :return:
@@ -287,6 +316,7 @@ def get_thickness_files_for_both_hemispheres(subjects_dir, subject_id):
 def masked_thickness_values(thickness_file, mask_image_file, array_index=None):
     """
     This function..
+
     :param thickness_file:
     :param mask_file:
     :param array_index:
@@ -318,6 +348,7 @@ def masked_thickness_values(thickness_file, mask_image_file, array_index=None):
 def calculate_stats(values):
     """
     This function..
+
     :param values:
     :return:
     """
@@ -331,6 +362,7 @@ def calculate_stats(values):
 def masked_thickness_stats(thickness_file, mask_image_file):
     """
     This function..
+
     :param thickness_file:
     :param mask_image_file:
     :return:
@@ -345,6 +377,7 @@ def masked_thickness_stats(thickness_file, mask_image_file):
 def get_thickness_stats_for_both_hemispheres(subjects_dir, subject_id, mask_file):
     """
     This function..
+
     :param subject_id:
     :param subjects_dir:
     :param mask_file:

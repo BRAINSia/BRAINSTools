@@ -1,8 +1,14 @@
 #!/usr/bin/env python
+"""
+WorkupT1T2BRAINSCut.py
+===========================
+Description:
 
+Author:
 
+Usage:
 
-
+"""
 from builtins import str
 
 import nipype.pipeline.engine as pe  # pypeline engine
@@ -21,6 +27,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     """
     A function to create a consolidated label map and a
     csv file of volume measurements.
+
     :param listOfImages:
     :param LabelImageName:
     :param CSVFileName:
@@ -28,8 +35,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     :param projectid:
     :param subjectid:
     :param sessionid:
-    :return: os.path.abspath(LabelImageName), os.path.abspath(
-        CSVFileName), CleanedLeftCaudate, CleanedRightCaudate, CleanedLeftHippocampus, CleanedRightHippocampus, CleanedLeftPutamen, CleanedRightPutamen, CleanedLeftThalamus, CleanedRightThalamus, CleanedLeftAccumben, CleanedRightAccumben, CleanedLeftGlobus, CleanedRightGlobus
+    :return:
     """
 
     import SimpleITK as sitk
@@ -39,13 +45,14 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
 
     def CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, probMapOfExclusion, percentageThreshold=0.85):
         """This function is used to clean up grey matter sub-cortical segmentations
-    by removing tissue that is more than 85% chance of being either WM or CSF
-    The inputs are the initial segmentation, the WM Probability, and the CSF Probability
-    :param initial_seg:
-    :param probMapOfExclusion:
-    :param percentageThreshold: 0.85
-    :return: cleanedUpSeg
-    """
+        by removing tissue that is more than 85% chance of being either WM or CSF
+        The inputs are the initial segmentation, the WM Probability, and the CSF Probability
+
+        :param initial_seg:
+        :param probMapOfExclusion:
+        :param percentageThreshold:
+        :return:
+        """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print(("AA", initial_seg))
         # print "BB", OrderedDict(sitk.Statistics(seg))
@@ -59,11 +66,12 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
         """
         This function...
+
         :param initial_seg_fn:
         :param posteriorDictionary:
         :param WMThreshold:
         :param CSFThreshold:
-        :return: CSF_removed
+        :return:
         """
         initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8)
 
@@ -196,6 +204,7 @@ def CreateBRAINSCutWorkflow(projectid,
                             t1Only):
     """
     This function...
+
     :param projectid:
     :param subjectid:
     :param sessionid:
@@ -203,7 +212,7 @@ def CreateBRAINSCutWorkflow(projectid,
     :param CLUSTER_QUEUE_LONG:
     :param WFName:
     :param t1Only:
-    :return: cutWF
+    :return:
     """
     cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
 

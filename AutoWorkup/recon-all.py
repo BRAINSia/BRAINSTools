@@ -1,3 +1,48 @@
+"""
+recon-all.py
+=================
+Description:
+    This program runs FreeSurfer's recon-all as a nipype script. This allows
+    for better parallel processing for easier experimenting with new and/or
+    improved processing steps.
+Author:
+    David Ellis
+Usage:
+    python recon-all.py --T1 <infile1> --subject <name> [--T1 <infile2>... --T2 <inT2> --FLAIR <inFLAIR>]
+
+    Required inputs;
+    -i or --T1 <infile1>      Input T1 image. Multiple T1 images may be used as inputs each requiring its own
+                              input flag
+
+    -s or --subject <name>    Name of the subject being processed.
+
+    --subjects_dir <dir>      Input subjects directory defines where to run workflow and output results
+
+    Optional inputs:
+    --T2 <inT2>               Input T2 image. T2 images are not used for processing, but the image will be converted
+                              to .mgz format.
+
+    --FLAIR <inFLAIR>         Input FLAIR image. FLAIR images are not used for processing, but the image will be
+                                  converted to .mgz format.
+
+    --plugin <plugin>         Plugin to use when running workflow
+
+    -q or --queue <queue>     Queue to submit as a qsub argument (requires 'SGE' or 'SGEGraph' plugin)
+
+    --qcache                  Make qcache
+
+    --cw256                   Include this flag after -autorecon1 if images have a FOV > 256.  The
+                              flag causes mri_convert to conform the image to dimensions of 256^3.
+
+    --longbase <name>         Set the longitudinal base template. If a longitudinal
+                              base is set, no input files will be used/required.
+
+    --openmp <numthreads>     OpenMP parallelization (CentOS 6 distribution only!)
+                              To enable this feature, add the flag -openmp <numthreads>
+                              to recon-all, where <numthreads> is the number of threads
+                              you would like to run.
+
+"""
 import sys
 import getopt
 import os
@@ -52,6 +97,7 @@ University of Iowa
 def procargs(argv):
     """
     This function...
+
     :param argv:
     :return:
     """
@@ -85,7 +131,7 @@ def procargs(argv):
                                                      "tp=",
                                                      "openmp="])
     except getopt.GetoptError:
-        print "Error occured when parsing arguments"
+        print("Error occured when parsing arguments")
         help()
         sys.exit(2)
     for opt, arg in opts:
@@ -95,22 +141,22 @@ def procargs(argv):
         elif opt in ("-i", "--T1"):
             config['in_T1s'].append(os.path.abspath(arg))
             if not os.path.isfile(arg):
-                print "ERROR: input T1 image must be an existing image file"
-                print "{0} does not exist".format(arg)
+                print("ERROR: input T1 image must be an existing image file")
+                print("{0} does not exist".format(arg))
                 sys.exit(2)
         elif opt in ("-s", "--subject"):
             config['subject_id'] = arg
         elif opt in ("--T2"):
             config['in_T2'] = os.path.abspath(arg)
             if not os.path.isfile(config['in_T2']):
-                print "ERROR: input T2 image must be an existing image file"
-                print "{0} does not exist".format(config['in_T2'])
+                print("ERROR: input T2 image must be an existing image file")
+                print("{0} does not exist".format(config['in_T2']))
                 sys.exit(2)
         elif opt in ("--FLAIR"):
             config['in_FLAIR'] = os.path.abspath(arg)
             if not os.path.isfile(config['in_FLAIR']):
-                print "ERROR: input FLAIR image must be an existing image file"
-                print "{0} does not exist".format(config['in_FLAIR'])
+                print("ERROR: input FLAIR image must be an existing image file")
+                print("{0} does not exist".format(config['in_FLAIR']))
                 sys.exit(2)
         elif opt in ("--plugin"):
             config['plugin'] = arg
@@ -132,42 +178,42 @@ def procargs(argv):
             try:
                 config['openmp'] = int(arg)
             except ValueError:
-                print "ERROR: --openmp flag accepts only integers"
+                print("ERROR: --openmp flag accepts only integers")
                 sys.exit(2)
 
     if config['subject_id'] == None:
-        print "ERROR: Must set subject_id using -s flag"
+        print("ERROR: Must set subject_id using -s flag")
         help()
         sys.exit(2)
 
     if not config['longitudinal'] and len(config['in_T1s']) == 0:
-        print "ERROR: Must have at least one input T1 image"
+        print("ERROR: Must have at least one input T1 image")
         help()
         sys.exit(2)
 
     if config['subjects_dir'] == None:
-        print "ERROR: Must set the subjects_dir before running"
+        print("ERROR: Must set the subjects_dir before running")
         help()
         sys.exit(2)
 
     # print the input cofigurations
-    print 'Subject ID: {0}'.format(config['subject_id'])
-    print 'Input T1s: {0}'.format(config['in_T1s'])
+    print('Subject ID: {0}'.format(config['subject_id']))
+    print('Input T1s: {0}'.format(config['in_T1s']))
 
     if config['in_T2'] != None:
-        print 'Input T2: {0}'.format(config['in_T2'])
+        print('Input T2: {0}'.format(config['in_T2']))
 
     if config['in_FLAIR'] != None:
-        print 'Input FLAIR: {0}'.format(config['in_FLAIR'])
+        print('Input FLAIR: {0}'.format(config['in_FLAIR']))
 
-    print 'Plugin: {0}'.format(config['plugin'])
-    print 'Make qcache: {0}'.format(config['qcache'])
-    print 'Conform to 256: {0}'.format(config['cw256'])
+    print('Plugin: {0}'.format(config['plugin']))
+    print('Make qcache: {0}'.format(config['qcache']))
+    print('Conform to 256: {0}'.format(config['cw256']))
 
     if config['queue'] != None:
-        print 'Queue: {0}'.format(config['queue'])
+        print ('Queue: {0}'.format(config['queue']))
         if config['plugin'] == 'Linear':
-            print "ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set"
+            print("ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set")
             sys.exit(2)
         if config['openmp'] != None:
             minmemoryGB = 8 # this could be modified in later updates
@@ -176,42 +222,43 @@ def procargs(argv):
                                                                       config['openmp'],
                                                                       config['openmp']),
                                       'overwrite' : True }
-            print 'plugin_args: {0}'.format(config['plugin_args'])
+            print('plugin_args: {0}'.format(config['plugin_args']))
 
     if config['openmp'] != None:
-        print 'OpenMP: {0}'.format(config['openmp'])
+        print('OpenMP: {0}'.format(config['openmp']))
 
     if config['longitudinal']:
         # set input requirements for running longitudinally
         # TODO: print errors when inputs are not set correctly
-        print 'Running longitudinally'
-        print 'Longitudinal Base: {0}'.format(config['long_base'])
+        print('Running longitudinally')
+        print('Longitudinal Base: {0}'.format(config['long_base']))
     return config
 
 
 def checkenv():
     """Check for the necessary FS environment variables
+
     :return:
     """
     fs_home = os.environ.get('FREESURFER_HOME')
     path = os.environ.get('PATH')
-    print "FREESURFER_HOME: {0}".format(fs_home)
+    print("FREESURFER_HOME: {0}".format(fs_home))
     if fs_home == None:
-        print "ERROR: please set FREESURFER_HOME before running the workflow"
+        print("ERROR: please set FREESURFER_HOME before running the workflow")
     elif not os.path.isdir(fs_home):
-        print "ERROR: FREESURFER_HOME must be set to a valid directory before \
-running this workflow"
+        print("ERROR: FREESURFER_HOME must be set to a valid directory before \
+running this workflow")
     elif os.path.join(fs_home, 'bin') not in path.replace('//','/'):
-        print path
-        print "ERROR: Could not find necessary executable in path"
+        print(path)
+        print("ERROR: Could not find necessary executable in path")
         setupscript = os.path.join(fs_home, 'SetUpFreeSurfer.sh')
         if os.path.isfile(setupscript):
-            print "Please source the setup script before running the workflow:\
-\nsource {0}".format(setupscript)
+            print("Please source the setup script before running the workflow:\
+\nsource {0}".format(setupscript))
         else:
-            print "Please ensure that FREESURFER_HOME is set to a valid fs \
+            print("Please ensure that FREESURFER_HOME is set to a valid fs \
 directory and source the necessary SetUpFreeSurfer.sh script before running \
-this workflow"
+this workflow")
     else:
         return fs_home
     sys.exit(2)
@@ -282,6 +329,7 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
 def main(argv):
     """
     This function...
+
     :param argv:
     :return:
     """

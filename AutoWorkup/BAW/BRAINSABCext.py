@@ -1,3 +1,13 @@
+"""
+BRAINSABCext.py
+===========================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import os
 from builtins import object
 from builtins import range
@@ -23,8 +33,9 @@ class GetPosteriorsFromAtlasXML(object):
     def getXMLstring(self, xmlFile):
         """
         This function...
+
         :param xmlFile:
-        :return: _xmlString
+        :return:
         """
         Handle = open(xmlFile)
         _xmlString = Handle.read()
@@ -34,8 +45,9 @@ class GetPosteriorsFromAtlasXML(object):
     def getPriorTypeNameList(self, xmlString):
         """
         This function...
+
         :param xmlString:
-        :return: posteriorFileNameList
+        :return:
         """
         myelem = et.fromstring(xmlString)
         elementsList = list(myelem.getiterator())
@@ -64,6 +76,9 @@ class BRAINSABCextInputSpec(BRAINSABCInputSpec):
 
 
 class BRAINSABCextOutputSpec(BRAINSABCOutputSpec):
+    """
+    This class represents a...
+    """
     # Not convenient outputAverageImages = OutputMultiPath(File(exists=True), exists = True)
     outputT1AverageImage = traits.Either(File(exists=True), [None])
     outputT2AverageImage = traits.Either(File(exists=True), [None])
@@ -72,17 +87,19 @@ class BRAINSABCextOutputSpec(BRAINSABCOutputSpec):
     posteriorImages = OutputMultiPath(File(exists=True), exists=True)
     atlasToSubjectInverseTransform = traits.Either(File(exists=True), [None])
 
-"""
-This class represents a...
-"""
+
 class BRAINSABCext(BRAINSABC):
+    """
+    This class represents a...
+    """
     # input_spec= BRAINSABCextInputSpec
     output_spec = BRAINSABCextOutputSpec
 
     def _list_outputs(self):
         """
         This function...
-        :return: outputs
+
+        :return:
         """
         from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
         custom_implied_outputs_with_no_inputs = ['posteriorImages',

@@ -1,4 +1,14 @@
+"""
+MeasurementWorkflow.py
+============================
+Description:
+    The purpose of this is to...
+    
+Author:
 
+Usage:
+
+"""
 
 import os
 from functools import reduce
@@ -18,9 +28,10 @@ from past.utils import old_div
 def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     """
     This Function takes in...
+
     :param WFname:
-    :param LABELS_CONFIG_FILE
-    :return: MeasurementWF
+    :param LABELS_CONFIG_FILE:
+    :return:
     """
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     ###### UTILITY FUNCTIONS #######
@@ -28,9 +39,10 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     def CreateDWILabelMap(T2LabelMapVolume, DWIBrainMask):
         """
         This Function takes in...
+
         :param T2LabelMapVolume:
         :param DWIBrainMask:
-        :return: outputVolume
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -65,17 +77,18 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
 
     def MakeResamplerInFileList(FAImage, MDImage, RDImage, FrobeniusNormImage, Lambda1Image, Lambda2Image,
                                 Lambda3Image):
-    """
-    This Function takes in...
-    :param FAImage:
-    :param MDImage:
-    :param RDImage:
-    :param FrobeniusNormImage:
-    :param Lambda1Image:
-    :param Lambda2Image:
-    :param Lambda3Image:
-    :return: RISsList
-    """
+        """
+        This Function takes in...
+
+        :param FAImage:
+        :param MDImage:
+        :param RDImage:
+        :param FrobeniusNormImage:
+        :param Lambda1Image:
+        :param Lambda2Image:
+        :param Lambda3Image:
+        :return:
+        """
         RISsList = [FAImage, MDImage, RDImage, FrobeniusNormImage, Lambda1Image, Lambda2Image, Lambda3Image]
         return RISsList
 
@@ -84,11 +97,12 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     def ComputeStatistics(inputVolume, T2LabelMapVolume, DWILabelMapVolume, labelCodesFile):
         """
         This Function takes in...
+
         :param inputVolume:
         :param T2LabelMapVolume:
         :param DWILabelMapVolume:
         :param labelCodesFile:
-        :return: CSVStatisticsFile
+        :return:
         """
         import os
         import SimpleITK as sitk
@@ -97,8 +111,9 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         def createLabelsDictionary(labelCodesFile):
             """
             This Function takes in...
+
             :param labelCodesFile:
-            :return: labelsDictionary
+            :return:
             """
             import csv
             labelsDictionary = OrderedDict()
@@ -114,8 +129,9 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         def computeVoxelVolume(inputVolume):
             """
             This Function takes in...
+
             :param inputVolume:
-            :return: reduce(operator.mul, inputVolume.GetSpacing())
+            :return:
             """
             import operator
             return reduce(operator.mul, inputVolume.GetSpacing())
@@ -123,12 +139,13 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         def ReturnStatisticsList(labelID, voxelVolume, resampledRISVolume, DWILabelMap, T2LabelMap):
             """
             This Function takes in...
+
             :param labelID:
             :param voxelVolume:
             :param resampledRISVolume:
             :param DWILabelMap:
             :param T2LabelMap:
-            :return: statsList, totalVolume
+            :return:
             """
             from past.utils import old_div
             from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -169,9 +186,10 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         def writeLabelStatistics(filename, statisticsDictionary):
             """
             This Function takes in...
+
             :param filename:
             :param statisticsDictionary:
-            :return: CSVStatisticsFile
+            :return:
             """
             import csv
             with open(filename, 'wb') as lf:
@@ -207,15 +225,17 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     def pickFromList(inputlist, item):
         """
         This Function takes in...
+
         :param inputList:
         :param item:
-        :return: inputList[item]
+        :return:
         """
         return inputlist[item]
 
     def ResampleRISVolumes(referenceVolume, inputVolume):
         """
         This Function takes in...
+
         :param referenceVolume:
         :param inputVolume:
         :return: outputVolume

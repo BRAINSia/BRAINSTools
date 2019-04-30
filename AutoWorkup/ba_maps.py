@@ -1,3 +1,13 @@
+"""
+ba_maps.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import os
 import nipype
 from nipype.interfaces.utility import Function,IdentityInterface
@@ -8,6 +18,7 @@ from nipype.interfaces.freesurfer import *
 def create_ba_maps_wf(config):
     """
     This function...
+
     :param config:
     :return:
     """

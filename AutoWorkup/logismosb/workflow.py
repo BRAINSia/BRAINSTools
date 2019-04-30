@@ -1,3 +1,13 @@
+"""
+workflow.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from nipype.interfaces.utility import IdentityInterface, Function
 from nipype.pipeline import Node, Workflow
 from nipype.interfaces.freesurfer import MRIConvert, MRIsConvert
@@ -10,6 +20,7 @@ import json
 def get_local_file_location(relative_file_name):
     """
     This function...
+
     :param relative_file_name:
     :return:
     """
@@ -22,6 +33,7 @@ def get_local_file_location(relative_file_name):
 def read_json_config(relative_file_name):
     """
     This function...
+
     :param relative_file_name:
     :return:
     """
@@ -35,6 +47,7 @@ def read_json_config(relative_file_name):
 def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=None):
     """
     This function...
+
     :param name:
     :param master_config:
     :param plugin_args:
@@ -137,6 +150,7 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
 def create_output_spec(outputs, hemisphere_names, name):
     """
     This function...
+
     :param outputs:
     :param hemisphere_names:
     :param name:
@@ -150,7 +164,9 @@ def create_output_spec(outputs, hemisphere_names, name):
 
 
 def create_fs_compatible_logb_workflow(name="LOGISMOSB", plugin_args=None, config=None):
-    """Create a workflow to run LOGISMOS-B from FreeSurfer Inputs
+    """
+    Create a workflow to run LOGISMOS-B from FreeSurfer Inputs
+
     :param name:
     :param plugin_args:
     :param config:
@@ -195,6 +211,7 @@ def create_fs_compatible_logb_workflow(name="LOGISMOSB", plugin_args=None, confi
     def t2_convert(in_file=None, reference_file=None, out_file=None):
         """
         This function...
+
         :param in_file:
         :param reference_file:
         :param out_file:
@@ -302,7 +319,9 @@ def create_fs_compatible_logb_workflow(name="LOGISMOSB", plugin_args=None, confi
 
 
 def create_fs_logb_workflow_for_both_hemispheres(name="FSLOGB", plugin_args=None, ml=False, config=None):
-    """Creates a workflow that connects FreeSurfer with LOGISMOS-B
+    """
+    Creates a workflow that connects FreeSurfer with LOGISMOS-B
+
     :param name:
     :param plugin_args:
     :param ml:

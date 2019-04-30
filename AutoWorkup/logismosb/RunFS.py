@@ -1,3 +1,13 @@
+"""
+RunFS.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from workflow import create_fs_logb_workflow_for_both_hemispheres
 import sqlite3
 import os

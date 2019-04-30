@@ -12,9 +12,25 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+
+import os
+import sys
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/BAW/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/BAW/workflows/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/bin/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/common/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/config/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/metrics/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/logismosb/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/logismosb/maclearn/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/logismosb/utils/'))
+sys.path.insert(0,os.path.abspath('../../AutoWorkup/TestSuite/'))
+
+
+
+
 
 
 # -- Project information -----------------------------------------------------
@@ -28,7 +44,7 @@ version = '5.0.0'
 # The full version, including alpha/beta/rc tags
 release = '5.0.0'
 
-
+autoclass_content = 'class'
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -43,6 +59,29 @@ extensions = [
     'sphinx.ext.githubpages',
 ]
 
+autodoc_mock_imports = ['nipype',
+                        'future',
+                        'past',
+                        'builtins',
+                        'errno',
+                        'sys',
+                        'SimpleITK',
+                        'matplotlib',
+                        'yaml',
+                        'numpy',
+                        'pandas',
+                        'sklearn',
+                        'cPickle',
+                        'vtk',
+                        'scipy',
+                        'PipeLineFunctionHelpers',
+                        'builtins',
+                        'subprocess',
+                        'shutil',
+                        'os',
+                        'argparse',
+                        'append_os_path',
+                        '..common',]
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

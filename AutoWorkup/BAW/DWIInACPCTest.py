@@ -29,7 +29,28 @@
 # the masked tensor image.
 
 # <codecell>
-
+"""
+DTIPrepext.py
+===========================
+Description:
+     The purpose of this pipeline is to complete all the pre-processing steps needed to turn diffusion-weighted images
+     into FA images that will be used to build a template diffusion tensor atlas for fiber tracking.`
+Author:
+    
+Inputs:
+    The input to this pipeline is a list of subject IDs that is used to generate lists of the corresponding DWIs
+    processed with automated quality control, T2s, and brain label images that are treated as brain masks.
+Pipeline Steps for CreateDWIWorkflow:
+    1. A rigid transform from the b0 of the DWI to the T2 is first derived with BRAINSFit. This rigid transform is then
+    used to resample the DWI in place into the physical space of the T2 (with gtractResampleDWIInPlace) while preserving
+    the voxel lattice of the DWI.
+    2. The b0 from the DWI resampled in place is extracted with extractNrrdVectorIndex. A BSpline transform from the T2
+    to the b0 of the DWI resampled in place is then derived with BRAINSFit and used to resample the brain mask into the
+    the space of the DWI resampled in place with BRAINSResample.
+    3. A masked tensor image is estimated with dtiprocess using the DWI resampled in place and resampled brain mask.
+    dtiprocess is used again to compute FA, MD, RD, Frobenius norm, lambda1 (AD), lambda2, and lambda3 images with
+    the masked tensor image.
+"""
 import glob
 import os
 import sys
@@ -72,10 +93,11 @@ from collections import OrderedDict  # Need OrderedDict internally to ensure con
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment=OrderedDict()):
     '''This is a wrapper script for running commands on an SGE cluster
 so that all the python modules and commands are pathed properly
+
     :param pythonPathsList:
     :param binPathsList:
     :param customEnvironment: OrderedDict()
-    :return: GLOBAL_SGE_SCRIPT
+    :return:
 '''
 
     custEnvString = ''
@@ -112,8 +134,9 @@ SGE_JOB_SCRIPT = JOB_SCRIPT
 def MergeByExtendListElements(FAImageList):
     """
     This function...
+
     :param FAImageList:
-    :return: ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     ## Initial list with empty dictionaries
@@ -145,10 +168,11 @@ def MergeByExtendListElements(FAImageList):
 def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     """
     This function...
+
     :param SESSION_TUPLE:
     :param BASE_STRUCT:
     :param BASE_DWI:
-    :return: MasterDWIWorkflow
+    :return:
     """
     return MasterDWIWorkflow
 
@@ -156,10 +180,11 @@ def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
 #############################
 def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     '''A function to extract file names from base parameters
+
     :param SESSION_TUPLE:
     :param BASE_STRUCT:
     :param BASE_DWI:
-    :return: PROJ_ID, SUBJ_ID, SESSION_ID, FixImage, FixMaskImage, MovingDWI
+    :return:
     '''
     import os
     import glob
@@ -474,8 +499,9 @@ DWIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIP
 def sinkContainer(_tuple):
     """
     This function...
+
     :param _tuple:
-    :return: os.path.join(*_tuple)
+    :return:
     """
     import os.path
     return os.path.join(*_tuple)

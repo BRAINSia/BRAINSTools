@@ -1,4 +1,13 @@
+"""
+updateAutoWorkupFile.py
+============================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 import argparse
 import csv
@@ -27,7 +36,8 @@ class UpdateAutoWorkup(object):
     def _generateNewPathName(self):
         """
         This function...
-        :return: newPath
+
+        :return:
         """
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
         basename = os.path.basename(inputArguments.autoWorkupFile)

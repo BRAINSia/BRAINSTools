@@ -1,3 +1,13 @@
+"""
+interfaces.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
                                     traits, File, TraitedSpec, InputMultiPath,
                                     CommandLineInputSpec, CommandLine, isdefined)
@@ -15,6 +25,7 @@ from freesurfer_utils import create_label_watershed
 def parse_labels_xml(xml_file):
     """
     This function...
+
     :param xml_file:
     :return:
     """
@@ -33,6 +44,7 @@ def parse_labels_xml(xml_file):
 def parse_lookup_table(lookup_table_file):
     """Parses a lookup table to determine regions.
     This allows the hemisphere splitting to adapt with updated lookup tables.
+
     :param lookup_table_file:
     :return:
     """
@@ -93,6 +105,7 @@ def parse_lookup_table(lookup_table_file):
 def parse_atlas_info(in_file):
     """
     This function...
+
     :param in_file:
     :return:
     """
@@ -156,6 +169,7 @@ class WMMasking(BaseInterface):
     Takes in a brainslabel map from BRAINSTools AutoWorkup as well
     as a csf posterior probability map and a label map and outputs
     the wm mask to be used by LOGISMOS-B.
+
     :param BaseInterface:
     """
 
@@ -165,6 +179,7 @@ class WMMasking(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
         """
         atlas_file = self.inputs.atlas_file
@@ -185,6 +200,7 @@ class WMMasking(BaseInterface):
         def largest_connected_component(image, minSize=1000):
             """
             This function...
+
             :param image:
             :param minSize:
             :return:
@@ -195,6 +211,7 @@ class WMMasking(BaseInterface):
         def fill_mask_holes(image, minSize=0):
             """
             This function...
+
             :param image:
             :param minSize:
             :return:
@@ -205,6 +222,7 @@ class WMMasking(BaseInterface):
         def fillLateralVentricle(ventricle, boundary, ventricleDilation=1, dilationFactor=1):
             """
             This function...
+
             :param ventricle:
             :param boundary:
             :param ventricleDilation:
@@ -270,6 +288,7 @@ class WMMasking(BaseInterface):
         def create_hemisphere_splits(right_template, left_template):
             """
             This function...
+
             :param right_template:
             :param left_template:
             :return:
@@ -368,6 +387,7 @@ class WMMasking(BaseInterface):
     def _list_outputs(self):
         """
         This function..
+
         :return:
         """
         outputs = self._outputs().get()
@@ -384,6 +404,7 @@ class WMMasking(BaseInterface):
 def readPolyData(filename):
     """
     This function...
+
     :param filename:
     :return:
     """
@@ -405,6 +426,7 @@ def readPolyData(filename):
 def vtkPoint_to_label(point, labelmap):
     """
     This function...
+
     :param point:
     :parma labelmap:
     :return:
@@ -425,6 +447,7 @@ def vtkPoint_to_label(point, labelmap):
 def multilabel_dilation(img, radius=1, kernel=sitk.BinaryDilateImageFilter.Ball):
     """
     This function...
+
     :param img:
     :param radius:
     :param kernel:
@@ -441,17 +464,19 @@ def multilabel_dilation(img, radius=1, kernel=sitk.BinaryDilateImageFilter.Ball)
 
 class CreateGMLabelMapInputSpec(BaseInterfaceInputSpec):
      """This class represents a...
+
      :param BaseInterfaceInputSpec:
      """
-    atlas_file = File(
+     atlas_file = File(
         exists=True, mandatory=True,
         desc='Label map used to define gray matter regions')
-    atlas_info = File(exists=True, mandatory=True,
+     atlas_info = File(exists=True, mandatory=True,
                       desc='input label information in xml format')
 
 
 class CreateGMLabelMapOutputSpec(TraitedSpec):
     """This class represents a...
+
     :param TraitedSpec:
     """
     out_file = File(desc="gray matter label map")
@@ -461,6 +486,7 @@ class CreateGMLabelMap(BaseInterface):
 
     """
     Selects the gray matter labels and then dilates them
+
     :param BaseInterface:
     """
 
@@ -470,6 +496,7 @@ class CreateGMLabelMap(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
         :return:
         """
@@ -491,6 +518,7 @@ class CreateGMLabelMap(BaseInterface):
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self._outputs().get()
@@ -500,18 +528,20 @@ class CreateGMLabelMap(BaseInterface):
 
 class ComputeDistanceInputSpec(BaseInterfaceInputSpec):
      """This class represents a...
+
      :param BaseInterfaceInputSpec:
      """
-    wm_file = File(exists=True, desc='vtk polydata mesh surface', mandatory=True)
-    gm_file = File(exists=True, desc='vtk polydata mesh surface', mandatory=True)
-    labels_file = File(exists=True, desc='label image file', mandatory=True)
-    hemisphere = traits.Enum('lh', 'rh', desc='hemisphere being processed', mandatory=True)
-    atlas_info = File(exists=True, mandatory=False,
+     wm_file = File(exists=True, desc='vtk polydata mesh surface', mandatory=True)
+     gm_file = File(exists=True, desc='vtk polydata mesh surface', mandatory=True)
+     labels_file = File(exists=True, desc='label image file', mandatory=True)
+     hemisphere = traits.Enum('lh', 'rh', desc='hemisphere being processed', mandatory=True)
+     atlas_info = File(exists=True, mandatory=False,
                       desc='input label information in xml format')
 
 
 class ComputeDistanceOutputSpec(TraitedSpec):
     """This class represents a...
+
     :param TraitedSpec:
     """
     out_file = File(desc="vtk polydata mesh surface with distance scalars")
@@ -522,6 +552,7 @@ class ComputeDistance(BaseInterface):
     """
     Nipype wrappers for a comparing 2 surfaces
     Compute the surface to surface distance between 2 using similar to FreeSurfer
+
     :param BaseInterface:
     """
 
@@ -531,6 +562,7 @@ class ComputeDistance(BaseInterface):
     def _list_outputs(self):
         """
         This function..
+
         :return:
         """
         outputs = self._outputs().get()
@@ -541,6 +573,7 @@ class ComputeDistance(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
         :return:
         """
@@ -629,38 +662,40 @@ class ComputeDistance(BaseInterface):
 
 class LOGISMOSBInputSpec(CommandLineInputSpec):
      """This class represents a...
+
      :param CommandLineInputSpec:
      """
-    t1_file = File(exists=True, desc='T1 scan output by BAW', argstr='--inputT1 %s', mandatory=True)
-    t2_file = File(exists=True, genfile=True, desc='T2 scan output by BAW', argstr='--inputT2 %s', mandatory=False)
-    mesh_file = File(exists=True, desc='final mesh of the white matter surface (must have a genus equal to 0)',
+     t1_file = File(exists=True, desc='T1 scan output by BAW', argstr='--inputT1 %s', mandatory=True)
+     t2_file = File(exists=True, genfile=True, desc='T2 scan output by BAW', argstr='--inputT2 %s', mandatory=False)
+     mesh_file = File(exists=True, desc='final mesh of the white matter surface (must have a genus equal to 0)',
                      argstr='-m %s', mandatory=True)
-    wm_file = File(exists=True, desc='final binary image of the white matter surface (must have a genus equal to 0)',
+     wm_file = File(exists=True, desc='final binary image of the white matter surface (must have a genus equal to 0)',
                    argstr='-b %s', mandatory=True)
-    atlas_file = File(exists=True, desc='hcnma atlas to define brain regions. If different atlas is used, thick ' +
+     atlas_file = File(exists=True, desc='hcnma atlas to define brain regions. If different atlas is used, thick ' +
                                         'regions must be defined',
                       argstr='-z %s', mandatory=False)
-    brainlabels_file = File(exists=True, desc='skullstripped brainlabels file', argstr='--inputABCLabels %s',
+     brainlabels_file = File(exists=True, desc='skullstripped brainlabels file', argstr='--inputABCLabels %s',
                             mandatory=True)
-    smoothnessConstraint = traits.Int(desc='smoothness constraint',
+     smoothnessConstraint = traits.Int(desc='smoothness constraint',
                                       argstr='--smoothnessConstraint %d', mandatory=True)
-    nColumns = traits.Int(desc="number of vertices", argstr="--nColumns %d", Mandatory=False)
-    columnChoice = traits.String(desc="some parameter", argstr="--columnChoice %s", Mandatory=False)
-    columnHeight = traits.Int(desc="column height", argstr="--columnHeight %d", Mandatory=False)
-    nodeSpacing = traits.Float(desc="node spacing", argstr="--nodeSpacing %.2f", Mandatory=False)
-    w = traits.Float(desc="w", argstr="-w %.2f", Mandatory=False)
-    a = traits.Float(desc="a", argstr="-a %.2f", Mandatory=False)
-    nPropagate = traits.Int(desc="number of propagations", argstr="--nPropagate %d", Mandatory=False)
-    basename = traits.String(desc="basename for output files", argstr="--outputBase %s", Mandatory=True)
-    thick_regions = traits.List(traits.Int(), argstr="-r %s", mandatory=False, sep=',',
+     nColumns = traits.Int(desc="number of vertices", argstr="--nColumns %d", Mandatory=False)
+     columnChoice = traits.String(desc="some parameter", argstr="--columnChoice %s", Mandatory=False)
+     columnHeight = traits.Int(desc="column height", argstr="--columnHeight %d", Mandatory=False)
+     nodeSpacing = traits.Float(desc="node spacing", argstr="--nodeSpacing %.2f", Mandatory=False)
+     w = traits.Float(desc="w", argstr="-w %.2f", Mandatory=False)
+     a = traits.Float(desc="a", argstr="-a %.2f", Mandatory=False)
+     nPropagate = traits.Int(desc="number of propagations", argstr="--nPropagate %d", Mandatory=False)
+     basename = traits.String(desc="basename for output files", argstr="--outputBase %s", Mandatory=True)
+     thick_regions = traits.List(traits.Int(), argstr="-r %s", mandatory=False, sep=',',
                                 desc="List of regions in the atlas file to that will be thicker")
-    useHNCMALabels = traits.Bool(argstr="--useHNCMALabels", desc="Uses HCNMA label map to define thick regions")
-    wm_proba_file = File(exist=True, argstr='--wmProbaMap %s', desc="White matter pobability map.")
-    gm_proba_file = File(exist=True, argstr='--gmProbaMap %s', desc="Gray matter pobability map.")
+     useHNCMALabels = traits.Bool(argstr="--useHNCMALabels", desc="Uses HCNMA label map to define thick regions")
+     wm_proba_file = File(exist=True, argstr='--wmProbaMap %s', desc="White matter pobability map.")
+     gm_proba_file = File(exist=True, argstr='--gmProbaMap %s', desc="Gray matter pobability map.")
 
 
 class LOGISMOSBOutputSpec(TraitedSpec):
     """This class represents a...
+
     :param TraitedSpec:
     """
     gmsurface_file = File(desc="path/name of GM surface file")
@@ -671,6 +706,7 @@ class LOGISMOSBOutputSpec(TraitedSpec):
 class LOGISMOSB(CommandLine):
     """
     This class represents a...
+
     :param CommandLine:
     """
     _cmd = 'LOGISMOS-B'
@@ -680,6 +716,7 @@ class LOGISMOSB(CommandLine):
     def _gen_filename(self, name):
         """
         This function...
+
         :param name:
         :return:
         """
@@ -690,19 +727,21 @@ class LOGISMOSB(CommandLine):
     def _format_arg(self, name, spec, value):
         """
         This function...
+
         :param name:
         :param spec:
         :param value:
         :return:
         """
         if name == "t2_file" and not os.path.isfile(value):
-            print "Using T1 as T2 file"
+            print("Using T1 as T2 file")
             value = self.inputs.t1_file
         return super(LOGISMOSB, self)._format_arg(name, spec, value)
 
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self.output_spec().get()
@@ -713,95 +752,104 @@ class LOGISMOSB(CommandLine):
 
 
 class BSGInputSpec(CommandLineInputSpec):
-     """This class represents a...
+     """
+     This class represents a..
+
      :param CommandLineInputSpec:
      """
-    in_file = File(exists=True, mandatory=True,
+     in_file = File(exists=True,
+                   mandatory=True,
                    desc="binary ITK image mask file",
                    argstr="--inputImageFile %s")
 
-    out_file = File(desc="output vtk polydata surface mesh file",
+     out_file = File(desc="output vtk polydata surface mesh file",
                     argstr="--outputSurface %s", mandatory=True)
 
-    smoothSurface = traits.Bool(desc="smooth the surface (default: off)", argstr="--smoothSurface")
+     smoothSurface = traits.Bool(desc="smooth the surface (default: off)", argstr="--smoothSurface")
 
-    numIterations = traits.Int(desc="number of iterations to smooth the surface (default: 5)",
+     numIterations = traits.Int(desc="number of iterations to smooth the surface (default: 5)",
                                argstr="--numIterations %d")
 
-    surfaceValue = traits.Float(desc="The iso-surface value for the resulting surface (default: 0.5)",
+     surfaceValue = traits.Float(desc="The iso-surface value for the resulting surface (default: 0.5)",
                                 argstr="--surfaceValue %.2f")
 
-    decimateSurface = traits.Bool(desc="decimate the surface (default: off)",
+     decimateSurface = traits.Bool(desc="decimate the surface (default: off)",
                                   argstr="--decimateSurface")
 
-    numberOfElements = traits.Int(desc="Number of faces desired after decimation (default: 70000)",
+     numberOfElements = traits.Int(desc="Number of faces desired after decimation (default: 70000)",
                                   argstr="--numberOfElements %d")
 
-    relaxationFactor = traits.Float(dec="The Relaxation Factor Used in Smoothing (default: 0.1)",
+     relaxationFactor = traits.Float(dec="The Relaxation Factor Used in Smoothing (default: 0.1)",
                                     argstr="--relaxationFactor %.2f")
 
 
 class BSGOutputSpec(TraitedSpec):
-     """This class represents a...
+     """
+     This class represents a...
+
      :param TraitedSpec:
      """
-    out_file = File(exists=True, desc="output vtk mesh surface file")
+     out_file = File(exists=True, desc="output vtk mesh surface file")
 
 
 class BRAINSSurfaceGeneration(CommandLine):
-     """This class represents a...
+     """
+     This class represents a...
+
      :param CommandLine:
      :return:
      """
-    _cmd = 'BRAINSSurfaceGeneration'
-    input_spec = BSGInputSpec
-    output_spec = BSGOutputSpec
+     cmd = 'BRAINSSurfaceGeneration'
+     input_spec = BSGInputSpec
+     output_spec = BSGOutputSpec
 
-    def _list_outputs(self):
-        outputs = self.output_spec().get()
-        outputs['out_file'] = os.path.abspath(self.inputs.out_file)
-        return outputs
+     def _list_outputs(self):
+         outputs = self.output_spec().get()
+         outputs['out_file'] = os.path.abspath(self.inputs.out_file)
+         return outputs
 
 
 class Genus0InputSpec(CommandLineInputSpec):
      """This class represents a...
+
      :param CommandLineInputSpec:
      """
-    in_file = File(exists=True,
+     in_file = File(exists=True,
                    argstr="--inputVolume %s",
                    desc="Input the image volume to be topologically corrected",
                    mandatory=True)
-    out_mask = File(argstr="--outputVolume %s",
+     out_mask = File(argstr="--outputVolume %s",
                     desc="Topologically corrected image volume output (ignored if computeSurface is set)")
-    out_mesh = File(argstr="--vtkOutput %s",
+     out_mesh = File(argstr="--vtkOutput %s",
                     desc="File to write a VTK triangluated mesh to (ignored if computeSurface is not set)")
-    stl = File(argstr="--stl %s",
+     stl = File(argstr="--stl %s",
                desc="File to write an STL triangluated mesh to.")
-    cutLoops = traits.Bool(argstr="--cutLoops",
+     cutLoops = traits.Bool(argstr="--cutLoops",
                            desc="Cut loops instead of patching holes (default: OFF)")
-    connectedComponent = traits.Bool(argstr="--connectedComponent",
+     connectedComponent = traits.Bool(argstr="--connectedComponent",
                                      desc="Extract largest connected component before processing (default: OFF)")
-    connectivity = traits.Int(argstr="--connectivity %d",
+     connectivity = traits.Int(argstr="--connectivity %d",
                               desc="Controls the discrete connectivity model (18|6 default: 18). 18-connectivity only allows for the output to be a vtk surface (computeSurface must be OFF).")
-    computeSurface = traits.Bool(argstr="--computeSurface",
+     computeSurface = traits.Bool(argstr="--computeSurface",
                                  desc="Compute VTK surface instead of corrected image volume (default: OFF)")
-    extractFinalConnectedComponent = traits.Bool(argstr="--extractFinalConnectedComponent",
+     extractFinalConnectedComponent = traits.Bool(argstr="--extractFinalConnectedComponent",
                                                  desc="Extracts the largest connected component after the processing. (default: 0)")
-    biggestComponent = traits.Bool(argstr="--biggestComponent",
+     biggestComponent = traits.Bool(argstr="--biggestComponent",
                                    desc="Extract largest component of the triangulated result. (The volume result needs to be followed by an extraction of the largest connected component if desired; use 'extractFinalConnectedComponent'.) (default: 0)")
-    returnParameterFile = File(argstr="--returnparameterfile %s",
+     returnParameterFile = File(argstr="--returnparameterfile %s",
                                desc="Filename in which to write simple return parameters (int, float, int-vector, etc.) as opposed to bulk return parameters (image, geometry, transform, measurement, table).")
-    processInformationAddress = File(argstr="--processinformationaddress %s",
+     processInformationAddress = File(argstr="--processinformationaddress %s",
                                      desc="Address of a structure to store process information (progress, abort, etc.). (default: 0)")
-    xml = traits.Bool(argstr="--xml",
+     xml = traits.Bool(argstr="--xml",
                       desc="Produce xml description of command line arguments (default: 0)")
-    echo = traits.Bool(argstr="--echo",
+     echo = traits.Bool(argstr="--echo",
                        desc="Echo the command line arguments (default: 0)")
-    commandHelp = traits.Bool(argstr="--help",
+     commandHelp = traits.Bool(argstr="--help",
                               desc="Displays the parameters to run this command")
 
 class Genus0OutputSpec(TraitedSpec):
     """This class represents a...
+
     :param TraitedSpec:
     """
     out_file = File(desc="white matter binary mask image (.nii.gz) or a vtk mesh")
@@ -809,6 +857,7 @@ class Genus0OutputSpec(TraitedSpec):
 
 class GenusZeroImageFilter(CommandLine):
     """This class represents a...
+
     :param CommandLine:
     """
     _cmd = 'GenusZeroImageFilter'
@@ -818,6 +867,7 @@ class GenusZeroImageFilter(CommandLine):
     def _list_outputs(self):
         """
         This function...
+
         :return:
         """
         outputs = self.output_spec().get()

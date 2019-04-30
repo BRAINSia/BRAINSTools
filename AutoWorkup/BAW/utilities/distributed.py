@@ -1,4 +1,15 @@
 
+"""
+distributed.py
+============================
+Description:
+    The purpose of this is to...
+    
+Author:
+
+Usage:
+
+"""
 
 import math
 from past.utils import old_div
@@ -8,8 +19,9 @@ from collections import OrderedDict  # Need OrderedDict internally to ensure con
 def load_cluster(modules=[]):
     """
     This Function takes in...
-    :param modules: empty list
-    :return: ''
+
+    :param modules:
+    :return:
     """
     if len(modules) > 0:
         module_list = []
@@ -23,8 +35,9 @@ def load_cluster(modules=[]):
 def source_virtualenv(virtualenv_dir=''):
     """
     This Function takes in...
-    :param virtualenv_dir: empty string
-    :return: "source {0}".format(virtualenv_dir)
+
+    :param virtualenv_dir:
+    :return:
     """
     if virtualenv_dir is None:
         return ''
@@ -35,8 +48,9 @@ def source_virtualenv(virtualenv_dir=''):
 def prepend_env(environment=OrderedDict()):
     """
     This Function takes in...
-    :param environment: OrderDict()
-    :return: '\n'.join(export_list)
+
+    :param environment:
+    :return:
     """
     import os
     export_list = []
@@ -51,16 +65,16 @@ def create_global_sge_script(cluster, environment):
     This is a wrapper script for running commands on an SGE cluster
     so that all the python modules and commands are pathed properly
 
-    >>> import os
-    >>> nomodules = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'TestSuite', 'node.sh.template.nomodules'), 'r')
-    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0]
-    True
-    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
-
     :param cluster:
-    param environment:
-    :return: retval
+    :param environment:
+    :return:
     """
+#    >>> import os
+#    >>> nomodules = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'TestSuite', 'node.sh.template.nomodules'), 'r')
+#    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0]
+#    True
+#    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
+
     import os
     from string import Template
     import sys
@@ -80,7 +94,7 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     Outputs qsub_args string for Nipype nodes
     queue is the string to specify the queue "-q all.q | -q HJ,ICTS,UI"
     memoryGB is a numeric in gigabytes to be given (ie 2.1 will result in "-l mem_free=2.1G")
-          if memoryGB = 0, then it is automatically computed.
+    if memoryGB = 0, then it is automatically computed.
     minThreads The fewest number of threads to use (if an algorithm has benifits from more than 1 thread)
     maxThreads The max number of threads to use (if an algorithm is not multi-threaded, then just use 1)
     stdout Where to put stdout logs
@@ -103,7 +117,7 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     :param maxThreads:
     :param stdout: '/dev/null'
     :param stderr: '/dev/null'
-    :return: format_str
+    :return:
 
     """
     assert memoryGB <= 48, "Memory must be supplied in GB, so anything more than 24 seems not-useful now."

@@ -3,7 +3,17 @@
 ## This workflow runs "compressed Sensing" in Matlab on a DWI scan,
 ## that is already corrected and aligned to t2 image space.
 ##
+"""
+CSWorkflow.py
+============================
+Description:
+    The purpose of this is to...
+    
+Author:
 
+Usage:
+
+"""
 import os
 
 import nipype
@@ -18,9 +28,10 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
     """
     This Function runs "compressed Sensing" in Matlab on a DWI scan, that is already correct and aligned to t2 image spaces
+
     :param WFname:
     :param PYTHON_AUX_PATHS:
-    :return: CSWF
+    :return:
     """
     if PYTHON_AUX_PATHS is not None:
         Path_to_Matlab_Func = os.path.join(PYTHON_AUX_PATHS[0], 'DWIProcessingWorkflows')
@@ -30,6 +41,7 @@ def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
     def runCSbyMatlab(inputScan, inputMask, CSScanFileName, Path_to_Matlab_Func):
         """
         This Function takes in...
+
         :param inputScan:
         :param inputMask:
         :param CSScanFileName:

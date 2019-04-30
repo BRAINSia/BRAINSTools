@@ -1,3 +1,14 @@
+"""
+PipeLineFunctionHelpers.py
+=============================
+Description:
+
+Author:
+
+Usage:
+
+"""
+
 import errno
 import os
 import shutil  ## needed for removing directory tree
@@ -6,8 +17,9 @@ from builtins import range
 def convertToList(element):
     """
     This funciton...
+
     :param element:
-    :return: None OR [element]
+    :return:
     """
     if element is None:
         return ''
@@ -16,9 +28,10 @@ def convertToList(element):
 def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
     """
     This function...
+
     :param posteriorDictionary:
     :param candidateRegionFileName:
-    :return: outputCandidateRegionFileName
+    :return:
     """
     import SimpleITK as sitk
 
@@ -50,8 +63,9 @@ def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileNam
 def makeListOfValidImages(imageFile):
     """
     This function...
+
     :param imageFile:
-    :return: [] OR imageFile
+    :return:
     """
     if imageFile is None:
         return []  # an empty iterable is a valid input to a data string
@@ -68,9 +82,10 @@ def makeListOfValidImages(imageFile):
 def getListIndex(imageList, index):
     """
     This function returns the imageList value at an index
+
     :param imageList:
     :param index:
-    :return: imageList[index]
+    :return:
     """
     return imageList[index]
 
@@ -78,10 +93,11 @@ def getListIndex(imageList, index):
 def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
     """
     This function...
+
     :param t1_image:
     :param brain_labels:
     :param clipped_file_name:
-    :return: clipped_file
+    :return:
     """
     import os
     import sys
@@ -101,8 +117,9 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
 def UnwrapPosteriorImagesFromListOfTuplesFunction(posteriorListOfTuples):
     """
     This function...
+
     :param posteriorListOfTuples:
-    :return: mylist
+    :return:
     """
     ## Dictionary values are now being returned as unicode characters
     ## so convert back to ascii
@@ -119,8 +136,9 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
 
         dg_list_list=[['Y1/POSTERIOR_AIR.nii.gz','Y1/POSTERIOR_CAUDATE.nii.gz'],['Y2/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']]
         dictionary_of_session_list={'AIR':['Y1/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_AIR.nii.gz'], 'CAUDATE':['Y1/POSTERIOR_CAUDATE.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']}
+
         :param dg_list_list:
-        :return: dicitonary_of_session_list
+        :return:
     """
     from os.path import basename
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
@@ -147,8 +165,9 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
 def AccumulateLikeTissuePosteriors(posteriorImages):
     """
     This function...
+
     :param posteriorImages
-    :return: AccumulatePriorsList, AccumulatePriorsNames
+    :return:
     """
     import os
     import sys
@@ -210,8 +229,9 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
 
 def mkdir_p(path):
     """ Safely make a new directory, checking if it already exists
+
         :param path:
-        :return: None
+        :return:
     """
     try:
         os.makedirs(path)
@@ -224,8 +244,9 @@ def mkdir_p(path):
 
 def recursive_dir_rm(path):
     """ Force recursive remove of directory
+
         :param path:
-        :return: Nothing
+        :return:
      """
     if os.path.exists(path):
         shutil.rmtree(path)
@@ -234,8 +255,9 @@ def recursive_dir_rm(path):
 
 def make_dummy_file(fn):
     """This function just makes a file with the correct name and time stamp
+
        :param fn:
-       :return: None
+       :return:
     """
     import time
     mkdir_p(os.path.dirname(fn))

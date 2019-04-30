@@ -1,13 +1,25 @@
+
 """
-Image processing functions for pipelines
+image_processing.py
+============================
+Description:
+    The purpose of this is to image process functions for pipelines
+    
+Author:
+
+Usage:
+
 """
-from builtins import range
+
+#Image processing functions for pipelines
+#from builtins import range
 
 
 def FixWMPartitioning(brainMask, PosteriorsList):
     """"There were some errors in mis-classifications for WM/NON_WM"""
     """
     This Function takes in...
+
     :param brainMask:
     :param PosteriorsList:
     :return: UpdatedPosteriorsList, MatchingFGCodeList, MatchingLabelList, nonAirRegionMask
@@ -20,7 +32,12 @@ def FixWMPartitioning(brainMask, PosteriorsList):
            the exterior topology.  Holes that are within 3 units
            of the exterior topology may not be completely filled.
            Any voxel in the original mask will be guanteed to be
-           in the returned mask."""
+           in the returned mask.
+
+           :param inputMask:
+           :param HOLE_FILL_SIZE:
+           :return:
+           """
 
         return sitk.BinaryThreshold(
             inputMask +
@@ -66,13 +83,14 @@ def FixWMPartitioning(brainMask, PosteriorsList):
                                    NOTREGION_NAME):
         """
         This function takes in...
+
         :param BM_FILLED:
         :param ShiftPosteriorsList:
         :param NOTREGION_index:
         :param REGION_index:
         :param REGION_NAME:
         :param NOTREGION_NAME:
-        :return: ShiftPosteriorsList
+        :return:
         """
         print(("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index],
                                                type(ShiftPosteriorsList[NOTREGION_index]))))

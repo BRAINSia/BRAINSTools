@@ -7,14 +7,15 @@ Welcome to BRAINSTools/AutoWorkup Python Documentation's documentation!
 =======================================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
    :caption: Contents:
 
    BAW
    bin
+   brains
    logismosb
    TestSuite
-
+   Extra
 
 
 

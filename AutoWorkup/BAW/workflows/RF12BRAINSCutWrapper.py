@@ -2,6 +2,8 @@
 # emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
 # vi: set ft=python sts=4 ts=4 sw=4 et:
 """
+RF12BRAINSCutWrapper.py
+===============================
 Date:          2012-09-05
 Author:        hans-johnson@uiowa.edu
 Purpose:       Wrap a convenience function for the BRAINSCut program in Nipype
@@ -158,7 +160,8 @@ class RF12BRAINSCutWrapper(CommandLine):
     def _list_outputs(self):
         """
         This fucntion...
-        :return: self._outputs_from_inputs(outputs)
+
+        :return:
         """
         outputs = self.output_spec().get()
         return self._outputs_from_inputs(outputs)
@@ -166,8 +169,9 @@ class RF12BRAINSCutWrapper(CommandLine):
     def _outputs_from_inputs(self, outputs):
         """
         This function...
+
         :param outputs:
-        :return: outputs
+        :return:
         """
         for name in list(outputs.keys()):
             coresponding_input = getattr(self.inputs, name)

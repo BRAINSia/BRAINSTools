@@ -1,4 +1,12 @@
+"""
+atlasNode.py
+============================
+Description:
+    The purpose of this is to..
 
+Usage:
+
+"""
 
 from builtins import range
 from builtins import zip
@@ -9,13 +17,14 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
         :param atlasDirectory:
         :param name:
         :param atlasParts:
-        :return: node
+        :return:
+
         Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
         compartmentalization of algorithmic components.
 
-        (S_) Static files that are relevant for any atlas
-        (W_) Files that require warping to subjecgt specific atlas
+        (S) Static files that are relevant for any atlas
+        (W) Files that require warping to subjecgt specific atlas
 
         KEY:
           [S|W]_BRAINSABCSupport
@@ -150,11 +159,13 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
 
 def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTemplate, outDefinition):
     """
+    This function...
+
     :param t1_image:
     :param deformed_list:
     :param AtlasTemplate:
     :param outDefinition:
-    :return: outAtlasFullPath, clean_deformed_list
+    :return:
     """
     import os
     import sys

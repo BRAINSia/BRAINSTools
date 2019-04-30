@@ -1,4 +1,12 @@
+"""
+pathHandling.py
+============================
+Description:
+    The purpose of this is to..
 
+Usage:
+
+"""
 
 import os.path
 import re
@@ -16,10 +24,11 @@ def validatePath(path, allow_empty, isDirectory):
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
+
     :param path:
     :param allow_empty:
     :param isDirectory:
-    :return full:
+    :return:
     """
     msg = "Path could not be found! {0}"
     if (path is None or path == '') and allow_empty:
@@ -40,8 +49,9 @@ def validatePaths(pathString):
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
+
     :param pathString:
-    :return: ':'.join([validatePath(path, False, True) for path in ':'.split(pathString)])
+    :return:
     """
     return ':'.join([validatePath(path, False, True) for path in ':'.split(pathString)])
 
@@ -61,8 +71,9 @@ def appendPathList(new, old=None):
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
+
     :param new:
-    :param old: None
+    :param old:
     :return:
     """
     new = validatePaths(new, False, True)
@@ -74,11 +85,13 @@ def appendPathList(new, old=None):
 
 def file_replace(in_file, out_file, pattern, repl):
     """
+    This function...
+
     :param in_file:
     :param out_file:
     :param patterm:
     :param repl:
-    :return: True
+    :return:
     """
     # From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
     from platform import system
@@ -95,9 +108,11 @@ def file_replace(in_file, out_file, pattern, repl):
 
 def clone_atlas_dir(cachedir, atlasdir):
     """
+    This function...
+
     :param cachedir:
     :param atlasdir:
-    :return: new_dir
+    :return:
     """
     from distutils.dir_util import copy_tree, remove_tree
     import stat

@@ -1,3 +1,14 @@
+"""
+fswrap.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
+
 import os
 import sys
 
@@ -64,10 +75,11 @@ class FSScript(CommandLine):
     def _format_arg(self, opt, spec, val):
         """
         This function...
+
         :param opt:
         :param spec:
         :param val:
-        :return: super(FSScript, self)._format_arg(opt, spec, val)
+        :return:
         """
         if opt == 'subprocess':
             if not val in ['autorecon', 'template', 'longitudinal']:
@@ -77,7 +89,8 @@ class FSScript(CommandLine):
     def _list_outputs(self):
         """
         This function...
-        :return: outputs
+
+        :return:
         """
         outputs = self._outputs().get()
         ## HACK: TEST

@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+"""
+WorkupComputeLabelVolume.py
+=============================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 
 
@@ -15,9 +24,10 @@ from utilities.misc import *
 def CreateVolumeMeasureWorkflow(WFname, master_config):
     """
     This function...
+
     :param WFname:
     :param master_config:
-    :return: volumeMeasureWF
+    :return:
     """
     volumeMeasureWF = pe.Workflow(name=WFname)
 

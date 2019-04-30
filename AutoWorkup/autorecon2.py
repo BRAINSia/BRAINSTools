@@ -1,3 +1,13 @@
+"""
+autorecon2.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 import os
 import nipype
 from nipype.interfaces.utility import Function, IdentityInterface, Merge
@@ -8,6 +18,7 @@ from autorecon1 import mkdir_p, copy_file
 def copy_ltas(in_file, subjects_dir, subject_id, long_template):
     """
     This function..
+
     :param in_file:
     :param subjects_dir:
     :param subject_id:
@@ -25,6 +36,7 @@ def copy_ltas(in_file, subjects_dir, subject_id, long_template):
 def create_AutoRecon2(config):
     """
     This function...
+
     :param config:
     :return:
     """

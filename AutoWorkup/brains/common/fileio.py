@@ -1,8 +1,19 @@
+"""
+fileio.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 def check_file(path):
     """
     This function..
+
     :param path:
-    :return: None or full
+    :return:
     """
     import os.path
     full = os.path.abspath(path)
@@ -14,7 +25,8 @@ def check_file(path):
 def parseLabelsFile():
     """
     This function...
-    :return: labelDict
+
+    :return:
     """
     import os.path
     from ..config import _config

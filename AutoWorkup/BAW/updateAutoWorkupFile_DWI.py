@@ -1,3 +1,13 @@
+"""
+updateAutoWorkupFile_DWI.py
+===============================
+Description:
+
+Author:
+
+Usage:
+
+"""
 
 
 import argparse
@@ -8,12 +18,12 @@ import textwrap
 from builtins import object
 from builtins import str
 
-"""This class represents a...""""
 class UpdateAutoWorkup(object):
-    """
-    This function...
-    """
+    """This class represents a..."""
     def updateAutoWorkup(self):
+        """
+        This function...
+        """
         newPath = self._generateNewPathName()
         newFile = csv.writer(open(newPath, 'wb'), quoting=csv.QUOTE_ALL)
         col_name_list = ["project", "subject", "session", "imagefiles"]
@@ -41,7 +51,8 @@ class UpdateAutoWorkup(object):
     def _generateNewPathName(self):
         """
         This function...
-        :return: newPath
+
+        :return:
         """
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
         basename = os.path.basename(inputArguments.autoWorkupFile)
@@ -109,6 +120,7 @@ class MakeNewImageDict(object):
     def _makeSQLiteCommand(self, imageDict):
         """
         This function..
+
         :param imageDict:
         """
         keys = list(imageDict.keys())
@@ -130,10 +142,11 @@ class MakeNewImageDict(object):
     def getNewImagesList(self, project, subject, session):
         """
         This function..
+
         :param project:
         :param subject:
         :param session:
-        :return: newImages
+        :return:
         """
         sqlQuery = self._makeDBquery(project, subject, session)
         dbInfo = self._getInfoFromDB(sqlQuery)
@@ -145,8 +158,9 @@ class MakeNewImageDict(object):
     def _getInfoFromDB(self, sqlQuery):
         """
         This function...
+
         :param sqlQuery:
-        :return: dbInfo
+        :return:
         """
         con = lite.connect(self.dbName)
         dbCur = con.cursor()
@@ -158,6 +172,7 @@ class MakeNewImageDict(object):
     def _makeDBquery(self, project, subject, session):
         """
         This function...
+
         :param project:
         :param subject:
         :param session:

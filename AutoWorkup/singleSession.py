@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
 singleSession.py
-=========
+===================
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
@@ -38,7 +38,7 @@ Examples:
 
 def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     """
-    create singleSession workflow on a single session
+    Create singleSession workflow on a single session
 
     This is the main function to call when processing a data set with T1 & T2
     data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
@@ -118,6 +118,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
     """
     This function...
+
     :param sessions:
     :param environment:
     :param experiment:
@@ -318,6 +319,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
     """
     This function...
+
     :param environment:
     :param experiment:
     :param pipeline:

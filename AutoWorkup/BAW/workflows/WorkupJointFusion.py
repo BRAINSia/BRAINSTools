@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+"""
+WorkupJointFusion.py
+===========================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 
 
@@ -37,10 +46,11 @@ from .WorkupComputeLabelVolume import *
 def MakeVector(inFN1, inFN2=None, jointFusion=False):
     """
     This function...
+
     :param inFN1:
-    :param inFN2: None
-    :param jointFusion: None
-    :return: returnVector
+    :param inFN2:
+    :param jointFusion:
+    :return:
     """
     # print("inFN1: {0}".format(inFN1))
     # print("inFN2: {0}".format(inFN2))
@@ -61,16 +71,17 @@ def MakeVector(inFN1, inFN2=None, jointFusion=False):
 def adjustMergeList(allList, n_modality):
     """
     This function...
+
     :param allList:
     :param n_modality:
-    :return: [fname for fname in list(yieldList(asciiAllList, n_modality))]
+    :return:
     """
     def yieldList(inList, n):
         """
         This function...
         :param inList:
         :param n:
-        :return: None
+        :return:
         """
         for i in range(0, len(inList), n):
             yield inList[i:i + n]
@@ -84,8 +95,9 @@ def adjustMergeList(allList, n_modality):
 def readRecodingList(recodeLabelFilename):
     """
     This function...
+
     :param recodeLabelFilename:
-    :return: recodeLabelPairList
+    :return:
     """
     recodeLabelPairList = []
     import csv
@@ -106,8 +118,9 @@ def readRecodingList(recodeLabelFilename):
 def readMalfAtlasDbBase(dictionaryFilename):
     """
     This function...
+
     :param dictionaryFilename:
-    :return: jointFusionAtlasDict
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     jointFusionAtlasDict = OrderedDict()
@@ -125,6 +138,7 @@ def readMalfAtlasDbBase(dictionaryFilename):
 def getListIndexOrNoneIfOutOfRange(imageList, index):
     """
     This function...
+
     :param imageList:
     :param index:
     :return:
@@ -141,8 +155,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     :param WFname:
     :param onlyT1:
     :param master_config:
-    :param runFixFusionLabelMap: True
-    :return: JointFusionWF
+    :param runFixFusionLabelMap:
+    :return:
     """
     from nipype.interfaces import ants
 

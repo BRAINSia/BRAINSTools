@@ -1,3 +1,13 @@
+"""
+RunLOGISMOSB.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from workflow import create_logb_workflow
 import sqlite3
 
@@ -39,4 +49,3 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id from 
     # wf.run(plugin="SGE", plugin_args={"qsub_args": "-q HJ,all.q,COE,UI"})
     # wf.run(plugin="MultiProc", plugin_args={"n_procs": 24})
     wf.run()
-

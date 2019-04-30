@@ -1,3 +1,13 @@
+"""
+nipype_interfaces.py
+======================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from nipype.interfaces.base import BaseInterface, traits, BaseInterfaceInputSpec, TraitedSpec
 from nipype.interfaces.semtools import BRAINSResample
 from nipype.interfaces.freesurfer import MRIConvert
@@ -12,6 +22,7 @@ def run_resample(in_file, ref_file, transform, out_file, interpolation_mode='Lin
                  inverse_transform=True):
     """
     This function...
+
     :param in_file:
     :param ref_file:
     :param transform:
@@ -63,8 +74,9 @@ class CollectFeatureFiles(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
-        :return: runtime
+        :return:
         """
         list_of_feature_files = self.combine_files()
         self.resample_images_for_features(list_of_feature_files, self.inputs.reference_file, self.inputs.transform_file)
@@ -74,6 +86,7 @@ class CollectFeatureFiles(BaseInterface):
     def _get_dict_name(filename):
         """
         This function...
+
         :param filename:
         :return:
         """
@@ -81,7 +94,8 @@ class CollectFeatureFiles(BaseInterface):
 
     def combine_files(self):
         """
-        This class represents a...
+        This function...
+
         :return: feature_files
         """
         feature_files = [self.inputs.rho, self.inputs.phi, self.inputs.theta] + self.inputs.posterior_files.values()
@@ -89,8 +103,9 @@ class CollectFeatureFiles(BaseInterface):
 
     def _list_outputs(self):
         """
-        This class represents a...
-        :return: outputs
+        This function...
+
+        :return:
         """
         outputs = self._outputs().get()
         outputs["feature_files"] = self._list_resampled_feature_files(self.combine_files())
@@ -98,9 +113,10 @@ class CollectFeatureFiles(BaseInterface):
 
     def _list_resampled_feature_files(self, list_of_feature_files):
         """
-        This class represents a...
+        This function...
+
         :param list_of_feature_files:
-        :return: resampled_feature_files_dict
+        :return:
         """
         resampled_feature_files_dict = dict()
         for _file in list_of_feature_files:
@@ -111,7 +127,8 @@ class CollectFeatureFiles(BaseInterface):
 
     def resample_images_for_features(self, list_of_feature_files, ref_file, transform):
         """
-        This class represents a...
+        This function...
+
         :param list_of_feature_files:
         :param ref_file:
         :param transform:
@@ -127,11 +144,12 @@ class CollectFeatureFiles(BaseInterface):
 def create_white_edge_cost_image(t1_file, t2_file, gm_proba_file, out_file):
     """
     This class represents a...
+
     :param t1_file:
     :param t2_file:
     :param gm_proba_file:
     :param out_file:
-    :return: out_file
+    :return:
     """
     import SimpleITK as sitk
     import os
@@ -170,8 +188,9 @@ class PredictEdgeProbability(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
-        :return: runtime:
+        :return:
         """
         feature_data = image_data(self.inputs.t1_file, "T1", additional_images=self.inputs.additional_files)
         gm_classifier = joblib.load(self.inputs.gm_classifier_file)
@@ -191,7 +210,8 @@ class PredictEdgeProbability(BaseInterface):
     def _list_outputs(self):
         """
         This function...
-        :return: outputs
+
+        :return:
         """
         outputs = self._outputs().get()
         for matter in ["gm", "wm"]:
@@ -203,7 +223,8 @@ class PredictEdgeProbability(BaseInterface):
 def create_identity_transform():
     """
     This function...
-    :return: transform
+
+    :return:
     """
     dimension = 3
     offset = (0, 0, 0)
@@ -215,10 +236,11 @@ def create_identity_transform():
 def change_orientation(image_file, out_file, orientation="LPS"):
     """
     This function...
+
     :param image_file:
     :param out_file:
     :param orientation:
-    :return: result.outputs.out_file
+    :return:
     """
     convert = MRIConvert()
     convert.inputs.in_file = image_file
@@ -234,7 +256,7 @@ def sample_image(image, size, spacing=(1, 1, 1)):
     :param image:
     :param size:
     :param spacing:
-    :return: resample.Execute(image)
+    :return:
     """
     resample = sitk.ResampleImageFilter()
     resample.SetInterpolator(sitk.sitkLinear)
@@ -265,7 +287,8 @@ class CreateReferenceImage(BaseInterface):
     def _list_outputs(self):
         """
         This function...
-        :return: outputs
+
+        :return:
         """
         outputs = self._outputs().get()
         outputs["reference_file"] = os.path.abspath("reference_file.nii.gz")
@@ -274,8 +297,9 @@ class CreateReferenceImage(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
-        :return: runtime
+        :return:
         """
         baw_image = sitk.ReadImage(str(self.inputs.baw_t1))
         spacing = baw_image.GetSpacing()
@@ -290,9 +314,10 @@ class CreateReferenceImage(BaseInterface):
 def scale_image(image, scale):
     """
     This function...
+
     :param image:
     :param scale:
-    :return: image*scale
+    :return:
     """
     return image * scale
 
@@ -300,10 +325,11 @@ def scale_image(image, scale):
 def increase_penalty(image, penalty, minimum):
     """
     This function...
+
     :param image:
     :param penalty:
     :param minimum:
-    :return: image - (background * penalty)
+    :return:
     """
     background = sitk.Cast(image < minimum, sitk.sitkFloat64)
     return image - (background * penalty)
@@ -335,7 +361,8 @@ class LOGISMOSBPreprocessing(BaseInterface):
     def _list_outputs(self):
         """
         This function...
-        :return: outputs
+
+        :return:
         """
         outputs = self._outputs().get()
         inputs = self.inputs.get()
@@ -346,8 +373,9 @@ class LOGISMOSBPreprocessing(BaseInterface):
     def _run_interface(self, runtime):
         """
         This function...
+
         :param runtime:
-        :return: runtime
+        :return:
         """
         inputs = self.inputs.get()
         for matter in ("gm", "wm"):

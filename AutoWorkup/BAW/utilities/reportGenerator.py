@@ -1,5 +1,10 @@
 #!/bin/env python
 """
+reportGenerator.py
+============================
+Description:
+    The purpose of this is to...
+
 Usage:
   reportGenerator.py -h | --help
   reportGenerator.py REPORT EXPERIMENT [--outdir D] [-f OUTFILE]
@@ -24,9 +29,11 @@ import shutil
 
 def onlyT1T2(src, names):
     """
+    This function...
+
     :param src:
     :param names:
-    :return: names
+    :return:
     """
     if src.endswith('TissueClassify'):
         # print "Keeping T1/T2!"
@@ -48,12 +55,14 @@ def onlyT1T2(src, names):
 
 def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', **kwargs):
     """
+    This function...
+
     :param REPORT:
     :param EXPERIMENT:
-    :param outdir: None
-    :param OUTFILE: '/tmp/autoworkup_report.csv'
-    :param **kwargs:
-    :return: None
+    :param outdir:
+    :param OUTFILE:
+    :param kwargs:
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     if outdir is not None:

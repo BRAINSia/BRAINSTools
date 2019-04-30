@@ -39,6 +39,7 @@ Options:
 def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, PYTHON_AUX_PATHS, LABELS_CONFIG_FILE):
     """
     This Function takes in...
+    
     :param DWI_scan:
     :param T2_scan:
     :param labelMap_image:

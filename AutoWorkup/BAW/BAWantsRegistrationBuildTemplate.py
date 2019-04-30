@@ -1,4 +1,13 @@
+"""
+BAWantsRegistrationTemplateBuildTemplate.py
+==============================================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 
 from builtins import range
@@ -20,8 +29,9 @@ from .utilities.misc import CommonANTsRegistrationSettings
 def makeListOfOneElement(inputFile):
     """
     This functions...
+
     :param inputFile:
-    :return: outputList
+    :return:
     """
     outputList = [inputFile]
     return outputList
@@ -30,8 +40,9 @@ def makeListOfOneElement(inputFile):
 def GetFirstListElement(this_list):
     """
     This function..
+
     :param this_list:
-    :return: this_list[0]
+    :return:
     """
     return this_list[0]
 
@@ -39,9 +50,10 @@ def GetFirstListElement(this_list):
 def MakeTransformListWithGradientWarps(averageAffineTranform, gradientStepWarp):
     """
     This function...
+
     :param averageAffineTranform:
     :param gradientStepWarp:
-    :return:[averageAffineTranform, gradientStepWarp, gradientStepWarp, gradientStepWarp, gradientStepWarp]
+    :return:
     """
     return [averageAffineTranform, gradientStepWarp, gradientStepWarp, gradientStepWarp, gradientStepWarp]
 
@@ -53,10 +65,11 @@ def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes
     and the inner list is the same size as the number of subjects to be averaged.
     In this case, the first element will be a list of all the deformed T2's, and
     the second element will be a list of all deformed POSTERIOR_AIR,  etc..
+
     :param deformedPassiveImages:
     :param flattened_image_nametypes:
     :param interpolationMapping:
-    :return: nested_imagetype_list, outputAverageImageName_list, image_type_list, nested_interpolation_type
+    :return:
     """
     all_images_size = len(deformedPassiveImages)
     image_dictionary_of_lists = OrderedDict()
@@ -90,8 +103,9 @@ def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes
 def SplitCompositeToComponentTransforms(transformFilename):
     """
     This function...
+
     :param transformFilename:
-    :return: affine_component_list, warp_component_list
+    :return:
     """
     ### Nota bene: The outputs will include the initial_moving_transform from Registration (which depends on what
     ###            the invert_initial_moving_transform is set to)
@@ -144,11 +158,12 @@ def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, i
                                   invert_transform_flags=None):
     """
     This function...
+
     :param ListOfPassiveImagesDictionaries:
     :param transforms:
     :param interpolationMapping:
     :param invert_transform_flags: None
-    :return: flattened_images, flattened_transforms, flattened_invert_transform_flags, flattened_image_nametypes, flattened_interpolation_type
+    :return:
     """
     import sys
     print(("HACK:  DEBUG: ListOfPassiveImagesDictionaries\n{lpi}\n".format(lpi=ListOfPassiveImagesDictionaries)))
@@ -196,10 +211,11 @@ def GetMovingImages(ListOfImagesDictionaries, registrationImageTypes, interpolat
     """ This currently ONLY works when registrationImageTypes has
         length of exactly 1.  When the new multi-variate registration
         is introduced, it will be expanded.
+
         :param ListOfImagesDictionaries:
         :param registrationImageTypes:
         :param interpolationMapping:
-        :return: moving_images, moving_interpolation_type
+        :return:
     """
     if len(registrationImageTypes) != 1:
         print("ERROR:  Multivariate imageing not supported yet!")
@@ -212,9 +228,10 @@ def GetMovingImages(ListOfImagesDictionaries, registrationImageTypes, interpolat
 def GetPassiveImages(ListOfImagesDictionaries, registrationImageTypes):
     """
     This function...
+
     :param ListOfImagesDictionaries:
     :param registrationImageTypes:
-    :return: passive_images
+    :return:
     """
     from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
     if len(registrationImageTypes) != 1:

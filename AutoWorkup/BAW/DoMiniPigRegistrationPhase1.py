@@ -1,4 +1,13 @@
+"""
+DoMiniPigRegistrationPhase1.py
+==================================
+Description:
 
+Author:
+
+Usage:
+
+"""
 
 import errno
 import os
@@ -45,6 +54,7 @@ if len(sys.argv) != 1:
 def addToSysPath(index, path):
     """
     This function...
+
     :param index:
     :param path:
     :return: None
@@ -98,6 +108,7 @@ print(ExperimentInfo)
 def mkdir_p(path):
     """
     This function..
+
     :param path:
     :return: None
     """
@@ -154,6 +165,7 @@ input_spec.inputs.Domestic_LabelMap = ExperimentInfo["Atlas"]["LabelMapImage"]
 def ChangeDynamicRangeOfImage(inFN, outFN, winMin, winMax, outMin, outMax):
     """
     This function...
+
     :param inFN:
     :param outFN:
     :param winMin:
@@ -217,6 +229,7 @@ minipigWF.connect(T1DynFix, 'outFN', ResampleBrainMask, 'referenceVolume')
 def SmoothBrainMask(inFN, outFN):
     """
     This function...
+
     :param inFN:
     :param outFN:
     :return: os.path.realpath(outFN)
@@ -273,6 +286,7 @@ def ChopImage(inFN, inMaskFN, outFN):
     """A function to apply mask to zero out all non-interesting pixels.
        ideally this should not be needed, but in an attempt to figure out
        why registration is acting difficult, this is a reasonable solution
+
        :param inFN:
        :param inMaskFN:
        :param outFN:
@@ -369,6 +383,7 @@ minipigWF.connect(AT_to_T1_Fit, 'outputTransform', BeginANTS, 'initial_moving_tr
 def MakeVector(inFN1, inFN2):
     """
     This function...
+
     :param inFN1:
     :param inFN2:
     :return: [inFN1, inFN2]
@@ -430,6 +445,7 @@ minipigWF.connect(BeginANTS, 'save_state', BeginANTS2, 'restore_state')
 def getListIndex(imageList, index):
     """
     This function...
+
     :param imageList:
     :param index:
     :return: imageList[indexs]

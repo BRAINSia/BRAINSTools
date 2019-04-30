@@ -1,3 +1,13 @@
+"""
+train_classifiers.py
+======================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from training import train_classifier
 from crossvalidation import read_data
 import os
@@ -6,6 +16,7 @@ import os
 def train_classifiers(data_file, cache_dir=os.path.curdir):
     """
     This function...
+
     :param data_file:
     :param cache_dir:
     """

@@ -1,3 +1,13 @@
+"""
+autoworkup.py
+=================
+Description:
+
+Author:
+
+Usage:
+
+"""
 from future import standard_library
 
 standard_library.install_aliases()
@@ -9,6 +19,7 @@ valid_schemes = ['BRAINS', 'Nipype']
 def writeConfiguration(filename='example.config'):
     """
     This function...
+
     :param filename:
     """
     config = ConfigParser.SafeConfigParser()
@@ -24,6 +35,7 @@ def writeConfiguration(filename='example.config'):
 def loadConfiguration(configFile='/dev/null'):
     """
     This function...
+
     :param configFile:
     """
     _config.read(configFile)

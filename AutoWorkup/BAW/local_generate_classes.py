@@ -1,3 +1,13 @@
+"""
+local_generate_classes.py
+=============================
+Description:
+
+Author:
+
+Usage:
+
+"""
 
 
 ## \author Hans J. Johnson

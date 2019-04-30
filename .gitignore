@@ -1,3 +1,5 @@
+# Ignore sphinx temporary files
+_build
 *.[oa]
 # Compiled Static libraries
 *.a

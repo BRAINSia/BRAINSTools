@@ -1,4 +1,14 @@
-""" By using
+"""
+configure_env.py
+============================
+Description:
+    The purpose of this is to...
+Author:
+
+Usage:
+
+
+By using
          execfile(this_file, OrderedDict(__file__=__file__,
                                   append_os_path=['list', 'of', 'PATH'],
                                   append_sys_path=['list', 'of', 'PYTHONPATH']))

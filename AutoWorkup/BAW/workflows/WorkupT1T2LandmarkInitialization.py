@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+"""
+WorkupT1T2LandmarkInitialization.py
+======================================
+Description:
 
+Author:
+
+Usage:
+
+"""
 import os
 
 import nipype.interfaces.io as nio  # Data i/o
@@ -33,14 +42,15 @@ def CreateLandmarkInitializeWorkflow(WFname, master_config, InterpolationMode, P
                                      useEMSP=False, Debug=False):
     """
     This function...
+
     :param WFname:
     :param master_config:
     :param InterpolationMode:
     :param PostACPCAlignToAtlas:
     :param DoReverseInit:
-    :param useEMSP: False
-    :param Debug: False
-    :return: landmarkInitializeWF
+    :param useEMSP:
+    :param Debug:
+    :return:
     """
     CLUSTER_QUEUE = master_config['queue']
     CLUSTER_QUEUE_LONG = master_config['long_q']

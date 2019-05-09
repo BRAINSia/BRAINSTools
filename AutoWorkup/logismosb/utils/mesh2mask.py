@@ -11,7 +11,7 @@ Usage:
 import vtk, math
 import sys, os
 import SimpleITK as sitk
-from fs_thickness_measurements import read_poly_data
+from .fs_thickness_measurements import read_poly_data
 from nipype.interfaces.base import BaseInterface, TraitedSpec, BaseInterfaceInputSpec, traits
 
 

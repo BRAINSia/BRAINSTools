@@ -12,8 +12,8 @@ import SimpleITK as sitk
 from sklearn.externals import joblib
 import os
 import numpy as np
-from preprocess import createwatersheds
-from training import image_data
+from .preprocess import createwatersheds
+from .training import image_data
 import pickle
 
 
@@ -73,7 +73,7 @@ def predict_image_proba(clf_files, features, label_array):
     :return:
     """
     prob_array = np.zeros(label_array.size)
-    for label in clf_files['Regional'].keys():
+    for label in list(clf_files['Regional'].keys()):
         idx = label_array.flatten() == label
         clf = joblib.load(clf_files['Regional'][label])
         prob_array[idx] = clf.predict_proba(features[idx])[:, 1]

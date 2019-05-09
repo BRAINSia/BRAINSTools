@@ -9,7 +9,7 @@ Usage:
 
 """
 from nipype import Workflow, IdentityInterface, Node, Function
-from nipype_interfaces import PredictEdgeProbability, CollectFeatureFiles, CreateReferenceImage, LOGISMOSBPreprocessing
+from .nipype_interfaces import PredictEdgeProbability, CollectFeatureFiles, CreateReferenceImage, LOGISMOSBPreprocessing
 from nipype.interfaces.semtools import BRAINSResample
 from nipype.interfaces.freesurfer import MRIsConvert
 #from ..workflow import LOGISMOSB, read_json_config

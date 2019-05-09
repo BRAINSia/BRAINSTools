@@ -12,7 +12,7 @@ import sys
 import os
 import errno
 import nipype
-from nipype.interfaces.utility import Function,IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 
@@ -281,7 +281,7 @@ copy the run to rawavg and continue.""")
         if config['longitudinal']:
             ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
                             (inputSpec, create_template, [('in_T1s', 'in_files')]),
-                            (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
+                            (copy_iscales, create_template, [('out_file', 'in_intensity_scales')]),
                         ])
         else:
             create_template.inputs.fixed_timepoint = True

@@ -62,7 +62,7 @@ def MakePosteriorListOfTuplesFunc(posteriorImages):
     posteriorImages.sort()
     #print("AAAA {0}".format(posteriorImages))
     import os
-    POSTERIORS = [ os.path.basename( pfn ).replace("POSTERIOR_","").replace(".nii.gz","") for pfn in posteriorImages ]
+    POSTERIORS = [ os.path.basename( pfn ).replace("POSTERIOR_", "").replace(".nii.gz", "") for pfn in posteriorImages ]
     #print("BBBB {0}".format(POSTERIORS))
     if len(POSTERIORS) != len(posteriorImages):
         print(("ERROR: ", posteriorNames))

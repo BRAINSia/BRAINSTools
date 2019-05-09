@@ -10,7 +10,7 @@ Usage:
 """
 import os
 import nipype
-from nipype.interfaces.utility import Function,IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 

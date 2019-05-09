@@ -1,4 +1,3 @@
-
 # \author Hans J. Johnson
 # This file will help store new data
 # in a publicly available web location
@@ -30,12 +29,19 @@ def md5_for_file(f, block_size=2 ** 20):
     return md5.hexdigest()
 
 
-if __name__ == '__main__':
-    defaultCMakeRepository = '/iplweb/html/users/brainstestdata/ctestdata'
+if __name__ == "__main__":
+    defaultCMakeRepository = "/iplweb/html/users/brainstestdata/ctestdata"
 
-    parser = argparse.ArgumentParser(description="Program to move local test data to external repository")
-    parser.add_argument('--src', dest='sourceFile', help='The source file to be moved.')
-    parser.add_argument('--dest', dest='destPath', default=defaultCMakeRepository, help='The external repository location')
+    parser = argparse.ArgumentParser(
+        description="Program to move local test data to external repository"
+    )
+    parser.add_argument("--src", dest="sourceFile", help="The source file to be moved.")
+    parser.add_argument(
+        "--dest",
+        dest="destPath",
+        default=defaultCMakeRepository,
+        help="The external repository location",
+    )
 
     args = parser.parse_args()
 
@@ -46,29 +52,37 @@ if __name__ == '__main__':
         exit(0)
     print(("Preparing: {0}".format(fileName)))
     localPublicPath = args.destPath
-    algo = 'MD5'
+    algo = "MD5"
     f = open(fileName)
     value = md5_for_file(f)
     f.close()
     # print('MD5 value={0}'.format(value))
     # print('MD5 value={0}'.format('59871b1b19b16a3c04d752f54bbf8bfd'))
     source = fileName
-    destPath = localPublicPath + '/' + algo
+    destPath = localPublicPath + "/" + algo
     if not os.path.exists(destPath):
         os.mkdir(destPath)
-    dest = destPath + '/' + value
+    dest = destPath + "/" + value
     print(("mv -f {0} {1}".format(source, dest)))
-    md5FileName = fileName + '.md5'
-    f = open(md5FileName, 'w')
+    md5FileName = fileName + ".md5"
+    f = open(md5FileName, "w")
     f.write(value)
     f.close()
-    finalDestination = destPath + '/' + os.path.basename(md5FileName)
+    finalDestination = destPath + "/" + os.path.basename(md5FileName)
     if os.path.exists(finalDestination):
-        print(("Destination file already exists: SKIPPING {0}".format(finalDestination)))
+        print(
+            ("Destination file already exists: SKIPPING {0}".format(finalDestination))
+        )
     else:
-        shutil.copyfile(md5FileName, destPath + '/' + os.path.basename(md5FileName))
+        shutil.copyfile(md5FileName, destPath + "/" + os.path.basename(md5FileName))
         shutil.copy(source, dest)
         os.unlink(source)
     ## if prepareing data remotely, echo a helpful rsync command needed to push from remote destination to IPL via rsync
     if args.destPath != defaultCMakeRepository:
-        print(('rsync -av {0}/ neuron.psychiatry.uiowa.edu:{1}/'.format(args.destPath, defaultCMakeRepository)))
+        print(
+            (
+                "rsync -av {0}/ neuron.psychiatry.uiowa.edu:{1}/".format(
+                    args.destPath, defaultCMakeRepository
+                )
+            )
+        )

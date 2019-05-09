@@ -20,8 +20,6 @@ Options:
 """
 
 
-
-
 from future import standard_library
 
 standard_library.install_aliases()
@@ -64,7 +62,7 @@ def getASCIIFromParser(parser, region, tag):
     """
     unicodeText = parser.get(region, tag)
     asciiText = unicodeText
-    #asciiText = str(unicodeText.encode('utf-8', errors='strict'))
+    # asciiText = str(unicodeText.encode('utf-8', errors='strict'))
     return asciiText
 
 
@@ -78,37 +76,53 @@ def parseEnvironment(parser, environment):
 
         :return:
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-    retval = OrderedDict()
-    if parser.has_option(environment, 'ENVAR_DICT'):
-        retval['env'] = eval(getASCIIFromParser(parser, environment, 'ENVAR_DICT'))
-    else:
-        retval['env'] = OrderedDict()
-    if 'PYTHONPATH' in list(retval['env'].keys()):
-        pythonpath = appendPathList(getASCIIFromParser(parser, environment, 'APPEND_PYTHONPATH'),
-                                    retval['env']['PYTHONPATH'])
-        retval['env']['PYTHONPATH'] = pythonpath  # Create append to PYTHONPATH
-    else:
-        retval['env']['PYTHONPATH'] = getASCIIFromParser(parser, environment, 'APPEND_PYTHONPATH')
-    if 'PATH' in list(retval['env'].keys()):
-        envpath = appendPathList(getASCIIFromParser(parser, environment, 'APPEND_PATH'), retval['env']['PATH'])
-        retval['env']['PATH'] = envpath  # Create append to PATH
-    else:
-        retval['env']['PATH'] = getASCIIFromParser(parser, environment, 'APPEND_PATH')
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
 
-    retval['prefix'] = validatePath(getASCIIFromParser(parser, environment, 'MOUNT_PREFIX'), True, True)
-    if retval['prefix'] is None:
-        retval['prefix'] = ''
-    if parser.has_option(environment, 'VIRTUALENV_DIR'):
-        retval['virtualenv_dir'] = validatePath(getASCIIFromParser(parser, environment, 'VIRTUALENV_DIR'), False, True)
+    retval = OrderedDict()
+    if parser.has_option(environment, "ENVAR_DICT"):
+        retval["env"] = eval(getASCIIFromParser(parser, environment, "ENVAR_DICT"))
     else:
-        retval['virtualenv_dir'] = None
+        retval["env"] = OrderedDict()
+    if "PYTHONPATH" in list(retval["env"].keys()):
+        pythonpath = appendPathList(
+            getASCIIFromParser(parser, environment, "APPEND_PYTHONPATH"),
+            retval["env"]["PYTHONPATH"],
+        )
+        retval["env"]["PYTHONPATH"] = pythonpath  # Create append to PYTHONPATH
+    else:
+        retval["env"]["PYTHONPATH"] = getASCIIFromParser(
+            parser, environment, "APPEND_PYTHONPATH"
+        )
+    if "PATH" in list(retval["env"].keys()):
+        envpath = appendPathList(
+            getASCIIFromParser(parser, environment, "APPEND_PATH"),
+            retval["env"]["PATH"],
+        )
+        retval["env"]["PATH"] = envpath  # Create append to PATH
+    else:
+        retval["env"]["PATH"] = getASCIIFromParser(parser, environment, "APPEND_PATH")
+
+    retval["prefix"] = validatePath(
+        getASCIIFromParser(parser, environment, "MOUNT_PREFIX"), True, True
+    )
+    if retval["prefix"] is None:
+        retval["prefix"] = ""
+    if parser.has_option(environment, "VIRTUALENV_DIR"):
+        retval["virtualenv_dir"] = validatePath(
+            getASCIIFromParser(parser, environment, "VIRTUALENV_DIR"), False, True
+        )
+    else:
+        retval["virtualenv_dir"] = None
     retval_cluster = OrderedDict()
-    retval_cluster['modules'] = eval(getASCIIFromParser(parser, environment, 'MODULES'))
-    retval_cluster['queue'] = getASCIIFromParser(parser, environment, 'QUEUE')
-    retval_cluster['long_q'] = getASCIIFromParser(parser, environment, 'QUEUE_LONG')
-    retval_cluster['qstat'] = getASCIIFromParser(parser, environment, 'QSTAT_IMMEDIATE')
-    retval_cluster['qstat_cached'] = getASCIIFromParser(parser, environment, 'QSTAT_CACHED')
+    retval_cluster["modules"] = eval(getASCIIFromParser(parser, environment, "MODULES"))
+    retval_cluster["queue"] = getASCIIFromParser(parser, environment, "QUEUE")
+    retval_cluster["long_q"] = getASCIIFromParser(parser, environment, "QUEUE_LONG")
+    retval_cluster["qstat"] = getASCIIFromParser(parser, environment, "QSTAT_IMMEDIATE")
+    retval_cluster["qstat_cached"] = getASCIIFromParser(
+        parser, environment, "QSTAT_CACHED"
+    )
 
     return retval, retval_cluster
 
@@ -123,13 +137,15 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     :param verify:
     :return:
     """
-    basename = name + '_' + suffix
+    basename = name + "_" + suffix
     fullpath = os.path.join(dirname, basename)
     if verify:
         return validatePath(fullpath, False, True)
     else:
         if os.path.isdir(fullpath):
-            print("WARNING: Experiment directory already exists.  Continuing will overwrite the previous results...")
+            print(
+                "WARNING: Experiment directory already exists.  Continuing will overwrite the previous results..."
+            )
             print(("   Path: {0}".format(fullpath)))
             return fullpath
         try:
@@ -147,82 +163,124 @@ def parseExperiment(parser, workflow_phase):
     :param workflow_phase:
     :return:
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     retval = OrderedDict()
-    dirname = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
-    if workflow_phase == 'atlas-based-reference':
-        current_suffix = '_BASE'
-    elif workflow_phase == 'subject-template-generation':
-        current_suffix = '_TEMP'
-    elif workflow_phase == 'subject-based-reference':
-        current_suffix = '_LONG'
-    elif workflow_phase == 'cross-validation':
-        current_suffix = '_CV'
+    dirname = validatePath(
+        getASCIIFromParser(parser, "EXPERIMENT", "BASE_OUTPUT_DIR"), False, True
+    )
+    if workflow_phase == "atlas-based-reference":
+        current_suffix = "_BASE"
+    elif workflow_phase == "subject-template-generation":
+        current_suffix = "_TEMP"
+    elif workflow_phase == "subject-based-reference":
+        current_suffix = "_LONG"
+    elif workflow_phase == "cross-validation":
+        current_suffix = "_CV"
     else:
         assert 0 == 1, "ERROR INVALID workflow_phase"
-    current = getASCIIFromParser(parser, 'EXPERIMENT', 'EXPERIMENT' + current_suffix)
+    current = getASCIIFromParser(parser, "EXPERIMENT", "EXPERIMENT" + current_suffix)
 
     """ output directory """
-    retval['cachedir'] = create_experiment_dir(dirname, current, 'CACHE')
-    retval['resultdir'] = create_experiment_dir(dirname, current, 'Results')
+    retval["cachedir"] = create_experiment_dir(dirname, current, "CACHE")
+    retval["resultdir"] = create_experiment_dir(dirname, current, "Results")
 
     """ any previous run HACK: DO WE EVER USE THIS?"""
-    if parser.has_option('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT'):
+    if parser.has_option("EXPERIMENT", "EXPERIMENT" + current_suffix + "_INPUT"):
         # If this is the initial run, there will be no previous experiment
-        previous = getASCIIFromParser(parser, 'EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT')
-        retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
+        previous = getASCIIFromParser(
+            parser, "EXPERIMENT", "EXPERIMENT" + current_suffix + "_INPUT"
+        )
+        retval["previousresult"] = create_experiment_dir(
+            dirname, previous, "Results", verify=True
+        )
 
     useRegistrationMasking = True
     try:
-        regMasking = getASCIIFromParser(parser, 'EXPERIMENT', 'USE_REGISTRATION_MASKING')
+        regMasking = getASCIIFromParser(
+            parser, "EXPERIMENT", "USE_REGISTRATION_MASKING"
+        )
         useRegistrationMasking = str2bool(regMasking)
     except:
         pass
-    retval['use_registration_masking'] = useRegistrationMasking
+    retval["use_registration_masking"] = useRegistrationMasking
 
-    atlas = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'ATLAS_PATH'), False, True)
-    retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
+    atlas = validatePath(
+        getASCIIFromParser(parser, "EXPERIMENT", "ATLAS_PATH"), False, True
+    )
+    retval["atlascache"] = clone_atlas_dir(retval["cachedir"], atlas)
 
-    if workflow_phase == 'cross-validation':
-        retval['components'] = ['']
+    if workflow_phase == "cross-validation":
+        retval["components"] = [""]
     else:
-        retval['dbfile'] = validatePath(getASCIIFromParser(parser, 'EXPERIMENT', 'SESSION_DB' + current_suffix), False,
-                                        False)
-        retval['components'] = [x.lower() for x in
-                                eval(getASCIIFromParser(parser, 'EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
+        retval["dbfile"] = validatePath(
+            getASCIIFromParser(parser, "EXPERIMENT", "SESSION_DB" + current_suffix),
+            False,
+            False,
+        )
+        retval["components"] = [
+            x.lower()
+            for x in eval(
+                getASCIIFromParser(
+                    parser, "EXPERIMENT", "WORKFLOW_COMPONENTS" + current_suffix
+                )
+            )
+        ]
 
-        valid_components=['FREESURFER', 'auxlmk', 'denoise', 'jointfusion_2015_wholebrain', 'landmark', 'segmentation', 'tissue_classify', 'warp_atlas_to_subject']
+        valid_components = [
+            "FREESURFER",
+            "auxlmk",
+            "denoise",
+            "jointfusion_2015_wholebrain",
+            "landmark",
+            "segmentation",
+            "tissue_classify",
+            "warp_atlas_to_subject",
+        ]
 
-        for component in retval['components']:
+        for component in retval["components"]:
             if component not in valid_components:
-                print("ERROR: Unknown workflow component: {0} not in {1}".format(component, valid_components))
+                print(
+                    "ERROR: Unknown workflow component: {0} not in {1}".format(
+                        component, valid_components
+                    )
+                )
                 sys.exit(-1)
 
-        if 'jointfusion_2015_wholebrain' in retval['components']:
-            print("'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'.")
+        if "jointfusion_2015_wholebrain" in retval["components"]:
+            print(
+                "'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'."
+            )
             """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""
-            retval['jointfusion_atlas_db_base'] = validatePath(
-                getASCIIFromParser(parser, 'EXPERIMENT', 'JointFusion_ATLAS_DB_BASE'),
+            retval["jointfusion_atlas_db_base"] = validatePath(
+                getASCIIFromParser(parser, "EXPERIMENT", "JointFusion_ATLAS_DB_BASE"),
                 allow_empty=False,
-                isDirectory=False)
-            retval['labelmap_colorlookup_table'] = validatePath(
-                getASCIIFromParser(parser, 'EXPERIMENT', 'LABELMAP_COLORLOOKUP_TABLE'),
+                isDirectory=False,
+            )
+            retval["labelmap_colorlookup_table"] = validatePath(
+                getASCIIFromParser(parser, "EXPERIMENT", "LABELMAP_COLORLOOKUP_TABLE"),
                 allow_empty=False,
-                isDirectory=False)
-            retval['relabel2lobes_filename'] = validatePath(
-                getASCIIFromParser(parser, 'EXPERIMENT', 'RELABEL2LOBES_FILENAME'),
+                isDirectory=False,
+            )
+            retval["relabel2lobes_filename"] = validatePath(
+                getASCIIFromParser(parser, "EXPERIMENT", "RELABEL2LOBES_FILENAME"),
                 allow_empty=True,
-                isDirectory=False)
-        if 'edge_prediction' in retval['components']:
-            retval['gm_edge_classifier'] = validatePath(
-                getASCIIFromParser(parser, 'EXPERIMENT', 'GM_EDGE_CLASSIFIER'),
+                isDirectory=False,
+            )
+        if "edge_prediction" in retval["components"]:
+            retval["gm_edge_classifier"] = validatePath(
+                getASCIIFromParser(parser, "EXPERIMENT", "GM_EDGE_CLASSIFIER"),
                 allow_empty=True,
-                isDirectory=False)
-            retval['wm_edge_classifier'] = validatePath(
-                getASCIIFromParser(parser, 'EXPERIMENT', 'WM_EDGE_CLASSIFIER'),
+                isDirectory=False,
+            )
+            retval["wm_edge_classifier"] = validatePath(
+                getASCIIFromParser(parser, "EXPERIMENT", "WM_EDGE_CLASSIFIER"),
                 allow_empty=True,
-                isDirectory=False)
-        retval['workflow_phase'] = workflow_phase
+                isDirectory=False,
+            )
+        retval["workflow_phase"] = workflow_phase
     return retval
 
 
@@ -234,14 +292,17 @@ def parseNIPYPE(parser):
     :return:
     """
 
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-    retval = OrderedDict()
-    retval['ds_overwrite'] = parser.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE')
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
 
-    if parser.has_option('NIPYPE', 'CRASHDUMP_DIR'):
-        retval['CRASHDUMP_DIR'] = getASCIIFromParser(parser, 'NIPYPE', 'CRASHDUMP_DIR')
+    retval = OrderedDict()
+    retval["ds_overwrite"] = parser.getboolean("NIPYPE", "GLOBAL_DATA_SINK_REWRITE")
+
+    if parser.has_option("NIPYPE", "CRASHDUMP_DIR"):
+        retval["CRASHDUMP_DIR"] = getASCIIFromParser(parser, "NIPYPE", "CRASHDUMP_DIR")
     else:
-        retval['CRASHDUMP_DIR'] = None
+        retval["CRASHDUMP_DIR"] = None
 
     return retval
 
@@ -269,12 +330,17 @@ def parseFile(configFile, env, workphase):
 
     """
     configFile = os.path.realpath(configFile)
-    assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
-    parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
-    with io.open(configFile, "r", encoding='ascii') as configFID:
+    assert os.path.exists(
+        configFile
+    ), "Configuration file could not be found: {0}".format(configFile)
+    parser = ConfigParser(
+        allow_no_value=True
+    )  # Parse configuration file parser = ConfigParser()
+    with io.open(configFile, "r", encoding="ascii") as configFID:
         parser.read_file(configFID)
-    assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')
-            ), "BUILD_DIR option not in {0}".format(env)
+    assert parser.has_option(env, "_BUILD_DIR") or parser.has_option(
+        "DEFAULT", "_BUILD_DIR"
+    ), "BUILD_DIR option not in {0}".format(env)
     environment, cluster = parseEnvironment(parser, env)
     experiment = parseExperiment(parser, workphase)
     pipeline = parseNIPYPE(parser)
@@ -289,7 +355,9 @@ def resolveDataSinkOption(args, pipeline):
     :param pipeline:
     :return:
     """
-    if args["--rewrite-datasinks"] or pipeline['ds_overwrite']:  # GLOBAL_DATA_SINK_REWRITE
+    if (
+        args["--rewrite-datasinks"] or pipeline["ds_overwrite"]
+    ):  # GLOBAL_DATA_SINK_REWRITE
         return True
     return False
 
@@ -301,6 +369,7 @@ class _create_DS_runner(object):
 
     :return:
     """
+
     def run(self, graph, **kwargs):
         """
         This Function takes in...
@@ -311,16 +380,11 @@ class _create_DS_runner(object):
         :return:
         """
         for node in graph.nodes():
-            if '_ds' in node.name.lower():
+            if "_ds" in node.name.lower():
                 node.run()
 
 
-_WFRUN_VALID_TYPES = ['SGE',
-                      'SGEGraph',
-                      'local_4',
-                      'local_12',
-                      'local',
-                      'ds_runner']
+_WFRUN_VALID_TYPES = ["SGE", "SGEGraph", "local_4", "local_12", "local", "ds_runner"]
 
 
 def get_cpus(option):
@@ -333,19 +397,23 @@ def get_cpus(option):
     assert option in _WFRUN_VALID_TYPES, "Unknown wfrun option"
     from multiprocessing import cpu_count
     import os
+
     total_cpus = cpu_count()
-    suffix = option.rsplit('local', 1)[1]
-    if suffix == '':
-        assert option in ['local', 'ds_runner'], "wfrun parse error!  Current option: {0}".format(option)
+    suffix = option.rsplit("local", 1)[1]
+    if suffix == "":
+        assert option in [
+            "local",
+            "ds_runner",
+        ], "wfrun parse error!  Current option: {0}".format(option)
         threads = 1
-        if option == 'local':
+        if option == "local":
             print("RUNNING WITHOUT POOL BUILDING")
     else:
-        threads = int(suffix.strip('_'))
+        threads = int(suffix.strip("_"))
     return int(old_div(total_cpus, threads))
 
 
-def _nipype_plugin_config(wfrun, cluster, template=''):
+def _nipype_plugin_config(wfrun, cluster, template=""):
     """
     This Function takes in...
 
@@ -354,32 +422,45 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
     :param template: empty string
     :return:
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-    assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(wfrun)
-    if wfrun in ['SGEGraph', 'SGE']:
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
+    assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(
+        wfrun
+    )
+    if wfrun in ["SGEGraph", "SGE"]:
         plugin_name = wfrun
-        plugin_args = {'template': template,
-                       'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 1),
-                       'qstatProgramPath': cluster['qstat'],
-                       'qstatCachedProgramPath': cluster['qstat_cached']}
-    elif wfrun in ['local_4', 'local_12']:
-        plugin_name = 'MultiProc'
-        proc_count = int(wfrun.split('local_')[1])
-        print(("Running with {0} parallel processes on local machine".format(proc_count)))
-        plugin_args = {'n_procs': proc_count}
-    elif wfrun == 'ds_runner':
+        plugin_args = {
+            "template": template,
+            "qsub_args": modify_qsub_args(cluster["queue"], 2, 1, 1),
+            "qstatProgramPath": cluster["qstat"],
+            "qstatCachedProgramPath": cluster["qstat_cached"],
+        }
+    elif wfrun in ["local_4", "local_12"]:
+        plugin_name = "MultiProc"
+        proc_count = int(wfrun.split("local_")[1])
+        print(
+            ("Running with {0} parallel processes on local machine".format(proc_count))
+        )
+        plugin_args = {"n_procs": proc_count}
+    elif wfrun == "ds_runner":
         plugin_name = _create_DS_runner()
         plugin_args = OrderedDict()
     else:
-        assert wfrun in ['local',
-                         'ds_runner'], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
-        plugin_name = 'Linear'
+        assert wfrun in [
+            "local",
+            "ds_runner",
+        ], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
+        plugin_name = "Linear"
         plugin_args = OrderedDict()
 
     return plugin_name, plugin_args
 
 
-def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False, crashdumpTempDirName=None):
+def _nipype_execution_config(
+    stop_on_first_crash=False, stop_on_first_rerun=False, crashdumpTempDirName=None
+):
     """
     This Function takes in...
 
@@ -388,31 +469,33 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
     :param crashdumpTempDirName:
     :return:
     """
-    stop_crash = 'false'
-    stop_rerun = 'false'
+    stop_crash = "false"
+    stop_rerun = "false"
     if stop_on_first_crash:
-        stop_crash = 'true'
+        stop_crash = "true"
     if stop_on_first_rerun:
         # This stops at first attempt to rerun, before running, and before deleting previous results
-        stop_rerun = 'true'
+        stop_rerun = "true"
 
     if crashdumpTempDirName is None:
         import tempfile
+
         crashdumpTempDirName = tempfile.gettempdir()
     print("*** Note")
     print(("    Crash file will be written to '{0}'".format(crashdumpTempDirName)))
     return {
-        'stop_on_first_crash': stop_crash,
-        'stop_on_first_rerun': stop_rerun,
-        'hash_method': 'timestamp',  # default
-        'single_thread_matlab': 'true',  # default # Multi-core 2011a  multi-core for matrix multiplication.
+        "stop_on_first_crash": stop_crash,
+        "stop_on_first_rerun": stop_rerun,
+        "hash_method": "timestamp",  # default
+        "single_thread_matlab": "true",  # default # Multi-core 2011a  multi-core for matrix multiplication.
         # default # relative paths should be on, require hash update when changed.
-        'use_relative_paths': 'false',
-        'remove_node_directories': 'false',  # default
-        'remove_unnecessary_outputs': 'true',  # remove any interface outputs not needed by the workflow
-        'local_hash_check': 'true',  # default
-        'job_finished_timeout': 25,
-        'crashdump_dir': crashdumpTempDirName}
+        "use_relative_paths": "false",
+        "remove_node_directories": "false",  # default
+        "remove_unnecessary_outputs": "true",  # remove any interface outputs not needed by the workflow
+        "local_hash_check": "true",  # default
+        "job_finished_timeout": 25,
+        "crashdump_dir": crashdumpTempDirName,
+    }
 
 
 def _nipype_logging_config(cachedir):
@@ -423,10 +506,12 @@ def _nipype_logging_config(cachedir):
     :return:
     """
 
-    return {'workflow_level': 'INFO',  # possible options:
-            'filemanip_level': 'INFO',  # INFO (default) | DEBUG
-            'interface_level': 'INFO',
-            'log_directory': cachedir}
+    return {
+        "workflow_level": "INFO",  # possible options:
+        "filemanip_level": "INFO",  # INFO (default) | DEBUG
+        "interface_level": "INFO",
+        "log_directory": cachedir,
+    }
 
 
 def nipype_options(args, pipeline, cluster, experiment, environment):
@@ -448,15 +533,19 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     """
     retval = copy.deepcopy(pipeline)
     from .distributed import create_global_sge_script
+
     template = create_global_sge_script(cluster, environment)
     # else:
     #    template = None
-    plugin_name, plugin_args = _nipype_plugin_config(args['--wfrun'], cluster, template)
-    retval['plugin_name'] = plugin_name
-    retval['plugin_args'] = plugin_args
-    retval['execution'] = _nipype_execution_config(stop_on_first_crash=True, stop_on_first_rerun=False,
-                                                   crashdumpTempDirName=pipeline['CRASHDUMP_DIR'])
-    retval['logging'] = _nipype_logging_config(experiment['cachedir'])
+    plugin_name, plugin_args = _nipype_plugin_config(args["--wfrun"], cluster, template)
+    retval["plugin_name"] = plugin_name
+    retval["plugin_args"] = plugin_args
+    retval["execution"] = _nipype_execution_config(
+        stop_on_first_crash=True,
+        stop_on_first_rerun=False,
+        crashdumpTempDirName=pipeline["CRASHDUMP_DIR"],
+    )
+    retval["logging"] = _nipype_logging_config(experiment["cachedir"])
     return retval
 
 
@@ -464,10 +553,13 @@ if __name__ == "__main__":
     from docopt import docopt
 
     SILENT = True
-    args = docopt(__doc__, version='0.1')  # Get argv as dictionary
-    assert args["PHASE"] in ['atlas-based-reference',
-                             'subject-template-generation', 'subject-based-reference'], "Unknown phase!"
-    if args['--debug']:
+    args = docopt(__doc__, version="0.1")  # Get argv as dictionary
+    assert args["PHASE"] in [
+        "atlas-based-reference",
+        "subject-template-generation",
+        "subject-based-reference",
+    ], "Unknown phase!"
+    if args["--debug"]:
         # TODO: Add and run doctests!
         pass
     output = parseFile(args["FILE"], args["ENV"], args["PHASE"])

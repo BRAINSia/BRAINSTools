@@ -12,11 +12,17 @@ import vtk, math
 import sys, os
 import SimpleITK as sitk
 from .fs_thickness_measurements import read_poly_data
-from nipype.interfaces.base import BaseInterface, TraitedSpec, BaseInterfaceInputSpec, traits
+from nipype.interfaces.base import (
+    BaseInterface,
+    TraitedSpec,
+    BaseInterfaceInputSpec,
+    traits,
+)
 
 
 class Mesh2MaskInputSpec(BaseInterfaceInputSpec):
     """This class respresents a.."""
+
     input_mesh = traits.File(mandatory=True, exists=True)
     output_image = traits.File(mandatory=True)
     input_image = traits.File(exists=True, mandatory=False)
@@ -24,11 +30,13 @@ class Mesh2MaskInputSpec(BaseInterfaceInputSpec):
 
 class Mesh2MaskOutputSpec(TraitedSpec):
     """This class respresents a.."""
+
     output_image = traits.File()
 
 
 class Mesh2Mask(BaseInterface):
     """This class respresents a.."""
+
     input_spec = Mesh2MaskInputSpec
     output_spec = Mesh2MaskOutputSpec
 
@@ -49,54 +57,60 @@ class Mesh2Mask(BaseInterface):
         :param runtime:
         :return:
         """
-        mesh2mask(inputMesh=self.inputs.input_mesh, outputImage=self.inputs.output_image,
-                  inputImage=self.inputs.input_image)
+        mesh2mask(
+            inputMesh=self.inputs.input_mesh,
+            outputImage=self.inputs.output_image,
+            inputImage=self.inputs.input_image,
+        )
         return runtime
 
 
 def patch(mesh):
-        """
+    """
         This function...
 
         :param mesh:
         :return:
         """
-        edges = vtk.vtkFeatureEdges()
-        edges.SetInputData(mesh)
-        edges.FeatureEdgesOff()
-        edges.NonManifoldEdgesOn()
-        edges.ManifoldEdgesOff()
-        edges.BoundaryEdgesOn()
-        edges.Update()
-        print("{0} cells and {1} points".format(edges.GetOutput().GetNumberOfCells(),
-                                                edges.GetOutput().GetNumberOfPoints()))
-        if edges.GetOutput().GetNumberOfPoints() == 0:
-            print("No defects")
-            return mesh
+    edges = vtk.vtkFeatureEdges()
+    edges.SetInputData(mesh)
+    edges.FeatureEdgesOff()
+    edges.NonManifoldEdgesOn()
+    edges.ManifoldEdgesOff()
+    edges.BoundaryEdgesOn()
+    edges.Update()
+    print(
+        "{0} cells and {1} points".format(
+            edges.GetOutput().GetNumberOfCells(), edges.GetOutput().GetNumberOfPoints()
+        )
+    )
+    if edges.GetOutput().GetNumberOfPoints() == 0:
+        print("No defects")
+        return mesh
 
-        patchSkel = vtk.vtkStripper()
-        patchSkel.SetInputData(edges.GetOutput())
-        patchSkel.Update()
+    patchSkel = vtk.vtkStripper()
+    patchSkel.SetInputData(edges.GetOutput())
+    patchSkel.Update()
 
-        patchPoly = vtk.vtkPolyData()
-        patchPoly.Initialize()
-        patchPoly.SetPoints(patchSkel.GetOutput().GetPoints())
-        patchPoly.SetPolys(patchSkel.GetOutput().GetLines())
+    patchPoly = vtk.vtkPolyData()
+    patchPoly.Initialize()
+    patchPoly.SetPoints(patchSkel.GetOutput().GetPoints())
+    patchPoly.SetPolys(patchSkel.GetOutput().GetLines())
 
-        patchTri = vtk.vtkTriangleFilter()
-        patchTri.SetInputData(patchPoly);
-        patchTri.Update()
+    patchTri = vtk.vtkTriangleFilter()
+    patchTri.SetInputData(patchPoly)
+    patchTri.Update()
 
-        meshAppend = vtk.vtkAppendPolyData()
-        meshAppend.AddInputData(patchTri.GetOutput())
-        meshAppend.AddInputData(mesh)
-        meshAppend.Update()
+    meshAppend = vtk.vtkAppendPolyData()
+    meshAppend.AddInputData(patchTri.GetOutput())
+    meshAppend.AddInputData(mesh)
+    meshAppend.Update()
 
-        poly = vtk.vtkCleanPolyData()
-        poly.SetInputData(meshAppend.GetOutput())
-        poly.Update()
+    poly = vtk.vtkCleanPolyData()
+    poly.SetInputData(meshAppend.GetOutput())
+    poly.Update()
 
-        return poly.GetOutput()
+    return poly.GetOutput()
 
 
 def preprocess_mesh(mesh, num_patches=10):
@@ -120,8 +134,11 @@ def preprocess_mesh(mesh, num_patches=10):
     edges2.BoundaryEdgesOn()
     edges2.Update()
     edgesPd = edges2.GetOutput()
-    print("{0} cells and {1} points".format(edgesPd.GetNumberOfCells(),
-                                            edgesPd.GetNumberOfPoints()))
+    print(
+        "{0} cells and {1} points".format(
+            edgesPd.GetNumberOfCells(), edgesPd.GetNumberOfPoints()
+        )
+    )
 
     toDelete = vtk.vtkFloatArray()
     toDelete.SetNumberOfComponents(1)
@@ -156,9 +173,13 @@ def read_vtk_image(inputImage):
     # check image extension
     img_ext = str(inputImage).split(".", 1)[-1]
     if "nii" in img_ext:
-            imageReader = vtk.vtkNIFTIImageReader()
+        imageReader = vtk.vtkNIFTIImageReader()
     else:
-        print("ERROR: Input must be NIFTI image file. \n\tUnrecognized extension: {0}".format(img_ext))
+        print(
+            "ERROR: Input must be NIFTI image file. \n\tUnrecognized extension: {0}".format(
+                img_ext
+            )
+        )
         return sys.exit(os.EX_IOERR)
     # read image in
     imageReader.SetFileName(inputImage)
@@ -166,7 +187,9 @@ def read_vtk_image(inputImage):
     return imageReader.GetOutput()
 
 
-def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(1.0, 1.0, 1.0)):
+def mesh2mask(
+    inputMesh, outputImage, inputImage=None, superRes=False, spacing=(1.0, 1.0, 1.0)
+):
     """
     This program takes in a closed 3D surface, vtkPolyData, and converts it into volume
     representation (vtkImageData) where the foreground voxels are 1 and the background voxels
@@ -193,14 +216,17 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
     if "nii" in out_ext:
         writer = vtk.vtkNIFTIImageWriter()
     else:
-        print("ERROR: Output must be NIFTI image file. \n\tUnrecognized extension: {0}".format(out_ext))
+        print(
+            "ERROR: Output must be NIFTI image file. \n\tUnrecognized extension: {0}".format(
+                out_ext
+            )
+        )
         return sys.exit(os.EX_IOERR)
 
     if inputImage:
         image = read_vtk_image(inputImage)
     else:
         image = None
-
 
     # read the mesh in
     pd = read_poly_data(inputMesh)
@@ -226,7 +252,7 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
         vtk_direction = (-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0)
 
         # vtk does not get the correct origin
-        #origin = image.GetOrigin ()
+        # origin = image.GetOrigin ()
 
         # use SimpleITK instead
         image_sitk = sitk.ReadImage(inputImage)
@@ -243,25 +269,37 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
             This helps allivaite some of the partial voluming effect that
             can take place."""
             denom = 2
-            spacing = (spacing[0] / float(denom), spacing[1] / float(denom), spacing[2] / float(denom))
+            spacing = (
+                spacing[0] / float(denom),
+                spacing[1] / float(denom),
+                spacing[2] / float(denom),
+            )
             dim = (dim[0] * denom, dim[1] * denom, dim[2] * denom)
 
         # VTKImages seem to always have the same direction
-        origin = (origin[0]*vtk_direction[0],
-                  origin[1]*vtk_direction[4],
-                  origin[2]*vtk_direction[8])
+        origin = (
+            origin[0] * vtk_direction[0],
+            origin[1] * vtk_direction[4],
+            origin[2] * vtk_direction[8],
+        )
         if direction != vtk_direction:
             if direction == (1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0):
-                origin = (origin[0] - spacing[0]*(dim[0] - 1),
-                          origin[1] - spacing[1]*(dim[1] - 1),
-                          origin[2])
+                origin = (
+                    origin[0] - spacing[0] * (dim[0] - 1),
+                    origin[1] - spacing[1] * (dim[1] - 1),
+                    origin[2],
+                )
             else:
                 print("ERROR: Not sure how to handle input image direction")
                 sys.exit()
         print(origin)
     else:
         if superRes:
-            spacing = (spacing[0] / float(2), spacing[1] / float(2), spacing[2] / float(2))
+            spacing = (
+                spacing[0] / float(2),
+                spacing[1] / float(2),
+                spacing[2] / float(2),
+            )
 
         # compute dimensions
         dim = [0, 0, 0]
@@ -318,19 +356,19 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
 
     # write image to file
 
-    writer.SetFileName( outputImage )
+    writer.SetFileName(outputImage)
 
     if inputImage != None and direction != vtk_direction:
         flipFilter = vtk.vtkImageFlip()
-        flipFilter.SetFilteredAxis(1) # flip y axis
-        flipFilter.SetInputData( imgstenc.GetOutput() )
-        flipFilter.SetFlipAboutOrigin( 1 )
+        flipFilter.SetFilteredAxis(1)  # flip y axis
+        flipFilter.SetInputData(imgstenc.GetOutput())
+        flipFilter.SetFlipAboutOrigin(1)
         flipFilter.Update()
 
         flipFilter2 = vtk.vtkImageFlip()
-        flipFilter2.SetFilteredAxis(0) # flip x axis
-        flipFilter2.SetInputData( flipFilter.GetOutput() )
-        flipFilter2.SetFlipAboutOrigin( 1 )
+        flipFilter2.SetFilteredAxis(0)  # flip x axis
+        flipFilter2.SetInputData(flipFilter.GetOutput())
+        flipFilter2.SetFlipAboutOrigin(1)
         flipFilter2.Update()
 
         if VTK_MAJOR_VERSION <= 5:
@@ -363,11 +401,14 @@ def usage():
 
 if __name__ == "__main__":
     import getopt, sys
+
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hi:o:r:", ["help", "inMesh=", "outImage=", "refImage="])
+        opts, args = getopt.getopt(
+            sys.argv[1:], "hi:o:r:", ["help", "inMesh=", "outImage=", "refImage="]
+        )
     except getopt.GetoptError as err:
         # print help information and exit:
-        print(str(err)) # will print something like "option -a not recognized"
+        print(str(err))  # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
     outputImage = None
@@ -387,7 +428,7 @@ if __name__ == "__main__":
         elif o in ("-r", "--refImage"):
             refImage = a
             if not os.path.isfile(refImage):
-                    print("ERROR: {0} does not exist.".format(refImage))
+                print("ERROR: {0} does not exist.".format(refImage))
         else:
             assert False, "unhandled option"
 
@@ -407,6 +448,5 @@ if __name__ == "__main__":
 
     print("Input image: {0}".format(refImage))
 
-
     print("Converting mesh to mask")
-    print("Mask created: {0}".format( mesh2mask(inputMesh, outputImage, refImage) ) )
+    print("Mask created: {0}".format(mesh2mask(inputMesh, outputImage, refImage)))

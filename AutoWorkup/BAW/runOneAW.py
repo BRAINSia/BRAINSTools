@@ -19,11 +19,16 @@ from builtins import object
 
 class runOneAW(object):
     """This class represents a..."""
+
     def main(self):
         """This is the main function..."""
         self.makeOuputDir()
-        self.sessionPath = os.path.join(input_arguments.experimentOutputDir, 'session.csv')
-        self.configPath = os.path.join(input_arguments.experimentOutputDir, 'localAW.config')
+        self.sessionPath = os.path.join(
+            input_arguments.experimentOutputDir, "session.csv"
+        )
+        self.configPath = os.path.join(
+            input_arguments.experimentOutputDir, "localAW.config"
+        )
         self.generateSessionCSV()
         self.generateConfigFile()
         self.executeAW()
@@ -41,29 +46,46 @@ class runOneAW(object):
  -ExperimentConfig {configFile} \
  -pe LOCAL_ENVIRONMENT \
  -wfrun local \
- -subject {subject} \n""".format(brainsToolsScriptsDir=input_arguments.brainsToolsScriptsDir,
-                                 configFile=self.configPath, subject=input_arguments.subject)
-        print(('-' * 80))
-        print(('\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)))
+ -subject {subject} \n""".format(
+            brainsToolsScriptsDir=input_arguments.brainsToolsScriptsDir,
+            configFile=self.configPath,
+            subject=input_arguments.subject,
+        )
+        print(("-" * 80))
+        print(("\nExecuting command: \n{bawCommand}".format(bawCommand=bawCommand)))
         os.system(bawCommand)
 
     def generateSessionCSV(self):
         """This function..."""
-        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        from collections import (
+            OrderedDict,
+        )  # Need OrderedDict internally to ensure consistent ordering
+
         sessionDict = OrderedDict()
         if input_arguments.t1 != []:
-            sessionDict['T1-30'] = input_arguments.t1
+            sessionDict["T1-30"] = input_arguments.t1
         if input_arguments.t2 != []:
-            sessionDict['T2-30'] = input_arguments.t2
+            sessionDict["T2-30"] = input_arguments.t2
         if sessionDict == OrderedDict():
-            print('ERROR: No T1 or T2 images were given as input arguments.')
+            print("ERROR: No T1 or T2 images were given as input arguments.")
             sys.exit()
         col_name_list = ["project", "subject", "session", "imagefiles"]
-        newFile = csv.writer(open(self.sessionPath, 'wb'), quoting=csv.QUOTE_ALL)
+        newFile = csv.writer(open(self.sessionPath, "wb"), quoting=csv.QUOTE_ALL)
         newFile.writerow(col_name_list)
-        line = (input_arguments.project, input_arguments.subject, input_arguments.session, sessionDict)
+        line = (
+            input_arguments.project,
+            input_arguments.subject,
+            input_arguments.session,
+            sessionDict,
+        )
         newFile.writerow(line)
-        print(('\nThe session csv file has been generated: {0}\n'.format(self.sessionPath)))
+        print(
+            (
+                "\nThe session csv file has been generated: {0}\n".format(
+                    self.sessionPath
+                )
+            )
+        )
         print(line)
 
     def generateConfigFile(self):
@@ -158,39 +180,91 @@ PROGRAM_PATHS=%(_BRAINSTOOLS_BUILD_PATH)s/lib:%(_BRAINSTOOLS_BUILD_PATH)s/bin:%(
 ATLASPATH=%(_BRAINSTOOLS_BUILD_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120830
 # The path to the model files to be used by BCD.
 BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
-        firstReplace = configString.replace('[replaceme_sessionDB]', self.sessionPath)
-        secondReplace = firstReplace.replace('[replaceme_outputDir]', input_arguments.experimentOutputDir)
-        thirdReplace = secondReplace.replace('[replaceme_brainsToolsScriptsDir]', input_arguments.brainsToolsScriptsDir)
-        newConfigString = thirdReplace.replace('[replaceme_brainsToolsBuildDir]', input_arguments.brainsToolsBuildDir)
-        handle = open(self.configPath, 'w')
+        firstReplace = configString.replace("[replaceme_sessionDB]", self.sessionPath)
+        secondReplace = firstReplace.replace(
+            "[replaceme_outputDir]", input_arguments.experimentOutputDir
+        )
+        thirdReplace = secondReplace.replace(
+            "[replaceme_brainsToolsScriptsDir]", input_arguments.brainsToolsScriptsDir
+        )
+        newConfigString = thirdReplace.replace(
+            "[replaceme_brainsToolsBuildDir]", input_arguments.brainsToolsBuildDir
+        )
+        handle = open(self.configPath, "w")
         handle.write(newConfigString)
         handle.close()
-        print(('\nThe configuration file has been generated: {0}'.format(self.configPath)))
+        print(
+            ("\nThe configuration file has been generated: {0}".format(self.configPath))
+        )
         print(newConfigString)
 
 
 if __name__ == "__main__":
     # Create and parse input arguments
-    parser = argparse.ArgumentParser(description="This program is used to run a mini version of AutoWorkup "
-                                                 "for a specific session and specified T1 and T2 files.")
-    group = parser.add_argument_group('Required')
-    group.add_argument('-project', action="store", dest='project', required=True,
-                       help='The name of the project to process')
-    group.add_argument('-subject', action="store", dest='subject', required=True,
-                       help='The name of the subject to process')
-    group.add_argument('-session', action="store", dest='session', required=True,
-                       help='The name of the session to process')
-    group.add_argument('-t1', action="store", dest='t1', nargs='*', default=[],
-                       help='The file name(s) of the T1 image(s) to process')
-    group.add_argument('-t2', action="store", dest='t2', nargs='*', default=[],
-                       help='The file name(s) of the T2 image(s) to process')
-    group.add_argument('-experimentOutputDir', action="store", dest='experimentOutputDir', required=True,
-                       help='The directory for the experiment output')
-    group.add_argument('-brainsToolsScriptsDir', action="store", dest='brainsToolsScriptsDir', required=True,
-                       help='The directory containing scripts for BRAINSTOOLS')
-    group.add_argument('-brainsToolsBuildDir', action="store", dest='brainsToolsBuildDir', required=True,
-                       help='The build directory for BRAINSTOOLS ')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+    parser = argparse.ArgumentParser(
+        description="This program is used to run a mini version of AutoWorkup "
+        "for a specific session and specified T1 and T2 files."
+    )
+    group = parser.add_argument_group("Required")
+    group.add_argument(
+        "-project",
+        action="store",
+        dest="project",
+        required=True,
+        help="The name of the project to process",
+    )
+    group.add_argument(
+        "-subject",
+        action="store",
+        dest="subject",
+        required=True,
+        help="The name of the subject to process",
+    )
+    group.add_argument(
+        "-session",
+        action="store",
+        dest="session",
+        required=True,
+        help="The name of the session to process",
+    )
+    group.add_argument(
+        "-t1",
+        action="store",
+        dest="t1",
+        nargs="*",
+        default=[],
+        help="The file name(s) of the T1 image(s) to process",
+    )
+    group.add_argument(
+        "-t2",
+        action="store",
+        dest="t2",
+        nargs="*",
+        default=[],
+        help="The file name(s) of the T2 image(s) to process",
+    )
+    group.add_argument(
+        "-experimentOutputDir",
+        action="store",
+        dest="experimentOutputDir",
+        required=True,
+        help="The directory for the experiment output",
+    )
+    group.add_argument(
+        "-brainsToolsScriptsDir",
+        action="store",
+        dest="brainsToolsScriptsDir",
+        required=True,
+        help="The directory containing scripts for BRAINSTOOLS",
+    )
+    group.add_argument(
+        "-brainsToolsBuildDir",
+        action="store",
+        dest="brainsToolsBuildDir",
+        required=True,
+        help="The build directory for BRAINSTOOLS ",
+    )
+    parser.add_argument("--version", action="version", version="%(prog)s 1.0")
     # parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')
     input_arguments = parser.parse_args()

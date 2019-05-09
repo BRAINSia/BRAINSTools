@@ -48,9 +48,9 @@ def get_directional_images(gradient_image):
     :return:
     """
     gradient_array = sitk.GetArrayFromImage(gradient_image)
-    x_gradient = create_image_like(gradient_array[:,:,:, 0], gradient_image)
-    y_gradient = create_image_like(gradient_array[:,:,:, 1], gradient_image)
-    z_gradient = create_image_like(gradient_array[:,:,:, 2], gradient_image)
+    x_gradient = create_image_like(gradient_array[:, :, :, 0], gradient_image)
+    y_gradient = create_image_like(gradient_array[:, :, :, 1], gradient_image)
+    z_gradient = create_image_like(gradient_array[:, :, :, 2], gradient_image)
     return x_gradient, y_gradient, z_gradient
 
 
@@ -75,7 +75,9 @@ def compute_gradient(image, sigma=0):
     :return:
     """
     if sigma > 0:
-        return sitk.GradientRecursiveGaussian(image, sigma=sigma, useImageDirection=True)
+        return sitk.GradientRecursiveGaussian(
+            image, sigma=sigma, useImageDirection=True
+        )
     else:
         return sitk.Gradient(image, useImageSpacing=True, useImageDirection=True)
 
@@ -96,13 +98,17 @@ def compute_hessian_matrix(image, sigma):
     :param sigma:
     :return:
     """
-    x_gradient, y_gradient, z_gradient = compute_directional_gradient_images(image, sigma=sigma)
-    x2_gradient, y2_gradient, z2_gradient = [compute_gradient(grad, sigma=sigma) for grad in [x_gradient,
-                                                                                              y_gradient,
-                                                                                              z_gradient]]
-    x2_array, y2_array, z2_array = [sitk.GetArrayFromImage(grad2) for grad2 in [x2_gradient,
-                                                                                y2_gradient,
-                                                                                z2_gradient]]
+    x_gradient, y_gradient, z_gradient = compute_directional_gradient_images(
+        image, sigma=sigma
+    )
+    x2_gradient, y2_gradient, z2_gradient = [
+        compute_gradient(grad, sigma=sigma)
+        for grad in [x_gradient, y_gradient, z_gradient]
+    ]
+    x2_array, y2_array, z2_array = [
+        sitk.GetArrayFromImage(grad2)
+        for grad2 in [x2_gradient, y2_gradient, z2_gradient]
+    ]
     hessian = np.stack((x2_array, y2_array, z2_array), axis=-1)
     if sigma > 0:
         return hessian * np.square(sigma)
@@ -116,7 +122,7 @@ def separate_eigen_values(eigen_values):
     :param eigen_values:
     :return:
     """
-    return [eigen_values[:,:,:, i] for i in range(eigen_values.shape[-1])]
+    return [eigen_values[:, :, :, i] for i in range(eigen_values.shape[-1])]
 
 
 def compute_eigen_values_from_hessian(hessian):
@@ -126,7 +132,7 @@ def compute_eigen_values_from_hessian(hessian):
     :param hessian:
     :return:
     """
-    eigen_values = np.linalg.eigvalsh(hessian[:,:,:,:,:])
+    eigen_values = np.linalg.eigvalsh(hessian[:, :, :, :, :])
     eigen_values_list = separate_eigen_values(eigen_values)
     if check_eigen_values(*eigen_values_list):
         return eigen_values_list
@@ -149,6 +155,7 @@ def sortbyabs(a, axis=0):
     :return:
     """
     import numpy as np
+
     index = list(np.ix_(*[np.arange(i) for i in a.shape]))
     index[axis] = np.abs(a).argsort(axis)
     return a[index]
@@ -225,7 +232,9 @@ def compute_vesselness(eigen1, eigen2, eigen3, alpha, beta, c, black_white):
     return filter_out_background(plate * blob * background, black_white, eigen2, eigen3)
 
 
-def compute_vesselness_image(image, sigma=0, alpha=0.5, beta=0.5, frangic=500, black_white=False):
+def compute_vesselness_image(
+    image, sigma=0, alpha=0.5, beta=0.5, frangic=500, black_white=False
+):
     """
     This function...
 
@@ -238,8 +247,15 @@ def compute_vesselness_image(image, sigma=0, alpha=0.5, beta=0.5, frangic=500, b
     :return:
     """
     eigen1, eigen2, eigen3 = compute_eigen_values(image, sigma=sigma)
-    voxel_data = compute_vesselness(eigen1=eigen1, eigen2=eigen2, eigen3=eigen3, black_white=black_white,
-                                    alpha=alpha, beta=beta, c=frangic)
+    voxel_data = compute_vesselness(
+        eigen1=eigen1,
+        eigen2=eigen2,
+        eigen3=eigen3,
+        black_white=black_white,
+        alpha=alpha,
+        beta=beta,
+        c=frangic,
+    )
     return create_image_like(voxel_data, image)
 
 
@@ -268,7 +284,7 @@ def compute_absolute_eigen_values(image, sigma):
 
 
 def check_eigen_values(eigen1, eigen2, eigen3):
-#Check that |eigen1| <= |eigen2| <= |eigen3|
+    # Check that |eigen1| <= |eigen2| <= |eigen3|
     """
     This function...
 
@@ -277,7 +293,9 @@ def check_eigen_values(eigen1, eigen2, eigen3):
     :param eigen3:
     :return:
     """
-    if np.all(np.abs(eigen1) <= np.abs(eigen2)) and np.all(np.abs(eigen2) <= np.abs(eigen3)):
+    if np.all(np.abs(eigen1) <= np.abs(eigen2)) and np.all(
+        np.abs(eigen2) <= np.abs(eigen3)
+    ):
         return True
     else:
         return False
@@ -304,7 +322,9 @@ def filter_out_background(voxel_data, black_white, eigen2, eigen3):
     return voxel_data
 
 
-def compute_vesselness_image_with_smoothing(image, sigmas, alpha=0.5, beta=0.5, frangic=500, black_white=True):
+def compute_vesselness_image_with_smoothing(
+    image, sigmas, alpha=0.5, beta=0.5, frangic=500, black_white=True
+):
     """
     This function...
 
@@ -321,11 +341,19 @@ def compute_vesselness_image_with_smoothing(image, sigmas, alpha=0.5, beta=0.5, 
         str_sigma = "{0:.1f}".format(sigma).replace(".", "_")
         print("--- sigma = {sigma} ---".format(sigma=str_sigma))
 
-        vessel_image = compute_vesselness_image(image, sigma=sigma, alpha=alpha, beta=beta, frangic=frangic,
-                                                black_white=black_white)
+        vessel_image = compute_vesselness_image(
+            image,
+            sigma=sigma,
+            alpha=alpha,
+            beta=beta,
+            frangic=frangic,
+            black_white=black_white,
+        )
 
         if output_vesselness_image:
-            output_vesselness_image = sitk.Maximum(output_vesselness_image, vessel_image)
+            output_vesselness_image = sitk.Maximum(
+                output_vesselness_image, vessel_image
+            )
         else:
             output_vesselness_image = vessel_image
     return output_vesselness_image

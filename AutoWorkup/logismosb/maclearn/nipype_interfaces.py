@@ -8,7 +8,12 @@ Author:
 Usage:
 
 """
-from nipype.interfaces.base import BaseInterface, traits, BaseInterfaceInputSpec, TraitedSpec
+from nipype.interfaces.base import (
+    BaseInterface,
+    traits,
+    BaseInterfaceInputSpec,
+    TraitedSpec,
+)
 from nipype.interfaces.semtools import BRAINSResample
 from nipype.interfaces.freesurfer import MRIConvert
 import os
@@ -18,8 +23,15 @@ from .predict import image_file_from_array_with_reference_image_file
 import SimpleITK as sitk
 
 
-def run_resample(in_file, ref_file, transform, out_file, interpolation_mode='Linear', pixel_type='float',
-                 inverse_transform=True):
+def run_resample(
+    in_file,
+    ref_file,
+    transform,
+    out_file,
+    interpolation_mode="Linear",
+    pixel_type="float",
+    inverse_transform=True,
+):
     """
     This function...
 
@@ -48,26 +60,35 @@ class CollectFeatureFilesInputSpec(BaseInterfaceInputSpec):
     """
     This class represents a...
     """
+
     rho = traits.File(exists=True)
     phi = traits.File(exists=True)
     theta = traits.File(exists=True)
-    posterior_files = traits.Dict(trait=traits.File(exists=True), desc="Dictionary of posterior probabilities")
+    posterior_files = traits.Dict(
+        trait=traits.File(exists=True), desc="Dictionary of posterior probabilities"
+    )
     reference_file = traits.File(exists=True)
     transform_file = traits.File(exists=True)
-    inverse_transform = traits.Bool(True, desc="if true, inverse transform will be used", use_default=True)
+    inverse_transform = traits.Bool(
+        True, desc="if true, inverse transform will be used", use_default=True
+    )
 
 
 class CollectFeatureFilesOutputSpec(TraitedSpec):
     """
     This class represents a...
     """
-    feature_files = traits.Dict(trait=traits.File(exists=True), desc="Output dictionary of feature files")
+
+    feature_files = traits.Dict(
+        trait=traits.File(exists=True), desc="Output dictionary of feature files"
+    )
 
 
 class CollectFeatureFiles(BaseInterface):
     """
     This class represents a...
     """
+
     input_spec = CollectFeatureFilesInputSpec
     output_spec = CollectFeatureFilesOutputSpec
 
@@ -79,7 +100,11 @@ class CollectFeatureFiles(BaseInterface):
         :return:
         """
         list_of_feature_files = self.combine_files()
-        self.resample_images_for_features(list_of_feature_files, self.inputs.reference_file, self.inputs.transform_file)
+        self.resample_images_for_features(
+            list_of_feature_files,
+            self.inputs.reference_file,
+            self.inputs.transform_file,
+        )
         return runtime
 
     @staticmethod
@@ -98,7 +123,9 @@ class CollectFeatureFiles(BaseInterface):
 
         :return: feature_files
         """
-        feature_files = [self.inputs.rho, self.inputs.phi, self.inputs.theta] + list(self.inputs.posterior_files.values())
+        feature_files = [self.inputs.rho, self.inputs.phi, self.inputs.theta] + list(
+            self.inputs.posterior_files.values()
+        )
         return feature_files
 
     def _list_outputs(self):
@@ -108,7 +135,9 @@ class CollectFeatureFiles(BaseInterface):
         :return:
         """
         outputs = self._outputs().get()
-        outputs["feature_files"] = self._list_resampled_feature_files(self.combine_files())
+        outputs["feature_files"] = self._list_resampled_feature_files(
+            self.combine_files()
+        )
         return outputs
 
     def _list_resampled_feature_files(self, list_of_feature_files):
@@ -133,12 +162,20 @@ class CollectFeatureFiles(BaseInterface):
         :param ref_file:
         :param transform:
         """
-        resampled_feature_files = self._list_resampled_feature_files(list_of_feature_files)
+        resampled_feature_files = self._list_resampled_feature_files(
+            list_of_feature_files
+        )
         for _file in list_of_feature_files:
             name = self._get_dict_name(_file)
-            resampled_feature_files[name] = run_resample(_file, ref_file, transform, resampled_feature_files[name],
-                                                         "Linear", "float",
-                                                         inverse_transform=self.inputs.inverse_transform)
+            resampled_feature_files[name] = run_resample(
+                _file,
+                ref_file,
+                transform,
+                resampled_feature_files[name],
+                "Linear",
+                "float",
+                inverse_transform=self.inputs.inverse_transform,
+            )
 
 
 def create_white_edge_cost_image(t1_file, t2_file, gm_proba_file, out_file):
@@ -153,13 +190,16 @@ def create_white_edge_cost_image(t1_file, t2_file, gm_proba_file, out_file):
     """
     import SimpleITK as sitk
     import os
+
     gm_proba = sitk.ReadImage(gm_proba_file)
     negative_gm_proba = 1 - gm_proba
     t1 = sitk.ReadImage(t1_file)
     t2 = sitk.ReadImage(t2_file)
     t1_gradient = sitk.GradientMagnitude(t1)
     t2_gradient = sitk.GradientMagnitude(t2)
-    multi_modal_gradient = sitk.Cast((t1_gradient + t2_gradient), negative_gm_proba.GetPixelID())
+    multi_modal_gradient = sitk.Cast(
+        (t1_gradient + t2_gradient), negative_gm_proba.GetPixelID()
+    )
     cost_image = multi_modal_gradient * negative_gm_proba
     out_file = os.path.abspath(out_file)
     sitk.WriteImage(cost_image, out_file)
@@ -168,20 +208,27 @@ def create_white_edge_cost_image(t1_file, t2_file, gm_proba_file, out_file):
 
 class PredictEdgeProbabilityInputSpec(BaseInterfaceInputSpec):
     """This class represents a..."""
+
     t1_file = traits.File(exists=True)
     additional_files = traits.Dict(trait=traits.File(exists=True))
-    gm_classifier_file = traits.File(exists=True, desc="Classifier file for predicting edge probability")
-    wm_classifier_file = traits.File(exists=True, desc="Classifier file for predicting edge probability")
+    gm_classifier_file = traits.File(
+        exists=True, desc="Classifier file for predicting edge probability"
+    )
+    wm_classifier_file = traits.File(
+        exists=True, desc="Classifier file for predicting edge probability"
+    )
 
 
 class PredictEdgeProbabilityOutputSpec(TraitedSpec):
     """This class represents a..."""
+
     gm_edge_probability = traits.File()
     wm_edge_probability = traits.File()
 
 
 class PredictEdgeProbability(BaseInterface):
     """This class represents a..."""
+
     input_spec = PredictEdgeProbabilityInputSpec
     output_spec = PredictEdgeProbabilityOutputSpec
 
@@ -192,18 +239,26 @@ class PredictEdgeProbability(BaseInterface):
         :param runtime:
         :return:
         """
-        feature_data = image_data(self.inputs.t1_file, "T1", additional_images=self.inputs.additional_files)
+        feature_data = image_data(
+            self.inputs.t1_file, "T1", additional_images=self.inputs.additional_files
+        )
         gm_classifier = joblib.load(self.inputs.gm_classifier_file)
         gm_probability_array = gm_classifier.predict_proba(feature_data.values)[:, 1]
         del gm_classifier
         gm_probability_image = image_file_from_array_with_reference_image_file(
-            gm_probability_array, self.inputs.t1_file, self._list_outputs()["gm_edge_probability"])
+            gm_probability_array,
+            self.inputs.t1_file,
+            self._list_outputs()["gm_edge_probability"],
+        )
         del gm_probability_array, gm_probability_image
         wm_classifier = joblib.load(self.inputs.wm_classifier_file)
         wm_probability_array = wm_classifier.predict_proba(feature_data.values)[:, 1]
         del wm_classifier
         wm_probability_image = image_file_from_array_with_reference_image_file(
-            wm_probability_array, self.inputs.t1_file, self._list_outputs()["wm_edge_probability"])
+            wm_probability_array,
+            self.inputs.t1_file,
+            self._list_outputs()["wm_edge_probability"],
+        )
         del wm_probability_array, wm_probability_image
         return runtime
 
@@ -229,7 +284,7 @@ def create_identity_transform():
     dimension = 3
     offset = (0, 0, 0)
     transform = sitk.TranslationTransform(dimension, offset)
-    transform.SetIdentity() # just to be safe
+    transform.SetIdentity()  # just to be safe
     return transform
 
 
@@ -270,17 +325,20 @@ def sample_image(image, size, spacing=(1, 1, 1)):
 
 class CreateReferenceImageInputSpec(BaseInterfaceInputSpec):
     """This class represents a..."""
+
     baw_t1 = traits.File(exists=True)
     orig_t1 = traits.File(exists=True)
 
 
 class CreateReferenceImageOutputSpec(TraitedSpec):
     """This class represents a..."""
+
     reference_file = traits.File(desc="reference file for resampling")
 
 
 class CreateReferenceImage(BaseInterface):
     """This class represents a..."""
+
     input_spec = CreateReferenceImageInputSpec
     output_spec = CreateReferenceImageOutputSpec
 
@@ -304,7 +362,9 @@ class CreateReferenceImage(BaseInterface):
         baw_image = sitk.ReadImage(str(self.inputs.baw_t1))
         spacing = baw_image.GetSpacing()
         size = baw_image.GetSize()
-        output_image = sample_image(sitk.ReadImage(str(self.inputs.orig_t1)), size, spacing)
+        output_image = sample_image(
+            sitk.ReadImage(str(self.inputs.orig_t1)), size, spacing
+        )
         out_file = self._list_outputs()["reference_file"]
         sitk.WriteImage(output_image, out_file)
         change_orientation(out_file, out_file)
@@ -337,17 +397,23 @@ def increase_penalty(image, penalty, minimum):
 
 class LOGISMOSBPreprocessingInputSpec(BaseInterfaceInputSpec):
     """This class represents a..."""
+
     white_mask = traits.File(exists=True, mandatory=True)
     erode_mask = traits.Int(default_value=1, usedefault=True)
     gm_proba = traits.File(exists=True, mandatory=True)
     wm_proba = traits.File(exists=True, mandatory=True)
-    background_penalty = traits.Int(default_value=100, usedefault=True, desc="Penalty for a zero probability.")
-    proba_scale = traits.Int(default_value=50, usedefault=True, desc="Scale the probabilities.")
+    background_penalty = traits.Int(
+        default_value=100, usedefault=True, desc="Penalty for a zero probability."
+    )
+    proba_scale = traits.Int(
+        default_value=50, usedefault=True, desc="Scale the probabilities."
+    )
     min_probability = traits.Float(default_value=0.01, usedefault=True)
 
 
 class LOGISMOSBPreprocessingOutputSpec(TraitedSpec):
     """This class represents a..."""
+
     wm_proba = traits.File()
     gm_proba = traits.File()
     white_mask = traits.File()
@@ -355,6 +421,7 @@ class LOGISMOSBPreprocessingOutputSpec(TraitedSpec):
 
 class LOGISMOSBPreprocessing(BaseInterface):
     """Interface for playing with the inputs so that LOGISMOS-B is optimized for the probability maps."""
+
     input_spec = LOGISMOSBPreprocessingInputSpec
     output_spec = LOGISMOSBPreprocessingOutputSpec
 
@@ -385,13 +452,17 @@ class LOGISMOSBPreprocessing(BaseInterface):
             if self.inputs.proba_scale:
                 proba = scale_image(proba, self.inputs.proba_scale)
             if self.inputs.background_penalty:
-                proba = increase_penalty(proba, self.inputs.background_penalty, self.inputs.min_probability)
+                proba = increase_penalty(
+                    proba, self.inputs.background_penalty, self.inputs.min_probability
+                )
             proba_out_file = self._list_outputs()[proba_name]
             sitk.WriteImage(proba, proba_out_file)
         white_mask = sitk.ReadImage(str(self.inputs.white_mask))
         white_out_file = self._list_outputs()["white_mask"]
         if self.inputs.erode_mask:
-            eroded_white_mask = sitk.BinaryErode(sitk.Cast(white_mask, sitk.sitkUInt8), int(self.inputs.erode_mask))
+            eroded_white_mask = sitk.BinaryErode(
+                sitk.Cast(white_mask, sitk.sitkUInt8), int(self.inputs.erode_mask)
+            )
             sitk.WriteImage(eroded_white_mask, white_out_file)
         else:
             sitk.WriteImage(white_mask, white_out_file)

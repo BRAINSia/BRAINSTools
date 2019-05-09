@@ -28,7 +28,10 @@ from .training import run_training, get_labeled_region_data
 
 nm_dir = "/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription/"
 
-def plot_feature_importances(list_of_importances, feature_names, out_file=None, title="Feature Importances"):
+
+def plot_feature_importances(
+    list_of_importances, feature_names, out_file=None, title="Feature Importances"
+):
     """
     This function...
 
@@ -42,24 +45,33 @@ def plot_feature_importances(list_of_importances, feature_names, out_file=None, 
     indices = np.argsort(importances)[::-1]
     num_features = len(feature_names)
     import random
+
     fig_num = random.randint(1, 10000)
 
     # Print the feature ranking
     print("Feature ranking:")
 
     for f in range(num_features):
-        print("%d. feature %s (%f)" % (f + 1, feature_names[indices][f], importances[indices[f]]))
+        print(
+            "%d. feature %s (%f)"
+            % (f + 1, feature_names[indices][f], importances[indices[f]])
+        )
     # Plot the feature importances of the forest
     fig = plt.figure(fig_num)
     # We define a fake subplot that is in fact only the plot.
     plot = fig.add_subplot(111)
 
     # We change the fontsize of minor ticks label
-    plot.tick_params(axis='x', which='major', labelsize=15)
-    plot.tick_params(axis='y', which='major', labelsize=12)
+    plot.tick_params(axis="x", which="major", labelsize=15)
+    plot.tick_params(axis="y", which="major", labelsize=12)
     plt.title(title, fontsize=14)
-    plt.bar(list(range(num_features)), importances[indices],
-            color="r", yerr=std[indices], align="center")
+    plt.bar(
+        list(range(num_features)),
+        importances[indices],
+        color="r",
+        yerr=std[indices],
+        align="center",
+    )
     plt.xticks(list(range(num_features)), feature_names[indices])
     plt.xlim([-1, num_features])
     plt.tight_layout()
@@ -69,7 +81,9 @@ def plot_feature_importances(list_of_importances, feature_names, out_file=None, 
         plt.savefig(out_file)
 
 
-def plot_all_feature_importances(all_importances, feature_names, out_file=None, title=None):
+def plot_all_feature_importances(
+    all_importances, feature_names, out_file=None, title=None
+):
     """
     This function...
 
@@ -82,7 +96,9 @@ def plot_all_feature_importances(all_importances, feature_names, out_file=None, 
     imp_list = list()
     for matter in list(all_importances.keys()):
         for label in list(all_importances[matter].keys()):
-            imp_list.append(np.average(all_importances[matter][label]["Regional"], axis=0))
+            imp_list.append(
+                np.average(all_importances[matter][label]["Regional"], axis=0)
+            )
 
     plot_feature_importances(imp_list, feature_names, out_file, title)
 
@@ -102,19 +118,20 @@ def split_region_data(train_data, test_data, matter, rg_name, label, n_jobs=-1):
     print("Label Region: {0}".format(label))
     # Training
     train_index = train_data[rg_name][label]
-    train_targets = train_data['Targets'][matter][train_index].values
-    train_feat = train_data['Features'][train_index].values
+    train_targets = train_data["Targets"][matter][train_index].values
+    train_feat = train_data["Features"][train_index].values
 
     # Testing
     test_index = test_data[rg_name][label]
-    test_targets = test_data['Targets'][matter][test_index].values
-    test_feat = test_data['Features'][test_index].values
+    test_targets = test_data["Targets"][matter][test_index].values
+    test_feat = test_data["Features"][test_index].values
 
     return train_feat, train_targets, test_feat, test_targets
 
 
-def train_classifier(train_features, train_targets, n_jobs=-1,
-                     clf=RandomForestClassifier()):
+def train_classifier(
+    train_features, train_targets, n_jobs=-1, clf=RandomForestClassifier()
+):
     """
     This function...
 
@@ -142,6 +159,7 @@ def test_classifier(clf, test_features, test_targets):
     probas = clf.predict_proba(test_features)
     score_roc = roc_curve(test_targets, probas[:, 1], pos_label=1)
     return score_roc
+
 
 cache_dir = "/Shared/sinapse/CACHE/20160510_EdgeDetection"
 
@@ -185,7 +203,9 @@ def runcrossval(idx_split, data_file):
 
     train_data = data.loc[train_ids]
 
-    classifiers = run_training(train_data, train_base_clf=True, out_dir=fold_dir, n_jobs=n_jobs)
+    classifiers = run_training(
+        train_data, train_base_clf=True, out_dir=fold_dir, n_jobs=n_jobs
+    )
 
     return test_idx, classifiers
 
@@ -202,12 +222,13 @@ def make_empty_dictionaries(labels):
     :return:
     """
     import copy
+
     roc_scores = dict()
     roc_scores_mean = dict()
     roc_auc = dict()
     pixel_counts = dict()
 
-    for matter in ['WM', 'GM']:
+    for matter in ["WM", "GM"]:
         roc_scores[matter] = dict()
         roc_scores_mean[matter] = dict()
         roc_auc[matter] = dict()
@@ -224,7 +245,7 @@ def make_empty_dictionaries(labels):
                 roc_scores_mean[matter][label][clf_type] = dict()
                 roc_auc[matter][label][clf_type] = list()
 
-                for pr in ['fpr', 'tpr']:
+                for pr in ["fpr", "tpr"]:
                     roc_scores[matter][label][clf_type][pr] = list()
                     roc_scores_mean[matter][label][clf_type][pr] = list()
 
@@ -289,86 +310,116 @@ def main():
     pool.join()
 
     # make empty dictionaries
-    labels = dict(WM=data['WMRegions'].columns, GM=data['GMRegions'].columns)
+    labels = dict(WM=data["WMRegions"].columns, GM=data["GMRegions"].columns)
     roc_scores, roc_scores_mean, roc_auc, importances = make_empty_dictionaries(labels)
 
     # Get ROC scores and feature importance from classifiers
     for test_idx, clf_files in results:
         test_ids = ids[test_idx].tolist()
         test_data = data.loc[test_ids]
-        for matter in ['WM', 'GM']:
+        for matter in ["WM", "GM"]:
 
             # Load classifier for either WM or GM
-            base_clf_file = clf_files[matter]['NonRegional']
+            base_clf_file = clf_files[matter]["NonRegional"]
             base_clf = joblib.load(base_clf_file)
 
-            rg_name = matter + 'Regions'
+            rg_name = matter + "Regions"
 
             for label in data[rg_name].columns:
 
                 # get data for that labeled region
-                label_test_features, label_test_targets = get_labeled_region_data(test_data, rg_name, label, matter)
+                label_test_features, label_test_targets = get_labeled_region_data(
+                    test_data, rg_name, label, matter
+                )
 
                 # load classifier for given region
-                regional_clf_file = clf_files[matter]['Regional'][label]
+                regional_clf_file = clf_files[matter]["Regional"][label]
                 regional_clf = joblib.load(regional_clf_file)
 
-                for clf_type, clf in [("Regional", regional_clf), ("NonRegional", base_clf)]:
+                for clf_type, clf in [
+                    ("Regional", regional_clf),
+                    ("NonRegional", base_clf),
+                ]:
 
                     # Get TPR and FPR scores for ROC analysis
-                    fpr, tpr, _ = test_classifier(clf,
-                                                  label_test_features,
-                                                  label_test_targets)
-                    roc_scores[matter][label][clf_type]['fpr'].append(fpr)
-                    roc_scores[matter][label][clf_type]['tpr'].append(tpr)
+                    fpr, tpr, _ = test_classifier(
+                        clf, label_test_features, label_test_targets
+                    )
+                    roc_scores[matter][label][clf_type]["fpr"].append(fpr)
+                    roc_scores[matter][label][clf_type]["tpr"].append(tpr)
 
                     # Get feature importance
-                    importances[matter][label][clf_type].append(clf.feature_importances_)
+                    importances[matter][label][clf_type].append(
+                        clf.feature_importances_
+                    )
 
-    pickle.dump(roc_scores, open(os.path.join(cache_dir, "roc_scores.pkl"), 'wb'))
-    pickle.dump(importances, open(os.path.join(cache_dir, "clf_importances.pkl"), 'wb'))
+    pickle.dump(roc_scores, open(os.path.join(cache_dir, "roc_scores.pkl"), "wb"))
+    pickle.dump(importances, open(os.path.join(cache_dir, "clf_importances.pkl"), "wb"))
 
     mean_fpr = np.linspace(0, 1, 100)
-    for j, matter in enumerate(['WM', 'GM']):
-        rg_name = matter + 'Regions'
+    for j, matter in enumerate(["WM", "GM"]):
+        rg_name = matter + "Regions"
         for i, label in enumerate(data[rg_name].columns):
             for clf_type in ["Regional", "NonRegional"]:
 
                 mean_tpr = 0.0
 
-                for ii, tpr in enumerate(roc_scores[matter][label][clf_type]['tpr']):
-                    fpr = roc_scores[matter][label][clf_type]['fpr'][ii]
+                for ii, tpr in enumerate(roc_scores[matter][label][clf_type]["tpr"]):
+                    fpr = roc_scores[matter][label][clf_type]["fpr"][ii]
                     mean_tpr += interp(mean_fpr, fpr, tpr)
                     mean_tpr[0] = 0.0
 
-                mean_tpr /= len(roc_scores[matter][label][clf_type]['tpr'])
-                roc_scores_mean[matter][label][clf_type]['tpr'] = mean_tpr
+                mean_tpr /= len(roc_scores[matter][label][clf_type]["tpr"])
+                roc_scores_mean[matter][label][clf_type]["tpr"] = mean_tpr
                 roc_auc[matter][label][clf_type] = auc(mean_fpr, mean_tpr)
                 plt.figure((i + 1) + j * 10, dpi=200)
-                plt.plot([0, 1], [0, 1], 'k--')
+                plt.plot([0, 1], [0, 1], "k--")
 
                 # Plot the classifier scores without the regions as baseline
-                plt.plot(mean_fpr,
-                         roc_scores_mean[matter][label]["NonRegional"]["tpr"],
-                         'k', label="NonRegional", linewidth=2)
-                plt.plot(mean_fpr,
-                         roc_scores_mean[matter][label]["Regional"]["tpr"],
-                         label="Regional", linewidth=2)
+                plt.plot(
+                    mean_fpr,
+                    roc_scores_mean[matter][label]["NonRegional"]["tpr"],
+                    "k",
+                    label="NonRegional",
+                    linewidth=2,
+                )
+                plt.plot(
+                    mean_fpr,
+                    roc_scores_mean[matter][label]["Regional"]["tpr"],
+                    label="Regional",
+                    linewidth=2,
+                )
                 fontsize = 16
-                plt.xlabel('False Positive Rate', fontsize=fontsize)
-                plt.ylabel('True Positive Rate', fontsize=fontsize)
+                plt.xlabel("False Positive Rate", fontsize=fontsize)
+                plt.ylabel("True Positive Rate", fontsize=fontsize)
                 # plt.title('ROC Curve for {0} Matter Classification in {1}'.format(matter, label))
-                plt.legend(loc='best', fontsize=fontsize)
-                plt.savefig(os.path.join(cache_dir, '{0}{1}ROC.eps'.format(matter, label)), pad_inches=0)
+                plt.legend(loc="best", fontsize=fontsize)
+                plt.savefig(
+                    os.path.join(cache_dir, "{0}{1}ROC.eps".format(matter, label)),
+                    pad_inches=0,
+                )
 
-    pickle.dump(roc_auc, open(os.path.join(cache_dir, "roc_auc_scores.pkl"), 'wb'))
+    pickle.dump(roc_auc, open(os.path.join(cache_dir, "roc_auc_scores.pkl"), "wb"))
 
-    feat_names_long = np.array([r'T1', r'$\|\nabla\|$', r'$\|\nabla\|\nabla\|\|$',
-                                r'$\nabla_x$', r'$\nabla_y$', r'$\nabla_z$',
-                                r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$'])
-    plot_all_feature_importances(importances, feat_names_long,
-                                 title="Feature Importance for Region Based Classifiers",
-                                 out_file=os.path.join(cache_dir, "RegionalFeatureImportances.eps"))
+    feat_names_long = np.array(
+        [
+            r"T1",
+            r"$\|\nabla\|$",
+            r"$\|\nabla\|\nabla\|\|$",
+            r"$\nabla_x$",
+            r"$\nabla_y$",
+            r"$\nabla_z$",
+            r"$\lambda_1$",
+            r"$\lambda_2$",
+            r"$\lambda_3$",
+        ]
+    )
+    plot_all_feature_importances(
+        importances,
+        feat_names_long,
+        title="Feature Importance for Region Based Classifiers",
+        out_file=os.path.join(cache_dir, "RegionalFeatureImportances.eps"),
+    )
 
 
 if __name__ == "__main__":

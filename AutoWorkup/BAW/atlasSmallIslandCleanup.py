@@ -15,23 +15,29 @@ import SimpleITK as sitk
 import math
 
 
-class DustCleanup():
+class DustCleanup:
     """
     This class represents a...
     """
+
     def __init__(self, arguments):
         from collections import OrderedDict
-        self.inputAtlasPath = arguments['--inputAtlasPath']
-        self.outputAtlasPath = arguments['--outputAtlasPath']
-        self.inputT1Path = arguments['--inputT1Path']
-        self.inputT2Path = arguments['--inputT2Path']
-        self.includeLabelsList = self.evalInputListArg(arguments['--includeLabelsList'])
-        self.excludeLabelsList = self.evalInputListArg(arguments['--excludeLabelsList'])
-        self.maximumIslandVoxelCount = int(arguments['--maximumIslandVoxelCount'])
-        self.useFullyConnectedInConnectedComponentFilter = arguments['--useFullyConnectedInConnectedComponentFilter']
-        self.forceSuspiciousLabelChange = arguments['--forceSuspiciousLabelChange']
-        self.noDilation = arguments['--noDilation']
-        self.islandStatistics = OrderedDict({'Total': {'numberOfIslandsCleaned': 0, 'numberOfIslands': 0}})
+
+        self.inputAtlasPath = arguments["--inputAtlasPath"]
+        self.outputAtlasPath = arguments["--outputAtlasPath"]
+        self.inputT1Path = arguments["--inputT1Path"]
+        self.inputT2Path = arguments["--inputT2Path"]
+        self.includeLabelsList = self.evalInputListArg(arguments["--includeLabelsList"])
+        self.excludeLabelsList = self.evalInputListArg(arguments["--excludeLabelsList"])
+        self.maximumIslandVoxelCount = int(arguments["--maximumIslandVoxelCount"])
+        self.useFullyConnectedInConnectedComponentFilter = arguments[
+            "--useFullyConnectedInConnectedComponentFilter"
+        ]
+        self.forceSuspiciousLabelChange = arguments["--forceSuspiciousLabelChange"]
+        self.noDilation = arguments["--noDilation"]
+        self.islandStatistics = OrderedDict(
+            {"Total": {"numberOfIslandsCleaned": 0, "numberOfIslands": 0}}
+        )
 
     def evalInputListArg(self, inputArg):
         """
@@ -40,7 +46,7 @@ class DustCleanup():
         :return: list(map(int, inputArg.split(','))) OR None
         """
         if inputArg:
-            return list(map(int, inputArg.split(',')))
+            return list(map(int, inputArg.split(",")))
         else:
             return None
 
@@ -56,7 +62,9 @@ class DustCleanup():
             inputT2VolumeImage = None
         labelsList = self.getLabelsList(inputT1VolumeImage, labelImage)
         for label in labelsList:
-            labelImage = self.relabelCurrentLabel(labelImage, inputT1VolumeImage, inputT2VolumeImage, label)
+            labelImage = self.relabelCurrentLabel(
+                labelImage, inputT1VolumeImage, inputT2VolumeImage, label
+            )
         self.printIslandStatistics()
         sitk.WriteImage(labelImage, self.outputAtlasPath)
 
@@ -115,15 +123,22 @@ class DustCleanup():
         print()
         "Label, numberOfIslandsCleaned, numberOfIslands, IslandVoxelCount, numberOfIslandsCleanedForIslandVoxelCount"
         for islandName in sorted(self.islandStatistics.keys()):
-            labelStats = [str(islandName), str(self.islandStatistics[islandName]['numberOfIslandsCleaned']),
-                          str(self.islandStatistics[islandName]['numberOfIslands'])]
-            if islandName != 'Total':
+            labelStats = [
+                str(islandName),
+                str(self.islandStatistics[islandName]["numberOfIslandsCleaned"]),
+                str(self.islandStatistics[islandName]["numberOfIslands"]),
+            ]
+            if islandName != "Total":
                 for i in range(1, self.maximumIslandVoxelCount + 1):
-                    labelStats.extend([str(i), str(self.islandStatistics[islandName][i])])
+                    labelStats.extend(
+                        [str(i), str(self.islandStatistics[islandName][i])]
+                    )
             print()
-            ','.join(labelStats)
+            ",".join(labelStats)
 
-    def relabelCurrentLabel(self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label_key):
+    def relabelCurrentLabel(
+        self, labelImage, inputT1VolumeImage, inputT2VolumeImage, label_key
+    ):
         """
         This function...
         :param labelImage:
@@ -132,56 +147,95 @@ class DustCleanup():
         :param label_key:
         :return: labelImage
         """
-        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        from collections import (
+            OrderedDict,
+        )  # Need OrderedDict internally to ensure consistent ordering
+
         label_key = str(label_key)  # all keys must be strings in order to sort
-        self.islandStatistics[label_key] = OrderedDict({'numberOfIslandsCleaned': 0})
+        self.islandStatistics[label_key] = OrderedDict({"numberOfIslandsCleaned": 0})
         label_value = int(label_key)
         for currentIslandSize in range(1, self.maximumIslandVoxelCount + 1):
-            maskForCurrentLabel = sitk.BinaryThreshold(labelImage, label_value, label_value)
-            relabeledConnectedRegion = self.getRelabeldConnectedRegion(maskForCurrentLabel, currentIslandSize)
-            labelStatsT1WithRelabeledConnectedRegion = self.getLabelStatsObject(inputT1VolumeImage,
-                                                                                relabeledConnectedRegion)
+            maskForCurrentLabel = sitk.BinaryThreshold(
+                labelImage, label_value, label_value
+            )
+            relabeledConnectedRegion = self.getRelabeldConnectedRegion(
+                maskForCurrentLabel, currentIslandSize
+            )
+            labelStatsT1WithRelabeledConnectedRegion = self.getLabelStatsObject(
+                inputT1VolumeImage, relabeledConnectedRegion
+            )
             if inputT2VolumeImage:
-                labelStatsT2WithRelabeledConnectedRegion = self.getLabelStatsObject(inputT2VolumeImage,
-                                                                                    relabeledConnectedRegion)
-            labelList = self.getLabelListFromLabelStatsObject(labelStatsT1WithRelabeledConnectedRegion)
+                labelStatsT2WithRelabeledConnectedRegion = self.getLabelStatsObject(
+                    inputT2VolumeImage, relabeledConnectedRegion
+                )
+            labelList = self.getLabelListFromLabelStatsObject(
+                labelStatsT1WithRelabeledConnectedRegion
+            )
             labelList.remove(0)  # remove background label from labelList
             labelList.reverse()
 
-            if currentIslandSize == 1:  # use island size 1 to get # of islands since this label map is not dilated
-                self.islandStatistics[label_key]['numberOfIslands'] = len(labelList)
-                self.islandStatistics['Total']['numberOfIslands'] += len(labelList)
+            if (
+                currentIslandSize == 1
+            ):  # use island size 1 to get # of islands since this label map is not dilated
+                self.islandStatistics[label_key]["numberOfIslands"] = len(labelList)
+                self.islandStatistics["Total"]["numberOfIslands"] += len(labelList)
 
             numberOfIslandsCleaned = 0
 
             for currentLabel in labelList:
-                islandVoxelCount = labelStatsT1WithRelabeledConnectedRegion.GetCount(currentLabel)
+                islandVoxelCount = labelStatsT1WithRelabeledConnectedRegion.GetCount(
+                    currentLabel
+                )
                 if islandVoxelCount < currentIslandSize:
                     continue
-                elif islandVoxelCount == currentIslandSize and currentLabel != 1:  # stop if you reach largest island
-                    meanT1Intensity = labelStatsT1WithRelabeledConnectedRegion.GetMean(currentLabel)
+                elif (
+                    islandVoxelCount == currentIslandSize and currentLabel != 1
+                ):  # stop if you reach largest island
+                    meanT1Intensity = labelStatsT1WithRelabeledConnectedRegion.GetMean(
+                        currentLabel
+                    )
                     if inputT2VolumeImage:
-                        meanT2Intensity = labelStatsT2WithRelabeledConnectedRegion.GetMean(currentLabel)
+                        meanT2Intensity = labelStatsT2WithRelabeledConnectedRegion.GetMean(
+                            currentLabel
+                        )
                     else:
                         meanT2Intensity = None
-                    targetLabels = self.getTargetLabels(labelImage, relabeledConnectedRegion, inputT1VolumeImage,
-                                                        currentLabel)
-                    diffDict = self.calculateLabelIntensityDifferenceValue(meanT1Intensity, meanT2Intensity,
-                                                                           targetLabels, inputT1VolumeImage,
-                                                                           inputT2VolumeImage, labelImage)
+                    targetLabels = self.getTargetLabels(
+                        labelImage,
+                        relabeledConnectedRegion,
+                        inputT1VolumeImage,
+                        currentLabel,
+                    )
+                    diffDict = self.calculateLabelIntensityDifferenceValue(
+                        meanT1Intensity,
+                        meanT2Intensity,
+                        targetLabels,
+                        inputT1VolumeImage,
+                        inputT2VolumeImage,
+                        labelImage,
+                    )
                     if self.forceSuspiciousLabelChange:
                         diffDict.pop(label_key)
-                    sortedLabelList = [ int(x) for x in self.getDictKeysListSortedByValue(diffDict) ]
-                    currentLabelBinaryThresholdImage = sitk.BinaryThreshold(relabeledConnectedRegion, currentLabel,
-                                                                            currentLabel)
-                    labelImage = self.relabelImage(labelImage, currentLabelBinaryThresholdImage, sortedLabelList[0])
+                    sortedLabelList = [
+                        int(x) for x in self.getDictKeysListSortedByValue(diffDict)
+                    ]
+                    currentLabelBinaryThresholdImage = sitk.BinaryThreshold(
+                        relabeledConnectedRegion, currentLabel, currentLabel
+                    )
+                    labelImage = self.relabelImage(
+                        labelImage, currentLabelBinaryThresholdImage, sortedLabelList[0]
+                    )
                     numberOfIslandsCleaned += 1
                 else:
                     break
 
             self.islandStatistics[label_key][currentIslandSize] = numberOfIslandsCleaned
-            self.islandStatistics[label_key]['numberOfIslandsCleaned'] += numberOfIslandsCleaned
-            self.islandStatistics['Total']['numberOfIslandsCleaned'] += numberOfIslandsCleaned
+            self.islandStatistics[label_key][
+                "numberOfIslandsCleaned"
+            ] += numberOfIslandsCleaned
+            self.islandStatistics["Total"][
+                "numberOfIslandsCleaned"
+            ] += numberOfIslandsCleaned
 
         return labelImage
 
@@ -194,9 +248,15 @@ class DustCleanup():
         """
         if (currentIslandSize > 1) and (not self.noDilation):
             dilationKernelRadius = self.calcDilationKernelRadius(currentIslandSize)
-            dilatedMaskForCurrentLabel = self.dilateLabelMap(maskForCurrentLabel, dilationKernelRadius)
-            relabeledConnectedLabelMap = self.runConnectedComponentsAndRelabel(dilatedMaskForCurrentLabel)
-            return sitk.Mask(relabeledConnectedLabelMap, maskForCurrentLabel, outsideValue=0)
+            dilatedMaskForCurrentLabel = self.dilateLabelMap(
+                maskForCurrentLabel, dilationKernelRadius
+            )
+            relabeledConnectedLabelMap = self.runConnectedComponentsAndRelabel(
+                dilatedMaskForCurrentLabel
+            )
+            return sitk.Mask(
+                relabeledConnectedLabelMap, maskForCurrentLabel, outsideValue=0
+            )
         else:
             return self.runConnectedComponentsAndRelabel(maskForCurrentLabel)
 
@@ -207,7 +267,11 @@ class DustCleanup():
         :return: int(math.ceil(math.pow(currentIslandSize / ((4. / 3.) * math.pi), (1. / 3.))))
         """
         # use the equation for the volume of a sphere to calculate the kernel radius value
-        return int(math.ceil(math.pow(currentIslandSize / ((4. / 3.) * math.pi), (1. / 3.))))
+        return int(
+            math.ceil(
+                math.pow(currentIslandSize / ((4.0 / 3.0) * math.pi), (1.0 / 3.0))
+            )
+        )
 
     def runConnectedComponentsAndRelabel(self, binaryImage):
         """
@@ -246,7 +310,9 @@ class DustCleanup():
             compontentLabels = labelStatsObject.GetValidLabels()
         return list(compontentLabels)
 
-    def getTargetLabels(self, labelImage, relabeledConnectedRegion, inputVolumeImage, currentLabel):
+    def getTargetLabels(
+        self, labelImage, relabeledConnectedRegion, inputVolumeImage, currentLabel
+    ):
         """
         This function...
         :param labelImage:
@@ -255,16 +321,30 @@ class DustCleanup():
         :param currentLabel:
         :return: targetLabels
         """
-        currentLabelBinaryThresholdImage = sitk.BinaryThreshold(relabeledConnectedRegion, currentLabel, currentLabel)
-        castedCurrentLabelBinaryThresholdImage = sitk.Cast(currentLabelBinaryThresholdImage, sitk.sitkInt16)
+        currentLabelBinaryThresholdImage = sitk.BinaryThreshold(
+            relabeledConnectedRegion, currentLabel, currentLabel
+        )
+        castedCurrentLabelBinaryThresholdImage = sitk.Cast(
+            currentLabelBinaryThresholdImage, sitk.sitkInt16
+        )
 
-        dilatedBinaryLabelMap = self.dilateLabelMap(castedCurrentLabelBinaryThresholdImage, 1)
+        dilatedBinaryLabelMap = self.dilateLabelMap(
+            castedCurrentLabelBinaryThresholdImage, 1
+        )
         outsideValue = -1
-        reducedLabelMapImage = sitk.Mask(labelImage, dilatedBinaryLabelMap, outsideValue=outsideValue)
+        reducedLabelMapImage = sitk.Mask(
+            labelImage, dilatedBinaryLabelMap, outsideValue=outsideValue
+        )
 
-        reducedLabelMapT1LabelStats = self.getLabelStatsObject(inputVolumeImage, reducedLabelMapImage)
-        targetLabels = self.getLabelListFromLabelStatsObject(reducedLabelMapT1LabelStats)
-        targetLabels = self.removeOutsideValueFromTargetLabels(targetLabels, outsideValue)
+        reducedLabelMapT1LabelStats = self.getLabelStatsObject(
+            inputVolumeImage, reducedLabelMapImage
+        )
+        targetLabels = self.getLabelListFromLabelStatsObject(
+            reducedLabelMapT1LabelStats
+        )
+        targetLabels = self.removeOutsideValueFromTargetLabels(
+            targetLabels, outsideValue
+        )
         return targetLabels
 
     def removeOutsideValueFromTargetLabels(self, targetLabels, outsideValue):
@@ -292,16 +372,21 @@ class DustCleanup():
         myFilter.SetForegroundValue(1.0)
         myFilter.SetKernelRadius((kernelRadius, kernelRadius, kernelRadius))
         myFilter.SetKernelType(2)  # Kernel Type=Box
-        #myFilter.SetNumberOfWorkUnits(8)
+        # myFilter.SetNumberOfWorkUnits(8)
         output = myFilter.Execute(inputLabelImage)
         castedOutput = sitk.Cast(output, sitk.sitkInt16)
 
         return castedOutput
 
-    def calculateLabelIntensityDifferenceValue(self, averageT1IntensitySuspiciousLabel,
-                                               averageT2IntensitySuspiciousLabel,
-                                               targetLabels, inputT1VolumeImage,
-                                               inputT2VolumeImage, inputLabelImage):
+    def calculateLabelIntensityDifferenceValue(
+        self,
+        averageT1IntensitySuspiciousLabel,
+        averageT2IntensitySuspiciousLabel,
+        targetLabels,
+        inputT1VolumeImage,
+        inputT2VolumeImage,
+        inputLabelImage,
+    ):
         """
         Calculates a measurement for each label that is on the border of the suspicious label.
         This value is the square root of the sum of the squared difference in the average T1
@@ -317,20 +402,33 @@ class DustCleanup():
         :param inputLabelImage:
         :return: squareRootDiffLabelDict
         """
-        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        from collections import (
+            OrderedDict,
+        )  # Need OrderedDict internally to ensure consistent ordering
+
         squareRootDiffLabelDict = OrderedDict()
-        labelStatsT1WithInputLabelImage = self.getLabelStatsObject(inputT1VolumeImage, inputLabelImage)
+        labelStatsT1WithInputLabelImage = self.getLabelStatsObject(
+            inputT1VolumeImage, inputLabelImage
+        )
         if inputT2VolumeImage:
-            labelStatsT2WithInputLabelImage = self.getLabelStatsObject(inputT2VolumeImage, inputLabelImage)
+            labelStatsT2WithInputLabelImage = self.getLabelStatsObject(
+                inputT2VolumeImage, inputLabelImage
+            )
 
         for targetLabel in targetLabels:
-            averageT1IntensityTargetLabel = labelStatsT1WithInputLabelImage.GetMean(targetLabel)
-            squareDiffAverageT1 = math.pow(averageT1IntensitySuspiciousLabel -
-                                           averageT1IntensityTargetLabel, 2)
+            averageT1IntensityTargetLabel = labelStatsT1WithInputLabelImage.GetMean(
+                targetLabel
+            )
+            squareDiffAverageT1 = math.pow(
+                averageT1IntensitySuspiciousLabel - averageT1IntensityTargetLabel, 2
+            )
             if inputT2VolumeImage:
-                averageT2IntensityTargetLabel = labelStatsT2WithInputLabelImage.GetMean(targetLabel)
-                squareDiffAverageT2 = math.pow(averageT2IntensitySuspiciousLabel -
-                                               averageT2IntensityTargetLabel, 2)
+                averageT2IntensityTargetLabel = labelStatsT2WithInputLabelImage.GetMean(
+                    targetLabel
+                )
+                squareDiffAverageT2 = math.pow(
+                    averageT2IntensitySuspiciousLabel - averageT2IntensityTargetLabel, 2
+                )
             else:
                 squareDiffAverageT2 = 0
             squareRootDiff = math.sqrt(squareDiffAverageT1 + squareDiffAverageT2)
@@ -364,7 +462,7 @@ class DustCleanup():
         return sorted(val, key=val.get)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from docopt import docopt
 
     arguments = docopt(__doc__)

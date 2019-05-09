@@ -18,19 +18,31 @@ from builtins import object
 
 class UpdateAutoWorkup(object):
     """This class represents a..."""
+
     def _getBlackList(self):
         """
         This function...
         :return: blackListDict, list(blackListDict.keys())
         """
-        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-        handle = csv.reader(open(inputArguments.blackList, 'rb'), delimiter=',', quotechar='\"')
+        from collections import (
+            OrderedDict,
+        )  # Need OrderedDict internally to ensure consistent ordering
+
+        handle = csv.reader(
+            open(inputArguments.blackList, "rb"), delimiter=",", quotechar='"'
+        )
         blackListDict = OrderedDict()
         for row in handle:
             if len(row) == 3:
                 blackListDict[row[0]] = row[1]
             else:
-                print(("WARNING: WRONG # of columns in csv (should be 3): {0}".format(row)))
+                print(
+                    (
+                        "WARNING: WRONG # of columns in csv (should be 3): {0}".format(
+                            row
+                        )
+                    )
+                )
         return blackListDict, list(blackListDict.keys())
 
     def _generateNewPathName(self):
@@ -48,12 +60,17 @@ class UpdateAutoWorkup(object):
         """
         This function...
         """
-        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+        from collections import (
+            OrderedDict,
+        )  # Need OrderedDict internally to ensure consistent ordering
+
         newPath = self._generateNewPathName()
-        newFile = csv.writer(open(newPath, 'wb'), quoting=csv.QUOTE_ALL)
+        newFile = csv.writer(open(newPath, "wb"), quoting=csv.QUOTE_ALL)
         col_name_list = ["project", "subject", "session", "imagefiles"]
         newFile.writerow(col_name_list)
-        oldFile = csv.reader(open(inputArguments.autoWorkupFile, 'rb'), delimiter=',', quotechar='\"')
+        oldFile = csv.reader(
+            open(inputArguments.autoWorkupFile, "rb"), delimiter=",", quotechar='"'
+        )
         blackListDict, blackListKeys = self._getBlackList()
         print((blackListDict, blackListKeys))
         for row in oldFile:
@@ -66,7 +83,7 @@ class UpdateAutoWorkup(object):
                     for path in filepaths:
                         if path in blackListKeys:
                             newPath = blackListDict[path]
-                            if newPath == '':
+                            if newPath == "":
                                 continue
                             if scan not in list(newScanDict.keys()):
                                 newScanDict[scan] = [newPath]
@@ -86,8 +103,10 @@ class UpdateAutoWorkup(object):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description=textwrap.dedent("""
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=textwrap.dedent(
+            """
 This program is used to update the Auto Workup input csv file with the black list. \n
 The blacklist needs to be a comma separated file.
     Example line:
@@ -101,9 +120,13 @@ Common Usage: \n
 $ python updateAutoWorkupFile.py -a autoworkupfile -b blacklistfile
 
 Example:
-$ python updateAutoWorkupFile.py -a example_autoworkup.csv -b example_blacklist.csv"""))
-    parser.add_argument('-a', '--autoWorkupFile', action='store', dest='autoWorkupFile', help='')
-    parser.add_argument('-b', '--blackList', action='store', dest='blackList', help='')
+$ python updateAutoWorkupFile.py -a example_autoworkup.csv -b example_blacklist.csv"""
+        ),
+    )
+    parser.add_argument(
+        "-a", "--autoWorkupFile", action="store", dest="autoWorkupFile", help=""
+    )
+    parser.add_argument("-b", "--blackList", action="store", dest="blackList", help="")
     inputArguments = parser.parse_args()
     Object = UpdateAutoWorkup()
     Object.updateAutoWorkup()

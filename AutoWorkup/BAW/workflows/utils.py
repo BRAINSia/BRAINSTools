@@ -8,10 +8,12 @@ Author:
 Usage:
 
 """
-from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+from collections import (
+    OrderedDict,
+)  # Need OrderedDict internally to ensure consistent ordering
 
 
-def run_workflow(workflow, plugin='Linear', plugin_args=OrderedDict()):
+def run_workflow(workflow, plugin="Linear", plugin_args=OrderedDict()):
     """
     Run workflow object and catch traceback for printing to stdout
 
@@ -24,7 +26,7 @@ def run_workflow(workflow, plugin='Linear', plugin_args=OrderedDict()):
     import sys
 
     print("Running workflow...")
-    for key, value in list(workflow.config['execution'].items()):
+    for key, value in list(workflow.config["execution"].items()):
         print("EXECUTE ENV: {0}={1}".format(key, value))
     try:
         workflow.run(plugin=plugin, plugin_args=plugin_args)
@@ -36,7 +38,7 @@ def run_workflow(workflow, plugin='Linear', plugin_args=OrderedDict()):
     return True
 
 
-def print_workflow(workflow, plugin, dotfilename='workflow', graph2use='hierarchical'):
+def print_workflow(workflow, plugin, dotfilename="workflow", graph2use="hierarchical"):
     """
     HINT: graph2use values: ['orig', 'flat', 'hierarchical', 'exec']
     'hierarchical' is the only one that DOES NOT require pygraphviz
@@ -46,8 +48,11 @@ def print_workflow(workflow, plugin, dotfilename='workflow', graph2use='hierarch
     :param graph2use:
     :return:
     """
-    assert plugin in ['Linear', 'MultiProc'], "'plugin' must be in ['Linear', 'MultiProc'] to print workflow"
-    dotfilename = '_'.join([dotfilename, graph2use])
+    assert plugin in [
+        "Linear",
+        "MultiProc",
+    ], "'plugin' must be in ['Linear', 'MultiProc'] to print workflow"
+    dotfilename = "_".join([dotfilename, graph2use])
     print(("Writing graph to filename {0}".format(dotfilename)))
     try:
         workflow.write_graph(dotfilename=dotfilename, graph2use=graph2use)

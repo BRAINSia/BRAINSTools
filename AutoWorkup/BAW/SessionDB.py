@@ -22,7 +22,8 @@ from collections import OrderedDict
 
 class SessionDB(object):
     """This class represents a..."""
-    def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
+
+    def __init__(self, defaultDBName="TempFileForDB.db", subject_list=[]):
         """This function represents a"""
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
@@ -32,15 +33,16 @@ class SessionDB(object):
         subject_filter = "( "
         for curr_subject in subject_list:
             subject_filter += "'" + curr_subject + "',"
-        subject_filter = subject_filter.rstrip(',')  # Remove last ,
+        subject_filter = subject_filter.rstrip(",")  # Remove last ,
         subject_filter += " )"
-        if subject_list[0] == 'all':
+        if subject_list[0] == "all":
             self.MasterQueryFilter = "SELECT * FROM {_tablename}".format(
-                _tablename=self.MasterTableName)
+                _tablename=self.MasterTableName
+            )
         else:
             self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj IN {_subjid}".format(
-                _tablename=self.MasterTableName,
-                _subjid=subject_filter)
+                _tablename=self.MasterTableName, _subjid=subject_filter
+            )
 
     def open_connection(self):
         """This function represents a """
@@ -78,42 +80,53 @@ class SessionDB(object):
         if os.path.exists(self.dbName):
             os.remove(self.dbName)
         self.open_connection()
-        dbColTypes = "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
+        dbColTypes = (
+            "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
+        )
         self.cursor.execute(
-            "CREATE TABLE {tablename}({coltypes});".format(tablename=self.MasterTableName, coltypes=dbColTypes))
+            "CREATE TABLE {tablename}({coltypes});".format(
+                tablename=self.MasterTableName, coltypes=dbColTypes
+            )
+        )
         self.connection.commit()
         sqlCommandList = list()
         missingFilesLog = self.dbName + "_MissingFiles.log"
         missingCount = 0
         print(("MISSING FILES RECORED IN {0}".format(missingFilesLog)))
-        missingFiles = open(missingFilesLog, 'w')
+        missingFiles = open(missingFilesLog, "w")
         print(("Building Subject returnList: " + subject_data_file))
-        subjData = csv.reader(open(subject_data_file, 'rt'), delimiter=',', quotechar='"')
+        subjData = csv.reader(
+            open(subject_data_file, "rt"), delimiter=",", quotechar='"'
+        )
         allEntriesOK = True
         for row in subjData:
             if len(row) < 1:
                 # contine of it is an empty row
                 continue
-            if row[0][0] == '#':
+            if row[0][0] == "#":
                 # if the first character is a #, then it is commented out
                 continue
-            if row[0] == 'project':
+            if row[0] == "project":
                 # continue if header line
                 continue
             currDict = OrderedDict()
             validEntry = True
             if len(row) == 4:
-                currDict = {'project': row[0],
-                            'subj': row[1],
-                            'session': row[2]}
+                currDict = {"project": row[0], "subj": row[1], "session": row[2]}
                 rawDict = OrderedDict(eval(row[3]))
                 dictionary_keys = list(rawDict.keys())
-                if not (('T1-15' in dictionary_keys) or ('T1-30' in dictionary_keys)):
-                    print(("ERROR: Skipping session {0} due to missing T1's: {1}".format(currDict, dictionary_keys)))
+                if not (("T1-15" in dictionary_keys) or ("T1-30" in dictionary_keys)):
+                    print(
+                        (
+                            "ERROR: Skipping session {0} due to missing T1's: {1}".format(
+                                currDict, dictionary_keys
+                            )
+                        )
+                    )
                     print("REMOVE OR FIX BEFORE CONTINUING")
                     allEntriesOK = False
                 for imageType in dictionary_keys:
-                    currDict['type'] = imageType
+                    currDict["type"] = imageType
                     fullPaths = [mountPrefix + i for i in rawDict[imageType]]
                     if len(fullPaths) < 1:
                         print(("Invalid Entry!  {0}".format(currDict)))
@@ -121,15 +134,21 @@ class SessionDB(object):
                     for i in range(len(fullPaths)):
                         imagePath = fullPaths[i]
                         if not os.path.exists(imagePath):
-                            print(("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  Missing File: {0}\n".format(imagePath)))
+                            print(
+                                (
+                                    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  Missing File: {0}\n".format(
+                                        imagePath
+                                    )
+                                )
+                            )
                             missingFiles.write("Missing File: {0}\n".format(imagePath))
                             validEntry = False
                             missingCount += 1
                         else:
                             print(("Found file {0}".format(imagePath)))
                         if validEntry == True:
-                            currDict['Qpos'] = str(i)
-                            currDict['filename'] = imagePath
+                            currDict["Qpos"] = str(i)
+                            currDict["filename"] = imagePath
                             sqlCommand = self.makeSQLiteCommand(currDict)
                             sqlCommandList.append(sqlCommand)
             else:
@@ -166,10 +185,10 @@ class SessionDB(object):
         keys = list(imageDict.keys())
         vals = list(imageDict.values())
         col_names = ",".join(keys)
-        values = ', '.join(["'" + x + "'" for x in vals])
+        values = ", ".join(["'" + x + "'" for x in vals])
         sqlCommand = "INSERT INTO {_tablename} ({_col_names}) VALUES ({_values});".format(
-            _tablename=self.MasterTableName,
-            _col_names=col_names, _values=values)
+            _tablename=self.MasterTableName, _col_names=col_names, _values=values
+        )
         return sqlCommand
 
     def getInfoFromDB(self, sqlCommand):
@@ -196,7 +215,9 @@ class SessionDB(object):
         """
         sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' AND Qpos='0';".format(
             _master_query=self.MasterQueryFilter,
-            _sessionid=sessionid, _scantype=scantype)
+            _sessionid=sessionid,
+            _scantype=scantype,
+        )
         val = self.getInfoFromDB(sqlCommand)
         filename = str(val[0][0])
         return filename
@@ -208,10 +229,12 @@ class SessionDB(object):
         :param sessionid:
         :return:
         """
-        scantype = 'T1-30'
+        scantype = "T1-30"
         sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' AND Qpos='0';".format(
             _master_query=self.MasterQueryFilter,
-            _sessionid=sessionid, _scantype=scantype)
+            _sessionid=sessionid,
+            _scantype=scantype,
+        )
         val = self.getInfoFromDB(sqlCommand)
         # print "HACK: ",sqlCommand
         # print "HACK: ", val
@@ -230,7 +253,9 @@ class SessionDB(object):
         for currScanType in scantypelist:
             sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' ORDER BY Qpos ASC;".format(
                 _master_query=self.MasterQueryFilter,
-                _sessionid=sessionid, _scantype=currScanType)
+                _sessionid=sessionid,
+                _scantype=currScanType,
+            )
             val = self.getInfoFromDB(sqlCommand)
             for i in val:
                 returnList.append(str(i[0]))
@@ -254,8 +279,8 @@ class SessionDB(object):
         :return: returnList
         """
         sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' ORDER BY type ASC, Qpos ASC;".format(
-            _master_query=self.MasterQueryFilter,
-            _sessionid=sessionid)
+            _master_query=self.MasterQueryFilter, _sessionid=sessionid
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -268,7 +293,9 @@ class SessionDB(object):
 
         :return:
         """
-        sqlCommand = "SELECT DISTINCT project FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
+        sqlCommand = "SELECT DISTINCT project FROM ({_master_query});".format(
+            _master_query=self.MasterQueryFilter
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -281,7 +308,9 @@ class SessionDB(object):
 
         :return:
         """
-        sqlCommand = "SELECT DISTINCT subj FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
+        sqlCommand = "SELECT DISTINCT subj FROM ({_master_query});".format(
+            _master_query=self.MasterQueryFilter
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -295,7 +324,9 @@ class SessionDB(object):
         :return:
         """
         # print("HACK:  This is a temporary until complete re-write")
-        sqlCommand = "SELECT DISTINCT session FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
+        sqlCommand = "SELECT DISTINCT session FROM ({_master_query});".format(
+            _master_query=self.MasterQueryFilter
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -310,8 +341,8 @@ class SessionDB(object):
         :return:
         """
         sqlCommand = "SELECT DISTINCT session FROM ({_master_query}) WHERE subj='{_subjid}';".format(
-            _master_query=self.MasterQueryFilter,
-            _subjid=subj)
+            _master_query=self.MasterQueryFilter, _subjid=subj
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -324,7 +355,9 @@ class SessionDB(object):
 
         :return:
         """
-        sqlCommand = "SELECT * FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
+        sqlCommand = "SELECT * FROM ({_master_query});".format(
+            _master_query=self.MasterQueryFilter
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -339,8 +372,8 @@ class SessionDB(object):
         :return:
         """
         sqlCommand = "SELECT DISTINCT subj FROM ({_master_query}) WHERE project='{_projectid}';".format(
-            _master_query=self.MasterQueryFilter,
-            _projectid=project)
+            _master_query=self.MasterQueryFilter, _projectid=project
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -355,8 +388,8 @@ class SessionDB(object):
         :return:
         """
         sqlCommand = "SELECT DISTINCT subj FROM ({_master_query}) WHERE session='{_sessionid}';".format(
-            _master_query=self.MasterQueryFilter,
-            _sessionid=session)
+            _master_query=self.MasterQueryFilter, _sessionid=session
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -374,8 +407,8 @@ class SessionDB(object):
         :return:
         """
         sqlCommand = "SELECT DISTINCT project FROM ({_master_query}) WHERE session='{_sessionid}';".format(
-            _master_query=self.MasterQueryFilter,
-            _sessionid=session)
+            _master_query=self.MasterQueryFilter, _sessionid=session
+        )
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -384,6 +417,7 @@ class SessionDB(object):
             print("ERROR: More than one project found")
             sys.exit(-1)
         return returnList[0]
+
 
 #
 # import SessionDB

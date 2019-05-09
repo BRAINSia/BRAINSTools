@@ -1,6 +1,4 @@
-
-
-__version__ = 'beta'
+__version__ = "beta"
 from . import config
 from . import metrics
 from .common import *

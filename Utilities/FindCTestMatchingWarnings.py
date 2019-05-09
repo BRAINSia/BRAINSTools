@@ -38,7 +38,13 @@ USAGE_COMMENT = r"""
 
 if len(sys.argv) != 3:
     print(("{0}\n\n".format(USAGE_COMMENT)))
-    print(("USAGE {0} <CDASH_WARNING_LOGGER> <$CMAKE_SOURCE_DIR/CMake/CTestCustom.cmake.in>\n".format(sys.argv[0])))
+    print(
+        (
+            "USAGE {0} <CDASH_WARNING_LOGGER> <$CMAKE_SOURCE_DIR/CMake/CTestCustom.cmake.in>\n".format(
+                sys.argv[0]
+            )
+        )
+    )
     sys.exit(0)
 
 
@@ -47,11 +53,10 @@ def GetListOfCustomExludePatterns(patterns_file_name):
     ## NOTE: This is not very robust, but if the first line is by itself,
     ## each regex is on its own line, andthe final closing ) is on it's own line,
     ## then this works.
-    start_excepts_pat = regex.compile(
-        r'^ *set *\( *CTEST_CUSTOM_WARNING_EXCEPTION *')
-    comment_pat = regex.compile(r'^ *#')
-    string_pattern_pat = regex.compile(r'^ *\".*\" *$')
-    end_excepts_pat = regex.compile(r'^ *\) *$')
+    start_excepts_pat = regex.compile(r"^ *set *\( *CTEST_CUSTOM_WARNING_EXCEPTION *")
+    comment_pat = regex.compile(r"^ *#")
+    string_pattern_pat = regex.compile(r"^ *\".*\" *$")
+    end_excepts_pat = regex.compile(r"^ *\) *$")
 
     in_excepts_block = False
 
@@ -76,7 +81,8 @@ def GetListOfCustomExludePatterns(patterns_file_name):
                 ispat_matchresult = string_pattern_pat.search(line)
                 if ispat_matchresult:
                     custom_except_pattern_list.append(
-                        line.rstrip().lstrip().rstrip('"').lstrip('"'))
+                        line.rstrip().lstrip().rstrip('"').lstrip('"')
+                    )
     patterns_file.close()
     return custom_except_pattern_list
 
@@ -88,10 +94,24 @@ def GetListOfCustomExludePatterns(patterns_file_name):
 ## that often are stored in a file like CMake/CTestCustom.cmake.in
 ##
 ######
-print((termcolor.colored('Generating Custom exceptions from file: {0}'.format(
-    sys.argv[2]), 'green')))
+print(
+    (
+        termcolor.colored(
+            "Generating Custom exceptions from file: {0}".format(sys.argv[2]), "green"
+        )
+    )
+)
 CTEST_CUSTOM_WARNING_EXCEPTION = GetListOfCustomExludePatterns(sys.argv[2])
-print((termcolor.colored('count= {0} {1}'.format(len(CTEST_CUSTOM_WARNING_EXCEPTION), CTEST_CUSTOM_WARNING_EXCEPTION), 'green')))
+print(
+    (
+        termcolor.colored(
+            "count= {0} {1}".format(
+                len(CTEST_CUSTOM_WARNING_EXCEPTION), CTEST_CUSTOM_WARNING_EXCEPTION
+            ),
+            "green",
+        )
+    )
+)
 
 CTEST_CUSTOM_WARNING_EXCEPTION_compiled = list()
 for cc in CTEST_CUSTOM_WARNING_EXCEPTION:
@@ -129,13 +149,13 @@ warn_regex_compiled = list()
 for cc in warn_regex_patterns:
     warn_regex_compiled.append(regex.compile(cc))
 
-print((termcolor.colored('Processing file: {0}'.format(sys.argv[1]), 'green')))
-ff = open(sys.argv[1], 'r')
+print((termcolor.colored("Processing file: {0}".format(sys.argv[1]), "green")))
+ff = open(sys.argv[1], "r")
 all_lines = ff.readlines()
 ff.close
 for idx in range(0, len(warn_regex_patterns)):
     print("")
-    print((termcolor.colored(warn_regex_patterns[idx], 'blue')))
+    print((termcolor.colored(warn_regex_patterns[idx], "blue")))
     print(("=" * 80))
 
     line_count = 0
@@ -144,14 +164,22 @@ for idx in range(0, len(warn_regex_patterns)):
         mresult = warn_regex_compiled[idx].search(line)
         if mresult:
             ignore_found = False
-            for ignore_pat_idx in range(0, len(CTEST_CUSTOM_WARNING_EXCEPTION_compiled)):
+            for ignore_pat_idx in range(
+                0, len(CTEST_CUSTOM_WARNING_EXCEPTION_compiled)
+            ):
                 ignore_result = CTEST_CUSTOM_WARNING_EXCEPTION_compiled[
-                    ignore_pat_idx].search(line)
+                    ignore_pat_idx
+                ].search(line)
                 if ignore_result and ignore_found == False:
                     # print("{0}:
                     # {1}".format(CTEST_CUSTOM_WARNING_EXCEPTION[ignore_pat_idx],line))
                     ignore_found = True
                     continue
             if ignore_found == False:
-                print((termcolor.colored(
-                    "No Match :{0}: {1}    ".format(line_count, line), 'red')))
+                print(
+                    (
+                        termcolor.colored(
+                            "No Match :{0}: {1}    ".format(line_count, line), "red"
+                        )
+                    )
+                )

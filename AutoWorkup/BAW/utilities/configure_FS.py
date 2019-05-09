@@ -19,7 +19,8 @@ try:
 except NameError as AttributeError:
     raise AssertionError(
         "Run this file like: execfile('path/to/configure_FS', OrderedDict(env={}) \
-        where 'env' is set to an os.environ-like dictionary")
+        where 'env' is set to an os.environ-like dictionary"
+    )
 import os
 from . import misc
 
@@ -38,6 +39,9 @@ for ENVVAR_TO_CHECK in FS_VARS:
         else:
             raise EnvironmentError(
                 "Freesurfer variable {0}={1} exists! \
-                Please unset before continuing.".format(ENVVAR_TO_CHECK, os.environ[ENVVAR_TO_CHECK]))
+                Please unset before continuing.".format(
+                    ENVVAR_TO_CHECK, os.environ[ENVVAR_TO_CHECK]
+                )
+            )
     else:
         pass

@@ -8,11 +8,11 @@ Author:
 Usage:
 
 """
-from preprocess import save_data_frame
+from .preprocess import save_data_frame
 import os
 import pickle
 import pandas as pd
-from training import linear_array_from_image_file, image_data
+from .training import linear_array_from_image_file, image_data
 
 
 def pickle_load(pickled_file):

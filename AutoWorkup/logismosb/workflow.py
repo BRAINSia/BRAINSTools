@@ -12,8 +12,8 @@ from nipype.interfaces.utility import IdentityInterface, Function
 from nipype.pipeline import Node, Workflow
 from nipype.interfaces.freesurfer import MRIConvert, MRIsConvert
 from nipype.interfaces.semtools import BRAINSResample
-from interfaces import *
-from freesurfer_utils import SplitLabels, SurfaceMask, recode_labelmap, create_ones_image, MultiLabelDilation
+from .interfaces import *
+from .freesurfer_utils import SplitLabels, SurfaceMask, recode_labelmap, create_ones_image, MultiLabelDilation
 import json
 
 

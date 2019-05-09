@@ -14,7 +14,7 @@ from sklearn import cross_validation
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_curve, auc
 from sklearn.externals import joblib
-import cPickle as pickle
+import pickle as pickle
 import sys
 
 

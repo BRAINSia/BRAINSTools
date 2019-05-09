@@ -8,7 +8,7 @@ Author:
 Usage:
 
 """
-from workflow import create_fs_logb_workflow_for_both_hemispheres
+from .workflow import create_fs_logb_workflow_for_both_hemispheres
 import sqlite3
 import os
 from nipype import Workflow, DataSink, Node

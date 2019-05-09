@@ -1,1 +1,1 @@
-from predict import get_image_probabilities
+from .predict import get_image_probabilities

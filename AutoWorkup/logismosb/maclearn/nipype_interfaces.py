@@ -12,9 +12,9 @@ from nipype.interfaces.base import BaseInterface, traits, BaseInterfaceInputSpec
 from nipype.interfaces.semtools import BRAINSResample
 from nipype.interfaces.freesurfer import MRIConvert
 import os
-from training import image_data
+from .training import image_data
 from sklearn.externals import joblib
-from predict import image_file_from_array_with_reference_image_file
+from .predict import image_file_from_array_with_reference_image_file
 import SimpleITK as sitk
 
 
@@ -98,7 +98,7 @@ class CollectFeatureFiles(BaseInterface):
 
         :return: feature_files
         """
-        feature_files = [self.inputs.rho, self.inputs.phi, self.inputs.theta] + self.inputs.posterior_files.values()
+        feature_files = [self.inputs.rho, self.inputs.phi, self.inputs.theta] + list(self.inputs.posterior_files.values())
         return feature_files
 
     def _list_outputs(self):

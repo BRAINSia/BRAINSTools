@@ -8,9 +8,9 @@ Author:
 Usage:
 
 """
-import preprocess
-import training
-import testing
+from . import preprocess
+from . import training
+from . import testing
 import os
 import pandas as pd
 import numpy as np
@@ -22,9 +22,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_curve, auc
 from sklearn.externals import joblib
 import datetime
-import cPickle as pickle
+import pickle as pickle
 from scipy import interp
-from training import run_training, get_labeled_region_data
+from .training import run_training, get_labeled_region_data
 
 nm_dir = "/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription/"
 
@@ -58,9 +58,9 @@ def plot_feature_importances(list_of_importances, feature_names, out_file=None, 
     plot.tick_params(axis='x', which='major', labelsize=15)
     plot.tick_params(axis='y', which='major', labelsize=12)
     plt.title(title, fontsize=14)
-    plt.bar(range(num_features), importances[indices],
+    plt.bar(list(range(num_features)), importances[indices],
             color="r", yerr=std[indices], align="center")
-    plt.xticks(range(num_features), feature_names[indices])
+    plt.xticks(list(range(num_features)), feature_names[indices])
     plt.xlim([-1, num_features])
     plt.tight_layout()
     if not out_file:
@@ -80,8 +80,8 @@ def plot_all_feature_importances(all_importances, feature_names, out_file=None, 
     """
     # get averages for all features
     imp_list = list()
-    for matter in all_importances.iterkeys():
-        for label in all_importances[matter].iterkeys():
+    for matter in all_importances.keys():
+        for label in all_importances[matter].keys():
             imp_list.append(np.average(all_importances[matter][label]["Regional"], axis=0))
 
     plot_feature_importances(imp_list, feature_names, out_file, title)

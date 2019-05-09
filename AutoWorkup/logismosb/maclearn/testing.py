@@ -11,7 +11,7 @@ Usage:
 import SimpleITK as sitk
 import os
 import numpy
-import training
+from . import training
 
 def run_test(clf, sample_dict, label, out_file):
     """

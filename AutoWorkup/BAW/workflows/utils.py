@@ -24,7 +24,7 @@ def run_workflow(workflow, plugin='Linear', plugin_args=OrderedDict()):
     import sys
 
     print("Running workflow...")
-    for key,value in workflow.config['execution'].items():
+    for key,value in list(workflow.config['execution'].items()):
         print("EXECUTE ENV: {0}={1}".format(key,value))
     try:
         workflow.run(plugin=plugin, plugin_args=plugin_args)

@@ -97,7 +97,7 @@ def copy_file(in_file, out_file=None):
     import shutil
     if out_file == None:
         out_file = os.path.join(os.getcwd(), os.path.basename(in_file))
-    if type(in_file) is list and len(in_file) == 1:
+    if isinstance(in_file, list) and len(in_file) == 1:
         in_file = in_file[0]
     print("copying %s to %s" % (in_file, out_file))
     shutil.copy(in_file, out_file)

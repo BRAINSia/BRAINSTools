@@ -257,7 +257,7 @@ class WMMasking(BaseInterface):
             (brainlabelsImage == 25) + (brainlabelsImage == 21)
 
         atlas_dict = parse_atlas_info(atlas_info)
-        for code in atlas_dict.keys():
+        for code in list(atlas_dict.keys()):
             location = atlas_dict[code]['location']
             hemi = atlas_dict[code]['hemisphere']
             name = atlas_dict[code]['name']
@@ -504,7 +504,7 @@ class CreateGMLabelMap(BaseInterface):
         atlas_dict = parse_labels_xml(self.inputs.atlas_info)
         atlas_img = sitk.Cast(sitk.ReadImage(atlas_file), sitk.sitkUInt64)
         gm_mask = atlas_img < 0
-        for code in atlas_dict.keys():
+        for code in list(atlas_dict.keys()):
             location = atlas_dict[code]['location']
             if location == 'gm':
                 gm_mask = gm_mask + (atlas_img == code)
@@ -642,7 +642,7 @@ class ComputeDistance(BaseInterface):
         minimum = ["min"]
         maximum = ["max"]
         labels = ["label"]
-        for key in measurements.keys():
+        for key in list(measurements.keys()):
             labels.append(key)
             data = np.array(measurements[key])
             mu.append(np.mean(data))

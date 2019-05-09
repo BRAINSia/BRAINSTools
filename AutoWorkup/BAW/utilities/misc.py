@@ -11,22 +11,26 @@ Usage:
 from builtins import range
 from builtins import str
 
-FS_VARS = ['FREESURFER_HOME',
-           'FSFAST_HOME',
-           'FSF_OUTPUT_FORMAT',
-           'SUBJECTS_DIR',
-           'MNI_DIR',
-           'FSL_DIR']
+FS_VARS = [
+    "FREESURFER_HOME",
+    "FSFAST_HOME",
+    "FSF_OUTPUT_FORMAT",
+    "SUBJECTS_DIR",
+    "MNI_DIR",
+    "FSL_DIR",
+]
 
 
-def CommonANTsRegistrationSettings(antsRegistrationNode,
-                                   registrationTypeDescription,
-                                   output_transform_prefix,
-                                   output_warped_image,
-                                   output_inverse_warped_image,
-                                   save_state,
-                                   invert_initial_moving_transform,
-                                   initial_moving_transform):
+def CommonANTsRegistrationSettings(
+    antsRegistrationNode,
+    registrationTypeDescription,
+    output_transform_prefix,
+    output_warped_image,
+    output_inverse_warped_image,
+    save_state,
+    invert_initial_moving_transform,
+    initial_moving_transform,
+):
     """ Ants registration settings are difficult
     to get correct all the time.  This utility function
     is designed to assist with getting the common settings
@@ -50,79 +54,249 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
         antsRegistrationNode.inputs.save_state = save_state
     ## TODO: Consider registration masking
     if (registrationTypeDescription == "FiveStageAntsRegistrationT1Only") or (
-        registrationTypeDescription == "FiveStageAntsRegistrationMultiModal"):
+        registrationTypeDescription == "FiveStageAntsRegistrationMultiModal"
+    ):
         local_num_stages = 5  # Assumes BLI landmark initialization
-        antsRegistrationNode.inputs.transforms = ["Affine", "Affine", "SyN", "SyN", "SyN"]
+        antsRegistrationNode.inputs.transforms = [
+            "Affine",
+            "Affine",
+            "SyN",
+            "SyN",
+            "SyN",
+        ]
         if registrationTypeDescription == "FiveStageAntsRegistrationT1Only":
-            antsRegistrationNode.inputs.metric = ['MI', 'MI', 'CC', 'CC', 'CC']
+            antsRegistrationNode.inputs.metric = ["MI", "MI", "CC", "CC", "CC"]
             antsRegistrationNode.inputs.metric_weight = [1.0, 1.0, 1.0, 1.0, 1.0]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular', 'Regular', None, None, None]
-            antsRegistrationNode.inputs.sampling_percentage = [.5, .5, 1.0, 1.0, 1.0]
+            antsRegistrationNode.inputs.sampling_strategy = [
+                "Regular",
+                "Regular",
+                None,
+                None,
+                None,
+            ]
+            antsRegistrationNode.inputs.sampling_percentage = [0.5, 0.5, 1.0, 1.0, 1.0]
             antsRegistrationNode.inputs.radius_or_number_of_bins = [32, 32, 4, 4, 4]
         else:
-            antsRegistrationNode.inputs.metric = ['MI', ['MI', 'MI'], 'CC', ['CC', 'CC'], ['CC', 'CC']]
-            antsRegistrationNode.inputs.metric_weight = [1.0, [1.0, 1.0], 1.0, [1.0, 1.0], [1.0, 1.0]]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular', ['Regular', 'Regular'], None, [None, None],
-                                                             [None, None]]
-            antsRegistrationNode.inputs.sampling_percentage = [0.5, [0.5, 0.5], 1.0, [1.0, 1.0], [1.0, 1.0]]
-            antsRegistrationNode.inputs.radius_or_number_of_bins = [32, [32, 32], 4, [4, 4], [4, 4]]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1], [0.1], [0.1, 3, 0], [0.1, 3, 0], [0.1, 3, 0]]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000, 1000, 500], [500, 500], [1000, 250], [140], [25]]
-        antsRegistrationNode.inputs.convergence_threshold = [5e-8, 5e-7, 5e-7, 5e-6, 5e-5]
-        antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2], [2, 1], [8, 4], [2], [1]]
-        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1], [1, 0], [3, 2], [1], [0]]
+            antsRegistrationNode.inputs.metric = [
+                "MI",
+                ["MI", "MI"],
+                "CC",
+                ["CC", "CC"],
+                ["CC", "CC"],
+            ]
+            antsRegistrationNode.inputs.metric_weight = [
+                1.0,
+                [1.0, 1.0],
+                1.0,
+                [1.0, 1.0],
+                [1.0, 1.0],
+            ]
+            antsRegistrationNode.inputs.sampling_strategy = [
+                "Regular",
+                ["Regular", "Regular"],
+                None,
+                [None, None],
+                [None, None],
+            ]
+            antsRegistrationNode.inputs.sampling_percentage = [
+                0.5,
+                [0.5, 0.5],
+                1.0,
+                [1.0, 1.0],
+                [1.0, 1.0],
+            ]
+            antsRegistrationNode.inputs.radius_or_number_of_bins = [
+                32,
+                [32, 32],
+                4,
+                [4, 4],
+                [4, 4],
+            ]
+        antsRegistrationNode.inputs.transform_parameters = [
+            [0.1],
+            [0.1],
+            [0.1, 3, 0],
+            [0.1, 3, 0],
+            [0.1, 3, 0],
+        ]
+        antsRegistrationNode.inputs.number_of_iterations = [
+            [1000, 1000, 500],
+            [500, 500],
+            [1000, 250],
+            [140],
+            [25],
+        ]
+        antsRegistrationNode.inputs.convergence_threshold = [
+            5e-8,
+            5e-7,
+            5e-7,
+            5e-6,
+            5e-5,
+        ]
+        antsRegistrationNode.inputs.shrink_factors = [
+            [8, 4, 2],
+            [2, 1],
+            [8, 4],
+            [2],
+            [1],
+        ]
+        antsRegistrationNode.inputs.smoothing_sigmas = [
+            [3, 2, 1],
+            [1, 0],
+            [3, 2],
+            [1],
+            [0],
+        ]
 
     elif (registrationTypeDescription == "SixStageAntsRegistrationT1Only") or (
-        registrationTypeDescription == "SixStageAntsRegistrationMultiModal"):
+        registrationTypeDescription == "SixStageAntsRegistrationMultiModal"
+    ):
         local_num_stages = 6
-        antsRegistrationNode.inputs.transforms = ["Rigid", "Affine", "Affine", "SyN", "SyN", "SyN"]
+        antsRegistrationNode.inputs.transforms = [
+            "Rigid",
+            "Affine",
+            "Affine",
+            "SyN",
+            "SyN",
+            "SyN",
+        ]
         if registrationTypeDescription == "SixStageAntsRegistrationT1Only":
-            antsRegistrationNode.inputs.metric = ['MI', 'MI', 'MI', 'CC', 'CC', 'CC']
+            antsRegistrationNode.inputs.metric = ["MI", "MI", "MI", "CC", "CC", "CC"]
             antsRegistrationNode.inputs.metric_weight = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular', 'Regular', 'Regular', None, None, None]
-            antsRegistrationNode.inputs.sampling_percentage = [.27, .5, .5, 1.0, 1.0, 1.0]
+            antsRegistrationNode.inputs.sampling_strategy = [
+                "Regular",
+                "Regular",
+                "Regular",
+                None,
+                None,
+                None,
+            ]
+            antsRegistrationNode.inputs.sampling_percentage = [
+                0.27,
+                0.5,
+                0.5,
+                1.0,
+                1.0,
+                1.0,
+            ]
             antsRegistrationNode.inputs.radius_or_number_of_bins = [32, 32, 32, 4, 4, 4]
         else:
-            antsRegistrationNode.inputs.metric = ['MI', 'MI', ['MI', 'MI'], 'CC', ['CC', 'CC'], ['CC', 'CC']]
-            antsRegistrationNode.inputs.metric_weight = [1.0, 1.0, [1.0, 1.0], 1.0, [1.0, 1.0], [1.0, 1.0]]
-            antsRegistrationNode.inputs.sampling_strategy = ['Regular', 'Regular', ['Regular', 'Regular'], None,
-                                                             [None, None], [None, None]]
-            antsRegistrationNode.inputs.sampling_percentage = [.27, 0.5, [0.5, 0.5], 1.0, [1.0, 1.0], [1.0, 1.0]]
-            antsRegistrationNode.inputs.radius_or_number_of_bins = [32, 32, [32, 32], 4, [4, 4], [4, 4]]
-        antsRegistrationNode.inputs.transform_parameters = [[0.1], [0.1], [0.1], [0.1, 3, 0], [0.1, 3, 0], [0.1, 3, 0]]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000, 1000, 1000], [1000, 1000, 500], [500, 500],
-                                                            [1000, 250], [140], [25]]
-        antsRegistrationNode.inputs.convergence_threshold = [5e-8, 5e-8, 5e-7, 5e-7, 5e-6, 5e-5]
-        antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2], [8, 4, 2], [2, 1], [8, 4], [2], [1]]
-        antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1], [3, 2, 1], [1, 0], [3, 2], [1], [0]]
+            antsRegistrationNode.inputs.metric = [
+                "MI",
+                "MI",
+                ["MI", "MI"],
+                "CC",
+                ["CC", "CC"],
+                ["CC", "CC"],
+            ]
+            antsRegistrationNode.inputs.metric_weight = [
+                1.0,
+                1.0,
+                [1.0, 1.0],
+                1.0,
+                [1.0, 1.0],
+                [1.0, 1.0],
+            ]
+            antsRegistrationNode.inputs.sampling_strategy = [
+                "Regular",
+                "Regular",
+                ["Regular", "Regular"],
+                None,
+                [None, None],
+                [None, None],
+            ]
+            antsRegistrationNode.inputs.sampling_percentage = [
+                0.27,
+                0.5,
+                [0.5, 0.5],
+                1.0,
+                [1.0, 1.0],
+                [1.0, 1.0],
+            ]
+            antsRegistrationNode.inputs.radius_or_number_of_bins = [
+                32,
+                32,
+                [32, 32],
+                4,
+                [4, 4],
+                [4, 4],
+            ]
+        antsRegistrationNode.inputs.transform_parameters = [
+            [0.1],
+            [0.1],
+            [0.1],
+            [0.1, 3, 0],
+            [0.1, 3, 0],
+            [0.1, 3, 0],
+        ]
+        antsRegistrationNode.inputs.number_of_iterations = [
+            [1000, 1000, 1000],
+            [1000, 1000, 500],
+            [500, 500],
+            [1000, 250],
+            [140],
+            [25],
+        ]
+        antsRegistrationNode.inputs.convergence_threshold = [
+            5e-8,
+            5e-8,
+            5e-7,
+            5e-7,
+            5e-6,
+            5e-5,
+        ]
+        antsRegistrationNode.inputs.shrink_factors = [
+            [8, 4, 2],
+            [8, 4, 2],
+            [2, 1],
+            [8, 4],
+            [2],
+            [1],
+        ]
+        antsRegistrationNode.inputs.smoothing_sigmas = [
+            [3, 2, 1],
+            [3, 2, 1],
+            [1, 0],
+            [3, 2],
+            [1],
+            [0],
+        ]
 
-    elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_Affine':
+    elif registrationTypeDescription == "AtlasToSubjectANTsPreABC_Affine":
         local_num_stages = 3
         antsRegistrationNode.inputs.transforms = ["Rigid", "Affine", "Affine"]
 
-        antsRegistrationNode.inputs.metric = ['MI'] * local_num_stages
+        antsRegistrationNode.inputs.metric = ["MI"] * local_num_stages
         antsRegistrationNode.inputs.metric_weight = [1.0] * local_num_stages
-        antsRegistrationNode.inputs.sampling_strategy = ['Regular'] * local_num_stages
+        antsRegistrationNode.inputs.sampling_strategy = ["Regular"] * local_num_stages
         antsRegistrationNode.inputs.sampling_percentage = [0.5] * local_num_stages
         antsRegistrationNode.inputs.radius_or_number_of_bins = [32] * local_num_stages
 
         antsRegistrationNode.inputs.transform_parameters = [[0.1], [0.1], [0.1]]
-        antsRegistrationNode.inputs.number_of_iterations = [[1000, 1000, 1000], [1000, 1000, 500], [500, 500]]
+        antsRegistrationNode.inputs.number_of_iterations = [
+            [1000, 1000, 1000],
+            [1000, 1000, 500],
+            [500, 500],
+        ]
         antsRegistrationNode.inputs.convergence_threshold = [5e-8, 5e-8, 5e-7, 5e-7]
         antsRegistrationNode.inputs.shrink_factors = [[8, 4, 2], [8, 4, 2], [2, 1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[3, 2, 1], [3, 2, 1], [1, 0]]
 
-    elif registrationTypeDescription == 'AtlasToSubjectANTsPreABC_SyN':
+    elif registrationTypeDescription == "AtlasToSubjectANTsPreABC_SyN":
         local_num_stages = 3
         antsRegistrationNode.inputs.transforms = ["SyN"] * local_num_stages
 
-        antsRegistrationNode.inputs.metric = ['CC'] * local_num_stages
+        antsRegistrationNode.inputs.metric = ["CC"] * local_num_stages
         antsRegistrationNode.inputs.metric_weight = [1.0] * local_num_stages
         antsRegistrationNode.inputs.sampling_strategy = [None] * local_num_stages
         antsRegistrationNode.inputs.sampling_percentage = [1.0] * local_num_stages
         antsRegistrationNode.inputs.radius_or_number_of_bins = [4] * local_num_stages
 
-        antsRegistrationNode.inputs.transform_parameters = [[0.1, 3, 0], [0.1, 3, 0], [0.1, 3, 0]]
+        antsRegistrationNode.inputs.transform_parameters = [
+            [0.1, 3, 0],
+            [0.1, 3, 0],
+            [0.1, 3, 0],
+        ]
         antsRegistrationNode.inputs.number_of_iterations = [[1000, 250], [140], [25]]
         antsRegistrationNode.inputs.convergence_threshold = [5e-7, 5e-6, 5e-5]
         antsRegistrationNode.inputs.shrink_factors = [[8, 4], [2], [1]]
@@ -132,7 +306,7 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
         local_num_stages = 1
         antsRegistrationNode.inputs.transforms = ["SyN"]
 
-        antsRegistrationNode.inputs.metric = ['CC']
+        antsRegistrationNode.inputs.metric = ["CC"]
         antsRegistrationNode.inputs.metric_weight = [1.0]
         antsRegistrationNode.inputs.sampling_strategy = [None]
         antsRegistrationNode.inputs.sampling_percentage = [1.0]
@@ -144,7 +318,14 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
         antsRegistrationNode.inputs.shrink_factors = [[1]]
         antsRegistrationNode.inputs.smoothing_sigmas = [[0]]
     else:
-        print(("!!" * 160 + "\nERROR invalid registration description: {0}".format(registrationTypeDescription)))
+        print(
+            (
+                "!!" * 160
+                + "\nERROR invalid registration description: {0}".format(
+                    registrationTypeDescription
+                )
+            )
+        )
         raise NameError(registrationTypeDescription)
 
     ## COMMON SETTINGS
@@ -154,21 +335,27 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     antsRegistrationNode.inputs.float = True
     antsRegistrationNode.inputs.num_threads = -1
 
-    antsRegistrationNode.inputs.write_composite_transform = True  # Required for initialize_transforms_per_stage
-    antsRegistrationNode.inputs.collapse_output_transforms = False  # Mutually Exclusive with initialize_transforms_per_stage
+    antsRegistrationNode.inputs.write_composite_transform = (
+        True
+    )  # Required for initialize_transforms_per_stage
+    antsRegistrationNode.inputs.collapse_output_transforms = (
+        False
+    )  # Mutually Exclusive with initialize_transforms_per_stage
     antsRegistrationNode.inputs.initialize_transforms_per_stage = True
 
     antsRegistrationNode.inputs.convergence_window_size = [12] * local_num_stages
     antsRegistrationNode.inputs.sigma_units = ["vox"] * local_num_stages
     antsRegistrationNode.inputs.use_histogram_matching = [True] * local_num_stages
     #
-    antsRegistrationNode.inputs.use_estimate_learning_rate_once = [False] * local_num_stages
+    antsRegistrationNode.inputs.use_estimate_learning_rate_once = [
+        False
+    ] * local_num_stages
     antsRegistrationNode.inputs.winsorize_lower_quantile = 0.01
     antsRegistrationNode.inputs.winsorize_upper_quantile = 0.99
 
-    if  initial_moving_transform is not None:
+    if initial_moving_transform is not None:
         antsRegistrationNode.inputs.initial_moving_transform = initial_moving_transform
-        if (invert_initial_moving_transform == True ):
+        if invert_initial_moving_transform == True:
             antsRegistrationNode.inputs.invert_initial_moving_transform = True
 
     if output_transform_prefix is not None:
@@ -176,11 +363,23 @@ def CommonANTsRegistrationSettings(antsRegistrationNode,
     if output_warped_image is not None:
         antsRegistrationNode.inputs.output_warped_image = output_warped_image
     if output_inverse_warped_image is not None:
-        antsRegistrationNode.inputs.output_inverse_warped_image = output_inverse_warped_image
+        antsRegistrationNode.inputs.output_inverse_warped_image = (
+            output_inverse_warped_image
+        )
 
 
-def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixBFC, postfixUnwrapped, PrimaryT1,
-                    ListOutType):
+def MakeOutFileList(
+    T1List,
+    T2List,
+    PDList,
+    FLList,
+    OTHERList,
+    postfix,
+    postfixBFC,
+    postfixUnwrapped,
+    PrimaryT1,
+    ListOutType,
+):
     #
     # for BABC: "_corrected.nii.gz"
     # for UNM Denoise: "_UNM_denoised.nii.gz"
@@ -202,14 +401,16 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
     :param ListOutType:
     :return:
     """
+
     def GetExtBaseName(filename):
-        '''
+        """
         Get the filename without the extension.  Works for .ext and .ext.gz
 
         :param filename:
         :return:
-        '''
+        """
         import os
+
         currBaseName = os.path.basename(filename)
         currExt = os.path.splitext(currBaseName)[1]
         currBaseName = os.path.splitext(currBaseName)[0]
@@ -269,10 +470,19 @@ def MakeOutFileList(T1List, T2List, PDList, FLList, OTHERList, postfix, postfixB
     print(outBFCImageList)
     print("imageTypeList:::")
     print(imageTypeList)
-    if (len(inImageList) != len(outImageList) or len(inImageList) != len(outBFCImageList)
-        or len(inImageList) != len(imageTypeList)):
+    if (
+        len(inImageList) != len(outImageList)
+        or len(inImageList) != len(outBFCImageList)
+        or len(inImageList) != len(imageTypeList)
+    ):
         return "ERROR:  INVALID LIST SIZE MATCHING"
-    return inImageList, outImageList, outBFCImageList, outUnwrappedImageList, imageTypeList
+    return (
+        inImageList,
+        outImageList,
+        outBFCImageList,
+        outUnwrappedImageList,
+        imageTypeList,
+    )
 
 
 def GenerateSeparateImageTypeList(inFileList, inTypeList):
@@ -283,7 +493,10 @@ def GenerateSeparateImageTypeList(inFileList, inTypeList):
     :param inTypeList:
     :return:
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     allListDict = OrderedDict()
     allListDict["T1"] = list()
     allListDict["T2"] = list()
@@ -294,7 +507,13 @@ def GenerateSeparateImageTypeList(inFileList, inTypeList):
     for i in range(0, len(inFileList)):
         allListDict[inTypeList[i]].append(inFileList[i])
 
-    return allListDict["T1"], allListDict["T2"], allListDict["PD"], allListDict["FL"], allListDict["OTHER"]
+    return (
+        allListDict["T1"],
+        allListDict["T2"],
+        allListDict["PD"],
+        allListDict["FL"],
+        allListDict["OTHER"],
+    )
 
 
 def add_dict(d1, d2, force=False):
@@ -307,6 +526,7 @@ def add_dict(d1, d2, force=False):
     :return:
     """
     from copy import deepcopy
+
     retval = deepcopy(d1)
     if d2:
         if not force:
@@ -339,7 +559,16 @@ def GenerateWFName(projectid, subjectid, sessionid, processing_phase):
     :processing_phase:
     :return:
     """
-    return 'WF_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid) + "_" + processing_phase
+    return (
+        "WF_"
+        + str(subjectid)
+        + "_"
+        + str(sessionid)
+        + "_"
+        + str(projectid)
+        + "_"
+        + processing_phase
+    )
 
 
 def GenerateSubjectOutputPattern(subjectid):
@@ -355,14 +584,16 @@ def GenerateSubjectOutputPattern(subjectid):
     replace_pat = ""
     patternList.append((find_pat, replace_pat))
 
-    find_pat = 'ReshapeAverageImageWithShapeUpdate.nii.gz'
-    replace_pat = r'AVG_T1.nii.gz'
+    find_pat = "ReshapeAverageImageWithShapeUpdate.nii.gz"
+    replace_pat = r"AVG_T1.nii.gz"
     patternList.append((find_pat, replace_pat))
 
     # find_pat = os.path.join('Atlas',
     #                         r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_[A-Z0-9]*WARP_(?P<structure>AVG_[A-Z0-9]*.nii.gz)')
-    find_pat = r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_(?P<structure>.*.nii.gz)'
-    replace_pat = r'AVG_\g<structure>'
+    find_pat = (
+        r"_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_(?P<structure>.*.nii.gz)"
+    )
+    replace_pat = r"AVG_\g<structure>"
     patternList.append((find_pat, replace_pat))
 
     # find_pat = r'CLIPPED_AVG_(?P<structure>.*.nii.gz)'

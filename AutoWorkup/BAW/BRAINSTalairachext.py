@@ -17,14 +17,14 @@ USAGE:
 """
 
 
-#import csv
-#import getopt
-#import os.path
-#import sys
+# import csv
+# import getopt
+# import os.path
+# import sys
 
-#import SimpleITK as sitk
+# import SimpleITK as sitk
 
-#print((sitk.Version()))
+# print((sitk.Version()))
 
 
 def csv_file_writer(filename, data):
@@ -35,18 +35,22 @@ def csv_file_writer(filename, data):
     :param data:
     :return: None
     """
-    with open(filename, 'w') as lf:
-        headerdata1 = [['#Fiducial', 'List', 'file', filename],
-                       ['#numPoints', '=', len(data)]]
-        headerdata2 = [['#symbolScale = 5'],
-                       ['#visibility = 1'],
-                       ['#textScale = 4.5'],
-                       ['#color = 0.4', '1', '1'],
-                       ['#selectedColor = 1', '0.5', '0.5'],
-                       ['#label', 'x', 'y', 'z', 'sel', 'vis']]
-        wr = csv.writer(lf, delimiter=' ')
+    with open(filename, "w") as lf:
+        headerdata1 = [
+            ["#Fiducial", "List", "file", filename],
+            ["#numPoints", "=", len(data)],
+        ]
+        headerdata2 = [
+            ["#symbolScale = 5"],
+            ["#visibility = 1"],
+            ["#textScale = 4.5"],
+            ["#color = 0.4", "1", "1"],
+            ["#selectedColor = 1", "0.5", "0.5"],
+            ["#label", "x", "y", "z", "sel", "vis"],
+        ]
+        wr = csv.writer(lf, delimiter=" ")
         wr.writerows(headerdata1)
-        wr = csv.writer(lf, delimiter=',')
+        wr = csv.writer(lf, delimiter=",")
         wr.writerows(headerdata2)
         wr.writerows(data)
 
@@ -60,8 +64,9 @@ def csv_file_reader(filename, dataList):
     :return: None
     """
     import csv
+
     with open(filename) as lf:
-        reader = csv.reader(lf, delimiter=',')
+        reader = csv.reader(lf, delimiter=",")
         for line in reader:
             lmkName = line[0]
             if lmkName == "AC":
@@ -71,26 +76,39 @@ def csv_file_reader(filename, dataList):
             else:
                 continue
 
+
 """
 Main function
 """
+
+
 def main(argv):
-    inputVolume = ''
-    inputLabelsImage = ''
-    inputLandmarksFile = ''
-    outputTalairachLandmarksFile = ''
+    inputVolume = ""
+    inputLabelsImage = ""
+    inputLandmarksFile = ""
+    outputTalairachLandmarksFile = ""
 
     try:
-        opts, args = getopt.getopt(argv, "hi:m:l:o:", ["inputVolume=", "inputLabelsImage=", "inputLandmarksFile=",
-                                                       "outputTalairachLandmarksFile="])
+        opts, args = getopt.getopt(
+            argv,
+            "hi:m:l:o:",
+            [
+                "inputVolume=",
+                "inputLabelsImage=",
+                "inputLandmarksFile=",
+                "outputTalairachLandmarksFile=",
+            ],
+        )
     except getopt.GetoptError:
         print(
-            'BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>')
+            "BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>"
+        )
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h':
+        if opt == "-h":
             print(
-                'BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>')
+                "BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>"
+            )
             sys.exit()
         elif opt in ("-i", "--inputVolume"):
             inputVolume = arg
@@ -109,19 +127,21 @@ def main(argv):
     input_img = sitk.ReadImage(inputVolume)
     img_labels = sitk.ReadImage(inputLabelsImage)
 
-    exclusionLabels = ((img_labels == 11) +
-                       (img_labels == 35) +
-                       (img_labels == 38) +
-                       (img_labels == 39) +
-                       (img_labels == 40) +
-                       (img_labels == 41) +
-                       (img_labels == 51) +
-                       (img_labels == 52) +
-                       (img_labels == 71) +
-                       (img_labels == 72) +
-                       (img_labels == 73) +
-                       (img_labels == 230) +
-                       (img_labels == 255))
+    exclusionLabels = (
+        (img_labels == 11)
+        + (img_labels == 35)
+        + (img_labels == 38)
+        + (img_labels == 39)
+        + (img_labels == 40)
+        + (img_labels == 41)
+        + (img_labels == 51)
+        + (img_labels == 52)
+        + (img_labels == 71)
+        + (img_labels == 72)
+        + (img_labels == 73)
+        + (img_labels == 230)
+        + (img_labels == 255)
+    )
 
     important_labels = img_labels * (1 - exclusionLabels)
     unified_important_labels = important_labels > 0
@@ -156,8 +176,10 @@ def main(argv):
     print(("IRP: ", IRP))
     print(("SLA: ", SLA))
 
-    data = [['SLA', SLA[0], SLA[1], SLA[2], 1, 1],
-            ['IRP', IRP[0], IRP[1], IRP[2], 1, 1]]
+    data = [
+        ["SLA", SLA[0], SLA[1], SLA[2], 1, 1],
+        ["IRP", IRP[0], IRP[1], IRP[2], 1, 1],
+    ]
 
     csv_file_reader(inputLandmarksFile, data)
     csv_file_writer(outputTalairachLandmarksFile, data)

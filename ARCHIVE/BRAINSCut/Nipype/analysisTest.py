@@ -3,7 +3,9 @@
 
 def computeSummary(rObject):
     import rpy2.robjects as robjects
-    rObject.r('''
+
+    rObject.r(
+        """
     require( psy )
     numericCols <- c(
         "FP", "SimilarityIndex", "totalSearchVol", "RelativeOverlap", "union", "Sensitivity",
@@ -47,19 +49,18 @@ def computeSummary(rObject):
 
       }
     }
-    ''')
+    """
+    )
     return rObject
 
 
 #########################################################################################
-def computeSummaryFromCSV(inputCSVFilename,
-                          outputCSVPrefix):
+def computeSummaryFromCSV(inputCSVFilename, outputCSVPrefix):
     import rpy2.robjects as robjects
+
     robjects = computeSummary(robjects)
-    rComputeSummary = robjects.globalenv['computeSummary']
+    rComputeSummary = robjects.globalenv["computeSummary"]
     res = rComputeSummary(inputCSVFilename, outputCSVPrefix)
-
-
 
 
 # computeSummaryFromCSV( '/hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BAW2012Dec/Dec29/outputDataCollector/_methodParameter_TreeDepth50_TreeNumber50_normalization_DoubleSigmoid_Q01/experimentalND/experimentalResult.csv' )

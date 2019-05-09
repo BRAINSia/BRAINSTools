@@ -1,9 +1,10 @@
-
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import str
 from builtins import zip
 from builtins import range
+
 ##############################################################################
 
 
@@ -25,6 +26,8 @@ def getProbabilityMapFilename(roiList):
     for roi in roiList:
         probabilityMapFilename[roi] = roi + "_probabilityMap.nii.gz"
     return probabilityMapFilename
+
+
 ##############################################################################
 
 
@@ -54,29 +57,45 @@ echo "With custom environment:"
 echo {CUSTENV}
 {CUSTENV}
 ## NOTE:  nipype inserts the actual commands that need running below this section.
-""".format(PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString)
+""".format(
+        PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString
+    )
     return GLOBAL_SGE_SCRIPT
+
+
 ##############################################################################
 
 
-def writeConfigFile(originalFilename,
-                    outputConfigFilename,
-                    outputAdditionaListFiles):
+def writeConfigFile(originalFilename, outputConfigFilename, outputAdditionaListFiles):
 
-    print("""****************************
+    print(
+        """****************************
           writeConfigFile
-          """)
+          """
+    )
     import configparser
 
     inConfigParser = configparser.ConfigParser()
     try:
-        print(( """read
-               {fn}""".format( fn=originalFilename )))
+        print(
+            (
+                """read
+               {fn}""".format(
+                    fn=originalFilename
+                )
+            )
+        )
         inConfigParser.read(originalFilename)
     except:
-        print(( """ERROR
+        print(
+            (
+                """ERROR
                fail to read file {fn}
-               """.format( fn=originalFilename )))
+               """.format(
+                    fn=originalFilename
+                )
+            )
+        )
 
     outConfigParser = configparser.RawConfigParser()
 
@@ -91,55 +110,59 @@ def writeConfigFile(originalFilename,
         print((outputAdditionaListFiles[option]))
         print((outputAdditionaListFiles[option]))
         print((outputAdditionaListFiles[option]))
-        outConfigParser.set('ListFiles',
-                            option,
-                            outputAdditionaListFiles[option])
+        outConfigParser.set("ListFiles", option, outputAdditionaListFiles[option])
 
-    with open(outputConfigFilename, 'wb') as outConfigFile:
+    with open(outputConfigFilename, "wb") as outConfigFile:
         outConfigParser.write(outConfigFile)
     import os
+
     return os.path.abspath(outputConfigFilename)
 
 
 #############################################################################
-def writeListFile(sessionDict,
-                  outFilenameDict,
-                  tagsToWrite):
-    print("""****************************
+def writeListFile(sessionDict, outFilenameDict, tagsToWrite):
+    print(
+        """****************************
           writeListFile
-          """)
+          """
+    )
     import csv
+
     for outTag in list(outFilenameDict.keys()):
         outFile = open(outFilenameDict[outTag], "wb")
 
-        writer = csv.DictWriter(outFile,
-                                list(sessionDict[list(sessionDict.keys())[0]].keys()))
+        writer = csv.DictWriter(
+            outFile, list(sessionDict[list(sessionDict.keys())[0]].keys())
+        )
         writer.writeheader()
 
         print(tagsToWrite)
         for session in list(sessionDict.keys()):
             sessionRow = sessionDict[session]
             if tagsToWrite[session] == outTag:
-                print(("Add {s} ".format(s=sessionRow['sessionID'])))
+                print(("Add {s} ".format(s=sessionRow["sessionID"])))
                 writer.writerow(sessionRow)
             else:
-                print(("Drop {s} ".format(s=sessionRow['sessionID'])))
+                print(("Drop {s} ".format(s=sessionRow["sessionID"])))
         outFile.close()
 
     import os.path
+
     returnOutFilenameDict = {}
     for fn in outFilenameDict:
         returnOutFilenameDict = os.path.abspath(outFilenameDict[fn])
     return returnOutFilenameDict
 
+
 #############################################################################
 
 
-def getStartAndEndIndex(p_iTh,
-                        p_numberOfElementsPerSubset):
-    print("""****************************
+def getStartAndEndIndex(p_iTh, p_numberOfElementsPerSubset):
+    print(
+        """****************************
           getStartAndEndIndex
-          """)
+          """
+    )
     if p_iTh == 0:
         StartIndex = 0
     else:
@@ -149,17 +172,24 @@ def getStartAndEndIndex(p_iTh,
     print(("({s},{e})".format(s=StartIndex, e=EndIndx)))
     return StartIndex, EndIndx
 
+
 #############################################################################
 
 
-def readListFileBySessionID(inputFilename,
-                            totalNumber=-1):
+def readListFileBySessionID(inputFilename, totalNumber=-1):
     import csv
+
     listDict = {}
 
     try:
-        print(("""Read
-              {fn}""".format( fn=inputFilename )))
+        print(
+            (
+                """Read
+              {fn}""".format(
+                    fn=inputFilename
+                )
+            )
+        )
         with open(inputFilename, "r") as inFile:
             reader = csv.reader(inFile, delimiter=",", skipinitialspace=True)
             header = next(reader)
@@ -169,30 +199,44 @@ def readListFileBySessionID(inputFilename,
                 rowDict = {}
                 for (name, value) in rowWithHeader:
                     rowDict[name] = value.strip()
-                listDict[rowDict['sessionID']] = rowDict
+                listDict[rowDict["sessionID"]] = rowDict
     except:
-        print(( """ERROR
+        print(
+            (
+                """ERROR
                fail to read file {fn}
-               """.format( fn=inputFilename)))
+               """.format(
+                    fn=inputFilename
+                )
+            )
+        )
     import sys
+
     if totalNumber > 0 and len(listDict) != totalNumber:
-        print(("""ERROR
+        print(
+            (
+                """ERROR
               Total number of feature images are not equal to the main list.
               n( inputFilename ) = {n} != {t}
-              """.format( n=len( listDict ), t=totalNumber )))
+              """.format(
+                    n=len(listDict), t=totalNumber
+                )
+            )
+        )
         sys.exit()
 
     return listDict
+
+
 #############################################################################
 
 
-def getTags(sessionList,
-            nTest,
-            numberOfElementInSubset,
-            randomize=False):
-    print("""****************************
+def getTags(sessionList, nTest, numberOfElementInSubset, randomize=False):
+    print(
+        """****************************
           getTags
-          """)
+          """
+    )
     if randomize:
         sessionOrder = getRandomizedSessionOrder(sessionList)
     else:
@@ -205,190 +249,286 @@ def getTags(sessionList,
     tags = {}
     for session in sessionList:
         if applyStart <= sessionOrder[session] and sessionOrder[session] <= applyEnd:
-            tags[session] = 'Apply'
+            tags[session] = "Apply"
         else:
-            tags[session] = 'Train'
-    print(("""Generate tags:::
-             {t}""".format( t=tags)))
+            tags[session] = "Train"
+    print(
+        (
+            """Generate tags:::
+             {t}""".format(
+                t=tags
+            )
+        )
+    )
     return tags
+
+
 #############################################################################
 
 
 def getRandomizedSessionOrder(sessionList):
-    print("""****************************
+    print(
+        """****************************
           getRandomizedSessionOrder
-          """)
+          """
+    )
     ## randomize the order
     import random
-    print(("""input list:::
-           {s}""".format( s=sessionList )))
+
+    print(
+        (
+            """input list:::
+           {s}""".format(
+                s=sessionList
+            )
+        )
+    )
     random.shuffle(sessionList, random.random)
-    print(( """randomized list:::
-           {s}""".format( s=sessionList )))
+    print(
+        (
+            """randomized list:::
+           {s}""".format(
+                s=sessionList
+            )
+        )
+    )
     orderIndex = 0
     sessionOrder = {}
     for s in sessionList:
-        print(( """ assign sessionOrder[{s}] = {orderIndex}""".format( s=s, orderIndex=orderIndex)))
+        print(
+            (
+                """ assign sessionOrder[{s}] = {orderIndex}""".format(
+                    s=s, orderIndex=orderIndex
+                )
+            )
+        )
         sessionOrder[s] = orderIndex
         orderIndex = orderIndex + 1
     return sessionOrder
 
+
 #############################################################################
 
 
-def generateNewFilenames(nTest,
-                         featureList,
-                         outputPrefix):
-    print("""****************************
+def generateNewFilenames(nTest, featureList, outputPrefix):
+    print(
+        """****************************
           generateNewFilenames
-          """)
+          """
+    )
     returnConfigFilename = outputPrefix + "_Test" + str(nTest) + "_configuration.config"
-    returnMainListFilename = {'Train': outputPrefix + "_Test" + str(nTest) + "_mainTrainList.csv",
-                              'Apply': outputPrefix + "_Test" + str(nTest) + "_mainApplyList.csv"}
+    returnMainListFilename = {
+        "Train": outputPrefix + "_Test" + str(nTest) + "_mainTrainList.csv",
+        "Apply": outputPrefix + "_Test" + str(nTest) + "_mainApplyList.csv",
+    }
     returnFeatureListFilenameDict = {}
     for ft in featureList:
         currentPefix = outputPrefix + "_" + "Test" + str(nTest) + "_" + str(ft)
-        returnFeatureListFilenameDict[ft] = {'Train': currentPefix + "_featureTrainList.csv",
-                                             'Apply': currentPefix + "_featureApplyList.csv"}
-    print(("""
+        returnFeatureListFilenameDict[ft] = {
+            "Train": currentPefix + "_featureTrainList.csv",
+            "Apply": currentPefix + "_featureApplyList.csv",
+        }
+    print(
+        (
+            """
           returnMainListFilename: {fn1}
           returnFeatureListFilenameDict: {fn2}
-          """.format( fn1=returnMainListFilename, fn2=returnFeatureListFilenameDict)))
+          """.format(
+                fn1=returnMainListFilename, fn2=returnFeatureListFilenameDict
+            )
+        )
+    )
     return returnConfigFilename, returnMainListFilename, returnFeatureListFilenameDict
+
 
 #############################################################################
 
 
-def createConfigurationFileForCrossValidationUnitTest(inputConfigurationFilename,
-                                                      outputConfigurationFilenamePrefix):
-    print("""****************************
+def createConfigurationFileForCrossValidationUnitTest(
+    inputConfigurationFilename, outputConfigurationFilenamePrefix
+):
+    print(
+        """****************************
           createConfigurationFileForCrossValidationUnitTest
-          """)
+          """
+    )
     import os.path
-    outputConfigurationFilenamePrefix = os.path.abspath(outputConfigurationFilenamePrefix)
+
+    outputConfigurationFilenamePrefix = os.path.abspath(
+        outputConfigurationFilenamePrefix
+    )
 
     import ConfigurationParser
-    m_configurationMap = ConfigurationParser.ConfigurationSectionMap(inputConfigurationFilename)
+
+    m_configurationMap = ConfigurationParser.ConfigurationSectionMap(
+        inputConfigurationFilename
+    )
 
     # get list filenames
     import crossValidation as this
-    listFilenames = m_configurationMap['ListFiles']
-    mainListFilename = listFilenames['subjectListFilename'.lower()]
-    featureListFilenamesDict = listFilenames['featureListFileDictionary'.lower()]
-    numberOfElementsInSubset = listFilenames['numberOfElementInSubset'.lower()]
+
+    listFilenames = m_configurationMap["ListFiles"]
+    mainListFilename = listFilenames["subjectListFilename".lower()]
+    featureListFilenamesDict = listFilenames["featureListFileDictionary".lower()]
+    numberOfElementsInSubset = listFilenames["numberOfElementInSubset".lower()]
     numberOfTotalSession = sum(numberOfElementsInSubset)
 
     # read files into sessionID -> data
-    mainSessionDict = this.readListFileBySessionID(mainListFilename,
-                                                   numberOfTotalSession)
+    mainSessionDict = this.readListFileBySessionID(
+        mainListFilename, numberOfTotalSession
+    )
     featureSessionDict = {}
     if len(featureListFilenamesDict) > 0:
         for ft in list(featureListFilenamesDict.keys()):
-            featureSessionDict[ft] = this.readListFileBySessionID(featureListFilenamesDict[ft],
-                                                                  numberOfTotalSession)
+            featureSessionDict[ft] = this.readListFileBySessionID(
+                featureListFilenamesDict[ft], numberOfTotalSession
+            )
 
-    #{ iterate throug subsets
+    # { iterate throug subsets
     outputConfigFilenameDict = {}
     for nTest in range(0, len(numberOfElementsInSubset)):
-        trainApplyTagList = this.getTags(list(mainSessionDict.keys()),
-                                         nTest,
-                                         numberOfElementsInSubset)
-        newConfigFilename, newMainFilename, newFeatureFilenameDict = this.generateNewFilenames(nTest,
-                                                                                               list(featureListFilenamesDict.keys()),
-                                                                                               outputConfigurationFilenamePrefix)
-        this.writeListFile(mainSessionDict,
-                           newMainFilename,
-                           trainApplyTagList)
+        trainApplyTagList = this.getTags(
+            list(mainSessionDict.keys()), nTest, numberOfElementsInSubset
+        )
+        newConfigFilename, newMainFilename, newFeatureFilenameDict = this.generateNewFilenames(
+            nTest,
+            list(featureListFilenamesDict.keys()),
+            outputConfigurationFilenamePrefix,
+        )
+        this.writeListFile(mainSessionDict, newMainFilename, trainApplyTagList)
         trainFeatureStr = {}
         applyFeatureStr = {}
-        print("++++++++++++++++++++++++++++++++newFeatureFilenameDict++++++++++++++++++++++++++++++++")
+        print(
+            "++++++++++++++++++++++++++++++++newFeatureFilenameDict++++++++++++++++++++++++++++++++"
+        )
         print(newFeatureFilenameDict)
         if len(featureSessionDict) > 0:
             for ft in list(featureSessionDict.keys()):
-                this.writeListFile(featureSessionDict[ft],
-                                   newFeatureFilenameDict[ft],
-                                   trainApplyTagList)
-                trainFeatureStr[ft] = newFeatureFilenameDict[ft]['Train']
-                applyFeatureStr[ft] = newFeatureFilenameDict[ft]['Apply']
+                this.writeListFile(
+                    featureSessionDict[ft],
+                    newFeatureFilenameDict[ft],
+                    trainApplyTagList,
+                )
+                trainFeatureStr[ft] = newFeatureFilenameDict[ft]["Train"]
+                applyFeatureStr[ft] = newFeatureFilenameDict[ft]["Apply"]
 
-        print((newMainFilename['Train']))
-        print((newMainFilename['Apply']))
+        print((newMainFilename["Train"]))
+        print((newMainFilename["Apply"]))
         print(trainFeatureStr)
         print(applyFeatureStr)
-        this.writeConfigFile(inputConfigurationFilename,
-                             newConfigFilename,
-                             {'subjectListFilename': newMainFilename['Train'],
-                              'applySubjectListFilename': newMainFilename['Apply'],
-                              'featureListFileDictionary': str(trainFeatureStr),
-                              'applyFeatureListFileDictionary': str(applyFeatureStr)})
-        outputConfigFilenameDict["Test" + str(nTest)] = os.path.abspath(newConfigFilename)
+        this.writeConfigFile(
+            inputConfigurationFilename,
+            newConfigFilename,
+            {
+                "subjectListFilename": newMainFilename["Train"],
+                "applySubjectListFilename": newMainFilename["Apply"],
+                "featureListFileDictionary": str(trainFeatureStr),
+                "applyFeatureListFileDictionary": str(applyFeatureStr),
+            },
+        )
+        outputConfigFilenameDict["Test" + str(nTest)] = os.path.abspath(
+            newConfigFilename
+        )
     return outputConfigFilenameDict
+
+
 #############################################################################
 
 
 def extractConfigFile(configurationFiledict):
-    print("""****************************
+    print(
+        """****************************
           extractConfigFile
-          """)
+          """
+    )
     print(configurationFiledict)
     return list(configurationFiledict.values())
 
 
-def crossValidationWorkUp(crossValidationConfigurationFilename,
-                          baseDir,
-                          runOption,
-                          PythonBinDir,
-                          BRAINSToolsSrcDir,
-                          BRAINSToolsBuildDir):
-    print("""****************************
+def crossValidationWorkUp(
+    crossValidationConfigurationFilename,
+    baseDir,
+    runOption,
+    PythonBinDir,
+    BRAINSToolsSrcDir,
+    BRAINSToolsBuildDir,
+):
+    print(
+        """****************************
           crossValidationWorkUp
-          """)
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+          """
+    )
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
     from nipype import config
+
     config.enable_debug_mode()
 
     import crossValidation as this
     import ConfigurationParser
+
     myConfigurationMap = ConfigurationParser.ConfigurationSectionMap(
-        crossValidationConfigurationFilename)
+        crossValidationConfigurationFilename
+    )
 
     import nipype.pipeline.engine as pe
     from nipype.interfaces.utility import Function
     import ast
-    print( """ before
-           createeachvalidationunitnd
-           """)
-    createConfigurationFiles = pe.Node(name="createConfigurationFiles",
-                                       interface=Function(
-                                           input_names=['inputConfigurationFilename',
-                                                        'outputConfigurationFilenamePrefix'],
-                                           output_names=['outputConfigFilenameDict'],
-                                           function=this.createConfigurationFileForCrossValidationUnitTest)
-                                       )
 
-    preprocessing = pe.Workflow(name='Preprocessing')
+    print(
+        """ before
+           createeachvalidationunitnd
+           """
+    )
+    createConfigurationFiles = pe.Node(
+        name="createConfigurationFiles",
+        interface=Function(
+            input_names=[
+                "inputConfigurationFilename",
+                "outputConfigurationFilenamePrefix",
+            ],
+            output_names=["outputConfigFilenameDict"],
+            function=this.createConfigurationFileForCrossValidationUnitTest,
+        ),
+    )
+
+    preprocessing = pe.Workflow(name="Preprocessing")
     preprocessing.base_dir = baseDir + "/PreprocessingDir"
 
-    createConfigurationFiles.inputs.inputConfigurationFilename = crossValidationConfigurationFilename
-    createConfigurationFiles.inputs.outputConfigurationFilenamePrefix = 'createConfigurationFiles'
+    createConfigurationFiles.inputs.inputConfigurationFilename = (
+        crossValidationConfigurationFilename
+    )
+    createConfigurationFiles.inputs.outputConfigurationFilenamePrefix = (
+        "createConfigurationFiles"
+    )
 
-    extractConfigurationFileListND = pe.Node(name="extractConfigurationFileListND",
-                                             interface=Function(
-                                                  input_names=['configurationFiledict'],
-                                                  output_names=['configurationFileList'],
-                                                  function=this.extractConfigFile)
-                                             )
-    preprocessing.connect(createConfigurationFiles, 'outputConfigFilenameDict',
-                          extractConfigurationFileListND, 'configurationFiledict')
+    extractConfigurationFileListND = pe.Node(
+        name="extractConfigurationFileListND",
+        interface=Function(
+            input_names=["configurationFiledict"],
+            output_names=["configurationFileList"],
+            function=this.extractConfigFile,
+        ),
+    )
+    preprocessing.connect(
+        createConfigurationFiles,
+        "outputConfigFilenameDict",
+        extractConfigurationFileListND,
+        "configurationFiledict",
+    )
 
     preprocessing.run()
 
-    #------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
     # Data graber for outputs
     #
     import nipype.interfaces.io as nio
+
     dg = nio.DataGrabber()
-    dg.inputs.base_directory = baseDir + "/PreprocessingDir/Preprocessing/createConfigurationFiles/"
+    dg.inputs.base_directory = (
+        baseDir + "/PreprocessingDir/Preprocessing/createConfigurationFiles/"
+    )
     dg.inputs.template = "*config"
     mainConfigFiles = dg.run()
 
@@ -397,213 +537,282 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     print((mainConfigFiles.outputs.outfiles))
     print((mainConfigFiles.outputs.outfiles))
 
-    #------------------------------------------------------------------------------------
-    workflow = pe.Workflow(name='crossValidationWF')
+    # ------------------------------------------------------------------------------------
+    workflow = pe.Workflow(name="crossValidationWF")
     workflow.base_dir = baseDir
 
-    #------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
     # Generate Probability Map
     #
-    Options = myConfigurationMap['Options']
-    roiDict = Options['roiBooleanCreator'.lower()]
+    Options = myConfigurationMap["Options"]
+    roiDict = Options["roiBooleanCreator".lower()]
 
-    #-------------------------------- probMapFilenameGenerator is dummy node
+    # -------------------------------- probMapFilenameGenerator is dummy node
     # to create proper probability file location for nipype
     #
-    print("""************************
+    print(
+        """************************
           probMapFilenameGenerator
-          """)
+          """
+    )
 
-    probMapFilenameGenerator = pe.Node(name="probMapFilenameGenerator",
-                                       interface=Function(
-                                           input_names=['roiList'],
-                                           output_names=['probabilityMapFilename'],
-                                           function=this.getProbabilityMapFilename)
-                                       )
+    probMapFilenameGenerator = pe.Node(
+        name="probMapFilenameGenerator",
+        interface=Function(
+            input_names=["roiList"],
+            output_names=["probabilityMapFilename"],
+            function=this.getProbabilityMapFilename,
+        ),
+    )
     print(roiDict)
     probMapFilenameGenerator.inputs.roiList = list(roiDict.keys())
-    print("""************************
+    print(
+        """************************
           probabilityMapGeneratorND
-          """)
+          """
+    )
 
     #
-    #--------------------------------  start from generate probability
+    # --------------------------------  start from generate probability
     #
-    probabilityMapGeneratorND = pe.Node(name="probabilityMapGeneratorND",
-                                        interface=Function(
-                                             input_names=['configurationFilename',
-                                                          'probabilityMapDict',
-                                                          'gaussianSigma',
-                                                          'outputXmlFilename'],
-                                             output_names=['probabilityMapDict',
-                                                           'outputXmlFilename',
-                                                           'outputConfigurationFilename'],
-                                             function=ConfigurationParser.BRAINSCutGenerateProbabilityMap)
-                                        )
+    probabilityMapGeneratorND = pe.Node(
+        name="probabilityMapGeneratorND",
+        interface=Function(
+            input_names=[
+                "configurationFilename",
+                "probabilityMapDict",
+                "gaussianSigma",
+                "outputXmlFilename",
+            ],
+            output_names=[
+                "probabilityMapDict",
+                "outputXmlFilename",
+                "outputConfigurationFilename",
+            ],
+            function=ConfigurationParser.BRAINSCutGenerateProbabilityMap,
+        ),
+    )
 
-    probabilityMapGeneratorND.inputs.outputXmlFilename = 'netConfiguration.xml'
+    probabilityMapGeneratorND.inputs.outputXmlFilename = "netConfiguration.xml"
 
-    gaussianSigmaParam = ast.literal_eval(Options['gaussianSigma'.lower()])
-    print (gaussianSigmaParam)
-    probabilityMapGeneratorND.iterables = ('configurationFilename', mainConfigFiles.outputs.outfiles)
+    gaussianSigmaParam = ast.literal_eval(Options["gaussianSigma".lower()])
+    print(gaussianSigmaParam)
+    probabilityMapGeneratorND.iterables = (
+        "configurationFilename",
+        mainConfigFiles.outputs.outfiles,
+    )
     probabilityMapGeneratorND.inputs.gaussianSigma = gaussianSigmaParam
 
-    workflow.connect(probMapFilenameGenerator, 'probabilityMapFilename',
-                     probabilityMapGeneratorND, 'probabilityMapDict')
+    workflow.connect(
+        probMapFilenameGenerator,
+        "probabilityMapFilename",
+        probabilityMapGeneratorND,
+        "probabilityMapDict",
+    )
 
     #
-    #--------------------------------  create vectors for each ROI
+    # --------------------------------  create vectors for each ROI
     #
-    print("""************************
+    print(
+        """************************
           configFileND
-          """)
-    configFileND = pe.Node(name="configFileND",
-                           interface=Function(
-                                input_names=['originalFilename',
-                                             'editedFilenamePrefix'],
-                                output_names=['editedFilenames'],
-                                function=ConfigurationParser.ConfigurationFileEditor)
-                           )
+          """
+    )
+    configFileND = pe.Node(
+        name="configFileND",
+        interface=Function(
+            input_names=["originalFilename", "editedFilenamePrefix"],
+            output_names=["editedFilenames"],
+            function=ConfigurationParser.ConfigurationFileEditor,
+        ),
+    )
 
-    configFileND.inputs.editedFilenamePrefix = 'ROI'
-    workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                     configFileND, 'originalFilename')
+    configFileND.inputs.editedFilenamePrefix = "ROI"
+    workflow.connect(
+        probabilityMapGeneratorND,
+        "outputConfigurationFilename",
+        configFileND,
+        "originalFilename",
+    )
 
-    vectorCreatorND = pe.MapNode(name="vectorCreatorND",
-                                 interface=Function(
-                                      input_names=['configurationFilename',
-                                                   'probabilityMapDict',
-                                                   'normalization',
-                                                   'outputXmlFilename',
-                                                   'outputVectorFilename'],
-                                      output_names=['outputVectorFilename',
-                                                    'outputVectorHdrFilename',
-                                                    'outputNormalization',
-                                                    'outputXmlFilename'],
-                                      function=ConfigurationParser.BRAINSCutCreateVector),
-                                 iterfield=['configurationFilename']
-                                 )
-    vectorCreatorND.inputs.outputVectorFilename = 'oneROIVectorFile.txt'
-    vectorCreatorND.inputs.outputXmlFilename = 'oneROICreateVectorNetConfiguration.xml'
-    normalizationOption = Options['normalization'.lower()]
-    print(( """Normalization Option: {str}
-           """.format( str=normalizationOption ) ))
-    vectorCreatorND.iterables = ('normalization', normalizationOption)
+    vectorCreatorND = pe.MapNode(
+        name="vectorCreatorND",
+        interface=Function(
+            input_names=[
+                "configurationFilename",
+                "probabilityMapDict",
+                "normalization",
+                "outputXmlFilename",
+                "outputVectorFilename",
+            ],
+            output_names=[
+                "outputVectorFilename",
+                "outputVectorHdrFilename",
+                "outputNormalization",
+                "outputXmlFilename",
+            ],
+            function=ConfigurationParser.BRAINSCutCreateVector,
+        ),
+        iterfield=["configurationFilename"],
+    )
+    vectorCreatorND.inputs.outputVectorFilename = "oneROIVectorFile.txt"
+    vectorCreatorND.inputs.outputXmlFilename = "oneROICreateVectorNetConfiguration.xml"
+    normalizationOption = Options["normalization".lower()]
+    print(
+        (
+            """Normalization Option: {str}
+           """.format(
+                str=normalizationOption
+            )
+        )
+    )
+    vectorCreatorND.iterables = ("normalization", normalizationOption)
     #
-    #--------------------------------  workflow connections
+    # --------------------------------  workflow connections
     #
-    workflow.connect(configFileND, 'editedFilenames',
-                     vectorCreatorND, 'configurationFilename')
-    workflow.connect(probabilityMapGeneratorND, 'probabilityMapDict',
-                     vectorCreatorND, 'probabilityMapDict')
+    workflow.connect(
+        configFileND, "editedFilenames", vectorCreatorND, "configurationFilename"
+    )
+    workflow.connect(
+        probabilityMapGeneratorND,
+        "probabilityMapDict",
+        vectorCreatorND,
+        "probabilityMapDict",
+    )
 
     #
-    #--------------------------------  balance and combine each ROI vectors
+    # --------------------------------  balance and combine each ROI vectors
     #
-    print("""************************
+    print(
+        """************************
           balanceND
-          """)
-    balaceND = pe.Node(name="balanceND",
-                       interface=Function(
-                            input_names=['inputVectorFilenames'],
-                            output_names=['outputVectorFilenames',
-                                          'outputVectorHdrFilenames'],
-                            function=ConfigurationParser.BalanceInputVectors)
-                       )
-    workflow.connect(vectorCreatorND, 'outputVectorFilename',
-                     balaceND, 'inputVectorFilenames')
+          """
+    )
+    balaceND = pe.Node(
+        name="balanceND",
+        interface=Function(
+            input_names=["inputVectorFilenames"],
+            output_names=["outputVectorFilenames", "outputVectorHdrFilenames"],
+            function=ConfigurationParser.BalanceInputVectors,
+        ),
+    )
+    workflow.connect(
+        vectorCreatorND, "outputVectorFilename", balaceND, "inputVectorFilenames"
+    )
 
-    combineND = pe.Node(name="combineND",
-                        interface=Function(
-                            input_names=['inputVectorFilenames',
-                                         'outputVectorFilename'],
-                            output_names=['outputVectorFilename',
-                                          'outputVectorHdrFilename'],
-                            function=ConfigurationParser.CombineInputVectors)
-                        )
-    workflow.connect(balaceND, 'outputVectorFilenames',
-                     combineND, 'inputVectorFilenames')
+    combineND = pe.Node(
+        name="combineND",
+        interface=Function(
+            input_names=["inputVectorFilenames", "outputVectorFilename"],
+            output_names=["outputVectorFilename", "outputVectorHdrFilename"],
+            function=ConfigurationParser.CombineInputVectors,
+        ),
+    )
+    workflow.connect(
+        balaceND, "outputVectorFilenames", combineND, "inputVectorFilenames"
+    )
 
-    combineND.inputs.outputVectorFilename = 'allCombinedVector.txtANN'
+    combineND.inputs.outputVectorFilename = "allCombinedVector.txtANN"
     #
-    #--------------------------------  train
+    # --------------------------------  train
     #
-    print("""************************
+    print(
+        """************************
           trainND
-          """)
-    trainND = pe.Node(name="trainND",
-                      interface=Function(
-                           input_names=['configurationFilename',
-                                        'inputVectorFilename',
-                                        'outputModelFilenamePrefix',
-                                        'outputXmlFilename',
-                                        'methodParameter'],
-                           output_names=['outputTrainedModelFilename',
-                                         'outputMethodParameter'],
-                           function=ConfigurationParser.BRAINSCutTrainModel)
-                      )
+          """
+    )
+    trainND = pe.Node(
+        name="trainND",
+        interface=Function(
+            input_names=[
+                "configurationFilename",
+                "inputVectorFilename",
+                "outputModelFilenamePrefix",
+                "outputXmlFilename",
+                "methodParameter",
+            ],
+            output_names=["outputTrainedModelFilename", "outputMethodParameter"],
+            function=ConfigurationParser.BRAINSCutTrainModel,
+        ),
+    )
     # methodParameter = { '--method': 'RandomForest',
     #                    '--numberOfTrees': 60,
     #                    '--randomTreeDepth ': 60 }
-    methodFromConfiguFile = Options['modelParameter'.lower()]
-    trainND.iterables = ('methodParameter', methodFromConfiguFile)
+    methodFromConfiguFile = Options["modelParameter".lower()]
+    trainND.iterables = ("methodParameter", methodFromConfiguFile)
 
-    trainND.inputs.outputXmlFilename = 'trianNetConfiguration.xml'
-    trainND.inputs.outputModelFilenamePrefix = 'trainModelFile.txt'
+    trainND.inputs.outputXmlFilename = "trianNetConfiguration.xml"
+    trainND.inputs.outputModelFilenamePrefix = "trainModelFile.txt"
 
-    workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                     trainND, 'configurationFilename')
-    workflow.connect(combineND, 'outputVectorFilename',
-                     trainND, 'inputVectorFilename')
+    workflow.connect(
+        probabilityMapGeneratorND,
+        "outputConfigurationFilename",
+        trainND,
+        "configurationFilename",
+    )
+    workflow.connect(combineND, "outputVectorFilename", trainND, "inputVectorFilename")
     #
-    #--------------------------------  apply
+    # --------------------------------  apply
     #
-    applyND = pe.Node(name="applyND",
-                      interface=Function(
-                           input_names=['configurationFilename',
-                                        'probabilityMapDict',
-                                        'normalization',
-                                        'inputModelFilename',
-                                        'methodParameter',
-                                        'outputXmlFilename'
-                                        ],
-                           output_names=['outputLabelDict'],
-                           function=ConfigurationParser.BRAINSCutApplyModel)
-                      )
+    applyND = pe.Node(
+        name="applyND",
+        interface=Function(
+            input_names=[
+                "configurationFilename",
+                "probabilityMapDict",
+                "normalization",
+                "inputModelFilename",
+                "methodParameter",
+                "outputXmlFilename",
+            ],
+            output_names=["outputLabelDict"],
+            function=ConfigurationParser.BRAINSCutApplyModel,
+        ),
+    )
     # methodParameter = { '--method': 'RandomForest',
     #                    '--numberOfTrees': 60,
     #                    '--randomTreeDepth ': 60 }
-    applyND.inputs.outputXmlFilename = 'applyConfiguration.xml'
-    workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                     applyND, 'configurationFilename')
-    workflow.connect(vectorCreatorND, 'outputNormalization',
-                     applyND, 'normalization')
-    workflow.connect(probabilityMapGeneratorND, 'probabilityMapDict',
-                     applyND, 'probabilityMapDict')
-    workflow.connect(trainND, 'outputTrainedModelFilename',
-                     applyND, 'inputModelFilename')
-    workflow.connect(trainND, 'outputMethodParameter',
-                     applyND, 'methodParameter')
+    applyND.inputs.outputXmlFilename = "applyConfiguration.xml"
+    workflow.connect(
+        probabilityMapGeneratorND,
+        "outputConfigurationFilename",
+        applyND,
+        "configurationFilename",
+    )
+    workflow.connect(vectorCreatorND, "outputNormalization", applyND, "normalization")
+    workflow.connect(
+        probabilityMapGeneratorND, "probabilityMapDict", applyND, "probabilityMapDict"
+    )
+    workflow.connect(
+        trainND, "outputTrainedModelFilename", applyND, "inputModelFilename"
+    )
+    workflow.connect(trainND, "outputMethodParameter", applyND, "methodParameter")
 
     #####################################################################################
     # Data Sink
     #
     import os
-    LabelsDS = pe.Node(nio.DataSink(), name='LabelDS')
+
+    LabelsDS = pe.Node(nio.DataSink(), name="LabelDS")
     LabelsDS.inputs.base_directory = os.path.join(baseDir, "Result")
-    LabelsDS.inputs.regexp_substitutions = [('/_', '/'),
-                                            ('configurationFilename.*_Test', 'Test'),
-                                            ('_configuration.config/normalization_', '/'),
-                                            ('methodParameter_--method', ''),
-                                            ('RandomForest', 'RF/'),
-                                            ('.--randomTreeDepth', 'TreeDepth'),
-                                            ('.--numberOfTrees', '_TreeNumber'),
-                                            ('ANNContinuousPrediction(?P<roi>.+)(?P<session>\d\d\d\d\d).nii.gz', r'\g<session>_\g<roi>_ANNContinuous.nii.gz')
-                                            ]
+    LabelsDS.inputs.regexp_substitutions = [
+        ("/_", "/"),
+        ("configurationFilename.*_Test", "Test"),
+        ("_configuration.config/normalization_", "/"),
+        ("methodParameter_--method", ""),
+        ("RandomForest", "RF/"),
+        (".--randomTreeDepth", "TreeDepth"),
+        (".--numberOfTrees", "_TreeNumber"),
+        (
+            "ANNContinuousPrediction(?P<roi>.+)(?P<session>\d\d\d\d\d).nii.gz",
+            r"\g<session>_\g<roi>_ANNContinuous.nii.gz",
+        ),
+    ]
     # ANNContinuousPredictionl_accumben77478
 
-    workflow.connect([(applyND, LabelsDS,
-                       [(('outputLabelDict', getDictionaryValues), 'Labels')])])
+    workflow.connect(
+        [(applyND, LabelsDS, [(("outputLabelDict", getDictionaryValues), "Labels")])]
+    )
 
     #####################################################################################
     # analysis
@@ -616,36 +825,52 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
         ############################################
         # Platform specific information
         #     Prepend the python search paths
-        pythonPath = BRAINSToolsSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + BRAINSToolsSrcDir + "/AutoWorkup/:" + BRAINSToolsSrcDir + "/AutoWorkup/BRAINSTools/:" + BRAINSToolsBuildDir + "/SimpleITK-build/bin/" + \
-            BRAINSToolsBuildDir + "/SimpleITK-build/lib:" + PythonBinDir
+        pythonPath = (
+            BRAINSToolsSrcDir
+            + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:"
+            + BRAINSToolsSrcDir
+            + "/AutoWorkup/:"
+            + BRAINSToolsSrcDir
+            + "/AutoWorkup/BRAINSTools/:"
+            + BRAINSToolsBuildDir
+            + "/SimpleITK-build/bin/"
+            + BRAINSToolsBuildDir
+            + "/SimpleITK-build/lib:"
+            + PythonBinDir
+        )
         binPath = BRAINSToolsBuildDir + "/bin:" + BRAINSToolsBuildDir + "/lib"
 
         PYTHON_AUX_PATHS = pythonPath
-        PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
+        PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(":")
         PYTHON_AUX_PATHS.extend(sys.path)
         sys.path = PYTHON_AUX_PATHS
         # print sys.path
         import SimpleITK as sitk
+
         #     Prepend the shell environment search paths
         PROGRAM_PATHS = binPath
-        PROGRAM_PATHS = PROGRAM_PATHS.split(':')
+        PROGRAM_PATHS = PROGRAM_PATHS.split(":")
         import os
-        PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
-        os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
-        Cluster_Script = get_global_sge_script(PYTHON_AUX_PATHS,
-                                               PROGRAM_PATHS,
-                                               {}
-                                               )
-        workflow.run(plugin='SGE',
-                     plugin_args=OrderedDict(template=Cluster_Script,
-                                      qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null "))
+        PROGRAM_PATHS.extend(os.environ["PATH"].split(":"))
+        os.environ["PATH"] = ":".join(PROGRAM_PATHS)
+
+        Cluster_Script = get_global_sge_script(PYTHON_AUX_PATHS, PROGRAM_PATHS, {})
+        workflow.run(
+            plugin="SGE",
+            plugin_args=OrderedDict(
+                template=Cluster_Script,
+                qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null ",
+            ),
+        )
     else:
-        print("""************************
+        print(
+            """************************
               run
-              """)
+              """
+        )
         try:
-            workflow.write_graph(graph2use='flat')
+            workflow.write_graph(graph2use="flat")
         except:
             pass
         workflow.run()
@@ -659,90 +884,145 @@ def main(argv=None):
     import ConfigurationParser
 
     from nipype import config
+
     config.enable_debug_mode()
 
-    workflow = pe.Workflow(name='crossValidation')
-    workflow.base_dir = '.'
+    workflow = pe.Workflow(name="crossValidation")
+    workflow.base_dir = "."
 
-    #-------------------------------- argument parser
+    # -------------------------------- argument parser
     import argparse
-    argParser = argparse.ArgumentParser( description="""****************************
+
+    argParser = argparse.ArgumentParser(
+        description="""****************************
         10-cross validation command line argument parser
-        """)
+        """
+    )
     # workup arguments
-    argWfGrp = argParser.add_argument_group( 'argWfGrp', """****************************
+    argWfGrp = argParser.add_argument_group(
+        "argWfGrp",
+        """****************************
         auto workflow arguments for cross validation
-        """)
-    argWfGrp.add_argument('--crossValidationConfigurationFilename',
-                          help="""configurationFilename
+        """,
+    )
+    argWfGrp.add_argument(
+        "--crossValidationConfigurationFilename",
+        help="""configurationFilename
         Configuration file name with FULL PATH""",
-                          dest='crossValidationConfigurationFilename', required=True)
-    argWfGrp.add_argument( '--baseDir',    help="""baseDir
+        dest="crossValidationConfigurationFilename",
+        required=True,
+    )
+    argWfGrp.add_argument(
+        "--baseDir",
+        help="""baseDir
         """,
-                           dest='baseDir', required=False, default=".")
-    argWfGrp.add_argument( '--runOption',    help="""runOption [local/cluster]
+        dest="baseDir",
+        required=False,
+        default=".",
+    )
+    argWfGrp.add_argument(
+        "--runOption",
+        help="""runOption [local/cluster]
         """,
-                           dest='runOption', required=False, default="local")
-    argWfGrp.add_argument( '--PythonBinDir',    help="""PythonBinDir [local/cluster]
+        dest="runOption",
+        required=False,
+        default="local",
+    )
+    argWfGrp.add_argument(
+        "--PythonBinDir",
+        help="""PythonBinDir [local/cluster]
         """,
-                           dest='PythonBinDir', required=False, default="NA")
-    argWfGrp.add_argument( '--BRAINSToolsSrcDir',    help="""BRAINSToolsSrcDir [local/cluster]
+        dest="PythonBinDir",
+        required=False,
+        default="NA",
+    )
+    argWfGrp.add_argument(
+        "--BRAINSToolsSrcDir",
+        help="""BRAINSToolsSrcDir [local/cluster]
         """,
-                           dest='BRAINSToolsSrcDir', required=False, default="NA")
-    argWfGrp.add_argument( '--BRAINSToolsBuildDir',    help="""BRAINSToolsBuildDir [local/cluster]
+        dest="BRAINSToolsSrcDir",
+        required=False,
+        default="NA",
+    )
+    argWfGrp.add_argument(
+        "--BRAINSToolsBuildDir",
+        help="""BRAINSToolsBuildDir [local/cluster]
         """,
-                           dest='BRAINSToolsBuildDir', required=False, default="NA")
+        dest="BRAINSToolsBuildDir",
+        required=False,
+        default="NA",
+    )
 
     # test arguments
-    argTestGrp = argParser.add_argument_group( 'argTestGrp', """****************************
+    argTestGrp = argParser.add_argument_group(
+        "argTestGrp",
+        """****************************
         arguments for testing
-        """)
-    argTestGrp.add_argument('--unitTest', action='store_true',
-                            dest='unitTest', help="""****************************
+        """,
+    )
+    argTestGrp.add_argument(
+        "--unitTest",
+        action="store_true",
+        dest="unitTest",
+        help="""****************************
         List of test function name
-        """)
+        """,
+    )
     args = argParser.parse_args()
 
-    #--------------------------------
+    # --------------------------------
     if not args.unitTest:
-        crossValidationWorkUp(args.crossValidationConfigurationFilename,
-                              args.baseDir,
-                              args.runOption,
-                              args.PythonBinDir,
-                              args.BRAINSToolsSrcDir,
-                              args.BRAINSToolsBuildDir)
+        crossValidationWorkUp(
+            args.crossValidationConfigurationFilename,
+            args.baseDir,
+            args.runOption,
+            args.PythonBinDir,
+            args.BRAINSToolsSrcDir,
+            args.BRAINSToolsBuildDir,
+        )
 
-    #--------------------------------
+    # --------------------------------
     if args.unitTest:
         testElementPerSubject = [3, 4, 5]
         getStartAndEndIndex(0, testElementPerSubject)
         getStartAndEndIndex(1, testElementPerSubject)
         getStartAndEndIndex(2, testElementPerSubject)
 
-        featureDict = {'GadSG': 'testGadFeatureList.csv',
-                       't2': 't2FeatureList.csv'}
+        featureDict = {"GadSG": "testGadFeatureList.csv", "t2": "t2FeatureList.csv"}
 
-        sessionList = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12"]
+        sessionList = [
+            "s1",
+            "s2",
+            "s3",
+            "s4",
+            "s5",
+            "s6",
+            "s7",
+            "s8",
+            "s9",
+            "s10",
+            "s11",
+            "s12",
+        ]
         getRandomizedSessionOrder(sessionList)
-        myTag = getTags(sessionList,
-                        2,
-                        testElementPerSubject)
-        featureFilenameDict = {'f1': 'f1.csv', 'f2': 'f2.csv'}
-        configFilename, mainFilenameDict, featureFilenameDict = generateNewFilenames(3,
-                                                                                     list(featureFilenameDict.keys()),
-                                                                                     "outputPrefix")
+        myTag = getTags(sessionList, 2, testElementPerSubject)
+        featureFilenameDict = {"f1": "f1.csv", "f2": "f2.csv"}
+        configFilename, mainFilenameDict, featureFilenameDict = generateNewFilenames(
+            3, list(featureFilenameDict.keys()), "outputPrefix"
+        )
         import ConfigurationParser
-        m_configurationMap = ConfigurationParser.ConfigurationSectionMap(args.crossValidationConfigurationFilename)
 
-        listFiles = m_configurationMap['ListFiles']
-        mainListFilename = listFiles['subjectListFilename'.lower()]
+        m_configurationMap = ConfigurationParser.ConfigurationSectionMap(
+            args.crossValidationConfigurationFilename
+        )
+
+        listFiles = m_configurationMap["ListFiles"]
+        mainListFilename = listFiles["subjectListFilename".lower()]
         sessionDict = readListFileBySessionID(mainListFilename)
-        myTag = getTags(list(sessionDict.keys()),
-                        2,
-                        listFiles['numberOfElementInSubset'.lower()])
-        writeListFile(sessionDict,
-                      mainFilenameDict,
-                      myTag)
+        myTag = getTags(
+            list(sessionDict.keys()), 2, listFiles["numberOfElementInSubset".lower()]
+        )
+        writeListFile(sessionDict, mainFilenameDict, myTag)
 
 
 import sys

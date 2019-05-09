@@ -10,17 +10,34 @@ Usage:
 """
 import os
 
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, \
-    InputMultiPath, OutputMultiPath
-from nipype.interfaces.semtools.diffusion.dtiprep import DTIPrepInputSpec, DTIPrepOutputSpec, DTIPrep
+from nipype.interfaces.base import (
+    CommandLine,
+    CommandLineInputSpec,
+    TraitedSpec,
+    File,
+    Directory,
+    traits,
+    isdefined,
+    InputMultiPath,
+    OutputMultiPath,
+)
+from nipype.interfaces.semtools.diffusion.dtiprep import (
+    DTIPrepInputSpec,
+    DTIPrepOutputSpec,
+    DTIPrep,
+)
 
 """
 This class represents a...
 """
+
+
 class DTIPrepextOutputSpec(DTIPrepOutputSpec):
     outputVolume = traits.Either(File(exists=True), None)
     outputReportXML = traits.Either(File(exists=True), None)
     outputReportTxt = traits.Either(File(exists=True), None)
+
+
 # outputQCedBaseline = traits.Either(File(exists=True), None)
 # outputQCedDTI = traits.Either(File(exists=True), None)
 # outputQCedDTI_FA = traits.Either(File(exists=True), None)
@@ -32,6 +49,8 @@ class DTIPrepextOutputSpec(DTIPrepOutputSpec):
 """
 This class represents a...
 """
+
+
 class DTIPrepext(DTIPrep):
     # input_spec = DTIPrepextInputSpec
     output_spec = DTIPrepextOutputSpec
@@ -41,11 +60,15 @@ class DTIPrepext(DTIPrep):
         This function...
         :return:
         """
-        from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-        custom_implied_outputs_with_no_inputs = ['outputVolume',
-                                                 'outputReportXML',
-                                                 'outputReportTxt'
-                                                 ]
+        from collections import (
+            OrderedDict,
+        )  # Need OrderedDict internally to ensure consistent ordering
+
+        custom_implied_outputs_with_no_inputs = [
+            "outputVolume",
+            "outputReportXML",
+            "outputReportTxt",
+        ]
         full_outputs = self._outputs().get()
         pruned_outputs = OrderedDict()
         for key, value in list(full_outputs.items()):
@@ -54,14 +77,19 @@ class DTIPrepext(DTIPrep):
         outputs = super(DTIPrepext, self)._outputs_from_inputs(pruned_outputs)
         inputDir, filename = os.path.split(self.inputs.DWINrrdFile)
         filenameList = filename.split(".")
-        prefix = '.'.join(filenameList[:-1])
+        prefix = ".".join(filenameList[:-1])
         # ConcatenatedDWIFile.nrrd
         # ConcatenatedDWIFile_QCed.nrrd
         # ConcatenatedDWIFile_QCed.nrrd
-        outputs['outputVolume'] = os.path.abspath(os.path.join(self.inputs.outputFolder, prefix + "_QCed.nrrd"))
-        outputs['outputReportXML'] = os.path.abspath(
-            os.path.join(self.inputs.outputFolder, prefix + "_XMLQCResult.xml"))
-        outputs['outputReportTxt'] = os.path.abspath(os.path.join(self.inputs.outputFolder, prefix + "_QCReport.txt"))
+        outputs["outputVolume"] = os.path.abspath(
+            os.path.join(self.inputs.outputFolder, prefix + "_QCed.nrrd")
+        )
+        outputs["outputReportXML"] = os.path.abspath(
+            os.path.join(self.inputs.outputFolder, prefix + "_XMLQCResult.xml")
+        )
+        outputs["outputReportTxt"] = os.path.abspath(
+            os.path.join(self.inputs.outputFolder, prefix + "_QCReport.txt")
+        )
         # outputs['outputQCedBaseline'] = os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed_Baseline.nrrd") )
         # outputs['outputQCedDTI'] =      os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed_DTI.nrrd") )
         # outputs['outputQCedDTI_FA'] =   os.path.abspath( os.path.join(self.inputs.outputFolder, prefix + "_QCed_DTI_FA.nrrd") )

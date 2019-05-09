@@ -14,6 +14,7 @@ import os
 import shutil  ## needed for removing directory tree
 from builtins import range
 
+
 def convertToList(element):
     """
     This funciton...
@@ -22,8 +23,9 @@ def convertToList(element):
     :return:
     """
     if element is None:
-        return ''
+        return ""
     return [element]
+
 
 def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
     """
@@ -35,10 +37,10 @@ def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileNam
     """
     import SimpleITK as sitk
 
-    AIR_FN = posteriorDictionary['AIR']
-    CSF_FN = posteriorDictionary['CSF']
-    VB_FN = posteriorDictionary['VB']
-    WM_FN = posteriorDictionary['WM']
+    AIR_FN = posteriorDictionary["AIR"]
+    CSF_FN = posteriorDictionary["CSF"]
+    VB_FN = posteriorDictionary["VB"]
+    WM_FN = posteriorDictionary["WM"]
 
     AIR_PROB = sitk.ReadImage(AIR_FN)
     CSF_PROB = sitk.ReadImage(CSF_FN)
@@ -48,12 +50,16 @@ def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileNam
     AIR_Region = sitk.BinaryThreshold(AIR_PROB, 0.51, 1.01, 1, 0)
     CSF_Region = sitk.BinaryThreshold(CSF_PROB, 0.51, 1.01, 1, 0)
     VB_Region = sitk.BinaryThreshold(VB_PROB, 0.51, 1.01, 1, 0)
-    WM_Region = sitk.BinaryThreshold(WM_PROB, 0.99, 1.01, 1, 0)  # NOTE: Higher tolerance for WM regions!
+    WM_Region = sitk.BinaryThreshold(
+        WM_PROB, 0.99, 1.01, 1, 0
+    )  # NOTE: Higher tolerance for WM regions!
 
-    outputCandidateRegion = sitk.BinaryThreshold(AIR_Region + CSF_Region + VB_Region + WM_Region, 1, 100, 0,
-                                                 1)  # NOTE: Inversion of input/output definitions
+    outputCandidateRegion = sitk.BinaryThreshold(
+        AIR_Region + CSF_Region + VB_Region + WM_Region, 1, 100, 0, 1
+    )  # NOTE: Inversion of input/output definitions
     ##  Now write out the candidate region name.
     import os
+
     outputCandidateRegionFileName = os.path.realpath(candidateRegionFileName)
     sitk.WriteImage(outputCandidateRegion, outputCandidateRegionFileName)
 
@@ -79,6 +85,7 @@ def makeListOfValidImages(imageFile):
 #     else:
 #         return imageFile
 
+
 def getListIndex(imageList, index):
     """
     This function returns the imageList value at an index
@@ -102,6 +109,7 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
     import os
     import sys
     import SimpleITK as sitk
+
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
@@ -123,9 +131,9 @@ def UnwrapPosteriorImagesFromListOfTuplesFunction(posteriorListOfTuples):
     """
     ## Dictionary values are now being returned as unicode characters
     ## so convert back to ascii
-    #print("QQQQQ {0}".format(posteriorListOfTuples))
-    mylist = [ x[1] for x in posteriorListOfTuples]
-    #print("YYYYY {0}".format(mylist))
+    # print("QQQQQ {0}".format(posteriorListOfTuples))
+    mylist = [x[1] for x in posteriorListOfTuples]
+    # print("YYYYY {0}".format(mylist))
     return mylist
 
 
@@ -141,22 +149,31 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
         :return:
     """
     from os.path import basename
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     dictionary_of_session_list = OrderedDict()
     assert not dg_list_list is None, "Input must be a list, not None"
-    assert isinstance(dg_list_list, list), "Input must be a list, not {0}".format(type(postList))
+    assert isinstance(dg_list_list, list), "Input must be a list, not {0}".format(
+        type(postList)
+    )
 
     # Do the firt session for initialization
     first_session = dg_list_list[0]
     for postFileName in first_session:
-        key = basename(postFileName).replace('POSTERIOR_', '').replace('.nii.gz', '')
+        key = basename(postFileName).replace("POSTERIOR_", "").replace(".nii.gz", "")
         dictionary_of_session_list[key] = [postFileName]
 
     ## Now do the rest!
     for one_session_list in dg_list_list[1:]:
         for postFileName in one_session_list:
-            key = basename(postFileName).replace('POSTERIOR_', '').replace('.nii.gz', '')
-            assert key in list(dictionary_of_session_list.keys()), "All session list must have the same key values"
+            key = (
+                basename(postFileName).replace("POSTERIOR_", "").replace(".nii.gz", "")
+            )
+            assert key in list(
+                dictionary_of_session_list.keys()
+            ), "All session list must have the same key values"
             dictionary_of_session_list[key].append(postFileName)
     print(dictionary_of_session_list)
     return dictionary_of_session_list
@@ -172,7 +189,10 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
     import os
     import sys
     import SimpleITK as sitk
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
@@ -182,37 +202,40 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
         base_name = os.path.basename(full_pathname)
         load_images_list[base_name] = sitk.ReadImage(full_pathname)
     GM_ACCUM = [
-        'POSTERIOR_SURFGM.nii.gz',
-        'POSTERIOR_BASAL.nii.gz',
-        'POSTERIOR_THALAMUS.nii.gz',
-        'POSTERIOR_HIPPOCAMPUS.nii.gz',
-        'POSTERIOR_CRBLGM.nii.gz',
+        "POSTERIOR_SURFGM.nii.gz",
+        "POSTERIOR_BASAL.nii.gz",
+        "POSTERIOR_THALAMUS.nii.gz",
+        "POSTERIOR_HIPPOCAMPUS.nii.gz",
+        "POSTERIOR_CRBLGM.nii.gz",
     ]
-    WM_ACCUM = [
-        'POSTERIOR_CRBLWM.nii.gz',
-        'POSTERIOR_WM.nii.gz'
-    ]
-    CSF_ACCUM = [
-        'POSTERIOR_CSF.nii.gz',
-    ]
-    VB_ACCUM = [
-        'POSTERIOR_VB.nii.gz',
-    ]
-    GLOBUS_ACCUM = [
-        'POSTERIOR_GLOBUS.nii.gz',
-    ]
+    WM_ACCUM = ["POSTERIOR_CRBLWM.nii.gz", "POSTERIOR_WM.nii.gz"]
+    CSF_ACCUM = ["POSTERIOR_CSF.nii.gz"]
+    VB_ACCUM = ["POSTERIOR_VB.nii.gz"]
+    GLOBUS_ACCUM = ["POSTERIOR_GLOBUS.nii.gz"]
     BACKGROUND_ACCUM = [
-        'POSTERIOR_AIR.nii.gz',
-        'POSTERIOR_NOTCSF.nii.gz',
-        'POSTERIOR_NOTGM.nii.gz',
-        'POSTERIOR_NOTVB.nii.gz',
-        'POSTERIOR_NOTWM.nii.gz',
+        "POSTERIOR_AIR.nii.gz",
+        "POSTERIOR_NOTCSF.nii.gz",
+        "POSTERIOR_NOTGM.nii.gz",
+        "POSTERIOR_NOTVB.nii.gz",
+        "POSTERIOR_NOTWM.nii.gz",
     ]
     ## The next 2 items MUST be syncronized
-    AccumulatePriorsNames = ['POSTERIOR_GM_TOTAL.nii.gz', 'POSTERIOR_WM_TOTAL.nii.gz',
-                             'POSTERIOR_CSF_TOTAL.nii.gz', 'POSTERIOR_VB_TOTAL.nii.gz',
-                             'POSTERIOR_GLOBUS_TOTAL.nii.gz', 'POSTERIOR_BACKGROUND_TOTAL.nii.gz']
-    ForcedOrderingLists = [GM_ACCUM, WM_ACCUM, CSF_ACCUM, VB_ACCUM, GLOBUS_ACCUM, BACKGROUND_ACCUM]
+    AccumulatePriorsNames = [
+        "POSTERIOR_GM_TOTAL.nii.gz",
+        "POSTERIOR_WM_TOTAL.nii.gz",
+        "POSTERIOR_CSF_TOTAL.nii.gz",
+        "POSTERIOR_VB_TOTAL.nii.gz",
+        "POSTERIOR_GLOBUS_TOTAL.nii.gz",
+        "POSTERIOR_BACKGROUND_TOTAL.nii.gz",
+    ]
+    ForcedOrderingLists = [
+        GM_ACCUM,
+        WM_ACCUM,
+        CSF_ACCUM,
+        VB_ACCUM,
+        GLOBUS_ACCUM,
+        BACKGROUND_ACCUM,
+    ]
     AccumulatePriorsList = list()
     for index in range(0, len(ForcedOrderingLists)):
         outname = AccumulatePriorsNames[index]
@@ -222,8 +245,8 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
             accum_image = accum_image + load_images_list[inlist[curr_image]]
         sitk.WriteImage(accum_image, outname)
         AccumulatePriorsList.append(os.path.realpath(outname))
-    #print(("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)))
-    #print((": {APN}\n".format(APN=AccumulatePriorsNames)))
+    # print(("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)))
+    # print((": {APN}\n".format(APN=AccumulatePriorsNames)))
     return AccumulatePriorsList, AccumulatePriorsNames
 
 
@@ -260,8 +283,9 @@ def make_dummy_file(fn):
        :return:
     """
     import time
+
     mkdir_p(os.path.dirname(fn))
-    ff = open(fn, 'w')
+    ff = open(fn, "w")
     ff.write("DummyFile with Proper time stamp")
     time.sleep(1)  # 1 second
     ff.close()

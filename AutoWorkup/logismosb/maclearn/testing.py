@@ -13,6 +13,7 @@ import os
 import numpy
 from . import training
 
+
 def run_test(clf, sample_dict, label, out_file):
     """
     Test the classifier on the trainign data.
@@ -34,10 +35,14 @@ def run_test(clf, sample_dict, label, out_file):
     labelmap = sitk.ReadImage(sample_dict["Labelmap"])
 
     # split the data by regions
-    data_dict, targets_dict, index_dict = training.databyregion(data, targets, labelmap, sample_dict["Labels"])
+    data_dict, targets_dict, index_dict = training.databyregion(
+        data, targets, labelmap, sample_dict["Labels"]
+    )
 
     # iterate through the labels and make predictions
-    proba_file = predict(clf, data_dict[label], target_image, out_file, index_dict[str(label)])
+    proba_file = predict(
+        clf, data_dict[label], target_image, out_file, index_dict[str(label)]
+    )
     return proba_file
 
 

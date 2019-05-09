@@ -28,14 +28,17 @@ def MakeLabelDictionary(inputColorLookUpTableFilename):
     """
     # inputColorLookUpTableFilename="/Shared/johnsonhj/HDNI/ReferenceData/20150709_HDAdultAtlas/BAWHDAdultAtlas_FreeSurferConventionColorLUT_20150709.txt"
     # import csv
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     labelDictionary = OrderedDict()
     with open(inputColorLookUpTableFilename) as f:
         contents = f.readlines()
         for line in contents:
             currentline = line.split()
             # print(currentline)
-            if (len(currentline) > 0 and currentline[0].isdigit()):
+            if len(currentline) > 0 and currentline[0].isdigit():
                 # print( currentline )
                 labelNo = int(currentline[0])
                 labelName = currentline[1]
@@ -66,7 +69,10 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
     """
     import SimpleITK as sitk
     import os
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     labelImg = sitk.ReadImage(labelVolume, sitk.sitkInt64)
     RefImg = sitk.ReadImage(RefVolume, sitk.sitkFloat64)
     labelStatFilter = sitk.LabelStoutputatisticsImageFilter()
@@ -75,18 +81,23 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
 
     outputLabelVolumes = list()
     for value in labelStatFilter.GetLabels():
-        structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * labelStatFilter.GetCount(value)
+        structVolume = (
+            ImageSpacing[0]
+            * ImageSpacing[1]
+            * ImageSpacing[2]
+            * labelStatFilter.GetCount(value)
+        )
         labelVolDict = OrderedDict()
-        labelVolDict['Volume_mm3'] = structVolume
+        labelVolDict["Volume_mm3"] = structVolume
 
         if value in list(labelDictionary.keys()):
             print(("{0} --> {1}".format(value, labelDictionary[value])))
-            labelVolDict['LabelName'] = labelDictionary[value]
+            labelVolDict["LabelName"] = labelDictionary[value]
         else:
             print(("** Caution: {0} --> No name exists!".format(value)))
-            labelVolDict['LabelName'] = 'NA'
-        labelVolDict['LabelCode'] = value
-        labelVolDict['FileName'] = os.path.abspath(labelVolume)
+            labelVolDict["LabelName"] = "NA"
+        labelVolDict["LabelCode"] = value
+        labelVolDict["FileName"] = os.path.abspath(labelVolume)
         outputLabelVolumes.append(labelVolDict)
     return outputLabelVolumes
 
@@ -111,12 +122,15 @@ def WriteDictionaryToCSV(inputList, outputFilename):
     """
     import csv
     import os
-    csvFile = open(outputFilename, 'w')
-    dWriter = csv.DictWriter(csvFile,
-                             ['LabelCode', 'LabelName', 'Volume_mm3', 'FileName'],
-                             restval='',
-                             extrasaction='raise',
-                             dialect='excel')
+
+    csvFile = open(outputFilename, "w")
+    dWriter = csv.DictWriter(
+        csvFile,
+        ["LabelCode", "LabelName", "Volume_mm3", "FileName"],
+        restval="",
+        extrasaction="raise",
+        dialect="excel",
+    )
     dWriter.writeheader()
     for line in inputList:
         dWriter.writerow(line)
@@ -139,11 +153,13 @@ def WriteDictionaryToJson(inputList, outputFilename):
     :return:
     """
     import json
-    with open(outputFilename, 'w') as fp:
+
+    with open(outputFilename, "w") as fp:
         json.dump(inputList, fp)
     import os
+
     outputFilename = os.path.abspath(outputFilename)
-    return (outputFilename)
+    return outputFilename
 
 
 """
@@ -152,10 +168,12 @@ WriteDictionaryToJson(labelVolDict, "~/Desktop/test.json")
 """
 
 
-def VolumeMeasure(inputColorLookUpTableFilename,
-                  labelFilename,
-                  inputReferenceFilename,
-                  outputFileBasename):
+def VolumeMeasure(
+    inputColorLookUpTableFilename,
+    labelFilename,
+    inputReferenceFilename,
+    outputFileBasename,
+):
     """
     This function...
 
@@ -173,6 +191,7 @@ def VolumeMeasure(inputColorLookUpTableFilename,
     WriteDictionaryToJson(measurementsList, jsonFilename)
 
     import os
+
     csvFilename = os.path.abspath(csvFilename)
     jsonFilename = os.path.abspath(jsonFilename)
     return (csvFilename, jsonFilename)
@@ -184,25 +203,32 @@ import getopt
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hc:l:r:o:",
-                                   ["help",
-                                    "colorTable=",
-                                    "labelFilename=",
-                                    "referenceFilename=",
-                                    "outputFileBasename="])
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            "hc:l:r:o:",
+            [
+                "help",
+                "colorTable=",
+                "labelFilename=",
+                "referenceFilename=",
+                "outputFileBasename=",
+            ],
+        )
     except getopt.GetoptError as err:
         print((str(err)))
         print(
-            "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename>  -r <referenceFilename> -o <outputFileBasename>")
+            "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename>  -r <referenceFilename> -o <outputFileBasename>"
+        )
         sys.exit(2)
     colorTable = ""
     labelFilename = ""
     outputFileBasename = ""
     referenceFilename = ""
     for opt, arg in opts:
-        if opt == '-h':
+        if opt == "-h":
             print(
-                "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename>  -r <referenceFilename> -o <outputFileBasename>")
+                "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename>  -r <referenceFilename> -o <outputFileBasename>"
+            )
             sys.ext()
         elif opt in ("-c", "--colorTable"):
             colorTable = arg
@@ -213,17 +239,27 @@ def main():
         elif opt in ("-o", "--outputFileBasename"):
             outputFileBasename = arg
 
-    if (colorTable and labelFilename and outputFileBasename):
-        print((""" Arguments:
+    if colorTable and labelFilename and outputFileBasename:
+        print(
+            (
+                """ Arguments:
         color table: {0}
         labelFile: {1}
         referenceFilename: {2}
-        outputFileBasename: {3}""".format(colorTable, labelFilename, referenceFilename, outputFileBasename)))
+        outputFileBasename: {3}""".format(
+                    colorTable, labelFilename, referenceFilename, outputFileBasename
+                )
+            )
+        )
 
-        outputFiles = VolumeMeasure(colorTable, labelFilename, referenceFilename, outputFileBasename)
+        outputFiles = VolumeMeasure(
+            colorTable, labelFilename, referenceFilename, outputFileBasename
+        )
         print(outputFiles)
     else:
-        print("WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename> -o <outputFileBasename>")
+        print(
+            "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename> -o <outputFileBasename>"
+        )
 
 
 if __name__ == "__main__":

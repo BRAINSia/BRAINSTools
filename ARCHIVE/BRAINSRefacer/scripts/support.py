@@ -8,12 +8,15 @@ def readFCSV(lmks_fn):
       lmks_fn: A slicer complant fcsv fiducial file
       This function returns a map of named landmark points.
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     lmks_map = OrderedDict()
-    with open(lmks_fn, 'r') as fid:
+    with open(lmks_fn, "r") as fid:
         lines = fid.readlines()
         for line in lines:
-            if line[0] == '#':
+            if line[0] == "#":
                 continue
             string_list = line.split(",")
             lmkName = string_list[0]
@@ -50,29 +53,34 @@ def zero_bnd_idx(pnt, img):
     idx = [min(last_idx[i] - 1, idx[i]) for i in (0, 1, 2)]
     return idx
 
+
 def fix_index_ranges(lower_corner, upper_corner):
     """
     Some images have index increases opposite physical space increases
     :return:
     """
-    lc=[ min(lower_corner[i], upper_corner[i]) for i in (0, 1, 2)]
-    uc=[ max(lower_corner[i], upper_corner[i]) for i in (0, 1, 2)]
+    lc = [min(lower_corner[i], upper_corner[i]) for i in (0, 1, 2)]
+    uc = [max(lower_corner[i], upper_corner[i]) for i in (0, 1, 2)]
     return lc, uc
 
+
 def get_eye_image(one_eye_pnt, orig_img_any, fov):
-    orig_img = sitk.Resample(orig_img_any,)
+    orig_img = sitk.Resample(orig_img_any)
     re_lower_idx = zero_bnd_idx([ii - fov for ii in one_eye_pnt], orig_img)
     re_upper_idx = zero_bnd_idx([ii + fov for ii in one_eye_pnt], orig_img)
     re_center_idx = orig_img.TransformPhysicalPointToIndex(one_eye_pnt)
     LOWER_CORNER = (re_center_idx[0], re_lower_idx[1], re_lower_idx[2])
     UPPER_CORNER = (re_center_idx[0], re_upper_idx[1], re_upper_idx[2])
     LOWER_CORNER, UPPER_CORNER = fix_index_ranges(LOWER_CORNER, UPPER_CORNER)
-    re_2dimg = orig_img[LOWER_CORNER[0],
-               LOWER_CORNER[1]:UPPER_CORNER[1],
-               LOWER_CORNER[2]:UPPER_CORNER[2]
-               ]
+    re_2dimg = orig_img[
+        LOWER_CORNER[0],
+        LOWER_CORNER[1] : UPPER_CORNER[1],
+        LOWER_CORNER[2] : UPPER_CORNER[2],
+    ]
     ## Ensure that the image range of the image fits into 16 bits
-    ThirtyTwoBitImage=sitk.RescaleIntensity(sitk.Cast(re_2dimg, sitk.sitkInt32), 0, (2 ** 16 - 1))
+    ThirtyTwoBitImage = sitk.RescaleIntensity(
+        sitk.Cast(re_2dimg, sitk.sitkInt32), 0, (2 ** 16 - 1)
+    )
     re_2dimg = sitk.Cast(ThirtyTwoBitImage, sitk.sitkUInt16)  # Fit into PNG img
     re_2dimg = sitk.Flip(re_2dimg, [False, True])  ## Flip for easy viewing
     return re_2dimg
@@ -95,9 +103,11 @@ def makeMaskFromBBCorners(LOWER_CORNER_pnt, UPPER_CORNER_pnt, ref_img):
 
     LOWER_index, UPPER_index = arrangeUpperLower(LOWER_index_tmp, UPPER_index_tmp)
 
-    extractregion = ref_img[LOWER_index[0]:UPPER_index[0],
-                    LOWER_index[1]:UPPER_index[1],
-                    LOWER_index[2]:UPPER_index[2]]
+    extractregion = ref_img[
+        LOWER_index[0] : UPPER_index[0],
+        LOWER_index[1] : UPPER_index[1],
+        LOWER_index[2] : UPPER_index[2],
+    ]
     extractregion = (extractregion * 0) + 1
     out_mask = sitk.Cast(sitk.Resample(extractregion, ref_img, IDTXFM), sitk.sitkInt32)
     return out_mask

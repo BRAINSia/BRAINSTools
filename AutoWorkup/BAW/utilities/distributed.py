@@ -1,4 +1,3 @@
-
 """
 distributed.py
 ============================
@@ -13,7 +12,9 @@ Usage:
 
 import math
 from past.utils import old_div
-from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+from collections import (
+    OrderedDict,
+)  # Need OrderedDict internally to ensure consistent ordering
 
 
 def load_cluster(modules=[]):
@@ -28,11 +29,11 @@ def load_cluster(modules=[]):
         for module in modules:
             module_list.append("module load {name}".format(name=module))
         assert len(modules) == len(module_list)
-        return '\n'.join(module_list)
-    return ''
+        return "\n".join(module_list)
+    return ""
 
 
-def source_virtualenv(virtualenv_dir=''):
+def source_virtualenv(virtualenv_dir=""):
     """
     This Function takes in...
 
@@ -40,8 +41,8 @@ def source_virtualenv(virtualenv_dir=''):
     :return:
     """
     if virtualenv_dir is None:
-        return ''
-    assert virtualenv_dir != ''
+        return ""
+    assert virtualenv_dir != ""
     return "source {0}".format(virtualenv_dir)
 
 
@@ -53,11 +54,15 @@ def prepend_env(environment=OrderedDict()):
     :return:
     """
     import os
+
     export_list = []
     for key, value in list(environment.items()):
         export_list.append(
-            "export {key}={value}{sep}${key}".format(key=key, value=value, sep=os.pathsep))  # Append to variable
-    return '\n'.join(export_list)
+            "export {key}={value}{sep}${key}".format(
+                key=key, value=value, sep=os.pathsep
+            )
+        )  # Append to variable
+    return "\n".join(export_list)
 
 
 def create_global_sge_script(cluster, environment):
@@ -69,27 +74,33 @@ def create_global_sge_script(cluster, environment):
     :param environment:
     :return:
     """
-#    >>> import os
-#    >>> nomodules = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'TestSuite', 'node.sh.template.nomodules'), 'r')
-#    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0]
-#    True
-#    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
+    #    >>> import os
+    #    >>> nomodules = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'TestSuite', 'node.sh.template.nomodules'), 'r')
+    #    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0]
+    #    True
+    #    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
 
     import os
     from string import Template
     import sys
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
 
-    sub_dict = OrderedDict(LOAD_MODULES=load_cluster(cluster['modules']),
-                    VIRTUALENV_DIR=source_virtualenv(environment['virtualenv_dir']),
-                    EXPORT_ENV=prepend_env(environment['env']))
-    with open(os.path.join(os.path.dirname(__file__), 'node.sh.template')) as fid:
+    sub_dict = OrderedDict(
+        LOAD_MODULES=load_cluster(cluster["modules"]),
+        VIRTUALENV_DIR=source_virtualenv(environment["virtualenv_dir"]),
+        EXPORT_ENV=prepend_env(environment["env"]),
+    )
+    with open(os.path.join(os.path.dirname(__file__), "node.sh.template")) as fid:
         tpl = fid.read()
     retval = Template(tpl).substitute(sub_dict)
     return retval
 
 
-def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null', stderr='/dev/null'):
+def modify_qsub_args(
+    queue, memoryGB, minThreads, maxThreads, stdout="/dev/null", stderr="/dev/null"
+):
     """
     Outputs qsub_args string for Nipype nodes
     queue is the string to specify the queue "-q all.q | -q HJ,ICTS,UI"
@@ -120,26 +131,34 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     :return:
 
     """
-    assert memoryGB <= 48, "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
+    assert (
+        memoryGB <= 48
+    ), "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
 
     ## NOTE: At least 1 thread needs to be requested per 2GB needed
-    memoryThreads = int(math.ceil((old_div(math.ceil(memoryGB), 2))))  # Ensure that threads are integers
+    memoryThreads = int(
+        math.ceil((old_div(math.ceil(memoryGB), 2)))
+    )  # Ensure that threads are integers
     minThreads = max(minThreads, memoryThreads)
     maxThreads = max(maxThreads, memoryThreads)
     maxThreads = int(maxThreads)  # Ensure that threads are integers
     minThreads = int(minThreads)  # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
-        threadsRangeString = '{0}'.format(minThreads)
+        threadsRangeString = "{0}".format(minThreads)
         maxThreads = minThreads
     elif maxThreads == -1:
-        threadsRangeString = '{0}-'.format(minThreasds)
+        threadsRangeString = "{0}-".format(minThreasds)
         maxThreads = 12345  # HUGE NUMBER!
     else:
         threadsRangeString = "{0}-{1}".format(minThreads, maxThreads)
 
     if maxThreads < minThreads:
-        assert maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads, maxThreads)
+        assert (
+            maxThreads > minThreads
+        ), "Must specify maxThreads({0}) > minThreads({1})".format(
+            minThreads, maxThreads
+        )
 
     ## TODO:  May need to figure out how to set memory and threads for cluster.
     ## for now just let the number of threads requested take care of this because
@@ -147,9 +166,13 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     ##  -l mem_free={mem}
 
     ## format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
-    format_str = '-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}'.format(
-        mint=minThreads, maxt=threadsRangeString,
+    format_str = "-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}".format(
+        mint=minThreads,
+        maxt=threadsRangeString,
         totalThreads=threadsRangeString,
         mem=memoryGB,
-        stdout=stdout, stderr=stderr, queue=queue)
+        stdout=stdout,
+        stderr=stderr,
+        queue=queue,
+    )
     return format_str

@@ -13,7 +13,13 @@ Usage:
 
 import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
+from nipype.interfaces.base import (
+    CommandLine,
+    CommandLineInputSpec,
+    TraitedSpec,
+    File,
+    Directory,
+)
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools import *
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
@@ -37,14 +43,25 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     """
     PERSISTANCE_CHECKWF = pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(
-        fields=['fixedVolume', 'fixedBinaryVolume', 'movingVolume', 'movingBinaryVolume', 'initialTransform']),
-        name='inputspec')
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'subject_id', fs_reconall, 'subject_id')
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')
+    inputsSpec = pe.Node(
+        interface=IdentityInterface(
+            fields=[
+                "fixedVolume",
+                "fixedBinaryVolume",
+                "movingVolume",
+                "movingBinaryVolume",
+                "initialTransform",
+            ]
+        ),
+        name="inputspec",
+    )
+    PERSISTANCE_CHECKWF.connect(inputsSpec, "subject_id", fs_reconall, "subject_id")
+    PERSISTANCE_CHECKWF.connect(inputsSpec, "T1_files", fs_reconall, "T1_files")
 
     print("DOING FILE PERSISTANCE CHECK")
-    PERSISTANCE_CHECK = pe.Node(interface=BRAINSFit(), name="99999_PERSISTANCE_CHECK_PERSISTANCE_CHECK")
+    PERSISTANCE_CHECK = pe.Node(
+        interface=BRAINSFit(), name="99999_PERSISTANCE_CHECK_PERSISTANCE_CHECK"
+    )
     PERSISTANCE_CHECK.inputs.costMetric = "MMI"
     PERSISTANCE_CHECK.inputs.debugLevel = 10
     PERSISTANCE_CHECK.inputs.maskProcessingMode = "ROI"
@@ -61,12 +78,25 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     PERSISTANCE_CHECK.inputs.outputTransform = "Trial_Initializer_Output.h5"
     PERSISTANCE_CHECK.inputs.writeOutputTransformInFloat = True
 
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'fixedVolume', PERSISTANCE_CHECK, 'fixedVolume')
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'fixedBinaryVolume', PERSISTANCE_CHECK, 'fixedBinaryVolume')
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'movingVolume', PERSISTANCE_CHECK, 'movingVolume')
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'movingBinaryVolume', PERSISTANCE_CHECK, 'movingBinaryVolume')
-    PERSISTANCE_CHECKWF.connect(inputsSpec, 'initialTransform', PERSISTANCE_CHECK, 'initialTransform')
+    PERSISTANCE_CHECKWF.connect(
+        inputsSpec, "fixedVolume", PERSISTANCE_CHECK, "fixedVolume"
+    )
+    PERSISTANCE_CHECKWF.connect(
+        inputsSpec, "fixedBinaryVolume", PERSISTANCE_CHECK, "fixedBinaryVolume"
+    )
+    PERSISTANCE_CHECKWF.connect(
+        inputsSpec, "movingVolume", PERSISTANCE_CHECK, "movingVolume"
+    )
+    PERSISTANCE_CHECKWF.connect(
+        inputsSpec, "movingBinaryVolume", PERSISTANCE_CHECK, "movingBinaryVolume"
+    )
+    PERSISTANCE_CHECKWF.connect(
+        inputsSpec, "initialTransform", PERSISTANCE_CHECK, "initialTransform"
+    )
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputVolume', 'outputTransform']), name='outputspec')
+    outputsSpec = pe.Node(
+        interface=IdentityInterface(fields=["outputVolume", "outputTransform"]),
+        name="outputspec",
+    )
 
     return PERSISTANCE_CHECKWF

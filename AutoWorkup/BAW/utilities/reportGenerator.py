@@ -35,25 +35,27 @@ def onlyT1T2(src, names):
     :param names:
     :return:
     """
-    if src.endswith('TissueClassify'):
+    if src.endswith("TissueClassify"):
         # print "Keeping T1/T2!"
         try:
-            names.remove('t1_average_BRAINSABC.nii.gz')
+            names.remove("t1_average_BRAINSABC.nii.gz")
         except ValueError:
             pass
         try:
-            names.remove('t2_average_BRAINSABC.nii.gz')
+            names.remove("t2_average_BRAINSABC.nii.gz")
         except ValueError:
             pass
     else:
-        names.remove('TissueClassify')
+        names.remove("TissueClassify")
     # print "Ignoring these files..."
     # for name in names:
     #     print "\t" + name
     return names
 
 
-def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', **kwargs):
+def main(
+    REPORT, EXPERIMENT, outdir=None, OUTFILE="/tmp/autoworkup_report.csv", **kwargs
+):
     """
     This function...
 
@@ -64,54 +66,69 @@ def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', 
     :param kwargs:
     :return:
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     if outdir is not None:
         EXPERIMENT = EXPERIMENT.rstrip(os.path.sep)
         outdir = os.path.join(outdir, os.path.basename(EXPERIMENT))
-    with open(REPORT, 'r') as iid, open(OUTFILE, 'w') as oid:
-        report_reader = csv.DictReader(iid, delimiter=',', quotechar='"')
+    with open(REPORT, "r") as iid, open(OUTFILE, "w") as oid:
+        report_reader = csv.DictReader(iid, delimiter=",", quotechar='"')
         writer = None
         for row in report_reader:
             if writer is None:
-                writer = csv.DictWriter(oid, fieldnames=report_reader.fieldnames, quoting=csv.QUOTE_ALL)
+                writer = csv.DictWriter(
+                    oid, fieldnames=report_reader.fieldnames, quoting=csv.QUOTE_ALL
+                )
                 writer.writeheader()
-            path = os.path.join(EXPERIMENT, row['project'], row['subject'], row['session'], 'TissueClassify')
+            path = os.path.join(
+                EXPERIMENT,
+                row["project"],
+                row["subject"],
+                row["session"],
+                "TissueClassify",
+            )
             print(path)
             if outdir is not None:
-                outpath = os.path.join(outdir, row['project'], row['subject'], row['session'])
+                outpath = os.path.join(
+                    outdir, row["project"], row["subject"], row["session"]
+                )
                 # assert os.path.isdir(path)
                 shutil.copytree(path, outpath, ignore=onlyT1T2)
                 # HACK: copytree isn't copying the files, so do it manually
                 try:
-                    assert len(os.listdir(outpath)) > 2, "{0} doesn't have enough files".format(outpath)
+                    assert (
+                        len(os.listdir(outpath)) > 2
+                    ), "{0} doesn't have enough files".format(outpath)
                 except AssertionError:
                     try:
-                        fname = os.path.join(path, 't1_average_BRAINSABC.nii.gz')
-                        newpath = os.path.join(outpath, 't1_average_BRAINSABC.nii.gz')
+                        fname = os.path.join(path, "t1_average_BRAINSABC.nii.gz")
+                        newpath = os.path.join(outpath, "t1_average_BRAINSABC.nii.gz")
                         shutil.copyfile(fname, newpath)
                     except:
                         pass
                     try:
-                        fname = os.path.join(path, 't2_average_BRAINSABC.nii.gz')
-                        newpath = os.path.join(outpath, 't2_average_BRAINSABC.nii.gz')
+                        fname = os.path.join(path, "t2_average_BRAINSABC.nii.gz")
+                        newpath = os.path.join(outpath, "t2_average_BRAINSABC.nii.gz")
                         shutil.copyfile(fname, newpath)
                     except:
                         pass
                 # END HACK
                 print(outpath)
             outdict = OrderedDict()
-            olddict = eval(row['imagefiles'])
+            olddict = eval(row["imagefiles"])
             for key in list(olddict.keys()):
-                if key.startswith('T1'):
-                    fname = os.path.join(path, 't1_average_BRAINSABC.nii.gz')
-                    newpath = os.path.join(outpath, 't1_average_BRAINSABC.nii.gz')
-                elif key.startswith('T2'):
-                    fname = os.path.join(path, 't2_average_BRAINSABC.nii.gz')
-                    newpath = os.path.join(outpath, 't2_average_BRAINSABC.nii.gz')
+                if key.startswith("T1"):
+                    fname = os.path.join(path, "t1_average_BRAINSABC.nii.gz")
+                    newpath = os.path.join(outpath, "t1_average_BRAINSABC.nii.gz")
+                elif key.startswith("T2"):
+                    fname = os.path.join(path, "t2_average_BRAINSABC.nii.gz")
+                    newpath = os.path.join(outpath, "t2_average_BRAINSABC.nii.gz")
                 else:
                     continue
                 outdict[key] = [fname]
-            row['imagefiles'] = outdict
+            row["imagefiles"] = outdict
             writer.writerow(row)
 
 
@@ -121,9 +138,9 @@ if __name__ == "__main__":
     args = docopt(__doc__)
     print(args)
     for key in list(args.keys()):
-        if key.startswith('-'):
+        if key.startswith("-"):
             value = args.pop(key)
             newkey = key.strip("-")
             args[newkey] = value
-    args['OUTFILE'] = args.pop('f')
+    args["OUTFILE"] = args.pop("f")
     main(**args)

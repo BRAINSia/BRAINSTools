@@ -17,9 +17,33 @@ import numpy as np
 from ..common import check_file
 from ..config import _config
 
-partials = ['accumben', 'air', 'caudate', 'crblgm', 'crblwm', 'csf', 'globus', 'hippocampus', 'notcsf', 'notgm',
-            'notvb', 'notwm', 'putamen', 'surfgm', 'thalamus', 'vb', 'wm']
-accumulated = ['background_total', 'gm_total', 'csf_total', 'vb_total', 'globus_total', 'wm_total']
+partials = [
+    "accumben",
+    "air",
+    "caudate",
+    "crblgm",
+    "crblwm",
+    "csf",
+    "globus",
+    "hippocampus",
+    "notcsf",
+    "notgm",
+    "notvb",
+    "notwm",
+    "putamen",
+    "surfgm",
+    "thalamus",
+    "vb",
+    "wm",
+]
+accumulated = [
+    "background_total",
+    "gm_total",
+    "csf_total",
+    "vb_total",
+    "globus_total",
+    "wm_total",
+]
 
 _isAccumulated = False
 _tolerance = [0.51, 1.01]
@@ -33,7 +57,7 @@ def _formatPartialAssertString():
     """
     assertString = "Partial label is not recognized: %s\nValid labels are:"
     for p in partials + accumulated:
-        assertString = '\n'.join([assertString, p.upper() + ','])
+        assertString = "\n".join([assertString, p.upper() + ","])
     assertString = assertString[:-1]
     return assertString
 
@@ -45,7 +69,7 @@ def _checkLabel(label):
     :param label:
     """
     errorString = _formatPartialAssertString()
-    if label.lower() == 'icv':
+    if label.lower() == "icv":
         pass
     else:
         assert label.lower() in partials + accumulated, errorString % label
@@ -58,7 +82,7 @@ def _setIfAccumulated(label):
     :param label:
     """
     global _isAccumulated
-    if label.lower() in accumulated + ['icv']:
+    if label.lower() in accumulated + ["icv"]:
         _isAccumulated = True
     else:
         _isAccumulated = False
@@ -80,21 +104,21 @@ def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolera
 
     maskSum = 0.0
     if _isAccumulated:
-        fileDir = _config.get('Results', 'accumulated')
+        fileDir = _config.get("Results", "accumulated")
     else:
         # print "Not accumulated: ", label
-        fileDir = _config.get('Results', 'partials')
+        fileDir = _config.get("Results", "partials")
 
-    if label == 'ICV':
+    if label == "ICV":
         for sublabel in accumulated:
-            if sublabel == 'background_total':
+            if sublabel == "background_total":
                 continue
             else:
                 # print "sublabel: ", sublabel, calculateBinaryVolume(dirname, sublabel, True)
                 maskSum += calculateBinaryVolume(dirname, sublabel, True)
         return maskSum
 
-    labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_' + label + '.nii.gz')
+    labelFile = os.path.join(dirname, fileDir, "POSTERIOR_" + label + ".nii.gz")
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     lowerTol, upperTol = tolerance
@@ -120,20 +144,20 @@ def calculatePartialVolume(dirname, label, _isAccumulated=True):
 
     maskSum = 0.0
     if _isAccumulated:
-        fileDir = _config.get('Results', 'accumulated')
+        fileDir = _config.get("Results", "accumulated")
     else:
-        fileDir = _config.get('Results', 'partials')
+        fileDir = _config.get("Results", "partials")
 
-    if label == 'ICV':
+    if label == "ICV":
         for sublabel in accumulated:
-            if sublabel == 'background_total':
+            if sublabel == "background_total":
                 continue
             else:
                 # print "sublabel: ", sublabel, calculatePartialVolume(dirname, sublabel, True)
                 maskSum += calculatePartialVolume(dirname, sublabel, True)
         return maskSum
 
-    labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_' + label + '.nii.gz')
+    labelFile = os.path.join(dirname, fileDir, "POSTERIOR_" + label + ".nii.gz")
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     nda = sitk.GetArrayFromImage(image)
@@ -153,20 +177,20 @@ def getPosteriorVolume(*args, **kwds):
     :return:
     """
     dirname = labels = project = subject = session = experimentDir = None
-    experimentDir = _config.get('Results', 'directory')
+    experimentDir = _config.get("Results", "directory")
     # parse keywords
     for key, value in list(kwds.items()):
-        if key == 'dirname':
+        if key == "dirname":
             dirname = check_file(value)
-        elif key == 'labels':
+        elif key == "labels":
             labels = value
-        elif key == 'project':
+        elif key == "project":
             project = value
-        elif key == 'subject':
+        elif key == "subject":
             subject = value
-        elif key == 'session':
+        elif key == "session":
             session = value
-        elif key == 'binary':
+        elif key == "binary":
             binary = value
     # Set keyword-only defaults
     if binary is None:
@@ -184,7 +208,9 @@ def getPosteriorVolume(*args, **kwds):
             labels = args
         if dirname is None:
             try:
-                dirname = check_file(os.path.join(experimentDir, project, subject, session))
+                dirname = check_file(
+                    os.path.join(experimentDir, project, subject, session)
+                )
             except Exception as err:
                 raise err
     assert dirname is not None

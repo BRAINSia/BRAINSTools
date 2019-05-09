@@ -1,4 +1,3 @@
-
 """
 image_processing.py
 ============================
@@ -11,8 +10,8 @@ Usage:
 
 """
 
-#Image processing functions for pipelines
-#from builtins import range
+# Image processing functions for pipelines
+# from builtins import range
 
 
 def FixWMPartitioning(brainMask, PosteriorsList):
@@ -40,10 +39,16 @@ def FixWMPartitioning(brainMask, PosteriorsList):
            """
 
         return sitk.BinaryThreshold(
-            inputMask +
-            sitk.ErodeObjectMorphology(
-                sitk.VotingBinaryHoleFilling(BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]), HOLE_FILL_SIZE), 1,
-            10000)
+            inputMask
+            + sitk.ErodeObjectMorphology(
+                sitk.VotingBinaryHoleFilling(
+                    BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]
+                ),
+                HOLE_FILL_SIZE,
+            ),
+            1,
+            10000,
+        )
 
     print(("Reading {0} of type {1}".format(brainMask, type(brainMask))))
     BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask), 1, 1000)
@@ -60,27 +65,33 @@ def FixWMPartitioning(brainMask, PosteriorsList):
     AIR_index = None
     bnames = [os.path.basename(fname) for fname in PosteriorsList]
     for i in range(0, len(PosteriorsList)):
-        if bnames[i] == 'POSTERIOR_NOTCSF.nii.gz':
+        if bnames[i] == "POSTERIOR_NOTCSF.nii.gz":
             NOTCSF_index = i
-        elif bnames[i] == 'POSTERIOR_CSF.nii.gz':
+        elif bnames[i] == "POSTERIOR_CSF.nii.gz":
             CSF_index = i
-        elif bnames[i] == 'POSTERIOR_NOTGM.nii.gz':
+        elif bnames[i] == "POSTERIOR_NOTGM.nii.gz":
             NOTGM_index = i
-        elif bnames[i] == 'POSTERIOR_SURFGM.nii.gz':
+        elif bnames[i] == "POSTERIOR_SURFGM.nii.gz":
             GM_index = i
-        elif bnames[i] == 'POSTERIOR_NOTWM.nii.gz':
+        elif bnames[i] == "POSTERIOR_NOTWM.nii.gz":
             NOTWM_index = i
-        elif bnames[i] == 'POSTERIOR_WM.nii.gz':
+        elif bnames[i] == "POSTERIOR_WM.nii.gz":
             WM_index = i
-        elif bnames[i] == 'POSTERIOR_NOTVB.nii.gz':
+        elif bnames[i] == "POSTERIOR_NOTVB.nii.gz":
             NOTVB_index = i
-        elif bnames[i] == 'POSTERIOR_VB.nii.gz':
+        elif bnames[i] == "POSTERIOR_VB.nii.gz":
             VB_index = i
-        elif bnames[i] == 'POSTERIOR_AIR.nii.gz':
+        elif bnames[i] == "POSTERIOR_AIR.nii.gz":
             AIR_index = i
 
-    def ShiftValueForHardPartition(BM_FILLED, ShiftPosteriorsList, NOTREGION_index, REGION_index, REGION_NAME,
-                                   NOTREGION_NAME):
+    def ShiftValueForHardPartition(
+        BM_FILLED,
+        ShiftPosteriorsList,
+        NOTREGION_index,
+        REGION_index,
+        REGION_NAME,
+        NOTREGION_NAME,
+    ):
         """
         This function takes in...
 
@@ -92,17 +103,31 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         :param NOTREGION_NAME:
         :return:
         """
-        print(("Reading {0} of type {1}".format(ShiftPosteriorsList[NOTREGION_index],
-                                               type(ShiftPosteriorsList[NOTREGION_index]))))
+        print(
+            (
+                "Reading {0} of type {1}".format(
+                    ShiftPosteriorsList[NOTREGION_index],
+                    type(ShiftPosteriorsList[NOTREGION_index]),
+                )
+            )
+        )
         NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index])
-        print(("Reading {0} of type {1}".format(ShiftPosteriorsList[REGION_index],
-                                               type(ShiftPosteriorsList[REGION_index]))))
+        print(
+            (
+                "Reading {0} of type {1}".format(
+                    ShiftPosteriorsList[REGION_index],
+                    type(ShiftPosteriorsList[REGION_index]),
+                )
+            )
+        )
         REGION = sitk.ReadImage(ShiftPosteriorsList[REGION_index])
         ALL_REGION = NOTREGION + REGION
         NEW_REGION = ALL_REGION * sitk.Cast(BM_FILLED, sitk.sitkFloat32)
         NEW_NOTREGION = ALL_REGION * sitk.Cast((1 - BM_FILLED), sitk.sitkFloat32)
-        NEW_REGION_FN = os.path.realpath('POSTERIOR_{0}.nii.gz'.format(REGION_NAME))
-        NEW_NOTREGION_FN = os.path.realpath('POSTERIOR_{0}.nii.gz'.format(NOTREGION_NAME))
+        NEW_REGION_FN = os.path.realpath("POSTERIOR_{0}.nii.gz".format(REGION_NAME))
+        NEW_NOTREGION_FN = os.path.realpath(
+            "POSTERIOR_{0}.nii.gz".format(NOTREGION_NAME)
+        )
         sitk.WriteImage(NEW_REGION, NEW_REGION_FN)
         sitk.WriteImage(NEW_NOTREGION, NEW_NOTREGION_FN)
         ShiftPosteriorsList[NOTREGION_index] = NEW_NOTREGION_FN
@@ -110,26 +135,41 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         return ShiftPosteriorsList
 
     UpdatedPosteriorsList = list(PosteriorsList)
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, 'CSF',
-                                                       'NOTCSF')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index,
-                                                       'SURFGM', 'NOTGM')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, 'WM',
-                                                       'NOTWM')
-    UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, 'VB',
-                                                       'NOTVB')
+    UpdatedPosteriorsList = ShiftValueForHardPartition(
+        BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, "CSF", "NOTCSF"
+    )
+    UpdatedPosteriorsList = ShiftValueForHardPartition(
+        BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index, "SURFGM", "NOTGM"
+    )
+    UpdatedPosteriorsList = ShiftValueForHardPartition(
+        BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, "WM", "NOTWM"
+    )
+    UpdatedPosteriorsList = ShiftValueForHardPartition(
+        BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, "VB", "NOTVB"
+    )
 
-    print(("Reading {0} of type {1}".format(PosteriorsList[AIR_index], type(PosteriorsList[AIR_index]))))
-    AirMask = sitk.BinaryThreshold(sitk.ReadImage(PosteriorsList[AIR_index]), 0.50, 1000000)
+    print(
+        (
+            "Reading {0} of type {1}".format(
+                PosteriorsList[AIR_index], type(PosteriorsList[AIR_index])
+            )
+        )
+    )
+    AirMask = sitk.BinaryThreshold(
+        sitk.ReadImage(PosteriorsList[AIR_index]), 0.50, 1000000
+    )
     nonAirMask = sitk.Cast(1 - AirMask, sitk.sitkUInt8)
-    nonAirRegionMask = os.path.realpath('NonAirMask.nii.gz')
+    nonAirRegionMask = os.path.realpath("NonAirMask.nii.gz")
     sitk.WriteImage(nonAirMask, nonAirRegionMask)
 
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
-                                         # input order is maintained across runs.
-                                         # This prevents "Outdated cache" errors
-                                         # That were causing the rest of
-                                         # the pipeline to be constantly re-run
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
+    # input order is maintained across runs.
+    # This prevents "Outdated cache" errors
+    # That were causing the rest of
+    # the pipeline to be constantly re-run
     POSTERIOR_LABELS = OrderedDict()  # (FG,Label)
     POSTERIOR_LABELS["POSTERIOR_WM.nii.gz"] = (1, 1)
     POSTERIOR_LABELS["POSTERIOR_SURFGM.nii.gz"] = (1, 2)
@@ -154,4 +194,9 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         MatchingFGCodeList.append(POSTERIOR_LABELS[post_key][0])
         MatchingLabelList.append(POSTERIOR_LABELS[post_key][1])
 
-    return UpdatedPosteriorsList, MatchingFGCodeList, MatchingLabelList, nonAirRegionMask
+    return (
+        UpdatedPosteriorsList,
+        MatchingFGCodeList,
+        MatchingLabelList,
+        nonAirRegionMask,
+    )

@@ -20,7 +20,7 @@ from sklearn.externals import joblib
 from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
 import json
-from vesselness import compute_absolute_eigen_values
+from .vesselness import compute_absolute_eigen_values
 
 
 def get_list_of_features():
@@ -30,7 +30,10 @@ def get_list_of_features():
     :return:
     """
     from ..workflow import get_local_file_location
-    _file = open(get_local_file_location(os.path.join("maclearn", "data_order.json")), "rb")
+
+    _file = open(
+        get_local_file_location(os.path.join("maclearn", "data_order.json")), "rb"
+    )
     features = json.load(_file)
     _file.close()
     return features
@@ -151,7 +154,9 @@ def imagearray(image):
     return a1D
 
 
-def databyregion(data, wmtargets, wmlabelmap, wmlabels, gmtargets, gmlabelmap, gmlabels):
+def databyregion(
+    data, wmtargets, wmlabelmap, wmlabels, gmtargets, gmlabelmap, gmlabels
+):
     """
     Takes in an label map image and devides the data and
     targets into specified regions. Regoins are specified
@@ -167,7 +172,7 @@ def databyregion(data, wmtargets, wmlabelmap, wmlabels, gmtargets, gmlabelmap, g
     :return:
     """
     columns = [data]
-    keys = ['Features', 'WMRegions', 'GMRegions', 'Targets']
+    keys = ["Features", "WMRegions", "GMRegions", "Targets"]
 
     wmregions = list()
     for i, label in enumerate(wmlabels):
@@ -179,7 +184,9 @@ def databyregion(data, wmtargets, wmlabelmap, wmlabels, gmtargets, gmlabelmap, g
         gmregions.append(pd.Series(gmlabelmap == label))
     df_gm = pd.concat(gmregions, axis=1, keys=gmlabels)
 
-    df_targets = pd.concat([pd.Series(wmtargets), pd.Series(gmtargets)], axis=1, keys=['WM', 'GM'])
+    df_targets = pd.concat(
+        [pd.Series(wmtargets), pd.Series(gmtargets)], axis=1, keys=["WM", "GM"]
+    )
 
     df = pd.concat([data, df_wm, df_gm, df_targets], axis=1, keys=keys)
 
@@ -206,14 +213,16 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
     # intensity
     image = sitk.ReadImage(in_file, sitk.sitkFloat64)
     feature_value_arrays.append(imagearray(image))
-    feature_names.append('')
+    feature_names.append("")
 
     # gradient magnitude
     feature_value_arrays.append(imagearray(sitk.GradientMagnitude(image)))
-    feature_names.append('GradMag')
+    feature_names.append("GradMag")
 
     # second order gradient magnitude
-    feature_value_arrays.append(imagearray(sitk.GradientMagnitude(sitk.GradientMagnitude(image))))
+    feature_value_arrays.append(
+        imagearray(sitk.GradientMagnitude(sitk.GradientMagnitude(image)))
+    )
     feature_names.append("GradMag2")
 
     # Sobel
@@ -222,36 +231,51 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
 
     # eigenvalues of hessian
     feature_names.extend(["Eigen{0}".format(i) for i in range(1, 4)])
-    feature_value_arrays.extend([eigen.flatten() for eigen in compute_absolute_eigen_values(image, sigma=0)])
+    feature_value_arrays.extend(
+        [eigen.flatten() for eigen in compute_absolute_eigen_values(image, sigma=0)]
+    )
 
     # Laplacian
     feature_names.append("Laplacian")
     feature_value_arrays.append(imagearray(sitk.Laplacian(image, useImageSpacing=True)))
 
-    for sigma in [i * .5 for i in range(1, 7)]:
+    for sigma in [i * 0.5 for i in range(1, 7)]:
         sigma_str = "{0:.1f}".format(sigma)
-        feature_names.extend(["GaussEigen{0}_{1}".format(i, sigma_str) for i in range(1, 4)])
-        feature_value_arrays.extend([eigen.flatten() for eigen in compute_absolute_eigen_values(image, sigma=sigma)])
+        feature_names.extend(
+            ["GaussEigen{0}_{1}".format(i, sigma_str) for i in range(1, 4)]
+        )
+        feature_value_arrays.extend(
+            [
+                eigen.flatten()
+                for eigen in compute_absolute_eigen_values(image, sigma=sigma)
+            ]
+        )
 
         feature_names.append("GaussLaplacian_{0}".format(sigma_str))
-        feature_value_arrays.append(imagearray(sitk.LaplacianRecursiveGaussian(image, sigma=sigma)))
+        feature_value_arrays.append(
+            imagearray(sitk.LaplacianRecursiveGaussian(image, sigma=sigma))
+        )
 
         feature_names.append("Gauss_{0}".format(sigma_str))
-        feature_value_arrays.append(imagearray(sitk.RecursiveGaussian(image, sigma=sigma)))
+        feature_value_arrays.append(
+            imagearray(sitk.RecursiveGaussian(image, sigma=sigma))
+        )
 
-        feature_value_arrays.append(imagearray(sitk.GradientMagnitudeRecursiveGaussian(image, sigma=sigma)))
+        feature_value_arrays.append(
+            imagearray(sitk.GradientMagnitudeRecursiveGaussian(image, sigma=sigma))
+        )
         feature_names.append("GaussGradMag_{0}".format(sigma_str))
 
     feature_value_series = [pd.Series(array) for array in feature_value_arrays]
     keys = [modality + meas for meas in feature_names]
 
     for name in additional_feature_names:
-        feature_value_series.append(pd.Series(imagearray(sitk.ReadImage(additional_images[name]))))
+        feature_value_series.append(
+            pd.Series(imagearray(sitk.ReadImage(additional_images[name])))
+        )
         keys.append(name)
 
-    data = pd.concat(feature_value_series,
-                     keys=keys,
-                     axis=1)
+    data = pd.concat(feature_value_series, keys=keys, axis=1)
 
     return data
 
@@ -309,7 +333,7 @@ def multimodalimagedata(sample_dict):
     modals = sample_dict["Modalities"]
     if len(modals) > 1:
         data_list = list()
-        for j, modal in enumerate(modals): # iterate through the modalities
+        for j, modal in enumerate(modals):  # iterate through the modalities
             data_list.append(image_data(sample_dict[modal], modal))
         df = pd.concat(data_list, axis=1)
     else:
@@ -340,11 +364,20 @@ def collectdata(data_csv):
                 else:
                     # check that the modalities and labels remain constant
                     if not modalities == ast.literal_eval(line["Modalities"]):
-                        print("ERROR: csv line %d - Modalities must be the same for all subjects" % i)
+                        print(
+                            "ERROR: csv line %d - Modalities must be the same for all subjects"
+                            % i
+                        )
                     elif not gmlabels == ast.literal_eval(line["GMLabels"]):
-                        print("ERROR: csv line %d - GMLabels must be the same for all subjects" % i)
+                        print(
+                            "ERROR: csv line %d - GMLabels must be the same for all subjects"
+                            % i
+                        )
                     elif not wmlabels == ast.literal_eval(line["WMLabels"]):
-                        print("ERROR: csv line %d - WMLabels must be the same for all subjects" % i)
+                        print(
+                            "ERROR: csv line %d - WMLabels must be the same for all subjects"
+                            % i
+                        )
 
                 # replace the string representations with the literal representations
                 line["Modalities"] = modalities
@@ -353,15 +386,14 @@ def collectdata(data_csv):
 
                 data_samples.append(line)
 
-           except KeyError, e:
+            except KeyError as e:
                 print("ERROR: csv line {0} KeyError: {1}".format(i + 1, str(e)))
                 sys.exit()
-
 
     return data_samples
 
 
-def splitdata(data_samples, per_testing=.1):
+def splitdata(data_samples, per_testing=0.1):
     """
     Split the data samples into training and testing sets.
 
@@ -375,7 +407,7 @@ def splitdata(data_samples, per_testing=.1):
         sys.exit()
 
     n = len(data_samples)
-    n_test = int(n * per_testing) # will always round down
+    n_test = int(n * per_testing)  # will always round down
 
     # randomly shuffle the training samples
     train_samples = data_samples
@@ -402,7 +434,7 @@ def combinedata(data_samples):
 
     for line in data_samples:
         # collect new data
-        id_list.append(line['ID'])
+        id_list.append(line["ID"])
         new_data = multimodalimagedata(line)
 
         # read in the target data
@@ -418,9 +450,17 @@ def combinedata(data_samples):
         gmlabels = line["GMLabels"]
 
         # split the data by the labeled regions
-        df_list.append(databyregion(new_data,
-                                    wm_targets, wmlabelmap, wmlabels,
-                                    gm_targets, gmlabelmap, gmlabels))
+        df_list.append(
+            databyregion(
+                new_data,
+                wm_targets,
+                wmlabelmap,
+                wmlabels,
+                gm_targets,
+                gmlabelmap,
+                gmlabels,
+            )
+        )
 
     df_final = pd.concat(df_list, axis=0, keys=id_list)
 
@@ -439,13 +479,15 @@ def get_labeled_region_data(t_data, rg_name, label, matter):
     """
     # Training
     t_index = t_data[rg_name][label]
-    t_targets = t_data['Targets'][matter][t_index].values
-    t_feat = t_data['Features'][t_index].values
+    t_targets = t_data["Targets"][matter][t_index].values
+    t_feat = t_data["Features"][t_index].values
 
     return t_feat, t_targets
 
 
-def train_classifier(data, targets, out_file, clf=RandomForestClassifier(), n_jobs=-1, load_clf=True):
+def train_classifier(
+    data, targets, out_file, clf=RandomForestClassifier(), n_jobs=-1, load_clf=True
+):
     """
     Trains the classifier and dumps the pickle file
 
@@ -480,34 +522,49 @@ def run_training(training_data, train_base_clf=False, out_dir=".", n_jobs=-1):
     :param n_jobs:
     :return:
     """
-    all_training_features = training_data['Features'].values
+    all_training_features = training_data["Features"].values
     classifiers = dict()
-    for matter in ['WM', 'GM']:
+    for matter in ["WM", "GM"]:
         classifiers[matter] = dict()
 
         print("Training {0}".format(matter))
         # Get WM training targets
-        train_matter_targets = training_data['Targets'][matter].values
+        train_matter_targets = training_data["Targets"][matter].values
 
         if train_base_clf:
             base_clf_file = os.path.join(out_dir, "{0}BaseCLF.pkl".format(matter))
-            train_classifier(all_training_features, train_matter_targets, base_clf_file, n_jobs=n_jobs, load_clf=False)
-            classifiers[matter]['NonRegional'] = base_clf_file
+            train_classifier(
+                all_training_features,
+                train_matter_targets,
+                base_clf_file,
+                n_jobs=n_jobs,
+                load_clf=False,
+            )
+            classifiers[matter]["NonRegional"] = base_clf_file
 
-        rg_name = matter + 'Regions'
+        rg_name = matter + "Regions"
 
-        classifiers[matter]['Regional'] = dict()
+        classifiers[matter]["Regional"] = dict()
 
         for label in training_data[rg_name].columns:
 
             # get label specific data
-            label_train_features, label_train_targets = get_labeled_region_data(training_data, rg_name, label, matter)
+            label_train_features, label_train_targets = get_labeled_region_data(
+                training_data, rg_name, label, matter
+            )
 
             # train regional classifier
-            regional_clf_file = os.path.join(out_dir, "{0}{1}RegionalCLF.pkl".format(matter, label))
-            train_classifier(label_train_features, label_train_targets, regional_clf_file, n_jobs=n_jobs,
-                             load_clf=False)
+            regional_clf_file = os.path.join(
+                out_dir, "{0}{1}RegionalCLF.pkl".format(matter, label)
+            )
+            train_classifier(
+                label_train_features,
+                label_train_targets,
+                regional_clf_file,
+                n_jobs=n_jobs,
+                load_clf=False,
+            )
 
-            classifiers[matter]['Regional'][label] = regional_clf_file
+            classifiers[matter]["Regional"][label] = regional_clf_file
 
     return classifiers

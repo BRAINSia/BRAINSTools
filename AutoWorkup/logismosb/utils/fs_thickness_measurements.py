@@ -215,7 +215,7 @@ def compute_thickness(wmP, kdTreegm, kdTreewm):
     # distnace from gm to closest wm point
     dst2 = distance.euclidean(gmP, wmP2)
     # average the two distances
-    thickness = (dst1 + dst2)/float(2)
+    thickness = (dst1 + dst2) / float(2)
     return thickness
 
 
@@ -297,7 +297,9 @@ def get_thickness_file(subjects_dir, subject_id, hemisphere):
     surf_dir = get_surf_dir(subjects_dir, subject_id)
     white, pial = get_white_and_pial(surf_dir, hemisphere)
     thickness = calculate_distance(white, pial)
-    return write_vtk_file(thickness, os.path.join(surf_dir, "{0}_thickness.vtk".format(hemisphere)))
+    return write_vtk_file(
+        thickness, os.path.join(surf_dir, "{0}_thickness.vtk".format(hemisphere))
+    )
 
 
 def get_thickness_files_for_both_hemispheres(subjects_dir, subject_id):
@@ -308,8 +310,8 @@ def get_thickness_files_for_both_hemispheres(subjects_dir, subject_id):
     :param subjects_id:
     :return:
     """
-    lh_thickness = get_thickness_file(subjects_dir, subject_id, 'lh')
-    rh_thickness = get_thickness_file(subjects_dir, subject_id, 'rh')
+    lh_thickness = get_thickness_file(subjects_dir, subject_id, "lh")
+    rh_thickness = get_thickness_file(subjects_dir, subject_id, "rh")
     return lh_thickness, rh_thickness
 
 
@@ -354,7 +356,12 @@ def calculate_stats(values):
     """
     if values:
         values_array = np.array(values)
-        return dict(mean=values_array.mean(), std=values_array.std(), min=values_array.min(), max=values_array.max())
+        return dict(
+            mean=values_array.mean(),
+            std=values_array.std(),
+            min=values_array.min(),
+            max=values_array.max(),
+        )
     else:
         return dict(mean=None, std=None, min=None, max=None)
 
@@ -367,10 +374,12 @@ def masked_thickness_stats(thickness_file, mask_image_file):
     :param mask_image_file:
     :return:
     """
-    inside_mask_values, outside_mask_values = masked_thickness_values(thickness_file, mask_image_file)
+    inside_mask_values, outside_mask_values = masked_thickness_values(
+        thickness_file, mask_image_file
+    )
     stats = dict()
-    stats['inside'] = calculate_stats(inside_mask_values)
-    stats['outside'] = calculate_stats(outside_mask_values)
+    stats["inside"] = calculate_stats(inside_mask_values)
+    stats["outside"] = calculate_stats(outside_mask_values)
     return stats
 
 
@@ -384,9 +393,11 @@ def get_thickness_stats_for_both_hemispheres(subjects_dir, subject_id, mask_file
     :return:
     """
     stats = dict()
-    lh_thickness, rh_thickness = get_thickness_files_for_both_hemispheres(subjects_dir, subject_id)
-    stats['lh'] = masked_thickness_stats(lh_thickness, mask_file)
-    stats['rh'] = masked_thickness_stats(rh_thickness, mask_file)
+    lh_thickness, rh_thickness = get_thickness_files_for_both_hemispheres(
+        subjects_dir, subject_id
+    )
+    stats["lh"] = masked_thickness_stats(lh_thickness, mask_file)
+    stats["rh"] = masked_thickness_stats(rh_thickness, mask_file)
     return stats
 
 
@@ -394,11 +405,14 @@ def main():
     """
     This function..
     """
-    os.environ['PATH'] += ":/Shared/sinapse/sharedopt/apps/freesurfer/Darwin/x86_64/6.0-beta/20150915/bin/"
+    os.environ[
+        "PATH"
+    ] += ":/Shared/sinapse/sharedopt/apps/freesurfer/Darwin/x86_64/6.0-beta/20150915/bin/"
     mask_file = "/Shared/sinapse/CACHE/20160712_AtrophySimulation_Results/2559/58661/simulation_1/atrophy_regions.nii.gz"
     subj_dir = "/Shared/sinapse/CACHE/20160713_AtrophySimulation_BAW_base_Results/PHD_024/2559_58661/79/"
     print(get_thickness_stats_for_both_hemispheres(subj_dir, "FreeSurfer", mask_file))
     print("done")
+
 
 if __name__ == "__main__":
     main()

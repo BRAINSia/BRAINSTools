@@ -5,6 +5,7 @@
 ##############################################################################
 def getLabelVolume(img, label=1):
     import SimpleITK as sitk
+
     binary = sitk.BinaryThreshold(img, label, label)
     stat = sitk.LabelStatisticsImageFilter()
     stat.Execute(binary, binary)
@@ -14,41 +15,68 @@ def getLabelVolume(img, label=1):
         count = 0
         pass
     volume = count * (img.GetSpacing()[0] * img.GetSpacing()[1] * img.GetSpacing()[2])
-    print(( """Computed volume is
-            {vl} mm^3""".format( vl=volume )))
+    print(
+        (
+            """Computed volume is
+            {vl} mm^3""".format(
+                vl=volume
+            )
+        )
+    )
     return volume
+
 
 #########################################################################################
 
 
 def printImageInfo(img):
     import SimpleITK as sitk
-    print(("""Image info:::
+
+    print(
+        (
+            """Image info:::
           spacing: {sp}
           pixelID: {pid}
           dimension: {d}
-          """.format( sp=img.GetSpacing(),
-                      pid=img.GetPixelIDValue(),
-                      d=img.GetDimension())))
+          """.format(
+                sp=img.GetSpacing(), pid=img.GetPixelIDValue(), d=img.GetDimension()
+            )
+        )
+    )
+
+
 #########################################################################################
 
 
 def getDefMask(img, tolerance):
     import SimpleITK as sitk
+
     lowerThreshold = tolerance
     upperThreshold = 1.0 - tolerance
     binary = sitk.BinaryThreshold(img, lowerThreshold, upperThreshold)
     return binary
+
+
 #########################################################################################
 
-def computeSimilarity(autoFilename, refFilename, autoLabel, roi, session, defFilename = None):
+
+def computeSimilarity(
+    autoFilename, refFilename, autoLabel, roi, session, defFilename=None
+):
     import SimpleITK as sitk
     import os
     import analysis as this
+
     floatTolerance = 0.01
 
-    print(( """ compute similarity of label :
-           {l}""".format( l=autoLabel )))
+    print(
+        (
+            """ compute similarity of label :
+           {l}""".format(
+                l=autoLabel
+            )
+        )
+    )
 
     autoImg = sitk.BinaryThreshold(sitk.ReadImage(autoFilename), autoLabel, autoLabel)
 
@@ -58,55 +86,63 @@ def computeSimilarity(autoFilename, refFilename, autoLabel, roi, session, defFil
     this.printImageInfo(refImg)
 
     OUT = {}
-    OUT['roi'] = roi
-    OUT['sessionID'] = session
-    OUT['autoVol'] = this.getLabelVolume(autoImg)
-    OUT['refVol'] = this.getLabelVolume(refImg)
+    OUT["roi"] = roi
+    OUT["sessionID"] = session
+    OUT["autoVol"] = this.getLabelVolume(autoImg)
+    OUT["refVol"] = this.getLabelVolume(refImg)
 
     if defFilename is not None:
         defImg = sitk.ReadImage(defFilename)
         this.printImageInfo(defImg)
         defMsk = this.getDefMask(defImg, floatTolerance)
 
-        OUT['totalSearchVol'] = this.getLabelVolume(defMsk)
+        OUT["totalSearchVol"] = this.getLabelVolume(defMsk)
 
         autoNeg = sitk.BinaryThreshold((defMsk - autoImg), 1, 1)
         refNeg = sitk.BinaryThreshold((defMsk - refImg), 1, 1)
 
-        OUT['FN'] = this.getLabelVolume(autoNeg & refImg)
-        OUT['TN'] = this.getLabelVolume(autoNeg & refNeg)
+        OUT["FN"] = this.getLabelVolume(autoNeg & refImg)
+        OUT["TN"] = this.getLabelVolume(autoNeg & refNeg)
 
-    OUT['union'] = this.getLabelVolume(autoImg | refImg)
-    OUT['intersection'] = this.getLabelVolume(autoImg & refImg)
-    OUT['TP'] = OUT['union']
-    OUT['FP'] = this.getLabelVolume(autoImg - refImg, 1)
+    OUT["union"] = this.getLabelVolume(autoImg | refImg)
+    OUT["intersection"] = this.getLabelVolume(autoImg & refImg)
+    OUT["TP"] = OUT["union"]
+    OUT["FP"] = this.getLabelVolume(autoImg - refImg, 1)
 
-    OUT['alpha'] = OUT['FP'] / (OUT['FP'] + OUT['TN'])
-    OUT['beta'] = OUT['FN'] / (OUT['TP'] + OUT['FN'])
-    OUT['Sensitivity'] = OUT['TP'] / (OUT['TP'] + OUT['FN'])
-    OUT['Specificity'] = OUT['TN'] / (OUT['FP'] + OUT['TN'])
-    OUT['Precision'] = OUT['TP'] / (OUT['TP'] + OUT['FP'])
-    OUT['FScore'] = 2 * OUT['Precision'] * OUT['Sensitivity'] / (OUT['Precision'] + OUT['Sensitivity'])
-    OUT['RelativeOverlap'] = OUT['intersection'] / OUT['union']
-    OUT['SimilarityIndex'] = 2 * OUT['intersection'] / (OUT['autoVol'] + OUT['refVol'])
+    OUT["alpha"] = OUT["FP"] / (OUT["FP"] + OUT["TN"])
+    OUT["beta"] = OUT["FN"] / (OUT["TP"] + OUT["FN"])
+    OUT["Sensitivity"] = OUT["TP"] / (OUT["TP"] + OUT["FN"])
+    OUT["Specificity"] = OUT["TN"] / (OUT["FP"] + OUT["TN"])
+    OUT["Precision"] = OUT["TP"] / (OUT["TP"] + OUT["FP"])
+    OUT["FScore"] = (
+        2
+        * OUT["Precision"]
+        * OUT["Sensitivity"]
+        / (OUT["Precision"] + OUT["Sensitivity"])
+    )
+    OUT["RelativeOverlap"] = OUT["intersection"] / OUT["union"]
+    OUT["SimilarityIndex"] = 2 * OUT["intersection"] / (OUT["autoVol"] + OUT["refVol"])
 
-    if OUT['autoVol'] != 0:
+    if OUT["autoVol"] != 0:
         hausdorffFilter = sitk.HausdorffDistanceImageFilter()
         hausdorffFilter.Execute(autoImg, refImg)
-        OUT['Hausdorff'] = hausdorffFilter.GetHausdorffDistance()
-        OUT['HausdorffAvg'] = hausdorffFilter.GetAverageHausdorffDistance()
+        OUT["Hausdorff"] = hausdorffFilter.GetHausdorffDistance()
+        OUT["HausdorffAvg"] = hausdorffFilter.GetAverageHausdorffDistance()
     else:
-        OUT['Hausdorff'] = -1
-        OUT['HausdorffAvg'] = -1
+        OUT["Hausdorff"] = -1
+        OUT["HausdorffAvg"] = -1
 
     for ele in list(OUT.keys()):
         print(("{e} = {v}".format(e=ele, v=OUT[ele])))
     return OUT
 
+
 #########################################################################################
 def computeSummary(rObject):
     import rpy2.robjects as robjects
-    rObject.r('''
+
+    rObject.r(
+        """
     require( psy )
     require( xtable )
 
@@ -258,27 +294,28 @@ def computeSummary(rObject):
       }
 
     }
-    ''')
+    """
+    )
     return rObject
+
 
 #########################################################################################
 
 
-def computeSummaryFromCSV(inputCSVFilename,
-                          outputCSVPrefix
-                          ):
+def computeSummaryFromCSV(inputCSVFilename, outputCSVPrefix):
     import rpy2.robjects as robjects
     import analysis as this
+
     robjects = this.computeSummary(robjects)
-    rComputeSummary = robjects.globalenv['computeSummary']
+    rComputeSummary = robjects.globalenv["computeSummary"]
 
     import os
+
     outputCSVPrefix = os.path.abspath(outputCSVPrefix)
-    res = rComputeSummary(inputCSVFilename,
-                          outputCSVPrefix
-                          )
+    res = rComputeSummary(inputCSVFilename, outputCSVPrefix)
 
     import glob
+
     outputCSVList = glob.glob(outputCSVPrefix + "*csv")
     outputCSVList.append(glob.glob(outputCSVPrefix + "*pdf"))
     outputCSVList.append(glob.glob(outputCSVPrefix + "*tex"))

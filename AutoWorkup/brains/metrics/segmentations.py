@@ -20,9 +20,11 @@ import numpy as np
 from .partials import calcutateBinaryVolume
 from ..common import check_file
 from ..config import _config
-from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+from collections import (
+    OrderedDict,
+)  # Need OrderedDict internally to ensure consistent ordering
 
-labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus', 'icv']
+labels = ["caudate", "putamen", "hippocampus", "thalamus", "accumben", "globus", "icv"]
 
 
 def constructLabels(labels):
@@ -36,8 +38,8 @@ def constructLabels(labels):
     full_labels = []
     index = 0
     for label in labels:
-        full_labels.append('_'.join(['left', label]))
-        full_labels.append('_'.join(['right', label]))
+        full_labels.append("_".join(["left", label]))
+        full_labels.append("_".join(["right", label]))
     return full_labels, numbers
 
 
@@ -48,7 +50,10 @@ def _moduleCreateLabels(labels):
     :param labels:
     :return:
     """
-    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
+    from collections import (
+        OrderedDict,
+    )  # Need OrderedDict internally to ensure consistent ordering
+
     full_labels, numbers = constructLabels(labels)
     labelMap = zip_longest(full_labels, numbers)
     return OrderedDict(labelMap)  # Use this variable
@@ -61,14 +66,16 @@ def formatLabel(label):
     :param label:
     :return:
     """
-    side, anatomy = label.split('_')
-    if side.lower() in ['l', 'left']:
-        side = 'left'
-    elif side.lower() in ['r', 'right']:
-        side = 'right'
+    side, anatomy = label.split("_")
+    if side.lower() in ["l", "left"]:
+        side = "left"
+    elif side.lower() in ["r", "right"]:
+        side = "right"
     else:
-        raise ValueError('Label %s is not recognized: cannot determine side %s' % (label, side))
-    label = '_'.join([side, anatomy])
+        raise ValueError(
+            "Label %s is not recognized: cannot determine side %s" % (label, side)
+        )
+    label = "_".join([side, anatomy])
     return label
 
 
@@ -80,8 +87,9 @@ def calculateLabelVolume(dirname, label):
     :param label:
     :return:
     """
-    labelFile = os.path.join(dirname, _config.get('Results', 'segmentations'),
-                             label + '_seg_seg.nii.gz')
+    labelFile = os.path.join(
+        dirname, _config.get("Results", "segmentations"), label + "_seg_seg.nii.gz"
+    )
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     nda = sitk.GetArrayFromImage(image)
@@ -98,8 +106,9 @@ def calculateICV(dirname):
 
     :param dirname:
     """
-    filename = os.path.join(dirname, _config.get('Results', 'partials'),
-                            'fixed_brainlabels_seg.nii.gz')
+    filename = os.path.join(
+        dirname, _config.get("Results", "partials"), "fixed_brainlabels_seg.nii.gz"
+    )
     filename = check_file(filename)
     calculateBinaryVolume(filename)
 
@@ -113,17 +122,17 @@ def getVolume(args=[], kwds=OrderedDict()):
     :return:
     """
     dirname = labels = project = subject = session = experimentDir = None
-    experimentDir = _config.get('Results', 'directory')  # HACK
+    experimentDir = _config.get("Results", "directory")  # HACK
     for key, value in kwds:
-        if key == 'dirname':
+        if key == "dirname":
             dirname = check_file(value)
-        elif key == 'labels':
+        elif key == "labels":
             labels = value
-        elif key == 'project':
+        elif key == "project":
             project = value
-        elif key == 'subject':
+        elif key == "subject":
             subject = value
-        elif key == 'session':
+        elif key == "session":
             session = value
     if session is None:
         session = args.pop()

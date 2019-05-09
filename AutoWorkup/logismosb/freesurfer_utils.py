@@ -8,7 +8,12 @@ Author:
 Usage:
 
 """
-from nipype.interfaces.base import BaseInterface, BaseInterfaceInputSpec, traits, TraitedSpec
+from nipype.interfaces.base import (
+    BaseInterface,
+    BaseInterfaceInputSpec,
+    traits,
+    TraitedSpec,
+)
 from nipype.interfaces.freesurfer.base import FSCommand, FSTraitedSpec
 import SimpleITK as sitk
 import numpy as np
@@ -26,6 +31,7 @@ def create_ones_image(in_volume, out_file, value=1):
     """
     import nibabel as nb
     import os
+
     image = nb.load(in_volume)
     array = image.get_data()
     array.fill(value)
@@ -62,14 +68,12 @@ def recode_labelmap(in_file, out_file, recode_file):
                     recode_table[int(fs_label)] = int(abc_label)
     else:
         # Extract label-label map from a CSV file
-        recode_data = np.loadtxt(recode_file, delimiter=',', skiprows=1,
-                                 dtype='S20')
+        recode_data = np.loadtxt(recode_file, delimiter=",", skiprows=1, dtype="S20")
         # Permit (and ignore) label names
         if recode_data.shape[1] == 4:
             recode_data = recode_data[:, (0, 2)]
         if recode_data.shape[1] != 2:
-            print("ERROR: input csv file for label recoding does meet "
-                  "requirements")
+            print("ERROR: input csv file for label recoding does meet " "requirements")
             sys.exit()
         recode_table = dict(recode_data.astype(np.uint64))
 
@@ -78,7 +82,7 @@ def recode_labelmap(in_file, out_file, recode_file):
     img = nib.load(in_file)
     klass = img.__class__
     if ".nii" in out_file:
-        klass = nib.Nifti1Image # allows for changing to NIFTI file type
+        klass = nib.Nifti1Image  # allows for changing to NIFTI file type
     out_file = os.path.abspath(out_file)
 
     # Cast non-integer labels as unsigned, 32-bit integers
@@ -117,12 +121,13 @@ def multilabel_dilation(in_file, out_file, radius=1, kernel=None):
     """
     import SimpleITK as sitk
     import os
+
     img = sitk.ReadImage(in_file)
     if not kernel:
         kernel = sitk.BinaryDilateImageFilter.Ball
     dilatImg = sitk.BinaryDilate(img != 0, radius, kernel)
     wsImg = create_label_watershed(img)
-    sitk.WriteImage(sitk.Cast(dilatImg, wsImg.GetPixelID())*wsImg, out_file)
+    sitk.WriteImage(sitk.Cast(dilatImg, wsImg.GetPixelID()) * wsImg, out_file)
     out_file = os.path.abspath(out_file)
     return out_file
 
@@ -136,11 +141,16 @@ def create_label_watershed(labels_image, markWatershedLine=False):
     :return:
     """
     import SimpleITK as sitk
-    distImg = sitk.SignedMaurerDistanceMap(labels_image != 0,
-                                           insideIsPositive=False,
-                                           squaredDistance=False,
-                                           useImageSpacing=False)
-    wsImg = sitk.MorphologicalWatershedFromMarkers(distImg, labels_image, markWatershedLine=markWatershedLine)
+
+    distImg = sitk.SignedMaurerDistanceMap(
+        labels_image != 0,
+        insideIsPositive=False,
+        squaredDistance=False,
+        useImageSpacing=False,
+    )
+    wsImg = sitk.MorphologicalWatershedFromMarkers(
+        distImg, labels_image, markWatershedLine=markWatershedLine
+    )
     return wsImg
 
 
@@ -149,6 +159,7 @@ class MultiLabelDilationInputSpec(BaseInterfaceInputSpec):
 
     :param BaseInterfaceInputSpec:
     """
+
     in_file = traits.File(exists=True, mandatory=True)
     out_file = traits.File(mandatory=True)
     radius = traits.Int(1, use_default=True)
@@ -159,6 +170,7 @@ class MultiLabelDilationOutputSpec(TraitedSpec):
 
     :param TraitedSpec:
     """
+
     out_file = traits.File()
 
 
@@ -167,6 +179,7 @@ class MultiLabelDilation(BaseInterface):
 
     :param BaseInterface:
     """
+
     input_spec = MultiLabelDilationInputSpec
     output_spec = MultiLabelDilationOutputSpec
 
@@ -177,7 +190,9 @@ class MultiLabelDilation(BaseInterface):
         :param runtime:
         :return:
         """
-        self.output_spec.out_file = multilabel_dilation(self.inputs.in_file, self.inputs.out_file, self.inputs.radius)
+        self.output_spec.out_file = multilabel_dilation(
+            self.inputs.in_file, self.inputs.out_file, self.inputs.radius
+        )
         return runtime
 
     def _list_outputs(self):
@@ -187,7 +202,7 @@ class MultiLabelDilation(BaseInterface):
         :return:
         """
         outputs = self._outputs().get()
-        outputs['out_file'] = self.output_spec.out_file
+        outputs["out_file"] = self.output_spec.out_file
         return outputs
 
 
@@ -199,6 +214,7 @@ def create_image_like(array, image):
     :return:
     """
     import SimpleITK as sitk
+
     image_array = sitk.GetArrayFromImage(image)
     ndims = len(array.shape)
     if ndims == 1:
@@ -244,7 +260,9 @@ def split_labels(labels_file, lut_file, out_file, left_label=1, right_label=2):
     right_image = create_image_like(right_array, image)
     clean_right = sitk.BinaryMorphologicalClosing(right_image, 1)
 
-    hemi_labels = (clean_left * (clean_right == 0)) * left_label + (clean_right * (clean_left == 0)) * right_label
+    hemi_labels = (clean_left * (clean_right == 0)) * left_label + (
+        clean_right * (clean_left == 0)
+    ) * right_label
 
     wsImg = create_label_watershed(hemi_labels)
     sitk.WriteImage(wsImg, out_file)
@@ -252,7 +270,9 @@ def split_labels(labels_file, lut_file, out_file, left_label=1, right_label=2):
     return out_file
 
 
-def apply_label_split(image_file, hemi_file, hemi, out_file, left_label=1, right_label=2):
+def apply_label_split(
+    image_file, hemi_file, hemi, out_file, left_label=1, right_label=2
+):
     """
     This function...
 
@@ -266,11 +286,12 @@ def apply_label_split(image_file, hemi_file, hemi, out_file, left_label=1, right
     """
     import SimpleITK as sitk
     import os
+
     image = sitk.ReadImage(image_file)
     hemis = sitk.ReadImage(hemi_file, image.GetPixelID())
-    if hemi == 'lh':
+    if hemi == "lh":
         out_image = (hemis == left_label) * image
-    elif hemi == 'rh':
+    elif hemi == "rh":
         out_image = (hemis == right_label) * image
     else:
         print("ERROR: Invalid hemisphere name {0}".format(hemi))
@@ -285,19 +306,21 @@ class SplitLabelsInputSpec(BaseInterfaceInputSpec):
 
     :param BaseInterfaceInputSpec:
     """
+
     in_file = traits.File(exists=True, mandatory=True)
     labels_file = traits.File(exists=True, mandatory=True)
     lookup_table = traits.File(exists=True, mandatory=True)
-    hemi = traits.Enum('lh', 'rh', mandatory=True)
+    hemi = traits.Enum("lh", "rh", mandatory=True)
     out_file = traits.File(mandatory=True)
 
 
 class SplitLabelsOutputSpec(TraitedSpec):
-     """This class represents a...
+    """This class represents a...
 
      :param TraitedSpec:
      """
-     out_file = traits.File(exists=True)
+
+    out_file = traits.File(exists=True)
 
 
 class SplitLabels(BaseInterface):
@@ -305,6 +328,7 @@ class SplitLabels(BaseInterface):
 
     :param BaseInterface:
     """
+
     input_spec = SplitLabelsInputSpec
     output_spec = SplitLabelsOutputSpec
 
@@ -315,9 +339,17 @@ class SplitLabels(BaseInterface):
         :param runtime:
         :return:
         """
-        hemispheres_image_file = split_labels(self.inputs.labels_file, self.inputs.lookup_table, "hemispheres.nii.gz")
-        self.output_spec.out_file = os.path.abspath(apply_label_split(self.inputs.in_file, hemispheres_image_file,
-                                                                      self.inputs.hemi, self.inputs.out_file))
+        hemispheres_image_file = split_labels(
+            self.inputs.labels_file, self.inputs.lookup_table, "hemispheres.nii.gz"
+        )
+        self.output_spec.out_file = os.path.abspath(
+            apply_label_split(
+                self.inputs.in_file,
+                hemispheres_image_file,
+                self.inputs.hemi,
+                self.inputs.out_file,
+            )
+        )
         return runtime
 
     def _list_outputs(self):
@@ -327,7 +359,7 @@ class SplitLabels(BaseInterface):
         :return:
         """
         outputs = self._outputs().get()
-        outputs['out_file'] = self.output_spec.out_file
+        outputs["out_file"] = self.output_spec.out_file
         return outputs
 
 
@@ -336,20 +368,31 @@ class SurfaceMaskInputSpec(FSTraitedSpec):
 
     :param FSTraitedSpec:
     """
-    in_volume = traits.File(argstr="%s", position=-3, exist=True,
-                            desc="Input volume to which mask is applied.")
-    in_surface = traits.File(argstr="%s", position=-2, exist=True,
-                             desc="Input surface. Values inside surface are set to the values of in_volume.")
-    out_file = traits.File(argstr="%s", position=-1, exist=True,
-                           desc="Output masked volume.")
+
+    in_volume = traits.File(
+        argstr="%s",
+        position=-3,
+        exist=True,
+        desc="Input volume to which mask is applied.",
+    )
+    in_surface = traits.File(
+        argstr="%s",
+        position=-2,
+        exist=True,
+        desc="Input surface. Values inside surface are set to the values of in_volume.",
+    )
+    out_file = traits.File(
+        argstr="%s", position=-1, exist=True, desc="Output masked volume."
+    )
 
 
 class SurfaceMaskOutputSpec(TraitedSpec):
-     """This class represents a...
+    """This class represents a...
 
      :param TraitedSpec:
      """
-     out_file = traits.File(desc="Output masked volume.")
+
+    out_file = traits.File(desc="Output masked volume.")
 
 
 class SurfaceMask(FSCommand):
@@ -358,7 +401,7 @@ class SurfaceMask(FSCommand):
     :param FSCommand:
     """
 
-    _cmd = 'mri_surfacemask'
+    _cmd = "mri_surfacemask"
     input_spec = SurfaceMaskInputSpec
     output_spec = SurfaceMaskOutputSpec
 

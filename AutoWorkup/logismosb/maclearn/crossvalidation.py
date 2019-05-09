@@ -40,7 +40,10 @@ def get_subject_id_folds(subject_ids, num_folds):
     :return:
     """
     splits = get_idx_folds(subject_ids, num_folds)
-    return [(subject_ids[train_idx].tolist(), subject_ids[test_idx].tolist()) for train_idx, test_idx in splits]
+    return [
+        (subject_ids[train_idx].tolist(), subject_ids[test_idx].tolist())
+        for train_idx, test_idx in splits
+    ]
 
 
 def get_subject_id_folds_from_data(data, num_folds):
@@ -109,7 +112,7 @@ def get_truth_from_data(data, matter):
     :param matter:
     :return:
     """
-    return data['Truth'][matter].values
+    return data["Truth"][matter].values
 
 
 def get_features_from_data(data):
@@ -119,7 +122,7 @@ def get_features_from_data(data):
     :param data:
     :return:
     """
-    return data['Features'].values
+    return data["Features"].values
 
 
 def run_cross_validation_fold(data, fold, output_dir):
@@ -141,10 +144,16 @@ def run_cross_validation_fold(data, fold, output_dir):
     for matter in ["WM", "GM"]:
         clf_file = os.path.join(output_dir, "{0}_classifier.pkl".format(matter))
         print("Training {0} classifier".format(matter))
-        clf = train_classifier(training_features, get_truth_from_data(training_data, matter),
-                               out_file=clf_file, n_jobs=8)
+        clf = train_classifier(
+            training_features,
+            get_truth_from_data(training_data, matter),
+            out_file=clf_file,
+            n_jobs=8,
+        )
         print("Getting ROC scores for classifier")
-        roc = test_classifier(clf, testing_features, get_truth_from_data(testing_data, matter))
+        roc = test_classifier(
+            clf, testing_features, get_truth_from_data(testing_data, matter)
+        )
 
         roc_out_file_name = os.path.join(output_dir, "{0}_roc.pkl".format(matter))
         roc_out_file = open(roc_out_file_name, "wb")
@@ -166,11 +175,18 @@ def run_nfold_cross_validation(data_file, nfolds=10, output_dir=os.path.curdir):
     folds = get_subject_id_folds_from_data(data, nfolds)
     for i in range(nfolds):
         print("Fold number: {0}".format(i))
-        run_cross_validation_fold(data=data, fold=folds[i], output_dir=os.path.join(output_dir, str(i)))
+        run_cross_validation_fold(
+            data=data, fold=folds[i], output_dir=os.path.join(output_dir, str(i))
+        )
 
 
-def train_classifier(train_features, train_targets, n_jobs=-1,
-                     clf=RandomForestClassifier(), out_file=None):
+def train_classifier(
+    train_features,
+    train_targets,
+    n_jobs=-1,
+    clf=RandomForestClassifier(),
+    out_file=None,
+):
     """
     This function...
 
@@ -204,6 +220,8 @@ def test_classifier(clf, test_features, test_targets):
 
 
 if __name__ == "__main__":
-    run_nfold_cross_validation(data_file="/Shared/sinapse/CACHE/20161025_Davids_CrossValidation/training_data.hdf5",
-                               nfolds=10,
-                               output_dir="/Shared/sinapse/CACHE/20161025_Davids_CrossValidation/")
+    run_nfold_cross_validation(
+        data_file="/Shared/sinapse/CACHE/20161025_Davids_CrossValidation/training_data.hdf5",
+        nfolds=10,
+        output_dir="/Shared/sinapse/CACHE/20161025_Davids_CrossValidation/",
+    )

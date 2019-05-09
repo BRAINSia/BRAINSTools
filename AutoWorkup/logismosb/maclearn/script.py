@@ -80,8 +80,8 @@ def plot_all_feature_importances(all_importances, feature_names, out_file=None, 
     """
     # get averages for all features
     imp_list = list()
-    for matter in all_importances.keys():
-        for label in all_importances[matter].keys():
+    for matter in list(all_importances.keys()):
+        for label in list(all_importances[matter].keys()):
             imp_list.append(np.average(all_importances[matter][label]["Regional"], axis=0))
 
     plot_feature_importances(imp_list, feature_names, out_file, title)

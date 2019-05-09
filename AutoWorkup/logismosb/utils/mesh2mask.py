@@ -290,7 +290,7 @@ def mesh2mask(inputMesh, outputImage, inputImage=None, superRes=False, spacing=(
         whiteImage.SetScalarTypeToUnsignedChar()
         whiteImage.AllocateScalars()
     else:
-        whiteImage.AllocateScalars(vtk.VTK_UNSIGNED_CHAR,1)
+        whiteImage.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
 
     # fill the image with foreground voxels:
     inval = 1

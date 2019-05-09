@@ -15,18 +15,18 @@
 
 import os
 import sys
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/BAW/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/BAW/workflows/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/bin/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/common/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/config/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/brains/metrics/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/logismosb/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/logismosb/maclearn/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/logismosb/utils/'))
-sys.path.insert(0,os.path.abspath('../../AutoWorkup/TestSuite/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/BAW/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/BAW/workflows/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/bin/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/brains/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/brains/common/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/brains/config/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/brains/metrics/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/logismosb/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/logismosb/maclearn/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/logismosb/utils/'))
+sys.path.insert(0, os.path.abspath('../../AutoWorkup/TestSuite/'))
 
 
 

@@ -228,7 +228,7 @@ def create_identity_transform():
     """
     dimension = 3
     offset = (0, 0, 0)
-    transform = sitk.TranslationTransform(dimension , offset)
+    transform = sitk.TranslationTransform(dimension, offset)
     transform.SetIdentity() # just to be safe
     return transform
 

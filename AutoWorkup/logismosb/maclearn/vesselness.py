@@ -48,9 +48,9 @@ def get_directional_images(gradient_image):
     :return:
     """
     gradient_array = sitk.GetArrayFromImage(gradient_image)
-    x_gradient = create_image_like(gradient_array[:, :, :, 0], gradient_image)
-    y_gradient = create_image_like(gradient_array[:, :, :, 1], gradient_image)
-    z_gradient = create_image_like(gradient_array[:, :, :, 2], gradient_image)
+    x_gradient = create_image_like(gradient_array[:,:,:, 0], gradient_image)
+    y_gradient = create_image_like(gradient_array[:,:,:, 1], gradient_image)
+    z_gradient = create_image_like(gradient_array[:,:,:, 2], gradient_image)
     return x_gradient, y_gradient, z_gradient
 
 
@@ -116,7 +116,7 @@ def separate_eigen_values(eigen_values):
     :param eigen_values:
     :return:
     """
-    return [eigen_values[:, :, :, i] for i in range(eigen_values.shape[-1])]
+    return [eigen_values[:,:,:, i] for i in range(eigen_values.shape[-1])]
 
 
 def compute_eigen_values_from_hessian(hessian):
@@ -126,7 +126,7 @@ def compute_eigen_values_from_hessian(hessian):
     :param hessian:
     :return:
     """
-    eigen_values = np.linalg.eigvalsh(hessian[:, :, :, :, :])
+    eigen_values = np.linalg.eigvalsh(hessian[:,:,:,:,:])
     eigen_values_list = separate_eigen_values(eigen_values)
     if check_eigen_values(*eigen_values_list):
         return eigen_values_list

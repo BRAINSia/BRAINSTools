@@ -30,15 +30,15 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 
 from utilities.distributed import modify_qsub_args
 from utilities.misc import *
-from utilities.misc import CommonANTsRegistrationSettings
-from .WorkupAtlasDustCleanup import CreateDustCleanupWorkflow
+from utilities.misc import common_ants_registration_settings
+from .WorkupAtlasDustCleanup import create_dust_cleanup_workflow
 from .WorkupComputeLabelVolume import *
 
 # HACK Remove due to bugs from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
 """
-    from WorkupJointFusion import CreateJointFusionWorkflow
-    myLocalTCWF= CreateJointFusionWorkflow("JointFusion")
+    from WorkupJointFusion import create_joint_fusion_workflow
+    myLocalTCWF= create_joint_fusion_workflow("JointFusion")
     JointFusionWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
     JointFusionWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
     JointFusionWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1sLength, subjectDatabaseFile ), 'T1_count')] ), ])
@@ -48,7 +48,7 @@ from .WorkupComputeLabelVolume import *
 """
 
 
-def MakeVector(inFN1, inFN2=None, jointFusion=False):
+def make_vector(inFN1, inFN2=None, jointFusion=False):
     """
     This function...
 
@@ -73,7 +73,7 @@ def MakeVector(inFN1, inFN2=None, jointFusion=False):
     return returnVector
 
 
-def adjustMergeList(allList, n_modality):
+def adjust_merge_list(allList, n_modality):
     """
     This function...
 
@@ -98,7 +98,7 @@ def adjustMergeList(allList, n_modality):
     return [fname for fname in list(yieldList(asciiAllList, n_modality))]
 
 
-def readRecodingList(recodeLabelFilename):
+def read_recoding_list(recodeLabelFilename):
     """
     This function...
 
@@ -122,7 +122,7 @@ def readRecodingList(recodeLabelFilename):
     return recodeLabelPairList
 
 
-def readMalfAtlasDbBase(dictionaryFilename):
+def read_malf_atlas_db_base(dictionaryFilename):
     """
     This function...
 
@@ -146,7 +146,7 @@ def readMalfAtlasDbBase(dictionaryFilename):
     return jointFusionAtlasDict
 
 
-def getListIndexOrNoneIfOutOfRange(imageList, index):
+def get_list_index_or_none_if_out_of_range(imageList, index):
     """
     This function...
 
@@ -160,7 +160,7 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True):
+def create_joint_fusion_workflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True):
     """
     This function...
     :param WFname:
@@ -234,7 +234,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     """
     sessionMakeMultimodalInput = pe.Node(
         Function(
-            function=MakeVector,
+            function=make_vector,
             input_names=["inFN1", "inFN2", "jointFusion"],
             output_names=["outFNs"],
         ),
@@ -282,7 +282,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     print(master_config)
     print("master_config['jointfusion_atlas_db_base']")
     print((master_config["jointfusion_atlas_db_base"]))
-    jointFusionAtlasDict = readMalfAtlasDbBase(
+    jointFusionAtlasDict = read_malf_atlas_db_base(
         master_config["jointfusion_atlas_db_base"]
     )
     number_of_atlas_sources = len(jointFusionAtlasDict)
@@ -387,7 +387,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
             JFregistrationTypeDescription = "FiveStageAntsRegistrationT1Only"
         else:
             JFregistrationTypeDescription = "FiveStageAntsRegistrationMultiModal"
-        CommonANTsRegistrationSettings(
+        common_ants_registration_settings(
             antsRegistrationNode=A2SantsRegistrationPreJointFusion_SyN[
                 jointFusion_atlas_subject
             ],
@@ -441,7 +441,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         """
         atlasMakeMultimodalInput[jointFusion_atlas_subject] = pe.Node(
             Function(
-                function=MakeVector,
+                function=make_vector,
                 input_names=["inFN1", "inFN2", "jointFusion"],
                 output_names=["outFNs"],
             ),
@@ -641,8 +641,8 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         jointFusion_atlas_mergeindex += 1
 
     ## Now work on cleaning up the label maps
-    from .FixLabelMapsTools import FixLabelMapFromNeuromorphemetrics2012
-    from .FixLabelMapsTools import RecodeLabelMap
+    from .FixLabelMapsTools import fix_label_map_from_neuromorphemetrics_2012
+    from .FixLabelMapsTools import recode_label_map
 
     ### Original NeuroMorphometrica merged fusion
     jointFusion = pe.Node(interface=ants.AntsJointFusion(), name="AntsJointFusion")
@@ -667,7 +667,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
 
     AdjustMergeListNode = pe.Node(
         Function(
-            function=adjustMergeList,
+            function=adjust_merge_list,
             input_names=["allList", "n_modality"],
             output_names=["out"],
         ),
@@ -682,7 +682,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
 
     AdjustTargetImageListNode = pe.Node(
         Function(
-            function=adjustMergeList,
+            function=adjust_merge_list,
             input_names=["allList", "n_modality"],
             output_names=["out"],
         ),
@@ -696,7 +696,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     """
     sessionMakeListSingleModalInput = pe.Node(
         Function(
-            function=MakeVector,
+            function=make_vector,
             input_names=["inFN1", "inFN2", "jointFusion"],
             output_names=["outFNs"],
         ),
@@ -754,10 +754,10 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         (15172, 2035),
         (15200, 2030),
     ]
-    ## def RecodeLabelMap(InputFileName,OutputFileName,RECODE_TABLE):
+    ## def recode_label_map(InputFileName,OutputFileName,RECODE_TABLE):
     RecodeToStandardFSWM = pe.Node(
         Function(
-            function=RecodeLabelMap,
+            function=recode_label_map,
             input_names=["InputFileName", "OutputFileName", "RECODE_TABLE"],
             output_names=["OutputFileName"],
         ),
@@ -785,7 +785,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
 
     #    JointFusionWF.connect(JointFusion_SNAPSHOT_WRITER,'outputFilename',outputsSpec,'JointFusion_extended_snapshot')
 
-    myLocalDustCleanup = CreateDustCleanupWorkflow(
+    myLocalDustCleanup = create_dust_cleanup_workflow(
         "DUST_CLEANUP", onlyT1, master_config
     )
     JointFusionWF.connect(
@@ -802,7 +802,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         ## post processing of jointfusion
         injectSurfaceCSFandVBIntoLabelMap = pe.Node(
             Function(
-                function=FixLabelMapFromNeuromorphemetrics2012,
+                function=fix_label_map_from_neuromorphemetrics_2012,
                 input_names=[
                     "fusionFN",
                     "FixedHeadFN",
@@ -927,7 +927,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     """
     Compute label volumes
     """
-    computeLabelVolumes = CreateVolumeMeasureWorkflow("LabelVolume", master_config)
+    computeLabelVolumes = create_volume_measure_workflow("LabelVolume", master_config)
     JointFusionWF.connect(
         inputsSpec, "subj_t1_image", computeLabelVolumes, "inputspec.subj_t1_image"
     )
@@ -954,12 +954,12 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
     if master_config["relabel2lobes_filename"] != None:
         # print("Generate relabeled version based on {0}".format(master_config['relabel2lobes_filename']))
 
-        RECODE_LABELS_2_LobePacellation = readRecodingList(
+        RECODE_LABELS_2_LobePacellation = read_recoding_list(
             master_config["relabel2lobes_filename"]
         )
         RecordToFSLobes = pe.Node(
             Function(
-                function=RecodeLabelMap,
+                function=recode_label_map,
                 input_names=["InputFileName", "OutputFileName", "RECODE_TABLE"],
                 output_names=["OutputFileName"],
             ),
@@ -982,7 +982,7 @@ def CreateJointFusionWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMa
         """
         Compute lobe volumes
         """
-        computeLobeVolumes = CreateVolumeMeasureWorkflow("LobeVolume", master_config)
+        computeLobeVolumes = create_volume_measure_workflow("LobeVolume", master_config)
         JointFusionWF.connect(
             inputsSpec, "subj_t1_image", computeLobeVolumes, "inputspec.subj_t1_image"
         )

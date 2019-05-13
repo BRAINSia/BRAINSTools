@@ -15,7 +15,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.utility import Function, IdentityInterface
 
 
-def runAutomaticCleanupScript(
+def run_automatic_cleanup_script(
     inFN1,
     inAtlas,
     outAtlas,
@@ -65,7 +65,7 @@ def runAutomaticCleanupScript(
     return os.path.abspath(outAtlas)
 
 
-def CreateDustCleanupWorkflow(workflowFileName, onlyT1, master_config):
+def create_dust_cleanup_workflow(workflowFileName, onlyT1, master_config):
     """
     This function...
 
@@ -111,7 +111,7 @@ def CreateDustCleanupWorkflow(workflowFileName, onlyT1, master_config):
     """
     sessionRunDustCleanupOnSuspicious = pe.Node(
         Function(
-            function=runAutomaticCleanupScript,
+            function=run_automatic_cleanup_script,
             input_names=[
                 "inFN1",
                 "inFN2",
@@ -161,7 +161,7 @@ def CreateDustCleanupWorkflow(workflowFileName, onlyT1, master_config):
     """
     sessionRunDustCleanup = pe.Node(
         Function(
-            function=runAutomaticCleanupScript,
+            function=run_automatic_cleanup_script,
             input_names=[
                 "inFN1",
                 "inFN2",

@@ -27,7 +27,7 @@ from collections import (
 labels = ["caudate", "putamen", "hippocampus", "thalamus", "accumben", "globus", "icv"]
 
 
-def constructLabels(labels):
+def construct_labels(labels):
     """
     This function...
 
@@ -43,7 +43,7 @@ def constructLabels(labels):
     return full_labels, numbers
 
 
-def _moduleCreateLabels(labels):
+def _module_create_labels(labels):
     """
     This function...
 
@@ -54,12 +54,12 @@ def _moduleCreateLabels(labels):
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
 
-    full_labels, numbers = constructLabels(labels)
+    full_labels, numbers = construct_labels(labels)
     labelMap = zip_longest(full_labels, numbers)
     return OrderedDict(labelMap)  # Use this variable
 
 
-def formatLabel(label):
+def format_labels(label):
     """
     Assumes that the label can be split by the '_' character.
 
@@ -79,7 +79,7 @@ def formatLabel(label):
     return label
 
 
-def calculateLabelVolume(dirname, label):
+def calculate_label_volume(dirname, label):
     """
     This function...
 
@@ -100,7 +100,7 @@ def calculateLabelVolume(dirname, label):
     return maskSum * size[0] * size[1] * size[2]
 
 
-def calculateICV(dirname):
+def calculate_icv(dirname):
     """
     This function...
 
@@ -110,10 +110,10 @@ def calculateICV(dirname):
         dirname, _config.get("Results", "partials"), "fixed_brainlabels_seg.nii.gz"
     )
     filename = check_file(filename)
-    calculateBinaryVolume(filename)
+    calculate_binary_volume(filename)
 
 
-def getVolume(args=[], kwds=OrderedDict()):
+def get_volume(args=[], kwds=OrderedDict()):
     """
     This function...
 
@@ -150,5 +150,5 @@ def getVolume(args=[], kwds=OrderedDict()):
             raise err
     volume = 0.0
     for label in labels:
-        volume += calculateLabelVolume(dirname, label)
+        volume += calculate_label_volume(dirname, label)
     return volume

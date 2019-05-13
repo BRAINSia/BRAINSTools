@@ -1,5 +1,5 @@
 """
-mesh2mask.py
+mesh_2_mask.py
 =================
 Description:
 
@@ -57,7 +57,7 @@ class Mesh2Mask(BaseInterface):
         :param runtime:
         :return:
         """
-        mesh2mask(
+        mesh_2_mask(
             inputMesh=self.inputs.input_mesh,
             outputImage=self.inputs.output_image,
             inputImage=self.inputs.input_image,
@@ -187,7 +187,7 @@ def read_vtk_image(inputImage):
     return imageReader.GetOutput()
 
 
-def mesh2mask(
+def mesh_2_mask(
     inputMesh, outputImage, inputImage=None, superRes=False, spacing=(1.0, 1.0, 1.0)
 ):
     """
@@ -396,7 +396,7 @@ def usage():
     """
     This function...
     """
-    print(mesh2mask.__doc__)
+    print(mesh_2_mask.__doc__)
 
 
 if __name__ == "__main__":
@@ -449,4 +449,4 @@ if __name__ == "__main__":
     print("Input image: {0}".format(refImage))
 
     print("Converting mesh to mask")
-    print("Mask created: {0}".format(mesh2mask(inputMesh, outputImage, refImage)))
+    print("Mask created: {0}".format(mesh_2_mask(inputMesh, outputImage, refImage)))

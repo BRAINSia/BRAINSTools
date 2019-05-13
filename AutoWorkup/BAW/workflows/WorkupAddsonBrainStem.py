@@ -22,7 +22,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 # #######################################################
 # brainstem computation from white matter mask
 ########################################################
-def brainStem(
+def brainstem(
     tissueLabelFilename, landmarkFilename, brainStemFilename, ouputTissuelLabelFilename
 ):
     """
@@ -37,7 +37,7 @@ def brainStem(
     import os
     import SimpleITK as sitk
 
-    def cropAndResampleInPlace(
+    def crop_and_resample_in_place(
         inputBrainLabelFilename,
         physBB1,
         physBB2,
@@ -94,8 +94,8 @@ def brainStem(
         )
 
         # HACK: WM label value should be given
-        brainStem = sitk.BinaryThreshold(brainStem_area, thresholdUpper, thresholdLower)
-        brainStem_connected = sitk.ConnectedComponent(brainStem)
+        brainstem = sitk.BinaryThreshold(brainStem_area, thresholdUpper, thresholdLower)
+        brainStem_connected = sitk.ConnectedComponent(brainstem)
         brainStem_largest_connected = sitk.BinaryThreshold(brainStem_connected, 1, 1)
 
         ## Fill Hole
@@ -165,7 +165,7 @@ def brainStem(
     ]
 
     wmLabelNo = 1
-    brainStem = cropAndResampleInPlace(
+    brainstem = crop_and_resample_in_place(
         tissueLabelFilename,
         roiBBStart,
         roiBBStop,
@@ -190,7 +190,7 @@ def brainStem(
         myLandmark["dens_axis"][2],
     ]
 
-    noExtraBottomBrainStem = cropAndResampleInPlace(
+    noExtraBottomBrainStem = crop_and_resample_in_place(
         tissueLabelFilename,
         roiBBStart,
         roiBBStop,
@@ -199,7 +199,7 @@ def brainStem(
         brainStemFilename + "_InValid.nii.gz",
     )
 
-    brainStemBinary = sitk.ReadImage(brainStem) > 0
+    brainStemBinary = sitk.ReadImage(brainstem) > 0
     noExtraBottomBrainStemBinary = sitk.ReadImage(noExtraBottomBrainStem) > 0
 
     outputTissueLabel = (
@@ -223,7 +223,7 @@ def brainStem(
     return full_output_path
 
 
-def CreateBrainstemWorkflow(WFname, CLUSTER_QUEUE, outputFilename):
+def create_brainstem_workflow(WFname, CLUSTER_QUEUE, outputFilename):
     """
     this function...
 
@@ -249,7 +249,7 @@ def CreateBrainstemWorkflow(WFname, CLUSTER_QUEUE, outputFilename):
 
     generateBrainStemNode = pe.Node(
         Function(
-            function=brainStem,
+            function=brainstem,
             input_names=[
                 "tissueLabelFilename",
                 "landmarkFilename",
@@ -259,7 +259,7 @@ def CreateBrainstemWorkflow(WFname, CLUSTER_QUEUE, outputFilename):
             output_names=["ouputTissuelLabelFilename"],
         ),
         run_without_submitting=False,
-        name="brainStem",
+        name="brainstem",
     )
 
     brainstemWF.connect(
@@ -313,7 +313,7 @@ def main(argv=None):
             tlFilename = a
     print((lmkFilename, bsFilename, tlFilename))
 
-    brainStem(tlFilename, lmkFilename, bsFilename)
+    brainstem(tlFilename, lmkFilename, bsFilename)
 
 
 if __name__ == "__main__":

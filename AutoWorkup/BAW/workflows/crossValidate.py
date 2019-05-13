@@ -58,7 +58,7 @@ from nipype.interfaces.utility import (
 from nipype.pipeline.engine import Workflow, Node, MapNode
 
 
-def subsample_crossValidationSet(length, test_size):
+def sample_crossvalidation_set(length, test_size):
     """
     This function...
 
@@ -66,14 +66,14 @@ def subsample_crossValidationSet(length, test_size):
     :param test_size:
     :return:
     """
-    #    >>> print zip(*subsample_crossValidationSet(10, 2))  #doctest: +NORMALIZE_WHITESPACE
+    #    >>> print zip(*sample_crossvalidation_set(10, 2))  #doctest: +NORMALIZE_WHITESPACE
     #        [([0, 1], [2, 3, 4, 5, 6, 7, 8, 9]),
     #         ([2, 3], [0, 1, 4, 5, 6, 7, 8, 9]),
     #         ([4, 5], [0, 1, 2, 3, 6, 7, 8, 9]),
     #         ([6, 7], [0, 1, 2, 3, 4, 5, 8, 9]),
     #         ([8, 9], [0, 1, 2, 3, 4, 5, 6, 7])]
 
-    #    >>> print zip(*subsample_crossValidationSet(9, 3))  #doctest: +NORMALIZE_WHITESPACE
+    #    >>> print zip(*sample_crossvalidation_set(9, 3))  #doctest: +NORMALIZE_WHITESPACE
     #        [([0, 1, 2], [3, 4, 5, 6, 7, 8]),
     #         ([3, 4, 5], [0, 1, 2, 6, 7, 8]),
     #         ([6, 7, 8], [0, 1, 2, 3, 4, 5])]
@@ -97,7 +97,7 @@ def subsample_crossValidationSet(length, test_size):
     return subsample_data_index
 
 
-def writeCVSubsetFile(
+def write_cvsubset_file(
     environment, experiment, pipeline, cluster, csv_file, test_size, hasHeader
 ):
     """
@@ -135,7 +135,7 @@ def writeCVSubsetFile(
 
     totalSampleSize = len(csv_data)
     print(totalSampleSize)
-    cv_subsets = subsample_crossValidationSet(totalSampleSize, test_size)
+    cv_subsets = sample_crossvalidation_set(totalSampleSize, test_size)
 
     """
     global variable
@@ -152,7 +152,7 @@ def writeCVSubsetFile(
     """
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
-    from .WorkupJointFusion import CreateJointFusionWorkflow
+    from .WorkupJointFusion import create_joint_fusion_workflow
 
     CV_JointFusion_WF = pe.Workflow(name="CV_JointFusion")
     CV_JointFusion_WF.base_dir = master_config["cachedir"]
@@ -171,7 +171,7 @@ def writeCVSubsetFile(
             JointFusionWFName = "JointFusion_Set{0}_{1}".format(
                 subset_no, testSession["id"]
             )
-            myJointFusion = CreateJointFusionWorkflow(
+            myJointFusion = create_joint_fusion_workflow(
                 JointFusionWFName,
                 master_config,
                 [(trainData[i])["id"] for i in range(len(trainData))],
@@ -326,7 +326,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         iters = OrderedDict()
         label = list(csvOut.outputs.__dict__.keys())[0]
         result = eval("csvOut.outputs.{0}".format(label))
-        iters["tests"], iters["trains"] = subsample_crossValidationSet(
+        iters["tests"], iters["trains"] = sample_crossvalidation_set(
             result, self.sample_size.default_value
         )
         # Main event
@@ -513,7 +513,7 @@ def main(environment, experiment, pipeline, cluster, **kwargs):
     )  # Generate Nipype options
     print("Getting session(s) from database...")
 
-    writeCVSubsetFile(
+    write_cvsubset_file(
         environment,
         experiment,
         pipeline,

@@ -36,7 +36,7 @@ def fill_mask_holes(image, minSize=0):
     return negConnected == 0
 
 
-def getedges(nm_file, between_labels=False):
+def get_edges(nm_file, between_labels=False):
     """
     Method to extract edges from a neuromorphometrics label map.
 
@@ -138,7 +138,7 @@ def remove_cerebellum(label_map, aseg_label_map, exclude_labels=None):
     :param exclude_labels:
     :return:
     """
-    dilated_labels = MultilabelDilation(aseg_label_map, radius=4)
+    dilated_labels = multilabel_dilation(aseg_label_map, radius=4)
     if not exclude_labels:
         exclude_labels = [16, 47, 46, 7, 8]
     cerebellum = aseg_label_map < 0
@@ -150,7 +150,7 @@ def remove_cerebellum(label_map, aseg_label_map, exclude_labels=None):
 # As advised on the ITK mailing list, label dilation can be implemented via
 # distance transforms and watershed transforms. This algorithm is illustrated
 # in SimpleITK python code below (courtesy of Bradely Lowekamp)
-def MultilabelDilation(img, radius=1, kernel=None):
+def multilabel_dilation(img, radius=1, kernel=None):
     """
     This function...
 
@@ -208,7 +208,7 @@ def cast_to_int(image):
     return image
 
 
-def createwatersheds(aseg_file, filled_file, dilation=6):
+def create_water_sheds(aseg_file, filled_file, dilation=6):
     """
     This function...
 
@@ -284,7 +284,7 @@ def write_edges(nm_file, out_dir, overwrite=False):
     :return:
     """
     if overwrite or not check_for_edge_files(out_dir):
-        wm_edges, gm_edges = getedges(nm_file)
+        wm_edges, gm_edges = get_edges(nm_file)
         for edge, name in [(wm_edges, "wm"), (gm_edges, "gm")]:
             write_image(edge, get_edge_file_name(name, out_dir), overwrite=overwrite)
     return get_edge_file_paths(out_dir)
@@ -398,7 +398,7 @@ def get_nm_t1(nm_file, fs=False, cache_dir=os.getcwd()):
     return out_t1
 
 
-def createdatacsv(in_dir, cache_dir, overwrite=False, file_list=None):
+def create_data_csv(in_dir, cache_dir, overwrite=False, file_list=None):
     """
     Function that is specific to the neuromorphometrics dataset. This function
     takes in a the neuromorph directory and finds all the necessary files
@@ -480,7 +480,7 @@ def createdatacsv(in_dir, cache_dir, overwrite=False, file_list=None):
             os.path.join(cache_dir, subject_id, "filled.nii.gz"),
             resample_type="nearest",
         )
-        ws_wm, ws_gm, wm_labels, gm_labels = createwatersheds(
+        ws_wm, ws_gm, wm_labels, gm_labels = create_water_sheds(
             out_fs_file, out_filled_file
         )
 
@@ -491,7 +491,7 @@ def createdatacsv(in_dir, cache_dir, overwrite=False, file_list=None):
                 os.path.join(cache_dir, subject_id, "neuro_labels.nii.gz"),
                 resample_type="nearest",
             )
-            wm_edge, gm_edge = getedges(nm_converted_file)
+            wm_edge, gm_edge = get_edges(nm_converted_file)
 
             # write wm files to subject dir
             write_image(ws_wm, wm_label_file, overwrite)

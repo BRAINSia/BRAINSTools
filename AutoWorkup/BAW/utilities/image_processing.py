@@ -14,7 +14,7 @@ Usage:
 # from builtins import range
 
 
-def FixWMPartitioning(brainMask, PosteriorsList):
+def fix_wm_partitioning(brainMask, PosteriorsList):
     """"There were some errors in mis-classifications for WM/NON_WM"""
     """
     This Function takes in...
@@ -26,7 +26,7 @@ def FixWMPartitioning(brainMask, PosteriorsList):
     import SimpleITK as sitk
     import os
 
-    def FillHolePreserveEdge(inputMask, HOLE_FILL_SIZE):
+    def fill_hole_preserved_edge(inputMask, HOLE_FILL_SIZE):
         """This function fills holes and tries to preserve
            the exterior topology.  Holes that are within 3 units
            of the exterior topology may not be completely filled.
@@ -52,7 +52,7 @@ def FixWMPartitioning(brainMask, PosteriorsList):
 
     print(("Reading {0} of type {1}".format(brainMask, type(brainMask))))
     BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask), 1, 1000)
-    BM_FILLED = FillHolePreserveEdge(BM, 3)
+    BM_FILLED = fill_hole_preserved_edge(BM, 3)
 
     NOTCSF_index = None  # Note: Purposfully using '-1' as it will force an error.
     CSF_index = None
@@ -84,7 +84,7 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         elif bnames[i] == "POSTERIOR_AIR.nii.gz":
             AIR_index = i
 
-    def ShiftValueForHardPartition(
+    def shift_value_for_hard_partition(
         BM_FILLED,
         ShiftPosteriorsList,
         NOTREGION_index,
@@ -135,16 +135,16 @@ def FixWMPartitioning(brainMask, PosteriorsList):
         return ShiftPosteriorsList
 
     UpdatedPosteriorsList = list(PosteriorsList)
-    UpdatedPosteriorsList = ShiftValueForHardPartition(
+    UpdatedPosteriorsList = shift_value_for_hard_partition(
         BM_FILLED, UpdatedPosteriorsList, NOTCSF_index, CSF_index, "CSF", "NOTCSF"
     )
-    UpdatedPosteriorsList = ShiftValueForHardPartition(
+    UpdatedPosteriorsList = shift_value_for_hard_partition(
         BM_FILLED, UpdatedPosteriorsList, NOTGM_index, GM_index, "SURFGM", "NOTGM"
     )
-    UpdatedPosteriorsList = ShiftValueForHardPartition(
+    UpdatedPosteriorsList = shift_value_for_hard_partition(
         BM_FILLED, UpdatedPosteriorsList, NOTWM_index, WM_index, "WM", "NOTWM"
     )
-    UpdatedPosteriorsList = ShiftValueForHardPartition(
+    UpdatedPosteriorsList = shift_value_for_hard_partition(
         BM_FILLED, UpdatedPosteriorsList, NOTVB_index, VB_index, "VB", "NOTVB"
     )
 

@@ -38,7 +38,7 @@ import sys
 import traceback
 from builtins import range
 
-from .baw_exp import OpenSubjectDatabase
+from .baw_exp import open_subject_database
 
 
 def get_processed_subjects(resultdir, input_subjects_list):
@@ -148,9 +148,9 @@ def get_subjects_sessions_dictionary(
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
 
-    _temp = OpenSubjectDatabase(cache, ["all"], prefix, dbfile)
+    _temp = open_subject_database(cache, ["all"], prefix, dbfile)
     if "all" in input_subjects:
-        input_subjects = _temp.getAllSubjects()
+        input_subjects = _temp.get_all_subjects()
     if useSentinal:
         print(("=" * 80))
         print("Using Sentinal Files to Limit Jobs Run")
@@ -166,12 +166,12 @@ def get_subjects_sessions_dictionary(
         random.shuffle(subjects)  # randomly shuffle to get max cluster efficiency
     subject_sessions_dictionary = OrderedDict()
     for subject in subjects:
-        subject_sessions_dictionary[subject] = _temp.getSessionsFromSubject(subject)
+        subject_sessions_dictionary[subject] = _temp.get_sessions_from_subject(subject)
     return subjects, subject_sessions_dictionary
 
 
 ## Merge the different subjects together
-def MergeByExtendListElements(
+def merge_by_extended_list_elements(
     t1s, t2s, pds, fls, labels, posteriors, passive_intensities, passive_masks
 ):
     from collections import (
@@ -274,7 +274,7 @@ def xml_filename(subject):
     return "AtlasDefinition_{0}.xml".format(subject)
 
 
-def getSessionsFromSubjectDictionary(subject_session_dictionary, subject):
+def get_session_from_subject_dictionary(subject_session_dictionary, subject):
     """
     This function...
 
@@ -381,7 +381,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
         sessionsExtractorNode = pe.Node(
             Function(
-                function=getSessionsFromSubjectDictionary,
+                function=get_session_from_subject_dictionary,
                 input_names=["subject_session_dictionary", "subject"],
                 output_names=["sessions"],
             ),
@@ -504,7 +504,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
         MergeByExtendListElementsNode = pe.Node(
             Function(
-                function=MergeByExtendListElements,
+                function=merge_by_extended_list_elements,
                 input_names=[
                     "t1s",
                     "t2s",
@@ -541,7 +541,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                         (
                             (
                                 "posteriorImages",
-                                ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists,
+                                convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists,
                             ),
                             "posteriors",
                         ),
@@ -563,7 +563,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                         (
                             (
                                 "passive_intensities",
-                                ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists,
+                                convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists,
                             ),
                             "passive_intensities",
                         )
@@ -576,7 +576,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                         (
                             (
                                 "passive_masks",
-                                ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists,
+                                convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists,
                             ),
                             "passive_masks",
                         )
@@ -599,17 +599,17 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         ####################################################################################################
         CLUSTER_QUEUE = cluster["queue"]
         CLUSTER_QUEUE_LONG = cluster["long_q"]
-        buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF(
+        buildTemplateIteration1 = baw_ants_registration_template_build_single_iteration_wf(
             "iteration01", CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
         )
         # buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-        buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF(
+        buildTemplateIteration2 = baw_ants_registration_template_build_single_iteration_wf(
             "Iteration02", CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
         )
 
         CreateAtlasXMLAndCleanedDeformedAveragesNode = pe.Node(
             interface=Function(
-                function=CreateAtlasXMLAndCleanedDeformedAverages,
+                function=create_atlas_xml_and_cleaned_deformed_averages,
                 input_names=[
                     "t1_image",
                     "deformed_list",
@@ -658,7 +658,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                 }
 
         # Running off previous baseline experiment
-        NACCommonAtlas = MakeAtlasNode(
+        NACCommonAtlas = make_atlas_node(
             experiment["atlascache"],
             "NACCommonAtlas_{0}".format("subject"),
             ["S_BRAINSABCSupport"],
@@ -804,17 +804,17 @@ if __name__ == "__main__":
     import nipype.interfaces.ants as ants
 
     from .PipeLineFunctionHelpers import (
-        ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists,
+        convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists,
     )
     from .workflows.atlasNode import (
-        MakeAtlasNode,
-        CreateAtlasXMLAndCleanedDeformedAverages,
+        make_atlas_node,
+        create_atlas_xml_and_cleaned_deformed_averages,
     )
-    from .utilities.misc import GenerateSubjectOutputPattern as outputPattern
+    from .utilities.misc import generate_subject_output_pattern as outputPattern
     from .utilities.distributed import modify_qsub_args
     from .workflows.utils import run_workflow, print_workflow
     from .BAWantsRegistrationBuildTemplate import (
-        BAWantsRegistrationTemplateBuildSingleIterationWF,
+        baw_ants_registration_template_build_single_iteration_wf,
     )
     from .utilities.configFileParser import nipype_options
     from nipype.interfaces.semtools.testing.generateaveragelmkfile import (

@@ -274,7 +274,7 @@ class WMMasking(BaseInterface):
             negConnected = largest_connected_component(1 - image, minSize)
             return 1 - negConnected
 
-        def fillLateralVentricle(
+        def fill_lateral_ventricle(
             ventricle, boundary, ventricleDilation=1, dilationFactor=1
         ):
             """
@@ -382,13 +382,13 @@ class WMMasking(BaseInterface):
             ) > 0
 
         right_ventricle_boundary = right_hemisphere
-        right_ventricle_final = fillLateralVentricle(
+        right_ventricle_final = fill_lateral_ventricle(
             right_ventricle_label_mask, right_ventricle_boundary
         )
 
         # Extract the left lateral and inferior ventricle from the label map
         left_ventricle_boundary = left_hemisphere
-        left_ventricle_final = fillLateralVentricle(
+        left_ventricle_final = fill_lateral_ventricle(
             left_ventricle_label_mask, left_ventricle_boundary
         )
 
@@ -501,7 +501,7 @@ class WMMasking(BaseInterface):
 
 # Define a useful function for reading PolyData vtk files
 # Read a PolyData file and output a vtk PolyData object
-def readPolyData(filename):
+def read_poly_data(filename):
     """
     This function...
 
@@ -523,7 +523,7 @@ def readPolyData(filename):
 
 
 # Find the label of a given vtk point from a label map
-def vtkPoint_to_label(point, labelmap):
+def vtk_point_to_label(point, labelmap):
     """
     This function...
 
@@ -686,8 +686,8 @@ class ComputeDistance(BaseInterface):
         :return:
         """
         labelmap = sitk.ReadImage(self.inputs.labels_file)
-        uncleanwm = readPolyData(self.inputs.wm_file)
-        uncleangm = readPolyData(self.inputs.gm_file)
+        uncleanwm = read_poly_data(self.inputs.wm_file)
+        uncleangm = read_poly_data(self.inputs.gm_file)
         if isdefined(self.inputs.atlas_info):
             atlas_dict = parse_labels_xml(self.inputs.atlas_info)
         # Clean the data
@@ -717,12 +717,12 @@ class ComputeDistance(BaseInterface):
             gmIndex = kdTreegm.FindClosestPoint(wmP)
             gmP = kdTreegm.GetDataSet().GetPoint(gmIndex)
             # Get the gray matter label from the label map
-            gmlabel = vtkPoint_to_label(gmP, labelmap)
+            gmlabel = vtk_point_to_label(gmP, labelmap)
             if gmlabel != 0:
                 label = str(gmlabel)
             else:
                 # if the gray matter label is not defined try the wm label
-                wmlabel = vtkPoint_to_label(wmP, labelmap)
+                wmlabel = vtk_point_to_label(wmP, labelmap)
                 if wmlabel != 0:
                     label = str(wmlabel)
                 else:

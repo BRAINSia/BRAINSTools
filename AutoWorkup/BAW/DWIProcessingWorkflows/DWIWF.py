@@ -35,7 +35,7 @@ Options:
 """
 
 
-def runMainWorkflow(
+def run_main_workflow(
     DWI_scan,
     T2_scan,
     labelMap_image,
@@ -125,23 +125,23 @@ def runMainWorkflow(
     )
 
     correctionWFname = "CorrectionWorkflow_CACHE_" + sessionID
-    myCorrectionWF = CreateCorrectionWorkflow(correctionWFname)
+    myCorrectionWF = create_correction_workflow(correctionWFname)
 
     CSWFname = "CompressedSensingWorkflow_CACHE_" + sessionID
-    myCSWF = CreateCSWorkflow(CSWFname, PYTHON_AUX_PATHS)
+    myCSWF = create_cs_from_workflow(CSWFname, PYTHON_AUX_PATHS)
 
     estimationWFname = "EstimationWorkflow_CACHE_" + sessionID
-    myEstimationWF = CreateEstimationWorkflow(estimationWFname)
+    myEstimationWF = create_estimation_workflow(estimationWFname)
 
     # clone estimation WF to estimate DTI and RISs from non compressed sensing DWI scan
     estimationWithoutCSWFname = "EstimationWFWithoutCS_CACHE_" + sessionID
     EstimationWFWithoutCS = myEstimationWF.clone(name=estimationWithoutCSWFname)
 
     tractographyWFname = "TractographyWorkflow_CACHE_" + sessionID
-    myTractographyWF = CreateTractographyWorkflow(tractographyWFname)
+    myTractographyWF = create_tractography_workflow(tractographyWFname)
 
     measurementWFname = "MeasurementWorkflow_CACHE_" + sessionID
-    myMeasurementWF = CreateMeasurementWorkflow(measurementWFname, LABELS_CONFIG_FILE)
+    myMeasurementWF = create_measurement_workflow(measurementWFname, LABELS_CONFIG_FILE)
 
     # clone measurement WF to measure statistics from RISs estimated from non compressed sensing DWI scan
     measurementWithoutCSWFname = "MeasurementWFWithoutCS_CACHE_" + sessionID
@@ -661,13 +661,13 @@ if __name__ == "__main__":
     from nipype.interfaces.semtools import *
 
     #####################################################################################
-    from CorrectionWorkflow import CreateCorrectionWorkflow
-    from CSWorkflow import CreateCSWorkflow
-    from EstimationWorkflow import CreateEstimationWorkflow
-    from TractographyWorkflow import CreateTractographyWorkflow
-    from MeasurementWorkflow import CreateMeasurementWorkflow
+    from CorrectionWorkflow import create_correction_workflow
+    from CSWorkflow import create_cs_from_workflow
+    from EstimationWorkflow import create_estimation_workflow
+    from TractographyWorkflow import create_tractography_workflow
+    from MeasurementWorkflow import create_measurement_workflow
 
-    exit = runMainWorkflow(
+    exit = run_main_workflow(
         DWISCAN,
         T2SCAN,
         LabelMapImage,

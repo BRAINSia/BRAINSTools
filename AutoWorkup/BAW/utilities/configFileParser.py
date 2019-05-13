@@ -51,7 +51,7 @@ def str2bool(v):
     raise ValueError("ERROR: INVALID String to bool conversion for '{0}'".format(v))
 
 
-def getASCIIFromParser(parser, region, tag):
+def get_ascii_from_parser(parser, region, tag):
     """
     This Function takes in...
 
@@ -66,7 +66,7 @@ def getASCIIFromParser(parser, region, tag):
     return asciiText
 
 
-def parseEnvironment(parser, environment):
+def parse_environment(parser, environment):
     """ Parse the environment environment given by 'section' and return a dictionary
         Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
 
@@ -82,45 +82,45 @@ def parseEnvironment(parser, environment):
 
     retval = OrderedDict()
     if parser.has_option(environment, "ENVAR_DICT"):
-        retval["env"] = eval(getASCIIFromParser(parser, environment, "ENVAR_DICT"))
+        retval["env"] = eval(get_ascii_from_parser(parser, environment, "ENVAR_DICT"))
     else:
         retval["env"] = OrderedDict()
     if "PYTHONPATH" in list(retval["env"].keys()):
-        pythonpath = appendPathList(
-            getASCIIFromParser(parser, environment, "APPEND_PYTHONPATH"),
+        pythonpath = append_path_list(
+            get_ascii_from_parser(parser, environment, "APPEND_PYTHONPATH"),
             retval["env"]["PYTHONPATH"],
         )
         retval["env"]["PYTHONPATH"] = pythonpath  # Create append to PYTHONPATH
     else:
-        retval["env"]["PYTHONPATH"] = getASCIIFromParser(
+        retval["env"]["PYTHONPATH"] = get_ascii_from_parser(
             parser, environment, "APPEND_PYTHONPATH"
         )
     if "PATH" in list(retval["env"].keys()):
-        envpath = appendPathList(
-            getASCIIFromParser(parser, environment, "APPEND_PATH"),
+        envpath = append_path_list(
+            get_ascii_from_parser(parser, environment, "APPEND_PATH"),
             retval["env"]["PATH"],
         )
         retval["env"]["PATH"] = envpath  # Create append to PATH
     else:
-        retval["env"]["PATH"] = getASCIIFromParser(parser, environment, "APPEND_PATH")
+        retval["env"]["PATH"] = get_ascii_from_parser(parser, environment, "APPEND_PATH")
 
-    retval["prefix"] = validatePath(
-        getASCIIFromParser(parser, environment, "MOUNT_PREFIX"), True, True
+    retval["prefix"] = validate_path(
+        get_ascii_from_parser(parser, environment, "MOUNT_PREFIX"), True, True
     )
     if retval["prefix"] is None:
         retval["prefix"] = ""
     if parser.has_option(environment, "VIRTUALENV_DIR"):
-        retval["virtualenv_dir"] = validatePath(
-            getASCIIFromParser(parser, environment, "VIRTUALENV_DIR"), False, True
+        retval["virtualenv_dir"] = validate_path(
+            get_ascii_from_parser(parser, environment, "VIRTUALENV_DIR"), False, True
         )
     else:
         retval["virtualenv_dir"] = None
     retval_cluster = OrderedDict()
-    retval_cluster["modules"] = eval(getASCIIFromParser(parser, environment, "MODULES"))
-    retval_cluster["queue"] = getASCIIFromParser(parser, environment, "QUEUE")
-    retval_cluster["long_q"] = getASCIIFromParser(parser, environment, "QUEUE_LONG")
-    retval_cluster["qstat"] = getASCIIFromParser(parser, environment, "QSTAT_IMMEDIATE")
-    retval_cluster["qstat_cached"] = getASCIIFromParser(
+    retval_cluster["modules"] = eval(get_ascii_from_parser(parser, environment, "MODULES"))
+    retval_cluster["queue"] = get_ascii_from_parser(parser, environment, "QUEUE")
+    retval_cluster["long_q"] = get_ascii_from_parser(parser, environment, "QUEUE_LONG")
+    retval_cluster["qstat"] = get_ascii_from_parser(parser, environment, "QSTAT_IMMEDIATE")
+    retval_cluster["qstat_cached"] = get_ascii_from_parser(
         parser, environment, "QSTAT_CACHED"
     )
 
@@ -140,7 +140,7 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     basename = name + "_" + suffix
     fullpath = os.path.join(dirname, basename)
     if verify:
-        return validatePath(fullpath, False, True)
+        return validate_path(fullpath, False, True)
     else:
         if os.path.isdir(fullpath):
             print(
@@ -155,7 +155,7 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     return fullpath
 
 
-def parseExperiment(parser, workflow_phase):
+def parse_experiment(parser, workflow_phase):
     """ Parse the experiment section and return a dictionary
     This Function takes in...
 
@@ -168,8 +168,8 @@ def parseExperiment(parser, workflow_phase):
     )  # Need OrderedDict internally to ensure consistent ordering
 
     retval = OrderedDict()
-    dirname = validatePath(
-        getASCIIFromParser(parser, "EXPERIMENT", "BASE_OUTPUT_DIR"), False, True
+    dirname = validate_path(
+        get_ascii_from_parser(parser, "EXPERIMENT", "BASE_OUTPUT_DIR"), False, True
     )
     if workflow_phase == "atlas-based-reference":
         current_suffix = "_BASE"
@@ -181,7 +181,7 @@ def parseExperiment(parser, workflow_phase):
         current_suffix = "_CV"
     else:
         assert 0 == 1, "ERROR INVALID workflow_phase"
-    current = getASCIIFromParser(parser, "EXPERIMENT", "EXPERIMENT" + current_suffix)
+    current = get_ascii_from_parser(parser, "EXPERIMENT", "EXPERIMENT" + current_suffix)
 
     """ output directory """
     retval["cachedir"] = create_experiment_dir(dirname, current, "CACHE")
@@ -190,7 +190,7 @@ def parseExperiment(parser, workflow_phase):
     """ any previous run HACK: DO WE EVER USE THIS?"""
     if parser.has_option("EXPERIMENT", "EXPERIMENT" + current_suffix + "_INPUT"):
         # If this is the initial run, there will be no previous experiment
-        previous = getASCIIFromParser(
+        previous = get_ascii_from_parser(
             parser, "EXPERIMENT", "EXPERIMENT" + current_suffix + "_INPUT"
         )
         retval["previousresult"] = create_experiment_dir(
@@ -199,7 +199,7 @@ def parseExperiment(parser, workflow_phase):
 
     useRegistrationMasking = True
     try:
-        regMasking = getASCIIFromParser(
+        regMasking = get_ascii_from_parser(
             parser, "EXPERIMENT", "USE_REGISTRATION_MASKING"
         )
         useRegistrationMasking = str2bool(regMasking)
@@ -207,23 +207,23 @@ def parseExperiment(parser, workflow_phase):
         pass
     retval["use_registration_masking"] = useRegistrationMasking
 
-    atlas = validatePath(
-        getASCIIFromParser(parser, "EXPERIMENT", "ATLAS_PATH"), False, True
+    atlas = validate_path(
+        get_ascii_from_parser(parser, "EXPERIMENT", "ATLAS_PATH"), False, True
     )
     retval["atlascache"] = clone_atlas_dir(retval["cachedir"], atlas)
 
     if workflow_phase == "cross-validation":
         retval["components"] = [""]
     else:
-        retval["dbfile"] = validatePath(
-            getASCIIFromParser(parser, "EXPERIMENT", "SESSION_DB" + current_suffix),
+        retval["dbfile"] = validate_path(
+            get_ascii_from_parser(parser, "EXPERIMENT", "SESSION_DB" + current_suffix),
             False,
             False,
         )
         retval["components"] = [
             x.lower()
             for x in eval(
-                getASCIIFromParser(
+                get_ascii_from_parser(
                     parser, "EXPERIMENT", "WORKFLOW_COMPONENTS" + current_suffix
                 )
             )
@@ -254,29 +254,29 @@ def parseExperiment(parser, workflow_phase):
                 "'jointFusion_2015_wholebrain' will be run with a specified 'jointfusion_atlas_db_base'."
             )
             """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""
-            retval["jointfusion_atlas_db_base"] = validatePath(
-                getASCIIFromParser(parser, "EXPERIMENT", "JointFusion_ATLAS_DB_BASE"),
+            retval["jointfusion_atlas_db_base"] = validate_path(
+                get_ascii_from_parser(parser, "EXPERIMENT", "JointFusion_ATLAS_DB_BASE"),
                 allow_empty=False,
                 isDirectory=False,
             )
-            retval["labelmap_colorlookup_table"] = validatePath(
-                getASCIIFromParser(parser, "EXPERIMENT", "LABELMAP_COLORLOOKUP_TABLE"),
+            retval["labelmap_colorlookup_table"] = validate_path(
+                get_ascii_from_parser(parser, "EXPERIMENT", "LABELMAP_COLORLOOKUP_TABLE"),
                 allow_empty=False,
                 isDirectory=False,
             )
-            retval["relabel2lobes_filename"] = validatePath(
-                getASCIIFromParser(parser, "EXPERIMENT", "RELABEL2LOBES_FILENAME"),
+            retval["relabel2lobes_filename"] = validate_path(
+                get_ascii_from_parser(parser, "EXPERIMENT", "RELABEL2LOBES_FILENAME"),
                 allow_empty=True,
                 isDirectory=False,
             )
         if "edge_prediction" in retval["components"]:
-            retval["gm_edge_classifier"] = validatePath(
-                getASCIIFromParser(parser, "EXPERIMENT", "GM_EDGE_CLASSIFIER"),
+            retval["gm_edge_classifier"] = validate_path(
+                get_ascii_from_parser(parser, "EXPERIMENT", "GM_EDGE_CLASSIFIER"),
                 allow_empty=True,
                 isDirectory=False,
             )
-            retval["wm_edge_classifier"] = validatePath(
-                getASCIIFromParser(parser, "EXPERIMENT", "WM_EDGE_CLASSIFIER"),
+            retval["wm_edge_classifier"] = validate_path(
+                get_ascii_from_parser(parser, "EXPERIMENT", "WM_EDGE_CLASSIFIER"),
                 allow_empty=True,
                 isDirectory=False,
             )
@@ -284,7 +284,7 @@ def parseExperiment(parser, workflow_phase):
     return retval
 
 
-def parseNIPYPE(parser):
+def parse_nipype(parser):
     """ Parse the nipype section and return a dictionary
     This Function takes in...
 
@@ -300,7 +300,7 @@ def parseNIPYPE(parser):
     retval["ds_overwrite"] = parser.getboolean("NIPYPE", "GLOBAL_DATA_SINK_REWRITE")
 
     if parser.has_option("NIPYPE", "CRASHDUMP_DIR"):
-        retval["CRASHDUMP_DIR"] = getASCIIFromParser(parser, "NIPYPE", "CRASHDUMP_DIR")
+        retval["CRASHDUMP_DIR"] = get_ascii_from_parser(parser, "NIPYPE", "CRASHDUMP_DIR")
     else:
         retval["CRASHDUMP_DIR"] = None
 
@@ -311,15 +311,15 @@ def parseNIPYPE(parser):
 #    """ Parse the cluster section and return a dictionary """
 #    from collections import OrderedDict  # Need OrderedDict internally to ensure consistent ordering
 #    retval = OrderedDict()
-#    retval['modules'] = eval(getASCIIFromParser(parser, env, 'MODULES'))
-#    retval['queue'] = getASCIIFromParser(parser, env, 'QUEUE')
-#    retval['long_q'] = getASCIIFromParser(parser, env, 'QUEUE_LONG')
-#    retval['qstat'] = getASCIIFromParser(parser, env, 'QSTAT_IMMEDIATE')
-#    retval['qstat_cached'] = getASCIIFromParser(parser, env, 'QSTAT_CACHED')
+#    retval['modules'] = eval(get_ascii_from_parser(parser, env, 'MODULES'))
+#    retval['queue'] = get_ascii_from_parser(parser, env, 'QUEUE')
+#    retval['long_q'] = get_ascii_from_parser(parser, env, 'QUEUE_LONG')
+#    retval['qstat'] = get_ascii_from_parser(parser, env, 'QSTAT_IMMEDIATE')
+#    retval['qstat_cached'] = get_ascii_from_parser(parser, env, 'QSTAT_CACHED')
 #    return retval
 
 
-def parseFile(configFile, env, workphase):
+def parse_file(configFile, env, workphase):
     """
     This Function takes in...
 
@@ -341,13 +341,13 @@ def parseFile(configFile, env, workphase):
     assert parser.has_option(env, "_BUILD_DIR") or parser.has_option(
         "DEFAULT", "_BUILD_DIR"
     ), "BUILD_DIR option not in {0}".format(env)
-    environment, cluster = parseEnvironment(parser, env)
-    experiment = parseExperiment(parser, workphase)
-    pipeline = parseNIPYPE(parser)
+    environment, cluster = parse_environment(parser, env)
+    experiment = parse_experiment(parser, workphase)
+    pipeline = parse_nipype(parser)
     return environment, experiment, pipeline, cluster
 
 
-def resolveDataSinkOption(args, pipeline):
+def resolve_data_sink_option(args, pipeline):
     """
     This Function takes in...
 
@@ -562,7 +562,7 @@ if __name__ == "__main__":
     if args["--debug"]:
         # TODO: Add and run doctests!
         pass
-    output = parseFile(args["FILE"], args["ENV"], args["PHASE"])
+    output = parse_file(args["FILE"], args["ENV"], args["PHASE"])
     from pprint import pprint
 
     print("")

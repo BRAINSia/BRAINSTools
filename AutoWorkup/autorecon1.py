@@ -17,7 +17,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 
 
-def VerifyInputs(T1sList):
+def verify_inputs(T1sList):
     ##TODO Make this its own node
     ##TODO Convert .mgz files to .nii.gz
     ##TODO Check the FOV
@@ -163,7 +163,7 @@ def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
     return inputvols, iscaleout, ltaout
 
 
-def create_AutoRecon1(config):
+def create_autorecon1(config):
     """
     This function...
 
@@ -184,7 +184,7 @@ def create_AutoRecon1(config):
         )
         inputSpec.inputs.subject_id = config["current_id"]
         inputSpec.inputs.subjects_dir = config["subjects_dir"]
-        inputSpec.inputs.Raw_T1s = VerifyInputs(config["in_T1s"])
+        inputSpec.inputs.Raw_T1s = verify_inputs(config["in_T1s"])
 
         inputvols, iscaleout, ltaout = create_preproc_filenames(
             config["subjects_dir"], config["current_id"], config["in_T1s"]

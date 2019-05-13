@@ -108,7 +108,7 @@ def addSession(
 
 #########################################################################################
 # {#######################################################################################
-def addProbabilityMapElement(
+def add_probability_map_element(
     probabilityMapFilename, roiID, Gaussian, outStream, roiCreateVector="true"
 ):
     outStream.write('  <ProbabilityMap StructureID    = "{str}"\n'.format(str=roiID))
@@ -126,7 +126,7 @@ def addProbabilityMapElement(
 # {#######################################################################################
 
 
-def xmlGenerator(
+def xml_generator(
     p_templateDict,
     p_templateSpatialLocation,
     p_inputVectorFilename,
@@ -246,7 +246,7 @@ def xmlGenerator(
             p_inputVectorCreateDict[roiID] = "true"
 
     for roiID in list(p_roiList.keys()):
-        addProbabilityMapElement(
+        add_probability_map_element(
             p_roiList[roiID],
             roiID,
             p_gaussianSigma,

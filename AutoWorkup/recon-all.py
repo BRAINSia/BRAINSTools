@@ -249,7 +249,7 @@ def procargs(argv):
     return config
 
 
-def checkenv():
+def check_env():
     """Check for the necessary FS environment variables
 
     :return:
@@ -372,7 +372,7 @@ def main(argv):
     :return:
     """
     config = procargs(argv)
-    config["FREESURFER_HOME"] = checkenv()
+    config["FREESURFER_HOME"] = check_env()
     if config["longitudinal"]:
         config["long_id"] = "{0}.long.{1}".format(
             config["subject_id"], config["long_base"]

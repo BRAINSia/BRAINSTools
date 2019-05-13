@@ -22,7 +22,7 @@ import SimpleITK as sitk
 from .PipeLineFunctionHelpers import mkdir_p, make_dummy_file, recursive_dir_rm
 
 
-def normalizeWM(t1, wm_prob):
+def normalize_wm(t1, wm_prob):
     """This function will compute the mean value of wm and rescale the image so that the mean WM=100
 
     :param t1:
@@ -43,7 +43,7 @@ def normalizeWM(t1, wm_prob):
     return t1_new
 
 
-def IsFirstNewerThanSecond(firstFile, secondFile):
+def is_first_newer_than_second(firstFile, secondFile):
     """
     This function..
 
@@ -190,7 +190,7 @@ exit $status
     return
 
 
-def baw_FixBrainMask(
+def baw_fixed_brain_mask(
     brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_session_id
 ):
     """
@@ -212,9 +212,9 @@ def baw_FixBrainMask(
     )
     output_nu_fn_mgz = os.path.join(base_subj_dir, "nu.mgz")
     if (
-        IsFirstNewerThanSecond(brainmask, output_brainmask_fn_mgz)
-        or IsFirstNewerThanSecond(brainmask, output_nu_fn_mgz)
-        or IsFirstNewerThanSecond(output_nu_fn_mgz, output_custom_brainmask_fn_mgz)
+        is_first_newer_than_second(brainmask, output_brainmask_fn_mgz)
+        or is_first_newer_than_second(brainmask, output_nu_fn_mgz)
+        or is_first_newer_than_second(output_nu_fn_mgz, output_custom_brainmask_fn_mgz)
     ):
         print("Fixing BrainMask recon-auto1 stage")
         brain = sitk.ReadImage(brainmask)
@@ -260,7 +260,7 @@ def baw_FixBrainMask(
         return  # Nothing to be done, files are already up-to-date.
 
 
-def removeDir(path):
+def remove_dir(path):
     """
     This function..
 
@@ -271,7 +271,7 @@ def removeDir(path):
         shutil.rmtree(path)
 
 
-def runAutoReconStage(
+def run_auto_recon_stage(
     subj_session_id, StageToRun, t1_fn, subjects_dir, FREESURFER_HOME, FS_SCRIPT
 ):
     """
@@ -288,9 +288,9 @@ def runAutoReconStage(
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     base_subj_dir = os.path.join(subjects_dir, subj_session_id)
     orig_001_mgz_fn = os.path.join(base_subj_dir, "mri", "orig", "001.mgz")
-    if IsFirstNewerThanSecond(t1_fn, orig_001_mgz_fn):
+    if is_first_newer_than_second(t1_fn, orig_001_mgz_fn):
         if os.path.exists(base_subj_dir):
-            removeDir(base_subj_dir)
+            remove_dir(base_subj_dir)
         mkdir_p(os.path.dirname(orig_001_mgz_fn))
         run_mri_convert_script(
             t1_fn,
@@ -357,7 +357,7 @@ exit $status
     return
 
 
-def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
+def run_subject_template(args, FREESURFER_HOME, FS_SCRIPT):
     import sys
 
     """ Create the within-subject template
@@ -485,7 +485,7 @@ exit $status
     return
 
 
-def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
+def run_longitudinal(args, FREESURFER_HOME, FS_SCRIPT):
     """ Create the longitudinal analysis
 
     :param args:
@@ -564,7 +564,7 @@ exit $status
     return
 
 
-def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
+def run_auto_recon(args, FREESURFER_HOME, FS_SCRIPT):
     """Run all stages of AutoRecon For FreeSurfer, including the custom BAW initialization.
 
     :param args:
@@ -572,7 +572,7 @@ def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
     :param FS_SCRIPT:
     :return:
     """
-    runAutoReconStage(
+    run_auto_recon_stage(
         args.subj_session_id,
         1,
         args.T1_files,
@@ -580,14 +580,14 @@ def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
         FREESURFER_HOME,
         FS_SCRIPT,
     )
-    baw_FixBrainMask(
+    baw_fixed_brain_mask(
         args.brainmask,
         args.subjects_dir,
         FREESURFER_HOME,
         FS_SCRIPT,
         args.subj_session_id,
     )
-    runAutoReconStage(
+    run_auto_recon_stage(
         args.subj_session_id,
         2,
         args.T1_files,
@@ -595,7 +595,7 @@ def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
         FREESURFER_HOME,
         FS_SCRIPT,
     )
-    runAutoReconStage(
+    run_auto_recon_stage(
         args.subj_session_id,
         3,
         args.T1_files,
@@ -682,7 +682,7 @@ if __name__ == "__main__":
         required=True,
         help="The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.",
     )
-    autorecon.set_defaults(func=runAutoRecon)
+    autorecon.set_defaults(func=run_auto_recon)
     # Create -base subparser
     template = subparsers.add_parser(
         "template",
@@ -710,7 +710,7 @@ if __name__ == "__main__":
         required=True,
         help="List of sessions for a subject template",
     )
-    template.set_defaults(func=runSubjectTemplate)
+    template.set_defaults(func=run_subject_template)
     # Create -long subparser
     longitudinal = subparsers.add_parser(
         "longitudinal",
@@ -737,7 +737,7 @@ if __name__ == "__main__":
         required=True,
         help='Template folder name (--base_template_id from "template" option)',
     )
-    longitudinal.set_defaults(func=runLongitudinal)
+    longitudinal.set_defaults(func=run_longitudinal)
     # Parse inputs and run correct function
     all_args = parser.parse_args()
     all_args.func(all_args, local_FREESURFER_HOME, local_FS_SCRIPT)

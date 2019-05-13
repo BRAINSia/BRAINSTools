@@ -12,15 +12,15 @@ import os.path
 import re
 
 
-def validatePath(path, allow_empty, isDirectory):
+def validate_path(path, allow_empty, isDirectory):
     """ Check if a path exists and return the path with all variables expanded or raise AssertionError
 
-    >>> validatePath('/usr/bin')
+    >>> validate_path('/usr/bin')
     /usr/bin
     >>> import os
-    >>> os.environ['HOME'] == validatePath('~')
+    >>> os.environ['HOME'] == validate_path('~')
     True
-    >>> validatePath('/dev/null')
+    >>> validate_path('/dev/null')
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
@@ -40,12 +40,12 @@ def validatePath(path, allow_empty, isDirectory):
     return full
 
 
-def validatePaths(pathString):
-    """ Run validatePath() on all paths in a ':' seperated string
+def validate_paths(pathString):
+    """ Run validate_path() on all paths in a ':' seperated string
 
-    >>> validatePaths('/:/usr/bin')
+    >>> validate_paths('/:/usr/bin')
     /:/usr/bin
-    >>> validatePaths('/:/usr/bin:/dev/null')
+    >>> validate_paths('/:/usr/bin:/dev/null')
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
@@ -53,21 +53,21 @@ def validatePaths(pathString):
     :param pathString:
     :return:
     """
-    return ":".join([validatePath(path, False, True) for path in ":".split(pathString)])
+    return ":".join([validate_path(path, False, True) for path in ":".split(pathString)])
 
 
-def appendPathList(new, old=None):
+def append_path_list(new, old=None):
     """ Join the new and old ":"-seperated path strings and return the result
 
-    >>> appendPathList('/usr', '/bin:/usr/bin')
+    >>> append_path_list('/usr', '/bin:/usr/bin')
     /usr:/bin:/usr/bin
-    >>> appendPathList('/usr:/usr/bin')
+    >>> append_path_list('/usr:/usr/bin')
     /usr:/usr/bin
-    >>> appendPathList('')
+    >>> append_path_list('')
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found!
-    >>> appendPathList('/dev/null')
+    >>> append_path_list('/dev/null')
     Traceback (most recent call last):
         ...
     AssertionError: Path could not be found! /dev/null
@@ -76,10 +76,10 @@ def appendPathList(new, old=None):
     :param old:
     :return:
     """
-    new = validatePaths(new, False, True)
+    new = validate_paths(new, False, True)
     if old is None or old == "":
         return new
-    old = validatePaths(old, False, True)
+    old = validate_paths(old, False, True)
     return ":".join([new, old])
 
 
@@ -123,7 +123,7 @@ def clone_atlas_dir(cachedir, atlasdir):
     new_dir = os.path.join(cachedir, "Atlas")
     print("Searching for atlas directory in cache...")
     if not os.path.exists(new_dir):
-        old_dir = validatePath(atlasdir, False, True)
+        old_dir = validate_path(atlasdir, False, True)
         print(("Copying new atlas {0} to cache directory...".format(old_dir)))
         newfiles = copy_tree(
             old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True

@@ -122,7 +122,7 @@ exit $status
     return job_name
 
 
-def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
+def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
     """
     This function...
 
@@ -183,7 +183,7 @@ def ValidateBaseTPS(base_tps_file, found_sessions, subject, templateID):
     return return_status
 
 
-def mktemplatescript(templateID, sessionList, outscript, dependantJobNames):
+def mk_template_script(templateID, sessionList, outscript, dependantJobNames):
     """
     This function...
 
@@ -317,7 +317,7 @@ if (not os.path.exists(subjectDatabaseFile)) or (
     os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)
 ):
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-    ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
+    ExperimentDatabase.make_new_db(subject_data_file, mountPrefix)
     ExperimentDatabase = None
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
 else:
@@ -345,7 +345,7 @@ else:
 # pickle.dump(obj, file[, protocol])
 
 
-def GetBaseSize(filename):
+def get_base_size(filename):
     """
     This function...
 
@@ -375,9 +375,9 @@ def find_mgz(inlist):
         return outlist
 
     same_size = list()
-    base_size = GetBaseSize(inlist[0])
+    base_size = get_base_size(inlist[0])
     for ff in inlist:
-        new_size = GetBaseSize(ff)
+        new_size = get_base_size(ff)
         if new_size != base_size:
             continue
         same_size.append(ff)
@@ -408,12 +408,12 @@ base_done = 0
 temp_done = 0
 long_done = 0
 
-all_subjects = sorted(ExperimentDatabase.getAllSubjects())
+all_subjects = sorted(ExperimentDatabase.get_all_subjects())
 all_subjects.reverse()
 for thisSubject in all_subjects:
     # if thisSubject != '0152':
     #    continue
-    thisSubject_sessions = ExperimentDatabase.getSessionsFromSubject(thisSubject)
+    thisSubject_sessions = ExperimentDatabase.get_sessions_from_subject(thisSubject)
 
     ## -------------------------
     ## Do initial timepoints
@@ -424,13 +424,13 @@ for thisSubject in all_subjects:
     for session in thisSubject_sessions:
         # NEVER DO THIS! if session != '77574':
         # NEVER DO THIS!   continue
-        T1_files_30 = ExperimentDatabase.getFilenamesByScantype(session, ["T1-30"])
-        T2_files = ExperimentDatabase.getFilenamesByScantype(session, ["T2-30"])
+        T1_files_30 = ExperimentDatabase.get_filenames_by_scan_type(session, ["T1-30"])
+        T2_files = ExperimentDatabase.get_filenames_by_scan_type(session, ["T2-30"])
 
         if len(T1_files_30) > 0:
             is3T = True
         else:
-            T1_files_15 = ExperimentDatabase.getFilenamesByScantype(session, ["T1-15"])
+            T1_files_15 = ExperimentDatabase.get_filenames_by_scan_type(session, ["T1-15"])
             is3T = False
 
         if is3T:
@@ -442,7 +442,7 @@ for thisSubject in all_subjects:
         this_session_base_done = False
         if is3T:  # len(T1_files_30) > 0:
             T1_files = find_mgz(T1_files_30)
-            T2_files_30 = ExperimentDatabase.getFilenamesByScantype(session, ["T2-30"])
+            T2_files_30 = ExperimentDatabase.get_filenames_by_scan_type(session, ["T2-30"])
             T2_files = find_mgz(T2_files_30)
             if len(T2_files) != len(T2_files_30):
                 print(("SKIPPING: mgz files missing: {0}".format(T2_files_30)))
@@ -495,7 +495,7 @@ for thisSubject in all_subjects:
         sentinal_file = os.path.join(subjects_dir, templateID, "surf/rh.volume")
 
         base_tps_file = os.path.join(subjects_dir, templateID, "base-tps")
-        validatedsamelength = ValidateBaseTPS(
+        validatedsamelength = validate_base_tps(
             base_tps_file, ThreeT_sessions, thisSubject, templateID
         )
 
@@ -513,7 +513,7 @@ for thisSubject in all_subjects:
                 os.unlink(fsscript)
         else:
             print(("2TODO:", templateID, ":"))
-            template_job_name = mktemplatescript(
+            template_job_name = mk_template_script(
                 templateID, ThreeT_sessions, fsscript, base3T_job_names
             )
             template_job_names.append(template_job_name)
@@ -525,8 +525,8 @@ for thisSubject in all_subjects:
         ## -------------------------
         ## Do 3T Longitudinal timepoints
         for session in ThreeT_sessions:
-            T1_files = ExperimentDatabase.getFilenamesByScantype(session, ["T1-30"])
-            T2_files = ExperimentDatabase.getFilenamesByScantype(session, ["T2-30"])
+            T1_files = ExperimentDatabase.get_filenames_by_scan_type(session, ["T1-30"])
+            T2_files = ExperimentDatabase.get_filenames_by_scan_type(session, ["T2-30"])
 
             T1_files = find_mgz(T1_files)
             T2_files = find_mgz(T2_files)
@@ -582,7 +582,7 @@ for thisSubject in all_subjects:
                 os.unlink(fsscript)
         else:
             print(("15TTODO:", templateID, ":", OneT_sessions))
-            template_job_name = mktemplatescript(
+            template_job_name = mk_template_script(
                 templateID, OneT_sessions, fsscript, base1T_job_names
             )
             template_job_names.append(template_job_name)
@@ -594,7 +594,7 @@ for thisSubject in all_subjects:
         ## -------------------------
         ## Do 1T Longitudinal timepoints
         for session in OneT_sessions:
-            T1_files = ExperimentDatabase.getFilenamesByScantype(session, ["T1-15"])
+            T1_files = ExperimentDatabase.get_filenames_by_scan_type(session, ["T1-15"])
 
             T1_files = find_mgz(T1_files)
 

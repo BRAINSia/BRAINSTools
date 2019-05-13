@@ -20,7 +20,7 @@ from nipype.interfaces.utility import Merge, IdentityInterface
 from . import fswrap
 
 
-def GenerateWFName(projectid, subjectid, sessionid, WFName):
+def generate_wf_name(projectid, subjectid, sessionid, WFName):
     """
     This function...
 
@@ -33,7 +33,7 @@ def GenerateWFName(projectid, subjectid, sessionid, WFName):
     return WFName + "_" + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)
 
 
-def CreateFreeSurferWorkflow_custom(
+def create_free_surfer_workflow_custom(
     projectid,
     subjectid,
     sessionid,
@@ -59,7 +59,7 @@ def CreateFreeSurferWorkflow_custom(
     :return:
     """
     freesurferWF = pe.Workflow(
-        name=GenerateWFName(projectid, subjectid, sessionid, WFname)
+        name=generate_wf_name(projectid, subjectid, sessionid, WFname)
     )
 
     inputsSpec = pe.Node(
@@ -156,7 +156,7 @@ def CreateFreeSurferWorkflow_custom(
     return freesurferWF
 
 
-def CreateFreeSurferSubjectTemplate(
+def create_free_surfer_subject_template(
     projectid,
     subjectid,
     WFname,
@@ -182,7 +182,7 @@ def CreateFreeSurferSubjectTemplate(
     :return:
     """
     subjectTemplate_freesurferWF = pe.Workflow(
-        name=GenerateWFName(projectid, subjectid, "", WFname)
+        name=generate_wf_name(projectid, subjectid, "", WFname)
     )
     inputsSpec = pe.Node(
         interface=IdentityInterface(
@@ -233,7 +233,7 @@ def CreateFreeSurferSubjectTemplate(
     return subjectTemplate_freesurferWF
 
 
-def CreateFreeSurferLongitudinalWorkflow(
+def create_free_surfer_longitudinal_worklfow(
     projectid,
     subjectid,
     sessionid,
@@ -260,7 +260,7 @@ def CreateFreeSurferLongitudinalWorkflow(
     :return:
     """
     long_freesurferWF = pe.Workflow(
-        name=GenerateWFName(projectid, subjectid, sessionid, WFname)
+        name=generate_wf_name(projectid, subjectid, sessionid, WFname)
     )
     inputsSpec = pe.Node(
         interface=IdentityInterface(

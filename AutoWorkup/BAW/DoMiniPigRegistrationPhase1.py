@@ -57,7 +57,7 @@ if len(sys.argv) != 1:
     )
 
 
-def addToSysPath(index, path):
+def add_to_sys_path(index, path):
     """
     This function...
 
@@ -70,10 +70,10 @@ def addToSysPath(index, path):
 
 
 # Modify the PATH for python modules
-addToSysPath(0, "/scratch/johnsonhj/src/NEP-11/NIPYPE")
-addToSysPath(0, "/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup/semtools")
-addToSysPath(1, "/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup")
-addToSysPath(1, "/scratch/johnsonhj/src/NEP-11/BRAINSTools")
+add_to_sys_path(0, "/scratch/johnsonhj/src/NEP-11/NIPYPE")
+add_to_sys_path(0, "/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup/semtools")
+add_to_sys_path(1, "/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup")
+add_to_sys_path(1, "/scratch/johnsonhj/src/NEP-11/BRAINSTools")
 
 # Modify the PATH for executibles used
 temp_paths = os.environ["PATH"].split(os.pathsep)
@@ -188,7 +188,7 @@ input_spec.inputs.DomesticLUT = ExperimentInfo["Atlas"]["LabelMapLUT"]
 input_spec.inputs.Domestic_LabelMap = ExperimentInfo["Atlas"]["LabelMapImage"]
 
 
-def ChangeDynamicRangeOfImage(inFN, outFN, winMin, winMax, outMin, outMax):
+def change_dynamic_range_of_image(inFN, outFN, winMin, winMax, outMin, outMax):
     """
     This function...
 
@@ -218,7 +218,7 @@ def ChangeDynamicRangeOfImage(inFN, outFN, winMin, winMax, outMin, outMax):
 
 fixAtlas = pe.Node(
     Function(
-        function=ChangeDynamicRangeOfImage,
+        function=change_dynamic_range_of_image,
         input_names=["inFN", "outFN", "winMin", "winMax", "outMin", "outMax"],
         output_names=["outFN"],
     ),
@@ -234,7 +234,7 @@ minipigWF.connect(input_spec, "Raw_Atlas", fixAtlas, "inFN")
 
 T1DynFix = pe.Node(
     Function(
-        function=ChangeDynamicRangeOfImage,
+        function=change_dynamic_range_of_image,
         input_names=["inFN", "outFN", "winMin", "winMax", "outMin", "outMax"],
         output_names=["outFN"],
     ),
@@ -250,7 +250,7 @@ minipigWF.connect(input_spec, "Cropped_T1", T1DynFix, "inFN")
 
 T2DynFix = pe.Node(
     Function(
-        function=ChangeDynamicRangeOfImage,
+        function=change_dynamic_range_of_image,
         input_names=["inFN", "outFN", "winMin", "winMax", "outMin", "outMax"],
         output_names=["outFN"],
     ),
@@ -272,7 +272,7 @@ minipigWF.connect(input_spec, "Raw_BM", ResampleBrainMask, "inputVolume")
 minipigWF.connect(T1DynFix, "outFN", ResampleBrainMask, "referenceVolume")
 
 
-def SmoothBrainMask(inFN, outFN):
+def smooth_brain_mask(inFN, outFN):
     """
     This function...
 
@@ -296,7 +296,7 @@ def SmoothBrainMask(inFN, outFN):
 
 smoothBrainMask = pe.Node(
     Function(
-        function=SmoothBrainMask, input_names=["inFN", "outFN"], output_names=["outFN"]
+        function=smooth_brain_mask, input_names=["inFN", "outFN"], output_names=["outFN"]
     ),
     run_without_submitting=True,
     name="smoothBrainMask",
@@ -333,7 +333,7 @@ minipigWF.connect(T2DynFix, "outFN", T2_to_T1_Fit, "movingVolume")
 
 
 ######===========================
-def ChopImage(inFN, inMaskFN, outFN):
+def chop_image(inFN, inMaskFN, outFN):
     """A function to apply mask to zero out all non-interesting pixels.
        ideally this should not be needed, but in an attempt to figure out
        why registration is acting difficult, this is a reasonable solution
@@ -359,7 +359,7 @@ def ChopImage(inFN, inMaskFN, outFN):
 
 chopT1 = pe.Node(
     Function(
-        function=ChopImage,
+        function=chop_image,
         input_names=["inFN", "inMaskFN", "outFN"],
         output_names=["outFN"],
     ),
@@ -372,7 +372,7 @@ minipigWF.connect(smoothBrainMask, "outFN", chopT1, "inMaskFN")
 
 chopT2 = pe.Node(
     Function(
-        function=ChopImage,
+        function=chop_image,
         input_names=["inFN", "inMaskFN", "outFN"],
         output_names=["outFN"],
     ),
@@ -461,7 +461,7 @@ minipigWF.connect(
 
 
 ######===========================
-def MakeVector(inFN1, inFN2):
+def make_vector(inFN1, inFN2):
     """
     This function...
 
@@ -474,7 +474,7 @@ def MakeVector(inFN1, inFN2):
 
 SubjectMakeVector = pe.Node(
     Function(
-        function=MakeVector, input_names=["inFN1", "inFN2"], output_names=["outFNs"]
+        function=make_vector, input_names=["inFN1", "inFN2"], output_names=["outFNs"]
     ),
     run_without_submitting=True,
     name="SubjectMakeVector",
@@ -484,7 +484,7 @@ minipigWF.connect(chopT2, "outFN", SubjectMakeVector, "inFN2")
 
 AtlasMakeVector = pe.Node(
     Function(
-        function=MakeVector, input_names=["inFN1", "inFN2"], output_names=["outFNs"]
+        function=make_vector, input_names=["inFN1", "inFN2"], output_names=["outFNs"]
     ),
     run_without_submitting=True,
     name="AtlasMakeVector",
@@ -535,7 +535,7 @@ minipigWF.connect(BeginANTS, "save_state", BeginANTS2, "restore_state")
 
 
 ######===========================
-def getListIndex(imageList, index):
+def get_list_index(imageList, index):
     """
     This function...
 

@@ -41,7 +41,7 @@ def copy_ltas(in_file, subjects_dir, subject_id, long_template):
     return out_file
 
 
-def create_AutoRecon2(config):
+def create_autorecon2(config):
     """
     This function...
 

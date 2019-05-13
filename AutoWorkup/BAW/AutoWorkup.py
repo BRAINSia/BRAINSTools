@@ -39,17 +39,17 @@ def setup_environment(argv):
     print("Configuring environment...")
     import os
     import os.path
-    from BAW.utilities.configFileParser import resolveDataSinkOption, parseFile
-    from BAW.utilities.pathHandling import validatePath
+    from BAW.utilities.configFileParser import resolve_data_sink_option, parse_file
+    from BAW.utilities.pathHandling import validate_path
     from BAW.utilities import misc
     from collections import (
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
 
-    environment, experiment, pipeline, cluster = parseFile(
+    environment, experiment, pipeline, cluster = parse_file(
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"]
     )
-    pipeline["ds_overwrite"] = resolveDataSinkOption(argv, pipeline)
+    pipeline["ds_overwrite"] = resolve_data_sink_option(argv, pipeline)
     if cluster is None:
         print("Running on local")
         # raise NotImplementedError("Running local has old code and has not been tested!")
@@ -62,14 +62,14 @@ def setup_environment(argv):
         )  # Load modules if not already done  ## MODS PATH
         # print os.environ['LOADEDMODULES']
         # if environment['virtualenv_dir'] is not None:  # MODS PATH
-        # activate_this = validatePath(
+        # activate_this = validate_path(
         #    os.path.join(environment['virtualenv_dir'], 'bin', 'activate_this.py'), False, False)
         # if os.path.exists( activate_this ) :
         #    exec(open(activate_this).read(), OrderedDict(__file__=activate_this))
     utilities_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "utilities"
     )
-    configure_env = validatePath(
+    configure_env = validate_path(
         os.path.join(utilities_path, "configure_env.py"), False, False
     )
     # Add the AutoWorkup directory to the PYTHONPATH every time - REQUIRED FOR CLUSTER DISPATCHING
@@ -101,7 +101,7 @@ def setup_environment(argv):
 
     verify_packages()
     if "FREESURFER" in experiment["components"]:  # FREESURFER MODS
-        configure_FS = validatePath(
+        configure_FS = validate_path(
             os.path.join(utilities_path, "utilities", "configure_FS.py"), False, False
         )
         exec(

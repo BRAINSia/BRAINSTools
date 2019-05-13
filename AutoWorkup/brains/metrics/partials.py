@@ -49,7 +49,7 @@ _isAccumulated = False
 _tolerance = [0.51, 1.01]
 
 
-def _formatPartialAssertString():
+def _format_partial_assert_string():
     """
     Returns assertion string for label
 
@@ -62,20 +62,20 @@ def _formatPartialAssertString():
     return assertString
 
 
-def _checkLabel(label):
+def _check_label(label):
     """
     Verifies string is in the list of valid labels for partial volume resuls
 
     :param label:
     """
-    errorString = _formatPartialAssertString()
+    errorString = _format_partial_assert_string()
     if label.lower() == "icv":
         pass
     else:
         assert label.lower() in partials + accumulated, errorString % label
 
 
-def _setIfAccumulated(label):
+def _set_if_accumulated(label):
     """
     Sets _isAccumulated to True if label is in accumulated list
 
@@ -90,7 +90,7 @@ def _setIfAccumulated(label):
         #     print "_isAccumulated: ", _isAccumulated
 
 
-def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolerance):
+def calculate_binary_volume(dirname, label, _isAccumulated=True, tolerance=_tolerance):
     """
     This function...
 
@@ -114,8 +114,8 @@ def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolera
             if sublabel == "background_total":
                 continue
             else:
-                # print "sublabel: ", sublabel, calculateBinaryVolume(dirname, sublabel, True)
-                maskSum += calculateBinaryVolume(dirname, sublabel, True)
+                # print "sublabel: ", sublabel, calculate_binary_volume(dirname, sublabel, True)
+                maskSum += calculate_binary_volume(dirname, sublabel, True)
         return maskSum
 
     labelFile = os.path.join(dirname, fileDir, "POSTERIOR_" + label + ".nii.gz")
@@ -131,7 +131,7 @@ def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolera
     return maskSum * size[0] * size[1] * size[2]
 
 
-def calculatePartialVolume(dirname, label, _isAccumulated=True):
+def calculate_partial_volume(dirname, label, _isAccumulated=True):
     """
     This function...
 
@@ -153,8 +153,8 @@ def calculatePartialVolume(dirname, label, _isAccumulated=True):
             if sublabel == "background_total":
                 continue
             else:
-                # print "sublabel: ", sublabel, calculatePartialVolume(dirname, sublabel, True)
-                maskSum += calculatePartialVolume(dirname, sublabel, True)
+                # print "sublabel: ", sublabel, calculate_partial_volume(dirname, sublabel, True)
+                maskSum += calculate_partial_volume(dirname, sublabel, True)
         return maskSum
 
     labelFile = os.path.join(dirname, fileDir, "POSTERIOR_" + label + ".nii.gz")
@@ -168,7 +168,7 @@ def calculatePartialVolume(dirname, label, _isAccumulated=True):
     return maskSum * size[0] * size[1] * size[2]
 
 
-def getPosteriorVolume(*args, **kwds):
+def get_posterior_volume(*args, **kwds):
     """
     This function...
 
@@ -220,10 +220,10 @@ def getPosteriorVolume(*args, **kwds):
 
     for label in labels:
         label = label.upper()
-        _checkLabel(label)
-        _setIfAccumulated(label)
+        _check_label(label)
+        _set_if_accumulated(label)
         if binary:
-            volume += calculateBinaryVolume(dirname, label, _isAccumulated)
+            volume += calculate_binary_volume(dirname, label, _isAccumulated)
         else:
-            volume += calculatePartialVolume(dirname, label, _isAccumulated)
+            volume += calculate_partial_volume(dirname, label, _isAccumulated)
     return volume

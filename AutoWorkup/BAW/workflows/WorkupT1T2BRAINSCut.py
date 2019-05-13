@@ -15,15 +15,15 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
 from nipype.interfaces.utility import Merge, Function, IdentityInterface
 
-from PipeLineFunctionHelpers import getListIndex
+from PipeLineFunctionHelpers import get_list_index
 from .RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
 
-def GenerateWFName(projectid, subjectid, sessionid, WFName):
+def generate_wf_name(projectid, subjectid, sessionid, WFName):
     return WFName + "_" + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)
 
 
-def CreateLabelMap(
+def create_label_map(
     listOfImages,
     LabelImageName,
     CSVFileName,
@@ -53,7 +53,7 @@ def CreateLabelMap(
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
 
-    def CleanUpSegmentationsWithExclusionProbabilityMaps(
+    def cleanup_segmentations_with_exlusion_probability_maps(
         initial_seg, probMapOfExclusion, percentageThreshold=0.85
     ):
         """This function is used to clean up grey matter sub-cortical segmentations
@@ -77,7 +77,7 @@ def CreateLabelMap(
         # print "DD", OrderedDict(sitk.Statistics(cleanedUpSeg))
         return cleanedUpSeg
 
-    def CleanUpGMSegmentationWithWMCSF(
+    def cleanup_gm_segmentation_with_mcsf(
         initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold
     ):
         """
@@ -93,11 +93,11 @@ def CreateLabelMap(
 
         # WM_FN = posteriorDictionary['WM']
         # WM_PROB = sitk.ReadImage(WM_FN)
-        # WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
+        # WM_removed = cleanup_segmentations_with_exlusion_probability_maps(initial_seg, WM_PROB, WMThreshold)
 
         CSF_FN = posteriorDictionary["CSF"]
         CSF_PROB = sitk.ReadImage(CSF_FN)
-        CSF_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(
+        CSF_removed = cleanup_segmentations_with_exlusion_probability_maps(
             initial_seg, CSF_PROB, CSFThreshold
         )
         return CSF_removed
@@ -144,7 +144,7 @@ def CreateLabelMap(
         x = x + 1
         print((x, segFN))
         ## Clean up the segmentations
-        curr_segROI = CleanUpGMSegmentationWithWMCSF(
+        curr_segROI = cleanup_gm_segmentation_with_mcsf(
             segFN, posteriorDictionary, 0.85, 0.85
         )
         print("Y")
@@ -246,7 +246,7 @@ def CreateLabelMap(
 # ==============================================
 
 
-def CreateBRAINSCutWorkflow(
+def create_brains_cut_workflow(
     projectid, subjectid, sessionid, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, WFName, t1Only
 ):
     """
@@ -261,7 +261,7 @@ def CreateBRAINSCutWorkflow(
     :param t1Only:
     :return:
     """
-    cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
+    cutWF = pe.Workflow(name=generate_wf_name(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(
         interface=IdentityInterface(
@@ -375,13 +375,13 @@ def CreateBRAINSCutWorkflow(
 
     cutWF.connect(DenoisedT1, "outputVolume", RF12BC, "inputSubjectT1Filename")
 
-    from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures
+    from PipeLineFunctionHelpers import make_inclusion_mask_for_gm_structures
 
     makeCandidateRegionNode = pe.Node(
         interface=Function(
             ["posteriorDictionary", "candidateRegionFileName"],
             ["outputCandidateRegionFileName"],
-            function=MakeInclusionMaskForGMStructures,
+            function=make_inclusion_mask_for_gm_structures,
         ),
         name="MakeCandidateRegion",
     )
@@ -471,7 +471,7 @@ def CreateBRAINSCutWorkflow(
                 RF12BC,
                 [
                     (
-                        ("atlasToSubjectTransform", getListIndex, 0),
+                        ("atlasToSubjectTransform", get_list_index, 0),
                         "deformationFromTemplateToSubject",
                     )
                 ],
@@ -523,7 +523,7 @@ def CreateBRAINSCutWorkflow(
                 "CleanedLeftGlobus",
                 "CleanedRightGlobus",
             ],
-            function=CreateLabelMap,
+            function=create_label_map,
         ),
         name="ComputeOneLabelMap",
     )

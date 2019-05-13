@@ -15,7 +15,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 
 
-def create_AutoRecon3(config):
+def create_autorecon3(config):
     """
     This function...
 

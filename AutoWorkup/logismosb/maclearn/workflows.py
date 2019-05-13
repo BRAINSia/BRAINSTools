@@ -19,7 +19,7 @@ from nipype.interfaces.semtools import BRAINSResample
 from nipype.interfaces.freesurfer import MRIsConvert
 
 # from ..workflow import LOGISMOSB, read_json_config
-# from ..utils.mesh2mask import Mesh2Mask
+# from ..utils.mesh_2_mask import Mesh2Mask
 import os
 
 

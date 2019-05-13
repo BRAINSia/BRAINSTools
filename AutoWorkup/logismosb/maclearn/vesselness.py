@@ -137,7 +137,7 @@ def compute_eigen_values_from_hessian(hessian):
     if check_eigen_values(*eigen_values_list):
         return eigen_values_list
     else:
-        sorted_eigen_values = sortbyabs(eigen_values, axis=-1)
+        sorted_eigen_values = sort_by_abs(eigen_values, axis=-1)
         sorted_eigen_values_list = separate_eigen_values(sorted_eigen_values)
         if check_eigen_values(*sorted_eigen_values_list):
             return sorted_eigen_values_list
@@ -146,7 +146,7 @@ def compute_eigen_values_from_hessian(hessian):
             sys.exit(1)
 
 
-def sortbyabs(a, axis=0):
+def sort_by_abs(a, axis=0):
     """Sort array along a given axis by the absolute value
     modified from: http://stackoverflow.com/a/11253931/4067734
 

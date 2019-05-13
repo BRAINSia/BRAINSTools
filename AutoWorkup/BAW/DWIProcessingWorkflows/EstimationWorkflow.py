@@ -33,7 +33,7 @@ from nipype.interfaces.semtools import *
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 
 
-def CreateEstimationWorkflow(WFname):
+def create_estimation_workflow(WFname):
     """
     This Function takes in...
 
@@ -41,7 +41,7 @@ def CreateEstimationWorkflow(WFname):
     :return: EstimationWF
     """
     #### Utility function ####
-    def RunDTIProcess(dti_image):
+    def run_dti_process(dti_image):
         """
         This Function takes in...
 
@@ -143,7 +143,7 @@ def CreateEstimationWorkflow(WFname):
     # However, some checkings are done to make sure all needed outputs of dtiprocess are written properly.
     DTIProcess = pe.Node(
         interface=Function(
-            function=RunDTIProcess,
+            function=run_dti_process,
             input_names=["dti_image"],
             output_names=[
                 "fa_output",

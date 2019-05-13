@@ -31,7 +31,7 @@ from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 
 
-def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
+def create_cs_from_workflow(WFname, PYTHON_AUX_PATHS):
     """
     This Function runs "compressed Sensing" in Matlab on a DWI scan, that is already correct and aligned to t2 image spaces
 
@@ -48,7 +48,7 @@ def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
         )
 
     #### Utility function ####
-    def runCSbyMatlab(inputScan, inputMask, CSScanFileName, Path_to_Matlab_Func):
+    def run_cs_by_matlab(inputScan, inputMask, CSScanFileName, Path_to_Matlab_Func):
         """
         This Function takes in...
 
@@ -97,7 +97,7 @@ def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
     # Running a matlab node directly could be a nicer way, but I doesn't have any outputspec,
     # so I chose to run the matlab code using a python function.
     """
-    runCS=pe.Node(interface=matlab.MatlabCommand(),name="runCSbyMatlab")
+    runCS=pe.Node(interface=matlab.MatlabCommand(),name="run_cs_by_matlab")
     matlab.MatlabCommand().set_default_matlab_cmd("matlab")
     runCS.inputs.single_comp_thread = False
     runCS.inputs.nodesktop = True
@@ -108,7 +108,7 @@ def CreateCSWorkflow(WFname, PYTHON_AUX_PATHS):
     """
     runCS = pe.Node(
         interface=Function(
-            function=runCSbyMatlab,
+            function=run_cs_by_matlab,
             input_names=[
                 "inputScan",
                 "inputMask",

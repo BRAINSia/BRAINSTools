@@ -18,7 +18,7 @@ from utilities.distributed import modify_qsub_args
 from utilities.misc import *
 
 
-def MakeLabelDictionary(inputColorLookUpTableFilename):
+def make_label_dictionary(inputColorLookUpTableFilename):
     """
     Construct dictionary:
         label No.: label name
@@ -51,12 +51,12 @@ def MakeLabelDictionary(inputColorLookUpTableFilename):
 #Unit test:
 inputColorLookUpTableFilename="/Shared/johnsonhj/HDNI/ReferenceData/20150709_HDAdultAtlas/BAWHDAdultAtlas_FreeSurferConventionColorLUT_20150709.txt"
 
-labelDict=MakeLabelDictionary(inputColorLookUpTableFilename)
+labelDict=make_label_dictionary(inputColorLookUpTableFilename)
 print(labelDict)
 """
 
 
-def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
+def get_label_volumes(labelVolume, RefVolume, labelDictionary):
     """
     Get label volumes using
     1. reference volume and
@@ -107,12 +107,12 @@ def GetLabelVolumes(labelVolume, RefVolume, labelDictionary):
 labelName="/Shared/sinapse/CACHE/20160405_PREDICTHD_long_Results/PHD_024/0138/49757/TissueClassify/JointFusion_HDAtlas20_2015_label.nii.gz"
 t1Name="/Shared/sinapse/CACHE/20160405_PREDICTHD_long_Results/PHD_024/0138/49757/TissueClassify/t1_average_BRAINSABC.nii.gz"
 
-labelVolDict= GetLabelVolumes(labelName, t1Name, labelDict)
+labelVolDict= get_label_volumes(labelName, t1Name, labelDict)
 print(labelVolDict)
 """
 
 
-def WriteDictionaryToCSV(inputList, outputFilename):
+def write_dictionary_to_csv(inputList, outputFilename):
     """
     This function...
 
@@ -139,12 +139,12 @@ def WriteDictionaryToCSV(inputList, outputFilename):
 
 """
 #Unit test::
-WriteDictionaryToCSV(labelVolDict, "~/Desktop/test.csv")
+write_dictionary_to_csv(labelVolDict, "~/Desktop/test.csv")
 
 """
 
 
-def WriteDictionaryToJson(inputList, outputFilename):
+def write_dictionary_to_json(inputList, outputFilename):
     """
     This function..
 
@@ -164,11 +164,11 @@ def WriteDictionaryToJson(inputList, outputFilename):
 
 """
 #Unit test::
-WriteDictionaryToJson(labelVolDict, "~/Desktop/test.json")
+write_dictionary_to_json(labelVolDict, "~/Desktop/test.json")
 """
 
 
-def VolumeMeasure(
+def volume_measure(
     inputColorLookUpTableFilename,
     labelFilename,
     inputReferenceFilename,
@@ -183,12 +183,12 @@ def VolumeMeasure(
     :param outputFileBasename:
     :return:
     """
-    labelDict = MakeLabelDictionary(inputColorLookUpTableFilename)
-    measurementsList = GetLabelVolumes(labelFilename, inputReferenceFilename, labelDict)
+    labelDict = make_label_dictionary(inputColorLookUpTableFilename)
+    measurementsList = get_label_volumes(labelFilename, inputReferenceFilename, labelDict)
     csvFilename = outputFileBasename + "CSV.csv"
     jsonFilename = outputFileBasename + "JSON.json"
-    WriteDictionaryToCSV(measurementsList, csvFilename)
-    WriteDictionaryToJson(measurementsList, jsonFilename)
+    write_dictionary_to_csv(measurementsList, csvFilename)
+    write_dictionary_to_json(measurementsList, jsonFilename)
 
     import os
 
@@ -252,7 +252,7 @@ def main():
             )
         )
 
-        outputFiles = VolumeMeasure(
+        outputFiles = volume_measure(
             colorTable, labelFilename, referenceFilename, outputFileBasename
         )
         print(outputFiles)

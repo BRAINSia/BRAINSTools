@@ -187,7 +187,7 @@ def BRAINSCutCMDFromConfigFile(
     if "createVectorOption".lower() in optionsDict:
         generalOption = optionsDict["createVectorOption".lower()]
 
-    from XMLConfigurationGenerator import xmlGenerator
+    from XMLConfigurationGenerator import xml_generator
 
     import os
 
@@ -204,7 +204,7 @@ def BRAINSCutCMDFromConfigFile(
             applyModelOutputDirDict[sessionID]
         )
 
-    returnList = xmlGenerator(
+    returnList = xml_generator(
         m_templateDict,
         m_spatialDescriptionDict,
         p_vectorFilename,

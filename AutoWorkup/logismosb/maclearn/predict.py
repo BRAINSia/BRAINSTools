@@ -12,7 +12,7 @@ import SimpleITK as sitk
 from sklearn.externals import joblib
 import os
 import numpy as np
-from .preprocess import createwatersheds
+from .preprocess import create_water_sheds
 from .training import image_data
 import pickle
 
@@ -33,7 +33,7 @@ def get_image_probabilities(
     clf_files = pickle.load(open(clf_dict_file, "rb"))
     image_data = image_data(image_file, "T1")
     image_features = image_data.values
-    wm_labels_image, gm_labels_image, _, _ = createwatersheds(
+    wm_labels_image, gm_labels_image, _, _ = create_water_sheds(
         aseg_labels_file, filled_labels_file
     )
     wm_labels_file = os.path.abspath(os.path.join(out_dir, "wm_regions.nii.gz"))

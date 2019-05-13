@@ -25,8 +25,8 @@ from nipype.interfaces.semtools import *
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 
 """
-    from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
-    myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
+    from WorkupT1T2PERSISTANCE_CHECK import create_persistance_check_workflow
+    myLocalPERSISTANCE_CHECKWF= create_persistance_check_workflow("999999_PersistanceCheckingWorkflow")
     PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
     PERSISTANCE_CHECKWF.connect(BABC,'outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
     PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1_denoised_gaussian',myLocalPERSISTANCE_CHECKWF,'movingVolume')
@@ -35,7 +35,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 """
 
 
-def CreatePERSISTANCE_CHECKWorkflow(WFname):
+def create_persistance_check_workflow(WFname):
     """ The purpose of this workflow is to debug the automatic deletion of files from the output directory.
 
     :param WFname:

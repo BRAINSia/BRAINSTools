@@ -16,7 +16,7 @@ from . import _config
 valid_schemes = ["BRAINS", "Nipype"]
 
 
-def writeConfiguration(filename="example.config"):
+def write_configuration(filename="example.config"):
     """
     This function...
 
@@ -32,7 +32,7 @@ def writeConfiguration(filename="example.config"):
         config.write(configfile)
 
 
-def loadConfiguration(configFile="/dev/null"):
+def load_configuration(configFile="/dev/null"):
     """
     This function...
 
@@ -41,4 +41,4 @@ def loadConfiguration(configFile="/dev/null"):
     _config.read(configFile)
 
 
-# _config = loadConfiguration()
+# _config = load_configuration()

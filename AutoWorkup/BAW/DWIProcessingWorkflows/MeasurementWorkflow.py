@@ -31,7 +31,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 from past.utils import old_div
 
 
-def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
+def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
     """
     This Function takes in...
 
@@ -42,7 +42,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     ###### UTILITY FUNCTIONS #######
     # This function returns a label map that only covers the FOV of the input DWI scan
-    def CreateDWILabelMap(T2LabelMapVolume, DWIBrainMask):
+    def create_dwi_label_map(T2LabelMapVolume, DWIBrainMask):
         """
         This Function takes in...
 
@@ -89,7 +89,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         sitk.WriteImage(DWILabelMapVolume, outputVolume)
         return outputVolume
 
-    def MakeResamplerInFileList(
+    def make_resampled_in_file_list(
         FAImage,
         MDImage,
         RDImage,
@@ -123,7 +123,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
 
     # This functions computes statistics of each input RIS volume over all input labels
     # and writes the results as a CSV file
-    def ComputeStatistics(
+    def compute_statistics(
         inputVolume, T2LabelMapVolume, DWILabelMapVolume, labelCodesFile
     ):
         """
@@ -142,7 +142,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         )  # Need OrderedDict internally to ensure consistent ordering
 
         #### Util Funcs ####
-        def createLabelsDictionary(labelCodesFile):
+        def create_labels_dictionary(labelCodesFile):
             """
             This Function takes in...
 
@@ -161,7 +161,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
                         labelsDictionary[line[0]] = line[1]
             return labelsDictionary
 
-        def computeVoxelVolume(inputVolume):
+        def compute_voxel_volume(inputVolume):
             """
             This Function takes in...
 
@@ -172,7 +172,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
 
             return reduce(operator.mul, inputVolume.GetSpacing())
 
-        def ReturnStatisticsList(
+        def return_statistics_list(
             labelID, voxelVolume, resampledRISVolume, DWILabelMap, T2LabelMap
         ):
             """
@@ -229,7 +229,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
             ]
             return statsList, totalVolume
 
-        def writeLabelStatistics(filename, statisticsDictionary):
+        def write_label_statistics(filename, statisticsDictionary):
             """
             This Function takes in...
 
@@ -262,12 +262,12 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         resampledRISVolume = sitk.ReadImage(inputVolume)
         T2LabelMap = sitk.ReadImage(T2LabelMapVolume)
         DWILabelMap = sitk.ReadImage(DWILabelMapVolume)
-        labelsDictionary = createLabelsDictionary(labelCodesFile)
+        labelsDictionary = create_labels_dictionary(labelCodesFile)
         statisticsDictionary = OrderedDict()
-        voxelVolume = computeVoxelVolume(resampledRISVolume)
+        voxelVolume = compute_voxel_volume(resampledRISVolume)
         for key in labelsDictionary:
             labelID = int(key)
-            [statisticsList, total_volume] = ReturnStatisticsList(
+            [statisticsList, total_volume] = return_statistics_list(
                 labelID, voxelVolume, resampledRISVolume, DWILabelMap, T2LabelMap
             )
             if total_volume != 0:
@@ -277,11 +277,11 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         inputName = os.path.splitext(inputBaseName)[0]
         RISName = inputName.split("_", 1)[0]
         CSVStatisticsFile = os.path.realpath(RISName + "_statistics.csv")
-        writeLabelStatistics(CSVStatisticsFile, statisticsDictionary)
+        write_label_statistics(CSVStatisticsFile, statisticsDictionary)
         return CSVStatisticsFile
 
     # This function helps to pick desirable output from the output list
-    def pickFromList(inputlist, item):
+    def pick_from_file(inputlist, item):
         """
         This Function takes in...
 
@@ -291,7 +291,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         """
         return inputlist[item]
 
-    def ResampleRISVolumes(referenceVolume, inputVolume):
+    def resample_ris_volumes(referenceVolume, inputVolume):
         """
         This Function takes in...
 
@@ -381,11 +381,11 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     # Step1: Create the labelmap volume for DWI scan
     CreateDWILabelMapNode = pe.Node(
         interface=Function(
-            function=CreateDWILabelMap,
+            function=create_dwi_label_map,
             input_names=["T2LabelMapVolume", "DWIBrainMask"],
             output_names=["DWILabelMapVolume"],
         ),
-        name="CreateDWILabelMap",
+        name="create_dwi_label_map",
     )
     MeasurementWF.connect(
         inputsSpec, "T2LabelMapVolume", CreateDWILabelMapNode, "T2LabelMapVolume"
@@ -402,7 +402,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     # Step2: Resample each RIS to T2LabelmapVolume voxel lattice
     MakeResamplerInFilesListNode = pe.Node(
         interface=Function(
-            function=MakeResamplerInFileList,
+            function=make_resampled_in_file_list,
             input_names=[
                 "FAImage",
                 "MDImage",
@@ -446,7 +446,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     # "voxel-wise square of intesity values"
     ResampleRISsNode = pe.MapNode(
         interface=Function(
-            function=ResampleRISVolumes,
+            function=resample_ris_volumes,
             input_names=["referenceVolume", "inputVolume"],
             output_names=["outputVolume"],
         ),
@@ -473,7 +473,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     # and writes the results as a CSV file (a csv file for each RIS)
     ComputeStatisticsNode = pe.MapNode(
         interface=Function(
-            function=ComputeStatistics,
+            function=compute_statistics,
             input_names=[
                 "inputVolume",
                 "T2LabelMapVolume",
@@ -482,7 +482,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
             ],
             output_names=["CSVStatisticsFile"],
         ),
-        name="ComputeStatistics",
+        name="compute_statistics",
         iterfield=["inputVolume"],
     )
     MeasurementWF.connect(
@@ -502,43 +502,43 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 0),
+        ("CSVStatisticsFile", pick_from_file, 0),
         outputsSpec,
         "FA_stats",
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 1),
+        ("CSVStatisticsFile", pick_from_file, 1),
         outputsSpec,
         "MD_stats",
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 2),
+        ("CSVStatisticsFile", pick_from_file, 2),
         outputsSpec,
         "RD_stats",
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 3),
+        ("CSVStatisticsFile", pick_from_file, 3),
         outputsSpec,
         "FrobeniusNorm_stats",
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 4),
+        ("CSVStatisticsFile", pick_from_file, 4),
         outputsSpec,
         "Lambda1_stats",
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 5),
+        ("CSVStatisticsFile", pick_from_file, 5),
         outputsSpec,
         "Lambda2_stats",
     )
     MeasurementWF.connect(
         ComputeStatisticsNode,
-        ("CSVStatisticsFile", pickFromList, 6),
+        ("CSVStatisticsFile", pick_from_file, 6),
         outputsSpec,
         "Lambda3_stats",
     )

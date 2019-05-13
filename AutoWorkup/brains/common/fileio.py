@@ -25,7 +25,7 @@ def check_file(path):
     return None
 
 
-def parseLabelsFile():
+def parse_labels_file():
     """
     This function...
 

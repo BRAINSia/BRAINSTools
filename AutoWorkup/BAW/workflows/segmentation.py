@@ -42,7 +42,7 @@ package_check("scipy", "0.7", "tutorial1")
 package_check("networkx", "1.0", "tutorial1")
 package_check("IPython", "0.10", "tutorial1")
 
-from utilities.misc import CommonANTsRegistrationSettings
+from utilities.misc import common_ants_registration_settings
 
 
 def segmentation(
@@ -70,8 +70,8 @@ def segmentation(
 
     config.update_config(master_config)
 
-    from PipeLineFunctionHelpers import ClipT1ImageWithBrainMask
-    from .WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
+    from PipeLineFunctionHelpers import clip_t1_image_with_brain_mask
+    from .WorkupT1T2BRAINSCut import create_brains_cut_workflow
     from utilities.distributed import modify_qsub_args
     from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
@@ -129,7 +129,7 @@ def segmentation(
     )
     ClipT1ImageWithBrainMaskNode = pe.Node(
         interface=Function(
-            function=ClipT1ImageWithBrainMask,
+            function=clip_t1_image_with_brain_mask,
             input_names=["t1_image", "brain_labels", "clipped_file_name"],
             output_names=["clipped_file"],
         ),
@@ -165,7 +165,7 @@ def segmentation(
         "overwrite": True,
     }
     A2SantsRegistrationPostABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
-    CommonANTsRegistrationSettings(
+    common_ants_registration_settings(
         antsRegistrationNode=A2SantsRegistrationPostABCSyN,
         registrationTypeDescription="A2SantsRegistrationPostABCSyN",
         output_transform_prefix="AtlasToSubjectPostBABC_SyN",
@@ -191,7 +191,7 @@ def segmentation(
         ]
     )
 
-    myLocalSegWF = CreateBRAINSCutWorkflow(
+    myLocalSegWF = create_brains_cut_workflow(
         projectid,
         subjectid,
         sessionid,
@@ -289,7 +289,7 @@ def segmentation(
 
     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
     # baw200.connect([(AccumulateLikeTissuePosteriorsNode, myLocalSegWF,
-    #               [(('AccumulatePriorsList', getListIndex, 0), "inputspec.TotalGM")]),
+    #               [(('AccumulatePriorsList', get_list_index, 0), "inputspec.TotalGM")]),
     #               ])
 
     ### Now define where the final organized outputs should go.
@@ -299,7 +299,7 @@ def segmentation(
     )
     DataSink.overwrite = master_config["ds_overwrite"]
     DataSink.inputs.base_directory = master_config["resultdir"]
-    # DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+    # DataSink.inputs.regexp_substitutions = generate_output_patern(projectid, subjectid, sessionid,'BRAINSCut')
     # DataSink.inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
     DataSink.inputs.substitutions = [
         (

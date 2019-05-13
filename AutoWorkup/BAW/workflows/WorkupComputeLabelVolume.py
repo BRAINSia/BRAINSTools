@@ -20,7 +20,7 @@ from utilities.measureVolumes import *
 from utilities.misc import *
 
 
-def CreateVolumeMeasureWorkflow(WFname, master_config):
+def create_volume_measure_workflow(WFname, master_config):
     """
     This function...
 
@@ -61,7 +61,7 @@ def CreateVolumeMeasureWorkflow(WFname, master_config):
     volumeMeasureWF = pe.Workflow(name=WFname)
     makeDictND = pe.Node(
         Function(
-            function=MakeLabelDictionary,
+            function=make_label_dictionary,
             input_names=["inputColorLookUpTableFilename"],
             output_names=["labelDictionary"],
         ),
@@ -74,7 +74,7 @@ def CreateVolumeMeasureWorkflow(WFname, master_config):
 
     getVolumesND = pe.Node(
         Function(
-            function=GetLabelVolumes,
+            function=get_label_volumes,
             input_names=["labelVolume", "RefVolume", "labelDictionary"],
             output_names=["outputLabelVolumes"],
         ),
@@ -89,7 +89,7 @@ def CreateVolumeMeasureWorkflow(WFname, master_config):
 
     writeCSVND = pe.Node(
         Function(
-            function=WriteDictionaryToCSV,
+            function=write_dictionary_to_csv,
             input_names=["inputList", "outputFilename"],
             output_names=["outputFilename"],
         ),
@@ -102,7 +102,7 @@ def CreateVolumeMeasureWorkflow(WFname, master_config):
 
     writeJSONND = pe.Node(
         Function(
-            function=WriteDictionaryToJson,
+            function=write_dictionary_to_json,
             input_names=["inputList", "outputFilename"],
             output_names=["outputFilename"],
         ),

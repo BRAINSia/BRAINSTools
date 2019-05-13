@@ -22,11 +22,11 @@ from builtins import str
 class UpdateAutoWorkup(object):
     """This class represents a..."""
 
-    def updateAutoWorkup(self):
+    def update_auto_workup(self):
         """
         This function...
         """
-        newPath = self._generateNewPathName()
+        newPath = self._generate_new_path_name()
         newFile = csv.writer(open(newPath, "wb"), quoting=csv.QUOTE_ALL)
         col_name_list = ["project", "subject", "session", "imagefiles"]
         newFile.writerow(col_name_list)
@@ -40,7 +40,7 @@ class UpdateAutoWorkup(object):
                 project = row[0]
                 subject = row[1]
                 session = row[2]
-                newImagesList = NewImageDict.getNewImagesList(project, subject, session)
+                newImagesList = NewImageDict.get_new_image_list(project, subject, session)
                 scanDict = eval(row[3])
                 if newImagesList != []:
                     if inputArguments.modality not in list(scanDict.keys()):
@@ -52,7 +52,7 @@ class UpdateAutoWorkup(object):
                 line = (project, subject, session, scanDict)
                 newFile.writerow(line)
 
-    def _generateNewPathName(self):
+    def _generate_new_path_name(self):
         """
         This function...
 
@@ -80,12 +80,12 @@ class MakeNewImageDict(object):
         self.dbName = "NewImages.db"
         self.dbTableName = "NewImages"
         self.newImagesFilepath = "{}_Images.list".format(inputArguments.modality)
-        self._makeNewImagesFile()
-        self._makeDB()
-        self._createCommandList()
-        self._fillDB()
+        self._make_new_images_file()
+        self._make_db()
+        self._create_command_list()
+        self._fill_db()
 
-    def _makeNewImagesFile(self):
+    def _make_new_images_file(self):
         """
         This function...
         """
@@ -95,7 +95,7 @@ class MakeNewImageDict(object):
         )
         os.system(command)
 
-    def _createCommandList(self):
+    def _create_command_list(self):
         """
         This function...
         """
@@ -112,8 +112,8 @@ class MakeNewImageDict(object):
                         "session": row[3],
                         "filepath": row[4],
                     }
-                    sqlCommand = self._makeSQLiteCommand(imageInfo)
-                    self._appendCommand(sqlCommand)
+                    sqlCommand = self._make_sqlite_command(imageInfo)
+                    self._append_command(sqlCommand)
                 else:
                     print(
                         (
@@ -123,7 +123,7 @@ class MakeNewImageDict(object):
                         )
                     )
 
-    def _makeDB(self):
+    def _make_db(self):
         """This function..."""
         if os.path.exists(self.dbName):
             os.remove(self.dbName)
@@ -139,7 +139,7 @@ class MakeNewImageDict(object):
         )
         dbCur.close()
 
-    def _fillDB(self):
+    def _fill_db(self):
         """This function..."""
         con = lite.connect(self.dbName)
         dbCur = con.cursor()
@@ -148,7 +148,7 @@ class MakeNewImageDict(object):
             con.commit()
         dbCur.close()
 
-    def _makeSQLiteCommand(self, imageDict):
+    def _make_sqlite_command(self, imageDict):
         """
         This function..
 
@@ -163,14 +163,14 @@ class MakeNewImageDict(object):
         )
         return sqlCommand
 
-    def _appendCommand(self, val):
+    def _append_command(self, val):
         """
         This function...
         :param val:
         """
         self.commandList.append(val)
 
-    def getNewImagesList(self, project, subject, session):
+    def get_new_image_list(self, project, subject, session):
         """
         This function..
 
@@ -179,14 +179,14 @@ class MakeNewImageDict(object):
         :param session:
         :return:
         """
-        sqlQuery = self._makeDBquery(project, subject, session)
-        dbInfo = self._getInfoFromDB(sqlQuery)
+        sqlQuery = self._make_db_query(project, subject, session)
+        dbInfo = self._get_info_from_db(sqlQuery)
         newImages = list()
         for item in dbInfo:
             newImages.append(str(item[0]))
         return newImages
 
-    def _getInfoFromDB(self, sqlQuery):
+    def _get_info_from_db(self, sqlQuery):
         """
         This function...
 
@@ -200,7 +200,7 @@ class MakeNewImageDict(object):
         dbCur.close()
         return dbInfo
 
-    def _makeDBquery(self, project, subject, session):
+    def _make_db_query(self, project, subject, session):
         """
         This function...
 
@@ -249,4 +249,4 @@ $ python updateAutoWorkupFile_DWI.py -a example_autoworkup.csv -m DWI -d /paulse
     )
     inputArguments = parser.parse_args()
     Object = UpdateAutoWorkup()
-    Object.updateAutoWorkup()
+    Object.update_auto_workup()

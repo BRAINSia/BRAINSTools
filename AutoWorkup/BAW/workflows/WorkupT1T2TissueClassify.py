@@ -28,8 +28,8 @@ from utilities.distributed import modify_qsub_args
 from utilities.misc import *
 
 """
-    from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
-    myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify")
+    from WorkupT1T2TissueClassify import create_tissue_classify_workflow
+    myLocalTCWF= create_tissue_classify_workflow("TissueClassify")
     tissueClassifyWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
     tissueClassifyWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
     tissueClassifyWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1sLength, subjectDatabaseFile ), 'T1_count')] ), ])
@@ -39,7 +39,7 @@ from utilities.misc import *
 """
 
 
-def getListIndexOrNoneIfOutOfRange(imageList, index):
+def get_list_index_or_none_if_out_of_range(imageList, index):
     """
     This function...
 
@@ -56,7 +56,7 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
 # POSTERIORS = sorted(['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
 #              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
 #              'NOTVB', 'AIR'])
-def MakePosteriorListOfTuplesFunc(posteriorImages):
+def make_posteriour_list_of_tuplefunc(posteriorImages):
     """
     This function...
 
@@ -86,7 +86,7 @@ def MakePosteriorListOfTuplesFunc(posteriorImages):
     return temp_dictionary
 
 
-def CreateTissueClassifyWorkflow(
+def create_tissue_classify_workflow(
     WFname, master_config, InterpolationMode, UseRegistrationMasking
 ):
     """
@@ -149,7 +149,7 @@ def CreateTissueClassifyWorkflow(
     ########################################################
     makeOutImageList = pe.Node(
         Function(
-            function=MakeOutFileList,
+            function=make_out_from_file,
             input_names=[
                 "T1List",
                 "T2List",
@@ -195,7 +195,7 @@ def CreateTissueClassifyWorkflow(
     }
     A2SantsRegistrationPreABCAffine.plugin_args = many_cpu_ANTsRigid_options_dictionary
 
-    CommonANTsRegistrationSettings(
+    common_ants_registration_settings(
         antsRegistrationNode=A2SantsRegistrationPreABCAffine,
         registrationTypeDescription="AtlasToSubjectANTsPreABC_Affine",
         output_transform_prefix="AtlasToSubjectPreBABC_Rigid",
@@ -229,7 +229,7 @@ def CreateTissueClassifyWorkflow(
         "overwrite": True,
     }
     A2SantsRegistrationPreABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
-    CommonANTsRegistrationSettings(
+    common_ants_registration_settings(
         antsRegistrationNode=A2SantsRegistrationPreABCSyN,
         registrationTypeDescription="AtlasToSubjectANTsPreABC_SyN",
         output_transform_prefix="AtlasToSubjectPreBABC_SyN",
@@ -366,7 +366,7 @@ def CreateTissueClassifyWorkflow(
         BABCext, "atlasToSubjectTransform", outputsSpec, "atlasToSubjectTransform"
     )
 
-    def MakeInverseTransformFileName(TransformFileName):
+    def make_inverse_transform_filename(TransformFileName):
         """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly
           in the list outputs
 
@@ -383,7 +383,7 @@ def CreateTissueClassifyWorkflow(
                 outputsSpec,
                 [
                     (
-                        ("atlasToSubjectTransform", MakeInverseTransformFileName),
+                        ("atlasToSubjectTransform", make_inverse_transform_filename),
                         "atlasToSubjectInverseTransform",
                     )
                 ],
@@ -400,13 +400,13 @@ def CreateTissueClassifyWorkflow(
     tissueClassifyWF.connect(BABCext, "outputPDAverageImage", outputsSpec, "pd_average")
     tissueClassifyWF.connect(BABCext, "outputFLAverageImage", outputsSpec, "fl_average")
 
-    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 0 ), "t1_average")] ), ] )
-    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 1 ), "t2_average")] ), ] )
-    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 2 ), "pd_average")] ), ] )
+    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', get_list_index_or_none_if_out_of_range, 0 ), "t1_average")] ), ] )
+    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', get_list_index_or_none_if_out_of_range, 1 ), "t2_average")] ), ] )
+    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', get_list_index_or_none_if_out_of_range, 2 ), "pd_average")] ), ] )
 
     MakePosteriorListOfTuplesNode = pe.Node(
         Function(
-            function=MakePosteriorListOfTuplesFunc,
+            function=make_posteriour_list_of_tuplefunc,
             input_names=["posteriorImages"],
             output_names=["posteriorDictionary"],
         ),

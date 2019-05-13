@@ -21,7 +21,7 @@ FS_VARS = [
 ]
 
 
-def CommonANTsRegistrationSettings(
+def common_ants_registration_settings(
     antsRegistrationNode,
     registrationTypeDescription,
     output_transform_prefix,
@@ -368,7 +368,7 @@ def CommonANTsRegistrationSettings(
         )
 
 
-def MakeOutFileList(
+def make_out_from_file(
     T1List,
     T2List,
     PDList,
@@ -402,7 +402,7 @@ def MakeOutFileList(
     :return:
     """
 
-    def GetExtBaseName(filename):
+    def get_ext_base_name(filename):
         """
         Get the filename without the extension.  Works for .ext and .ext.gz
 
@@ -429,9 +429,9 @@ def MakeOutFileList(
     outBFCImageList = []
     outUnwrappedImageList = []
     for i in all_files:
-        out_name = GetExtBaseName(i) + postfix
-        out_BFC_name = GetExtBaseName(i) + postfixBFC
-        out_unwrap_name = GetExtBaseName(i) + postfixUnwrapped
+        out_name = get_ext_base_name(i) + postfix
+        out_BFC_name = get_ext_base_name(i) + postfixBFC
+        out_unwrap_name = get_ext_base_name(i) + postfixUnwrapped
         if ListOutType:
             out_name = [str(out_name)]
             out_BFC_name = [str(out_BFC_name)]
@@ -485,7 +485,7 @@ def MakeOutFileList(
     )
 
 
-def GenerateSeparateImageTypeList(inFileList, inTypeList):
+def generate_separate_image_type_list(inFileList, inTypeList):
     """
     This function...
 
@@ -549,7 +549,7 @@ def add_dict(d1, d2, force=False):
     return retval
 
 
-def GenerateWFName(projectid, subjectid, sessionid, processing_phase):
+def generate_wf_name(projectid, subjectid, sessionid, processing_phase):
     """
     This function...
 
@@ -571,7 +571,7 @@ def GenerateWFName(projectid, subjectid, sessionid, processing_phase):
     )
 
 
-def GenerateSubjectOutputPattern(subjectid):
+def generate_subject_output_pattern(subjectid):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard
 
     :param subjectid:
@@ -604,7 +604,7 @@ def GenerateSubjectOutputPattern(subjectid):
     return patternList
 
 
-def GenerateOutputPattern(projectid, subjectid, sessionid, DefaultNodeName):
+def generate_output_patern(projectid, subjectid, sessionid, DefaultNodeName):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
 
     :param projectid:

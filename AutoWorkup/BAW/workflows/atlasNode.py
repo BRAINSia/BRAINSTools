@@ -12,7 +12,7 @@ from builtins import range
 from builtins import zip
 
 
-def MakeAtlasNode(atlasDirectory, name, atlasParts):
+def make_atlas_node(atlasDirectory, name, atlasParts):
     """
         :param atlasDirectory:
         :param name:
@@ -179,7 +179,7 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
     return node
 
 
-def CreateAtlasXMLAndCleanedDeformedAverages(
+def create_atlas_xml_and_cleaned_deformed_averages(
     t1_image, deformed_list, AtlasTemplate, outDefinition
 ):
     """

@@ -32,9 +32,9 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 from utilities.distributed import modify_qsub_args
 
 """
-    from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
-    myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize")
-    landmarkInitializeWF.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
+    from WorkupT1T2LandmarkInitialization import create_landmark_initialize_workflow
+    myLocalLMIWF= create_landmark_initialize_workflow("LandmarkInitialize")
+    landmarkInitializeWF.connect( [ (uidSource, myLocalLMIWF, [(('uid', get_first_t1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
 
     landmarkInitializeWF.connect( BAtlas, 'template_landmarks_50Lmks_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
     landmarkInitializeWF.connect( BAtlas, 'template_weights_50Lmks_wts', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
@@ -46,7 +46,7 @@ from utilities.distributed import modify_qsub_args
 """
 
 
-def CreateLandmarkInitializeWorkflow(
+def create_landmark_initialize_workflow(
     WFname,
     master_config,
     InterpolationMode,

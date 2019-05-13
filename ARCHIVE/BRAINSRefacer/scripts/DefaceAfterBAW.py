@@ -46,14 +46,14 @@ class DefaceAfterBAW:
         )
 
         lmks_fn = os.path.join(self.experiment_dir, "ACPCAlign/BCD_ACPC_Landmarks.fcsv")
-        self.lndmk_pts = readFCSV(lmks_fn)
+        self.lndmk_pts = read_fcsv(lmks_fn)
         del lmks_fn
 
         self.IDTXFM = sitk.Transform()
         self.reference_image = sitk.ReadImage(self.acpc_aligned_face_image_fn)
         self.reference_image_storage_type = self.reference_image.GetPixelID()
 
-        _tmp = makeIdentityImage()
+        _tmp = make_identity_image()
         self.idimg = sitk.Cast(
             sitk.Resample(self.reference_image, _tmp, self.IDTXFM, sitk.sitkLinear),
             self.reference_image_storage_type,
@@ -67,13 +67,13 @@ class DefaceAfterBAW:
             self.IDTXFM,
             sitk.sitkNearestNeighbor,
         )
-        self.head_mask = quickDilate(_tmp, 4, 5)
+        self.head_mask = quick_dilate(_tmp, 4, 5)
         del _tmp
 
     def do_defacing(self):
         # UPPER_CORNER=(-MAX_SIZE,self.lndmk_pts["RE"][1]+EYE_DIAMETER, self.lndmk_pts["RE"][2]-EYE_DIAMETER)
         # LOWER_CORNER=(+MAX_SIZE,+MAX_SIZE,self.lndmk_pts["RE"][2]-MAX_SIZE)
-        # out_mask = makeMaskFromBBCorners(LOWER_CORNER,UPPER_CORNER,self.idimg)
+        # out_mask = make_mask_from_bb_corners(LOWER_CORNER,UPPER_CORNER,self.idimg)
 
         UPPER_CORNER = (
             -GLB_MAX_SIZE,
@@ -82,7 +82,7 @@ class DefaceAfterBAW:
         )
         # -- LOWER_CORNER=(+MAX_SIZE,+MAX_SIZE, self.lndmk_pts["RE"][2]+MAX_SIZE)
         LOWER_CORNER = (+GLB_MAX_SIZE, +GLB_MAX_SIZE, +GLB_MAX_SIZE)
-        top_of_head_mask = makeMaskFromBBCorners(LOWER_CORNER, UPPER_CORNER, self.idimg)
+        top_of_head_mask = make_mask_from_bb_corners(LOWER_CORNER, UPPER_CORNER, self.idimg)
         UPPER_CORNER = (
             -GLB_MAX_SIZE,
             self.lndmk_pts["AC"][1],
@@ -93,10 +93,10 @@ class DefaceAfterBAW:
             self.lndmk_pts["RE"][1] + GLB_MAX_SIZE,
             +GLB_MAX_SIZE,
         )
-        behind_acpnt = makeMaskFromBBCorners(LOWER_CORNER, UPPER_CORNER, self.idimg)
+        behind_acpnt = make_mask_from_bb_corners(LOWER_CORNER, UPPER_CORNER, self.idimg)
 
-        left_eye = DrawEye(self.lndmk_pts["LE"], self.head_mask)
-        right_eye = DrawEye(self.lndmk_pts["RE"], self.head_mask)
+        left_eye = draw_eye(self.lndmk_pts["LE"], self.head_mask)
+        right_eye = draw_eye(self.lndmk_pts["RE"], self.head_mask)
 
         force_keep_InIDIMG = (
             (left_eye > 0)

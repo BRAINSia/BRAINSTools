@@ -103,7 +103,7 @@ def masked_image_array(image, mask):
     :param mask:
     :return:
     """
-    return imagearray(sitk.Mask(image, mask))
+    return image_array(sitk.Mask(image, mask))
 
 
 def mask_array_with_image(array, mask_image):
@@ -114,7 +114,7 @@ def mask_array_with_image(array, mask_image):
     :param mask_image:
     :return:
     """
-    mask_array = imagearray(mask_image)
+    mask_array = image_array(mask_image)
     array[numpy.where(mask_array == 0)] = 0
     return array
 
@@ -140,10 +140,10 @@ def linear_array_from_image_file(image_file):
     :return:
     """
     image = sitk.ReadImage(image_file)
-    return imagearray(image)
+    return image_array(image)
 
 
-def imagearray(image):
+def image_array(image):
     """
     Returns the 1D array of the numpy matrix
     :param image:
@@ -154,7 +154,7 @@ def imagearray(image):
     return a1D
 
 
-def databyregion(
+def data_by_region(
     data, wmtargets, wmlabelmap, wmlabels, gmtargets, gmlabelmap, gmlabels
 ):
     """
@@ -212,22 +212,22 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
 
     # intensity
     image = sitk.ReadImage(in_file, sitk.sitkFloat64)
-    feature_value_arrays.append(imagearray(image))
+    feature_value_arrays.append(image_array(image))
     feature_names.append("")
 
     # gradient magnitude
-    feature_value_arrays.append(imagearray(sitk.GradientMagnitude(image)))
+    feature_value_arrays.append(image_array(sitk.GradientMagnitude(image)))
     feature_names.append("GradMag")
 
     # second order gradient magnitude
     feature_value_arrays.append(
-        imagearray(sitk.GradientMagnitude(sitk.GradientMagnitude(image)))
+        image_array(sitk.GradientMagnitude(sitk.GradientMagnitude(image)))
     )
     feature_names.append("GradMag2")
 
     # Sobel
     feature_names.append("Sobel")
-    feature_value_arrays.append(imagearray(sitk.SobelEdgeDetection(image)))
+    feature_value_arrays.append(image_array(sitk.SobelEdgeDetection(image)))
 
     # eigenvalues of hessian
     feature_names.extend(["Eigen{0}".format(i) for i in range(1, 4)])
@@ -237,7 +237,7 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
 
     # Laplacian
     feature_names.append("Laplacian")
-    feature_value_arrays.append(imagearray(sitk.Laplacian(image, useImageSpacing=True)))
+    feature_value_arrays.append(image_array(sitk.Laplacian(image, useImageSpacing=True)))
 
     for sigma in [i * 0.5 for i in range(1, 7)]:
         sigma_str = "{0:.1f}".format(sigma)
@@ -253,16 +253,16 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
 
         feature_names.append("GaussLaplacian_{0}".format(sigma_str))
         feature_value_arrays.append(
-            imagearray(sitk.LaplacianRecursiveGaussian(image, sigma=sigma))
+            image_array(sitk.LaplacianRecursiveGaussian(image, sigma=sigma))
         )
 
         feature_names.append("Gauss_{0}".format(sigma_str))
         feature_value_arrays.append(
-            imagearray(sitk.RecursiveGaussian(image, sigma=sigma))
+            image_array(sitk.RecursiveGaussian(image, sigma=sigma))
         )
 
         feature_value_arrays.append(
-            imagearray(sitk.GradientMagnitudeRecursiveGaussian(image, sigma=sigma))
+            image_array(sitk.GradientMagnitudeRecursiveGaussian(image, sigma=sigma))
         )
         feature_names.append("GaussGradMag_{0}".format(sigma_str))
 
@@ -271,7 +271,7 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
 
     for name in additional_feature_names:
         feature_value_series.append(
-            pd.Series(imagearray(sitk.ReadImage(additional_images[name])))
+            pd.Series(image_array(sitk.ReadImage(additional_images[name])))
         )
         keys.append(name)
 
@@ -280,7 +280,7 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
     return data
 
 
-def getgradientinfo(t1):
+def get_graient_info(t1):
     """
     Takes in an image and computes the gradient, and hessian and returns
     the eigen values of the hessian.
@@ -323,7 +323,7 @@ def getgradientinfo(t1):
     return gx_array, gy_array, gz_array, eigen1, eigen2, eigen3
 
 
-def multimodalimagedata(sample_dict):
+def multimodal_image_data(sample_dict):
     """
     Collects and Combines the image data from multiple modalities
 
@@ -341,7 +341,7 @@ def multimodalimagedata(sample_dict):
     return df
 
 
-def collectdata(data_csv):
+def collect_data(data_csv):
     """
     Collects the training data from a csv file.
     CSV header format must contain 'Truth', 'Labelmap', 'Labels', and
@@ -393,7 +393,7 @@ def collectdata(data_csv):
     return data_samples
 
 
-def splitdata(data_samples, per_testing=0.1):
+def split_data(data_samples, per_testing=0.1):
     """
     Split the data samples into training and testing sets.
 
@@ -419,7 +419,7 @@ def splitdata(data_samples, per_testing=0.1):
     return train_samples, test_samples
 
 
-def combinedata(data_samples):
+def combine_data(data_samples):
     """
     Takes the given data samples, reads in the images, and combines
     the image data and the targets to be used for classifier
@@ -435,23 +435,23 @@ def combinedata(data_samples):
     for line in data_samples:
         # collect new data
         id_list.append(line["ID"])
-        new_data = multimodalimagedata(line)
+        new_data = multimodal_image_data(line)
 
         # read in the target data
-        gm_targets = imagearray(sitk.ReadImage(line["GMEdges"]))
-        wm_targets = imagearray(sitk.ReadImage(line["WMEdges"]))
+        gm_targets = image_array(sitk.ReadImage(line["GMEdges"]))
+        wm_targets = image_array(sitk.ReadImage(line["WMEdges"]))
 
         # read in the label map
-        wmlabelmap = imagearray(sitk.ReadImage(line["WMLabelmap"]))
+        wmlabelmap = image_array(sitk.ReadImage(line["WMLabelmap"]))
         wmlabels = line["WMLabels"]
 
         # read in the label map
-        gmlabelmap = imagearray(sitk.ReadImage(line["GMLabelmap"]))
+        gmlabelmap = image_array(sitk.ReadImage(line["GMLabelmap"]))
         gmlabels = line["GMLabels"]
 
         # split the data by the labeled regions
         df_list.append(
-            databyregion(
+            data_by_region(
                 new_data,
                 wm_targets,
                 wmlabelmap,

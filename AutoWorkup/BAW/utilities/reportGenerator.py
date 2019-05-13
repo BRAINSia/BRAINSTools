@@ -27,7 +27,7 @@ import os.path
 import shutil
 
 
-def onlyT1T2(src, names):
+def only_t1t2(src, names):
     """
     This function...
 
@@ -95,7 +95,7 @@ def main(
                     outdir, row["project"], row["subject"], row["session"]
                 )
                 # assert os.path.isdir(path)
-                shutil.copytree(path, outpath, ignore=onlyT1T2)
+                shutil.copytree(path, outpath, ignore=only_t1t2)
                 # HACK: copytree isn't copying the files, so do it manually
                 try:
                     assert (

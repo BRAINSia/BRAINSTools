@@ -12,7 +12,7 @@ Usage:
 """
 
 
-def FixLabelMapFromNeuromorphemetrics2012(
+def fix_label_map_from_neuromorphemetrics_2012(
     fusionFN, FixedHeadFN, posteriorListOfTuples, LeftHemisphereFN, outFN, OUT_DICT
 ):
     """
@@ -34,7 +34,7 @@ def FixLabelMapFromNeuromorphemetrics2012(
 
     posterior_dict = OrderedDict(posteriorListOfTuples)
 
-    def ForceMaskInsert(inlabels, newmask, newmaskvalue):
+    def force_mask_insert(inlabels, newmask, newmaskvalue):
         """
         This function...
 
@@ -49,8 +49,8 @@ def FixLabelMapFromNeuromorphemetrics2012(
         outlabels = outlabels + newmask * newmaskvalue
         return sitk.Cast(outlabels, sitk.sitkUInt32)
 
-    ## TODO: GetLargestLabel is copied from elsewhere
-    def GetLargestLabel(inputMask, UseErosionCleaning):
+    ## TODO: get_largest_label is copied from elsewhere
+    def get_largest_label(inputMask, UseErosionCleaning):
         """
         This function...
 
@@ -73,7 +73,7 @@ def FixLabelMapFromNeuromorphemetrics2012(
 
         return largestMask * dilateMask > 0
 
-    def RecodeNonLargest(outlabels, keepCode, UNKNOWN_LABEL_CODE):
+    def recode_nonlargest(outlabels, keepCode, UNKNOWN_LABEL_CODE):
         """
         This function...
 
@@ -83,13 +83,13 @@ def FixLabelMapFromNeuromorphemetrics2012(
         :return:
         """
         orig_mask = outlabels == keepCode
-        connected_mask = GetLargestLabel(orig_mask, False)
+        connected_mask = get_largest_label(orig_mask, False)
         small_regions = orig_mask - connected_mask
-        outlabels = ForceMaskInsert(outlabels, connected_mask, keepCode)
-        outlabels = ForceMaskInsert(outlabels, small_regions, UNKNOWN_LABEL_CODE)
+        outlabels = force_mask_insert(outlabels, connected_mask, keepCode)
+        outlabels = force_mask_insert(outlabels, small_regions, UNKNOWN_LABEL_CODE)
         return outlabels
 
-    def MinimizeSizeOfImage(outlabels):
+    def minimize_size_of_image(outlabels):
         """This function will find the largest integer value in the labelmap, and
         cast the image to the smallest possible integer size so that no loss of data
         results.
@@ -140,7 +140,7 @@ def FixLabelMapFromNeuromorphemetrics2012(
         | inner_vb
     )
     # DEBUG sitk.WriteImage(blood_labels,"/tmp/blood_labels.nii.gz")
-    outlabels = ForceMaskInsert(outlabels, blood_labels, OUT_DICT["BLOOD"])
+    outlabels = force_mask_insert(outlabels, blood_labels, OUT_DICT["BLOOD"])
 
     csf_post = sitk.ReadImage(posterior_dict["CSF"])
     ring_csf = lbl_outter_ring * sitk.BinaryThreshold(
@@ -158,14 +158,14 @@ def FixLabelMapFromNeuromorphemetrics2012(
         | inner_csf
     )
     # DEBUG sitk.WriteImage(csf_labels,"/tmp/csf_labels.nii.gz")
-    outlabels = ForceMaskInsert(outlabels, csf_labels, OUT_DICT["RH_CSF"])
+    outlabels = force_mask_insert(outlabels, csf_labels, OUT_DICT["RH_CSF"])
     # DEBUG sitk.WriteImage(outlabels,"/tmp/outlabels.nii.gz")
 
     ## Now split CSF based on LeftHemisphereMask
     if LeftHemisphereFN != None:
         LeftHemisphereIm = sitk.Cast(sitk.ReadImage(LeftHemisphereFN), sitk.sitkUInt32)
         left_hemi_pre = outlabels == OUT_DICT["LH_CSF"]
-        outlabels = ForceMaskInsert(
+        outlabels = force_mask_insert(
             outlabels, left_hemi_pre, OUT_DICT["RH_CSF"]
         )  ## Make all CSF Right hemisphere
         left_hemi_post = (
@@ -173,7 +173,7 @@ def FixLabelMapFromNeuromorphemetrics2012(
             * sitk.Cast((outlabels == OUT_DICT["RH_CSF"]), sitk.sitkUInt32)
             > 0
         )  # SplitCSF with LeftHemisphereMask
-        outlabels = ForceMaskInsert(
+        outlabels = force_mask_insert(
             outlabels, left_hemi_post, OUT_DICT["LH_CSF"]
         )  ## Make all CSF Right hemisphere
     ## Now extend brainstem lower
@@ -184,7 +184,7 @@ def FixLabelMapFromNeuromorphemetrics2012(
         brain_stem = (FixedHead == BRAINSABC_DICT["BRAINSTEM"]) * (
             outlabels == misLabelDict[misLabel]
         )
-        outlabels = ForceMaskInsert(
+        outlabels = force_mask_insert(
             outlabels, brain_stem, OUT_DICT["BRAINSTEM"]
         )  ## Make all CSF Right hemisphere
 
@@ -201,14 +201,14 @@ def FixLabelMapFromNeuromorphemetrics2012(
     UNKNOWN_LABEL_CODE = OUT_DICT["UNKNOWN"]
     labels_to_ensure_connected = OUT_DICT["CONNECTED"]
     for keepCode in labels_to_ensure_connected:
-        outlabels = RecodeNonLargest(outlabels, keepCode, UNKNOWN_LABEL_CODE)
+        outlabels = recode_nonlargest(outlabels, keepCode, UNKNOWN_LABEL_CODE)
 
     ## FILL IN HOLES
     unkown_holes = (VALID_REGION > 0) * (outlabels == 0)
-    outlabels = ForceMaskInsert(
+    outlabels = force_mask_insert(
         outlabels, unkown_holes, UNKNOWN_LABEL_CODE
     )  ## Fill unkown regions with unkown code
-    outlabels = MinimizeSizeOfImage(outlabels)
+    outlabels = minimize_size_of_image(outlabels)
 
     fixedFusionLabelFN = os.path.realpath(outFN)
     sitk.WriteImage(outlabels, fixedFusionLabelFN)
@@ -216,7 +216,7 @@ def FixLabelMapFromNeuromorphemetrics2012(
     return fixedFusionLabelFN
 
 
-def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
+def recode_label_map(InputFileName, OutputFileName, RECODE_TABLE):
     """
     This funciton...
 
@@ -228,7 +228,7 @@ def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
     import SimpleITK as sitk
     import os
 
-    def MinimizeSizeOfImage(outlabels):
+    def minimize_size_of_image(outlabels):
         """This function will find the largest integer value in the labelmap, and
         cast the image to the smallest possible integer size so that no loss of data
         results.
@@ -255,7 +255,7 @@ def RecodeLabelMap(InputFileName, OutputFileName, RECODE_TABLE):
         LabelImage = (
             sitk.Cast((LabelImage == old), sitk.sitkUInt32) * (new - old) + LabelImage
         )
-    LabelImage = MinimizeSizeOfImage(LabelImage)
+    LabelImage = minimize_size_of_image(LabelImage)
     recodedFN = os.path.realpath(OutputFileName)
     sitk.WriteImage(LabelImage, recodedFN)
     return recodedFN

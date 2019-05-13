@@ -25,10 +25,10 @@ from nipype.interfaces.ants import (
 from nipype.interfaces.utility import Function
 
 from .utilities.distributed import modify_qsub_args
-from .utilities.misc import CommonANTsRegistrationSettings
+from .utilities.misc import common_ants_registration_settings
 
 
-def makeListOfOneElement(inputFile):
+def make_list_of_one_element(inputFile):
     """
     This functions...
 
@@ -39,7 +39,7 @@ def makeListOfOneElement(inputFile):
     return outputList
 
 
-def GetFirstListElement(this_list):
+def get_first_list_element(this_list):
     """
     This function..
 
@@ -49,7 +49,7 @@ def GetFirstListElement(this_list):
     return this_list[0]
 
 
-def MakeTransformListWithGradientWarps(averageAffineTranform, gradientStepWarp):
+def make_transform_list_with_gradient_warps(averageAffineTranform, gradientStepWarp):
     """
     This function...
 
@@ -66,7 +66,7 @@ def MakeTransformListWithGradientWarps(averageAffineTranform, gradientStepWarp):
     ]
 
 
-def RenestDeformedPassiveImages(
+def renest_deformed_passive_images(
     deformedPassiveImages, flattened_image_nametypes, interpolationMapping
 ):
     import os
@@ -118,7 +118,7 @@ def RenestDeformedPassiveImages(
     )
 
 
-def SplitCompositeToComponentTransforms(transformFilename):
+def split_composite_to_component_transform(transformFilename):
     """
     This function...
 
@@ -179,7 +179,7 @@ def SplitCompositeToComponentTransforms(transformFilename):
 ## Flatten and return equal length transform and images lists.
 
 
-def FlattenTransformAndImagesList(
+def flatten_transform_and_images_list(
     ListOfPassiveImagesDictionaries,
     transforms,
     interpolationMapping,
@@ -261,7 +261,7 @@ def FlattenTransformAndImagesList(
     )
 
 
-def GetMovingImages(
+def get_moving_images(
     ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 ):
     """ This currently ONLY works when registrationImageTypes has
@@ -283,7 +283,7 @@ def GetMovingImages(
     return moving_images, moving_interpolation_type
 
 
-def GetPassiveImages(ListOfImagesDictionaries, registrationImageTypes):
+def get_passive_images(ListOfImagesDictionaries, registrationImageTypes):
     """
     This function...
 
@@ -315,7 +315,7 @@ def GetPassiveImages(ListOfImagesDictionaries, registrationImageTypes):
 ##        any other string indicates the normal mode that you would expect and replicates the shell script build_template_parallel.sh
 
 
-def BAWantsRegistrationTemplateBuildSingleIterationWF(
+def baw_ants_registration_template_build_single_iteration_wf(
     iterationPhasePrefix, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
 ):
     """
@@ -371,7 +371,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
     )
     # SEE template.py many_cpu_BeginANTS_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
     ## This is set in the template.py file BeginANTS.plugin_args = BeginANTS_cpu_sge_options_dictionary
-    CommonANTsRegistrationSettings(
+    common_ants_registration_settings(
         antsRegistrationNode=BeginANTS,
         registrationTypeDescription="SixStageAntsRegistrationT1Only",
         output_transform_prefix=str(iterationPhasePrefix) + "_tfm",
@@ -384,7 +384,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
 
     GetMovingImagesNode = pe.Node(
         interface=util.Function(
-            function=GetMovingImages,
+            function=get_moving_images,
             input_names=[
                 "ListOfImagesDictionaries",
                 "registrationImageTypes",
@@ -468,7 +468,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
 
     SplitCompositeTransform = pe.MapNode(
         interface=util.Function(
-            function=SplitCompositeToComponentTransforms,
+            function=split_composite_to_component_transform,
             input_names=["transformFilename"],
             output_names=["affine_component_list", "warp_component_list"],
         ),
@@ -532,7 +532,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
             (
                 AvgAffineTransform,
                 UpdateTemplateShape,
-                [(("affine_transform", makeListOfOneElement), "transforms")],
+                [(("affine_transform", make_list_of_one_element), "transforms")],
             )
         ]
     )
@@ -545,7 +545,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
 
     ApplyInvAverageAndFourTimesGradientStepWarpImage = pe.Node(
         interface=util.Function(
-            function=MakeTransformListWithGradientWarps,
+            function=make_transform_list_with_gradient_warps,
             input_names=["averageAffineTranform", "gradientStepWarp"],
             output_names=["TransformListWithGradientWarps"],
         ),
@@ -614,7 +614,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
     ## Now warp all the ListOfPassiveImagesDictionaries images
     FlattenTransformAndImagesListNode = pe.Node(
         Function(
-            function=FlattenTransformAndImagesList,
+            function=flatten_transform_and_images_list,
             input_names=[
                 "ListOfPassiveImagesDictionaries",
                 "transforms",
@@ -635,7 +635,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
 
     GetPassiveImagesNode = pe.Node(
         interface=util.Function(
-            function=GetPassiveImages,
+            function=get_passive_images,
             input_names=["ListOfImagesDictionaries", "registrationImageTypes"],
             output_names=["ListOfPassiveImagesDictionaries"],
         ),
@@ -720,7 +720,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(
 
     RenestDeformedPassiveImagesNode = pe.Node(
         Function(
-            function=RenestDeformedPassiveImages,
+            function=renest_deformed_passive_images,
             input_names=[
                 "deformedPassiveImages",
                 "flattened_image_nametypes",

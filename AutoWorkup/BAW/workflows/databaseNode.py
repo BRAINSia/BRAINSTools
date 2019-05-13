@@ -175,7 +175,7 @@ class SQLiteGrabber(IOBase):
         return query
 
 
-def OpenSubjectDatabase(
+def open_subject_database(
     ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file
 ):
     """
@@ -198,7 +198,7 @@ def OpenSubjectDatabase(
         os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)
     ):
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-        ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
+        ExperimentDatabase.make_new_db(subject_data_file, mountPrefix)
         ExperimentDatabase = None
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     else:
@@ -210,15 +210,15 @@ def OpenSubjectDatabase(
             )
         )
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-    # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
+    # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.get_subject_filter())
     # print "^^^^^^^^^^^^^"
-    # for row in ExperimentDatabase.getEverything():
+    # for row in ExperimentDatabase.get_everything():
     #    print row
     # print "^^^^^^^^^^^^^"
     return ExperimentDatabase
 
 
-def getAllScans(cache, subject, prefix, dbfile, session):
+def get_all_scans(cache, subject, prefix, dbfile, session):
     """
     This function...
 
@@ -232,7 +232,7 @@ def getAllScans(cache, subject, prefix, dbfile, session):
     pass
 
 
-def MakeDatabaseNode(
+def make_database_node(
     cache, dbfile, table_name="MasterDB", columns=["*"], constraints=[]
 ):
     """
@@ -247,7 +247,7 @@ def MakeDatabaseNode(
     """
     import os.path
     import nipype.pipeline.engine as pe  # pypeline engine
-    from .databaseNode import SQLiteGrabber  # OpenSubjectDatabase
+    from .databaseNode import SQLiteGrabber  # open_subject_database
 
     node = pe.Node(interface=SQLiteGrabber(), name="99_OpenSubjectDatabase")
     node.inputs.database_file = os.path.join(cache, dbfile)

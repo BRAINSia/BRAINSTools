@@ -15,7 +15,7 @@ import shutil  ## needed for removing directory tree
 from builtins import range
 
 
-def convertToList(element):
+def convert_to_list(element):
     """
     This funciton...
 
@@ -27,7 +27,7 @@ def convertToList(element):
     return [element]
 
 
-def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
+def make_inclusion_mask_for_gm_structures(posteriorDictionary, candidateRegionFileName):
     """
     This function...
 
@@ -66,7 +66,7 @@ def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileNam
     return outputCandidateRegionFileName
 
 
-def makeListOfValidImages(imageFile):
+def make_list_of_valid_images(imageFile):
     """
     This function...
 
@@ -86,7 +86,7 @@ def makeListOfValidImages(imageFile):
 #         return imageFile
 
 
-def getListIndex(imageList, index):
+def get_list_index(imageList, index):
     """
     This function returns the imageList value at an index
 
@@ -97,7 +97,7 @@ def getListIndex(imageList, index):
     return imageList[index]
 
 
-def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
+def clip_t1_image_with_brain_mask(t1_image, brain_labels, clipped_file_name):
     """
     This function...
 
@@ -122,7 +122,7 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
     return clipped_file
 
 
-def UnwrapPosteriorImagesFromListOfTuplesFunction(posteriorListOfTuples):
+def unwrap_posterior_images_from_list_tuples_function(posteriorListOfTuples):
     """
     This function...
 
@@ -137,7 +137,7 @@ def UnwrapPosteriorImagesFromListOfTuplesFunction(posteriorListOfTuples):
     return mylist
 
 
-def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
+def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(dg_list_list):
     """ The input is a list of sessions with a list of posteriors per session.
         The output is a dicitionary of posterior types, with a list of that
         posterior type for each session.
@@ -179,7 +179,7 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
     return dictionary_of_session_list
 
 
-def AccumulateLikeTissuePosteriors(posteriorImages):
+def accumulate_like_tissue_posteriors(posteriorImages):
     """
     This function...
 

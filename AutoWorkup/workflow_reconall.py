@@ -12,9 +12,9 @@ import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.io import DataGrabber, FreeSurferSource
 from nipype.interfaces.utility import Merge
-from autorecon1 import mkdir_p, create_AutoRecon1
-from autorecon2 import create_AutoRecon2
-from autorecon3 import create_AutoRecon3
+from autorecon1 import mkdir_p, create_autorecon1
+from autorecon2 import create_autorecon2
+from autorecon3 import create_autorecon3
 
 
 def create_reconall(config):
@@ -24,9 +24,9 @@ def create_reconall(config):
     :param config:
     :return:
     """
-    ar1_wf = create_AutoRecon1(config)
-    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(config)
-    ar3_wf = create_AutoRecon3(config)
+    ar1_wf = create_autorecon1(config)
+    ar2_wf, ar2_lh, ar2_rh = create_autorecon2(config)
+    ar3_wf = create_autorecon3(config)
 
     # Connect workflows
     reconall = pe.Workflow(name="recon-all")

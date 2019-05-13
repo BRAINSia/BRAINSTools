@@ -64,7 +64,7 @@ if False:
         # END HACK
 
 
-def addProbabilityMapElement(probabilityMap, maskName, outputStream):
+def add_probability_map_element(probabilityMap, maskName, outputStream):
     """
     This function...
 
@@ -80,7 +80,7 @@ def addProbabilityMapElement(probabilityMap, maskName, outputStream):
     outputStream.write("   />\n")
 
 
-def xmlGenerator(args, roi=""):
+def xml_generator(args, roi=""):
     """
     This function...
 
@@ -193,45 +193,45 @@ def xmlGenerator(args, roi=""):
     # add probability maps (ROIs)
     #
     if roi == "caudate":
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsLeftCaudate, "l_caudate", outputStream
         )
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsRightCaudate, "r_caudate", outputStream
         )
     elif roi == "putamen":
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsLeftPutamen, "l_putamen", outputStream
         )
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsRightPutamen, "r_putamen", outputStream
         )
     elif roi == "thalamus":
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsLeftThalamus, "l_thalamus", outputStream
         )
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsRightThalamus, "r_thalamus", outputStream
         )
     elif roi == "hippocampus":
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsLeftHippocampus, "l_hippocampus", outputStream
         )
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsRightHippocampus, "r_hippocampus", outputStream
         )
     elif roi == "accumben":
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsLeftAccumben, "l_accumben", outputStream
         )
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsRightAccumben, "r_accumben", outputStream
         )
     elif roi == "globus":
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsLeftGlobus, "l_globus", outputStream
         )
-        addProbabilityMapElement(
+        add_probability_map_element(
             args.probabilityMapsRightGlobus, "r_globus", outputStream
         )
 
@@ -482,7 +482,7 @@ if __name__ == "__main__":
     roiList = ["accumben", "caudate", "putamen", "globus", "thalamus", "hippocampus"]
 
     for roi in roiList:
-        currentXmlFilename = xmlGenerator(args, roi)
+        currentXmlFilename = xml_generator(args, roi)
         if roi == "caudate":
             currentModelFilename = (
                 args.modelFilename[:-3] + "_" + roi + "_LinearWithMask.gz"

@@ -29,10 +29,10 @@ from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools import *
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 
-from utilities.misc import CommonANTsRegistrationSettings
+from utilities.misc import common_ants_registration_settings
 
 
-def CreateCorrectionWorkflow(WFname):
+def create_correction_workflow(WFname):
     """
     This Function takes in...
 
@@ -42,7 +42,7 @@ def CreateCorrectionWorkflow(WFname):
     ###### UTILITY FUNCTIONS #######
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     # remove the skull from the T2 volume
-    def ExtractBRAINFromHead(RawScan, BrainLabels):
+    def extract_brain_from_head(RawScan, BrainLabels):
         """
         This function will remove the skull from the T2 volume
 
@@ -66,7 +66,7 @@ def CreateCorrectionWorkflow(WFname):
         sitk.WriteImage(brainImage, outputVolume)
         return outputVolume
 
-    def MakeResamplerInFileList(inputT2, inputLabelMap):
+    def make_resampled_in_file_list(inputT2, inputLabelMap):
         """
         This function..
 
@@ -78,7 +78,7 @@ def CreateCorrectionWorkflow(WFname):
         return imagesList
 
     # This function helps to pick desirable output from the output list
-    def pickFromList(inlist, item):
+    def pick_from_file(inlist, item):
         """
         This function will
 
@@ -89,7 +89,7 @@ def CreateCorrectionWorkflow(WFname):
         return inlist[item]
 
     # Create registration mask for ANTs from resampled label map image
-    def CreateAntsRegistrationMask(brainMask):
+    def create_ants_registration_mask(brainMask):
         """
         This function will
 
@@ -112,7 +112,7 @@ def CreateCorrectionWorkflow(WFname):
         return registrationMask
 
     # Save direction cosine for the input volume
-    def SaveDirectionCosineToMatrix(inputVolume):
+    def save_direction_cosine_to_matrix(inputVolume):
         """
         This function will return the direction cosine for the input volume
 
@@ -127,7 +127,7 @@ def CreateCorrectionWorkflow(WFname):
         directionCosine = t2.GetDirection()
         return directionCosine
 
-    def MakeForceDCFilesList(inputB0, inputT2, inputLabelMap):
+    def make_force_dc_file_list(inputB0, inputT2, inputLabelMap):
         """
         This function will
 
@@ -145,7 +145,7 @@ def CreateCorrectionWorkflow(WFname):
         return imagesList
 
     # Force DC to ID
-    def ForceDCtoID(inputVolume):
+    def force_dc_to_id(inputVolume):
         """
         This function will force DC to ID
 
@@ -161,7 +161,7 @@ def CreateCorrectionWorkflow(WFname):
         sitk.WriteImage(inImage, outputVolume)
         return outputVolume
 
-    def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
+    def restore_dc_from_saved_matrix(inputVolume, inputDirectionCosine):
         """
         This function will
 
@@ -178,7 +178,7 @@ def CreateCorrectionWorkflow(WFname):
         sitk.WriteImage(inImage, outputVolume)
         return outputVolume
 
-    def GetRigidTransformInverse(inputTransform):
+    def get_rigid_transform_inverse(inputTransform):
         """
         This function will
 
@@ -218,11 +218,11 @@ def CreateCorrectionWorkflow(WFname):
     # Step0: remove the skull from the T2 volume
     ExtractBRAINFromHeadNode = pe.Node(
         interface=Function(
-            function=ExtractBRAINFromHead,
+            function=extract_brain_from_head,
             input_names=["RawScan", "BrainLabels"],
             output_names=["outputVolume"],
         ),
-        name="ExtractBRAINFromHead",
+        name="extract_brain_from_head",
     )
 
     CorrectionWF.connect(inputsSpec, "T2Volume", ExtractBRAINFromHeadNode, "RawScan")
@@ -261,7 +261,7 @@ def CreateCorrectionWorkflow(WFname):
     # Step3: Use T_rigid to "resample" T2 and label map images to B0 image space
     MakeResamplerInFilesListNode = pe.Node(
         Function(
-            function=MakeResamplerInFileList,
+            function=make_resampled_in_file_list,
             input_names=["inputT2", "inputLabelMap"],
             output_names=["imagesList"],
         ),
@@ -303,15 +303,15 @@ def CreateCorrectionWorkflow(WFname):
     # Step4: Create registration mask from resampled label map image
     CreateRegistrationMask = pe.Node(
         interface=Function(
-            function=CreateAntsRegistrationMask,
+            function=create_ants_registration_mask,
             input_names=["brainMask"],
             output_names=["registrationMask"],
         ),
-        name="CreateAntsRegistrationMask",
+        name="create_ants_registration_mask",
     )
     CorrectionWF.connect(
         ResampleToB0Space,
-        ("outputVolume", pickFromList, 1),
+        ("outputVolume", pick_from_file, 1),
         CreateRegistrationMask,
         "brainMask",
     )
@@ -319,15 +319,15 @@ def CreateCorrectionWorkflow(WFname):
     # Step5: Save direction cosine for the resampled T2 image
     SaveDirectionCosineToMatrixNode = pe.Node(
         interface=Function(
-            function=SaveDirectionCosineToMatrix,
+            function=save_direction_cosine_to_matrix,
             input_names=["inputVolume"],
             output_names=["directionCosine"],
         ),
-        name="SaveDirectionCosineToMatrix",
+        name="save_direction_cosine_to_matrix",
     )
     CorrectionWF.connect(
         ResampleToB0Space,
-        ("outputVolume", pickFromList, 0),
+        ("outputVolume", pick_from_file, 0),
         SaveDirectionCosineToMatrixNode,
         "inputVolume",
     )
@@ -335,7 +335,7 @@ def CreateCorrectionWorkflow(WFname):
     # Step6: Force DC to ID
     MakeForceDCFilesListNode = pe.Node(
         Function(
-            function=MakeForceDCFilesList,
+            function=make_force_dc_file_list,
             input_names=["inputB0", "inputT2", "inputLabelMap"],
             output_names=["imagesList"],
         ),
@@ -347,7 +347,7 @@ def CreateCorrectionWorkflow(WFname):
             (
                 ResampleToB0Space,
                 MakeForceDCFilesListNode,
-                [(("outputVolume", pickFromList, 0), "inputT2")],
+                [(("outputVolume", pick_from_file, 0), "inputT2")],
             ),
             (
                 CreateRegistrationMask,
@@ -359,11 +359,11 @@ def CreateCorrectionWorkflow(WFname):
 
     ForceDCtoIDNode = pe.MapNode(
         interface=Function(
-            function=ForceDCtoID,
+            function=force_dc_to_id,
             input_names=["inputVolume"],
             output_names=["outputVolume"],
         ),
-        name="ForceDCtoID",
+        name="force_dc_to_id",
         iterfield=["inputVolume"],
     )
     CorrectionWF.connect(
@@ -402,31 +402,31 @@ def CreateCorrectionWorkflow(WFname):
     antsReg_B0ToTransformedT2.inputs.args = "--restrict-deformation 0x1x0"
     CorrectionWF.connect(
         ForceDCtoIDNode,
-        ("outputVolume", pickFromList, 1),
+        ("outputVolume", pick_from_file, 1),
         antsReg_B0ToTransformedT2,
         "fixed_image",
     )
     CorrectionWF.connect(
         ForceDCtoIDNode,
-        ("outputVolume", pickFromList, 2),
+        ("outputVolume", pick_from_file, 2),
         antsReg_B0ToTransformedT2,
         "fixed_image_masks",
     )
     CorrectionWF.connect(
         ForceDCtoIDNode,
-        ("outputVolume", pickFromList, 0),
+        ("outputVolume", pick_from_file, 0),
         antsReg_B0ToTransformedT2,
         "moving_image",
     )
 
     # Step8: Now, all necessary transforms are acquired. It's a time to
     #        transform input DWI image into T2 image space
-    # {DWI} --> ForceDCtoID --> gtractResampleDWIInPlace(using SyN transfrom)
+    # {DWI} --> force_dc_to_id --> gtractResampleDWIInPlace(using SyN transfrom)
     # --> Restore DirectionCosine From Saved Matrix --> gtractResampleDWIInPlace(inverse of T_rigid from BFit)
     # --> {CorrectedDW_in_T2Space}
     DWI_ForceDCtoIDNode = pe.Node(
         interface=Function(
-            function=ForceDCtoID,
+            function=force_dc_to_id,
             input_names=["inputVolume"],
             output_names=["outputVolume"],
         ),
@@ -448,7 +448,7 @@ def CreateCorrectionWorkflow(WFname):
     )
     CorrectionWF.connect(
         ForceDCtoIDNode,
-        ("outputVolume", pickFromList, 1),
+        ("outputVolume", pick_from_file, 1),
         gtractResampleDWI_SyN,
         "referenceVolume",
     )  # fixed image of antsRegistration
@@ -456,11 +456,11 @@ def CreateCorrectionWorkflow(WFname):
 
     RestoreDCFromSavedMatrixNode = pe.Node(
         interface=Function(
-            function=RestoreDCFromSavedMatrix,
+            function=restore_dc_from_saved_matrix,
             input_names=["inputVolume", "inputDirectionCosine"],
             output_names=["outputVolume"],
         ),
-        name="RestoreDCFromSavedMatrix",
+        name="restore_dc_from_saved_matrix",
     )
     CorrectionWF.connect(
         gtractResampleDWI_SyN,
@@ -480,11 +480,11 @@ def CreateCorrectionWorkflow(WFname):
 
     GetRigidTransformInverseNode = pe.Node(
         interface=Function(
-            function=GetRigidTransformInverse,
+            function=get_rigid_transform_inverse,
             input_names=["inputTransform"],
             output_names=["inverseTransform"],
         ),
-        name="GetRigidTransformInverse",
+        name="get_rigid_transform_inverse",
     )
     CorrectionWF.connect(
         BFit_T2toB0,

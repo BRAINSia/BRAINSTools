@@ -36,7 +36,7 @@ def print_usage():
     )
 
 
-def readInputFile(inputFilename):
+def read_input_file(inputFilename):
     """This function...
 
     :param inputFilename:
@@ -111,7 +111,7 @@ def main(argv=None):
 
     print(("Input file is {0}".format(inputfile)))
 
-    inputDictList = readInputFile(inputfile)
+    inputDictList = read_input_file(inputfile)
     snapShotWF = pe.Workflow(name="BAWSnapshots")  # templage generate work flow
     snapShotWF.base_dir = os.path.abspath(cacheDirectory)
 

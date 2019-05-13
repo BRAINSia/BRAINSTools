@@ -19,7 +19,7 @@ from builtins import object
 class UpdateAutoWorkup(object):
     """This class represents a..."""
 
-    def _getBlackList(self):
+    def _get_black_list(self):
         """
         This function...
         :return: blackListDict, list(blackListDict.keys())
@@ -45,7 +45,7 @@ class UpdateAutoWorkup(object):
                 )
         return blackListDict, list(blackListDict.keys())
 
-    def _generateNewPathName(self):
+    def _generate_new_path_name(self):
         """
         This function...
 
@@ -56,7 +56,7 @@ class UpdateAutoWorkup(object):
         newPath = os.path.join(dirname, "edited_{0}".format(basename))
         return newPath
 
-    def updateAutoWorkup(self):
+    def update_auto_workup(self):
         """
         This function...
         """
@@ -64,14 +64,14 @@ class UpdateAutoWorkup(object):
             OrderedDict,
         )  # Need OrderedDict internally to ensure consistent ordering
 
-        newPath = self._generateNewPathName()
+        newPath = self._generate_new_path_name()
         newFile = csv.writer(open(newPath, "wb"), quoting=csv.QUOTE_ALL)
         col_name_list = ["project", "subject", "session", "imagefiles"]
         newFile.writerow(col_name_list)
         oldFile = csv.reader(
             open(inputArguments.autoWorkupFile, "rb"), delimiter=",", quotechar='"'
         )
-        blackListDict, blackListKeys = self._getBlackList()
+        blackListDict, blackListKeys = self._get_black_list()
         print((blackListDict, blackListKeys))
         for row in oldFile:
             ## skip header
@@ -129,4 +129,4 @@ $ python updateAutoWorkupFile.py -a example_autoworkup.csv -b example_blacklist.
     parser.add_argument("-b", "--blackList", action="store", dest="blackList", help="")
     inputArguments = parser.parse_args()
     Object = UpdateAutoWorkup()
-    Object.updateAutoWorkup()
+    Object.update_auto_workup()

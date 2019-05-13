@@ -164,7 +164,7 @@ def test_classifier(clf, test_features, test_targets):
 cache_dir = "/Shared/sinapse/CACHE/20160510_EdgeDetection"
 
 
-def runcrossval(idx_split, data_file):
+def run_crossval(idx_split, data_file):
     """
     Runs cross validation after the data splits
 
@@ -211,7 +211,7 @@ def runcrossval(idx_split, data_file):
 
 
 hdf5_file = os.path.join(cache_dir, "alldata.hdf5")
-partial_runcrossval = partial(runcrossval, data_file=hdf5_file)
+partial_runcrossval = partial(run_crossval, data_file=hdf5_file)
 
 
 def make_empty_dictionaries(labels):
@@ -268,9 +268,9 @@ def get_data(data_file, nm_dir, overwrite=False, out_dir=None):
     if not os.path.isfile(data_file) or overwrite:
         if not out_dir:
             out_dir = cache_dir
-        csv_file = preprocess.createdatacsv(nm_dir, out_dir, overwrite=overwrite)
-        data_samples = training.collectdata(csv_file)
-        data = training.combinedata(data_samples)
+        csv_file = preprocess.create_data_csv(nm_dir, out_dir, overwrite=overwrite)
+        data_samples = training.collect_data(csv_file)
+        data = training.combine_data(data_samples)
         preprocess.save_data_frame(data, data_file)
     else:
         if ".hdf" in data_file:

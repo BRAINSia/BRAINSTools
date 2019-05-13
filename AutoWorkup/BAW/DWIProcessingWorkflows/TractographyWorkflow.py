@@ -34,7 +34,7 @@ from nipype.interfaces.semtools import *
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 
 
-def CreateTractographyWorkflow(WFname):
+def create_tractography_workflow(WFname):
     """
     This Function takes in...
 
@@ -42,7 +42,7 @@ def CreateTractographyWorkflow(WFname):
     :return:
     """
     ###### UTILITY FUNCTIONS #######
-    def computeNumberOfSeedsPerVoxel(inputVolume):
+    def computer_number_of_seeds_per_vexel(inputVolume):
         """
         This Function takes in...
 
@@ -86,7 +86,7 @@ def CreateTractographyWorkflow(WFname):
     # Step2: Compute number of seeds per voxel
     computeNumberOfSeedsPerVoxelNode = pe.Node(
         interface=Function(
-            function=computeNumberOfSeedsPerVoxel,
+            function=computer_number_of_seeds_per_vexel,
             input_names=["inputVolume"],
             output_names=["seedsPerVoxel"],
         ),

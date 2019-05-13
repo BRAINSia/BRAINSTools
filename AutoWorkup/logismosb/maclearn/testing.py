@@ -25,17 +25,17 @@ def run_test(clf, sample_dict, label, out_file):
     :return:
     """
     # read in image data
-    data = training.multimodalimagedata(sample_dict)
+    data = training.multimodal_image_data(sample_dict)
 
     # read in the target image
     target_image = sitk.ReadImage(sample_dict["Truth"])
-    targets = training.imagearray(target_image)
+    targets = training.image_array(target_image)
 
     # read in the label map
     labelmap = sitk.ReadImage(sample_dict["Labelmap"])
 
     # split the data by regions
-    data_dict, targets_dict, index_dict = training.databyregion(
+    data_dict, targets_dict, index_dict = training.data_by_region(
         data, targets, labelmap, sample_dict["Labels"]
     )
 
@@ -93,7 +93,7 @@ def predict(clf, data, in_image, out_file, index, neg_proba=False):
         return out_file
 
 
-def combinepredictions(predictions, in_image, out_file):
+def combine_predictions(predictions, in_image, out_file):
     """
     Takes in a list of the prediction images that are split by region
     and combines them to make one prediction image.

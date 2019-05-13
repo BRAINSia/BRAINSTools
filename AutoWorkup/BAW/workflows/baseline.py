@@ -44,14 +44,14 @@ package_check("networkx", "1.0", "tutorial1")
 package_check("IPython", "0.10", "tutorial1")
 
 from utilities.distributed import modify_qsub_args
-from utilities.image_processing import FixWMPartitioning
-from PipeLineFunctionHelpers import convertToList, AccumulateLikeTissuePosteriors
-from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromListOfTuplesFunction
+from utilities.image_processing import fix_wm_partitioning
+from PipeLineFunctionHelpers import convert_to_list, accumulate_like_tissue_posteriors
+from PipeLineFunctionHelpers import unwrap_posterior_images_from_list_tuples_function
 
-from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
-from .WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
-from .WorkupJointFusion import CreateJointFusionWorkflow
-from .WorkupAddsonBrainStem import CreateBrainstemWorkflow
+from .WorkupT1T2LandmarkInitialization import create_landmark_initialize_workflow
+from .WorkupT1T2TissueClassify import create_tissue_classify_workflow
+from .WorkupJointFusion import create_joint_fusion_workflow
+from .WorkupAddsonBrainStem import create_brainstem_workflow
 
 from utilities.misc import *
 
@@ -81,7 +81,7 @@ def get_list_element(nestedList, index):
     return nestedList[index]
 
 
-def DetermineIfSegmentationShouldBeDone(master_config):
+def determine_if_segmentation_should_be_done(master_config):
     """ This function is in a trival state right now, but
     more complicated rulesets may be necessary in the furture
     to determine when segmentation should be run.
@@ -101,7 +101,7 @@ def DetermineIfSegmentationShouldBeDone(master_config):
     return do_BRAINSCut_Segmentation
 
 
-def getAllT1sLength(allT1s):
+def get_all_t1s_length(allT1s):
     """
     This function...
 
@@ -112,8 +112,8 @@ def getAllT1sLength(allT1s):
 
 
 ##TODO:  Move to module that can be re-used
-##       GetLargestLabel is copied elsewhere
-def CreateLeftRightWMHemispheres(
+##       get_largest_label is copied elsewhere
+def create_left_right_wm_hemispheres(
     BRAINLABELSFile,
     HDCMARegisteredVentricleMaskFN,
     LeftHemisphereMaskName,
@@ -134,7 +134,7 @@ def CreateLeftRightWMHemispheres(
     import SimpleITK as sitk
     import os
 
-    def GetLargestLabel(inputMask, UseErosionCleaning):
+    def get_largest_label(inputMask, UseErosionCleaning):
         """
         This function...
 
@@ -188,10 +188,10 @@ def CreateLeftRightWMHemispheres(
     )  # All subcortical regions are listed greater than equal to values of 12
     WMSubcortFilled = (WMMaskImage + subcorticalRegions) > 0
 
-    WMSubcortFilled_CC = GetLargestLabel(WMSubcortFilled, False)
+    WMSubcortFilled_CC = get_largest_label(WMSubcortFilled, False)
     WMSubcortFilled_CC_Ventricles = (WMSubcortFilled_CC + VentricleMask_d2) > 0
     neg_WMSubcortFilled_CC = 1 - WMSubcortFilled_CC
-    neg_WMSubcortFilled_CC_bg = GetLargestLabel(neg_WMSubcortFilled_CC, False)
+    neg_WMSubcortFilled_CC_bg = get_largest_label(neg_WMSubcortFilled_CC, False)
     neg_WMSubcortFilled_CC_bg_holes = neg_WMSubcortFilled_CC - neg_WMSubcortFilled_CC_bg
 
     WM_Final = neg_WMSubcortFilled_CC_bg_holes + WMSubcortFilled_CC_Ventricles > 0
@@ -211,14 +211,14 @@ def CreateLeftRightWMHemispheres(
     WM_left = WM_Final * Left_template > 0
     WM_right = WM_Final * Right_template > 0
 
-    WM_Largest_left = GetLargestLabel(WM_left, False)
-    WM_Largest_right = GetLargestLabel(WM_right, False)
+    WM_Largest_left = get_largest_label(WM_left, False)
+    WM_Largest_right = get_largest_label(WM_right, False)
 
     WM_left_extras = WM_left - WM_Largest_left
     WM_right_extras = WM_right - WM_Largest_right
 
-    WM_Largest_left = GetLargestLabel(WM_Largest_left + WM_right_extras, False)
-    WM_Largest_right = GetLargestLabel(WM_Largest_right + WM_left_extras, False)
+    WM_Largest_left = get_largest_label(WM_Largest_left + WM_right_extras, False)
+    WM_Largest_right = get_largest_label(WM_Largest_right + WM_left_extras, False)
 
     ## Write todisk
     WM_LeftHemisphereFileName = os.path.abspath(WM_LeftHemisphereFileName)
@@ -245,7 +245,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
     import numpy as np
     from scipy.signal import savgol_filter
 
-    def FlipPermuteToIdentity(sitkImageIn):
+    def flip_permute_to_identity(sitkImageIn):
         """
         This function...
 
@@ -343,7 +343,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
     for index in range(0, len(wrapped_inputfn)):
         ii = wrapped_inputfn[index]
         wrapped_image = sitk.ReadImage(str(ii))
-        identdc_wrapped_image = FlipPermuteToIdentity(wrapped_image)
+        identdc_wrapped_image = flip_permute_to_identity(wrapped_image)
         del wrapped_image
         if 0 == 1:  # THIS DOES NOT WORK ROBUSTLY YET
             unwrapped_image, rotationZ, zslicevalues = one_axis_unwrap(
@@ -372,7 +372,7 @@ def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
     return unwrapped_outputfn
 
 
-def generate_single_session_template_WF(
+def generate_single_session_template_wf(
     projectid,
     subjectid,
     sessionid,
@@ -432,7 +432,7 @@ def generate_single_session_template_WF(
             "warp_atlas_to_subject" in master_config["components"]
         ), "jointfusion_2015_wholebrain requires warp_atlas_to_subject!"
 
-    from workflows.atlasNode import MakeAtlasNode
+    from workflows.atlasNode import make_atlas_node
 
     baw201 = pe.Workflow(name=pipeline_name)
 
@@ -504,7 +504,7 @@ def generate_single_session_template_WF(
     if master_config["workflow_phase"] == "atlas-based-reference":
         PostACPCAlignToAtlas = False
         atlas_warped_directory = master_config["atlascache"]
-        atlasABCNode_XML = MakeAtlasNode(
+        atlasABCNode_XML = make_atlas_node(
             atlas_warped_directory,
             "BABCXMLAtlas_{0}".format(sessionid),
             ["W_BRAINSABCSupport"],
@@ -516,7 +516,7 @@ def generate_single_session_template_WF(
             "atlasDefinition",
         )
 
-        atlasABCNode_W = MakeAtlasNode(
+        atlasABCNode_W = make_atlas_node(
             atlas_warped_directory,
             "BABCAtlas_W{0}".format(sessionid),
             ["W_BRAINSABCSupport", "W_LabelMapsSupport"],
@@ -539,7 +539,7 @@ def generate_single_session_template_WF(
             ]
         )
         ## These landmarks are only relevant for the atlas-based-reference case
-        atlasBCDNode_W = MakeAtlasNode(
+        atlasBCDNode_W = make_atlas_node(
             atlas_warped_directory, "BBCDAtlas_W{0}".format(sessionid), ["W_BCDSupport"]
         )
         baw201.connect(
@@ -558,7 +558,7 @@ def generate_single_session_template_WF(
             ]
         )
         ## Needed for both segmentation and template building prep
-        atlasBCUTNode_W = MakeAtlasNode(
+        atlasBCUTNode_W = make_atlas_node(
             atlas_warped_directory,
             "BBCUTAtlas_W{0}".format(sessionid),
             ["W_BRAINSCutSupport"],
@@ -731,7 +731,7 @@ def generate_single_session_template_WF(
     else:
         assert 0 == 1, "Invalid workflow type specified for singleSession"
 
-    atlasBCDNode_S = MakeAtlasNode(
+    atlasBCDNode_S = make_atlas_node(
         atlas_static_directory, "BBCDAtlas_S{0}".format(sessionid), ["S_BCDSupport"]
     )
     baw201.connect(
@@ -752,7 +752,7 @@ def generate_single_session_template_WF(
         print("\ndenoise image filter\n")
         makeDenoiseInImageList = pe.Node(
             Function(
-                function=MakeOutFileList,
+                function=make_out_from_file,
                 input_names=[
                     "T1List",
                     "T2List",
@@ -874,7 +874,7 @@ def generate_single_session_template_WF(
         print("\nMerge all T1 and T2 List\n")
         makePreprocessingOutList = pe.Node(
             Function(
-                function=GenerateSeparateImageTypeList,
+                function=generate_separate_image_type_list,
                 input_names=["inFileList", "inTypeList"],
                 output_names=["T1s", "T2s", "PDs", "FLs", "OTHERs"],
             ),
@@ -896,7 +896,7 @@ def generate_single_session_template_WF(
         DoReverseMapping = False  # Set to true for debugging outputs
         if "auxlmk" in master_config["components"]:
             DoReverseMapping = True
-        myLocalLMIWF = CreateLandmarkInitializeWorkflow(
+        myLocalLMIWF = create_landmark_initialize_workflow(
             "LandmarkInitialize",
             master_config,
             interpMode,
@@ -983,7 +983,7 @@ def generate_single_session_template_WF(
 
         useRegistrationMask = master_config["use_registration_masking"]
 
-        myLocalTCWF = CreateTissueClassifyWorkflow(
+        myLocalTCWF = create_tissue_classify_workflow(
             "TissueClassify", master_config, interpMode, useRegistrationMask
         )
         baw201.connect(
@@ -1004,7 +1004,7 @@ def generate_single_session_template_WF(
                         ("atlasDefinition", "inputspec.atlasDefinition"),
                         ("template_t1_denoised_gaussian", "inputspec.atlasVolume"),
                         ("template_headregion", "inputspec.atlasheadregion"),
-                        (("T1s", getAllT1sLength), "inputspec.T1_count"),
+                        (("T1s", get_all_t1s_length), "inputspec.T1_count"),
                     ],
                 ),
                 (
@@ -1104,11 +1104,11 @@ def generate_single_session_template_WF(
             )
 
         currentFixWMPartitioningName = "_".join(
-            ["FixWMPartitioning", str(subjectid), str(sessionid)]
+            ["fix_wm_partitioning", str(subjectid), str(sessionid)]
         )
         FixWMNode = pe.Node(
             interface=Function(
-                function=FixWMPartitioning,
+                function=fix_wm_partitioning,
                 input_names=["brainMask", "PosteriorsList"],
                 output_names=[
                     "UpdatedPosteriorsList",
@@ -1130,7 +1130,7 @@ def generate_single_session_template_WF(
                         (
                             (
                                 "outputspec.posteriorImages",
-                                UnwrapPosteriorImagesFromListOfTuplesFunction,
+                                unwrap_posterior_images_from_list_tuples_function,
                             ),
                             "PosteriorsList",
                         ),
@@ -1219,7 +1219,7 @@ def generate_single_session_template_WF(
         )
         AccumulateLikeTissuePosteriorsNode = pe.Node(
             interface=Function(
-                function=AccumulateLikeTissuePosteriors,
+                function=accumulate_like_tissue_posteriors,
                 input_names=["posteriorImages"],
                 output_names=["AccumulatePriorsList", "AccumulatePriorsNames"],
             ),
@@ -1254,7 +1254,7 @@ def generate_single_session_template_WF(
         output:
             - complete_brainlabels_seg.nii.gz Segmentation
         """
-        myLocalBrainStemWF = CreateBrainstemWorkflow(
+        myLocalBrainStemWF = create_brainstem_workflow(
             "BrainStem", master_config["queue"], "complete_brainlabels_seg.nii.gz"
         )
 
@@ -1295,11 +1295,11 @@ def generate_single_session_template_WF(
     del dsName
 
     ###########################
-    do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
+    do_BRAINSCut_Segmentation = determine_if_segmentation_should_be_done(master_config)
     if do_BRAINSCut_Segmentation:
 
         from workflows.segmentation import segmentation
-        from workflows.WorkupT1T2BRAINSCut import GenerateWFName
+        from workflows.WorkupT1T2BRAINSCut import generate_wf_name
 
         sname = "segmentation"
         segWF = segmentation(
@@ -1382,7 +1382,7 @@ def generate_single_session_template_WF(
             ]
         )
 
-        atlasBCUTNode_S = MakeAtlasNode(
+        atlasBCUTNode_S = make_atlas_node(
             atlas_static_directory,
             "BBCUTAtlas_S{0}".format(sessionid),
             ["S_BRAINSCutSupport"],
@@ -1596,7 +1596,7 @@ def generate_single_session_template_WF(
 
         WhiteMatterHemisphereNode = pe.Node(
             interface=Function(
-                function=CreateLeftRightWMHemispheres,
+                function=create_left_right_wm_hemispheres,
                 input_names=[
                     "BRAINLABELSFile",
                     "HDCMARegisteredVentricleMaskFN",
@@ -1668,7 +1668,7 @@ def generate_single_session_template_WF(
         else:
             print("Multimodal processing in jointFusion")
 
-        myLocalJointFusion = CreateJointFusionWorkflow(
+        myLocalJointFusion = create_joint_fusion_workflow(
             "JointFusion", onlyT1, master_config
         )
         baw201.connect(

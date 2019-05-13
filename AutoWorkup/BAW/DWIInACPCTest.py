@@ -94,7 +94,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.semtools import *
 
-from .utilities.misc import CommonANTsRegistrationSettings
+from .utilities.misc import common_ants_registration_settings
 from collections import (
     OrderedDict,
 )  # Need OrderedDict internally to ensure consistent ordering
@@ -145,7 +145,7 @@ JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
 SGE_JOB_SCRIPT = JOB_SCRIPT
 
 
-def MergeByExtendListElements(FAImageList):
+def merge_by_extended_list_elements(FAImageList):
     """
     This function...
 
@@ -186,7 +186,7 @@ def MergeByExtendListElements(FAImageList):
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 
-def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
+def create_dwi_workflow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     """
     This function...
 
@@ -199,7 +199,7 @@ def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
 
 
 #############################
-def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
+def get_dwi_reference_images_from_session_id(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     """A function to extract file names from base parameters
 
     :param SESSION_TUPLE:
@@ -343,7 +343,7 @@ MasterDWIWorkflow.config["logging"] = {
 }
 
 """
-    MasterDWIWorkflow.connect([(resampleIDNode, DTIDataSink,[(('SESSION_TUPLE', sinkContainer), 'container')])])
+    MasterDWIWorkflow.connect([(resampleIDNode, DTIDataSink,[(('SESSION_TUPLE', sink_container), 'container')])])
     MasterDWIWorkflow.connect(ResampleDTI, 'out_file', DTIDataSink, 'Output.@out_file')
 """
 
@@ -386,7 +386,7 @@ inputsSpec.iterables = ("SESSION_TUPLE", SESSION_TUPLE)
 
 GetFileNamesNode = pe.Node(
     interface=Function(
-        function=GetDWIReferenceImagesFromSessionID,
+        function=get_dwi_reference_images_from_session_id,
         input_names=["SESSION_TUPLE", "BASE_STRUCT", "BASE_DWI"],
         output_names=[
             "PROJ_ID",
@@ -599,7 +599,7 @@ DWIDataSink.inputs.base_directory = (
 # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
 
 
-def sinkContainer(_tuple):
+def sink_container(_tuple):
     """
     This function...
 
@@ -612,7 +612,7 @@ def sinkContainer(_tuple):
 
 
 MasterDWIWorkflow.connect(
-    [(inputsSpec, DWIDataSink, [(("SESSION_TUPLE", sinkContainer), "container")])]
+    [(inputsSpec, DWIDataSink, [(("SESSION_TUPLE", sink_container), "container")])]
 )
 
 MasterDWIWorkflow.connect(outputsSpec, "FAImage", DWIDataSink, "Output.@FAImage")

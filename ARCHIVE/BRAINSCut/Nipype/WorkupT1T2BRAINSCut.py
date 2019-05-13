@@ -18,14 +18,14 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from SEMTools import *
 from RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
-from PipeLineFunctionHelpers import getListIndex
+from PipeLineFunctionHelpers import get_list_index
 
 
-def GenerateWFName(projectid, subjectid, sessionid, WFName):
+def generate_wf_name(projectid, subjectid, sessionid, WFName):
     return WFName + "_" + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)
 
 
-def CreateLabelMap(
+def create_label_map(
     listOfImages, LabelImageName, CSVFileName, projectid, subjectid, sessionid
 ):
     """
@@ -147,10 +147,10 @@ def CreateLabelMap(
 """
 
 
-def CreateBRAINSCutWorkflow(
+def create_brains_cut_workflow(
     projectid, subjectid, sessionid, WFName, CLUSTER_QUEUE, atlasObject
 ):
-    cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
+    cutWF = pe.Workflow(name=generate_wf_name(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(
         interface=IdentityInterface(
@@ -302,7 +302,7 @@ def CreateBRAINSCutWorkflow(
                 RF12BC,
                 [
                     (
-                        ("atlasToSubjectTransform", getListIndex, 0),
+                        ("atlasToSubjectTransform", get_list_index, 0),
                         "deformationFromTemplateToSubject",
                     )
                 ],
@@ -338,7 +338,7 @@ def CreateBRAINSCutWorkflow(
                 "sessionid",
             ],
             ["outputLabelImageName", "outputCSVFileName"],
-            function=CreateLabelMap,
+            function=create_label_map,
         ),
         name="ComputeOneLabelMap",
     )

@@ -38,13 +38,13 @@ class GetPosteriorsFromAtlasXML(object):
 
     def __init__(self, xmlFile):
         self.xmlFile = xmlFile
-        self.xmlString = self.getXMLstring(self.xmlFile)
-        self.priorTypeNameList = self.getPriorTypeNameList(self.xmlString)
+        self.xmlString = self.get_xml_string(self.xmlFile)
+        self.priorTypeNameList = self.get_prior_type_name_list(self.xmlString)
 
     def main(self):
-        self.getPosteriorFileNameList(priorTypeNameList)
+        self.get_posterior_file_name_list(priorTypeNameList)
 
-    def getXMLstring(self, xmlFile):
+    def get_xml_string(self, xmlFile):
         """
         This function...
 
@@ -56,7 +56,7 @@ class GetPosteriorsFromAtlasXML(object):
         Handle.close()
         return _xmlString
 
-    def getPriorTypeNameList(self, xmlString):
+    def get_prior_type_name_list(self, xmlString):
         """
         This function...
 
@@ -73,7 +73,7 @@ class GetPosteriorsFromAtlasXML(object):
                 priorTypeNameList.append(elementsList[i + 1].text)
         return priorTypeNameList
 
-    def getPosteriorFileNameList(self, posteriorTemplate):
+    def get_posterior_file_name_list(self, posteriorTemplate):
         posteriorFileNameList = list()
         for priorType in self.priorTypeNameList:
             posteriorFileNameList.append(
@@ -152,7 +152,7 @@ class BRAINSABCext(BRAINSABC):
                 outputs[values[0]] = None
 
         PosteriorOutputs = GetPosteriorsFromAtlasXML(self.inputs.atlasDefinition)
-        PosteriorPaths = PosteriorOutputs.getPosteriorFileNameList(
+        PosteriorPaths = PosteriorOutputs.get_posterior_file_name_list(
             self.inputs.posteriorTemplate
         )
         outputs["posteriorImages"] = [

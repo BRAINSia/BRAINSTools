@@ -3,7 +3,7 @@ import math
 import SimpleITK as sitk
 
 
-def readFCSV(lmks_fn):
+def read_fcsv(lmks_fn):
     """
       lmks_fn: A slicer complant fcsv fiducial file
       This function returns a map of named landmark points.
@@ -29,7 +29,7 @@ def readFCSV(lmks_fn):
     return lmks_map
 
 
-def makeIdentityImage(img_size=320):
+def make_identity_image(img_size=320):
     """
     make an image with idenity space, and origin at center of space
     """
@@ -86,7 +86,7 @@ def get_eye_image(one_eye_pnt, orig_img_any, fov):
     return re_2dimg
 
 
-def makeMaskFromBBCorners(LOWER_CORNER_pnt, UPPER_CORNER_pnt, ref_img):
+def make_mask_from_bb_corners(LOWER_CORNER_pnt, UPPER_CORNER_pnt, ref_img):
     """
     Given two physical points, create a mask that is the bounding box between those two points
 
@@ -113,7 +113,7 @@ def makeMaskFromBBCorners(LOWER_CORNER_pnt, UPPER_CORNER_pnt, ref_img):
     return out_mask
 
 
-def quickDilate(img, count, iterdilate):
+def quick_dilate(img, count, iterdilate):
     """
     iteratively calling smaller dilations is faster than doing large dilations
     """
@@ -123,7 +123,7 @@ def quickDilate(img, count, iterdilate):
     return outlbl
 
 
-def DrawEye(pnt, img):
+def draw_eye(pnt, img):
     """
     Eye diameters are less than 30mm (typically average about 24mm)
     """

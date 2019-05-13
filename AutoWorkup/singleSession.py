@@ -34,7 +34,7 @@ Examples:
 """
 
 
-def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
+def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
     """
     Create singleSession workflow on a single session
 
@@ -63,7 +63,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     config.update_config(master_config)  # Set universal pipeline options
     logging.update_logging(config)
 
-    from BAW.workflows.baseline import generate_single_session_template_WF
+    from BAW.workflows.baseline import generate_single_session_template_wf
 
     project = dataDict["project"]
     subject = dataDict["subject"]
@@ -97,7 +97,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     useEMSP = False
     if len(dataDict["EMSP"]) > 0:
         useEMSP = True
-    sessionWorkflow = generate_single_session_template_WF(
+    sessionWorkflow = generate_single_session_template_wf(
         project,
         subject,
         session,
@@ -125,7 +125,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     return sessionWorkflow
 
 
-def createAndRun(
+def create_and_run(
     sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun
 ):
     """
@@ -140,7 +140,7 @@ def createAndRun(
     :param dryRun:
     :return:
     """
-    from BAW.baw_exp import OpenSubjectDatabase
+    from BAW.baw_exp import open_subject_database
     from BAW.utilities.misc import add_dict
     from collections import OrderedDict
     import sys
@@ -153,12 +153,12 @@ def createAndRun(
     master_config = OrderedDict()
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
-    database = OpenSubjectDatabase(
+    database = open_subject_database(
         experiment["cachedir"], ["all"], environment["prefix"], experiment["dbfile"]
     )
     database.open_connection()
     try:
-        all_sessions = database.getAllSessions()
+        all_sessions = database.get_all_sessions()
         if not set(sessions) <= set(all_sessions) and "all" not in sessions:
             missing = set(sessions) - set(all_sessions)
             assert (
@@ -175,7 +175,7 @@ def createAndRun(
         print(("!=" * 40))
         for session in sessions:
             _dict = OrderedDict()
-            t1_list = database.getFilenamesByScantype(session, ["T1-15", "T1-30"])
+            t1_list = database.get_filenames_by_scan_type(session, ["T1-15", "T1-30"])
             if len(t1_list) == 0:
                 print(
                     (
@@ -186,24 +186,24 @@ def createAndRun(
                 )
                 print("REMOVE OR FIX BEFORE CONTINUING")
                 continue
-            subject = database.getSubjFromSession(session)
+            subject = database.get_subj_from_session(session)
             _dict["session"] = session
-            _dict["project"] = database.getProjFromSession(session)
+            _dict["project"] = database.get_proj_from_session(session)
             _dict["subject"] = subject
             _dict["T1s"] = t1_list
-            _dict["T2s"] = database.getFilenamesByScantype(session, ["T2-15", "T2-30"])
+            _dict["T2s"] = database.get_filenames_by_scan_type(session, ["T2-15", "T2-30"])
             _dict["BadT2"] = False
-            if _dict["T2s"] == database.getFilenamesByScantype(session, ["T2-15"]):
+            if _dict["T2s"] == database.get_filenames_by_scan_type(session, ["T2-15"]):
                 print("This T2 is not going to be used for JointFusion")
                 print("This T2 is not going to be used for JointFusion")
                 print("This T2 is not going to be used for JointFusion")
                 print("This T2 is not going to be used for JointFusion")
                 print((_dict["T2s"]))
                 _dict["BadT2"] = True
-            _dict["PDs"] = database.getFilenamesByScantype(session, ["PD-15", "PD-30"])
-            _dict["FLs"] = database.getFilenamesByScantype(session, ["FL-15", "FL-30"])
-            _dict["EMSP"] = database.getFilenamesByScantype(session, ["EMSP"])
-            _dict["OTHERs"] = database.getFilenamesByScantype(
+            _dict["PDs"] = database.get_filenames_by_scan_type(session, ["PD-15", "PD-30"])
+            _dict["FLs"] = database.get_filenames_by_scan_type(session, ["FL-15", "FL-30"])
+            _dict["EMSP"] = database.get_filenames_by_scan_type(session, ["EMSP"])
+            _dict["OTHERs"] = database.get_filenames_by_scan_type(
                 session, ["OTHER-15", "OTHER-30"]
             )
             sentinal_file_basedir = os.path.join(
@@ -311,9 +311,9 @@ def createAndRun(
                 continue
 
             ## Use different sentinal file if segmentation specified.
-            from BAW.workflows.baseline import DetermineIfSegmentationShouldBeDone
+            from BAW.workflows.baseline import determine_if_segmentation_should_be_done
 
-            do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(
+            do_BRAINSCut_Segmentation = determine_if_segmentation_should_be_done(
                 master_config
             )
             if do_BRAINSCut_Segmentation:
@@ -325,7 +325,7 @@ def createAndRun(
                     )
                 )
 
-            def allPathsExists(list_of_paths):
+            def all_paths_exists(list_of_paths):
                 """
                 This function...
                 :param list_of_paths:
@@ -338,12 +338,12 @@ def createAndRun(
                         print(("MISSING: {0}".format(ff)))
                 return not is_missing
 
-            if useSentinal and allPathsExists(sentinal_file_list):
+            if useSentinal and all_paths_exists(sentinal_file_list):
                 print(("SKIPPING: {0} exists".format(sentinal_file_list)))
             else:
                 print("PROCESSING INCOMPLETE: at least 1 required file does not exists")
                 if dryRun == False:
-                    workflow = _create_singleSession(
+                    workflow = _create_single_session(
                         _dict,
                         master_config,
                         "Linear",
@@ -369,7 +369,7 @@ def createAndRun(
             pass
 
 
-def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
+def single_session_main(environment, experiment, pipeline, cluster, **kwds):
     """
     This function...
 
@@ -387,7 +387,7 @@ def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
         kwds, pipeline, cluster, experiment, environment
     )  # Generate Nipype options
     print("Getting session(s) from database...")
-    createAndRun(
+    create_and_run(
         kwds["SESSIONS"],
         environment,
         experiment,
@@ -414,5 +414,5 @@ if __name__ == "__main__":
     print(("=" * 100))
     environment, experiment, pipeline, cluster = setup_environment(argv)
 
-    exit = _SingleSession_main(environment, experiment, pipeline, cluster, **argv)
+    exit = single_session_main(environment, experiment, pipeline, cluster, **argv)
     sys.exit(exit)

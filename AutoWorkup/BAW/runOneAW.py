@@ -22,25 +22,25 @@ class runOneAW(object):
 
     def main(self):
         """This is the main function..."""
-        self.makeOuputDir()
+        self.make_output_dir()
         self.sessionPath = os.path.join(
             input_arguments.experimentOutputDir, "session.csv"
         )
         self.configPath = os.path.join(
             input_arguments.experimentOutputDir, "localAW.config"
         )
-        self.generateSessionCSV()
-        self.generateConfigFile()
-        self.executeAW()
+        self.generate_session_csv()
+        self.generate_config_file()
+        self.execute_aw()
 
-    def makeOuputDir(self):
+    def make_output_dir(self):
         """This funciton does..."""
         if os.path.exists(input_arguments.experimentOutputDir):
             pass
         else:
             os.mkdir(input_arguments.experimentOutputDir)
 
-    def executeAW(self):
+    def execute_aw(self):
         """This function does..."""
         bawCommand = """time python {brainsToolsScriptsDir}/AutoWorkup/baw_exp.py \
  -ExperimentConfig {configFile} \
@@ -55,7 +55,7 @@ class runOneAW(object):
         print(("\nExecuting command: \n{bawCommand}".format(bawCommand=bawCommand)))
         os.system(bawCommand)
 
-    def generateSessionCSV(self):
+    def generate_session_csv(self):
         """This function..."""
         from collections import (
             OrderedDict,
@@ -88,7 +88,7 @@ class runOneAW(object):
         )
         print(line)
 
-    def generateConfigFile(self):
+    def generate_config_file(self):
         """ TODO: Move configString text to a separate text file
         TODO: configString has many curly brackets and percent signs for use in python and bash environments.
         Therefore the .format() or %s replace options are not usable.  So .replace() was used to replace key words

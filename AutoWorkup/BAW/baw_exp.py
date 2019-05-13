@@ -41,7 +41,7 @@ import time
 ##############################################################################
 
 
-def OpenSubjectDatabase(
+def open_subject_database(
     ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file
 ):
     """
@@ -64,7 +64,7 @@ def OpenSubjectDatabase(
         os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)
     ):
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-        ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
+        ExperimentDatabase.make_new_db(subject_data_file, mountPrefix)
     else:
         print(
             (
@@ -74,15 +74,15 @@ def OpenSubjectDatabase(
             )
         )
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
-    # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
+    # print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.get_subject_filter())
     # print "^^^^^^^^^^^^^"
-    # for row in ExperimentDatabase.getEverything():
+    # for row in ExperimentDatabase.get_everything():
     #    print row
     # print "^^^^^^^^^^^^^"
     return ExperimentDatabase
 
 
-def DoSingleSubjectProcessing(sp_args):
+def do_single_subject_processing(sp_args):
     """
     This function...
 
@@ -102,7 +102,7 @@ def DoSingleSubjectProcessing(sp_args):
         print(("Delaying start for {0}".format(subjectid)))
 
     list_with_one_subject = [subjectid]
-    ExperimentDatabase = OpenSubjectDatabase(
+    ExperimentDatabase = open_subject_database(
         ExperimentBaseDirectoryCache,
         list_with_one_subject,
         mountPrefix,
@@ -234,7 +234,7 @@ def DoSingleSubjectProcessing(sp_args):
     return True
 
 
-def MasterProcessingController(argv=None):
+def master_processing_controller(argv=None):
     """
     This function...
     :param argv: None
@@ -459,7 +459,7 @@ def MasterProcessingController(argv=None):
 
     print("Configuring Pipeline")
     ## Ensure that entire db is built and cached before parallel section starts.
-    _ignoreme = OpenSubjectDatabase(
+    _ignoreme = open_subject_database(
         experiment["output_cache"],
         ["all"],
         environment["prefix"],
@@ -467,7 +467,7 @@ def MasterProcessingController(argv=None):
     )
     to_do_subjects = args.subject.split(",")
     if to_do_subjects[0] == "all":
-        to_do_subjects = _ignoreme.getAllSubjects()
+        to_do_subjects = _ignoreme.get_all_subjects()
     _ignoreme = None
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
@@ -513,13 +513,13 @@ def MasterProcessingController(argv=None):
     if "local" in args.wfrun:
         print("RUNNING WITHOUT POOL BUILDING")
         for sp_args in sp_args_list:
-            DoSingleSubjectProcessing(sp_args)
+            do_single_subject_processing(sp_args)
     else:
         ## Make a pool of workers to submit simultaneously
         from multiprocessing import Pool
 
         myPool = Pool(processes=64, maxtasksperchild=1)
-        all_results = myPool.map_async(DoSingleSubjectProcessing, sp_args_list).get(
+        all_results = myPool.map_async(do_single_subject_processing, sp_args_list).get(
             1e100
         )
 
@@ -534,5 +534,5 @@ def MasterProcessingController(argv=None):
 if __name__ == "__main__":
     import sys
 
-    main_status = MasterProcessingController(None)
+    main_status = master_processing_controller(None)
     sys.exit(main_status)

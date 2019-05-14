@@ -34,6 +34,7 @@ Examples:
 """
 import re
 
+
 def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
     """
     Create singleSession workflow on a single session
@@ -97,14 +98,24 @@ def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
     useEMSP = None
     if len(dataDict["EMSP"]) > 0:
         useEMSP = dataDict["EMSP"][0]
-    def replace_image_extensions( filename, new_extension ):
+
+    def replace_image_extensions(filename, new_extension):
         filename_base = filename
-        for rmext in [r".gz$",r".nii$",r".hdr$",r".img$",r".dcm$",r".nrrd$",r".nhdr$", r".mhd$"]:
-            filename_base= re.sub(rmext, "",filename_base)
+        for rmext in [
+            r".gz$",
+            r".nii$",
+            r".hdr$",
+            r".img$",
+            r".dcm$",
+            r".nrrd$",
+            r".nhdr$",
+            r".mhd$",
+        ]:
+            filename_base = re.sub(rmext, "", filename_base)
         return filename_base + new_extension
 
-    input_sidecare_fcsv_filename = replace_image_extensions( dataDict["T1s"][0], ".fcsv" )
-    if os.path.exists( input_sidecare_fcsv_filename):
+    input_sidecare_fcsv_filename = replace_image_extensions(dataDict["T1s"][0], ".fcsv")
+    if os.path.exists(input_sidecare_fcsv_filename):
         useEMSP = input_sidecare_fcsv_filename
 
     sessionWorkflow = generate_single_session_template_wf(
@@ -201,7 +212,9 @@ def create_and_run(
             _dict["project"] = database.get_proj_from_session(session)
             _dict["subject"] = subject
             _dict["T1s"] = t1_list
-            _dict["T2s"] = database.get_filenames_by_scan_type(session, ["T2-15", "T2-30"])
+            _dict["T2s"] = database.get_filenames_by_scan_type(
+                session, ["T2-15", "T2-30"]
+            )
             _dict["BadT2"] = False
             if _dict["T2s"] == database.get_filenames_by_scan_type(session, ["T2-15"]):
                 print("This T2 is not going to be used for JointFusion")
@@ -210,8 +223,12 @@ def create_and_run(
                 print("This T2 is not going to be used for JointFusion")
                 print((_dict["T2s"]))
                 _dict["BadT2"] = True
-            _dict["PDs"] = database.get_filenames_by_scan_type(session, ["PD-15", "PD-30"])
-            _dict["FLs"] = database.get_filenames_by_scan_type(session, ["FL-15", "FL-30"])
+            _dict["PDs"] = database.get_filenames_by_scan_type(
+                session, ["PD-15", "PD-30"]
+            )
+            _dict["FLs"] = database.get_filenames_by_scan_type(
+                session, ["FL-15", "FL-30"]
+            )
             _dict["EMSP"] = database.get_filenames_by_scan_type(session, ["EMSP"])
             _dict["OTHERs"] = database.get_filenames_by_scan_type(
                 session, ["OTHER-15", "OTHER-30"]
@@ -320,8 +337,9 @@ def create_and_run(
                 print(("SKIPPING: {0} prerequisites missing".format(session)))
                 continue
 
-            assert "segmentation" not in master_config[
-              "components"], "ERROR, segmentation (aka BRAINSCut) no longer supported"
+            assert (
+                "segmentation" not in master_config["components"]
+            ), "ERROR, segmentation (aka BRAINSCut) no longer supported"
 
             def all_paths_exists(list_of_paths):
                 """

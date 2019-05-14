@@ -102,7 +102,9 @@ def parse_environment(parser, environment):
         )
         retval["env"]["PATH"] = envpath  # Create append to PATH
     else:
-        retval["env"]["PATH"] = get_ascii_from_parser(parser, environment, "APPEND_PATH")
+        retval["env"]["PATH"] = get_ascii_from_parser(
+            parser, environment, "APPEND_PATH"
+        )
 
     retval["prefix"] = validate_path(
         get_ascii_from_parser(parser, environment, "MOUNT_PREFIX"), True, True
@@ -116,10 +118,14 @@ def parse_environment(parser, environment):
     else:
         retval["virtualenv_dir"] = None
     retval_cluster = OrderedDict()
-    retval_cluster["modules"] = eval(get_ascii_from_parser(parser, environment, "MODULES"))
+    retval_cluster["modules"] = eval(
+        get_ascii_from_parser(parser, environment, "MODULES")
+    )
     retval_cluster["queue"] = get_ascii_from_parser(parser, environment, "QUEUE")
     retval_cluster["long_q"] = get_ascii_from_parser(parser, environment, "QUEUE_LONG")
-    retval_cluster["qstat"] = get_ascii_from_parser(parser, environment, "QSTAT_IMMEDIATE")
+    retval_cluster["qstat"] = get_ascii_from_parser(
+        parser, environment, "QSTAT_IMMEDIATE"
+    )
     retval_cluster["qstat_cached"] = get_ascii_from_parser(
         parser, environment, "QSTAT_CACHED"
     )
@@ -255,12 +261,16 @@ def parse_experiment(parser, workflow_phase):
             )
             """ HACK: warp_atlas_to_subject is coupled with jointFusion????"""
             retval["jointfusion_atlas_db_base"] = validate_path(
-                get_ascii_from_parser(parser, "EXPERIMENT", "JointFusion_ATLAS_DB_BASE"),
+                get_ascii_from_parser(
+                    parser, "EXPERIMENT", "JointFusion_ATLAS_DB_BASE"
+                ),
                 allow_empty=False,
                 isDirectory=False,
             )
             retval["labelmap_colorlookup_table"] = validate_path(
-                get_ascii_from_parser(parser, "EXPERIMENT", "LABELMAP_COLORLOOKUP_TABLE"),
+                get_ascii_from_parser(
+                    parser, "EXPERIMENT", "LABELMAP_COLORLOOKUP_TABLE"
+                ),
                 allow_empty=False,
                 isDirectory=False,
             )
@@ -300,7 +310,9 @@ def parse_nipype(parser):
     retval["ds_overwrite"] = parser.getboolean("NIPYPE", "GLOBAL_DATA_SINK_REWRITE")
 
     if parser.has_option("NIPYPE", "CRASHDUMP_DIR"):
-        retval["CRASHDUMP_DIR"] = get_ascii_from_parser(parser, "NIPYPE", "CRASHDUMP_DIR")
+        retval["CRASHDUMP_DIR"] = get_ascii_from_parser(
+            parser, "NIPYPE", "CRASHDUMP_DIR"
+        )
     else:
         retval["CRASHDUMP_DIR"] = None
 

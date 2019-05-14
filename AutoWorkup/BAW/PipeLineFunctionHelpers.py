@@ -137,7 +137,9 @@ def unwrap_posterior_images_from_list_tuples_function(posteriorListOfTuples):
     return mylist
 
 
-def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(dg_list_list):
+def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(
+    dg_list_list
+):
     """ The input is a list of sessions with a list of posteriors per session.
         The output is a dicitionary of posterior types, with a list of that
         posterior type for each session.

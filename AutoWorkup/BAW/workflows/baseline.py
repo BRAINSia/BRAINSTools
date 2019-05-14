@@ -80,6 +80,7 @@ def get_list_element(nestedList, index):
     """
     return nestedList[index]
 
+
 def get_all_t1s_length(allT1s):
     """
     This function...
@@ -208,6 +209,7 @@ def create_left_right_wm_hemispheres(
 
     ## TODO Add splitting into hemispheres code here
     return WM_LeftHemisphereFileName, WM_RightHemisphereFileName
+
 
 def generate_single_session_template_wf(
     projectid,
@@ -1040,7 +1042,9 @@ def generate_single_session_template_wf(
     del dsName
 
     ###########################
-    assert "segmentation" not in master_config["components"], "ERROR, segmentation (aka BRAINSCut) no longer supported"
+    assert (
+        "segmentation" not in master_config["components"]
+    ), "ERROR, segmentation (aka BRAINSCut) no longer supported"
 
     if "warp_atlas_to_subject" in master_config["components"]:
         ##

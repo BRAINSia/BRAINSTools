@@ -627,7 +627,9 @@ for thisSubject in all_subjects:
         else:
             if USE_15T_SESSIONS == False:
                 continue  # Skip this session
-            T1_files_15 = ExperimentDatabase.get_filenames_by_scan_type(session, ["T1-15"])
+            T1_files_15 = ExperimentDatabase.get_filenames_by_scan_type(
+                session, ["T1-15"]
+            )
             is3T = False
 
         if is3T:
@@ -639,7 +641,9 @@ for thisSubject in all_subjects:
         this_session_base_done = False
         if is3T:  # len(T1_files_30) > 0:
             T1_files = find_mgz(T1_files_30)
-            T2_files_30 = ExperimentDatabase.get_filenames_by_scan_type(session, ["T2-30"])
+            T2_files_30 = ExperimentDatabase.get_filenames_by_scan_type(
+                session, ["T2-30"]
+            )
             T2_files = find_mgz(T2_files_30)
             if len(T2_files) != len(T2_files_30):
                 print(

@@ -27,8 +27,12 @@ class DustCleanup:
         self.outputAtlasPath = arguments["--outputAtlasPath"]
         self.inputT1Path = arguments["--inputT1Path"]
         self.inputT2Path = arguments["--inputT2Path"]
-        self.includeLabelsList = self.eval_input_list_arg(arguments["--includeLabelsList"])
-        self.excludeLabelsList = self.eval_input_list_arg(arguments["--excludeLabelsList"])
+        self.includeLabelsList = self.eval_input_list_arg(
+            arguments["--includeLabelsList"]
+        )
+        self.excludeLabelsList = self.eval_input_list_arg(
+            arguments["--excludeLabelsList"]
+        )
         self.maximumIslandVoxelCount = int(arguments["--maximumIslandVoxelCount"])
         self.useFullyConnectedInConnectedComponentFilter = arguments[
             "--useFullyConnectedInConnectedComponentFilter"
@@ -78,7 +82,9 @@ class DustCleanup:
         labelStatsObject = self.get_label_stats_object(volumeImage, labelImage)
         labelsList = self.get_label_list_from_label_stats_object(labelStatsObject)
         if self.excludeLabelsList:
-            return self.remove_labels_from_labels_list(labelsList, self.excludeLabelsList)
+            return self.remove_labels_from_labels_list(
+                labelsList, self.excludeLabelsList
+            )
         if self.includeLabelsList:
             return self.verify_include_labels_list(labelsList, self.includeLabelsList)
         return labelsList
@@ -217,7 +223,8 @@ class DustCleanup:
                     if self.forceSuspiciousLabelChange:
                         diffDict.pop(label_key)
                     sortedLabelList = [
-                        int(x) for x in self.get_dict_keys_list_sorted_by_value(diffDict)
+                        int(x)
+                        for x in self.get_dict_keys_list_sorted_by_value(diffDict)
                     ]
                     currentLabelBinaryThresholdImage = sitk.BinaryThreshold(
                         relabeledConnectedRegion, currentLabel, currentLabel

@@ -53,7 +53,9 @@ def validate_paths(pathString):
     :param pathString:
     :return:
     """
-    return ":".join([validate_path(path, False, True) for path in ":".split(pathString)])
+    return ":".join(
+        [validate_path(path, False, True) for path in ":".split(pathString)]
+    )
 
 
 def append_path_list(new, old=None):

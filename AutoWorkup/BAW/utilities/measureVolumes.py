@@ -184,7 +184,9 @@ def volume_measure(
     :return:
     """
     labelDict = make_label_dictionary(inputColorLookUpTableFilename)
-    measurementsList = get_label_volumes(labelFilename, inputReferenceFilename, labelDict)
+    measurementsList = get_label_volumes(
+        labelFilename, inputReferenceFilename, labelDict
+    )
     csvFilename = outputFileBasename + "CSV.csv"
     jsonFilename = outputFileBasename + "JSON.json"
     write_dictionary_to_csv(measurementsList, csvFilename)

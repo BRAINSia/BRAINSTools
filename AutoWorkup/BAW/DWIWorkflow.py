@@ -712,36 +712,21 @@ def run_main_workflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR)
 
     DWIWorkflow.connect(outputsSpec, "ukfTracks", DWIDataSink, "@ukfTracks")
     # DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs@ukf2ndTracks')
+    DWIWorkflow.connect(outputsSpec, "CorrectedDWI", DWIDataSink, "@CorrectedDWI")
     DWIWorkflow.connect(
-        outputsSpec, "CorrectedDWI", DWIDataSink, "@CorrectedDWI"
+        outputsSpec, "CorrectedDWI_in_T2Space", DWIDataSink, "@CorrectedDWI_in_T2Space"
     )
-    DWIWorkflow.connect(
-        outputsSpec,
-        "CorrectedDWI_in_T2Space",
-        DWIDataSink,
-        "@CorrectedDWI_in_T2Space",
-    )
-    DWIWorkflow.connect(
-        outputsSpec, "tensor_image", DWIDataSink, "@tensor_image"
-    )
-    DWIWorkflow.connect(
-        outputsSpec, "DWIBrainMask", DWIDataSink, "@DWIBrainMask"
-    )
+    DWIWorkflow.connect(outputsSpec, "tensor_image", DWIDataSink, "@tensor_image")
+    DWIWorkflow.connect(outputsSpec, "DWIBrainMask", DWIDataSink, "@DWIBrainMask")
     DWIWorkflow.connect(outputsSpec, "FAImage", DWIDataSink, "@FAImage")
     DWIWorkflow.connect(outputsSpec, "MDImage", DWIDataSink, "@MDImage")
     DWIWorkflow.connect(outputsSpec, "RDImage", DWIDataSink, "@RDImage")
     DWIWorkflow.connect(
         outputsSpec, "FrobeniusNormImage", DWIDataSink, "@FrobeniusNormImage"
     )
-    DWIWorkflow.connect(
-        outputsSpec, "Lambda1Image", DWIDataSink, "@Lambda1Image"
-    )
-    DWIWorkflow.connect(
-        outputsSpec, "Lambda2Image", DWIDataSink, "@Lambda2Image"
-    )
-    DWIWorkflow.connect(
-        outputsSpec, "Lambda3Image", DWIDataSink, "@Lambda3Image"
-    )
+    DWIWorkflow.connect(outputsSpec, "Lambda1Image", DWIDataSink, "@Lambda1Image")
+    DWIWorkflow.connect(outputsSpec, "Lambda2Image", DWIDataSink, "@Lambda2Image")
+    DWIWorkflow.connect(outputsSpec, "Lambda3Image", DWIDataSink, "@Lambda3Image")
 
     DWIWorkflow.write_graph()
     DWIWorkflow.run()

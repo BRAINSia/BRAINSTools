@@ -160,7 +160,9 @@ def get_list_index_or_none_if_out_of_range(imageList, index):
         return None
 
 
-def create_joint_fusion_workflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True):
+def create_joint_fusion_workflow(
+    WFname, onlyT1, master_config, runFixFusionLabelMap=True
+):
     """
     This function...
     :param WFname:

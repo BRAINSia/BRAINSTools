@@ -237,7 +237,9 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
 
     # Laplacian
     feature_names.append("Laplacian")
-    feature_value_arrays.append(image_array(sitk.Laplacian(image, useImageSpacing=True)))
+    feature_value_arrays.append(
+        image_array(sitk.Laplacian(image, useImageSpacing=True))
+    )
 
     for sigma in [i * 0.5 for i in range(1, 7)]:
         sigma_str = "{0:.1f}".format(sigma)

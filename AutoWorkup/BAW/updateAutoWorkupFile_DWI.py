@@ -40,7 +40,9 @@ class UpdateAutoWorkup(object):
                 project = row[0]
                 subject = row[1]
                 session = row[2]
-                newImagesList = NewImageDict.get_new_image_list(project, subject, session)
+                newImagesList = NewImageDict.get_new_image_list(
+                    project, subject, session
+                )
                 scanDict = eval(row[3])
                 if newImagesList != []:
                     if inputArguments.modality not in list(scanDict.keys()):

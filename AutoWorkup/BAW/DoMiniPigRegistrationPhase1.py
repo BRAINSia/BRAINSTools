@@ -296,7 +296,9 @@ def smooth_brain_mask(inFN, outFN):
 
 smoothBrainMask = pe.Node(
     Function(
-        function=smooth_brain_mask, input_names=["inFN", "outFN"], output_names=["outFN"]
+        function=smooth_brain_mask,
+        input_names=["inFN", "outFN"],
+        output_names=["outFN"],
     ),
     run_without_submitting=True,
     name="smoothBrainMask",

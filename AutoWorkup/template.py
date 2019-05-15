@@ -31,7 +31,6 @@ Examples:
 
 """
 
-
 import glob
 import os
 import sys
@@ -43,12 +42,12 @@ from .baw_exp import open_subject_database
 
 def get_processed_subjects(resultdir, input_subjects_list):
     """
-    This function...
+  This function...
 
-    :param resultdir:
-    :param input_subjects_list:
-    :return:
-    """
+  :param resultdir:
+  :param input_subjects_list:
+  :return:
+  """
     import glob
 
     required_files = [
@@ -123,8 +122,8 @@ def get_processed_subjects(resultdir, input_subjects_list):
                 )
             else:
                 partial_done.append(os.path.basename(os.path.dirname(testDirectory)))
-        print(("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects)))
-        print(("Finishing Incomplete SUBJECTS: {0}".format(partial_done)))
+        print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
+        print("Finishing Incomplete SUBJECTS: {0}".format(partial_done))
         return processedSubjects
 
 
@@ -132,17 +131,17 @@ def get_subjects_sessions_dictionary(
     input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False
 ):
     """
-    This function...
+  This function...
 
-    :param input_subjects:
-    :param cache:
-    :param resultdir:
-    :param prefix:
-    :param dbfile:
-    :param useSentinal:
-    :param shuffle:
-    :return:
-    """
+  :param input_subjects:
+  :param cache:
+  :param resultdir:
+  :param prefix:
+  :param dbfile:
+  :param useSentinal:
+  :param shuffle:
+  :return:
+  """
     import random
     from collections import (
         OrderedDict,
@@ -152,7 +151,7 @@ def get_subjects_sessions_dictionary(
     if "all" in input_subjects:
         input_subjects = _temp.get_all_subjects()
     if useSentinal:
-        print(("=" * 80))
+        print("=" * 80)
         print("Using Sentinal Files to Limit Jobs Run")
         _all_subjects = set(input_subjects)
         _processed_subjects = set(get_processed_subjects(resultdir, input_subjects))
@@ -179,37 +178,37 @@ def merge_by_extended_list_elements(
     )  # Need OrderedDict internally to ensure consistent ordering
 
     """
-    *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
+  *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
 
-    output = [{'T1':        os.path.join(mydatadir, '01_T1_half.nii.gz'),
-               'INV_T1':    os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
-               'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
-              },
-              {'T1':        os.path.join(mydatadir, '02_T1_half.nii.gz'),
-               'INV_T1':    os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
-               'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
-              },
-              {'T1':        os.path.join(mydatadir, '03_T1_half.nii.gz'),
-               'INV_T1':    os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
-               'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
-              }
-             ]
-    #          SUBJECT_01                    SUBJECT_02                        SUBJECT_03
-    labels = ['brain_label_seg.nii.gz',      'brain_label_seg.nii.gz',          ...      ]
-    pds    = [None,                          None,                              ...      ]
-    t1s    = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz',     ...      ]
-    t2s    = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz',     ...      ]
+  output = [{'T1':        os.path.join(mydatadir, '01_T1_half.nii.gz'),
+             'INV_T1':    os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
+             'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
+            },
+            {'T1':        os.path.join(mydatadir, '02_T1_half.nii.gz'),
+             'INV_T1':    os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
+             'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
+            },
+            {'T1':        os.path.join(mydatadir, '03_T1_half.nii.gz'),
+             'INV_T1':    os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
+             'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
+            }
+           ]
+  #          SUBJECT_01                    SUBJECT_02                        SUBJECT_03
+  labels = ['brain_label_seg.nii.gz',      'brain_label_seg.nii.gz',          ...      ]
+  pds    = [None,                          None,                              ...      ]
+  t1s    = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz',     ...      ]
+  t2s    = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz',     ...      ]
 
-    :param t1s:
-    :param t2s:
-    :param pds:
-    :param fls:
-    :param labels:
-    :param posteriors:
-    :param passive_intensities:
-    :param passive_masks:
-    :return:
-    """
+  :param t1s:
+  :param t2s:
+  :param pds:
+  :param fls:
+  :param labels:
+  :param posteriors:
+  :param passive_intensities:
+  :param passive_masks:
+  :return:
+  """
     # print "t1s", t1s
     # print "t2s", t2s
     # print "pds", pds
@@ -220,7 +219,7 @@ def merge_by_extended_list_elements(
     ListOfImagesDictionaries = [
         OrderedDict() for i in t1s
     ]  # Initial list with empty dictionaries
-    ## HACK:  Need to make it so that AVG_AIR.nii.gz has a background value of 1
+    # HACK:  Need to make it so that AVG_AIR.nii.gz has a background value of 1
     registrationImageTypes = ["T1"]  # ['T1','T2'] someday.
     DefaultContinuousInterpolationType = (
         "Linear"
@@ -243,7 +242,7 @@ def merge_by_extended_list_elements(
             ListOfImagesDictionaries[subject_index]["FL"] = fls[subject_index]
         if labels[subject_index] is not None:
             ListOfImagesDictionaries[subject_index]["BRAINMASK"] = labels[subject_index]
-        print((ListOfImagesDictionaries[subject_index]))
+        print(ListOfImagesDictionaries[subject_index])
         for key, value in list(posteriors.items()):
             # print "key:", key, " -> value:", value
             ListOfImagesDictionaries[subject_index][key] = value[subject_index]
@@ -266,44 +265,44 @@ def merge_by_extended_list_elements(
 
 def xml_filename(subject):
     """
-    This function...
+  This function...
 
-    :param subject:
-    :return:
-    """
+  :param subject:
+  :return:
+  """
     return "AtlasDefinition_{0}.xml".format(subject)
 
 
 def get_session_from_subject_dictionary(subject_session_dictionary, subject):
     """
-    This function...
+  This function...
 
-    :param subject_session_dictionary:
-    :param subject:
-    :return:
-    """
-    print(("#" + subject + "#" * 80 + "\n"))
-    print((subject_session_dictionary[subject]))
+  :param subject_session_dictionary:
+  :param subject:
+  :return:
+  """
+    print("#" + subject + "#" * 80 + "\n")
+    print(subject_session_dictionary[subject])
     if len(subject_session_dictionary[subject]) == 0:
         import sys
 
         print(subject_session_dictionary)
-        print(("ERROR:  No sessions for subject {0}".format(subject)))
+        print("ERROR:  No sessions for subject {0}".format(subject))
         sys.exit(-1)
     return subject_session_dictionary[subject]
 
 
 def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     """
-    This function...
+  This function...
 
-    :param argv:
-    :param environment:
-    :param experiment:
-    :param pipeline_options:
-    :param cluster:
-    :return:
-    """
+  :param argv:
+  :param environment:
+  :param experiment:
+  :param pipeline_options:
+  :param cluster:
+  :return:
+  """
     print("Getting subjects from database...")
     # subjects = argv["--subjects"].split(',')
     subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(
@@ -330,15 +329,15 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             sys.exit(-1)
 
     for thisSubject in subjects:
-        print(("Processing atlas generation for this subject: {0}".format(thisSubject)))
-        print(("=" * 80))
+        print("Processing atlas generation for this subject: {0}".format(thisSubject))
+        print("=" * 80)
         print("Copying Atlas directory and determining appropriate Nipype options...")
         subj_pipeline_options = nipype_options(
             argv, pipeline_options, cluster, experiment, environment
         )  # Generate Nipype options
         print("Dispatching jobs to the system...")
         ######
-        ###### Now start workflow construction
+        # Now start workflow construction
         ######
         # Set universal pipeline options
         nipype_config.update_config(subj_pipeline_options)
@@ -360,10 +359,10 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                         )
                     )
                 )
-                print(("     at path {0}".format(path_test)))
+                print("     at path {0}".format(path_test))
                 ready_for_template_building = False
         if not ready_for_template_building:
-            print(("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject)))
+            print("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject))
             continue
 
         base_output_directory = os.path.join(
@@ -795,7 +794,7 @@ if __name__ == "__main__":
             "ERROR: Only --workphase subject-template-generation supported for template building"
         )
         sys.exit(-1)
-    print(("=" * 100))
+    print("=" * 100)
     environment, experiment, pipeline, cluster = setup_environment(argv)
     from nipype import config as nipype_config
     import nipype.pipeline.engine as pe

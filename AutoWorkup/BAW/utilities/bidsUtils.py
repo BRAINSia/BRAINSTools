@@ -22,11 +22,11 @@ class BAWBIDSFormatter(object):
         self, subject_data: dict, full_path: str = None, ext: str = None
     ) -> str:
         """
-    :param subject_data: a dictionary of information about the subject including subject id and session id
-    :param full_path: a string representing the path to join the bids name to
-    :param ext: an optional file extension parameter
-    :return: a formatted string containing all of the subject information as a file name
-    """
+        :param subject_data: a dictionary of information about the subject including subject id and session id
+        :param full_path: a string representing the path to join the bids name to
+        :param ext: an optional file extension parameter
+        :return: a formatted string containing all of the subject information as a file name
+        """
         # input validation (subject and session must be given)
         if self.sub_kw not in subject_data.keys():
             raise KeyError(

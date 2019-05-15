@@ -5,6 +5,7 @@ Description:
     This file is used for formatting pipline data into the BIDS format
 
 Author:
+    Alex Powers
 
 Usage: N/A not a command line script (no bang above)
 

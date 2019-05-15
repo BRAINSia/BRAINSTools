@@ -24,15 +24,16 @@ if __name__ == "__main__":
             "spacing": "iso2mm",
         }
         bids_formatter = BAWBIDSFormatter()
-        print(
-            bids_formatter.get_bids_name(
+        assert (
+            "/Shared/sinapse/out/sub-0123456_ses-43210_favColor-red_run-05_space-LPS_spacing-iso2mm.nii.gz"
+            == bids_formatter.get_bids_name(
                 subject_data=subject_info,
                 full_path="/Shared/sinapse/out/",
                 ext="nii.gz",
             )
         )
         print("Success")
-    except Exception as e:
+    except Exception:
         print("Failure")
 
     try:
@@ -46,7 +47,7 @@ if __name__ == "__main__":
         bids_formatter = BAWBIDSFormatter()
         bids_formatter.get_bids_name(subject_data=no_sub)
         print("Failure")
-    except KeyError as e:
+    except KeyError:
         print("Success")
 
     try:
@@ -60,5 +61,5 @@ if __name__ == "__main__":
         bids_formatter = BAWBIDSFormatter()
         bids_formatter.get_bids_name(subject_data=no_ses)
         print("Failure")
-    except KeyError as e:
+    except KeyError:
         print("Success")

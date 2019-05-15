@@ -15,8 +15,8 @@ from os.path import join
 
 class BAWBIDSFormatter(object):
     def __init__(self):
-        self.sub_kw = "sub"
-        self.ses_kw = "ses"
+        self.sub_kw = "subject"
+        self.ses_kw = "session"
         self.REQUIRED_FIELDS = [self.ses_kw, self.sub_kw]
 
     def get_bids_name(
@@ -43,11 +43,8 @@ class BAWBIDSFormatter(object):
             )
 
         # build the bids name
-        bids_name = "{subkw}-{subject}_{seskw}-{session}".format(
-            subkw=self.sub_kw,
-            subject=subject_data[self.sub_kw],
-            seskw=self.ses_kw,
-            session=subject_data[self.ses_kw],
+        bids_name = "sub-{subject}_ses-{session}".format(
+            subject=subject_data[self.sub_kw], session=subject_data[self.ses_kw]
         )
 
         for k in sorted(subject_data.keys()):

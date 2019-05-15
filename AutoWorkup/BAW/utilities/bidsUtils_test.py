@@ -16,8 +16,8 @@ from bidsUtils import BAWBIDSFormatter
 if __name__ == "__main__":
     try:
         subject_info = {
-            "sub": "0123456",
-            "ses": "43210",
+            "subject": "0123456",
+            "session": "43210",
             "space": "LPS",
             "run": "05",
             "favColor": "red",
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     try:
         no_sub = {
-            "ses": "43210",
+            "session": "43210",
             "space": "LPS",
             "run": "05",
             "favColor": "red",
@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     try:
         no_ses = {
-            "sub": "0123456",
+            "subject": "0123456",
             "space": "LPS",
             "run": "05",
             "favColor": "red",

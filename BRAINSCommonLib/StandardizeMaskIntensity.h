@@ -196,7 +196,7 @@ typename ImageType::Pointer StandardizeMaskIntensity(
   // routine:
   using IntensityWindowingImageFilter = typename itk::IntensityWindowingImageFilter<ImageType>;
   typename IntensityWindowingImageFilter::Pointer intensityMapper = IntensityWindowingImageFilter::New();
-  intensityMapper->SetInput( maskedStatistics->GetOutput() ); // i.clipMin.,
+  intensityMapper->SetInput( image ); // i.clipMin.,
                                                               // image.
   // NOTE:  The math below is to extend the range to the clipping region.
   //

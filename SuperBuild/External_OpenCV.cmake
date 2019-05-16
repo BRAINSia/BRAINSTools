@@ -149,7 +149,7 @@ endif()
 
 mark_as_superbuild(
   VARS
-    ${extProjName}_DIR:FILE
+    ${extProjName}_DIR:PATH
   LABELS
      "FIND_PACKAGE"
 )

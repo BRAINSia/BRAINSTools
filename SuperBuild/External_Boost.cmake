@@ -45,7 +45,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/boostorg/boost.git")
-  set(${proj}_GIT_TAG "boost-1.66.0") # July 4, 2015
+  set(${proj}_GIT_TAG "boost-1.69.0") # Dec 12, 2018
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

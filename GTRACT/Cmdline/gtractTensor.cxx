@@ -53,7 +53,7 @@
 #include "itkGtractImageIO.h"
 #include "itkGtractParameterIO.h"
 #include "itkComputeDiffusionTensorImageFilter.h"
-#include "itkVectorResampleImageFilter.h"
+#include "itkResampleImageFilter.h"
 #include "itkIdentityTransform.h"
 #include "itkMetaDataObject.h"
 #include "itkIOCommon.h"

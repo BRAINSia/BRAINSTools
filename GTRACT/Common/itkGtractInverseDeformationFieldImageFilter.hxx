@@ -24,7 +24,7 @@
 #include "itkProgressReporter.h"
 #include "itkThinPlateSplineKernelTransform.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkVectorResampleImageFilter.h"
+#include "itkResampleImageFilter.h"
 
 namespace itk
 {
@@ -120,7 +120,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
   // displacement in the inverse direction.
   LandmarkContainerPointer target = LandmarkContainer::New();
 
-  using ResamplerType = itk::VectorResampleImageFilter<
+  using ResamplerType = itk::ResampleImageFilter<
       InputImageType,
       InputImageType>;
 

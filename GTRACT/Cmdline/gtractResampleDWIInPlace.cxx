@@ -43,7 +43,6 @@
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 #include <itkResampleImageFilter.h>
-#include <itkVectorResampleImageFilter.h>
 #include <itkTransformFileWriter.h>
 #include "DWIMetaDataDictionaryValidator.h"
 

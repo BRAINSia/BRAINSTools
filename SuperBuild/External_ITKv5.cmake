@@ -40,7 +40,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG 08c84c34c750199573f380833c1927682a11dfa3 ) #20180513 - FixSpatialObjectsTesting
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG fe34d9caa5d98face1ef422afdfc05d71d38a68c ) #20180518 - GenericLabelmapInterpolator
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
@@ -114,6 +114,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DITKV3_COMPATIBILITY:BOOL=OFF
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DModule_AnisotropicDiffusionLBR:BOOL=ON
+      -DModule_GenericLabelInterpolator:BOOL=ON # Needed for ANTs
       -DModule_ITKReview:BOOL=ON
       -DModule_MGHIO:BOOL=ON
       -DModule_ITKIOMINC:BOOL=ON

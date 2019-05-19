@@ -1254,6 +1254,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 #if defined( USE_OLD_SPATIAL_OBJECTS_PRE20190321 )
         typename FixedImageType::RegionType roiRegion = roiMask->GetAxisAlignedBoundingBoxRegion();
 #else
+        typename FixedImageType::RegionType roiRegion = roiMask->ComputeMyBoundingBoxInIndexSpace();
+#if 0
         typename FixedImageType::RegionType roiRegion;
           {
             // Transform the corners of the bounding box
@@ -1295,6 +1297,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             roiRegion.SetIndex( indx );
             roiRegion.SetSize( size );
           }
+#endif
 #endif
         typename FixedImageType::SpacingType roiSpacing =
         m_FixedVolume->GetSpacing();

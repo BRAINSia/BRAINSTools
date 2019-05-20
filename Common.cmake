@@ -191,6 +191,9 @@ mark_as_superbuild(VARS USE_BRAINSRefacer:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSTalairach:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
+cmake_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
+mark_as_superbuild(VARS USE_BRAINSDemonWarp:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
+
 cmake_dependent_option(USE_DicomSignature "Build DicomSignature is under development" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_DicomSignature:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 

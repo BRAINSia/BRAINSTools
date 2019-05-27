@@ -820,5 +820,5 @@ if __name__ == "__main__":
         GenerateAverageLmkFile,
     )
 
-    exit = _template_runner(argv, environment, experiment, pipeline, cluster)
-    sys.exit(exit)
+    exit_status = _template_runner(argv, environment, experiment, pipeline, cluster)
+    sys.exit(exit_status)

@@ -359,7 +359,7 @@ def create_and_run(
                 print(("SKIPPING: {0} exists".format(sentinal_file_list)))
             else:
                 print("PROCESSING INCOMPLETE: at least 1 required file does not exists")
-                if dryRun == False:
+                if not dryRun:
                     workflow = _create_single_session(
                         _dict,
                         master_config,

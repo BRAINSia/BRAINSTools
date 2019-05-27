@@ -51,52 +51,52 @@ def get_processed_subjects(resultdir, input_subjects_list):
     import glob
 
     required_files = [
-        "AVG_template_headregion.nii.gz",
-        "AVG_hncma_atlas.nii.gz",
-        "AVG_l_accumben_ProbabilityMap.nii.gz",
-        "AVG_l_caudate_ProbabilityMap.nii.gz",
-        "AVG_l_globus_ProbabilityMap.nii.gz",
-        "AVG_l_hippocampus_ProbabilityMap.nii.gz",
-        "AVG_LMKS.fcsv",
-        "AVG_l_putamen_ProbabilityMap.nii.gz",
-        "AVG_l_thalamus_ProbabilityMap.nii.gz",
-        "AVG_phi.nii.gz",
-        "AVG_r_accumben_ProbabilityMap.nii.gz",
-        "AVG_r_caudate_ProbabilityMap.nii.gz",
-        "AVG_r_globus_ProbabilityMap.nii.gz",
-        "AVG_r_hippocampus_ProbabilityMap.nii.gz",
-        "AVG_rho.nii.gz",
-        "AVG_r_putamen_ProbabilityMap.nii.gz",
-        "AVG_r_thalamus_ProbabilityMap.nii.gz",
-        "AVG_T1.nii.gz",
-        "AVG_T2.nii.gz",
-        "AVG_template_headregion.nii.gz",
-        "AVG_template_leftHemisphere.nii.gz",
-        "AVG_template_nac_labels.nii.gz",
-        "AVG_template_rightHemisphere.nii.gz",
-        "AVG_template_ventricles.nii.gz",
-        "AVG_template_WMPM2_labels.nii.gz",
-        "AVG_theta.nii.gz",
-        "CLIPPED_AVG_AIR.nii.gz",
-        "CLIPPED_AVG_BASAL.nii.gz",
-        "CLIPPED_AVG_BRAINMASK.nii.gz",
-        "CLIPPED_AVG_CRBLGM.nii.gz",
-        "CLIPPED_AVG_CRBLWM.nii.gz",
-        "CLIPPED_AVG_CSF.nii.gz",
-        "CLIPPED_AVG_GLOBUS.nii.gz",
-        "CLIPPED_AVG_HIPPOCAMPUS.nii.gz",
-        "CLIPPED_AVG_NOTCSF.nii.gz",
-        "CLIPPED_AVG_NOTGM.nii.gz",
-        "CLIPPED_AVG_NOTVB.nii.gz",
-        "CLIPPED_AVG_NOTWM.nii.gz",
-        "CLIPPED_AVG_SURFGM.nii.gz",
-        "CLIPPED_AVG_THALAMUS.nii.gz",
-        "CLIPPED_AVG_VB.nii.gz",
-        "CLIPPED_AVG_WM.nii.gz",
+        "AvgTemplateHeadregion.nii.gz",
+        "AvgHncmaAtlas.nii.gz",
+        "AvgLAccumbenProbabilityMap.nii.gz",
+        "AvgLCaudateProbabilityMap.nii.gz",
+        "AvgLGlobusProbabilityMap.nii.gz",
+        "AvgLHippocampusProbabilityMap.nii.gz",
+        "AvgLMKS.fcsv",
+        "AvgLPutamenProbabilityMap.nii.gz",
+        "AvgLThalamusProbabilityMap.nii.gz",
+        "AvgPhi.nii.gz",
+        "AvgRAccumbenProbabilityMap.nii.gz",
+        "AvgRCaudateProbabilityMap.nii.gz",
+        "AvgRGlobusProbabilityMap.nii.gz",
+        "AvgRHippocampusProbabilityMap.nii.gz",
+        "AvgRho.nii.gz",
+        "AvgRPutamenProbabilityMap.nii.gz",
+        "AvgRThalamus_ProbabilityMap.nii.gz",
+        "AvgT1.nii.gz",
+        "AvgT2.nii.gz",
+        "AvgTemplateHeadregion.nii.gz",
+        "AvgTemplateLeftHemisphere.nii.gz",
+        "AvgTemplateNacLabels.nii.gz",
+        "AvgTemplateRightHemisphere.nii.gz",
+        "AvgTemplateVentricles.nii.gz",
+        "AvgTemplateWMPM2Labels.nii.gz",
+        "AvgTheta.nii.gz",
+        "ClippedAvgAIR.nii.gz",
+        "ClippedAvgBASAL.nii.gz",
+        "ClippedAvgBRAINMASK.nii.gz",
+        "ClippedAvgCRBLGM.nii.gz",
+        "ClippedAvgCRBLWM.nii.gz",
+        "ClippedAvgCSF.nii.gz",
+        "ClippedAvgGLOBUS.nii.gz",
+        "ClippedAvgHIPPOCAMPUS.nii.gz",
+        "ClippedAvgNOTCSF.nii.gz",
+        "ClippedAvgNOTGM.nii.gz",
+        "ClippedAvgNOTVB.nii.gz",
+        "ClippedAvgNOTWM.nii.gz",
+        "ClippedAvgSURFGM.nii.gz",
+        "ClippedAvgTHALAMUS.nii.gz",
+        "ClippedAvgVB.nii.gz",
+        "ClippedAvgWM.nii.gz",
     ]
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
     for subject in input_subjects_list:
-        sential_file_pattern = "*{0}/Atlas/AVG_template_rightHemisphere.nii.gz".format(
+        sential_file_pattern = "*{0}/Atlas/Avg_template_rightHemisphere.nii.gz".format(
             subject
         )
         glob_search_pattern = os.path.join(resultdir, sential_file_pattern)
@@ -314,7 +314,9 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         argv["--use-sentinal"],
         argv["--use-shuffle"],
     )  # Build database before parallel section
-    useSentinal = argv["--use-sentinal"]
+
+    # unused variable?
+    # useSentinal = argv["--use-sentinal"]
 
     # Quick preliminary sanity check
     for thisSubject in subjects:
@@ -461,34 +463,34 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             "rho.nii.gz",
             "phi.nii.gz",
             "theta.nii.gz",
-            "l_thalamus_ProbabilityMap.nii.gz",
-            "r_accumben_ProbabilityMap.nii.gz",
-            "l_globus_ProbabilityMap.nii.gz",
-            "l_accumben_ProbabilityMap.nii.gz",
-            "l_caudate_ProbabilityMap.nii.gz",
-            "l_putamen_ProbabilityMap.nii.gz",
-            "r_thalamus_ProbabilityMap.nii.gz",
-            "r_putamen_ProbabilityMap.nii.gz",
-            "r_caudate_ProbabilityMap.nii.gz",
-            "r_hippocampus_ProbabilityMap.nii.gz",
-            "r_globus_ProbabilityMap.nii.gz",
-            "l_hippocampus_ProbabilityMap.nii.gz",
+            "lThalamusProbabilityMap.nii.gz",
+            "rAccumbenProbabilityMap.nii.gz",
+            "lGlobusProbabilityMap.nii.gz",
+            "lAccumbenProbabilityMap.nii.gz",
+            "lCaudateProbabilityMap.nii.gz",
+            "lPutamenProbabilityMap.nii.gz",
+            "rThalamusProbabilityMap.nii.gz",
+            "rPutamenProbabilityMap.nii.gz",
+            "rCaudateProbabilityMap.nii.gz",
+            "rHippocampusProbabilityMap.nii.gz",
+            "rGlobusProbabilityMap.nii.gz",
+            "lHippocampusProbabilityMap.nii.gz",
         ]
         passive_mask_files = [
-            "template_WMPM2_labels.nii.gz",
-            "hncma_atlas.nii.gz",
-            "template_nac_labels.nii.gz",
-            "template_leftHemisphere.nii.gz",
-            "template_rightHemisphere.nii.gz",
-            "template_ventricles.nii.gz",
-            "template_headregion.nii.gz",
+            "templateWMPM2Labels.nii.gz",
+            "hncmaAtlas.nii.gz",
+            "templateNacLabels.nii.gz",
+            "templateLeftHemisphere.nii.gz",
+            "templateRightHemisphere.nii.gz",
+            "templateVentricles.nii.gz",
+            "templateHeadregion.nii.gz",
         ]
 
         baselineRequiredDG.inputs.field_template = {
-            "t1_average": "*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz",
-            "brainMaskLabels": "*/%s/%s/TissueClassify/complete_brainlabels_seg.nii.gz",
-            "BCD_ACPC_Landmarks_fcsv": "*/%s/%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv",
-            "posteriorImages": "*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz",
+            "t1_average": "*/%s/%s/TissueClassify/t1AverageBRAINSABC.nii.gz",
+            "brainMaskLabels": "*/%s/%s/TissueClassify/completeBrainlabelsSeg.nii.gz",
+            "BCD_ACPC_Landmarks_fcsv": "*/%s/%s/ACPCAlign/BCDACPCLandmarks.fcsv",
+            "posteriorImages": "*/%s/%s/TissueClassify/POSTERIOR%s.nii.gz",
             "passive_intensities": "*/%s/%s/WarpedAtlas2Subject/%s",
             "passive_masks": "*/%s/%s/WarpedAtlas2Subject/%s",
         }
@@ -661,7 +663,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             experiment["atlascache"],
             "NACCommonAtlas_{0}".format("subject"),
             ["S_BRAINSABCSupport"],
-        )  ## HACK : replace 'subject' with subject id once this is a loop rather than an iterable.
+        )  # HACK : replace 'subject' with subject id once this is a loop rather than an iterable.
         template.connect(
             [
                 (
@@ -782,7 +784,6 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
 
 if __name__ == "__main__":
-    import sys
     from .AutoWorkup import setup_environment
 
     from docopt import docopt

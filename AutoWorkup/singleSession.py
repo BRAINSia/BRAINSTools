@@ -377,12 +377,14 @@ def create_and_run(
                     )
                 else:
                     print("EXITING WITHOUT WORK DUE TO dryRun flag")
-    except:
+    except Exception as e:
+        print(e)
         raise
     finally:
         try:
             database.close_connection()
-        except:
+        except Exception as e:
+            print(e)
             pass
 
 

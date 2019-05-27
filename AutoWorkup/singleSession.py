@@ -257,8 +257,8 @@ def create_and_run(
 
             if "tissue_classify" in master_config["components"]:
                 for tc_file in [
-                    "complete_brainlabels_seg.nii.gz",
-                    "t1_average_BRAINSABC.nii.gz",
+                    "completeBrainlabelsSeg.nii.gz",
+                    "t1AverageBRAINSABC.nii.gz",
                 ]:
                     sentinal_file_list.append(
                         os.path.join(sentinal_file_basedir, "TissueClassify", tc_file)
@@ -266,29 +266,29 @@ def create_and_run(
 
             if "warp_atlas_to_subject" in master_config["components"]:
                 warp_atlas_file_list = [
-                    "hncma_atlas.nii.gz",
-                    "l_accumben_ProbabilityMap.nii.gz",
-                    "l_caudate_ProbabilityMap.nii.gz",
-                    "l_globus_ProbabilityMap.nii.gz",
-                    "l_hippocampus_ProbabilityMap.nii.gz",
-                    "l_putamen_ProbabilityMap.nii.gz",
-                    "l_thalamus_ProbabilityMap.nii.gz",
-                    "left_hemisphere_wm.nii.gz",
+                    "hncmaAtlas.nii.gz",
+                    "lAccumbenProbabilityMap.nii.gz",
+                    "lCaudateProbabilityMap.nii.gz",
+                    "lGlobusProbabilityMap.nii.gz",
+                    "lHippocampusProbabilityMap.nii.gz",
+                    "lPutamenProbabilityMap.nii.gz",
+                    "lThalamusProbabilityMap.nii.gz",
+                    "leftHemisphereWM.nii.gz",
                     "phi.nii.gz",
-                    "r_accumben_ProbabilityMap.nii.gz",
-                    "r_caudate_ProbabilityMap.nii.gz",
-                    "r_globus_ProbabilityMap.nii.gz",
-                    "r_hippocampus_ProbabilityMap.nii.gz",
-                    "r_putamen_ProbabilityMap.nii.gz",
-                    "r_thalamus_ProbabilityMap.nii.gz",
+                    "rAccumbenProbabilityMap.nii.gz",
+                    "rCaudateProbabilityMap.nii.gz",
+                    "rGlobusProbabilityMap.nii.gz",
+                    "rHippocampusProbabilityMap.nii.gz",
+                    "rPutamenProbabilityMap.nii.gz",
+                    "rThalamusProbabilityMap.nii.gz",
                     "rho.nii.gz",
-                    "right_hemisphere_wm.nii.gz",
-                    "template_WMPM2_labels.nii.gz",
-                    "template_headregion.nii.gz",
-                    "template_leftHemisphere.nii.gz",
-                    "template_nac_labels.nii.gz",
-                    "template_rightHemisphere.nii.gz",
-                    "template_ventricles.nii.gz",
+                    "rightHemisphereWm.nii.gz",
+                    "templateWMPM2Labels.nii.gz",
+                    "templateHeadregion.nii.gz",
+                    "templateLeftHemisphere.nii.gz",
+                    "templateNacLabels.nii.gz",
+                    "templateRightHemisphere.nii.gz",
+                    "templateVentricles.nii.gz",
                     "theta.nii.gz",
                 ]
                 for ff in warp_atlas_file_list:
@@ -301,12 +301,12 @@ def create_and_run(
                     os.path.join(
                         sentinal_file_basedir,
                         "TissueClassify",
-                        "JointFusion_HDAtlas20_2015_lobar_label.nii.gz",
+                        "JointFusionHDAtlas202015LobarLabel.nii.gz",
                     )
                 )
                 sentinal_file_list.append(
                     os.path.join(
-                        sentinal_file_basedir, "TissueClassify", "lobeVolumes_JSON.json"
+                        sentinal_file_basedir, "TissueClassify", "lobeVolumesJSON.json"
                     )
                 )
 
@@ -317,7 +317,7 @@ def create_and_run(
                 sentinal_file_list.append(atlasDirectory)
             else:
                 atlasDirectory = os.path.join(
-                    master_config["previousresult"], subject, "Atlas", "AVG_rho.nii.gz"
+                    master_config["previousresult"], subject, "Atlas", "AVGRho.nii.gz"
                 )
                 sentinal_file_list.append(atlasDirectory)
                 sentinal_file_list.append(
@@ -325,7 +325,7 @@ def create_and_run(
                         master_config["previousresult"],
                         subject,
                         "Atlas",
-                        "AVG_template_headregion.nii.gz",
+                        "AVGTemplateHeadRegion.nii.gz",
                     )
                 )
 

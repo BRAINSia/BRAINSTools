@@ -46,7 +46,7 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
 
   std::vector<std::string> inputFileNames;
-  if( inputLandmarkFiles.size() > 2 )
+  if( inputLandmarkFiles.size() >= 2 )
     {
     inputFileNames = inputLandmarkFiles;
     }

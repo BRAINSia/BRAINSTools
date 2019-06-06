@@ -43,6 +43,8 @@
 
 #include "itkBRAINSROIAutoImageFilter.h"
 
+// #include "itkIO.h"
+
 itk::Transform<double, 3, 3>::Pointer MakeRigidIdentity(void)
 {
   // Also append identity matrix for each image
@@ -333,10 +335,11 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   this->m_RegisteredIntraSubjectImagesList.clear(); //Ensure that pushing onto clean list
   // Use resampleInPlace to transform all images to the physical space of the first key image.
   // Then, use linear interpolation to resample all within modality images to a same voxel space.
-  this->m_RegisteredIntraSubjectImagesList =
-    ResampleInPlaceImageList("Linear",
-                             this->m_IntraSubjectOriginalImageList,
-                             this->m_IntraSubjectTransforms);
+  ByteImagePointerType FOV =
+      ResampleToFirstImageList("Linear",
+                               this->m_IntraSubjectOriginalImageList,
+                               this->m_IntraSubjectTransforms,
+                               this->m_RegisteredIntraSubjectImagesList);
 
   muLogMacro(<< "Average co-registered Intra subject images" << std::endl);
   this->m_ModalityAveragedOfIntraSubjectImages.clear(); //Ensure that pushing onto clean list

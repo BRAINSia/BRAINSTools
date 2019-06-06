@@ -45,6 +45,7 @@
 #include "itkNaryAddImageFilter.h"
 
 #include <vector>
+#include <string>
 
 #include "BRAINSFitHelper.h"
 #include "BRAINSABCUtilities.h"
@@ -53,6 +54,7 @@
 #include <string>
 
 #include "LinearRegressionIntensityMatching.h"
+#include "itkIO.h"
 class EmptyVectorException
 {
 public:
@@ -77,55 +79,55 @@ template <typename TImage>
 typename TImage::Pointer
 AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
 {
-  if( inputImageList.empty() )
-    {
+  if (inputImageList.empty())
+  {
     // No images, something went wrong.
     throw EmptyVectorException();
-    }
-  if( inputImageList.size() == 1 )
-    {
+  }
+  if (inputImageList.size() == 1)
+  {
     // Only one image, nothing to average.
     return inputImageList[0];
-    }
+  }
 
-  using BinaryThreshImageFilterType = itk::BinaryThresholdImageFilter<TImage,TImage>;
-  using MultiplyFilterType = itk::MultiplyImageFilter<TImage,TImage>;
+  using BinaryThreshImageFilterType = itk::BinaryThresholdImageFilter<TImage, TImage>;
+  using MultiplyFilterType = itk::MultiplyImageFilter<TImage, TImage>;
   typename BinaryThreshImageFilterType::Pointer firstBinary = BinaryThreshImageFilterType::New();
-  firstBinary->SetLowerThreshold( 0 );
-  firstBinary->SetUpperThreshold( 0 );
+  firstBinary->SetLowerThreshold(0);
+  firstBinary->SetUpperThreshold(0);
   firstBinary->SetInsideValue(0.0);
   firstBinary->SetOutsideValue(1.0);
   firstBinary->SetInput(inputImageList[0]);
   firstBinary->Update();
   typename TImage::Pointer averageMask = firstBinary->GetOutput();
-  for(unsigned int i = 1; i < inputImageList.size(); ++i)
+  for (unsigned int i = 1; i < inputImageList.size(); ++i)
   {
-  typename BinaryThreshImageFilterType::Pointer myThresholder = BinaryThreshImageFilterType::New();
-  myThresholder->SetInput(inputImageList[i]);
-  myThresholder->SetLowerThreshold( 0 ); // Only valuse exactly equal to zero are to be used.
-  myThresholder->SetUpperThreshold( 0 );
-  myThresholder->SetInsideValue(0.0);
-  myThresholder->SetOutsideValue(1.0);
-  myThresholder->Update();
-  typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
-  multIF->SetInput1(averageMask);
-  multIF->SetInput2(myThresholder->GetOutput());
-  multIF->Update();
-  averageMask = multIF->GetOutput();
+    typename BinaryThreshImageFilterType::Pointer myThresholder = BinaryThreshImageFilterType::New();
+    myThresholder->SetInput(inputImageList[i]);
+    myThresholder->SetLowerThreshold(0); // Only valuse exactly equal to zero are to be used.
+    myThresholder->SetUpperThreshold(0);
+    myThresholder->SetInsideValue(0.0);
+    myThresholder->SetOutsideValue(1.0);
+    myThresholder->Update();
+    typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
+    multIF->SetInput1(averageMask);
+    multIF->SetInput2(myThresholder->GetOutput());
+    multIF->Update();
+    averageMask = multIF->GetOutput();
   }
 
-  using AvgFilterType = itk::AverageImageFilter<TImage,TImage>;
+  using AvgFilterType = itk::AverageImageFilter<TImage, TImage>;
   typename AvgFilterType::Pointer filter = AvgFilterType::New();
   typename TImage::Pointer referenceScaleImg = inputImageList[0];
-  filter->SetInput(0,referenceScaleImg);
-  for(unsigned int i = 1; i < inputImageList.size(); ++i)
-    {
-      //Modify inputImageList in place.
-      typename TImage::Pointer temp=LinearRegressionIntensityMatching<TImage,TImage>(referenceScaleImg.GetPointer(),
-                                                          averageMask.GetPointer(),
-                                                          inputImageList[i].GetPointer());
-      filter->SetInput(i,  temp);
-    }
+  filter->SetInput(0, referenceScaleImg);
+  for (unsigned int i = 1; i < inputImageList.size(); ++i)
+  {
+    //Modify inputImageList in place.
+    typename TImage::Pointer temp = LinearRegressionIntensityMatching<TImage, TImage>(referenceScaleImg.GetPointer(),
+                                                                                      averageMask.GetPointer(),
+                                                                                      inputImageList[i].GetPointer());
+    filter->SetInput(i, temp);
+  }
   filter->Update();
   typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
   multIF->SetInput1(averageMask);

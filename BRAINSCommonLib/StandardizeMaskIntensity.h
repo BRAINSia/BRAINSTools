@@ -95,7 +95,7 @@ ResampleImageWithIdentityTransform(const std::string & resamplerInterpolatorType
 }
 
 
-#define MAX_IMAGE_OUTPUT_VALUE 4096
+constexpr signed short MAX_IMAGE_OUTPUT_VALUE=4096;
 
 /* * * * *
  *   StandardizeMaskIntensity trims the upper and lower fractions of the histogram inside the mask

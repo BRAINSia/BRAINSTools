@@ -28,7 +28,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "itkAverageImageFilter.h"
 #include "itkSqrtImageFilter.h"
 #include "itkBSplineDownsampleImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
@@ -2558,7 +2557,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   this->CheckInput();
 
-  // FloatingPrecision logLikelihood = vnl_huge_val(1.0);
+  // constexpr FloatingPrecision logLikelihood = std::numeric_limits<FloatingPrecision>::infinity();
   FloatingPrecision logLikelihood = 1.0 / itk::Math::eps;
   FloatingPrecision deltaLogLikelihood = 1.0;
 

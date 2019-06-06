@@ -128,6 +128,7 @@ public:
 
 using FloatingPrecision = double;
 using ByteImageType = itk::Image<unsigned char, 3>;
+using ByteImagePointerType = ByteImageType::Pointer;
 using FloatImageType = itk::Image<float, 3>;
 using FloatImagePointerType = FloatImageType::Pointer;
 using ShortImageType = itk::Image<signed short int, 3>;
@@ -138,6 +139,9 @@ using ImageByTypeMap = orderedmap<std::string,std::string>;
 
 using FloatImageVector = std::vector<FloatImagePointerType>;
 using MapOfFloatImageVectors = orderedmap<std::string, FloatImageVector>;
+
+using MaskImageVector = std::vector<ByteImagePointerType>;
+using MapOfMaskImageVectors = orderedmap<std::string, MaskImageVector>;
 
 using GenericTransformType = itk::Transform<double, 3, 3>;
 using TransformList = std::vector<GenericTransformType::Pointer>;
@@ -189,10 +193,12 @@ ResampleImageListToFirstKeyImage(const std::string & resamplerInterpolatorType,
  * Then, it resamples all images within one modality to the voxel lattice of the fist image of that modality channel
  * using resamplerInterpolatorType and Identity transform.
  */
-extern MapOfFloatImageVectors
-ResampleInPlaceImageList(const std::string & resamplerInterpolatorType,
-                         const MapOfFloatImageVectors & inputImageMap,
-                         MapOfTransformLists & intraSubjectTransforms);
+extern ByteImageType::Pointer
+ResampleToFirstImageList(const std::string &resamplerInterpolatorType,
+                         const MapOfFloatImageVectors &inputImageMap,
+                         const MapOfTransformLists &intraSubjectTransforms,
+                         MapOfFloatImageVectors &outputImageMap);
+
 
 extern template std::vector<FloatImagePointerType> DuplicateImageList<FloatImageType>(
   const std::vector<FloatImagePointerType> & );

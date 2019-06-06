@@ -130,7 +130,7 @@ GetStrippedImageFileNameExtension(const std::string & ImageFileName)
 
 
 static AtlasRegType::MapOfFloatImageVectors
-RescaleFunctionLocal( AtlasRegType::MapOfFloatImageVectors& localList)
+RescaleFunctionLocal( AtlasRegType::MapOfFloatImageVectors& localList, const ByteImagePointer & FOVMask)
 {
   AtlasRegType::MapOfFloatImageVectors rval;
 
@@ -150,7 +150,15 @@ RescaleFunctionLocal( AtlasRegType::MapOfFloatImageVectors& localList)
       FloatImageType::Pointer tmp = (*imIt);
       rescaler->SetInput(tmp);
       rescaler->Update();
-      rval[elem.first].push_back(rescaler->GetOutput());
+
+      using MultType = itk::MultiplyImageFilter<FloatImageType, ByteImageType , FloatImageType >;
+
+      MultType::Pointer mult = MultType::New();
+      mult->SetInput1(rescaler->GetOutput());
+      mult->SetInput2(FOVMask);
+      mult->Update();
+
+      rval[elem.first].push_back(mult->GetOutput());
 // #if !defined( INPLACE_RESCALER)
 //       (*imIt)  = rescaler->GetOutput();
 // #endif
@@ -162,7 +170,7 @@ RescaleFunctionLocal( AtlasRegType::MapOfFloatImageVectors& localList)
 
 //
 // utility method for constructing map of vectors
-AtlasRegType::MapOfStringVectors
+static AtlasRegType::MapOfStringVectors
 CreateTypedMap(const AtlasRegType::StringVector &keys, const AtlasRegType::StringVector &values)
 {
   AtlasRegType::MapOfStringVectors rval;
@@ -235,7 +243,7 @@ int main(int argc, char * *argv)
                 << "outputDir must be specified" << std::endl );
     AllSimpleParameterChecksValid = false;
     }
-  if( static_cast<int>(AllSimpleParameterChecksValid) == false )
+  if( static_cast<int>(AllSimpleParameterChecksValid) == 0 )
     {
     muLogMacro( << "ERROR:  Commanline arguments are not valid." << std::endl );
     GENERATE_ECHOARGS;
@@ -484,6 +492,8 @@ int main(int argc, char * *argv)
 
   AtlasRegType::MapOfFloatImageVectors intraSubjectRegisteredImageMap;
   AtlasRegType::MapOfFloatImageVectors intraSubjectRegisteredRawImageMap;
+
+
   std::vector<std::string>       priorfnlist;
 
   AtlasRegType::MapOfStringVectors templateVolumes;
@@ -514,6 +524,7 @@ int main(int argc, char * *argv)
       templateVolumes[elem.first].push_back(temp);
       }
     }
+  ByteImagePointerType ResampledToFirstFOVMask = nullptr;
   std::vector<bool> candidateDuplicatesList;
   {
   AtlasRegType::Pointer atlasreg = AtlasRegType::New();
@@ -895,21 +906,27 @@ int main(int argc, char * *argv)
   AtlasRegType::MapOfTransformLists intraSubjectTransforms =
     atlasreg->GetIntraSubjectTransforms();
 
-  // ::ResampleImages()
+  // ::ResampleImages() and clip all images to FOV setting backgrounds to exactly zero
   {
+    MapOfMaskImageVectors                intraSubjectRegisteredFOVMap;
+    MapOfMaskImageVectors                intraSubjectRegisteredRawFOVMap;
   // muLogMacro(<< "ResampleImages");
-  intraSubjectRegisteredImageMap =
-    ResampleInPlaceImageList(resamplerInterpolatorType, intraSubjectNoiseRemovedImageMap,
-                             intraSubjectTransforms);
+    ByteImagePointerType FOVMaskNoNoise = ResampleToFirstImageList(resamplerInterpolatorType,
+                                                                   intraSubjectNoiseRemovedImageMap,
+                                                                   intraSubjectTransforms,
+                                                                   intraSubjectRegisteredImageMap);
 
-  intraSubjectRegisteredRawImageMap =
-    ResampleInPlaceImageList(resamplerInterpolatorType, intraSubjectRawImageMap,
-                             intraSubjectTransforms);
+    ResampledToFirstFOVMask = ResampleToFirstImageList(resamplerInterpolatorType, intraSubjectRawImageMap,
+                                                       intraSubjectTransforms,
+                                                       intraSubjectRegisteredRawImageMap);
+
   //TODO: The maps size needs to be the same, but so do the lists within the maps.
   assert( intraSubjectRegisteredImageMap.size() == intraSubjectNoiseRemovedImageMap.size() );
   assert( intraSubjectRegisteredImageMap.size() == intraSubjectRawImageMap.size() );
   intraSubjectNoiseRemovedImageMap.clear();
   intraSubjectRawImageMap.clear();
+
+
   } // End registering data
 
   } // EndOriginalImagesList
@@ -993,9 +1010,15 @@ int main(int argc, char * *argv)
   PrintMapOfImageVectors(intraSubjectRegisteredImageMap);
   muLogMacro(<< "Rescale intensity of filtered images...\n");
   {
-  intraSubjectRegisteredImageMap = RescaleFunctionLocal(intraSubjectRegisteredImageMap);
-  intraSubjectRegisteredRawImageMap = RescaleFunctionLocal(intraSubjectRegisteredRawImageMap);
+  intraSubjectRegisteredImageMap = RescaleFunctionLocal(intraSubjectRegisteredImageMap,ResampledToFirstFOVMask);
+  intraSubjectRegisteredRawImageMap = RescaleFunctionLocal(intraSubjectRegisteredRawImageMap,ResampledToFirstFOVMask);
   }
+  if( debuglevel > 4 )
+  {
+
+
+  }
+
   /*
    ------------------------------------
    *** BRAINSABC Input Images Flow: ***
@@ -1008,7 +1031,7 @@ int main(int argc, char * *argv)
  push_back to:{intraSubjectRawImageMap}     push_back to:{intraSubjectNoiseRemovedImageMap} => <atlasreg>:{IntraSubjOriginalImageList}
                         |                                                       |
                         ~                                                       ~
-     [ResampleInPlaceImageList] <--  <atlasreg>:{intraSubjTransforms} --> [ResampleInPlaceImageList]
+     [ResampleInPlaceImageList] <--  <atlasreg>:{intraSubjTransforms} --> [ResampleToFirstImageList]
                         |                                                       |
                         ~                                                       ~
   {intraSubjectRegisteredRawImageMap}  <->  [RescaleFunctionLocal]  <->  {intraSubjectRegisteredImageMap}

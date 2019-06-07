@@ -66,7 +66,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     # plus the following patch:
     # * Set CMP0067 to ensure try_compile work as expected
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "52cf5b48c113ff9c4100e10bba2bd45f21eeda62" # 20190331
+    "9304628a87128aba312d401bc4e5fe8d82eb3de5" # 20190530
     QUIET
     )
 

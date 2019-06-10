@@ -132,27 +132,62 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 
   SImageType::Pointer inputVolume = caster->GetOutput();
 
+  /*
+   * Look for existing manually identified landmark point files adjacent
+   * to the original image.
+   */
     {
-    const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
-    itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
-    std::string               ImageMetaDataEMSPFileOverride =  "";
-    // if it exists and the string matches what we put in on the image to write, AOK.
-    if( itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false )
-      {
-      std::string directoryName = itksys::SystemTools::GetParentDirectory(this->m_inputVolume.c_str() );
-      if( directoryName == "" )
-        {
-        directoryName = ".";
-        }
-      this->m_inputLandmarksEMSP = directoryName + "/" + ImageMetaDataEMSPFileOverride;
+      const static std::string fcsv_extension{".fcsv"};
+      const std::string root_dir = itksys::SystemTools::GetParentDirectory(this->m_inputVolume);
+      std::string potentialLandmarkFileName =
+          root_dir + "/" +
+          itksys::SystemTools::GetFilenameWithoutExtension(this->m_inputVolume);
 
-      std::cout << "STATUS:  Found meta-data for EMSP override with value: " << this->m_inputLandmarksEMSP << std::endl;
+      // If the extension is .gz, then also remove the preceding extension.
+      if( itksys::SystemTools::GetFilenameExtension(this->m_inputVolume) == ".gz" )
+      {
+        potentialLandmarkFileName=
+            root_dir + "/" +
+            itksys::SystemTools::GetFilenameWithoutExtension(potentialLandmarkFileName);
       }
+      potentialLandmarkFileName += fcsv_extension;
+      if( itksys::SystemTools::FileExists(potentialLandmarkFileName, true) )
+      {
+        std::cerr << "WARNING: Using the side-car landmark override file to pre-load landmarks!: "
+                  <<         "\n         "
+                  << potentialLandmarkFileName
+                  << std::endl;
+        this->m_inputLandmarksEMSP = potentialLandmarkFileName;
+      }
+      else
+      {
+        std::cerr << "WARNING: Side-car landmark file not found to pre-load landmarks!"
+                  <<         "\n         "
+                  << potentialLandmarkFileName
+                  << std::endl;
+        // Now looking for file encoded as meta data in header.
+        const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
+        itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
+        std::string               ImageMetaDataEMSPFileOverride =  "";
+        // if it exists and the string matches what we put in on the image to write, AOK.
+        if( itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false )
+        {
+          std::string directoryName = itksys::SystemTools::GetParentDirectory(this->m_inputVolume.c_str() );
+          if( directoryName == "" )
+          {
+            directoryName = ".";
+          }
+          this->m_inputLandmarksEMSP = directoryName + "/" + ImageMetaDataEMSPFileOverride;
+
+          std::cout << "STATUS:  Found meta-data for EMSP override with value: " << this->m_inputLandmarksEMSP << std::endl;
+        }
+      }
+      std::cerr << "\n\n\n\n\n";
     }
 
   // load corresponding landmarks in EMSP aligned space from file if possible
   LandmarksMapType landmarksEMSP;
-  if( this->m_inputLandmarksEMSP.compare( "" ) != 0 )
+  if( ! this->m_inputLandmarksEMSP.empty() )
     {
     landmarksEMSP = ReadSlicer3toITKLmk( this->m_inputLandmarksEMSP );
     }
@@ -225,7 +260,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       }
     catch( ... )
       {
-      std::cout << "Failed to find eye centers exception occured" << std::endl;
+      std::cout << "Failed to find eye centers exception occurred" << std::endl;
       }
     }
 
@@ -267,7 +302,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       }
     }
 
-  // tell the constellation detector whehter Hough eye detector fails
+  // tell the constellation detector if Hough eye detector fails
   constellation2->SetHoughEyeFailure( houghEyeDetector->GetFailure() );
   constellation2->SetInputTemplateModel( this->m_inputTemplateModel );
   constellation2->SetMspQualityLevel( this->m_mspQualityLevel );

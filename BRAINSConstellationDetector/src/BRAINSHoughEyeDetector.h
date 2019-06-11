@@ -167,12 +167,6 @@ public:
   /** Get the RoI image */
   itkGetConstObjectMacro( RoIImage, TInputImage );
 
-  /** Get the rotation angle of the alignment process */
-  itkGetMacro( RotAngle, InputPointType );
-
-  /** Get the adult interpupilary distance */
-  itkGetConstMacro( Ipd, double );
-
   /** Get the maximum output pixel value */
   itkGetConstMacro( MaxInputPixelValue, OutputPixelType );
 
@@ -239,8 +233,6 @@ protected:
   OutputImagePointer m_RoIImage;
   OutputPointType    m_LE;
   OutputPointType    m_RE;
-  OutputPointType    m_RotAngle;
-  double             m_Ipd;     // adult inter-pupilary distance
   bool               m_Failure; // indicating whether the detector realizes the failure
   OutputPixelType    m_MaxInputPixelValue;
   OutputPixelType    m_MinInputPixelValue;

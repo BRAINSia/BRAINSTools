@@ -26,6 +26,104 @@
 
 namespace itk
 {
+
+
+/** Isolate resample function from landamrk points **/
+template < typename TInputImage, typename TOutputImage >
+void
+ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
+                       const typename TInputImage::PointType &    RE_Point,
+                       const typename TInputImage::ConstPointer & image,
+                       /* Outputs */
+                       VersorRigid3DTransform< double >::Pointer & VTrans, typename TOutputImage::PointType & RotAngle,
+                       typename TOutputImage::Pointer & resampledOutput )
+{
+  using InputIndexType = typename TInputImage::IndexType;
+  using InputSizeType = typename TInputImage::SizeType;
+  using InputRegionType = typename TInputImage::RegionType;
+  using InputPointType = typename TInputImage::PointType;
+
+  /* Transform and filter type alias */
+  using VersorTransformType = VersorRigid3DTransform< double >;
+  using VersorVectorType = typename VersorTransformType::OutputVectorType;
+
+  static constexpr unsigned int Dimension = TInputImage::ImageDimension;
+  /*
+   * Align the image with eye centers
+   */
+  const InputRegionType ImageRegion = image->GetLargestPossibleRegion();
+  const InputSizeType   size = ImageRegion.GetSize();
+
+  // Compute translation
+  InputPointType physicalStartLocation;
+  InputPointType physicalStopLocation;
+  {
+    InputIndexType startIndex = ImageRegion.GetIndex();
+    InputIndexType stopIndex;
+    stopIndex[0] = startIndex[0] + size[0] - 1;
+    stopIndex[1] = startIndex[1] + size[1] - 1;
+    stopIndex[2] = startIndex[2] + size[2] - 1;
+    image->TransformIndexToPhysicalPoint( startIndex, physicalStartLocation );
+    image->TransformIndexToPhysicalPoint( stopIndex, physicalStopLocation );
+  }
+
+  // Space coordinate origin -> center of eye centers of input image
+  VersorVectorType translation1;
+  /** Center the image at a place close to the AC point.
+   Here we use an approximation which is vertically at an IPD distance from center
+   of eye centers, i.e., the center is at ( 0, -IPD, 0 ) in LPS coordinate system */
+  VersorVectorType translation2;
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    translation1[i] = 0.5 * ( LE_Point[i] + RE_Point[i] );
+    translation2[i] = 0;
+  }
+  const double IPD_dist = LE_Point.EuclideanDistanceTo( RE_Point );
+  translation2[1] = IPD_dist;
+
+  // Compute rotation in radian
+  // about +S-axis
+  VersorVectorType rotation1; // about +S-axis
+  rotation1[0] = 0;
+  rotation1[1] = 0;
+  rotation1[2] = 1;
+
+  // about +P-axis
+  VersorVectorType rotation2; // about +P-axis
+  rotation2[0] = 0;
+  rotation2[1] = 1;
+  rotation2[2] = 0;
+
+  // Note: algorithm doesn't treat rotations about +L-axis
+  RotAngle[0] = 0.0;
+  RotAngle[1] = 0.0;
+  RotAngle[2] = 0.0;
+
+
+  // about +P-axis
+  RotAngle[1] = std::atan( ( LE_Point[2] - RE_Point[2] ) / IPD_dist );
+  // about +S-axis
+  RotAngle[2] = -std::atan( ( LE_Point[1] - RE_Point[1] ) / IPD_dist );
+
+
+  // Set affine tranformation
+  VTrans->Translate( translation2 );
+  VTrans->SetRotation( rotation1, -RotAngle[2] );
+  VTrans->SetRotation( rotation2, -RotAngle[1] );
+  VTrans->Translate( translation1 );
+
+  /** The output image will have exact the same index contents
+   but with modified image info so that the index-to-physical mapping
+   makes the image in the physical space aligned */
+  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter< TInputImage, TOutputImage >;
+
+  typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
+  resampleIPFilter->SetInputImage( image );
+  resampleIPFilter->SetRigidTransform( VTrans.GetPointer() );
+  resampleIPFilter->Update();
+  resampledOutput = resampleIPFilter->GetOutput();
+}
+
 template < typename TInputImage, typename TOutputImage >
 BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
 {
@@ -80,7 +178,6 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
 {
   const InputImageConstPointer image( this->GetInput() );
   const InputRegionType        region = image->GetLargestPossibleRegion();
-  const InputSizeType          size = region.GetSize();
   {
     /*
      * Set RoI of the input image
@@ -291,12 +388,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     // Metric 1: Adult Interpupillary Distance ( IPD )
     // Mean: 63mm
     // Most likely: 50mm - 75mm
-    this->m_Ipd = 0.;
-    for ( unsigned int i = 0; i < Dimension; ++i )
-    {
-      this->m_Ipd += itk::Math::sqr( this->m_LE[i] - this->m_RE[i] );
-    }
-    this->m_Ipd = std::sqrt( this->m_Ipd );
+    this->m_Ipd = this->m_LE.EuclideanDistanceTo( this->m_RE );
     std::cout << "The resulted inter-pupilary distance is " << this->m_Ipd << " mm" << std::endl;
 
     if ( this->m_Ipd < 40 or this->m_Ipd > 85 )
@@ -306,90 +398,23 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
       return;
     }
 
-    /*
-     * Align the image with eye centers
-     */
 
-    // Compute translation
-    InputPointType physicalStartLocation;
-    InputPointType physicalStopLocation;
-    {
-      InputIndexType startIndex = region.GetIndex();
-      InputIndexType stopIndex;
-      stopIndex[0] = startIndex[0] + size[0] - 1;
-      stopIndex[1] = startIndex[1] + size[1] - 1;
-      stopIndex[2] = startIndex[2] + size[2] - 1;
-      image->TransformIndexToPhysicalPoint( startIndex, physicalStartLocation );
-      image->TransformIndexToPhysicalPoint( stopIndex, physicalStopLocation );
-    }
+    const InputPointType LE_Point = this->m_LE;
+    const InputPointType RE_Point = this->m_RE;
+
+    VersorTransformType::Pointer VTrans = this->m_VersorTransform;
+    VersorTransformType::Pointer InvVTrans = this->m_InvVersorTransform;
 
 
-    // Space coordinate origin -> center of eye centers of input image
-    VersorVectorType translation1;
-    /** Center the image at a place close to the AC point.
-     Here we use an approximation which is vertically at an IPD distance from center
-     of eye centers, i.e., the center is at ( 0, -IPD, 0 ) in LPS coordinate system */
-    VersorVectorType translation2;
-    for ( unsigned int i = 0; i < Dimension; ++i )
-    {
-      translation1[i] = 0.5 * ( this->m_LE[i] + this->m_RE[i] );
-      translation2[i] = 0;
-    }
-    translation2[1] = this->m_Ipd;
+    ResampleFromEyePoints< TInputImage, TOutputImage >(
+      this->m_LE, this->m_RE, image, this->m_VersorTransform, this->m_RotAngle, this->m_OutputImage );
 
-    // Compute rotation in radian
-    // about +S-axis
-    VersorVectorType rotation1; // about +S-axis
-    rotation1[0] = 0;
-    rotation1[1] = 0;
-    rotation1[2] = 1;
-
-    // about +P-axis
-    VersorVectorType rotation2; // about +P-axis
-    rotation2[0] = 0;
-    rotation2[1] = 1;
-    rotation2[2] = 0;
-
-    // Note: this algorithm doesn't treat rotations about +L-axis
-    this->m_RotAngle[0] = 0.0;
-    this->m_RotAngle[1] = 0.0;
-    this->m_RotAngle[2] = 0.0;
-
-    const double lr_distance_between_eyes = ( this->m_LE[0] - this->m_RE[0] );
-    if ( lr_distance_between_eyes < 40 )
-    {
-      std::cerr << "WARNING: The distance is abnormal! Get ready to use a GUI corrector next." << std::endl;
-      this->m_Failure = true;
-    }
-    // about +P-axis
-    this->m_RotAngle[1] = std::atan( ( this->m_LE[2] - this->m_RE[2] ) / lr_distance_between_eyes );
-    // about +S-axis
-    this->m_RotAngle[2] = -std::atan( ( this->m_LE[1] - this->m_RE[1] ) / lr_distance_between_eyes );
-
-
-    // Set affine tranformation
-    this->m_VersorTransform->Translate( translation2 );
-    this->m_VersorTransform->SetRotation( rotation1, -this->m_RotAngle[2] );
-    this->m_VersorTransform->SetRotation( rotation2, -this->m_RotAngle[1] );
-    this->m_VersorTransform->Translate( translation1 );
 
     // Get the inverse transform
-    if ( !this->m_VersorTransform->GetInverse( this->m_InvVersorTransform ) )
+    if ( !m_VersorTransform->GetInverse( InvVTrans ) )
     {
       itkGenericExceptionMacro( "Cannot get the inverse transform from Hough eye detector!" );
     }
-
-    /** The output image will have exact the same index contents
-     but with modified image info so that the index-to-physical mapping
-     makes the image in the physical space aligned */
-    using ResampleIPFilterType = itk::ResampleInPlaceImageFilter< TInputImage, TOutputImage >;
-
-    typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
-    resampleIPFilter->SetInputImage( image );
-    resampleIPFilter->SetRigidTransform( this->m_VersorTransform.GetPointer() );
-    resampleIPFilter->Update();
-    this->m_OutputImage = resampleIPFilter->GetOutput();
-
     this->GraftOutput( this->m_OutputImage );
   }
 }

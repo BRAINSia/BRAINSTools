@@ -187,6 +187,7 @@ public:
   itkGetConstMacro( Failure, bool );
   itkSetMacro( Failure, bool );
 
+
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( IntConvertibleToOutputCheck, (Concept::Convertible< int, OutputPixelType >));

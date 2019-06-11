@@ -27,16 +27,30 @@
 namespace itk
 {
 
+template < typename TInputImage, typename TOutputImage >
+typename TOutputImage::Pointer
+RigidResampleInPlayByVersor3D( const typename TInputImage::ConstPointer & image,
+                               VersorRigid3DTransform< double >::Pointer  versorRigid3DTfm )
+{
+  /** The output image will have exact the same index contents
+   but with modified image info so that the index-to-physical mapping
+   makes the image in the physical space aligned */
+  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter< TInputImage, TOutputImage >;
+
+  typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
+  resampleIPFilter->SetInputImage( image );
+  resampleIPFilter->SetRigidTransform( versorRigid3DTfm.GetPointer() );
+  resampleIPFilter->Update();
+  typename TOutputImage::Pointer resampledOutput = resampleIPFilter->GetOutput();
+  return resampledOutput;
+}
 
 /** Isolate resample function from landamrk points **/
 template < typename TInputImage, typename TOutputImage >
-void
+VersorRigid3DTransform< double >::Pointer
 ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
                        const typename TInputImage::PointType &    RE_Point,
-                       const typename TInputImage::ConstPointer & image,
-                       /* Outputs */
-                       VersorRigid3DTransform< double >::Pointer & VTrans,
-                       typename TOutputImage::Pointer &            resampledOutput )
+                       const typename TInputImage::ConstPointer & image )
 {
   using InputIndexType = typename TInputImage::IndexType;
   using InputSizeType = typename TInputImage::SizeType;
@@ -107,22 +121,14 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
   RotAngle[2] = -std::atan( ( LE_Point[1] - RE_Point[1] ) / IPD_dist );
 
 
-  // Set affine tranformation
-  VTrans->Translate( translation2 );
-  VTrans->SetRotation( rotation1, -RotAngle[2] );
-  VTrans->SetRotation( rotation2, -RotAngle[1] );
-  VTrans->Translate( translation1 );
+  // Set rigid tranformation
+  VersorRigid3DTransform< double >::Pointer versorRigid3DTfm = VersorRigid3DTransform< double >::New();
+  versorRigid3DTfm->Translate( translation2 );
+  versorRigid3DTfm->SetRotation( rotation1, -RotAngle[2] );
+  versorRigid3DTfm->SetRotation( rotation2, -RotAngle[1] );
+  versorRigid3DTfm->Translate( translation1 );
 
-  /** The output image will have exact the same index contents
-   but with modified image info so that the index-to-physical mapping
-   makes the image in the physical space aligned */
-  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter< TInputImage, TOutputImage >;
-
-  typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
-  resampleIPFilter->SetInputImage( image );
-  resampleIPFilter->SetRigidTransform( VTrans.GetPointer() );
-  resampleIPFilter->Update();
-  resampledOutput = resampleIPFilter->GetOutput();
+  return versorRigid3DTfm;
 }
 
 template < typename TInputImage, typename TOutputImage >
@@ -388,7 +394,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     // Mean: 63mm
     // Most likely: 50mm - 75mm
     const double IPD_Distance = this->m_LE.EuclideanDistanceTo( this->m_RE );
-    std::cout << "The resulted inter-pupilary distance is " << IPD_Distance << " mm" << std::endl;
+    std::cout << "The inter-pupilary distance is " << IPD_Distance << " mm" << std::endl;
 
     if ( IPD_Distance < 40 or IPD_Distance > 85 )
     {
@@ -397,9 +403,8 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
       return;
     }
 
-    ResampleFromEyePoints< TInputImage, TOutputImage >(
-      this->m_LE, this->m_RE, image, this->m_VersorTransform, this->m_OutputImage );
-
+    this->m_VersorTransform = ResampleFromEyePoints< TInputImage, TOutputImage >( this->m_LE, this->m_RE, image );
+    this->m_OutputImage = RigidResampleInPlayByVersor3D< TInputImage, TOutputImage >( image, this->m_VersorTransform );
 
     // Get the inverse transform
     if ( !m_VersorTransform->GetInverse( this->m_InvVersorTransform ) )

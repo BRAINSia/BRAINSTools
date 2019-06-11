@@ -69,6 +69,7 @@
 #include "GenericTransformImage.h"
 #include "BRAINSCommonLibWin32Header.h"
 
+#include "itkScalableAffineTransform.h"
 
 namespace itk
 {

@@ -132,6 +132,7 @@ BRAINSConstellationDetectorPrimary::Compute( void )
    * Look for existing manually identified landmark point files adjacent
    * to the original image.
    */
+  if ( this->m_inputLandmarksEMSP.empty() ) // Only look for default files if not specified on command line.
   {
     const static std::string fcsv_extension{ ".fcsv" };
     const std::string        root_dir = itksys::SystemTools::GetParentDirectory( this->m_inputVolume );
@@ -207,20 +208,36 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     const SImageType::PointType tmpLE = landmarksEMSP.find( "LE" )->second;
     const SImageType::PointType tmpRE = landmarksEMSP.find( "RE" )->second;
     // https://en.wikipedia.org/wiki/Pupillary_distance  Minimum inter pupulary distance measured is 51mm for women
-    std::cout << tmpRE << std::endl; //-27
-    std::cout << tmpLE << std::endl; //+31
+
     // 1988 Anthropometric Survey MIN: 51mm,  Max 77mm, so add bit of margin on this stddev=3.6
-    if ( ( tmpLE[0] - tmpRE[0] ) < 51.0 + 2.0 * 3.6 )
+
+
+    constexpr double mindistance_IPD = 51.0;
+    constexpr double maxdistance_IPD = 77.0;
+    constexpr double two_stddev_distance_IPD = 2.0 * 3.6;
+
+    const double IPD = ( tmpLE.EuclideanDistanceTo( tmpRE ) );
+    if ( IPD < ( mindistance_IPD - two_stddev_distance_IPD ) )
     {
-      std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye'"
+
+      std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
                 << std::endl;
+
+      std::cerr << "Right Eye: " << tmpRE << std::endl; //-27
+      std::cerr << "Left Eye: " << tmpLE << std::endl;  //+31
+
+
       std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
       exit( -1 );
     }
-    if ( ( tmpLE[0] - tmpRE[0] ) > 77.0 + 2.0 * 3.6 )
+
+    if ( IPD > ( maxdistance_IPD + two_stddev_distance_IPD ) )
     {
-      std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye'"
-                << std::endl;
+      std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
+                << IPD << std::endl;
+      std::cerr << "Right Eye: " << tmpRE << std::endl; //-27
+      std::cerr << "Left Eye: " << tmpLE << std::endl;  //+31
+
       std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
       exit( -1 );
     }

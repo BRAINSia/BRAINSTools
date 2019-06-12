@@ -326,6 +326,9 @@ public:
   Compute( void );
 
 private:
+  static ImagePointType
+  localFindCenterHeadFunc( ImageType::ConstPointer img );
+
   int          m_houghEyeDetectorMode;      // 1
   unsigned int m_mspQualityLevel;           // 2
   unsigned int m_writedebuggingImagesLevel; // 0

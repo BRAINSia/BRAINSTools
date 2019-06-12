@@ -72,6 +72,26 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_outputLandmarksInACPCAlignedSpaceMap.clear();
 }
 
+BRAINSConstellationDetectorPrimary::ImagePointType
+BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
+  BRAINSConstellationDetectorPrimary::ImageType::ConstPointer img )
+{
+  // ------------------------------------
+  // Find center of head mass
+  std::cout << "\nFinding center of head mass..." << std::endl;
+  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+
+  findCenterFilter->SetAxis( 2 );
+  findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
+  findCenterFilter->SetClosingSize( 7 );
+  findCenterFilter->SetHeadSizeLimit( 700 );
+  findCenterFilter->SetBackgroundValue( 0 );
+  findCenterFilter->SetInput( img );
+  findCenterFilter->Update();
+  const ImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+  return centerOfHeadMass;
+}
+
 bool
 BRAINSConstellationDetectorPrimary::Compute( void )
 {
@@ -126,7 +146,7 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   caster->SetInput( rescaledInputVolume );
   caster->Update();
 
-  SImageType::Pointer inputVolume = caster->GetOutput();
+  SImageType::Pointer origSpaceInputVolume = caster->GetOutput();
 
   /*
    * Look for existing manually identified landmark point files adjacent
@@ -178,84 +198,68 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   }
 
   // load corresponding landmarks in EMSP aligned space from file if possible
-  LandmarksMapType landmarksEMSP;
+  LandmarksMapType origSpaceLandmarks;
   if ( !this->m_inputLandmarksEMSP.empty() )
   {
-    landmarksEMSP = ReadSlicer3toITKLmk( this->m_inputLandmarksEMSP );
+    origSpaceLandmarks = ReadSlicer3toITKLmk( this->m_inputLandmarksEMSP );
   }
 
-  // ------------------------------------
-  // Find center of head mass
-  std::cout << "\nFinding center of head mass..." << std::endl;
-  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput( inputVolume );
-  findCenterFilter->SetAxis( 2 );
-  findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
-  findCenterFilter->SetClosingSize( 7 );
-  findCenterFilter->SetHeadSizeLimit( 700 );
-  findCenterFilter->SetBackgroundValue( 0 );
-  findCenterFilter->Update();
-  ImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
 
   // ------------------------------------
   // Find eye centers with BRAINS Hough Eye Detector
-  HoughEyeDetectorType::Pointer houghEyeDetector = HoughEyeDetectorType::New();
+  HoughEyeDetectorType::Pointer                  houghEyeDetector = HoughEyeDetectorType::New();
+  itk::VersorRigid3DTransform< double >::Pointer orig2eyeFixedImageVersorTransform = nullptr;
+  itk::VersorRigid3DTransform< double >::Pointer org2eyeFixedLandmarkVersorTransform = nullptr;
 
-  if ( ( landmarksEMSP.find( "LE" ) != landmarksEMSP.end() ) && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
+
+  LandmarksMapType   eyeFixedSpaceLandmarks;
+  ImageType::Pointer eyeFixedResampledImage = nullptr;
+
+  bool hasBothEyeLandmarksDefinedInOrigSpace = false;
+  if ( ( origSpaceLandmarks.find( "LE" ) != origSpaceLandmarks.end() ) &&
+       ( origSpaceLandmarks.find( "RE" ) != origSpaceLandmarks.end() ) )
+  {
+    hasBothEyeLandmarksDefinedInOrigSpace = true;
+  }
+
+  if ( hasBothEyeLandmarksDefinedInOrigSpace )
   {
     std::cout << "\nLoaded eye centers information for BRAINS Hough Eye Detector." << std::endl;
     std::cout << "Skip estimation steps for eye centers." << std::endl;
-    const SImageType::PointType tmpLE = landmarksEMSP.find( "LE" )->second;
-    const SImageType::PointType tmpRE = landmarksEMSP.find( "RE" )->second;
-    // https://en.wikipedia.org/wiki/Pupillary_distance  Minimum inter pupulary distance measured is 51mm for women
+    const SImageType::PointType origSpaceLE = origSpaceLandmarks.find( "LE" )->second;
+    const SImageType::PointType origSpaceRE = origSpaceLandmarks.find( "RE" )->second;
 
-    // 1988 Anthropometric Survey MIN: 51mm,  Max 77mm, so add bit of margin on this stddev=3.6
+    orig2eyeFixedImageVersorTransform =
+      itk::ResampleFromEyePoints< ImageType, ImageType >( origSpaceLE, origSpaceRE, origSpaceInputVolume );
+    eyeFixedResampledImage = itk::RigidResampleInPlayByVersor3D< ImageType, ImageType >(
+      origSpaceInputVolume, orig2eyeFixedImageVersorTransform );
 
-
-    constexpr double mindistance_IPD = 51.0;
-    constexpr double maxdistance_IPD = 77.0;
-    constexpr double two_stddev_distance_IPD = 2.0 * 3.6;
-
-    const double IPD = ( tmpLE.EuclideanDistanceTo( tmpRE ) );
-    if ( IPD < ( mindistance_IPD - two_stddev_distance_IPD ) )
+    // Now transform landmarks based on the eye centerings.
+    org2eyeFixedLandmarkVersorTransform = itk::VersorRigid3DTransform< double >::New();
+    orig2eyeFixedImageVersorTransform->GetInverse( org2eyeFixedLandmarkVersorTransform );
+    for ( auto & landmark_pair : origSpaceLandmarks )
     {
-
-      std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
-                << std::endl;
-
-      std::cerr << "Right Eye: " << tmpRE << std::endl; //-27
-      std::cerr << "Left Eye: " << tmpLE << std::endl;  //+31
-
-
-      std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
-      exit( -1 );
+      eyeFixedSpaceLandmarks[landmark_pair.first] =
+        org2eyeFixedLandmarkVersorTransform->TransformPoint( landmark_pair.second );
     }
 
-    if ( IPD > ( maxdistance_IPD + two_stddev_distance_IPD ) )
+    // If CM is not provided from original space and moved to eyeFixedSpace, then compute it here from the eyeFixedImage
+    if ( eyeFixedSpaceLandmarks.find( "CM" ) == eyeFixedSpaceLandmarks.end() )
     {
-      std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
-                << IPD << std::endl;
-      std::cerr << "Right Eye: " << tmpRE << std::endl; //-27
-      std::cerr << "Left Eye: " << tmpLE << std::endl;  //+31
-
-      std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
-      exit( -1 );
+      eyeFixedSpaceLandmarks["CM"] = localFindCenterHeadFunc( eyeFixedResampledImage );
     }
-  }
-  else if ( this->m_forceHoughEyeDetectorReportFailure == true )
-  {
-    houghEyeDetector->SetFailure( true );
-    std::cout << "\nThe Hough eye detector is doomed to failure as notified." << std::endl;
-    std::cout << "Skip estimation steps for eye centers." << std::endl;
   }
   else
   {
     std::cout << "\nFinding eye centers with BRAINS Hough Eye Detector..." << std::endl;
-    houghEyeDetector->SetInput( inputVolume );
+    houghEyeDetector->SetInput( origSpaceInputVolume );
     houghEyeDetector->SetHoughEyeDetectorMode( this->m_houghEyeDetectorMode );
     houghEyeDetector->SetResultsDir( this->m_resultsDir ); // debug output dir
     houghEyeDetector->SetWritedebuggingImagesLevel( this->m_writedebuggingImagesLevel );
-    houghEyeDetector->SetCenterOfHeadMass( centerOfHeadMass );
+
+    origSpaceLandmarks["CM"] = localFindCenterHeadFunc( origSpaceInputVolume );
+    houghEyeDetector->SetCenterOfHeadMass( origSpaceLandmarks.at( "CM" ) );
+
     try
     {
       houghEyeDetector->Update();
@@ -269,48 +273,63 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     {
       std::cout << "Failed to find eye centers exception occurred" << std::endl;
     }
+    org2eyeFixedLandmarkVersorTransform = houghEyeDetector->GetModifiableVersorTransform();
+    std::cout << "PRE COHM: " << origSpaceLandmarks.at( "CM" );
+
+    eyeFixedSpaceLandmarks["CM"] =
+      houghEyeDetector->GetInvVersorTransform()->TransformPoint( origSpaceLandmarks.at( "CM" ) );
+    std::cout << "POST HOUGH INV COHM: " << eyeFixedSpaceLandmarks.at( "CM" );
+
+    eyeFixedSpaceLandmarks["LE"] = houghEyeDetector->GetLE();
+    eyeFixedSpaceLandmarks["RE"] = houghEyeDetector->GetRE();
+    eyeFixedResampledImage = houghEyeDetector->GetOutput();
   }
 
   // ------------------------------------
   // Find MPJ, AC, PC, and VN4 points with BRAINS Constellation Detector
   std::cout << "\nFinding named points with BRAINS Constellation Detector..." << std::endl;
-
   itk::BRAINSConstellationDetector2< ImageType, ImageType >::Pointer constellation2 =
     itk::BRAINSConstellationDetector2< ImageType, ImageType >::New();
 
-  if ( ( landmarksEMSP.find( "LE" ) != landmarksEMSP.end() ) && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
+  if ( !origSpaceLandmarks.empty() )
   {
-    constellation2->SetInput( inputVolume );
-    constellation2->SetLandmarksEMSP( landmarksEMSP );
-    constellation2->SetCenterOfHeadMass( centerOfHeadMass );
+    constellation2->SetLandmarksEMSP( origSpaceLandmarks );
   }
-  else
+
+  constellation2->SetLEPoint( eyeFixedSpaceLandmarks.at( "LE" ) );
+  constellation2->SetREPoint( eyeFixedSpaceLandmarks.at( "RE" ) );
+  constellation2->SetHoughEyeTransform( org2eyeFixedLandmarkVersorTransform );
+  constellation2->SetInput( eyeFixedResampledImage );
+  constellation2->SetCenterOfHeadMass( eyeFixedSpaceLandmarks.at( "CM" ) );
+
+  // HACK: --- REMOVE ME
+  std::string dggpath = "/tmp/nolmkinit_";
+  if ( hasBothEyeLandmarksDefinedInOrigSpace )
   {
-    if ( !landmarksEMSP.empty() )
-    {
-      constellation2->SetLandmarksEMSP( landmarksEMSP );
-    }
-
-    if ( !houghEyeDetector->GetFailure() )
-    {
-      ImagePointType houghTransformedCOHM =
-        houghEyeDetector->GetInvVersorTransform()->TransformPoint( centerOfHeadMass );
-
-      constellation2->SetLEPoint( houghEyeDetector->GetLE() );
-      constellation2->SetREPoint( houghEyeDetector->GetRE() );
-      constellation2->SetInput( houghEyeDetector->GetOutput() );
-      constellation2->SetHoughEyeTransform( houghEyeDetector->GetModifiableVersorTransform() );
-      constellation2->SetCenterOfHeadMass( houghTransformedCOHM );
-    }
-    else
-    {
-      constellation2->SetInput( inputVolume );
-      constellation2->SetCenterOfHeadMass( centerOfHeadMass );
-    }
+    dggpath = "/tmp/manuallmkinit_";
   }
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+
+  WriteITKtoSlicer3Lmk( dggpath + "eye_orig_space.fcsv", origSpaceLandmarks );
+  WriteITKtoSlicer3Lmk( dggpath + "eye_fixed_space.fcsv", eyeFixedSpaceLandmarks );
+
+  WriterType::Pointer dggwriter = WriterType::New();
+  dggwriter->SetFileName( dggpath + "eye_fixed.nii.gz" );
+  dggwriter->SetInput( eyeFixedResampledImage );
+  dggwriter->Update();
+  dggwriter->SetFileName( dggpath + "eye_orig_space.nii.gz" );
+  dggwriter->SetInput( origSpaceInputVolume );
+  dggwriter->Update();
+
 
   // tell the constellation detector if Hough eye detector fails
-  constellation2->SetHoughEyeFailure( houghEyeDetector->GetFailure() );
+  // HACK constellation2->SetHoughEyeFailure( houghEyeDetector->GetFailure() );
   constellation2->SetInputTemplateModel( this->m_inputTemplateModel );
   constellation2->SetMspQualityLevel( this->m_mspQualityLevel );
   constellation2->SetOtsuPercentileThreshold( this->m_otsuPercentileThreshold );
@@ -337,7 +356,7 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   constellation2->SetLlsMatrices( llsMatrices );
   constellation2->SetLlsMeans( llsMeans );
   constellation2->SetSearchRadii( searchRadii );
-  constellation2->SetOriginalInputImage( inputVolume );
+  constellation2->SetOriginalInputImage( origSpaceInputVolume );
   constellation2->SetatlasVolume( this->m_atlasVolume );
   constellation2->SetatlasLandmarks( this->m_atlasLandmarks );
   constellation2->SetatlasLandmarkWeights( this->m_atlasLandmarkWeights );

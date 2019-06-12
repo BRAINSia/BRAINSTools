@@ -93,6 +93,39 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
     translation2[i] = 0;
   }
   const double IPD_dist = LE_Point.EuclideanDistanceTo( RE_Point );
+  // https://en.wikipedia.org/wiki/Pupillary_distance  Minimum inter pupulary distance measured is 51mm for women
+
+  // 1988 Anthropometric Survey MIN: 51mm,  Max 77mm, so add bit of margin on this stddev=3.6
+
+  constexpr double mindistance_IPD = 51.0;
+  constexpr double maxdistance_IPD = 77.0;
+  constexpr double two_stddev_distance_IPD = 2.0 * 3.6;
+
+  const double IPD = ( LE_Point.EuclideanDistanceTo( RE_Point ) );
+  if ( IPD < ( mindistance_IPD - two_stddev_distance_IPD ) )
+  {
+
+    std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
+              << std::endl;
+
+    std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
+    std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
+
+
+    std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
+    exit( -1 );
+  }
+
+  if ( IPD > ( maxdistance_IPD + two_stddev_distance_IPD ) )
+  {
+    std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
+              << IPD << std::endl;
+    std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
+    std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
+
+    std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
+    exit( -1 );
+  }
   translation2[1] = IPD_dist;
 
   // Compute rotation in radian
@@ -390,18 +423,6 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     /*
      * Metrics Collection
      */
-    // Metric 1: Adult Interpupillary Distance ( IPD )
-    // Mean: 63mm
-    // Most likely: 50mm - 75mm
-    const double IPD_Distance = this->m_LE.EuclideanDistanceTo( this->m_RE );
-    std::cout << "The inter-pupilary distance is " << IPD_Distance << " mm" << std::endl;
-
-    if ( IPD_Distance < 40 or IPD_Distance > 85 )
-    {
-      std::cerr << "WARNING: The distance is abnormal! Get ready to use a GUI corrector next." << std::endl;
-      this->m_Failure = true;
-      return;
-    }
 
     this->m_VersorTransform = ResampleFromEyePoints< TInputImage, TOutputImage >( this->m_LE, this->m_RE, image );
     this->m_OutputImage = RigidResampleInPlayByVersor3D< TInputImage, TOutputImage >( image, this->m_VersorTransform );

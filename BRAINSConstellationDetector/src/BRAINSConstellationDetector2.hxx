@@ -61,7 +61,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDe
 
   this->m_LEPoint.Fill( -123.0 );
   this->m_REPoint.Fill( -123.0 );
-  this->m_CenterOfHeadMass.Fill( -12345.0 );
+  this->m_CenterOfHeadMassInFixedEyeSpace.Fill( -12345.0 );
 
   m_landmarksEMSP.clear();
   m_HoughEyeFailure = false;
@@ -255,7 +255,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   myDetector.SetResultsDir( this->m_ResultsDir );
   myDetector.SetTemplateRadius( myModel.GetRadii() );
   myDetector.SetMSPQualityLevel( this->m_MspQualityLevel );
-  myDetector.SetCenterOfHeadMass( this->m_CenterOfHeadMass );
+  myDetector.SetCenterOfHeadMass( this->m_CenterOfHeadMassInFixedEyeSpace );
   myDetector.SetHoughEyeFailure( this->m_HoughEyeFailure );
 
   LandmarksMapType LandmarksEMSP = this->GetLandmarksEMSP();

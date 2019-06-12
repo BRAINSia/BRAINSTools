@@ -243,7 +243,7 @@ def generate_single_session_template_wf(
     pipeline_name,
     doDenoise=True,
     badT2=False,
-    useEMSP=False,
+    useEMSP=None,
 ):
     """
     Run autoworkup on a single sessionid

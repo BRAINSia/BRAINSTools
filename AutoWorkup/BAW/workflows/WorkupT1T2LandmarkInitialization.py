@@ -52,7 +52,7 @@ def create_landmark_initialize_workflow(
     InterpolationMode,
     PostACPCAlignToAtlas,
     DoReverseInit,
-    useEMSP=False,
+    useEMSP=None,
     Debug=False,
 ):
     """
@@ -144,7 +144,7 @@ def create_landmark_initialize_workflow(
     )
 
     # If EMSP, pre-selected landmarks are given, force to use.
-    if useEMSP:
+    if useEMSP is not None:
         print("*** Use pre-selected landmark file for Landmark Detection")
         landmarkInitializeWF.connect(inputsSpec, "EMSP", BCD, "inputLandmarksEMSP")
 

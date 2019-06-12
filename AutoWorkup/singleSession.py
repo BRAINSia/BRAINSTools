@@ -32,7 +32,7 @@ Examples:
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
-
+import re
 
 def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
     """
@@ -94,9 +94,19 @@ def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
             doDenoise = False
         else:
             doDenoise = True
-    useEMSP = False
+    useEMSP = None
     if len(dataDict["EMSP"]) > 0:
-        useEMSP = True
+        useEMSP = dataDict["EMSP"][0]
+    def replace_image_extensions( filename, new_extension ):
+        filename_base = filename
+        for rmext in [r".gz$",r".nii$",r".hdr$",r".img$",r".dcm$",r".nrrd$",r".nhdr$", r".mhd$"]:
+            filename_base= re.sub(rmext, "",filename_base)
+        return filename_base + new_extension
+
+    input_sidecare_fcsv_filename = replace_image_extensions( dataDict["T1s"][0], ".fcsv" )
+    if os.path.exists( input_sidecare_fcsv_filename):
+        useEMSP = input_sidecare_fcsv_filename
+
     sessionWorkflow = generate_single_session_template_wf(
         project,
         subject,
@@ -119,8 +129,8 @@ def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
     sessionWorkflow_inputsspec.inputs.T2s = dataDict["T2s"]
     sessionWorkflow_inputsspec.inputs.PDs = dataDict["PDs"]
     sessionWorkflow_inputsspec.inputs.FLs = dataDict["FLs"]
-    if useEMSP:
-        sessionWorkflow_inputsspec.inputs.EMSP = dataDict["EMSP"][0]
+    if useEMSP is not None:
+        sessionWorkflow_inputsspec.inputs.EMSP = useEMSP
     sessionWorkflow_inputsspec.inputs.OTHERs = dataDict["OTHERs"]
     return sessionWorkflow
 

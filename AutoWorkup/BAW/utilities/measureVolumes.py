@@ -75,7 +75,7 @@ def get_label_volumes(labelVolume, RefVolume, labelDictionary):
 
     labelImg = sitk.ReadImage(labelVolume, sitk.sitkInt64)
     RefImg = sitk.ReadImage(RefVolume, sitk.sitkFloat64)
-    labelStatFilter = sitk.LabelStoutputatisticsImageFilter()
+    labelStatFilter = sitk.LabelStatisticsImageFilter()
     labelStatFilter.Execute(RefImg, labelImg)
     ImageSpacing = RefImg.GetSpacing()
 

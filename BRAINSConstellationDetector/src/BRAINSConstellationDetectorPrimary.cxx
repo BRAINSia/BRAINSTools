@@ -298,7 +298,12 @@ BRAINSConstellationDetectorPrimary::Compute( void )
 
   constellation2->SetLEPoint( origSpaceLandmarks.at( "LE" ) );
   constellation2->SetREPoint( origSpaceLandmarks.at( "RE" ) );
-  constellation2->SetCenterOfHeadMass( eyeFixedSpaceLandmarks.at( "CM" ) ); // This is likely wrong!
+
+#if 0 // HACK: PRobably need to undo a translatoin somewhere in other file
+  constellation2->SetCenterOfHeadMassInFixedEyeSpace( origSpaceLandmarks.at("CM") );
+#else
+  constellation2->SetCenterOfHeadMassInFixedEyeSpace( eyeFixedSpaceLandmarks.at( "CM" ) ); // This is likely wrong!
+#endif
 
 
   constellation2->SetHoughEyeTransform( org2eyeFixedLandmarkVersorTransform );

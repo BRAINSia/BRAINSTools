@@ -172,7 +172,8 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv} # Baseline file
   --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   )
-set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
 
 set(BCDTestName landmarksConstellationAlignerTest) #This test aims to generate the output of the landmarksConstellationAligner to be compared with the baseline file
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -190,7 +191,9 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv} # Baseline file
   --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   )
-set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
 set(BCDTestName BCD_HELP_TEST)
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -223,7 +226,9 @@ set(BCDTestName BCDTest_ForceRPPoint)
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
-  set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
 set(BCDTestName BCDTest_ForceACPoint)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -245,7 +250,9 @@ set(BCDTestName BCDTest_ForceACPoint)
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
-  set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
 set(BCDTestName BCDTest_ForcePCPoint)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -266,7 +273,9 @@ set(BCDTestName BCDTest_ForcePCPoint)
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
-  set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
 set(BCDTestName BCDTest_ForceVN4Point)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -288,7 +297,9 @@ set(BCDTestName BCDTest_ForceVN4Point)
     DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
-  set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
   set(BCDTestName BCDTest_acLowerBound)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -648,7 +659,9 @@ set(BCDTestName BCDTest_ForceVN4Point)
     DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
   --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
-  set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
   set(PARENT_TEST BCDTestForLandmarkCompare)
   set(BCDTestName chk_i_${PARENT_TEST})
@@ -659,7 +672,9 @@ set(BCDTestName BCDTest_ForceVN4Point)
     DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
   --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
-  set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
   #set(PARENT_TEST BCDTestForLandmarkCompare)
   #set(BCDTestName chk_${PARENT_TEST})
@@ -669,7 +684,9 @@ set(BCDTestName BCDTest_ForceVN4Point)
   #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.wts} # Baseline file
   # --tolerance 1.875 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   #  )
-  #set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+  #set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 
 ##    DEPENDS BCDTestForLandmarkCompare)
 #if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
@@ -704,6 +721,8 @@ set(BCDTestName BCDTest_ForceVN4Point)
 #  #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationWeightsTest.wts # output of the landmarksConstellationWeightsTest
 #  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.wts} # Baseline file
 #  #  )
-#  #set_property(TEST ${BCDTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+#  #set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
+set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+
 #
 #endif()

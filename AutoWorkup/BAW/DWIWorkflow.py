@@ -707,40 +707,40 @@ def run_main_workflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR)
 
     ## Write all outputs with DataSink
     DWIDataSink = pe.Node(interface=nio.DataSink(), name="DWIDataSink")
-    DWIDataSink.inputs.base_directory = dataSink_DIR
+    DWIDataSink.inputs.base_directory = os.path.abspath(dataSink_DIR)
     DWIDataSink.inputs.container = sessionID
 
-    DWIWorkflow.connect(outputsSpec, "ukfTracks", DWIDataSink, "Outputs.@ukfTracks")
-    # DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
+    DWIWorkflow.connect(outputsSpec, "ukfTracks", DWIDataSink, "@ukfTracks")
+    # DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs@ukf2ndTracks')
     DWIWorkflow.connect(
-        outputsSpec, "CorrectedDWI", DWIDataSink, "Outputs.@CorrectedDWI"
+        outputsSpec, "CorrectedDWI", DWIDataSink, "@CorrectedDWI"
     )
     DWIWorkflow.connect(
         outputsSpec,
         "CorrectedDWI_in_T2Space",
         DWIDataSink,
-        "Outputs.@CorrectedDWI_in_T2Space",
+        "@CorrectedDWI_in_T2Space",
     )
     DWIWorkflow.connect(
-        outputsSpec, "tensor_image", DWIDataSink, "Outputs.@tensor_image"
+        outputsSpec, "tensor_image", DWIDataSink, "@tensor_image"
     )
     DWIWorkflow.connect(
-        outputsSpec, "DWIBrainMask", DWIDataSink, "Outputs.@DWIBrainMask"
+        outputsSpec, "DWIBrainMask", DWIDataSink, "@DWIBrainMask"
     )
-    DWIWorkflow.connect(outputsSpec, "FAImage", DWIDataSink, "Outputs.@FAImage")
-    DWIWorkflow.connect(outputsSpec, "MDImage", DWIDataSink, "Outputs.@MDImage")
-    DWIWorkflow.connect(outputsSpec, "RDImage", DWIDataSink, "Outputs.@RDImage")
+    DWIWorkflow.connect(outputsSpec, "FAImage", DWIDataSink, "@FAImage")
+    DWIWorkflow.connect(outputsSpec, "MDImage", DWIDataSink, "@MDImage")
+    DWIWorkflow.connect(outputsSpec, "RDImage", DWIDataSink, "@RDImage")
     DWIWorkflow.connect(
-        outputsSpec, "FrobeniusNormImage", DWIDataSink, "Outputs.@FrobeniusNormImage"
-    )
-    DWIWorkflow.connect(
-        outputsSpec, "Lambda1Image", DWIDataSink, "Outputs.@Lambda1Image"
+        outputsSpec, "FrobeniusNormImage", DWIDataSink, "@FrobeniusNormImage"
     )
     DWIWorkflow.connect(
-        outputsSpec, "Lambda2Image", DWIDataSink, "Outputs.@Lambda2Image"
+        outputsSpec, "Lambda1Image", DWIDataSink, "@Lambda1Image"
     )
     DWIWorkflow.connect(
-        outputsSpec, "Lambda3Image", DWIDataSink, "Outputs.@Lambda3Image"
+        outputsSpec, "Lambda2Image", DWIDataSink, "@Lambda2Image"
+    )
+    DWIWorkflow.connect(
+        outputsSpec, "Lambda3Image", DWIDataSink, "@Lambda3Image"
     )
 
     DWIWorkflow.write_graph()

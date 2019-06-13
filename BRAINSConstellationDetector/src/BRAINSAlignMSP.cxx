@@ -149,10 +149,10 @@ main( int argc, char * argv[] )
   findCenterFilter->SetHeadSizeLimit( 700 );
   findCenterFilter->SetBackgroundValue( 0 );
   findCenterFilter->Update();
-  SImagePointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+  SImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
 
-  RigidTransformType::Pointer Tmsp = RigidTransformType::New();
-  ComputeMSP_Easy( image, Tmsp, centerOfHeadMass, mspQualityLevel );
+  RigidTransformType::Pointer eyeFixed2msp_lmk_tfm = RigidTransformType::New();
+  ComputeMSP_Easy( image, eyeFixed2msp_lmk_tfm, orig_lmk_CenterOfHeadMass, mspQualityLevel );
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;
@@ -172,14 +172,14 @@ main( int argc, char * argv[] )
       image.GetPointer(),
       BackgroundFillValue,
       GetInterpolatorFromString< SImageType >( interpolationMode ).GetPointer(),
-      Tmsp.GetPointer() );
+      eyeFixed2msp_lmk_tfm.GetPointer() );
     itkUtil::WriteImage< SImageType >( interpImage, resampleMSP );
   }
   if ( globalImagedebugLevel > 3 )
   {
     const std::string ORIG_ImagePlane( globalResultsDir + "/ORIG_PLANE_" +
                                        itksys::SystemTools::GetFilenameName( inputVolume ) );
-    CreatedebugPlaneImage( image, Tmsp, ORIG_ImagePlane );
+    CreatedebugPlaneImage( image, eyeFixed2msp_lmk_tfm, ORIG_ImagePlane );
   }
   // TODO:  Add more features to this program:
   //       1) Resample to a given space (256^3, 1.0mm^3)

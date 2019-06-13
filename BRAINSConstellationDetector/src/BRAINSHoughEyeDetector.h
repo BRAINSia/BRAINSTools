@@ -138,7 +138,7 @@ public:
   itkSetMacro( HoughEyeDetectorMode, int );
 
   /** Set the center of head mass of the image */
-  itkSetMacro( CenterOfHeadMass, InputPointType );
+  itkSetMacro( orig_lmk_CenterOfHeadMass, InputPointType );
 
   /** Set the interior radius of the shell-like RoI */
   itkSetMacro( R1, double );
@@ -150,10 +150,10 @@ public:
   itkSetMacro( Theta, double );
 
   /** Get the left eye center coordinate */
-  itkGetMacro( LE, InputPointType );
+  itkGetMacro( orig_lmk_LE, InputPointType );
 
   /** Get the right eye center coordinate */
-  itkGetMacro( RE, InputPointType );
+  itkGetMacro( orig_lmk_RE, InputPointType );
 
   /** Set the debug output dir */
   itkSetMacro( ResultsDir, std::string );
@@ -174,8 +174,7 @@ public:
   itkGetConstMacro( MinInputPixelValue, OutputPixelType );
 
   /** Get the versor transform of the detector */
-  itkGetModifiableObjectMacro( VersorTransform, VersorTransformType );
-  itkGetModifiableObjectMacro( InvVersorTransform, VersorTransformType );
+  itkGetModifiableObjectMacro( orig2eyeFixedTransform, VersorTransformType );
 
   /** Get/Set the failure report */
   itkGetConstMacro( Failure, bool );
@@ -215,14 +214,13 @@ protected:
   unsigned int   m_NbOfThreads;
   double         m_SamplingRatio;
   int            m_HoughEyeDetectorMode;
-  InputPointType m_CenterOfHeadMass;
+  InputPointType m_orig_lmk_CenterOfHeadMass;
 
   // Interior radius (mm), exterior radius (mm), and spread
   // angle (rad) of the shell-like RoI.
-  double             m_R1;
-  double             m_R2;
-  double             m_Theta;
-  OutputImagePointer m_OutputImage;
+  double m_R1;
+  double m_R2;
+  double m_Theta;
 
   // Debug settings
   std::string  m_ResultsDir;
@@ -231,14 +229,13 @@ protected:
   /** Output parameters */
   OutputImagePointer m_AccumulatorImage;
   OutputImagePointer m_RoIImage;
-  OutputPointType    m_LE;
-  OutputPointType    m_RE;
+  OutputPointType    m_orig_lmk_LE;
+  OutputPointType    m_orig_lmk_RE;
   bool               m_Failure; // indicating whether the detector realizes the failure
   OutputPixelType    m_MaxInputPixelValue;
   OutputPixelType    m_MinInputPixelValue;
 
-  VersorTransformType::Pointer m_VersorTransform;
-  VersorTransformType::Pointer m_InvVersorTransform;
+  VersorTransformType::Pointer m_orig2eyeFixedTransform;
 };
 } // end namespace itk
 

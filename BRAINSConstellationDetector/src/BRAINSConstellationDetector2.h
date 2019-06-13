@@ -152,16 +152,17 @@ public:
   itkSetMacro( InterpolationMode, std::string );
 
   /** Set Hough eye transform */
-  itkSetObjectMacro( HoughEyeTransform, VersorTransformType );
+  itkSetObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
 
   /** Set LE point */
-  itkSetMacro( LEPoint, SImagePointType );
+  itkSetMacro( orig_lmk_LE, SImagePointType );
 
   /** Set RE point */
-  itkSetMacro( REPoint, SImagePointType );
+  itkSetMacro( orig_lmk_RE, SImagePointType );
 
   /** Set center of head mass **/
-  itkSetMacro( CenterOfHeadMassInFixedEyeSpace, SImagePointType );
+  itkSetMacro( eyeFixed_lmk_CenterOfHeadMass, SImagePointType );
+  itkSetMacro( orig_lmk_CenterOfHeadMass, SImagePointType );
 
   /** Set the original input image before the Hough eye detector */
   itkSetObjectMacro( OriginalInputImage, SImageType );
@@ -169,7 +170,7 @@ public:
 
   /** GetHoughEyeAlignedImage */
   SImageType::ConstPointer
-  GetHoughEyeAlignedImage( void ) const
+  GeteyeFixed_img() const
   {
     SImageType::ConstPointer internalImage = this->GetInput( 0 );
     return internalImage;
@@ -180,25 +181,12 @@ public:
   itkGetConstObjectMacro( OrigToACPCVersorTransform, VersorTransformType );
   itkGetConstObjectMacro( ACPCToOrigVersorTransform, VersorTransformType );
 
-  /** Get the named points in original space */
-  const LandmarksMapType &
-  GetOriginalPoints()
-  {
-    return this->m_OriginalPoints;
-  }
 
   /** Get the aligned named points */
   const LandmarksMapType &
   GetAlignedPoints()
   {
     return this->m_AlignedPoints;
-  }
-
-  // This is wrong?
-  const SImagePointType &
-  GetAlignedPoint( std::string name )
-  {
-    return this->m_AlignedPoints[name];
   }
 
   /** Get the interpolated output isotropic image */
@@ -211,7 +199,7 @@ public:
   itkGetConstObjectMacro( CleanedIntensityOriginalInputImage, SImageType );
 
   /** Get the Hough eye transform */
-  itkGetModifiableObjectMacro( HoughEyeTransform, VersorTransformType );
+  itkGetModifiableObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
 
   /** Set the Hough eye failure report */
   void
@@ -287,16 +275,16 @@ public:
 
   /** Set/Get EMSP landmarks */
   void
-  SetLandmarksEMSP( LandmarksMapType landmarks )
+  Setmsp_lmks( LandmarksMapType landmarks )
   {
-    m_landmarksEMSP.clear();
-    m_landmarksEMSP.insert( landmarks.begin(), landmarks.end() );
+    m_msp_lmks.clear();
+    m_msp_lmks.insert( landmarks.begin(), landmarks.end() );
   }
 
   LandmarksMapType
-  GetLandmarksEMSP()
+  Getmsp_lmks()
   {
-    return m_landmarksEMSP;
+    return m_msp_lmks;
   }
 
   itkSetMacro( atlasVolume, std::string );
@@ -337,15 +325,16 @@ protected:
   // Note: this->GetInput() will return a const input after Hough eye.
   SImageType::Pointer m_OriginalInputImage;
 
-  VersorTransformType::Pointer m_HoughEyeTransform; // help to get the points
-                                                    // location in the original
-                                                    // space
-  SImagePointType m_LEPoint;                        // automated estimated LE in
-                                                    // the original space by
-                                                    // Hough eye detector
-  SImagePointType  m_REPoint;
-  SImagePointType  m_CenterOfHeadMassInFixedEyeSpace;
-  LandmarksMapType m_landmarksEMSP;
+  VersorTransformType::Pointer m_orig2eyeFixed_img_tfm; // help to get the points
+                                                        // location in the original
+                                                        // space
+  SImagePointType m_orig_lmk_LE;                        // automated estimated LE in
+                                                        // the original space by
+                                                        // Hough eye detector
+  SImagePointType  m_orig_lmk_RE;
+  SImagePointType  m_eyeFixed_lmk_CenterOfHeadMass;
+  SImagePointType  m_orig_lmk_CenterOfHeadMass;
+  LandmarksMapType m_msp_lmks;
   bool             m_HoughEyeFailure;
 
   std::map< std::string, MatrixType >            m_LlsMatrices;
@@ -357,7 +346,6 @@ protected:
   VersorTransformType::Pointer m_OrigToACPCVersorTransform;
   VersorTransformType::Pointer m_ACPCToOrigVersorTransform;
   LandmarksMapType             m_AlignedPoints;
-  LandmarksMapType             m_OriginalPoints;
   SImageType::Pointer          m_OutputImage; // Output image w/o
                                               // interpolation
   SImageType::Pointer m_OutputResampledImage; // Output image w/

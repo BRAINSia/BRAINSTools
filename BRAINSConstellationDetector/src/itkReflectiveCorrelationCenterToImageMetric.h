@@ -337,7 +337,7 @@ public:
   {
     if ( !m_CenterOfHeadMassIsSet )
     {
-      itkGenericExceptionMacro( << "ERROR: m_CenterOfHeadMassInFixedEyeSpace is not set!" << std::endl );
+      itkGenericExceptionMacro( << "ERROR: m_eyeFixed_lmk_CenterOfHeadMass is not set!" << std::endl );
     }
     else
     {
@@ -603,9 +603,9 @@ public:
   itkGetConstMacro( DoPowell, bool );
 
   void
-  SetCenterOfHeadMass( const SImageType::PointType & centerOfHeadMass )
+  Setorig_lmk_CenterOfHeadMass( const SImageType::PointType & orig_lmk_CenterOfHeadMass )
   {
-    this->m_CenterOfHeadMass = centerOfHeadMass;
+    this->m_CenterOfHeadMass = orig_lmk_CenterOfHeadMass;
     this->m_CenterOfHeadMassIsSet = true;
   }
 
@@ -615,7 +615,7 @@ private:
   {
     if ( !m_CenterOfHeadMassIsSet )
     {
-      itkGenericExceptionMacro( << "ERROR: m_CenterOfHeadMassInFixedEyeSpace is not set!" << std::endl );
+      itkGenericExceptionMacro( << "ERROR: m_eyeFixed_lmk_CenterOfHeadMass is not set!" << std::endl );
     }
     return this->m_CenterOfHeadMass;
   }

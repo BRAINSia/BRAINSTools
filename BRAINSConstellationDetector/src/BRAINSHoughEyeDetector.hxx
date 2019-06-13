@@ -182,7 +182,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
   this->m_NbOfThreads = 64;
   this->m_SamplingRatio = .2;
   this->m_HoughEyeDetectorMode = 1; // for T1-weighted image
-  this->m_CenterOfHeadMass.Fill( -9999.87654321 );
+  this->m_orig_lmk_CenterOfHeadMass.Fill( -9999.87654321 );
 
   this->m_R1 = 30;
   this->m_R2 = 120;
@@ -194,20 +194,18 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
   /** Output parameters */
   this->m_AccumulatorImage = TInputImage::New();
   this->m_RoIImage = TInputImage::New();
-  this->m_LE.Fill( 123 );
-  this->m_RE.Fill( 123 );
+  this->m_orig_lmk_LE.Fill( 123 );
+  this->m_orig_lmk_RE.Fill( 123 );
   this->m_Failure = false;
 
   this->m_MaxInputPixelValue = 0;
   this->m_MinInputPixelValue = 0;
-  this->m_OutputImage = TOutputImage::New();
 
   this->m_MaxInputPixelValue = -1234;
   this->m_MinInputPixelValue = 1234;
 
   /** Internal parameters */
-  this->m_VersorTransform = VersorTransformType::New();
-  this->m_InvVersorTransform = VersorTransformType::New();
+  this->m_orig2eyeFixedTransform = VersorTransformType::New();
 }
 
 template < typename TInputImage, typename TOutputImage >
@@ -245,7 +243,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
           image->TransformIndexToPhysicalPoint( It1.GetIndex(), currPt );
 
           // Center of head mass to current vector
-          const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_CenterOfHeadMass;
+          const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_orig_lmk_CenterOfHeadMass;
 
           // posterior/anterior component of the vector
           const float CMtoCurrPA = CMtoCurrVec * unitVectorAnterior;
@@ -407,16 +405,16 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     {
       for ( unsigned int i = 0; i < Dimension; ++i )
       {
-        this->m_LE[i] = physicalEye1[i];
-        this->m_RE[i] = physicalEye2[i];
+        this->m_orig_lmk_LE[i] = physicalEye1[i];
+        this->m_orig_lmk_RE[i] = physicalEye2[i];
       }
     }
     else
     {
       for ( unsigned int i = 0; i < Dimension; ++i )
       {
-        this->m_LE[i] = physicalEye2[i]; // eye2 is on the left
-        this->m_RE[i] = physicalEye1[i];
+        this->m_orig_lmk_LE[i] = physicalEye2[i]; // eye2 is on the left
+        this->m_orig_lmk_RE[i] = physicalEye1[i];
       }
     }
 
@@ -424,15 +422,8 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
      * Metrics Collection
      */
 
-    this->m_VersorTransform = ResampleFromEyePoints< TInputImage, TOutputImage >( this->m_LE, this->m_RE, image );
-    this->m_OutputImage = RigidResampleInPlayByVersor3D< TInputImage, TOutputImage >( image, this->m_VersorTransform );
-
-    // Get the inverse transform
-    if ( !m_VersorTransform->GetInverse( this->m_InvVersorTransform ) )
-    {
-      itkGenericExceptionMacro( "Cannot get the inverse transform from Hough eye detector!" );
-    }
-    this->GraftOutput( this->m_OutputImage );
+    this->m_orig2eyeFixedTransform =
+      ResampleFromEyePoints< TInputImage, TOutputImage >( this->m_orig_lmk_LE, this->m_orig_lmk_RE, image );
   }
 }
 

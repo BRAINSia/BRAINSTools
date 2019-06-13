@@ -278,15 +278,15 @@ main( int argc, char * argv[] )
     SImageType::PointType origCEC;
     origCEC.SetToMidPoint( origLE, origRE );
 
-    SImageType::PointType centerOfHeadMass = GetCenterOfHeadMass( image );
+    SImageType::PointType orig_lmk_CenterOfHeadMass = GetCenterOfHeadMass( image );
 
     // original input volume from the training set
     // transforms image to MSP aligned voxel lattice
-    RigidTransformType::Pointer Tmsp = RigidTransformType::New();
+    RigidTransformType::Pointer eyeFixed2msp_lmk_tfm = RigidTransformType::New();
     SImageType::Pointer         volumeMSP;
     double                      c_c = 0;
 
-    ComputeMSP( image, Tmsp, volumeMSP, centerOfHeadMass, mspQualityLevel, c_c );
+    ComputeMSP( image, eyeFixed2msp_lmk_tfm, volumeMSP, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c );
 
     if ( globalImagedebugLevel > 2 )
     {
@@ -298,7 +298,7 @@ main( int argc, char * argv[] )
 
     // Compute the transform from original space to the AC-PC aligned space using Reflective Correlation method
     //    RigidTransformType::Pointer invTmsp = RigidTransformType::New();
-    //    Tmsp->GetInverse(invTmsp);
+    //    eyeFixed2msp_lmk_tfm->GetInverse(invTmsp);
 
     // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
     // AC and PC points
@@ -327,7 +327,7 @@ main( int argc, char * argv[] )
     //////////////////////////////////////////////////////////////////
 
     // Transform points based on the new transform
-    cm_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint( centerOfHeadMass );
+    cm_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint( orig_lmk_CenterOfHeadMass );
     rp_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint( origRP );
     ac_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint( origAC );
     pc_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint( origPC );

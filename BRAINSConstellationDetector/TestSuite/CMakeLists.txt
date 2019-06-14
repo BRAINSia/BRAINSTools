@@ -618,6 +618,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}}
     --writeBranded2DImage ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.png)
 
+if (0)
   set(BCDTestName BCDTest_inputLandmarksEMSP)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
@@ -635,7 +636,9 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}}
     --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv})
   set_tests_properties(${BCDTestName} PROPERTIES TIMEOUT 9876)
-
+else()
+  message(STATUS "BCDTest_inputLandmarksEMSP test needs to be re written, and XML file updated with new flag")
+endif()
   set(BCDTestName BCDTestForLandmarkCompare)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>

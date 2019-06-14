@@ -644,7 +644,7 @@ landmarksConstellationDetector::DoResampleInPlace( const SImageType::ConstPointe
 void
 landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 {
-  LandmarksMapType local_msp_lmks; // named points in EMSP space
+
   std::cout << "\nEstimating MSP..." << std::endl;
 
   // save the result that whether we are going to process all the landmarks
@@ -829,6 +829,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
   orig2eyeFixed_lmk_tfm = VersorTransformType::New();
   this->m_orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
 
+  // TODO:  ERROR
   VersorTransformType::Pointer eyeFixed2msp_lmk_tfm = VersorTransformType::New();
   this->m_test_orig2msp_img_tfm->GetInverse( eyeFixed2msp_lmk_tfm );
 
@@ -847,16 +848,18 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
     SImageType::PointType::VectorType RPtoPC;
 
     SImageType::PointType mspSpaceCEC;
+    {
+      SImageType::PointType eyeFixed_LE =
+        eyeFixed2msp_lmk_tfm->TransformPoint( orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmk_LE ) );
+      SImageType::PointType eyeFixed_RE =
+        eyeFixed2msp_lmk_tfm->TransformPoint( orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmk_RE ) );
 
-    local_msp_lmks["LE"] =
-      eyeFixed2msp_lmk_tfm->TransformPoint( orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmk_LE ) );
-    local_msp_lmks["RE"] =
-      eyeFixed2msp_lmk_tfm->TransformPoint( orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmk_RE ) );
 
-    mspSpaceCEC.SetToMidPoint( local_msp_lmks["LE"], local_msp_lmks["RE"] );
-    mspSpaceCEC[0] = 0; // Search starts on the estimated MSP
-
-    std::cout << "\nPerforming morphmetric search + local search..." << std::endl;
+      mspSpaceCEC.SetToMidPoint( eyeFixed_LE, eyeFixed_RE );
+      mspSpaceCEC[0] = 0; // Search starts on the estimated MSP
+    }
+    std::cout << "\nPerforming morpohmetric search + local search..." << std::endl;
+    LandmarksMapType local_msp_lmks; // named points in EMSP space
     {
       /*
        * Search for MPJ ( RP )

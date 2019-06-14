@@ -124,7 +124,7 @@ public:
   }
 
   RigidTransformType::Pointer
-  GeteyeFixed2msp_img_tfm() const
+  Getorig2msp_img_tfm() const
   {
     RigidTransformType::Pointer value = RigidTransformType::New();
 

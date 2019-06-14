@@ -221,36 +221,36 @@
             <label>forceACPoint</label>
             <longflag>forceACPoint</longflag>
             <description>
-                Use this flag to manually specify the AC point from the original image on the command line.
+                Manually specify the AC point from the original image in RAS coordinates (i.e. Slicer coordinates).
             </description>
-            <default>0</default>
+            <default></default>
         </float-vector>
         <float-vector>
             <name>forcePCPoint</name>
             <label>forcePCPoint</label>
             <longflag>forcePCPoint</longflag>
             <description>
-                Use this flag to manually specify the PC point from the original image on the command line.
+                Manually specify the PC point from the original image in RAS coordinates (i.e. Slicer coordinates).
             </description>
-            <default>0</default>
+            <default></default>
         </float-vector>
         <float-vector>
             <name>forceVN4Point</name>
             <label>forceVN4Point</label>
             <longflag>forceVN4Point</longflag>
             <description>
-                Use this flag to manually specify the VN4 point from the original image on the command line.
+                Manually specify the VN4 point from the original image in RAS coordinates (i.e. Slicer coordinates).
             </description>
-            <default>0</default>
+            <default></default>
         </float-vector>
         <float-vector>
             <name>forceRPPoint</name>
             <label>forceRPPoint</label>
             <longflag>forceRPPoint</longflag>
             <description>
-                Use this flag to manually specify the RP point from the original image on the command line.
+                Manually specify the RP point from the original image in RAS coordinates (i.e. Slicer coordinates).
             </description>
-            <default>0</default>
+            <default></default>
         </float-vector>
         <file fileExtensions=".fcsv">
             <name>inputLandmarksEMSP</name>

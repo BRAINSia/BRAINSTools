@@ -74,13 +74,13 @@ public:
   void
   Setorig_lmks_NamedPoint( const std::string & NamedPoint, const SImageType::PointType & PointValue )
   {
-    this->m_eyeFixed_lmks[NamedPoint] = PointValue;
+    this->m_orig_lmks[NamedPoint] = PointValue;
   }
 
   const LandmarksMapType &
   Getorig_lmks() const
   {
-    return this->m_eyeFixed_lmks;
+    return this->m_orig_lmks;
   }
 
   void
@@ -133,8 +133,8 @@ public:
   {
     RigidTransformType::Pointer value = RigidTransformType::New();
 
-    value->SetFixedParameters( this->m_eyeFixed2msp_img_tfm->GetFixedParameters() );
-    value->SetParameters( this->m_eyeFixed2msp_img_tfm->GetParameters() );
+    value->SetFixedParameters( this->m_test_orig2msp_img_tfm->GetFixedParameters() );
+    value->SetParameters( this->m_test_orig2msp_img_tfm->GetParameters() );
     return value;
   }
 
@@ -323,12 +323,13 @@ private:
   int                           m_mspQualityLevel;
   std::string                   m_ResultsDir;
 
-  // TODO Add this concept that is clearly needed. LandmarksMapType m_orig_lmks;
-  LandmarksMapType m_eyeFixed_lmks; // named points in the
-                                    // original space
-                                    // even before the Hough eye
-                                    // detector
 
+  LandmarksMapType m_orig_lmks; // named points in the
+                                // original space
+                                // even before the Hough eye
+                                // detector
+  // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
+  // LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks;
   LandmarksMapType m_msp_lmks; // named points in EMSP space
 
   std::vector< std::string > m_MidlinePointsList; // name list of the landmarks
@@ -336,8 +337,8 @@ private:
                                                   // should be treated as
                                                   // midline landmarks
 
-  RigidTransformType::Pointer  m_eyeFixed2msp_img_tfm;
-  VersorTransformType::Pointer m_orig2msp_tfm;
+  RigidTransformType::Pointer  m_test_orig2msp_img_tfm;
+  VersorTransformType::Pointer m_orig2msp_img_tfm;
 
   // Wei: Read in LE, RE value for linear model estimation
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;

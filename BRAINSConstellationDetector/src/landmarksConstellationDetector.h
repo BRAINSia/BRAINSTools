@@ -270,8 +270,8 @@ private:
   void
   DoResampleInPlace( const SImageType::ConstPointer, const RigidTransformType::ConstPointer, SImageType::Pointer & );
 
-  VersorTransformType::Pointer
-  Compute_orig2msp_img_tfm();
+  static VersorTransformType::Pointer
+  Compute_orig2msp_img_tfm( const LandmarksMapType & updated_lmks );
 
   // Linear model estimation using EPCA
   void

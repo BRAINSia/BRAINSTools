@@ -54,16 +54,13 @@ GetLandmarkTransformFromImageTransform( VersorTransformType::ConstPointer orig2m
 }
 
 VersorTransformType::Pointer
-landmarksConstellationDetector::Compute_orig2msp_img_tfm()
+landmarksConstellationDetector::Compute_orig2msp_img_tfm( const LandmarksMapType & updated_lmks )
 {
   SImageType::PointType ZeroCenter;
   ZeroCenter.Fill( 0.0 );
 
   RigidTransformType::Pointer orig2msp_lmk_tfm_estimate =
-    computeTmspFromPoints( GetNamedPointFromLandmarkList( this->Getorig_lmks(), "RP" ),
-                           GetNamedPointFromLandmarkList( this->Getorig_lmks(), "AC" ),
-                           GetNamedPointFromLandmarkList( this->Getorig_lmks(), "PC" ),
-                           ZeroCenter );
+    computeTmspFromPoints( updated_lmks.at( "RP" ), updated_lmks.at( "AC" ), updated_lmks.at( "PC" ), ZeroCenter );
 
   VersorTransformType::Pointer orig2msp_lmk_tfm_cleaned = VersorTransformType::New();
   orig2msp_lmk_tfm_cleaned->SetFixedParameters( orig2msp_lmk_tfm_estimate->GetFixedParameters() );
@@ -1189,7 +1186,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       // Compute the AC-PC aligned transform
       // Note for the sake of EPCA, we need the transform at this stage
       // so that the method is robust against rotation
-      this->m_orig2msp_img_tfm = this->Compute_orig2msp_img_tfm();
+      this->m_orig2msp_img_tfm = this->Compute_orig2msp_img_tfm( m_orig_lmks_constant );
       // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
       VersorTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform( this->m_orig2msp_img_tfm.GetPointer() );

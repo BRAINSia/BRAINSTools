@@ -1220,15 +1220,9 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         // Build up an evolutionary processing list
         // order: RP, AC, PC, VN4, LE, RE, ...
         // Note this order should comply with the order we defined in LLS model
-        std::vector< std::string > processingList;
-        processingList.emplace_back( "RP" );
-        processingList.emplace_back( "AC" );
-        processingList.emplace_back( "PC" );
-        processingList.emplace_back( "VN4" );
-        processingList.emplace_back( "LE" );
-        processingList.emplace_back( "RE" );
-        unsigned int numBaseLandmarks = 6;
-        unsigned int dim = 3;
+        std::vector< std::string > processingList{ "RP", "AC", "PC", "VN4", "LE", "RE" };
+        unsigned int               numBaseLandmarks = 6;
+        unsigned int               dim = 3;
         for ( unsigned int ii = 1; ii <= m_LlsMatrices.size(); ++ii )
         {
           // The processing order is indicated by the length of EPCA coefficient
@@ -1251,9 +1245,10 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
           if ( this->m_msp_lmks.find( iit->first ) != this->m_msp_lmks.end() )
           {
             std::cout << "Skip estimation, directly load from file." << std::endl;
-            this->m_orig_lmks[iit->first] =
-              this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks[iit->first] );
-            msp_lmks[iit->first] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks[iit->first] );
+
+            // HACK : The following looks like an identity mapping
+            msp_lmks[iit->first] = orig2msp_lmk_tfm->TransformPoint(
+              this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks[iit->first] ) );
             raw_msp_lmks[iit->first] = msp_lmks[iit->first];
           }
           else

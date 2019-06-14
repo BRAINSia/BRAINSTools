@@ -1095,60 +1095,68 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         }
       }
 
+      // ============================================================================================
+      //  Update landmark points
+
+
       // After finding RP, AC, PC, we can compute the versor transform for
       // registration
       // Also in this stage, we store some results for later use
       // Save named points in original space
       if ( !hasUserForcedRPPoint )
       {
-        this->m_orig_lmks_constant["RP"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_RP_Candidate );
+        this->m_orig_lmks_updated["RP"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_RP_Candidate );
       }
 
       if ( !hasUserForcedVN4Point )
       {
-        this->m_orig_lmks_constant["VN4"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_VN4_Candidate );
+        this->m_orig_lmks_updated["VN4"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_VN4_Candidate );
       }
 
       if ( !hasUserForcedACPoint )
       {
-        this->m_orig_lmks_constant["AC"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_AC_Candidate );
+        this->m_orig_lmks_updated["AC"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_AC_Candidate );
       }
 
       if ( !hasUserForcedPCPoint )
       {
-        this->m_orig_lmks_constant["PC"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_PC_Candiate );
+        this->m_orig_lmks_updated["PC"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_PC_Candiate );
       }
 
-      this->m_orig_lmks_constant["CM"] =
+      this->m_orig_lmks_updated["CM"] =
         this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmk_CenterOfHeadMass );
 
       if ( !hasUserSpecEyeCenterInfo )
       {
-        LandmarksMapType & orig_lmks = m_orig_lmks_constant; // BUG: Something is amiss here
         if ( !hasUserForcedRPPoint )
         {
-          orig_lmks["RP"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "RP" ) );
+          m_orig_lmks_updated["RP"] =
+            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "RP" ) );
         }
         if ( !hasUserForcedVN4Point )
         {
-          orig_lmks["VN4"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "VN4" ) );
+          m_orig_lmks_updated["VN4"] =
+            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "VN4" ) );
         }
         if ( !hasUserForcedACPoint )
         {
-          orig_lmks["AC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "AC" ) );
+          m_orig_lmks_updated["AC"] =
+            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "AC" ) );
         }
         if ( !hasUserForcedPCPoint )
         {
-          orig_lmks["PC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "PC" ) );
+          m_orig_lmks_updated["PC"] =
+            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "PC" ) );
         }
-        orig_lmks["CM"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "CM" ) );
-        orig_lmks["LE"] = this->m_orig_lmk_LE;
-        orig_lmks["RE"] = this->m_orig_lmk_RE;
+        m_orig_lmks_updated["CM"] =
+          this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "CM" ) );
+        m_orig_lmks_updated["LE"] = this->m_orig_lmk_LE;
+        m_orig_lmks_updated["RE"] = this->m_orig_lmk_RE;
       }
       else
       {
-        this->m_orig_lmks_constant["LE"] = this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks.at( "LE" ) );
-        this->m_orig_lmks_constant["RE"] = this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks.at( "RE" ) );
+        this->m_orig_lmks_updated["LE"] = this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks.at( "LE" ) );
+        this->m_orig_lmks_updated["RE"] = this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks.at( "RE" ) );
       }
 
       // Write some debug images
@@ -1186,7 +1194,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       // Compute the AC-PC aligned transform
       // Note for the sake of EPCA, we need the transform at this stage
       // so that the method is robust against rotation
-      this->m_orig2msp_img_tfm = this->Compute_orig2msp_img_tfm( m_orig_lmks_constant );
+      this->m_orig2msp_img_tfm = this->Compute_orig2msp_img_tfm( m_orig_lmks_updated );
       // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
       VersorTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform( this->m_orig2msp_img_tfm.GetPointer() );
@@ -1286,7 +1294,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             msp_lmks[iit->first][2] = raw_msp_lmks[iit->first][2];
 
             // Obtain the position of the current landmark in other spaces
-            this->m_orig_lmks_constant[iit->first] =
+            this->m_orig_lmks_updated[iit->first] =
               this->m_orig2msp_img_tfm->TransformPoint( msp_lmks.at( iit->first ) );
             if ( !hasUserSpecEyeCenterInfo )
             {
@@ -1318,11 +1326,11 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
                                      iit->first );
 
               // Update landmarks in input and ACPC-aligned space
-              this->m_orig_lmks_constant[iit->first] =
+              this->m_orig_lmks_updated[iit->first] =
                 this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmks.at( iit->first ) );
               if ( !hasUserSpecEyeCenterInfo )
               {
-                this->m_orig_lmks_constant[iit->first] =
+                this->m_orig_lmks_updated[iit->first] =
                   this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( iit->first ) );
               }
               msp_lmks[iit->first] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_constant.at( iit->first ) );

@@ -50,7 +50,8 @@ class landmarksConstellationDetector
 public:
   landmarksConstellationDetector( const LandmarksMapType & orig_lmks )
     : m_mspQualityLevel( 1 )
-    , m_orig_lmks_constant{ orig_lmks }
+    , m_orig_lmks_updated{ orig_lmks } // Initialize the updated landmarks
+    , m_orig_lmks_constant{ m_orig_lmks_updated }
     , m_HoughEyeFailure( false )
   {
     // Build midline landmarks name list
@@ -183,11 +184,10 @@ public:
     m_eyeFixed_lmk_CenterOfHeadMass = eyeFixed_lmk_CenterOfHeadMass;
   }
 
-  void
-  Setorig_lmk_CenterOfHeadMass( const SImageType::PointType & orig_lmk_CenterOfHeadMass )
-  {
-    m_orig_lmk_CenterOfHeadMass = orig_lmk_CenterOfHeadMass;
-  }
+  //  void Setorig_lmk_CenterOfHeadMass( const SImageType::PointType& orig_lmk_CenterOfHeadMass)
+  //  {
+  //    m_orig_lmk_CenterOfHeadMass = orig_lmk_CenterOfHeadMass;
+  //  }
 
   void
   SetLlsMeans( std::map< std::string, std::vector< double > > & llsMeans )
@@ -317,8 +317,9 @@ private:
   std::string                   m_ResultsDir;
 
 
-  LandmarksMapType m_orig_lmks_constant; // named points in the original space
-  // LandmarksMapType m_orig_lmks; //TODO: Need this value too
+  LandmarksMapType         m_orig_lmks_updated;  // TODO: Need this value too
+  const LandmarksMapType & m_orig_lmks_constant; // named points in the original space
+
   // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
   // LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks_constant;
   LandmarksMapType m_msp_lmks; // named points in EMSP space
@@ -340,7 +341,7 @@ private:
   // SImageType::PointType m_ReferencePointAC;
   // SImageType::PointType m_ReferencePointPC;
   SImageType::PointType m_eyeFixed_lmk_CenterOfHeadMass;
-  SImageType::PointType m_orig_lmk_CenterOfHeadMass;
+  // HACK:  MOVE THIS TO orig_lmk_constant  SImageType::PointType m_orig_lmk_CenterOfHeadMass;
 
   // Store linear model parameters
   // Note each matrix of m_LlsMatrices is actually cascaded by two mapping:

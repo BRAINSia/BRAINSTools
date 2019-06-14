@@ -594,9 +594,12 @@ public:
     {
       defineTemplateIndexLocations(
         this->GetRadius( it2->first ), this->GetHeight( it2->first ), this->m_VectorIndexLocations[it2->first] );
-      printf( "%s template size = %u voxels\n",
-              it2->first.c_str(),
-              static_cast< unsigned int >( this->m_VectorIndexLocations[it2->first].size() ) );
+#if 0
+        {
+          printf( "%s template size = %u voxels\n", it2->first.c_str(),
+                  static_cast<unsigned int>( this->m_VectorIndexLocations[it2->first].size() ) );
+        }
+#endif
       if ( CreatingModel )
       {
         // Allocate the outter dim for all datasets

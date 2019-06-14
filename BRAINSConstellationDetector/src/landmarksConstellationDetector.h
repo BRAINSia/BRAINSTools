@@ -208,12 +208,6 @@ public:
     this->m_SearchRadii = radii;
   }
 
-  //  void Setmsp_lmks( LandmarksMapType landmarks)
-  //  {
-  //    m_msp_lmks.clear();
-  //    m_msp_lmks.insert( landmarks.begin(), landmarks.end() );
-  //  }
-
   void
   Compute( SImageType::Pointer original_space_image );
 
@@ -322,7 +316,7 @@ private:
 
   // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
   LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks_updated;
-  LandmarksMapType   m_msp_lmks; // named points in EMSP space
+
 
   std::vector< std::string > m_MidlinePointsList; // name list of the landmarks
                                                   // that

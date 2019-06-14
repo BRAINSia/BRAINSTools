@@ -235,16 +235,16 @@ public:
   // Set Advanced Inputs
 
   /** Set force AC point */
-  VECTORitkSetMacro( ForceACPoint, std::vector< float > );
+  VECTORitkSetMacro( Force_orig_lmk_ACPointLPS, std::vector< float > );
 
   /** Set force PC point */
-  VECTORitkSetMacro( ForcePCPoint, std::vector< float > );
+  VECTORitkSetMacro( Force_orig_lmk_PCPointLPS, std::vector< float > );
 
   /** Set force VN4 point */
-  VECTORitkSetMacro( ForceVN4Point, std::vector< float > );
+  VECTORitkSetMacro( Force_orig_lmk_VN4PointLPS, std::vector< float > );
 
   /** Set force MPJ point */
-  VECTORitkSetMacro( ForceRPPoint, std::vector< float > );
+  VECTORitkSetMacro( Force_orig_lmk_RPPointLPS, std::vector< float > );
 
   /** Set MPJ search radius */
   itkSetMacro( RadiusMPJ, double );
@@ -356,10 +356,10 @@ protected:
   /** Advanced parameters */
   /** Manual Override */
   // Inputs
-  std::vector< float > m_ForceACPoint;  // default = 0.
-  std::vector< float > m_ForcePCPoint;  // default = 0.
-  std::vector< float > m_ForceVN4Point; // default = 0.
-  std::vector< float > m_ForceRPPoint;  // default = 0.
+  std::vector< float > m_Force_orig_lmk_ACPointLPS;  // default = 0.
+  std::vector< float > m_Force_orig_lmk_PCPointLPS;  // default = 0.
+  std::vector< float > m_Force_orig_lmk_VN4PointLPS; // default = 0.
+  std::vector< float > m_Force_orig_lmk_RPPointLPS;  // default = 0.
 
   /** Model Override */
   // Inputs

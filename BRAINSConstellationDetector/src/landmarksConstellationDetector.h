@@ -323,6 +323,7 @@ private:
   int                           m_mspQualityLevel;
   std::string                   m_ResultsDir;
 
+  // TODO Add this concept that is clearly needed. LandmarksMapType m_orig_lmks;
   LandmarksMapType m_eyeFixed_lmks; // named points in the
                                     // original space
                                     // even before the Hough eye

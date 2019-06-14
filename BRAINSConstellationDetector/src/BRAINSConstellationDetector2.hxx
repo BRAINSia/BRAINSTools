@@ -86,10 +86,10 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDe
   /** Advanced parameters */
   /** Manual Override */
   // Inputs
-  this->m_ForceACPoint.push_back( 0 );
-  this->m_ForcePCPoint.push_back( 0 );
-  this->m_ForceVN4Point.push_back( 0 );
-  this->m_ForceRPPoint.push_back( 0 );
+  this->m_Force_orig_lmk_ACPointLPS.clear();
+  this->m_Force_orig_lmk_PCPointLPS.clear();
+  this->m_Force_orig_lmk_VN4PointLPS.clear();
+  this->m_Force_orig_lmk_RPPointLPS.clear();
 
   /** Model Override */
   // Inputs
@@ -265,39 +265,39 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   }
 
   { /** Force setting the landmark points from the command line. */
-    if ( this->m_ForceACPoint.size() == 3 )
+    if ( this->m_Force_orig_lmk_ACPointLPS.size() == 3 )
     {
       SImageType::PointType manualACPoint;
       for ( int i = 0; i < 3; i++ )
       {
-        manualACPoint[i] = this->m_ForceACPoint[i];
+        manualACPoint[i] = this->m_Force_orig_lmk_ACPointLPS[i];
       }
       myDetector.Setorig_lmks_NamedPoint( std::string( "AC" ), manualACPoint );
     }
-    if ( this->m_ForcePCPoint.size() == 3 )
+    if ( this->m_Force_orig_lmk_PCPointLPS.size() == 3 )
     {
       SImageType::PointType manualPCPoint;
       for ( int i = 0; i < 3; i++ )
       {
-        manualPCPoint[i] = this->m_ForcePCPoint[i];
+        manualPCPoint[i] = this->m_Force_orig_lmk_PCPointLPS[i];
       }
       myDetector.Setorig_lmks_NamedPoint( std::string( "PC" ), manualPCPoint );
     }
-    if ( this->m_ForceVN4Point.size() == 3 )
+    if ( this->m_Force_orig_lmk_VN4PointLPS.size() == 3 )
     {
       SImageType::PointType manualVN4Point;
       for ( int i = 0; i < 3; i++ )
       {
-        manualVN4Point[i] = this->m_ForceVN4Point[i];
+        manualVN4Point[i] = this->m_Force_orig_lmk_VN4PointLPS[i];
       }
       myDetector.Setorig_lmks_NamedPoint( std::string( "VN4" ), manualVN4Point );
     }
-    if ( this->m_ForceRPPoint.size() == 3 )
+    if ( this->m_Force_orig_lmk_RPPointLPS.size() == 3 )
     {
       SImageType::PointType manualRPPoint;
       for ( int i = 0; i < 3; i++ )
       {
-        manualRPPoint[i] = this->m_ForceRPPoint[i];
+        manualRPPoint[i] = this->m_Force_orig_lmk_RPPointLPS[i];
       }
       myDetector.Setorig_lmks_NamedPoint( std::string( "RP" ), manualRPPoint );
     }

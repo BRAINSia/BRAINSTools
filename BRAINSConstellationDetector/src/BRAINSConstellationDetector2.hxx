@@ -361,7 +361,8 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
 
   if ( globalImagedebugLevel > 3 )
   {
-    SImageType::Pointer TaggedOriginalImage = myDetector.GetTaggedImage( this->m_CleanedIntensityOriginalInputImage );
+    const SImageType::Pointer TaggedOriginalImage =
+      myDetector.GetTaggedImage( this->m_CleanedIntensityOriginalInputImage );
     itkUtil::WriteImage< SImageType >( TaggedOriginalImage, this->m_ResultsDir + "/TAGGED_POINTS.nii.gz" );
     {
       SImageType::Pointer isoTaggedImage =
@@ -382,14 +383,14 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
       itkUtil::WriteImage< SImageType >( VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz" );
     }
     {
-      RigidTransformType::Pointer OrigSpaceCenterOfGravityCentered = myDetector.GeteyeFixed2msp_img_tfm();
-      SImageType::Pointer         RigidMSPImage =
+      RigidTransformType::Pointer orig2msp_img_tfm = myDetector.Getorig2msp_img_tfm();
+      SImageType::Pointer         msp_img =
         TransformResample< SImageType, SImageType >( TaggedOriginalImage.GetPointer(),
                                                      MakeIsoTropicReferenceImage().GetPointer(),
                                                      BackgroundFillValue,
                                                      GetInterpolatorFromString< SImageType >( "Linear" ).GetPointer(),
-                                                     OrigSpaceCenterOfGravityCentered.GetPointer() );
-      itkUtil::WriteImage< SImageType >( RigidMSPImage, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz" );
+                                                     orig2msp_img_tfm.GetPointer() );
+      itkUtil::WriteImage< SImageType >( msp_img, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz" );
     }
   }
 

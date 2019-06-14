@@ -214,12 +214,11 @@ public:
     this->m_SearchRadii = radii;
   }
 
-  void
-  Setmsp_lmks( LandmarksMapType landmarks )
-  {
-    m_msp_lmks.clear();
-    m_msp_lmks.insert( landmarks.begin(), landmarks.end() );
-  }
+  //  void Setmsp_lmks( LandmarksMapType landmarks)
+  //  {
+  //    m_msp_lmks.clear();
+  //    m_msp_lmks.insert( landmarks.begin(), landmarks.end() );
+  //  }
 
   void
   Compute( SImageType::Pointer original_space_image );

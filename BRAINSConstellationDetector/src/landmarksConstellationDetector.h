@@ -48,8 +48,9 @@ class landmarksConstellationDetector
   using ValMapType = std::map< std::string, float >;
 
 public:
-  landmarksConstellationDetector()
+  landmarksConstellationDetector( const LandmarksMapType & orig_lmks )
     : m_mspQualityLevel( 1 )
+    , m_orig_lmks_constant{ orig_lmks }
     , m_HoughEyeFailure( false )
   {
     // Build midline landmarks name list
@@ -68,13 +69,6 @@ public:
     this->m_MidlinePointsList.emplace_back( "mid_prim_inf" );
     this->m_MidlinePointsList.emplace_back( "mid_prim_sup" );
     this->m_MidlinePointsList.emplace_back( "mid_sup" );
-  }
-
-  // Force the setting of the point values to override those that were specified.
-  void
-  Setorig_lmks_NamedPoint( const std::string & NamedPoint, const SImageType::PointType & PointValue )
-  {
-    this->m_orig_lmks_constant[NamedPoint] = PointValue;
   }
 
   const LandmarksMapType &

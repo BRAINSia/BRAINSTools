@@ -1059,55 +1059,43 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       // registration
       // Also in this stage, we store some results for later use
       // Save named points in original space
+
       if ( !hasUserForcedRPPoint )
       {
-        this->m_orig_lmks_updated["RP"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_RP_Candidate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_RP_Candidate );
+
+        m_orig_lmks_updated["RP"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
       if ( !hasUserForcedVN4Point )
       {
-        this->m_orig_lmks_updated["VN4"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_VN4_Candidate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_VN4_Candidate );
+
+        m_orig_lmks_updated["VN4"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
       if ( !hasUserForcedACPoint )
       {
-        this->m_orig_lmks_updated["AC"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_AC_Candidate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_AC_Candidate );
+
+        m_orig_lmks_updated["AC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
       if ( !hasUserForcedPCPoint )
       {
-        this->m_orig_lmks_updated["PC"] = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_PC_Candiate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_PC_Candiate );
+
+        m_orig_lmks_updated["PC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
       this->m_orig_lmks_updated["CM"] =
         this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmk_CenterOfHeadMass );
 
 
-      { // TODO: THIS IS WRONG
-        if ( !hasUserForcedRPPoint )
-        {
-          m_eyeFixed_lmks["RP"] =
-            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "RP" ) );
-        }
-        if ( !hasUserForcedVN4Point )
-        {
-          m_eyeFixed_lmks["VN4"] =
-            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "VN4" ) );
-        }
-        if ( !hasUserForcedACPoint )
-        {
-          m_eyeFixed_lmks["AC"] =
-            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "AC" ) );
-        }
-        if ( !hasUserForcedPCPoint )
-        {
-          m_eyeFixed_lmks["PC"] =
-            this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "PC" ) );
-        }
-        m_eyeFixed_lmks["CM"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "CM" ) );
-        m_orig_lmks_updated["LE"] = this->m_orig_lmk_LE;
-        m_orig_lmks_updated["RE"] = this->m_orig_lmk_RE;
-      }
+      m_orig_lmks_updated["CM"] =
+        this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_constant.at( "CM" ) );
+      m_orig_lmks_updated["LE"] = this->m_orig_lmk_LE;
+      m_orig_lmks_updated["RE"] = this->m_orig_lmk_RE;
 
 
       // Write some debug images
@@ -1249,7 +1237,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             {
               local_msp_lmks_algo_found[Lls_info_pair->first] =
                 eyeFixed2msp_lmk_tfm->TransformPoint( orig2eyeFixed_lmk_tfm->TransformPoint(
-                  this->m_eyeFixed_lmks.at( Lls_info_pair->first ) ) ); // TODO: Verify this
+                  this->m_orig_lmks_updated.at( Lls_info_pair->first ) ) ); // TODO: Verify this
             }
 
 
@@ -1274,7 +1262,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
               this->m_orig_lmks_updated[Lls_info_pair->first] =
                 this->m_test_orig2msp_img_tfm->TransformPoint( local_msp_lmks_algo_found.at( Lls_info_pair->first ) );
               {
-                this->m_eyeFixed_lmks[Lls_info_pair->first] =
+                this->m_orig_lmks_updated[Lls_info_pair->first] =
                   this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_updated.at( Lls_info_pair->first ) );
               }
               msp_lmks_from_orig_space[Lls_info_pair->first] =

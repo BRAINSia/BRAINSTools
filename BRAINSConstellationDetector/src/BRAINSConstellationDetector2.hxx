@@ -228,7 +228,46 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
     this->m_CleanedIntensityOriginalInputImage = copyOfOriginalInputImage;
   }
 
-  landmarksConstellationDetector myDetector;
+  LandmarksMapType forced_orig_lmks;
+  { /** Force setting the landmark points from the command line. */
+    if ( this->m_Force_orig_lmk_ACPointLPS.size() == 3 )
+    {
+      SImageType::PointType manualACPoint;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualACPoint[i] = this->m_Force_orig_lmk_ACPointLPS[i];
+      }
+      forced_orig_lmks["AC"] = manualACPoint;
+    }
+    if ( this->m_Force_orig_lmk_PCPointLPS.size() == 3 )
+    {
+      SImageType::PointType manualPCPoint;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualPCPoint[i] = this->m_Force_orig_lmk_PCPointLPS[i];
+      }
+      forced_orig_lmks["PC"] = manualPCPoint;
+    }
+    if ( this->m_Force_orig_lmk_VN4PointLPS.size() == 3 )
+    {
+      SImageType::PointType manualVN4Point;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualVN4Point[i] = this->m_Force_orig_lmk_VN4PointLPS[i];
+      }
+      forced_orig_lmks["VN4"] = manualVN4Point;
+    }
+    if ( this->m_Force_orig_lmk_RPPointLPS.size() == 3 )
+    {
+      SImageType::PointType manualRPPoint;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualRPPoint[i] = this->m_Force_orig_lmk_RPPointLPS[i];
+      }
+      forced_orig_lmks["RP"] = manualRPPoint;
+    }
+  }
+  landmarksConstellationDetector myDetector( forced_orig_lmks );
   {
     // a little abuse of the eyeFixed_img_duplicator here
     LandmarkIO::DuplicatorType::Pointer eyeFixed_img_duplicator = LandmarkIO::DuplicatorType::New();
@@ -265,44 +304,6 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   myDetector.Setorig_lmk_RE( this->m_orig_lmk_RE );
   //    }
 
-  { /** Force setting the landmark points from the command line. */
-    if ( this->m_Force_orig_lmk_ACPointLPS.size() == 3 )
-    {
-      SImageType::PointType manualACPoint;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualACPoint[i] = this->m_Force_orig_lmk_ACPointLPS[i];
-      }
-      myDetector.Setorig_lmks_NamedPoint( std::string( "AC" ), manualACPoint );
-    }
-    if ( this->m_Force_orig_lmk_PCPointLPS.size() == 3 )
-    {
-      SImageType::PointType manualPCPoint;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualPCPoint[i] = this->m_Force_orig_lmk_PCPointLPS[i];
-      }
-      myDetector.Setorig_lmks_NamedPoint( std::string( "PC" ), manualPCPoint );
-    }
-    if ( this->m_Force_orig_lmk_VN4PointLPS.size() == 3 )
-    {
-      SImageType::PointType manualVN4Point;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualVN4Point[i] = this->m_Force_orig_lmk_VN4PointLPS[i];
-      }
-      myDetector.Setorig_lmks_NamedPoint( std::string( "VN4" ), manualVN4Point );
-    }
-    if ( this->m_Force_orig_lmk_RPPointLPS.size() == 3 )
-    {
-      SImageType::PointType manualRPPoint;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualRPPoint[i] = this->m_Force_orig_lmk_RPPointLPS[i];
-      }
-      myDetector.Setorig_lmks_NamedPoint( std::string( "RP" ), manualRPPoint );
-    }
-  }
 
   myDetector.SetatlasVolume( this->GetatlasVolume() );
   myDetector.SetatlasLandmarks( this->GetatlasLandmarks() );

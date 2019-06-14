@@ -74,13 +74,13 @@ public:
   void
   Setorig_lmks_NamedPoint( const std::string & NamedPoint, const SImageType::PointType & PointValue )
   {
-    this->m_orig_lmks[NamedPoint] = PointValue;
+    this->m_orig_lmks_constant[NamedPoint] = PointValue;
   }
 
   const LandmarksMapType &
   Getorig_lmks() const
   {
-    return this->m_orig_lmks;
+    return this->m_orig_lmks_constant;
   }
 
   void
@@ -323,12 +323,10 @@ private:
   std::string                   m_ResultsDir;
 
 
-  LandmarksMapType m_orig_lmks; // named points in the
-                                // original space
-                                // even before the Hough eye
-                                // detector
+  LandmarksMapType m_orig_lmks_constant; // named points in the original space
+  // LandmarksMapType m_orig_lmks; //TODO: Need this value too
   // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
-  // LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks;
+  // LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks_constant;
   LandmarksMapType m_msp_lmks; // named points in EMSP space
 
   std::vector< std::string > m_MidlinePointsList; // name list of the landmarks

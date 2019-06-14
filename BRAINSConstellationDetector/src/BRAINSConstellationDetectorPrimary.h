@@ -280,28 +280,29 @@ public:
     this->m_rescaleIntensitiesOutputRange = rescaleIntensitiesOutputRange;
   }
 
+
   void
-  SetForceACPoint( std::vector< float > forceACPoint )
+  SetForce_orig_lmk_ACPointRAS( std::vector< float > forceACPointRAS )
   {
-    this->m_forceACPoint = forceACPoint;
+    this->m_force_orig_lmk_ACPointLPS = RAS2LPS( forceACPointRAS, "AC" );
   }
 
   void
-  SetForcePCPoint( std::vector< float > forcePCPoint )
+  SetForce_orig_lmk_PCPointRAS( std::vector< float > forcePCPointRAS )
   {
-    this->m_forcePCPoint = forcePCPoint;
+    this->m_force_orig_lmk_PCPointLPS = RAS2LPS( forcePCPointRAS, "PC" );
   }
 
   void
-  SetForceVN4Point( std::vector< float > forceVN4Point )
+  SetForce_with_lmk_VN4PointRAS( std::vector< float > forceVN4PointRAS )
   {
-    this->m_forceVN4Point = forceVN4Point;
+    this->m_force_orig_lmk_VN4PointLPS = RAS2LPS( forceVN4PointRAS, "VN4" );
   }
 
   void
-  SetForceRPPoint( std::vector< float > forceRPPoint )
+  SetForce_with_lmk_RPPointRAS( std::vector< float > forceRPPointRAS )
   {
-    this->m_forceRPPoint = forceRPPoint;
+    this->m_force_orig_lmk_RPPointLPS = RAS2LPS( forceRPPointRAS, "RP" );
   }
 
   void
@@ -326,6 +327,28 @@ public:
   Compute( void );
 
 private:
+  static std::vector< float > &
+  RAS2LPS( std::vector< float > & RASlmk, std::string name )
+  {
+    if ( !RASlmk.empty() )
+    {
+      // If not empty, then only size 3 is allowed, and must negate first two elements.
+      if ( RASlmk.size() != 3 )
+      {
+        std::cerr << "Forced landmark requires 3 dimensions, " << RASlmk.size() << " provided for " << name << ". ";
+        for ( const auto e : RASlmk )
+        {
+          std::cerr << e << ", ";
+        }
+        std::cerr << std::endl;
+        RASlmk.clear();
+        exit( -1 );
+      }
+      RASlmk[0] *= -1.0f;
+      RASlmk[1] *= -1.0f;
+    }
+    return RASlmk;
+  }
   static ImagePointType
   localFindCenterHeadFunc( ImageType::ConstPointer img );
 
@@ -369,10 +392,10 @@ private:
 
   std::vector< int > m_rescaleIntensitiesOutputRange; // default = [40,4000]
 
-  std::vector< float > m_forceACPoint;  // default = 0.
-  std::vector< float > m_forcePCPoint;  // default = 0.
-  std::vector< float > m_forceVN4Point; // default = 0.
-  std::vector< float > m_forceRPPoint;  // default = 0.
+  std::vector< float > m_force_orig_lmk_ACPointLPS;  // default = 0.
+  std::vector< float > m_force_orig_lmk_PCPointLPS;  // default = 0.
+  std::vector< float > m_force_orig_lmk_VN4PointLPS; // default = 0.
+  std::vector< float > m_force_orig_lmk_RPPointLPS;  // default = 0.
 
   std::string m_resultsDir; // default = "./"
 

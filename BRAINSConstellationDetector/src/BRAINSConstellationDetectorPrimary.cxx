@@ -59,10 +59,10 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_interpolationMode = "Linear";
   this->m_rescaleIntensitiesOutputRange.push_back( 40 );
   this->m_rescaleIntensitiesOutputRange.push_back( 4000 );
-  this->m_forceACPoint.push_back( 0 );
-  this->m_forcePCPoint.push_back( 0 );
-  this->m_forceVN4Point.push_back( 0 );
-  this->m_forceRPPoint.push_back( 0 );
+  this->m_force_orig_lmk_ACPointLPS.clear();
+  this->m_force_orig_lmk_PCPointLPS.clear();
+  this->m_force_orig_lmk_VN4PointLPS.clear();
+  this->m_force_orig_lmk_RPPointLPS.clear();
   this->m_resultsDir = "./";
   this->m_atlasVolume = "";
   this->m_atlasLandmarks = "";
@@ -332,10 +332,10 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   dggwriter->Update();
 
 
-  constellation2->SetForceACPoint( this->m_forceACPoint ); // In original space
-  constellation2->SetForcePCPoint( this->m_forcePCPoint );
-  constellation2->SetForceVN4Point( this->m_forceVN4Point );
-  constellation2->SetForceRPPoint( this->m_forceRPPoint );
+  constellation2->SetForce_orig_lmk_ACPointLPS( this->m_force_orig_lmk_ACPointLPS ); // In original space
+  constellation2->SetForce_orig_lmk_PCPointLPS( this->m_force_orig_lmk_PCPointLPS );
+  constellation2->SetForce_orig_lmk_VN4PointLPS( this->m_force_orig_lmk_VN4PointLPS );
+  constellation2->SetForce_orig_lmk_RPPointLPS( this->m_force_orig_lmk_RPPointLPS );
 
   // tell the constellation detector if Hough eye detector fails
   // HACK remove this constellation2->SetHoughEyeFailure( houghEyeDetector->GetFailure() );

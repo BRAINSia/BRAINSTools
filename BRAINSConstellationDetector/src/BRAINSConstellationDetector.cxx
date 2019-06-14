@@ -123,10 +123,10 @@ main( int argc, char * argv[] )
   BCD.SetRescaleIntensitiesOutputRange( rescaleIntensitiesOutputRange );
   BCD.SetBackgroundFillValueString( backgroundFillValueString );
   BCD.SetInterpolationMode( interpolationMode );
-  BCD.SetForceACPoint( forceACPoint );
-  BCD.SetForcePCPoint( forcePCPoint );
-  BCD.SetForceVN4Point( forceVN4Point );
-  BCD.SetForceRPPoint( forceRPPoint );
+  BCD.SetForce_orig_lmk_ACPointRAS( forceACPoint );
+  BCD.SetForce_orig_lmk_PCPointRAS( forcePCPoint );
+  BCD.SetForce_with_lmk_VN4PointRAS( forceVN4Point );
+  BCD.SetForce_with_lmk_RPPointRAS( forceRPPoint );
   BCD.SetRadiusMPJ( radiusMPJ );
   BCD.SetRadiusAC( radiusAC );
   BCD.SetRadiusPC( radiusPC );

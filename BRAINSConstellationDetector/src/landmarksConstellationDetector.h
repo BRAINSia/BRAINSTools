@@ -321,8 +321,8 @@ private:
   const LandmarksMapType & m_orig_lmks_constant; // named points in the original space
 
   // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
-  // LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks_constant;
-  LandmarksMapType m_msp_lmks; // named points in EMSP space
+  LandmarksMapType & m_eyeFixed_lmks = m_orig_lmks_updated;
+  LandmarksMapType   m_msp_lmks; // named points in EMSP space
 
   std::vector< std::string > m_MidlinePointsList; // name list of the landmarks
                                                   // that

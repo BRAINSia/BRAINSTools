@@ -88,15 +88,15 @@ DoMultiQualityReflection( SImageType::Pointer & image, RigidTransformType::Point
 }
 
 void
-ComputeMSP( SImageType::Pointer image, RigidTransformType::Pointer & eyeFixed2msp_lmk_tfm,
+ComputeMSP( SImageType::Pointer image, RigidTransformType::Pointer & output_transform,
             SImageType::Pointer & transformedImage, const SImageType::PointType & orig_lmk_CenterOfHeadMass,
             const int qualityLevel, double & cc )
 {
   if ( qualityLevel == -1 ) // Assume image was pre-aligned outside of the
                             // program
   {
-    eyeFixed2msp_lmk_tfm = RigidTransformType::New();
-    eyeFixed2msp_lmk_tfm->SetIdentity();
+    output_transform = RigidTransformType::New();
+    output_transform->SetIdentity();
 
     itk::ImageDuplicator< SImageType >::Pointer MSP = itk::ImageDuplicator< SImageType >::New();
     MSP->SetInputImage( image );
@@ -108,7 +108,7 @@ ComputeMSP( SImageType::Pointer image, RigidTransformType::Pointer & eyeFixed2ms
     reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
     reflectionFunctor->Setorig_lmk_CenterOfHeadMass( orig_lmk_CenterOfHeadMass );
 
-    DoMultiQualityReflection( image, eyeFixed2msp_lmk_tfm, qualityLevel, reflectionFunctor );
+    DoMultiQualityReflection( image, output_transform, qualityLevel, reflectionFunctor );
 
     transformedImage = reflectionFunctor->GetMSPCenteredImage();
     cc = reflectionFunctor->GetCC();

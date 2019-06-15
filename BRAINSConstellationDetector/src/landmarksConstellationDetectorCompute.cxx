@@ -511,7 +511,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
             // Find search center by linear model estimation with
             // dimension reduction.
-            // The result will be stored into m_msp_lmks[Lls_info_pair->first]
+            // The result will be stored into m_msp_lmks[LlsMatrix_name]
             LinearEstimation( iteratively_updated_msp_lmks, processingList, numBaseLandmarks );
 
             // check whether it is midline landmark, set search range
@@ -529,14 +529,14 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
                 }
               }
             }
-            msp_lmks_from_orig_space[Lls_info_pair->first] = iteratively_updated_msp_lmks[Lls_info_pair->first];
+            msp_lmks_from_orig_space[LlsMatrix_name] = iteratively_updated_msp_lmks[LlsMatrix_name];
 
             // Obtain the position of the current landmark in other spaces
-            this->m_orig_lmks_updated[Lls_info_pair->first] =
-              this->m_orig2msp_img_tfm->TransformPoint( msp_lmks_from_orig_space.at( Lls_info_pair->first ) );
+            this->m_orig_lmks_updated[LlsMatrix_name] =
+              this->m_orig2msp_img_tfm->TransformPoint( msp_lmks_from_orig_space.at( LlsMatrix_name ) );
             {
-              msp_lmks_algo_found[Lls_info_pair->first] = eyeFixed2msp_lmk_tfm->TransformPoint(
-                orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( Lls_info_pair->first ) ) );
+              msp_lmks_algo_found[LlsMatrix_name] = eyeFixed2msp_lmk_tfm->TransformPoint(
+                orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( LlsMatrix_name ) ) );
             }
 
             // Enable local search
@@ -544,27 +544,27 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             {
               // local search
               double cc_Max = 0;
-              msp_lmks_algo_found[Lls_info_pair->first] =
+              msp_lmks_algo_found[LlsMatrix_name] =
                 FindCandidatePoints( this->m_msp_img,
                                      this->m_msp_img,
                                      localSearchRadiusLR,
-                                     this->m_SearchRadii[Lls_info_pair->first],
-                                     this->m_SearchRadii[Lls_info_pair->first],
-                                     msp_lmks_algo_found[Lls_info_pair->first].GetVectorFromOrigin(),
-                                     this->m_InputTemplateModel.GetTemplateMeans( Lls_info_pair->first ),
-                                     this->m_InputTemplateModel.m_VectorIndexLocations[Lls_info_pair->first],
+                                     this->m_SearchRadii[LlsMatrix_name],
+                                     this->m_SearchRadii[LlsMatrix_name],
+                                     msp_lmks_algo_found[LlsMatrix_name].GetVectorFromOrigin(),
+                                     this->m_InputTemplateModel.GetTemplateMeans( LlsMatrix_name ),
+                                     this->m_InputTemplateModel.m_VectorIndexLocations[LlsMatrix_name],
                                      cc_Max,
-                                     Lls_info_pair->first );
+                                     LlsMatrix_name );
 
               // Update landmarks in input and ACPC-aligned space
-              this->m_orig_lmks_updated[Lls_info_pair->first] =
-                this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found.at( Lls_info_pair->first ) );
+              this->m_orig_lmks_updated[LlsMatrix_name] =
+                this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found.at( LlsMatrix_name ) );
               {
-                this->m_orig_lmks_updated[Lls_info_pair->first] =
-                  this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_updated.at( Lls_info_pair->first ) );
+                this->m_orig_lmks_updated[LlsMatrix_name] =
+                  this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_updated.at( LlsMatrix_name ) );
               }
-              msp_lmks_from_orig_space[Lls_info_pair->first] =
-                orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( Lls_info_pair->first ) );
+              msp_lmks_from_orig_space[LlsMatrix_name] =
+                orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( LlsMatrix_name ) );
             }
           }
         } // End of arbitrary landmarks detection for the rest of "new" ones

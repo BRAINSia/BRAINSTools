@@ -295,8 +295,8 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   constellation2->Setorig_lmk_LE( orig_lmks.at( "LE" ) );
   constellation2->Setorig_lmk_RE( orig_lmks.at( "RE" ) );
 
-#if 0 // HACK: Probably need to undo a translation somewhere in other file
-  constellation2->Setorig_lmk_CenterOfHeadMass( orig_lmks.at("CM") );
+#if 1 // TODO HACK: Probably need to undo a translation somewhere in other file
+  constellation2->Setorig_lmk_CenterOfHeadMass( orig_lmks.at( "CM" ) );
 #else
   constellation2->SeteyeFixed_lmk_CenterOfHeadMass( eyeFixed_lmks.at( "CM" ) ); // This is likely wrong!
 #endif
@@ -454,13 +454,15 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   if ( this->m_outputLandmarksInInputSpace.compare( "" ) != 0 )
   {
     WriteITKtoSlicer3Lmk( this->m_outputLandmarksInInputSpace, this->m_outputLandmarksInInputSpaceMap );
-    std::cout << "The output landmarks list file in the original space is written." << std::endl;
+    std::cout << "The output landmarks list file in the original space is written. \n    "
+              << this->m_outputLandmarksInInputSpace << std::endl;
   }
 
   if ( this->m_outputLandmarksInACPCAlignedSpace.compare( "" ) != 0 )
   {
     WriteITKtoSlicer3Lmk( this->m_outputLandmarksInACPCAlignedSpace, this->m_outputLandmarksInACPCAlignedSpaceMap );
-    std::cout << "The output landmarks list file in the output space is written." << std::endl;
+    std::cout << "The output landmarks list file in the output space is written. \n    "
+              << this->m_outputLandmarksInACPCAlignedSpace << std::endl;
     if ( preferedOutputReferenceImage.compare( "" ) == 0 )
     {
       std::cout << "WARNING no aligned output volume is requested." << std::endl;

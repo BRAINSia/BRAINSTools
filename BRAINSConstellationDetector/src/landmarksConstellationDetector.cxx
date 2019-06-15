@@ -213,13 +213,6 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform( SImageT
 
     // Provide better masking of images
     {
-      // if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
-      //  {
-      //  std::cout
-      //    << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
-      //    << std::endl;
-      //  return EXIT_FAILURE;
-      //  }
       static constexpr unsigned int ROIAutoClosingSize = 4;
       static constexpr unsigned int ROIAutoDilateSize = 6;
       {
@@ -273,11 +266,6 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform( SImageT
         // First shift the transform
         this->m_orig2msp_img_tfm->Translate( translation, false );
       }
-
-      // LandmarkOrigToACPCTransform = GetLandmarkTransformFromImageTransform( this->m_orig2msp_img_tfm.GetPointer()  );
-      // VersorRigid3DTransformType::OutputPointType newacPointInACPCSpace =
-      // LandmarkOrigToACPCTransform->TransformPoint(GetNamedPointFromLandmarkList(updated_orig_lmks,"AC")); std::cout
-      // << "HACK: POST-FIXING" << newacPointInACPCSpace << std::endl;
       // TODO:  This still does not put it to (0,0,0) and it should.
     }
   }
@@ -677,12 +665,6 @@ landmarksConstellationDetector::LinearEstimation( LandmarksMapType &            
   tmp.SetVnlVector( this->m_LlsMatrices[newPointName] * Xi_t );
   newPoint = msp_lmks_linearly_estimated[processingList[0]] + tmp;
   msp_lmks_linearly_estimated[newPointName] = newPoint;
-
-  // debug
-  // std::cout << "Mi' = " << this->m_LlsMatrices[newPointName] << std::endl;
-  // std::cout << "Xi_t = " << Xi_t << std::endl;
-  // std::cout << "MPJ = " << msp_lmks_linearly_estimated[processingList[0]] << std::endl;
-  // std::cout << newPointName << " = " << newPoint << std::endl;
 }
 
 SImageType::PointType::VectorType

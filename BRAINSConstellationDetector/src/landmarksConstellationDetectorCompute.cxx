@@ -518,10 +518,9 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             // and modify search center accordingly
             double localSearchRadiusLR = this->m_SearchRadii[LlsMatrix_name];
             {
-              std::vector< std::string >::const_iterator midlineIt = this->m_MidlinePointsList.begin();
-              for ( ; midlineIt != this->m_MidlinePointsList.end(); ++midlineIt )
+              for ( const auto & midlineIt : m_MidlinePointsList )
               {
-                if ( ( *midlineIt ).compare( LlsMatrix_name ) == 0 )
+                if ( midlineIt.compare( LlsMatrix_name ) == 0 )
                 {
                   localSearchRadiusLR = searchRadiusLR;                 // a variable changed with err_MSP
                   iteratively_updated_msp_lmks[LlsMatrix_name][0] = 0.; // search starts near EMSP

@@ -139,12 +139,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
     CreatedebugPlaneImage( this->m_msp_img, MSP_ImagePlane );
   }
 
-  // HACK:  TODO:  DEBUG: Need to remove redundant need for volume and mask when
-  // they can be the same image ( perhaps with a threshold );
-  SImageType::Pointer mask_LR = this->m_msp_img;
-
-
-  // TODO:  ERROR
+  // TODO:  ERROR  Compute Center of Head Mas differently
   VersorTransformType::Pointer eyeFixed2msp_lmk_tfm = VersorTransformType::New();
   this->m_test_orig2msp_img_tfm->GetInverse( eyeFixed2msp_lmk_tfm );
 
@@ -192,7 +187,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         // radius in SI direction.
         // It's large because some scans have extra contents of neck or shoulder
         msp_lmk_RP_Candidate = FindCandidatePoints( this->m_msp_img,
-                                                    mask_LR,
+                                                    this->m_msp_img,
                                                     searchRadiusLR,
                                                     3. * this->m_TemplateRadius["RP"],
                                                     5. * this->m_TemplateRadius["RP"],
@@ -270,7 +265,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       else
       {
         msp_lmk_VN4_Candidate = FindCandidatePoints( this->m_msp_img,
-                                                     mask_LR,
+                                                     this->m_msp_img,
                                                      searchRadiusLR,
                                                      1.6 * this->m_TemplateRadius["VN4"],
                                                      1.6 * this->m_TemplateRadius["VN4"],
@@ -305,7 +300,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       else
       {
         msp_lmk_AC_Candidate = FindCandidatePoints( this->m_msp_img,
-                                                    mask_LR,
+                                                    this->m_msp_img,
                                                     searchRadiusLR,
                                                     1.6 * this->m_TemplateRadius["AC"],
                                                     1.6 * this->m_TemplateRadius["AC"],
@@ -340,7 +335,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       else
       {
         msp_lmk_PC_Candiate = FindCandidatePoints( this->m_msp_img,
-                                                   mask_LR,
+                                                   this->m_msp_img,
                                                    searchRadiusLR,
                                                    4 * this->m_TemplateRadius["PC"],
                                                    4 * this->m_TemplateRadius["PC"],
@@ -554,11 +549,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
                 }
               }
             }
-            // TODO: Simplify below to msp_lmks_from_orig_space[Lls_info_pair->first] =
-            // iteratively_updated_msp_lmks.at(Lls_info_pair->first)
-            msp_lmks_from_orig_space[Lls_info_pair->first][0] = iteratively_updated_msp_lmks[Lls_info_pair->first][0];
-            msp_lmks_from_orig_space[Lls_info_pair->first][1] = iteratively_updated_msp_lmks[Lls_info_pair->first][1];
-            msp_lmks_from_orig_space[Lls_info_pair->first][2] = iteratively_updated_msp_lmks[Lls_info_pair->first][2];
+            msp_lmks_from_orig_space[Lls_info_pair->first] = iteratively_updated_msp_lmks[Lls_info_pair->first];
 
             // Obtain the position of the current landmark in other spaces
             this->m_orig_lmks_updated[Lls_info_pair->first] =
@@ -576,7 +567,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
               double cc_Max = 0;
               local_msp_lmks_algo_found[Lls_info_pair->first] =
                 FindCandidatePoints( this->m_msp_img,
-                                     mask_LR,
+                                     this->m_msp_img,
                                      localSearchRadiusLR,
                                      this->m_SearchRadii[Lls_info_pair->first],
                                      this->m_SearchRadii[Lls_info_pair->first],

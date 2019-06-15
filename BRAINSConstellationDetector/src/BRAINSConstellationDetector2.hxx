@@ -395,7 +395,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   }
 
   itk::ApplyInverseOfTransformToLandmarks( this->m_OrigToACPCVersorTransform.GetPointer(), // Input RO
-                                           myDetector.Getorig_lmks(),
+                                           myDetector.Getorig_lmks_updated(),
                                            this->m_AlignedPoints );
 
   // Following is a mechanism to force BCD report failure if

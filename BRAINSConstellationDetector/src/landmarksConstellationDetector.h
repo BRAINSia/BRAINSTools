@@ -51,7 +51,7 @@ public:
   landmarksConstellationDetector( const LandmarksMapType & orig_lmks )
     : m_mspQualityLevel( 1 )
     , m_orig_lmks_updated{ orig_lmks } // Initialize the updated landmarks
-    , m_orig_lmks_constant{ m_orig_lmks_updated }
+    , m_orig_lmks_constant{ orig_lmks }
     , m_HoughEyeFailure( false )
   {
     // Build midline landmarks name list
@@ -73,9 +73,9 @@ public:
   }
 
   const LandmarksMapType &
-  Getorig_lmks() const
+  Getorig_lmks_updated() const
   {
-    return this->m_orig_lmks_constant;
+    return this->m_orig_lmks_updated;
   }
 
   void
@@ -224,13 +224,17 @@ public:
     setLowHigh< SImageType >( taggedImage, low, high, 0.01F );
 
     SImageType::IndexType PTIndex;
-    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks(), "AC" ), PTIndex );
+    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks_updated(), "AC" ),
+                                                PTIndex );
     taggedImage->SetPixel( PTIndex, high );
-    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks(), "PC" ), PTIndex );
+    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks_updated(), "PC" ),
+                                                PTIndex );
     taggedImage->SetPixel( PTIndex, high );
-    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks(), "VN4" ), PTIndex );
+    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks_updated(), "VN4" ),
+                                                PTIndex );
     taggedImage->SetPixel( PTIndex, high );
-    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks(), "RP" ), PTIndex );
+    taggedImage->TransformPhysicalPointToIndex( GetNamedPointFromLandmarkList( this->Getorig_lmks_updated(), "RP" ),
+                                                PTIndex );
     taggedImage->SetPixel( PTIndex, high );
     return taggedImage;
   }
@@ -320,8 +324,8 @@ private:
   std::string                   m_ResultsDir;
 
 
-  LandmarksMapType         m_orig_lmks_updated;  // TODO: Need this value too
-  const LandmarksMapType & m_orig_lmks_constant; // named points in the original space
+  LandmarksMapType       m_orig_lmks_updated;  // TODO: Need this value too
+  const LandmarksMapType m_orig_lmks_constant; // named points in the original space
 
   // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
   // LandmarksMapType m_eyeFixed_lmks = m_orig_lmks_updated;

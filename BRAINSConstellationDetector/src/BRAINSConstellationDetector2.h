@@ -155,14 +155,28 @@ public:
   itkSetObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
 
   /** Set LE point */
-  itkSetMacro( orig_lmk_LE, SImagePointType );
+
+  void
+  Setorig_lmk_LE( SImagePointType lmk )
+  {
+    m_forced_orig_lmks["LE"] = lmk;
+  }
 
   /** Set RE point */
-  itkSetMacro( orig_lmk_RE, SImagePointType );
+  void
+  Setorig_lmk_RE( SImagePointType lmk )
+  {
+    m_forced_orig_lmks["RE"] = lmk;
+  }
 
   /** Set center of head mass **/
-  itkSetMacro( eyeFixed_lmk_CenterOfHeadMass, SImagePointType );
-  itkSetMacro( orig_lmk_CenterOfHeadMass, SImagePointType );
+  // itkSetMacro(eyeFixed_lmk_CenterOfHeadMass, SImagePointType);
+
+  void
+  Setorig_lmk_CenterOfHeadMass( SImagePointType lmk )
+  {
+    m_forced_orig_lmks["CM"] = lmk;
+  }
 
   /** Set the original input image before the Hough eye detector */
   itkSetObjectMacro( OriginalInputImage, SImageType );
@@ -326,13 +340,11 @@ protected:
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm; // help to get the points
                                                         // location in the original
                                                         // space
-  SImagePointType m_orig_lmk_LE;                        // automated estimated LE in
-                                                        // the original space by
-                                                        // Hough eye detector
-  SImagePointType m_orig_lmk_RE;
 
-  SImagePointType m_eyeFixed_lmk_CenterOfHeadMass;
-  SImagePointType m_orig_lmk_CenterOfHeadMass;
+  LandmarksMapType m_forced_orig_lmks;
+
+  //  SImagePointType  m_eyeFixed_lmk_CenterOfHeadMass;
+
   //  LandmarksMapType m_msp_lmks;
   bool m_HoughEyeFailure;
 

@@ -134,11 +134,10 @@ public:
     m_HoughEyeFailure = failure;
   }
 
-  void
-  SeteyeFixed_lmk_CenterOfHeadMass( const SImageType::PointType & eyeFixed_lmk_CenterOfHeadMass )
-  {
-    m_eyeFixed_lmk_CenterOfHeadMass = eyeFixed_lmk_CenterOfHeadMass;
-  }
+  //  void SeteyeFixed_lmk_CenterOfHeadMass( const SImageType::PointType& eyeFixed_lmk_CenterOfHeadMass)
+  //  {
+  //    m_eyeFixed_lmk_CenterOfHeadMass = eyeFixed_lmk_CenterOfHeadMass;
+  //  }
 
   void
   SetLlsMeans( std::map< std::string, std::vector< double > > & llsMeans )
@@ -283,7 +282,7 @@ private:
 
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;
   bool                         m_HoughEyeFailure;
-  SImageType::PointType        m_eyeFixed_lmk_CenterOfHeadMass;
+  // TODO Remove SImageType::PointType m_eyeFixed_lmk_CenterOfHeadMass;
 
   // Store linear model parameters
   // Note each matrix of m_LlsMatrices is actually cascaded by two mapping:

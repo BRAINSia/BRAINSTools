@@ -17,13 +17,13 @@
  *
  *=========================================================================*/
 /*
- * Author: Han J. Johnson, Wei Lu
- * at Psychiatry Imaging Lab,
+ * Author: Han J. Johnson, Wei Lu  at SINAPSE Lab
  * University of Iowa Health Care 2010
  */
 
 #ifndef __landmarksConstellationDetector__h
 #define __landmarksConstellationDetector__h
+#include <map>
 
 #include "landmarksConstellationCommon.h"
 #include "landmarksConstellationModelIO.h"
@@ -31,8 +31,6 @@
 #include "itkOtsuThresholdImageFilter.h"
 #include "Slicer3LandmarkIO.h"
 #include "PrepareOutputImages.h"
-
-#include <map>
 
 #include "itkMaskedFFTNormalizedCorrelationImageFilter.h"
 #include "itkMinimumMaximumImageCalculator.h"
@@ -96,26 +94,11 @@ public:
     m_eyeFixed_img = image; // This input is the output of Hough Eye detector
   }
 
-  //  void Setorig_img( SImageType::Pointer image)
-  //  {
-  //    m_orig_img = image; // This is the original input of BCD
-  //  }
-  //
-  //  SImageType::Pointer Getorig_img() const
-  //  {
-  //    return this->m_orig_img; // Returns the original input of BCD
-  //  }
-
   void
   SetInputTemplateModel( landmarksConstellationModelIO & myModel )
   {
     m_InputTemplateModel = myModel;
   }
-
-  //  double GetModelHeight(std::string PointName)
-  //  {
-  //    return m_InputTemplateModel.GetHeight(PointName);
-  //  }
 
   double
   GetModelRadius( std::string PointName )
@@ -132,11 +115,6 @@ public:
     value->SetParameters( this->m_test_orig2msp_img_tfm->GetParameters() );
     return value;
   }
-
-  //  SImageType::PointType Getmsp_lmk_CenterOfHeadMass() const
-  //  {
-  //    return this->m_msp_lmk_CenterOfHeadMass;
-  //  }
 
   void
   SetResultsDir( std::string resultsDir )
@@ -156,36 +134,11 @@ public:
     m_HoughEyeFailure = failure;
   }
 
-  //  void Setorig_lmk_LE(const SImageType::PointType & LEPoint)
-  //  {
-  //    this->m_orig_lmk_LE = LEPoint;
-  //  }
-
-  //  const SImageType::PointType & GetLEPoint() const
-  //  {
-  //    return this->m_orig_lmk_LE;
-  //  }
-  //
-  //  void Setorig_lmk_RE( const SImageType::PointType& REPoint)
-  //  {
-  //    this->m_orig_lmk_RE = REPoint;
-  //  }
-
-  //  const SImageType::PointType & GetREPoint() const
-  //  {
-  //    return this->m_orig_lmk_RE;
-  //  }
-
   void
   SeteyeFixed_lmk_CenterOfHeadMass( const SImageType::PointType & eyeFixed_lmk_CenterOfHeadMass )
   {
     m_eyeFixed_lmk_CenterOfHeadMass = eyeFixed_lmk_CenterOfHeadMass;
   }
-
-  //  void Setorig_lmk_CenterOfHeadMass( const SImageType::PointType& orig_lmk_CenterOfHeadMass)
-  //  {
-  //    m_orig_lmk_CenterOfHeadMass = orig_lmk_CenterOfHeadMass;
-  //  }
 
   void
   SetLlsMeans( std::map< std::string, std::vector< double > > & llsMeans )
@@ -310,11 +263,8 @@ private:
                        const landmarksConstellationModelIO::IndexLocationVectorType & model, double & cc_Max,
                        const std::string & mapID );
 
-  RigidTransformType::Pointer m_TmspBasedOnReflectionCrossCorrelation;
-  SImageType::PointType       m_msp_lmk_CenterOfHeadMass;
-  // SImageType::PointType         m_BestCenter;
-  SImageType::Pointer m_eyeFixed_img;
-  //  SImageType::Pointer           m_orig_img;
+  SImageType::PointType         m_msp_lmk_CenterOfHeadMass;
+  SImageType::Pointer           m_eyeFixed_img;
   SImageType::Pointer           m_msp_img;
   landmarksConstellationModelIO m_InputTemplateModel;
   ValMapType                    m_TemplateRadius;
@@ -322,31 +272,18 @@ private:
   std::string                   m_ResultsDir;
 
 
-  LandmarksMapType       m_orig_lmks_updated; // TODO: Need this value too
-  const LandmarksMapType m_orig_lmks_forced;  // named points in the original space
+  LandmarksMapType       m_orig_lmks_updated;
+  const LandmarksMapType m_orig_lmks_forced; // named points in the original space
 
-  // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
-  // LandmarksMapType m_eyeFixed_lmks = m_orig_lmks_updated;
-
-
-  std::vector< std::string > m_MidlinePointsList; // name list of the landmarks
-                                                  // that
-                                                  // should be treated as
-                                                  // midline landmarks
+  // name list of the landmarks that should be treated as midline landmarks
+  std::vector< std::string > m_MidlinePointsList;
 
   RigidTransformType::Pointer  m_test_orig2msp_img_tfm;
   VersorTransformType::Pointer m_orig2msp_img_tfm;
 
-  // Wei: Read in LE, RE value for linear model estimation
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;
   bool                         m_HoughEyeFailure;
-  // NOW PART OF m_orig_lmks_forced LANDMARKSSImageType::PointType        m_orig_lmk_LE;    // in input space
-  // NOW PART OF m_orig_lmks_forced LANDMARKS SImageType::PointType       m_orig_lmk_RE;
-
-  // SImageType::PointType m_ReferencePointAC;
-  // SImageType::PointType m_ReferencePointPC;
-  SImageType::PointType m_eyeFixed_lmk_CenterOfHeadMass;
-  // HACK:  MOVE THIS TO orig_lmk_constant  SImageType::PointType m_orig_lmk_CenterOfHeadMass;
+  SImageType::PointType        m_eyeFixed_lmk_CenterOfHeadMass;
 
   // Store linear model parameters
   // Note each matrix of m_LlsMatrices is actually cascaded by two mapping:

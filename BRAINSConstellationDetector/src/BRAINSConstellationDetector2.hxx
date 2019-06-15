@@ -155,8 +155,6 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   myModel.SetRadius( "PC", templateRadius[2] );
   myModel.SetRadius( "VN4", templateRadius[3] );
 
-  // Wei: We will get the input image from filter input rather than an external
-  // file
   SImageType::Pointer copyOfOriginalInputImage;
   {
     LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
@@ -293,21 +291,8 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   myDetector.SetMSPQualityLevel( this->m_MspQualityLevel );
   myDetector.SetHoughEyeFailure( this->m_HoughEyeFailure );
 
-  //  LandmarksMapType msp_lmks = this->Getmsp_lmks();
-  //  if( !msp_lmks.empty() )
-  //    {
-  //      myDetector.Setmsp_lmks( this->Getmsp_lmks() );
-  //    }
-  //
-  //  if( ( this->m_msp_lmks.find("LE") == this->m_msp_lmks.end() )
-  //      || ( this->m_msp_lmks.find("RE") == this->m_msp_lmks.end() ) )
-  //    {
 
   myDetector.Setorig2eyeFixed_img_tfm( this->m_orig2eyeFixed_img_tfm );
-  //    myDetector.Setorig_lmk_LE( this->m_orig_lmk_LE );
-  //    myDetector.Setorig_lmk_RE( this->m_orig_lmk_RE );
-  //    }
-
 
   myDetector.SetatlasVolume( this->GetatlasVolume() );
   myDetector.SetatlasLandmarks( this->GetatlasLandmarks() );
@@ -340,15 +325,6 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
     std::cout << "itkVersorRigid3DTransform: \n" << this->m_OrigToACPCVersorTransform << std::endl;
     std::cout << "itkRigid3DTransform: \n" << this->m_OrigToACPCVersorTransform << std::endl;
   }
-
-  //  {
-  //    // The detector also needs the original input if it has to fix a bad estimation of the MSP
-  //    //HACK: TODO:  Why duplicate?  This seems crazy
-  //    LandmarkIO::DuplicatorType::Pointer duplicator2 = LandmarkIO::DuplicatorType::New();
-  //    duplicator2->SetInputImage( this->m_CleanedIntensityOriginalInputImage );
-  //    duplicator2->Update();
-  //    myDetector.Setorig_img( duplicator2->GetOutput() );
-  //  }
 
   itk::PrepareOutputImages( this->m_OutputResampledImage,
                             this->m_OutputImage,

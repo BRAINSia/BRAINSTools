@@ -51,7 +51,7 @@ public:
   landmarksConstellationDetector( const LandmarksMapType & orig_lmks )
     : m_mspQualityLevel( 1 )
     , m_orig_lmks_updated{ orig_lmks } // Initialize the updated landmarks
-    , m_orig_lmks_constant{ orig_lmks }
+    , m_orig_lmks_forced{ orig_lmks }
     , m_HoughEyeFailure( false )
   {
     // Build midline landmarks name list
@@ -322,8 +322,8 @@ private:
   std::string                   m_ResultsDir;
 
 
-  LandmarksMapType       m_orig_lmks_updated;  // TODO: Need this value too
-  const LandmarksMapType m_orig_lmks_constant; // named points in the original space
+  LandmarksMapType       m_orig_lmks_updated; // TODO: Need this value too
+  const LandmarksMapType m_orig_lmks_forced;  // named points in the original space
 
   // TODO Add this concept that is clearly needed to separate orig/eyeFixed landmarks
   // LandmarksMapType m_eyeFixed_lmks = m_orig_lmks_updated;
@@ -340,8 +340,8 @@ private:
   // Wei: Read in LE, RE value for linear model estimation
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;
   bool                         m_HoughEyeFailure;
-  // NOW PART OF m_orig_lmks_constant LANDMARKSSImageType::PointType        m_orig_lmk_LE;    // in input space
-  // NOW PART OF m_orig_lmks_constant LANDMARKS SImageType::PointType       m_orig_lmk_RE;
+  // NOW PART OF m_orig_lmks_forced LANDMARKSSImageType::PointType        m_orig_lmk_LE;    // in input space
+  // NOW PART OF m_orig_lmks_forced LANDMARKS SImageType::PointType       m_orig_lmk_RE;
 
   // SImageType::PointType m_ReferencePointAC;
   // SImageType::PointType m_ReferencePointPC;

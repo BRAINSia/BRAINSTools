@@ -156,22 +156,20 @@ public:
     m_HoughEyeFailure = failure;
   }
 
-  void
-  Setorig_lmk_LE( const SImageType::PointType & LEPoint )
-  {
-    this->m_orig_lmk_LE = LEPoint;
-  }
+  //  void Setorig_lmk_LE(const SImageType::PointType & LEPoint)
+  //  {
+  //    this->m_orig_lmk_LE = LEPoint;
+  //  }
 
   //  const SImageType::PointType & GetLEPoint() const
   //  {
   //    return this->m_orig_lmk_LE;
   //  }
-
-  void
-  Setorig_lmk_RE( const SImageType::PointType & REPoint )
-  {
-    this->m_orig_lmk_RE = REPoint;
-  }
+  //
+  //  void Setorig_lmk_RE( const SImageType::PointType& REPoint)
+  //  {
+  //    this->m_orig_lmk_RE = REPoint;
+  //  }
 
   //  const SImageType::PointType & GetREPoint() const
   //  {
@@ -342,8 +340,8 @@ private:
   // Wei: Read in LE, RE value for linear model estimation
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;
   bool                         m_HoughEyeFailure;
-  SImageType::PointType        m_orig_lmk_LE; // in input space
-  SImageType::PointType        m_orig_lmk_RE;
+  // NOW PART OF m_orig_lmks_constant LANDMARKSSImageType::PointType        m_orig_lmk_LE;    // in input space
+  // NOW PART OF m_orig_lmks_constant LANDMARKS SImageType::PointType       m_orig_lmk_RE;
 
   // SImageType::PointType m_ReferencePointAC;
   // SImageType::PointType m_ReferencePointPC;

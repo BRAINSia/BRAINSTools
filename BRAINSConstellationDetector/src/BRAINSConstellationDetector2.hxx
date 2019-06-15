@@ -266,8 +266,13 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
       }
       forced_orig_lmks["RP"] = manualRPPoint;
     }
+    forced_orig_lmks["LE"] = this->m_orig_lmk_LE;
+    forced_orig_lmks["RE"] = this->m_orig_lmk_RE;
   }
   landmarksConstellationDetector myDetector( forced_orig_lmks );
+  // TODO:
+  myDetector.SeteyeFixed_lmk_CenterOfHeadMass( this->m_eyeFixed_lmk_CenterOfHeadMass );
+
   {
     // a little abuse of the eyeFixed_img_duplicator here
     LandmarkIO::DuplicatorType::Pointer eyeFixed_img_duplicator = LandmarkIO::DuplicatorType::New();
@@ -288,8 +293,6 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   myDetector.SetMSPQualityLevel( this->m_MspQualityLevel );
   myDetector.SetHoughEyeFailure( this->m_HoughEyeFailure );
 
-  myDetector.SeteyeFixed_lmk_CenterOfHeadMass( this->m_eyeFixed_lmk_CenterOfHeadMass );
-
   //  LandmarksMapType msp_lmks = this->Getmsp_lmks();
   //  if( !msp_lmks.empty() )
   //    {
@@ -299,9 +302,10 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   //  if( ( this->m_msp_lmks.find("LE") == this->m_msp_lmks.end() )
   //      || ( this->m_msp_lmks.find("RE") == this->m_msp_lmks.end() ) )
   //    {
+
   myDetector.Setorig2eyeFixed_img_tfm( this->m_orig2eyeFixed_img_tfm );
-  myDetector.Setorig_lmk_LE( this->m_orig_lmk_LE );
-  myDetector.Setorig_lmk_RE( this->m_orig_lmk_RE );
+  //    myDetector.Setorig_lmk_LE( this->m_orig_lmk_LE );
+  //    myDetector.Setorig_lmk_RE( this->m_orig_lmk_RE );
   //    }
 
 

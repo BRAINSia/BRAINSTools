@@ -266,6 +266,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
     }
     forced_orig_lmks["LE"] = this->m_orig_lmk_LE;
     forced_orig_lmks["RE"] = this->m_orig_lmk_RE;
+    // forced_orig_lmks["CM"] =
   }
   landmarksConstellationDetector myDetector( forced_orig_lmks );
   // TODO:

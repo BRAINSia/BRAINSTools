@@ -147,17 +147,6 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
   this->m_msp_lmk_CenterOfHeadMass[0] = 0; // Search starts on the estimated MSP
 
   {
-    SImageType::PointType msp_lmk_RP_Candidate;
-    SImageType::PointType msp_lmk_PC_Candiate;
-    SImageType::PointType msp_lmk_VN4_Candidate;
-    SImageType::PointType msp_lmk_AC_Candidate;
-
-    SImageType::PointType::VectorType RPtoCEC;
-    SImageType::PointType::VectorType RPtoVN4;
-    SImageType::PointType::VectorType RPtoAC;
-    SImageType::PointType::VectorType RPtoPC;
-
-
     std::cout << "\nPerforming morpohmetric search + local search..." << std::endl;
 
     {
@@ -175,10 +164,12 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
       this->m_orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
 
+      // Save some named points in EMSP space mainly for debug use
+      LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
       if ( mapHasKey( m_orig_lmks_forced, "RP" ) )
       {
         std::cout << "Skip estimation of RP, directly forced by command line." << std::endl;
-        msp_lmk_RP_Candidate = eyeFixed2msp_lmk_tfm->TransformPoint(
+        msp_lmks_algo_found["RP"] = eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RP" ) ) );
       }
       else
@@ -186,22 +177,22 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         // The search radius of RP is set to 5 times larger than its template
         // radius in SI direction.
         // It's large because some scans have extra contents of neck or shoulder
-        msp_lmk_RP_Candidate = FindCandidatePoints( this->m_msp_img,
-                                                    this->m_msp_img,
-                                                    searchRadiusLR,
-                                                    3. * this->m_TemplateRadius["RP"],
-                                                    5. * this->m_TemplateRadius["RP"],
-                                                    this->m_msp_lmk_CenterOfHeadMass.GetVectorFromOrigin() +
-                                                      this->m_InputTemplateModel.GetCMtoRPMean(),
-                                                    this->m_InputTemplateModel.GetTemplateMeans( "RP" ),
-                                                    this->m_InputTemplateModel.m_VectorIndexLocations["RP"],
-                                                    cc_RP_Max,
-                                                    "RP" );
+        msp_lmks_algo_found["RP"] = FindCandidatePoints( this->m_msp_img,
+                                                         this->m_msp_img,
+                                                         searchRadiusLR,
+                                                         3. * this->m_TemplateRadius["RP"],
+                                                         5. * this->m_TemplateRadius["RP"],
+                                                         this->m_msp_lmk_CenterOfHeadMass.GetVectorFromOrigin() +
+                                                           this->m_InputTemplateModel.GetCMtoRPMean(),
+                                                         this->m_InputTemplateModel.GetTemplateMeans( "RP" ),
+                                                         this->m_InputTemplateModel.m_VectorIndexLocations["RP"],
+                                                         cc_RP_Max,
+                                                         "RP" );
       }
 
       // Local search radius in LR direction is affected by the
       // estimated MSP error in LR direction
-      const double err_MSP = std::abs( msp_lmk_RP_Candidate[0] - this->m_msp_lmk_CenterOfHeadMass[0] );
+      const double err_MSP = std::abs( msp_lmks_algo_found["RP"][0] - this->m_msp_lmk_CenterOfHeadMass[0] );
       std::cout << "The estimated MSP error in LR direction: " << err_MSP << " mm" << std::endl;
 
       if ( err_MSP < 1 )
@@ -236,6 +227,8 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
        * 3. The center of eye centers, MPJ, and AC are all very close to the MSP plane
        * 4. VN4 is always below CEC-MPJ line on MSP plane
        */
+
+      SImageType::PointType::VectorType RPtoCEC;
       std::cout << "Processing 4VN..." << std::endl;
       {
         SImageType::PointType mspSpaceCEC;
@@ -247,11 +240,11 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
         mspSpaceCEC.SetToMidPoint( eyeFixed_LE, eyeFixed_RE );
         mspSpaceCEC[0] = 0; // Search starts on the estimated MSP
-        RPtoCEC = mspSpaceCEC - msp_lmk_RP_Candidate;
+        RPtoCEC = mspSpaceCEC - msp_lmks_algo_found["RP"];
       }
 
       // RPtoVN4 = this->m_InputTemplateModel.GetRPtoXMean( "VN4" );
-      RPtoVN4 = FindVectorFromPointAndVectors(
+      const SImageType::PointType::VectorType RPtoVN4 = FindVectorFromPointAndVectors(
         RPtoCEC, this->m_InputTemplateModel.GetRPtoCECMean(), this->m_InputTemplateModel.GetRPtoXMean( "VN4" ), -1 );
 
       double cc_VN4_Max = 0;
@@ -259,21 +252,21 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       if ( mapHasKey( m_orig_lmks_forced, "VN4" ) )
       {
         std::cout << "Skip estimation of VN4, directly forced by command line." << std::endl;
-        msp_lmk_VN4_Candidate = eyeFixed2msp_lmk_tfm->TransformPoint(
+        msp_lmks_algo_found["VN4"] = eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "VN4" ) ) );
       }
       else
       {
-        msp_lmk_VN4_Candidate = FindCandidatePoints( this->m_msp_img,
-                                                     this->m_msp_img,
-                                                     searchRadiusLR,
-                                                     1.6 * this->m_TemplateRadius["VN4"],
-                                                     1.6 * this->m_TemplateRadius["VN4"],
-                                                     msp_lmk_RP_Candidate.GetVectorFromOrigin() + RPtoVN4,
-                                                     this->m_InputTemplateModel.GetTemplateMeans( "VN4" ),
-                                                     this->m_InputTemplateModel.m_VectorIndexLocations["VN4"],
-                                                     cc_VN4_Max,
-                                                     "VN4" );
+        msp_lmks_algo_found["VN4"] = FindCandidatePoints( this->m_msp_img,
+                                                          this->m_msp_img,
+                                                          searchRadiusLR,
+                                                          1.6 * this->m_TemplateRadius["VN4"],
+                                                          1.6 * this->m_TemplateRadius["VN4"],
+                                                          msp_lmks_algo_found["RP"].GetVectorFromOrigin() + RPtoVN4,
+                                                          this->m_InputTemplateModel.GetTemplateMeans( "VN4" ),
+                                                          this->m_InputTemplateModel.m_VectorIndexLocations["VN4"],
+                                                          cc_VN4_Max,
+                                                          "VN4" );
       }
 
       /*
@@ -288,27 +281,27 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       std::cout << "Processing AC..." << std::endl;
 
       // RPtoAC = this->m_InputTemplateModel.GetRPtoXMean( "AC" );
-      RPtoAC = FindVectorFromPointAndVectors(
+      SImageType::PointType::VectorType RPtoAC = FindVectorFromPointAndVectors(
         RPtoCEC, this->m_InputTemplateModel.GetRPtoCECMean(), this->m_InputTemplateModel.GetRPtoXMean( "AC" ), 1 );
       double cc_AC_Max = 0;
       if ( mapHasKey( m_orig_lmks_forced, "AC" ) )
       {
         std::cout << "Skip estimation of AC , directly forced by command line." << std::endl;
-        msp_lmk_AC_Candidate = eyeFixed2msp_lmk_tfm->TransformPoint(
+        msp_lmks_algo_found["AC"] = eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "AC" ) ) );
       }
       else
       {
-        msp_lmk_AC_Candidate = FindCandidatePoints( this->m_msp_img,
-                                                    this->m_msp_img,
-                                                    searchRadiusLR,
-                                                    1.6 * this->m_TemplateRadius["AC"],
-                                                    1.6 * this->m_TemplateRadius["AC"],
-                                                    msp_lmk_RP_Candidate.GetVectorFromOrigin() + RPtoAC,
-                                                    this->m_InputTemplateModel.GetTemplateMeans( "AC" ),
-                                                    this->m_InputTemplateModel.m_VectorIndexLocations["AC"],
-                                                    cc_AC_Max,
-                                                    "AC" );
+        msp_lmks_algo_found["AC"] = FindCandidatePoints( this->m_msp_img,
+                                                         this->m_msp_img,
+                                                         searchRadiusLR,
+                                                         1.6 * this->m_TemplateRadius["AC"],
+                                                         1.6 * this->m_TemplateRadius["AC"],
+                                                         msp_lmks_algo_found["RP"].GetVectorFromOrigin() + RPtoAC,
+                                                         this->m_InputTemplateModel.GetTemplateMeans( "AC" ),
+                                                         this->m_InputTemplateModel.m_VectorIndexLocations["AC"],
+                                                         cc_AC_Max,
+                                                         "AC" );
       }
 
       /*
@@ -323,34 +316,34 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       std::cout << "Processing PC..." << std::endl;
 
       // RPtoPC = this->m_InputTemplateModel.GetRPtoXMean( "PC" );
-      RPtoPC = FindVectorFromPointAndVectors(
+      SImageType::PointType::VectorType RPtoPC = FindVectorFromPointAndVectors(
         RPtoCEC, this->m_InputTemplateModel.GetRPtoCECMean(), this->m_InputTemplateModel.GetRPtoXMean( "PC" ), 1 );
       double cc_PC_Max = 0;
       if ( mapHasKey( m_orig_lmks_forced, "PC" ) )
       {
         std::cout << "Skip estimation of PC, directly forced by command line." << std::endl;
-        msp_lmk_PC_Candiate = eyeFixed2msp_lmk_tfm->TransformPoint(
+        msp_lmks_algo_found["PC"] = eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "PC" ) ) );
       }
       else
       {
-        msp_lmk_PC_Candiate = FindCandidatePoints( this->m_msp_img,
-                                                   this->m_msp_img,
-                                                   searchRadiusLR,
-                                                   4 * this->m_TemplateRadius["PC"],
-                                                   4 * this->m_TemplateRadius["PC"],
-                                                   msp_lmk_RP_Candidate.GetVectorFromOrigin() + RPtoPC,
-                                                   this->m_InputTemplateModel.GetTemplateMeans( "PC" ),
-                                                   this->m_InputTemplateModel.m_VectorIndexLocations["PC"],
-                                                   cc_PC_Max,
-                                                   "PC" );
+        msp_lmks_algo_found["PC"] = FindCandidatePoints( this->m_msp_img,
+                                                         this->m_msp_img,
+                                                         searchRadiusLR,
+                                                         4 * this->m_TemplateRadius["PC"],
+                                                         4 * this->m_TemplateRadius["PC"],
+                                                         msp_lmks_algo_found["RP"].GetVectorFromOrigin() + RPtoPC,
+                                                         this->m_InputTemplateModel.GetTemplateMeans( "PC" ),
+                                                         this->m_InputTemplateModel.m_VectorIndexLocations["PC"],
+                                                         cc_PC_Max,
+                                                         "PC" );
       }
       // A check point for base landmarks
       if ( LMC::globalverboseFlag )
       {
         std::cout << cc_RP_Max << " " << cc_PC_Max << " " << cc_VN4_Max << " " << cc_AC_Max << "\n"
-                  << msp_lmk_RP_Candidate << " " << msp_lmk_PC_Candiate << " " << msp_lmk_VN4_Candidate << " "
-                  << msp_lmk_AC_Candidate << std::endl;
+                  << msp_lmks_algo_found["RP"] << " " << msp_lmks_algo_found["PC"] << " " << msp_lmks_algo_found["VN4"]
+                  << " " << msp_lmks_algo_found["AC"] << std::endl;
       }
 
       if ( globalImagedebugLevel > 1 )
@@ -360,22 +353,22 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         MakeBrandeddebugImage( this->m_msp_img.GetPointer(),
                                this->m_InputTemplateModel,
                                this->m_msp_lmk_CenterOfHeadMass + this->m_InputTemplateModel.GetCMtoRPMean(),
-                               msp_lmk_RP_Candidate + RPtoAC,
-                               msp_lmk_RP_Candidate + RPtoPC,
-                               msp_lmk_RP_Candidate + RPtoVN4,
+                               msp_lmks_algo_found["RP"] + RPtoAC,
+                               msp_lmks_algo_found["RP"] + RPtoPC,
+                               msp_lmks_algo_found["RP"] + RPtoVN4,
                                BrandedImageAName,
-                               msp_lmk_RP_Candidate,
-                               msp_lmk_AC_Candidate,
-                               msp_lmk_PC_Candiate,
-                               msp_lmk_VN4_Candidate );
+                               msp_lmks_algo_found["RP"],
+                               msp_lmks_algo_found["AC"],
+                               msp_lmks_algo_found["PC"],
+                               msp_lmks_algo_found["VN4"] );
         if ( globalImagedebugLevel > 3 )
         {
           std::string LabelImageAName( this->m_ResultsDir + "/MSP_Mask.nii.gz" );
           MakeLabelImage( this->m_msp_img,
-                          msp_lmk_RP_Candidate,
-                          msp_lmk_AC_Candidate,
-                          msp_lmk_PC_Candiate,
-                          msp_lmk_VN4_Candidate,
+                          msp_lmks_algo_found["RP"],
+                          msp_lmks_algo_found["AC"],
+                          msp_lmks_algo_found["PC"],
+                          msp_lmks_algo_found["VN4"],
                           LabelImageAName );
         }
       }
@@ -390,43 +383,37 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
       if ( !mapHasKey( m_orig_lmks_forced, "RP" ) )
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_RP_Candidate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found["RP"] );
 
         this->m_orig_lmks_updated["RP"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
       if ( !mapHasKey( m_orig_lmks_forced, "VN4" ) )
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_VN4_Candidate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found["VN4"] );
 
         this->m_orig_lmks_updated["VN4"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
       if ( !mapHasKey( m_orig_lmks_forced, "AC" ) )
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_AC_Candidate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found["AC"] );
 
         this->m_orig_lmks_updated["AC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
-        std::cout << "msp_lmk_AC:         " << msp_lmk_AC_Candidate << std::endl;
+        std::cout << "msp_lmk_AC:         " << msp_lmks_algo_found["AC"] << std::endl;
         std::cout << "tempLoc eyeFixed?:  " << tempLoc << std::endl;
         std::cout << "orig AC:            " << this->m_orig_lmks_updated["AC"] << std::endl;
       }
 
       if ( !mapHasKey( m_orig_lmks_forced, "PC" ) )
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmk_PC_Candiate );
+        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found["PC"] );
 
         this->m_orig_lmks_updated["PC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
-      {
-        // XXXXXXX
-        // HACK TODO: "CM" seems to be wrong here
 
-        this->m_orig_lmks_updated["CM"] =
-          this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmk_CenterOfHeadMass );
-        this->m_orig_lmks_updated["CM"] =
-          this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_updated.at( "CM" ) );
-      }
+      this->m_orig_lmks_updated["CM"] =
+        this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmk_CenterOfHeadMass );
       this->m_orig_lmks_updated["LE"] = this->m_orig_lmks_forced.at( "LE" );
       this->m_orig_lmks_updated["RE"] = this->m_orig_lmks_forced.at( "RE" );
 
@@ -437,10 +424,10 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         {
           std::string ResampledMaskmageName( this->m_ResultsDir + "/Resampled_Mask.nii.gz" );
           MakeLabelImage( this->m_eyeFixed_img,
-                          msp_lmk_RP_Candidate,
-                          msp_lmk_AC_Candidate,
-                          msp_lmk_PC_Candiate,
-                          msp_lmk_VN4_Candidate,
+                          msp_lmks_algo_found["RP"],
+                          msp_lmks_algo_found["AC"],
+                          msp_lmks_algo_found["PC"],
+                          msp_lmks_algo_found["VN4"],
                           ResampledMaskmageName );
 
           std::string OrigMaskImageName( this->m_ResultsDir + "/Orig_Mask.nii.gz" );
@@ -463,16 +450,11 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       VersorTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform( this->m_orig2msp_img_tfm.GetPointer() );
 
-      // Save some named points in EMSP space mainly for debug use
-      LandmarksMapType local_msp_lmks_algo_found; // named points in EMSP space
+
       {
-        local_msp_lmks_algo_found["RP"] = msp_lmk_RP_Candidate;
-        local_msp_lmks_algo_found["AC"] = msp_lmk_AC_Candidate;
-        local_msp_lmks_algo_found["PC"] = msp_lmk_PC_Candiate;
-        local_msp_lmks_algo_found["VN4"] = msp_lmk_VN4_Candidate;
-        local_msp_lmks_algo_found["CM"] = this->m_msp_lmk_CenterOfHeadMass;
-        local_msp_lmks_algo_found["LE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "LE" ) );
-        local_msp_lmks_algo_found["RE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RE" ) );
+        msp_lmks_algo_found["CM"] = this->m_msp_lmk_CenterOfHeadMass;
+        msp_lmks_algo_found["LE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "LE" ) );
+        msp_lmks_algo_found["RE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RE" ) );
       }
 
       /*
@@ -555,9 +537,8 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             this->m_orig_lmks_updated[Lls_info_pair->first] =
               this->m_orig2msp_img_tfm->TransformPoint( msp_lmks_from_orig_space.at( Lls_info_pair->first ) );
             {
-              local_msp_lmks_algo_found[Lls_info_pair->first] =
-                eyeFixed2msp_lmk_tfm->TransformPoint( orig2eyeFixed_lmk_tfm->TransformPoint(
-                  this->m_orig_lmks_updated.at( Lls_info_pair->first ) ) ); // TODO: Verify this
+              msp_lmks_algo_found[Lls_info_pair->first] = eyeFixed2msp_lmk_tfm->TransformPoint(
+                orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( Lls_info_pair->first ) ) );
             }
 
             // Enable local search
@@ -565,13 +546,13 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             {
               // local search
               double cc_Max = 0;
-              local_msp_lmks_algo_found[Lls_info_pair->first] =
+              msp_lmks_algo_found[Lls_info_pair->first] =
                 FindCandidatePoints( this->m_msp_img,
                                      this->m_msp_img,
                                      localSearchRadiusLR,
                                      this->m_SearchRadii[Lls_info_pair->first],
                                      this->m_SearchRadii[Lls_info_pair->first],
-                                     local_msp_lmks_algo_found[Lls_info_pair->first].GetVectorFromOrigin(),
+                                     msp_lmks_algo_found[Lls_info_pair->first].GetVectorFromOrigin(),
                                      this->m_InputTemplateModel.GetTemplateMeans( Lls_info_pair->first ),
                                      this->m_InputTemplateModel.m_VectorIndexLocations[Lls_info_pair->first],
                                      cc_Max,
@@ -579,7 +560,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
               // Update landmarks in input and ACPC-aligned space
               this->m_orig_lmks_updated[Lls_info_pair->first] =
-                this->m_test_orig2msp_img_tfm->TransformPoint( local_msp_lmks_algo_found.at( Lls_info_pair->first ) );
+                this->m_test_orig2msp_img_tfm->TransformPoint( msp_lmks_algo_found.at( Lls_info_pair->first ) );
               {
                 this->m_orig_lmks_updated[Lls_info_pair->first] =
                   this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_updated.at( Lls_info_pair->first ) );
@@ -595,7 +576,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       if ( globalImagedebugLevel > 1 ) // This may be very useful for GUI
       // corrector
       {
-        WriteITKtoSlicer3Lmk( this->m_ResultsDir + "/EMSP.fcsv", local_msp_lmks_algo_found );
+        WriteITKtoSlicer3Lmk( this->m_ResultsDir + "/EMSP.fcsv", msp_lmks_algo_found );
       }
 
     } // End of local searching kernel

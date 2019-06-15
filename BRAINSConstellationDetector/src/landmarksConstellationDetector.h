@@ -262,7 +262,6 @@ private:
                        const landmarksConstellationModelIO::IndexLocationVectorType & model, double & cc_Max,
                        const std::string & mapID );
 
-  SImageType::PointType         m_msp_lmk_CenterOfHeadMass;
   SImageType::Pointer           m_eyeFixed_img;
   SImageType::Pointer           m_msp_img;
   landmarksConstellationModelIO m_InputTemplateModel;

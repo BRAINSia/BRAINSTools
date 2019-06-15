@@ -146,9 +146,9 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
   VersorTransformType::Pointer eyeFixed2msp_lmk_tfm = VersorTransformType::New();
   this->m_test_orig2msp_img_tfm->GetInverse( eyeFixed2msp_lmk_tfm );
 
-  this->m_msp_lmk_CenterOfHeadMass =->TransformPoint( this->m_eyeFixed_lmk_CenterOfHeadMass );
-  this->m_msp_lmk_CenterOfHeadMass[0] = 0; // Search starts on the estimated MSP
-
+  SImageType::PointType temppnt = m_test_orig2msp_img_tfm->TransformPoint( m_orig_lmks_forced.at( "CM" ) );
+  temppnt[0] = 0; // Search starts on the estimated MSP
+  const SImageType::PointType msp_lmk_CenterOfHeadMass_zeroed_x = temppnt;
   {
     std::cout << "\nPerforming morpohmetric search + local search..." << std::endl;
 
@@ -162,10 +162,6 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       double searchRadiusLR = 4.; // in mm, and it is only for landmarks near
       // MSP
       double cc_RP_Max = 0;
-
-
-      VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
-      this->m_orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
 
       // Save some named points in EMSP space mainly for debug use
       LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
@@ -185,7 +181,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
                                                          searchRadiusLR,
                                                          3. * this->m_TemplateRadius["RP"],
                                                          5. * this->m_TemplateRadius["RP"],
-                                                         this->m_msp_lmk_CenterOfHeadMass.GetVectorFromOrigin() +
+                                                         msp_lmk_CenterOfHeadMass_zeroed_x.GetVectorFromOrigin() +
                                                            this->m_InputTemplateModel.GetCMtoRPMean(),
                                                          this->m_InputTemplateModel.GetTemplateMeans( "RP" ),
                                                          this->m_InputTemplateModel.m_VectorIndexLocations["RP"],
@@ -195,7 +191,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
       // Local search radius in LR direction is affected by the
       // estimated MSP error in LR direction
-      const double err_MSP = std::abs( msp_lmks_algo_found["RP"][0] - this->m_msp_lmk_CenterOfHeadMass[0] );
+      const double err_MSP = std::abs( msp_lmks_algo_found["RP"][0] - msp_lmk_CenterOfHeadMass_zeroed_x[0] );
       std::cout << "The estimated MSP error in LR direction: " << err_MSP << " mm" << std::endl;
 
       if ( err_MSP < 1 )
@@ -355,7 +351,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
         MakeBrandeddebugImage( this->m_msp_img.GetPointer(),
                                this->m_InputTemplateModel,
-                               this->m_msp_lmk_CenterOfHeadMass + this->m_InputTemplateModel.GetCMtoRPMean(),
+                               msp_lmk_CenterOfHeadMass_zeroed_x + this->m_InputTemplateModel.GetCMtoRPMean(),
                                msp_lmks_algo_found["RP"] + RPtoAC,
                                msp_lmks_algo_found["RP"] + RPtoPC,
                                msp_lmks_algo_found["RP"] + RPtoVN4,
@@ -415,8 +411,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         this->m_orig_lmks_updated["PC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint( tempLoc );
       }
 
-      this->m_orig_lmks_updated["CM"] =
-        this->m_test_orig2msp_img_tfm->TransformPoint( this->m_msp_lmk_CenterOfHeadMass );
+      this->m_orig_lmks_updated["CM"] = this->m_orig_lmks_forced.at( "CM" );
       this->m_orig_lmks_updated["LE"] = this->m_orig_lmks_forced.at( "LE" );
       this->m_orig_lmks_updated["RE"] = this->m_orig_lmks_forced.at( "RE" );
 
@@ -455,7 +450,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
 
       {
-        msp_lmks_algo_found["CM"] = this->m_msp_lmk_CenterOfHeadMass;
+        msp_lmks_algo_found["CM"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "CM" ) );
         msp_lmks_algo_found["LE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "LE" ) );
         msp_lmks_algo_found["RE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RE" ) );
       }

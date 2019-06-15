@@ -88,7 +88,7 @@ main( int argc, char * argv[] )
         error_term = std::sqrt( error_term );
         if ( error_term > tolerance )
         {
-          std::cout << "\nFAIL: lmk" << lmk1iter->first << " differ by greater than tolerance" << std::endl;
+          std::cout << "\nFAIL: lmk " << lmk1iter->first << " differ by greater than tolerance" << std::endl;
           std::cout << "FAIL: euclidean distance  = " << error_term << " is greater than " << tolerance << std::endl;
           allSame = false;
           thisLmkOK = false;

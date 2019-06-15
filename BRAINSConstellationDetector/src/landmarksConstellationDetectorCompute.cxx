@@ -143,9 +143,6 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
   // they can be the same image ( perhaps with a threshold );
   SImageType::Pointer mask_LR = this->m_msp_img;
 
-  VersorTransformType::Pointer orig2eyeFixed_lmk_tfm;
-  orig2eyeFixed_lmk_tfm = VersorTransformType::New();
-  this->m_orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
 
   // TODO:  ERROR
   VersorTransformType::Pointer eyeFixed2msp_lmk_tfm = VersorTransformType::New();
@@ -165,17 +162,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
     SImageType::PointType::VectorType RPtoAC;
     SImageType::PointType::VectorType RPtoPC;
 
-    SImageType::PointType mspSpaceCEC;
-    //{
-    SImageType::PointType eyeFixed_LE = eyeFixed2msp_lmk_tfm->TransformPoint(
-      orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "LE" ) ) );
-    SImageType::PointType eyeFixed_RE = eyeFixed2msp_lmk_tfm->TransformPoint(
-      orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RE" ) ) );
 
-
-    mspSpaceCEC.SetToMidPoint( eyeFixed_LE, eyeFixed_RE );
-    mspSpaceCEC[0] = 0; // Search starts on the estimated MSP
-    //}
     std::cout << "\nPerforming morpohmetric search + local search..." << std::endl;
 
     {
@@ -189,6 +176,9 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       // MSP
       double cc_RP_Max = 0;
 
+
+      VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
+      this->m_orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
 
       // TODO: Remove these constants.  just query the map.
       // save the result that whether we are going to process all the landmarks
@@ -260,7 +250,18 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
        * 4. VN4 is always below CEC-MPJ line on MSP plane
        */
       std::cout << "Processing 4VN..." << std::endl;
-      RPtoCEC = mspSpaceCEC - msp_lmk_RP_Candidate;
+      {
+        SImageType::PointType mspSpaceCEC;
+        SImageType::PointType eyeFixed_LE = eyeFixed2msp_lmk_tfm->TransformPoint(
+          orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "LE" ) ) );
+        SImageType::PointType eyeFixed_RE = eyeFixed2msp_lmk_tfm->TransformPoint(
+          orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RE" ) ) );
+
+
+        mspSpaceCEC.SetToMidPoint( eyeFixed_LE, eyeFixed_RE );
+        mspSpaceCEC[0] = 0; // Search starts on the estimated MSP
+        RPtoCEC = mspSpaceCEC - msp_lmk_RP_Candidate;
+      }
 
       // RPtoVN4 = this->m_InputTemplateModel.GetRPtoXMean( "VN4" );
       RPtoVN4 = FindVectorFromPointAndVectors(
@@ -483,13 +484,8 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         local_msp_lmks_algo_found["PC"] = msp_lmk_PC_Candiate;
         local_msp_lmks_algo_found["VN4"] = msp_lmk_VN4_Candidate;
         local_msp_lmks_algo_found["CM"] = this->m_msp_lmk_CenterOfHeadMass;
-#if 1                                                  // OLD TEST PASSS
-        local_msp_lmks_algo_found["LE"] = eyeFixed_LE; // TODO, We may have a better estimate of this now.
-        local_msp_lmks_algo_found["RE"] = eyeFixed_RE; // TODO, We may have a better estimate of this now.
-#else
-        local_msp_lmks_algo_found["LE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmk_LE );
-        local_msp_lmks_algo_found["RE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmk_RE );
-#endif
+        local_msp_lmks_algo_found["LE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "LE" ) );
+        local_msp_lmks_algo_found["RE"] = orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "RE" ) );
       }
 
       /*

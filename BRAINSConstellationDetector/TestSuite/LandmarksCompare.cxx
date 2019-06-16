@@ -79,23 +79,19 @@ main( int argc, char * argv[] )
       }
       else
       {
-        bool   thisLmkOK = true;
-        double error_term = 0.0;
-        for ( unsigned int i = 0; i < 3; ++i )
-        {
-          error_term += std::pow( ( lmk1iter->second[i] - lmk2iter->second[i] ), 2 );
-        }
-        error_term = std::sqrt( error_term );
+        bool         thisLmkOK = true;
+        const double error_term = lmk1iter->second.EuclideanDistanceTo( lmk2iter->second );
         if ( error_term > tolerance )
         {
-          std::cout << "\nFAIL: lmk " << lmk1iter->first << " differ by greater than tolerance" << std::endl;
-          std::cout << "FAIL: euclidean distance  = " << error_term << " is greater than " << tolerance << std::endl;
+          std::cout << "FAILED: lmk " << lmk1iter->first << "\t\t differ    ||" << lmk1iter->second << " - "
+                    << lmk2iter->second << "|| = " << error_term << "\t > " << tolerance << std::endl;
           allSame = false;
           thisLmkOK = false;
         }
         if ( thisLmkOK )
         {
-          std::cout << "PASS:  lmk" << lmk1iter->first << std::endl;
+          std::cout << "PASSED: lmk " << lmk1iter->first << "\t\t are same ||" << lmk1iter->second << " - "
+                    << lmk2iter->second << "|| = " << error_term << "\t > " << tolerance << std::endl;
         }
       }
       ++lmk1iter;

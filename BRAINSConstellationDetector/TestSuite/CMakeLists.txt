@@ -688,7 +688,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   # --tolerance 1.875 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   #  )
   #set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
-set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+  #set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
 
 
 ##    DEPENDS BCDTestForLandmarkCompare)
@@ -725,7 +725,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
 #  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.wts} # Baseline file
 #  #  )
 #  #set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
-set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
+#  set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
 
 #
 #endif()

@@ -68,13 +68,15 @@ option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined versio
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)
 option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
+option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support" OFF)
 
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 
+if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK)
+endif()
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ITKv5)
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SlicerExecutionModel)
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)

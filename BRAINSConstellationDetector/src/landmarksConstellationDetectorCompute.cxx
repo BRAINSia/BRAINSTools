@@ -468,11 +468,11 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
         // errors of local search process
 
         // Save some named points in AC-PC aligned space
-        LandmarksMapType msp_lmks_from_orig_space; // named points in ACPC-aligned space
+        LandmarksMapType msp_lmks_computed_iteratively_using_orig_lmks; // named points in ACPC-aligned space
         {
           for ( const auto & lmk_name : base_lmk_names )
           {
-            msp_lmks_from_orig_space[lmk_name] =
+            msp_lmks_computed_iteratively_using_orig_lmks[lmk_name] =
               orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( lmk_name ) );
           }
         }
@@ -513,7 +513,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
             // dimension reduction.
             // The result will be stored into m_msp_lmks[LlsMatrix_name]
             LandmarksMapType iteratively_updated_msp_lmks =
-              msp_lmks_from_orig_space; // Initialize with lmks from orig_space
+              msp_lmks_computed_iteratively_using_orig_lmks; // Initialize with lmks from orig_space
             LinearEstimation( iteratively_updated_msp_lmks, processingList, numBaseLandmarks );
 
             // check whether it is midline landmark, set search range
@@ -530,11 +530,12 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
                 }
               }
             }
-            msp_lmks_from_orig_space[LlsMatrix_name] = iteratively_updated_msp_lmks[LlsMatrix_name];
+            msp_lmks_computed_iteratively_using_orig_lmks[LlsMatrix_name] =
+              iteratively_updated_msp_lmks[LlsMatrix_name];
 
             // Obtain the position of the current landmark in other spaces
-            this->m_orig_lmks_updated[LlsMatrix_name] =
-              this->m_orig2msp_img_tfm->TransformPoint( msp_lmks_from_orig_space.at( LlsMatrix_name ) );
+            this->m_orig_lmks_updated[LlsMatrix_name] = this->m_orig2msp_img_tfm->TransformPoint(
+              msp_lmks_computed_iteratively_using_orig_lmks.at( LlsMatrix_name ) );
 
             msp_lmks_algo_found[LlsMatrix_name] = eyeFixed2msp_lmk_tfm->TransformPoint(
               orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( LlsMatrix_name ) ) );
@@ -564,7 +565,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
                 this->m_orig_lmks_updated[LlsMatrix_name] =
                   this->m_orig2eyeFixed_img_tfm->TransformPoint( this->m_orig_lmks_updated.at( LlsMatrix_name ) );
               }
-              msp_lmks_from_orig_space[LlsMatrix_name] =
+              msp_lmks_computed_iteratively_using_orig_lmks[LlsMatrix_name] =
                 orig2msp_lmk_tfm->TransformPoint( this->m_orig_lmks_updated.at( LlsMatrix_name ) );
             }
           }

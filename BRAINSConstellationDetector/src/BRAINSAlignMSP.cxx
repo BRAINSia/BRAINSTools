@@ -181,8 +181,5 @@ main( int argc, char * argv[] )
                                        itksys::SystemTools::GetFilenameName( inputVolume ) );
     CreatedebugPlaneImage( image, eyeFixed2msp_lmk_tfm, ORIG_ImagePlane );
   }
-  // TODO:  Add more features to this program:
-  //       1) Resample to a given space (256^3, 1.0mm^3)
-  //       2) Output using Windowed Sinc for best results.
   return 0;
 }

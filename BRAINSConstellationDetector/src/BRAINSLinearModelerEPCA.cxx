@@ -222,22 +222,6 @@ ComputeEPCAModel( MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBT
       itkGenericExceptionMacro( << "Error: vnl_symmetric_eigensystem_compute failed." )
     }
 
-    // TODO -------------------------------------------------------
-
-    // Compute W_ri
-
-    // Construct Y_i
-
-    // Compute C_opt
-
-    // Compute and save M_i
-
-    // DEBUG
-    // std::cout << "X_i( i = " << k << " ) = \n" << X_i << std::endl;
-    // std::cout << "I_si = \n" << I_si << std::endl;
-    // std::cout << "s_i( i = " << k << " ) = " << s_i << std::endl;
-    // std::cout << "X_i0Mean( i = " << k << " ) = \n" << X_i0Mean << std::endl;
-    // std::cout << "D( i = " << k << " ) = \n" << D << std::endl;
     std::cout << "W_i( i = " << k << " ) = \n" << W_i << std::endl;
 
     if ( k++ > 0 )

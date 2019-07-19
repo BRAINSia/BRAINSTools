@@ -44,7 +44,7 @@ endforeach()
 
 #if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ### Test Versor,  This does not currently have a formal test, so disable building it.
-### TODO:  Create a test for the VersorTester
+### FUTURE:  Create a test for the VersorTester
 ###
 #set (VersorTester_source VersorTester.cxx)
 #add_executable(VersorTester ${VersorTester_source})

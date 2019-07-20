@@ -32,7 +32,7 @@
 
 
 static void
-CheckLandmarks( const LandmarksMapType & ldmk, const LandmarkWeightMapType & weightMap )
+CheckLandmarks( const LandmarksMapType & ldmk, const LandmarksWeightMapType & weightMap )
 {
   if ( ldmk.size() < 4 )
   {
@@ -83,7 +83,7 @@ InitializeTransform( int argc, char * argv[] )
   LandmarksMapType movingLandmarks = ReadSlicer3toITKLmk( inputMovingLandmarkFilename );
 
   /** Landmark Weights */
-  LandmarkWeightMapType landmarkWeightMap;
+  LandmarksWeightMapType landmarkWeightMap;
   if ( !inputWeightFilename.empty() )
   {
     landmarkWeightMap = ReadLandmarkWeights( inputWeightFilename );

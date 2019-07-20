@@ -10,7 +10,7 @@ using ImageMaskPointer = SpatialObjectType::Pointer;
 
 using LandmarkPointType = itk::Point< double, 3 >;
 using LandmarksMapType = std::map< std::string, LandmarkPointType >;
-using LandmarkWeightMapType = std::map< std::string, float >;
+// using LandmarksWeightMapType = std::map<std::string, float>;
 using LandmarksWeightMapType = std::map< std::string, double >;
 
 #endif // BRAINSTypes_H__

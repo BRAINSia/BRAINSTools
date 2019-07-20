@@ -71,7 +71,7 @@ static inline std::string trim_copy(std::string s) {
 #endif
 
 
-LandmarkWeightMapType
+LandmarksWeightMapType
 ReadLandmarkWeights( const std::string & weightFilename )
 {
   std::ifstream weightFileStream( weightFilename.c_str() );
@@ -83,8 +83,8 @@ ReadLandmarkWeights( const std::string & weightFilename )
       __FILE__, __LINE__, "Couldn't open landmark weight file for reading", ITK_LOCATION );
   }
 
-  std::string           line;
-  LandmarkWeightMapType landmarkWeightMap;
+  std::string            line;
+  LandmarksWeightMapType landmarkWeightMap;
   while ( getline( weightFileStream, line ) )
   {
     trim( line );

@@ -56,7 +56,7 @@ typedef enum
  * weightFilename  -
  * Output: A map of weights
  */
-LandmarkWeightMapType
+LandmarksWeightMapType
 ReadLandmarkWeights( const std::string & weightFilename );
 
 /*

@@ -29,27 +29,10 @@
 #ifndef __landmarksConstellationCommon_h
 #define __landmarksConstellationCommon_h
 
-// Use linear interpolation to keep the processing quick.
-// RM #define __QUICK_RUNS_APPROXIMATION__
-
-#include <cstdio>      // TODO: This include file should be removed, prefer constructs
-                       // from the std library
-#include <cstdlib>     // TODO: This include file should be removed, prefer constructs
-                       // from the std library
-#include <cmath>       // TODO: This include file should be removed, use vcl_math
-                       // instead
-#include <sys/types.h> // TODO: This include file should be removed, unix only
-                       // non-portable
-#include <sys/stat.h>  // TODO: This include file should be removed, unix only
-                       // non-portable
-#include <unistd.h>    // TODO: This include file should be removed, unix only
-                       // non-portable
-#include <ctime>       // TODO: This include file should be removed, unix only
-                       // non-portable
-#include <cctype>      // TODO: This include file should be removed, use vcl_math
-                       // instead
-                       // #include <volume.h> //This include file should be
-                       // removed
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 
 #include <numeric>
 #include <itksys/SystemTools.hxx>
@@ -72,7 +55,7 @@
 #include "itkExtractImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkFlipImageFilter.h"
-#include <vcl_compiler.h>
+
 #include <iostream>
 #include "algorithm"
 #include "itkImageDuplicator.h"
@@ -85,13 +68,6 @@
 
 #include "Slicer3LandmarkIO.h"
 
-#if 0 // RM
-extern const unsigned int MAX_ROTATIONS_TESTED;
-extern const unsigned int MAXITER;
-extern const unsigned int DEL;
-extern const unsigned int YES;
-extern const unsigned int SMAX;
-#endif
 extern const unsigned int NO;
 namespace LMC
 {
@@ -105,13 +81,10 @@ extern bool globalverboseFlag;
 
 namespace // avoid 'shadows declaration' warnings.
 {
-// RM typedef float                 vertexType[4][3];
+
 using SImageType = itk::Image< short, 3 >;
 using DImageType3D = itk::Image< double, 3 >;
 using FImageType3D = itk::Image< float, 3 >;
-// RM using SImageType2D = itk::Image<short,2>;
-// RM using DImageType2D = itk::Image<double, 2>;
-// RM using FImageType2D = itk::Image<float, 2>;
 
 using ByteImageType = itk::Image< unsigned char, 3 >;
 
@@ -129,8 +102,6 @@ using LinearInterpolatorType = itk::LinearInterpolateImageFunction< SImageType, 
 } // namespace
 
 #include "landmarksConstellationModelIO.h"
-
-// RM extern VersorTransformType::Pointer ConvertToVersorRigid3D(RigidTransformType::Pointer RT);
 
 extern std::string globalResultsDir;
 extern int         globalImagedebugLevel;
@@ -155,24 +126,6 @@ CreateTestCenteredRotatedImage2( const RigidTransformType::Pointer ACPC_MSP_Alig
                                  /*const*/ SImageType::Pointer &     image,
                                  const RigidTransformType::Pointer & Point_Rotate );
 
-#if 0 // RM
-extern itk::Matrix<double, 3, 3> GetMatrixInverse(const itk::Matrix<double, 3, 3> & input);
-
-// extern itk::Matrix<double,3,3> CreateRotationMatrixFromAngles(const double
-// alpha, const double beta, const double gamma);
-extern itk::Versor<double> CreateRotationVersorFromAngles(const double alpha, const double beta, const double gamma);
-
-extern void ComputeEulerAnglesFromRotationMatrix(const itk::Matrix<double, 3,
-                                                                   3> &  m, double & initialAttitudeAngle,
-                                                 double & initialBankAngle, double & initialHeadingAngle);
-
-extern void defineTemplateIndexLocations(const int r, const int h,
-                                         landmarksConstellationModelIO::IndexLocationVectorType & indexLocations,
-                                         std::vector<float> & results_array);
-
-extern int computeTemplateSize(const int r, const int h);
-
-#endif
 extern void
 decomposeRPAC( const SImageType::PointType & RP, const SImageType::PointType & PC, const SImageType::PointType & AC,
                double * const RPPC_to_RPAC_angle, double * const RPAC_over_RPPC );
@@ -180,19 +133,6 @@ decomposeRPAC( const SImageType::PointType & RP, const SImageType::PointType & P
 extern void
 MakeLabelImage( SImageType::Pointer in, const SImageType::PointType & RP, const SImageType::PointType & AC,
                 const SImageType::PointType & PC, const SImageType::PointType & VN4, const std::string & fname );
-
-#if 0 // RM
-extern SImageType::PointType::VectorType initialAC(const SImageType::PointType & RP, const SImageType::PointType & PC,
-                                                   const double RPPC_to_RPAC_angleMean,
-                                                   const double RPAC_over_RPPCMean);
-#endif
-
-// RM using RandomGeneratorType = itk::Statistics::MersenneTwisterRandomVariateGenerator;
-// RM using RandomGeneratorPointer = RandomGeneratorType::Pointer;
-// RM extern RandomGeneratorPointer _RandomGenerator;
-// RM extern double GetRandomZeroOneDouble(void);
-
-// RM extern void InitializeRandomZeroOneDouble(RandomGeneratorType::IntegerType rseed);
 
 extern void
 ComputeMSP( SImageType::Pointer image, RigidTransformType::Pointer & output_transform,
@@ -340,25 +280,6 @@ extractArray( LinearInterpolatorType::Pointer imInterp, const SImageType::PointT
               const landmarksConstellationModelIO::IndexLocationVectorType & model,
               std::vector< float > &                                         result_array );
 
-#if 0 // RM
-inline
-static std::string
-PrefixName(const char *prefix, const std::string & name)
-{
-  std::string rval;
-
-  rval += itksys::SystemTools::GetFilenamePath(name);
-  if( rval.size() > 0 )
-    {
-    rval += "/";
-    }
-  //  std::string rval(pathpart);
-  rval += prefix;
-  rval += itksys::SystemTools::GetFilenameName(name);
-  return rval;
-}
-#endif
-
 #include <itkMinimumMaximumImageFilter.h>
 #include <itkScalarImageToHistogramGenerator.h>
 #include <itkOtsuMultipleThresholdsCalculator.h>
@@ -425,258 +346,4 @@ setLowHigh( typename SImageType::Pointer & image, typename SImageType::PixelType
   return static_cast< typename SImageType::PixelType >( otsuThresholds[0] );
 }
 
-#if 0 // TODO: Remove old code
-// ------------------------------
-// The following should be cleaned up and moved elsewhere
-template <typename DType>
-double
-removeVectorMean(DType *x, DType *y, int n)
-{
-  double mean = 0.0;
-
-  if( n <= 0 )
-    {
-    return 0.0;
-    }
-  for( int i = 0; i < n; ++i )
-    {
-    mean += static_cast<double>( x[i] );
-    }
-  mean /= n;
-  for( int i = 0; i < n; ++i )
-    {
-    y[i] = static_cast<DType>( x[i] - mean );
-    }
-  return mean;
-}
-
-extern void removeVectorMean(double *y, int n, int p);
-
-template <typename DType>
-double removeVectorMean(DType *y, int n)
-{
-  double mean = 0.0;
-
-  if( n <= 0 )
-    {
-    return 0.0;
-    }
-  for( int i = 0; i < n; ++i )
-    {
-    mean += y[i];
-    }
-  mean /= n;
-  for( int i = 0; i < n; ++i )
-    {
-    y[i] = y[i] - mean;
-    }
-  return mean;
-}
-
-// ///////////////////////////////////////////////////////
-// Implements Eq. (2.2.1) of J. Cohen & P. Cohen (2nd ed.)
-template <typename DType>
-double standardDeviation(DType *x, int n)
-{
-  double sx, sxx;
-  double sd;
-
-  if( n <= 0 )
-    {
-    return 0.0;
-    }
-  sx = sxx = 0.0;
-  for( int i = 0; i < n; ++i )
-    {
-    sx += x[i];
-    sxx += x[i] * x[i];
-    }
-  sd = ( sxx - sx * sx / n ) / n;
-  if( sd > 0.0 )
-    {
-    sd = std::sqrt(sd);
-    }
-  else
-    {
-    sd = 0.0;
-    }
-  return sd;
-}
-
-// Computes the Pearson correlation coefficient between x and y.
-// Implements Eq. (2.3.2) of J. Cohen & P. Cohen (2nd ed.)
-template <typename DTypeX, typename DTypeY>
-double pearsonCorrelation(DTypeX *x, DTypeY *y, int n)
-{
-  double sx, sy, sxx, syy, sxy;
-  double Sxx, Sxy, Syy;
-  double dum = 0.0;
-
-  sx = sy = sxx = syy = sxy = 0.0;
-  for( int i = 0; i < n; ++i )
-    {
-    sx += x[i];
-    sxx += x[i] * x[i];
-    sy += y[i];
-    syy += y[i] * y[i];
-    sxy += x[i] * y[i];
-    }
-  Sxx = n * sxx - sx * sx;
-  Syy = n * syy - sy * sy;
-  Sxy = n * sxy - sx * sy;
-  if( Sxx * Syy > 0.0 )
-    {
-    dum = std::sqrt(Sxx * Syy);
-    }
-  if( dum != 0.0 )
-    {
-    return (double)( Sxy / dum );
-    }
-  else
-    {
-    return 0.0;
-    }
-}
-
-// Implements Eq. (3.3.11) of J. Cohen & P. Cohen (2nd ed.)
-template <typename DTypeY, typename DTypeX>
-void partialCorrelation(DTypeY *Y, DTypeX *X1, DTypeX *X2, int n, double *pr1, double *pr2)
-{
-  double rY1, rY2, r12;
-  double dum1, dum2;
-
-  rY1 = pearsonCorrelation(X1, Y, n);
-  rY2 = pearsonCorrelation(X2, Y, n);
-  r12 = pearsonCorrelation(X1, X2, n);
-  dum1 = ( 1.0 - rY2 * rY2 ) * ( 1 - r12 * r12 );
-  dum2 = ( 1.0 - rY1 * rY1 ) * ( 1 - r12 * r12 );
-  if( dum1 > 0.0 )
-    {
-    *pr1 = ( rY1 - rY2 * r12 ) / std::sqrt(dum1);
-    }
-  else
-    {
-    *pr1 = 0.0;
-    }
-  if( dum2 > 0.0 )
-    {
-    *pr2 = ( rY2 - rY1 * r12 ) / std::sqrt(dum2);
-    }
-  else
-    {
-    *pr2 = 0.0;
-    }
-}
-
-// //////////////////////////////////////////////////////////////
-// Computes the sample mean of a set of n observations {x_1,x_2,...,x_n} from a
-// given distribution.
-// //////////////////////////////////////////////////////////////
-template <typename DType>
-double
-sample_mean(DType *x, int n)
-{
-  double mean = 0.0;
-
-  if( n <= 0 )
-    {
-    return 0.0;
-    }
-  for( int i = 0; i < n; ++i )
-    {
-    mean += x[i];
-    }
-  mean /= n;
-  return mean;
-}
-
-// //////////////////////////////////////////////////////////////
-// Computes the unbiased sample variance of a set of n observations
-// {x_1,x_2,...,x_n} from a given distribution.
-// //////////////////////////////////////////////////////////////
-template <typename DType>
-double sample_variance(DType *x, int n, double *mean)
-{
-  double sum_of_sq = 0.0;
-  double sum = 0.0;
-  double var;
-
-  if( n < 2 )
-    {
-    *mean = 0.0;
-    return 0.0;
-    }
-  for( int i = 0; i < n; ++i )
-    {
-    sum_of_sq +=
-      static_cast<double>( x[i] )
-      * static_cast<double>( x[i] );
-    sum += static_cast<double>( x[i] );
-    }
-  *mean = sum / n;
-  var = ( sum_of_sq - sum * sum / n ) / ( n - 1.0 );
-  return var;
-}
-
-template <typename DType>
-double
-independent_samples_t(DType *x1, int n1, DType *x2, int n2, int *df, double *meandiff)
-{
-  double var1, var2;
-  double mean1, mean2;
-  double var, sd;
-  double t;
-
-  *df = n1 + n2 - 2;
-  if( n1 < 2 || n2 < 2 )
-    {
-    return 0.0;
-    }
-  var1 = sample_variance<DType>(x1, n1, &mean1);
-  var2 = sample_variance<DType>(x2, n2, &mean2);
-  var = ( ( ( n1 - 1 ) * var1 + ( n2 - 1 ) * var2 ) / ( n1 + n2 - 2.0 ) ) * ( 1.0 / n1 + 1.0 / n2 );
-  sd = std::sqrt(var);
-  if( sd == 0.0 )
-    {
-    return 0.0;
-    }
-  *meandiff = mean1 - mean2;
-  t = ( mean1 - mean2 ) / sd;
-  return t;
-}
-
-template <typename DType>
-double
-paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
-{
-  double var;
-  double mean;
-  double sd;
-  double t;
-
-  *df = n - 1;
-  if( n < 2 )
-    {
-    return 0.0;
-    }
-  for( int i = 0; i < n; ++i )
-    {
-    x1[i] -= x2[i];
-    }
-  var = sample_variance<double>(x1, n, &mean) / n;
-  sd = std::sqrt(var);
-  if( sd == 0.0 )
-    {
-    return 0.0;
-    }
-  *meandiff = mean;
-  t = mean / sd;
-  return t;
-}
-#endif
-#if 0
-template<typename TScalarType>
-extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  );
-#endif
-
-#endif
+#endif //__landmarksConstellationCommon_h

@@ -63,7 +63,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
 
   VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
   this->m_orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
-  SImagePointType eyeFixed_lmk_CenterOfHeadMass =
+  const SImagePointType eyeFixed_lmk_CenterOfHeadMass =
     orig2eyeFixed_lmk_tfm->TransformPoint( m_orig_lmks_forced.at( "CM" ) );
   if ( globalImagedebugLevel > 2 )
   {
@@ -142,7 +142,7 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
     CreatedebugPlaneImage( this->m_msp_img, MSP_ImagePlane );
   }
 
-  // TODO:  ERROR  Compute Center of Head Mas differently
+  // INFO: Compute Center of Head Mass differently
   VersorTransformType::Pointer eyeFixed2msp_lmk_tfm = VersorTransformType::New();
   this->m_test_orig2msp_img_tfm->GetInverse( eyeFixed2msp_lmk_tfm );
 
@@ -285,7 +285,6 @@ landmarksConstellationDetector::Compute( SImageType::Pointer orig_space_image )
       if ( mapHasKey( m_orig_lmks_forced, "AC" ) )
       {
         std::cout << "Skip estimation of AC , directly forced by command line." << std::endl;
-        // TODO:  Simplify these transforms.
         msp_lmks_algo_found["AC"] = eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint( this->m_orig_lmks_forced.at( "AC" ) ) );
       }

@@ -89,7 +89,6 @@ namespace itk
  * radius given by the user, and fill in the array of radii.
  *
  * \ingroup ImageFeatureExtraction
- * \todo Update the doxygen documentation!!!
  * */
 
 template < typename TInputImage, typename TOutputImage >

@@ -59,12 +59,11 @@ TrimForegroundInDirection( SImageType::Pointer & foreground, SImageType::Pointer
                            double otsuPercentileThreshold, unsigned int closingSize, double headSizeLowerLimit,
                            SImageType::PixelType BackgroundFillValue );
 
-// TODO: This function needs to be cleaned up.  It should not compute the otsu
-// TODO: threasholding, but rather, it should have been given
-// TODO: An image that was previously otsu threasholded.
-// TODO: This filter slowly evolved from another filter, and should be cleaned
-// so
-// TODO: that it only uses the items that are necessary for success.
+// INFO: This function needs to be cleaned up.  It should not compute the otsu
+// threasholding, but rather, it should have been given
+// An image that was previously otsu threasholded.
+// This filter slowly evolved from another filter, and should be cleaned
+// so that it only uses the items that are necessary for success.
 extern SImageType::PointType
 FindCenterOfBrainBasedOnTopOfHead( SImageType::Pointer & volOrig, unsigned int axis, double otsuPercentileThreshold,
                                    unsigned int closingSize, double headSizeLowerLimit,

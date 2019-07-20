@@ -135,7 +135,6 @@ IsOnSphere( const SImageType::PointType & curr_point, const SImageType::PointTyp
   return PointDist.GetNorm() < radius;
 }
 
-// TODO:  BrandedImages should be from the modelFile instead of the mDef.
 void
 MakeBrandeddebugImage( SImageType::ConstPointer in, const landmarksConstellationModelIO & mDef,
                        const SImageType::PointType & RP, const SImageType::PointType & AC,
@@ -404,7 +403,7 @@ MakeBranded2DImage( SImageType::ConstPointer in, landmarksConstellationDetector 
   itkUtil::WriteImage< RGB2DImageType >( TwoDImage, fname );
 }
 
-// TODO:  Determine what the interface for WriteMRMLFile really needs to produce
+// INFO:  Determine what the interface for WriteMRMLFile really needs to produce
 // a useful file, and then limit the interface to just that.
 extern void
 WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,

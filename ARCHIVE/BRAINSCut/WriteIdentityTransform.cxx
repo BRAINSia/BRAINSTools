@@ -21,20 +21,20 @@
 #include "itkAffineTransform.h"
 
 int
-main(int argc, char * *argv)
+main( int argc, char ** argv )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  using TransformationType = itk::AffineTransform<double, 3>;
+  using TransformationType = itk::AffineTransform< double, 3 >;
 
   TransformationType::Pointer transform = TransformationType::New();
 
   transform->SetIdentity();
 
   using WriterType = itk::TransformFileWriter;
-  WriterType::Pointer writer =  WriterType::New();
+  WriterType::Pointer writer = WriterType::New();
 
-  writer->SetFileName("./identityTransformation.mat");
+  writer->SetFileName( "./identityTransformation.mat" );
   writer->SetInput( transform );
 #if ITK_VERSION_MAJOR >= 5
   writer->SetUseCompression( true );

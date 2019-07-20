@@ -19,27 +19,33 @@
 class VTK_ITK_EXPORT vtkITKLevelTracing3DImageFilter : public vtkImageAlgorithm
 {
 public:
-  static vtkITKLevelTracing3DImageFilter *New();
-  vtkTypeMacro(vtkITKLevelTracing3DImageFilter, vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkITKLevelTracing3DImageFilter *
+  New();
+  vtkTypeMacro( vtkITKLevelTracing3DImageFilter, vtkImageAlgorithm );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
   /// Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).
-  vtkSetVector3Macro(Seed, int);
-  vtkGetVector3Macro(Seed, int);
+  vtkSetVector3Macro( Seed, int );
+  vtkGetVector3Macro( Seed, int );
 
 protected:
   vtkITKLevelTracing3DImageFilter();
   ~vtkITKLevelTracing3DImageFilter();
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
+  virtual int
+  RequestInformation( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
+  virtual int
+  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
+  virtual int
+  FillInputPortInformation( int port, vtkInformation * info ) override;
 
   int Seed[3];
 
 private:
-  vtkITKLevelTracing3DImageFilter(const vtkITKLevelTracing3DImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKLevelTracing3DImageFilter&);  /// Not implemented.
+  vtkITKLevelTracing3DImageFilter( const vtkITKLevelTracing3DImageFilter & ); /// Not implemented.
+  void
+  operator=( const vtkITKLevelTracing3DImageFilter & ); /// Not implemented.
 };
 
 #endif

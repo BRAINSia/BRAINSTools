@@ -27,37 +27,41 @@
 #include "DistanceMapsCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if( inputLabelVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputLabelVolume Required! "  << std::endl;
-    }
-  if( inputMaskVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputMaskVolume Required! "  << std::endl;
-    }
-  if( outputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
-    }
-  if( violated )
-    {
+  if ( inputLabelVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputLabelVolume Required! " << std::endl;
+  }
+  if ( inputMaskVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputMaskVolume Required! " << std::endl;
+  }
+  if ( outputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --outputVolume Required! " << std::endl;
+  }
+  if ( violated )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   using PixelType = float;
   // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  using LabelImageType = itk::Image<PixelType,  Dimension>;
-  using MaskImageType = itk::Image<char,  Dimension>;
-  using ReaderType = itk::ImageFileReader<LabelImageType>;
-  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+  using LabelImageType = itk::Image< PixelType, Dimension >;
+  using MaskImageType = itk::Image< char, Dimension >;
+  using ReaderType = itk::ImageFileReader< LabelImageType >;
+  using MaskReaderType = itk::ImageFileReader< MaskImageType >;
 
   ReaderType::Pointer     labelReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -65,43 +69,43 @@ int main(int argc, char *argv[])
   labelReader->SetFileName( inputLabelVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  using MaskFilterType = itk::MaskImageFilter<LabelImageType, MaskImageType, LabelImageType>;
+  using MaskFilterType = itk::MaskImageFilter< LabelImageType, MaskImageType, LabelImageType >;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType>;
+  using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter< LabelImageType, LabelImageType >;
   BinaryThresholdFilterType::Pointer binaryFilter = BinaryThresholdFilterType::New();
 
-  using DistanceMapFilterType = itk::SignedMaurerDistanceMapImageFilter<LabelImageType, LabelImageType>;
+  using DistanceMapFilterType = itk::SignedMaurerDistanceMapImageFilter< LabelImageType, LabelImageType >;
   DistanceMapFilterType::Pointer distanceMapFilter = DistanceMapFilterType::New();
-  distanceMapFilter->SetInsideIsPositive(true); // Makes all distances positive
+  distanceMapFilter->SetInsideIsPositive( true ); // Makes all distances positive
 
   try
-    {
+  {
     maskFilter->SetInput1( labelReader->GetOutput() );
     maskFilter->SetInput2( maskReader->GetOutput() );
-    maskFilter->SetOutsideValue(0);
+    maskFilter->SetOutsideValue( 0 );
     // binaryFilter->SetInput(labelReader->GetOutput());
     binaryFilter->SetInput( maskFilter->GetOutput() );
-    binaryFilter->SetLowerThreshold(inputTissueLabel);
-    binaryFilter->SetUpperThreshold(inputTissueLabel);
+    binaryFilter->SetLowerThreshold( inputTissueLabel );
+    binaryFilter->SetUpperThreshold( inputTissueLabel );
     binaryFilter->Update();
     distanceMapFilter->SetInput( binaryFilter->GetOutput() );
     distanceMapFilter->UseImageSpacingOff();
     distanceMapFilter->SquaredDistanceOff();
     distanceMapFilter->Update();
     maskReader->Update();
-    }
-  catch( itk::ExceptionObject & excep )
-    {
+  }
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     throw;
-    }
+  }
 
-  using ImageWriterType = itk::ImageFileWriter<DistanceMapFilterType::OutputImageType>;
+  using ImageWriterType = itk::ImageFileWriter< DistanceMapFilterType::OutputImageType >;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
-  imageWriter->SetFileName(outputVolume);
+  imageWriter->SetFileName( outputVolume );
   imageWriter->SetInput( distanceMapFilter->GetOutput() );
   imageWriter->Update();
 

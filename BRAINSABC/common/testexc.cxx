@@ -18,17 +18,18 @@
  *=========================================================================*/
 #include "muException.h"
 
-int main()
+int
+main()
 {
   try
-    {
-    muExceptionMacro(<< "FOO");
-    }
-  catch( mu::Exception & e )
-    {
+  {
+    muExceptionMacro( << "FOO" );
+  }
+  catch ( mu::Exception & e )
+  {
     std::cerr << e << std::endl;
     return -1;
-    }
+  }
 
   return 0;
 }

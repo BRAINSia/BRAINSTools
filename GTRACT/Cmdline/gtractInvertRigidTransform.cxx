@@ -48,28 +48,29 @@
 #include "gtractInvertRigidTransformCLP.h"
 #include "GenericTransformImage.h"
 #include "BRAINSThreadControl.h"
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
 
   bool debug = true;
-  if( debug )
-    {
+  if ( debug )
+  {
     std::cout << "==============================================================" << std::endl;
-    std::cout << "Input Transform: " <<  inputTransform << std::endl;
-    std::cout << "Output Transform: " <<  outputTransform << std::endl;
+    std::cout << "Input Transform: " << inputTransform << std::endl;
+    std::cout << "Output Transform: " << outputTransform << std::endl;
     std::cout << "==============================================================" << std::endl;
-    }
+  }
 
-  using RigidTransformType = itk::VersorRigid3DTransform<double>;
+  using RigidTransformType = itk::VersorRigid3DTransform< double >;
   // Read the transform
-  using GenericTransformType = itk::Transform<double, 3, 3>;
+  using GenericTransformType = itk::Transform< double, 3, 3 >;
 
-  GenericTransformType::Pointer forwardTransform = itk::ReadTransformFromDisk(inputTransform);
+  GenericTransformType::Pointer forwardTransform = itk::ReadTransformFromDisk( inputTransform );
   RigidTransformType::Pointer   reverseTransform = RigidTransformType::New();
-  forwardTransform->GetInverse(reverseTransform);
-  itk::WriteTransformToDisk<double>(reverseTransform, outputTransform);
+  forwardTransform->GetInverse( reverseTransform );
+  itk::WriteTransformToDisk< double >( reverseTransform, outputTransform );
   return EXIT_SUCCESS;
 }

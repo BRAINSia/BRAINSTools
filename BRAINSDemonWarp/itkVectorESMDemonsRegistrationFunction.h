@@ -48,57 +48,54 @@
 namespace itk
 {
 /**
-  * \class ESMDemonsRegistrationFunction
-  *
-  * \brief Fast implementation of the symmetric demons registration force
-  *
-  * This class provides a substantially faster implementation of the
-  * symmetric demons registration force. Speed is improved by keeping
-  * a deformed copy of the moving image for gradient evaluation.
-  *
-  * Symmetric forces simply means using the mean of the gradient
-  * of the fixed image and the gradient of the warped moving
-  * image.
-  *
-  * Note that this class also enables the use of fixed, mapped moving
-  * and warped moving images forces by using a call to SetUseGradientType
-  *
-  * The moving image should not be saturated. We indeed use
-  * NumericTraits<MovingPixelType>::Max() as a special value.
-  *
-  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
-  *
-  * This implementation was taken from the Insight Journal paper:
-  * http://hdl.handle.net/1926/510
-  *
-  * \sa SymmetricForcesDemonsRegistrationFunction
-  * \sa SymmetricForcesDemonsRegistrationFilter
-  * \sa DemonsRegistrationFilter
-  * \sa DemonsRegistrationFunction
-  * \ingroup FiniteDifferenceFunctions
-  *
-  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-class VectorESMDemonsRegistrationFunction :
-  public         PDEDeformableRegistrationFunction<TFixedImage,
-                                                   TMovingImage, TDisplacementField>
+ * \class ESMDemonsRegistrationFunction
+ *
+ * \brief Fast implementation of the symmetric demons registration force
+ *
+ * This class provides a substantially faster implementation of the
+ * symmetric demons registration force. Speed is improved by keeping
+ * a deformed copy of the moving image for gradient evaluation.
+ *
+ * Symmetric forces simply means using the mean of the gradient
+ * of the fixed image and the gradient of the warped moving
+ * image.
+ *
+ * Note that this class also enables the use of fixed, mapped moving
+ * and warped moving images forces by using a call to SetUseGradientType
+ *
+ * The moving image should not be saturated. We indeed use
+ * NumericTraits<MovingPixelType>::Max() as a special value.
+ *
+ * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+ *
+ * This implementation was taken from the Insight Journal paper:
+ * http://hdl.handle.net/1926/510
+ *
+ * \sa SymmetricForcesDemonsRegistrationFunction
+ * \sa SymmetricForcesDemonsRegistrationFilter
+ * \sa DemonsRegistrationFilter
+ * \sa DemonsRegistrationFunction
+ * \ingroup FiniteDifferenceFunctions
+ *
+ */
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+class VectorESMDemonsRegistrationFunction
+  : public PDEDeformableRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VectorESMDemonsRegistrationFunction);
+  ITK_DISALLOW_COPY_AND_ASSIGN( VectorESMDemonsRegistrationFunction );
 
   /** Standard class type alias. */
   using Self = VectorESMDemonsRegistrationFunction;
-  using Superclass = PDEDeformableRegistrationFunction<
-      TFixedImage, TMovingImage, TDisplacementField>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = PDEDeformableRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorESMDemonsRegistrationFunction,
-               PDEDeformableRegistrationFunction);
+  itkTypeMacro( VectorESMDemonsRegistrationFunction, PDEDeformableRegistrationFunction );
 
   /** MovingImage image type. */
   using VectorMovingImageType = TMovingImage;
@@ -113,15 +110,15 @@ public:
 
   /** MovingImage image type. */
   //  using MovingImageType = typename Superclass::MovingImageType;
-  using MovingImageType = itk::Image<float, Self::ImageDimension>;
+  using MovingImageType = itk::Image< float, Self::ImageDimension >;
   //  using MovingImagePointer = typename Superclass::MovingImagePointer;
   using MovingImagePointer = typename MovingImageType::Pointer;
   using MovingPixelType = typename MovingImageType::PixelType;
 
   /** FixedImage image type. */
   //  using FixedImageType = typename Superclass::FixedImageType;
-  using FixedImageType = itk::Image<float, Self::ImageDimension>;
-  using FixedImagePointer = typename  FixedImageType::Pointer;
+  using FixedImageType = itk::Image< float, Self::ImageDimension >;
+  using FixedImagePointer = typename FixedImageType::Pointer;
   //  using FixedImagePointer = typename Superclass::FixedImagePointer;
   using IndexType = typename FixedImageType::IndexType;
   using SizeType = typename FixedImageType::SizeType;
@@ -139,176 +136,189 @@ public:
   using FloatOffsetType = typename Superclass::FloatOffsetType;
   using TimeStepType = typename Superclass::TimeStepType;
 
-  using AdaptorType = itk::VectorImageToImageAdaptor<MovingPixelType, Self::ImageDimension>;
+  using AdaptorType = itk::VectorImageToImageAdaptor< MovingPixelType, Self::ImageDimension >;
 
   /** Interpolator type. */
   using CoordRepType = double;
-  using InterpolatorType = InterpolateImageFunction<
-      AdaptorType, CoordRepType>;
+  using InterpolatorType = InterpolateImageFunction< AdaptorType, CoordRepType >;
   using InterpolatorPointer = typename InterpolatorType::Pointer;
   using PointType = typename InterpolatorType::PointType;
-  using DefaultInterpolatorType = LinearInterpolateImageFunction<
-      AdaptorType, CoordRepType>;
+  using DefaultInterpolatorType = LinearInterpolateImageFunction< AdaptorType, CoordRepType >;
 
   /** Warper type */
-  using WarperType = WarpImageFilter<
-      AdaptorType,
-      MovingImageType, DisplacementFieldType>;
+  using WarperType = WarpImageFilter< AdaptorType, MovingImageType, DisplacementFieldType >;
   using WarperPointer = typename WarperType::Pointer;
 
   /** Covariant vector type. */
-  using CovariantVectorType = CovariantVector<double,
-                          Self::ImageDimension>;
+  using CovariantVectorType = CovariantVector< double, Self::ImageDimension >;
 
   /** Fixed image gradient calculator type. */
-  using GradientCalculatorType = CentralDifferenceImageFunction<AdaptorType>;
+  using GradientCalculatorType = CentralDifferenceImageFunction< AdaptorType >;
   using GradientCalculatorPointer = typename GradientCalculatorType::Pointer;
 
   /** Moving image gradient (unwarped) calculator type. */
-  using MovingImageGradientCalculatorType = CentralDifferenceImageFunction<AdaptorType, CoordRepType>;
-  typedef typename MovingImageGradientCalculatorType::Pointer
-    MovingImageGradientCalculatorPointer;
+  using MovingImageGradientCalculatorType = CentralDifferenceImageFunction< AdaptorType, CoordRepType >;
+  typedef typename MovingImageGradientCalculatorType::Pointer MovingImageGradientCalculatorPointer;
 
   /** Set the moving image interpolator. */
-  void SetMovingImageInterpolator(InterpolatorType *ptr)
+  void
+  SetMovingImageInterpolator( InterpolatorType * ptr )
   {
-    m_MovingImageInterpolator = ptr; m_MovingImageWarper->SetInterpolator(ptr);
+    m_MovingImageInterpolator = ptr;
+    m_MovingImageWarper->SetInterpolator( ptr );
   }
 
   /** Get the moving image interpolator. */
-  InterpolatorType * GetMovingImageInterpolator(void)
+  InterpolatorType *
+  GetMovingImageInterpolator( void )
   {
     return m_MovingImageInterpolator;
   }
 
   /** This class uses a constant timestep of 1. */
-  TimeStepType ComputeGlobalTimeStep( void *itkNotUsed(GlobalData) ) const override
+  TimeStepType
+  ComputeGlobalTimeStep( void * itkNotUsed( GlobalData ) ) const override
   {
     return m_TimeStep;
   }
 
   /** Return a pointer to a global data structure that is passed to
-    * this object from the solver at each calculation.  */
-  void * GetGlobalDataPointer() const override
+   * this object from the solver at each calculation.  */
+  void *
+  GetGlobalDataPointer() const override
   {
-    GlobalDataStruct *global = new GlobalDataStruct();
+    GlobalDataStruct * global = new GlobalDataStruct();
 
-    global->m_SumOfSquaredDifference  = 0.0;
+    global->m_SumOfSquaredDifference = 0.0;
     global->m_NumberOfPixelsProcessed = 0L;
-    global->m_SumOfSquaredChange      = 0;
+    global->m_SumOfSquaredChange = 0;
     return global;
   }
 
   /** Release memory for global data structure. */
-  void ReleaseGlobalDataPointer(void *GlobalData) const override;
+  void
+  ReleaseGlobalDataPointer( void * GlobalData ) const override;
 
   /** Set the object's state before each iteration. */
-  void InitializeIteration() override;
+  void
+  InitializeIteration() override;
 
   /** This method is called by a finite difference solver image filter at
-    * each pixel that does not lie on a data set boundary */
-  PixelType  ComputeUpdate(const NeighborhoodType & neighborhood, void *globalData, const FloatOffsetType & offset =
-                                     FloatOffsetType(
-                                       0.0) ) override;
+   * each pixel that does not lie on a data set boundary */
+  PixelType
+  ComputeUpdate( const NeighborhoodType & neighborhood, void * globalData,
+                 const FloatOffsetType & offset = FloatOffsetType( 0.0 ) ) override;
 
   /** Get the metric value. The metric value is the mean square difference
-    * in intensity between the fixed image and transforming moving image
-    * computed over the the overlapping region between the two images. */
-  virtual double GetMetric() const
+   * in intensity between the fixed image and transforming moving image
+   * computed over the the overlapping region between the two images. */
+  virtual double
+  GetMetric() const
   {
     return m_Metric;
   }
 
   /** Get the rms change in deformation field. */
-  virtual const double & GetRMSChange() const
+  virtual const double &
+  GetRMSChange() const
   {
     return m_RMSChange;
   }
 
   /** Set/Get the threshold below which the absolute difference of
-    * intensity yields a match. When the intensities match between a
-    * moving and fixed image pixel, the update vector (for that
-    * iteration) will be the zero vector. Default is 0.001. */
-  virtual void SetIntensityDifferenceThreshold(double);
+   * intensity yields a match. When the intensities match between a
+   * moving and fixed image pixel, the update vector (for that
+   * iteration) will be the zero vector. Default is 0.001. */
+  virtual void
+  SetIntensityDifferenceThreshold( double );
 
-  virtual double GetIntensityDifferenceThreshold() const;
+  virtual double
+  GetIntensityDifferenceThreshold() const;
 
   /** Set/Get the maximum update step length. In Thirion this is 0.5.
-    *  Setting it to 0 implies no restriction (beware of numerical
-    *  instability in this case. */
-  virtual void SetMaximumUpdateStepLength(double sm)
+   *  Setting it to 0 implies no restriction (beware of numerical
+   *  instability in this case. */
+  virtual void
+  SetMaximumUpdateStepLength( double sm )
   {
     this->m_MaximumUpdateStepLength = sm;
   }
 
-  virtual double GetMaximumUpdateStepLength() const
+  virtual double
+  GetMaximumUpdateStepLength() const
   {
     return this->m_MaximumUpdateStepLength;
   }
 
   /** Type of available image forces */
   enum GradientType
-    {
+  {
     Symmetric = 0,
     Fixed,
     WarpedMoving,
     MappedMoving
-    };
+  };
 
   /** Set/Get the type of used image forces */
-  virtual void SetUseGradientType(GradientType gtype)
+  virtual void
+  SetUseGradientType( GradientType gtype )
   {
     m_UseGradientType = gtype;
   }
 
-  virtual GradientType GetUseGradientType() const
+  virtual GradientType
+  GetUseGradientType() const
   {
     return m_UseGradientType;
   }
 
   /** Set the moving image.  */
-  void SetMovingImage(const VectorMovingImageType *ptr)
+  void
+  SetMovingImage( const VectorMovingImageType * ptr )
   {
     m_MovingImage = ptr;
   }
 
   /** Get the moving image. */
-  const VectorMovingImageType * GetMovingImage(void) const
+  const VectorMovingImageType *
+  GetMovingImage( void ) const
   {
     return m_MovingImage;
   }
 
   /** Set the fixed image. */
-  void SetFixedImage(const VectorFixedImageType *ptr)
+  void
+  SetFixedImage( const VectorFixedImageType * ptr )
   {
     m_FixedImage = ptr;
   }
 
   /** Get the fixed image. */
-  const VectorFixedImageType * GetFixedImage(void) const
+  const VectorFixedImageType *
+  GetFixedImage( void ) const
   {
     return m_FixedImage;
   }
 
 protected:
   VectorESMDemonsRegistrationFunction();
-  ~VectorESMDemonsRegistrationFunction() override
-  {
-  }
+  ~VectorESMDemonsRegistrationFunction() override {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** FixedImage image neighborhood iterator type. */
-  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator<FixedImageType>;
+  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator< FixedImageType >;
 
   /** A global data type for this class of equation. Used to store
-    * iterators for the fixed image. */
+   * iterators for the fixed image. */
   struct GlobalDataStruct
-    {
-    double m_SumOfSquaredDifference;
+  {
+    double        m_SumOfSquaredDifference;
     unsigned long m_NumberOfPixelsProcessed;
-    double m_SumOfSquaredChange;
-    };
+    double        m_SumOfSquaredChange;
+  };
+
 private:
   VectorFixedImagePointer  m_FixedImage;
   VectorMovingImagePointer m_MovingImage;
@@ -346,8 +356,8 @@ private:
   double m_MaximumUpdateStepLength;
 
   /** The metric value is the mean square difference in intensity between
-    * the fixed image and transforming moving image computed over the
-    * the overlapping region between the two images. */
+   * the fixed image and transforming moving image computed over the
+   * the overlapping region between the two images. */
   mutable double        m_Metric;
   mutable double        m_SumOfSquaredDifference;
   mutable unsigned long m_NumberOfPixelsProcessed;
@@ -357,15 +367,15 @@ private:
   /** Mutex lock to protect modification to metric. */
   mutable std::mutex m_MetricCalculationLock;
 
-  std::vector<WarperPointer>                        m_MovingImageWarperVector;
-  std::vector<InterpolatorPointer>                  m_MovingImageInterpolatorVector;
-  std::vector<GradientCalculatorPointer>            m_FixedImageGradientCalculatorVector;
-  std::vector<MovingImageGradientCalculatorPointer> m_MappedMovingImageGradientCalculatorVector;
+  std::vector< WarperPointer >                        m_MovingImageWarperVector;
+  std::vector< InterpolatorPointer >                  m_MovingImageInterpolatorVector;
+  std::vector< GradientCalculatorPointer >            m_FixedImageGradientCalculatorVector;
+  std::vector< MovingImageGradientCalculatorPointer > m_MappedMovingImageGradientCalculatorVector;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVectorESMDemonsRegistrationFunction.hxx"
+#  include "itkVectorESMDemonsRegistrationFunction.hxx"
 #endif
 
 #endif

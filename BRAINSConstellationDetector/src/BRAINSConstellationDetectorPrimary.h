@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 /*
-*/
+ */
 #ifndef __BRAINSConstellationDetectorPrimary__h
 #define __BRAINSConstellationDetectorPrimary__h
 
@@ -49,10 +49,9 @@
 class BRAINSConstellationDetectorPrimary
 {
 public:
-
   // Image, filter, transform typedef
   using PixelType = short;
-  using ImageType = itk::Image<PixelType, 3>;
+  using ImageType = itk::Image< PixelType, 3 >;
   using ImagePointerType = ImageType::Pointer;
   using ImagePointType = ImageType::PointType;
   using ImageSpacingType = ImageType::SpacingType;
@@ -60,228 +59,271 @@ public:
   using ImageDirectionType = ImageType::DirectionType;
   using ImageIndexType = ImageType::IndexType;
 
-  using ReaderType = itk::ImageFileReader<ImageType>;
-  using WriterType = itk::ImageFileWriter<ImageType>;
-  using FindCenterFilter = itk::FindCenterOfBrainFilter<ImageType>;
-  using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector<ImageType, ImageType>;
+  using ReaderType = itk::ImageFileReader< ImageType >;
+  using WriterType = itk::ImageFileWriter< ImageType >;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter< ImageType >;
+  using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector< ImageType, ImageType >;
   using TransformWriterType = itk::TransformFileWriter;
-  using VersorTransformType = itk::VersorRigid3DTransform<double>;
+  using VersorTransformType = itk::VersorRigid3DTransform< double >;
   std::string pathOut;
   std::string errorMsg;
 
   BRAINSConstellationDetectorPrimary();
 
-  void SetHoughEyeDetectorMode(int houghEyeDetectorMode)
+  void
+  SetHoughEyeDetectorMode( int houghEyeDetectorMode )
   {
     this->m_houghEyeDetectorMode = houghEyeDetectorMode;
   }
 
-  void SetMspQualityLevel(unsigned int mspQualityLevel)
+  void
+  SetMspQualityLevel( unsigned int mspQualityLevel )
   {
     this->m_mspQualityLevel = mspQualityLevel;
   }
 
-  void SetWritedebuggingImagesLevel(unsigned int writedebuggingImagesLevel)
+  void
+  SetWritedebuggingImagesLevel( unsigned int writedebuggingImagesLevel )
   {
     this->m_writedebuggingImagesLevel = writedebuggingImagesLevel;
   }
 
-  void SetNumberOfWorkUnits(unsigned int numberOfThreads)
+  void
+  SetNumberOfWorkUnits( unsigned int numberOfThreads )
   {
     this->m_numberOfThreads = numberOfThreads;
   }
 
-  void SetOtsuPercentileThreshold(double otsuPercentileThreshold)
+  void
+  SetOtsuPercentileThreshold( double otsuPercentileThreshold )
   {
     this->m_otsuPercentileThreshold = otsuPercentileThreshold;
   }
 
-  void SetAcLowerBound(double acLowerBound)
+  void
+  SetAcLowerBound( double acLowerBound )
   {
     this->m_acLowerBound = acLowerBound;
   }
 
-  void SetTrimRescaledIntensities(double trimRescaledIntensities)
+  void
+  SetTrimRescaledIntensities( double trimRescaledIntensities )
   {
     this->m_trimRescaledIntensities = trimRescaledIntensities;
   }
 
-  void SetRadiusMPJ(double radiusMPJ)
+  void
+  SetRadiusMPJ( double radiusMPJ )
   {
     this->m_radiusMPJ = radiusMPJ;
   }
 
-  void SetRadiusAC(double radiusAC)
+  void
+  SetRadiusAC( double radiusAC )
   {
     this->m_radiusAC = radiusAC;
   }
 
-  void SetRadiusPC(double radiusPC)
+  void
+  SetRadiusPC( double radiusPC )
   {
     this->m_radiusPC = radiusPC;
   }
 
-  void SetRadiusVN4(double radiusVN4)
+  void
+  SetRadiusVN4( double radiusVN4 )
   {
     this->m_radiusVN4 = radiusVN4;
   }
 
-  void SetCutOutHeadInOutputVolume(bool cutOutHeadInOutputVolume)
+  void
+  SetCutOutHeadInOutputVolume( bool cutOutHeadInOutputVolume )
   {
     this->m_cutOutHeadInOutputVolume = cutOutHeadInOutputVolume;
   }
 
-  void SetRescaleIntensities(bool rescaleIntensities)
+  void
+  SetRescaleIntensities( bool rescaleIntensities )
   {
     this->m_rescaleIntensities = rescaleIntensities;
   }
 
-  void SetForceHoughEyeDetectorReportFailure(bool forceHoughEyeDetectorReportFailure)
+  void
+  SetForceHoughEyeDetectorReportFailure( bool forceHoughEyeDetectorReportFailure )
   {
     this->m_forceHoughEyeDetectorReportFailure = forceHoughEyeDetectorReportFailure;
   }
 
-  void SetDebug(bool debug)
+  void
+  SetDebug( bool debug )
   {
     this->m_debug = debug;
   }
 
-  void SetVerbose(bool verbose)
+  void
+  SetVerbose( bool verbose )
   {
     this->m_verbose = verbose;
   }
 
-  void SetAtlasVolume( const std::string & atlasVolume )
+  void
+  SetAtlasVolume( const std::string & atlasVolume )
   {
     this->m_atlasVolume = atlasVolume;
   }
 
-  void SetAtlasLandmarks( const std::string & atlasLandmarks )
+  void
+  SetAtlasLandmarks( const std::string & atlasLandmarks )
   {
     this->m_atlasLandmarks = atlasLandmarks;
   }
 
-  void SetAtlasLandmarkWeights( const std::string & atlasLandmarkWeights )
+  void
+  SetAtlasLandmarkWeights( const std::string & atlasLandmarkWeights )
   {
     this->m_atlasLandmarkWeights = atlasLandmarkWeights;
   }
 
-  void SetInputTemplateModel(std::string inputTemplateModel)
+  void
+  SetInputTemplateModel( std::string inputTemplateModel )
   {
     this->m_inputTemplateModel = inputTemplateModel;
   }
 
-  void SetLLSModel(std::string llsModel)
+  void
+  SetLLSModel( std::string llsModel )
   {
     this->m_llsModel = llsModel;
   }
 
-  void SetInputVolume(std::string inputVolume)
+  void
+  SetInputVolume( std::string inputVolume )
   {
     this->m_inputVolume = inputVolume;
   }
 
-  void SetOutputVolume(std::string outputVolume)
+  void
+  SetOutputVolume( std::string outputVolume )
   {
     this->m_outputVolume = outputVolume;
   }
 
-  void SetOutputResampledVolume(std::string outputResampledVolume)
+  void
+  SetOutputResampledVolume( std::string outputResampledVolume )
   {
     this->m_outputResampledVolume = outputResampledVolume;
   }
 
-  void SetOutputTransform(std::string outputTransform)
+  void
+  SetOutputTransform( std::string outputTransform )
   {
     this->m_outputTransform = outputTransform;
   }
 
-  void SetOutputLandmarksInInputSpace(std::string outputLandmarksInInputSpace)
+  void
+  SetOutputLandmarksInInputSpace( std::string outputLandmarksInInputSpace )
   {
     this->m_outputLandmarksInInputSpace = outputLandmarksInInputSpace;
   }
 
-  void SetOutputLandmarksInACPCAlignedSpace(std::string outputLandmarksInACPCAlignedSpace)
+  void
+  SetOutputLandmarksInACPCAlignedSpace( std::string outputLandmarksInACPCAlignedSpace )
   {
     this->m_outputLandmarksInACPCAlignedSpace = outputLandmarksInACPCAlignedSpace;
   }
 
-  void SetOutputMRML(std::string outputMRML)
+  void
+  SetOutputMRML( std::string outputMRML )
   {
     this->m_outputMRML = outputMRML;
   }
 
-  void SetOutputVerificationScript(std::string outputVerificationScript)
+  void
+  SetOutputVerificationScript( std::string outputVerificationScript )
   {
     this->m_outputVerificationScript = outputVerificationScript;
   }
 
-  void SetOutputUntransformedClippedVolume(std::string outputUntransformedClippedVolume)
+  void
+  SetOutputUntransformedClippedVolume( std::string outputUntransformedClippedVolume )
   {
     this->m_outputUntransformedClippedVolume = outputUntransformedClippedVolume;
   }
 
-  void SetInputLandmarksEMSP(std::string inputLandmarksEMSP)
+  void
+  SetInputLandmarksEMSP( std::string inputLandmarksEMSP )
   {
     this->m_inputLandmarksEMSP = inputLandmarksEMSP;
   }
 
-  void SetWriteBranded2DImage(std::string writeBranded2DImage)
+  void
+  SetWriteBranded2DImage( std::string writeBranded2DImage )
   {
     this->m_writeBranded2DImage = writeBranded2DImage;
   }
 
-  void SetBackgroundFillValueString(std::string backgroundFillValueString)
+  void
+  SetBackgroundFillValueString( std::string backgroundFillValueString )
   {
     this->m_backgroundFillValueString = backgroundFillValueString;
   }
 
-  void SetInterpolationMode(std::string interpolationMode)
+  void
+  SetInterpolationMode( std::string interpolationMode )
   {
     this->m_interpolationMode = interpolationMode;
   }
 
-  void SetRescaleIntensitiesOutputRange(std::vector<int> rescaleIntensitiesOutputRange)
+  void
+  SetRescaleIntensitiesOutputRange( std::vector< int > rescaleIntensitiesOutputRange )
   {
     this->m_rescaleIntensitiesOutputRange = rescaleIntensitiesOutputRange;
   }
 
-  void SetForceACPoint(std::vector<float> forceACPoint)
+  void
+  SetForceACPoint( std::vector< float > forceACPoint )
   {
     this->m_forceACPoint = forceACPoint;
   }
 
-  void SetForcePCPoint(std::vector<float> forcePCPoint)
+  void
+  SetForcePCPoint( std::vector< float > forcePCPoint )
   {
     this->m_forcePCPoint = forcePCPoint;
   }
 
-  void SetForceVN4Point(std::vector<float> forceVN4Point)
+  void
+  SetForceVN4Point( std::vector< float > forceVN4Point )
   {
     this->m_forceVN4Point = forceVN4Point;
   }
 
-  void SetForceRPPoint(std::vector<float> forceRPPoint)
+  void
+  SetForceRPPoint( std::vector< float > forceRPPoint )
   {
     this->m_forceRPPoint = forceRPPoint;
   }
 
-  void SetResultsDir(std::string resultsDir)
+  void
+  SetResultsDir( std::string resultsDir )
   {
     this->m_resultsDir = resultsDir;
   }
 
-  const LandmarksMapType & GetOutputLandmarksInInputSpace(void)
+  const LandmarksMapType &
+  GetOutputLandmarksInInputSpace( void )
   {
     return this->m_outputLandmarksInInputSpaceMap;
   }
 
-  const LandmarksMapType & GetOutputLandmarksInACPCAlignedSpace(void)
+  const LandmarksMapType &
+  GetOutputLandmarksInACPCAlignedSpace( void )
   {
     return this->m_outputLandmarksInACPCAlignedSpaceMap;
   }
 
-  bool Compute(void);
+  bool
+  Compute( void );
 
 private:
   int          m_houghEyeDetectorMode;      // 1
@@ -292,16 +334,16 @@ private:
   double       m_acLowerBound;              // 1000.0
   double       m_trimRescaledIntensities;   // 4.4172
 
-  double m_radiusMPJ;   // -1
-  double m_radiusAC;    // -1
-  double m_radiusPC;    // -1
-  double m_radiusVN4;   // -1
+  double m_radiusMPJ; // -1
+  double m_radiusAC;  // -1
+  double m_radiusPC;  // -1
+  double m_radiusVN4; // -1
 
-  bool m_cutOutHeadInOutputVolume;              // false
-  bool m_rescaleIntensities;                    // false
-  bool m_forceHoughEyeDetectorReportFailure;    // false
-  bool m_debug;                                 // false
-  bool m_verbose;                               // false
+  bool m_cutOutHeadInOutputVolume;           // false
+  bool m_rescaleIntensities;                 // false
+  bool m_forceHoughEyeDetectorReportFailure; // false
+  bool m_debug;                              // false
+  bool m_verbose;                            // false
 
   std::string m_inputTemplateModel;
   std::string m_llsModel;
@@ -322,14 +364,14 @@ private:
   std::string m_atlasLandmarks;
   std::string m_atlasLandmarkWeights;
 
-  std::vector<int> m_rescaleIntensitiesOutputRange;   // default = [40,4000]
+  std::vector< int > m_rescaleIntensitiesOutputRange; // default = [40,4000]
 
-  std::vector<float> m_forceACPoint;    // default = 0.
-  std::vector<float> m_forcePCPoint;    // default = 0.
-  std::vector<float> m_forceVN4Point;   // default = 0.
-  std::vector<float> m_forceRPPoint;    // default = 0.
+  std::vector< float > m_forceACPoint;  // default = 0.
+  std::vector< float > m_forcePCPoint;  // default = 0.
+  std::vector< float > m_forceVN4Point; // default = 0.
+  std::vector< float > m_forceRPPoint;  // default = 0.
 
-  std::string m_resultsDir;   // default = "./"
+  std::string m_resultsDir; // default = "./"
 
   LandmarksMapType m_outputLandmarksInInputSpaceMap;
   LandmarksMapType m_outputLandmarksInACPCAlignedSpaceMap;

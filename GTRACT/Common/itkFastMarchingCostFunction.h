@@ -62,22 +62,22 @@ namespace itk
 class FastMarchingCostFunction : public SingleValuedCostFunction
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(FastMarchingCostFunction);
+  ITK_DISALLOW_COPY_AND_ASSIGN( FastMarchingCostFunction );
 
   /** Standard class type alias */
   using Self = FastMarchingCostFunction;
   using Superclass = SingleValuedCostFunction;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingCostFunction, SingleValuedCostFunction);
+  itkTypeMacro( FastMarchingCostFunction, SingleValuedCostFunction );
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Some convenient type alias. */
-  using CostImageType = itk::Image<float, 3>;
+  using CostImageType = itk::Image< float, 3 >;
   using CostImagePointer = CostImageType::Pointer;
   using CostImageConstPointer = CostImageType::ConstPointer;
   using CostImageRegionType = CostImageType::RegionType;
@@ -88,9 +88,9 @@ public:
   using CostImageIndexType = CostImageType::IndexType;
   using CostImageDirectionType = CostImageType::DirectionType;
 
-  using CostIPType = itk::LinearInterpolateImageFunction<CostImageType, float>;      //
-                                                                                     //
-                                                                                     // ScalarIPType;
+  using CostIPType = itk::LinearInterpolateImageFunction< CostImageType, float >; //
+                                                                                  //
+                                                                                  // ScalarIPType;
   using CostIPTypePointer = CostIPType::Pointer;
 
   /** ImageDimension constants */
@@ -110,37 +110,39 @@ public:
   itkGetConstObjectMacro( CostImage, CostImageType );
 
   // Returns dimension of image
-  unsigned int GetNumberOfParameters() const override;
+  unsigned int
+  GetNumberOfParameters() const override;
 
   /** This method returns the value of the std::cost function for
-    * the specified parameters, or position. */
-  MeasureType GetValue( const ParametersType & parameters ) const override;
+   * the specified parameters, or position. */
+  MeasureType
+  GetValue( const ParametersType & parameters ) const override;
 
   /** This method returns the derivative of the std::cost function corresponding
-    * to the specified parameters.   */
-  void GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const override;
+   * to the specified parameters.   */
+  void
+  GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const override;
 
 protected:
   FastMarchingCostFunction();
   // virtual ~FastMarchingCostFunction(){};
-  ~FastMarchingCostFunction() override
-  {
-  }
+  ~FastMarchingCostFunction() override {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   // void SetMetaDataHeader();
 
   CostImagePointer    m_CostImage;
   CostImageRegionType m_BufferedRegion;
   CostIPTypePointer   m_CostIP;
-private:
 
-};                                        // end of class
+private:
+}; // end of class
 } // end of namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkFastMarchingCostFunction.cxx"
+#  include "itkFastMarchingCostFunction.cxx"
 #endif
 
 #endif

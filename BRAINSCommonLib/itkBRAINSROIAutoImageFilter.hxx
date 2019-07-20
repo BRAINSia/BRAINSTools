@@ -38,59 +38,52 @@
 
 namespace itk
 {
-template <typename TInputImage, typename TOutputImage>
-BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
-::BRAINSROIAutoImageFilter() :
-  m_OtsuPercentileThreshold(0.01),
-  m_ThresholdCorrectionFactor(1.0),
-  m_ClosingSize(9.0),
-  m_DilateSize(0.0),
-  m_ResultMaskPointer(nullptr)
+template < typename TInputImage, typename TOutputImage >
+BRAINSROIAutoImageFilter< TInputImage, TOutputImage >::BRAINSROIAutoImageFilter()
+  : m_OtsuPercentileThreshold( 0.01 )
+  , m_ThresholdCorrectionFactor( 1.0 )
+  , m_ClosingSize( 9.0 )
+  , m_DilateSize( 0.0 )
+  , m_ResultMaskPointer( nullptr )
 {
   // this filter requires two input images
-  this->SetNumberOfRequiredInputs(1);
+  this->SetNumberOfRequiredInputs( 1 );
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
-::GenerateData()
+BRAINSROIAutoImageFilter< TInputImage, TOutputImage >::GenerateData()
 {
   m_ResultMaskPointer = nullptr; // Need to make this null during every re-run of
-                              // the data.
+                                 // the data.
   // Create a process accumulator for tracking the progress of this minipipeline
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
-  progress->SetMiniPipelineFilter(this);
+  progress->SetMiniPipelineFilter( this );
 
-  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >;
   typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   // Register the filter with the with progress accumulator using
   // equal weight proportion
-  progress->RegisterInternalFilter(LFF, 1.0f);
+  progress->RegisterInternalFilter( LFF, 1.0f );
   LFF->SetInput( this->GetInput() );
-  LFF->SetOtsuPercentileThreshold(m_OtsuPercentileThreshold);
-  LFF->SetClosingSize(m_ClosingSize);
-  LFF->SetDilateSize(m_DilateSize);
-  LFF->SetThresholdCorrectionFactor(m_ThresholdCorrectionFactor);
+  LFF->SetOtsuPercentileThreshold( m_OtsuPercentileThreshold );
+  LFF->SetClosingSize( m_ClosingSize );
+  LFF->SetDilateSize( m_DilateSize );
+  LFF->SetThresholdCorrectionFactor( m_ThresholdCorrectionFactor );
   LFF->Update();
   this->GraftOutput( LFF->GetOutput() );
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
-::PrintSelf(std::ostream & os, Indent indent) const
+BRAINSROIAutoImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf( os, indent );
 
-  os << indent << "OtsuPercentileThreshold: "
-     << m_OtsuPercentileThreshold << std::endl;
-  os << indent << "ThresholdCorrectionFactor: "
-     << m_ThresholdCorrectionFactor << std::endl;
-  os << indent << "ClosingSize: "
-     << m_ClosingSize << std::endl;
-  os << indent << "DilateSize: "
-     << m_DilateSize << std::endl;
+  os << indent << "OtsuPercentileThreshold: " << m_OtsuPercentileThreshold << std::endl;
+  os << indent << "ThresholdCorrectionFactor: " << m_ThresholdCorrectionFactor << std::endl;
+  os << indent << "ClosingSize: " << m_ClosingSize << std::endl;
+  os << indent << "DilateSize: " << m_DilateSize << std::endl;
 }
 } // end namespace itk
 #endif

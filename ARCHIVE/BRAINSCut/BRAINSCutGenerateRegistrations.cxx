@@ -22,115 +22,104 @@
 #include "BRAINSFitHelper.h"
 
 // ----------------------------------------------------- //
-BRAINSCutGenerateRegistrations
-::BRAINSCutGenerateRegistrations(  BRAINSCutDataHandler& dataHandler ) :
-  myDataHandler(nullptr),
-  atlasToSubjectRegistraionOn(false),
-  subjectDataSets()
+BRAINSCutGenerateRegistrations ::BRAINSCutGenerateRegistrations( BRAINSCutDataHandler & dataHandler )
+  : myDataHandler( nullptr )
+  , atlasToSubjectRegistraionOn( false )
+  , subjectDataSets()
 {
-  myDataHandler =  &dataHandler;
+  myDataHandler = &dataHandler;
   myDataHandler->SetRegistrationParameters();
   myDataHandler->SetAtlasDataSet();
 }
 
 // ----------------------------------------------------- //
 void
-BRAINSCutGenerateRegistrations
-::SetAtlasToSubjectRegistrationOn( bool onOff)
+BRAINSCutGenerateRegistrations ::SetAtlasToSubjectRegistrationOn( bool onOff )
 {
   atlasToSubjectRegistraionOn = onOff;
 }
 
 // ----------------------------------------------------- //
 void
-BRAINSCutGenerateRegistrations
-::SetDataSet( bool applyDataSet )
+BRAINSCutGenerateRegistrations ::SetDataSet( bool applyDataSet )
 {
   // if applyDataSEt==false, then use training dataset
-  if( applyDataSet )
-    {
+  if ( applyDataSet )
+  {
     subjectDataSets = myDataHandler->GetApplyDataSet();
-    }
+  }
   else
-    {
+  {
     subjectDataSets = myDataHandler->GetTrainDataSet();
-    }
+  }
 }
 
 // ----------------------------------------------------- //
 void
-BRAINSCutGenerateRegistrations
-::GenerateRegistrations()
+BRAINSCutGenerateRegistrations ::GenerateRegistrations()
 {
-  for( std::list<DataSet *>::iterator subjectIt = subjectDataSets.begin();
-       subjectIt != subjectDataSets.end();
-       ++subjectIt )
-    {
-    const std::string subjectFilename( (*subjectIt)->GetImageFilenameByType(
-                                         myDataHandler->GetRegistrationImageTypeToUse() ) );
+  for ( std::list< DataSet * >::iterator subjectIt = subjectDataSets.begin(); subjectIt != subjectDataSets.end();
+        ++subjectIt )
+  {
+    const std::string subjectFilename(
+      ( *subjectIt )->GetImageFilenameByType( myDataHandler->GetRegistrationImageTypeToUse() ) );
 
     const std::string registrationID = myDataHandler->GetRegistrationID();
 
-    const RegistrationType *subjectRegistration = (*subjectIt)->GetRegistrationWithID(
-        registrationID );
-    const std::string SubjectToAtlasRegistrationFilename
-      ( subjectRegistration->GetAttribute<StringValue>("SubjToAtlasRegistrationFilename") );
-    const std::string AtlasToSubjRegistrationFilename
-      ( subjectRegistration->GetAttribute<StringValue>("AtlasToSubjRegistrationFilename") );
-    const std::string SubjectBinaryFilename
-      ( (*subjectIt)->GetMaskFilenameByType( "RegistrationROI" ) );
+    const RegistrationType * subjectRegistration = ( *subjectIt )->GetRegistrationWithID( registrationID );
+    const std::string        SubjectToAtlasRegistrationFilename(
+      subjectRegistration->GetAttribute< StringValue >( "SubjToAtlasRegistrationFilename" ) );
+    const std::string AtlasToSubjRegistrationFilename(
+      subjectRegistration->GetAttribute< StringValue >( "AtlasToSubjRegistrationFilename" ) );
+    const std::string SubjectBinaryFilename( ( *subjectIt )->GetMaskFilenameByType( "RegistrationROI" ) );
 
-    if( registrationID == "identity" || registrationID == "Identity")
-      {
+    if ( registrationID == "identity" || registrationID == "Identity" )
+    {
       break;
-      }
-    else if( atlasToSubjectRegistraionOn &&
-        (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
-      {
-      // create directories
-      std::string directory = itksys::SystemTools::GetParentDirectory(
-          SubjectToAtlasRegistrationFilename.c_str() );
-
-      if( !itksys::SystemTools::FileExists( directory.c_str() ) )
-        {
-        itksys::SystemTools::MakeDirectory( directory.c_str() );
-        }
-      CreateTransformFile(  myDataHandler->GetAtlasFilename(),        // moving image
-                            subjectFilename,                          // fixed image
-                            myDataHandler->GetAtlasBinaryFilename(),  // moving ROI
-                            SubjectBinaryFilename,                    // fixed ROI
-                            AtlasToSubjRegistrationFilename,
-                            false );
-      }
-    else if( (!atlasToSubjectRegistraionOn) &&
-             (!itksys::SystemTools::FileExists( SubjectToAtlasRegistrationFilename.c_str() ) ) )
-      {
-      // create directories
-      std::string directory = itksys::SystemTools::GetParentDirectory(
-          SubjectToAtlasRegistrationFilename.c_str() );
-
-      if( !itksys::SystemTools::FileExists( directory.c_str() ) )
-        {
-        itksys::SystemTools::MakeDirectory( directory.c_str() );
-        }
-      CreateTransformFile(  subjectFilename,                         // moving image
-                            myDataHandler->GetAtlasFilename(),       // fixed image
-                            SubjectBinaryFilename,                   // moving ROI
-                            myDataHandler->GetAtlasBinaryFilename(), // fixed ROI
-                            SubjectToAtlasRegistrationFilename,
-                            false );
-      }
     }
+    else if ( atlasToSubjectRegistraionOn &&
+              ( !itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
+    {
+      // create directories
+      std::string directory = itksys::SystemTools::GetParentDirectory( SubjectToAtlasRegistrationFilename.c_str() );
+
+      if ( !itksys::SystemTools::FileExists( directory.c_str() ) )
+      {
+        itksys::SystemTools::MakeDirectory( directory.c_str() );
+      }
+      CreateTransformFile( myDataHandler->GetAtlasFilename(),       // moving image
+                           subjectFilename,                         // fixed image
+                           myDataHandler->GetAtlasBinaryFilename(), // moving ROI
+                           SubjectBinaryFilename,                   // fixed ROI
+                           AtlasToSubjRegistrationFilename,
+                           false );
+    }
+    else if ( ( !atlasToSubjectRegistraionOn ) &&
+              ( !itksys::SystemTools::FileExists( SubjectToAtlasRegistrationFilename.c_str() ) ) )
+    {
+      // create directories
+      std::string directory = itksys::SystemTools::GetParentDirectory( SubjectToAtlasRegistrationFilename.c_str() );
+
+      if ( !itksys::SystemTools::FileExists( directory.c_str() ) )
+      {
+        itksys::SystemTools::MakeDirectory( directory.c_str() );
+      }
+      CreateTransformFile( subjectFilename,                         // moving image
+                           myDataHandler->GetAtlasFilename(),       // fixed image
+                           SubjectBinaryFilename,                   // moving ROI
+                           myDataHandler->GetAtlasBinaryFilename(), // fixed ROI
+                           SubjectToAtlasRegistrationFilename,
+                           false );
+    }
+  }
 }
 
 void
-BRAINSCutGenerateRegistrations
-::CreateTransformFile(const std::string & MovingImageFilename,
-                      const std::string & FixedImageFilename,
-                      const std::string & MovingBinaryImageFilename,
-                      const std::string & FixedBinaryImageFilename,
-                      const std::string & OutputRegName,
-                      bool verbose)
+BRAINSCutGenerateRegistrations ::CreateTransformFile( const std::string & MovingImageFilename,
+                                                      const std::string & FixedImageFilename,
+                                                      const std::string & MovingBinaryImageFilename,
+                                                      const std::string & FixedBinaryImageFilename,
+                                                      const std::string & OutputRegName, bool verbose )
 {
   // Create Helper Class of BRAINSFit for BSpline Registraion.
   // CAUTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -139,11 +128,10 @@ BRAINSCutGenerateRegistrations
   // For now, BRAINSCut only uses float type, so it is safe!!!!!!
 
   using BSplineRegistrationHelperType = itk::BRAINSFitHelper;
-  BSplineRegistrationHelperType::Pointer BSplineRegistrationHelper =
-    BSplineRegistrationHelperType::New();
+  BSplineRegistrationHelperType::Pointer BSplineRegistrationHelper = BSplineRegistrationHelperType::New();
 
   // Set BSpline Trainsformation Type
-  std::vector<std::string> transformType( 4 );
+  std::vector< std::string > transformType( 4 );
 
   // transformType[0]="Rigid";
   transformType[0] = "ScaleVersor3D";
@@ -154,10 +142,10 @@ BRAINSCutGenerateRegistrations
   BSplineRegistrationHelper->SetTransformType( transformType );
 
   // Set Displacement Field Size
-  BSplineRegistrationHelper->SetMaxBSplineDisplacement(4);
+  BSplineRegistrationHelper->SetMaxBSplineDisplacement( 4 );
 
   // BSpline Grid Size
-  std::vector<int> splineGridSize(3);
+  std::vector< int > splineGridSize( 3 );
 
   splineGridSize[0] = 28;
   splineGridSize[1] = 20;
@@ -166,7 +154,7 @@ BRAINSCutGenerateRegistrations
   BSplineRegistrationHelper->SetSplineGridSize( splineGridSize );
 
   // Number of Iterations
-  std::vector<int> numberOfIterations(4);
+  std::vector< int > numberOfIterations( 4 );
 
   numberOfIterations[0] = 1500;
   numberOfIterations[1] = 1500;
@@ -177,7 +165,7 @@ BRAINSCutGenerateRegistrations
   BSplineRegistrationHelper->SetNumberOfIterations( numberOfIterations );
 
   // Set Minimum Step Length
-  std::vector<double> minimumStepLength(4);
+  std::vector< double > minimumStepLength( 4 );
 
   minimumStepLength[0] = 0.005;
   minimumStepLength[1] = 0.005;
@@ -192,7 +180,7 @@ BRAINSCutGenerateRegistrations
   // TODO: decide what to do here too much freedom?
   // BSplineRegistrationHelper->SetNumberOfMatchPoints(10);
   // TODO:: HISTOGRAMMATCHING OPTION is now Disabled!
-  BSplineRegistrationHelper->SetHistogramMatch(false);
+  BSplineRegistrationHelper->SetHistogramMatch( false );
 
   // Set Fixed Volume
   WorkingImageType::Pointer fixedVolume = ReadImageByFilename( FixedImageFilename );
@@ -204,90 +192,78 @@ BRAINSCutGenerateRegistrations
 
   BSplineRegistrationHelper->SetMovingVolume( movingVolume );
 
-  using LocalBinaryImageType = itk::Image<unsigned char, 3>;
+  using LocalBinaryImageType = itk::Image< unsigned char, 3 >;
 
   // - Fixed Image Binary Mask
 
-  if( FixedBinaryImageFilename == "NA" ||
-      FixedBinaryImageFilename == "na" ||
-      FixedBinaryImageFilename == "" )
-    {
-    using ROIAutoFilterType = itk::BRAINSROIAutoImageFilter<WorkingImageType,
-                                          LocalBinaryImageType>;
+  if ( FixedBinaryImageFilename == "NA" || FixedBinaryImageFilename == "na" || FixedBinaryImageFilename == "" )
+  {
+    using ROIAutoFilterType = itk::BRAINSROIAutoImageFilter< WorkingImageType, LocalBinaryImageType >;
 
     ROIAutoFilterType::Pointer fixedVolumeROIFilter = ROIAutoFilterType::New();
 
     fixedVolumeROIFilter->SetInput( fixedVolume );
-    fixedVolumeROIFilter->SetDilateSize(myDataHandler->GetROIAutoDilateSize() );
+    fixedVolumeROIFilter->SetDilateSize( myDataHandler->GetROIAutoDilateSize() );
     fixedVolumeROIFilter->Update();
 
-    BSplineRegistrationHelper->SetFixedBinaryVolume(
-      fixedVolumeROIFilter->GetSpatialObjectROI() );
+    BSplineRegistrationHelper->SetFixedBinaryVolume( fixedVolumeROIFilter->GetSpatialObjectROI() );
     // get brain region size
-    }
+  }
   else
-    {
-    using BinaryImageReaderType = itk::ImageFileReader<LocalBinaryImageType>;
+  {
+    using BinaryImageReaderType = itk::ImageFileReader< LocalBinaryImageType >;
     BinaryImageReaderType::Pointer binaryFixedImageReader = BinaryImageReaderType::New();
     binaryFixedImageReader->SetFileName( FixedBinaryImageFilename );
     binaryFixedImageReader->Update();
 
-    using binarySpatialObjectType = itk::ImageMaskSpatialObject<3>;
-    binarySpatialObjectType::Pointer binaryFixedObject
-      = binarySpatialObjectType::New();
+    using binarySpatialObjectType = itk::ImageMaskSpatialObject< 3 >;
+    binarySpatialObjectType::Pointer binaryFixedObject = binarySpatialObjectType::New();
     binaryFixedObject->SetImage( binaryFixedImageReader->GetOutput() );
 
     BSplineRegistrationHelper->SetFixedBinaryVolume( binaryFixedObject );
-    }
+  }
 
   // - Moving Image Binary Mask
 
-  if( MovingBinaryImageFilename == "NA" ||
-      MovingBinaryImageFilename == "na" ||
-      MovingBinaryImageFilename == "" )
-    {
-    using ROIAutoFilterType = itk::BRAINSROIAutoImageFilter<WorkingImageType,
-                                          LocalBinaryImageType>;
+  if ( MovingBinaryImageFilename == "NA" || MovingBinaryImageFilename == "na" || MovingBinaryImageFilename == "" )
+  {
+    using ROIAutoFilterType = itk::BRAINSROIAutoImageFilter< WorkingImageType, LocalBinaryImageType >;
 
     ROIAutoFilterType::Pointer movingVolumeROIFilter = ROIAutoFilterType::New();
 
     movingVolumeROIFilter->SetInput( movingVolume );
-    movingVolumeROIFilter->SetDilateSize(myDataHandler->GetROIAutoDilateSize() );
+    movingVolumeROIFilter->SetDilateSize( myDataHandler->GetROIAutoDilateSize() );
     movingVolumeROIFilter->Update();
 
-    BSplineRegistrationHelper->SetMovingBinaryVolume(
-      movingVolumeROIFilter->GetSpatialObjectROI() );
-    }
+    BSplineRegistrationHelper->SetMovingBinaryVolume( movingVolumeROIFilter->GetSpatialObjectROI() );
+  }
   else
-    {
-    using BinaryImageReaderType = itk::ImageFileReader<LocalBinaryImageType>;
-    BinaryImageReaderType::Pointer binaryMovingImageReader =
-      BinaryImageReaderType::New();
+  {
+    using BinaryImageReaderType = itk::ImageFileReader< LocalBinaryImageType >;
+    BinaryImageReaderType::Pointer binaryMovingImageReader = BinaryImageReaderType::New();
     binaryMovingImageReader->SetFileName( MovingBinaryImageFilename );
     binaryMovingImageReader->Update();
 
-    using binarySpatialObjectType = itk::ImageMaskSpatialObject<3>;
-    binarySpatialObjectType::Pointer binaryMovingObject
-      = binarySpatialObjectType::New();
+    using binarySpatialObjectType = itk::ImageMaskSpatialObject< 3 >;
+    binarySpatialObjectType::Pointer binaryMovingObject = binarySpatialObjectType::New();
     binaryMovingObject->SetImage( binaryMovingImageReader->GetOutput() );
 
     BSplineRegistrationHelper->SetMovingBinaryVolume( binaryMovingObject );
-    }
+  }
 
   // Set Other Options
 
   // TODO :: Following has to be user input
   constexpr unsigned int maxBSplineDisplacement = 7;
-  constexpr double maskInferiorCutOffFromCenter = 65.0;
-  constexpr double translationScale = 1000.0;
-  constexpr double reproportionalScale = 1.0;
-  constexpr double skewScale = 1.0;
+  constexpr double       maskInferiorCutOffFromCenter = 65.0;
+  constexpr double       translationScale = 1000.0;
+  constexpr double       reproportionalScale = 1.0;
+  constexpr double       skewScale = 1.0;
 
   BSplineRegistrationHelper->SetSamplingPercentage( 0.05 ); // Use 5% of image
   BSplineRegistrationHelper->SetMaxBSplineDisplacement( maxBSplineDisplacement );
   BSplineRegistrationHelper->SetInitializeTransformMode( "useCenterOfHeadAlign" );
-  BSplineRegistrationHelper->SetMaskInferiorCutOffFromCenter(
-    maskInferiorCutOffFromCenter );
+  BSplineRegistrationHelper->SetMaskInferiorCutOffFromCenter( maskInferiorCutOffFromCenter );
   // BSplineRegistrationHelper->SetOutputTransform( OutputRegName );
   BSplineRegistrationHelper->SetTranslationScale( translationScale );
   BSplineRegistrationHelper->SetReproportionScale( reproportionalScale );
@@ -297,34 +273,30 @@ BRAINSCutGenerateRegistrations
 
   // TODO: is this line really print before start registration????
 
-  if( verbose == true )
-    {
-    BSplineRegistrationHelper->PrintCommandLine(true, "BSplineRegistrationHelper");
-    }
+  if ( verbose == true )
+  {
+    BSplineRegistrationHelper->PrintCommandLine( true, "BSplineRegistrationHelper" );
+  }
 
   BSplineRegistrationHelper->Update();
 
-  if( verbose == true )
-    {
-    std::cout << " - Write deformation " << std::endl
-              << " :: " << OutputRegName
-              << std::endl;
-    }
-  itk::WriteTransformToDisk<double>( BSplineRegistrationHelper->GetCurrentGenericTransform(),
-                        OutputRegName );
+  if ( verbose == true )
+  {
+    std::cout << " - Write deformation " << std::endl << " :: " << OutputRegName << std::endl;
+  }
+  itk::WriteTransformToDisk< double >( BSplineRegistrationHelper->GetCurrentGenericTransform(), OutputRegName );
   // Write out Transformed Output As Well
   // - EX. from GenericTransformImage.hxx
 
   WorkingImageType::Pointer DeformedMovingImage;
-  DeformedMovingImage = TransformResample<WorkingImageType,
-                                          WorkingImageType>(
-      movingVolume.GetPointer(),
-      fixedVolume.GetPointer(),
-      0.0F,
-      GetInterpolatorFromString<WorkingImageType>("Linear").GetPointer(),
-      BSplineRegistrationHelper->GetCurrentGenericTransform().GetPointer() );
+  DeformedMovingImage = TransformResample< WorkingImageType, WorkingImageType >(
+    movingVolume.GetPointer(),
+    fixedVolume.GetPointer(),
+    0.0F,
+    GetInterpolatorFromString< WorkingImageType >( "Linear" ).GetPointer(),
+    BSplineRegistrationHelper->GetCurrentGenericTransform().GetPointer() );
 
-  using DeformedVolumeWriterType = itk::ImageFileWriter<WorkingImageType>;
+  using DeformedVolumeWriterType = itk::ImageFileWriter< WorkingImageType >;
 
   DeformedVolumeWriterType::Pointer deformedVolumeWriter = DeformedVolumeWriterType::New();
 

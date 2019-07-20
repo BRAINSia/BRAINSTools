@@ -55,34 +55,40 @@ class vtkPolyData;
 class vtkFSSurfaceReader : public vtkDataReader
 {
 public:
-  static vtkFSSurfaceReader * New();
+  static vtkFSSurfaceReader *
+  New();
 
-  vtkTypeMacro(vtkFSSurfaceReader, vtkDataReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro( vtkFSSurfaceReader, vtkDataReader );
+  void
+  PrintSelf( ostream & os, vtkIndent indent );
 
   ///
   /// Get the output of this reader.
-  vtkPolyData * GetOutput();
+  vtkPolyData *
+  GetOutput();
 
-  vtkPolyData * GetOutput(int idx);
+  vtkPolyData *
+  GetOutput( int idx );
 
-  void SetOutput(vtkPolyData *output);
+  void
+  SetOutput( vtkPolyData * output );
 
   // BTX
   // Description:
   /// old previous versions constants
   enum
-    {
-    FS_QUAD_FILE_MAGIC_NUMBER = (-1 & 0x00ffffff),
-    FS_NEW_QUAD_FILE_MAGIC_NUMBER = (-3 & 0x00ffffff),
-    FS_TRIANGLE_FILE_MAGIC_NUMBER = (-2 & 0x00ffffff),
+  {
+    FS_QUAD_FILE_MAGIC_NUMBER = ( -1 & 0x00ffffff ),
+    FS_NEW_QUAD_FILE_MAGIC_NUMBER = ( -3 & 0x00ffffff ),
+    FS_TRIANGLE_FILE_MAGIC_NUMBER = ( -2 & 0x00ffffff ),
     FS_NUM_VERTS_IN_QUAD_FACE = 4,    /// dealing with quads
     FS_NUM_VERTS_IN_TRI_FACE = 3,     /// dealing with tris
     FS_MAX_NUM_FACES_PER_VERTEX = 10, /// kinda arbitrary
-    };
+  };
   // ETX
 
-  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *outputVector);
+  int
+  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * outputVector );
 
 protected:
   vtkFSSurfaceReader();
@@ -93,11 +99,13 @@ protected:
   /// Update extent of PolyData is specified in pieces.
   /// Since all DataObjects should be able to set UpdateExent as pieces,
   /// just copy output->UpdateExtent  all Inputs.
-#if (VTK_MAJOR_VERSION >= 5)
-  virtual int FillOutputPortInformation(int, vtkInformation *);
+#if ( VTK_MAJOR_VERSION >= 5 )
+  virtual int
+  FillOutputPortInformation( int, vtkInformation * );
 
 #else
-  void ComputeInputUpdateExtents(vtkDataObject *output);
+  void
+  ComputeInputUpdateExtents( vtkDataObject * output );
 
 #endif
 
@@ -106,9 +114,11 @@ protected:
   int ExecutePiece;
   int ExecuteNumberOfPieces;
   int ExecuteGhostLevel;
+
 private:
-  vtkFSSurfaceReader(const vtkFSSurfaceReader &); /// Not implemented.
-  void operator=(const vtkFSSurfaceReader &);     /// Not implemented.
+  vtkFSSurfaceReader( const vtkFSSurfaceReader & ); /// Not implemented.
+  void
+  operator=( const vtkFSSurfaceReader & ); /// Not implemented.
 };
 
 /// If we're going to try to do normals, we need to keep some
@@ -116,18 +126,18 @@ private:
 /// structures.
 #if FS_CALC_NORMALS
 typedef struct
-  {
-  int numFaces;
-  int faces[FS_MAX_NUM_FACES_PER_VERTEX];
-  int indicesInFace[FS_MAX_NUM_FACES_PER_VERTEX];
+{
+  int   numFaces;
+  int   faces[FS_MAX_NUM_FACES_PER_VERTEX];
+  int   indicesInFace[FS_MAX_NUM_FACES_PER_VERTEX];
   float x, y, z;
   float nx, ny, nz;
-  } Vertex;
+} Vertex;
 
 typedef struct
-  {
+{
   int vertices[FS_NUM_SIDES_IN_FACE];
-  } Face;
+} Face;
 #endif
 
 #endif

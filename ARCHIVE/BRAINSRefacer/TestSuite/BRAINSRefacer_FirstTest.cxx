@@ -5,7 +5,8 @@
 #include <iostream>
 
 
-int main()
+int
+main()
 {
   std::cout << "First BRAINSRefacer Test!!!" << std::endl;
   return 0;

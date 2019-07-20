@@ -64,58 +64,57 @@ namespace itk
 /** \class DtiGuidedTrackingFilter
  */
 
-template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
-class DtiGuidedTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
-                                                                  TAnisotropyImageType,
-                                                                  TMaskImageType>
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+class DtiGuidedTrackingFilter
+  : public itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGuidedTrackingFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( DtiGuidedTrackingFilter );
 
   /** Standard class type alias. */
   using Self = DtiGuidedTrackingFilter;
-  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
-  typedef vtkPolyData *GuideFiberType;
+  typedef vtkPolyData * GuideFiberType;
 
   /** Standard New method. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Runtime information support. */
-  itkTypeMacro(DtiGuidedTrackingFilter, itk::DtiTrackingFilterBase);
+  itkTypeMacro( DtiGuidedTrackingFilter, itk::DtiTrackingFilterBase );
 
-  itkSetMacro(CurvatureThreshold, double);
-  itkGetMacro(CurvatureThreshold, double);
-  itkSetMacro(GuidedCurvatureThreshold, double);
-  itkGetMacro(GuidedCurvatureThreshold, double);
-  itkSetMacro(MaximumGuideDistance, double);
-  itkGetMacro(MaximumGuideDistance, double);
+  itkSetMacro( CurvatureThreshold, double );
+  itkGetMacro( CurvatureThreshold, double );
+  itkSetMacro( GuidedCurvatureThreshold, double );
+  itkGetMacro( GuidedCurvatureThreshold, double );
+  itkSetMacro( MaximumGuideDistance, double );
+  itkGetMacro( MaximumGuideDistance, double );
 
   // void InitializeSeeds();
   void SetGuideFiber( GuideFiberType );
 
-  void Update();
+  void
+  Update();
 
 protected:
   DtiGuidedTrackingFilter();
-  ~DtiGuidedTrackingFilter() override
-  {
-  }
+  ~DtiGuidedTrackingFilter() override {}
 
 private:
-  bool GuideDirection(typename Self::ContinuousIndexType, GuideFiberType, const float, TVector &);
+  bool
+  GuideDirection( typename Self::ContinuousIndexType, GuideFiberType, const float, TVector & );
 
   GuideFiberType m_GuideFiber;
   double         m_CurvatureThreshold;
   double         m_GuidedCurvatureThreshold;
   double         m_MaximumGuideDistance;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDtiGuidedTrackingFilter.hxx"
+#  include "itkDtiGuidedTrackingFilter.hxx"
 #endif
 
 #endif

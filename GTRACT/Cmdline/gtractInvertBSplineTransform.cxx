@@ -49,42 +49,43 @@
 #include "BRAINSThreadControl.h"
 #include "GenericTransformImage.h"
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
 
   int xSize = landmarkDensity[0];
   int ySize = landmarkDensity[1];
   int zSize = landmarkDensity[2];
 
   bool debug = true;
-  if( debug )
-    {
+  if ( debug )
+  {
     std::cout << "==============================================================" << std::endl;
-    std::cout << "Input Transform: " <<  inputTransform << std::endl;
-    std::cout << "Output Transform: " <<  outputTransform << std::endl;
-    std::cout << "Reference Image: " <<  inputReferenceVolume << std::endl;
+    std::cout << "Input Transform: " << inputTransform << std::endl;
+    std::cout << "Output Transform: " << outputTransform << std::endl;
+    std::cout << "Reference Image: " << inputReferenceVolume << std::endl;
     std::cout << "Density: " << xSize << " " << ySize << " " << zSize << std::endl;
     std::cout << "==============================================================" << std::endl;
-    }
+  }
 
   using PixelType = signed short;
 
-  using ImageType = itk::Image<PixelType, 3>;
-  using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageType = itk::Image< PixelType, 3 >;
+  using AnatomicalImageReaderType = itk::ImageFileReader< ImageType >;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName( inputReferenceVolume );
   try
-    {
+  {
     anatomicalReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   ImageType::Pointer ExampleImage;
   ExampleImage = anatomicalReader->GetOutput();
@@ -92,17 +93,17 @@ int main(int argc, char *argv[])
   std::cout << "Using Image: " << ExampleImage << std::endl;
 
   // Read the transform
-  using GenericTransformType = itk::Transform<double, 3, 3>;
-  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
+  using GenericTransformType = itk::Transform< double, 3, 3 >;
+  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk( inputTransform );
 
   using InvertFilterType = itk::InvertBSplineFilter;
   std::cout << "Running Inversion using TPS" << std::endl;
   InvertFilterType::Pointer invertTransformFilter = InvertFilterType::New();
-    {
-    InvertFilterType::BsplineTransformTypePointer myBSpline
-      = dynamic_cast<InvertFilterType::BsplineTransformType *>( baseTransform.GetPointer() );
+  {
+    InvertFilterType::BsplineTransformTypePointer myBSpline =
+      dynamic_cast< InvertFilterType::BsplineTransformType * >( baseTransform.GetPointer() );
     invertTransformFilter->SetInput( myBSpline );
-    }
+  }
   invertTransformFilter->SetXgridSize( xSize );
   invertTransformFilter->SetYgridSize( ySize );
   invertTransformFilter->SetZgridSize( zSize );
@@ -110,6 +111,6 @@ int main(int argc, char *argv[])
   invertTransformFilter->Update();
   std::cout << "TPS Inversion Complete" << std::endl;
 
-  itk::WriteTransformToDisk<double>(invertTransformFilter->GetOutput(), outputTransform);
+  itk::WriteTransformToDisk< double >( invertTransformFilter->GetOutput(), outputTransform );
   return EXIT_SUCCESS;
 }

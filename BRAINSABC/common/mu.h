@@ -23,7 +23,7 @@
 
 // Platform specific stuff
 #ifdef __CYGWIN__
-#include "muCygwin.h"
+#  include "muCygwin.h"
 #endif
 
 // Convenience macros

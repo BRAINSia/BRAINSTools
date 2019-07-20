@@ -28,25 +28,25 @@
  * }
  */
 
-template<typename TInputImage >
-class ITKStyleFilterExample
-  : public itk::ImageToImageFilter< TInputImage, TInputImage>
+template < typename TInputImage >
+class ITKStyleFilterExample : public itk::ImageToImageFilter< TInputImage, TInputImage >
 {
 public:
   using Self = ITKStyleFilterExample;
-  using Pointer = itk::SmartPointer <Self>;
+  using Pointer = itk::SmartPointer< Self >;
 
-  itkNewMacro(Self);
-  itkTypeMacro(Self, ImageToImageFilter);
+  itkNewMacro( Self );
+  itkTypeMacro( Self, ImageToImageFilter );
 
 protected:
   ITKStyleFilterExample(){};
   ~ITKStyleFilterExample(){};
 
-  void GenerateData() override
+  void
+  GenerateData() override
   {
     std::cout << "Hello Filter!!!" << std::endl;
   }
 };
 
-#endif //BRAINSTOOLS_ITKSTYLEFILTEREXAMPLE_H
+#endif // BRAINSTOOLS_ITKSTYLEFILTEREXAMPLE_H

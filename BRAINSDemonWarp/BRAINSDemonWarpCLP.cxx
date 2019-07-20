@@ -24,7 +24,8 @@
 
 sdfasdfa
 
-int main(int argc, char *argv[])
+  int
+  main( int argc, char * argv[] )
 {
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
@@ -35,5 +36,5 @@ int main(int argc, char *argv[])
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
 
-  return BRAINSDemonWarp(argc, argv);
+  return BRAINSDemonWarp( argc, argv );
 }

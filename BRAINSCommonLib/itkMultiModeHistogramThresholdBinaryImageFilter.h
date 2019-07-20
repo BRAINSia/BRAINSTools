@@ -27,14 +27,13 @@
 namespace itk
 {
 /**
-  * \author Hans J. Johnson
-  *
-  * This filter
-  *
-  */
-template <typename TInputImage, typename TOutputImage = Image<unsigned short, TInputImage::ImageDimension> >
-class MultiModeHistogramThresholdBinaryImageFilter :
-  public         ImageToImageFilter<TInputImage, TOutputImage>
+ * \author Hans J. Johnson
+ *
+ * This filter
+ *
+ */
+template < typename TInputImage, typename TOutputImage = Image< unsigned short, TInputImage::ImageDimension > >
+class MultiModeHistogramThresholdBinaryImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Extract dimension from input and output image. */
@@ -53,41 +52,44 @@ public:
   using OutputPixelType = typename OutputImageType::PixelType;
 
   using Self = MultiModeHistogramThresholdBinaryImageFilter;
-  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
-  using Pointer = SmartPointer<Self>;
+  using Superclass = ImageToImageFilter< InputImageType, OutputImageType >;
+  using Pointer = SmartPointer< Self >;
   using IntegerImageType = TOutputImage;
   using IntegerPixelType = typename IntegerImageType::PixelType;
 
-  using ThresholdArrayType = Array<double>;
+  using ThresholdArrayType = Array< double >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MultiModeHistogramThresholdBinaryImageFilter, ImageToImageFilter);
+  itkTypeMacro( MultiModeHistogramThresholdBinaryImageFilter, ImageToImageFilter );
 
-  itkSetMacro(LinearQuantileThreshold, double);
-  itkGetConstMacro(LinearQuantileThreshold, double);
+  itkSetMacro( LinearQuantileThreshold, double );
+  itkGetConstMacro( LinearQuantileThreshold, double );
 
   /** set Quantile Threshold Arrays */
-  itkSetMacro(QuantileLowerThreshold, ThresholdArrayType);
-  itkGetConstMacro(QuantileLowerThreshold, ThresholdArrayType);
-  itkSetMacro(QuantileUpperThreshold, ThresholdArrayType);
-  itkGetConstMacro(QuantileUpperThreshold, ThresholdArrayType);
+  itkSetMacro( QuantileLowerThreshold, ThresholdArrayType );
+  itkGetConstMacro( QuantileLowerThreshold, ThresholdArrayType );
+  itkSetMacro( QuantileUpperThreshold, ThresholdArrayType );
+  itkGetConstMacro( QuantileUpperThreshold, ThresholdArrayType );
 
-  itkGetConstObjectMacro(BinaryPortionImage, IntegerImageType);
-  itkSetObjectMacro(BinaryPortionImage, IntegerImageType);
+  itkGetConstObjectMacro( BinaryPortionImage, IntegerImageType );
+  itkSetObjectMacro( BinaryPortionImage, IntegerImageType );
 
-  itkSetMacro(InsideValue, IntegerPixelType);
-  itkGetConstMacro(InsideValue, IntegerPixelType);
-  itkSetMacro(OutsideValue, IntegerPixelType);
-  itkGetConstMacro(OutsideValue, IntegerPixelType);
+  itkSetMacro( InsideValue, IntegerPixelType );
+  itkGetConstMacro( InsideValue, IntegerPixelType );
+  itkSetMacro( OutsideValue, IntegerPixelType );
+  itkGetConstMacro( OutsideValue, IntegerPixelType );
+
 protected:
   MultiModeHistogramThresholdBinaryImageFilter();
   ~MultiModeHistogramThresholdBinaryImageFilter() override;
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
   ThresholdArrayType m_QuantileLowerThreshold;
@@ -102,7 +104,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMultiModeHistogramThresholdBinaryImageFilter.hxx"
+#  include "itkMultiModeHistogramThresholdBinaryImageFilter.hxx"
 #endif
 
 #endif

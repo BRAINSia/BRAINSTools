@@ -39,27 +39,23 @@
 
 namespace itk
 {
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-class ICCDeformableFunction :
-  public         PDEDeformableRegistrationFunction<TFixedImage,
-                                                   TMovingImage, TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+class ICCDeformableFunction : public PDEDeformableRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ICCDeformableFunction);
+  ITK_DISALLOW_COPY_AND_ASSIGN( ICCDeformableFunction );
 
   /** Standard class type alias. */
   using Self = ICCDeformableFunction;
-  using Superclass = PDEDeformableRegistrationFunction<
-      TFixedImage, TMovingImage, TDisplacementField>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = PDEDeformableRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( ICCDeformableFunction,
-                PDEDeformableRegistrationFunction );
+  itkTypeMacro( ICCDeformableFunction, PDEDeformableRegistrationFunction );
 
   /** MovingImage image type. */
   using MovingImageType = typename Superclass::MovingImageType;
@@ -77,8 +73,7 @@ public:
 
   /** Deformation field type. */
   using DisplacementFieldType = typename Superclass::DisplacementFieldType;
-  typedef typename Superclass::DisplacementFieldTypePointer
-    DisplacementFieldTypePointer;
+  typedef typename Superclass::DisplacementFieldTypePointer DisplacementFieldTypePointer;
 
   /** Inherit some enums from the superclass. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
@@ -92,127 +87,131 @@ public:
 
   /** Interpolator type. */
   using CoordRepType = double;
-  using InterpolatorMovingType = InterpolateImageFunction<
-      MovingImageType, CoordRepType>;
+  using InterpolatorMovingType = InterpolateImageFunction< MovingImageType, CoordRepType >;
   using InterpolatorMovingPointer = typename InterpolatorMovingType::Pointer;
   using MovingPointType = typename InterpolatorMovingType::PointType;
 
-  using DefaultMovingInterpolatorType = LinearInterpolateImageFunction<
-      MovingImageType, CoordRepType>;
+  using DefaultMovingInterpolatorType = LinearInterpolateImageFunction< MovingImageType, CoordRepType >;
 
-  using DefaultFixedInterpolatorType = LinearInterpolateImageFunction<
-      FixedImageType, CoordRepType>;
+  using DefaultFixedInterpolatorType = LinearInterpolateImageFunction< FixedImageType, CoordRepType >;
 
   /** Warper type */
-  using WarperMovingType = WarpImageFilter<
-      MovingImageType,
-      MovingImageType, DisplacementFieldType>;
+  using WarperMovingType = WarpImageFilter< MovingImageType, MovingImageType, DisplacementFieldType >;
   using WarperMovingPointer = typename WarperMovingType::Pointer;
 
   using MaskPixelType = unsigned char;
-  using MaskImageType = Image<MaskPixelType, Self::ImageDimension>;
+  using MaskImageType = Image< MaskPixelType, Self::ImageDimension >;
   using MaskImagePointer = typename MaskImageType::Pointer;
 
-  using MaskWarperType = WarpImageFilter<MaskImageType,
-                          MaskImageType, DisplacementFieldType>;
+  using MaskWarperType = WarpImageFilter< MaskImageType, MaskImageType, DisplacementFieldType >;
   using MaskWarperPointer = typename MaskWarperType::Pointer;
 
-  using ComplexPixelType = std::complex<MovingPixelType>;
-  using DisplacementFieldFFTPixelType = itk::Vector<ComplexPixelType,
-                      Self::ImageDimension>;
-  using ComplexImageType = itk::Image<ComplexPixelType, Self::ImageDimension>;
-  using DisplacementFieldFFTType = itk::Image<DisplacementFieldFFTPixelType, Self::ImageDimension>;
+  using ComplexPixelType = std::complex< MovingPixelType >;
+  using DisplacementFieldFFTPixelType = itk::Vector< ComplexPixelType, Self::ImageDimension >;
+  using ComplexImageType = itk::Image< ComplexPixelType, Self::ImageDimension >;
+  using DisplacementFieldFFTType = itk::Image< DisplacementFieldFFTPixelType, Self::ImageDimension >;
 
   using DisplacementFieldFFTPointer = typename DisplacementFieldFFTType::Pointer;
   using ComplexImagePointer = typename ComplexImageType::Pointer;
 
-  using FFTWRealToComplexType = VectorFFTWRealToHalfHermitianForwardFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             Self::ImageDimension>;
-  using FFTWComplexToRealType = VectorFFTWHalfHermitianToRealInverseFFTImageFilter<typename TDisplacementField::PixelType,
-                                                             Self::ImageDimension>;
+  using FFTWRealToComplexType =
+    VectorFFTWRealToHalfHermitianForwardFFTImageFilter< typename TDisplacementField::PixelType, Self::ImageDimension >;
+  using FFTWComplexToRealType =
+    VectorFFTWHalfHermitianToRealInverseFFTImageFilter< typename TDisplacementField::PixelType, Self::ImageDimension >;
 
-  using SubtractImageType = SubtractImageFilter<FixedImageType, FixedImageType, FixedImageType>;
-  using DerivativeType = DerivativeImageFilter<MovingImageType, MovingImageType>;
-  using IterationDisplacementFieldType = ImageRegionIterator<DisplacementFieldType>;
-  using IterationImageType = ImageRegionIterator<FixedImageType>;
-  using ConstIterationImageType = ImageRegionConstIterator<FixedImageType>;
-//  typedef SubtractImageFilter<DisplacementFieldType,  DisplacementFieldType, DisplacementFieldType>
-// SubtractDisplacementFieldType;
-//  typedef SubtractImageFilter<DisplacementFieldFFTType, DisplacementFieldFFTType, DisplacementFieldFFTType>
-// SubtractDisplacementFieldFFTType;
-//  typedef MultiplyByConstantImageFilter<DisplacementFieldType, float, DisplacementFieldType>
-// MultiplyByConstantImageType;
-//  typedef MultiplyByConstantImageFilter<DisplacementFieldFFTType, float, DisplacementFieldFFTType>
-// MultiplyByConstantFFTType;
-  using AddImageType = AddImageFilter<DisplacementFieldType, DisplacementFieldType, DisplacementFieldType>;
-  using FloatImageType = Image<float, Self::ImageDimension>;
+  using SubtractImageType = SubtractImageFilter< FixedImageType, FixedImageType, FixedImageType >;
+  using DerivativeType = DerivativeImageFilter< MovingImageType, MovingImageType >;
+  using IterationDisplacementFieldType = ImageRegionIterator< DisplacementFieldType >;
+  using IterationImageType = ImageRegionIterator< FixedImageType >;
+  using ConstIterationImageType = ImageRegionConstIterator< FixedImageType >;
+  //  typedef SubtractImageFilter<DisplacementFieldType,  DisplacementFieldType, DisplacementFieldType>
+  // SubtractDisplacementFieldType;
+  //  typedef SubtractImageFilter<DisplacementFieldFFTType, DisplacementFieldFFTType, DisplacementFieldFFTType>
+  // SubtractDisplacementFieldFFTType;
+  //  typedef MultiplyByConstantImageFilter<DisplacementFieldType, float, DisplacementFieldType>
+  // MultiplyByConstantImageType;
+  //  typedef MultiplyByConstantImageFilter<DisplacementFieldFFTType, float, DisplacementFieldFFTType>
+  // MultiplyByConstantFFTType;
+  using AddImageType = AddImageFilter< DisplacementFieldType, DisplacementFieldType, DisplacementFieldType >;
+  using FloatImageType = Image< float, Self::ImageDimension >;
 
   // typename TDisplacementField::PixelType
   /** Covariant vector type. */
-  using CovariantVectorType = CovariantVector<double, Self::ImageDimension>;
+  using CovariantVectorType = CovariantVector< double, Self::ImageDimension >;
 
-  using MaskType = SpatialObject<Self::ImageDimension>;
+  using MaskType = SpatialObject< Self::ImageDimension >;
   using MaskPointer = typename MaskType::Pointer;
 
-  using LandmarkType = LandmarkSpatialObject<Self::ImageDimension>;
+  using LandmarkType = LandmarkSpatialObject< Self::ImageDimension >;
   using LandmarkPointer = typename LandmarkType::Pointer;
 
-  using PointSetType = PointSet<MovingPixelType, Self::ImageDimension>;
+  using PointSetType = PointSet< MovingPixelType, Self::ImageDimension >;
   using PointSetPointer = typename PointSetType::Pointer;
   /** Set the moving image interpolator. */
-  void SetMovingImageInterpolator( InterpolatorMovingType * ptr )
+  void
+  SetMovingImageInterpolator( InterpolatorMovingType * ptr )
   {
-    m_MovingImageInterpolator = ptr; m_MovingImageWarper->SetInterpolator( ptr );
+    m_MovingImageInterpolator = ptr;
+    m_MovingImageWarper->SetInterpolator( ptr );
   }
 
   /** Get the moving image interpolator. */
-  InterpolatorMovingType * GetMovingImageInterpolator(void)
+  InterpolatorMovingType *
+  GetMovingImageInterpolator( void )
   {
     return m_MovingImageInterpolator;
   }
 
   /** This class uses a constant timestep of 1. */
-  TimeStepType ComputeGlobalTimeStep(void * itkNotUsed(GlobalData) ) const override
+  TimeStepType
+  ComputeGlobalTimeStep( void * itkNotUsed( GlobalData ) ) const override
   {
     return m_TimeStep;
   }
 
   /** Return a pointer to a global data structure that is passed to
    * this object from the solver at each calculation.  */
-  void * GetGlobalDataPointer() const override
+  void *
+  GetGlobalDataPointer() const override
   {
-    GlobalDataStruct *global = new GlobalDataStruct();
+    GlobalDataStruct * global = new GlobalDataStruct();
 
-    global->m_SumOfSquaredDifference  = 0.0;
+    global->m_SumOfSquaredDifference = 0.0;
     global->m_NumberOfPixelsProcessed = 0L;
-    global->m_SumOfSquaredChange      = 0;
+    global->m_SumOfSquaredChange = 0;
     return global;
   }
 
   /** Release memory for global data structure. */
-  void ReleaseGlobalDataPointer( void *GlobalData ) const override;
+  void
+  ReleaseGlobalDataPointer( void * GlobalData ) const override;
 
   /** Set the object's state before each iteration. */
-  void InitializeIteration() override;
+  void
+  InitializeIteration() override;
 
   /** This method is called by a finite difference solver image filter at
    * each pixel that does not lie on a data set boundary */
 
-  virtual void ComputeMetric( void *globalData);
+  virtual void
+  ComputeMetric( void * globalData );
 
-  PixelType  ComputeUpdate(const NeighborhoodType & neighborhood, void *globalData,
-                                   const FloatOffsetType & offset = FloatOffsetType( 0.0) ) override;
+  PixelType
+  ComputeUpdate( const NeighborhoodType & neighborhood, void * globalData,
+                 const FloatOffsetType & offset = FloatOffsetType( 0.0 ) ) override;
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
    * computed over the the overlapping region between the two images. */
-  virtual double GetMetric() const
+  virtual double
+  GetMetric() const
   {
     return m_Metric;
   }
 
   /** Get the rms change in deformation field. */
-  virtual const double & GetRMSChange() const
+  virtual const double &
+  GetRMSChange() const
   {
     return m_RMSChange;
   }
@@ -221,27 +220,33 @@ public:
    * intensity yields a match. When the intensities match between a
    * moving and fixed image pixel, the update vector (for that
    * iteration) will be the zero vector. Default is 0.001. */
-  virtual void SetIntensityDifferenceThreshold(double);
+  virtual void
+  SetIntensityDifferenceThreshold( double );
 
-  virtual double GetIntensityDifferenceThreshold() const;
+  virtual double
+  GetIntensityDifferenceThreshold() const;
 
   /** Set/Get whether using consistent internsity registration**/
-  virtual void SetUseConsistentIntensity(bool cl)
+  virtual void
+  SetUseConsistentIntensity( bool cl )
   {
     m_UseConsistentIntensity = cl;
   }
 
-  virtual bool GetUseConsistentIntensity(void)
+  virtual bool
+  GetUseConsistentIntensity( void )
   {
     return m_UseConsistentIntensity;
   }
 
-  virtual void SetUseConsistentLandmark(bool cl)
+  virtual void
+  SetUseConsistentLandmark( bool cl )
   {
     m_UseConsistentLandmark = cl;
   }
 
-  virtual bool GetUseConsistentLandmark(void)
+  virtual bool
+  GetUseConsistentLandmark( void )
   {
     return m_UseConsistentLandmark;
   }
@@ -249,145 +254,167 @@ public:
   /** Set/Get the maximum update step length. In Thirion this is 0.5.
    *  Setting it to 0 implies no restriction (beware of numerical
    *  instability in this case. */
-  virtual void SetMaximumUpdateStepLength(double sm)
+  virtual void
+  SetMaximumUpdateStepLength( double sm )
   {
     this->m_MaximumUpdateStepLength = sm;
   }
 
-  virtual double GetMaximumUpdateStepLength() const
+  virtual double
+  GetMaximumUpdateStepLength() const
   {
     return this->m_MaximumUpdateStepLength;
   }
 
-  virtual void SetBackgroundFilledValue(float bf)
+  virtual void
+  SetBackgroundFilledValue( float bf )
   {
     this->m_BackgroundFilledValue = bf;
   }
 
-  virtual float GetBackgroundFilledValue() const
+  virtual float
+  GetBackgroundFilledValue() const
   {
     return this->m_BackgroundFilledValue;
   }
 
   /** Type of available image forces */
   enum GradientType
-    {
+  {
     Symmetric = 0,
     Fixed = 1,
     WarpedMoving = 2,
     MappedMoving = 3
-    };
+  };
 
   /** Set/Get the type of used image forces */
-  virtual void SetUseGradientType( GradientType gtype )
+  virtual void
+  SetUseGradientType( GradientType gtype )
   {
     m_UseGradientType = gtype;
   }
 
-  virtual GradientType GetUseGradientType() const
+  virtual GradientType
+  GetUseGradientType() const
   {
     return m_UseGradientType;
   }
 
-  DisplacementFieldTypePointer GetInverseUpdateBuffer()
+  DisplacementFieldTypePointer
+  GetInverseUpdateBuffer()
   {
     return m_InverseUpdateBuffer;
   }
 
-  DisplacementFieldTypePointer GetUpdateBuffer()
+  DisplacementFieldTypePointer
+  GetUpdateBuffer()
   {
     return m_UpdateBuffer;
   }
 
-  DisplacementFieldFFTPointer GetCoefficient()
+  DisplacementFieldFFTPointer
+  GetCoefficient()
   {
     return m_Coefficient;
   }
 
-  void SetCoefficient(DisplacementFieldFFTPointer& coeff)
+  void
+  SetCoefficient( DisplacementFieldFFTPointer & coeff )
   {
     m_Coefficient = coeff;
   }
 
-  virtual void SetSimilarityWeight(double sm)
+  virtual void
+  SetSimilarityWeight( double sm )
   {
     this->m_SimilarityWeight = sm;
   }
 
-  virtual double GetSimilarityWeight() const
+  virtual double
+  GetSimilarityWeight() const
   {
     return this->m_SimilarityWeight;
   }
 
-  virtual void SetLandmarkWeight(double sm)
+  virtual void
+  SetLandmarkWeight( double sm )
   {
     this->m_LandmarkWeight = sm;
   }
 
-  virtual double GetLandmarkWeight() const
+  virtual double
+  GetLandmarkWeight() const
   {
     return this->m_LandmarkWeight;
   }
 
-  virtual void SetSmoothFilter(ComplexImagePointer& filter)
+  virtual void
+  SetSmoothFilter( ComplexImagePointer & filter )
   {
     m_SmoothFilter = filter;
   }
 
-  virtual void SetMovingImageMask(MaskType *mask)
+  virtual void
+  SetMovingImageMask( MaskType * mask )
   {
     m_MovingMask = mask;
   }
 
-  virtual void SetFixedImageMask(MaskType *mask)
+  virtual void
+  SetFixedImageMask( MaskType * mask )
   {
     m_FixedMask = mask;
   }
 
-  virtual const MaskType * GetFixedImageMask(void) const
+  virtual const MaskType *
+  GetFixedImageMask( void ) const
   {
     return m_FixedMask;
   }
 
-  virtual const MaskType * GetMovingImageMask(void) const
+  virtual const MaskType *
+  GetMovingImageMask( void ) const
   {
     return m_MovingMask;
   }
 
-  virtual MaskImageType * GetMovingWarpedMask(void)
+  virtual MaskImageType *
+  GetMovingWarpedMask( void )
   {
     return m_WarpedMaskImage;
   }
 
-  virtual void SetFixedLandmark(PointSetType *lk)
+  virtual void
+  SetFixedLandmark( PointSetType * lk )
   {
     m_FixedLandmark = lk;
   }
 
-  virtual void SetMovingLandmark(PointSetType *lk)
+  virtual void
+  SetMovingLandmark( PointSetType * lk )
   {
     m_MovingLandmark = lk;
   }
 
 protected:
   ICCDeformableFunction();
-  ~ICCDeformableFunction() override
-  {
-  }
+  ~ICCDeformableFunction() override {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** FixedImage image neighborhood iterator type. */
-  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator<FixedImageType>;
+  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator< FixedImageType >;
 
   /** A global data type for this class of equation. Used to store
    * iterators for the fixed image. */
   struct GlobalDataStruct
-    {
-    double m_SumOfSquaredDifference;
+  {
+    double        m_SumOfSquaredDifference;
     unsigned long m_NumberOfPixelsProcessed;
-    double m_SumOfSquaredChange;
-    };
+    double        m_SumOfSquaredChange;
+  };
+
 private:
   /** Cache fixed image information. */
   MovingPointType m_FixedImageOrigin;
@@ -397,10 +424,10 @@ private:
   double m_Normalizer;
 
   /** Function to compute derivatives of the fixed image. */
-//  GradientCalculatorPointer       m_FixedImageGradientCalculator;
+  //  GradientCalculatorPointer       m_FixedImageGradientCalculator;
 
   /** Function to compute derivatives of the moving image (unwarped). */
-//  MovingImageGradientCalculatorPointer m_MappedMovingImageGradientCalculator;
+  //  MovingImageGradientCalculatorPointer m_MappedMovingImageGradientCalculator;
 
   GradientType m_UseGradientType;
 
@@ -441,21 +468,21 @@ private:
 
   /** Mutex lock to protect modification to metric. */
   mutable std::mutex m_MetricCalculationLock;
-  MaskPointer                 m_MovingMask;
-  MaskPointer                 m_FixedMask;
-  PointSetPointer             m_FixedLandmark;
-  PointSetPointer             m_MovingLandmark;
-  MaskImagePointer            m_WarpedMaskImage;
-  float                       m_FixedImageBackground;
-  float                       m_MovingImageBackground;
-  float                       m_BackgroundFilledValue;
-  bool                        m_UseConsistentIntensity;
-  bool                        m_UseConsistentLandmark;
+  MaskPointer        m_MovingMask;
+  MaskPointer        m_FixedMask;
+  PointSetPointer    m_FixedLandmark;
+  PointSetPointer    m_MovingLandmark;
+  MaskImagePointer   m_WarpedMaskImage;
+  float              m_FixedImageBackground;
+  float              m_MovingImageBackground;
+  float              m_BackgroundFilledValue;
+  bool               m_UseConsistentIntensity;
+  bool               m_UseConsistentLandmark;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkICCDeformableFunction.hxx"
+#  include "itkICCDeformableFunction.hxx"
 #endif
 
 #endif

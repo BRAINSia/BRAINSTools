@@ -13,8 +13,8 @@ class vtkImageData;
 /// \brief- Wrapper class around itk::GrowCutSegmentationImageFilter
 ///
 /// GrowCutSegmentationImageFilter produces segmentation of regions on an image interactively.
-/// It uses the postive and  negative gestures (strokes/ lines/points marked by the user on the region of interest (positive),
-/// and outside the object (negative) to automatically generate the segmentation
+/// It uses the postive and  negative gestures (strokes/ lines/points marked by the user on the region of interest
+/// (positive), and outside the object (negative) to automatically generate the segmentation
 ///
 /// Usage: SetInput1 is the input feature/intensity image (required)
 /// SetInput2 takes the gesture image (the gestures) image (required)
@@ -27,22 +27,23 @@ class vtkImageData;
 class VTK_ITK_EXPORT vtkITKGrowCutSegmentationImageFilter : public vtkImageAlgorithm
 {
 public:
-
-  static vtkITKGrowCutSegmentationImageFilter *New();
-  vtkTypeMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageAlgorithm );
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkITKGrowCutSegmentationImageFilter *
+  New();
+  vtkTypeMacro( vtkITKGrowCutSegmentationImageFilter, vtkImageAlgorithm );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
   /// Methods to set/get objectSize
-  vtkSetMacro(ObjectSize, double);
-  vtkGetMacro(ObjectSize, double);
+  vtkSetMacro( ObjectSize, double );
+  vtkGetMacro( ObjectSize, double );
 
   /// Methods to set/get contrastNoiseRatio
-  vtkSetMacro(ContrastNoiseRatio, double);
-  vtkGetMacro(ContrastNoiseRatio, double);
+  vtkSetMacro( ContrastNoiseRatio, double );
+  vtkGetMacro( ContrastNoiseRatio, double );
 
   /// Methods to set/get priorSegmentConfidence
-  vtkSetMacro(PriorSegmentConfidence, double);
-  vtkGetMacro(PriorSegmentConfidence, double);
+  vtkSetMacro( PriorSegmentConfidence, double );
+  vtkGetMacro( PriorSegmentConfidence, double );
 
 public:
   double ObjectSize;
@@ -52,19 +53,22 @@ public:
 
 protected:
   vtkITKGrowCutSegmentationImageFilter();
-  ~vtkITKGrowCutSegmentationImageFilter(){}
+  ~vtkITKGrowCutSegmentationImageFilter() {}
 
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void ExecuteData(vtkDataObject *outData);
+#if ( VTK_MAJOR_VERSION <= 5 )
+  virtual void
+  ExecuteData( vtkDataObject * outData );
 #else
-  virtual void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) override;
+  virtual void
+  ExecuteDataWithInformation( vtkDataObject * outData, vtkInformation * outInfo ) override;
 #endif
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int
+  RequestInformation( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
 
 private:
-  vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
-  void operator=(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
-
+  vtkITKGrowCutSegmentationImageFilter( const vtkITKGrowCutSegmentationImageFilter & ); // Not implemented.
+  void
+  operator=( const vtkITKGrowCutSegmentationImageFilter & ); // Not implemented.
 };
 
 #endif

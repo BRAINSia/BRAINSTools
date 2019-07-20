@@ -16,32 +16,33 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include <math.h>  /* Needed for fabs() and sqrt() */
+#include <math.h> /* Needed for fabs() and sqrt() */
 #include "blas.h"
 
-double dnrm2_(int *n, double *x, int *incx)
+double
+dnrm2_( int * n, double * x, int * incx )
 {
   long int nn, iincx;
-  double norm;
+  double   norm;
 
-/*  DNRM2 returns the euclidean norm of a vector via the function
-    name, so that
+  /*  DNRM2 returns the euclidean norm of a vector via the function
+      name, so that
 
-       DNRM2 := sqrt( x'*x )
+         DNRM2 := sqrt( x'*x )
 
-    -- This version written on 25-October-1982.
-       Modified on 14-October-1993 to inline the call to SLASSQ.
-       Sven Hammarling, Nag Ltd.   */
+      -- This version written on 25-October-1982.
+         Modified on 14-October-1993 to inline the call to SLASSQ.
+         Sven Hammarling, Nag Ltd.   */
 
   /* Dereference inputs */
   nn = *n;
   iincx = *incx;
 
-  if( nn > 0 && iincx > 0 )
+  if ( nn > 0 && iincx > 0 )
   {
-    if (nn == 1)
+    if ( nn == 1 )
     {
-      norm = fabs(x[0]);
+      norm = fabs( x[0] );
     }
     else
     {
@@ -52,28 +53,28 @@ double dnrm2_(int *n, double *x, int *incx)
          auxiliary routine:   CALL SLASSQ( N, X, INCX, SCALE, SSQ ) */
 
       {
-      long int ix;
-      for (ix=(nn-1)*iincx; ix>=0; ix-=iincx)
-      {
-        if (x[ix] != 0.0)
+        long int ix;
+        for ( ix = ( nn - 1 ) * iincx; ix >= 0; ix -= iincx )
         {
-          long int absxi = fabs(x[ix]);
-          long int temp;
-          if (scale < absxi)
+          if ( x[ix] != 0.0 )
           {
-            temp = scale / absxi;
-            ssq = ssq * (temp * temp) + 1.0;
-            scale = absxi;
-          }
-          else
-          {
-            temp = absxi / scale;
-            ssq += temp * temp;
+            long int absxi = fabs( x[ix] );
+            long int temp;
+            if ( scale < absxi )
+            {
+              temp = scale / absxi;
+              ssq = ssq * ( temp * temp ) + 1.0;
+              scale = absxi;
+            }
+            else
+            {
+              temp = absxi / scale;
+              ssq += temp * temp;
+            }
           }
         }
       }
-      }
-      norm = scale * sqrt(ssq);
+      norm = scale * sqrt( ssq );
     }
   }
   else

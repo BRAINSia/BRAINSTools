@@ -23,23 +23,26 @@
 class GenericDWIConverter : public DWIConverter
 {
 public:
-  GenericDWIConverter( DWIConverter::FileNamesContainer &inputFileNames );
+  GenericDWIConverter( DWIConverter::FileNamesContainer & inputFileNames );
 
-  void LoadFromDisk() override;
+  void
+  LoadFromDisk() override;
 
 
   ~GenericDWIConverter() override;
 
 protected:
-  void ExtractDWIData() override;
-  void AddFlagsToDictionary() override;
+  void
+  ExtractDWIData() override;
+  void
+  AddFlagsToDictionary() override;
 
   /**
- * @brief Return common fields.  Does nothing for FSL
- * @return empty map
- */
-  CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
-
+   * @brief Return common fields.  Does nothing for FSL
+   * @return empty map
+   */
+  CommonDicomFieldMapType
+  GetCommonDicomFieldsMap() const override;
 };
 
 #endif // __GenericDWIConverter_h

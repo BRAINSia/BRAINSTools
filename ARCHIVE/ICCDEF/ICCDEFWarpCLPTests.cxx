@@ -17,14 +17,15 @@
  *
  *=========================================================================*/
 #if defined( _MSC_VER )
-#pragma warning ( disable : 4786 )
+#  pragma warning( disable : 4786 )
 #endif
 #include <iostream>
 #include "itkBRAINSToolsTestMain.h"
 
-extern void RegisterTests()
+extern void
+RegisterTests()
 {
-  REGISTER_TEST(ICCDEFWarpTest);
+  REGISTER_TEST( ICCDEFWarpTest );
 }
 
 #undef main

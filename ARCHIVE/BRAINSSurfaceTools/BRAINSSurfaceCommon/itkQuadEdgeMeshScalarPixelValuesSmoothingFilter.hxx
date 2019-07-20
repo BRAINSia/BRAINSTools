@@ -26,24 +26,20 @@
 
 namespace itk
 {
-template <typename TInputMesh, typename TOutputMesh>
-QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
-::QuadEdgeMeshScalarPixelValuesSmoothingFilter()
+template < typename TInputMesh, typename TOutputMesh >
+QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::QuadEdgeMeshScalarPixelValuesSmoothingFilter()
 {
   this->m_Lambda = 1.0;
   this->m_MaximumNumberOfIterations = 10;
 }
 
-template <typename TInputMesh, typename TOutputMesh>
-QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
-::~QuadEdgeMeshScalarPixelValuesSmoothingFilter()
-{
-}
+template < typename TInputMesh, typename TOutputMesh >
+QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::~QuadEdgeMeshScalarPixelValuesSmoothingFilter()
+{}
 
-template <typename TInputMesh, typename TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
 void
-QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
-::GenerateData()
+QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::GenerateData()
 {
   // Copy the input mesh into the output mesh.
   this->CopyInputMeshToOutputMesh();
@@ -55,27 +51,27 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
   //
   OutputPointsContainerPointer points = outputMesh->GetPoints();
 
-  if( points.IsNull() )
-    {
-    itkExceptionMacro("Mesh has NULL PointData");
-    }
+  if ( points.IsNull() )
+  {
+    itkExceptionMacro( "Mesh has NULL PointData" );
+  }
 
   OutputPointDataContainerPointer pointData = outputMesh->GetPointData();
 
-  if( pointData.IsNull() )
-    {
-    itkExceptionMacro("Output Mesh has NULL PointData");
-    }
+  if ( pointData.IsNull() )
+  {
+    itkExceptionMacro( "Output Mesh has NULL PointData" );
+  }
 
   const double weightFactor = std::exp( -1.0 / ( 2.0 * this->m_Lambda ) );
 
-  ProgressReporter progress(this, 0, this->m_MaximumNumberOfIterations);
+  ProgressReporter progress( this, 0, this->m_MaximumNumberOfIterations );
 
   const unsigned int numberOfPoints = outputMesh->GetNumberOfPoints();
 
   std::cout << "Output Mesh numberOfPoints " << numberOfPoints << std::endl;
-  for( unsigned int iter = 0; iter < this->m_MaximumNumberOfIterations; ++iter )
-    {
+  for ( unsigned int iter = 0; iter < this->m_MaximumNumberOfIterations; ++iter )
+  {
     std::cout << " Smoothing Iteration " << iter << std::endl;
 
     using EdgeType = typename OutputMeshType::QEPrimal;
@@ -84,9 +80,9 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
 
     newPointDataContainer->Reserve( pointData->Size() );
 
-    using AccumulatePixelType = typename NumericTraits<OutputPixelType>::AccumulateType;
-    for( unsigned int pointId = 0; pointId < numberOfPoints; pointId++ )
-      {
+    using AccumulatePixelType = typename NumericTraits< OutputPixelType >::AccumulateType;
+    for ( unsigned int pointId = 0; pointId < numberOfPoints; pointId++ )
+    {
       const OutputPixelType & centralPixelValue = pointData->GetElement( pointId );
 
       const EdgeType * edgeToFirstNeighborPoint = outputMesh->FindEdge( pointId );
@@ -97,7 +93,7 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
       unsigned int numberOfNeighbors = 0;
 
       do
-        {
+      {
         const OutputPointIdentifier neighborPointId = edgeToNeighborPoint->GetDestination();
         const OutputPixelType &     neighborPixelValue = pointData->GetElement( neighborPointId );
 
@@ -106,22 +102,21 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
         numberOfNeighbors++;
 
         edgeToNeighborPoint = edgeToNeighborPoint->GetOnext();
-        }
-      while( edgeToNeighborPoint != edgeToFirstNeighborPoint );
+      } while ( edgeToNeighborPoint != edgeToFirstNeighborPoint );
 
       const double normalizationFactor = 1.0 / ( 1.0 + numberOfNeighbors * weightFactor );
 
       OutputPixelType smoothedPixelValue = pixelSum * normalizationFactor;
 
       newPointDataContainer->SetElement( pointId, smoothedPixelValue );
-      }
+    }
 
     outputMesh->SetPointData( newPointDataContainer );
 
     pointData = newPointDataContainer;
 
-    progress.CompletedPixel();  // potential exception thrown here
-    }
+    progress.CompletedPixel(); // potential exception thrown here
+  }
 }
 } // end namespace itk
 

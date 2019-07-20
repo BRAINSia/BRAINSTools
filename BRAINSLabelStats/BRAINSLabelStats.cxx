@@ -43,7 +43,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "BRAINSLabelStatsCLP.h"
 
-std::string GetXmlLabelName( std::string fileName, int label )
+std::string
+GetXmlLabelName( std::string fileName, int label )
 {
   // Set default return value
   std::string labelName = "Error";
@@ -55,38 +56,39 @@ std::string GetXmlLabelName( std::string fileName, int label )
   xmlReader->Update();
 
   // Find the labels and extract name of specified label
-  itk::DOMNode::Pointer  labelXmlInfo = xmlReader->GetOutput();
+  itk::DOMNode::Pointer          labelXmlInfo = xmlReader->GetOutput();
   itk::DOMNode::ChildrenListType elementList;
-  labelXmlInfo->GetAllChildren(elementList);
-  for( std::vector<itk::DOMNode *>::iterator it = elementList.begin(); it != elementList.end(); ++it )
-    {
+  labelXmlInfo->GetAllChildren( elementList );
+  for ( std::vector< itk::DOMNode * >::iterator it = elementList.begin(); it != elementList.end(); ++it )
+  {
     // std::cout << *it << std::endl;
     // std::cout << (*it)->GetName() << std::endl;
     // std::cout << (*it)->GetPath() << std::endl;
-    if( (*it)->GetName() == "data" )
-      {
+    if ( ( *it )->GetName() == "data" )
+    {
       itk::DOMNode::ChildrenListType labelList;
-      (*it)->GetAllChildren(labelList);
-      for( std::vector<itk::DOMNode *>::iterator lt = labelList.begin(); lt != labelList.end(); ++lt )
-        {
+      ( *it )->GetAllChildren( labelList );
+      for ( std::vector< itk::DOMNode * >::iterator lt = labelList.begin(); lt != labelList.end(); ++lt )
+      {
         // std::cout << *lt << std::endl;
         // std::cout << (*lt)->GetName() << std::endl;
         // std::cout << (*lt)->GetPath() << std::endl;
-        std::string attributeValue = (*lt)->GetAttribute("index");
+        std::string attributeValue = ( *lt )->GetAttribute( "index" );
         int         currentLabel = std::stoi( attributeValue.c_str() );
-        if( currentLabel == label )
-          {
-          itk::DOMTextNode::Pointer textNode = (*lt)->GetTextChild(0);
+        if ( currentLabel == label )
+        {
+          itk::DOMTextNode::Pointer textNode = ( *lt )->GetTextChild( 0 );
           labelName = textNode->GetText();
-          }
         }
       }
     }
+  }
 
   return labelName;
 }
 
-std::string GetAntsLabelName( std::string fileName, int label )
+std::string
+GetAntsLabelName( std::string fileName, int label )
 {
   // Set default return value
   std::string labelName = "Error";
@@ -96,111 +98,112 @@ std::string GetAntsLabelName( std::string fileName, int label )
 
   std::ifstream labelFile( fileName.c_str() );
 
-  if( labelFile.is_open() )
+  if ( labelFile.is_open() )
+  {
+    while ( !labelFile.eof() )
     {
-    while( !labelFile.eof() )
-      {
       labelFile >> value >> x1 >> y1 >> z1;
       labelFile >> x2 >> y2 >> z2;
-      std::getline(labelFile, txtLabel);
+      std::getline( labelFile, txtLabel );
 
       int currentLabel = std::stoi( value.c_str() );
-      if( currentLabel == label )
-        {
-        unsigned first = txtLabel.find('"');
-        unsigned last = txtLabel.rfind('"');
-        labelName = txtLabel.substr(first + 1, last - first - 1);
+      if ( currentLabel == label )
+      {
+        unsigned first = txtLabel.find( '"' );
+        unsigned last = txtLabel.rfind( '"' );
+        labelName = txtLabel.substr( first + 1, last - first - 1 );
         labelFile.close();
         return labelName;
-        }
       }
+    }
 
     labelFile.close();
-    }
+  }
 
   return labelName;
 }
 
-std::string GetLabelName( int mode, std::string fileName, int label )
+std::string
+GetLabelName( int mode, std::string fileName, int label )
 {
-  switch( mode )
-    {
+  switch ( mode )
+  {
     case 1:
-      {
-      return GetXmlLabelName(fileName, label);
-      }
-      break;
+    {
+      return GetXmlLabelName( fileName, label );
+    }
+    break;
     case 3:
-      {
-      return GetAntsLabelName(fileName, label);
-      }
-      break;
+    {
+      return GetAntsLabelName( fileName, label );
+    }
+    break;
     default:
       return "UNKNOWN";
-    }
+  }
 
   return "UNKNOWN";
 }
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  if( ( imageVolume.length() == 0 ) &&
-      ( labelVolume.length() == 0 ) )
-    {
+  if ( ( imageVolume.length() == 0 ) && ( labelVolume.length() == 0 ) )
+  {
     std::cout << "Error: Both the image and label must be specified" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  if( outputPrefixColumnNames.size() != outputPrefixColumnValues.size() )
-    {
+  if ( outputPrefixColumnNames.size() != outputPrefixColumnValues.size() )
+  {
     std::cout << "Error: Number of column names must match number of values" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int mode = 0;
-  if( labelFileType == "fslxml" )
-    {
+  if ( labelFileType == "fslxml" )
+  {
     mode = 1;
-    }
-  else if( labelFileType == "csv" )
-    {
+  }
+  else if ( labelFileType == "csv" )
+  {
     mode = 2;
-    }
-  else if( labelFileType == "ants" )
-    {
+  }
+  else if ( labelFileType == "ants" )
+  {
     mode = 3;
-    }
+  }
 
-  if( echoSwitch )
-    {
+  if ( echoSwitch )
+  {
     std::cout << "=====================================================" << std::endl;
-    std::cout << "Image: " <<   imageVolume << std::endl;
-    std::cout << "Label Map: " <<   labelVolume << std::endl;
-    std::cout << "Label Name File: " <<   labelNameFile << std::endl;
+    std::cout << "Image: " << imageVolume << std::endl;
+    std::cout << "Label Map: " << labelVolume << std::endl;
+    std::cout << "Label Name File: " << labelNameFile << std::endl;
     std::cout << "Column Prefix Names: ";
-    for( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
-      {
+    for ( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
+    {
       std::cout << outputPrefixColumnNames[i] << ", ";
-      }
+    }
     std::cout << std::endl;
     std::cout << "Column Prefix Values: ";
-    for( size_t i = 0; i < outputPrefixColumnValues.size(); ++i )
-      {
+    for ( size_t i = 0; i < outputPrefixColumnValues.size(); ++i )
+    {
       std::cout << outputPrefixColumnValues[i] << ", ";
-      }
-    std::cout << std::endl;
-    std::cout << "Label File Type: " <<   labelFileType << std::endl;
-    std::cout << "Number of Histogram Bins: " <<   numberOfHistogramBins << std::endl;
-    std::cout << "Define Min/Max Method: " <<   minMaxType << std::endl;
-    std::cout << "User define min: " <<   userDefineMinimum << std::endl;
-    std::cout << "User defined max: " <<   userDefineMaximum << std::endl;
-    std::cout << "=====================================================" << std::endl;
     }
+    std::cout << std::endl;
+    std::cout << "Label File Type: " << labelFileType << std::endl;
+    std::cout << "Number of Histogram Bins: " << numberOfHistogramBins << std::endl;
+    std::cout << "Define Min/Max Method: " << minMaxType << std::endl;
+    std::cout << "User define min: " << userDefineMinimum << std::endl;
+    std::cout << "User defined max: " << userDefineMaximum << std::endl;
+    std::cout << "=====================================================" << std::endl;
+  }
 
-  using ImageType = itk::Image<float, 3>;
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageType = itk::Image< float, 3 >;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName( imageVolume );
   imageReader->UpdateLargestPossibleRegion();
@@ -214,8 +217,8 @@ int main(int argc, char *argv[])
   imageSpacing = imageReader->GetOutput()->GetSpacing();
   imageOrigin = imageReader->GetOutput()->GetOrigin();
 
-  using LabelType = itk::Image<short, 3>;
-  using LabelReaderType = itk::ImageFileReader<LabelType>;
+  using LabelType = itk::Image< short, 3 >;
+  using LabelReaderType = itk::ImageFileReader< LabelType >;
   LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName( labelVolume );
   labelReader->UpdateLargestPossibleRegion();
@@ -229,122 +232,122 @@ int main(int argc, char *argv[])
   labelSpacing = labelReader->GetOutput()->GetSpacing();
   labelOrigin = labelReader->GetOutput()->GetOrigin();
   // Check the Image and Label Map to Make sure they define the same space
-  for( size_t i = 0; i < 3; ++i )
+  for ( size_t i = 0; i < 3; ++i )
+  {
+    if ( imageSize[i] != labelSize[i] )
     {
-    if( imageSize[i] != labelSize[i] )
-      {
       std::cout << "Error: Image and label size do not match" << std::endl;
       std::cout << "Image: " << imageSize << std::endl;
       std::cout << "Label: " << labelSize << std::endl;
       return EXIT_FAILURE;
-      }
-    if( fabs(labelSpacing[i] - imageSpacing[i]) > 0.01 )
-      {
+    }
+    if ( fabs( labelSpacing[i] - imageSpacing[i] ) > 0.01 )
+    {
       std::cout << "Error: Image and label spacing do not match" << std::endl;
       std::cout << "Image: " << imageSpacing << std::endl;
       std::cout << "Label: " << labelSpacing << std::endl;
       return EXIT_FAILURE;
-      }
-    if( fabs(labelOrigin[i] - imageOrigin[i]) > 0.01 )
-      {
+    }
+    if ( fabs( labelOrigin[i] - imageOrigin[i] ) > 0.01 )
+    {
       std::cout << "Error: Image and label origin do not match" << std::endl;
       std::cout << "Image: " << imageOrigin << std::endl;
       std::cout << "Label: " << labelOrigin << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   float minValue;
   float maxValue;
   bool  computeGlobalHistogram = false;
 
-  if( minMaxType == "manual" )
-    {
+  if ( minMaxType == "manual" )
+  {
     minValue = userDefineMinimum;
     maxValue = userDefineMaximum;
     computeGlobalHistogram = true;
-    }
-  else if( minMaxType == "image" )
-    {
-    using MinMaxFilterType = itk::MinimumMaximumImageFilter<ImageType>;
+  }
+  else if ( minMaxType == "image" )
+  {
+    using MinMaxFilterType = itk::MinimumMaximumImageFilter< ImageType >;
     MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
     minMaxFilter->SetInput( imageReader->GetOutput() );
     minMaxFilter->UpdateLargestPossibleRegion();
     minValue = minMaxFilter->GetMinimum();
     maxValue = minMaxFilter->GetMaximum();
     computeGlobalHistogram = true;
-    }
-  else if( minMaxType == "label" )
-    {
+  }
+  else if ( minMaxType == "label" )
+  {
     std::cerr << "ERROR:  label method not yet implemented." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cerr << "Invalid minMaxType provided" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  using StatsFilterType = itk::LabelStatisticsImageFilter<ImageType, LabelType>;
+  using StatsFilterType = itk::LabelStatisticsImageFilter< ImageType, LabelType >;
   StatsFilterType::Pointer statsFilter = StatsFilterType::New();
   statsFilter->SetInput( imageReader->GetOutput() );
   statsFilter->SetLabelInput( labelReader->GetOutput() );
-  if( computeGlobalHistogram )
-    {
+  if ( computeGlobalHistogram )
+  {
     statsFilter->UseHistogramsOn();
-    statsFilter->SetHistogramParameters(numberOfHistogramBins, minValue, maxValue);
-    }
+    statsFilter->SetHistogramParameters( numberOfHistogramBins, minValue, maxValue );
+  }
   statsFilter->UpdateLargestPossibleRegion();
 
   using ValidLabelValuesType = StatsFilterType::ValidLabelValuesContainerType;
   using LabelPixelType = StatsFilterType::LabelPixelType;
-  for( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
-    {
+  for ( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
+  {
     std::cout << outputPrefixColumnNames[i] << ", ";
-    }
+  }
   std::cout << "Name, label, min, max, median, mean, stddev, var, sum, count" << std::endl;
-  for( ValidLabelValuesType::const_iterator vIt = statsFilter->GetValidLabelValues().begin();
-       vIt != statsFilter->GetValidLabelValues().end();
-       ++vIt )
+  for ( ValidLabelValuesType::const_iterator vIt = statsFilter->GetValidLabelValues().begin();
+        vIt != statsFilter->GetValidLabelValues().end();
+        ++vIt )
+  {
+    if ( statsFilter->HasLabel( *vIt ) )
     {
-    if( statsFilter->HasLabel(*vIt) )
-      {
       LabelPixelType labelValue = *vIt;
 
-      std::string labelName = GetLabelName(mode, labelNameFile, labelValue);
-      for( size_t i = 0; i < outputPrefixColumnValues.size(); ++i )
-        {
+      std::string labelName = GetLabelName( mode, labelNameFile, labelValue );
+      for ( size_t i = 0; i < outputPrefixColumnValues.size(); ++i )
+      {
         std::cout << outputPrefixColumnValues[i] << ", ";
-        }
+      }
       std::cout << labelName << ", ";
       std::cout << labelValue << ", ";
       std::cout << statsFilter->GetMinimum( labelValue ) << ", ";
       std::cout << statsFilter->GetMaximum( labelValue ) << ", ";
       float medianValue;
 
-      if( !computeGlobalHistogram )
-        {
+      if ( !computeGlobalHistogram )
+      {
         minValue = statsFilter->GetMinimum( labelValue );
         maxValue = statsFilter->GetMaximum( labelValue );
         StatsFilterType::Pointer labelStatsFilter = StatsFilterType::New();
         labelStatsFilter->SetInput( imageReader->GetOutput() );
         labelStatsFilter->SetLabelInput( labelReader->GetOutput() );
         labelStatsFilter->UseHistogramsOn();
-        labelStatsFilter->SetHistogramParameters(numberOfHistogramBins, minValue, maxValue);
+        labelStatsFilter->SetHistogramParameters( numberOfHistogramBins, minValue, maxValue );
         labelStatsFilter->UpdateLargestPossibleRegion();
         medianValue = labelStatsFilter->GetMedian( labelValue );
-        }
+      }
       else
-        {
+      {
         medianValue = statsFilter->GetMedian( labelValue );
-        }
+      }
       std::cout << medianValue << ", ";
       std::cout << statsFilter->GetMean( labelValue ) << ", ";
       std::cout << statsFilter->GetSigma( labelValue ) << ", ";
       std::cout << statsFilter->GetVariance( labelValue ) << ", ";
       std::cout << statsFilter->GetSum( labelValue ) << ", ";
       std::cout << statsFilter->GetCount( labelValue ) << std::endl;
-      }
     }
+  }
   return EXIT_SUCCESS;
 }

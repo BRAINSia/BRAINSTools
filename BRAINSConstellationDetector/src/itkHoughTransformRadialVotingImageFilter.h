@@ -92,19 +92,17 @@ namespace itk
  * \todo Update the doxygen documentation!!!
  * */
 
-template <typename TInputImage, typename TOutputImage>
-class HoughTransformRadialVotingImageFilter :
-  public         ImageToImageFilter<TInputImage, TOutputImage>
+template < typename TInputImage, typename TOutputImage >
+class HoughTransformRadialVotingImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-
   /** Standard "Self" type alias. */
   using Self = HoughTransformRadialVotingImageFilter;
   /** Standard "Superclass" type alias. */
-  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
   /** Smart pointer type alias support. */
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
@@ -128,7 +126,7 @@ public:
   using OutputPixelType = typename OutputImageType::PixelType;
   using OutputImageRegionType = typename OutputImageType::RegionType;
 
-  using InternalImageType = Image<InputCoordType, ImageDimension>;
+  using InternalImageType = Image< InputCoordType, ImageDimension >;
   using InternalImagePointer = typename InternalImageType::Pointer;
   using InternalIndexType = typename InternalImageType::IndexType;
   using InternalIndexValueType = typename InternalIndexType::IndexValueType;
@@ -139,128 +137,123 @@ public:
   using InternalSpacingType = typename InternalImageType::SpacingType;
 
   /** Sphere type alias */
-  using SphereType = EllipseSpatialObject<ImageDimension>;
+  using SphereType = EllipseSpatialObject< ImageDimension >;
   using SpherePointer = typename SphereType::Pointer;
   using SphereVectorType = typename SphereType::VectorType;
-  using SpheresListType = std::list<SpherePointer>;
+  using SpheresListType = std::list< SpherePointer >;
 
-  using InternalIteratorType = ImageRegionIterator<InternalImageType>;
-  using OutputIteratorType = ImageRegionIterator<OutputImageType>;
+  using InternalIteratorType = ImageRegionIterator< InternalImageType >;
+  using OutputIteratorType = ImageRegionIterator< OutputImageType >;
 
-  using GaussianFilterType = DiscreteGaussianImageFilter<OutputImageType, InternalImageType>;
-  typedef typename GaussianFilterType::Pointer
-    GaussianFilterPointer;
+  using GaussianFilterType = DiscreteGaussianImageFilter< OutputImageType, InternalImageType >;
+  typedef typename GaussianFilterType::Pointer GaussianFilterPointer;
 
   using GaussianFunctionType = itk::Statistics::GaussianDistribution;
   using GaussianFunctionPointer = typename GaussianFunctionType::Pointer;
 
-  using DoGFunctionType = GaussianDerivativeImageFunction<InputImageType, InputCoordType>;
-  typedef typename DoGFunctionType::Pointer
-    DoGFunctionPointer;
-  typedef typename DoGFunctionType::VectorType
-    DoGVectorType;
+  using DoGFunctionType = GaussianDerivativeImageFunction< InputImageType, InputCoordType >;
+  typedef typename DoGFunctionType::Pointer    DoGFunctionPointer;
+  typedef typename DoGFunctionType::VectorType DoGVectorType;
 
-  using MinMaxCalculatorType = MinimumMaximumImageCalculator<InternalImageType>;
+  using MinMaxCalculatorType = MinimumMaximumImageCalculator< InternalImageType >;
   using MinMaxCalculatorPointer = typename MinMaxCalculatorType::Pointer;
 
-  using CastFilterType = CastImageFilter<InternalImageType, OutputImageType>;
+  using CastFilterType = CastImageFilter< InternalImageType, OutputImageType >;
   using CastFilterPointer = typename CastFilterType::Pointer;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(HoughTransformRadialVotingImageFilter, ImageToImageFilter);
+  itkTypeMacro( HoughTransformRadialVotingImageFilter, ImageToImageFilter );
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Set both Minimum and Maximum radius values */
-  void SetRadius(InputCoordType radius);
+  void
+  SetRadius( InputCoordType radius );
 
   /** Set the minimum radiu value the filter should look for */
-  itkSetMacro(MinimumRadius, InputCoordType);
+  itkSetMacro( MinimumRadius, InputCoordType );
 
   /** Set the maximum radius value the filter should look for */
-  itkSetMacro(MaximumRadius, InputCoordType);
+  itkSetMacro( MaximumRadius, InputCoordType );
 
   /** Set the threshold above which the filter should consider
    the point as a valid point */
-  itkSetMacro(Threshold, double);
+  itkSetMacro( Threshold, double );
 
   /** Get the threshold value */
-  itkGetConstMacro(Threshold, double);
+  itkGetConstMacro( Threshold, double );
 
   /** Set the threshold above which the filter should consider
       the point as a valid point */
-  itkSetMacro(OutputThreshold, InternalPixelType);
+  itkSetMacro( OutputThreshold, InternalPixelType );
 
   /** Get the threshold value */
-  itkGetConstMacro(OutputThreshold, InternalPixelType);
+  itkGetConstMacro( OutputThreshold, InternalPixelType );
 
   /** Set the threshold above which the filter should consider
       the point as a valid point */
-  itkSetMacro(GradientThreshold, InputCoordType);
+  itkSetMacro( GradientThreshold, InputCoordType );
 
   /** Get the threshold value */
-  itkGetConstMacro(GradientThreshold, InputCoordType);
+  itkGetConstMacro( GradientThreshold, InputCoordType );
 
   /** Get the radius image */
-  itkGetConstObjectMacro(RadiusImage, InternalImageType);
+  itkGetConstObjectMacro( RadiusImage, InternalImageType );
 
   /** Get the accumulator image */
-  itkGetConstObjectMacro(AccumulatorImage, InternalImageType);
+  itkGetConstObjectMacro( AccumulatorImage, InternalImageType );
 
   /** Set the scale of the derivative function (using DoG) */
-  itkSetMacro(SigmaGradient, double);
+  itkSetMacro( SigmaGradient, double );
 
   /** Get the scale value */
-  itkGetConstMacro(SigmaGradient, double);
+  itkGetConstMacro( SigmaGradient, double );
 
   /** Get the list of circles. This recomputes the circles */
-  SpheresListType & GetSpheres();
+  SpheresListType &
+  GetSpheres();
 
   /** Set/Get the number of circles to extract */
-  itkSetMacro(NumberOfSpheres, unsigned int);
-  itkGetConstMacro(NumberOfSpheres, unsigned int);
+  itkSetMacro( NumberOfSpheres, unsigned int );
+  itkGetConstMacro( NumberOfSpheres, unsigned int );
 
   /** Set/Get the radius of the disc to remove from the accumulator
    *  for each circle found */
-  itkSetMacro(SphereRadiusRatio, InputCoordType);
-  itkGetConstMacro(SphereRadiusRatio, InputCoordType);
+  itkSetMacro( SphereRadiusRatio, InputCoordType );
+  itkGetConstMacro( SphereRadiusRatio, InputCoordType );
 
-  itkSetMacro(VotingRadiusRatio, InputCoordType);
-  itkGetConstMacro(VotingRadiusRatio, InputCoordType);
+  itkSetMacro( VotingRadiusRatio, InputCoordType );
+  itkGetConstMacro( VotingRadiusRatio, InputCoordType );
 
   /** Set the variance of the gaussian bluring for the accumulator */
-  itkSetMacro(Variance, double);
-  itkGetConstMacro(Variance, double);
+  itkSetMacro( Variance, double );
+  itkGetConstMacro( Variance, double );
 
   /** Set the number of threads */
-  itkSetMacro(NbOfThreads, unsigned int);
-  itkGetConstMacro(NbOfThreads, unsigned int);
+  itkSetMacro( NbOfThreads, unsigned int );
+  itkGetConstMacro( NbOfThreads, unsigned int );
 
   /** Set the number of threads */
-  itkSetMacro(SamplingRatio, double);
-  itkGetConstMacro(SamplingRatio, double);
+  itkSetMacro( SamplingRatio, double );
+  itkGetConstMacro( SamplingRatio, double );
 
   /** Set the mode of the algorithm */
   /** HoughEyeDetectorMode = 0: Detecting bright spheres in a dark environment.
-    */
+   */
   /** HoughEyeDetectorMode = 1: Detecting dark spheres in a bright environment.
-    */
-  itkSetMacro(HoughEyeDetectorMode, int);
+   */
+  itkSetMacro( HoughEyeDetectorMode, int );
 
   /** Get the mode of the algorithm */
-  itkGetConstMacro(HoughEyeDetectorMode, int);
+  itkGetConstMacro( HoughEyeDetectorMode, int );
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( IntConvertibleToOutputCheck,
-                   ( Concept::Convertible<int, OutputPixelType> ) );
-  itkConceptMacro( InputGreaterThanDoubleCheck,
-                   ( Concept::GreaterThanComparable<InputPixelType, double> ) );
-  itkConceptMacro( OutputPlusIntCheck,
-                   ( Concept::AdditiveOperators<OutputPixelType, int> ) );
-  itkConceptMacro( OutputDividedByIntCheck,
-                   ( Concept::DivisionOperators<OutputPixelType, int> ) );
+  itkConceptMacro( IntConvertibleToOutputCheck, (Concept::Convertible< int, OutputPixelType >));
+  itkConceptMacro( InputGreaterThanDoubleCheck, (Concept::GreaterThanComparable< InputPixelType, double >));
+  itkConceptMacro( OutputPlusIntCheck, (Concept::AdditiveOperators< OutputPixelType, int >));
+  itkConceptMacro( OutputDividedByIntCheck, (Concept::DivisionOperators< OutputPixelType, int >));
   /** End concept checking */
 #endif
 protected:
@@ -289,40 +282,45 @@ protected:
   int m_HoughEyeDetectorMode;
 
   /** Method for evaluating the implicit function over the image. */
-  void BeforeThreadedGenerateData() override;
+  void
+  BeforeThreadedGenerateData() override;
 
-  void AfterThreadedGenerateData() override;
+  void
+  AfterThreadedGenerateData() override;
 
-  void ThreadedGenerateData(const OutputImageRegionType & windowRegion, ThreadIdType threadId) override;
+  void
+  ThreadedGenerateData( const OutputImageRegionType & windowRegion, ThreadIdType threadId ) override;
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** HoughTransformRadialVotingImageFilter needs the entire input. Therefore
    * it must provide an implementation GenerateInputRequestedRegion().
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion() override;
+  void
+  GenerateInputRequestedRegion() override;
 
   /** HoughTransformRadialVotingImageFilter's produces all the output.
    * Therefore, it must provide an implementation of
    * EnlargeOutputRequestedRegion.
    * \sa ProcessObject::EnlargeOutputRequestedRegion() */
-  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) ) override;
+  void
+  EnlargeOutputRequestedRegion( DataObject * itkNotUsed( output ) ) override;
 
-  void ComputeMeanRadiusImage();
+  void
+  ComputeMeanRadiusImage();
 
 private:
-  HoughTransformRadialVotingImageFilter(const Self &)
-  {
-  }
+  HoughTransformRadialVotingImageFilter( const Self & ) {}
 
-  void operator=(const Self &)
-  {
-  }
+  void
+  operator=( const Self & )
+  {}
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkHoughTransformRadialVotingImageFilter.hxx"
+#  include "itkHoughTransformRadialVotingImageFilter.hxx"
 #endif
 
 #endif

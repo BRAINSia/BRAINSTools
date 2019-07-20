@@ -35,18 +35,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
-class AssignScalarValuesQuadEdgeMeshFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
+class AssignScalarValuesQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AssignScalarValuesQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( AssignScalarValuesQuadEdgeMeshFilter );
 
   using Self = AssignScalarValuesQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( AssignScalarValuesQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -55,40 +53,44 @@ public:
   itkNewMacro( Self );
 
   using SourceMeshType = TSourceMesh;
-  using SourceMeshPointer = typename  SourceMeshType::Pointer;
-  using SourcePointDataContainer = typename  SourceMeshType::PointDataContainer;
+  using SourceMeshPointer = typename SourceMeshType::Pointer;
+  using SourcePointDataContainer = typename SourceMeshType::PointDataContainer;
 
-  using InputMeshType = typename  Superclass::InputMeshType;
+  using InputMeshType = typename Superclass::InputMeshType;
 
-  using OutputMeshType = typename  Superclass::OutputMeshType;
-  using OutputMeshPointer = typename  OutputMeshType::Pointer;
-  using OutputPointDataContainer = typename  Superclass::OutputPointDataContainer;
-  using OutputPointDataContainerPointer = typename  OutputPointDataContainer::Pointer;
-  using OutputPointDataContainerIterator = typename  OutputPointDataContainer::Iterator;
+  using OutputMeshType = typename Superclass::OutputMeshType;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputPointDataContainer = typename Superclass::OutputPointDataContainer;
+  using OutputPointDataContainerPointer = typename OutputPointDataContainer::Pointer;
+  using OutputPointDataContainerIterator = typename OutputPointDataContainer::Iterator;
 
   // Set source mesh who has the scalar values we want.
-  void SetSourceMesh( const SourceMeshType * sourceMesh );
+  void
+  SetSourceMesh( const SourceMeshType * sourceMesh );
 
-  const SourceMeshType * GetSourceMesh( void ) const;
+  const SourceMeshType *
+  GetSourceMesh( void ) const;
 
   // Set input mesh who wants to have scalar values from sourceMesh.
-  void SetInputMesh( const InputMeshType * inputMesh );
+  void
+  SetInputMesh( const InputMeshType * inputMesh );
 
-  const InputMeshType * GetInputMesh( void ) const;
+  const InputMeshType *
+  GetInputMesh( void ) const;
 
 protected:
   AssignScalarValuesQuadEdgeMeshFilter();
   ~AssignScalarValuesQuadEdgeMeshFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkAssignScalarValuesQuadEdgeMeshFilter.hxx"
+#  include "itkAssignScalarValuesQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

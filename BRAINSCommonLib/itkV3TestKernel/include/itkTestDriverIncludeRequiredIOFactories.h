@@ -31,7 +31,8 @@
 #include "itkTestDriverInclude.h"
 #include "itkObjectFactoryBase.h"
 
-void RegisterRequiredFactories()
+void
+RegisterRequiredFactories()
 {
   itk::ObjectFactoryBase::RegisterFactory( itk::MetaImageIOFactory::New() );
   itk::ObjectFactoryBase::RegisterFactory( itk::GDCMImageIOFactory::New() );
@@ -45,7 +46,8 @@ void RegisterRequiredFactories()
   itk::ObjectFactoryBase::RegisterFactory( itk::NiftiImageIOFactory::New() );
 }
 
-void ProcessArgumentsAndRegisterRequiredFactories(int *ac, ArgumentStringType *av)
+void
+ProcessArgumentsAndRegisterRequiredFactories( int * ac, ArgumentStringType * av )
 {
   RegisterRequiredFactories();
   ProcessArguments( ac, av );

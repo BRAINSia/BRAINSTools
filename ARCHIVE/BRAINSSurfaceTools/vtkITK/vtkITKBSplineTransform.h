@@ -19,27 +19,34 @@ class vtkITKBSplineTransformHelper;
 class VTK_ITK_EXPORT vtkITKBSplineTransform : public vtkWarpTransform
 {
 public:
-  //BTX
-  using BulkTransformType = itk::AffineTransform<double, 3>;
-  //ETX
-  static vtkITKBSplineTransform * New();
+  // BTX
+  using BulkTransformType = itk::AffineTransform< double, 3 >;
+  // ETX
+  static vtkITKBSplineTransform *
+  New();
 
   vtkTypeRevisionMacro( vtkITKBSplineTransform, vtkWarpTransform );
-  virtual void PrintSelf( ostream & os, vtkIndent indent );
+  virtual void
+  PrintSelf( ostream & os, vtkIndent indent );
 
-  vtkAbstractTransform * MakeTransform();
+  vtkAbstractTransform *
+  MakeTransform();
 
   // SetOrder MUST be called first before other set functions.
-  void SetSplineOrder( unsigned int );
+  void
+  SetSplineOrder( unsigned int );
 
-  unsigned int GetSplineOrder() const;
+  unsigned int
+  GetSplineOrder() const;
 
   // The origin of the B-spline grid must be set at one grid position
   // away from the origin of the desired output image.
-  void SetGridOrigin( const double origin[3] );
+  void
+  SetGridOrigin( const double origin[3] );
 
   // The spacing between grid nodes.
-  void SetGridSpacing( const double spacing[3] );
+  void
+  SetGridSpacing( const double spacing[3] );
 
   // Number of grid nodes in each dimension.
   //
@@ -48,10 +55,12 @@ public:
   // such extra nodes depends on the order of the BSpline; for a cubic
   // (order 3) BSpline, there needs to be 3 extra nodes in each
   // dimension.
-  void SetGridSize( const unsigned int size[3] );
+  void
+  SetGridSize( const unsigned int size[3] );
 
   // See the documentation of SetParameters(double[]).
-  void SetParameters( vtkDoubleArray & param );
+  void
+  SetParameters( vtkDoubleArray & param );
 
   // Set the BSpline parameters.
   //
@@ -72,36 +81,45 @@ public:
   // The parameter values in \a param are copied, and hence can be
   // released after this call.
   //
-  void SetParameters( const double *param );
+  void
+  SetParameters( const double * param );
 
   // The number of elements in the parameter vector.
   //
   // See SetParameters(double[]).
-  unsigned int GetNumberOfParameters() const;
+  unsigned int
+  GetNumberOfParameters() const;
 
-  const double * GetParameters() const;
+  const double *
+  GetParameters() const;
 
   // Set the fixed parameters.
   //
   // These are the grid spacing, the grid origin, etc.
-  void SetFixedParameters( const double *param, unsigned N );
+  void
+  SetFixedParameters( const double * param, unsigned N );
 
   // The number of fixed parameters.
-  unsigned int GetNumberOfFixedParameters() const;
+  unsigned int
+  GetNumberOfFixedParameters() const;
 
   // Return a pointer to the fixed parameter array.
   //
   // This is a pointer to internal data; the class still owns it.
-  const double * GetFixedParameters() const;
+  const double *
+  GetFixedParameters() const;
 
   // BulkTransform should be in the ITK coordinate system, which is LPS.
-  void SetBulkTransform( const double linear[3][3], const double offset[3] );
+  void
+  SetBulkTransform( const double linear[3][3], const double offset[3] );
 
-  void GetBulkTransform( double linear[3][3], double offset[3] );
-  //BTX
-  BulkTransformType const * GetBulkTransform() const;
+  void
+  GetBulkTransform( double linear[3][3], double offset[3] );
+  // BTX
+  BulkTransformType const *
+  GetBulkTransform() const;
 
-  //ETX
+  // ETX
 
   // Sets whether a LPS->RAS conversion should be done.
   //
@@ -114,36 +132,44 @@ public:
   //
   // By default, this switch is is FALSE.  Thus, by default, this
   // class will behave exactly like the wrapped ITK BSpline.
-  void SetSwitchCoordinateSystem( bool v );
+  void
+  SetSwitchCoordinateSystem( bool v );
 
-  bool GetSwitchCoordinateSystem() const;
+  bool
+  GetSwitchCoordinateSystem() const;
 
-  //BTX
-  itk::Transform<double, 3, 3>::Pointer GetITKTransform() const;
+  // BTX
+  itk::Transform< double, 3, 3 >::Pointer
+  GetITKTransform() const;
 
-  //ETX
+  // ETX
 protected:
   vtkITKBSplineTransform();
   virtual ~vtkITKBSplineTransform();
 
-  void ForwardTransformPoint( const float in[3], float out[3] );
-  void ForwardTransformPoint( const double in[3], double out[3] );
+  void
+  ForwardTransformPoint( const float in[3], float out[3] );
+  void
+  ForwardTransformPoint( const double in[3], double out[3] );
 
-  void ForwardTransformDerivative( const float in[3], float out[3],
-                                   float derivative[3][3] );
-  void ForwardTransformDerivative( const double in[3], double out[3],
-                                   double derivative[3][3] );
+  void
+  ForwardTransformDerivative( const float in[3], float out[3], float derivative[3][3] );
+  void
+  ForwardTransformDerivative( const double in[3], double out[3], double derivative[3][3] );
 
-  void InverseTransformPoint( const float in[3], float out[3] );
+  void
+  InverseTransformPoint( const float in[3], float out[3] );
 
-  void InverseTransformPoint( const double in[3], double out[3] );
+  void
+  InverseTransformPoint( const double in[3], double out[3] );
 
-  void InverseTransformDerivative( const float in[3], float out[3],
-                                   float derivative[3][3] );
-  void InverseTransformDerivative( const double in[3], double out[3],
-                                   double derivative[3][3] );
+  void
+  InverseTransformDerivative( const float in[3], float out[3], float derivative[3][3] );
+  void
+  InverseTransformDerivative( const double in[3], double out[3], double derivative[3][3] );
+
 private:
-  vtkITKBSplineTransformHelper *Helper;
+  vtkITKBSplineTransformHelper * Helper;
 };
 
 #endif

@@ -33,28 +33,27 @@
 #include "GenerateSummedGradientImageCLP.h"
 #include <BRAINSCommonLib.h>
 int
-main(int argc, char * *argv)
+main( int argc, char ** argv )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
   using PixelType = float;
   constexpr unsigned int Dim = 3;
-  using ImageType = itk::Image<PixelType, Dim>;
+  using ImageType = itk::Image< PixelType, Dim >;
 
   using OutputPixelType = unsigned char;
-  using OutputImageType = itk::Image<OutputPixelType, Dim>;
+  using OutputImageType = itk::Image< OutputPixelType, Dim >;
 
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
 
   ImageReaderType::Pointer t1_imageReader = ImageReaderType::New();
   ImageReaderType::Pointer t2_imageReader = ImageReaderType::New();
 
-  t1_imageReader->SetFileName(inputVolume1);
-  t2_imageReader->SetFileName(inputVolume2);
+  t1_imageReader->SetFileName( inputVolume1 );
+  t2_imageReader->SetFileName( inputVolume2 );
 
-  using GradientFilterType = itk::GradientMagnitudeImageFilter<ImageType,
-                                            ImageType>;
+  using GradientFilterType = itk::GradientMagnitudeImageFilter< ImageType, ImageType >;
 
   GradientFilterType::Pointer t1_gradientFilter = GradientFilterType::New();
   GradientFilterType::Pointer t2_gradientFilter = GradientFilterType::New();
@@ -64,7 +63,7 @@ main(int argc, char * *argv)
   t1_gradientFilter->Update();
   t2_gradientFilter->Update();
 
-  using MinMaxCalculatorType = itk::MinimumMaximumImageCalculator<ImageType>;
+  using MinMaxCalculatorType = itk::MinimumMaximumImageCalculator< ImageType >;
   MinMaxCalculatorType::Pointer t1_myMinMax = MinMaxCalculatorType::New();
   MinMaxCalculatorType::Pointer t2_myMinMax = MinMaxCalculatorType::New();
   t1_myMinMax->SetImage( t1_gradientFilter->GetOutput() );
@@ -72,27 +71,24 @@ main(int argc, char * *argv)
   t1_myMinMax->Compute();
   t2_myMinMax->Compute();
 
-  using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator<ImageType>;
-  typedef HistogramGeneratorType::HistogramType
-    HistogramType;
-  HistogramGeneratorType::Pointer t1_HistogramGenerator =
-    HistogramGeneratorType::New();
+  using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator< ImageType >;
+  typedef HistogramGeneratorType::HistogramType HistogramType;
+  HistogramGeneratorType::Pointer               t1_HistogramGenerator = HistogramGeneratorType::New();
   t1_HistogramGenerator->SetInput( t1_gradientFilter->GetOutput() );
-  t1_HistogramGenerator->SetNumberOfBins(1024);   // 4x oversampling to put into
+  t1_HistogramGenerator->SetNumberOfBins( 1024 ); // 4x oversampling to put into
                                                   // an unsigned char image.
-  t1_HistogramGenerator->SetMarginalScale(10);
+  t1_HistogramGenerator->SetMarginalScale( 10 );
 
   t1_HistogramGenerator->SetHistogramMin( t1_myMinMax->GetMinimum() );
   t1_HistogramGenerator->SetHistogramMax( t1_myMinMax->GetMaximum() );
   t1_HistogramGenerator->Compute();
   HistogramType::ConstPointer t1_histogram = t1_HistogramGenerator->GetOutput();
 
-  HistogramGeneratorType::Pointer t2_HistogramGenerator =
-    HistogramGeneratorType::New();
+  HistogramGeneratorType::Pointer t2_HistogramGenerator = HistogramGeneratorType::New();
   t2_HistogramGenerator->SetInput( t2_gradientFilter->GetOutput() );
-  t2_HistogramGenerator->SetNumberOfBins(1024);   // 4x oversampling to put into
+  t2_HistogramGenerator->SetNumberOfBins( 1024 ); // 4x oversampling to put into
                                                   // an unsigned char image.
-  t2_HistogramGenerator->SetMarginalScale(10);
+  t2_HistogramGenerator->SetMarginalScale( 10 );
   t2_HistogramGenerator->SetHistogramMin( t2_myMinMax->GetMinimum() );
   t2_HistogramGenerator->SetHistogramMax( t2_myMinMax->GetMaximum() );
   t2_HistogramGenerator->Compute();
@@ -105,109 +101,99 @@ main(int argc, char * *argv)
   // Now linear rescale gradient intensity values so that 10%=25/2 and 90%=230/2
   // so that when the two images are
   // added together they will fit into unsigned char
-  using RescalerType = itk::IntensityWindowingImageFilter<ImageType,
-                                             OutputImageType>;
+  using RescalerType = itk::IntensityWindowingImageFilter< ImageType, OutputImageType >;
   RescalerType::Pointer t1_rescaler = RescalerType::New();
   t1_rescaler->SetInput( t1_gradientFilter->GetOutput() );
-  t1_rescaler->SetOutputMinimum(0);
-  t1_rescaler->SetOutputMaximum(127);
+  t1_rescaler->SetOutputMinimum( 0 );
+  t1_rescaler->SetOutputMaximum( 127 );
   const float T1Slope =
-    ( t1_histogram->Quantile(0,
-                             UpperPercentileMatching)
-      - t1_histogram->Quantile(0, LowerPercentileMatching) ) / 80.0F;
-  t1_rescaler->SetWindowMinimum( t1_histogram->Quantile(0,
-                                                        LowerPercentileMatching) );
-  t1_rescaler->SetWindowMaximum( t1_histogram->Quantile(0,
-                                                        UpperPercentileMatching) + T1Slope * 100.0
-                                 * ( 1.0 - UpperPercentileMatching ) );
+    ( t1_histogram->Quantile( 0, UpperPercentileMatching ) - t1_histogram->Quantile( 0, LowerPercentileMatching ) ) /
+    80.0F;
+  t1_rescaler->SetWindowMinimum( t1_histogram->Quantile( 0, LowerPercentileMatching ) );
+  t1_rescaler->SetWindowMaximum( t1_histogram->Quantile( 0, UpperPercentileMatching ) +
+                                 T1Slope * 100.0 * ( 1.0 - UpperPercentileMatching ) );
 
   RescalerType::Pointer t2_rescaler = RescalerType::New();
   t2_rescaler->SetInput( t2_gradientFilter->GetOutput() );
-  t2_rescaler->SetOutputMinimum(0);
-  t2_rescaler->SetOutputMaximum(127);
+  t2_rescaler->SetOutputMinimum( 0 );
+  t2_rescaler->SetOutputMaximum( 127 );
   const float T2Slope =
-    ( t2_histogram->Quantile(0,
-                             UpperPercentileMatching)
-      - t2_histogram->Quantile(0, LowerPercentileMatching) ) / 80.0F;
-  t2_rescaler->SetWindowMinimum( t2_histogram->Quantile(0,
-                                                        LowerPercentileMatching) );
-  t2_rescaler->SetWindowMaximum( t2_histogram->Quantile(0,
-                                                        UpperPercentileMatching) + T2Slope * 100.0
-                                 * ( 1.0 - UpperPercentileMatching ) );
+    ( t2_histogram->Quantile( 0, UpperPercentileMatching ) - t2_histogram->Quantile( 0, LowerPercentileMatching ) ) /
+    80.0F;
+  t2_rescaler->SetWindowMinimum( t2_histogram->Quantile( 0, LowerPercentileMatching ) );
+  t2_rescaler->SetWindowMaximum( t2_histogram->Quantile( 0, UpperPercentileMatching ) +
+                                 T2Slope * 100.0 * ( 1.0 - UpperPercentileMatching ) );
 
   // Type for Adder
-  using AddFilterType = itk::AddImageFilter<OutputImageType, OutputImageType,
-                              OutputImageType>;
+  using AddFilterType = itk::AddImageFilter< OutputImageType, OutputImageType, OutputImageType >;
   AddFilterType::Pointer myAdder = AddFilterType::New();
   // Type for Maximum
-  using MaximumFilterType = itk::MaximumImageFilter<OutputImageType, OutputImageType,
-                                  OutputImageType>;
+  using MaximumFilterType = itk::MaximumImageFilter< OutputImageType, OutputImageType, OutputImageType >;
   MaximumFilterType::Pointer myMax = MaximumFilterType::New();
-  if( MaximumGradient == false )
-    {
+  if ( MaximumGradient == false )
+  {
     // Set Output Image:: with Adder
 
     myAdder->SetInput1( t1_rescaler->GetOutput() );
     myAdder->SetInput2( t2_rescaler->GetOutput() );
     try
-      {
+    {
       myAdder->Update();
-      }
-    catch( itk::ExceptionObject & exp )
-      {
+    }
+    catch ( itk::ExceptionObject & exp )
+    {
       std::cerr << "ExceptionObject with Iterator" << std::endl;
       std::cerr << exp << std::endl;
       return EXIT_FAILURE;
-      }
     }
-  else   // Set Output Image with Maximum of Gradient
-    {
+  }
+  else // Set Output Image with Maximum of Gradient
+  {
     myMax->SetInput1( t1_rescaler->GetOutput() );
     myMax->SetInput2( t2_rescaler->GetOutput() );
     try
-      {
+    {
       myMax->Update();
-      }
-    catch( itk::ExceptionObject & exp )
-      {
+    }
+    catch ( itk::ExceptionObject & exp )
+    {
       std::cerr << "ExceptionObject with Iterator" << std::endl;
       std::cerr << exp << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
   // writer setting
   std::cout << "Writing output ... " << std::endl;
-  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  using WriterType = itk::ImageFileWriter< OutputImageType >;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  using RescaleFilterType = itk::IntensityWindowingImageFilter<OutputImageType,
-                                             OutputImageType>;
+  using RescaleFilterType = itk::IntensityWindowingImageFilter< OutputImageType, OutputImageType >;
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
-  rescaler->SetOutputMinimum(0);
-  rescaler->SetOutputMaximum(255);
+  rescaler->SetOutputMinimum( 0 );
+  rescaler->SetOutputMaximum( 255 );
 
-  if( MaximumGradient == false )
-    {
+  if ( MaximumGradient == false )
+  {
     rescaler->SetInput( myAdder->GetOutput() );
-    }
+  }
   else
-    {
+  {
     rescaler->SetInput( myMax->GetOutput() );
-    }
+  }
   rescaler->Update();
-  writer->SetFileName(outputFileName);
+  writer->SetFileName( outputFileName );
   writer->SetInput( rescaler->GetOutput() );
   try
-    {
+  {
     writer->Update();
-    }
-  catch( itk::ExceptionObject & exp )
-    {
+  }
+  catch ( itk::ExceptionObject & exp )
+  {
     std::cerr << "ExceptionObject with writer" << std::endl;
     std::cerr << exp << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return 0;
 }

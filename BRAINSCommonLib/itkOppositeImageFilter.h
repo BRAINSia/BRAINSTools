@@ -42,94 +42,87 @@
 namespace itk
 {
 /** \class OppositeImageFilter
-  *
-  * \brief Take the opposite of the input pixels.
-  *
-  * This filter is templated over the input image type
-  * and the output image type.
-  *
-  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
-  *
-  * \ingroup IntensityImageFilters  Multithreaded
-  * \sa UnaryFunctorImageFilter
-  */
+ *
+ * \brief Take the opposite of the input pixels.
+ *
+ * This filter is templated over the input image type
+ * and the output image type.
+ *
+ * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+ *
+ * \ingroup IntensityImageFilters  Multithreaded
+ * \sa UnaryFunctorImageFilter
+ */
 namespace Functor
 {
-template <typename TInput, typename TOutput>
+template < typename TInput, typename TOutput >
 class Opposite
 {
 public:
-  Opposite()
-  {
-  }
+  Opposite() {}
 
-  ~Opposite()
-  {
-  }
+  ~Opposite() {}
 
-  bool operator!=(const Opposite & other) const
+  bool
+  operator!=( const Opposite & other ) const
   {
     return false;
   }
 
-  bool operator==(const Opposite & other) const
+  bool
+  operator==( const Opposite & other ) const
   {
     return true;
   }
 
-  inline TOutput operator()(const TInput & A) const
+  inline TOutput
+  operator()( const TInput & A ) const
   {
     // We don't check if the TOutput can be signed.
     // It's up to the user to decide whether this makes sense.
-    return static_cast<TOutput>( -A );
+    return static_cast< TOutput >( -A );
   }
 };
-}
+} // namespace Functor
 
-template <typename TInputImage, typename TOutputImage>
-class OppositeImageFilter :
-  public
-  UnaryFunctorImageFilter<TInputImage, TOutputImage,
-                          Functor::Opposite<
-                            typename TInputImage::PixelType,
-                            typename TOutputImage::PixelType> >
+template < typename TInputImage, typename TOutputImage >
+class OppositeImageFilter
+  : public UnaryFunctorImageFilter<
+      TInputImage, TOutputImage,
+      Functor::Opposite< typename TInputImage::PixelType, typename TOutputImage::PixelType > >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(OppositeImageFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( OppositeImageFilter );
 
   /** Standard class type alias. */
   using Self = OppositeImageFilter;
-  using Superclass = UnaryFunctorImageFilter<TInputImage, TOutputImage,
-                                  Functor::Opposite<typename TInputImage::PixelType,
-                                                    typename TOutputImage::PixelType> >;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass =
+    UnaryFunctorImageFilter< TInputImage, TOutputImage,
+                             Functor::Opposite< typename TInputImage::PixelType, typename TOutputImage::PixelType > >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(OppositeImageFilter, UnaryFunctorImageFilter);
+  itkTypeMacro( OppositeImageFilter, UnaryFunctorImageFilter );
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( InputConvertibleToOutputCheck,
-                   ( Concept::Convertible<typename TInputImage::PixelType,
-                                          typename TOutputImage::PixelType> ) );
+                   (Concept::Convertible< typename TInputImage::PixelType, typename TOutputImage::PixelType >));
   /** End concept checking */
 #endif
 protected:
-  OppositeImageFilter()
-  {
-  }
+  OppositeImageFilter() {}
 
-  virtual ~OppositeImageFilter()
-  {
-  }
+  virtual ~OppositeImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const
   {
-    Superclass::PrintSelf(os, indent);
+    Superclass::PrintSelf( os, indent );
   }
 };
 } // end namespace itk

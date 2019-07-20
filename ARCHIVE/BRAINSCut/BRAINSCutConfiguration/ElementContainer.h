@@ -25,40 +25,38 @@
 class ElementContainer
 {
 public:
-  ElementContainer(const std::string & name)
+  ElementContainer( const std::string & name ) { this->SetName( name ); }
+
+  ElementContainer() {}
+
+  virtual ~ElementContainer() {}
+
+  virtual bool
+  Verify() const = 0;
+
+  std::string
+  PrintSpaces( const int howmany ) const
   {
-    this->SetName(name);
-  }
+    std::string spaces( "" );
 
-  ElementContainer()
-  {
-  }
-
-  virtual ~ElementContainer()
-  {
-  }
-
-  virtual bool Verify() const = 0;
-
-  std::string PrintSpaces(const int howmany) const
-  {
-    std::string spaces("");
-
-    for( int i = 0; i < howmany; i++ )
-      {
+    for ( int i = 0; i < howmany; i++ )
+    {
       spaces = spaces + " ";
-      }
+    }
     return spaces;
   }
 
-  virtual int PrintSelf(std::ostream & os, int indent) const = 0;
+  virtual int
+  PrintSelf( std::ostream & os, int indent ) const = 0;
 
-  const std::string & GetName() const
+  const std::string &
+  GetName() const
   {
     return m_Name;
   }
 
-  void SetName(const std::string & s)
+  void
+  SetName( const std::string & s )
   {
     m_Name = s;
   }
@@ -67,14 +65,14 @@ private:
   std::string m_Name;
 };
 
-template <typename TOutputType>
-class XMLContents :
-  public ElementContainer
+template < typename TOutputType >
+class XMLContents : public ElementContainer
 {
 public:
   using SuperClass = ElementContainer;
   using OutputType = TOutputType;
-  int PrintSelf(std::ostream &, int indent) const override
+  int
+  PrintSelf( std::ostream &, int indent ) const override
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== XMLContents ===" <<
@@ -83,20 +81,16 @@ public:
     return indent;
   }
 
-  XMLContents(const std::string & s) :
-    ElementContainer(s)
-  {
-  }
+  XMLContents( const std::string & s )
+    : ElementContainer( s )
+  {}
 
-  XMLContents()
-  {
-  }
+  XMLContents() {}
 
-  ~XMLContents() override
-  {
-  }
+  ~XMLContents() override {}
 
-  virtual OutputType GetValue(void) const = 0;
+  virtual OutputType
+  GetValue( void ) const = 0;
 };
 
 #endif // ElementContainer_H

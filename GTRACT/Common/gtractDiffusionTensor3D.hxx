@@ -45,10 +45,9 @@ namespace itk
 /**
  *  Compute the Volume Ratio
  */
-template <typename TComponent>
-typename gtractDiffusionTensor3D<TComponent>::RealValueType
-gtractDiffusionTensor3D<TComponent>
-::GetVolumeRatio() const
+template < typename TComponent >
+typename gtractDiffusionTensor3D< TComponent >::RealValueType
+gtractDiffusionTensor3D< TComponent >::GetVolumeRatio() const
 {
   const RealValueType xx = ( *this )[0];
   const RealValueType xy = ( *this )[1];
@@ -59,48 +58,44 @@ gtractDiffusionTensor3D<TComponent>
 
   const RealValueType Dav = ( xx + yy + zz ) / 3;
 
-  return 1.0
-         - ( ( xx * yy * zz + 2.0
-               * ( xy * xz * yz ) - ( zz * xy * xy + yy * xz * xz + xx * yz * yz ) ) / ( Dav * Dav * Dav ) );
+  return 1.0 - ( ( xx * yy * zz + 2.0 * ( xy * xz * yz ) - ( zz * xy * xy + yy * xz * xz + xx * yz * yz ) ) /
+                 ( Dav * Dav * Dav ) );
 }
 
 /**
  *  Compute the Axial Diffusivity
  */
-template <typename TComponent>
-typename gtractDiffusionTensor3D<TComponent>::RealValueType
-gtractDiffusionTensor3D<TComponent>
-::GetAxialDiffusivity() const
+template < typename TComponent >
+typename gtractDiffusionTensor3D< TComponent >::RealValueType
+gtractDiffusionTensor3D< TComponent >::GetAxialDiffusivity() const
 {
   EigenValuesArrayType eigenValues;
 
   this->Superclass::ComputeEigenValues( eigenValues );
 
-  return itk::Math::abs (eigenValues[2]);
+  return itk::Math::abs( eigenValues[2] );
 }
 
 /**
  *  Compute the Radial Diffusivity
  */
-template <typename TComponent>
-typename gtractDiffusionTensor3D<TComponent>::RealValueType
-gtractDiffusionTensor3D<TComponent>
-::GetRadialDiffusivity() const
+template < typename TComponent >
+typename gtractDiffusionTensor3D< TComponent >::RealValueType
+gtractDiffusionTensor3D< TComponent >::GetRadialDiffusivity() const
 {
   EigenValuesArrayType eigenValues;
 
   this->Superclass::ComputeEigenValues( eigenValues );
 
-  return ( itk::Math::abs (eigenValues[0]) + itk::Math::abs (eigenValues[1]) ) / 2.0;
+  return ( itk::Math::abs( eigenValues[0] ) + itk::Math::abs( eigenValues[1] ) ) / 2.0;
 }
 
 /**
  *  Compute the Lattice Index
  */
-template <typename TComponent>
-typename gtractDiffusionTensor3D<TComponent>::RealValueType
-gtractDiffusionTensor3D<TComponent>
-::GetLatticeIndex() const
+template < typename TComponent >
+typename gtractDiffusionTensor3D< TComponent >::RealValueType
+gtractDiffusionTensor3D< TComponent >::GetLatticeIndex() const
 {
   const RealValueType FA = this->GetFractionalAnisotropy();
 

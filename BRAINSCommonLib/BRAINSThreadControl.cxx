@@ -22,50 +22,50 @@
 
 namespace BRAINSUtils
 {
-StackPushITKDefaultNumberOfThreads::StackPushITKDefaultNumberOfThreads(const int desiredCount) :
-  m_originalThreadValue( itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() )
+StackPushITKDefaultNumberOfThreads::StackPushITKDefaultNumberOfThreads( const int desiredCount )
+  : m_originalThreadValue( itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() )
 {
-  int threadCount(-1);
+  int threadCount( -1 );
 
-  if( desiredCount > 0 )  // NOTE: Default is -1, which then uses the ITK default.
-    {
+  if ( desiredCount > 0 ) // NOTE: Default is -1, which then uses the ITK default.
+  {
     // Respect the users request irregardless of what environmental variables are set to.
     threadCount = desiredCount;
-    }
+  }
   else
-    {                                          // If user set desiredCount <= 0, then use evnironmentanl or internal
-                                               // ITKv4 values.
+  { // If user set desiredCount <= 0, then use evnironmentanl or internal
+    // ITKv4 values.
     // OLD ITK default threadCount = this->m_originalThreadValue; // This is the old default.
     itksys::SystemInformation mySys;
     mySys.RunCPUCheck();
     mySys.RunOSCheck();
     mySys.RunMemoryCheck();
     threadCount = mySys.GetNumberOfPhysicalCPU();
-      // Avoid using hyperthreading cores.
-      {
+    // Avoid using hyperthreading cores.
+    {
       // Process the NSLOTS environmental varialble set by the SGE batch
       // processing system
-      int NSLOTSThreadCount(threadCount);
+      int         NSLOTSThreadCount( threadCount );
       std::string numThreads;
-      if( itksys::SystemTools::GetEnv("NSLOTS", numThreads) )
-        {
-        std::istringstream s(numThreads, std::istringstream::in);
+      if ( itksys::SystemTools::GetEnv( "NSLOTS", numThreads ) )
+      {
+        std::istringstream s( numThreads, std::istringstream::in );
         s >> NSLOTSThreadCount;
-        }
-      if( NSLOTSThreadCount != threadCount )
-        {
+      }
+      if ( NSLOTSThreadCount != threadCount )
+      {
         threadCount = NSLOTSThreadCount;
-        }
       }
     }
-  if( threadCount > 0 )
-    {
-    itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(threadCount);
-    }
+  }
+  if ( threadCount > 0 )
+  {
+    itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads( threadCount );
+  }
 }
 
 StackPushITKDefaultNumberOfThreads::~StackPushITKDefaultNumberOfThreads()
 {
-  itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(this->m_originalThreadValue);
+  itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads( this->m_originalThreadValue );
 }
-}
+} // namespace BRAINSUtils

@@ -37,16 +37,15 @@ namespace Testing
 /**
  *
  */
-template <typename TInputImage, typename TOutputImage>
-StretchIntensityImageFilter<TInputImage, TOutputImage>
-::StretchIntensityImageFilter()
+template < typename TInputImage, typename TOutputImage >
+StretchIntensityImageFilter< TInputImage, TOutputImage >::StretchIntensityImageFilter()
 {
-  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
-  m_OutputMaximum   = NumericTraits<OutputPixelType>::max();
-  m_OutputMinimum   = NumericTraits<OutputPixelType>::NonpositiveMin();
+  this->DynamicMultiThreadingOff(); // NEEDED FOR ITKv5 backwards compatibility
+  m_OutputMaximum = NumericTraits< OutputPixelType >::max();
+  m_OutputMinimum = NumericTraits< OutputPixelType >::NonpositiveMin();
 
-  m_InputMaximum   = NumericTraits<InputPixelType>::ZeroValue();
-  m_InputMinimum   = NumericTraits<InputPixelType>::max();
+  m_InputMaximum = NumericTraits< InputPixelType >::ZeroValue();
+  m_InputMinimum = NumericTraits< InputPixelType >::max();
 
   m_Scale = 1.0;
   m_Shift = 0.0;
@@ -55,114 +54,104 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-StretchIntensityImageFilter<TInputImage, TOutputImage>
-::PrintSelf(std::ostream & os, Indent indent) const
+StretchIntensityImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf( os, indent );
 
-  os << indent << "Output Minimum: "
-     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>( m_OutputMinimum )
+  os << indent
+     << "Output Minimum: " << static_cast< typename NumericTraits< OutputPixelType >::PrintType >( m_OutputMinimum )
      << std::endl;
-  os << indent << "Output Maximum: "
-     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>( m_OutputMaximum )
+  os << indent
+     << "Output Maximum: " << static_cast< typename NumericTraits< OutputPixelType >::PrintType >( m_OutputMaximum )
      << std::endl;
 }
 
 /**
  *
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-StretchIntensityImageFilter<TInputImage, TOutputImage>
-::BeforeThreadedGenerateData()
+StretchIntensityImageFilter< TInputImage, TOutputImage >::BeforeThreadedGenerateData()
 {
-  if( m_OutputMinimum > m_OutputMaximum )
-    {
-    itkExceptionMacro(<< "Minimum output value cannot be greater than Maximum output value.");
+  if ( m_OutputMinimum > m_OutputMaximum )
+  {
+    itkExceptionMacro( << "Minimum output value cannot be greater than Maximum output value." );
     return;
-    }
+  }
 
   const TInputImage * inputImage = this->GetInput();
 
-  ImageRegionConstIteratorWithIndex<TInputImage> it( inputImage, inputImage->GetBufferedRegion() );
+  ImageRegionConstIteratorWithIndex< TInputImage > it( inputImage, inputImage->GetBufferedRegion() );
 
-  m_InputMaximum = NumericTraits<InputPixelType>::NonpositiveMin();
-  m_InputMinimum = NumericTraits<InputPixelType>::max();
+  m_InputMaximum = NumericTraits< InputPixelType >::NonpositiveMin();
+  m_InputMinimum = NumericTraits< InputPixelType >::max();
 
-  while( !it.IsAtEnd() )
-    {
+  while ( !it.IsAtEnd() )
+  {
     const InputPixelType value = it.Get();
-    if( value > m_InputMaximum )
-      {
+    if ( value > m_InputMaximum )
+    {
       m_InputMaximum = value;
-      }
+    }
     else
+    {
+      if ( value < m_InputMinimum )
       {
-      if( value < m_InputMinimum )
-        {
         m_InputMinimum = value;
-        }
       }
+    }
     ++it;
-    }
+  }
 
-  if( m_InputMinimum != m_InputMaximum )
-    {
-    m_Scale =
-      ( static_cast<RealType>( m_OutputMaximum )
-        - static_cast<RealType>( m_OutputMinimum ) )
-      / ( static_cast<RealType>( m_InputMaximum )
-          - static_cast<RealType>( m_InputMinimum ) );
-    }
-  else if( m_InputMaximum != NumericTraits<InputPixelType>::ZeroValue() )
-    {
-    m_Scale =
-      ( static_cast<RealType>( m_OutputMaximum )
-        - static_cast<RealType>( m_OutputMinimum ) )
-      / static_cast<RealType>( m_InputMaximum );
-    }
+  if ( m_InputMinimum != m_InputMaximum )
+  {
+    m_Scale = ( static_cast< RealType >( m_OutputMaximum ) - static_cast< RealType >( m_OutputMinimum ) ) /
+              ( static_cast< RealType >( m_InputMaximum ) - static_cast< RealType >( m_InputMinimum ) );
+  }
+  else if ( m_InputMaximum != NumericTraits< InputPixelType >::ZeroValue() )
+  {
+    m_Scale = ( static_cast< RealType >( m_OutputMaximum ) - static_cast< RealType >( m_OutputMinimum ) ) /
+              static_cast< RealType >( m_InputMaximum );
+  }
   else
-    {
+  {
     m_Scale = 0.0;
-    }
+  }
 
-  m_Shift =
-    static_cast<RealType>( m_OutputMinimum )
-    - static_cast<RealType>( m_InputMinimum ) * m_Scale;
+  m_Shift = static_cast< RealType >( m_OutputMinimum ) - static_cast< RealType >( m_InputMinimum ) * m_Scale;
 }
 
 /**
  * ThreadedGenerateData Performs the pixel-wise addition
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-StretchIntensityImageFilter<TInputImage, TOutputImage>
-::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                       ThreadIdType threadId)
+StretchIntensityImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(
+  const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId )
 {
   const TInputImage * inputPtr = this->GetInput();
-  TOutputImage *      outputPtr = this->GetOutput(0);
+  TOutputImage *      outputPtr = this->GetOutput( 0 );
 
   InputImageRegionType inputRegionForThread = outputRegionForThread;
 
   // Define the iterators
-  ImageRegionConstIterator<TInputImage> inputIt(inputPtr, inputRegionForThread);
-  ImageRegionIterator<TOutputImage>     outputIt(outputPtr, outputRegionForThread);
+  ImageRegionConstIterator< TInputImage > inputIt( inputPtr, inputRegionForThread );
+  ImageRegionIterator< TOutputImage >     outputIt( outputPtr, outputRegionForThread );
 
   ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
   inputIt.GoToBegin();
   outputIt.GoToBegin();
 
-  while( !inputIt.IsAtEnd() )
-    {
+  while ( !inputIt.IsAtEnd() )
+  {
     const InputPixelType x = inputIt.Get();
 
-    const RealType value  = static_cast<RealType>( x ) * m_Scale + m_Shift;
+    const RealType value = static_cast< RealType >( x ) * m_Scale + m_Shift;
 
-    OutputPixelType result = static_cast<OutputPixelType>( value );
+    OutputPixelType result = static_cast< OutputPixelType >( value );
 
     result = ( result > m_OutputMaximum ) ? m_OutputMaximum : result;
     result = ( result < m_OutputMinimum ) ? m_OutputMinimum : result;
@@ -172,36 +161,34 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>
     ++inputIt;
     ++outputIt;
 
-    progress.CompletedPixel();  // potential exception thrown here
-    }
+    progress.CompletedPixel(); // potential exception thrown here
+  }
 }
 
 /**
  *
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-StretchIntensityImageFilter<TInputImage, TOutputImage>
-::SetInput(const TInputImage *input)
+StretchIntensityImageFilter< TInputImage, TOutputImage >::SetInput( const TInputImage * input )
 {
   // Process object is not const-correct so the const_cast is required here
-  this->ProcessObject::SetNthInput( 0, const_cast<TInputImage *>( input ) );
+  this->ProcessObject::SetNthInput( 0, const_cast< TInputImage * >( input ) );
 }
 
 /**
  *
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 const TInputImage *
-StretchIntensityImageFilter<TInputImage, TOutputImage>
-::GetInput(void) const
+StretchIntensityImageFilter< TInputImage, TOutputImage >::GetInput( void ) const
 {
-  if( this->GetNumberOfInputs() < 1 )
-    {
+  if ( this->GetNumberOfInputs() < 1 )
+  {
     return 0;
-    }
+  }
 
-  return static_cast<const TInputImage *>( this->ProcessObject::GetInput(0) );
+  return static_cast< const TInputImage * >( this->ProcessObject::GetInput( 0 ) );
 }
 } // end namespace Testing
 } // end namespace itk

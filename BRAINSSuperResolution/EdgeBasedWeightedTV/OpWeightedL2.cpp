@@ -14,105 +14,110 @@
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkBinaryFunctorImageFilter.h>
 
-//Special override for CVImageType
-PrecisionType * GetFirstPointer(CVImageType::Pointer in)
+// Special override for CVImageType
+PrecisionType *
+GetFirstPointer( CVImageType::Pointer in )
 {
   CVType * firstCovariantVectorX = in->GetBufferPointer();
-  return  firstCovariantVectorX->GetDataPointer();
+  return firstCovariantVectorX->GetDataPointer();
 }
 
-PrecisionType * GetFirstPointer(HalfHermetianImageType::Pointer in)
+PrecisionType *
+GetFirstPointer( HalfHermetianImageType::Pointer in )
 {
-  return reinterpret_cast<PrecisionType *>(in->GetBufferPointer());
+  return reinterpret_cast< PrecisionType * >( in->GetBufferPointer() );
 }
 
 
-template<typename ImagePointerType>
-PrecisionType * GetFirstPointer(ImagePointerType in)
+template < typename ImagePointerType >
+PrecisionType *
+GetFirstPointer( ImagePointerType in )
 {
   return in->GetBufferPointer();
 }
 
 
-//Implement out = c*(a*x + y), y is output, and is corrupted
-template<typename ImagePointerType>
-void AddAllElements(ImagePointerType &OutImg,
-                           const PrecisionType aScaler,
-                           ImagePointerType &xImg, ImagePointerType &yImg,
-                           const PrecisionType cScaler= 1.0F)
+// Implement out = c*(a*x + y), y is output, and is corrupted
+template < typename ImagePointerType >
+void
+AddAllElements( ImagePointerType & OutImg, const PrecisionType aScaler, ImagePointerType & xImg,
+                ImagePointerType & yImg, const PrecisionType cScaler = 1.0F )
 {
-  const size_t N = xImg->GetLargestPossibleRegion().GetNumberOfPixels()*xImg->GetNumberOfComponentsPerPixel();
-  PrecisionType * x =  GetFirstPointer(xImg);
-  PrecisionType * y =  GetFirstPointer(yImg);
-  cblas_saxpy(N,aScaler,x,1,y,1);
+  const size_t    N = xImg->GetLargestPossibleRegion().GetNumberOfPixels() * xImg->GetNumberOfComponentsPerPixel();
+  PrecisionType * x = GetFirstPointer( xImg );
+  PrecisionType * y = GetFirstPointer( yImg );
+  cblas_saxpy( N, aScaler, x, 1, y, 1 );
 
-  //PrecisionType * Out=  GetFirstPointer(OutImg);
-  if(cScaler != 1.0F)
+  // PrecisionType * Out=  GetFirstPointer(OutImg);
+  if ( cScaler != 1.0F )
   {
-  cblas_sscal(N,cScaler,y,1);
+    cblas_sscal( N, cScaler, y, 1 );
   }
-  if( OutImg.GetPointer() != yImg.GetPointer())
+  if ( OutImg.GetPointer() != yImg.GetPointer() )
   {
     ImagePointerType temp = OutImg;
     OutImg = yImg;
-    yImg = temp; //Sanity Check to induce failures if variable is needed in future.
-    //yImg has been corrupted by processing here.
+    yImg = temp; // Sanity Check to induce failures if variable is needed in future.
+    // yImg has been corrupted by processing here.
   }
 }
 
-//Implement out = x*y, y, and y is corrupted
-template<typename ImagePointerType>
-void MultiplyVectors(ImagePointerType &OutImg,
-                           ImagePointerType &xImg, ImagePointerType &yImg)
+// Implement out = x*y, y, and y is corrupted
+template < typename ImagePointerType >
+void
+MultiplyVectors( ImagePointerType & OutImg, ImagePointerType & xImg, ImagePointerType & yImg )
 {
-  const size_t N = xImg->GetLargestPossibleRegion().GetNumberOfPixels()*xImg->GetNumberOfComponentsPerPixel();
-  PrecisionType * x_Start = GetFirstPointer(xImg);
-  const PrecisionType * x_End = x_Start+N;
-  const PrecisionType * y = GetFirstPointer(yImg);
-  PrecisionType * o = GetFirstPointer(OutImg);
-  //HACK ADD open_MP here
-  //HACK end = x+N : while x < end
-  for(PrecisionType *x = x_Start; x < x_End; ++x)
+  const size_t    N = xImg->GetLargestPossibleRegion().GetNumberOfPixels() * xImg->GetNumberOfComponentsPerPixel();
+  PrecisionType * x_Start = GetFirstPointer( xImg );
+  const PrecisionType * x_End = x_Start + N;
+  const PrecisionType * y = GetFirstPointer( yImg );
+  PrecisionType *       o = GetFirstPointer( OutImg );
+  // HACK ADD open_MP here
+  // HACK end = x+N : while x < end
+  for ( PrecisionType * x = x_Start; x < x_End; ++x )
   {
-    (*o) = (*y) * (*x);
+    ( *o ) = ( *y ) * ( *x );
     ++o;
     ++y;
   }
 }
 
-template <typename ImageTypePointer>
-void Duplicate(ImageTypePointer & Y, ImageTypePointer &YminusL)
+template < typename ImageTypePointer >
+void
+Duplicate( ImageTypePointer & Y, ImageTypePointer & YminusL )
 {
-  const size_t N= Y->GetLargestPossibleRegion().GetNumberOfPixels() *Y->GetNumberOfComponentsPerPixel();
-  const PrecisionType * firstInput = GetFirstPointer(Y);
+  const size_t          N = Y->GetLargestPossibleRegion().GetNumberOfPixels() * Y->GetNumberOfComponentsPerPixel();
+  const PrecisionType * firstInput = GetFirstPointer( Y );
   const PrecisionType * lastInput = firstInput + N;
-  PrecisionType * firstOutput = GetFirstPointer(YminusL);
-  std::copy(firstInput,lastInput,firstOutput);
+  PrecisionType *       firstOutput = GetFirstPointer( YminusL );
+  std::copy( firstInput, lastInput, firstOutput );
 }
 
 
 #include <itkVectorMagnitudeImageFilter.h>
 
-FloatImageType::Pointer ComputeSqrtMu(FloatImageType::Pointer mu)
+FloatImageType::Pointer
+ComputeSqrtMu( FloatImageType::Pointer mu )
 {
-  using SqrtType = itk::SqrtImageFilter<FloatImageType,FloatImageType>;
+  using SqrtType = itk::SqrtImageFilter< FloatImageType, FloatImageType >;
   SqrtType::Pointer sqrtFilter = SqrtType::New();
-  sqrtFilter->SetInput(mu);
+  sqrtFilter->SetInput( mu );
   sqrtFilter->Update();
   return sqrtFilter->GetOutput();
 }
 
 // (2*mu+gam)^{-1}
-static CVImageType::Pointer ComputeInvTwoMuPlusGamma( FloatImageType::Pointer edgemask,  const PrecisionType gam)
+static CVImageType::Pointer
+ComputeInvTwoMuPlusGamma( FloatImageType::Pointer edgemask, const PrecisionType gam )
 {
-  CVImageType::Pointer repMu = CreateEmptyImage<CVImageType>(edgemask);
-  itk::ImageRegionIterator<CVImageType> cvIt(repMu,repMu->GetLargestPossibleRegion());
-  itk::ImageRegionConstIterator<FloatImageType> muIt(edgemask,edgemask->GetLargestPossibleRegion());
+  CVImageType::Pointer                            repMu = CreateEmptyImage< CVImageType >( edgemask );
+  itk::ImageRegionIterator< CVImageType >         cvIt( repMu, repMu->GetLargestPossibleRegion() );
+  itk::ImageRegionConstIterator< FloatImageType > muIt( edgemask, edgemask->GetLargestPossibleRegion() );
 
-  itk::CovariantVector<float, 3> local_cv;
-  while(!muIt.IsAtEnd())
+  itk::CovariantVector< float, 3 > local_cv;
+  while ( !muIt.IsAtEnd() )
   {
-    local_cv.Fill( 1.0 / ( 2.0*muIt.Value() + gam) );
+    local_cv.Fill( 1.0 / ( 2.0 * muIt.Value() + gam ) );
     cvIt.Set( local_cv );
     ++cvIt;
     ++muIt;
@@ -120,24 +125,26 @@ static CVImageType::Pointer ComputeInvTwoMuPlusGamma( FloatImageType::Pointer ed
   return repMu;
 }
 
-static HalfHermetianImageType::Pointer GetAFP_of_b(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edgemask)
+static HalfHermetianImageType::Pointer
+GetAFP_of_b( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edgemask )
 {
-  FloatImageType::Pointer upsampledB = IdentityResampleByFFT(norm01_lowres, edgemask.GetPointer());
-  HalfHermetianImageType::Pointer b_FC = A_fhp(upsampledB, norm01_lowres.GetPointer());
+  FloatImageType::Pointer         upsampledB = IdentityResampleByFFT( norm01_lowres, edgemask.GetPointer() );
+  HalfHermetianImageType::Pointer b_FC = A_fhp( upsampledB, norm01_lowres.GetPointer() );
   return b_FC;
 }
 
-static FloatImageType::Pointer GetDiracDeltaImage(FloatImageType::Pointer edgemask)
+static FloatImageType::Pointer
+GetDiracDeltaImage( FloatImageType::Pointer edgemask )
 {
-  FloatImageType::Pointer p_image = CreateEmptyImage<FloatImageType>(edgemask);
+  FloatImageType::Pointer   p_image = CreateEmptyImage< FloatImageType >( edgemask );
   FloatImageType::IndexType zeroIdx;
-  zeroIdx.Fill(0);
-  p_image->SetPixel(zeroIdx,1);
+  zeroIdx.Fill( 0 );
+  p_image->SetPixel( zeroIdx, 1 );
   return p_image;
 }
 
-static HalfHermetianImageType::Pointer GetLowpassOperator(FloatImageType::Pointer norm01_lowres,
-                                                           FloatImageType::Pointer p_image, const PrecisionType scaler)
+static HalfHermetianImageType::Pointer
+GetLowpassOperator( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer p_image, const PrecisionType scaler )
 {
   /*
    * Make dirac-delta impulse response filter for convolving with the high-resolution image
@@ -157,16 +164,18 @@ static HalfHermetianImageType::Pointer GetLowpassOperator(FloatImageType::Pointe
   in the frequency domain of the low-resolution image.
    */
 
-  HalfHermetianImageType::Pointer testA_fhp = A_fhp(p_image,norm01_lowres.GetPointer());
-  FloatImageType::Pointer testAtA = At_fhp(testA_fhp,norm01_lowres->GetLargestPossibleRegion().GetSize()[0]%2 == 1, p_image.GetPointer());
-  HalfHermetianImageType::Pointer AtAhat = GetForwardFFT(testAtA);
-  return opIC(AtAhat,AtAhat,'*',scaler); // A is the linear measurement operator
+  HalfHermetianImageType::Pointer testA_fhp = A_fhp( p_image, norm01_lowres.GetPointer() );
+  FloatImageType::Pointer         testAtA =
+    At_fhp( testA_fhp, norm01_lowres->GetLargestPossibleRegion().GetSize()[0] % 2 == 1, p_image.GetPointer() );
+  HalfHermetianImageType::Pointer AtAhat = GetForwardFFT( testAtA );
+  return opIC( AtAhat, AtAhat, '*', scaler ); // A is the linear measurement operator
 }
 
-static FloatImageType::Pointer  MakeTwoAtb(FloatImageType::Pointer Atb)
+static FloatImageType::Pointer
+MakeTwoAtb( FloatImageType::Pointer Atb )
 {
-FloatImageType::Pointer TwoAtb =DeepImageCopy<FloatImageType>(Atb);
-return opIC(TwoAtb,TwoAtb,'*',2.0);
+  FloatImageType::Pointer TwoAtb = DeepImageCopy< FloatImageType >( Atb );
+  return opIC( TwoAtb, TwoAtb, '*', 2.0 );
 }
 
 /*
@@ -194,150 +203,152 @@ Inputs:  A = function handle representing the forward
 Output:  X = high-resolution output image
          cost = array of cost function value vs. iteration
 Define AtA fourier mask
-PrecisionType lambda, uvec ind_samples, frowvec res, int Niter, double tol, PrecisionType gam, FloatImageType::Pointer& X, frowvec& cost, frowvec& resvec)
+PrecisionType lambda, uvec ind_samples, frowvec res, int Niter, double tol, PrecisionType gam, FloatImageType::Pointer&
+X, frowvec& cost, frowvec& resvec)
  */
-FloatImageType::Pointer OpWeightedL2(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edgemask)
+FloatImageType::Pointer
+OpWeightedL2( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edgemask )
 {
   const PrecisionType lambda = 1e-3F;
-  constexpr int Niter = 100;
+  constexpr int       Niter = 100;
   const PrecisionType gam = 1.0F;
 
-  //using GMType = itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType>;
+  // using GMType = itk::VectorMagnitudeImageFilter<CVImageType, FloatImageType>;
 
-  //The optimal filter for modeling the measurement operator is low pass filter in this case
+  // The optimal filter for modeling the measurement operator is low pass filter in this case
   // NOTE: That the A operator is a projection operator, so A^{T}A = A, That is to say that applying
   //       the A^{T} to A results in A.
-  FloatImageType::Pointer p_image = GetDiracDeltaImage(edgemask);
+  FloatImageType::Pointer p_image = GetDiracDeltaImage( edgemask );
   // Precompute
 
-  //Make high-res coefficients
-  const HalfHermetianImageType::Pointer b_FC = GetAFP_of_b(norm01_lowres, edgemask);
-  //TODO: too many copies of Atb here.
-  FloatImageType::Pointer Atb = At_fhp(b_FC,
-                                       edgemask->GetLargestPossibleRegion().GetSize()[0]%2 == 1,
-                                       edgemask.GetPointer());
-  FloatImageType::Pointer TwoAtb = MakeTwoAtb(Atb);
-  FloatImageType::Pointer X = DeepImageCopy<FloatImageType>(Atb);
-  Atb = nullptr; //Save memory here
+  // Make high-res coefficients
+  const HalfHermetianImageType::Pointer b_FC = GetAFP_of_b( norm01_lowres, edgemask );
+  // TODO: too many copies of Atb here.
+  FloatImageType::Pointer Atb =
+    At_fhp( b_FC, edgemask->GetLargestPossibleRegion().GetSize()[0] % 2 == 1, edgemask.GetPointer() );
+  FloatImageType::Pointer TwoAtb = MakeTwoAtb( Atb );
+  FloatImageType::Pointer X = DeepImageCopy< FloatImageType >( Atb );
+  Atb = nullptr; // Save memory here
 
-  CVImageType::Pointer DX = GetGradient(X);
-  CVImageType::Pointer L = CreateEmptyImage<CVImageType>(DX);
-  CVImageType::Pointer Y = CreateEmptyImage<CVImageType>(DX);
-  //CVImageType::Pointer WDX = CreateEmptyImage<CVImageType>(DX);
-  CVImageType::Pointer residue = CreateEmptyImage<CVImageType>(DX);
-  CVImageType::Pointer YminusL = CreateEmptyImage<CVImageType>(DX);
-  FloatImageType::Pointer tempValue=CreateEmptyImage<FloatImageType>(DX);
+  CVImageType::Pointer DX = GetGradient( X );
+  CVImageType::Pointer L = CreateEmptyImage< CVImageType >( DX );
+  CVImageType::Pointer Y = CreateEmptyImage< CVImageType >( DX );
+  // CVImageType::Pointer WDX = CreateEmptyImage<CVImageType>(DX);
+  CVImageType::Pointer    residue = CreateEmptyImage< CVImageType >( DX );
+  CVImageType::Pointer    YminusL = CreateEmptyImage< CVImageType >( DX );
+  FloatImageType::Pointer tempValue = CreateEmptyImage< FloatImageType >( DX );
 
-  std::vector<PrecisionType> resvec(Niter,0);
-  std::vector<PrecisionType> cost(Niter,0);
+  std::vector< PrecisionType > resvec( Niter, 0 );
+  std::vector< PrecisionType > cost( Niter, 0 );
 
 #ifdef USE_WRITE_DEGUBBING
-  itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::Pointer cpx2abs =
-  itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::New();
+  itk::ComplexToModulusImageFilter< HalfHermetianImageType, FloatImageType >::Pointer cpx2abs =
+    itk::ComplexToModulusImageFilter< HalfHermetianImageType, FloatImageType >::New();
 #endif
 
-  CVImageType::Pointer gradIm = GetGradient(p_image);
-  FloatImageType::Pointer divIm = GetDivergence(gradIm);
-  HalfHermetianImageType::Pointer DtDhat = GetForwardFFT(divIm);
+  CVImageType::Pointer            gradIm = GetGradient( p_image );
+  FloatImageType::Pointer         divIm = GetDivergence( gradIm );
+  HalfHermetianImageType::Pointer DtDhat = GetForwardFFT( divIm );
   // TODO:  ALL SAME TO HERE!
   using FCType = HalfHermetianImageType::PixelType;
-  HalfHermetianImageType::Pointer TwoTimesAtAhatPlusLamGamDtDhat = CreateEmptyImage<HalfHermetianImageType>(DtDhat);
+  HalfHermetianImageType::Pointer TwoTimesAtAhatPlusLamGamDtDhat = CreateEmptyImage< HalfHermetianImageType >( DtDhat );
   {
-    HalfHermetianImageType::Pointer TwoTimesAtAhat = GetLowpassOperator(norm01_lowres,p_image, 2.0F);
-    TwoTimesAtAhatPlusLamGamDtDhat = opIC(TwoTimesAtAhatPlusLamGamDtDhat,FCType(lambda*gam),'*',DtDhat);
-    //TODO:  Make This an inverse!
-    TwoTimesAtAhatPlusLamGamDtDhat = opII(TwoTimesAtAhatPlusLamGamDtDhat,TwoTimesAtAhat,'+',TwoTimesAtAhatPlusLamGamDtDhat);
+    HalfHermetianImageType::Pointer TwoTimesAtAhat = GetLowpassOperator( norm01_lowres, p_image, 2.0F );
+    TwoTimesAtAhatPlusLamGamDtDhat = opIC( TwoTimesAtAhatPlusLamGamDtDhat, FCType( lambda * gam ), '*', DtDhat );
+    // TODO:  Make This an inverse!
+    TwoTimesAtAhatPlusLamGamDtDhat =
+      opII( TwoTimesAtAhatPlusLamGamDtDhat, TwoTimesAtAhat, '+', TwoTimesAtAhatPlusLamGamDtDhat );
   }
-  p_image = nullptr; //Save memory
+  p_image = nullptr; // Save memory
 
   const bool edgemask_ActualXDimensionIsOdd = edgemask->GetLargestPossibleRegion().GetSize()[0] % 2 == 1;
 
-  CVImageType::Pointer InvTwoMuPlusGamma = ComputeInvTwoMuPlusGamma(edgemask,gam);
-  //FloatImageType::Pointer SqrtMu = ComputeSqrtMu(edgemask);
+  CVImageType::Pointer InvTwoMuPlusGamma = ComputeInvTwoMuPlusGamma( edgemask, gam );
+  // FloatImageType::Pointer SqrtMu = ComputeSqrtMu(edgemask);
 
 #define USE_BLAS_WRAPPERS
 #ifdef USE_BLAS_WRAPPERS
 #else
-  using CVImageAdder = itk::AddImageFilter<CVImageType,CVImageType>;
+  using CVImageAdder = itk::AddImageFilter< CVImageType, CVImageType >;
   CVImageAdder::Pointer dxPlusL = CVImageAdder::New();
 #endif
 
   itk::TimeProbe tp;
   tp.Start();
 
-  HalfHermetianImageType::Pointer tempRatioFC = CreateEmptyImage<HalfHermetianImageType>(DtDhat);
+  HalfHermetianImageType::Pointer tempRatioFC = CreateEmptyImage< HalfHermetianImageType >( DtDhat );
 
-  for (size_t i=0; i < Niter; ++i)
+  for ( size_t i = 0; i < Niter; ++i )
   {
     std::cout << "Iteration : " << i << std::endl;
 
 #ifdef USE_BLAS_WRAPPERS
-    //Z = 1.0*L+DX
-    AddAllElements(DX,1.0F,L,DX,gam);//DX destroyed
+    // Z = 1.0*L+DX
+    AddAllElements( DX, 1.0F, L, DX, gam ); // DX destroyed
     CVImageType::Pointer & Z = DX;
 #else
-    //Z = opII(Z,DX,'+',L);
-    dxPlusL->SetInput1(DX);
-    dxPlusL->SetInput2(L);
-    dxPlusL->SetInPlace(true);
+    // Z = opII(Z,DX,'+',L);
+    dxPlusL->SetInput1( DX );
+    dxPlusL->SetInput2( L );
+    dxPlusL->SetInPlace( true );
     dxPlusL->Update();
-    CVImageType::Pointer Z=dxPlusL->GetOutput();
-    MultiplyCVByScalar(Z,gam);
+    CVImageType::Pointer Z = dxPlusL->GetOutput();
+    MultiplyCVByScalar( Z, gam );
 #endif
 #ifdef USE_BLAS_WRAPPERS
-    //Y=InvTwoMuPlusGamm.*Z
-    MultiplyVectors(Y,InvTwoMuPlusGamma,Z);
+    // Y=InvTwoMuPlusGamm.*Z
+    MultiplyVectors( Y, InvTwoMuPlusGamma, Z );
 #else
-    Y = opII(Y,Z,'*',InvTwoMuPlusGamma);
+    Y = opII( Y, Z, '*', InvTwoMuPlusGamma );
 #endif
 
     // X Subprob
     // Numerator = 2*Atb+lambda*gam*SRdiv(Y-L))
 #ifdef USE_BLAS_WRAPPERS
-    //YminusL = 1.0F* SRdiv( -1.0F*L + Y)
-    Duplicate(Y,YminusL);
-    AddAllElements(YminusL,-1.0F,L,YminusL,1.0F);
+    // YminusL = 1.0F* SRdiv( -1.0F*L + Y)
+    Duplicate( Y, YminusL );
+    AddAllElements( YminusL, -1.0F, L, YminusL, 1.0F );
 #else
-    YminusL=opII(YminusL,Y,'-',L);
+    YminusL = opII( YminusL, Y, '-', L );
 #endif
-    FloatImageType::Pointer tempNumerator=GetDivergence(YminusL);
+    FloatImageType::Pointer tempNumerator = GetDivergence( YminusL );
 #ifdef USE_BLAS_WRAPPERS
-    //lambd*gam*tempNumerator+TwoAtb
-    Duplicate(TwoAtb,tempValue);
-    AddAllElements(tempValue,lambda*gam,tempNumerator,tempValue,1.0F);
-    HalfHermetianImageType::Pointer tempNumeratorFC = GetForwardFFT(tempValue);
+    // lambd*gam*tempNumerator+TwoAtb
+    Duplicate( TwoAtb, tempValue );
+    AddAllElements( tempValue, lambda * gam, tempNumerator, tempValue, 1.0F );
+    HalfHermetianImageType::Pointer tempNumeratorFC = GetForwardFFT( tempValue );
 #else
-    tempNumerator=opIC(tempNumerator,lambda*gam,'*',tempNumerator);
-    tempNumerator=opII(tempNumerator,TwoAtb,'+',tempNumerator);
-    HalfHermetianImageType::Pointer tempNumeratorFC = GetForwardFFT(tempNumerator);
+    tempNumerator = opIC( tempNumerator, lambda * gam, '*', tempNumerator );
+    tempNumerator = opII( tempNumerator, TwoAtb, '+', tempNumerator );
+    HalfHermetianImageType::Pointer tempNumeratorFC = GetForwardFFT( tempNumerator );
 #endif
 
-    //KEEP
-    tempRatioFC = opII_scalar(tempRatioFC,tempNumeratorFC,'/',TwoTimesAtAhatPlusLamGamDtDhat);
+    // KEEP
+    tempRatioFC = opII_scalar( tempRatioFC, tempNumeratorFC, '/', TwoTimesAtAhatPlusLamGamDtDhat );
 
-    X = GetInverseFFT(tempRatioFC,edgemask_ActualXDimensionIsOdd,1.0); //TODO: Determine scale factor here. X
+    X = GetInverseFFT( tempRatioFC, edgemask_ActualXDimensionIsOdd, 1.0 ); // TODO: Determine scale factor here. X
 
     // should be on same dynamic range as b
-    DX = GetGradient(X);
-    residue = opII(residue, DX, '-', Y); //TODO:  Implement math graph output here
-    L = opII(L,L,'+',residue);
+    DX = GetGradient( X );
+    residue = opII( residue, DX, '-', Y ); // TODO:  Implement math graph output here
+    L = opII( L, L, '+', residue );
 
     //
-    resvec[i] = 0; //TODO: Figure out the math for here
+    resvec[i] = 0; // TODO: Figure out the math for here
     if ( i > 900000 )
     {
       tp.Stop();
       std::cout << " Only iterations " << tp.GetTotal() << tp.GetUnit() << std::endl;
       return X;
     }
-    if( i > 99 ) //HACK: Cutting this function short
+    if ( i > 99 ) // HACK: Cutting this function short
     {
       return X;
     }
-    //WDX = opII_CVmult(WDX,SqrtMu,'*',DX);
-    //diff = opII(diff,A_fhp(X,norm01_lowres.GetPointer()),'-',b_FC);
+    // WDX = opII_CVmult(WDX,SqrtMu,'*',DX);
+    // diff = opII(diff,A_fhp(X,norm01_lowres.GetPointer()),'-',b_FC);
     //
-    //cost[i] = 0; //TODO: Need to figure out math for here
+    // cost[i] = 0; //TODO: Need to figure out math for here
   }
   return X;
 }

@@ -94,234 +94,244 @@ namespace itk
 //
 // Software Guide : EndLatex
 
-template <typename TInputImage, typename TOutputImage>
-class BRAINSConstellationDetector2 :
-  public         ImageToImageFilter<SImageType, SImageType>
+template < typename TInputImage, typename TOutputImage >
+class BRAINSConstellationDetector2 : public ImageToImageFilter< SImageType, SImageType >
 {
 public:
-
   /** Standard ITK type alias */
   using Self = BRAINSConstellationDetector2;
-  using Superclass = ImageToImageFilter<SImageType, SImageType>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = ImageToImageFilter< SImageType, SImageType >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   static constexpr unsigned int Dimension = SImageType::ImageDimension;
-  using MatrixType = vnl_matrix<double>;
+  using MatrixType = vnl_matrix< double >;
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro(BRAINSConstellationDetector2, ImageToImageFilter);
+  itkTypeMacro( BRAINSConstellationDetector2, ImageToImageFilter );
 
   /** Method for creation through the object factory */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Display */
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   // Set Basic Inputs
   /** Set the filename of the output transform */
-  itkSetMacro(Transform, std::string);
+  itkSetMacro( Transform, std::string );
 
   /** Set the filename of the model file */
-  itkSetMacro(InputTemplateModel, std::string);
+  itkSetMacro( InputTemplateModel, std::string );
 
   /** Set MSP quality level */
-  itkSetMacro(MspQualityLevel, unsigned int);
+  itkSetMacro( MspQualityLevel, unsigned int );
 
   /** Set Otsu percentile threshold */
-  itkSetMacro(OtsuPercentileThreshold, double);
+  itkSetMacro( OtsuPercentileThreshold, double );
 
   /** Set AC lower bound */
-  itkSetMacro(AcLowerBound, double);
+  itkSetMacro( AcLowerBound, double );
 
   /** Set Cut Out Head In Output volumes */
-  itkSetMacro(CutOutHeadInOutputVolume, bool);
+  itkSetMacro( CutOutHeadInOutputVolume, bool );
 
   /** Set rescale intensities */
-  itkSetMacro(RescaleIntensities, bool);
+  itkSetMacro( RescaleIntensities, bool );
 
   /** Set trim rescaled intensities */
-  itkSetMacro(TrimRescaledIntensities, double);
+  itkSetMacro( TrimRescaledIntensities, double );
 
   /** Set rescale intensities output range */
-  VECTORitkSetMacro(RescaleIntensitiesOutputRange, std::vector<int> );
+  VECTORitkSetMacro( RescaleIntensitiesOutputRange, std::vector< int > );
 
   /** Set the background fill value string */
-  itkSetMacro(BackgroundFillValueString, std::string);
+  itkSetMacro( BackgroundFillValueString, std::string );
 
   /** Set use windowed sinc */
-  itkSetMacro(InterpolationMode, std::string);
+  itkSetMacro( InterpolationMode, std::string );
 
   /** Set Hough eye transform */
-  itkSetObjectMacro(HoughEyeTransform, VersorTransformType);
+  itkSetObjectMacro( HoughEyeTransform, VersorTransformType );
 
   /** Set LE point */
-  itkSetMacro(LEPoint, SImagePointType);
+  itkSetMacro( LEPoint, SImagePointType );
 
   /** Set RE point */
-  itkSetMacro(REPoint, SImagePointType);
+  itkSetMacro( REPoint, SImagePointType );
 
   /** Set center of head mass **/
-  itkSetMacro(CenterOfHeadMass, SImagePointType);
+  itkSetMacro( CenterOfHeadMass, SImagePointType );
 
   /** Set the original input image before the Hough eye detector */
-  itkSetObjectMacro(OriginalInputImage, SImageType);
-  itkGetConstObjectMacro(OriginalInputImage, SImageType);
+  itkSetObjectMacro( OriginalInputImage, SImageType );
+  itkGetConstObjectMacro( OriginalInputImage, SImageType );
 
   /** GetHoughEyeAlignedImage */
-  SImageType::ConstPointer GetHoughEyeAlignedImage(void) const
-    {
-    SImageType::ConstPointer internalImage = this->GetInput(0);
+  SImageType::ConstPointer
+  GetHoughEyeAlignedImage( void ) const
+  {
+    SImageType::ConstPointer internalImage = this->GetInput( 0 );
     return internalImage;
-    }
+  }
 
   // Get Basic Outputs
   /** Get the versor transform */
-  itkGetConstObjectMacro(OrigToACPCVersorTransform, VersorTransformType);
-  itkGetConstObjectMacro(ACPCToOrigVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro( OrigToACPCVersorTransform, VersorTransformType );
+  itkGetConstObjectMacro( ACPCToOrigVersorTransform, VersorTransformType );
 
   /** Get the named points in original space */
-  const LandmarksMapType & GetOriginalPoints()
+  const LandmarksMapType &
+  GetOriginalPoints()
   {
     return this->m_OriginalPoints;
   }
 
   /** Get the aligned named points */
-  const LandmarksMapType & GetAlignedPoints()
+  const LandmarksMapType &
+  GetAlignedPoints()
   {
     return this->m_AlignedPoints;
   }
 
   // This is wrong?
-  const SImagePointType & GetAlignedPoint(std::string name)
+  const SImagePointType &
+  GetAlignedPoint( std::string name )
   {
     return this->m_AlignedPoints[name];
   }
 
   /** Get the interpolated output isotropic image */
-  itkGetConstObjectMacro(OutputResampledImage, SImageType);
+  itkGetConstObjectMacro( OutputResampledImage, SImageType );
 
   /** Get the output untransformed clipped volume */
-  itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
+  itkGetConstObjectMacro( OutputUntransformedClippedVolume, SImageType );
 
   /** Get the image to be resampled */
-  itkGetConstObjectMacro(CleanedIntensityOriginalInputImage, SImageType);
+  itkGetConstObjectMacro( CleanedIntensityOriginalInputImage, SImageType );
 
   /** Get the Hough eye transform */
-  itkGetModifiableObjectMacro(HoughEyeTransform, VersorTransformType);
+  itkGetModifiableObjectMacro( HoughEyeTransform, VersorTransformType );
 
   /** Set the Hough eye failure report */
-  void SetHoughEyeFailure(const bool failure)
+  void
+  SetHoughEyeFailure( const bool failure )
   {
     this->m_HoughEyeFailure = failure;
   }
 
   /** Set llsMeans **/
-  void SetLlsMeans(const std::map<std::string, std::vector<double> > & llsMeans)
+  void
+  SetLlsMeans( const std::map< std::string, std::vector< double > > & llsMeans )
   {
     this->m_LlsMeans = llsMeans;
   }
 
   /** Set llsMatrices **/
-  void SetLlsMatrices(const std::map<std::string, MatrixType> & llsMatrices)
+  void
+  SetLlsMatrices( const std::map< std::string, MatrixType > & llsMatrices )
   {
     this->m_LlsMatrices = llsMatrices;
   }
 
   /** Set search radii for corresponding landmarks **/
-  void SetSearchRadii(const std::map<std::string, double> & radii)
+  void
+  SetSearchRadii( const std::map< std::string, double > & radii )
   {
     this->m_SearchRadii = radii;
   }
 
   /** Set AC mean **/
-  itkSetMacro(ACMean, SImagePointType);
+  itkSetMacro( ACMean, SImagePointType );
 
   // Set Advanced Inputs
 
   /** Set force AC point */
-  VECTORitkSetMacro(ForceACPoint, std::vector<float> );
+  VECTORitkSetMacro( ForceACPoint, std::vector< float > );
 
   /** Set force PC point */
-  VECTORitkSetMacro(ForcePCPoint, std::vector<float> );
+  VECTORitkSetMacro( ForcePCPoint, std::vector< float > );
 
   /** Set force VN4 point */
-  VECTORitkSetMacro(ForceVN4Point, std::vector<float> );
+  VECTORitkSetMacro( ForceVN4Point, std::vector< float > );
 
   /** Set force MPJ point */
-  VECTORitkSetMacro(ForceRPPoint, std::vector<float> );
+  VECTORitkSetMacro( ForceRPPoint, std::vector< float > );
 
   /** Set MPJ search radius */
-  itkSetMacro(RadiusMPJ, double);
+  itkSetMacro( RadiusMPJ, double );
 
   /** Set AC search radius */
-  itkSetMacro(RadiusAC, double);
+  itkSetMacro( RadiusAC, double );
 
   /** Set PC search radius */
-  itkSetMacro(RadiusPC, double);
+  itkSetMacro( RadiusPC, double );
 
   /** Set VN4 search radius */
-  itkSetMacro(RadiusVN4, double);
+  itkSetMacro( RadiusVN4, double );
 
   /** Set use debug mode */
-  itkSetMacro(Debug, bool);
+  itkSetMacro( Debug, bool );
 
   /** Set use verbose mode */
-  itkSetMacro(Verbose, bool);
+  itkSetMacro( Verbose, bool );
 
   /** Set debugging images level */
-  itkSetMacro(WritedebuggingImagesLevel, unsigned int);
+  itkSetMacro( WritedebuggingImagesLevel, unsigned int );
 
   /** Set branded 2D image filename */
-  itkSetMacro(WriteBranded2DImage, std::string);
+  itkSetMacro( WriteBranded2DImage, std::string );
 
   /** Set results dir */
-  itkSetMacro(ResultsDir, std::string);
+  itkSetMacro( ResultsDir, std::string );
 
   /** Set/Get EMSP landmarks */
-  void SetLandmarksEMSP(LandmarksMapType landmarks)
+  void
+  SetLandmarksEMSP( LandmarksMapType landmarks )
   {
     m_landmarksEMSP.clear();
     m_landmarksEMSP.insert( landmarks.begin(), landmarks.end() );
   }
 
-  LandmarksMapType GetLandmarksEMSP()
+  LandmarksMapType
+  GetLandmarksEMSP()
   {
     return m_landmarksEMSP;
   }
 
-  itkSetMacro(atlasVolume, std::string);
-  itkSetMacro(atlasLandmarks, std::string);
-  itkSetMacro(atlasLandmarkWeights, std::string);
+  itkSetMacro( atlasVolume, std::string );
+  itkSetMacro( atlasLandmarks, std::string );
+  itkSetMacro( atlasLandmarkWeights, std::string );
 
-  itkGetMacro(atlasVolume, std::string);
-  itkGetMacro(atlasLandmarks, std::string);
-  itkGetMacro(atlasLandmarkWeights, std::string);
+  itkGetMacro( atlasVolume, std::string );
+  itkGetMacro( atlasLandmarks, std::string );
+  itkGetMacro( atlasLandmarkWeights, std::string );
 
-  BRAINSConstellationDetector2(const Self &) = delete;
-  void operator=(const Self &) = delete;
+  BRAINSConstellationDetector2( const Self & ) = delete;
+  void
+  operator=( const Self & ) = delete;
   ~BRAINSConstellationDetector2() override = default;
 
 protected:
-
   BRAINSConstellationDetector2();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
   /** Essential Parameters */
   // Inputs
 
-  std::string      m_Transform;
-  std::string      m_InputTemplateModel;
-  unsigned int     m_MspQualityLevel;               // default = 2
-  double           m_OtsuPercentileThreshold;       // default = 0.01
-  double           m_AcLowerBound;                  // default = 1000.0
-  bool             m_CutOutHeadInOutputVolume;      // default = false
-  bool             m_RescaleIntensities;            // default = false
-  double           m_TrimRescaledIntensities;       // default = 4.4172
-  std::vector<int> m_RescaleIntensitiesOutputRange; // default = [40, 4000]
-  std::string m_BackgroundFillValueString;          // default = "0"
-  std::string m_InterpolationMode;                  // default = "Linear"
+  std::string        m_Transform;
+  std::string        m_InputTemplateModel;
+  unsigned int       m_MspQualityLevel;               // default = 2
+  double             m_OtsuPercentileThreshold;       // default = 0.01
+  double             m_AcLowerBound;                  // default = 1000.0
+  bool               m_CutOutHeadInOutputVolume;      // default = false
+  bool               m_RescaleIntensities;            // default = false
+  double             m_TrimRescaledIntensities;       // default = 4.4172
+  std::vector< int > m_RescaleIntensitiesOutputRange; // default = [40, 4000]
+  std::string        m_BackgroundFillValueString;     // default = "0"
+  std::string        m_InterpolationMode;             // default = "Linear"
 
   // a local editable copy of original input before Hough eye detector
   // Note: this->GetInput() will return a const input after Hough eye.
@@ -338,39 +348,37 @@ protected:
   LandmarksMapType m_landmarksEMSP;
   bool             m_HoughEyeFailure;
 
-  std::map<std::string,
-           MatrixType> m_LlsMatrices;
-  std::map<std::string,
-           std::vector<double> > m_LlsMeans;
-  SImagePointType                m_ACMean;
-  std::map<std::string, double>  m_SearchRadii;
+  std::map< std::string, MatrixType >            m_LlsMatrices;
+  std::map< std::string, std::vector< double > > m_LlsMeans;
+  SImagePointType                                m_ACMean;
+  std::map< std::string, double >                m_SearchRadii;
 
   // Outputs
   VersorTransformType::Pointer m_OrigToACPCVersorTransform;
   VersorTransformType::Pointer m_ACPCToOrigVersorTransform;
   LandmarksMapType             m_AlignedPoints;
   LandmarksMapType             m_OriginalPoints;
-  SImageType::Pointer          m_OutputImage;          // Output image w/o
-                                                       // interpolation
-  SImageType::Pointer m_OutputResampledImage;          // Output image w/
-                                                       // interpolation
+  SImageType::Pointer          m_OutputImage; // Output image w/o
+                                              // interpolation
+  SImageType::Pointer m_OutputResampledImage; // Output image w/
+                                              // interpolation
   SImageType::Pointer m_OutputUntransformedClippedVolume;
   SImageType::Pointer m_CleanedIntensityOriginalInputImage;
 
   /** Advanced parameters */
   /** Manual Override */
   // Inputs
-  std::vector<float> m_ForceACPoint;              // default = 0.
-  std::vector<float> m_ForcePCPoint;              // default = 0.
-  std::vector<float> m_ForceVN4Point;             // default = 0.
-  std::vector<float> m_ForceRPPoint;              // default = 0.
+  std::vector< float > m_ForceACPoint;  // default = 0.
+  std::vector< float > m_ForcePCPoint;  // default = 0.
+  std::vector< float > m_ForceVN4Point; // default = 0.
+  std::vector< float > m_ForceRPPoint;  // default = 0.
 
   /** Model Override */
   // Inputs
-  double m_RadiusMPJ;                         // default = -1.
-  double m_RadiusAC;                          // default = -1.
-  double m_RadiusPC;                          // default = -1.
-  double m_RadiusVN4;                         // default = -1.
+  double m_RadiusMPJ; // default = -1.
+  double m_RadiusAC;  // default = -1.
+  double m_RadiusPC;  // default = -1.
+  double m_RadiusVN4; // default = -1.
 
   /** Debug Options */
   // Inputs
@@ -378,18 +386,17 @@ protected:
   bool         m_Verbose;                   // default = false
   unsigned int m_WritedebuggingImagesLevel; // default = 0
   std::string  m_WriteBranded2DImage;
-  std::string  m_ResultsDir;                    // default = "./"
+  std::string  m_ResultsDir; // default = "./"
 
-  std::string m_atlasVolume; // The reference atlas image
-  std::string m_atlasLandmarks; // The reference atlas landmarks
+  std::string m_atlasVolume;          // The reference atlas image
+  std::string m_atlasLandmarks;       // The reference atlas landmarks
   std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
-
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "BRAINSConstellationDetector2.hxx"
+#  include "BRAINSConstellationDetector2.hxx"
 #endif
 
 #endif

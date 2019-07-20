@@ -24,23 +24,23 @@ namespace itk
  *
  * \ingroup Operators
  */
-template <typename TInputImage>
+template < typename TInputImage >
 class NewOtsuThresholdImageCalculator : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageCalculator);
+  ITK_DISALLOW_COPY_AND_ASSIGN( NewOtsuThresholdImageCalculator );
 
   /** Standard class type alias. */
   using Self = NewOtsuThresholdImageCalculator;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(NewOtsuThresholdImageCalculator, Object);
+  itkTypeMacro( NewOtsuThresholdImageCalculator, Object );
 
   /** Type definition for the input image. */
   using ImageType = TInputImage;
@@ -55,40 +55,40 @@ public:
   using PixelType = typename TInputImage::PixelType;
 
   /** Set the input image. */
-  itkSetConstObjectMacro(Image,ImageType);
+  itkSetConstObjectMacro( Image, ImageType );
 
   /** Compute the Otsu's threshold for the input image. */
-  void Compute(void);
+  void
+  Compute( void );
 
   /** Return the Otsu's threshold value. */
-  itkGetMacro(Threshold,PixelType);
+  itkGetMacro( Threshold, PixelType );
 
   /** Set/Get the number of histogram bins. Default is 128. */
-  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1,
-                    NumericTraits<unsigned long>::max() );
+  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1, NumericTraits< unsigned long >::max() );
   itkGetMacro( NumberOfHistogramBins, unsigned long );
 
-  itkSetMacro(Omega, double);
-  itkGetMacro(Omega,double);
+  itkSetMacro( Omega, double );
+  itkGetMacro( Omega, double );
 
 protected:
   NewOtsuThresholdImageCalculator();
-  virtual ~NewOtsuThresholdImageCalculator() {};
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  virtual ~NewOtsuThresholdImageCalculator(){};
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
-  PixelType            m_Threshold;
-  unsigned long        m_NumberOfHistogramBins;
-  double m_Omega;
-  ImageConstPointer    m_Image;
-
+  PixelType         m_Threshold;
+  unsigned long     m_NumberOfHistogramBins;
+  double            m_Omega;
+  ImageConstPointer m_Image;
 };
 
-} /// end namespace itk
+} // namespace itk
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkNewOtsuThresholdImageCalculator.txx"
+#  include "itkNewOtsuThresholdImageCalculator.txx"
 #endif
 
 #endif

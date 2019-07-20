@@ -21,9 +21,10 @@
 #include <iostream>
 #include "itkBRAINSToolsTestMain.h"
 
-void RegisterTests()
+void
+RegisterTests()
 {
-  REGISTER_TEST(VBRAINSDemonWarpTest);
+  REGISTER_TEST( VBRAINSDemonWarpTest );
 }
 
 #undef main

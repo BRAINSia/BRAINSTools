@@ -36,17 +36,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TOutputMesh>
-class PiecewiseRescaleQuadEdgeMeshFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class PiecewiseRescaleQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(PiecewiseRescaleQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( PiecewiseRescaleQuadEdgeMeshFilter );
 
   using Self = PiecewiseRescaleQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( PiecewiseRescaleQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -65,9 +64,11 @@ public:
   using OutputPointDataContainerPointer = typename OutputMeshType::PointDataContainerPointer;
 
   /** Set/Get the mesh that will be deformed. */
-  void SetInputMesh( const InputMeshType * mesh );
+  void
+  SetInputMesh( const InputMeshType * mesh );
 
-  const InputMeshType * GetInputMesh( void ) const;
+  const InputMeshType *
+  GetInputMesh( void ) const;
 
   /** Set/Get min value of the output mesh scalars. */
   itkSetMacro( OutputMinimum, OutputPixelType );
@@ -92,14 +93,15 @@ public:
 
   /** Get scale to transform mesh scalars in (cValue,max_in]. */
   itkGetMacro( Scale_b, double );
+
 protected:
   PiecewiseRescaleQuadEdgeMeshFilter();
   ~PiecewiseRescaleQuadEdgeMeshFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
   OutputPixelType m_OutputMinimum;
   OutputPixelType m_OutputMaximum;
 
@@ -111,10 +113,10 @@ private:
   double m_Scale_a;
   double m_Scale_b;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkPiecewiseRescaleQuadEdgeMeshFilter.hxx"
+#  include "itkPiecewiseRescaleQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

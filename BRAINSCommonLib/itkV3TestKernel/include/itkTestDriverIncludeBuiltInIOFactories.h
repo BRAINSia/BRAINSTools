@@ -34,7 +34,8 @@
 #include "itkTestDriverInclude.h"
 #include "itkObjectFactoryBase.h"
 
-void ProcessArgumentsAndRegisterBuiltInFactories(int *ac, ArgumentStringType *av)
+void
+ProcessArgumentsAndRegisterBuiltInFactories( int * ac, ArgumentStringType * av )
 {
   itk::ObjectFactoryBase::RegisterFactory( itk::BioRadImageIOFactory::New() );
   itk::ObjectFactoryBase::RegisterFactory( itk::GDCMImageIOFactory::New() );

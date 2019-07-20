@@ -7,13 +7,14 @@
 #include <itkImage.h>
 
 
-int main(int argc, char * argv[])
+int
+main( int argc, char * argv[] )
 {
-  using ImageType = itk::Image<float, 3>;
-  using ReaderType = itk::ImageFileReader<ImageType>;
+  using ImageType = itk::Image< float, 3 >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
   ImageType::Pointer ref = ReaderType::New();
   ImageType::Pointer rescale =
 
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

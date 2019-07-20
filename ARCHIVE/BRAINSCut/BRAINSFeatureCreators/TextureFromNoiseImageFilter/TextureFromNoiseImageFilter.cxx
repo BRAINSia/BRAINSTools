@@ -26,7 +26,8 @@
 #include "TextureFromNoiseImageFilterCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -34,33 +35,33 @@ int main(int argc, char *argv[])
   using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using ImageType = itk::Image<PixelType,  Dimension>;
-  using ReaderType = itk::ImageFileReader<ImageType>;
+  using ImageType = itk::Image< PixelType, Dimension >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
   ReaderType::Pointer imageReader = ReaderType::New();
 
   imageReader->SetFileName( inputVolume.c_str() );
 
-  using NoiseImageFilterType = itk::NoiseImageFilter<ImageType, ImageType>;
+  using NoiseImageFilterType = itk::NoiseImageFilter< ImageType, ImageType >;
   NoiseImageFilterType::Pointer noiseFilter = NoiseImageFilterType::New();
 
   try
-    {
+  {
     noiseFilter->SetInput( imageReader->GetOutput() );
-    noiseFilter->SetRadius( inputRadius);
+    noiseFilter->SetRadius( inputRadius );
     noiseFilter->Update();
-    }
+  }
 
-  catch( itk::ExceptionObject & excep )
-    {
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     throw;
-    }
+  }
 
-  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter< ImageType >;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
-  imageWriter->SetFileName(outputVolume);
+  imageWriter->SetFileName( outputVolume );
   imageWriter->SetInput( noiseFilter->GetOutput() );
   imageWriter->Update();
 

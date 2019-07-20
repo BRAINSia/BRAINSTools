@@ -55,18 +55,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TOutputMesh>
-class QuadEdgeMeshScalarPixelValuesSmoothingFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class QuadEdgeMeshScalarPixelValuesSmoothingFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshScalarPixelValuesSmoothingFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshScalarPixelValuesSmoothingFilter );
 
   using Self = QuadEdgeMeshScalarPixelValuesSmoothingFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshScalarPixelValuesSmoothingFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -126,21 +124,22 @@ public:
    */
   itkSetMacro( Lambda, double );
   itkGetMacro( Lambda, double );
+
 protected:
   QuadEdgeMeshScalarPixelValuesSmoothingFilter();
   ~QuadEdgeMeshScalarPixelValuesSmoothingFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
   unsigned long m_MaximumNumberOfIterations;
   double        m_Lambda;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshScalarPixelValuesSmoothingFilter.hxx"
+#  include "itkQuadEdgeMeshScalarPixelValuesSmoothingFilter.hxx"
 #endif
 
 #endif

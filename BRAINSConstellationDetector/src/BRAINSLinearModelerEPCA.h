@@ -35,13 +35,13 @@
 
 // typedef
 constexpr unsigned int PointDim = 3;
-using PointType = itk::Point<double, PointDim>;
-using DatasetMapType = std::map<std::string, PointType>;
-using LmkDBType = std::map<std::string, DatasetMapType>;
-using MatrixType = vnl_matrix<double>;
-using VectorType = vnl_vector_fixed<double, PointDim>;
-using MatrixMapType = std::map<std::string, MatrixType>;
-using VectorMapType = std::map<std::string, VectorType>;
+using PointType = itk::Point< double, PointDim >;
+using DatasetMapType = std::map< std::string, PointType >;
+using LmkDBType = std::map< std::string, DatasetMapType >;
+using MatrixType = vnl_matrix< double >;
+using VectorType = vnl_vector_fixed< double, PointDim >;
+using MatrixMapType = std::map< std::string, MatrixType >;
+using VectorMapType = std::map< std::string, VectorType >;
 
 /*
  * Description:
@@ -50,7 +50,8 @@ using VectorMapType = std::map<std::string, VectorType>;
  * "A METHOD FOR AUTOMATED LANDMARK CONSTELLATION DETECTION USING
  * EVOLUTIONARY PRINCIPAL COMPONENTS AND STATISTICAL SHAPE MODELS"
  */
-int BRAINSLinearModelerEPCAPrimary( int argc, char * argv[] );
+int
+BRAINSLinearModelerEPCAPrimary( int argc, char * argv[] );
 
 /*
  * Build up the landmark database from a list of fcsv files
@@ -58,12 +59,14 @@ int BRAINSLinearModelerEPCAPrimary( int argc, char * argv[] );
  * Input:
  * filename ...
  */
-void CreateLmkDB( std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB );
+void
+CreateLmkDB( std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB );
 
 /*
  * Initialize X_i matrix from base landmarks
  */
-MatrixType InitializeXi( LmkDBType & baseLmkDB );
+MatrixType
+InitializeXi( LmkDBType & baseLmkDB );
 
 /*
  * Compute the principal components of landmark vector space
@@ -71,17 +74,20 @@ MatrixType InitializeXi( LmkDBType & baseLmkDB );
  * TODO: Explain each argument in the func
  * Input:
  */
-void ComputeEPCAModel( MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBType & baseLmkDB,
-                       LmkDBType & EPCALmkDB );
+void
+ComputeEPCAModel( MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBType & baseLmkDB,
+                  LmkDBType & EPCALmkDB );
 
 /*
  * Compute the s_i vector from X_i matrix
  */
-VectorType ComputeSVector( const MatrixType & X_i );
+VectorType
+ComputeSVector( const MatrixType & X_i );
 
 /*
  * Compute the I_si matrix from X_i and s_i
  */
-MatrixType ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const VectorType & s_i );
+MatrixType
+ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const VectorType & s_i );
 
 #endif

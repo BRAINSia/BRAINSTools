@@ -29,37 +29,41 @@
 #include "DilateImageCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if( inputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputVolume Required! "  << std::endl;
-    }
-  if( inputMaskVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputMaskVolume Required! "  << std::endl;
-    }
-  if( outputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
-    }
-  if( violated )
-    {
+  if ( inputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputVolume Required! " << std::endl;
+  }
+  if ( inputMaskVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputMaskVolume Required! " << std::endl;
+  }
+  if ( outputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --outputVolume Required! " << std::endl;
+  }
+  if ( violated )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   using PixelType = float;
   // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  using ImageType = itk::Image<PixelType,  Dimension>;
-  using ReaderType = itk::ImageFileReader<ImageType>;
-  using MaskImageType = itk::Image<char,  Dimension>;
-  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+  using ImageType = itk::Image< PixelType, Dimension >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
+  using MaskImageType = itk::Image< char, Dimension >;
+  using MaskReaderType = itk::ImageFileReader< MaskImageType >;
 
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -69,41 +73,41 @@ int main(int argc, char *argv[])
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  using MaskFilterType = itk::MaskImageFilter<ImageType, MaskImageType, ImageType>;
+  using MaskFilterType = itk::MaskImageFilter< ImageType, MaskImageType, ImageType >;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  using StructuringElementType = itk::BinaryBallStructuringElement<PixelType, Dimension>;
+  using StructuringElementType = itk::BinaryBallStructuringElement< PixelType, Dimension >;
 
-  using DilateFilterType = itk::GrayscaleDilateImageFilter<ImageType, ImageType, StructuringElementType>;
+  using DilateFilterType = itk::GrayscaleDilateImageFilter< ImageType, ImageType, StructuringElementType >;
   DilateFilterType::Pointer grayscaleDilateFilter = DilateFilterType::New();
 
   StructuringElementType structuringElement;
-  structuringElement.SetRadius(inputRadius);
+  structuringElement.SetRadius( inputRadius );
   structuringElement.CreateStructuringElement();
-  grayscaleDilateFilter->SetKernel(structuringElement);
+  grayscaleDilateFilter->SetKernel( structuringElement );
 
   try
-    {
+  {
     maskFilter->SetInput1( imageReader->GetOutput() );
     maskFilter->SetInput2( maskReader->GetOutput() );
-    maskFilter->SetOutsideValue(0);
+    maskFilter->SetOutsideValue( 0 );
 
     grayscaleDilateFilter->SetInput( maskFilter->GetOutput() );
     grayscaleDilateFilter->Update();
-    }
+  }
 
-  catch( itk::ExceptionObject & excep )
-    {
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     throw;
-    }
+  }
 
   // Output Dilated Image
-  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter< ImageType >;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
-  imageWriter->SetFileName(outputVolume);
+  imageWriter->SetFileName( outputVolume );
   imageWriter->SetInput( grayscaleDilateFilter->GetOutput() );
   imageWriter->Update();
   return EXIT_SUCCESS;

@@ -18,7 +18,8 @@
  *=========================================================================*/
 #include "BRAINSDemonWarpTemplates.h"
 
-void VectorProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command)
+void
+VectorProcessOutputType_int( struct BRAINSDemonWarpAppParameters & command )
 {
-  VectorProcessOutputType<int>(command);
+  VectorProcessOutputType< int >( command );
 }

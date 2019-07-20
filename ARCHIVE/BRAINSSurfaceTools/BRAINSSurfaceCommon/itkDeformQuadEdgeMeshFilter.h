@@ -42,17 +42,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
-class DeformQuadEdgeMeshFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
+template < typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints >
+class DeformQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TInputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DeformQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( DeformQuadEdgeMeshFilter );
 
   using Self = DeformQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TInputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( DeformQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -69,24 +68,30 @@ public:
   using InputPointType = typename InputMeshType::PointType;
 
   /** Interpolator type alias. */
-  using InterpolatorType = LinearInterpolateDeformationFieldMeshFunction<
-      ReferenceMeshType, DestinationPointsContainerType>;
+  using InterpolatorType =
+    LinearInterpolateDeformationFieldMeshFunction< ReferenceMeshType, DestinationPointsContainerType >;
   using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set/Get the mesh that will be deformed. */
-  void SetInputMesh( const InputMeshType * mesh );
+  void
+  SetInputMesh( const InputMeshType * mesh );
 
-  const InputMeshType * GetInputMesh( void ) const;
-
-  /** Set/Get the mesh that carried the deformation field as pixel data. */
-  void SetReferenceMesh( const ReferenceMeshType * mesh );
-
-  const ReferenceMeshType * GetReferenceMesh( void ) const;
+  const InputMeshType *
+  GetInputMesh( void ) const;
 
   /** Set/Get the mesh that carried the deformation field as pixel data. */
-  void SetDestinationPoints( const DestinationPointsType * points );
+  void
+  SetReferenceMesh( const ReferenceMeshType * mesh );
 
-  const DestinationPointsType * GetDestinationPoints( void ) const;
+  const ReferenceMeshType *
+  GetReferenceMesh( void ) const;
+
+  /** Set/Get the mesh that carried the deformation field as pixel data. */
+  void
+  SetDestinationPoints( const DestinationPointsType * points );
+
+  const DestinationPointsType *
+  GetDestinationPoints( void ) const;
 
   /** Set the interpolator function.  The default is a linear interpolator. */
   itkSetObjectMacro( Interpolator, InterpolatorType );
@@ -110,23 +115,24 @@ public:
    */
   itkSetMacro( SphereRadius, double );
   itkGetConstMacro( SphereRadius, double );
+
 protected:
   DeformQuadEdgeMeshFilter();
   ~DeformQuadEdgeMeshFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
   InterpolatorPointerType m_Interpolator;
 
   InputPointType m_SphereCenter;
   double         m_SphereRadius;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDeformQuadEdgeMeshFilter.hxx"
+#  include "itkDeformQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

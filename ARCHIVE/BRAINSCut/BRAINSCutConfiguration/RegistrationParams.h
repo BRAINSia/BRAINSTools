@@ -25,18 +25,19 @@ class RegistrationParams : public CompoundObjectBase
 {
 public:
   using SuperClass = CompoundObjectBase;
-  virtual int PrintSelf(std::ostream & os, int indent) const
+  virtual int
+  PrintSelf( std::ostream & os, int indent ) const
   {
-    indent += SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== RegistrationParams ==="
-       << std::endl;
+    indent += SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== RegistrationParams ===" << std::endl;
     return indent + 2;
   }
 
-  RegistrationParams() : CompoundObjectBase("RegistrationParams")
+  RegistrationParams()
+    : CompoundObjectBase( "RegistrationParams" )
   {
-    this->Add(new StringValue("ImageTypeToUse", ""), "ImageTypeToUse");
-    this->Add(new StringValue("ID", ""), "ID");
+    this->Add( new StringValue( "ImageTypeToUse", "" ), "ImageTypeToUse" );
+    this->Add( new StringValue( "ID", "" ), "ID" );
   }
 };
 

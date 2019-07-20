@@ -19,47 +19,48 @@
 #include "Slicer3LandmarkIO.h"
 
 
-int main()
+int
+main()
 {
   bool testPassedStatus = true;
 
   // read in bogus landmarks file
   try
-    {
-    std::cout << "Attempting to read in non-exitsant landmarks file" <<std::endl;
-    //hopefully there is no landmarks file with this path in your system.
-    LandmarksMapType bogusLandmarks = ReadSlicer3toITKLmk("/this/file/does/not/exist.fcsv");
+  {
+    std::cout << "Attempting to read in non-exitsant landmarks file" << std::endl;
+    // hopefully there is no landmarks file with this path in your system.
+    LandmarksMapType bogusLandmarks = ReadSlicer3toITKLmk( "/this/file/does/not/exist.fcsv" );
 
     // An exception should be thrown, and this code should never be reached
-    std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" <<std::endl;
+    std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" << std::endl;
     testPassedStatus &= false;
-    }
-  catch (itk::ExceptionObject &exception)
-    {
+  }
+  catch ( itk::ExceptionObject & exception )
+  {
     // We want to succesfully catch this exception
     std::cout << "Successfully caught exception for landmark file reading." << std::endl;
     std::cout << "Exception was:";
-    exception.Print(std::cout);
+    exception.Print( std::cout );
     testPassedStatus &= true;
-    }
+  }
   try
-    {
-    std::cout << "Attempting to read in non-exitsant landmark weight file" <<std::endl;
-    //hopefully there is no landmarks file with this path in your system.
-    LandmarkWeightMapType bogusLandmarksWeights = ReadLandmarkWeights("/this/file/does/not/exist/either.fcsv");
+  {
+    std::cout << "Attempting to read in non-exitsant landmark weight file" << std::endl;
+    // hopefully there is no landmarks file with this path in your system.
+    LandmarkWeightMapType bogusLandmarksWeights = ReadLandmarkWeights( "/this/file/does/not/exist/either.fcsv" );
 
     // An exception should be thrown, and this code should never be reached
-    std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" <<std::endl;
+    std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" << std::endl;
     testPassedStatus &= false;
-    }
-  catch (itk::ExceptionObject &exception)
-    {
+  }
+  catch ( itk::ExceptionObject & exception )
+  {
     // We want to succesfully catch this exception
     std::cout << "Successfully caught exception for landmark weights file reading." << std::endl;
     std::cout << "Exception was:";
-    exception.Print(std::cout);
+    exception.Print( std::cout );
     testPassedStatus &= true;
-    }
+  }
 
-  return testPassedStatus ? EXIT_SUCCESS: EXIT_FAILURE;
+  return testPassedStatus ? EXIT_SUCCESS : EXIT_FAILURE;
 }

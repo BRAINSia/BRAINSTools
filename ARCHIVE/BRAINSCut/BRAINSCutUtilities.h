@@ -37,7 +37,7 @@
 #include "opencv2/flann.hpp"
 
 // using OpenCVMLPType = CvANN_MLP_Revision;
-//using OpenCVMLPType = CvANN_MLP;
+// using OpenCVMLPType = CvANN_MLP;
 using OpenCVMLPType = cv::ml::ANN_MLP;
 
 /** Training data set definition */
@@ -45,70 +45,76 @@ using OpenCVMLPType = cv::ml::ANN_MLP;
 using scalarType = float;
 
 struct pairedTrainingSetType
-  {
-  cv::Mat pairedInput;
-  cv::Mat pairedOutput;
-  cv::Mat pairedOutputRF;
+{
+  cv::Mat      pairedInput;
+  cv::Mat      pairedOutput;
+  cv::Mat      pairedOutputRF;
   unsigned int size;
-  };
+};
 
 /* normalization type */
 enum FeatureNormalizationMethodEnum
-  {
+{
   Linear,
   Sigmoid,
   DoubleSigmoid,
   zScore
-  };
+};
 /*
  * constant
  */
-static const float        HundredPercentValue = 1.0F;
-static const float        ZeroPercentValue = -1.0F;
+static const float            HundredPercentValue = 1.0F;
+static const float            ZeroPercentValue = -1.0F;
 static constexpr unsigned int LineGuardSize = 1;
-static const scalarType   LineGuard = 1234567.0;
-static const float        FLOAT_TOLERANCE = 0.01;
+static const scalarType       LineGuard = 1234567.0;
+static const float            FLOAT_TOLERANCE = 0.01;
 
 /*
-* Image Definitions
-*/
+ * Image Definitions
+ */
 constexpr unsigned char DIMENSION = 3;
 
 using ReadInPixelType = double;
-using ReadInImageType = itk::Image<ReadInPixelType, DIMENSION>;
+using ReadInImageType = itk::Image< ReadInPixelType, DIMENSION >;
 using ReadInImagePointer = ReadInImageType::Pointer;
 
 using WorkingPixelType = float;
-using WorkingImageType = itk::Image<WorkingPixelType, DIMENSION>;
+using WorkingImageType = itk::Image< WorkingPixelType, DIMENSION >;
 using WorkingImagePointer = WorkingImageType::Pointer;
 
-using WorkingImageVectorType = std::vector<WorkingImagePointer>;
+using WorkingImageVectorType = std::vector< WorkingImagePointer >;
 
 /* Deformations */
 using DeformationScalarType = double;
-using DeformationPixelType = itk::Vector<DeformationScalarType, DIMENSION>;
-using DisplacementFieldType = itk::Image<DeformationPixelType, DIMENSION>;
+using DeformationPixelType = itk::Vector< DeformationScalarType, DIMENSION >;
+using DisplacementFieldType = itk::Image< DeformationPixelType, DIMENSION >;
 
 using WorkingIndexType = WorkingImageType::IndexType;
 
-using InputVectorType = std::vector<WorkingPixelType>;
-using OutputVectorType = std::vector<WorkingPixelType>;
+using InputVectorType = std::vector< WorkingPixelType >;
+using OutputVectorType = std::vector< WorkingPixelType >;
 
 // HACK TODO:  Regina int below should be unsigned int to avoid negative index numbers
-using InputVectorMapType = std::map<int, InputVectorType>; // < index ,feature vector > pair
-using OutputVectorMapType = std::map<int, OutputVectorType>;
-using PredictValueMapType = std::map<int, scalarType>;
+using InputVectorMapType = std::map< int, InputVectorType >; // < index ,feature vector > pair
+using OutputVectorMapType = std::map< int, OutputVectorType >;
+using PredictValueMapType = std::map< int, scalarType >;
 
-std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
+std::string
+GetAtlasToSubjectRegistrationFilename( DataSet & subject );
 
-std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);
+std::string
+GetSubjectToAtlasRegistrationFilename( DataSet & subject );
 
-WorkingImagePointer SmoothImage( const WorkingImagePointer& image, const float GaussianValue);
+WorkingImagePointer
+SmoothImage( const WorkingImagePointer & image, const float GaussianValue );
 
-WorkingImagePointer ReadImageByFilename( const std::string  & filename );
+WorkingImagePointer
+ReadImageByFilename( const std::string & filename );
 
-DisplacementFieldType::Pointer GetDeformationField( std::string filename);
+DisplacementFieldType::Pointer
+GetDeformationField( std::string filename );
 
-itk::Transform<double, 3, 3>::Pointer GetGenericTransform( std::string filename);
+itk::Transform< double, 3, 3 >::Pointer
+GetGenericTransform( std::string filename );
 
 #endif

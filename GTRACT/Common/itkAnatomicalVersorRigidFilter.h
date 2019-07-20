@@ -72,16 +72,16 @@ namespace itk
 class GTRACT_COMMON_EXPORT AnatomicalVersorRigidFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalVersorRigidFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( AnatomicalVersorRigidFilter );
 
   /** Standard class type alias. */
   using Self = AnatomicalVersorRigidFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Fixed Image type alias. */
-  using RegisterImageType = itk::Image<signed short, 3>;
+  using RegisterImageType = itk::Image< signed short, 3 >;
   using RegisterImagePointer = RegisterImageType::Pointer;
   using RegisterImageConstPointer = RegisterImageType::ConstPointer;
   using RegisterImageRegionType = RegisterImageType::RegionType;
@@ -93,24 +93,16 @@ public:
   using RegisterImageIndexType = RegisterImageType::IndexType;
 
   /** Output Transform type alias. */
-  using TransformType = itk::VersorRigid3DTransform<double>;
+  using TransformType = itk::VersorRigid3DTransform< double >;
   using OptimizerType = itk::VersorRigid3DTransformOptimizer;
-  using MetricType = itk::MattesMutualInformationImageToImageMetric<
-      RegisterImageType,
-      RegisterImageType>;
+  using MetricType = itk::MattesMutualInformationImageToImageMetric< RegisterImageType, RegisterImageType >;
 
-  using InterpolatorType = itk::LinearInterpolateImageFunction<
-      RegisterImageType,
-      double>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction< RegisterImageType, double >;
 
-  using RegistrationType = itk::ImageRegistrationMethod<
-      RegisterImageType,
-      RegisterImageType>;
+  using RegistrationType = itk::ImageRegistrationMethod< RegisterImageType, RegisterImageType >;
 
-  typedef itk::CenteredTransformInitializer<TransformType,
-                                            RegisterImageType,
-                                            RegisterImageType
-                                            >  TransformInitializerType;
+  typedef itk::CenteredTransformInitializer< TransformType, RegisterImageType, RegisterImageType >
+    TransformInitializerType;
   using TransformTypePointer = TransformType::Pointer;
   using VersorType = TransformType::VersorType;
   using VectorType = VersorType::VectorType;
@@ -123,40 +115,39 @@ public:
   using TransformInitializerTypePointer = TransformInitializerType::Pointer;
 
   /** Standard New method. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
-/** Runtime information support. */
-  itkTypeMacro(AnatomicalVersorRigidFilter, itk::Object);
+  /** Runtime information support. */
+  itkTypeMacro( AnatomicalVersorRigidFilter, itk::Object );
 
-/* SetInput and GetOutput Macros */
-  itkSetObjectMacro(FixedImage,  RegisterImageType);
-  itkSetObjectMacro(MovingImage, RegisterImageType);
-  itkGetConstObjectMacro(Output,      TransformType);
+  /* SetInput and GetOutput Macros */
+  itkSetObjectMacro( FixedImage, RegisterImageType );
+  itkSetObjectMacro( MovingImage, RegisterImageType );
+  itkGetConstObjectMacro( Output, TransformType );
 
-  itkSetMacro(NumberOfSpatialSamples, int);
-  itkSetMacro(NumberOfIterations,     int);
-  itkSetMacro(TranslationScale,       float);
-  itkSetMacro(MaximumStepLength,      float);
-  itkSetMacro(MinimumStepLength,      float);
-  itkSetMacro(RelaxationFactor,       float);
-  itkSetMacro(InitialRotationAngle,   double);
-  itkSetMacro(InitialRotationAxis,    int);
+  itkSetMacro( NumberOfSpatialSamples, int );
+  itkSetMacro( NumberOfIterations, int );
+  itkSetMacro( TranslationScale, float );
+  itkSetMacro( MaximumStepLength, float );
+  itkSetMacro( MinimumStepLength, float );
+  itkSetMacro( RelaxationFactor, float );
+  itkSetMacro( InitialRotationAngle, double );
+  itkSetMacro( InitialRotationAxis, int );
 
-  void Update();
+  void
+  Update();
 
 protected:
   AnatomicalVersorRigidFilter();
-  ~AnatomicalVersorRigidFilter() override
-  {
-  }
+  ~AnatomicalVersorRigidFilter() override {}
 
 private:
-// Input and Output Image
+  // Input and Output Image
   RegisterImagePointer m_FixedImage;
   RegisterImagePointer m_MovingImage;
   TransformTypePointer m_Output;
 
-// Registration Parameters
+  // Registration Parameters
   float  m_TranslationScale;
   float  m_MaximumStepLength;
   float  m_MinimumStepLength;
@@ -165,7 +156,7 @@ private:
   int    m_NumberOfIterations;
   int    m_InitialRotationAxis;
   double m_InitialRotationAngle;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #endif

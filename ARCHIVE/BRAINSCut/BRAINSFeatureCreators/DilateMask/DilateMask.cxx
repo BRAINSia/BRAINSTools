@@ -16,12 +16,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+#if defined( _MSC_VER )
+#  pragma warning( disable : 4786 )
 #endif
 
 #ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
+#  define ITK_LEAN_AND_MEAN
 #endif
 
 #include "itkImage.h"
@@ -36,7 +36,8 @@
 #include "DilateMaskCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -45,22 +46,17 @@ int main( int argc, char * argv[] )
   using InputPixelType = float;
   using OutputPixelType = unsigned char;
 
-  using InputImageType = itk::Image<InputPixelType,  Dimension>;
-  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+  using InputImageType = itk::Image< InputPixelType, Dimension >;
+  using OutputImageType = itk::Image< OutputPixelType, Dimension >;
 
-  using ReaderType = itk::ImageFileReader<InputImageType>;
-  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  using ReaderType = itk::ImageFileReader< InputImageType >;
+  using WriterType = itk::ImageFileWriter< OutputImageType >;
 
-  using ThresholdFilterType = itk::BinaryThresholdImageFilter<InputImageType, OutputImageType>;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter< InputImageType, OutputImageType >;
 
-  using StructuringElementType = itk::BinaryBallStructuringElement<
-      InputPixelType,
-      Dimension>;
+  using StructuringElementType = itk::BinaryBallStructuringElement< InputPixelType, Dimension >;
 
-  using DilateFilterType = itk::BinaryDilateImageFilter<
-      OutputImageType,
-      OutputImageType,
-      StructuringElementType>;
+  using DilateFilterType = itk::BinaryDilateImageFilter< OutputImageType, OutputImageType, StructuringElementType >;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writingFilter = WriterType::New();
@@ -69,7 +65,7 @@ int main( int argc, char * argv[] )
 
   DilateFilterType::Pointer binaryDilate = DilateFilterType::New();
   StructuringElementType    structuringElement;
-  structuringElement.SetRadius( sizeStructuralElement);  // 3x3 structuring element
+  structuringElement.SetRadius( sizeStructuralElement ); // 3x3 structuring element
   structuringElement.CreateStructuringElement();
   binaryDilate->SetKernel( structuringElement );
 
@@ -79,11 +75,11 @@ int main( int argc, char * argv[] )
 
   thresholder->SetInput( reader->GetOutput() );
 
-  InputPixelType background =   0;
+  InputPixelType background = 0;
   InputPixelType foreground = 1;
 
   thresholder->SetOutsideValue( background );
-  thresholder->SetInsideValue(  foreground );
+  thresholder->SetInsideValue( foreground );
 
   thresholder->SetLowerThreshold( lowerThreshold );
   // thresholder->SetUpperThreshold( upperThreshold );

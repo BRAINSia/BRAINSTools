@@ -3,11 +3,12 @@
 #include <itkHessianToObjectnessMeasureImageFilter.h>
 #include <itkMultiScaleHessianBasedMeasureImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
-int main( int argc, char* argv[] )
+int
+main( int argc, char * argv[] )
 {
-  if( argc < 3 )
+  if ( argc < 3 )
   {
-    std::cerr << "Usage: "<< std::endl;
+    std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0];
     std::cerr << " <InputFileName> <OutputFileName>";
     std::cerr << " [SigmaMinimum] [SigmaMaximum] [NumberOfSigmaSteps]";
@@ -17,43 +18,43 @@ int main( int argc, char* argv[] )
   }
   const char * inputFileName = argv[1];
   const char * outputFileName = argv[2];
-  double sigmaMinimum = 1.0;
-  double sigmaMaximum = 10.0;
+  double       sigmaMinimum = 1.0;
+  double       sigmaMaximum = 10.0;
   unsigned int numberOfSigmaSteps = 10;
-  double alpha = 0.1;
-  double beta = 0.1;
-  double gamma = 20.0;
-  int structure = 2;
-  bool bright = true;
-  if( argc > 3 )
+  double       alpha = 0.1;
+  double       beta = 0.1;
+  double       gamma = 20.0;
+  int          structure = 2;
+  bool         bright = true;
+  if ( argc > 3 )
   {
     sigmaMinimum = std::stod( argv[3] );
   }
-  if( argc > 4 )
+  if ( argc > 4 )
   {
     sigmaMaximum = std::stod( argv[4] );
   }
-  if( argc > 5 )
+  if ( argc > 5 )
   {
     numberOfSigmaSteps = std::stod( argv[5] );
   }
-  if( argc > 6 )
+  if ( argc > 6 )
   {
     alpha = std::stod( argv[6] );
   }
-  if( argc > 7 )
+  if ( argc > 7 )
   {
-    beta = std::stod(argv[7] );
+    beta = std::stod( argv[7] );
   }
-  if( argc > 8 )
+  if ( argc > 8 )
   {
     gamma = std::stod( argv[8] );
   }
-  if( argc > 9 )
+  if ( argc > 9 )
   {
     structure = std::stoi( argv[9] );
   }
-  if( argc >10)
+  if ( argc > 10 )
   {
     bright = argv[10];
   }
@@ -75,11 +76,11 @@ int main( int argc, char* argv[] )
   objectnessFilter->SetAlpha( alpha );
   objectnessFilter->SetBeta( beta );
   objectnessFilter->SetGamma( gamma );
-  objectnessFilter->SetObjectDimension(structure);
+  objectnessFilter->SetObjectDimension( structure );
 
-  using MultiScaleEnhancementFilterType = itk::MultiScaleHessianBasedMeasureImageFilter< ImageType, HessianImageType, ImageType >;
-  MultiScaleEnhancementFilterType::Pointer multiScaleEnhancementFilter =
-  MultiScaleEnhancementFilterType::New();
+  using MultiScaleEnhancementFilterType =
+    itk::MultiScaleHessianBasedMeasureImageFilter< ImageType, HessianImageType, ImageType >;
+  MultiScaleEnhancementFilterType::Pointer multiScaleEnhancementFilter = MultiScaleEnhancementFilterType::New();
   multiScaleEnhancementFilter->SetInput( reader->GetOutput() );
   multiScaleEnhancementFilter->SetHessianToMeasureFilter( objectnessFilter );
   multiScaleEnhancementFilter->SetSigmaStepMethodToLogarithmic();
@@ -92,16 +93,16 @@ int main( int argc, char* argv[] )
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName );
   writer->SetInput( multiScaleEnhancementFilter->GetOutput() );
-  std::cout<<objectnessFilter->GetAlpha()<<std::endl;
-  std::cout<<objectnessFilter->GetBeta()<<std::endl;
-  std::cout<<objectnessFilter->GetGamma()<<std::endl;
+  std::cout << objectnessFilter->GetAlpha() << std::endl;
+  std::cout << objectnessFilter->GetBeta() << std::endl;
+  std::cout << objectnessFilter->GetGamma() << std::endl;
 
 
   try
   {
     writer->Update();
   }
-  catch( itk::ExceptionObject & error )
+  catch ( itk::ExceptionObject & error )
   {
     std::cerr << "Error: " << error << std::endl;
     return EXIT_FAILURE;

@@ -28,16 +28,15 @@ namespace itk
  * \class QuadEdgeMeshRayTracingFilter
  * \brief This filter first computes the center of mass C of the input mesh.
  * Then it projects each vertex on a sphere centered at C.
-*/
-template <typename TInputMesh, typename TOutputMesh>
-class QuadEdgeMeshRayTracingFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+ */
+template < typename TInputMesh, typename TOutputMesh >
+class QuadEdgeMeshRayTracingFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
   using Self = QuadEdgeMeshRayTracingFilter;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshRayTracingFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -59,11 +58,9 @@ public:
   using InputTraits = typename InputMeshType::Traits;
 
   using InputPointsContainer = typename InputMeshType::PointsContainer;
-  typedef typename InputMeshType::PointsContainerConstIterator
-    InputPointsContainerConstIterator;
+  typedef typename InputMeshType::PointsContainerConstIterator InputPointsContainerConstIterator;
 
-  typedef typename InputMeshType::CellsContainerConstIterator
-    InputCellsContainerConstIterator;
+  typedef typename InputMeshType::CellsContainerConstIterator InputCellsContainerConstIterator;
   using InputEdgeCellType = typename InputMeshType::EdgeCellType;
   using InputPolygonCellType = typename InputMeshType::PolygonCellType;
   using InputPointIdList = typename InputMeshType::PointIdList;
@@ -78,34 +75,34 @@ public:
   using OutputQEType = typename OutputMeshType::QEType;
   using OutputVectorType = typename OutputMeshType::VectorType;
   using OutputQEIterator = typename OutputQEType::IteratorGeom;
-  typedef typename OutputMeshType::PointsContainerPointer
-    OutputPointsContainerPointer;
-  typedef typename OutputMeshType::PointsContainerIterator
-    OutputPointsContainerIterator;
+  typedef typename OutputMeshType::PointsContainerPointer  OutputPointsContainerPointer;
+  typedef typename OutputMeshType::PointsContainerIterator OutputPointsContainerIterator;
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
+  using CoefficientsComputation = MatrixCoefficients< InputMeshType >;
 
-  void SetCoefficientsMethod( CoefficientsComputation* iMethod )
+  void
+  SetCoefficientsMethod( CoefficientsComputation * iMethod )
   {
-    (void) iMethod;
+    (void)iMethod;
   }
 
   itkSetMacro( Radius, OutputCoordRepType );
-protected:
-  QuadEdgeMeshRayTracingFilter() : Superclass(), m_Radius( 1. )
-  {
-  }
 
-  ~QuadEdgeMeshRayTracingFilter()
-  {
-  }
+protected:
+  QuadEdgeMeshRayTracingFilter()
+    : Superclass()
+    , m_Radius( 1. )
+  {}
+
+  ~QuadEdgeMeshRayTracingFilter() {}
 
   OutputPointType    m_Center;
   OutputCoordRepType m_Radius;
 
-  void GenerateData()
+  void
+  GenerateData()
   {
     this->CopyInputMeshToOutputMesh();
 
@@ -116,26 +113,27 @@ protected:
     OutputCoordRepType norm2;
     OutputPointType    u;
     unsigned int       dim;
-    for( p_it = points->Begin(); p_it != points->End(); ++p_it )
-      {
+    for ( p_it = points->Begin(); p_it != points->End(); ++p_it )
+    {
       norm2 = 0.;
       u.SetEdge( p_it->Value().GetEdge() );
-      for( dim = 0; dim < PointDimension; ++dim )
-        {
+      for ( dim = 0; dim < PointDimension; ++dim )
+      {
         u[dim] = p_it->Value()[dim] - m_Center[dim];
         norm2 += u[dim] * u[dim];
-        }
-      norm2 = m_Radius / std::sqrt( norm2 );
-      for( dim = 0; dim < PointDimension; ++dim )
-        {
-        u[dim] *= norm2;
-        }
-      points->SetElement( p_it->Index(), u );
       }
+      norm2 = m_Radius / std::sqrt( norm2 );
+      for ( dim = 0; dim < PointDimension; ++dim )
+      {
+        u[dim] *= norm2;
+      }
+      points->SetElement( p_it->Index(), u );
+    }
   }
 
   /** \brief Compute the Center of mass of the input mesh. */
-  void ComputeCenterOfMass()
+  void
+  ComputeCenterOfMass()
   {
     m_Center.Fill( 0. );
 
@@ -145,24 +143,25 @@ protected:
 
     unsigned int  dim;
     unsigned long k = 0;
-    for(; p_it != points->End(); ++p_it, ++k )
+    for ( ; p_it != points->End(); ++p_it, ++k )
+    {
+      for ( dim = 0; dim < PointDimension; ++dim )
       {
-      for( dim = 0; dim < PointDimension; ++dim )
-        {
         m_Center[dim] += p_it->Value()[dim];
-        }
       }
+    }
 
-    OutputCoordRepType inv = 1. / static_cast<OutputCoordRepType>(k);
-    for( dim = 0; dim < PointDimension; ++dim )
-      {
+    OutputCoordRepType inv = 1. / static_cast< OutputCoordRepType >( k );
+    for ( dim = 0; dim < PointDimension; ++dim )
+    {
       m_Center[dim] *= inv;
-      }
+    }
   }
 
 private:
   QuadEdgeMeshRayTracingFilter( const Self & );
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 };
-}
+} // namespace itk
 #endif

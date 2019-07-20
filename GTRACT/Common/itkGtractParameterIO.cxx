@@ -41,16 +41,15 @@
 
 namespace itk
 {
-GtractParameterIO
-::GtractParameterIO() :
-  m_Directions(),
-  m_Bvalue(0.0),
-  m_NumberOfDirections(0),
-  m_FileName("")
-{
-}
+GtractParameterIO ::GtractParameterIO()
+  : m_Directions()
+  , m_Bvalue( 0.0 )
+  , m_NumberOfDirections( 0 )
+  , m_FileName( "" )
+{}
 
-void GtractParameterIO::Update()
+void
+GtractParameterIO::Update()
 {
   std::cout << std::endl;
   std::cout << "Loading parameter file...." << std::endl;
@@ -58,27 +57,27 @@ void GtractParameterIO::Update()
 
   std::ifstream fin( m_FileName.c_str() );
 
-  if( fin )
-    {
+  if ( fin )
+  {
     // Read in the Nominal b values
     fin >> m_Bvalue;
 
     // Read in the direction profile
     fin >> m_NumberOfDirections;
-      {
-      TMatrix temp(m_NumberOfDirections, 6);
-      temp.fill(0.0);
+    {
+      TMatrix temp( m_NumberOfDirections, 6 );
+      temp.fill( 0.0 );
       m_Directions = temp;
-      }
-    for( int i = 0; i < m_NumberOfDirections; i++ )
-      {
+    }
+    for ( int i = 0; i < m_NumberOfDirections; i++ )
+    {
       fin >> m_Directions[i][0] >> m_Directions[i][1] >> m_Directions[i][2];
-      }
+    }
 
     fin.close();
 
     std::cout << "Done!" << std::endl;
-    }
+  }
 }
 } // end namespace itk
 #endif

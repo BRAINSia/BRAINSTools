@@ -18,36 +18,37 @@
 #define __itkEncodedTransformFileReader_h
 
 #ifdef ITK_USE_TRANSFORM_IO_FACTORIES
-#include "itkEncodedTransformFileReaderWithFactory.h"
+#  include "itkEncodedTransformFileReaderWithFactory.h"
 #else
 
-#include "itkTransformFileReader.h"
-#include "vtkITK.h"
+#  include "itkTransformFileReader.h"
+#  include "vtkITK.h"
 
 namespace itk
 {
 class VTK_ITK_EXPORT EncodedTransformFileReader : public TransformFileReader
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileReader);
+  ITK_DISALLOW_COPY_AND_ASSIGN( EncodedTransformFileReader );
 
   /** SmartPointer type alias support */
   using Self = EncodedTransformFileReader;
-  using Pointer = SmartPointer<Self>;
+  using Pointer = SmartPointer< Self >;
 
   /** Method for creation through the object factory */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
   using Superclass = TransformFileReader;
-  itkTypeMacro(EncodedTransformFileReader, TransformFileReader);
+  itkTypeMacro( EncodedTransformFileReader, TransformFileReader );
   using TransformType = Superclass::TransformType;
   using ParametersType = Superclass::ParametersType;
   using TransformPointer = Superclass::TransformPointer;
   using TransformListType = Superclass::TransformListType;
 
   /** Read in the transform */
-  void Update();
+  void
+  Update();
 
 protected:
   EncodedTransformFileReader();

@@ -61,17 +61,17 @@ namespace itk
  * The output of the filter contains the resulting spatial object.
  */
 
-template <typename TInputImage, typename TTransformType, typename TSpatialObject>
+template < typename TInputImage, typename TTransformType, typename TSpatialObject >
 class CreateSpatialObjectFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(CreateSpatialObjectFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( CreateSpatialObjectFilter );
 
   /** Standard class type alias. */
   using Self = CreateSpatialObjectFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
@@ -94,34 +94,35 @@ public:
   using SpatialObjectPointListType = typename SpatialObjectType::PointListType;
 
   /** Standard New method. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Runtime information support. */
-  itkTypeMacro(CreateSpatialObjectFilter, itk::Object);
+  itkTypeMacro( CreateSpatialObjectFilter, itk::Object );
 
   /* SetInput and GetOutput Macros */
-  itkSetObjectMacro(Input, InputImageType);
-  itkGetConstObjectMacro(Output, SpatialObjectType);
-  itkSetObjectMacro(Transform, TransformType);
-  itkGetMacro(Size, InputImageSizeType);
-  itkSetMacro(Size, InputImageSizeType);
-  itkGetMacro(Spacing, InputImageSpacingType);
-  itkSetMacro(Spacing, InputImageSpacingType);
-  itkGetMacro(Origin, InputImagePointType);
-  itkSetMacro(Origin, InputImagePointType);
+  itkSetObjectMacro( Input, InputImageType );
+  itkGetConstObjectMacro( Output, SpatialObjectType );
+  itkSetObjectMacro( Transform, TransformType );
+  itkGetMacro( Size, InputImageSizeType );
+  itkSetMacro( Size, InputImageSizeType );
+  itkGetMacro( Spacing, InputImageSpacingType );
+  itkSetMacro( Spacing, InputImageSpacingType );
+  itkGetMacro( Origin, InputImagePointType );
+  itkSetMacro( Origin, InputImagePointType );
 
-  void Update();
+  void
+  Update();
 
 protected:
   CreateSpatialObjectFilter();
-  ~CreateSpatialObjectFilter()
-  {
-  }
+  ~CreateSpatialObjectFilter() {}
 
 private:
-  void LoadImage();
+  void
+  LoadImage();
 
-  void ExtractROI();
+  void
+  ExtractROI();
 
   // Input and Output Image
   InputImagePointer        m_Input;
@@ -130,11 +131,11 @@ private:
   InputImageSpacingType    m_Spacing;
   InputImagePointType      m_Origin;
   SpatialObjectTypePointer m_Output;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkCreateSpatialObjectFilter.hxx"
+#  include "itkCreateSpatialObjectFilter.hxx"
 #endif
 
 #endif

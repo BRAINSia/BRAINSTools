@@ -63,101 +63,95 @@
 
 namespace itk
 {
-template <typename TInputImage, typename TOutputImage>
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::HoughTransformRadialVotingImageFilter() :
-  m_MinimumRadius(0),   // by default
-  m_MaximumRadius(10),  // by default
-  m_Threshold(0),
-  m_GradientThreshold(0),
-  m_OutputThreshold(0.0),
-  m_SigmaGradient(1),   // Scale of the DoG filter
-  m_Variance(1),
-  m_VotingRadiusRatio(0.5),
-  m_SphereRadiusRatio(1),
-  m_SamplingRatio(1.0),
-  m_RadiusImage(nullptr),
-  m_AccumulatorImage(nullptr),
-  m_SpheresList(),
-  m_NumberOfSpheres(1),
-  m_OldModifiedTime(0),
-  m_NbOfThreads(1),
-  m_AllSeedsProcessed(false),
-  m_HoughEyeDetectorMode(0)
+template < typename TInputImage, typename TOutputImage >
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::HoughTransformRadialVotingImageFilter()
+  : m_MinimumRadius( 0 )
+  , // by default
+  m_MaximumRadius( 10 )
+  , // by default
+  m_Threshold( 0 )
+  , m_GradientThreshold( 0 )
+  , m_OutputThreshold( 0.0 )
+  , m_SigmaGradient( 1 )
+  , // Scale of the DoG filter
+  m_Variance( 1 )
+  , m_VotingRadiusRatio( 0.5 )
+  , m_SphereRadiusRatio( 1 )
+  , m_SamplingRatio( 1.0 )
+  , m_RadiusImage( nullptr )
+  , m_AccumulatorImage( nullptr )
+  , m_SpheresList()
+  , m_NumberOfSpheres( 1 )
+  , m_OldModifiedTime( 0 )
+  , m_NbOfThreads( 1 )
+  , m_AllSeedsProcessed( false )
+  , m_HoughEyeDetectorMode( 0 )
 {
   // Limiting the Hough Filter to run with single thread.
   // In a single threaded status, the increment of run time for this filter is not tremendous in compare with
   // the total run time of the BCD
-  this->SetNumberOfWorkUnits(1);
-  this->DynamicMultiThreadingOff();  //NEEDED FOR ITKv5 backwards compatibility
+  this->SetNumberOfWorkUnits( 1 );
+  this->DynamicMultiThreadingOff(); // NEEDED FOR ITKv5 backwards compatibility
 }
 
-template <typename TInputImage, typename TOutputImage>
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::~HoughTransformRadialVotingImageFilter()
-{
-}
+template < typename TInputImage, typename TOutputImage >
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::~HoughTransformRadialVotingImageFilter()
+{}
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::SetRadius(InputCoordType radius)
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::SetRadius( InputCoordType radius )
 {
-  this->SetMinimumRadius(radius);
-  this->SetMaximumRadius(radius);
+  this->SetMinimumRadius( radius );
+  this->SetMaximumRadius( radius );
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::EnlargeOutputRequestedRegion(DataObject *output)
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::EnlargeOutputRequestedRegion( DataObject * output )
 {
-  Superclass::EnlargeOutputRequestedRegion(output);
+  Superclass::EnlargeOutputRequestedRegion( output );
 
   output->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::GenerateInputRequestedRegion()
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::GenerateInputRequestedRegion()
 {
   Superclass::GenerateInputRequestedRegion();
 
-  if( this->GetInput() )
-    {
-    InputImagePointer image =
-      const_cast<InputImageType *>( this->GetInput() );
+  if ( this->GetInput() )
+  {
+    InputImagePointer image = const_cast< InputImageType * >( this->GetInput() );
     image->SetRequestedRegionToLargestPossibleRegion();
-    }
+  }
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::BeforeThreadedGenerateData()
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::BeforeThreadedGenerateData()
 {
   // Get the input and output pointers
   const InputImageConstPointer inputImage = this->GetInput();
 
   m_AccumulatorImage = InternalImageType::New();
-  m_AccumulatorImage->CopyInformation(inputImage);
+  m_AccumulatorImage->CopyInformation( inputImage );
   m_AccumulatorImage->SetRegions( inputImage->GetLargestPossibleRegion() );
 
   m_AccumulatorImage->Allocate();
-  m_AccumulatorImage->FillBuffer(0);
+  m_AccumulatorImage->FillBuffer( 0 );
 
   m_RadiusImage = InternalImageType::New();
   m_RadiusImage->CopyInformation( inputImage );
   m_RadiusImage->SetRegions( inputImage->GetLargestPossibleRegion() );
   m_RadiusImage->Allocate();
-  m_RadiusImage->FillBuffer(0);
+  m_RadiusImage->FillBuffer( 0 );
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::AfterThreadedGenerateData()
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::AfterThreadedGenerateData()
 {
   ComputeMeanRadiusImage();
 
@@ -167,20 +161,19 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 
   iIt.GoToBegin();
   oIt.GoToBegin();
-  while( !iIt.IsAtEnd() )
-    {
+  while ( !iIt.IsAtEnd() )
+  {
     assert( !oIt.IsAtEnd() );
-    oIt.Set( static_cast<OutputPixelType>( iIt.Get() ) );
+    oIt.Set( static_cast< OutputPixelType >( iIt.Get() ) );
     ++iIt;
     ++oIt;
-    }
+  }
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(
-  const OutputImageRegionType & windowRegion,
-  ThreadIdType /* threadId -- Not used */)
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(
+  const OutputImageRegionType & windowRegion, ThreadIdType /* threadId -- Not used */ )
 
 {
   // Get the input and output pointers
@@ -188,160 +181,153 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
   const InputSpacingType       spacing = inputImage->GetSpacing();
 
   DoGFunctionPointer DoGFunction = DoGFunctionType::New();
-  DoGFunction->SetUseImageSpacing(true);
+  DoGFunction->SetUseImageSpacing( true );
 
-  DoGFunction->SetInputImage(inputImage);
-  DoGFunction->SetSigma(m_SigmaGradient);
+  DoGFunction->SetInputImage( inputImage );
+  DoGFunction->SetSigma( m_SigmaGradient );
 
   GaussianFunctionPointer GaussianFunction = GaussianFunctionType::New();
 
   const InputCoordType averageRadius = 0.5 * ( m_MinimumRadius + m_MaximumRadius );
   const InputCoordType averageRadius2 = averageRadius * averageRadius;
 
-  ImageRegionConstIteratorWithIndex<InputImageType>
-  image_it(inputImage, windowRegion);
+  ImageRegionConstIteratorWithIndex< InputImageType > image_it( inputImage, windowRegion );
   image_it.GoToBegin();
 
-  const unsigned int sampling = static_cast<unsigned int>( 1. / m_SamplingRatio );
+  const unsigned int sampling = static_cast< unsigned int >( 1. / m_SamplingRatio );
   unsigned int       counter = 1;
 
   InternalRegionType region;
-  while( !image_it.IsAtEnd() )
+  while ( !image_it.IsAtEnd() )
+  {
+    if ( image_it.Get() > m_Threshold )
     {
-    if( image_it.Get() > m_Threshold )
-      {
-      const Index<ImageDimension> index = image_it.GetIndex();
-      DoGVectorType               grad = DoGFunction->EvaluateAtIndex(index);
+      const Index< ImageDimension > index = image_it.GetIndex();
+      DoGVectorType                 grad = DoGFunction->EvaluateAtIndex( index );
 
       // if the gradient is not flat
       typename DoGVectorType::ValueType norm2 = grad.GetSquaredNorm();
 
-      if( norm2 > m_GradientThreshold )
+      if ( norm2 > m_GradientThreshold )
+      {
+        if ( counter % sampling == 0 )
         {
-        if( counter % sampling == 0 )
-          {
           // Normalization
-          if( norm2 != 0 )
+          if ( norm2 != 0 )
+          {
+            const typename DoGVectorType::ValueType inv_norm = 1.0 / std::sqrt( norm2 );
+            for ( unsigned int i = 0; i < ImageDimension; i++ )
             {
-            const typename DoGVectorType::ValueType inv_norm = 1.0 / std::sqrt(norm2);
-            for( unsigned int i = 0; i < ImageDimension; i++ )
-              {
               grad[i] *= inv_norm;
-              }
             }
-          Index<ImageDimension> center;
-            {
+          }
+          Index< ImageDimension > center;
+          {
             InternalIndexType start;
             InternalSizeType  size;
-            for( unsigned int i = 0; i < ImageDimension; i++ )
-              {
+            for ( unsigned int i = 0; i < ImageDimension; i++ )
+            {
               // for T1, T2 images
-              if( m_HoughEyeDetectorMode == 1 )
-                {
-                center[i] = index[i] + static_cast
-                  <InternalIndexValueType>( averageRadius * grad[i] / spacing[i] );
-                }
+              if ( m_HoughEyeDetectorMode == 1 )
+              {
+                center[i] = index[i] + static_cast< InternalIndexValueType >( averageRadius * grad[i] / spacing[i] );
+              }
               else
-                { // for PD image
-                center[i] = index[i] - static_cast
-                  <InternalIndexValueType>( averageRadius * grad[i] / spacing[i] );
-                }
+              { // for PD image
+                center[i] = index[i] - static_cast< InternalIndexValueType >( averageRadius * grad[i] / spacing[i] );
+              }
 
               const InputCoordType rad = m_VotingRadiusRatio * m_MinimumRadius / spacing[i];
-              start[i] = center[i] - static_cast<InternalIndexValueType>( rad );
-              size[i] = 1 + 2 * static_cast<InternalSizeValueType>( rad );
-              }
-            region.SetSize(size);
-            region.SetIndex(start);
+              start[i] = center[i] - static_cast< InternalIndexValueType >( rad );
+              size[i] = 1 + 2 * static_cast< InternalSizeValueType >( rad );
             }
+            region.SetSize( size );
+            region.SetIndex( start );
+          }
 
-          if( inputImage->GetRequestedRegion().IsInside(region) )
-            {
-            ImageRegionIteratorWithIndex<InternalImageType>
-            It1(m_AccumulatorImage, region);
+          if ( inputImage->GetRequestedRegion().IsInside( region ) )
+          {
+            ImageRegionIteratorWithIndex< InternalImageType > It1( m_AccumulatorImage, region );
 
-            ImageRegionIterator<InternalImageType> It2(m_RadiusImage, region);
+            ImageRegionIterator< InternalImageType > It2( m_RadiusImage, region );
 
             It1.GoToBegin();
             It2.GoToBegin();
-            while( !It1.IsAtEnd() )
-              {
+            while ( !It1.IsAtEnd() )
+            {
               assert( !It2.IsAtEnd() );
-              const Index<ImageDimension> indexAtVote = It1.GetIndex();
-              InputCoordType              distance = 0;
-              double                      d = 0;
-              for( unsigned int i = 0; i < ImageDimension; i++ )
-                {
-                d += itk::Math::sqr (
-                    static_cast<double>( indexAtVote[i] - center[i] ) * spacing[i]);
-                distance += itk::Math::sqr (
-                    static_cast<InputCoordType>( indexAtVote[i] - index[i] ) * spacing[i]);
-                }
-              d = std::sqrt(d);
-              distance = std::sqrt(distance);
+              const Index< ImageDimension > indexAtVote = It1.GetIndex();
+              InputCoordType                distance = 0;
+              double                        d = 0;
+              for ( unsigned int i = 0; i < ImageDimension; i++ )
+              {
+                d += itk::Math::sqr( static_cast< double >( indexAtVote[i] - center[i] ) * spacing[i] );
+                distance += itk::Math::sqr( static_cast< InputCoordType >( indexAtVote[i] - index[i] ) * spacing[i] );
+              }
+              d = std::sqrt( d );
+              distance = std::sqrt( distance );
 
               // Apply a normal distribution weight;
-              const double weight = GaussianFunction->EvaluatePDF(d, 0, averageRadius2);
-              double       distweight(distance * weight);
+              const double weight = GaussianFunction->EvaluatePDF( d, 0, averageRadius2 );
+              double       distweight( distance * weight );
 
-              It1.Set(It1.Get() + weight);
-              It2.Set(It2.Get() + distweight);
+              It1.Set( It1.Get() + weight );
+              It2.Set( It2.Get() + distweight );
 
               ++It1;
               ++It2;
-              }
             }
-          } // end counter
+          }
+        } // end counter
         counter++;
-        } // end gradient threshold
-      }   // end intensity threshold
+      } // end gradient threshold
+    }   // end intensity threshold
     ++image_it;
-    }
+  }
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeMeanRadiusImage()
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::ComputeMeanRadiusImage()
 {
-  const InputImageConstPointer inputImage = this->GetInput(0);
+  const InputImageConstPointer inputImage = this->GetInput( 0 );
   const InputRegionType        windowRegion = inputImage->GetRequestedRegion();
 
-  ImageRegionConstIterator<InternalImageType> acc_it(m_AccumulatorImage, windowRegion);
-  ImageRegionIterator<InternalImageType>      radius_it(m_RadiusImage, windowRegion);
+  ImageRegionConstIterator< InternalImageType > acc_it( m_AccumulatorImage, windowRegion );
+  ImageRegionIterator< InternalImageType >      radius_it( m_RadiusImage, windowRegion );
 
   acc_it.GoToBegin();
   radius_it.GoToBegin();
-  while( !acc_it.IsAtEnd() )
+  while ( !acc_it.IsAtEnd() )
+  {
+    assert( !radius_it.IsAtEnd() );
+    if ( acc_it.Get() > 0 )
     {
-    assert(!radius_it.IsAtEnd() );
-    if( acc_it.Get() > 0 )
-      {
       radius_it.Set( radius_it.Get() / acc_it.Get() );
-      }
+    }
     ++acc_it;
     ++radius_it;
-    }
+  }
 }
 
 /** Get the list of circles. This recomputes the circles */
-template <typename TInputImage, typename TOutputImage>
-typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::SpheresListType
-& HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::GetSpheres()
-  {
+template < typename TInputImage, typename TOutputImage >
+typename HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::SpheresListType &
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::GetSpheres()
+{
   // if the filter has not been updated
-  if( this->GetMTime() == m_OldModifiedTime )
-    {
+  if ( this->GetMTime() == m_OldModifiedTime )
+  {
     return m_SpheresList;
-    }
+  }
 
   m_SpheresList.clear();
 
   /** Blur the accumulator in order to find the maximum */
   GaussianFilterPointer gaussianFilter = GaussianFilterType::New();
-  gaussianFilter->SetInput( this->GetOutput(0) );   // the output is the
+  gaussianFilter->SetInput( this->GetOutput( 0 ) ); // the output is the
                                                     // accumulator image
-  gaussianFilter->SetVariance(m_Variance);
+  gaussianFilter->SetVariance( m_Variance );
   gaussianFilter->Update();
 
   const InternalImagePointer postProcessImage = gaussianFilter->GetOutput();
@@ -349,7 +335,7 @@ typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::Spher
   const InternalSizeType     size = postProcessImage->GetRequestedRegion().GetSize();
 
   MinMaxCalculatorPointer minMaxCalculator = MinMaxCalculatorType::New();
-  minMaxCalculator->SetImage(postProcessImage);
+  minMaxCalculator->SetImage( postProcessImage );
   minMaxCalculator->ComputeMaximum();
   const InternalPixelType pmax = minMaxCalculator->GetMaximum();
 
@@ -357,91 +343,88 @@ typename HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::Spher
 
   // Find maxima
   do
-    {
+  {
     minMaxCalculator->ComputeMaximum();
     const InternalPixelType max = minMaxCalculator->GetMaximum();
     const InternalIndexType idx = minMaxCalculator->GetIndexOfMaximum();
 
-    if( max < m_OutputThreshold * pmax )
-      {
+    if ( max < m_OutputThreshold * pmax )
+    {
       assert( 0 == 1 ); // This should never happen.  max == pmax in all cases
       break;
-      }
+    }
 
     SphereVectorType center;
-    for( unsigned int i = 0; i < ImageDimension; i++ )
-      {
+    for ( unsigned int i = 0; i < ImageDimension; i++ )
+    {
       center[i] = idx[i];
-      }
+    }
 
     // Create a Line Spatial Object
     SpherePointer Sphere = SphereType::New();
-    Sphere->SetId(circles);
-    Sphere->SetRadiusInObjectSpace( m_RadiusImage->GetPixel(idx) );
-    Sphere->GetModifiableObjectToParentTransform()->SetOffset(center);
+    Sphere->SetId( circles );
+    Sphere->SetRadiusInObjectSpace( m_RadiusImage->GetPixel( idx ) );
+    Sphere->GetModifiableObjectToParentTransform()->SetOffset( center );
     Sphere->Update();
 
-    m_SpheresList.push_back(Sphere);
+    m_SpheresList.push_back( Sphere );
     // Remove a black disc from the hough space domain
     InternalSizeType  sizeOfROI;
     InternalIndexType start;
     InternalIndexType end;
-    for( unsigned int i = 0; i < ImageDimension; i++ )
-      {
+    for ( unsigned int i = 0; i < ImageDimension; i++ )
+    {
       const InternalIndexValueType rad =
-        static_cast<InternalIndexValueType>(
-          m_SphereRadiusRatio * Sphere->GetRadiusInObjectSpace()[i] / spacing[i] );
+        static_cast< InternalIndexValueType >( m_SphereRadiusRatio * Sphere->GetRadiusInObjectSpace()[i] / spacing[i] );
 
-      if( idx[i] > static_cast<InternalIndexValueType>( rad ) )
-        {
-        start[i] = idx[i] - static_cast<InternalIndexValueType>( rad );
-        }
+      if ( idx[i] > static_cast< InternalIndexValueType >( rad ) )
+      {
+        start[i] = idx[i] - static_cast< InternalIndexValueType >( rad );
+      }
       else
-        {
+      {
         start[i] = 0;
-        }
+      }
 
-      if( idx[i] + rad < static_cast<InternalIndexValueType>( size[i] - 1 ) )
-        {
-        end[i] = idx[i] + static_cast<InternalIndexValueType>( rad );
-        }
+      if ( idx[i] + rad < static_cast< InternalIndexValueType >( size[i] - 1 ) )
+      {
+        end[i] = idx[i] + static_cast< InternalIndexValueType >( rad );
+      }
       else
-        {
+      {
         end[i] = postProcessImage->GetLargestPossibleRegion().GetSize()[i] - 1;
-        }
+      }
 
       sizeOfROI[i] = end[i] - start[i] + 1;
-      }
+    }
 
     InternalRegionType region;
-    region.SetSize(sizeOfROI);
-    region.SetIndex(start);
+    region.SetSize( sizeOfROI );
+    region.SetIndex( start );
 
-    ImageRegionIterator<InternalImageType> It(postProcessImage, region);
+    ImageRegionIterator< InternalImageType > It( postProcessImage, region );
 
     It.GoToBegin();
-    while( !It.IsAtEnd() )
-      {
-      It.Set(0);
+    while ( !It.IsAtEnd() )
+    {
+      It.Set( 0 );
       ++It;
-      }
+    }
 
     ++circles;
-    }
-  while( circles < m_NumberOfSpheres );
+  } while ( circles < m_NumberOfSpheres );
 
   m_OldModifiedTime = this->GetMTime();
 
   return m_SpheresList;
-  }
+}
 
 /** Print Self information */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
-::PrintSelf(std::ostream & os, Indent indent) const
+HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf( os, indent );
 
   os << "Threshold: " << m_Threshold << std::endl;
   os << "Gradient Threshold: " << m_GradientThreshold << std::endl;
@@ -460,6 +443,6 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>
 
   os << "Radius Image Information : " << m_RadiusImage << std::endl;
 }
-} // end namespace
+} // namespace itk
 
 #endif

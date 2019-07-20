@@ -37,18 +37,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
-class QuadEdgeMeshAddScalarsFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh1>
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
+class QuadEdgeMeshAddScalarsFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh1, TInputMesh1 >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshAddScalarsFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshAddScalarsFilter );
 
   using Self = QuadEdgeMeshAddScalarsFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh1, TInputMesh1>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh1, TInputMesh1 >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshAddScalarsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -63,28 +61,32 @@ public:
   using OutputMeshType = TOutputMesh;
 
   /** Set/Get the input mesh 1. */
-  void SetInput1( const InputMeshType1 * mesh );
+  void
+  SetInput1( const InputMeshType1 * mesh );
 
-  const InputMeshType1 * GetInput1( void ) const;
+  const InputMeshType1 *
+  GetInput1( void ) const;
 
   /** Set/Get the input mesh2. */
-  void SetInput2( const InputMeshType2 * mesh );
+  void
+  SetInput2( const InputMeshType2 * mesh );
 
-  const InputMeshType2 * GetInput2( void ) const;
+  const InputMeshType2 *
+  GetInput2( void ) const;
 
 protected:
   QuadEdgeMeshAddScalarsFilter();
   ~QuadEdgeMeshAddScalarsFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshAddScalarsFilter.hxx"
+#  include "itkQuadEdgeMeshAddScalarsFilter.hxx"
 #endif
 
 #endif

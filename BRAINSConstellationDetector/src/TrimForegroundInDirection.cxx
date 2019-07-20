@@ -58,39 +58,32 @@
 
 // #define USE_DEBUGGIN_IMAGES
 
-SImageType::PointType  FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & volOrig,
-                                                         unsigned int axis,
-                                                         double otsuPercentileThreshold,
-                                                         unsigned int closingSize,
-                                                         double headSizeLowerLimit,
-                                                         SImageType::PixelType BackgroundFillValue)
+SImageType::PointType
+FindCenterOfBrainBasedOnTopOfHead( SImageType::Pointer & volOrig, unsigned int axis, double otsuPercentileThreshold,
+                                   unsigned int closingSize, double headSizeLowerLimit,
+                                   SImageType::PixelType BackgroundFillValue )
 {
   SImageType::Pointer foreground = SImageType::New();
 
-  return TrimForegroundInDirection(foreground,
-                                   volOrig,
-                                   axis,
-                                   otsuPercentileThreshold,
-                                   closingSize,
-                                   headSizeLowerLimit,
-                                   BackgroundFillValue);
+  return TrimForegroundInDirection(
+    foreground, volOrig, axis, otsuPercentileThreshold, closingSize, headSizeLowerLimit, BackgroundFillValue );
 }
 
 // ////////////////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
-SImageType::PointType TrimForegroundInDirection(SImageType::Pointer & foreground,  SImageType::Pointer & volOrig,
-                                                unsigned int axis,
-                                                double otsuPercentileThreshold, unsigned int closingSize,
-                                                double headSizeLowerLimit, SImageType::PixelType BackgroundFillValue)
+SImageType::PointType
+TrimForegroundInDirection( SImageType::Pointer & foreground, SImageType::Pointer & volOrig, unsigned int axis,
+                           double otsuPercentileThreshold, unsigned int closingSize, double headSizeLowerLimit,
+                           SImageType::PixelType BackgroundFillValue )
 {
-  using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter< SImageType >;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput(volOrig);
-  findCenterFilter->SetAxis(axis);
-  findCenterFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);
-  findCenterFilter->SetClosingSize(closingSize);
-  findCenterFilter->SetHeadSizeLimit(headSizeLowerLimit);
-  findCenterFilter->SetBackgroundValue(BackgroundFillValue);
+  findCenterFilter->SetInput( volOrig );
+  findCenterFilter->SetAxis( axis );
+  findCenterFilter->SetOtsuPercentileThreshold( otsuPercentileThreshold );
+  findCenterFilter->SetClosingSize( closingSize );
+  findCenterFilter->SetHeadSizeLimit( headSizeLowerLimit );
+  findCenterFilter->SetBackgroundValue( BackgroundFillValue );
 
   findCenterFilter->Update();
 

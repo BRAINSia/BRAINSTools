@@ -23,50 +23,65 @@
 /// vtkITKGradientAnisotropicDiffusionImageFilter
 class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
 {
- public:
-  static vtkITKGradientAnisotropicDiffusionImageFilter *New();
-  vtkTypeMacro(vtkITKGradientAnisotropicDiffusionImageFilter, vtkITKImageToImageFilterFF);
+public:
+  static vtkITKGradientAnisotropicDiffusionImageFilter *
+  New();
+  vtkTypeMacro( vtkITKGradientAnisotropicDiffusionImageFilter, vtkITKImageToImageFilterFF );
 
-  double GetTimeStep ()
+  double
+  GetTimeStep()
   {
-    DelegateITKOutputMacro(GetTimeStep);
+    DelegateITKOutputMacro( GetTimeStep );
   };
 
-  double GetConductanceParameter ()
+  double
+  GetConductanceParameter()
   {
-    DelegateITKOutputMacro(GetConductanceParameter);
+    DelegateITKOutputMacro( GetConductanceParameter );
   };
 
-  unsigned int GetNumberOfIterations ()
+  unsigned int
+  GetNumberOfIterations()
   {
-    DelegateITKOutputMacro ( GetNumberOfIterations );
+    DelegateITKOutputMacro( GetNumberOfIterations );
   };
 
-  void SetNumberOfIterations( unsigned int value )
+  void
+  SetNumberOfIterations( unsigned int value )
   {
-    DelegateITKInputMacro ( SetNumberOfIterations, value );
+    DelegateITKInputMacro( SetNumberOfIterations, value );
   };
 
-  void SetTimeStep ( double value )
+  void
+  SetTimeStep( double value )
   {
-    DelegateITKInputMacro ( SetTimeStep, value );
+    DelegateITKInputMacro( SetTimeStep, value );
   };
 
-  void SetConductanceParameter ( double value )
+  void
+  SetConductanceParameter( double value )
   {
-    DelegateITKInputMacro ( SetConductanceParameter, value );
+    DelegateITKInputMacro( SetConductanceParameter, value );
   };
 
 protected:
-  using ImageFilterType = itk::GradientAnisotropicDiffusionImageFilter<Superclass::InputImageType,Superclass::InputImageType>;
-  vtkITKGradientAnisotropicDiffusionImageFilter() : Superclass ( ImageFilterType::New() ){};
-  ~vtkITKGradientAnisotropicDiffusionImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
+  using ImageFilterType =
+    itk::GradientAnisotropicDiffusionImageFilter< Superclass::InputImageType, Superclass::InputImageType >;
+  vtkITKGradientAnisotropicDiffusionImageFilter()
+    : Superclass( ImageFilterType::New() ){};
+  ~vtkITKGradientAnisotropicDiffusionImageFilter(){};
+  ImageFilterType *
+  GetImageFilterPointer()
+  {
+    return dynamic_cast< ImageFilterType * >( m_Filter.GetPointer() );
+  }
 
 
 private:
-  vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
+  vtkITKGradientAnisotropicDiffusionImageFilter(
+    const vtkITKGradientAnisotropicDiffusionImageFilter & ); /// Not implemented.
+  void
+  operator=( const vtkITKGradientAnisotropicDiffusionImageFilter & ); /// Not implemented.
 };
 
 #endif

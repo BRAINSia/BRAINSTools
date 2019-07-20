@@ -37,18 +37,17 @@
 
 /** \class AtlasCropImageSource
  */
-template <typename TInputImage, typename TProbabilityImage>
+template < typename TInputImage, typename TProbabilityImage >
 class AtlasCropImageSource : public itk::Object
 {
 public:
-
   /** Standard class type alias. */
   using Self = AtlasCropImageSource;
-  using Pointer = itk::SmartPointer<Self>;
-  using ConstPointer = itk::SmartPointer<const Self>;
+  using Pointer = itk::SmartPointer< Self >;
+  using ConstPointer = itk::SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** The dimension of the image. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -73,49 +72,53 @@ public:
   using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
   using ProbabilityImageSpacingType = typename ProbabilityImageType::SpacingType;
 
-  using ProbabilityImageList = std::vector<ProbabilityImagePointer>;
+  using ProbabilityImageList = std::vector< ProbabilityImagePointer >;
 
   typedef struct
-    {
+  {
     InputImageIndexType offset;
-    InputImageSizeType cropped_size;
-    InputImageSizeType original_size;
-    } CropInfoType;
+    InputImageSizeType  cropped_size;
+    InputImageSizeType  original_size;
+  } CropInfoType;
 
   // Set/get output image padding, in mm
-  itkGetMacro(Padding, double);
-  itkSetMacro(Padding, double);
+  itkGetMacro( Padding, double );
+  itkSetMacro( Padding, double );
 
-  bool CheckBounds();
+  bool
+  CheckBounds();
 
-  void UseProbabilities(ProbabilityImageList probs);
+  void
+  UseProbabilities( ProbabilityImageList probs );
 
   // Create new images (either cropped or padded)
-  InputImagePointer Restore(InputImagePointer img);
+  InputImagePointer
+  Restore( InputImagePointer img );
 
-  InputImagePointer Crop(InputImagePointer img);
+  InputImagePointer
+  Crop( InputImagePointer img );
 
   // Crop region information
-  void SetCropInfo(const CropInfoType & info)
+  void
+  SetCropInfo( const CropInfoType & info )
   {
     m_CropInfo = info;
   }
 
-  const CropInfoType & GetCropInfo()
+  const CropInfoType &
+  GetCropInfo()
   {
     return m_CropInfo;
   }
 
   // For debugging, generate slabs in last dim with top and bottom parts removed
-  itkSetMacro(SlabMode, bool);
-  itkGetConstMacro(SlabMode, bool);
-  itkBooleanMacro(SlabMode);
-protected:
+  itkSetMacro( SlabMode, bool );
+  itkGetConstMacro( SlabMode, bool );
+  itkBooleanMacro( SlabMode );
 
+protected:
   AtlasCropImageSource();
-  ~AtlasCropImageSource()
-  {
-  }
+  ~AtlasCropImageSource() {}
 
   double m_Padding;
 
@@ -133,7 +136,7 @@ protected:
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "AtlasCropImageSource.hxx"
+#  include "AtlasCropImageSource.hxx"
 #endif
 
 #endif

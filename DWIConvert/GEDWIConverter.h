@@ -24,18 +24,19 @@
 class GEDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
-                 DWIConverter::FileNamesContainer &inputFileNames,
-                 const bool useBMatrixGradientDirections
-                 );
+  GEDWIConverter( DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
+                  DWIConverter::FileNamesContainer & inputFileNames, const bool useBMatrixGradientDirections );
 
   ~GEDWIConverter() override;
-  void LoadDicomDirectory() override;
+  void
+  LoadDicomDirectory() override;
 
-  void ExtractDWIData() override;
+  void
+  ExtractDWIData() override;
 
 protected:
-  void AddFlagsToDictionary() override;
+  void
+  AddFlagsToDictionary() override;
 };
 
 #endif // __GEDWIConverter_h

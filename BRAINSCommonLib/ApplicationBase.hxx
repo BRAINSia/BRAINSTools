@@ -37,99 +37,97 @@
 
 namespace itk
 {
-template <typename TParser, typename TPreprocessor, typename TRegistrator>
-ApplicationBase<TParser, TPreprocessor, TRegistrator>
-::ApplicationBase()
+template < typename TParser, typename TPreprocessor, typename TRegistrator >
+ApplicationBase< TParser, TPreprocessor, TRegistrator >::ApplicationBase()
 {
-  m_Parser       = ParserType::New();
+  m_Parser = ParserType::New();
   m_Preprocessor = PreprocessorType::New();
-  m_Registrator  = RegistratorType::New();
-  m_OutDebug  = false;
+  m_Registrator = RegistratorType::New();
+  m_OutDebug = false;
 }
 
-template <typename TParser, typename TPreprocessor, typename TRegistrator>
+template < typename TParser, typename TPreprocessor, typename TRegistrator >
 void
-ApplicationBase<TParser, TPreprocessor, TRegistrator>
-::Execute()
+ApplicationBase< TParser, TPreprocessor, TRegistrator >::Execute()
 {
   /**************************
-    * Parse input
-    */
-  if( this->GetOutDebug() )
-    {
+   * Parse input
+   */
+  if ( this->GetOutDebug() )
+  {
     std::cout << "Parsing input ... " << std::endl;
-    }
+  }
 
   try
-    {
+  {
     this->InitializeParser();
     m_Parser->Execute();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
-    }
-  catch( ... )
-    {
+  }
+  catch ( ... )
+  {
     std::cout << "Error occurred during input parsing." << std::endl;
     throw;
-    }
+  }
 
   /**************************
-    * Preprocess the images before registration
-    */
+   * Preprocess the images before registration
+   */
 
-  if( this->GetOutDebug() )
-    {
+  if ( this->GetOutDebug() )
+  {
     std::cout << "Preprocess the images ... " << std::endl;
-    }
+  }
 
   try
-    {
+  {
     this->InitializePreprocessor();
     m_Preprocessor->Execute();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
-    }
-  catch( ... )
-    {
+  }
+  catch ( ... )
+  {
     std::cout << "Error occured during preprocessing." << std::endl;
     throw;
-    }
+  }
 
   /**************************
-    * Registered the processed images
-    */
-  if( this->GetOutDebug() )
-    {
+   * Registered the processed images
+   */
+  if ( this->GetOutDebug() )
+  {
     std::cout << "Register the images ... " << std::endl;
-    }
+  }
 
   try
-    {
+  {
     this->InitializeRegistrator();
     m_Preprocessor = nullptr;
     m_Parser = nullptr;
     m_Registrator->Execute();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
-    }
-  catch( ... )
-    {
+  }
+  catch ( ... )
+  {
     std::cout << "Error occured during registration" << std::endl;
     throw;
-    }
+  }
 }
-}   // namespace itk
+} // namespace itk
 
 #endif

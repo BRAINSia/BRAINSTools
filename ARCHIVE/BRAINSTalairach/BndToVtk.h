@@ -26,28 +26,38 @@
 class BndToVtk : public vtkDataObjectAlgorithm
 {
 public:
-  static BndToVtk * New();
+  static BndToVtk *
+  New();
 
   /* Proces the BND file to obtain AC, PC, IRP and SLA points */
-  void ProcessBND(std::string bndFile);
+  void
+  ProcessBND( std::string bndFile );
 
   /* Get the AC, PC, IRP and SLA points */
-  double * GetAC();
+  double *
+  GetAC();
 
-  double * GetPC();
+  double *
+  GetPC();
 
-  double * GetIRP();
+  double *
+  GetIRP();
 
-  double * GetSLA();
+  double *
+  GetSLA();
 
   /* Get the inverted AC, PC, IRP and SLA points */
-  double * GetInverseAC();
+  double *
+  GetInverseAC();
 
-  double * GetInversePC();
+  double *
+  GetInversePC();
 
-  double * GetInverseSLA();
+  double *
+  GetInverseSLA();
 
-  double * GetInverseIRP();
+  double *
+  GetInverseIRP();
 
   /* Set the inverted AC, PC, IRP and SLA points */
 private:
@@ -64,16 +74,24 @@ private:
   double inverseIRP[3];
 
   /* Set the AC, PC, IRP and SLA points */
-  void SetAC(double pnt[3]);
-  void SetPC(double pnt[3]);
-  void SetIRP(double pnt[3]);
-  void SetSLA(double pnt[3]);
+  void
+  SetAC( double pnt[3] );
+  void
+  SetPC( double pnt[3] );
+  void
+  SetIRP( double pnt[3] );
+  void
+  SetSLA( double pnt[3] );
 
   /* Set the inverted AC, PC, IRP and SLA points */
-  void SetInverseAC(double pnt[3]);
-  void SetInversePC(double pnt[3]);
-  void SetInverseSLA(double pnt[3]);
-  void SetInverseIRP(double pnt[3]);
+  void
+  SetInverseAC( double pnt[3] );
+  void
+  SetInversePC( double pnt[3] );
+  void
+  SetInverseSLA( double pnt[3] );
+  void
+  SetInverseIRP( double pnt[3] );
 };
 
 #endif

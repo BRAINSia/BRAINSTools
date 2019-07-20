@@ -32,94 +32,136 @@ public:
   using CvRTrees = cv::ml::RTrees;
 
   /** train */
-  void InitializeNeuralNetwork();
+  void
+  InitializeNeuralNetwork();
 
-  void InitializeRandomForest();
+  void
+  InitializeRandomForest();
 
-  void InitializeTrainDataSet( bool doShuffle);
+  void
+  InitializeTrainDataSet( bool doShuffle );
 
-  void TrainANN();
+  void
+  TrainANN();
 
-  void TrainRandomForest();
+  void
+  TrainRandomForest();
 
-  void TrainRandomForestAt( const int depth, const int numberOfTree );
+  void
+  TrainRandomForestAt( const int depth, const int numberOfTree );
 
   /** inline functions */
-  inline void TrainWithUpdate(cv::Ptr<OpenCVMLPType> myTrainer, pairedTrainingSetType& currentTrainData);
+  inline void
+  TrainWithUpdate( cv::Ptr< OpenCVMLPType > myTrainer, pairedTrainingSetType & currentTrainData );
 
-  inline void SaveANNTrainModelAtIteration( cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No);
+  inline void
+  SaveANNTrainModelAtIteration( cv::Ptr< OpenCVMLPType > myTrainer, unsigned int No );
 
-  inline void SaveRFTrainModelAtIteration( cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int NTrees);
+  inline void
+  SaveRFTrainModelAtIteration( cv::Ptr< cv::ml::RTrees > myTrainer, int depth, int NTrees );
 
-  inline void recordRFTrainInformation( int depth, int nTree);
+  inline void
+  recordRFTrainInformation( int depth, int nTree );
 
-  inline void printANNTrainInformation( cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No );
+  inline void
+  printANNTrainInformation( cv::Ptr< OpenCVMLPType > myTrainer, unsigned int No );
 
-  void FillANNLayerStructureArray3D( int * const layer ) const;
+  void
+  FillANNLayerStructureArray3D( int * const layer ) const;
 
   // TODO: REGINA all "Get" functions should be const
   /** setting function with net configuration */
-  std::string GetModelBasename();
+  std::string
+  GetModelBasename();
 
-  std::string Getm_ANNVectorFilenamePrefix();
+  std::string
+  Getm_ANNVectorFilenamePrefix();
 
-  void SetIteration();
+  void
+  SetIteration();
 
-  void SetEpochIteration();
+  void
+  SetEpochIteration();
 
-  void SetDesiredError();
+  void
+  SetDesiredError();
 
-  void SetMaximumDataSize();
+  void
+  SetMaximumDataSize();
 
-  void Setm_ANNHiddenNodesNumber();
+  void
+  Setm_ANNHiddenNodesNumber();
 
-  void SetActivatioinFunction();
+  void
+  SetActivatioinFunction();
 
-  void SetModelBasename();
+  void
+  SetModelBasename();
 
   /** default functions to set/get member variables */
-  void SetIteration(unsigned int iteration);
+  void
+  SetIteration( unsigned int iteration );
 
-  unsigned int GetIteration();
+  unsigned int
+  GetIteration();
 
-  void SetEpochIteration( unsigned int epochIteration);
+  void
+  SetEpochIteration( unsigned int epochIteration );
 
-  unsigned int GetEpochIteration();
+  unsigned int
+  GetEpochIteration();
 
-  void SetDesiredError( float desiredError );
+  void
+  SetDesiredError( float desiredError );
 
-  float GetDesiredError();
+  float
+  GetDesiredError();
 
-  void SetMaximumDataSize( unsigned int maximumDataSize);
+  void
+  SetMaximumDataSize( unsigned int maximumDataSize );
 
-  unsigned int GetMaximumDataSize();
+  unsigned int
+  GetMaximumDataSize();
 
-  void Setm_ANNHiddenNodesNumber( int hiddenNodes);
+  void
+  Setm_ANNHiddenNodesNumber( int hiddenNodes );
 
-  int Getm_ANNHiddenNodesNumber();
+  int
+  Getm_ANNHiddenNodesNumber();
 
-  void SetActivationFunction( float slope, float minMax);
+  void
+  SetActivationFunction( float slope, float minMax );
 
-  float GetActivationSlope();
+  float
+  GetActivationSlope();
 
-  float GetActivationMinMax();
+  float
+  GetActivationMinMax();
 
   /** random trees */
-  void  SetMaxDepth();
+  void
+  SetMaxDepth();
 
-  void  SetMinSampleCount();
+  void
+  SetMinSampleCount();
 
-  void  SetUseSurrogates();
+  void
+  SetUseSurrogates();
 
-  void  SetCalcVarImportance();
+  void
+  SetCalcVarImportance();
 
-  void  SetMaxTreeCount();
+  void
+  SetMaxTreeCount();
 
-  void  SetRFErrorFilename();
+  void
+  SetRFErrorFilename();
 
-  void  SetRFErrorFile();
+  void
+  SetRFErrorFile();
 
-  inline void appendToFile( std::string filename, std::string line);
+  inline void
+  appendToFile( std::string filename, std::string line );
 
 private:
   // TODO:  REGINA:  These all need to be called with "m_" prefix
@@ -143,10 +185,10 @@ private:
   int  m_trainMaxTreeCount;
 
   /** common paramters */
-  std::string                 m_modelBasename;
-  std::string                 m_ANNVectorFilenamePrefix;
-  std::string                 m_RFErrorFilename;
-  BRAINSCutVectorTrainingSet* m_trainingDataSet;
+  std::string                  m_modelBasename;
+  std::string                  m_ANNVectorFilenamePrefix;
+  std::string                  m_RFErrorFilename;
+  BRAINSCutVectorTrainingSet * m_trainingDataSet;
 
   CvMat * m_ANNLayerStructure;
 };

@@ -31,34 +31,44 @@ public:
   using SuperClass = ElementParser;
   BRAINSCutConfiguration();
 
-  int PrintSelf(std::ostream & os, int indent) const override
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent += SuperClass::PrintSelf(os, indent);
+    indent += SuperClass::PrintSelf( os, indent );
     return indent + 2;
   }
 
-  using TrainDataSetListType = std::list<DataSet *>;
-  using ApplyDataSetListType = std::list<DataSet *>;
+  using TrainDataSetListType = std::list< DataSet * >;
+  using ApplyDataSetListType = std::list< DataSet * >;
 
-  void AddDataSet(DataSet *newSet);
+  void
+  AddDataSet( DataSet * newSet );
 
-  DataSet * GetAtlasDataSet() const;
+  DataSet *
+  GetAtlasDataSet() const;
 
-  TrainDataSetListType GetTrainDataSets() const;
+  TrainDataSetListType
+  GetTrainDataSets() const;
 
-  ApplyDataSetListType GetApplyDataSets() const;
+  ApplyDataSetListType
+  GetApplyDataSets() const;
 
-  const DataSet::StringVectorType GetImageTypes() const;
+  const DataSet::StringVectorType
+  GetImageTypes() const;
 
   // Set/Get Functions
   //
-  void SetImageTypeToUse( std::string imageTypeToUse );
+  void
+  SetImageTypeToUse( std::string imageTypeToUse );
 
-  std::string GetImageTypeToUse();
+  std::string
+  GetImageTypeToUse();
 
-  void SetRegistrationID( std::string registrationID );
+  void
+  SetRegistrationID( std::string registrationID );
 
-  std::string GetRegistrationID();
+  std::string
+  GetRegistrationID();
 
 private:
   std::string ImageTypeToUse;

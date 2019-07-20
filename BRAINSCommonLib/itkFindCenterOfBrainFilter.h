@@ -26,19 +26,18 @@
 namespace itk
 {
 /**
-  * \class FindCenterOfBrainFilter
-  */
-template <typename TInputImage, typename TMaskImage = itk::Image<unsigned char, 3> >
-class FindCenterOfBrainFilter :
-  public         ImageToImageFilter<TInputImage, TInputImage>
+ * \class FindCenterOfBrainFilter
+ */
+template < typename TInputImage, typename TMaskImage = itk::Image< unsigned char, 3 > >
+class FindCenterOfBrainFilter : public ImageToImageFilter< TInputImage, TInputImage >
 {
 public:
   using Self = FindCenterOfBrainFilter;
-  using Superclass = ImageToImageFilter<TInputImage, TInputImage>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  itkNewMacro(Self);
-  itkTypeMacro(FindCenterOfBrain, Superclass);
+  using Superclass = ImageToImageFilter< TInputImage, TInputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  itkNewMacro( Self );
+  itkTypeMacro( FindCenterOfBrain, Superclass );
 
   using ImageType = TInputImage;
   using MaskImageType = TMaskImage;
@@ -49,62 +48,67 @@ public:
   using SizeType = typename ImageType::SizeType;
   using SpacingType = typename ImageType::SpacingType;
   using IndexType = typename ImageType::IndexType;
-  using ImageIteratorType = typename itk::ImageRegionIteratorWithIndex<ImageType>;
-  using ImageConstIteratorType = typename itk::ImageRegionConstIteratorWithIndex<ImageType>;
-  using LFFMaskFilterType = LargestForegroundFilledMaskImageFilter<ImageType, MaskImageType>;
-  using DistanceImageType = typename itk::Image<float, 3>;
+  using ImageIteratorType = typename itk::ImageRegionIteratorWithIndex< ImageType >;
+  using ImageConstIteratorType = typename itk::ImageRegionConstIteratorWithIndex< ImageType >;
+  using LFFMaskFilterType = LargestForegroundFilledMaskImageFilter< ImageType, MaskImageType >;
+  using DistanceImageType = typename itk::Image< float, 3 >;
   using DistanceImagePointer = typename DistanceImageType::Pointer;
   /** Image related type alias. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  itkSetMacro(Maximize, bool);
-  itkGetConstMacro(Maximize, bool);
-  itkSetMacro(Axis, unsigned int);
-  itkGetConstMacro(Axis, unsigned int);
-  itkSetMacro(OtsuPercentileThreshold, double);
-  itkGetConstMacro(OtsuPercentileThreshold, double);
-  itkSetMacro(ClosingSize, unsigned int);
-  itkGetConstMacro(ClosingSize, unsigned int);
-  itkSetMacro(HeadSizeLimit, double);
-  itkGetConstMacro(HeadSizeLimit, double);
-  itkSetMacro(HeadSizeEstimate, double);
-  itkGetConstMacro(HeadSizeEstimate, double);
-  itkSetMacro(BackgroundValue, PixelType);
-  itkGetConstMacro(BackgroundValue, PixelType);
+  itkSetMacro( Maximize, bool );
+  itkGetConstMacro( Maximize, bool );
+  itkSetMacro( Axis, unsigned int );
+  itkGetConstMacro( Axis, unsigned int );
+  itkSetMacro( OtsuPercentileThreshold, double );
+  itkGetConstMacro( OtsuPercentileThreshold, double );
+  itkSetMacro( ClosingSize, unsigned int );
+  itkGetConstMacro( ClosingSize, unsigned int );
+  itkSetMacro( HeadSizeLimit, double );
+  itkGetConstMacro( HeadSizeLimit, double );
+  itkSetMacro( HeadSizeEstimate, double );
+  itkGetConstMacro( HeadSizeEstimate, double );
+  itkSetMacro( BackgroundValue, PixelType );
+  itkGetConstMacro( BackgroundValue, PixelType );
 
-  itkGetConstMacro(CenterOfBrain, PointType);
-  itkGetModifiableObjectMacro(TrimmedImage, TInputImage);
+  itkGetConstMacro( CenterOfBrain, PointType );
+  itkGetModifiableObjectMacro( TrimmedImage, TInputImage );
 
-  itkSetConstObjectMacro(ImageMask, TMaskImage);
-  itkGetConstObjectMacro(ImageMask, TMaskImage);
+  itkSetConstObjectMacro( ImageMask, TMaskImage );
+  itkGetConstObjectMacro( ImageMask, TMaskImage );
 
   // THIS IS OUTPUT ONLY  itkSetObjectMacro(ClippedImageMask, TMaskImage);
-  itkGetConstObjectMacro(ClippedImageMask, TMaskImage);
+  itkGetConstObjectMacro( ClippedImageMask, TMaskImage );
 
   // DEBUGGING STUFF
-  itkSetMacro(GenerateDebugImages, bool);
-  itkGetMacro(GenerateDebugImages, bool);
-  DistanceImagePointer GetDebugDistanceImage() const
+  itkSetMacro( GenerateDebugImages, bool );
+  itkGetMacro( GenerateDebugImages, bool );
+  DistanceImagePointer
+  GetDebugDistanceImage() const
   {
     return m_DebugDistanceImage;
   }
 
-  InputImagePointer GetDebugGridImage() const
+  InputImagePointer
+  GetDebugGridImage() const
   {
     return m_DebugGridImage;
   }
 
-  MaskImagePointer GetDebugAfterGridComputationsForegroundImage() const
+  MaskImagePointer
+  GetDebugAfterGridComputationsForegroundImage() const
   {
     return m_DebugAfterGridComputationsForegroundImage;
   }
 
-  MaskImagePointer GetDebugClippedImageMask() const
+  MaskImagePointer
+  GetDebugClippedImageMask() const
   {
     return m_DebugClippedImageMask;
   }
 
-  InputImagePointer GetDebugTrimmedImage() const
+  InputImagePointer
+  GetDebugTrimmedImage() const
   {
     return m_DebugTrimmedImage;
   }
@@ -112,11 +116,14 @@ public:
 protected:
   FindCenterOfBrainFilter();
   ~FindCenterOfBrainFilter() override;
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
-  void AllocateOutputs() override;
+  void
+  AllocateOutputs() override;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
   bool         m_Maximize;
@@ -135,18 +142,18 @@ private:
   typename TMaskImage::ConstPointer m_ImageMask;
   /** The foreground mask, computed automatically if
    * not specified on the command line. **/
-  typename TMaskImage::Pointer m_ClippedImageMask;
+  typename TMaskImage::Pointer  m_ClippedImageMask;
   typename TInputImage::Pointer m_TrimmedImage;
-  DistanceImagePointer m_DebugDistanceImage;
-  InputImagePointer    m_DebugGridImage;
-  MaskImagePointer     m_DebugAfterGridComputationsForegroundImage;
-  MaskImagePointer     m_DebugClippedImageMask;
-  InputImagePointer    m_DebugTrimmedImage;
+  DistanceImagePointer          m_DebugDistanceImage;
+  InputImagePointer             m_DebugGridImage;
+  MaskImagePointer              m_DebugAfterGridComputationsForegroundImage;
+  MaskImagePointer              m_DebugClippedImageMask;
+  InputImagePointer             m_DebugTrimmedImage;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkFindCenterOfBrainFilter.hxx"
+#  include "itkFindCenterOfBrainFilter.hxx"
 #endif
 
 #endif // itkFindeCenterOfBrainFilter_hxx

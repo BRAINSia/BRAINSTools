@@ -37,37 +37,41 @@
 #include "FlippedDifferenceCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if( inputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputVolume Required! "  << std::endl;
-    }
-  if( inputMaskVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputMaskVolume Required! "  << std::endl;
-    }
-  if( outputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
-    }
-  if( violated )
-    {
+  if ( inputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputVolume Required! " << std::endl;
+  }
+  if ( inputMaskVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputMaskVolume Required! " << std::endl;
+  }
+  if ( outputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --outputVolume Required! " << std::endl;
+  }
+  if ( violated )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   //  using PixelType = signed short;
   using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using ImageType = itk::Image<PixelType,  Dimension>;
-  using ReaderType = itk::ImageFileReader<ImageType>;
-  using MaskImageType = itk::Image<char,  Dimension>;
-  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+  using ImageType = itk::Image< PixelType, Dimension >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
+  using MaskImageType = itk::Image< char, Dimension >;
+  using MaskReaderType = itk::ImageFileReader< MaskImageType >;
 
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -75,60 +79,60 @@ int main(int argc, char *argv[])
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  using MaskFilterType = itk::MaskImageFilter<ImageType, MaskImageType, ImageType>;
+  using MaskFilterType = itk::MaskImageFilter< ImageType, MaskImageType, ImageType >;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  using DifferenceFilterType = itk::ConstrainedValueDifferenceImageFilter<ImageType, ImageType, ImageType>;
+  using DifferenceFilterType = itk::ConstrainedValueDifferenceImageFilter< ImageType, ImageType, ImageType >;
   DifferenceFilterType::Pointer differenceFilter = DifferenceFilterType::New();
 
-  using ImageDuplicatorType = itk::ImageDuplicator<ImageType>;
+  using ImageDuplicatorType = itk::ImageDuplicator< ImageType >;
   ImageDuplicatorType::Pointer duplicateImageFilter = ImageDuplicatorType::New();
 
   try
-    {
+  {
     maskReader->Update();
 
     maskFilter->SetInput1( imageReader->GetOutput() );
     maskFilter->SetInput2( maskReader->GetOutput() );
-    maskFilter->SetOutsideValue(0);
+    maskFilter->SetOutsideValue( 0 );
     maskFilter->Update();
 
     duplicateImageFilter->SetInputImage( maskFilter->GetOutput() );
     duplicateImageFilter->Update();
-    }
-  catch( itk::ExceptionObject & excep )
-    {
+  }
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << argv[0] << ": exception caught !" << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  using ImageRegionIteratorType = itk::ImageRegionIterator<ImageType>;
+  using ImageRegionIteratorType = itk::ImageRegionIterator< ImageType >;
   ImageRegionIteratorType imgItr( maskFilter->GetOutput(), maskFilter->GetOutput()->GetRequestedRegion() );
   unsigned long           xMax = maskFilter->GetOutput()->GetLargestPossibleRegion().GetSize()[0];
-  for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
-    {
+  for ( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
+  {
     ImageType::IndexType idx = imgItr.GetIndex();
     ImageType::IndexType idxOpposite = imgItr.GetIndex();
     idxOpposite[0] = xMax - idx[0];
-    if( maskReader->GetOutput()->GetPixel(idx) != 0 )
-      {
-      duplicateImageFilter->GetOutput()->SetPixel( idx, maskFilter->GetOutput()->GetPixel(idxOpposite) );
-      }
+    if ( maskReader->GetOutput()->GetPixel( idx ) != 0 )
+    {
+      duplicateImageFilter->GetOutput()->SetPixel( idx, maskFilter->GetOutput()->GetPixel( idxOpposite ) );
     }
+  }
 
   try
-    {
+  {
     differenceFilter->SetInput1( duplicateImageFilter->GetOutput() );
     differenceFilter->SetInput2( maskFilter->GetOutput() );
     differenceFilter->Update();
-    }
-  catch( itk::ExceptionObject & excep )
-    {
+  }
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << argv[0] << ": exception caught !" << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  using FileWriterType = itk::ImageFileWriter<ImageType>;
+  using FileWriterType = itk::ImageFileWriter< ImageType >;
   FileWriterType::Pointer imageWriter = FileWriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetInput( differenceFilter->GetOutput() );

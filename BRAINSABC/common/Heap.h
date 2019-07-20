@@ -36,63 +36,74 @@
 /**
  * \class Heap
  */
-template <typename T>
+template < typename T >
 class Heap
 {
 public:
-
   Heap();
-  Heap(const Heap & h);
+  Heap( const Heap & h );
   ~Heap();
 
-  Heap & operator=(const Heap & h);
+  Heap &
+  operator=( const Heap & h );
 
-  void Allocate(unsigned int size);
+  void
+  Allocate( unsigned int size );
 
-  inline void Clear()
+  inline void
+  Clear()
   {
     m_Elements.clear();
   }
 
-  T ExtractMinimum();
+  T
+  ExtractMinimum();
 
-  inline unsigned int GetNumberOfElements()
+  inline unsigned int
+  GetNumberOfElements()
   {
     return m_Elements.size();
   }
 
-  void Insert(const T & e);
+  void
+  Insert( const T & e );
 
-  bool IsEmpty();
+  bool
+  IsEmpty();
 
-  T * GetElements()
+  T *
+  GetElements()
   {
     return m_Elements.GetRawArray();
   }
 
-  void UpdateElementAt(unsigned int i);
+  void
+  UpdateElementAt( unsigned int i );
 
 private:
+  std::vector< T > m_Elements;
 
-  std::vector<T> m_Elements;
-
-  void PreserveHeapOrder();
+  void
+  PreserveHeapOrder();
 };
 
 // Get the first k sorted elements using heap sort
-template <typename T>
-T * heapFirstK(std::vector<T> & array, unsigned int n, unsigned int k);
+template < typename T >
+T *
+heapFirstK( std::vector< T > & array, unsigned int n, unsigned int k );
 
 // Get the k-th element using heap sort
-template <typename T>
-T heapKthElement(std::vector<T> & array, unsigned int n, unsigned int k);
+template < typename T >
+T
+heapKthElement( std::vector< T > & array, unsigned int n, unsigned int k );
 
 // Get median using heap sort
-template <typename T>
-T heapMedian(std::vector<T> & array, unsigned int n);
+template < typename T >
+T
+heapMedian( std::vector< T > & array, unsigned int n );
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "Heap.hxx"
+#  include "Heap.hxx"
 #endif
 
 #endif

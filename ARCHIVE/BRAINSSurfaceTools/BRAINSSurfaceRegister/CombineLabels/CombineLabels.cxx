@@ -46,7 +46,8 @@
 #include <BRAINSCommonLib.h>
 #include "itkMacro.h" //Needed for nullptr
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -60,39 +61,39 @@ int main( int argc, char * argv[] )
   std::cout << "-----------------------------------------" << std::endl;
 
   // read the input surface with prior label information
-  vtkSmartPointer<vtkPolyDataReader> inputReader = vtkSmartPointer<vtkPolyDataReader>::New();
-  inputReader->SetFileName(inputSurfaceFile.c_str() );
+  vtkSmartPointer< vtkPolyDataReader > inputReader = vtkSmartPointer< vtkPolyDataReader >::New();
+  inputReader->SetFileName( inputSurfaceFile.c_str() );
   inputReader->Update();
 
-  vtkSmartPointer<vtkPolyData> inputSurface = inputReader->GetOutput();
-  int                          nPoints = inputSurface->GetNumberOfPoints();
+  vtkSmartPointer< vtkPolyData > inputSurface = inputReader->GetOutput();
+  int                            nPoints = inputSurface->GetNumberOfPoints();
 
   // get label array from input surface
-  vtkDataArray *labelArray = inputSurface->GetPointData()->GetArray("LabelValue");
-  if( labelArray == nullptr )
-    {
+  vtkDataArray * labelArray = inputSurface->GetPointData()->GetArray( "LabelValue" );
+  if ( labelArray == nullptr )
+  {
     std::cerr << "There is no label array on the input surface. ";
     std::cerr << "Quit." << std::endl;
     return 1;
-    }
-  for( int i = 0; i < nPoints; i++ )
-    {
+  }
+  for ( int i = 0; i < nPoints; i++ )
+  {
     // if label_i == label2
-    int label_i = labelArray->GetTuple1(i);
-    if( label_i == removeLabel )
-      {
-      labelArray->SetTuple1(i, keepLabel);
-      }
+    int label_i = labelArray->GetTuple1( i );
+    if ( label_i == removeLabel )
+    {
+      labelArray->SetTuple1( i, keepLabel );
     }
+  }
 
   // write output Surface
-  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-#if (VTK_MAJOR_VERSION < 6)
-  writer->SetInput(inputSurface);
+  vtkSmartPointer< vtkPolyDataWriter > writer = vtkSmartPointer< vtkPolyDataWriter >::New();
+#if ( VTK_MAJOR_VERSION < 6 )
+  writer->SetInput( inputSurface );
 #else
-  writer->SetInputData(inputSurface);
+  writer->SetInputData( inputSurface );
 #endif
-  writer->SetFileName(outputSurfaceFile.c_str() );
+  writer->SetFileName( outputSurfaceFile.c_str() );
   writer->Update();
 
   return 0;

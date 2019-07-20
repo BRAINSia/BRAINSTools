@@ -25,27 +25,28 @@
 #include <itkTransformToDisplacementFieldFilter.h>
 
 /**
-  * Go from any subclass of Transform, to the corresponding deformation field
-  */
-template <typename DisplacementFieldPointerType, typename TransformPointerType>
+ * Go from any subclass of Transform, to the corresponding deformation field
+ */
+template < typename DisplacementFieldPointerType, typename TransformPointerType >
 DisplacementFieldPointerType
-TransformToDisplacementField(itk::ImageBase<DisplacementFieldPointerType::ObjectType::ImageDimension> *templateImage,
-                             TransformPointerType xfrm)
+TransformToDisplacementField(
+  itk::ImageBase< DisplacementFieldPointerType::ObjectType::ImageDimension > * templateImage,
+  TransformPointerType                                                         xfrm )
 {
   using OutputType = typename DisplacementFieldPointerType::ObjectType;
-  using TodefType = typename itk::TransformToDisplacementFieldFilter<OutputType, double>;
+  using TodefType = typename itk::TransformToDisplacementFieldFilter< OutputType, double >;
   typename TodefType::Pointer todef( TodefType::New() );
-  todef->SetUseReferenceImage(true);
-  todef->SetReferenceImage(templateImage);
-  todef->SetTransform(xfrm);
+  todef->SetUseReferenceImage( true );
+  todef->SetReferenceImage( templateImage );
+  todef->SetTransform( xfrm );
   try
-    {
+  {
     todef->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     throw; // pass the buck up.
-    }
+  }
   return todef->GetOutput();
 }
 

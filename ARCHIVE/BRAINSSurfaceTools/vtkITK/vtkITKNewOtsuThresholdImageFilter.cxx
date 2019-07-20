@@ -28,8 +28,8 @@
 
 =========================================================================*/
 #ifndef _vtkITKNewOtsuThresholdImageFilter_txx
-#define _vtkITKNewOtsuThresholdImageFilter_txx
-#include "vtkITKNewOtsuThresholdImageFilter.h"
+#  define _vtkITKNewOtsuThresholdImageFilter_txx
+#  include "vtkITKNewOtsuThresholdImageFilter.h"
 #endif
 
-vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);
+vtkStandardNewMacro( vtkITKNewOtsuThresholdImageFilter );

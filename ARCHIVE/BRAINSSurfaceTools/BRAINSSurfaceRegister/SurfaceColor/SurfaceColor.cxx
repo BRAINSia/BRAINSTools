@@ -53,7 +53,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "SurfaceColorCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -64,31 +65,28 @@ int main( int argc, char * argv[] )
   std::cout << "to the surface of: " << std::endl;
   std::cout << inputSurfaceFile << std::endl;
   std::cout << "Search labels for surface points in radius of " << radius << std::endl;
-  if( increaseRadius )
-    {
+  if ( increaseRadius )
+  {
     std::cout << "Increase the radius until label is found for every surface point" << std::endl;
-    }
+  }
   else
-    {
+  {
     std::cout << "Searching radius is fixed" << std::endl;
-    }
+  }
   std::cout << "---------------------------------------------------" << std::endl;
 
   // read the surface
-  vtkSmartPointer<vtkPolyDataReader> surfacereader = vtkSmartPointer<vtkPolyDataReader>::New();
-  surfacereader->SetFileName(inputSurfaceFile.c_str() );
+  vtkSmartPointer< vtkPolyDataReader > surfacereader = vtkSmartPointer< vtkPolyDataReader >::New();
+  surfacereader->SetFileName( inputSurfaceFile.c_str() );
   surfacereader->Update();
 
   // transform the surface into ITK image coordinates
-  vtkSmartPointer<vtkTransform> rasOrientation = vtkSmartPointer<vtkTransform>::New();
-  const double                  orientationMatrix[16] = { -1,  0, 0, 0,
-                                                          0, -1, 0, 0,
-                                                          0,  0, 1, 0,
-                                                          0,  0, 0, 0  };
+  vtkSmartPointer< vtkTransform > rasOrientation = vtkSmartPointer< vtkTransform >::New();
+  const double                    orientationMatrix[16] = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
   rasOrientation->SetMatrix( orientationMatrix );
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> resampleSurface = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkSmartPointer< vtkTransformPolyDataFilter > resampleSurface = vtkSmartPointer< vtkTransformPolyDataFilter >::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   resampleSurface->SetInput( surfacereader->GetOutput() );
 #else
   resampleSurface->SetInputData( surfacereader->GetOutput() );
@@ -96,18 +94,18 @@ int main( int argc, char * argv[] )
   resampleSurface->SetTransform( rasOrientation );
   resampleSurface->Update();
 
-  vtkPolyData *surface = resampleSurface->GetOutput();
+  vtkPolyData * surface = resampleSurface->GetOutput();
 
   // define image type
   constexpr unsigned char dimension = 3;
   using PixelType = unsigned char;
-  using ImageType = itk::Image<PixelType, dimension>;
+  using ImageType = itk::Image< PixelType, dimension >;
 
   // read Inputimage
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
   ImageReaderType::Pointer imagereader = ImageReaderType::New();
 
-  imagereader->SetFileName(labelMapFile.c_str() );
+  imagereader->SetFileName( labelMapFile.c_str() );
   imagereader->Update();
 
   ImageType::ConstPointer image = imagereader->GetOutput();
@@ -115,24 +113,24 @@ int main( int argc, char * argv[] )
   ImageType::SizeType  size = image->GetBufferedRegion().GetSize();
   ImageType::IndexType start = image->GetBufferedRegion().GetIndex();
 
-  vtkPoints *surfacepoint = surface->GetPoints();
-  int        npoints = surfacepoint->GetNumberOfPoints();
+  vtkPoints * surfacepoint = surface->GetPoints();
+  int         npoints = surfacepoint->GetNumberOfPoints();
 
-  vtkSmartPointer<vtkFloatArray> label = vtkSmartPointer<vtkFloatArray>::New();
-  double                         point[3];
+  vtkSmartPointer< vtkFloatArray > label = vtkSmartPointer< vtkFloatArray >::New();
+  double                           point[3];
 
   ImageType::IndexType pixelindex;
-  using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
+  using ConstIteratorType = itk::ImageRegionConstIterator< ImageType >;
 
   ImageType::RegionType            subregion;
   ImageType::RegionType::IndexType substart;
   ImageType::RegionType::SizeType  subsize;
 
-  using PointType = itk::Point<double, ImageType::ImageDimension>;
+  using PointType = itk::Point< double, ImageType::ImageDimension >;
   PointType impoint;
-  for( int i = 0; i < npoints; i++ )
-    {
-    surface->GetPoint(i, point); // physical points
+  for ( int i = 0; i < npoints; i++ )
+  {
+    surface->GetPoint( i, point ); // physical points
 
     impoint[0] = point[0];
     impoint[1] = point[1];
@@ -140,39 +138,39 @@ int main( int argc, char * argv[] )
 
     bool Isin = image->TransformPhysicalPointToIndex( impoint, pixelindex );
 
-    if( !Isin )
-      {
+    if ( !Isin )
+    {
       std::cout << "There are points of input surface located outside of image." << std::endl;
       std::cout << "Quit." << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     ImageType::PixelType pixelValue = image->GetPixel( pixelindex );
 
     // instead of getting pixel directly
     // find the sizexsize neighborhood and take the most occurring non-zero value
-    if( pixelValue == 0 )
-      {
+    if ( pixelValue == 0 )
+    {
       bool Found = false;
 
-      while( !Found )
-        {
+      while ( !Found )
+      {
         substart[0] = pixelindex[0] - radius;
         substart[1] = pixelindex[1] - radius;
         substart[2] = pixelindex[2] - radius;
 
-        if( substart[0] < start[0] )
-          {
+        if ( substart[0] < start[0] )
+        {
           substart[0] = start[0];
-          }
-        if( substart[1] < start[1] )
-          {
+        }
+        if ( substart[1] < start[1] )
+        {
           substart[1] = start[1];
-          }
-        if( substart[2] < start[2] )
-          {
+        }
+        if ( substart[2] < start[2] )
+        {
           substart[2] = start[2];
-          }
+        }
 
         subsize[0] = radius * 2 + 1;
         subsize[1] = radius * 2 + 1;
@@ -183,72 +181,72 @@ int main( int argc, char * argv[] )
 
         ConstIteratorType it( image, subregion );
 
-        int *counter = new int[numOfLabels];
-        for( int ii = 0; ii < numOfLabels; ii++ )
-          {
+        int * counter = new int[numOfLabels];
+        for ( int ii = 0; ii < numOfLabels; ii++ )
+        {
           counter[ii] = 0;
-          }
+        }
 
         // save number of pixels with value i
         int newValue = 0, temp = 0;
-        for( it.GoToBegin(); !it.IsAtEnd(); ++it )
-          {
+        for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+        {
           ImageType::IndexType subIndex = it.GetIndex(); // no bounds checking
 
-          if( (subIndex[0] >= start[0] && subIndex[0] <= start[0] + int(size[0]) - 1)
-              && (subIndex[1] >= start[1] && subIndex[1] <= start[1] + int(size[1]) - 1)
-              && (subIndex[2] >= start[2] && subIndex[2] <= start[2] + int(size[2]) - 1) )
-            {
+          if ( ( subIndex[0] >= start[0] && subIndex[0] <= start[0] + int( size[0] ) - 1 ) &&
+               ( subIndex[1] >= start[1] && subIndex[1] <= start[1] + int( size[1] ) - 1 ) &&
+               ( subIndex[2] >= start[2] && subIndex[2] <= start[2] + int( size[2] ) - 1 ) )
+          {
             ImageType::PixelType subValue = it.Get();
-            if( subValue != 0 )
-              {
+            if ( subValue != 0 )
+            {
               counter[subValue - 1] += 1;
-              }
             }
           }
-        for( int j = 0; j < numOfLabels; j++ )
+        }
+        for ( int j = 0; j < numOfLabels; j++ )
+        {
+          if ( counter[j] > temp )
           {
-          if( counter[j] > temp )
-            {
             temp = counter[j];
             newValue = j + 1;
-            }
           }
+        }
 
-        if( (newValue != 0) || (radius > 15.0) || (!increaseRadius) )
-          {
+        if ( ( newValue != 0 ) || ( radius > 15.0 ) || ( !increaseRadius ) )
+        {
           Found = true;
-          }
-        else if( newValue == 0 )
-          {
+        }
+        else if ( newValue == 0 )
+        {
           std::cout << "some point can not find valid label." << std::endl;
           std::cout << "Continue" << std::endl;
           radius += 1;
           std::cout << "radius: " << radius << std::endl;
-          }
+        }
 
         pixelValue = newValue;
-        delete [] counter;
-        }
+        delete[] counter;
       }
+    }
 
     label->InsertValue( i, pixelValue );
-    }
+  }
 
-  label->SetName("LabelValue");
-  if( surface->GetPointData()->GetScalars() == nullptr )
-    {
-    surface->GetPointData()->SetScalars(label);
-    }
+  label->SetName( "LabelValue" );
+  if ( surface->GetPointData()->GetScalars() == nullptr )
+  {
+    surface->GetPointData()->SetScalars( label );
+  }
   else
-    {
-    surface->GetPointData()->AddArray(label);
-    surface->GetPointData()->SetActiveScalars("LabelValue");
-    }
+  {
+    surface->GetPointData()->AddArray( label );
+    surface->GetPointData()->SetActiveScalars( "LabelValue" );
+  }
 
   // Put the surface back into its original orientation
-  vtkSmartPointer<vtkTransformPolyDataFilter> revertedSurface = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkSmartPointer< vtkTransformPolyDataFilter > revertedSurface = vtkSmartPointer< vtkTransformPolyDataFilter >::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   revertedSurface->SetInput( surface );
 #else
   revertedSurface->SetInputData( surface );
@@ -256,13 +254,13 @@ int main( int argc, char * argv[] )
   revertedSurface->SetTransform( rasOrientation->GetInverse() );
   revertedSurface->Update();
 
-  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-#if (VTK_MAJOR_VERSION < 6)
-  writer->SetInput(revertedSurface->GetOutput() );
+  vtkSmartPointer< vtkPolyDataWriter > writer = vtkSmartPointer< vtkPolyDataWriter >::New();
+#if ( VTK_MAJOR_VERSION < 6 )
+  writer->SetInput( revertedSurface->GetOutput() );
 #else
-  writer->SetInputData(revertedSurface->GetOutput() );
+  writer->SetInputData( revertedSurface->GetOutput() );
 #endif
-  writer->SetFileName(outputSurfaceFile.c_str() );
+  writer->SetFileName( outputSurfaceFile.c_str() );
   writer->SetFileTypeToASCII();
   writer->Update();
 

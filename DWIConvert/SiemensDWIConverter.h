@@ -26,103 +26,102 @@
 class SiemensDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  SiemensDWIConverter(DCMTKFileVector &allHeaders,
-                      DWIConverter::FileNamesContainer &inputFileNames,
-                      const bool useBMatrixGradientDirections,
-                      const double smallGradientThreshold);
+  SiemensDWIConverter( DCMTKFileVector & allHeaders, DWIConverter::FileNamesContainer & inputFileNames,
+                       const bool useBMatrixGradientDirections, const double smallGradientThreshold );
   ~SiemensDWIConverter() override;
 
-  template <typename T>
-  T CSAExtractFromString(const char *ptr);
+  template < typename T >
+  T
+  CSAExtractFromString( const char * ptr );
 
-  class CSAItem : public std::vector<std::string >
+  class CSAItem : public std::vector< std::string >
   {
   public:
-      using SuperClass = std::vector<std::string>;
+    using SuperClass = std::vector< std::string >;
 
-      itk::uint32_t vm;
-      std::string vr;
+    itk::uint32_t vm;
+    std::string   vr;
 
-      CSAItem(unsigned int length) : SuperClass(length),
-                                     vm(0)
+    CSAItem( unsigned int length )
+      : SuperClass( length )
+      , vm( 0 )
+    {}
+    CSAItem()
+      : SuperClass()
+    {}
+    CSAItem( const CSAItem & other )
+      : SuperClass( other.size() )
+    {
+      *this = other;
+    }
+    CSAItem &
+    operator=( const CSAItem & other )
+    {
+      this->resize( 0 );
+      for ( CSAItem::const_iterator it = other.begin(); it != other.end(); ++it )
       {
+        this->push_back( *it );
       }
-      CSAItem() : SuperClass()
-      {
-      }
-      CSAItem( const CSAItem & other ) : SuperClass(other.size())
-      {
-        *this = other;
-      }
-      CSAItem & operator=(const CSAItem &other)
-      {
-        this->resize(0);
-        for(CSAItem::const_iterator it = other.begin();
-            it != other.end();
-            ++it)
-        {
-          this->push_back(*it);
-        }
-        this->vm = other.vm;
-        this->vr = other.vr;
-        return *this;
-      }
+      this->vm = other.vm;
+      this->vr = other.vr;
+      return *this;
+    }
 
-      template <typename T>
-      std::vector<T> AsVector() const
+    template < typename T >
+    std::vector< T >
+    AsVector() const
+    {
+      std::vector< T > rval;
+      for ( unsigned i = 0; i < this->size(); ++i )
       {
-        std::vector<T> rval;
-        for(unsigned i = 0; i < this->size(); ++i)
+        if ( !( *this )[i].empty() )
         {
-          if(! (*this)[i].empty())
-          {
-            T val = 0;
-            std::stringstream convert((*this)[i]);
-            convert >> val;
-            rval.push_back(val);
-          }
+          T                 val = 0;
+          std::stringstream convert( ( *this )[i] );
+          convert >> val;
+          rval.push_back( val );
         }
-        return rval;
       }
-      void DebugPrint() const
+      return rval;
+    }
+    void
+    DebugPrint() const
+    {
+      std::cerr << "  VM = " << this->vm << " VR = " << this->vr << std::endl << "    ";
+      bool firstTime( false );
+      for ( CSAItem::const_iterator it = this->begin(); it != this->end(); ++it )
       {
-        std::cerr << "  VM = " << this->vm << " VR = " << this->vr << std::endl
-                  << "    ";
-        bool firstTime(false);
-        for(CSAItem::const_iterator it = this->begin();
-            it != this->end(); ++it)
+        if ( firstTime )
         {
-          if(firstTime)
-          {
-            firstTime = false;
-          }
-          else
-          {
-            std::cerr << " ";
-          }
-          std::cerr << *it;
+          firstTime = false;
         }
-        std::cerr << std::endl;
+        else
+        {
+          std::cerr << " ";
+        }
+        std::cerr << *it;
       }
+      std::cerr << std::endl;
+    }
   };
 
-  class CSAHeader : public std::map<std::string,CSAItem>
+  class CSAHeader : public std::map< std::string, CSAItem >
   {
   public:
-      void DebugPrint() const
+    void
+    DebugPrint() const
+    {
+      for ( CSAHeader::const_iterator it = this->begin(); it != this->end(); ++it )
       {
-        for(CSAHeader::const_iterator it = this->begin();
-            it != this->end(); ++it)
-        {
-          std::cerr << it->first << std::endl;
-          it->second.DebugPrint();
-        }
+        std::cerr << it->first << std::endl;
+        it->second.DebugPrint();
       }
+    }
   };
 
 
-  void  DecodeCSAHeader(CSAHeader &header, const std::string &infoString);
-
+  void
+  DecodeCSAHeader( CSAHeader & header, const std::string & infoString );
 
 
   /** Siemens datasets are either in the
@@ -131,26 +130,35 @@ public:
    *  a collection of 2D slices arranged in a single
    *  mosaic slice.
    */
-  void LoadDicomDirectory() override;
+  void
+  LoadDicomDirectory() override;
 
-  double ExtractBValue(CSAHeader *csaHeader, unsigned int strideVolume);
+  double
+  ExtractBValue( CSAHeader * csaHeader, unsigned int strideVolume );
 
-  bool ExtractGradientDirection(CSAHeader *csaHeader, unsigned int strideVolume,
-                                vnl_vector_fixed<double, 3> &gradient);
+  bool
+  ExtractGradientDirection( CSAHeader * csaHeader, unsigned int strideVolume,
+                            vnl_vector_fixed< double, 3 > & gradient );
 
-  bool ExtractBMatrix(CSAHeader *csaHeader, unsigned int strideVolume,
-                      vnl_matrix_fixed<double, 3, 3> &bMatrix);
-   /**
-    * @brief  find the bvalues and gradient vectors
-    */
-  void ExtractDWIData() override;
+  bool
+  ExtractBMatrix( CSAHeader * csaHeader, unsigned int strideVolume, vnl_matrix_fixed< double, 3, 3 > & bMatrix );
+  /**
+   * @brief  find the bvalues and gradient vectors
+   */
+  void
+  ExtractDWIData() override;
+
 private:
-  static bool IsZeroMag(DWIMetaDataDictionaryValidator::GradientDirectionType vec);
+  static bool
+  IsZeroMag( DWIMetaDataDictionaryValidator::GradientDirectionType vec );
+
 protected:
   /** turn a mosaic image back into a sequential volume image */
-  void DeMosaic();
+  void
+  DeMosaic();
 
-  unsigned int ConvertFromCharPtr(const char *s);
+  unsigned int
+  ConvertFromCharPtr( const char * s );
   /** pull data out of Siemens scans.
    *
    *  Siemens sticks most of the DTI information into a single
@@ -161,20 +169,21 @@ protected:
    *  document.
    */
   unsigned int
-  ExtractSiemensDiffusionInformation(const std::string & tagString,
-                                     const std::string & nameString,
-                                     std::vector<double>& valueArray);
+  ExtractSiemensDiffusionInformation( const std::string & tagString, const std::string & nameString,
+                                      std::vector< double > & valueArray );
 
-  void CheckCSAHeaderAvailable();
+  void
+  CheckCSAHeaderAvailable();
 
-  void AddFlagsToDictionary() override;
+  void
+  AddFlagsToDictionary() override;
+
 private:
-  double      m_SmallGradientThreshold;
+  double       m_SmallGradientThreshold;
   unsigned int m_MMosaic;
   unsigned int m_NMosaic;
   unsigned int m_Stride;
-  bool m_HasCSAHeader;
-
+  bool         m_HasCSAHeader;
 };
 #include "SiemensDWIConverter.hxx"
 

@@ -8,96 +8,90 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkMersenneTwisterRandomVariateGenerator.h>
 
-template<typename TInputImage,
-  typename TPixelType,
-    unsigned int NDimension,
-      unsigned int NBSplineOrder>
-class CreateRandomBSpline
-  : public itk::ImageToImageFilter< TInputImage, TInputImage>
+template < typename TInputImage, typename TPixelType, unsigned int NDimension, unsigned int NBSplineOrder >
+class CreateRandomBSpline : public itk::ImageToImageFilter< TInputImage, TInputImage >
 {
 public:
   using Self = CreateRandomBSpline;
-  using Pointer = itk::SmartPointer <Self>;
+  using Pointer = itk::SmartPointer< Self >;
 
-  using BSplineType = itk::BSplineTransform<TPixelType,NDimension,NBSplineOrder>;
+  using BSplineType = itk::BSplineTransform< TPixelType, NDimension, NBSplineOrder >;
   using BSplinePointer = typename BSplineType::Pointer;
 
-  itkNewMacro(Self);
-  itkTypeMacro(Self, ImageToImageFilter);
+  itkNewMacro( Self );
+  itkTypeMacro( Self, ImageToImageFilter );
 
-  itkGetMacro(BSplineOutput, BSplinePointer)
+  itkGetMacro( BSplineOutput, BSplinePointer )
 
-  itkSetMacro(BSplineControlPoints, unsigned int)
-  itkGetMacro(BSplineControlPoints, unsigned int)
+    itkSetMacro( BSplineControlPoints, unsigned int ) itkGetMacro( BSplineControlPoints, unsigned int )
 
-  itkSetMacro(RandMin, int)
-  itkGetMacro(RandMin, int)
+      itkSetMacro( RandMin, int ) itkGetMacro( RandMin, int )
 
-  itkSetMacro(RandMax, int)
-  itkGetMacro(RandMax, int)
+        itkSetMacro( RandMax, int ) itkGetMacro( RandMax, int )
 
-  itkSetMacro(Verbose, bool)
-  itkSetMacro(Debug, bool)
+          itkSetMacro( Verbose, bool ) itkSetMacro( Debug, bool )
 
-  itkSetMacro(PrintMersenneSeed, bool)
+            itkSetMacro( PrintMersenneSeed, bool )
 
-  virtual void SetMersenneSeed(const unsigned long seed)
+              virtual void SetMersenneSeed( const unsigned long seed )
   {
-    itkDebugMacro("seting  MersenneSeed to " << seed );
-    if (this->m_MersenneSeed != seed )
-      {
+    itkDebugMacro( "seting  MersenneSeed to " << seed );
+    if ( this->m_MersenneSeed != seed )
+    {
       this->m_MersenneSeed = seed;
-      this->m_Generator->SetSeed(this->m_MersenneSeed);
+      this->m_Generator->SetSeed( this->m_MersenneSeed );
       this->Modified();
-      }
+    }
   }
-  itkGetMacro(MersenneSeed, unsigned long)
+  itkGetMacro( MersenneSeed, unsigned long )
 
-  using ImageType = TInputImage;
+    using ImageType = TInputImage;
   using ImagePointer = typename ImageType::Pointer;
   using ImagePointType = typename ImageType::PointType;
 
-  //set up random control point creation
+  // set up random control point creation
   using GeneratorType = itk::Statistics::MersenneTwisterRandomVariateGenerator;
 
 protected:
   CreateRandomBSpline()
   {
-    m_BSplineOutput=BSplineType::New();
-    m_BSplineControlPoints = 8; //default value
-    m_RandMax = 5; //default value
-    m_RandMin = -5; //default value
+    m_BSplineOutput = BSplineType::New();
+    m_BSplineControlPoints = 8; // default value
+    m_RandMax = 5;              // default value
+    m_RandMin = -5;             // default value
 
     this->m_Verbose = false;
     this->m_Debug = false;
     this->m_PrintMersenneSeed = false;
 
 
-    //set up random control point creation
+    // set up random control point creation
     this->m_Generator = GeneratorType::New();
     this->m_Generator->Initialize();
   };
   ~CreateRandomBSpline() override{};
 
-  void GenerateData() override
+  void
+  GenerateData() override
   {
-    if( m_Debug )
-      {
+    if ( m_Debug )
+    {
       std::cout << "File:  " << __FILE__ << std::endl;
       std::cout << "Line:  " << __LINE__ << std::endl;
       std::cout << "In function GenerateData()" << std::endl;
-      }
+    }
 
     using ImageRegionType = typename ImageType::RegionType;
 
-    constexpr unsigned int sizeVal = 400; // The image should be large enough to contain most heads, 40 cm^3 should do it
-    if(sizeVal % 2 != 0)
-      {
+    constexpr unsigned int sizeVal =
+      400; // The image should be large enough to contain most heads, 40 cm^3 should do it
+    if ( sizeVal % 2 != 0 )
+    {
       std::cerr << "File: " << __FILE__ << std::endl;
       std::cerr << "Line: " << __LINE__ << std::endl;
       std::cerr << "BSpline size must be divisible by 0" << std::endl;
-      }
-    double originVal = sizeVal * -0.5;  //automatically determine origin based on size
+    }
+    double originVal = sizeVal * -0.5; // automatically determine origin based on size
 
     typename ImageType::IndexType start;
     start[0] = 0;
@@ -109,139 +103,141 @@ protected:
     size[1] = sizeVal;
     size[2] = sizeVal;
 
-    ImageRegionType subjectRegion(start, size);
+    ImageRegionType subjectRegion( start, size );
 
-    typename BSplineType::OriginType  fixedOrigin;
+    typename BSplineType::OriginType fixedOrigin;
     fixedOrigin[0] = originVal;
     fixedOrigin[1] = originVal;
     fixedOrigin[2] = originVal;
 
-    this->GetBSplineOutput()->SetTransformDomainOrigin(fixedOrigin);
+    this->GetBSplineOutput()->SetTransformDomainOrigin( fixedOrigin );
 
     typename BSplineType::MeshSizeType meshSize;
-    meshSize.Fill(this->GetBSplineControlPoints() - NBSplineOrder);
-    this->GetBSplineOutput()->SetTransformDomainMeshSize(meshSize);
+    meshSize.Fill( this->GetBSplineControlPoints() - NBSplineOrder );
+    this->GetBSplineOutput()->SetTransformDomainMeshSize( meshSize );
 
     typename BSplineType::PhysicalDimensionsType fixedBSplinePhysicalDimensions;
-    typename ImageType::SpacingType  spacing;
+    typename ImageType::SpacingType              spacing;
     spacing[0] = 1;
     spacing[1] = 1;
     spacing[2] = 1;
 
-    for( size_t i = 0; i < NDimension; ++i)
-      {
+    for ( size_t i = 0; i < NDimension; ++i )
+    {
       fixedBSplinePhysicalDimensions[i] = spacing[i] * size[i];
-      }
-    this->GetBSplineOutput()->SetTransformDomainPhysicalDimensions(fixedBSplinePhysicalDimensions);
+    }
+    this->GetBSplineOutput()->SetTransformDomainPhysicalDimensions( fixedBSplinePhysicalDimensions );
 
-    //Get the number of paramaters/nodes required for this BSpline
+    // Get the number of paramaters/nodes required for this BSpline
     const unsigned int numberOfParameters = this->GetBSplineOutput()->GetNumberOfParameters();
 
-    //Setup a paramaters variable for the bspline
+    // Setup a paramaters variable for the bspline
     typename BSplineType::ParametersType bSplineParams( numberOfParameters );
 
     ImagePointer coefficientImgLR = this->GetBSplineOutput()->GetCoefficientImages()[0];
     ImagePointer coefficientImgPA = this->GetBSplineOutput()->GetCoefficientImages()[1];
     ImagePointer coefficientImgSI = this->GetBSplineOutput()->GetCoefficientImages()[2];
 
-    using IteratorType = typename itk::ImageRegionIteratorWithIndex<ImageType>;
-    IteratorType LRit(coefficientImgLR, coefficientImgLR->GetLargestPossibleRegion());
-    IteratorType PAit(coefficientImgPA, coefficientImgPA->GetLargestPossibleRegion());
-    IteratorType SIit(coefficientImgSI, coefficientImgSI->GetLargestPossibleRegion());
+    using IteratorType = typename itk::ImageRegionIteratorWithIndex< ImageType >;
+    IteratorType LRit( coefficientImgLR, coefficientImgLR->GetLargestPossibleRegion() );
+    IteratorType PAit( coefficientImgPA, coefficientImgPA->GetLargestPossibleRegion() );
+    IteratorType SIit( coefficientImgSI, coefficientImgSI->GetLargestPossibleRegion() );
 
     LRit.GoToBegin();
     PAit.GoToBegin();
     SIit.GoToBegin();
 
-    if( m_Debug )
-      {
+    if ( m_Debug )
+    {
       std::cout << "File:  " << __FILE__ << std::endl;
       std::cout << "Line:  " << __LINE__ << std::endl;
       std::cout << "In function GenerateData()" << std::endl;
 
       std::cout << "inputToBSpline" << std::endl;
-      this->GetInput()->Print(std::cout, 0);
+      this->GetInput()->Print( std::cout, 0 );
       std::cout << "done Input" << std::endl;
 
       std::cout << "LR coefficient image" << std::endl;
-      coefficientImgLR->Print(std::cout, 0);
+      coefficientImgLR->Print( std::cout, 0 );
       std::cout << std::endl << "doneLR" << std::endl;
 
       std::cout << "PA coefficient image" << std::endl;
-      coefficientImgPA->Print(std::cout, 0);
+      coefficientImgPA->Print( std::cout, 0 );
       std::cout << std::endl << "donePA" << std::endl;
 
       std::cout << std::endl << "SI coefficient image" << std::endl;
-      coefficientImgSI->Print(std::cout, 0);
+      coefficientImgSI->Print( std::cout, 0 );
       std::cout << std::endl << "doneSI" << std::endl;
-      }
+    }
 
     LRit.GoToBegin();
     PAit.GoToBegin();
     SIit.GoToBegin();
-    for(; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
-      {
+    for ( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit )
+    {
       ImagePointType pointLR;
       ImagePointType pointPA;
       ImagePointType pointSI;
-      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), pointLR);
-      coefficientImgPA->TransformIndexToPhysicalPoint(PAit.GetIndex(), pointPA);
-      coefficientImgSI->TransformIndexToPhysicalPoint(SIit.GetIndex(), pointSI);
+      coefficientImgLR->TransformIndexToPhysicalPoint( LRit.GetIndex(), pointLR );
+      coefficientImgPA->TransformIndexToPhysicalPoint( PAit.GetIndex(), pointPA );
+      coefficientImgSI->TransformIndexToPhysicalPoint( SIit.GetIndex(), pointSI );
 
       double x = pointLR[0];
 
-      //if( y > 0 ) continue; //only front half of skull
-      if( x > 0 )
-        {
+      // if( y > 0 ) continue; //only front half of skull
+      if ( x > 0 )
+      {
         LRit.Set( myRandom() );
-        PAit.Set( myRandom() );//might have to do these seperateley(different loop) for each one if there is no guarentee of order
+        PAit.Set( myRandom() ); // might have to do these seperateley(different loop) for each one if there is no
+                                // guarentee of order
         SIit.Set( myRandom() );
-        }
       }
+    }
 
 
     LRit.GoToBegin();
     PAit.GoToBegin();
     SIit.GoToBegin();
-    for(; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit)
-      {
+    for ( ; !LRit.IsAtEnd(); ++LRit, ++PAit, ++SIit )
+    {
 
       ImagePointType pointLR;
       ImagePointType pointPA;
       ImagePointType pointSI;
-      coefficientImgLR->TransformIndexToPhysicalPoint(LRit.GetIndex(), pointLR);
-      coefficientImgPA->TransformIndexToPhysicalPoint(PAit.GetIndex(), pointPA);
-      coefficientImgSI->TransformIndexToPhysicalPoint(SIit.GetIndex(), pointSI);
+      coefficientImgLR->TransformIndexToPhysicalPoint( LRit.GetIndex(), pointLR );
+      coefficientImgPA->TransformIndexToPhysicalPoint( PAit.GetIndex(), pointPA );
+      coefficientImgSI->TransformIndexToPhysicalPoint( SIit.GetIndex(), pointSI );
       double x = pointLR[0];
       double y = pointPA[1];
       double z = pointSI[2];
 
-      //if( y > 0 ) continue; //Only front half of skull
-      if( x <= 0 )
-        {
+      // if( y > 0 ) continue; //Only front half of skull
+      if ( x <= 0 )
+      {
         ImagePointType pos;
         pos[0] = x * -1;
         pos[1] = y;
         pos[2] = z;
         typename ImageType::IndexType idx;
-        coefficientImgLR->TransformPhysicalPointToIndex(pos, idx);
-        //set the weight along LR direction to be anti symmetric and other direction symmetric
-        LRit.Set( coefficientImgLR->GetPixel(idx) * -1 );
-        PAit.Set( coefficientImgPA->GetPixel(idx) ); //might have to do these seperateley for each one if there is no guarentee of order
-        SIit.Set( coefficientImgSI->GetPixel(idx) );
-        }
+        coefficientImgLR->TransformPhysicalPointToIndex( pos, idx );
+        // set the weight along LR direction to be anti symmetric and other direction symmetric
+        LRit.Set( coefficientImgLR->GetPixel( idx ) * -1 );
+        PAit.Set( coefficientImgPA->GetPixel(
+          idx ) ); // might have to do these seperateley for each one if there is no guarentee of order
+        SIit.Set( coefficientImgSI->GetPixel( idx ) );
       }
+    }
 
-    //We shouldn't need to set the parameters since we set the coefficient images
+    // We shouldn't need to set the parameters since we set the coefficient images
     using CoefficeintImages = typename BSplineType::CoefficientImageArray;
     CoefficeintImages images;
     images[0] = coefficientImgLR;
     images[1] = coefficientImgPA;
     images[2] = coefficientImgSI;
-    this->GetBSplineOutput()->SetCoefficientImages(images);
+    this->GetBSplineOutput()->SetCoefficientImages( images );
 
     // Print the mersenne seed if requested
-    if(this->m_PrintMersenneSeed || this->m_Debug || this->m_Verbose)
+    if ( this->m_PrintMersenneSeed || this->m_Debug || this->m_Verbose )
     {
       std::cout << "BSpline Creation is done!! " << std::endl;
       std::cout << "Mersenne Seed was: " << GetMersenneSeed() << std::endl;
@@ -249,24 +245,25 @@ protected:
   }
 
 private:
-  inline double myRandom()
+  inline double
+  myRandom()
   {
     int min = this->GetRandMin();
     int max = this->GetRandMax();
     int range = max - min;
-    int val =  this->m_Generator->GetIntegerVariate(range) + min;
-    return static_cast<double >(val);
+    int val = this->m_Generator->GetIntegerVariate( range ) + min;
+    return static_cast< double >( val );
   }
 
   BSplinePointer m_BSplineOutput;
-  unsigned int m_BSplineControlPoints;
-  int m_RandMin;
-  int m_RandMax;
-  bool             m_Verbose;
-  bool             m_Debug;
-  bool             m_PrintMersenneSeed;
+  unsigned int   m_BSplineControlPoints;
+  int            m_RandMin;
+  int            m_RandMax;
+  bool           m_Verbose;
+  bool           m_Debug;
+  bool           m_PrintMersenneSeed;
 
   GeneratorType::Pointer m_Generator;
-  unsigned long    m_MersenneSeed;
+  unsigned long          m_MersenneSeed;
 };
-#endif //BRAINSTOOLS_CREATERANDOMBSPLINE_H
+#endif // BRAINSTOOLS_CREATERANDOMBSPLINE_H

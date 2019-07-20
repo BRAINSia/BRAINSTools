@@ -50,40 +50,42 @@
 class QHullMSTClusteringProcess
 {
 public:
-
   QHullMSTClusteringProcess();
   ~QHullMSTClusteringProcess();
 
-  using VertexType = vnl_vector<float>;
+  using VertexType = vnl_vector< float >;
   using EdgeType = MSTEdge;
 
-  using VertexList = std::vector<VertexType>;
+  using VertexList = std::vector< VertexType >;
 
-  void SetInputVertices(const VertexList & l);
+  void
+  SetInputVertices( const VertexList & l );
 
   // Break edges with threshold value T, and then cluster based on MST edge
   // connectivity
   //
   // Returns the number of clusters and fills the cluster map array
-  unsigned int GetClusters(unsigned int *maps, float T);
+  unsigned int
+  GetClusters( unsigned int * maps, float T );
 
-  inline void SortOn()
+  inline void
+  SortOn()
   {
     m_SortFlag = true;
   }
 
-  inline void SortOff()
+  inline void
+  SortOff()
   {
     m_SortFlag = false;
   }
 
 private:
-
   unsigned int m_NumberOfVertices;
 
-  MSTEdge *m_MSTEdges;
+  MSTEdge * m_MSTEdges;
 
-  float *m_NodeAverages;
+  float * m_NodeAverages;
 
   bool m_SortFlag;
 };

@@ -3,10 +3,10 @@
 //
 
 
-if( writeProtocolGradientsFile == true )
+if ( writeProtocolGradientsFile == true )
 {
-std::cerr << "ERROR: DEPRECATED IMPLEMENTED" << std::endl;
-return EXIT_FAILURE;
+  std::cerr << "ERROR: DEPRECATED IMPLEMENTED" << std::endl;
+  return EXIT_FAILURE;
 #if 0
 itk::NumberToString<double> DoubleConvert;
     //////////////////////////////////////////////

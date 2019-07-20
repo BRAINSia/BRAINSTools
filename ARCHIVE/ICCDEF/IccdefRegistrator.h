@@ -63,27 +63,23 @@ namespace itk
  *   - Checkerboard image
  *   - x,y,z components of displacement fields.
  */
-template <
-  typename TRealImage,
-  typename TOutputImage,
-  typename TFieldValue = typename TRealImage::PixelType
-  >
+template < typename TRealImage, typename TOutputImage, typename TFieldValue = typename TRealImage::PixelType >
 class IccdefRegistrator : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefRegistrator);
+  ITK_DISALLOW_COPY_AND_ASSIGN( IccdefRegistrator );
 
   /** Standard class type alias. */
   using Self = IccdefRegistrator;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(IccdefRegistrator, Object);
+  itkTypeMacro( IccdefRegistrator, Object );
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Fixed Image Type. */
   using RealImageType = TRealImage;
@@ -99,38 +95,28 @@ public:
   using FieldValueType = TFieldValue;
 
   /** Deformation field pixel type. */
-  using FieldPixelType = Vector<FieldValueType,
-                 Self::ImageDimension>;
+  using FieldPixelType = Vector< FieldValueType, Self::ImageDimension >;
 
   /** Deformation field type. */
-  using TDisplacementField = Image<FieldPixelType,
-                Self::ImageDimension>;
+  using TDisplacementField = Image< FieldPixelType, Self::ImageDimension >;
 
   /** Fixed Image Pyramid Type. */
-  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
-      RealImageType,
-      RealImageType>;
+  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter< RealImageType, RealImageType >;
 
   /** Moving Image Pyramid Type. */
-  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
-      RealImageType,
-      RealImageType>;
+  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter< RealImageType, RealImageType >;
 
   /** Registration Method. */
-  using RegistrationType = MultiResolutionICCDeformableRegistration<
-      RealImageType,
-      RealImageType,
-      TDisplacementField>;
+  using RegistrationType = MultiResolutionICCDeformableRegistration< RealImageType, RealImageType, TDisplacementField >;
 
   /** UnsignedIntArray type. */
-  using UnsignedIntArray = Array<unsigned int>;
+  using UnsignedIntArray = Array< unsigned int >;
 
   /** ShrinkFactorsArray type. */
-  using ShrinkFactorsArray = FixedArray<unsigned int,
-                     Self::ImageDimension>;
+  using ShrinkFactorsArray = FixedArray< unsigned int, Self::ImageDimension >;
 
   /** Set the intial deformation field **/
-  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
 
   /** Set the fixed image. */
   itkSetObjectMacro( FixedImage, RealImageType );
@@ -145,67 +131,69 @@ public:
   itkSetObjectMacro( UnNormalizedFixedImage, RealImageType );
 
   /** Set the number of resolution levels. */
-  itkSetClampMacro( NumberOfLevels, unsigned short, 1,
-                    NumericTraits<unsigned short>::max() );
+  itkSetClampMacro( NumberOfLevels, unsigned short, 1, NumericTraits< unsigned short >::max() );
 
   /** Set the number of iterations per level. */
   itkSetMacro( NumberOfIterations, UnsignedIntArray );
 
-  itkSetStringMacro(InitialFixedDisplacementFieldFilename);
-  itkGetStringMacro(InitialFixedDisplacementFieldFilename);
+  itkSetStringMacro( InitialFixedDisplacementFieldFilename );
+  itkGetStringMacro( InitialFixedDisplacementFieldFilename );
 
-  itkSetStringMacro(InitialMovingDisplacementFieldFilename);
-  itkGetStringMacro(InitialMovingDisplacementFieldFilename);
+  itkSetStringMacro( InitialMovingDisplacementFieldFilename );
+  itkGetStringMacro( InitialMovingDisplacementFieldFilename );
 
-  itkSetMacro(OutputJacobianImage, bool);
-  itkGetConstMacro(OutputJacobianImage, bool);
+  itkSetMacro( OutputJacobianImage, bool );
+  itkGetConstMacro( OutputJacobianImage, bool );
 
-  itkSetMacro(OutputDisplacementField, bool);
-  itkGetConstMacro(OutputDisplacementField, bool);
+  itkSetMacro( OutputDisplacementField, bool );
+  itkGetConstMacro( OutputDisplacementField, bool );
 
-  itkSetMacro(OutputDisplacement, bool);
-  itkGetConstMacro(OutputDisplacement, bool);
+  itkSetMacro( OutputDisplacement, bool );
+  itkGetConstMacro( OutputDisplacement, bool );
 
   /** Set WarpedImageName */
   itkSetStringMacro( OutputPrefix );
   itkGetStringMacro( OutputPrefix );
 
   /** Set Deformation field output file Name */
-  itkSetStringMacro(ForwardDisplacementFieldOutputName);
-  itkGetStringMacro(ForwardDisplacementFieldOutputName);
+  itkSetStringMacro( ForwardDisplacementFieldOutputName );
+  itkGetStringMacro( ForwardDisplacementFieldOutputName );
 
-  itkSetStringMacro(BackwardDisplacementFieldOutputName);
-  itkGetStringMacro(BackwardDisplacementFieldOutputName);
+  itkSetStringMacro( BackwardDisplacementFieldOutputName );
+  itkGetStringMacro( BackwardDisplacementFieldOutputName );
 
   /**Set histogram matching*/
-  itkSetMacro(UseHistogramMatching, bool);
-  itkGetConstMacro(UseHistogramMatching, bool);
+  itkSetMacro( UseHistogramMatching, bool );
+  itkGetConstMacro( UseHistogramMatching, bool );
 
   /** Method to execute the registration. */
-  virtual void Execute();
+  virtual void
+  Execute();
 
   /** Get the deformation field. */
   itkGetConstObjectMacro( DisplacementField, TDisplacementField );
 
   /** Initialize registration at the start of new level. */
-  void StartNewLevel();
+  void
+  StartNewLevel();
 
   /**Set Debug mode*/
-  itkSetMacro(OutDebug, bool );
-  itkGetConstMacro( OutDebug,  bool );
+  itkSetMacro( OutDebug, bool );
+  itkGetConstMacro( OutDebug, bool );
 
-  itkSetMacro(DefaultPixelValue, typename RealImageType::PixelType);
-  itkGetMacro(DefaultPixelValue, typename RealImageType::PixelType);
+  itkSetMacro( DefaultPixelValue, typename RealImageType::PixelType );
+  itkGetMacro( DefaultPixelValue, typename RealImageType::PixelType );
 
-  using BaseRegistrationFilterType = ICCDeformableRegistrationFilter<RealImageType, RealImageType,
-                                          TDisplacementField>;
-  void SetRegistrationFilter(
-    BaseRegistrationFilterType * filter)
+  using BaseRegistrationFilterType =
+    ICCDeformableRegistrationFilter< RealImageType, RealImageType, TDisplacementField >;
+  void
+  SetRegistrationFilter( BaseRegistrationFilterType * filter )
   {
-    this->m_Registration->SetRegistrationFilter(filter);
+    this->m_Registration->SetRegistrationFilter( filter );
   }
 
-  RegistrationType * GetRegistrationType(void)
+  RegistrationType *
+  GetRegistrationType( void )
   {
     return m_Registration;
   }
@@ -213,43 +201,45 @@ public:
 protected:
   IccdefRegistrator();
   ~IccdefRegistrator() override;
-private:
-  void WriteDisplacementComponents(TDisplacementField *, std::string);
 
-  typename TDisplacementField::Pointer m_InitialDisplacementField;
-  typename RealImageType::Pointer m_FixedImage;
-  typename RealImageType::Pointer m_MovingImage;
-  typename RealImageType::Pointer m_UnNormalizedMovingImage;
-  typename RealImageType::Pointer m_UnNormalizedFixedImage;
-  typename FixedImagePyramidType::Pointer m_FixedImagePyramid;
+private:
+  void
+  WriteDisplacementComponents( TDisplacementField *, std::string );
+
+  typename TDisplacementField::Pointer     m_InitialDisplacementField;
+  typename RealImageType::Pointer          m_FixedImage;
+  typename RealImageType::Pointer          m_MovingImage;
+  typename RealImageType::Pointer          m_UnNormalizedMovingImage;
+  typename RealImageType::Pointer          m_UnNormalizedFixedImage;
+  typename FixedImagePyramidType::Pointer  m_FixedImagePyramid;
   typename MovingImagePyramidType::Pointer m_MovingImagePyramid;
-  typename RegistrationType::Pointer m_Registration;
-  typename RealImageType::PixelType m_DefaultPixelValue;
+  typename RegistrationType::Pointer       m_Registration;
+  typename RealImageType::PixelType        m_DefaultPixelValue;
 
   unsigned short   m_NumberOfLevels;
   UnsignedIntArray m_NumberOfIterations;
 
   typename TDisplacementField::Pointer m_DisplacementField;
   typename TDisplacementField::Pointer m_BackwardDisplacementField;
-  unsigned long m_Tag;
-  std::string   m_DisplacementBaseName;
-  std::string   m_OutputPrefix;
-  std::string   m_ForwardDisplacementFieldOutputName;
-  std::string   m_BackwardDisplacementFieldOutputName;
-  bool          m_OutDebug;
-  bool          m_UseHistogramMatching;
-  std::string   m_InitialMovingDisplacementFieldFilename;
-  std::string   m_InitialFixedDisplacementFieldFilename;
-  bool          m_OutputJacobianImage;
-  bool          m_OutputDisplacement;
-  bool          m_OutputDisplacementField;
-  std::string   m_ForwardDir;
-  std::string   m_BackwardDir;
+  unsigned long                        m_Tag;
+  std::string                          m_DisplacementBaseName;
+  std::string                          m_OutputPrefix;
+  std::string                          m_ForwardDisplacementFieldOutputName;
+  std::string                          m_BackwardDisplacementFieldOutputName;
+  bool                                 m_OutDebug;
+  bool                                 m_UseHistogramMatching;
+  std::string                          m_InitialMovingDisplacementFieldFilename;
+  std::string                          m_InitialFixedDisplacementFieldFilename;
+  bool                                 m_OutputJacobianImage;
+  bool                                 m_OutputDisplacement;
+  bool                                 m_OutputDisplacementField;
+  std::string                          m_ForwardDir;
+  std::string                          m_BackwardDir;
 };
-}   // namespace itk
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "IccdefRegistrator.hxx"
+#  include "IccdefRegistrator.hxx"
 #endif
 
 #endif

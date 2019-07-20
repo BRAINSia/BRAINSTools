@@ -61,128 +61,130 @@
 #include "BRAINSThreadControl.h"
 #include <BRAINSCommonLib.h>
 
-double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledStandardFibers, int numberOfPoints)
+double
+PairOffFibers( vtkPolyData * resampledTestFibers, vtkPolyData * resampledStandardFibers, int numberOfPoints )
 {
   double maxDistances = 0.0;
 
-  for( int j = 0; j < resampledTestFibers->GetNumberOfCells(); j++ )
+  for ( int j = 0; j < resampledTestFibers->GetNumberOfCells(); j++ )
+  {
+    if ( resampledTestFibers->GetCellType( j ) == VTK_POLY_LINE )
     {
-    if( resampledTestFibers->GetCellType(j) == VTK_POLY_LINE )
-      {
-      vtkIdList *testPointList = vtkIdList::New();
-      resampledTestFibers->GetCellPoints(j, testPointList);
+      vtkIdList * testPointList = vtkIdList::New();
+      resampledTestFibers->GetCellPoints( j, testPointList );
       double minDist = 1E200;
       int    closestK = -1;
-      for( int k = 0; k < resampledStandardFibers->GetNumberOfCells(); k++ )
+      for ( int k = 0; k < resampledStandardFibers->GetNumberOfCells(); k++ )
+      {
+        if ( resampledStandardFibers->GetCellType( k ) == VTK_POLY_LINE )
         {
-        if( resampledStandardFibers->GetCellType(k) == VTK_POLY_LINE )
-          {
-          vtkIdList *standardPointList = vtkIdList::New();
-          resampledStandardFibers->GetCellPoints(k, standardPointList);
+          vtkIdList * standardPointList = vtkIdList::New();
+          resampledStandardFibers->GetCellPoints( k, standardPointList );
           double sumDist = 0.0;
-          for( int i = 0; i < numberOfPoints; i++ )
-            {
+          for ( int i = 0; i < numberOfPoints; i++ )
+          {
             double testPoint[3];
-            resampledTestFibers->GetPoint(testPointList->GetId(i), testPoint);
+            resampledTestFibers->GetPoint( testPointList->GetId( i ), testPoint );
 
             double standardPoint[3];
-            resampledStandardFibers->GetPoint(standardPointList->GetId(i), standardPoint);
+            resampledStandardFibers->GetPoint( standardPointList->GetId( i ), standardPoint );
 
             double sumSquares = 0.0;
-            for( int p = 0; p < 3; p++ )
-              {
+            for ( int p = 0; p < 3; p++ )
+            {
               double edge = testPoint[p] - standardPoint[p];
               sumSquares += edge * edge;
-              }
-            sumDist += std::sqrt(sumSquares);
             }
+            sumDist += std::sqrt( sumSquares );
+          }
 
           double dist = ( sumDist / numberOfPoints );
-          if( dist < minDist )
-            {
+          if ( dist < minDist )
+          {
             minDist = dist;
             closestK = k;
-            }
           }
         }
+      }
 
       std::cout << "Pairing test fiber " << j << " with standard fiber " << closestK << " at distance " << minDist
                 << std::endl;
-      if( maxDistances < minDist )
-        {
+      if ( maxDistances < minDist )
+      {
         maxDistances = minDist;
-        }
       }
     }
+  }
   return maxDistances;
 }
 
-int main(int argc, char * argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
 
   const bool debug = true;
-  if( debug )
-    {
-    std::cout << "Test Fiber Tract: " <<  testFiber << std::endl;
-    std::cout << "Standard Fiber Tract: " <<  standardFiber << std::endl;
-    std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile  << std::endl;
-    std::cout << "Single Fiber Tract Closeness: " <<  closeness << std::endl;
-    std::cout << "Test For Tract Bijection: " << testForBijection  << std::endl;
-    std::cout << "Test For Tract Cardinality Agreement: " << testForFiberCardinality  << std::endl;
-    std::cout << "Number Of Guide Fiber Points: " <<  numberOfPoints << std::endl;
-    }
+  if ( debug )
+  {
+    std::cout << "Test Fiber Tract: " << testFiber << std::endl;
+    std::cout << "Standard Fiber Tract: " << standardFiber << std::endl;
+    std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile << std::endl;
+    std::cout << "Single Fiber Tract Closeness: " << closeness << std::endl;
+    std::cout << "Test For Tract Bijection: " << testForBijection << std::endl;
+    std::cout << "Test For Tract Cardinality Agreement: " << testForFiberCardinality << std::endl;
+    std::cout << "Number Of Guide Fiber Points: " << numberOfPoints << std::endl;
+  }
 
-  vtkPolyData *testFiberTract;
-  if( writeXMLPolyDataFile )
-    {
-    vtkXMLPolyDataReader *tractReader = vtkXMLPolyDataReader::New();
+  vtkPolyData * testFiberTract;
+  if ( writeXMLPolyDataFile )
+  {
+    vtkXMLPolyDataReader * tractReader = vtkXMLPolyDataReader::New();
     tractReader->SetFileName( testFiber.c_str() );
     tractReader->Update();
     testFiberTract = tractReader->GetOutput();
-    }
+  }
   else
-    {
-    vtkPolyDataReader *tractReader = vtkPolyDataReader::New();
+  {
+    vtkPolyDataReader * tractReader = vtkPolyDataReader::New();
     tractReader->SetFileName( testFiber.c_str() );
     tractReader->Update();
     testFiberTract = tractReader->GetOutput();
-    }
+  }
 
-  vtkPolyData *standardFiberTract;
-  if( writeXMLPolyDataFile )
-    {
-    vtkXMLPolyDataReader *tractReader = vtkXMLPolyDataReader::New();
+  vtkPolyData * standardFiberTract;
+  if ( writeXMLPolyDataFile )
+  {
+    vtkXMLPolyDataReader * tractReader = vtkXMLPolyDataReader::New();
     tractReader->SetFileName( standardFiber.c_str() );
     tractReader->Update();
     standardFiberTract = tractReader->GetOutput();
-    }
+  }
   else
-    {
-    vtkPolyDataReader *tractReader = vtkPolyDataReader::New();
+  {
+    vtkPolyDataReader * tractReader = vtkPolyDataReader::New();
     tractReader->SetFileName( standardFiber.c_str() );
     tractReader->Update();
     standardFiberTract = tractReader->GetOutput();
-    }
+  }
 
   int numberOfTestFibers = testFiberTract->GetNumberOfCells();
   int numberOfStandardFibers = standardFiberTract->GetNumberOfCells();
-  if( testForFiberCardinality )
+  if ( testForFiberCardinality )
+  {
+    if ( numberOfTestFibers != numberOfStandardFibers )
     {
-    if( numberOfTestFibers != numberOfStandardFibers )
-      {
       std::cout << "Number of Test Fibers in " << testFiber << " was " << numberOfTestFibers << std::endl;
       std::cout << "Number of Standard Fibers in " << standardFiber << " was " << numberOfStandardFibers << std::endl;
       std::cout << "TractInclusion test halting with error status 2 indicating cardinality agreement error."
                 << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
-  vtkSplineFilter *testSpline = vtkSplineFilter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkSplineFilter * testSpline = vtkSplineFilter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   testSpline->SetInput( testFiberTract );
 #else
   testSpline->SetInputData( testFiberTract );
@@ -191,10 +193,10 @@ int main(int argc, char * argv[])
   testSpline->SetNumberOfSubdivisions( numberOfPoints );
   testSpline->Update();
 
-  vtkPolyData *resampledTestFibers = testSpline->GetOutput();
+  vtkPolyData * resampledTestFibers = testSpline->GetOutput();
 
-  vtkSplineFilter *standardSpline = vtkSplineFilter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkSplineFilter * standardSpline = vtkSplineFilter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   standardSpline->SetInput( standardFiberTract );
 #else
   standardSpline->SetInputData( standardFiberTract );
@@ -203,32 +205,31 @@ int main(int argc, char * argv[])
   standardSpline->SetNumberOfSubdivisions( numberOfPoints );
   standardSpline->Update();
 
-  vtkPolyData *resampledStandardFibers = standardSpline->GetOutput();
+  vtkPolyData * resampledStandardFibers = standardSpline->GetOutput();
 
-  double maxDistances = PairOffFibers(resampledTestFibers, resampledStandardFibers, numberOfPoints);
+  double maxDistances = PairOffFibers( resampledTestFibers, resampledStandardFibers, numberOfPoints );
   std::cout << "Maximum distance to standard fibers from all test fibers was " << maxDistances
             << " which is required to be <= " << closeness << std::endl;
-  if( !( maxDistances <= closeness ) )  // Also fails on nan
-    {
+  if ( !( maxDistances <= closeness ) ) // Also fails on nan
+  {
     std::cout
       << "TractInclusion test halting with error status 3 indicating Test fibers not included in Standard neighborhood."
       << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  if( testForBijection )
-    {
-    maxDistances = PairOffFibers(resampledStandardFibers, resampledTestFibers, numberOfPoints);
+  if ( testForBijection )
+  {
+    maxDistances = PairOffFibers( resampledStandardFibers, resampledTestFibers, numberOfPoints );
     std::cout << "Maximum distance to test fibers from all standard fibers was " << maxDistances
               << " which is required to be <= " << closeness << std::endl;
-    if( !( maxDistances <= closeness ) )  // Also fails on nan
-      {
-      std::cout
-        <<
-        "TractInclusion test halting witherror status 4 indicating Standard fibers not included in Test neighborhood."
-        << std::endl;
+    if ( !( maxDistances <= closeness ) ) // Also fails on nan
+    {
+      std::cout << "TractInclusion test halting witherror status 4 indicating Standard fibers not included in Test "
+                   "neighborhood."
+                << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
   return EXIT_SUCCESS;
 }

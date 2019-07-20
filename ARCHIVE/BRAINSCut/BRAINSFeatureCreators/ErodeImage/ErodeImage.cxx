@@ -33,37 +33,41 @@
 #include "ErodeImageCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if( inputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputVolume Required! "  << std::endl;
-    }
-  if( inputMaskVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputMaskVolume Required! "  << std::endl;
-    }
-  if( inputMaskVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputMaskVolume Required! "  << std::endl;
-    }
-  if( violated )
-    {
+  if ( inputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputVolume Required! " << std::endl;
+  }
+  if ( inputMaskVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputMaskVolume Required! " << std::endl;
+  }
+  if ( inputMaskVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputMaskVolume Required! " << std::endl;
+  }
+  if ( violated )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   using PixelType = float;
   // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  using ImageType = itk::Image<PixelType,  Dimension>;
-  using MaskImageType = itk::Image<char,  Dimension>;
-  using ReaderType = itk::ImageFileReader<ImageType>;
-  using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+  using ImageType = itk::Image< PixelType, Dimension >;
+  using MaskImageType = itk::Image< char, Dimension >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
+  using MaskReaderType = itk::ImageFileReader< MaskImageType >;
 
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
@@ -71,40 +75,40 @@ int main(int argc, char *argv[])
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
 
-  using MaskFilterType = itk::MaskImageFilter<ImageType, MaskImageType, ImageType>;
+  using MaskFilterType = itk::MaskImageFilter< ImageType, MaskImageType, ImageType >;
   MaskFilterType::Pointer maskFilter = MaskFilterType::New();
 
-  using StructuringElementType = itk::BinaryBallStructuringElement<PixelType, Dimension>;
+  using StructuringElementType = itk::BinaryBallStructuringElement< PixelType, Dimension >;
 
-  using ErodeFilterType = itk::GrayscaleErodeImageFilter<ImageType, ImageType, StructuringElementType>;
+  using ErodeFilterType = itk::GrayscaleErodeImageFilter< ImageType, ImageType, StructuringElementType >;
   ErodeFilterType::Pointer grayscaleErodeFilter = ErodeFilterType::New();
 
   StructuringElementType structuringElement;
-  structuringElement.SetRadius(inputRadius);
+  structuringElement.SetRadius( inputRadius );
   structuringElement.CreateStructuringElement();
-  grayscaleErodeFilter->SetKernel(structuringElement);
+  grayscaleErodeFilter->SetKernel( structuringElement );
 
   try
-    {
+  {
     maskFilter->SetInput1( imageReader->GetOutput() );
     maskFilter->SetInput2( maskReader->GetOutput() );
-    maskFilter->SetOutsideValue(0);
+    maskFilter->SetOutsideValue( 0 );
 
     grayscaleErodeFilter->SetInput( maskFilter->GetOutput() );
     grayscaleErodeFilter->Update();
-    }
+  }
 
-  catch( itk::ExceptionObject & excep )
-    {
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     throw;
-    }
+  }
 
-  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter< ImageType >;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
-  imageWriter->SetFileName(outputVolume);
+  imageWriter->SetFileName( outputVolume );
   imageWriter->SetInput( grayscaleErodeFilter->GetOutput() );
   imageWriter->Update();
 

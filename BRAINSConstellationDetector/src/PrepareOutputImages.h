@@ -25,26 +25,19 @@
 namespace itk
 {
 
-  extern SImageType::PointType GetNamedPointFromLandmarkList(
-    const LandmarksMapType & landmarks,
-    const std::string & NamedPoint);
+extern SImageType::PointType
+GetNamedPointFromLandmarkList( const LandmarksMapType & landmarks, const std::string & NamedPoint );
 
-  extern void PrepareOutputImages(SImageType::Pointer & lOutputResampledImage,
-    SImageType::Pointer & lOutputImage,
-    SImageType::Pointer & lOutputUntransformedClippedVolume,
-    SImageType::ConstPointer lImageToBeResampled,
-    VersorTransformType::ConstPointer lVersorTransform,
-    const double lACLowerBound,
-    const short int BackgroundFillValue,
-    const std::string & lInterpolationMode,
-    const bool lCutOutHeadInOutputVolume,
-    const double lOtsuPercentileThreshold
-  );
+extern void
+PrepareOutputImages( SImageType::Pointer & lOutputResampledImage, SImageType::Pointer & lOutputImage,
+                     SImageType::Pointer &    lOutputUntransformedClippedVolume,
+                     SImageType::ConstPointer lImageToBeResampled, VersorTransformType::ConstPointer lVersorTransform,
+                     const double lACLowerBound, const short int BackgroundFillValue,
+                     const std::string & lInterpolationMode, const bool lCutOutHeadInOutputVolume,
+                     const double lOtsuPercentileThreshold );
 
-  extern void ApplyInverseOfTransformToLandmarks(
-    VersorTransformType::ConstPointer lVersorTransform,
-    const LandmarksMapType & inputLmks,
-    LandmarksMapType & outputLmks
-    );
-}
+extern void
+ApplyInverseOfTransformToLandmarks( VersorTransformType::ConstPointer lVersorTransform,
+                                    const LandmarksMapType & inputLmks, LandmarksMapType & outputLmks );
+} // namespace itk
 #endif // __PrepareOutputImages_h__

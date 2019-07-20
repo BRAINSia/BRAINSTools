@@ -37,9 +37,9 @@
 
 namespace itk
 {
-template <typename TMesh>
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
+template < typename TMesh >
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
+  TMesh >::MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {
   this->SetNumberOfIndexedInputs( 8 ); // four resolution levels, two meshes on each
   this->SetNumberOfIndexedOutputs( 1 );
@@ -73,97 +73,92 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_SelfStopMode = false;
 }
 
-template <typename TMesh>
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::~MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
-{
-}
+template < typename TMesh >
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
+  TMesh >::~MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
+{}
 
-template <typename TMesh>
+template < typename TMesh >
 DataObject::Pointer
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::MakeOutput(size_t idx)
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::MakeOutput( size_t idx )
 {
   DataObject::Pointer output;
 
-  switch( idx )
-    {
+  switch ( idx )
+  {
     case 0:
-      {
-      output = (TMesh::New() ).GetPointer();
-      }
-      break;
+    {
+      output = ( TMesh::New() ).GetPointer();
     }
+    break;
+  }
   return output.GetPointer();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::SetFixedMesh( const MeshType * fixedMesh )
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::SetFixedMesh( const MeshType * fixedMesh )
 {
-  itkDebugMacro("setting Fixed Mesh to " << fixedMesh );
+  itkDebugMacro( "setting Fixed Mesh to " << fixedMesh );
 
   // Process object is not const-correct so the const_cast is required here
-  this->ProcessObject::SetNthInput(0, const_cast<MeshType *>( fixedMesh ) );
+  this->ProcessObject::SetNthInput( 0, const_cast< MeshType * >( fixedMesh ) );
 
   this->Modified();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::SetMovingMesh( const MeshType * movingMesh )
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::SetMovingMesh( const MeshType * movingMesh )
 {
-  itkDebugMacro("setting Moving Mesh to " << movingMesh );
+  itkDebugMacro( "setting Moving Mesh to " << movingMesh );
 
   // Process object is not const-correct so the const_cast is required here
-  this->ProcessObject::SetNthInput(1, const_cast<MeshType *>( movingMesh ) );
+  this->ProcessObject::SetNthInput( 1, const_cast< MeshType * >( movingMesh ) );
 
   this->Modified();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::SetFixedMesh( unsigned int level, const MeshType * fixedMesh )
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::SetFixedMesh( unsigned int     level,
+                                                                                      const MeshType * fixedMesh )
 {
-  itkDebugMacro("setting Fixed Mesh to " << fixedMesh );
+  itkDebugMacro( "setting Fixed Mesh to " << fixedMesh );
 
   const unsigned int inputNumber = 2 * level;
 
   // Process object is not const-correct so the const_cast is required here
-  this->ProcessObject::SetNthInput( inputNumber, const_cast<MeshType *>( fixedMesh ) );
+  this->ProcessObject::SetNthInput( inputNumber, const_cast< MeshType * >( fixedMesh ) );
 
   this->Modified();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::SetMovingMesh( unsigned int level, const MeshType * movingMesh )
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::SetMovingMesh( unsigned int     level,
+                                                                                       const MeshType * movingMesh )
 {
-  itkDebugMacro("setting Moving Mesh to " << movingMesh );
+  itkDebugMacro( "setting Moving Mesh to " << movingMesh );
 
   const unsigned int inputNumber = 2 * level + 1;
 
   // Process object is not const-correct so the const_cast is required here
-  this->ProcessObject::SetNthInput(inputNumber, const_cast<MeshType *>( movingMesh ) );
+  this->ProcessObject::SetNthInput( inputNumber, const_cast< MeshType * >( movingMesh ) );
 
   this->Modified();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::GenerateData()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::GenerateData()
 {
   this->InitializeRigidRegistrationParameters();
   this->InitializeDemonsRegistrationParameters();
   this->PrepareCoarsestResolutionMeshes();
 
-  while( this->m_CurrentResolutionLevel < this->m_NumberOfResolutionLevels )
-    {
+  while ( this->m_CurrentResolutionLevel < this->m_NumberOfResolutionLevels )
+  {
     std::cout << "RESOLUTION LEVEL = " << this->m_CurrentResolutionLevel << std::endl;
     this->ComputeRigidRegistration();
     this->RigidlyTransformPointsOfFixedMesh();
@@ -171,18 +166,16 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
     this->PrepareNextResolutionLevelMeshes();
     this->DeformNextResolutionLevelFixedMesh();
     this->m_CurrentResolutionLevel++;
-    }
+  }
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::InitializeRigidRegistrationParameters()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::InitializeRigidRegistrationParameters()
 {
   using ScalesType = RigidOptimizerType::ScalesType;
 
-  const unsigned int numberOfTransformParameters =
-    this->m_RigidTransform->GetNumberOfParameters();
+  const unsigned int numberOfTransformParameters = this->m_RigidTransform->GetNumberOfParameters();
 
   ScalesType parametersScale( numberOfTransformParameters );
   parametersScale[0] = 1.0;
@@ -196,21 +189,20 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_RigidOptimizer->SetMinimumStepLength( 1e-9 );
   this->m_RigidOptimizer->SetRelaxationFactor( 0.9 );
 
-  if( this->m_RigidRegistrationIterations.size() < this->m_NumberOfResolutionLevels )
-    {
-    itkExceptionMacro("Rigid registration iterations array size is smaller than number of iteration levels");
-    }
+  if ( this->m_RigidRegistrationIterations.size() < this->m_NumberOfResolutionLevels )
+  {
+    itkExceptionMacro( "Rigid registration iterations array size is smaller than number of iteration levels" );
+  }
 
-  if( this->m_RigidRegistrationStepLength.size() < this->m_NumberOfResolutionLevels )
-    {
-    itkExceptionMacro("Rigid registration step length array size is smaller than number of iteration levels");
-    }
+  if ( this->m_RigidRegistrationStepLength.size() < this->m_NumberOfResolutionLevels )
+  {
+    itkExceptionMacro( "Rigid registration step length array size is smaller than number of iteration levels" );
+  }
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::InitializeDemonsRegistrationParameters()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::InitializeDemonsRegistrationParameters()
 {
   this->m_DemonsRegistrationFilter->SetSphereCenter( this->m_SphereCenter );
   this->m_DemonsRegistrationFilter->SetSphereRadius( this->m_SphereRadius );
@@ -221,99 +213,94 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_DemonsRegistrationFilter->SetLambda( 1.0 );
   this->m_DemonsRegistrationFilter->SetMetricSignificance( 1.0 );
 
-  if( this->m_SmoothingIterations.size() < this->m_NumberOfResolutionLevels )
-    {
-    itkExceptionMacro("Smoothing iterations array size is smaller than number of iteration levels");
-    }
+  if ( this->m_SmoothingIterations.size() < this->m_NumberOfResolutionLevels )
+  {
+    itkExceptionMacro( "Smoothing iterations array size is smaller than number of iteration levels" );
+  }
 
-  if( this->m_DemonsIterations.size() < this->m_NumberOfResolutionLevels )
-    {
-    itkExceptionMacro("Demons iterations array size is smaller than number of iteration levels");
-    }
+  if ( this->m_DemonsIterations.size() < this->m_NumberOfResolutionLevels )
+  {
+    itkExceptionMacro( "Demons iterations array size is smaller than number of iteration levels" );
+  }
 
-  if( this->m_SelfRegulatedMode )
-    {
+  if ( this->m_SelfRegulatedMode )
+  {
     this->m_DemonsRegistrationFilter->SelfRegulatedModeOn();
-    }
+  }
   else
-    {
+  {
     this->m_DemonsRegistrationFilter->SelfRegulatedModeOff();
 
-    if( this->m_EpsilonValues.size() < this->m_NumberOfResolutionLevels )
-      {
-      itkExceptionMacro("Demons Epsilon array size is smaller than number of iteration levels");
-      }
-    if( this->m_SigmaXValues.size() < this->m_NumberOfResolutionLevels )
-      {
-      itkExceptionMacro("Demons SigmaX array size is smaller than number of iteration levels");
-      }
+    if ( this->m_EpsilonValues.size() < this->m_NumberOfResolutionLevels )
+    {
+      itkExceptionMacro( "Demons Epsilon array size is smaller than number of iteration levels" );
     }
+    if ( this->m_SigmaXValues.size() < this->m_NumberOfResolutionLevels )
+    {
+      itkExceptionMacro( "Demons SigmaX array size is smaller than number of iteration levels" );
+    }
+  }
 
-  if( this->m_SelfStopMode )
-    {
+  if ( this->m_SelfStopMode )
+  {
     this->m_DemonsRegistrationFilter->SelfStopModeOn();
-    }
+  }
   else
-    {
+  {
     this->m_DemonsRegistrationFilter->SelfStopModeOff();
-    }
+  }
 
   this->m_FinalDestinationPoints = DestinationPointSetType::New();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::PrepareCoarsestResolutionMeshes()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::PrepareCoarsestResolutionMeshes()
 {
   this->m_CurrentResolutionLevel = 0;
 
-  const TMesh * fixedMesh  = dynamic_cast<MeshType *>(this->ProcessObject::GetInput( 0 ) );
-  const TMesh * movingMesh = dynamic_cast<MeshType *>(this->ProcessObject::GetInput( 1 ) );
+  const TMesh * fixedMesh = dynamic_cast< MeshType * >( this->ProcessObject::GetInput( 0 ) );
+  const TMesh * movingMesh = dynamic_cast< MeshType * >( this->ProcessObject::GetInput( 1 ) );
 
   this->m_CurrentLevelFixedMesh = fixedMesh;
   this->m_CurrentLevelMovingMesh = movingMesh;
   this->m_CurrentLevelInitialFixedMesh = fixedMesh;
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::PrepareNextResolutionLevelMeshes()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::PrepareNextResolutionLevelMeshes()
 {
-  if( this->m_CurrentResolutionLevel + 1 == this->m_NumberOfResolutionLevels )
-    {
+  if ( this->m_CurrentResolutionLevel + 1 == this->m_NumberOfResolutionLevels )
+  {
     return;
-    }
+  }
 
-  const unsigned int fixedInput  = ( this->m_CurrentResolutionLevel + 1 ) * 2;
+  const unsigned int fixedInput = ( this->m_CurrentResolutionLevel + 1 ) * 2;
   const unsigned int movingInput = ( this->m_CurrentResolutionLevel + 1 ) * 2 + 1;
 
   //
   //   Prepare meshes for next resolution level
   //
-  const TMesh * fixedMesh  = dynamic_cast<MeshType *>(this->ProcessObject::GetInput( fixedInput ) );
-  const TMesh * movingMesh = dynamic_cast<MeshType *>(this->ProcessObject::GetInput( movingInput ) );
+  const TMesh * fixedMesh = dynamic_cast< MeshType * >( this->ProcessObject::GetInput( fixedInput ) );
+  const TMesh * movingMesh = dynamic_cast< MeshType * >( this->ProcessObject::GetInput( movingInput ) );
 
   this->m_NextLevelFixedMesh = fixedMesh;
   this->m_NextLevelMovingMesh = movingMesh;
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::ComputeRigidRegistration()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::ComputeRigidRegistration()
 {
   this->SetRigidTransformToIdentity();
 
   this->m_RegistrationMode = RIGID;
   std::cout << "RIGID" << std::endl;
 
-  this->m_RigidOptimizer->SetNumberOfIterations(
-    this->m_RigidRegistrationIterations[this->m_CurrentResolutionLevel] );
+  this->m_RigidOptimizer->SetNumberOfIterations( this->m_RigidRegistrationIterations[this->m_CurrentResolutionLevel] );
 
-  this->m_RigidOptimizer->SetMaximumStepLength(
-    this->m_RigidRegistrationStepLength[this->m_CurrentResolutionLevel] );
+  this->m_RigidOptimizer->SetMaximumStepLength( this->m_RigidRegistrationStepLength[this->m_CurrentResolutionLevel] );
 
 #ifdef USE_VTK
   this->m_RegistrationMonitor->SetResolutionLevel( this->m_CurrentResolutionLevel );
@@ -322,14 +309,14 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 
 #endif
 
-  using RegistrationType = MeshToMeshRegistrationMethod<MeshType, MeshType>;
+  using RegistrationType = MeshToMeshRegistrationMethod< MeshType, MeshType >;
 
-  using MetricType = MeanSquaresMeshToMeshMetric<MeshType, MeshType>;
+  using MetricType = MeanSquaresMeshToMeshMetric< MeshType, MeshType >;
 
-  typename RegistrationType::Pointer   registration  = RegistrationType::New();
+  typename RegistrationType::Pointer registration = RegistrationType::New();
   // registration->InPlaceOn();
 
-  typename MetricType::Pointer  metric = MetricType::New();
+  typename MetricType::Pointer metric = MetricType::New();
 
   registration->SetMetric( metric );
 
@@ -338,14 +325,13 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 
   registration->SetTransform( this->m_RigidTransform );
 
-  using InterpolatorType = LinearInterpolateMeshFunction<MeshType>;
+  using InterpolatorType = LinearInterpolateMeshFunction< MeshType >;
 
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   registration->SetInterpolator( interpolator );
 
-  const unsigned int numberOfTransformParameters =
-    this->m_RigidTransform->GetNumberOfParameters();
+  const unsigned int numberOfTransformParameters = this->m_RigidTransform->GetNumberOfParameters();
 
   using ParametersType = typename TransformType::ParametersType;
   ParametersType parameters( numberOfTransformParameters );
@@ -357,15 +343,15 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   registration->SetOptimizer( this->m_RigidOptimizer );
 
   try
-    {
+  {
     registration->Update();
-    }
-  catch( ExceptionObject & e )
-    {
+  }
+  catch ( ExceptionObject & e )
+  {
     std::cerr << "Registration failed" << std::endl;
     std::cerr << "Reason " << e << std::endl;
     throw e;
-    }
+  }
 
   ParametersType finalParameters = registration->GetLastTransformParameters();
 
@@ -375,50 +361,45 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_RigidTransform->SetParameters( finalParameters );
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::RigidlyTransformPointsOfFixedMesh()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::RigidlyTransformPointsOfFixedMesh()
 {
   this->m_CurrentLevelRigidlyMappedFixedMesh = MeshType::New();
 
-  CopyMeshToMesh<MeshType, MeshType>( this->m_CurrentLevelFixedMesh, this->m_CurrentLevelRigidlyMappedFixedMesh  );
+  CopyMeshToMesh< MeshType, MeshType >( this->m_CurrentLevelFixedMesh, this->m_CurrentLevelRigidlyMappedFixedMesh );
 
   PointsContainer * fixedPoints = this->m_CurrentLevelRigidlyMappedFixedMesh->GetPoints();
 
   PointsContainerIterator fixedPointItr = fixedPoints->Begin();
   PointsContainerIterator fixedPointEnd = fixedPoints->End();
 
-  while( fixedPointItr != fixedPointEnd )
-    {
-    fixedPointItr.Value().SetPoint(
-      this->m_RigidTransform->TransformPoint( fixedPointItr.Value() ) );
+  while ( fixedPointItr != fixedPointEnd )
+  {
+    fixedPointItr.Value().SetPoint( this->m_RigidTransform->TransformPoint( fixedPointItr.Value() ) );
     ++fixedPointItr;
-    }
+  }
 
   this->m_CurrentLevelRigidlyMappedFixedMesh->Modified();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::SetRigidTransformToIdentity()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::SetRigidTransformToIdentity()
 {
   this->m_RigidTransform->SetIdentity();
 }
 
-template <typename TMesh>
-typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>::RegistrationModeType
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::GetRegistrationMode() const
+template < typename TMesh >
+typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::RegistrationModeType
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::GetRegistrationMode() const
 {
   return this->m_RegistrationMode;
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::ComputeDemonsRegistration()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::ComputeDemonsRegistration()
 {
   // This is needed for the proper visual monitoring of the Demons registration
   this->SetRigidTransformToIdentity();
@@ -432,12 +413,10 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_DemonsRegistrationFilter->SetMaximumNumberOfIterations(
     this->m_DemonsIterations[this->m_CurrentResolutionLevel] );
 
-  this->m_DemonsRegistrationFilter->SetEpsilon(
-    this->m_EpsilonValues[this->m_CurrentResolutionLevel] );
+  this->m_DemonsRegistrationFilter->SetEpsilon( this->m_EpsilonValues[this->m_CurrentResolutionLevel] );
   std::cout << "Epsilon: " << this->m_EpsilonValues[this->m_CurrentResolutionLevel] << std::endl;
 
-  this->m_DemonsRegistrationFilter->SetSigmaX(
-    this->m_SigmaXValues[this->m_CurrentResolutionLevel] );
+  this->m_DemonsRegistrationFilter->SetSigmaX( this->m_SigmaXValues[this->m_CurrentResolutionLevel] );
   std::cout << "SigmaX: " << this->m_SigmaXValues[this->m_CurrentResolutionLevel] << std::endl;
 
   this->m_DemonsRegistrationFilter->SetMetricSignificance(
@@ -453,20 +432,19 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_DemonsRegistrationFilter->SetMovingMesh( this->m_CurrentLevelMovingMesh );
 
   try
-    {
+  {
     this->m_DemonsRegistrationFilter->Update();
-    }
-  catch( ExceptionObject & exp )
-    {
+  }
+  catch ( ExceptionObject & exp )
+  {
     std::cerr << exp << std::endl;
     throw exp;
-    }
+  }
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::DeformNextResolutionLevelFixedMesh()
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::DeformNextResolutionLevelFixedMesh()
 {
   typename DestinationPointSetType::Pointer currentDestinationPoints =
     this->m_DemonsRegistrationFilter->GetFinalDestinationPoints();
@@ -474,19 +452,19 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   currentDestinationPoints->DisconnectPipeline();
 
   // Create the new destination points for the following iteration
-  this->m_DemonsRegistrationFilter->MakeOutput(2);
+  this->m_DemonsRegistrationFilter->MakeOutput( 2 );
 
   this->m_FinalDestinationPoints = currentDestinationPoints;
 
-  if( this->m_CurrentResolutionLevel + 1 == this->m_NumberOfResolutionLevels )
-    {
+  if ( this->m_CurrentResolutionLevel + 1 == this->m_NumberOfResolutionLevels )
+  {
     return;
-    }
+  }
 
   //
   //   Deform fixed new mesh using current fixed mesh and destination points
   //
-  using DeformFilterType = DeformQuadEdgeMeshFilter<MeshType, MeshType, DestinationPointSetType>;
+  using DeformFilterType = DeformQuadEdgeMeshFilter< MeshType, MeshType, DestinationPointSetType >;
 
   typename DeformFilterType::Pointer deformFilter = DeformFilterType::New();
 
@@ -499,14 +477,14 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   deformFilter->SetSphereCenter( this->m_SphereCenter );
 
   try
-    {
+  {
     deformFilter->Update();
-    }
-  catch( ExceptionObject & excp )
-    {
+  }
+  catch ( ExceptionObject & excp )
+  {
     std::cerr << excp << std::endl;
     throw excp;
-    }
+  }
 
   this->m_CurrentLevelDemonsMappedFixedMesh = deformFilter->GetOutput();
 
@@ -519,24 +497,23 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   this->m_CurrentLevelMovingMesh = this->m_NextLevelMovingMesh;
 }
 
-template <typename TMesh>
-const typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>::DestinationPointSetType
-* MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::GetCurrentDestinationPoints() const
-  {
-  return this->m_DemonsRegistrationFilter->GetFinalDestinationPoints();
-  }
-
-template <typename TMesh>
-void
-MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
-::PrintSelf(std::ostream& os, Indent indent) const
+template < typename TMesh >
+const typename MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::DestinationPointSetType *
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::GetCurrentDestinationPoints() const
 {
-  Superclass::PrintSelf(os, indent);
+  return this->m_DemonsRegistrationFilter->GetFinalDestinationPoints();
+}
+
+template < typename TMesh >
+void
+MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TMesh >::PrintSelf( std::ostream & os,
+                                                                                   Indent         indent ) const
+{
+  Superclass::PrintSelf( os, indent );
 
   os << "Sphere center: " << this->m_SphereCenter << std::endl;
   os << "Sphere radius: " << this->m_SphereRadius << std::endl;
 }
-}
+} // namespace itk
 
 #endif

@@ -22,65 +22,86 @@
 #include "BRAINSCutDataHandler.h"
 #include "FeatureInputVector.h"
 
-using LabelImageType = itk::Image<unsigned char, DIMENSION>;
+using LabelImageType = itk::Image< unsigned char, DIMENSION >;
 using LabelImagePointerType = LabelImageType::Pointer;
 
 class BRAINSCutApplyModel
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSCutApplyModel);
+  ITK_DISALLOW_COPY_AND_ASSIGN( BRAINSCutApplyModel );
 
-  BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler );
+  BRAINSCutApplyModel( BRAINSCutDataHandler & dataHandler );
   BRAINSCutApplyModel();
   ~BRAINSCutApplyModel();
 
-  void Apply();
+  void
+  Apply();
 
-  void ApplyOnSubject( DataSet& subject);
+  void
+  ApplyOnSubject( DataSet & subject );
 
-  void SetComputeSSE( const bool sse );
+  void
+  SetComputeSSE( const bool sse );
 
-  void SetMethod( std::string inputMethod);
+  void
+  SetMethod( std::string inputMethod );
 
-  void SetNumberOfTrees( const int numberOfTree );
+  void
+  SetNumberOfTrees( const int numberOfTree );
 
-  void SetDepthOfTree( const int depth );
+  void
+  SetDepthOfTree( const int depth );
 
-  void ReadANNModelFile();
+  void
+  ReadANNModelFile();
 
-  void ReadRandomForestModelFile();
+  void
+  ReadRandomForestModelFile();
 
-  LabelImagePointerType PostProcessingANN( const std::string & continuousFilename, scalarType threshold );
+  LabelImagePointerType
+  PostProcessingANN( const std::string & continuousFilename, scalarType threshold );
 
-  LabelImagePointerType PostProcessingRF( const std::string & labelImageFIlename, const unsigned char );
+  LabelImagePointerType
+  PostProcessingRF( const std::string & labelImageFIlename, const unsigned char );
 
-  LabelImagePointerType CombineLabel( LabelImagePointerType& resultLabel, LabelImagePointerType& currentLabel,
-                                      const unsigned char binaryToLabelValue = 0 );
+  LabelImagePointerType
+  CombineLabel( LabelImagePointerType & resultLabel, LabelImagePointerType & currentLabel,
+                const unsigned char binaryToLabelValue = 0 );
 
-  LabelImagePointerType AmbiguousCountLabel( LabelImagePointerType& resultLabel, LabelImagePointerType& combinedLabel,
-                                             LabelImagePointerType& currentLabel );
+  LabelImagePointerType
+  AmbiguousCountLabel( LabelImagePointerType & resultLabel, LabelImagePointerType & combinedLabel,
+                       LabelImagePointerType & currentLabel );
 
-  LabelImagePointerType ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue );
+  LabelImagePointerType
+  ThresholdImageAtLower( WorkingImagePointer & image, scalarType thresholdValue );
 
-  LabelImagePointerType ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue );
+  LabelImagePointerType
+  ThresholdImageAtUpper( WorkingImagePointer & image, scalarType thresholdValue );
 
-  LabelImagePointerType ExtractLabel( const LabelImagePointerType& image, unsigned char thresholdValue );
+  LabelImagePointerType
+  ExtractLabel( const LabelImagePointerType & image, unsigned char thresholdValue );
 
-  LabelImagePointerType GetOneConnectedRegion( LabelImagePointerType& image );
+  LabelImagePointerType
+  GetOneConnectedRegion( LabelImagePointerType & image );
 
-  LabelImagePointerType FillHole( LabelImagePointerType& mask, const unsigned char );
+  LabelImagePointerType
+  FillHole( LabelImagePointerType & mask, const unsigned char );
 
-  LabelImagePointerType Closing( LabelImagePointerType& mask, const unsigned char );
+  LabelImagePointerType
+  Closing( LabelImagePointerType & mask, const unsigned char );
 
-  LabelImagePointerType Opening( LabelImagePointerType& image, const unsigned char );
+  LabelImagePointerType
+  Opening( LabelImagePointerType & image, const unsigned char );
 
-  void WriteLabelMapToBinaryImages( const DataSet& subject, const LabelImagePointerType& labelMapImage );
+  void
+  WriteLabelMapToBinaryImages( const DataSet & subject, const LabelImagePointerType & labelMapImage );
 
-  WorkingImagePointer ClipImageWithBinaryMask( WorkingImagePointer& image, WorkingImagePointer mask);
+  WorkingImagePointer
+  ClipImageWithBinaryMask( WorkingImagePointer & image, WorkingImagePointer mask );
 
 protected:
 private:
-  BRAINSCutDataHandler*                        m_myDataHandler;
+  BRAINSCutDataHandler *                       m_myDataHandler;
   BRAINSCutConfiguration::ApplyDataSetListType m_applyDataSetList;
 
   std::string m_method;
@@ -93,36 +114,43 @@ private:
 
   std::fstream m_ANNTestingSSEFileStream;
 
-  scalarType      m_annOutputThreshold;
-  scalarType      m_gaussianSmoothingSigma;
-  cv::Ptr<OpenCVMLPType> m_openCVANN;
+  scalarType               m_annOutputThreshold;
+  scalarType               m_gaussianSmoothingSigma;
+  cv::Ptr< OpenCVMLPType > m_openCVANN;
 
-  //CvRTrees* m_openCVRandomForest;
-  cv::Ptr<cv::ml::RTrees>  m_openCVRandomForest;
+  // CvRTrees* m_openCVRandomForest;
+  cv::Ptr< cv::ml::RTrees > m_openCVRandomForest;
 
   /* private functions  */
-  std::string GetANNModelBaseName();
+  std::string
+  GetANNModelBaseName();
 
-  float ComputeSSE(const PredictValueMapType& predictedOutputVector, const std::string & roiReferenceFilename );
+  float
+  ComputeSSE( const PredictValueMapType & predictedOutputVector, const std::string & roiReferenceFilename );
 
   /* inline functions */
 
-  void PredictROI( InputVectorMapType& roiInputFeatureVector, PredictValueMapType& resultOutputVector,
-                   const unsigned int roiNumber, const unsigned int inputVectorSize) const;
+  void
+  PredictROI( InputVectorMapType & roiInputFeatureVector, PredictValueMapType & resultOutputVector,
+              const unsigned int roiNumber, const unsigned int inputVectorSize ) const;
 
-  inline void WritePredictROIProbabilityBasedOnReferenceImage( const PredictValueMapType& predictedOutput,
-                                                               const WorkingImagePointer& referenceImage,
-                                                               const WorkingImagePointer& roi,
-                                                               const std::string & imageFilename, const WorkingPixelType & labelValue =
-                                                                 HundredPercentValue);
+  inline void
+  WritePredictROIProbabilityBasedOnReferenceImage( const PredictValueMapType & predictedOutput,
+                                                   const WorkingImagePointer & referenceImage,
+                                                   const WorkingImagePointer & roi, const std::string & imageFilename,
+                                                   const WorkingPixelType & labelValue = HundredPercentValue );
 
-  inline std::string GetSubjectOutputDirectory( const DataSet& subject);
+  inline std::string
+  GetSubjectOutputDirectory( const DataSet & subject );
 
-  inline std::string GetLabelMapFilename( const DataSet& subject );
+  inline std::string
+  GetLabelMapFilename( const DataSet & subject );
 
-  inline std::string GetContinuousPredictionFilename( const DataSet& subject, const std::string & currentROIName);
+  inline std::string
+  GetContinuousPredictionFilename( const DataSet & subject, const std::string & currentROIName );
 
-  inline std::string GetROIVolumeName( const DataSet& subject, const std::string & currentROIName);
+  inline std::string
+  GetROIVolumeName( const DataSet & subject, const std::string & currentROIName );
 };
 
 #endif

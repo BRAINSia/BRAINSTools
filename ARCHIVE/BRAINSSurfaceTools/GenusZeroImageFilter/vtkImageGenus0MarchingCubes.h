@@ -52,49 +52,55 @@ class vtkPoints;
 class VTK_BRAINSTOOLS_GRAPHICS_EXPORT vtkImageGenus0MarchingCubes : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkImageGenus0MarchingCubes * New();
+  static vtkImageGenus0MarchingCubes *
+  New();
 
-  vtkTypeMacro(vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro( vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
   // Description:
   // Methods to set contour values
   // why don't these do anything?
-  void SetValue(int, double )
-  {
-  }
+  void
+  SetValue( int, double )
+  {}
 
-  double GetValue(int )
+  double
+  GetValue( int )
   {
     return 0.0;
   }
 
-  int GetNumberOfConnectedComponents()
+  int
+  GetNumberOfConnectedComponents()
   {
     return iConnectedComponents;
   }
 
-  vtkCellArray *Triangles;
-  vtkPoints *   Points;
+  vtkCellArray * Triangles;
+  vtkPoints *    Points;
 
-  vtkSetMacro(BiggestComponent, int );
-  vtkGetMacro(BiggestComponent, int );
-  vtkBooleanMacro(BiggestComponent, int );
+  vtkSetMacro( BiggestComponent, int );
+  vtkGetMacro( BiggestComponent, int );
+  vtkBooleanMacro( BiggestComponent, int );
 
-  vtkSetMacro(ConnectedComponent, int );
-  vtkGetMacro(ConnectedComponent, int );
-  vtkBooleanMacro(ConnectedComponent, int );
+  vtkSetMacro( ConnectedComponent, int );
+  vtkGetMacro( ConnectedComponent, int );
+  vtkBooleanMacro( ConnectedComponent, int );
 
   vtkSetMacro( CutLoops, int );
   vtkGetMacro( CutLoops, int );
   vtkBooleanMacro( CutLoops, int );
 
-  void SetAltValue( int value )
+  void
+  SetAltValue( int value )
   {
     altValue = value;
   }
 
-  double GetAltValue()
+  double
+  GetAltValue()
   {
     return altValue;
   }
@@ -107,17 +113,20 @@ public:
   vtkGetMacro( Verbose, int );
   vtkBooleanMacro( Verbose, int );
 
-  void Use18Connectivity()
+  void
+  Use18Connectivity()
   {
     iConnectivity = 18;
   }
 
-  void Use6Connectivity()
+  void
+  Use6Connectivity()
   {
     iConnectivity = 6;
   }
 
-  vtkImageData * GetCorrectedImageData()
+  vtkImageData *
+  GetCorrectedImageData()
   {
     return pCorrectedImageData;
   }
@@ -126,8 +135,10 @@ protected:
   vtkImageGenus0MarchingCubes();
   ~vtkImageGenus0MarchingCubes();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector**, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
+  virtual int
+  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * );
+  virtual int
+  FillInputPortInformation( int port, vtkInformation * info ) override;
 
   int BiggestComponent;
   int ConnectedComponent;
@@ -140,13 +151,14 @@ protected:
   int iConnectivity;
   int iConnectedComponents;
 
-  vtkImageData *pCorrectedImageData;
-private:
-  vtkImageGenus0MarchingCubes(const vtkImageGenus0MarchingCubes &); // Not
-                                                                    // implemented.
-  void operator=(const vtkImageGenus0MarchingCubes &);              // Not
-                                                                    // implemented.
+  vtkImageData * pCorrectedImageData;
 
+private:
+  vtkImageGenus0MarchingCubes( const vtkImageGenus0MarchingCubes & ); // Not
+                                                                      // implemented.
+  void
+  operator=( const vtkImageGenus0MarchingCubes & ); // Not
+                                                    // implemented.
 };
 
 #endif

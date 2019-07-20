@@ -17,11 +17,13 @@
 
 
 #ifndef PixelState
-enum PixelState{
-    UNLABELED = 0,
-    LABELED = 1,
-    LOCALLY_SATURATED = 2,
-    SATURATED = 3 };
+enum PixelState
+{
+  UNLABELED = 0,
+  LABELED = 1,
+  LOCALLY_SATURATED = 2,
+  SATURATED = 3
+};
 #endif
 
 namespace itk
@@ -49,33 +51,30 @@ namespace itk
  * supported.
  *
  *
-**/
+ **/
 
 
 /* template<typename TInputImage,  */
 /*   typename TOutputImage, typename TLabelPixelType = short,  */
 /*   typename TWeightPixelType = float >  */
-template<typename TInputImage,
-  typename TOutputImage,
-  typename TWeightPixelType = float>
-  class GrowCutSegmentationImageFilter: public ImageToImageFilter<TInputImage,TOutputImage>
+template < typename TInputImage, typename TOutputImage, typename TWeightPixelType = float >
+class GrowCutSegmentationImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 
- public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GrowCutSegmentationImageFilter);
+public:
+  ITK_DISALLOW_COPY_AND_ASSIGN( GrowCutSegmentationImageFilter );
 
   /** Standard class type alias. */
   using Self = GrowCutSegmentationImageFilter;
-  using Superclass = ImageToImageFilter<TInputImage,TOutputImage>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods).  */
-  itkTypeMacro(GrowCutSegmentationImageFilter,
-               ImageToImageFilter);
+  itkTypeMacro( GrowCutSegmentationImageFilter, ImageToImageFilter );
 
   /** Image related type alias. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -100,18 +99,18 @@ template<typename TInputImage,
   using DataObjectPointer = typename DataObject::Pointer;
 
 
-   /** Image dimension constants */
+  /** Image dimension constants */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-   /** Index type alias support. */
-  using IndexType = Index<Self::InputImageDimension>;
+  /** Index type alias support. */
+  using IndexType = Index< Self::InputImageDimension >;
 
- /** InputSizeType type alias support **/
+  /** InputSizeType type alias support **/
   using InputSizeType = typename InputImageType::SizeType;
 
   /* NodeContainer type alias support for storing a set of seed points */
-  using NodeContainer = VectorContainer<unsigned int, IndexType>;
+  using NodeContainer = VectorContainer< unsigned int, IndexType >;
 
   /* NodeContainer pointer support */
   using NodeContainerPointer = typename NodeContainer::Pointer;
@@ -120,12 +119,17 @@ template<typename TInputImage,
     that have not been assigned any label. Object represents points
     that are assigned to foreground, and Background represents points
     that are assigned to the background **/
-  enum LabelType { NoLabel, ObjectLabel, BackgroundLabel };
+  enum LabelType
+  {
+    NoLabel,
+    ObjectLabel,
+    BackgroundLabel
+  };
 
 
   /** WeightImage type alias support */
   /* indicates the strength of a label for a given cell */
-  using WeightImageType = Image<TWeightPixelType, Self::InputImageDimension >;
+  using WeightImageType = Image< TWeightPixelType, Self::InputImageDimension >;
 
   /** WeightImagePointer type alias support. */
   using WeightImagePointer = typename WeightImageType::Pointer;
@@ -133,43 +137,56 @@ template<typename TInputImage,
   using WeightPixelType = TWeightPixelType;
 
   /** Set the Input Image **/
-  void SetInputImage( const InputImageType *in)
+  void
+  SetInputImage( const InputImageType * in )
   {
-    this->ProcessObject::SetNthInput(0, const_cast< InputImageType *>(in) );
+    this->ProcessObject::SetNthInput( 0, const_cast< InputImageType * >( in ) );
   }
 
-  const InputImagePointer GetInputImage( );
+  const InputImagePointer
+  GetInputImage();
 
   /** Set/Get the Label Image **/
-  void SetLabelImage( const OutputImageType *f)
+  void
+  SetLabelImage( const OutputImageType * f )
   {
-    this->ProcessObject::SetNthInput(1, const_cast< OutputImageType *>(f) );
-    m_LabelImage = static_cast< OutputImageType *>(this->ProcessObject::GetInput(1));
+    this->ProcessObject::SetNthInput( 1, const_cast< OutputImageType * >( f ) );
+    m_LabelImage = static_cast< OutputImageType * >( this->ProcessObject::GetInput( 1 ) );
   }
 
-  const OutputImagePointer GetLabelImage();
+  const OutputImagePointer
+  GetLabelImage();
 
   /** Get the Weight image **/
-  const WeightImagePointer GetStrengthImage();
+  const WeightImagePointer
+  GetStrengthImage();
 
   /** Set the Weight Image **/
-  void SetStrengthImage( const WeightImageType *w )
+  void
+  SetStrengthImage( const WeightImageType * w )
   {
-    this->ProcessObject::SetNthInput(2,const_cast< WeightImageType *>(w));
-    //m_WeightImage = static_cast< WeightImageType *>(this->ProcessObject::GetInput(2));
+    this->ProcessObject::SetNthInput( 2, const_cast< WeightImageType * >( w ) );
+    // m_WeightImage = static_cast< WeightImageType *>(this->ProcessObject::GetInput(2));
   }
 
-  const WeightImagePointer GetUpdatedStrengthImage();
+  const WeightImagePointer
+  GetUpdatedStrengthImage();
 
   /** Set/Get Methods for state, distance, and maxSaturation **/
-  void SetStateImage( const OutputImageType *l);
-  const OutputImagePointer GetStateImage();
+  void
+  SetStateImage( const OutputImageType * l );
+  const OutputImagePointer
+  GetStateImage();
 
-  void SetDistancesImage( const WeightImageType *d);
-  const WeightImagePointer GetDistancesImage();
+  void
+  SetDistancesImage( const WeightImageType * d );
+  const WeightImagePointer
+  GetDistancesImage();
 
-  void SetMaxSaturationImage( const WeightImageType *w);
-  const WeightImagePointer GetMaxSaturationImage();
+  void
+  SetMaxSaturationImage( const WeightImageType * w );
+  const WeightImagePointer
+  GetMaxSaturationImage();
 
   /** Set the initial strength **/
   itkSetMacro( SeedStrength, double );
@@ -178,16 +195,16 @@ template<typename TInputImage,
   itkGetConstMacro( SeedStrength, double );
 
   /** Set/Get the number of Labeled pixels **/
-  itkSetMacro( Labeled, unsigned int);
-  itkGetMacro( Labeled, unsigned int);
+  itkSetMacro( Labeled, unsigned int );
+  itkGetMacro( Labeled, unsigned int );
 
   /** Set/Get the number of locally saturated pixels **/
-  itkSetMacro( LocallySaturated, unsigned int);
-  itkGetMacro( LocallySaturated, unsigned int);
+  itkSetMacro( LocallySaturated, unsigned int );
+  itkGetMacro( LocallySaturated, unsigned int );
 
   /** Set/Get the number of Saturated pixels **/
-  itkSetMacro( Saturated, unsigned int);
-  itkGetMacro( Saturated, unsigned int);
+  itkSetMacro( Saturated, unsigned int );
+  itkGetMacro( Saturated, unsigned int );
 
   /** Set the number of iterations **/
   itkSetMacro( MaxIterations, unsigned int );
@@ -195,31 +212,35 @@ template<typename TInputImage,
   /** Get the number of iterations **/
   itkGetConstMacro( MaxIterations, unsigned int );
 
- /** Set the number of iterations **/
+  /** Set the number of iterations **/
   itkSetMacro( ObjectRadius, unsigned int );
 
   /** Get the number of iterations **/
   itkGetConstMacro( ObjectRadius, unsigned int );
 
   /** Set/Get the ROI start and End **/
-  void SetROIStart( const OutputIndexType &start)
+  void
+  SetROIStart( const OutputIndexType & start )
   {
     m_roiStart = start;
   }
 
-  OutputIndexType GetROIStart() const
+  OutputIndexType
+  GetROIStart() const
   {
     return m_roiStart;
   }
 
 
-  void SetROIEnd(const OutputIndexType &end)
+  void
+  SetROIEnd( const OutputIndexType & end )
   {
     m_roiEnd = end;
   }
 
 
-  OutputIndexType GetROIEnd() const
+  OutputIndexType
+  GetROIEnd() const
   {
     return m_roiEnd;
   }
@@ -233,104 +254,114 @@ template<typename TInputImage,
   /**Set/Get whether the filter should run one iteration or until
      convergence.  When set to run to convergence, set OneIteration to
      Off which is the default behavior for this filter. **/
-  itkSetMacro(RunOneIteration, bool);
-  itkGetConstMacro(RunOneIteration, bool);
-  itkBooleanMacro(RunOneIteration);
+  itkSetMacro( RunOneIteration, bool );
+  itkGetConstMacro( RunOneIteration, bool );
+  itkBooleanMacro( RunOneIteration );
 
 
   /**Set/Get whether the distancesImage has already been set for the
-  * filter.  Default setting is off in which case the filter
-  * automatically initializes the distances image.
-  **/
-  itkSetMacro(SetDistancesImage, bool);
-  itkGetConstMacro(SetDistancesImage, bool);
-  itkBooleanMacro(SetDistancesImage);
+   * filter.  Default setting is off in which case the filter
+   * automatically initializes the distances image.
+   **/
+  itkSetMacro( SetDistancesImage, bool );
+  itkGetConstMacro( SetDistancesImage, bool );
+  itkBooleanMacro( SetDistancesImage );
 
   /**Set/Get whether the stateImage has already been set for the filter.
-  * Default setting is off in which case the filter automatically initializes
-  * the state image.
-  **/
-  itkSetMacro(SetStateImage, bool);
-  itkGetConstMacro(SetStateImage, bool);
-  itkBooleanMacro(SetStateImage);
+   * Default setting is off in which case the filter automatically initializes
+   * the state image.
+   **/
+  itkSetMacro( SetStateImage, bool );
+  itkGetConstMacro( SetStateImage, bool );
+  itkBooleanMacro( SetStateImage );
 
   /**Set/Get whether the maxSaturationImage has already been set for the filter.
-  * Default setting is off in which case the filter automatically initializes
-  * the maxSaturationImage image.
-  **/
-  itkSetMacro(SetMaxSaturationImage, bool);
-  itkGetConstMacro(SetMaxSaturationImage, bool);
-  itkBooleanMacro(SetMaxSaturationImage);
+   * Default setting is off in which case the filter automatically initializes
+   * the maxSaturationImage image.
+   **/
+  itkSetMacro( SetMaxSaturationImage, bool );
+  itkGetConstMacro( SetMaxSaturationImage, bool );
+  itkBooleanMacro( SetMaxSaturationImage );
 
- protected:
-
+protected:
   GrowCutSegmentationImageFilter();
-  ~GrowCutSegmentationImageFilter() {};
+  ~GrowCutSegmentationImageFilter(){};
 
-   // Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion() override;
+  // Override since the filter needs all the data for the algorithm
+  void
+  GenerateInputRequestedRegion() override;
 
-   // Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output) override;
+  // Override since the filter produces the entire dataset
+  void
+  EnlargeOutputRequestedRegion( DataObject * output ) override;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
-  void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                             ThreadIdType threadId );
+  void
+  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
 
-  void AfterThreadedGenerateData() override;
+  void
+  AfterThreadedGenerateData() override;
 
-  void Initialize(OutputImageType* output);
+  void
+  Initialize( OutputImageType * output );
 
-  void PrintSelf ( std::ostream& os, Indent indent ) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
-  void GrowCutSlowROI( TOutputImage *);
-
-
- private:
-
-  bool InitializeStateImage( OutputImageType *state );
-
-  void InitializeDistancesImage(TInputImage *input,WeightImageType *distance);
-
-  void GetRegionOfInterest();
-
-  void ComputeLabelVolumes(TOutputImage *outputImage, std::vector< unsigned > &volumes, std::vector< unsigned > &phyVolumes);
-
-  void MaskSegmentedImageByWeight(float upperThresh);
+  void
+  GrowCutSlowROI( TOutputImage * );
 
 
-  WeightPixelType                            m_ConfThresh;
-  InputSizeType                              m_Radius;
-  OutputImagePointer                         m_LabelImage;
-  WeightImagePointer                         m_WeightImage;
-  unsigned int                               m_Labeled;
-  unsigned int                               m_LocallySaturated;
-  unsigned int                               m_Saturated;
+private:
+  bool
+  InitializeStateImage( OutputImageType * state );
 
-  double                                     m_SeedStrength;
-  bool                                       m_RunOneIteration;
-  bool                                       m_SetStateImage;
-  bool                                       m_SetDistancesImage;
-  bool                                       m_SetMaxSaturationImage;
+  void
+  InitializeDistancesImage( TInputImage * input, WeightImageType * distance );
 
-  unsigned int                               m_MaxIterations;
-  unsigned int                               m_ObjectRadius;
+  void
+  GetRegionOfInterest();
 
-  OutputPixelType                        m_ObjectLabel;
-  OutputPixelType                        m_BackgroundLabel;
-  OutputPixelType                        m_UnknownLabel;
+  void
+  ComputeLabelVolumes( TOutputImage * outputImage, std::vector< unsigned > & volumes,
+                       std::vector< unsigned > & phyVolumes );
 
-  OutputIndexType                            m_roiStart;
-  OutputIndexType                            m_roiEnd;
+  void
+  MaskSegmentedImageByWeight( float upperThresh );
 
+
+  WeightPixelType    m_ConfThresh;
+  InputSizeType      m_Radius;
+  OutputImagePointer m_LabelImage;
+  WeightImagePointer m_WeightImage;
+  unsigned int       m_Labeled;
+  unsigned int       m_LocallySaturated;
+  unsigned int       m_Saturated;
+
+  double m_SeedStrength;
+  bool   m_RunOneIteration;
+  bool   m_SetStateImage;
+  bool   m_SetDistancesImage;
+  bool   m_SetMaxSaturationImage;
+
+  unsigned int m_MaxIterations;
+  unsigned int m_ObjectRadius;
+
+  OutputPixelType m_ObjectLabel;
+  OutputPixelType m_BackgroundLabel;
+  OutputPixelType m_UnknownLabel;
+
+  OutputIndexType m_roiStart;
+  OutputIndexType m_roiEnd;
 };
 
 } // namespace itk
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGrowCutSegmentationImageFilter.txx"
+#  include "itkGrowCutSegmentationImageFilter.txx"
 #endif
 
 #endif

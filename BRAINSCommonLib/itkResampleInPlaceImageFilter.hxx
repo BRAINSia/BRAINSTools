@@ -35,11 +35,10 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputImage, typename TOutputImage>
-ResampleInPlaceImageFilter<TInputImage, TOutputImage>
-::ResampleInPlaceImageFilter() :
-  m_OutputImage( nullptr ),
-  m_RigidTransform( nullptr )
+template < typename TInputImage, typename TOutputImage >
+ResampleInPlaceImageFilter< TInputImage, TOutputImage >::ResampleInPlaceImageFilter()
+  : m_OutputImage( nullptr )
+  , m_RigidTransform( nullptr )
 {
   this->SetNumberOfRequiredInputs( 1 );
 }
@@ -47,71 +46,67 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 /**
  * Set/Get input image, required
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-ResampleInPlaceImageFilter<TInputImage, TOutputImage>
-::SetInputImage( const InputImageType * image )
+ResampleInPlaceImageFilter< TInputImage, TOutputImage >::SetInputImage( const InputImageType * image )
 {
   this->SetInput( 0, image );
 }
 
-template <typename TInputImage, typename TOutputImage>
-const typename ResampleInPlaceImageFilter<TInputImage, TOutputImage>::InputImageType
-* ResampleInPlaceImageFilter<TInputImage, TOutputImage>
-::GetInputImage() const
-  {
+template < typename TInputImage, typename TOutputImage >
+const typename ResampleInPlaceImageFilter< TInputImage, TOutputImage >::InputImageType *
+ResampleInPlaceImageFilter< TInputImage, TOutputImage >::GetInputImage() const
+{
   return this->GetInput( 0 );
-  }
+}
 
 /**
  * GenerateData Performs the in-place resampling
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-ResampleInPlaceImageFilter<TInputImage, TOutputImage>
-::GenerateData()
+ResampleInPlaceImageFilter< TInputImage, TOutputImage >::GenerateData()
 {
-  if( !this->GetInput() )
-    {
-    itkExceptionMacro(<< "Input image has not been connected");
+  if ( !this->GetInput() )
+  {
+    itkExceptionMacro( << "Input image has not been connected" );
     return;
-    }
+  }
 
-    //  SEE HEADER FILE FOR MATH DESCRIPTION
+  //  SEE HEADER FILE FOR MATH DESCRIPTION
 
-    {
+  {
     /** make a cast copied version of the input image **/
-    using DuplicatorType = CastImageFilter<InputImageType, OutputImageType>;
+    using DuplicatorType = CastImageFilter< InputImageType, OutputImageType >;
     typename DuplicatorType::Pointer CastFilter = DuplicatorType::New();
     CastFilter->SetInput( this->GetInput() );
     CastFilter->Update();
     m_OutputImage = CastFilter->GetOutput();
-    }
+  }
 
-  RigidTransformConstPointer FMTxfm = this->m_RigidTransform.GetPointer();
+  RigidTransformConstPointer                    FMTxfm = this->m_RigidTransform.GetPointer();
   const typename RigidTransformType::MatrixType inverseRotation( FMTxfm->GetMatrix().GetInverse() );
 
   // Modify the origin and direction info of the image to reflect the transform.
-  itk::Vector<double,3> newOriginVector = inverseRotation * (
-                                                  this->GetInput()->GetOrigin().GetVectorFromOrigin()
-                                                - FMTxfm->GetCenter().GetVectorFromOrigin()
-                                                - FMTxfm->GetTranslation() ) // NewOrigin = [R^-1] * ( O - C - T ) + C
-                            + FMTxfm->GetCenter().GetVectorFromOrigin();
-  itk::Point<double,3> newOriginPoint;
-  for(int i =0; i < 3; ++i)
+  itk::Vector< double, 3 > newOriginVector =
+    inverseRotation *
+      ( this->GetInput()->GetOrigin().GetVectorFromOrigin() - FMTxfm->GetCenter().GetVectorFromOrigin() -
+        FMTxfm->GetTranslation() ) // NewOrigin = [R^-1] * ( O - C - T ) + C
+    + FMTxfm->GetCenter().GetVectorFromOrigin();
+  itk::Point< double, 3 > newOriginPoint;
+  for ( int i = 0; i < 3; ++i )
   {
-   newOriginPoint[i]=newOriginVector[i];
+    newOriginPoint[i] = newOriginVector[i];
   }
   m_OutputImage->SetOrigin( newOriginPoint );
-  m_OutputImage->SetDirection( inverseRotation
-                               * this->GetInput()->GetDirection() ); // NewDC = [R^-1][DC]
+  m_OutputImage->SetDirection( inverseRotation * this->GetInput()->GetDirection() ); // NewDC = [R^-1][DC]
 
   this->GraftOutput( m_OutputImage );
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-ResampleInPlaceImageFilter<TInputImage, TOutputImage>::PrintSelf( std::ostream& os, Indent indent ) const
+ResampleInPlaceImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
 

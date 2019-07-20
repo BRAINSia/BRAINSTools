@@ -29,11 +29,10 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TMesh, typename TBasisSystem>
-TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
-::TriangleListBasisSystemCalculator()
+template < typename TMesh, typename TBasisSystem >
+TriangleListBasisSystemCalculator< TMesh, TBasisSystem >::TriangleListBasisSystemCalculator()
 {
-  itkDebugMacro("Constructor");
+  itkDebugMacro( "Constructor" );
   this->m_InputMesh = nullptr;
   this->m_BasisSystemList = BasisSystemListType::New();
 }
@@ -41,46 +40,43 @@ TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
 /**
  * Destructor
  */
-template <typename TMesh, typename TBasisSystem>
-TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
-::~TriangleListBasisSystemCalculator()
+template < typename TMesh, typename TBasisSystem >
+TriangleListBasisSystemCalculator< TMesh, TBasisSystem >::~TriangleListBasisSystemCalculator()
 {
-  itkDebugMacro("Destructor");
+  itkDebugMacro( "Destructor" );
 }
 
-template <typename TMesh, typename TBasisSystem>
+template < typename TMesh, typename TBasisSystem >
 void
-TriangleListBasisSystemCalculator<TMesh, TBasisSystem>
-::Calculate()
+TriangleListBasisSystemCalculator< TMesh, TBasisSystem >::Calculate()
 {
-  if( this->m_InputMesh.IsNull() )
-    {
-    itkExceptionMacro(<< "TriangleListBasisSystemCalculator CalculateTriangle  m_InputMesh is NULL.");
-    }
+  if ( this->m_InputMesh.IsNull() )
+  {
+    itkExceptionMacro( << "TriangleListBasisSystemCalculator CalculateTriangle  m_InputMesh is NULL." );
+  }
 
   this->m_BasisSystemList = BasisSystemListType::New();
 
   this->m_BasisSystemList->Reserve( this->m_InputMesh->GetCells()->Size() );
 
-  using TriangleBasisSystemCalculatorType = TriangleBasisSystemCalculator<TMesh, TBasisSystem>;
+  using TriangleBasisSystemCalculatorType = TriangleBasisSystemCalculator< TMesh, TBasisSystem >;
 
-  typename TriangleBasisSystemCalculatorType::Pointer basisCalculator =
-    TriangleBasisSystemCalculatorType::New();
+  typename TriangleBasisSystemCalculatorType::Pointer basisCalculator = TriangleBasisSystemCalculatorType::New();
 
   basisCalculator->SetInputMesh( this->m_InputMesh );
 
   typename CellsContainer::ConstPointer cells = this->m_InputMesh->GetCells();
-  CellsContainerConstIterator cellIterator = cells->Begin();
-  CellsContainerConstIterator cellEnd = cells->End();
+  CellsContainerConstIterator           cellIterator = cells->Begin();
+  CellsContainerConstIterator           cellEnd = cells->End();
 
   TBasisSystem triangleBasisSystem;
 
-  while( cellIterator != cellEnd )
-    {
+  while ( cellIterator != cellEnd )
+  {
     const CellIdentifier cellIndex = cellIterator.Index();
-    basisCalculator->CalculateTriangle( cellIndex, this->m_BasisSystemList->ElementAt(cellIndex) );
+    basisCalculator->CalculateTriangle( cellIndex, this->m_BasisSystemList->ElementAt( cellIndex ) );
     ++cellIterator;
-    }
+  }
 }
 } // end namespace itk
 

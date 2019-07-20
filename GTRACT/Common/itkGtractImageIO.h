@@ -59,81 +59,93 @@ namespace itk
 class GTRACT_COMMON_EXPORT GtractImageIO : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GtractImageIO);
+  ITK_DISALLOW_COPY_AND_ASSIGN( GtractImageIO );
 
   using Self = GtractImageIO;
   using Superclass = itk::Object;
-  using Pointer = itk::SmartPointer<Self>;
-  using ConstPointer = itk::SmartPointer<const Self>;
+  using Pointer = itk::SmartPointer< Self >;
+  using ConstPointer = itk::SmartPointer< const Self >;
 
-  itkNewMacro(Self);
-  itkTypeMacro(GtractImageIO, itk::Object);
+  itkNewMacro( Self );
+  itkTypeMacro( GtractImageIO, itk::Object );
 
-  using Short3dImageType = itk::Image<signed short, 3>;
-  using Short4dImageType = itk::Image<signed short, 4>;
-  using Float3dImageType = itk::Image<float, 3>;
-  using RGBPixelType = itk::RGBAPixel<unsigned char>;
-  using Rgb3dImageType = itk::Image<RGBPixelType, 3>;
-  using TensorPixelType = itk::Vector<float, 6>;
-  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using Short3dImageType = itk::Image< signed short, 3 >;
+  using Short4dImageType = itk::Image< signed short, 4 >;
+  using Float3dImageType = itk::Image< float, 3 >;
+  using RGBPixelType = itk::RGBAPixel< unsigned char >;
+  using Rgb3dImageType = itk::Image< RGBPixelType, 3 >;
+  using TensorPixelType = itk::Vector< float, 6 >;
+  using TensorImageType = itk::Image< TensorPixelType, 3 >;
 
   /*** Get/Set the Images for I/O Routines ***/
-  itkSetObjectMacro(Short3dImage, Short3dImageType);
-  itkSetObjectMacro(Short4dImage, Short4dImageType);
-  itkSetObjectMacro(Float3dImage, Float3dImageType);
-  itkSetObjectMacro(Rgb3dImage,   Rgb3dImageType);
-  itkSetObjectMacro(TensorImage,  TensorImageType);
+  itkSetObjectMacro( Short3dImage, Short3dImageType );
+  itkSetObjectMacro( Short4dImage, Short4dImageType );
+  itkSetObjectMacro( Float3dImage, Float3dImageType );
+  itkSetObjectMacro( Rgb3dImage, Rgb3dImageType );
+  itkSetObjectMacro( TensorImage, TensorImageType );
 
-  itkGetConstObjectMacro(Short3dImage, Short3dImageType);
-  itkGetConstObjectMacro(Short4dImage, Short4dImageType);
-  itkGetConstObjectMacro(Float3dImage, Float3dImageType);
-  itkGetConstObjectMacro(Rgb3dImage,   Rgb3dImageType);
-  itkGetConstObjectMacro(TensorImage,  TensorImageType);
+  itkGetConstObjectMacro( Short3dImage, Short3dImageType );
+  itkGetConstObjectMacro( Short4dImage, Short4dImageType );
+  itkGetConstObjectMacro( Float3dImage, Float3dImageType );
+  itkGetConstObjectMacro( Rgb3dImage, Rgb3dImageType );
+  itkGetConstObjectMacro( TensorImage, TensorImageType );
 
   /*** Additional API - Functions ***/
-  void Load3dDICOMSeries();
+  void
+  Load3dDICOMSeries();
 
-  void Load4dDICOMSeries();
+  void
+  Load4dDICOMSeries();
 
-  void Load4dShortImage();
+  void
+  Load4dShortImage();
 
-  void Load3dShortImage();
+  void
+  Load3dShortImage();
 
-  void Load3dFloatImage();
+  void
+  Load3dFloatImage();
 
-  void Load3dRgbImage();
+  void
+  Load3dRgbImage();
 
-  void LoadTensorImage();
+  void
+  LoadTensorImage();
 
-  void Save3dFloatImage();
+  void
+  Save3dFloatImage();
 
-  void Save3dShortImage();
+  void
+  Save3dShortImage();
 
-  void Save4dShortImage();
+  void
+  Save4dShortImage();
 
-  void Save3dRgbImage();
+  void
+  Save3dRgbImage();
 
-  void SaveTensorImage();
+  void
+  SaveTensorImage();
 
-  void SetFileName(char *);
+  void
+  SetFileName( char * );
 
-  void SetFileName(std::string);
+  void SetFileName( std::string );
 
-  void SetDicomSeriesUID(char *);
+  void
+  SetDicomSeriesUID( char * );
 
-  void SetDicomSeriesUID(std::string);
+  void SetDicomSeriesUID( std::string );
 
-  void SetDicomDirectory(char *);
+  void
+  SetDicomDirectory( char * );
 
-  void SetDicomDirectory(std::string);
+  void SetDicomDirectory( std::string );
 
 protected:
-
   /** Constructor and Destructor */
   GtractImageIO();
-  ~GtractImageIO() override
-  {
-  }
+  ~GtractImageIO() override {}
 
 private:
   Short3dImageType::Pointer m_Short3dImage;

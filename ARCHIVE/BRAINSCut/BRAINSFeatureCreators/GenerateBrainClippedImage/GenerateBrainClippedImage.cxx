@@ -31,51 +31,48 @@
 #include <BRAINSCommonLib.h>
 
 int
-main(int argc, char * *argv)
+main( int argc, char ** argv )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
   using PixelType = float;
   constexpr unsigned int Dim = 3;
-  using ImageType = itk::Image<PixelType, Dim>;
+  using ImageType = itk::Image< PixelType, Dim >;
 
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
 
   ImageReaderType::Pointer imgReader = ImageReaderType::New();
   ImageReaderType::Pointer mskReader = ImageReaderType::New();
 
-  imgReader->SetFileName(inputImg);
-  mskReader->SetFileName(inputMsk);
+  imgReader->SetFileName( inputImg );
+  mskReader->SetFileName( inputMsk );
 
-  using ImageMultiplyFilterType = itk::MultiplyImageFilter<ImageType, ImageType, ImageType>;
-  ImageMultiplyFilterType::Pointer imgMultiplyFilter =
-    ImageMultiplyFilterType::New();
+  using ImageMultiplyFilterType = itk::MultiplyImageFilter< ImageType, ImageType, ImageType >;
+  ImageMultiplyFilterType::Pointer imgMultiplyFilter = ImageMultiplyFilterType::New();
 
   imgMultiplyFilter->SetInput1( imgReader->GetOutput() );
   imgMultiplyFilter->SetInput2( mskReader->GetOutput() );
 
   // writer setting
   std::cout << "Writing output ... " << std::endl;
-  using WriterType = itk::ImageFileWriter<ImageType>;
+  using WriterType = itk::ImageFileWriter< ImageType >;
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  std::cout << "* origin of input   ::" << imgReader->GetOutput()->GetOrigin()
-            << std::endl
-            << "* origin of output  ::" << imgMultiplyFilter->GetOutput()->GetOrigin()
-            << std::endl;
-  writer->SetFileName(outputFileName);
+  std::cout << "* origin of input   ::" << imgReader->GetOutput()->GetOrigin() << std::endl
+            << "* origin of output  ::" << imgMultiplyFilter->GetOutput()->GetOrigin() << std::endl;
+  writer->SetFileName( outputFileName );
   writer->SetInput( imgMultiplyFilter->GetOutput() );
   try
-    {
+  {
     writer->Update();
-    }
-  catch( itk::ExceptionObject & exp )
-    {
+  }
+  catch ( itk::ExceptionObject & exp )
+  {
     std::cerr << "ExceptionObject with writer" << std::endl;
     std::cerr << exp << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return 0;
 }

@@ -20,10 +20,10 @@
    This file tests if the compiler supports char16_t
 */
 
-int main()
+int
+main()
 {
-  char16_t myVariable=static_cast<char16_t>(0);
+  char16_t myVariable = static_cast< char16_t >( 0 );
   // Do something silly to avoid unused variable warning.
-  return static_cast<int>(myVariable);
+  return static_cast< int >( myVariable );
 }
-

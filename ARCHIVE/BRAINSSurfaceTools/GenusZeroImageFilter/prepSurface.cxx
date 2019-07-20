@@ -19,122 +19,123 @@
 
 #include "prepSurfaceCLP.h"
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  using ImageType = itk::Image<unsigned char, 3>;
-  using FloatImageType = itk::Image<float, 3>;
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
-  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageType = itk::Image< unsigned char, 3 >;
+  using FloatImageType = itk::Image< float, 3 >;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
+  using ImageWriterType = itk::ImageFileWriter< ImageType >;
 
   ImageReaderType::Pointer classImageReader = ImageReaderType::New();
   classImageReader->SetFileName( tissueClassVolume );
   classImageReader->Update();
 
   ImageReaderType::Pointer ventImageReader = ImageReaderType::New();
-  ventImageReader->SetFileName(ventricleVolume);
+  ventImageReader->SetFileName( ventricleVolume );
   ventImageReader->Update();
 
   ImageReaderType::Pointer rCaudImageReader = ImageReaderType::New();
-  rCaudImageReader->SetFileName(rightCaudateVolume);
+  rCaudImageReader->SetFileName( rightCaudateVolume );
   rCaudImageReader->Update();
 
   ImageReaderType::Pointer lCaudImageReader = ImageReaderType::New();
-  lCaudImageReader->SetFileName(leftCaudateVolume);
+  lCaudImageReader->SetFileName( leftCaudateVolume );
   lCaudImageReader->Update();
 
   ImageReaderType::Pointer rPutImageReader = ImageReaderType::New();
-  rPutImageReader->SetFileName(rightPutamenVolume);
+  rPutImageReader->SetFileName( rightPutamenVolume );
   rPutImageReader->Update();
 
   ImageReaderType::Pointer lPutImageReader = ImageReaderType::New();
-  lPutImageReader->SetFileName(leftPutamenVolume);
+  lPutImageReader->SetFileName( leftPutamenVolume );
   lPutImageReader->Update();
 
   ImageReaderType::Pointer rThalImageReader = ImageReaderType::New();
-  rThalImageReader->SetFileName(rightThalamusVolume);
+  rThalImageReader->SetFileName( rightThalamusVolume );
   rThalImageReader->Update();
 
   ImageReaderType::Pointer lThalImageReader = ImageReaderType::New();
-  lThalImageReader->SetFileName(leftThalamusVolume);
+  lThalImageReader->SetFileName( leftThalamusVolume );
   lThalImageReader->Update();
 
   ImageReaderType::Pointer brainImageReader = ImageReaderType::New();
-  brainImageReader->SetFileName(brainVolume);
+  brainImageReader->SetFileName( brainVolume );
   brainImageReader->Update();
 
   ImageReaderType::Pointer leftHemisphereReader = ImageReaderType::New();
-  leftHemisphereReader->SetFileName(leftHemisphereVolume);
+  leftHemisphereReader->SetFileName( leftHemisphereVolume );
   leftHemisphereReader->Update();
 
   ImageReaderType::Pointer rightHemisphereReader = ImageReaderType::New();
-  rightHemisphereReader->SetFileName(rightHemisphereVolume);
+  rightHemisphereReader->SetFileName( rightHemisphereVolume );
   rightHemisphereReader->Update();
 
   ImageReaderType::Pointer clipImageReader = ImageReaderType::New();
   clipImageReader->SetFileName( clipVolume );
   clipImageReader->Update();
 
-  using BinaryFilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+  using BinaryFilterType = itk::BinaryThresholdImageFilter< ImageType, ImageType >;
   BinaryFilterType::Pointer binaryVentFilter = BinaryFilterType::New();
   binaryVentFilter->SetInput( ventImageReader->GetOutput() );
-  binaryVentFilter->SetLowerThreshold(1);
-  binaryVentFilter->SetUpperThreshold(255);
-  binaryVentFilter->SetOutsideValue(0);
-  binaryVentFilter->SetInsideValue(1);
+  binaryVentFilter->SetLowerThreshold( 1 );
+  binaryVentFilter->SetUpperThreshold( 255 );
+  binaryVentFilter->SetOutsideValue( 0 );
+  binaryVentFilter->SetInsideValue( 1 );
   binaryVentFilter->Update();
 
   BinaryFilterType::Pointer binaryBrainFilter = BinaryFilterType::New();
   binaryBrainFilter->SetInput( brainImageReader->GetOutput() );
-  binaryBrainFilter->SetLowerThreshold(1);
-  binaryBrainFilter->SetUpperThreshold(255);
-  binaryBrainFilter->SetOutsideValue(0);
-  binaryBrainFilter->SetInsideValue(1);
+  binaryBrainFilter->SetLowerThreshold( 1 );
+  binaryBrainFilter->SetUpperThreshold( 255 );
+  binaryBrainFilter->SetOutsideValue( 0 );
+  binaryBrainFilter->SetInsideValue( 1 );
   binaryBrainFilter->Update();
 
   BinaryFilterType::Pointer binaryClipFilter = BinaryFilterType::New();
   binaryClipFilter->SetInput( clipImageReader->GetOutput() );
-  binaryClipFilter->SetLowerThreshold(1);
-  binaryClipFilter->SetUpperThreshold(255);
-  binaryClipFilter->SetOutsideValue(0);
-  binaryClipFilter->SetInsideValue(1);
+  binaryClipFilter->SetLowerThreshold( 1 );
+  binaryClipFilter->SetUpperThreshold( 255 );
+  binaryClipFilter->SetOutsideValue( 0 );
+  binaryClipFilter->SetInsideValue( 1 );
   binaryClipFilter->Update();
 
   // Invert clip region
-  using NotFilterType = itk::NotImageFilter<ImageType, ImageType>;
+  using NotFilterType = itk::NotImageFilter< ImageType, ImageType >;
   NotFilterType::Pointer invertFilter = NotFilterType::New();
   invertFilter->SetInput( binaryClipFilter->GetOutput() );
   invertFilter->Update();
 
   // Combine Brain region and inverse of clip region
-  using AndFilterType = itk::AndImageFilter<ImageType, ImageType, ImageType>;
+  using AndFilterType = itk::AndImageFilter< ImageType, ImageType, ImageType >;
   AndFilterType::Pointer brainRegionFilter = AndFilterType::New();
-  brainRegionFilter->SetInput1(binaryBrainFilter->GetOutput() );
-  brainRegionFilter->SetInput2(invertFilter->GetOutput() );
+  brainRegionFilter->SetInput1( binaryBrainFilter->GetOutput() );
+  brainRegionFilter->SetInput2( invertFilter->GetOutput() );
   brainRegionFilter->Update();
 
   // Generate Caudate Region
   BinaryFilterType::Pointer binaryRightCaudateFilter = BinaryFilterType::New();
   binaryRightCaudateFilter->SetInput( rCaudImageReader->GetOutput() );
-  binaryRightCaudateFilter->SetLowerThreshold(1);
-  binaryRightCaudateFilter->SetUpperThreshold(255);
-  binaryRightCaudateFilter->SetOutsideValue(0);
-  binaryRightCaudateFilter->SetInsideValue(1);
+  binaryRightCaudateFilter->SetLowerThreshold( 1 );
+  binaryRightCaudateFilter->SetUpperThreshold( 255 );
+  binaryRightCaudateFilter->SetOutsideValue( 0 );
+  binaryRightCaudateFilter->SetInsideValue( 1 );
   binaryRightCaudateFilter->Update();
 
   BinaryFilterType::Pointer binaryLeftCaudateFilter = BinaryFilterType::New();
   binaryLeftCaudateFilter->SetInput( lCaudImageReader->GetOutput() );
-  binaryLeftCaudateFilter->SetLowerThreshold(1);
-  binaryLeftCaudateFilter->SetUpperThreshold(255);
-  binaryLeftCaudateFilter->SetOutsideValue(0);
-  binaryLeftCaudateFilter->SetInsideValue(1);
+  binaryLeftCaudateFilter->SetLowerThreshold( 1 );
+  binaryLeftCaudateFilter->SetUpperThreshold( 255 );
+  binaryLeftCaudateFilter->SetOutsideValue( 0 );
+  binaryLeftCaudateFilter->SetInsideValue( 1 );
   binaryLeftCaudateFilter->Update();
 
-  using OrFilterType = itk::OrImageFilter<ImageType, ImageType, ImageType>;
+  using OrFilterType = itk::OrImageFilter< ImageType, ImageType, ImageType >;
   OrFilterType::Pointer caudateFilter = OrFilterType::New();
-  caudateFilter->SetInput1(binaryRightCaudateFilter->GetOutput() );
-  caudateFilter->SetInput2(binaryLeftCaudateFilter->GetOutput() );
+  caudateFilter->SetInput1( binaryRightCaudateFilter->GetOutput() );
+  caudateFilter->SetInput2( binaryLeftCaudateFilter->GetOutput() );
   caudateFilter->Update();
 
   ImageWriterType::Pointer writeTmpFilter1 = ImageWriterType::New();
@@ -145,23 +146,23 @@ int main(int argc, char *argv[])
   // Generate Putamen Region
   BinaryFilterType::Pointer binaryRightPutamenFilter = BinaryFilterType::New();
   binaryRightPutamenFilter->SetInput( rPutImageReader->GetOutput() );
-  binaryRightPutamenFilter->SetLowerThreshold(1);
-  binaryRightPutamenFilter->SetUpperThreshold(255);
-  binaryRightPutamenFilter->SetOutsideValue(0);
-  binaryRightPutamenFilter->SetInsideValue(1);
+  binaryRightPutamenFilter->SetLowerThreshold( 1 );
+  binaryRightPutamenFilter->SetUpperThreshold( 255 );
+  binaryRightPutamenFilter->SetOutsideValue( 0 );
+  binaryRightPutamenFilter->SetInsideValue( 1 );
   binaryRightPutamenFilter->Update();
 
   BinaryFilterType::Pointer binaryLeftPutamenFilter = BinaryFilterType::New();
   binaryLeftPutamenFilter->SetInput( lPutImageReader->GetOutput() );
-  binaryLeftPutamenFilter->SetLowerThreshold(1);
-  binaryLeftPutamenFilter->SetUpperThreshold(255);
-  binaryLeftPutamenFilter->SetOutsideValue(0);
-  binaryLeftPutamenFilter->SetInsideValue(1);
+  binaryLeftPutamenFilter->SetLowerThreshold( 1 );
+  binaryLeftPutamenFilter->SetUpperThreshold( 255 );
+  binaryLeftPutamenFilter->SetOutsideValue( 0 );
+  binaryLeftPutamenFilter->SetInsideValue( 1 );
   binaryLeftPutamenFilter->Update();
 
   OrFilterType::Pointer putamenFilter = OrFilterType::New();
-  putamenFilter->SetInput1(binaryRightPutamenFilter->GetOutput() );
-  putamenFilter->SetInput2(binaryLeftPutamenFilter->GetOutput() );
+  putamenFilter->SetInput1( binaryRightPutamenFilter->GetOutput() );
+  putamenFilter->SetInput2( binaryLeftPutamenFilter->GetOutput() );
   putamenFilter->Update();
 
   ImageWriterType::Pointer writeTmpFilter2 = ImageWriterType::New();
@@ -171,8 +172,8 @@ int main(int argc, char *argv[])
 
   // Basal Ganglia =  Caudate + Putamen
   OrFilterType::Pointer basalGangliaFilter = OrFilterType::New();
-  basalGangliaFilter->SetInput1(caudateFilter->GetOutput() );
-  basalGangliaFilter->SetInput2(putamenFilter->GetOutput() );
+  basalGangliaFilter->SetInput1( caudateFilter->GetOutput() );
+  basalGangliaFilter->SetInput2( putamenFilter->GetOutput() );
   basalGangliaFilter->Update();
 
   ImageWriterType::Pointer writeTmpFilter3 = ImageWriterType::New();
@@ -183,23 +184,23 @@ int main(int argc, char *argv[])
   // Generate Thalamus Region
   BinaryFilterType::Pointer binaryRightThalamusFilter = BinaryFilterType::New();
   binaryRightThalamusFilter->SetInput( rThalImageReader->GetOutput() );
-  binaryRightThalamusFilter->SetLowerThreshold(1);
-  binaryRightThalamusFilter->SetUpperThreshold(255);
-  binaryRightThalamusFilter->SetOutsideValue(0);
-  binaryRightThalamusFilter->SetInsideValue(1);
+  binaryRightThalamusFilter->SetLowerThreshold( 1 );
+  binaryRightThalamusFilter->SetUpperThreshold( 255 );
+  binaryRightThalamusFilter->SetOutsideValue( 0 );
+  binaryRightThalamusFilter->SetInsideValue( 1 );
   binaryRightThalamusFilter->Update();
 
   BinaryFilterType::Pointer binaryLeftThalamusFilter = BinaryFilterType::New();
   binaryLeftThalamusFilter->SetInput( lThalImageReader->GetOutput() );
-  binaryLeftThalamusFilter->SetLowerThreshold(1);
-  binaryLeftThalamusFilter->SetUpperThreshold(255);
-  binaryLeftThalamusFilter->SetOutsideValue(0);
-  binaryLeftThalamusFilter->SetInsideValue(1);
+  binaryLeftThalamusFilter->SetLowerThreshold( 1 );
+  binaryLeftThalamusFilter->SetUpperThreshold( 255 );
+  binaryLeftThalamusFilter->SetOutsideValue( 0 );
+  binaryLeftThalamusFilter->SetInsideValue( 1 );
   binaryLeftThalamusFilter->Update();
 
   OrFilterType::Pointer thalamusFilter = OrFilterType::New();
-  thalamusFilter->SetInput1(binaryRightThalamusFilter->GetOutput() );
-  thalamusFilter->SetInput2(binaryLeftThalamusFilter->GetOutput() );
+  thalamusFilter->SetInput1( binaryRightThalamusFilter->GetOutput() );
+  thalamusFilter->SetInput2( binaryLeftThalamusFilter->GetOutput() );
   thalamusFilter->Update();
 
   ImageWriterType::Pointer writeTmpFilter4 = ImageWriterType::New();
@@ -209,8 +210,8 @@ int main(int argc, char *argv[])
 
   // Subcortical = Basal Ganglia + Thalamus
   OrFilterType::Pointer subcorticalFilter = OrFilterType::New();
-  subcorticalFilter->SetInput1(basalGangliaFilter->GetOutput() );
-  subcorticalFilter->SetInput2(thalamusFilter->GetOutput() );
+  subcorticalFilter->SetInput1( basalGangliaFilter->GetOutput() );
+  subcorticalFilter->SetInput2( thalamusFilter->GetOutput() );
   subcorticalFilter->Update();
 
   ImageWriterType::Pointer writeTmpFilter5 = ImageWriterType::New();
@@ -220,8 +221,8 @@ int main(int argc, char *argv[])
 
   // Subcortical + Ventricles
   OrFilterType::Pointer fillFilter = OrFilterType::New();
-  fillFilter->SetInput1(binaryVentFilter->GetOutput() );
-  fillFilter->SetInput2(subcorticalFilter->GetOutput() );
+  fillFilter->SetInput1( binaryVentFilter->GetOutput() );
+  fillFilter->SetInput2( subcorticalFilter->GetOutput() );
   fillFilter->Update();
 
   ImageWriterType::Pointer writeTmpFilter6 = ImageWriterType::New();
@@ -231,20 +232,20 @@ int main(int argc, char *argv[])
 
   BinaryFilterType::Pointer rescaleVentFilter = BinaryFilterType::New();
   rescaleVentFilter->SetInput( fillFilter->GetOutput() );
-  rescaleVentFilter->SetLowerThreshold(1);
-  rescaleVentFilter->SetUpperThreshold(255);
-  rescaleVentFilter->SetOutsideValue(0);
-  rescaleVentFilter->SetInsideValue(230);
+  rescaleVentFilter->SetLowerThreshold( 1 );
+  rescaleVentFilter->SetUpperThreshold( 255 );
+  rescaleVentFilter->SetOutsideValue( 0 );
+  rescaleVentFilter->SetInsideValue( 230 );
   rescaleVentFilter->Update();
 
-  using MaximumFilterType = itk::MaximumImageFilter<ImageType, ImageType, ImageType>;
-  MaximumFilterType::Pointer maximumFilter =  MaximumFilterType::New();
+  using MaximumFilterType = itk::MaximumImageFilter< ImageType, ImageType, ImageType >;
+  MaximumFilterType::Pointer maximumFilter = MaximumFilterType::New();
   maximumFilter->SetInput1( rescaleVentFilter->GetOutput() );
   maximumFilter->SetInput2( classImageReader->GetOutput() );
   maximumFilter->Update();
 
   /* Now clip the image to the Hemispheres and Brain*/
-  using MaskFilterType = itk::MaskImageFilter<ImageType, ImageType>;
+  using MaskFilterType = itk::MaskImageFilter< ImageType, ImageType >;
   MaskFilterType::Pointer maskLeftFilter = MaskFilterType::New();
   maskLeftFilter->SetInput1( maximumFilter->GetOutput() );
   maskLeftFilter->SetInput2( leftHemisphereReader->GetOutput() );
@@ -273,43 +274,43 @@ int main(int argc, char *argv[])
   ImageType::Pointer rightTissueClass = maskRightClipFilter->GetOutput();
   ImageType::Pointer leftTissueClass = maskLeftClipFilter->GetOutput();
 
-  if( medianFilter )
-    {
-    using MedianFilterType = itk::MedianImageFilter<ImageType, ImageType>;
-    itk::Size<3> radius;
-    radius.SetElement(0, medianFilterSize[0]);
-    radius.SetElement(1, medianFilterSize[0]);
-    radius.SetElement(2, medianFilterSize[0]);
+  if ( medianFilter )
+  {
+    using MedianFilterType = itk::MedianImageFilter< ImageType, ImageType >;
+    itk::Size< 3 > radius;
+    radius.SetElement( 0, medianFilterSize[0] );
+    radius.SetElement( 1, medianFilterSize[0] );
+    radius.SetElement( 2, medianFilterSize[0] );
 
     MedianFilterType::Pointer medianLeftFilter = MedianFilterType::New();
     medianLeftFilter->SetInput( maskLeftClipFilter->GetOutput() );
-    medianLeftFilter->SetRadius(radius);
+    medianLeftFilter->SetRadius( radius );
     medianLeftFilter->Update();
     leftTissueClass = medianLeftFilter->GetOutput();
 
     MedianFilterType::Pointer medianRightFilter = MedianFilterType::New();
     medianRightFilter->SetInput( maskRightClipFilter->GetOutput() );
-    medianRightFilter->SetRadius(radius);
+    medianRightFilter->SetRadius( radius );
     medianRightFilter->Update();
     rightTissueClass = medianRightFilter->GetOutput();
-    }
+  }
 
-  if( anisoDiffusionFilter )
-    {
-    using CastFloatType = itk::CastImageFilter<ImageType, FloatImageType>;
+  if ( anisoDiffusionFilter )
+  {
+    using CastFloatType = itk::CastImageFilter< ImageType, FloatImageType >;
     CastFloatType::Pointer leftFloatCast = CastFloatType::New();
     leftFloatCast->SetInput( leftTissueClass );
     leftFloatCast->Update();
 
-    using AnisotropicDiffusionType = itk::GradientAnisotropicDiffusionImageFilter<FloatImageType, FloatImageType>;
+    using AnisotropicDiffusionType = itk::GradientAnisotropicDiffusionImageFilter< FloatImageType, FloatImageType >;
     AnisotropicDiffusionType::Pointer anisoLeftFilter = AnisotropicDiffusionType::New();
     anisoLeftFilter->SetInput( leftFloatCast->GetOutput() );
     anisoLeftFilter->SetNumberOfIterations( iterations );
-    anisoLeftFilter->SetTimeStep( static_cast<double>(stepSize) );
+    anisoLeftFilter->SetTimeStep( static_cast< double >( stepSize ) );
     anisoLeftFilter->SetConductanceParameter( conductance );
     anisoLeftFilter->Update();
 
-    using CastImageType = itk::CastImageFilter<FloatImageType, ImageType>;
+    using CastImageType = itk::CastImageFilter< FloatImageType, ImageType >;
     CastImageType::Pointer leftImageCast = CastImageType::New();
     leftImageCast->SetInput( anisoLeftFilter->GetOutput() );
     leftImageCast->Update();
@@ -322,7 +323,7 @@ int main(int argc, char *argv[])
     AnisotropicDiffusionType::Pointer anisoRightFilter = AnisotropicDiffusionType::New();
     anisoRightFilter->SetInput( rightFloatCast->GetOutput() );
     anisoRightFilter->SetNumberOfIterations( iterations );
-    anisoRightFilter->SetTimeStep( static_cast<double>(stepSize) );
+    anisoRightFilter->SetTimeStep( static_cast< double >( stepSize ) );
     anisoRightFilter->SetConductanceParameter( conductance );
     anisoRightFilter->Update();
 
@@ -330,41 +331,41 @@ int main(int argc, char *argv[])
     rightImageCast->SetInput( anisoRightFilter->GetOutput() );
     rightImageCast->Update();
     rightTissueClass = rightImageCast->GetOutput();
-    }
+  }
 
   /* Create Binary Images for Surface Generation */
   BinaryFilterType::Pointer binaryLeftBrainFilter = BinaryFilterType::New();
   binaryLeftBrainFilter->SetInput( leftTissueClass );
-  binaryLeftBrainFilter->SetLowerThreshold(190);
-  binaryLeftBrainFilter->SetUpperThreshold(255);
-  binaryLeftBrainFilter->SetOutsideValue(0);
-  binaryLeftBrainFilter->SetInsideValue(1);
+  binaryLeftBrainFilter->SetLowerThreshold( 190 );
+  binaryLeftBrainFilter->SetUpperThreshold( 255 );
+  binaryLeftBrainFilter->SetOutsideValue( 0 );
+  binaryLeftBrainFilter->SetInsideValue( 1 );
   binaryLeftBrainFilter->Update();
 
-  using ConnectedComponentFilterType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
+  using ConnectedComponentFilterType = itk::ConnectedComponentImageFilter< ImageType, ImageType >;
   ConnectedComponentFilterType::Pointer leftConnectedRegions = ConnectedComponentFilterType::New();
   leftConnectedRegions->SetInput( binaryLeftBrainFilter->GetOutput() );
   leftConnectedRegions->Update();
 
-  using RelabelImageFilterType = itk::RelabelComponentImageFilter<ImageType, ImageType>;
+  using RelabelImageFilterType = itk::RelabelComponentImageFilter< ImageType, ImageType >;
   RelabelImageFilterType::Pointer relabelLeftFilter = RelabelImageFilterType::New();
   relabelLeftFilter->SetInput( leftConnectedRegions->GetOutput() );
   relabelLeftFilter->Update();
 
   BinaryFilterType::Pointer binaryLeftLabelFilter = BinaryFilterType::New();
   binaryLeftLabelFilter->SetInput( relabelLeftFilter->GetOutput() );
-  binaryLeftLabelFilter->SetLowerThreshold(1);
-  binaryLeftLabelFilter->SetUpperThreshold(1);
-  binaryLeftLabelFilter->SetOutsideValue(0);
-  binaryLeftLabelFilter->SetInsideValue(1);
+  binaryLeftLabelFilter->SetLowerThreshold( 1 );
+  binaryLeftLabelFilter->SetUpperThreshold( 1 );
+  binaryLeftLabelFilter->SetOutsideValue( 0 );
+  binaryLeftLabelFilter->SetInsideValue( 1 );
   binaryLeftLabelFilter->Update();
 
   BinaryFilterType::Pointer binaryRightBrainFilter = BinaryFilterType::New();
   binaryRightBrainFilter->SetInput( rightTissueClass );
-  binaryRightBrainFilter->SetLowerThreshold(190);
-  binaryRightBrainFilter->SetUpperThreshold(255);
-  binaryRightBrainFilter->SetOutsideValue(0);
-  binaryRightBrainFilter->SetInsideValue(1);
+  binaryRightBrainFilter->SetLowerThreshold( 190 );
+  binaryRightBrainFilter->SetUpperThreshold( 255 );
+  binaryRightBrainFilter->SetOutsideValue( 0 );
+  binaryRightBrainFilter->SetInsideValue( 1 );
   binaryRightBrainFilter->Update();
 
   ConnectedComponentFilterType::Pointer rightConnectedRegions = ConnectedComponentFilterType::New();
@@ -377,10 +378,10 @@ int main(int argc, char *argv[])
 
   BinaryFilterType::Pointer binaryRightLabelFilter = BinaryFilterType::New();
   binaryRightLabelFilter->SetInput( relabelRightFilter->GetOutput() );
-  binaryRightLabelFilter->SetLowerThreshold(1);
-  binaryRightLabelFilter->SetUpperThreshold(1);
-  binaryRightLabelFilter->SetOutsideValue(0);
-  binaryRightLabelFilter->SetInsideValue(1);
+  binaryRightLabelFilter->SetLowerThreshold( 1 );
+  binaryRightLabelFilter->SetUpperThreshold( 1 );
+  binaryRightLabelFilter->SetOutsideValue( 0 );
+  binaryRightLabelFilter->SetInsideValue( 1 );
   binaryRightLabelFilter->Update();
 
   /* Write the results */

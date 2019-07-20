@@ -22,7 +22,7 @@
 #include "vtkImageData.h"
 
 #ifndef vtkFloatingPointType
-#define vtkFloatingPointType float
+#  define vtkFloatingPointType float
 #endif
 
 namespace itk
@@ -39,53 +39,59 @@ namespace itk
  *
  * \ingroup   ImageFilters
  */
-template <typename TOutputImage>
+template < typename TOutputImage >
 class ITK_EXPORT VTKImageToImageFilter : public ProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(VTKImageToImageFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( VTKImageToImageFilter );
 
   /** Standard class type alias. */
   using Self = VTKImageToImageFilter;
   using Superclass = ProcessObject;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(VTKImageToImageFilter, ProcessObject);
+  itkTypeMacro( VTKImageToImageFilter, ProcessObject );
 
   /** Some type alias. */
   using OutputImageType = TOutputImage;
-  using OutputImagePointer = typename    OutputImageType::ConstPointer;
-  using ImporterFilterType = VTKImageImport<OutputImageType>;
+  using OutputImagePointer = typename OutputImageType::ConstPointer;
+  using ImporterFilterType = VTKImageImport< OutputImageType >;
   using ImporterFilterPointer = typename ImporterFilterType::Pointer;
 
   /** Get the output in the form of a vtkImage.
       This call is delegated to the internal vtkImageImporter filter  */
-  const OutputImageType *  GetOutput() const;
+  const OutputImageType *
+  GetOutput() const;
 
   /** Set the input in the form of a vtkImageData */
-  void SetInputData( vtkImageData * );
+  void
+  SetInputData( vtkImageData * );
 
   /** Return the internal VTK image exporter filter.
       This is intended to facilitate users the access
       to methods in the exporter */
-  vtkImageExport * GetExporter() const;
+  vtkImageExport *
+  GetExporter() const;
 
   /** Return the internal ITK image importer filter.
       This is intended to facilitate users the access
       to methods in the importer */
-  ImporterFilterType * GetImporter() const;
+  ImporterFilterType *
+  GetImporter() const;
 
   /** This call delegate the update to the importer */
-  void Update() override;
+  void
+  Update() override;
 
 protected:
   VTKImageToImageFilter();
   virtual ~VTKImageToImageFilter();
+
 private:
   ImporterFilterPointer m_Importer;
   vtkImageExport *      m_Exporter;
@@ -93,7 +99,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVTKImageToImageFilter.hxx"
+#  include "itkVTKImageToImageFilter.hxx"
 #endif
 
 #endif

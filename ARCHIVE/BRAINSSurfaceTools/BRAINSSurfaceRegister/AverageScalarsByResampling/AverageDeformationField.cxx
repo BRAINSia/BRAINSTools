@@ -28,10 +28,11 @@
 #include "itkQuadEdgeMeshTraits.h"
 #include "itkQuadEdgeMeshAddDeformationFieldFilter.h"
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
-  if( argc < 4 )
-    {
+  if ( argc < 4 )
+  {
     std::cerr << "Missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << std::endl;
@@ -39,28 +40,28 @@ int main( int argc, char * argv [] )
     std::cerr << "outputDeformationField";
     std::cerr << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
-  unsigned int numInputs = std::stoi(argv[1]);
+  unsigned int numInputs = std::stoi( argv[1] );
 
   using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using MeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
 
   using PointType = MeshType::PointType;
   using VectorType = PointType::VectorType;
 
-  using VectorPointSetTraits = itk::QuadEdgeMeshTraits<VectorType, Dimension, bool, bool>;
+  using VectorPointSetTraits = itk::QuadEdgeMeshTraits< VectorType, Dimension, bool, bool >;
 
-  using MeshWithVectorsType = itk::QuadEdgeMesh<VectorType, Dimension, VectorPointSetTraits>;
+  using MeshWithVectorsType = itk::QuadEdgeMesh< VectorType, Dimension, VectorPointSetTraits >;
 
-  using DeformationFieldReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshWithVectorsType>;
+  using DeformationFieldReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshWithVectorsType >;
 
   DeformationFieldReaderType::Pointer deformationFieldReader = DeformationFieldReaderType::New();
 
-  using AddDeformationFieldFilterType = itk::QuadEdgeMeshAddDeformationFieldFilter<
-      MeshWithVectorsType, MeshWithVectorsType, MeshWithVectorsType>;
+  using AddDeformationFieldFilterType =
+    itk::QuadEdgeMeshAddDeformationFieldFilter< MeshWithVectorsType, MeshWithVectorsType, MeshWithVectorsType >;
 
   AddDeformationFieldFilterType::Pointer addDFFilter = AddDeformationFieldFilterType::New();
 
@@ -68,34 +69,34 @@ int main( int argc, char * argv [] )
   // add it to the previous deformationField
   MeshWithVectorsType::Pointer output = MeshWithVectorsType::New();
   MeshWithVectorsType::Pointer newDF = MeshWithVectorsType::New();
-  for( unsigned int i = 0; i < numInputs; i++ )
-    {
+  for ( unsigned int i = 0; i < numInputs; i++ )
+  {
     deformationFieldReader->SetFileName( argv[i + 2] );
     deformationFieldReader->Update();
 
     std::cout << "read deformation field: ";
     std::cout << argv[i + 2] << std::endl;
 
-    if( i == 0 )
-      {
+    if ( i == 0 )
+    {
       output = deformationFieldReader->GetOutput();
       output->DisconnectPipeline();
-      }
+    }
     else
-      {
+    {
       newDF = deformationFieldReader->GetOutput();
       newDF->DisconnectPipeline();
 
       // add point.Value of newDF to point.Value of output
-      addDFFilter->SetInput1(output);
-      addDFFilter->SetInput2(newDF);
+      addDFFilter->SetInput1( output );
+      addDFFilter->SetInput2( newDF );
       addDFFilter->Update();
 
       output = addDFFilter->GetOutput();
 
       output->DisconnectPipeline();
-      }
     }
+  }
 
   // divide the sum deformation field with numInputs
   // iterate through pointData of output
@@ -108,21 +109,21 @@ int main( int argc, char * argv [] )
   displacementVectorIterator displacementVectorItr = displacementVectors->Begin();
   displacementVectorIterator displacementVectorEnd = displacementVectors->End();
 
-  while( displacementVectorItr != displacementVectorEnd )
+  while ( displacementVectorItr != displacementVectorEnd )
+  {
+    if ( numInputs != 0 )
     {
-    if( numInputs != 0 )
-      {
-      displacementVectorItr.Value() = displacementVectorItr.Value() / double(numInputs);
-      }
-    ++displacementVectorItr;
+      displacementVectorItr.Value() = displacementVectorItr.Value() / double( numInputs );
     }
+    ++displacementVectorItr;
+  }
 
   // write out deformation field
-  using VectorMeshWriterType = itk::QuadEdgeMeshVectorDataVTKPolyDataWriter<MeshWithVectorsType>;
+  using VectorMeshWriterType = itk::QuadEdgeMeshVectorDataVTKPolyDataWriter< MeshWithVectorsType >;
   VectorMeshWriterType::Pointer vectorMeshWriter = VectorMeshWriterType::New();
 
   vectorMeshWriter->SetInput( output );
-  vectorMeshWriter->SetFileName(argv[numInputs + 2]);
+  vectorMeshWriter->SetFileName( argv[numInputs + 2] );
   vectorMeshWriter->Update();
 
   return EXIT_SUCCESS;

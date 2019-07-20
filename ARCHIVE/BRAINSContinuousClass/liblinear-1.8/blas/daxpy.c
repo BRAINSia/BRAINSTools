@@ -18,10 +18,10 @@
  *=========================================================================*/
 #include "blas.h"
 
-int daxpy_(int *n, double *sa, double *sx, int *incx, double *sy,
-           int *incy)
+int
+daxpy_( int * n, double * sa, double * sx, int * incx, double * sy, int * incy )
 {
-  long int nn, iincx, iincy;
+  long int        nn, iincx, iincy;
   register double ssa;
 
   /* constant times a vector plus a vector.
@@ -35,27 +35,27 @@ int daxpy_(int *n, double *sa, double *sx, int *incx, double *sy,
   iincx = *incx;
   iincy = *incy;
 
-  if( nn > 0 && ssa != 0.0 )
+  if ( nn > 0 && ssa != 0.0 )
   {
     long int i;
-    if (iincx == 1 && iincy == 1) /* code for both increments equal to 1 */
+    if ( iincx == 1 && iincy == 1 ) /* code for both increments equal to 1 */
     {
-      long int m = nn-3;
-      for (i = 0; i < m; i += 4)
+      long int m = nn - 3;
+      for ( i = 0; i < m; i += 4 )
       {
         sy[i] += ssa * sx[i];
-        sy[i+1] += ssa * sx[i+1];
-        sy[i+2] += ssa * sx[i+2];
-        sy[i+3] += ssa * sx[i+3];
+        sy[i + 1] += ssa * sx[i + 1];
+        sy[i + 2] += ssa * sx[i + 2];
+        sy[i + 3] += ssa * sx[i + 3];
       }
-      for ( ; i < nn; ++i) /* clean-up loop */
+      for ( ; i < nn; ++i ) /* clean-up loop */
         sy[i] += ssa * sx[i];
     }
     else /* code for unequal increments or equal increments not equal to 1 */
     {
-      long int ix = iincx >= 0 ? 0 : (1 - nn) * iincx;
-      long int iy = iincy >= 0 ? 0 : (1 - nn) * iincy;
-      for (i = 0; i < nn; i++)
+      long int ix = iincx >= 0 ? 0 : ( 1 - nn ) * iincx;
+      long int iy = iincy >= 0 ? 0 : ( 1 - nn ) * iincy;
+      for ( i = 0; i < nn; i++ )
       {
         sy[iy] += ssa * sx[ix];
         ix += iincx;

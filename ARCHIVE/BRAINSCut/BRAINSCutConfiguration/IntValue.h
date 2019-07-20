@@ -21,34 +21,34 @@
 #include "NumericValue.h"
 #include "itkMacro.h" //Needed for override
 
-class IntValue :
-  public NumericValue<long>
+class IntValue : public NumericValue< long >
 {
 public:
-  using SuperClass = NumericValue<long>;
-  int PrintSelf(std::ostream & os, int indent) const override
+  using SuperClass = NumericValue< long >;
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent = SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== IntValue ===!" << this->m_Value
-       << "!" << std::endl;
+    indent = SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== IntValue ===!" << this->m_Value << "!" << std::endl;
     return indent + 2;
   }
 
   using ReturnType = long;
-  IntValue(const std::string & name, ReturnType value) :
-    NumericValue<ReturnType>(name, value)
+  IntValue( const std::string & name, ReturnType value )
+    : NumericValue< ReturnType >( name, value )
+  {}
+
+  IntValue( const std::string & name, const std::string & stringval )
+    : NumericValue< ReturnType >( name, 0 )
   {
+    this->SetValue( stringval );
   }
 
-  IntValue(const std::string & name, const std::string & stringval) :
-    NumericValue<ReturnType>(name, 0)
-  {
-    this->SetValue(stringval);
-  }
+  void
+  SetValue( const std::string & stringval );
 
-  void SetValue(const std::string & stringval);
-
-  bool Verify() const override;
+  bool
+  Verify() const override;
 
 private:
 };

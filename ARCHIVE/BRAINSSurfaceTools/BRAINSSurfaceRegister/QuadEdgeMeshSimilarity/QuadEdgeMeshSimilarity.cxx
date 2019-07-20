@@ -50,7 +50,8 @@
 #include "QuadEdgeMeshSimilarityCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -59,76 +60,76 @@ int main( int argc, char * argv [] )
   std::cout << labelName1 << " of surface: " << inputSurfaceFile1 << std::endl;
   std::cout << "And " << labelName2 << " of surface: " << inputSurfaceFile2 << std::endl;
   std::cout << "Output .txt file: " << outputSimilarityFile << std::endl;
-  if( average )
-    {
+  if ( average )
+  {
     std::cout << "Also output the average indices across labels." << std::endl;
-    }
+  }
   std::cout << "--------------------------------------------" << std::endl;
 
   // use vtk to get the range of labels for both inputs
   // and take care of label arrays if they are not saved as scalars
-  vtkSmartPointer<vtkPolyDataReader> vtkReader1 = vtkSmartPointer<vtkPolyDataReader>::New();
-  vtkReader1->SetFileName(inputSurfaceFile1.c_str() );
+  vtkSmartPointer< vtkPolyDataReader > vtkReader1 = vtkSmartPointer< vtkPolyDataReader >::New();
+  vtkReader1->SetFileName( inputSurfaceFile1.c_str() );
   vtkReader1->Update();
 
-  vtkPolyData * inputSurface1 = vtkReader1->GetOutput();
-  int           numOfPoints = inputSurface1->GetNumberOfPoints();
-  vtkDataArray *labelArray1;
-  if( labelName1 == "scalars" )
-    {
+  vtkPolyData *  inputSurface1 = vtkReader1->GetOutput();
+  int            numOfPoints = inputSurface1->GetNumberOfPoints();
+  vtkDataArray * labelArray1;
+  if ( labelName1 == "scalars" )
+  {
     labelArray1 = inputSurface1->GetPointData()->GetScalars();
-    }
+  }
   else
-    {
-    labelArray1 = inputSurface1->GetPointData()->GetArray(labelName1.c_str() );
-    }
-  if( labelArray1 == nullptr )
-    {
+  {
+    labelArray1 = inputSurface1->GetPointData()->GetArray( labelName1.c_str() );
+  }
+  if ( labelArray1 == nullptr )
+  {
     std::cerr << "surface1 does't have label array with the name: " << labelName1 << std::endl;
     std::cerr << "Quit." << std::endl;
     return 1;
-    }
+  }
   double labelRange1[2];
-  labelArray1->GetRange(labelRange1);
+  labelArray1->GetRange( labelRange1 );
 
-  vtkSmartPointer<vtkPolyDataReader> vtkReader2 = vtkSmartPointer<vtkPolyDataReader>::New();
-  vtkReader2->SetFileName(inputSurfaceFile2.c_str() );
+  vtkSmartPointer< vtkPolyDataReader > vtkReader2 = vtkSmartPointer< vtkPolyDataReader >::New();
+  vtkReader2->SetFileName( inputSurfaceFile2.c_str() );
   vtkReader2->Update();
 
-  vtkPolyData *inputSurface2 = vtkReader2->GetOutput();
-  if( inputSurface2->GetNumberOfPoints() != numOfPoints )
-    {
+  vtkPolyData * inputSurface2 = vtkReader2->GetOutput();
+  if ( inputSurface2->GetNumberOfPoints() != numOfPoints )
+  {
     std::cerr << "Number of points on surface2 is different from surface1." << std::endl;
     std::cerr << "Quit." << std::endl;
     return 1;
-    }
-  vtkDataArray *labelArray2;
-  if( labelName2 == "scalars" )
-    {
+  }
+  vtkDataArray * labelArray2;
+  if ( labelName2 == "scalars" )
+  {
     labelArray2 = inputSurface2->GetPointData()->GetScalars();
-    }
+  }
   else
-    {
-    labelArray2 = inputSurface2->GetPointData()->GetArray(labelName2.c_str() );
-    }
-  if( labelArray2 == nullptr )
-    {
+  {
+    labelArray2 = inputSurface2->GetPointData()->GetArray( labelName2.c_str() );
+  }
+  if ( labelArray2 == nullptr )
+  {
     std::cerr << "surface2 does't have label array with the name: " << labelName2 << std::endl;
     std::cerr << "Quit." << std::endl;
     return 1;
-    }
+  }
   double labelRange2[2];
-  labelArray2->GetRange(labelRange2);
-  if( labelRange1[0] != labelRange2[0] || labelRange1[1] != labelRange2[1] )
-    {
+  labelArray2->GetRange( labelRange2 );
+  if ( labelRange1[0] != labelRange2[0] || labelRange1[1] != labelRange2[1] )
+  {
     std::cerr << "The label range on surface2 is different from surface1." << std::endl;
     std::cerr << "Quit." << std::endl;
     return 1;
-    }
+  }
 
   // set labelArray as scalars
-  inputSurface1->GetPointData()->SetActiveScalars(labelName1.c_str() );
-  inputSurface2->GetPointData()->SetActiveScalars(labelName2.c_str() );
+  inputSurface1->GetPointData()->SetActiveScalars( labelName1.c_str() );
+  inputSurface2->GetPointData()->SetActiveScalars( labelName2.c_str() );
 
   // convert vtk polydata to itk QuadEdgeMesh
   // use integer as pixelType of QuadEdgeMesh
@@ -136,20 +137,20 @@ int main( int argc, char * argv [] )
   using MeshPixelType = int;
   constexpr unsigned int Dimension = 3;
 
-  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using MeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
 
-  using convertFilterType = itk::ConvertVTKToQuadEdgeMeshFilter<MeshType>;
+  using convertFilterType = itk::ConvertVTKToQuadEdgeMeshFilter< MeshType >;
 
   convertFilterType::Pointer convertor1 = convertFilterType::New();
-  convertor1->SetPolyData(inputSurface1);
+  convertor1->SetPolyData( inputSurface1 );
   convertor1->Update();
 
   convertFilterType::Pointer convertor2 = convertFilterType::New();
-  convertor2->SetPolyData(inputSurface2);
+  convertor2->SetPolyData( inputSurface2 );
   convertor2->Update();
 
   // set up QuadEdgeMesh similarity calculator
-  using SimilarityCalculatorType = itk::QuadEdgeMeshSimilarityCalculator<MeshType, MeshType>;
+  using SimilarityCalculatorType = itk::QuadEdgeMeshSimilarityCalculator< MeshType, MeshType >;
 
   SimilarityCalculatorType::Pointer similarityCalculator = SimilarityCalculatorType::New();
 
@@ -159,16 +160,16 @@ int main( int argc, char * argv [] )
   double sum_dice = 0.0;
   double sum_jaccard = 0.0;
 
-  int startLabel = int(labelRange1[0]);
-  int endLabel = int(labelRange1[1]);
+  int startLabel = int( labelRange1[0] );
+  int endLabel = int( labelRange1[1] );
   int numOfLabels = endLabel - startLabel + 1;
 
   // go through labels
   std::ofstream similarity_out;
-  similarity_out.open(outputSimilarityFile.c_str(), std::ofstream::app);
-  for( int i = startLabel; i < numOfLabels; i++ )
-    {
-    similarityCalculator->SetLabelValue(i);
+  similarity_out.open( outputSimilarityFile.c_str(), std::ofstream::app );
+  for ( int i = startLabel; i < numOfLabels; i++ )
+  {
+    similarityCalculator->SetLabelValue( i );
     similarityCalculator->Compute();
 
     sum_dice += similarityCalculator->GetDice();
@@ -177,13 +178,13 @@ int main( int argc, char * argv [] )
     // write out the similarity file
     similarity_out << i << ": " << similarityCalculator->GetDice();
     similarity_out << " " << similarityCalculator->GetJaccard() << std::endl;
-    }
+  }
 
-  if( average )
-    {
-    similarity_out << "Average Dice: " << sum_dice / double(numOfLabels) << std::endl;
-    similarity_out << "Average Jaccard: " << sum_jaccard / double(numOfLabels) << std::endl;
-    }
+  if ( average )
+  {
+    similarity_out << "Average Dice: " << sum_dice / double( numOfLabels ) << std::endl;
+    similarity_out << "Average Jaccard: " << sum_jaccard / double( numOfLabels ) << std::endl;
+  }
   similarity_out.close();
 
   return 0;

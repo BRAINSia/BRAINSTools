@@ -45,15 +45,17 @@ namespace BRAINSUtils
 class StackPushITKDefaultNumberOfThreads
 {
 public:
-  explicit StackPushITKDefaultNumberOfThreads(const int desiredCount);
+  explicit StackPushITKDefaultNumberOfThreads( const int desiredCount );
   ~StackPushITKDefaultNumberOfThreads();
+
 protected:
-  StackPushITKDefaultNumberOfThreads();                                                 // Purposefully not implemented
-  StackPushITKDefaultNumberOfThreads & operator=(StackPushITKDefaultNumberOfThreads &); // Purposefully not implemented
+  StackPushITKDefaultNumberOfThreads(); // Purposefully not implemented
+  StackPushITKDefaultNumberOfThreads &
+  operator=( StackPushITKDefaultNumberOfThreads & ); // Purposefully not implemented
 
 private:
   int m_originalThreadValue;
 };
-}
+} // namespace BRAINSUtils
 
 #endif // BRAINSThreadControl_h

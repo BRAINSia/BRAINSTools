@@ -37,26 +37,27 @@
 #include "insertMidACPCpointCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
 
-  std::map<std::string, LandmarkPointType> lmksMap = ReadSlicer3toITKLmk(inputLandmarkFile);
+  std::map< std::string, LandmarkPointType > lmksMap = ReadSlicer3toITKLmk( inputLandmarkFile );
 
   const LandmarkPointType ACpoint = lmksMap["AC"];
   const LandmarkPointType PCpoint = lmksMap["PC"];
 
-  const LandmarkPointType midACPCpoint = (PCpoint - ACpoint) * 0.5;
+  const LandmarkPointType midACPCpoint = ( PCpoint - ACpoint ) * 0.5;
 
-//  std::cout << "PC :" << PCpoint[0] << ", " << PCpoint[1] << ", " << PCpoint[2] << ")" << std::endl;
-//  std::cout << "midpoint :" << midACPCpoint[0] << ", " << midACPCpoint[1] << ", " << midACPCpoint[2] << ")" <<
-// std::endl;
+  //  std::cout << "PC :" << PCpoint[0] << ", " << PCpoint[1] << ", " << PCpoint[2] << ")" << std::endl;
+  //  std::cout << "midpoint :" << midACPCpoint[0] << ", " << midACPCpoint[1] << ", " << midACPCpoint[2] << ")" <<
+  // std::endl;
 
   lmksMap["midACPC"] = midACPCpoint;
 
-  WriteITKtoSlicer3Lmk(outputLandmarkFile, lmksMap);
+  WriteITKtoSlicer3Lmk( outputLandmarkFile, lmksMap );
 
   return EXIT_SUCCESS;
 }

@@ -16,12 +16,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+#if defined( _MSC_VER )
+#  pragma warning( disable : 4786 )
 #endif
 
 #ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
+#  define ITK_LEAN_AND_MEAN
 #endif
 
 #include "itkImage.h"
@@ -40,76 +40,75 @@
 #include <fstream>
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char *argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if( inputVolume == "na"  || inputMaskVolume == "na" )
-    {
-    std::cout << "InputVolume Required!"
-              << std::endl;
-    }
+  if ( inputVolume == "na" || inputMaskVolume == "na" )
+  {
+    std::cout << "InputVolume Required!" << std::endl;
+  }
 
   constexpr unsigned int Dimension = 3;
 
   using InputPixelType = double;
-  using InputImageType = itk::Image<InputPixelType, Dimension>;
-  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
+  using InputImageType = itk::Image< InputPixelType, Dimension >;
+  using InputImageReaderType = itk::ImageFileReader< InputImageType >;
 
   InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
 
   inputImageReader->SetFileName( inputVolume );
   try
-    {
+  {
     inputImageReader->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cerr << "Exception Object Caught! " << std::endl;
     std::cerr << err << std::endl;
     throw;
-    }
+  }
 
   /** Convert Type to unsigned char */
-  using RescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType, InputImageType>;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter< InputImageType, InputImageType >;
 
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
 
   rescaler->SetInput( inputImageReader->GetOutput() );
-  rescaler->SetOutputMaximum(255);
-  rescaler->SetOutputMinimum(0);
+  rescaler->SetOutputMaximum( 255 );
+  rescaler->SetOutputMinimum( 0 );
 
   /** read ROI mask */
   using InternalPixelType = unsigned char;
-  using InternalImageType = itk::Image<InternalPixelType, Dimension>;
-  using CasterType = itk::CastImageFilter<InputImageType, InternalImageType>;
+  using InternalImageType = itk::Image< InternalPixelType, Dimension >;
+  using CasterType = itk::CastImageFilter< InputImageType, InternalImageType >;
 
   CasterType::Pointer caster = CasterType::New();
 
   caster->SetInput( inputImageReader->GetOutput() );
 
-  using BinaryImageReaderType = itk::ImageFileReader<InputImageType>;
+  using BinaryImageReaderType = itk::ImageFileReader< InputImageType >;
 
   BinaryImageReaderType::Pointer binaryImageReader = BinaryImageReaderType::New();
 
-  binaryImageReader->SetFileName( inputMaskVolume);
+  binaryImageReader->SetFileName( inputMaskVolume );
 
   /** make sure binary mask */
-  using BinaryFilterType = itk::BinaryThresholdImageFilter<InputImageType, InternalImageType>;
+  using BinaryFilterType = itk::BinaryThresholdImageFilter< InputImageType, InternalImageType >;
   BinaryFilterType::Pointer binaryFilter = BinaryFilterType::New();
 
   binaryFilter->SetInput( binaryImageReader->GetOutput() );
-  binaryFilter->SetLowerThreshold(1.0);
-  binaryFilter->SetInsideValue(1);
-  binaryFilter->SetOutsideValue(1);
+  binaryFilter->SetLowerThreshold( 1.0 );
+  binaryFilter->SetInsideValue( 1 );
+  binaryFilter->SetOutsideValue( 1 );
 
   /** texture Computation */
 
-  using TextureFilterType = itk::Statistics::ScalarImageToTextureFeaturesFilter<InternalImageType>;
+  using TextureFilterType = itk::Statistics::ScalarImageToTextureFeaturesFilter< InternalImageType >;
 
-  TextureFilterType::FeatureNameVectorPointer requestedFeatures =
-    TextureFilterType::FeatureNameVector::New();
+  TextureFilterType::FeatureNameVectorPointer requestedFeatures = TextureFilterType::FeatureNameVector::New();
 
   /** texture setting */
   requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::Energy );
@@ -123,42 +122,37 @@ int main( int argc, char *argv[] )
   TextureFilterType::Pointer textureFilter = TextureFilterType::New();
 
   /** texture distance */
-  TextureFilterType::OffsetVectorPointer requestedOffsets =
-    TextureFilterType::OffsetVector::New();
+  TextureFilterType::OffsetVectorPointer requestedOffsets = TextureFilterType::OffsetVector::New();
 
   TextureFilterType::OffsetVector::ConstIterator offSetIt;
-  std::cout << "TextureDistance,"
-            << distance
-            << std::endl;
-  for( offSetIt  = textureFilter->GetOffsets()->Begin();
-       offSetIt != textureFilter->GetOffsets()->End();
-       ++offSetIt )
-    {
+  std::cout << "TextureDistance," << distance << std::endl;
+  for ( offSetIt = textureFilter->GetOffsets()->Begin(); offSetIt != textureFilter->GetOffsets()->End(); ++offSetIt )
+  {
     TextureFilterType::OffsetType tempOffset = offSetIt.Value();
-    for( unsigned int t = 0; t < Dimension; t++ )
-      {
+    for ( unsigned int t = 0; t < Dimension; t++ )
+    {
       tempOffset[t] *= distance;
-      }
-    requestedOffsets->push_back( tempOffset );
     }
+    requestedOffsets->push_back( tempOffset );
+  }
 
   textureFilter->SetInput( caster->GetOutput() );
   textureFilter->SetMaskImage( binaryFilter->GetOutput() );
   // textureFilter->SetInsidePixelValue( 1 );
-  textureFilter->SetNumberOfBinsPerAxis(256);
+  textureFilter->SetNumberOfBinsPerAxis( 256 );
   textureFilter->FastCalculationsOff();
-  textureFilter->SetRequestedFeatures( requestedFeatures);
+  textureFilter->SetRequestedFeatures( requestedFeatures );
   textureFilter->SetOffsets( requestedOffsets );
   try
-    {
+  {
     textureFilter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cerr << "Exception Object Caught! " << std::endl;
     std::cerr << err << std::endl;
     throw;
-    }
+  }
 
   /** Get output and display */
 
@@ -167,7 +161,7 @@ int main( int argc, char *argv[] )
   means = textureFilter->GetFeatureMeans();
   stds = textureFilter->GetFeatureStandardDeviations();
 
-  const TextureFilterType::FeatureNameVector* featureNames = textureFilter->GetRequestedFeatures();
+  const TextureFilterType::FeatureNameVector * featureNames = textureFilter->GetRequestedFeatures();
 
   TextureFilterType::FeatureValueVector::ConstIterator mIt;
   TextureFilterType::FeatureValueVector::ConstIterator sIt;
@@ -176,69 +170,69 @@ int main( int argc, char *argv[] )
   /** output file ready */
   std::ofstream outputFileStream;
   try
-    {
+  {
     outputFileStream.open( outputFilename.c_str() );
-    }
-  catch( std::exception& ex )
-    {
+  }
+  catch ( std::exception & ex )
+  {
     std::cout << "Opening file failed: " << outputFilename << std::endl;
     std::cout << ex.what() << std::endl;
-    exit(EXIT_FAILURE);
-    }
+    exit( EXIT_FAILURE );
+  }
 
   int counter;
-  for( counter = 0, mIt = means->Begin(), sIt = stds->Begin(), nIt = featureNames->Begin();
-       mIt != means->End(); ++mIt, counter++, ++nIt, ++sIt )
-    {
+  for ( counter = 0, mIt = means->Begin(), sIt = stds->Begin(), nIt = featureNames->Begin(); mIt != means->End();
+        ++mIt, counter++, ++nIt, ++sIt )
+  {
     int         name = nIt.Value();
-    std::string outPrefixString("Feature, ");
+    std::string outPrefixString( "Feature, " );
 
-    switch( name )
-      {
+    switch ( name )
+    {
       case 0:
-        {
-        outPrefixString +=  "Energy                  ,";
-        }
-        break;
-      case 1:
-        {
-        outPrefixString +=  "Entropy                  ,";
-        }
-        break;
-      case 2:
-        {
-        outPrefixString +=  "Correlation              ,";
-        }
-        break;
-      case 3:
-        {
-        outPrefixString +=  "InverseDifferenceMoment  ,";
-        }
-        break;
-      case 4:
-        {
-        outPrefixString +=  "Inertia                  ,";
-        }
-        break;
-      case 5:
-        {
-        outPrefixString +=  "ClusterShade             ,";
-        }
-        break;
-      case 6:
-        {
-        outPrefixString +=  "ClusterProminence        ,";
-        }
-        break;
-      case 7:
-        {
-        outPrefixString +=  "HaralickCorrelation      ,";
-        }
-        break;
-      default:
-        outPrefixString +=  "Unknown Feature          ,";
+      {
+        outPrefixString += "Energy                  ,";
       }
-    outPrefixString +=  "Mean,";
+      break;
+      case 1:
+      {
+        outPrefixString += "Entropy                  ,";
+      }
+      break;
+      case 2:
+      {
+        outPrefixString += "Correlation              ,";
+      }
+      break;
+      case 3:
+      {
+        outPrefixString += "InverseDifferenceMoment  ,";
+      }
+      break;
+      case 4:
+      {
+        outPrefixString += "Inertia                  ,";
+      }
+      break;
+      case 5:
+      {
+        outPrefixString += "ClusterShade             ,";
+      }
+      break;
+      case 6:
+      {
+        outPrefixString += "ClusterProminence        ,";
+      }
+      break;
+      case 7:
+      {
+        outPrefixString += "HaralickCorrelation      ,";
+      }
+      break;
+      default:
+        outPrefixString += "Unknown Feature          ,";
+    }
+    outPrefixString += "Mean,";
     outputFileStream << outPrefixString;
     std::cout << outPrefixString;
 
@@ -253,7 +247,7 @@ int main( int argc, char *argv[] )
 
     outputFileStream << "\n";
     std::cout << "\n";
-    }
+  }
 
   outputFileStream.close();
   return 0;

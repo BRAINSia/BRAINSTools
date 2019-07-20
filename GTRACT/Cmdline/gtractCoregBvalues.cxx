@@ -55,21 +55,22 @@
 #include "itkOrthogonalize3DRotationMatrix.h"
 #include "itkNumberToString.h"
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  itk::NumberToString<double>                                        doubleConvert;
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  itk::NumberToString< double >                         doubleConvert;
   bool                                                  debug = true;
-  if( debug )
-    {
+  if ( debug )
+  {
     std::cout << "=====================================================" << std::endl;
-    std::cout << "Moving Image: " <<  movingVolume << std::endl;
-    std::cout << "Fixed Image: " <<  fixedVolume << std::endl;
-    std::cout << "Fixed Image Index: " <<  fixedVolumeIndex << std::endl;
-    std::cout << "Output Image: " <<  outputVolume << std::endl;
-    std::cout << "Output Transform: " <<  outputTransform << std::endl;
+    std::cout << "Moving Image: " << movingVolume << std::endl;
+    std::cout << "Fixed Image: " << fixedVolume << std::endl;
+    std::cout << "Fixed Image Index: " << fixedVolumeIndex << std::endl;
+    std::cout << "Output Image: " << outputVolume << std::endl;
+    std::cout << "Output Transform: " << outputTransform << std::endl;
     std::cout << "Eddy Current Correction: " << eddyCurrentCorrection << std::endl;
     std::cout << "Iterations: " << numberOfIterations << std::endl;
     std::cout << "Translation Scale: " << spatialScale << std::endl;
@@ -80,76 +81,78 @@ int main(int argc, char *argv[])
     std::cout << "Register B0 Only: " << registerB0Only << std::endl;
     std::cout << "Debug Level: " << debugLevel << std::endl;
     std::cout << "=====================================================" << std::endl;
-    }
+  }
 
   bool violated = false;
-  if( movingVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --movingVolume Required! "  << std::endl;
-    }
-  if( fixedVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --fixedVolume Required! "  << std::endl;
-    }
-  if( outputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
-    }
-  if( outputTransform.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputTransform Required! "  << std::endl;
-    }
-  if( violated )
-    {
+  if ( movingVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --movingVolume Required! " << std::endl;
+  }
+  if ( fixedVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --fixedVolume Required! " << std::endl;
+  }
+  if ( outputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --outputVolume Required! " << std::endl;
+  }
+  if ( outputTransform.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --outputTransform Required! " << std::endl;
+  }
+  if ( violated )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   using OutputPixelType = signed short;
   using PixelType = float;
-  using NrrdImageType = itk::VectorImage<PixelType, 3>;
-  using OutputImageType = itk::VectorImage<OutputPixelType, 3>;
-  using InputIndexImageType = itk::Image<PixelType, 3>;
-  using OutputIndexImageType = itk::Image<OutputPixelType, 3>;
-  using LocalAffineTransformType = itk::AffineTransform<double, 3>;
-  using RigidTransformType = itk::VersorRigid3DTransform<double>;
+  using NrrdImageType = itk::VectorImage< PixelType, 3 >;
+  using OutputImageType = itk::VectorImage< OutputPixelType, 3 >;
+  using InputIndexImageType = itk::Image< PixelType, 3 >;
+  using OutputIndexImageType = itk::Image< OutputPixelType, 3 >;
+  using LocalAffineTransformType = itk::AffineTransform< double, 3 >;
+  using RigidTransformType = itk::VersorRigid3DTransform< double >;
 
-  using FileReaderType = itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> >;
+  using FileReaderType = itk::ImageFileReader< NrrdImageType, itk::DefaultConvertPixelTraits< PixelType > >;
   FileReaderType::Pointer movingImageReader = FileReaderType::New();
   movingImageReader->SetFileName( movingVolume );
   movingImageReader->Update();
 
   try
-    {
+  {
     movingImageReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   // using InputImageType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType,
   // IndexImageType >;
-  using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, InputIndexImageType>;
+  using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType, InputIndexImageType >;
   ExtractImageFilterType::Pointer movingImageExtractionFilter = ExtractImageFilterType::New();
-  movingImageExtractionFilter->SetInput(movingImageReader->GetOutput() );
+  movingImageExtractionFilter->SetInput( movingImageReader->GetOutput() );
 
-  using FileReaderType = itk::ImageFileReader<NrrdImageType,
-                               itk::DefaultConvertPixelTraits<PixelType> >;
+  using FileReaderType = itk::ImageFileReader< NrrdImageType, itk::DefaultConvertPixelTraits< PixelType > >;
   FileReaderType::Pointer fixedImageReader = FileReaderType::New();
   fixedImageReader->SetFileName( fixedVolume );
   fixedImageReader->Update();
 
   try
-    {
+  {
     fixedImageReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   /* Extract Image Index to be used for Coregistration */
   ExtractImageFilterType::Pointer fixedImageExtractionFilter = ExtractImageFilterType::New();
@@ -163,17 +166,17 @@ int main(int argc, char *argv[])
   using RegisterFilterType = itk::BRAINSFitHelper;
   RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
 
-  std::vector<double> minStepLength;
-  minStepLength.push_back( (double)minimumStepSize);
+  std::vector< double > minStepLength;
+  minStepLength.push_back( (double)minimumStepSize );
 
-  std::vector<std::string> rigidTransformTypes;
-  rigidTransformTypes.push_back("ScaleVersor3D");
+  std::vector< std::string > rigidTransformTypes;
+  rigidTransformTypes.push_back( "ScaleVersor3D" );
 
-  std::vector<std::string> affineTransformTypes;
-  affineTransformTypes.push_back("Affine");
+  std::vector< std::string > affineTransformTypes;
+  affineTransformTypes.push_back( "Affine" );
 
-  std::vector<int> iterations;
-  iterations.push_back(numberOfIterations);
+  std::vector< int > iterations;
+  iterations.push_back( numberOfIterations );
 
   // Allocate output image
   RegisteredImage = OutputImageType::New();
@@ -185,40 +188,40 @@ int main(int argc, char *argv[])
   RegisteredImage->SetMetaDataDictionary( movingImageReader->GetOutput()->GetMetaDataDictionary() );
   RegisteredImage->Allocate();
 
-  using ConstIteratorType = itk::ImageRegionConstIterator<OutputIndexImageType>;
-  using IteratorType = itk::ImageRegionIterator<OutputImageType>;
+  using ConstIteratorType = itk::ImageRegionConstIterator< OutputIndexImageType >;
+  using IteratorType = itk::ImageRegionIterator< OutputImageType >;
 
   IteratorType               ot( RegisteredImage, RegisteredImage->GetRequestedRegion() );
   OutputImageType::PixelType vectorImagePixel;
-  for( unsigned int i = 0; i < movingImageReader->GetOutput()->GetVectorLength(); i++ )
-    {
+  for ( unsigned int i = 0; i < movingImageReader->GetOutput()->GetVectorLength(); i++ )
+  {
     // Get Current Gradient Direction
-    vnl_vector<double> curGradientDirection(3);
-    char               tmpStr[64];
-    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
-    std::string KeyString(tmpStr);
+    vnl_vector< double > curGradientDirection( 3 );
+    char                 tmpStr[64];
+    sprintf( tmpStr, "DWMRI_gradient_%04u", i );
+    std::string KeyString( tmpStr );
     std::string NrrdValue;
 
     itk::MetaDataDictionary inputMetaDataDictionary = movingImageReader->GetOutput()->GetMetaDataDictionary();
-    itk::ExposeMetaData<std::string>(inputMetaDataDictionary, KeyString, NrrdValue);
+    itk::ExposeMetaData< std::string >( inputMetaDataDictionary, KeyString, NrrdValue );
     /* %lf is 'long float', i.e., double. */
     // std::cout<<"KeyString: "<<KeyString<<std::endl;
     // std::cout<<"NrrdValue: "<<NrrdValue<<std::endl;
     sscanf(
-      NrrdValue.c_str(), " %lf %lf %lf", &curGradientDirection[0], &curGradientDirection[1], &curGradientDirection[2]);
+      NrrdValue.c_str(), " %lf %lf %lf", &curGradientDirection[0], &curGradientDirection[1], &curGradientDirection[2] );
     // std::cout<<" before: "<<std::endl;
     // std::cout<<curGradientDirection<<std::endl;
 
-    if( eddyCurrentCorrection == 0 )
-      {
+    if ( eddyCurrentCorrection == 0 )
+    {
       std::cout << "Rigid Registration: " << std::endl;
-      registerImageFilter->SetTransformType(rigidTransformTypes);
-      }
+      registerImageFilter->SetTransformType( rigidTransformTypes );
+    }
     else
-      {
+    {
       std::cout << "Full Affine Registration: " << std::endl;
-      registerImageFilter->SetTransformType(affineTransformTypes);
-      }
+      registerImageFilter->SetTransformType( affineTransformTypes );
+    }
     movingImageExtractionFilter->SetIndex( i );
     movingImageExtractionFilter->Update();
 
@@ -227,110 +230,110 @@ int main(int argc, char *argv[])
     registerImageFilter->SetMinimumStepLength( minStepLength );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
     registerImageFilter->SetNumberOfIterations( iterations );
-    if(numberOfSpatialSamples > 0)
-      {
-        const unsigned long numberOfAllSamples = fixedImageExtractionFilter->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
-        samplingPercentage = static_cast<double>( numberOfSpatialSamples )/numberOfAllSamples;
-        std::cout << "WARNING --numberOfSpatialSamples is deprecated, please use --samplingPercentage instead " << std::endl;
-        std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
-      }
+    if ( numberOfSpatialSamples > 0 )
+    {
+      const unsigned long numberOfAllSamples =
+        fixedImageExtractionFilter->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
+      samplingPercentage = static_cast< double >( numberOfSpatialSamples ) / numberOfAllSamples;
+      std::cout << "WARNING --numberOfSpatialSamples is deprecated, please use --samplingPercentage instead "
+                << std::endl;
+      std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
+    }
     registerImageFilter->SetSamplingPercentage( samplingPercentage );
     registerImageFilter->SetMovingVolume( movingImageExtractionFilter->GetOutput() );
     registerImageFilter->SetFixedVolume( fixedImageExtractionFilter->GetOutput() );
-    registerImageFilter->SetDebugLevel(debugLevel);
-    registerImageFilter->SetInitializeTransformMode("useMomentsAlign" );
+    registerImageFilter->SetDebugLevel( debugLevel );
+    registerImageFilter->SetInitializeTransformMode( "useMomentsAlign" );
 
 
     try
-      {
+    {
       registerImageFilter->Update();
-      }
-    catch( itk::ExceptionObject & ex )
-      {
+    }
+    catch ( itk::ExceptionObject & ex )
+    {
       std::cout << ex << std::endl;
       throw;
-      }
-    using GenericTransformType = itk::Transform<double, 3, 3>;
+    }
+    using GenericTransformType = itk::Transform< double, 3, 3 >;
     // restore writing out transform if specified on command line.
-    if( outputTransform.size() != 0 )
-      {
-      GenericTransformType::Pointer transform =
-        registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0);
-      itk::TransformFileWriter::Pointer xfrmWriter =
-        itk::TransformFileWriter::New();
-      xfrmWriter->SetFileName(outputTransform);
-      xfrmWriter->SetInput(transform);
+    if ( outputTransform.size() != 0 )
+    {
+      GenericTransformType::Pointer transform = registerImageFilter->GetCurrentGenericTransform()->GetNthTransform( 0 );
+      itk::TransformFileWriter::Pointer xfrmWriter = itk::TransformFileWriter::New();
+      xfrmWriter->SetFileName( outputTransform );
+      xfrmWriter->SetInput( transform );
 #if ITK_VERSION_MAJOR >= 5
-      xfrmWriter->SetUseCompression(true);
+      xfrmWriter->SetUseCompression( true );
 #endif
       xfrmWriter->Update();
-      }
-    using ResampleFilterType = itk::ResampleImageFilter<InputIndexImageType, OutputIndexImageType, double>;
+    }
+    using ResampleFilterType = itk::ResampleImageFilter< InputIndexImageType, OutputIndexImageType, double >;
     ResampleFilterType::Pointer resampler = ResampleFilterType::New();
     resampler->SetTransform( registerImageFilter->GetCurrentGenericTransform() );
     resampler->SetInput( movingImageExtractionFilter->GetOutput() );
     // Remember:  the Data is Moving's, the shape is Fixed's.
-    resampler->SetOutputParametersFromImage(fixedImageExtractionFilter->GetOutput() );
+    resampler->SetOutputParametersFromImage( fixedImageExtractionFilter->GetOutput() );
     resampler->SetDefaultPixelValue( 0 );
     resampler->Update();
 
-    if( eddyCurrentCorrection == 0 )
-      {
+    if ( eddyCurrentCorrection == 0 )
+    {
       RigidTransformType::Pointer rigidTransform;
       rigidTransform =
-        dynamic_cast<RigidTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer() );
+        dynamic_cast< RigidTransformType * >( registerImageFilter->GetCurrentGenericTransform().GetPointer() );
       curGradientDirection = rigidTransform->GetMatrix().GetVnlMatrix() * curGradientDirection;
-      }
+    }
     else
-      {
+    {
       LocalAffineTransformType::Pointer affineTransform;
       affineTransform =
-        dynamic_cast<LocalAffineTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer() );
-      itk::Matrix<double, 3, 3> NonOrthog = affineTransform->GetMatrix();
-      itk::Matrix<double, 3, 3> Orthog( itk::Orthogonalize3DRotationMatrix(NonOrthog) );
+        dynamic_cast< LocalAffineTransformType * >( registerImageFilter->GetCurrentGenericTransform().GetPointer() );
+      itk::Matrix< double, 3, 3 > NonOrthog = affineTransform->GetMatrix();
+      itk::Matrix< double, 3, 3 > Orthog( itk::Orthogonalize3DRotationMatrix( NonOrthog ) );
       curGradientDirection = Orthog.GetVnlMatrix() * curGradientDirection;
       // std::cout<<"i = "<<i<<std::endl;
       // std::cout<<curGradientDirection<<std::endl;
-      }
+    }
 
     // Write RegisteredImage
     ConstIteratorType it( resampler->GetOutput(), resampler->GetOutput()->GetRequestedRegion() );
-    for( ot.GoToBegin(), it.GoToBegin(); !ot.IsAtEnd(); ++ot, ++it )
-      {
+    for ( ot.GoToBegin(), it.GoToBegin(); !ot.IsAtEnd(); ++ot, ++it )
+    {
       vectorImagePixel = ot.Get();
       vectorImagePixel[i] = it.Value();
       ot.Set( vectorImagePixel );
-      }
+    }
 
     // Add the gradient direction to the resulting image
     // sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
     //         curGradientDirection[2]);
     // NrrdValue = tmpStr;
     NrrdValue = " ";
-    for( unsigned dir = 0; dir < 3; ++dir )
+    for ( unsigned dir = 0; dir < 3; ++dir )
+    {
+      if ( i > 0 )
       {
-      if( i > 0 )
-        {
         NrrdValue += " ";
-        }
-      NrrdValue += doubleConvert(curGradientDirection[dir]);
       }
-    itk::EncapsulateMetaData<std::string>(RegisteredImage->GetMetaDataDictionary(), KeyString, NrrdValue);
+      NrrdValue += doubleConvert( curGradientDirection[dir] );
     }
+    itk::EncapsulateMetaData< std::string >( RegisteredImage->GetMetaDataDictionary(), KeyString, NrrdValue );
+  }
 
-  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  using WriterType = itk::ImageFileWriter< OutputImageType >;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput( RegisteredImage );
   nrrdWriter->SetFileName( outputVolume );
   try
-    {
+  {
     nrrdWriter->Update();
-    }
-  catch( itk::ExceptionObject & e )
-    {
+  }
+  catch ( itk::ExceptionObject & e )
+  {
     std::cout << e << std::endl;
-    }
+  }
   return EXIT_SUCCESS;
 }

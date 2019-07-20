@@ -33,14 +33,14 @@ namespace itk
  * \ingroup Writers
  *
  */
-template <typename TMesh>
-class QuadEdgeMeshVectorDataVTKPolyDataWriter : public VTKPolyDataWriter<TMesh>
+template < typename TMesh >
+class QuadEdgeMeshVectorDataVTKPolyDataWriter : public VTKPolyDataWriter< TMesh >
 {
 public:
   using Self = QuadEdgeMeshVectorDataVTKPolyDataWriter;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  using Superclass = VTKPolyDataWriter<TMesh>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = VTKPolyDataWriter< TMesh >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshVectorDataVTKPolyDataWriter, VTKPolyDataWriter );
@@ -72,12 +72,13 @@ public:
   using CellDataContainerConstIterator = typename CellDataContainer::ConstIterator;
 
   /** Set/Get the name of the CellDataName where data are written. */
-  itkSetStringMacro(CellDataName);
-  itkGetStringMacro(CellDataName);
+  itkSetStringMacro( CellDataName );
+  itkGetStringMacro( CellDataName );
 
   /** Set/Get the name of the PointDataName where data are written. */
-  itkSetStringMacro(PointDataName);
-  itkGetStringMacro(PointDataName);
+  itkSetStringMacro( PointDataName );
+  itkGetStringMacro( PointDataName );
+
 protected:
   QuadEdgeMeshVectorDataVTKPolyDataWriter();
   ~QuadEdgeMeshVectorDataVTKPolyDataWriter();
@@ -85,20 +86,24 @@ protected:
   std::string m_CellDataName;
   std::string m_PointDataName;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
-  void WriteCellData();
+  void
+  WriteCellData();
 
-  void WritePointData();
+  void
+  WritePointData();
 
 private:
   QuadEdgeMeshVectorDataVTKPolyDataWriter( const Self & );
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshVectorDataVTKPolyDataWriter.hxx"
+#  include "itkQuadEdgeMeshVectorDataVTKPolyDataWriter.hxx"
 #endif
 
 #endif

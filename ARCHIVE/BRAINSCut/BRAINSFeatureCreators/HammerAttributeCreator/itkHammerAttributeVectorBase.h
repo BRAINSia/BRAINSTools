@@ -44,74 +44,73 @@ PURPOSE.  See the above copyright notices for more information.
 namespace itk
 {
 /** \class HammerAttributeVectorBase
-  * \brief Abstract base class for attribute vector used by Hammer
-  *
-  */
-template <typename TValueType, unsigned int VLength = 3>
-class HammerAttributeVectorBase :
-  public         FixedArray<TValueType, VLength>
+ * \brief Abstract base class for attribute vector used by Hammer
+ *
+ */
+template < typename TValueType, unsigned int VLength = 3 >
+class HammerAttributeVectorBase : public FixedArray< TValueType, VLength >
 {
 public:
-
   using Self = HammerAttributeVectorBase;
-  using SuperClass = typename itk::FixedArray<TValueType, VLength>;
-  using VectorType = FixedArray<TValueType, VLength>;
+  using SuperClass = typename itk::FixedArray< TValueType, VLength >;
+  using VectorType = FixedArray< TValueType, VLength >;
 
   /** Length constant */
-  unsigned int GetLength() const
+  unsigned int
+  GetLength() const
   {
     return SuperClass::GetLength();
   }
 
   /** Dimension constant */
-  unsigned int GetDimension() const
+  unsigned int
+  GetDimension() const
   {
     return SuperClass::GetDimension();
   }
 
   /** define interface for computing similarity/difference between two
-    * attribute vectors */
-  virtual double ComputeSimilarity(const VectorType & vec2) const
+   * attribute vectors */
+  virtual double
+  ComputeSimilarity( const VectorType & vec2 ) const
   {
     double d = 1;
 
-    for( unsigned int k = 0; k < this->Size(); k++ )
-      {
-      const double c = static_cast<double>( this->GetElement(k) ) - static_cast<double>( vec2[k] );
-      d *= exp(-c * c / 2);
-      }
+    for ( unsigned int k = 0; k < this->Size(); k++ )
+    {
+      const double c = static_cast< double >( this->GetElement( k ) ) - static_cast< double >( vec2[k] );
+      d *= exp( -c * c / 2 );
+    }
     return d;
   }
 
-  virtual double ComputeDifference(const VectorType & vec2) const
+  virtual double
+  ComputeDifference( const VectorType & vec2 ) const
   {
     double d = 0;
 
-    for( unsigned k = 0; k < this->Size(); k++ )
-      {
-      const double c = static_cast<double>( this->GetElement(k) ) - static_cast<double>( vec2[k] );
+    for ( unsigned k = 0; k < this->Size(); k++ )
+    {
+      const double c = static_cast< double >( this->GetElement( k ) ) - static_cast< double >( vec2[k] );
       d += c * c;
-      }
+    }
     return d;
   }
 
-  virtual bool IsQualifiedDrivingVoxel(std::vector<float> & /* qualifier */)
+  virtual bool
+  IsQualifiedDrivingVoxel( std::vector< float > & /* qualifier */ )
   {
     return false;
   }
 
-  HammerAttributeVectorBase()
-  {
-  }
+  HammerAttributeVectorBase() {}
 
-  virtual ~HammerAttributeVectorBase()
-  {
-  }
+  virtual ~HammerAttributeVectorBase() {}
 
-  void PrintSelf(std::ostream & /*NOT IMPLEMENTED os*/, Indent /*NOT IMPLEMENTED indent*/) const
-  {
-  }
+  void
+  PrintSelf( std::ostream & /*NOT IMPLEMENTED os*/, Indent /*NOT IMPLEMENTED indent*/ ) const
+  {}
 };
-}   // end namespace itk
+} // end namespace itk
 
 #endif

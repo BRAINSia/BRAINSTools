@@ -20,55 +20,50 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-int main( int argc, char *argv[] )
+int
+main( int argc, char * argv[] )
 {
-  using ImageType = itk::Image<float, 3>;
-  using MaskImageType = itk::Image<unsigned char, 3>;
+  using ImageType = itk::Image< float, 3 >;
+  using MaskImageType = itk::Image< unsigned char, 3 >;
 
-  using ReaderType = itk::ImageFileReader<ImageType>;
+  using ReaderType = itk::ImageFileReader< ImageType >;
 
   ReaderType::Pointer imageReader = ReaderType::New();
-  imageReader->SetFileName(argv[1]);
+  imageReader->SetFileName( argv[1] );
   imageReader->Update();
   ImageType::Pointer image = imageReader->GetOutput();
 
   MaskImageType::Pointer mask = NULL; // itkUtil::ReadImage<MaskImageType>(
                                       // argv[2] );
-  if( argc == 4 )
-    {
-    using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+  if ( argc == 4 )
+  {
+    using MaskReaderType = itk::ImageFileReader< MaskImageType >;
     MaskReaderType::Pointer maskReader = MaskReaderType::New();
-    maskReader->SetFileName(argv[3]);
+    maskReader->SetFileName( argv[3] );
     maskReader->Update();
     mask = maskReader->GetOutput();
-    }
+  }
 
-  constexpr double lFract = 0.00005;
-  const double               uFract = 1.0 - lFract;
-  constexpr ImageType::PixelType lTarget  = 1;
-  const ImageType::PixelType uTarget = 0.95 * MAX_IMAGE_OUTPUT_VALUE;
-  constexpr ImageType::PixelType clipMin  = 0;
-  const ImageType::PixelType clipMax = MAX_IMAGE_OUTPUT_VALUE;
+  constexpr double               lFract = 0.00005;
+  const double                   uFract = 1.0 - lFract;
+  constexpr ImageType::PixelType lTarget = 1;
+  const ImageType::PixelType     uTarget = 0.95 * MAX_IMAGE_OUTPUT_VALUE;
+  constexpr ImageType::PixelType clipMin = 0;
+  const ImageType::PixelType     clipMax = MAX_IMAGE_OUTPUT_VALUE;
 
-  ImageType::Pointer result = StandardizeMaskIntensity<ImageType, MaskImageType>(image,
-                                                                                 mask,
-                                                                                 lFract,
-                                                                                 uFract,
-                                                                                 lTarget,
-                                                                                 uTarget,
-                                                                                 clipMin,
-                                                                                 clipMax);
+  ImageType::Pointer result = StandardizeMaskIntensity< ImageType, MaskImageType >(
+    image, mask, lFract, uFract, lTarget, uTarget, clipMin, clipMax );
 
-  if( result.IsNull() )
-    {
+  if ( result.IsNull() )
+  {
     return 2;
-    }
+  }
 
-  using FloatWriterType = itk::ImageFileWriter<ImageType>;
+  using FloatWriterType = itk::ImageFileWriter< ImageType >;
   FloatWriterType::Pointer writer = FloatWriterType::New();
 
-  writer->SetInput(result);
-  writer->SetFileName(argv[2]);
+  writer->SetInput( result );
+  writer->SetFileName( argv[2] );
   writer->UseCompressionOn();
   writer->Update();
   return 0;

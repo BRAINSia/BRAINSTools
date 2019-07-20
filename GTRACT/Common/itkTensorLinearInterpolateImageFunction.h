@@ -41,23 +41,21 @@
 
 namespace itk
 {
-template <typename TInputImage, typename TCoordRep = float>
-class TensorLinearInterpolateImageFunction :
-  public         TensorInterpolateImageFunction<TInputImage, TCoordRep>
+template < typename TInputImage, typename TCoordRep = float >
+class TensorLinearInterpolateImageFunction : public TensorInterpolateImageFunction< TInputImage, TCoordRep >
 {
 public:
   /** Standard class type alias. */
   using Self = TensorLinearInterpolateImageFunction;
-  using Superclass = TensorInterpolateImageFunction<TInputImage, TCoordRep>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = TensorInterpolateImageFunction< TInputImage, TCoordRep >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TensorLinearInterpolateImageFunction,
-               TensorInterpolateImageFunction);
+  itkTypeMacro( TensorLinearInterpolateImageFunction, TensorInterpolateImageFunction );
 
   /** InputImageType type alias support. */
   using InputImageType = typename Superclass::InputImageType;
@@ -88,20 +86,21 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override;
+  OutputType
+  EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override;
 
 protected:
   TensorLinearInterpolateImageFunction();
-  ~TensorLinearInterpolateImageFunction() override
-  {
-  }
+  ~TensorLinearInterpolateImageFunction() override {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
-  TensorLinearInterpolateImageFunction(const Self &); // purposely not
-                                                      // implemented
-  void operator=(const Self &);                       // purposely not
+  TensorLinearInterpolateImageFunction( const Self & ); // purposely not
+                                                        // implemented
+  void
+  operator=( const Self & ); // purposely not
 
   // implemented
 
@@ -111,7 +110,7 @@ private:
 } // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkTensorLinearInterpolateImageFunction.hxx"
+#  include "itkTensorLinearInterpolateImageFunction.hxx"
 #endif
 
 #endif

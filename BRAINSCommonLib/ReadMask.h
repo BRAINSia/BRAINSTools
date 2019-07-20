@@ -22,29 +22,28 @@
 #include "itkIO.h"
 #include "itkImageMaskSpatialObject.h"
 
-template <typename MaskType, unsigned VDimension>
+template < typename MaskType, unsigned VDimension >
 typename MaskType::Pointer
-ReadImageMask(const std::string & filename,
-              typename itk::ImageBase<VDimension> * /*referenceImage*/)
+ReadImageMask( const std::string & filename, typename itk::ImageBase< VDimension > * /*referenceImage*/ )
 {
   using MaskPixelType = unsigned char;
-  using ReadMaskImageType = itk::Image<MaskPixelType, 3>;
+  using ReadMaskImageType = itk::Image< MaskPixelType, 3 >;
 
-  typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
+  typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage< ReadMaskImageType >( filename );
   // TODO:  May want to check that physical spaces overlap?
 
   // convert mask image to mask
-  using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<ReadMaskImageType::ImageDimension>;
+  using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject< ReadMaskImageType::ImageDimension >;
   typename ReadImageMaskSpatialObjectType::Pointer mask = ReadImageMaskSpatialObjectType::New();
-  mask->SetImage(OrientedMaskImage);
+  mask->SetImage( OrientedMaskImage );
   //
   mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   // return pointer to mask
-  typename MaskType::Pointer p = dynamic_cast<MaskType *>( mask.GetPointer() );
-  if( p.IsNull() )
-    {
-    itkGenericExceptionMacro(<< "Failed conversion to Mask");
-    }
+  typename MaskType::Pointer p = dynamic_cast< MaskType * >( mask.GetPointer() );
+  if ( p.IsNull() )
+  {
+    itkGenericExceptionMacro( << "Failed conversion to Mask" );
+  }
   return p;
 }
 

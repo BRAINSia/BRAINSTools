@@ -25,29 +25,28 @@ class RegistrationType : public ElementParser
 {
 public:
   using SuperClass = ElementParser;
-  int PrintSelf(std::ostream & os, int indent) const override
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent += SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== RegistrationType ===" << std::endl;
+    indent += SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== RegistrationType ===" << std::endl;
     return indent + 2;
   }
 
-  RegistrationType() : ElementParser("Registration")
+  RegistrationType()
+    : ElementParser( "Registration" )
   {
-    this->Add(new StringValue("SubjToAtlasRegistrationFilename", ""),
-              "SubjToAtlasRegistrationFilename");
-    this->Add(new StringValue("AtlasToSubjRegistrationFilename", ""),
-              "AtlasToSubjRegistrationFilename");
-    this->Add(new StringValue("ID", ""),
-              "ID");
+    this->Add( new StringValue( "SubjToAtlasRegistrationFilename", "" ), "SubjToAtlasRegistrationFilename" );
+    this->Add( new StringValue( "AtlasToSubjRegistrationFilename", "" ), "AtlasToSubjRegistrationFilename" );
+    this->Add( new StringValue( "ID", "" ), "ID" );
   }
 };
 
 class RegistrationList : public ElementParser
 {
 public:
-  RegistrationList() : ElementParser("RegistrationList")
-  {
-  }
+  RegistrationList()
+    : ElementParser( "RegistrationList" )
+  {}
 };
 #endif

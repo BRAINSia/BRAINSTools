@@ -24,9 +24,8 @@
 
 namespace itk
 {
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::QuadEdgeMeshAddScalarsFilter()
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::QuadEdgeMeshAddScalarsFilter()
 {
   this->SetNumberOfRequiredInputs( 2 );
   this->SetNumberOfRequiredOutputs( 1 );
@@ -35,66 +34,55 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
   this->SetNthOutput( 0, OutputMeshType::New() );
 }
 
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::~QuadEdgeMeshAddScalarsFilter()
-{
-}
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::~QuadEdgeMeshAddScalarsFilter()
+{}
 
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
 void
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::SetInput1(const InputMeshType1 * mesh)
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::SetInput1( const InputMeshType1 * mesh )
 {
-  itkDebugMacro("setting input1 to " << mesh);
-  if( mesh != static_cast<const InputMeshType1 *>(this->ProcessObject::GetInput( 0 ) ) )
-    {
-    this->ProcessObject::SetNthInput(0, const_cast<InputMeshType1 *>( mesh ) );
-    this->Modified();
-    }
-}
-
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
-void
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::SetInput2(const InputMeshType2 * mesh)
-{
-  itkDebugMacro("setting input2 to " << mesh);
-  if( mesh != static_cast<const InputMeshType2 *>(this->ProcessObject::GetInput( 1 ) ) )
-    {
-    this->ProcessObject::SetNthInput(1, const_cast<InputMeshType2 *>( mesh ) );
-    this->Modified();
-    }
-}
-
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
-const typename
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>::InputMeshType1
-* QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::GetInput1() const
+  itkDebugMacro( "setting input1 to " << mesh );
+  if ( mesh != static_cast< const InputMeshType1 * >( this->ProcessObject::GetInput( 0 ) ) )
   {
-  Self *                 surrogate = const_cast<Self *>( this );
-  const InputMeshType1 * inputMesh =
-    static_cast<const InputMeshType1 *>( surrogate->ProcessObject::GetInput(0) );
-  return inputMesh;
+    this->ProcessObject::SetNthInput( 0, const_cast< InputMeshType1 * >( mesh ) );
+    this->Modified();
   }
+}
 
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
-const typename
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>::InputMeshType2
-* QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::GetInput2() const
-  {
-  Self *                 surrogate = const_cast<Self *>( this );
-  const InputMeshType2 * inputMesh =
-    static_cast<const InputMeshType2 *>( surrogate->ProcessObject::GetInput(1) );
-  return inputMesh;
-  }
-
-template <typename TInputMesh1, typename TInputMesh2, typename TOutputMesh>
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
 void
-QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
-::GenerateData()
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::SetInput2( const InputMeshType2 * mesh )
+{
+  itkDebugMacro( "setting input2 to " << mesh );
+  if ( mesh != static_cast< const InputMeshType2 * >( this->ProcessObject::GetInput( 1 ) ) )
+  {
+    this->ProcessObject::SetNthInput( 1, const_cast< InputMeshType2 * >( mesh ) );
+    this->Modified();
+  }
+}
+
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
+const typename QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::InputMeshType1 *
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::GetInput1() const
+{
+  Self *                 surrogate = const_cast< Self * >( this );
+  const InputMeshType1 * inputMesh = static_cast< const InputMeshType1 * >( surrogate->ProcessObject::GetInput( 0 ) );
+  return inputMesh;
+}
+
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
+const typename QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::InputMeshType2 *
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::GetInput2() const
+{
+  Self *                 surrogate = const_cast< Self * >( this );
+  const InputMeshType2 * inputMesh = static_cast< const InputMeshType2 * >( surrogate->ProcessObject::GetInput( 1 ) );
+  return inputMesh;
+}
+
+template < typename TInputMesh1, typename TInputMesh2, typename TOutputMesh >
+void
+QuadEdgeMeshAddScalarsFilter< TInputMesh1, TInputMesh2, TOutputMesh >::GenerateData()
 {
   this->CopyInputMeshToOutputMesh();
 
@@ -106,10 +94,10 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
   const unsigned int numberOfPoints1 = inputMesh1->GetNumberOfPoints();
   const unsigned int numberOfPoints2 = inputMesh2->GetNumberOfPoints();
 
-  if( numberOfPoints1 != numberOfPoints2 )
-    {
-    itkExceptionMacro("The inputs does not have the same number of points");
-    }
+  if ( numberOfPoints1 != numberOfPoints2 )
+  {
+    itkExceptionMacro( "The inputs does not have the same number of points" );
+  }
 
   using DisplacementVectorContainer1 = typename InputMeshType1::PointDataContainer;
   using DisplacementVectorContainer2 = typename InputMeshType2::PointDataContainer;
@@ -131,14 +119,14 @@ QuadEdgeMeshAddScalarsFilter<TInputMesh1, TInputMesh2, TOutputMesh>
   InputIterator1 inputItr1 = displacementVectors1->Begin();
   InputIterator2 inputItr2 = displacementVectors2->Begin();
 
-  while( outputItr != outputEnd )
-    {
+  while ( outputItr != outputEnd )
+  {
     outputItr.Value() = inputItr1.Value() + inputItr2.Value();
 
     ++outputItr;
     ++inputItr1;
     ++inputItr2;
-    }
+  }
 }
 } // end namespace itk
 

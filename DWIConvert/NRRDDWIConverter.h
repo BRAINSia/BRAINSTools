@@ -12,36 +12,38 @@
 class NRRDDWIConverter : public DWIConverter
 {
 public:
-
-
-
   NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames );
 
   ~NRRDDWIConverter() override {}
 
-  void AddFlagsToDictionary() override;
+  void
+  AddFlagsToDictionary() override;
 
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
    */
-  void LoadFromDisk() override;
+  void
+  LoadFromDisk() override;
 
   /**
    * @brief  find the bvalues and gradient vectors
    */
-  void ExtractDWIData() override;
+  void
+  ExtractDWIData() override;
 
   /**
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
+  CommonDicomFieldMapType
+  GetCommonDicomFieldsMap() const override;
 
 private:
-  Volume4DType::Pointer CreateVolume(VectorVolumeType::Pointer & inputVol);
+  Volume4DType::Pointer
+              CreateVolume( VectorVolumeType::Pointer & inputVol );
   std::string m_inputBValues;
   std::string m_inputBVectors;
 };
 
 
-#endif //BRAINSTOOLS_NRRDDWICONVERTER_H
+#endif // BRAINSTOOLS_NRRDDWICONVERTER_H

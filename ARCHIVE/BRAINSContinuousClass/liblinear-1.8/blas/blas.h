@@ -27,17 +27,23 @@
 #define BLAS_INCLUDE
 
 /* Data types specific to BLAS implementation */
-using fcomplex = struct { float r, i; };
-using dcomplex = struct { double r, i; };
+using fcomplex = struct
+{
+  float r, i;
+};
+using dcomplex = struct
+{
+  double r, i;
+};
 using blasbool = int;
 
-#include "blasp.h"    /* Prototypes for all BLAS functions */
+#include "blasp.h" /* Prototypes for all BLAS functions */
 
 #define FALSE 0
-#define TRUE  1
+#define TRUE 1
 
 /* Macro functions */
-#define MIN(a, b) ( (a) <= (b) ? (a) : (b) )
-#define MAX(a, b) ( (a) >= (b) ? (a) : (b) )
+#define MIN( a, b ) ( ( a ) <= ( b ) ? ( a ) : ( b ) )
+#define MAX( a, b ) ( ( a ) >= ( b ) ? ( a ) : ( b ) )
 
 #endif

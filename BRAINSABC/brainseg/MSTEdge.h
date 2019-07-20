@@ -24,7 +24,6 @@
 class MSTEdge
 {
 public:
-
   // Pair of graph vertex indices
   unsigned int i;
   unsigned int j;
@@ -34,14 +33,15 @@ public:
 
   MSTEdge()
   {
-    this->i = 0; this->j = 0; this->dist = 0;
+    this->i = 0;
+    this->j = 0;
+    this->dist = 0;
   }
 
-  ~MSTEdge()
-  {
-  }
+  ~MSTEdge() {}
 
-  MSTEdge & operator=(const MSTEdge & e)
+  MSTEdge &
+  operator=( const MSTEdge & e )
   {
     this->i = e.i;
     this->j = e.j;
@@ -49,7 +49,8 @@ public:
     return *this;
   }
 
-  bool operator<(const MSTEdge & e) const
+  bool
+  operator<( const MSTEdge & e ) const
   {
     return this->dist < e.dist;
   }

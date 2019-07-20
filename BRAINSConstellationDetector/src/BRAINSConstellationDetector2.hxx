@@ -80,10 +80,10 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDe
   /** Advanced parameters */
   /** Manual Override */
   // Inputs
-  this->m_Force_orig_lmk_ACPointLPS.clear();
-  this->m_Force_orig_lmk_PCPointLPS.clear();
-  this->m_Force_orig_lmk_VN4PointLPS.clear();
-  this->m_Force_orig_lmk_RPPointLPS.clear();
+  this->m_force_orig_lmk_ACPointLPS.clear();
+  this->m_force_orig_lmk_PCPointLPS.clear();
+  this->m_force_orig_lmk_VN4PointLPS.clear();
+  this->m_force_orig_lmk_RPPointLPS.clear();
 
   /** Model Override */
   // Inputs
@@ -219,44 +219,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
     this->m_CleanedIntensityOriginalInputImage = copyOfOriginalInputImage;
   }
 
-  { /** Force setting the landmark points from the command line. */
-    if ( this->m_Force_orig_lmk_ACPointLPS.size() == 3 )
-    {
-      SImageType::PointType manualACPoint;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualACPoint[i] = this->m_Force_orig_lmk_ACPointLPS[i];
-      }
-      m_forced_orig_lmks["AC"] = manualACPoint;
-    }
-    if ( this->m_Force_orig_lmk_PCPointLPS.size() == 3 )
-    {
-      SImageType::PointType manualPCPoint;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualPCPoint[i] = this->m_Force_orig_lmk_PCPointLPS[i];
-      }
-      m_forced_orig_lmks["PC"] = manualPCPoint;
-    }
-    if ( this->m_Force_orig_lmk_VN4PointLPS.size() == 3 )
-    {
-      SImageType::PointType manualVN4Point;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualVN4Point[i] = this->m_Force_orig_lmk_VN4PointLPS[i];
-      }
-      m_forced_orig_lmks["VN4"] = manualVN4Point;
-    }
-    if ( this->m_Force_orig_lmk_RPPointLPS.size() == 3 )
-    {
-      SImageType::PointType manualRPPoint;
-      for ( int i = 0; i < 3; i++ )
-      {
-        manualRPPoint[i] = this->m_Force_orig_lmk_RPPointLPS[i];
-      }
-      m_forced_orig_lmks["RP"] = manualRPPoint;
-    }
-  }
+
   landmarksConstellationDetector myDetector( m_forced_orig_lmks );
   // TODO:
   // myDetector.SeteyeFixed_lmk_CenterOfHeadMass( this->m_eyeFixed_lmk_CenterOfHeadMass );

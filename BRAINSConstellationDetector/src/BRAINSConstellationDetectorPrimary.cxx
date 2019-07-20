@@ -210,15 +210,9 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   // load corresponding landmarks in EMSP aligned space from file if possible
   const LandmarksMapType constant_orig_lmks =
     ( !this->orig_lmks_filename.empty() ) ? ReadSlicer3toITKLmk( this->orig_lmks_filename ) : LandmarksMapType{};
-  bool hasBothEyeLandmarksDefinedInOrigSpace = false;
-  if ( ( constant_orig_lmks.find( "LE" ) != constant_orig_lmks.end() ) &&
-       ( constant_orig_lmks.find( "RE" ) != constant_orig_lmks.end() ) )
-  {
-    hasBothEyeLandmarksDefinedInOrigSpace = true;
-  }
 
   LandmarksMapType orig_lmks = constant_orig_lmks;
-  if ( hasBothEyeLandmarksDefinedInOrigSpace )
+  if ( ( orig_lmks.find( "LE" ) != orig_lmks.end() ) && ( orig_lmks.find( "RE" ) != orig_lmks.end() ) )
   {
     std::cout << "\nLoaded eye centers information for BRAINS Hough Eye Detector." << std::endl;
     std::cout << "Skip estimation steps for eye centers." << std::endl;
@@ -286,59 +280,92 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   itk::BRAINSConstellationDetector2< ImageType, ImageType >::Pointer constellation2 =
     itk::BRAINSConstellationDetector2< ImageType, ImageType >::New();
 
-  // TODO:  HACK Try to put this back in
-  //  if( !constant_orig_lmks.empty() )
-  //    {
-  //      constellation2->Setmsp_lmks( constant_orig_lmks );
-  //    }
 
-  constellation2->Setorig_lmk_LE( orig_lmks.at( "LE" ) );
-  constellation2->Setorig_lmk_RE( orig_lmks.at( "RE" ) );
+  { /** Force setting the landmark points from the command line. */
+    // NOTE:  These command lines override values if specified in file.
+    if ( this->m_force_orig_lmk_ACPointLPS.size() == 3 )
+    {
+      SImageType::PointType manualACPoint;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualACPoint[i] = this->m_force_orig_lmk_ACPointLPS[i];
+      }
+      orig_lmks["AC"] = manualACPoint;
+    }
+    if ( this->m_force_orig_lmk_PCPointLPS.size() == 3 )
+    {
+      SImageType::PointType manualPCPoint;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualPCPoint[i] = this->m_force_orig_lmk_PCPointLPS[i];
+      }
+      orig_lmks["PC"] = manualPCPoint;
+    }
+    if ( this->m_force_orig_lmk_VN4PointLPS.size() == 3 )
+    {
+      SImageType::PointType manualVN4Point;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualVN4Point[i] = this->m_force_orig_lmk_VN4PointLPS[i];
+      }
+      orig_lmks["VN4"] = manualVN4Point;
+    }
+    if ( this->m_force_orig_lmk_RPPointLPS.size() == 3 )
+    {
+      SImageType::PointType manualRPPoint;
+      for ( int i = 0; i < 3; i++ )
+      {
+        manualRPPoint[i] = this->m_force_orig_lmk_RPPointLPS[i];
+      }
+      orig_lmks["RP"] = manualRPPoint;
+    }
+  }
 
-#if 1 // TODO HACK: Probably need to undo a translation somewhere in other file
-  constellation2->Setorig_lmk_CenterOfHeadMass( orig_lmks.at( "CM" ) );
-#else
-  constellation2->SeteyeFixed_lmk_CenterOfHeadMass( eyeFixed_lmks.at( "CM" ) ); // This is likely wrong!
-#endif
+
+  /*
+    constellation2->Setorig_lmk_LE( orig_lmks.at("LE") );
+    constellation2->Setorig_lmk_RE( orig_lmks.at("RE") );
+    constellation2->Setorig_lmk_CenterOfHeadMass( orig_lmks.at("CM") );
+
+    constellation2->SetForce_orig_lmk_ACPointLPS( this->m_force_orig_lmk_ACPointLPS );     // In original space
+    constellation2->SetForce_orig_lmk_PCPointLPS( this->m_force_orig_lmk_PCPointLPS );
+    constellation2->SetForce_orig_lmk_VN4PointLPS( this->m_force_orig_lmk_VN4PointLPS );
+    constellation2->SetForce_orig_lmk_RPPointLPS( this->m_force_orig_lmk_RPPointLPS );
+  */
+
+  constellation2->Setforced_orig_lmks( orig_lmks );
 
 
   constellation2->Setorig2eyeFixed_img_tfm( orig2eyeFixed_img_tfm );
   constellation2->SetInput( eyeFixed_img );
 
 
-  // HACK: --- REMOVE ME
-  std::string dggpath = "/tmp/nolmkinit_";
-  if ( hasBothEyeLandmarksDefinedInOrigSpace )
-  {
-    dggpath = "/tmp/manuallmkinit_";
-  }
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
-  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  //HACK: --- REMOVE ME
+  //  std::string dggpath= "/tmp/nolmkinit_";
+  //  if( hasBothEyeLandmarksDefinedInOrigSpace )
+  //    {
+  //      dggpath="/tmp/manuallmkinit_";
+  //    }
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //  std::cout << "\n\nHACK: REMOVE ME\n\n" << std::endl;
+  //
+  //  WriteITKtoSlicer3Lmk(dggpath + "eye_orig_space.fcsv", orig_lmks);
+  //  WriteITKtoSlicer3Lmk(dggpath + "eye_fixed_space.fcsv", eyeFixed_lmks);
+  //
+  //  WriterType::Pointer dggwriter = WriterType::New();
+  //  dggwriter->SetFileName( dggpath + "eye_fixed.nii.gz" );
+  //  dggwriter->SetInput( eyeFixed_img );
+  //  dggwriter->Update();
+  //  dggwriter->SetFileName( dggpath + "eye_orig_space.nii.gz" );
+  //  dggwriter->SetInput( orig_img );
+  //  dggwriter->Update();
 
-  WriteITKtoSlicer3Lmk( dggpath + "eye_orig_space.fcsv", orig_lmks );
-  WriteITKtoSlicer3Lmk( dggpath + "eye_fixed_space.fcsv", eyeFixed_lmks );
 
-  WriterType::Pointer dggwriter = WriterType::New();
-  dggwriter->SetFileName( dggpath + "eye_fixed.nii.gz" );
-  dggwriter->SetInput( eyeFixed_img );
-  dggwriter->Update();
-  dggwriter->SetFileName( dggpath + "eye_orig_space.nii.gz" );
-  dggwriter->SetInput( orig_img );
-  dggwriter->Update();
-
-
-  constellation2->SetForce_orig_lmk_ACPointLPS( this->m_force_orig_lmk_ACPointLPS ); // In original space
-  constellation2->SetForce_orig_lmk_PCPointLPS( this->m_force_orig_lmk_PCPointLPS );
-  constellation2->SetForce_orig_lmk_VN4PointLPS( this->m_force_orig_lmk_VN4PointLPS );
-  constellation2->SetForce_orig_lmk_RPPointLPS( this->m_force_orig_lmk_RPPointLPS );
-
-  // tell the constellation detector if Hough eye detector fails
-  // HACK remove this constellation2->SetHoughEyeFailure( houghEyeDetector->GetFailure() );
   constellation2->SetInputTemplateModel( this->m_inputTemplateModel );
   constellation2->SetMspQualityLevel( this->m_mspQualityLevel );
   constellation2->SetOtsuPercentileThreshold( this->m_otsuPercentileThreshold );

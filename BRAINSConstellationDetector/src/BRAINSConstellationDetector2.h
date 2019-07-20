@@ -154,29 +154,29 @@ public:
   /** Set Hough eye transform */
   itkSetObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
 
+#if 0
   /** Set LE point */
-
-  void
-  Setorig_lmk_LE( SImagePointType lmk )
+  void Setorig_lmk_LE(SImagePointType lmk)
   {
     m_forced_orig_lmks["LE"] = lmk;
   }
 
   /** Set RE point */
-  void
-  Setorig_lmk_RE( SImagePointType lmk )
+  void Setorig_lmk_RE(SImagePointType lmk)
   {
     m_forced_orig_lmks["RE"] = lmk;
   }
 
   /** Set center of head mass **/
-  // itkSetMacro(eyeFixed_lmk_CenterOfHeadMass, SImagePointType);
+  //itkSetMacro(eyeFixed_lmk_CenterOfHeadMass, SImagePointType);
 
-  void
-  Setorig_lmk_CenterOfHeadMass( SImagePointType lmk )
+  void Setorig_lmk_CenterOfHeadMass(SImagePointType lmk)
   {
     m_forced_orig_lmks["CM"] = lmk;
   }
+#endif
+
+  itkSetMacro( forced_orig_lmks, LandmarksMapType );
 
   /** Set the original input image before the Hough eye detector */
   itkSetObjectMacro( OriginalInputImage, SImageType );
@@ -247,7 +247,7 @@ public:
   itkSetMacro( ACMean, SImagePointType );
 
   // Set Advanced Inputs
-
+#if 0
   /** Set force AC point */
   VECTORitkSetMacro( Force_orig_lmk_ACPointLPS, std::vector< float > );
 
@@ -255,11 +255,12 @@ public:
   VECTORitkSetMacro( Force_orig_lmk_PCPointLPS, std::vector< float > );
 
   /** Set force VN4 point */
-  VECTORitkSetMacro( Force_orig_lmk_VN4PointLPS, std::vector< float > );
+  VECTORitkSetMacro(Force_orig_lmk_VN4PointLPS, std::vector<float> );
 
   /** Set force MPJ point */
-  VECTORitkSetMacro( Force_orig_lmk_RPPointLPS, std::vector< float > );
+  VECTORitkSetMacro(Force_orig_lmk_RPPointLPS, std::vector<float> );
 
+#endif
   /** Set MPJ search radius */
   itkSetMacro( RadiusMPJ, double );
 
@@ -367,10 +368,10 @@ protected:
   /** Advanced parameters */
   /** Manual Override */
   // Inputs
-  std::vector< float > m_Force_orig_lmk_ACPointLPS;  // default = 0.
-  std::vector< float > m_Force_orig_lmk_PCPointLPS;  // default = 0.
-  std::vector< float > m_Force_orig_lmk_VN4PointLPS; // default = 0.
-  std::vector< float > m_Force_orig_lmk_RPPointLPS;  // default = 0.
+  std::vector< float > m_force_orig_lmk_ACPointLPS;  // default = 0.
+  std::vector< float > m_force_orig_lmk_PCPointLPS;  // default = 0.
+  std::vector< float > m_force_orig_lmk_VN4PointLPS; // default = 0.
+  std::vector< float > m_force_orig_lmk_RPPointLPS;  // default = 0.
 
   /** Model Override */
   // Inputs
@@ -394,8 +395,7 @@ protected:
 
 } // end namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#  include "BRAINSConstellationDetector2.hxx"
-#endif
+// TODO: Explicitly instantiate this
+#include "BRAINSConstellationDetector2.hxx"
 
 #endif

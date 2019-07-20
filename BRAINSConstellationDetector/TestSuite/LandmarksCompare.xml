@@ -32,6 +32,14 @@
       <description>Second input landmark file. This can be a vector of baseline file names (.fcsv or .wts)</description>
     </string-vector>
 
+    <file>
+      <name>weights</name>
+      <longflag>--weights</longflag>
+      <label>Weights file for adjusting weight tolerances</label>
+      <channel>input</channel>
+      <description>Weights on the tolerance to accept ( tolerance  / weights )</description>
+    </file>
+
     <double>
       <name>tolerance</name>
       <longflag>tolerance</longflag>

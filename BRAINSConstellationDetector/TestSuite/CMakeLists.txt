@@ -9,6 +9,7 @@ target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO BRAINSCommo
   ${VTK_LIBRARIES})
 set_target_properties(TestlandmarksConstellationTrainingDefinitionIO PROPERTIES FOLDER ${MODULE_FOLDER})
 
+
 set(ALL_TEST_PROGS
   BRAINSAlignMSP
   BRAINSConstellationDetector
@@ -170,8 +171,10 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/insertMidACPCpointTest_ACPCSpace_aligned.fcsv # output of the insertMidACPCpoint
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv} # Baseline file
+  --weights ${TestData_DIR}/weight_tolerance.wts
   --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   )
+
 set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
 set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
 
@@ -189,6 +192,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationAlignerTest.fcsv # output of the landmarksConstellationAlignerTest
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv} # Baseline file
+  --weights ${TestData_DIR}/weight_tolerance.wts
   --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   )
 set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
@@ -224,6 +228,7 @@ set(BCDTestName BCDTest_ForceRPPoint)
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTest_ForceRPPoint_InputSpace.fcsv # output of the ForceRPPoint Test
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --weights ${TestData_DIR}/weight_tolerance.wts
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
@@ -248,6 +253,7 @@ set(BCDTestName BCDTest_ForceACPoint)
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTest_ForceACPoint_InputSpace.fcsv # output of the ForceACPoint Test
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --weights ${TestData_DIR}/weight_tolerance.wts
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
@@ -271,6 +277,7 @@ set(BCDTestName BCDTest_ForcePCPoint)
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTest_ForcePCPoint_InputSpace.fcsv # output of the ForcePCPoint Test
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --weights ${TestData_DIR}/weight_tolerance.wts
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
@@ -293,8 +300,8 @@ set(BCDTestName BCDTest_ForceVN4Point)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTest_ForceVN4Point_InputSpace.fcsv # output of the ForceVN4Point Test
-    --inputLandmarkFile2
-    DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --weights ${TestData_DIR}/weight_tolerance.wts
     --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
@@ -658,9 +665,9 @@ endif()
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTestForLandmarkCompare_ACPCSpace_aligned.fcsv
-    --inputLandmarkFile2
-    DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
-  --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
+    --inputLandmarkFile2  DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --weights ${TestData_DIR}/weight_tolerance.wts
+    --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
 set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
@@ -671,9 +678,9 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTestForLandmarkCompare_InputSpace_aligned.fcsv
-    --inputLandmarkFile2
-    DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
-  --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.fcsv}# Baseline file
+    --weights ${TestData_DIR}/weight_tolerance.wts
+    --tolerance 3.248 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
     )
   set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
 set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )
@@ -685,7 +692,8 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BCDTestForLandmarkCompare_aligned.wts
   #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BCDTestName}_standard.wts} # Baseline file
-  # --tolerance 1.875 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
+  #  --weights ${TestData_DIR}/weight_tolerance.wts
+  #  --tolerance 1.875 # The images are 1.875x1.875x2.4 in the test suite, so a large tolerance is needed
   #  )
   #set_tests_properties(${BCDTestName} PROPERTIES FIXTURES_REQUIRED BCD_${BCDTestName} )
   #set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName} )

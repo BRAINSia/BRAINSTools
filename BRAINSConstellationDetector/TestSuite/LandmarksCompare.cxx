@@ -48,8 +48,9 @@ main( int argc, char * argv[] )
     std::cout << "\nCompare the input landmark file with the baseline files number: " << l + 1 << std::endl;
 
     // load corresponding landmarks in EMSP aligned space from file if possible
-    const LandmarksMapType landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
-    const LandmarksMapType landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2Names[l] );
+    const LandmarksMapType       landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
+    const LandmarksMapType       landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2Names[l] );
+    const LandmarksWeightMapType weight_values = ReadLandmarkWeights( weights );
 
     if ( landmarks1.empty() )
     {
@@ -66,14 +67,26 @@ main( int argc, char * argv[] )
       std::cout << "ERROR: number of landmarks differ." << std::endl;
       return EXIT_FAILURE;
     }
+    if ( weight_values.empty() )
+    {
+      std::cout << "ERROR: Missing weights" << std::endl;
+      return EXIT_FAILURE;
+    }
     LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
     bool                             allSame = true;
     while ( lmk1iter != landmarks1.end() )
     {
-      const LandmarksMapType::const_iterator lmk2iter = landmarks2.find( lmk1iter->first );
+      const LandmarksMapType::const_iterator       lmk2iter = landmarks2.find( lmk1iter->first );
+      const LandmarksWeightMapType::const_iterator wtsiter = weight_values.find( lmk1iter->first );
+      const double lmk_tolerance = ( wtsiter == weight_values.end() ) ? 5.0 : wtsiter->second;
+      if ( wtsiter == weight_values.end() )
+      {
+        std::cout << "Missing weight in file for landmark: " << lmk1iter->first << std::endl;
+      }
+
       if ( lmk2iter == landmarks2.end() )
       {
-        std::cout << "Missing landmark in second file" << lmk1iter->first << std::endl;
+        std::cout << "Missing landmark in second file: " << lmk1iter->first << std::endl;
         allSame = false;
         continue;
       }
@@ -81,17 +94,20 @@ main( int argc, char * argv[] )
       {
         bool         thisLmkOK = true;
         const double error_term = lmk1iter->second.EuclideanDistanceTo( lmk2iter->second );
-        if ( error_term > tolerance )
+
+        if ( error_term > lmk_tolerance && error_term > tolerance )
         {
           std::cout << "FAILED: lmk " << lmk1iter->first << "\t\t differ    ||" << lmk1iter->second << " - "
-                    << lmk2iter->second << "|| = " << error_term << "\t > " << tolerance << std::endl;
+                    << lmk2iter->second << "|| = " << error_term << "\t > " << lmk_tolerance << " wts " << lmk_tolerance
+                    << " tol: " << tolerance << std::endl;
           allSame = false;
           thisLmkOK = false;
         }
         if ( thisLmkOK )
         {
-          std::cout << "PASSED: lmk " << lmk1iter->first << "\t\t are same ||" << lmk1iter->second << " - "
-                    << lmk2iter->second << "|| = " << error_term << "\t > " << tolerance << std::endl;
+          std::cout << "  PASSED: lmk " << lmk1iter->first << "\t\t are same ||" << lmk1iter->second << " - "
+                    << lmk2iter->second << "|| = " << error_term << "\t > " << lmk_tolerance << " wts " << lmk_tolerance
+                    << " tol: " << tolerance << std::endl;
         }
       }
       ++lmk1iter;

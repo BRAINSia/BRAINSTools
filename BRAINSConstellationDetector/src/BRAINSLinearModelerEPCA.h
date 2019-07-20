@@ -55,7 +55,6 @@ BRAINSLinearModelerEPCAPrimary( int argc, char * argv[] );
 
 /*
  * Build up the landmark database from a list of fcsv files
- * TODO: Explain each argument in the func
  * Input:
  * filename ...
  */
@@ -71,7 +70,6 @@ InitializeXi( LmkDBType & baseLmkDB );
 /*
  * Compute the principal components of landmark vector space
  * in each iteration
- * TODO: Explain each argument in the func
  * Input:
  */
 void

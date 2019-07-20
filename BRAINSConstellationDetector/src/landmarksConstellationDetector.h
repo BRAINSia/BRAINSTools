@@ -134,11 +134,6 @@ public:
     m_HoughEyeFailure = failure;
   }
 
-  //  void SeteyeFixed_lmk_CenterOfHeadMass( const SImageType::PointType& eyeFixed_lmk_CenterOfHeadMass)
-  //  {
-  //    m_eyeFixed_lmk_CenterOfHeadMass = eyeFixed_lmk_CenterOfHeadMass;
-  //  }
-
   void
   SetLlsMeans( std::map< std::string, std::vector< double > > & llsMeans )
   {
@@ -256,7 +251,7 @@ private:
   SImageType::PointType
   FindCandidatePoints( SImageType::Pointer volumeMSP, SImageType::Pointer mask_LR, const double LR_restrictions,
                        const double PA_restrictions, const double SI_restrictions,
-                       // TODO: restrictions should really be ellipsoidal values
+                       // INFO: restrictions should really be ellipsoidal values
                        const SImageType::PointType::VectorType &                      CenterOfSearchArea,
                        const std::vector< std::vector< float > > &                    TemplateMean,
                        const landmarksConstellationModelIO::IndexLocationVectorType & model, double & cc_Max,
@@ -281,7 +276,6 @@ private:
 
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;
   bool                         m_HoughEyeFailure;
-  // TODO Remove SImageType::PointType m_eyeFixed_lmk_CenterOfHeadMass;
 
   // Store linear model parameters
   // Note each matrix of m_LlsMatrices is actually cascaded by two mapping:
@@ -299,7 +293,6 @@ private:
   std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
 };
 
-// TODO:  Move out of class all together
 void
 WriteManualFixFiles( const std::string & EMSP_Fiducial_file_name, SImageType * const mspVolume,
                      const std::string & resultDir, const LandmarksMapType & errorLmks,

@@ -221,9 +221,6 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
 
 
   landmarksConstellationDetector myDetector( m_forced_orig_lmks );
-  // TODO:
-  // myDetector.SeteyeFixed_lmk_CenterOfHeadMass( this->m_eyeFixed_lmk_CenterOfHeadMass );
-
   {
     // a little abuse of the eyeFixed_img_duplicator here
     LandmarkIO::DuplicatorType::Pointer eyeFixed_img_duplicator = LandmarkIO::DuplicatorType::New();

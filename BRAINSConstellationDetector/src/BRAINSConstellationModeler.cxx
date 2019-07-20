@@ -145,10 +145,9 @@ main( int argc, char * argv[] )
   // coords
   // these tables store the RP, AC, PC, etc locations for each volume projected
   // on the MSP
-  // NOTE:  only 2 coords need after projectsion into MSP, but using 3 to keep
+  // NOTE:  only 2 coords need after projection into MSP, but using 3 to keep
   // math simple.
-  // TODO:  Will need to change all index to get y and z (which is currently
-  // coded as coord index 0 and 1
+  // May need to change all index to get y and z (which is currently coded as coord index 0 and 1
   std::vector< SImageType::PointType > rp_InMSPAlignedSpace( myModel.GetNumDataSets() );
   std::vector< SImageType::PointType > ac_InMSPAlignedSpace( myModel.GetNumDataSets() );
   std::vector< SImageType::PointType > pc_InMSPAlignedSpace( myModel.GetNumDataSets() );
@@ -398,7 +397,7 @@ main( int argc, char * argv[] )
           itkUtil::WriteImage< SImageType >( image_TestRotated, rotatedName );
         }
 
-        // TODO:  The following 3 function calls may be a performance problem,
+        // The following 3 function calls may be a performance problem,
         // and it should be  straight forward to refactor this into a single function
         // extractZeroMeanNormalizedVector that has the same signature as extractArray, but has many fewer
         // loop iterations.

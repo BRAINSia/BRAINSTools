@@ -399,7 +399,6 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   // Save landmarks in input/output or original/aligned space
   this->m_outputLandmarksInACPCAlignedSpaceMap = constellation2->GetAlignedPoints();
 
-  // TODO: Use PrepareOutputsLandmarks here.
   for ( LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin();
         lit != constellation2->GetAlignedPoints().end();
         ++lit )
@@ -460,7 +459,6 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     // Write the aligned image to a file
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputResampledVolume );
-    // TODO: Encapsulate this for applying a transform resampling.
     writer->SetInput( constellation2->GetOutputResampledImage() );
 #if ITK_VERSION_MAJOR >= 5
     writer->SetUseCompression( true );

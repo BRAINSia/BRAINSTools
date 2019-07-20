@@ -98,7 +98,6 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform( SImageT
       std::cerr << "Error while reading atlasVolume file:\n " << err << std::endl;
     }
 
-    // TODO: prob needs a try-catch
     std::cout << "read atlas landmarks:  " << this->m_atlasLandmarks << std::endl;
     LandmarksMapType referenceAtlasLandmarks = ReadSlicer3toITKLmk( this->m_atlasLandmarks );
 
@@ -250,12 +249,10 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform( SImageT
     {
       // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform< double >;
-      VersorTransformType::Pointer LandmarkOrigToACPCTransform =
+      const VersorTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform( this->m_orig2msp_img_tfm.GetPointer() );
-      // TODO: Change name of LandmarkOrigToACPCTransform
       const VersorRigid3DTransformType::OutputPointType acPointInACPCSpace =
-        LandmarkOrigToACPCTransform->TransformPoint( GetNamedPointFromLandmarkList( updated_orig_lmks, "AC" ) );
-      // std::cout << "HACK: PRE-FIXING" << acPointInACPCSpace << std::endl;
+        orig2msp_lmk_tfm->TransformPoint( GetNamedPointFromLandmarkList( updated_orig_lmks, "AC" ) );
       {
         VersorRigid3DTransformType::OffsetType translation;
         translation[0] =
@@ -265,7 +262,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform( SImageT
         // First shift the transform
         this->m_orig2msp_img_tfm->Translate( translation, false );
       }
-      // TODO:  This still does not put it to (0,0,0) and it should.
+      // INFO:  This still does not put it to (0,0,0) and it should.
     }
   }
   /// END BRAINSFIT_ALTERNATIVE
@@ -282,7 +279,7 @@ SImageType::PointType
 landmarksConstellationDetector::FindCandidatePoints(
   SImageType::Pointer volumeMSP, SImageType::Pointer mask_LR, const double LR_restrictions,
   const double PA_restrictions, const double SI_restrictions,
-  // TODO: restrictions should really be ellipsoidal values
+  // INFO: restrictions should really be ellipsoidal values
   const SImageType::PointType::VectorType &                      CenterOfSearchArea,
   const std::vector< std::vector< float > > &                    TemplateMean,
   const landmarksConstellationModelIO::IndexLocationVectorType & model, double & cc_Max, const std::string & mapID )

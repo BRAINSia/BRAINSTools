@@ -22,58 +22,59 @@
 #include <iostream>
 #include "itkMacro.h" //Needed for override
 
-class BooleanValue :
-  public XMLContents<bool>
+class BooleanValue : public XMLContents< bool >
 {
 public:
-  using SuperClass = XMLContents<bool>;
-  int PrintSelf(std::ostream & os, int indent) const override
+  using SuperClass = XMLContents< bool >;
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent += SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== BooleanValue ===!"
-       << this->m_Value << "!" << std::endl;
+    indent += SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== BooleanValue ===!" << this->m_Value << "!" << std::endl;
     return indent + 2;
   }
 
   using ReturnType = bool;
-  BooleanValue(const std::string & name, const ReturnType value) :
-    XMLContents<ReturnType>(name),
-    m_Value(value)
-  {
-  }
+  BooleanValue( const std::string & name, const ReturnType value )
+    : XMLContents< ReturnType >( name )
+    , m_Value( value )
+  {}
 
-  ReturnType GetValue(void) const override
+  ReturnType
+  GetValue( void ) const override
   {
     return this->m_Value;
   }
 
-  void SetValue(const ReturnType & s)
+  void
+  SetValue( const ReturnType & s )
   {
     this->m_Value = s;
   }
 
-  bool Verify() const override
+  bool
+  Verify() const override
   {
     return true;
   }
 
-  void SetValue(const std::string & stringval)
+  void
+  SetValue( const std::string & stringval )
   {
     std::string s = stringval;
 
-    for( unsigned i = 0; i < s.size(); i++ )
-      {
-      s[i] = ::tolower(s[i]);
-      }
+    for ( unsigned i = 0; i < s.size(); i++ )
+    {
+      s[i] = ::tolower( s[i] );
+    }
 
-    if( s != "true" &&
-        s != "false" )
-      {
-      std::string msg("Can't convert *");
+    if ( s != "true" && s != "false" )
+    {
+      std::string msg( "Can't convert *" );
       msg += stringval;
       msg += ") to boolean";
-      throw BRAINSCutExceptionStringHandler(msg);
-      }
+      throw BRAINSCutExceptionStringHandler( msg );
+    }
     bool returnVal = ( s == "true" );
     SetValue( returnVal );
   }

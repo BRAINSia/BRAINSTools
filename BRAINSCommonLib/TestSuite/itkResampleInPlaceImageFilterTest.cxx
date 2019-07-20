@@ -31,20 +31,22 @@
 #include <iostream>
 
 // return true if it fails the validation
-inline bool Validate( double input, double desired, double tolerance )
+inline bool
+Validate( double input, double desired, double tolerance )
 {
-  return std::abs<double>( input - desired ) > tolerance * std::abs<double>( desired );
+  return std::abs< double >( input - desired ) > tolerance * std::abs< double >( desired );
 }
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   // Simple parameter check
-  if( argc < 3 )
-    {
+  if ( argc < 3 )
+  {
     std::cerr << "Wrong arguments!" << std::endl;
     std::cerr << "Usage: ./" << argv[0] << " inputImage baselineImage outputImage" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool   result = false; // test result default = no failure
   double tol = 1.e-3;    // tolerance
@@ -53,41 +55,40 @@ int main( int argc, char * argv[] )
   constexpr unsigned int LocalImageDimension = 3;
   using PixelType = short;
 
-  using ImageType = itk::Image<PixelType, LocalImageDimension>;
+  using ImageType = itk::Image< PixelType, LocalImageDimension >;
   using ImagePointer = ImageType::Pointer;
   using ImagePointType = ImageType::PointType;
   using ImageDirectionType = ImageType::DirectionType;
   using ImageSpacingType = ImageType::SpacingType;
 
-  using ImageConstIterator = itk::ImageRegionConstIterator<ImageType>;
-  using ReaderType = itk::ImageFileReader<ImageType>;
-  using TransformType = itk::VersorRigid3DTransform<double>;
+  using ImageConstIterator = itk::ImageRegionConstIterator< ImageType >;
+  using ReaderType = itk::ImageFileReader< ImageType >;
+  using TransformType = itk::VersorRigid3DTransform< double >;
 
-  using FilterType = itk::ResampleInPlaceImageFilter<ImageType, ImageType>;
+  using FilterType = itk::ResampleInPlaceImageFilter< ImageType, ImageType >;
 
   // Read in input test image
   ImagePointer inputImage;
-    {
+  {
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( argv[1] );
     try
-      {
+    {
       reader->Update();
-      }
-    catch( itk::ExceptionObject & err )
-      {
-      std::cerr << " Error while reading image file(s) with ITK:\n "
-                << err << std::endl;
-      }
-    inputImage = reader->GetOutput();
     }
+    catch ( itk::ExceptionObject & err )
+    {
+      std::cerr << " Error while reading image file(s) with ITK:\n " << err << std::endl;
+    }
+    inputImage = reader->GetOutput();
+  }
 
   // Set up transforms
-  itk::Vector<double, 3> rotationAxis;
+  itk::Vector< double, 3 > rotationAxis;
   rotationAxis.Fill( 0. );
   rotationAxis[0] = 1.;
-  double                 rotationAngle = .5; // in rad
-  itk::Vector<double, 3> translation;
+  double                   rotationAngle = .5; // in rad
+  itk::Vector< double, 3 > translation;
   translation.Fill( 0. );
   translation[1] = 300.; // in mm along P-axis
   TransformType::Pointer transform = TransformType::New();
@@ -109,47 +110,46 @@ int main( int argc, char * argv[] )
 
   // Read in baseline image
   ImagePointer baselineImage = nullptr;
-    {
+  {
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( argv[2] );
     try
-      {
+    {
       reader->Update();
-      }
-    catch( itk::ExceptionObject & err )
-      {
-      std::cerr << " Error while reading image file(s) with ITK:\n "
-                << err << std::endl;
-      }
-    baselineImage = reader->GetOutput();
     }
+    catch ( itk::ExceptionObject & err )
+    {
+      std::cerr << " Error while reading image file(s) with ITK:\n " << err << std::endl;
+    }
+    baselineImage = reader->GetOutput();
+  }
   ImagePointType     origin_d = baselineImage->GetOrigin();
   ImageDirectionType direction_d = baselineImage->GetDirection();
   ImageSpacingType   spacing_d = baselineImage->GetSpacing();
   // Image info validation
-  for( unsigned int i = 0; i < LocalImageDimension; ++i )
-    {
+  for ( unsigned int i = 0; i < LocalImageDimension; ++i )
+  {
     result = ( result || Validate( origin[i], origin_d[i], tol ) );
     result = ( result || Validate( spacing[i], spacing_d[i], tol ) );
-    for( unsigned int j = 0; j < LocalImageDimension; ++j )
-      {
-      result = ( result || Validate( direction(i, j), direction_d(i, j), tol ) );
-      }
+    for ( unsigned int j = 0; j < LocalImageDimension; ++j )
+    {
+      result = ( result || Validate( direction( i, j ), direction_d( i, j ), tol ) );
     }
+  }
 
   // Voxel contents validation
   ImageConstIterator it1( outputImage, outputImage->GetRequestedRegion() );
   ImageConstIterator it2( baselineImage, baselineImage->GetRequestedRegion() );
   it1.GoToBegin();
   it2.GoToBegin();
-  while( !it1.IsAtEnd() )
-    {
+  while ( !it1.IsAtEnd() )
+  {
     result = ( result || Validate( it1.Get(), it2.Get(), tol ) );
     ++it1;
     ++it2;
-    }
+  }
 
-  using WriterType = itk::ImageFileWriter<ImageType>;
+  using WriterType = itk::ImageFileWriter< ImageType >;
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( argv[3] );
   writer->SetInput( outputImage );

@@ -44,31 +44,31 @@
  * ----------------------------------------------------------------------------- */
 
 int
-main(int argc, char *argv[])
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if( verbose )
-    {
+  if ( verbose )
+  {
     std::cout << "- referenceVolume: " << referenceVolume << std::endl
               << "- inputVolume: " << inputVolume << std::endl
               << "- referenceBinaryVolume: " << referenceBinaryVolume << std::endl
               << "- inputBinaryVolume: " << inputBinaryVolume << std::endl
               << "- writeHistogram: " << writeHistogram << std::endl;
-    }
+  }
   // define image with type of voxel
   using PixelType = float;
   constexpr unsigned int Dimension = 3;
-  using ImageType = itk::Image<PixelType, Dimension>;
+  using ImageType = itk::Image< PixelType, Dimension >;
 
   /*
    * Reader
    */
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
 
   ImageReaderType::Pointer referenceImageReader = ImageReaderType::New();
-  referenceImageReader->SetFileName( referenceVolume);
+  referenceImageReader->SetFileName( referenceVolume );
 
   ImageReaderType::Pointer inputImageReader = ImageReaderType::New();
   inputImageReader->SetFileName( inputVolume );
@@ -78,37 +78,35 @@ main(int argc, char *argv[])
    * image for histogram matching filter
    */
 
-  using MaskSpatialObjectType = itk::ImageMaskSpatialObject<Dimension>;
+  using MaskSpatialObjectType = itk::ImageMaskSpatialObject< Dimension >;
   MaskSpatialObjectType::Pointer referenceMaskSpatialObject = nullptr;
   MaskSpatialObjectType::Pointer inputMaskSpatialObject = nullptr;
 
-  if( !referenceBinaryVolume.empty() && !inputBinaryVolume.empty() )
-    {
+  if ( !referenceBinaryVolume.empty() && !inputBinaryVolume.empty() )
+  {
     /*
      * Binary Image Read
      */
     using BinaryPixelType = unsigned char;
-    using BinaryImageType = itk::Image<BinaryPixelType, Dimension>;
+    using BinaryImageType = itk::Image< BinaryPixelType, Dimension >;
 
-    using BinaryImageReaderType = itk::ImageFileReader<BinaryImageType>;
+    using BinaryImageReaderType = itk::ImageFileReader< BinaryImageType >;
 
-    BinaryImageReaderType::Pointer referenceBinaryImageReader =
-      BinaryImageReaderType::New();
+    BinaryImageReaderType::Pointer referenceBinaryImageReader = BinaryImageReaderType::New();
     referenceBinaryImageReader->SetFileName( referenceBinaryVolume );
     referenceBinaryImageReader->Update();
 
-    BinaryImageReaderType::Pointer inputBinaryImageReader =
-      BinaryImageReaderType::New();
+    BinaryImageReaderType::Pointer inputBinaryImageReader = BinaryImageReaderType::New();
     inputBinaryImageReader->SetFileName( inputBinaryVolume );
     inputBinaryImageReader->Update();
 
     /*
      * Binary image to Spatial Object
      */
-    if( verbose )
-      {
+    if ( verbose )
+    {
       std::cout << " using binary masks in processing histograms " << std::endl;
-      }
+    }
     referenceMaskSpatialObject = MaskSpatialObjectType::New();
     inputMaskSpatialObject = MaskSpatialObjectType::New();
 
@@ -116,17 +114,17 @@ main(int argc, char *argv[])
     inputMaskSpatialObject->SetImage( inputBinaryImageReader->GetOutput() );
 
     referenceMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
-    inputMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
+    inputMaskSpatialObject->Update();     // Replaced old ComputeObjectToWorldTransform with new Update()
 
-    if( referenceMaskSpatialObject.IsNotNull() )
-      {
+    if ( referenceMaskSpatialObject.IsNotNull() )
+    {
       std::cout << "ref is not null" << std::endl;
-      }
-    else
-      {
-      std::cout << "ref is null" << std::endl;
-      }
     }
+    else
+    {
+      std::cout << "ref is null" << std::endl;
+    }
+  }
 
   /*
    *  Histogram Matching Filter
@@ -134,7 +132,7 @@ main(int argc, char *argv[])
 
   std::string histogramDataFilename = writeHistogram + ".dat";
   // Define Writer Here
-  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter< ImageType >;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->SetFileName( outputVolume );
 
@@ -143,18 +141,17 @@ main(int argc, char *argv[])
    *  itk::HistogramMatchingImageFilter
    */
 
-  if( histogramAlgorithm == "quantileHistogramMatch" )
-    {
+  if ( histogramAlgorithm == "quantileHistogramMatch" )
+  {
     std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;
     std::cout << "This is under the construction. " << std::endl;
     return EXIT_FAILURE;
     // Find quantiles and linearly scale image.
-    }
-  if( histogramAlgorithm == "simpleITKHistogramMatch" )
-    {
+  }
+  if ( histogramAlgorithm == "simpleITKHistogramMatch" )
+  {
     std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;
-    using SimpleHistogramMatchingType = itk::HistogramMatchingImageFilter<ImageType,
-                                              ImageType>;
+    using SimpleHistogramMatchingType = itk::HistogramMatchingImageFilter< ImageType, ImageType >;
     SimpleHistogramMatchingType::Pointer SHFilter = SimpleHistogramMatchingType::New();
 
     SHFilter->SetReferenceImage( referenceImageReader->GetOutput() );
@@ -193,46 +190,41 @@ main(int argc, char *argv[])
 
     histFileStream.open( histogramDataFilename.c_str() );
 
-    histFileStream << " bin, src_frequency, ref_frequency, adjusted_frequency"
-                   << std::endl;
+    histFileStream << " bin, src_frequency, ref_frequency, adjusted_frequency" << std::endl;
 
     unsigned int binNumber = 0;
 
-    while( srcIt != endIt )
-      {
-      histFileStream << binNumber << ", "
-                     << srcIt.GetFrequency() << ", "
-                     << refIt.GetFrequency() << ", "
-                     << outIt.GetFrequency()
-                     << std::endl;
+    while ( srcIt != endIt )
+    {
+      histFileStream << binNumber << ", " << srcIt.GetFrequency() << ", " << refIt.GetFrequency() << ", "
+                     << outIt.GetFrequency() << std::endl;
       ++srcIt;
       ++refIt;
       ++outIt;
       binNumber++;
-      }
+    }
 
     histFileStream.close();
-    }
-  else if( histogramAlgorithm == "OtsuHistogramMatching" )
-    {
+  }
+  else if ( histogramAlgorithm == "OtsuHistogramMatching" )
+  {
     std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;
-    using OtsuHistogramMatchingType = itk::OtsuHistogramMatchingImageFilter<ImageType,
-                                                  ImageType>;
+    using OtsuHistogramMatchingType = itk::OtsuHistogramMatchingImageFilter< ImageType, ImageType >;
     OtsuHistogramMatchingType::Pointer OHFilter = OtsuHistogramMatchingType::New();
 
     OHFilter->SetReferenceImage( referenceImageReader->GetOutput() );
     OHFilter->SetInput( inputImageReader->GetOutput() );
 
-    if( referenceMaskSpatialObject.IsNotNull() )
-      {
+    if ( referenceMaskSpatialObject.IsNotNull() )
+    {
       std::cout << "Setting Reference Mask" << std::endl;
       OHFilter->SetReferenceMask( referenceMaskSpatialObject );
-      }
-    if( inputMaskSpatialObject.IsNotNull() )
-      {
+    }
+    if ( inputMaskSpatialObject.IsNotNull() )
+    {
       std::cout << "Setting Input Mask" << std::endl;
-      OHFilter->SetSourceMask(inputMaskSpatialObject);
-      }
+      OHFilter->SetSourceMask( inputMaskSpatialObject );
+    }
 
     OHFilter->SetNumberOfHistogramLevels( numberOfHistogramBins );
     OHFilter->SetNumberOfMatchPoints( numberOfMatchPoints );
@@ -264,34 +256,28 @@ main(int argc, char *argv[])
     std::ofstream histFileStream;
     histFileStream.open( histogramDataFilename.c_str() );
 
-    histFileStream << " bin, src_frequency, ref_frequency, adjusted_frequency"
-                   << std::endl;
+    histFileStream << " bin, src_frequency, ref_frequency, adjusted_frequency" << std::endl;
 
     unsigned int binNumber = 0;
 
-    while( srcIt != endIt )
-      {
-      histFileStream << binNumber << ", "
-                     << srcIt.GetFrequency() << ", "
-                     << refIt.GetFrequency() << ", "
-                     << outIt.GetFrequency()
-                     << std::endl;
+    while ( srcIt != endIt )
+    {
+      histFileStream << binNumber << ", " << srcIt.GetFrequency() << ", " << refIt.GetFrequency() << ", "
+                     << outIt.GetFrequency() << std::endl;
       ++srcIt;
       ++refIt;
       ++outIt;
       binNumber++;
-      }
+    }
 
     histFileStream.close();
-    }
+  }
   else
-    {
-    std::cout << "Unsupported Histogram Algorithm Option "
-              << histogramAlgorithm
-              << ". Please check available option with  -help"
-              << std::endl;
+  {
+    std::cout << "Unsupported Histogram Algorithm Option " << histogramAlgorithm
+              << ". Please check available option with  -help" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   /*
    * write shell script to run R script for plotting
@@ -304,11 +290,7 @@ main(int argc, char *argv[])
   std::string histogramFigureFilename = writeHistogram + ".png";
   std::string histogramRScript = "HistogramMatchingFilter.R";
 
-  histgramPlotterStream << " R --slave --args "
-                        << histogramDataFilename << " "
-                        << histogramFigureFilename << " "
-                        << " < "
-                        << histogramRScript
-                        << std::endl;
+  histgramPlotterStream << " R --slave --args " << histogramDataFilename << " " << histogramFigureFilename << " "
+                        << " < " << histogramRScript << std::endl;
   return EXIT_SUCCESS;
 }

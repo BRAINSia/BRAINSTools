@@ -30,86 +30,81 @@
 #include "DWIMetaDataDictionaryValidator.h"
 
 using PixelValueType = short;
-using Volume4DType = itk::Image<PixelValueType, 4>;
-using Volume3DType = itk::Image<PixelValueType, 3>;
-using VectorVolumeType = itk::VectorImage<PixelValueType, 3>;
+using Volume4DType = itk::Image< PixelValueType, 4 >;
+using Volume3DType = itk::Image< PixelValueType, 3 >;
+using VectorVolumeType = itk::VectorImage< PixelValueType, 3 >;
 
 int
-FSLToNrrd(const std::string & inputVolume,
-          const std::string & outputVolume,
-          const std::string & fslNIFTIFile,
-          const std::string & inputBValues,
-          const std::string & inputBVectors,
-          bool transpose,
-          bool allowLossyConversion
-         )
+FSLToNrrd( const std::string & inputVolume, const std::string & outputVolume, const std::string & fslNIFTIFile,
+           const std::string & inputBValues, const std::string & inputBVectors, bool transpose,
+           bool allowLossyConversion )
 {
-  if( (CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE &&
-       CheckArg<std::string>("Input Volume", fslNIFTIFile, "") == EXIT_FAILURE) ||
-      CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE)
-    {
+  if ( ( CheckArg< std::string >( "Input Volume", inputVolume, "" ) == EXIT_FAILURE &&
+         CheckArg< std::string >( "Input Volume", fslNIFTIFile, "" ) == EXIT_FAILURE ) ||
+       CheckArg< std::string >( "Output Volume", outputVolume, "" ) == EXIT_FAILURE )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   Volume4DType::Pointer inputVol;
 
   // string to use as template if no bval or bvec filename is given.
   std::string inputVolumeNameTemplate = inputVolume;
-  if(fslNIFTIFile.size() > 0)
+  if ( fslNIFTIFile.size() > 0 )
+  {
+    if ( ReadVolume< Volume4DType >( inputVol, fslNIFTIFile, allowLossyConversion ) != EXIT_SUCCESS )
     {
-    if( ReadVolume<Volume4DType>(inputVol, fslNIFTIFile, allowLossyConversion) != EXIT_SUCCESS )
-      {
       return EXIT_FAILURE;
-      }
+    }
     inputVolumeNameTemplate = fslNIFTIFile;
-    }
-  else if( inputVolume.size() == 0 || ReadVolume<Volume4DType>(inputVol, inputVolume, allowLossyConversion) != EXIT_SUCCESS )
-    {
+  }
+  else if ( inputVolume.size() == 0 ||
+            ReadVolume< Volume4DType >( inputVol, inputVolume, allowLossyConversion ) != EXIT_SUCCESS )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   std::string _inputBValues = inputBValues;
-  std::string baseDirectory = itksys::SystemTools::GetParentDirectory(inputVolumeNameTemplate);
-  if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
-    {
-    std::vector<std::string> pathElements;
-    pathElements.push_back(baseDirectory);
-    pathElements.push_back("/");
-    pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension (inputVolumeNameTemplate) + ".bval");
-    _inputBValues = itksys::SystemTools::JoinPath(pathElements);
+  std::string baseDirectory = itksys::SystemTools::GetParentDirectory( inputVolumeNameTemplate );
+  if ( CheckArg< std::string >( "B Values", inputBValues, "" ) == EXIT_FAILURE )
+  {
+    std::vector< std::string > pathElements;
+    pathElements.push_back( baseDirectory );
+    pathElements.push_back( "/" );
+    pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension( inputVolumeNameTemplate ) + ".bval" );
+    _inputBValues = itksys::SystemTools::JoinPath( pathElements );
     std::cout << "   defaulting to: " << _inputBValues << std::endl;
-    }
+  }
   std::string _inputBVectors = inputBVectors;
-  if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
-    {
-      std::vector<std::string> pathElements;
-      pathElements.push_back(baseDirectory);
-      pathElements.push_back("/");
-      pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec" );
-    _inputBVectors = itksys::SystemTools::JoinPath(pathElements);
+  if ( CheckArg< std::string >( "B Vectors", inputBVectors, "" ) == EXIT_FAILURE )
+  {
+    std::vector< std::string > pathElements;
+    pathElements.push_back( baseDirectory );
+    pathElements.push_back( "/" );
+    pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension( inputVolumeNameTemplate ) + ".bvec" );
+    _inputBVectors = itksys::SystemTools::JoinPath( pathElements );
     std::cout << "   defaulting to: " << _inputBVectors << std::endl;
-    }
+  }
 
-  std::vector<double>               BVals;
+  std::vector< double >                             BVals;
   DWIMetaDataDictionaryValidator::GradientTableType BVecs;
-  unsigned int                      bValCount = 0;
-  unsigned int                      bVecCount = 0;
-  double                            maxBValue(0.0);
-  if( ReadBVals(BVals, bValCount, _inputBValues, maxBValue) != EXIT_SUCCESS )
-    {
+  unsigned int                                      bValCount = 0;
+  unsigned int                                      bVecCount = 0;
+  double                                            maxBValue( 0.0 );
+  if ( ReadBVals( BVals, bValCount, _inputBValues, maxBValue ) != EXIT_SUCCESS )
+  {
     return EXIT_FAILURE;
-    }
-  if( ReadBVecs(BVecs, bVecCount, _inputBVectors,transpose) != EXIT_SUCCESS )
-    {
+  }
+  if ( ReadBVecs( BVecs, bVecCount, _inputBVectors, transpose ) != EXIT_SUCCESS )
+  {
     return EXIT_FAILURE;
-    }
-  if( bValCount != bVecCount )
-    {
-    std::cerr << "Mismatch between count of B Vectors ("
-              << bVecCount << ") and B Values ("
-              << bValCount << ")" << std::endl;
+  }
+  if ( bValCount != bVecCount )
+  {
+    std::cerr << "Mismatch between count of B Vectors (" << bVecCount << ") and B Values (" << bValCount << ")"
+              << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // As suggested by Martin Styner:
   // The implicit normalization is implementing by dividing
@@ -130,42 +125,37 @@ FSLToNrrd(const std::string & inputVolume,
   // gradients (i.e. those with b-values below the maximal
   // b-value), you need to scale the coordinates of the
   // b-vector by sqrt(this-b-value/max-b-value).
-  std::vector<double>::const_iterator bValIt = BVals.begin(),
-    bValsEnd = BVals.end();
-  DWIMetaDataDictionaryValidator::GradientTableType::iterator bVecIt = BVecs.begin(),
-    bVecsEnd = BVecs.end();
+  std::vector< double >::const_iterator                       bValIt = BVals.begin(), bValsEnd = BVals.end();
+  DWIMetaDataDictionaryValidator::GradientTableType::iterator bVecIt = BVecs.begin(), bVecsEnd = BVecs.end();
 
-  for(; bVecIt != bVecsEnd && bValIt != bValsEnd; ++bVecIt, ++bValIt)
+  for ( ; bVecIt != bVecsEnd && bValIt != bValsEnd; ++bVecIt, ++bValIt )
+  {
+    if ( ( *bValIt ) == maxBValue )
     {
-    if((*bValIt) == maxBValue)
-      {
       continue;
-      }
-    double scale = std::sqrt((*bValIt) / maxBValue);
-    DWIMetaDataDictionaryValidator::GradientDirectionType &cur = *bVecIt;
-    for(unsigned int i = 0; i < 3; ++i)
-      {
-      cur[i] *= scale;
-      }
     }
+    double                                                  scale = std::sqrt( ( *bValIt ) / maxBValue );
+    DWIMetaDataDictionaryValidator::GradientDirectionType & cur = *bVecIt;
+    for ( unsigned int i = 0; i < 3; ++i )
+    {
+      cur[i] *= scale;
+    }
+  }
 
-  Volume4DType::SizeType inputSize =
-    inputVol->GetLargestPossibleRegion().GetSize();
+  Volume4DType::SizeType inputSize = inputVol->GetLargestPossibleRegion().GetSize();
 
-  Volume4DType::IndexType inputIndex =
-    inputVol->GetLargestPossibleRegion().GetIndex();
+  Volume4DType::IndexType inputIndex = inputVol->GetLargestPossibleRegion().GetIndex();
 
   const unsigned int volumeCount = inputSize[3];
-  if( volumeCount != bValCount )
-    {
-    std::cerr << "Mismatch between BVector count ("
-              << bVecCount << ") and image volume count ("
-              << volumeCount << ")" << std::endl;
+  if ( volumeCount != bValCount )
+  {
+    std::cerr << "Mismatch between BVector count (" << bVecCount << ") and image volume count (" << volumeCount << ")"
+              << std::endl;
     return EXIT_SUCCESS;
-    }
+  }
 
   // convert from image series to vector voxels
-  Volume4DType::SpacingType   inputSpacing = inputVol->GetSpacing();
+  Volume4DType::SpacingType inputSpacing = inputVol->GetSpacing();
   std::cout << "Spacing :" << inputSpacing << std::endl;
 
   ////////
@@ -173,37 +163,36 @@ FSLToNrrd(const std::string & inputVolume,
   //
   using ExtractFilterType = itk::ExtractImageFilter< Volume4DType, Volume3DType >;
 
-  using ComposeImageFilterType = itk::ComposeImageFilter<Volume3DType, VectorVolumeType>;
-  ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
+  using ComposeImageFilterType = itk::ComposeImageFilter< Volume3DType, VectorVolumeType >;
+  ComposeImageFilterType::Pointer composer = ComposeImageFilterType::New();
 
-  for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
-     {
-     Volume4DType::SizeType extractSize = inputSize;
-     extractSize[3] = 0;
-     Volume4DType::IndexType extractIndex = inputIndex;
-     extractIndex[3] = componentNumber;
-     Volume4DType::RegionType extractRegion(extractIndex, extractSize);
+  for ( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
+  {
+    Volume4DType::SizeType extractSize = inputSize;
+    extractSize[3] = 0;
+    Volume4DType::IndexType extractIndex = inputIndex;
+    extractIndex[3] = componentNumber;
+    Volume4DType::RegionType extractRegion( extractIndex, extractSize );
 
-     ExtractFilterType::Pointer extracter = ExtractFilterType::New();
-     extracter->SetExtractionRegion( extractRegion );
-     extracter->SetInput( inputVol );
-     extracter->SetDirectionCollapseToIdentity();
-     extracter->Update();
+    ExtractFilterType::Pointer extracter = ExtractFilterType::New();
+    extracter->SetExtractionRegion( extractRegion );
+    extracter->SetInput( inputVol );
+    extracter->SetDirectionCollapseToIdentity();
+    extracter->Update();
 
-     composer->SetInput(componentNumber,extracter->GetOutput());
-     }
+    composer->SetInput( componentNumber, extracter->GetOutput() );
+  }
   composer->Update();
   VectorVolumeType::Pointer nrrdVolume = composer->GetOutput();
 
   const unsigned int nrrdNumOfComponents = nrrdVolume->GetNumberOfComponentsPerPixel();
   std::cout << "Number of components in converted Nrrd volume: " << nrrdNumOfComponents << std::endl;
-  if( nrrdNumOfComponents != bVecCount )
-    {
-    std::cerr << "Mismatch between count of B Vectors ("
-    << bVecCount << ") and number of components in converted vector image ("
-    << nrrdNumOfComponents << ")" << std::endl;
+  if ( nrrdNumOfComponents != bVecCount )
+  {
+    std::cerr << "Mismatch between count of B Vectors (" << bVecCount
+              << ") and number of components in converted vector image (" << nrrdNumOfComponents << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   ////////
 
   // Define nrrd volume metaData
@@ -222,49 +211,51 @@ FSLToNrrd(const std::string & inputVolume,
          will automatically handle the correct permutation.
    */
   // centerings (optional)
-  std::vector<std::string> tempCenterings(4,std::string("cell"));
+  std::vector< std::string > tempCenterings( 4, std::string( "cell" ) );
   tempCenterings[3] = "???";
-  nrrdVolumeValidator.SetCenterings(tempCenterings);
+  nrrdVolumeValidator.SetCenterings( tempCenterings );
 
   // thickness (optional)
-  std::vector<double> tempThickness(4,std::numeric_limits<double>::quiet_NaN());
+  std::vector< double > tempThickness( 4, std::numeric_limits< double >::quiet_NaN() );
   tempThickness[2] = inputSpacing[2];
-  nrrdVolumeValidator.SetThicknesses(tempThickness);
+  nrrdVolumeValidator.SetThicknesses( tempThickness );
 
   // modality
-  std::string tempModality("DWMRI"); //The only valid DWI modality
-  nrrdVolumeValidator.SetModality(tempModality);
+  std::string tempModality( "DWMRI" ); // The only valid DWI modality
+  nrrdVolumeValidator.SetModality( tempModality );
 
   // measurement frame -> it is identity
   DWIMetaDataDictionaryValidator::RotationMatrixType msrFrame;
-  for( unsigned int saxi = 0; saxi < 3; saxi++ )
+  for ( unsigned int saxi = 0; saxi < 3; saxi++ )
+  {
+    for ( unsigned int saxj = 0; saxj < 3; saxj++ )
     {
-    for( unsigned int saxj = 0; saxj < 3; saxj++ )
-      {
-      msrFrame(saxi,saxj) = 0.0;
-      }
+      msrFrame( saxi, saxj ) = 0.0;
     }
-  msrFrame(0,0) = 1.0; msrFrame(1,1) = 1.0; msrFrame(2,2) = 1.0;
-  nrrdVolumeValidator.SetMeasurementFrame(msrFrame);
+  }
+  msrFrame( 0, 0 ) = 1.0;
+  msrFrame( 1, 1 ) = 1.0;
+  msrFrame( 2, 2 ) = 1.0;
+  nrrdVolumeValidator.SetMeasurementFrame( msrFrame );
 
   // b-value
   nrrdVolumeValidator.SetBValue( maxBValue );
 
   // Gradient directions
-  DWIMetaDataDictionaryValidator::GradientTableType gradientTable( bVecCount );
+  DWIMetaDataDictionaryValidator::GradientTableType     gradientTable( bVecCount );
   DWIMetaDataDictionaryValidator::GradientDirectionType BVec_fixedSize;
-  for( unsigned int i = 0; i < bVecCount; ++i )
-    {
+  for ( unsigned int i = 0; i < bVecCount; ++i )
+  {
     // convert std::vector to MyArrayWrapper that is a vector with fixed size
-    std::copy( BVecs[i].begin(), BVecs[i].begin()+3, BVec_fixedSize.begin() );
+    std::copy( BVecs[i].begin(), BVecs[i].begin() + 3, BVec_fixedSize.begin() );
     gradientTable[i] = BVec_fixedSize;
-    }
+  }
   nrrdVolumeValidator.SetGradientTable( gradientTable );
 
   // Add metaDataDictionary to Nrrd volume
-  nrrdVolume->SetMetaDataDictionary(nrrdVolumeValidator.GetMetaDataDictionary());
+  nrrdVolume->SetMetaDataDictionary( nrrdVolumeValidator.GetMetaDataDictionary() );
   // Write Nrrd volume to disk
-  using WriterType = itk::ImageFileWriter<VectorVolumeType>;
+  using WriterType = itk::ImageFileWriter< VectorVolumeType >;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

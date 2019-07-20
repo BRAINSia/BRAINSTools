@@ -16,20 +16,24 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if !defined(__ImageCalculator_h__)
-#define __ImageCalculator_h__
-#include <iostream>
-#include <string>
+#if !defined( __ImageCalculator_h__ )
+#  define __ImageCalculator_h__
+#  include <iostream>
+#  include <string>
 
 // This function prints the valid pixel types.
-extern void PrintDataTypeStrings(void);
+extern void
+PrintDataTypeStrings( void );
 
 // This function replaces a substring with another substring
-extern void ReplaceSubWithSub(std::string& s, const char *o, const char  *n);
+extern void
+ReplaceSubWithSub( std::string & s, const char * o, const char * n );
 
 // This function compares strings.
-extern int CompareNoCase( const std::string & s, const std::string& s2 );
+extern int
+CompareNoCase( const std::string & s, const std::string & s2 );
 
-extern int PrimaryImageCalculatorRoutine(int argc, char *argv[]);
+extern int
+PrimaryImageCalculatorRoutine( int argc, char * argv[] );
 
 #endif // __ImageCalculator_h__

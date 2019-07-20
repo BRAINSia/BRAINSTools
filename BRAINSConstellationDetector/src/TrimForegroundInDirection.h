@@ -54,10 +54,10 @@
 #include "itkIO.h"
 #include "landmarksConstellationCommon.h"
 
-extern SImageType::PointType TrimForegroundInDirection(SImageType::Pointer & foreground, SImageType::Pointer & volOrig,
-                                                       unsigned int axis, double otsuPercentileThreshold,
-                                                       unsigned int closingSize, double headSizeLowerLimit,
-                                                       SImageType::PixelType BackgroundFillValue);
+extern SImageType::PointType
+TrimForegroundInDirection( SImageType::Pointer & foreground, SImageType::Pointer & volOrig, unsigned int axis,
+                           double otsuPercentileThreshold, unsigned int closingSize, double headSizeLowerLimit,
+                           SImageType::PixelType BackgroundFillValue );
 
 // TODO: This function needs to be cleaned up.  It should not compute the otsu
 // TODO: threasholding, but rather, it should have been given
@@ -65,9 +65,9 @@ extern SImageType::PointType TrimForegroundInDirection(SImageType::Pointer & for
 // TODO: This filter slowly evolved from another filter, and should be cleaned
 // so
 // TODO: that it only uses the items that are necessary for success.
-extern SImageType::PointType FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & volOrig, unsigned int axis,
-                                                               double otsuPercentileThreshold, unsigned int closingSize,
-                                                               double headSizeLowerLimit,
-                                                               SImageType::PixelType BackgroundFillValue);
+extern SImageType::PointType
+FindCenterOfBrainBasedOnTopOfHead( SImageType::Pointer & volOrig, unsigned int axis, double otsuPercentileThreshold,
+                                   unsigned int closingSize, double headSizeLowerLimit,
+                                   SImageType::PixelType BackgroundFillValue );
 
-#endif                          /* __TrimForegroundInDirection_h */
+#endif /* __TrimForegroundInDirection_h */

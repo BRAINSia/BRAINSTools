@@ -26,26 +26,26 @@
 class HitachiDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  HitachiDWIConverter(DCMTKFileVector &allHeaders,
-                      DWIConverter::FileNamesContainer &inputFileNames,
-                      const bool useBMatrixGradientDirections
-                      );
+  HitachiDWIConverter( DCMTKFileVector & allHeaders, DWIConverter::FileNamesContainer & inputFileNames,
+                       const bool useBMatrixGradientDirections );
 
   ~HitachiDWIConverter() override;
   /* load dicom directory -- no postprocessing necessary after letting
    * superclass do its thing.
    */
-  void LoadDicomDirectory() override;
+  void
+  LoadDicomDirectory() override;
   /** extract gradient vectors.
    *  Hitachi apparently supports the Supplement 49 definition
    *  for Diffusion data.-- see page 94 of the Supplement 49 document:
    *  ftp://medical.nema.org/medical/dicom/final/sup49_ft.pdf
    */
-  void ExtractDWIData() override;
+  void
+  ExtractDWIData() override;
 
 protected:
-  void AddFlagsToDictionary() override;
-
+  void
+  AddFlagsToDictionary() override;
 };
 
 #endif // __HitachiDWIConverter_h

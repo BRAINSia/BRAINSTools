@@ -75,25 +75,26 @@ AnatomicalBSplineFilter::AnatomicalBSplineFilter()
   m_Output = TransformType::New();
 }
 
-void AnatomicalBSplineFilter::Update()
+void
+AnatomicalBSplineFilter::Update()
 {
   std::cout << "AnatomicalBSplineFilter()...." << std::endl;
 
-  MetricTypePointer       metric        = MetricType::New();
-  OptimizerTypePointer    optimizer     = OptimizerType::New();
-  InterpolatorTypePointer interpolator  = InterpolatorType::New();
-  RegistrationTypePointer registration  = RegistrationType::New();
-  //TODO: Needed for ITKv4 registration registration->InPlaceOn();
+  MetricTypePointer       metric = MetricType::New();
+  OptimizerTypePointer    optimizer = OptimizerType::New();
+  InterpolatorTypePointer interpolator = InterpolatorType::New();
+  RegistrationTypePointer registration = RegistrationType::New();
+  // TODO: Needed for ITKv4 registration registration->InPlaceOn();
 
   /*** Set up the Registration ***/
-  registration->SetMetric(        metric        );
-  registration->SetOptimizer(     optimizer     );
-  registration->SetInterpolator(  interpolator  );
+  registration->SetMetric( metric );
+  registration->SetOptimizer( optimizer );
+  registration->SetInterpolator( interpolator );
   registration->SetTransform( m_Output );
 
   /*** Setup the Registration ***/
-  registration->SetFixedImage(  m_FixedImage   );
-  registration->SetMovingImage(   m_MovingImage   );
+  registration->SetFixedImage( m_FixedImage );
+  registration->SetMovingImage( m_MovingImage );
 
   RegisterImageRegionType fixedImageRegion = m_FixedImage->GetBufferedRegion();
 
@@ -106,20 +107,19 @@ void AnatomicalBSplineFilter::Update()
   TransformSizeType   totalGridSize;
 
   gridSizeOnImage.SetSize( m_GridSize.GetSize() );
-  gridBorderSize.Fill( m_GridBorderSize );    // Border for spline order = 3 ( 1
-                                              // lower, 2 upper )
+  gridBorderSize.Fill( m_GridBorderSize ); // Border for spline order = 3 ( 1
+                                           // lower, 2 upper )
   totalGridSize = gridSizeOnImage + gridBorderSize;
 
   // bsplineRegion.SetSize( totalGridSize );
 
-  if( m_BulkTransform.IsNotNull() )
-    {
+  if ( m_BulkTransform.IsNotNull() )
+  {
     std::cout << "Using Bulk Transform" << std::endl;
-    m_Output->SetBulkTransform(   m_BulkTransform   );
-    }
+    m_Output->SetBulkTransform( m_BulkTransform );
+  }
 
-  const unsigned int numberOfParameters
-    = m_Output->GetNumberOfParameters();
+  const unsigned int numberOfParameters = m_Output->GetNumberOfParameters();
 
   TransformParametersType parameters( numberOfParameters );
 
@@ -138,18 +138,18 @@ void AnatomicalBSplineFilter::Update()
   // lowerBound.Fill( 0.0 );
   /* New Method - User Specifies the Displacement Bounds in X,Y,Z */
   /*    Default is the same as the Old method          */
-  for( unsigned int i = 0; i < boundSelect.size(); i += 3 )
-    {
+  for ( unsigned int i = 0; i < boundSelect.size(); i += 3 )
+  {
     boundSelect[i + 0] = m_BoundTypeX;
     boundSelect[i + 1] = m_BoundTypeY;
     boundSelect[i + 2] = m_BoundTypeZ;
-    lowerBound[i + 0]  = m_LowerBoundX;
-    lowerBound[i + 1]  = m_LowerBoundY;
-    lowerBound[i + 2]  = m_LowerBoundZ;
-    upperBound[i + 0]  = m_UpperBoundX;
-    upperBound[i + 1]  = m_UpperBoundY;
-    upperBound[i + 2]  = m_UpperBoundZ;
-    }
+    lowerBound[i + 0] = m_LowerBoundX;
+    lowerBound[i + 1] = m_LowerBoundY;
+    lowerBound[i + 2] = m_LowerBoundZ;
+    upperBound[i + 0] = m_UpperBoundX;
+    upperBound[i + 1] = m_UpperBoundY;
+    upperBound[i + 2] = m_UpperBoundZ;
+  }
 
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
@@ -175,20 +175,19 @@ void AnatomicalBSplineFilter::Update()
   std::cout << std::endl << "Starting Registration" << std::endl;
 
   try
-    {
+  {
     collector.Start( "Registration" );
     registration->Update();
     collector.Stop( "Registration" );
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
     return;
-    }
+  }
 
-  OptimizerType::ParametersType finalParameters
-    = registration->GetLastTransformParameters();
+  OptimizerType::ParametersType finalParameters = registration->GetLastTransformParameters();
 
   collector.Report();
 

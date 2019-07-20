@@ -34,29 +34,33 @@ class QFileDialogs : public QWidget
 {
   Q_OBJECT
 public:
-
-  QFileDialogs( QString landmarks = "", QWidget *myParent = nullptr ) : QWidget( myParent )
+  QFileDialogs( QString landmarks = "", QWidget * myParent = nullptr )
+    : QWidget( myParent )
   {
     m_landmarks = landmarks;
   }
 
-  QString openLandmarksFile();
+  QString
+  openLandmarksFile();
 
-  QString saveLandmarksFile();
+  QString
+  saveLandmarksFile();
 
-  QString landmarksFile()
+  QString
+  landmarksFile()
   {
     return m_landmarks;
   }
 
 public slots:
 
-  void openLandmarksFileSlot();
+  void
+  openLandmarksFileSlot();
 
-  void saveLandmarksFileSlot();
+  void
+  saveLandmarksFileSlot();
 
 protected:
-
   QString m_landmarks;
 };
 

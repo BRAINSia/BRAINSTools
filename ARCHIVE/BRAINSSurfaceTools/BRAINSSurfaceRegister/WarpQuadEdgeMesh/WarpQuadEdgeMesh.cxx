@@ -48,7 +48,8 @@
 #include "WarpQuadEdgeMeshCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -68,9 +69,9 @@ int main( int argc, char * argv [] )
   using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using MeshType = itk::QuadEdgeMesh<PixelType, Dimension>;
+  using MeshType = itk::QuadEdgeMesh< PixelType, Dimension >;
 
-  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
 
   ReaderType::Pointer inputMeshReader = ReaderType::New();
   inputMeshReader->SetFileName( fixedMeshFile.c_str() );
@@ -84,57 +85,54 @@ int main( int argc, char * argv [] )
   deformedMeshReader->SetFileName( deformedMeshFile.c_str() );
   deformedMeshReader->Update();
 
-  using TransformType = itk::IdentityTransform<double>;
+  using TransformType = itk::IdentityTransform< double >;
 
   TransformType::Pointer transform = TransformType::New();
 
-  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
-  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction<MeshType>;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction< MeshType >;
+  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction< MeshType >;
 
   LinearInterpolatorType::Pointer interpolator_l = LinearInterpolatorType::New();
 
   NearestInterpolatorType::Pointer interpolator_n = NearestInterpolatorType::New();
 
   // get scalars from moving mesh (reference) for deformed mesh
-  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
+  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter< MeshType, MeshType >;
 
   ResamplingFilterType::Pointer resampler = ResamplingFilterType::New();
 
   resampler->SetTransform( transform );
 
   // set the interpolation type
-  if( interpolateType == "Nearest" )
-    {
+  if ( interpolateType == "Nearest" )
+  {
     resampler->SetInterpolator( interpolator_n );
-    }
-  else if( interpolateType == "Linear" )
-    {
+  }
+  else if ( interpolateType == "Linear" )
+  {
     resampler->SetInterpolator( interpolator_l );
-    }
+  }
 
-  resampler->SetInput(referenceMeshReader->GetOutput() );
-  resampler->SetReferenceMesh(deformedMeshReader->GetOutput() );
+  resampler->SetInput( referenceMeshReader->GetOutput() );
+  resampler->SetReferenceMesh( deformedMeshReader->GetOutput() );
 
   resampler->Update();
 
   // assign scalars from deformed mesh to fixed mesh
-  using AssignFilterType = itk::AssignScalarValuesQuadEdgeMeshFilter<
-      MeshType,
-      MeshType,
-      MeshType>;
+  using AssignFilterType = itk::AssignScalarValuesQuadEdgeMeshFilter< MeshType, MeshType, MeshType >;
 
-  AssignFilterType::Pointer assignFilter  = AssignFilterType::New();
+  AssignFilterType::Pointer assignFilter = AssignFilterType::New();
 
-  assignFilter->SetInputMesh(inputMeshReader->GetOutput() );
-  assignFilter->SetSourceMesh(resampler->GetOutput() );
+  assignFilter->SetInputMesh( inputMeshReader->GetOutput() );
+  assignFilter->SetSourceMesh( resampler->GetOutput() );
 
   assignFilter->Update();
 
   // write the result
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( assignFilter->GetOutput() );
-  writer->SetFileName(outputMeshFile.c_str() );
+  writer->SetFileName( outputMeshFile.c_str() );
   writer->Update();
 
   return 0;

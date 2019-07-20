@@ -22,24 +22,20 @@
 
 namespace itk
 {
-template <typename TMesh>
-PointLocator2<TMesh>
-::PointLocator2()
+template < typename TMesh >
+PointLocator2< TMesh >::PointLocator2()
 {
   this->m_SampleAdaptor = SampleAdaptorType::New();
   this->m_KdTreeGenerator = TreeGeneratorType::New();
 }
 
-template <typename TMesh>
-PointLocator2<TMesh>
-::~PointLocator2()
-{
-}
+template < typename TMesh >
+PointLocator2< TMesh >::~PointLocator2()
+{}
 
-template <typename TMesh>
+template < typename TMesh >
 void
-PointLocator2<TMesh>
-::Initialize()
+PointLocator2< TMesh >::Initialize()
 {
   this->m_SampleAdaptor = SampleAdaptorType::New();
   this->m_KdTreeGenerator = TreeGeneratorType::New();
@@ -53,15 +49,16 @@ PointLocator2<TMesh>
   PointsContainerConstIteratorType pIrEnd = pointsContainer->End();
 
   typename ListSamplePointSetType::PointType point;
-  int i = 0;
-  while( pIr != pIrEnd )
-    {
+  int                                        i = 0;
+  while ( pIr != pIrEnd )
+  {
     point.CastFrom( pIr.Value() );
-    pointSet->SetPoint(i, point);
-    i++; pIr++;
-    }
+    pointSet->SetPoint( i, point );
+    i++;
+    pIr++;
+  }
 
-  this->m_SampleAdaptor->SetPointSet(pointSet.GetPointer() );
+  this->m_SampleAdaptor->SetPointSet( pointSet.GetPointer() );
   // this->m_SampleAdaptor->SetPointSet(
   //  const_cast< PointSetType * >( this->m_PointSet.GetPointer() ) );
 
@@ -75,22 +72,17 @@ PointLocator2<TMesh>
   this->m_Tree = this->m_KdTreeGenerator->GetOutput();
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-PointLocator2<TMesh>
-::Search(const PointType & query,
-         unsigned int numberOfNeighborsRequested,
-         InstanceIdentifierVectorType& result) const
+PointLocator2< TMesh >::Search( const PointType & query, unsigned int numberOfNeighborsRequested,
+                                InstanceIdentifierVectorType & result ) const
 {
   this->m_Tree->Search( query, numberOfNeighborsRequested, result );
 }
 
-template <typename TMesh>
+template < typename TMesh >
 void
-PointLocator2<TMesh>
-::Search(const PointType & query,
-         double radius,
-         InstanceIdentifierVectorType& result) const
+PointLocator2< TMesh >::Search( const PointType & query, double radius, InstanceIdentifierVectorType & result ) const
 {
   this->m_Tree->Search( query, radius, result );
 }
@@ -98,12 +90,11 @@ PointLocator2<TMesh>
 /**
  * Print out internals
  */
-template <typename TMesh>
+template < typename TMesh >
 void
-PointLocator2<TMesh>
-::PrintSelf(std::ostream& os, Indent indent) const
+PointLocator2< TMesh >::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf( os, indent );
 }
 } // end namespace itk
 

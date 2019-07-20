@@ -42,38 +42,33 @@
 
 namespace itk
 {
-template <
-  typename TInputImage,
-  typename TCoordRep = float // ,typename TComponent = float
-  >
-class TensorInterpolateImageFunction :
-  public         ImageFunction<
-    TInputImage,
-    SymmetricSecondRankTensor<double, 3>,
-    TCoordRep>
+template < typename TInputImage,
+           typename TCoordRep = float // ,typename TComponent = float
+           >
+class TensorInterpolateImageFunction
+  : public ImageFunction< TInputImage, SymmetricSecondRankTensor< double, 3 >, TCoordRep >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TensorInterpolateImageFunction);
+  ITK_DISALLOW_COPY_AND_ASSIGN( TensorInterpolateImageFunction );
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Standard class type alias. */
   using Self = TensorInterpolateImageFunction;
-  using Superclass = ImageFunction<TInputImage,
-                        SymmetricSecondRankTensor<double, 3>, TCoordRep>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = ImageFunction< TInputImage, SymmetricSecondRankTensor< double, 3 >, TCoordRep >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TensorInterpolateImageFunction, ImageFunction);
+  itkTypeMacro( TensorInterpolateImageFunction, ImageFunction );
 
   /** InputImageType type alias support. */
   using InputImageType = typename Superclass::InputImageType;
   using PixelType = typename InputImageType::PixelType;
-  using ValueType = itk::SymmetricSecondRankTensor<double, 3>::ValueType;
+  using ValueType = itk::SymmetricSecondRankTensor< double, 3 >::ValueType;
 
   // using ValueType = typename PixelType::ValueType;
-  using RealType = typename NumericTraits<ValueType>::RealType;
+  using RealType = typename NumericTraits< ValueType >::RealType;
 
   /** Point type alias support. */
   using PointType = typename Superclass::PointType;
@@ -89,7 +84,8 @@ public:
 
   /** CoordRep type alias support. */
   using CoordRepType = TCoordRep;
-  OutputType Evaluate( const PointType & point ) const override
+  OutputType
+  Evaluate( const PointType & point ) const override
   {
     ContinuousIndexType index;
 
@@ -107,7 +103,8 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const override   = 0;
+  OutputType
+  EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override = 0;
 
   /** Interpolate the image at an index position.
    * Simply returns the image value at the
@@ -116,28 +113,26 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  OutputType EvaluateAtIndex( const IndexType & index ) const override
+  OutputType
+  EvaluateAtIndex( const IndexType & index ) const override
   {
     OutputType output;
     PixelType  input = this->GetInputImage()->GetPixel( index );
 
-    for( unsigned int k = 0; k < 6; k++ )
-      {
-      output[k] = static_cast<double>( input[k] );
-      }
+    for ( unsigned int k = 0; k < 6; k++ )
+    {
+      output[k] = static_cast< double >( input[k] );
+    }
     return output;
   }
 
 protected:
-  TensorInterpolateImageFunction()
-  {
-  }
+  TensorInterpolateImageFunction() {}
 
-  ~TensorInterpolateImageFunction() override
-  {
-  }
+  ~TensorInterpolateImageFunction() override {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const override
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override
   {
     Superclass::PrintSelf( os, indent );
   }

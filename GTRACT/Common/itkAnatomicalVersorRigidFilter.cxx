@@ -61,39 +61,39 @@ AnatomicalVersorRigidFilter::AnatomicalVersorRigidFilter()
   m_RelaxationFactor = 0.5;
 }
 
-void AnatomicalVersorRigidFilter::Update()
+void
+AnatomicalVersorRigidFilter::Update()
 {
   std::cout << "AnatomicalVersorRigidFilter()...." << std::endl;
 
-  MetricTypePointer       metric        = MetricType::New();
-  OptimizerTypePointer    optimizer     = OptimizerType::New();
-  InterpolatorTypePointer interpolator  = InterpolatorType::New();
-  RegistrationTypePointer registration  = RegistrationType::New();
-  //TODO: Needed for ITKv4 registration registration->InPlaceOn();
+  MetricTypePointer       metric = MetricType::New();
+  OptimizerTypePointer    optimizer = OptimizerType::New();
+  InterpolatorTypePointer interpolator = InterpolatorType::New();
+  RegistrationTypePointer registration = RegistrationType::New();
+  // TODO: Needed for ITKv4 registration registration->InPlaceOn();
 
-  TransformType::Pointer  transform     = TransformType::New();
+  TransformType::Pointer transform = TransformType::New();
 
   /*** Set up the Registration ***/
   metric->SetNumberOfSpatialSamples( m_NumberOfSpatialSamples );
-  registration->SetMetric(        metric        );
-  registration->SetOptimizer(     optimizer     );
-  registration->SetInterpolator(  interpolator  );
-  registration->SetTransform(     transform     );
+  registration->SetMetric( metric );
+  registration->SetOptimizer( optimizer );
+  registration->SetInterpolator( interpolator );
+  registration->SetTransform( transform );
 
-  registration->SetFixedImage(   m_FixedImage   );
-  registration->SetMovingImage(   m_MovingImage   );
+  registration->SetFixedImage( m_FixedImage );
+  registration->SetMovingImage( m_MovingImage );
   registration->SetFixedImageRegion( m_FixedImage->GetBufferedRegion() );
 
   TransformInitializerTypePointer initializer = TransformInitializerType::New();
-  initializer->SetTransform(   transform );
-  initializer->SetFixedImage(  m_FixedImage );
+  initializer->SetTransform( transform );
+  initializer->SetFixedImage( m_FixedImage );
   initializer->SetMovingImage( m_MovingImage );
   initializer->MomentsOn();
   initializer->InitializeTransform();
 
-  std::cout << "Initializer, center: " << transform->GetCenter()
-            << ", offset: " << transform->GetOffset()
-            << "." << std::endl;
+  std::cout << "Initializer, center: " << transform->GetCenter() << ", offset: " << transform->GetOffset() << "."
+            << std::endl;
 
   VersorType rotation;
   VectorType axis;
@@ -104,10 +104,10 @@ void AnatomicalVersorRigidFilter::Update()
   axis[m_InitialRotationAxis] = 1.0;
 
   constexpr double pi = 3.14159265358979323846;
-  const double inRadians = pi / 180.0;
-  const double angle = m_InitialRotationAngle * inRadians;
+  const double     inRadians = pi / 180.0;
+  const double     angle = m_InitialRotationAngle * inRadians;
 
-  rotation.Set(  axis, angle  );
+  rotation.Set( axis, angle );
   transform->SetRotation( rotation );
   registration->SetInitialTransformParameters( transform->GetParameters() );
 
@@ -130,55 +130,54 @@ void AnatomicalVersorRigidFilter::Update()
 
   optimizer->SetNumberOfIterations( m_NumberOfIterations );
 
-  std::cout << "Before Rigid Registration, center: " << transform->GetCenter()
-            << ", offset: " << transform->GetOffset()
+  std::cout << "Before Rigid Registration, center: " << transform->GetCenter() << ", offset: " << transform->GetOffset()
             << "." << std::endl;
 
   try
-    {
+  {
     registration->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
-    }
+  }
 
   OptimizerParameterType finalParameters = registration->GetLastTransformParameters();
 
-  const double       versorX              = finalParameters[0];
-  const double       versorY              = finalParameters[1];
-  const double       versorZ              = finalParameters[2];
-  const double       finalTranslationX    = finalParameters[3];
-  const double       finalTranslationY    = finalParameters[4];
-  const double       finalTranslationZ    = finalParameters[5];
+  const double       versorX = finalParameters[0];
+  const double       versorY = finalParameters[1];
+  const double       versorZ = finalParameters[2];
+  const double       finalTranslationX = finalParameters[3];
+  const double       finalTranslationY = finalParameters[4];
+  const double       finalTranslationZ = finalParameters[5];
   const unsigned int numberOfIterations = optimizer->GetCurrentIteration();
   const double       bestValue = optimizer->GetValue();
 
   // Print out results
   std::cout << std::endl << std::endl;
   std::cout << "Result = " << std::endl;
-  std::cout << " versor X      = " << versorX  << std::endl;
-  std::cout << " versor Y      = " << versorY  << std::endl;
-  std::cout << " versor Z      = " << versorZ  << std::endl;
-  std::cout << " Translation X = " << finalTranslationX  << std::endl;
-  std::cout << " Translation Y = " << finalTranslationY  << std::endl;
-  std::cout << " Translation Z = " << finalTranslationZ  << std::endl;
+  std::cout << " versor X      = " << versorX << std::endl;
+  std::cout << " versor Y      = " << versorY << std::endl;
+  std::cout << " versor Z      = " << versorZ << std::endl;
+  std::cout << " Translation X = " << finalTranslationX << std::endl;
+  std::cout << " Translation Y = " << finalTranslationY << std::endl;
+  std::cout << " Translation Z = " << finalTranslationZ << std::endl;
   std::cout << " Iterations    = " << numberOfIterations << std::endl;
-  std::cout << " Metric value  = " << bestValue          << std::endl;
+  std::cout << " Metric value  = " << bestValue << std::endl;
 
-  if( numberOfIterations == static_cast<unsigned int>( m_NumberOfIterations ) )
-    {
-    std::cout << std::endl << std::endl
+  if ( numberOfIterations == static_cast< unsigned int >( m_NumberOfIterations ) )
+  {
+    std::cout << std::endl
+              << std::endl
               << "|##>> Iterations maxed out!  A solution was not found in the numberOfIterations permitted. "
               << std::endl
               << std::endl;
-    }
+  }
 
   transform->SetParameters( finalParameters );
 
-  std::cout << "After Rigid Registration, center: " << transform->GetCenter()
-            << ", offset: " << transform->GetOffset()
+  std::cout << "After Rigid Registration, center: " << transform->GetCenter() << ", offset: " << transform->GetOffset()
             << "." << std::endl;
 
   TransformType::MatrixType matrix = transform->GetMatrix();

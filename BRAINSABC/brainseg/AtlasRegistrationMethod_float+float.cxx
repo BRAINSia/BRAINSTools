@@ -18,4 +18,4 @@
  *=========================================================================*/
 #include "AtlasRegistrationMethod.hxx"
 
-template class AtlasRegistrationMethod<float, float>;
+template class AtlasRegistrationMethod< float, float >;

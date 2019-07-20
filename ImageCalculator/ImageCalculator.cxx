@@ -19,18 +19,19 @@
 #include "ImageCalculatorUtils.h"
 #include "itkMacro.h"
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   try
-    {
-    return PrimaryImageCalculatorRoutine(argc, argv);
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  {
+    return PrimaryImageCalculatorRoutine( argc, argv );
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cout << "Exception Object caught: " << std::endl;
     std::cout << err << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 }
 
 // End of main()

@@ -48,25 +48,23 @@ namespace itk
  *
  * \ingroup MeshFunctions
  */
-template <typename TInputMesh, typename TOutput>
-class MeshFunction :
-  public         FunctionBase<typename TInputMesh::PointType, TOutput>
+template < typename TInputMesh, typename TOutput >
+class MeshFunction : public FunctionBase< typename TInputMesh::PointType, TOutput >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeshFunction);
+  ITK_DISALLOW_COPY_AND_ASSIGN( MeshFunction );
 
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
 
   /** Standard class type alias. */
   using Self = MeshFunction;
-  using Superclass = FunctionBase<
-      typename TInputMesh::PointType, TOutput>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = FunctionBase< typename TInputMesh::PointType, TOutput >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MeshFunction, FunctionBase);
+  itkTypeMacro( MeshFunction, FunctionBase );
 
   /** InputMeshType type alias support. */
   using InputMeshType = TInputMesh;
@@ -89,22 +87,24 @@ public:
   /** Set the input mesh.
    * \warning this method caches information.  If the Mesh has changed, user
    * must call SetInputMesh again to update cached values. */
-  virtual void SetInputMesh( const InputMeshType * ptr );
+  virtual void
+  SetInputMesh( const InputMeshType * ptr );
 
   /** Get the input mesh. */
-  const InputMeshType * GetInputMesh() const;
+  const InputMeshType *
+  GetInputMesh() const;
 
   /** Evaluate the function at specified Point position.
    * Subclasses must provide this method. */
-  virtual TOutput Evaluate( constexpr PointType& point ) const override   = 0;
+  virtual TOutput
+  Evaluate( constexpr PointType & point ) const override = 0;
 
 protected:
   MeshFunction();
-  ~MeshFunction()
-  {
-  }
+  ~MeshFunction() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** Const pointer to the input image. */
   InputMeshConstPointer m_Mesh;
@@ -112,7 +112,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMeshFunction.hxx"
+#  include "itkMeshFunction.hxx"
 #endif
 
 #endif

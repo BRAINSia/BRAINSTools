@@ -36,32 +36,29 @@ namespace itk
  * \ingroup MeshFunctions
  *
  * */
-template <typename TInputMesh, typename TVectorContainer>
-class NodeVectorJacobianCalculator :
-  public         FunctionBase<typename TInputMesh::PointIdentifier,
-                              Matrix<
-                                typename NumericTraits<typename TVectorContainer::Element::ValueType>::RealType,
-                                TInputMesh::PointDimension,
-                                TInputMesh::PointDimension> >
+template < typename TInputMesh, typename TVectorContainer >
+class NodeVectorJacobianCalculator
+  : public FunctionBase< typename TInputMesh::PointIdentifier,
+                         Matrix< typename NumericTraits< typename TVectorContainer::Element::ValueType >::RealType,
+                                 TInputMesh::PointDimension, TInputMesh::PointDimension > >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(NodeVectorJacobianCalculator);
+  ITK_DISALLOW_COPY_AND_ASSIGN( NodeVectorJacobianCalculator );
 
   /** Standard class type alias. */
   using Self = NodeVectorJacobianCalculator;
-  using Superclass = FunctionBase<typename TInputMesh::PointIdentifier,
-                       Matrix<
-                         typename NumericTraits<typename TVectorContainer::Element::ValueType>::RealType,
-                         TInputMesh::PointDimension,
-                         TInputMesh::PointDimension> >;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass =
+    FunctionBase< typename TInputMesh::PointIdentifier,
+                  Matrix< typename NumericTraits< typename TVectorContainer::Element::ValueType >::RealType,
+                          TInputMesh::PointDimension, TInputMesh::PointDimension > >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(NodeVectorJacobianCalculator, FunctionBase);
+  itkTypeMacro( NodeVectorJacobianCalculator, FunctionBase );
 
   /** Dimension underlying input mesh. */
   static constexpr unsigned int MeshDimension = TInputMesh::PointDimension;
@@ -74,9 +71,9 @@ public:
   using PointsContainer = typename InputMeshType::PointsContainer;
   using PointIterator = typename PointsContainer::ConstIterator;
 
-  using TriangleBasisSystemType = TriangleBasisSystem<VectorType, 2>;
+  using TriangleBasisSystemType = TriangleBasisSystem< VectorType, 2 >;
   using CellIdentifier = typename InputMeshType::CellIdentifier;
-  using BasisSystemListType = VectorContainer<CellIdentifier, TriangleBasisSystemType>;
+  using BasisSystemListType = VectorContainer< CellIdentifier, TriangleBasisSystemType >;
   using BasisSystemListIterator = typename BasisSystemListType::ConstIterator;
 
   using CellType = typename InputMeshType::CellType;
@@ -86,17 +83,18 @@ public:
   using CellsContainerConstIterator = typename CellsContainer::ConstIterator;
   using PointIdIterator = typename CellTraits::PointIdIterator;
 
-  using TriangleHelperType = TriangleHelper<PointType>;
+  using TriangleHelperType = TriangleHelper< PointType >;
   using AreaType = typename TriangleHelperType::CoordRepType;
-  using AreaListType = VectorContainer<CellIdentifier, AreaType>;
+  using AreaListType = VectorContainer< CellIdentifier, AreaType >;
   using AreaListIterator = typename AreaListType::Iterator;
   using AreaListConstIterator = typename AreaListType::ConstIterator;
 
-  using TriangleListBasisSystemCalculatorType = TriangleListBasisSystemCalculator<InputMeshType, TriangleBasisSystemType>;
+  using TriangleListBasisSystemCalculatorType =
+    TriangleListBasisSystemCalculator< InputMeshType, TriangleBasisSystemType >;
 
-  using InterpolatorType = LinearInterpolateMeshFunction<InputMeshType>;
+  using InterpolatorType = LinearInterpolateMeshFunction< InputMeshType >;
 
-  using PointLocatorType = PointLocator2<TInputMesh>;
+  using PointLocatorType = PointLocator2< TInputMesh >;
   using PointLocatorPointer = typename PointLocatorType::Pointer;
   using PointIdentifier = typename InterpolatorType::PointIdentifier;
 
@@ -105,17 +103,14 @@ public:
 
   using ArrayType = typename TVectorContainer::Element;
   using ArrayValueType = typename ArrayType::ValueType;
-  using JacobianComponentType = typename NumericTraits<ArrayValueType>::RealType;
+  using JacobianComponentType = typename NumericTraits< ArrayValueType >::RealType;
 
-  using JacobianType = Matrix<
-      JacobianComponentType,
-      Self::MeshDimension,
-      Self::MeshDimension>;
+  using JacobianType = Matrix< JacobianComponentType, Self::MeshDimension, Self::MeshDimension >;
 
-  using JacobianListType = VectorContainer<CellIdentifier, JacobianType>;
+  using JacobianListType = VectorContainer< CellIdentifier, JacobianType >;
 
   using CoordRepType = typename PointType::CoordRepType;
-  using CoordRepListType = VectorContainer<PointIdentifier, CoordRepType>;
+  using CoordRepListType = VectorContainer< PointIdentifier, CoordRepType >;
 
   /** Set/Get the input mesh. */
   itkSetConstObjectMacro( InputMesh, InputMeshType );
@@ -137,7 +132,8 @@ public:
    *
    * \sa Compute
    */
-  virtual void Initialize( void );
+  virtual void
+  Initialize( void );
 
   /** Compute the values at all the nodes. The Initialize() method MUST be
    * called first. In a normal usage, the Initialize() method will be called
@@ -146,14 +142,16 @@ public:
    *
    * \sa Initialize
    */
-  virtual void Compute();
+  virtual void
+  Compute();
 
   /** Set/Get list of basis systems at every cell. */
   itkSetConstObjectMacro( BasisSystemList, BasisSystemListType );
   itkGetConstObjectMacro( BasisSystemList, BasisSystemListType );
 
   /** Evaluate at the specified input position */
-  virtual OutputType Evaluate( const InputType& input) const override;
+  virtual OutputType
+  Evaluate( const InputType & input ) const override;
 
   /** Set Sphere Center.  The implementation of this class assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -172,45 +170,53 @@ public:
    */
   itkSetMacro( SphereRadius, double );
   itkGetConstMacro( SphereRadius, double );
+
 protected:
   NodeVectorJacobianCalculator();
   ~NodeVectorJacobianCalculator();
 
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
-  typename InputMeshType::ConstPointer                         m_InputMesh;
-  typename TVectorContainer::ConstPointer                      m_VectorContainer;
-  typename BasisSystemListType::ConstPointer                   m_BasisSystemList;
-  typename AreaListType::Pointer                               m_AreaList;
-  typename CoordRepListType::Pointer                           m_PointAreaAccumulatorList;
-  typename JacobianListType::Pointer                           m_PointJacobianAccumulatorList;
+  typename InputMeshType::ConstPointer       m_InputMesh;
+  typename TVectorContainer::ConstPointer    m_VectorContainer;
+  typename BasisSystemListType::ConstPointer m_BasisSystemList;
+  typename AreaListType::Pointer             m_AreaList;
+  typename CoordRepListType::Pointer         m_PointAreaAccumulatorList;
+  typename JacobianListType::Pointer         m_PointJacobianAccumulatorList;
 
   using JacobianListIterator = typename JacobianListType::Iterator;
 
   /** Check that all necessary inputs are connected. */
-  virtual void VerifyInputs( void ) const;
+  virtual void
+  VerifyInputs( void ) const;
 
   /** Allocate memory for all the internal containers. This method is called
    * only once during the initialization of the calculator. It doesn't need to be
    * called again unless the number of cells or number of points in the input
    * mesh change. */
-  void AllocateInternalContainers();
+  void
+  AllocateInternalContainers();
 
   /** Parallel-transport for gradient vectors. This is equivalent to sliding them along
    * the great circle that connects sourcePoint with destinationPoint.  */
-  void ParallelTransport( const PointType sourcePoint, const PointType destinationPoint,
-                          const DerivativeType & inputVector, DerivativeType & transportedVector ) const;
+  void
+  ParallelTransport( const PointType sourcePoint, const PointType destinationPoint, const DerivativeType & inputVector,
+                     DerivativeType & transportedVector ) const;
 
   /** Divide the cumulated derivatives by the cumulated areas */
-  void NormalizeDerivativesByTotalArea();
+  void
+  NormalizeDerivativesByTotalArea();
 
   /** Compute the area in all cells and store it in a container */
-  void ComputeAreaForAllCells();
+  void
+  ComputeAreaForAllCells();
 
   /** Fill the values of several containers with null values. This is done as
    * initialization before we start accumulating values in them. */
-  void SetContainersToNullValues();
+  void
+  SetContainersToNullValues();
 
   PointType m_SphereCenter;
   double    m_SphereRadius;
@@ -218,7 +224,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkNodeVectorJacobianCalculator.hxx"
+#  include "itkNodeVectorJacobianCalculator.hxx"
 #endif
 
 #endif

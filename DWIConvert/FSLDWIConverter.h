@@ -25,29 +25,32 @@
 class FSLDWIConverter : public DWIConverter
 {
 public:
-
-  FSLDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames,
-  const std::string inputBValues, const std::string inputBVectors);
+  FSLDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames, const std::string inputBValues,
+                   const std::string inputBVectors );
 
   ~FSLDWIConverter() override {}
 
-  void AddFlagsToDictionary() override;
+  void
+  AddFlagsToDictionary() override;
 
   /**
    * @brief FSL datasets are always in  normal sequential volume arrangement.
    */
-   void LoadFromDisk() override;
+  void
+  LoadFromDisk() override;
 
-   /**
-    * @brief  find the bvalues and gradient vectors
-    */
-  void ExtractDWIData() override;
+  /**
+   * @brief  find the bvalues and gradient vectors
+   */
+  void
+  ExtractDWIData() override;
 
   /**
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
+  CommonDicomFieldMapType
+  GetCommonDicomFieldsMap() const override;
 
 
 private:

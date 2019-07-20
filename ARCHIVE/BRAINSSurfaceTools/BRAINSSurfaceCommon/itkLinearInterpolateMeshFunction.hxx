@@ -29,9 +29,8 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputMesh>
-LinearInterpolateMeshFunction<TInputMesh>
-::LinearInterpolateMeshFunction()
+template < typename TInputMesh >
+LinearInterpolateMeshFunction< TInputMesh >::LinearInterpolateMeshFunction()
 {
   this->m_TriangleBasisSystemCalculator = TriangleBasisSystemCalculatorType::New();
   this->m_SphereCenter.Fill( 0.0 );
@@ -41,19 +40,16 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Destructor
  */
-template <typename TInputMesh>
-LinearInterpolateMeshFunction<TInputMesh>
-::~LinearInterpolateMeshFunction()
-{
-}
+template < typename TInputMesh >
+LinearInterpolateMeshFunction< TInputMesh >::~LinearInterpolateMeshFunction()
+{}
 
 /**
  * Standard "PrintSelf" method
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-LinearInterpolateMeshFunction<TInputMesh>
-::PrintSelf( std::ostream& os, Indent indent) const
+LinearInterpolateMeshFunction< TInputMesh >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf( os, indent );
 }
@@ -61,146 +57,137 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Evaluate the mesh at a given point position.
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-LinearInterpolateMeshFunction<TInputMesh>
-::EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const
+LinearInterpolateMeshFunction< TInputMesh >::EvaluateDerivative( const PointType & point,
+                                                                 DerivativeType &  derivative ) const
 {
-  InstanceIdentifierVectorType pointIds(3);
+  InstanceIdentifierVectorType pointIds( 3 );
 
-  if( this->FindTriangle( point, pointIds ) )
-    {
-    PixelType pixelValue1 = itk::NumericTraits<PixelType>::ZeroValue();
-    PixelType pixelValue2 = itk::NumericTraits<PixelType>::ZeroValue();
-    PixelType pixelValue3 = itk::NumericTraits<PixelType>::ZeroValue();
+  if ( this->FindTriangle( point, pointIds ) )
+  {
+    PixelType pixelValue1 = itk::NumericTraits< PixelType >::ZeroValue();
+    PixelType pixelValue2 = itk::NumericTraits< PixelType >::ZeroValue();
+    PixelType pixelValue3 = itk::NumericTraits< PixelType >::ZeroValue();
 
     this->GetPointData( pointIds[0], &pixelValue1 );
     this->GetPointData( pointIds[1], &pixelValue2 );
     this->GetPointData( pointIds[2], &pixelValue3 );
 
-    this->GetDerivativeFromPixelsAndBasis(
-      pixelValue1, pixelValue2, pixelValue3, m_U12, m_U32, derivative);
-    }
+    this->GetDerivativeFromPixelsAndBasis( pixelValue1, pixelValue2, pixelValue3, m_U12, m_U32, derivative );
+  }
   else
+  {
+    if ( this->GetUseNearestNeighborInterpolationAsBackup() )
     {
-    if( this->GetUseNearestNeighborInterpolationAsBackup() )
-      {
       this->FindTriangleOfClosestPoint( point, pointIds );
 
-      PixelType pixelValue1 = itk::NumericTraits<PixelType>::ZeroValue();
-      PixelType pixelValue2 = itk::NumericTraits<PixelType>::ZeroValue();
-      PixelType pixelValue3 = itk::NumericTraits<PixelType>::ZeroValue();
+      PixelType pixelValue1 = itk::NumericTraits< PixelType >::ZeroValue();
+      PixelType pixelValue2 = itk::NumericTraits< PixelType >::ZeroValue();
+      PixelType pixelValue3 = itk::NumericTraits< PixelType >::ZeroValue();
 
       this->GetPointData( pointIds[0], &pixelValue1 );
       this->GetPointData( pointIds[1], &pixelValue2 );
       this->GetPointData( pointIds[2], &pixelValue3 );
 
-      this->GetDerivativeFromPixelsAndBasis(
-        pixelValue1, pixelValue2, pixelValue3, m_U12, m_U32, derivative);
-      }
-    else
-      {
-      derivative.Fill( NumericTraits<RealType>::ZeroValue() );
-      }
+      this->GetDerivativeFromPixelsAndBasis( pixelValue1, pixelValue2, pixelValue3, m_U12, m_U32, derivative );
     }
+    else
+    {
+      derivative.Fill( NumericTraits< RealType >::ZeroValue() );
+    }
+  }
 }
 
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-LinearInterpolateMeshFunction<TInputMesh>
-::GetDerivativeFromPixelsAndBasis(PixelType pixelValue1, PixelType pixelValue2,
-                                  PixelType pixelValue3, const VectorType  & m_U12,
-                                  const VectorType &  m_U32, DerivativeType & derivative)
+LinearInterpolateMeshFunction< TInputMesh >::GetDerivativeFromPixelsAndBasis(
+  PixelType pixelValue1, PixelType pixelValue2, PixelType pixelValue3, const VectorType & m_U12,
+  const VectorType & m_U32, DerivativeType & derivative )
 {
-  const RealType pixelValueReal1 = static_cast<RealType>( pixelValue1 );
-  const RealType pixelValueReal2 = static_cast<RealType>( pixelValue2 );
-  const RealType pixelValueReal3 = static_cast<RealType>( pixelValue3 );
+  const RealType pixelValueReal1 = static_cast< RealType >( pixelValue1 );
+  const RealType pixelValueReal2 = static_cast< RealType >( pixelValue2 );
+  const RealType pixelValueReal3 = static_cast< RealType >( pixelValue3 );
 
   const RealType variation12 = pixelValueReal1 - pixelValueReal2;
   const RealType variation32 = pixelValueReal3 - pixelValueReal2;
 
-  derivative = m_U12 * variation12  + m_U32 * variation32;
+  derivative = m_U12 * variation12 + m_U32 * variation32;
 }
 
-template <typename TInputMesh>
-template <typename TArray, typename TMatrix>
+template < typename TInputMesh >
+template < typename TArray, typename TMatrix >
 void
-LinearInterpolateMeshFunction<TInputMesh>
-::GetJacobianFromVectorAndBasis(
-  const TArray & pixelArray1, const TArray & pixelArray2, const TArray & pixelArray3,
-  const VectorType & m_U12, const VectorType & m_U32, TMatrix & jacobian)
+LinearInterpolateMeshFunction< TInputMesh >::GetJacobianFromVectorAndBasis(
+  const TArray & pixelArray1, const TArray & pixelArray2, const TArray & pixelArray3, const VectorType & m_U12,
+  const VectorType & m_U32, TMatrix & jacobian )
 {
   DerivativeType derivative;
 
-  for( int i = 0; i < 3; i++ )
-    {
+  for ( int i = 0; i < 3; i++ )
+  {
     PixelType pixelValue1 = pixelArray1[i];
     PixelType pixelValue2 = pixelArray2[i];
     PixelType pixelValue3 = pixelArray3[i];
 
-    GetDerivativeFromPixelsAndBasis(
-      pixelValue1, pixelValue2, pixelValue3, m_U12, m_U32, derivative);
-    for( int j = 0; j < 3; j++ )
-      {
+    GetDerivativeFromPixelsAndBasis( pixelValue1, pixelValue2, pixelValue3, m_U12, m_U32, derivative );
+    for ( int j = 0; j < 3; j++ )
+    {
       jacobian[i][j] = derivative[j];
-      }
     }
+  }
 }
 
 /**
  * Evaluate the mesh at a given point position.
  */
-template <typename TInputMesh>
-typename
-LinearInterpolateMeshFunction<TInputMesh>::OutputType
-LinearInterpolateMeshFunction<TInputMesh>
-::Evaluate( const PointType& point ) const
+template < typename TInputMesh >
+typename LinearInterpolateMeshFunction< TInputMesh >::OutputType
+LinearInterpolateMeshFunction< TInputMesh >::Evaluate( const PointType & point ) const
 {
-  InstanceIdentifierVectorType pointIds(3);
+  InstanceIdentifierVectorType pointIds( 3 );
 
   bool foundTriangle = this->FindTriangle( point, pointIds );
 
-  if( !foundTriangle )
+  if ( !foundTriangle )
+  {
+    if ( this->GetUseNearestNeighborInterpolationAsBackup() )
     {
-    if( this->GetUseNearestNeighborInterpolationAsBackup() )
-      {
       constexpr unsigned int numberOfNeighbors = 1;
 
-      InstanceIdentifierVectorType closestPointIds(numberOfNeighbors);
+      InstanceIdentifierVectorType closestPointIds( numberOfNeighbors );
 
       this->Search( point, numberOfNeighbors, closestPointIds );
 
-      PixelType pixelValue0 = itk::NumericTraits<PixelType>::ZeroValue();
+      PixelType pixelValue0 = itk::NumericTraits< PixelType >::ZeroValue();
 
       this->GetPointData( pointIds[0], &pixelValue0 );
 
       return pixelValue0;
-      }
+    }
     else
-      {
+    {
       PixelType pixelValue100 = 100.0;
       std::cout << "100" << std::endl;
       return pixelValue100;
       // itkExceptionMacro("Can not find a triangle for point " << point );
-      }
     }
+  }
 
-  PixelType pixelValue1 = itk::NumericTraits<PixelType>::ZeroValue();
-  PixelType pixelValue2 = itk::NumericTraits<PixelType>::ZeroValue();
-  PixelType pixelValue3 = itk::NumericTraits<PixelType>::ZeroValue();
+  PixelType pixelValue1 = itk::NumericTraits< PixelType >::ZeroValue();
+  PixelType pixelValue2 = itk::NumericTraits< PixelType >::ZeroValue();
+  PixelType pixelValue3 = itk::NumericTraits< PixelType >::ZeroValue();
 
   this->GetPointData( pointIds[0], &pixelValue1 );
   this->GetPointData( pointIds[1], &pixelValue2 );
   this->GetPointData( pointIds[2], &pixelValue3 );
 
-  RealType pixelValueReal1 = static_cast<RealType>( pixelValue1 );
-  RealType pixelValueReal2 = static_cast<RealType>( pixelValue2 );
-  RealType pixelValueReal3 = static_cast<RealType>( pixelValue3 );
+  RealType pixelValueReal1 = static_cast< RealType >( pixelValue1 );
+  RealType pixelValueReal2 = static_cast< RealType >( pixelValue2 );
+  RealType pixelValueReal3 = static_cast< RealType >( pixelValue3 );
 
-  RealType returnValue =
-    pixelValueReal1 * m_InterpolationWeights[0]
-    + pixelValueReal2 * m_InterpolationWeights[1]
-    + pixelValueReal3 * m_InterpolationWeights[2];
+  RealType returnValue = pixelValueReal1 * m_InterpolationWeights[0] + pixelValueReal2 * m_InterpolationWeights[1] +
+                         pixelValueReal3 * m_InterpolationWeights[2];
 
   return returnValue;
 }
@@ -208,10 +195,10 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Find corresponding triangle, vector base and barycentric coordinates
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 bool
-LinearInterpolateMeshFunction<TInputMesh>
-::FindTriangle( const PointType& point, InstanceIdentifierVectorType & pointIds ) const
+LinearInterpolateMeshFunction< TInputMesh >::FindTriangle( const PointType &              point,
+                                                           InstanceIdentifierVectorType & pointIds ) const
 {
   //
   // start numberOfNeighbors with a certain value
@@ -220,21 +207,21 @@ LinearInterpolateMeshFunction<TInputMesh>
 
   unsigned int numberOfNeighbors = this->GetInputMesh()->GetNumberOfPoints();
 
-  if( numberOfNeighbors > 20 )
-    {
+  if ( numberOfNeighbors > 20 )
+  {
     numberOfNeighbors = 20;
-    }
+  }
 
-  unsigned int maxNeighbors = int(0.004 * (this->GetInputMesh()->GetNumberOfPoints() ) );
+  unsigned int maxNeighbors = int( 0.004 * ( this->GetInputMesh()->GetNumberOfPoints() ) );
 
-  if( maxNeighbors < 250 )
-    {
+  if ( maxNeighbors < 250 )
+  {
     maxNeighbors = 250;
-    }
+  }
 
-  while( numberOfNeighbors < maxNeighbors )
-    {
-    InstanceIdentifierVectorType closestPointIds(numberOfNeighbors);
+  while ( numberOfNeighbors < maxNeighbors )
+  {
+    InstanceIdentifierVectorType closestPointIds( numberOfNeighbors );
 
     this->Search( point, numberOfNeighbors, closestPointIds );
 
@@ -245,8 +232,8 @@ LinearInterpolateMeshFunction<TInputMesh>
     // Find the edge connected to the closest point.
     //
     // go through triangles around each neighbors
-    for( unsigned int i = 0; i < numberOfNeighbors; i++ )
-      {
+    for ( unsigned int i = 0; i < numberOfNeighbors; i++ )
+    {
       pointIds[0] = closestPointIds[i];
 
       EdgeType * edge1 = mesh->FindEdge( pointIds[0] );
@@ -258,7 +245,7 @@ LinearInterpolateMeshFunction<TInputMesh>
       EdgeType * temp2 = edge1;
 
       do
-        {
+      {
         temp1 = temp2;
         temp2 = temp1->GetOnext();
 
@@ -267,16 +254,15 @@ LinearInterpolateMeshFunction<TInputMesh>
 
         const bool isInside = this->ComputeWeights( point, pointIds );
 
-        if( isInside )
-          {
+        if ( isInside )
+        {
           return true;
-          }
         }
-      while( temp2 != edge1 );
-      }
+      } while ( temp2 != edge1 );
+    }
 
     numberOfNeighbors += 20;
-    }
+  }
 
   return false;
 }
@@ -284,14 +270,14 @@ LinearInterpolateMeshFunction<TInputMesh>
 /**
  * Find the first triangle of the closest point
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-LinearInterpolateMeshFunction<TInputMesh>
-::FindTriangleOfClosestPoint( const PointType& point, InstanceIdentifierVectorType & pointIds ) const
+LinearInterpolateMeshFunction< TInputMesh >::FindTriangleOfClosestPoint( const PointType &              point,
+                                                                         InstanceIdentifierVectorType & pointIds ) const
 {
   constexpr unsigned int numberOfNeighbors = 1;
 
-  InstanceIdentifierVectorType closestPointId(numberOfNeighbors);
+  InstanceIdentifierVectorType closestPointId( numberOfNeighbors );
 
   this->Search( point, numberOfNeighbors, closestPointId );
 
@@ -315,11 +301,10 @@ LinearInterpolateMeshFunction<TInputMesh>
  * Compute interpolation weights and verify if the input point is inside the
  * triangle formed by the three identifiers.
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 bool
-LinearInterpolateMeshFunction<TInputMesh>
-::ComputeWeights( const PointType & inputPoint,
-                  const InstanceIdentifierVectorType & pointIds ) const
+LinearInterpolateMeshFunction< TInputMesh >::ComputeWeights( const PointType &                    inputPoint,
+                                                             const InstanceIdentifierVectorType & pointIds ) const
 {
   const InputMeshType * mesh = this->GetInputMesh();
 
@@ -355,10 +340,10 @@ LinearInterpolateMeshFunction<TInputMesh>
   // if the angle between V and any of v1,v2,v3 is
   // bigger or equal to pi/2.
   // inputPoint could never located within pt1,pt2,pt3
-  if( ( vv1 <= 0.0 ) || ( vv2 <= 0.0 ) || ( vv3 <= 0.0 ) )
-    {
+  if ( ( vv1 <= 0.0 ) || ( vv2 <= 0.0 ) || ( vv3 <= 0.0 ) )
+  {
     return false;
-    }
+  }
 
   PointType ppt1 = this->m_SphereCenter + ( v1 * ( vv / vv1 ) );
   PointType ppt2 = this->m_SphereCenter + ( v2 * ( vv / vv2 ) );
@@ -367,14 +352,13 @@ LinearInterpolateMeshFunction<TInputMesh>
   TriangleBasisSystemType triangleBasisSystem;
   TriangleBasisSystemType orthogonalBasisSytem;
 
-  this->m_TriangleBasisSystemCalculator->CalculateBasis(
-    ppt1, ppt2, ppt3, triangleBasisSystem, orthogonalBasisSytem );
+  this->m_TriangleBasisSystemCalculator->CalculateBasis( ppt1, ppt2, ppt3, triangleBasisSystem, orthogonalBasisSytem );
 
-  m_U12 = triangleBasisSystem.GetVector(0);
-  m_U32 = triangleBasisSystem.GetVector(1);
+  m_U12 = triangleBasisSystem.GetVector( 0 );
+  m_U32 = triangleBasisSystem.GetVector( 1 );
 
-  m_V12 = orthogonalBasisSytem.GetVector(0);
-  m_V32 = orthogonalBasisSytem.GetVector(1);
+  m_V12 = orthogonalBasisSytem.GetVector( 0 );
+  m_V32 = orthogonalBasisSytem.GetVector( 1 );
 
   //
   // Project inputPoint to plane, by using the dual vector base
@@ -423,11 +407,11 @@ LinearInterpolateMeshFunction<TInputMesh>
   // only three tests should be necessary. That is, we only need
   // to test against the equations of three lines (half-spaces).
   //
-  if( ( b1 >= zwe ) && ( b2 >= zwe ) && ( b3 >= zwe ) )
-    {
+  if ( ( b1 >= zwe ) && ( b2 >= zwe ) && ( b3 >= zwe ) )
+  {
     // The points is inside this triangle
     isInside = true;
-    }
+  }
 
   //
   // FIXME: It should now do also the chain rule with the Jacobian of how the
@@ -442,13 +426,12 @@ LinearInterpolateMeshFunction<TInputMesh>
  * Return interpolate weight values. This is provided as a convenience for
  * derived classes.
  */
-template <typename TInputMesh>
-const typename LinearInterpolateMeshFunction<TInputMesh>::RealType
-& LinearInterpolateMeshFunction<TInputMesh>
-::GetInterpolationWeight( unsigned int index ) const
-  {
+template < typename TInputMesh >
+const typename LinearInterpolateMeshFunction< TInputMesh >::RealType &
+LinearInterpolateMeshFunction< TInputMesh >::GetInterpolationWeight( unsigned int index ) const
+{
   return this->m_InterpolationWeights[index];
-  }
+}
 } // end namespace itk
 
 #endif

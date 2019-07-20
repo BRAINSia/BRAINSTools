@@ -28,24 +28,21 @@
 #include "vtkInteractorStyleImage.h"
 #include "vtkCommand.h"
 
-QImageViewerWidget::QImageViewerWidget(QWidget *parent) : QVTKWidget(parent),
-  m_ImageViewer(0)
+QImageViewerWidget::QImageViewerWidget( QWidget * parent )
+  : QVTKWidget( parent )
+  , m_ImageViewer( 0 )
 {
   this->m_ImageViewer = vtkImageViewer2::New();
-  this->SetRenderWindow(this->m_ImageViewer->GetRenderWindow() );
-  this->m_ImageViewer->SetupInteractor
-    (this->m_ImageViewer->GetRenderWindow()->GetInteractor() );
+  this->SetRenderWindow( this->m_ImageViewer->GetRenderWindow() );
+  this->m_ImageViewer->SetupInteractor( this->m_ImageViewer->GetRenderWindow()->GetInteractor() );
 }
 
-QImageViewerWidget::
-~QImageViewerWidget()
-{
-}
+QImageViewerWidget::~QImageViewerWidget() {}
 
 void
-QImageViewerWidget::SetSlice(int slice)
+QImageViewerWidget::SetSlice( int slice )
 {
-  this->m_ImageViewer->SetSlice(slice);
+  this->m_ImageViewer->SetSlice( slice );
 }
 
 void
@@ -73,29 +70,29 @@ QImageViewerWidget::GetRenderer()
 }
 
 void
-QImageViewerWidget::SetColorWindow(double s)
+QImageViewerWidget::SetColorWindow( double s )
 {
-  return this->m_ImageViewer->SetColorWindow(s);
+  return this->m_ImageViewer->SetColorWindow( s );
 }
 
 void
-QImageViewerWidget::SetColorLevel(double s)
+QImageViewerWidget::SetColorLevel( double s )
 {
-  return this->m_ImageViewer->SetColorLevel(s);
+  return this->m_ImageViewer->SetColorLevel( s );
 }
 
 void
-QImageViewerWidget::SetInput(vtkImageData *in)
+QImageViewerWidget::SetInput( vtkImageData * in )
 {
-  return this->m_ImageViewer->SetInput(in);
+  return this->m_ImageViewer->SetInput( in );
 }
 
 void
 QImageViewerWidget::SetSliceOrientationToXY()
 {
   this->m_ImageViewer->SetSliceOrientationToXY();
-  vtkCamera *cam = this->m_ImageViewer->GetRenderer()->GetActiveCamera();
-  cam->SetViewUp(0.0, -1.0, 0.0);
+  vtkCamera * cam = this->m_ImageViewer->GetRenderer()->GetActiveCamera();
+  cam->SetViewUp( 0.0, -1.0, 0.0 );
   this->m_ImageViewer->Render();
 }
 

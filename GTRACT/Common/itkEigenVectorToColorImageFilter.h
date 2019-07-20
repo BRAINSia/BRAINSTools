@@ -64,28 +64,28 @@ namespace itk
  */
 
 enum ENUM_TENSOR_SHAPE_TYPE
-  {
+{
   TERTIARY_EIGENVECTOR = 0,
   SECONDARY_EIGENVECTOR = 1,
   PRIMARY_EIGENVECTOR = 2,
   TENSOR_SHAPE = 3
-  };
+};
 using TensorShapeType = enum ENUM_TENSOR_SHAPE_TYPE;
 
 class EigenVectorToColorImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(EigenVectorToColorImageFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( EigenVectorToColorImageFilter );
 
   /** Standard class type alias. */
   using Self = EigenVectorToColorImageFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Some convenient type alias. */
-  using InputPixelType = itk::Vector<float, 6>;
-  using InputImageType = itk::Image<InputPixelType, 3>;
+  using InputPixelType = itk::Vector< float, 6 >;
+  using InputImageType = itk::Image< InputPixelType, 3 >;
   using InputImagePointer = InputImageType::Pointer;
   using InputImageConstPointer = InputImageType::ConstPointer;
   using InputImageRegionType = InputImageType::RegionType;
@@ -95,37 +95,36 @@ public:
   using InputImagePixelType = InputImageType::PixelType;
   using InputImageDirectionType = InputImageType::DirectionType;
 
-  using OutputPixelType = itk::RGBAPixel<unsigned char>;
-  using OutputImageType = itk::Image<OutputPixelType, 3>;
+  using OutputPixelType = itk::RGBAPixel< unsigned char >;
+  using OutputImageType = itk::Image< OutputPixelType, 3 >;
   using OutputImagePointer = OutputImageType::Pointer;
   using OutputImageRegionType = OutputImageType::RegionType;
 
 
-/** Standard New method. */
-  itkNewMacro(Self);
+  /** Standard New method. */
+  itkNewMacro( Self );
 
-/** Runtime information support. */
-  itkTypeMacro(EigenVectorToColorImageFilter, itk::Object);
+  /** Runtime information support. */
+  itkTypeMacro( EigenVectorToColorImageFilter, itk::Object );
 
-  itkSetObjectMacro(Input,  InputImageType);
-  itkGetConstObjectMacro(Output, OutputImageType);
-  itkSetMacro(TensorShapeType, TensorShapeType);
+  itkSetObjectMacro( Input, InputImageType );
+  itkGetConstObjectMacro( Output, OutputImageType );
+  itkSetMacro( TensorShapeType, TensorShapeType );
 
-  void Update();
+  void
+  Update();
 
 protected:
   EigenVectorToColorImageFilter();
-  ~EigenVectorToColorImageFilter() override
-  {
-  }
+  ~EigenVectorToColorImageFilter() override {}
 
 private:
-// Input and Output Image
+  // Input and Output Image
   InputImagePointer  m_Input;
   OutputImagePointer m_Output;
 
   TensorShapeType m_TensorShapeType;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #endif

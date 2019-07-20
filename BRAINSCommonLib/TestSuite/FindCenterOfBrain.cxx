@@ -34,111 +34,96 @@
 #include <FindCenterOfBrainCLP.h>
 #include "itkNumberToString.h"
 
-int main(int argc, char * *argv)
+int
+main( int argc, char ** argv )
 {
   PARSE_ARGS;
-  if( InputVolume == "" )
-    {
+  if ( InputVolume == "" )
+  {
     std::cerr << "FindCenterOfBrain: missing input image name" << std::endl;
     return 1;
-    }
-  using ImageType = itk::Image<unsigned char, 3>;
-  using FindCenterFilterType = itk::FindCenterOfBrainFilter<ImageType>;
+  }
+  using ImageType = itk::Image< unsigned char, 3 >;
+  using FindCenterFilterType = itk::FindCenterOfBrainFilter< ImageType >;
   using MaskImageType = FindCenterFilterType::MaskImageType;
 
-  ImageType::Pointer inputImage = itkUtil::ReadImage<ImageType>(InputVolume);
-  if( inputImage.IsNull() )
-    {
-    std::cerr << "FindCenterOfBrain: Can't read input image "
-              << InputVolume << std::endl;
+  ImageType::Pointer inputImage = itkUtil::ReadImage< ImageType >( InputVolume );
+  if ( inputImage.IsNull() )
+  {
+    std::cerr << "FindCenterOfBrain: Can't read input image " << InputVolume << std::endl;
     return 2;
-    }
+  }
 
   FindCenterFilterType::Pointer filter = FindCenterFilterType::New();
-  filter->SetInput(inputImage);
+  filter->SetInput( inputImage );
 
   MaskImageType::Pointer imageMask;
-  if( ImageMask != "" )
+  if ( ImageMask != "" )
+  {
+    imageMask = itkUtil::ReadImage< MaskImageType >( ImageMask );
+    if ( imageMask.IsNull() )
     {
-    imageMask = itkUtil::ReadImage<MaskImageType>(ImageMask);
-    if( imageMask.IsNull() )
-      {
-      std::cerr << "FindCenterOfBrain: Can't read mask "
-                << ImageMask << std::endl;
+      std::cerr << "FindCenterOfBrain: Can't read mask " << ImageMask << std::endl;
       return 3;
-      }
-    filter->SetImageMask(imageMask);
     }
-  filter->SetMaximize(Maximize);
-  filter->SetAxis(Axis);
-  filter->SetOtsuPercentileThreshold(OtsuPercentileThreshold);
-  filter->SetClosingSize(ClosingSize);
-  filter->SetHeadSizeLimit(HeadSizeLimit);
-  filter->SetHeadSizeEstimate(HeadSizeEstimate);
-  filter->SetBackgroundValue(BackgroundValue);
-  filter->SetGenerateDebugImages(GenerateDebugImages);
+    filter->SetImageMask( imageMask );
+  }
+  filter->SetMaximize( Maximize );
+  filter->SetAxis( Axis );
+  filter->SetOtsuPercentileThreshold( OtsuPercentileThreshold );
+  filter->SetClosingSize( ClosingSize );
+  filter->SetHeadSizeLimit( HeadSizeLimit );
+  filter->SetHeadSizeEstimate( HeadSizeEstimate );
+  filter->SetBackgroundValue( BackgroundValue );
+  filter->SetGenerateDebugImages( GenerateDebugImages );
   try
-    {
+  {
     filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
     return 4;
-    }
-  FindCenterFilterType::PointType center =
-    filter->GetCenterOfBrain();
-  itk::NumberToString<double> doubleConvert;
+  }
+  FindCenterFilterType::PointType center = filter->GetCenterOfBrain();
+  itk::NumberToString< double >   doubleConvert;
   std::cout << "Center Of Brain:"
-            << " " << doubleConvert(center[0])
-            << " " << doubleConvert(center[1])
-            << " " << doubleConvert(center[2])
-            << std::endl;
-  if( ClippedImageMask != "" )
-    {
-    MaskImageType::Pointer clippedMask =
-      const_cast<MaskImageType *>(filter->GetClippedImageMask() );
-    itkUtil::WriteImage<MaskImageType>(clippedMask,
-                                       ClippedImageMask);
-    }
-  if( !GenerateDebugImages )
-    {
+            << " " << doubleConvert( center[0] ) << " " << doubleConvert( center[1] ) << " "
+            << doubleConvert( center[2] ) << std::endl;
+  if ( ClippedImageMask != "" )
+  {
+    MaskImageType::Pointer clippedMask = const_cast< MaskImageType * >( filter->GetClippedImageMask() );
+    itkUtil::WriteImage< MaskImageType >( clippedMask, ClippedImageMask );
+  }
+  if ( !GenerateDebugImages )
+  {
     return 0;
-    }
-  if( DebugDistanceImage != "" )
-    {
-    FindCenterFilterType::DistanceImagePointer distImage =
-      filter->GetDebugDistanceImage();
-    itkUtil::WriteImage<FindCenterFilterType::DistanceImageType>(distImage,
-                                                                 DebugDistanceImage);
-    }
-  if( DebugGridImage != "" )
-    {
-    FindCenterFilterType::InputImagePointer gridImage =
-      filter->GetDebugGridImage();
-    itkUtil::WriteImage<ImageType>(gridImage, DebugGridImage);
-    }
-  if( DebugAfterGridComputationsForegroundImage != "" )
-    {
-    MaskImageType::Pointer afterImage =
-      filter->GetDebugAfterGridComputationsForegroundImage();
-    itkUtil::WriteImage<MaskImageType>(afterImage,
-                                       DebugAfterGridComputationsForegroundImage);
-    }
-  if( DebugClippedImageMask != "" )
-    {
-    MaskImageType::Pointer clippedMask =
-      filter->GetDebugClippedImageMask();
-    itkUtil::WriteImage<MaskImageType>(clippedMask,
-                                       DebugClippedImageMask);
-    }
-  if( DebugTrimmedImage != "" )
-    {
-    ImageType::Pointer trimmedImage =
-      filter->GetDebugTrimmedImage();
-    itkUtil::WriteImage<ImageType>(trimmedImage,
-                                   DebugTrimmedImage);
-    }
+  }
+  if ( DebugDistanceImage != "" )
+  {
+    FindCenterFilterType::DistanceImagePointer distImage = filter->GetDebugDistanceImage();
+    itkUtil::WriteImage< FindCenterFilterType::DistanceImageType >( distImage, DebugDistanceImage );
+  }
+  if ( DebugGridImage != "" )
+  {
+    FindCenterFilterType::InputImagePointer gridImage = filter->GetDebugGridImage();
+    itkUtil::WriteImage< ImageType >( gridImage, DebugGridImage );
+  }
+  if ( DebugAfterGridComputationsForegroundImage != "" )
+  {
+    MaskImageType::Pointer afterImage = filter->GetDebugAfterGridComputationsForegroundImage();
+    itkUtil::WriteImage< MaskImageType >( afterImage, DebugAfterGridComputationsForegroundImage );
+  }
+  if ( DebugClippedImageMask != "" )
+  {
+    MaskImageType::Pointer clippedMask = filter->GetDebugClippedImageMask();
+    itkUtil::WriteImage< MaskImageType >( clippedMask, DebugClippedImageMask );
+  }
+  if ( DebugTrimmedImage != "" )
+  {
+    ImageType::Pointer trimmedImage = filter->GetDebugTrimmedImage();
+    itkUtil::WriteImage< ImageType >( trimmedImage, DebugTrimmedImage );
+  }
   return EXIT_SUCCESS;
 }

@@ -33,54 +33,51 @@ namespace mu
 class Exception : public std::exception
 {
 public:
+  Exception() throw()
+    : m_Message( "" )
+  {}
 
-  Exception() throw ( ) :
-    m_Message("")
-  {
-  }
+  ~Exception() throw() {}
 
-  ~Exception()
-  throw ( )
-  {
-  }
-
-  void SetMessage(const char *s)
+  void
+  SetMessage( const char * s )
   {
     m_Message = s;
   }
 
-  void Print(std::ostream & os) const
+  void
+  Print( std::ostream & os ) const
   {
     os << m_Message << std::endl;
   }
 
-  const char * what() const throw ( ) override
+  const char *
+  what() const throw() override
   {
     return m_Message.c_str();
   }
 
 protected:
-
   std::string m_Message;
 };
 } // namespace mu
 
-inline std::ostream & operator<<(std::ostream & os, mu::Exception & e)
+inline std::ostream &
+operator<<( std::ostream & os, mu::Exception & e )
 {
-  ( &e )->Print(os);
+  ( &e )->Print( os );
   return os;
 }
 
-#define muExceptionMacro(x)                                             \
-    {                                                                     \
-    muLogMacro( << "mu::Exception, in " << __FILE__ << " line " << __LINE__; \
-                std::cerr << "\n" x << "\n");                           \
-    std::stringstream oss;                                              \
-    oss << "mu::Exception, in " << __FILE__ << " line " << __LINE__;    \
-    oss << "\n" x << std::ends;                                         \
-    mu::Exception e;                                                    \
-    e.SetMessage( oss.str().c_str() );                                  \
-    throw e;                                                            \
-    }
+#define muExceptionMacro( x )                                                                                          \
+  {                                                                                                                    \
+    muLogMacro( << "mu::Exception, in " << __FILE__ << " line " << __LINE__; std::cerr << "\n" x << "\n" );            \
+    std::stringstream oss;                                                                                             \
+    oss << "mu::Exception, in " << __FILE__ << " line " << __LINE__;                                                   \
+    oss << "\n" x << std::ends;                                                                                        \
+    mu::Exception e;                                                                                                   \
+    e.SetMessage( oss.str().c_str() );                                                                                 \
+    throw e;                                                                                                           \
+  }
 
 #endif

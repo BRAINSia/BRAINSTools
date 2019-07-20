@@ -55,41 +55,44 @@
 #include "vtkVersion.h"
 #include "itkMacro.h" //Needed for override
 
-#if (VTK_MAJOR_VERSION >= 6)
-#define VTK_GRAPHICS_EXPORT /* */
+#if ( VTK_MAJOR_VERSION >= 6 )
+#  define VTK_GRAPHICS_EXPORT /* */
 #endif
 
 class VTK_GRAPHICS_EXPORT vtkMaskLabel : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkMaskLabel * New();
+  static vtkMaskLabel *
+  New();
 
-  vtkTypeMacro(vtkMaskLabel, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro( vtkMaskLabel, vtkPolyDataAlgorithm );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
   // Description:
   // Specify the label value
-  vtkSetMacro(Label, int);
-  vtkGetMacro(Label, int);
+  vtkSetMacro( Label, int );
+  vtkGetMacro( Label, int );
 
   // Turn on MaskPoint to keep only the "Labeled" points
-  vtkSetMacro(LabelOnly, int);
-  vtkGetMacro(LabelOnly, int);
-  vtkBooleanMacro(LabelOnly, int);
+  vtkSetMacro( LabelOnly, int );
+  vtkGetMacro( LabelOnly, int );
+  vtkBooleanMacro( LabelOnly, int );
+
 protected:
   vtkMaskLabel();
-  ~vtkMaskLabel()
-  {
-  };
+  ~vtkMaskLabel(){};
 
-  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *) override;
+  int
+  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
 
   int Label; // the label value that decides which cell is going to be kept.
 
   int LabelOnly; // boolean turns on/off to keep labeled points only
 private:
-  vtkMaskLabel(const vtkMaskLabel &);   // Not implemented.
-  void operator=(const vtkMaskLabel &); // Not implemented.
+  vtkMaskLabel( const vtkMaskLabel & ); // Not implemented.
+  void
+  operator=( const vtkMaskLabel & ); // Not implemented.
 };
 
 #endif

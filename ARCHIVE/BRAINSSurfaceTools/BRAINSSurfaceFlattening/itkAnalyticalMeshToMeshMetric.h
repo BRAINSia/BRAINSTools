@@ -45,24 +45,23 @@ namespace itk
  *
  * \ingroup RegistrationMetrics
  */
-template <typename TFixedMesh, typename TMovingMesh>
-class AnalyticalMeshToMeshMetric :
-  public         MeshToMeshMetric<TFixedMesh, TMovingMesh>
+template < typename TFixedMesh, typename TMovingMesh >
+class AnalyticalMeshToMeshMetric : public MeshToMeshMetric< TFixedMesh, TMovingMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnalyticalMeshToMeshMetric);
+  ITK_DISALLOW_COPY_AND_ASSIGN( AnalyticalMeshToMeshMetric );
 
   /** Standard class type alias. */
   using Self = AnalyticalMeshToMeshMetric;
-  using Superclass = MeshToMeshMetric<TFixedMesh, TMovingMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = MeshToMeshMetric< TFixedMesh, TMovingMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(AnalyticalMeshToMeshMetric, MeshToMeshMetric);
+  itkTypeMacro( AnalyticalMeshToMeshMetric, MeshToMeshMetric );
 
   /** Types transferred from the base class */
   using TransformType = typename Superclass::TransformType;
@@ -91,27 +90,29 @@ public:
   static constexpr unsigned int FixedMeshDimension = Superclass::FixedMeshDimension;
 
   /** Get the derivatives of the match measure. */
-  void GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const;
+  void
+  GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const;
 
   /**  Get the value for single valued optimizers. */
-  MeasureType GetValue( const TransformParametersType & parameters ) const;
+  MeasureType
+  GetValue( const TransformParametersType & parameters ) const;
 
   /**  Get value and derivatives for multiple valued optimizers. */
-  void GetValueAndDerivative( const TransformParametersType & parameters, MeasureType& Value,
-                              DerivativeType& Derivative ) const;
+  void
+  GetValueAndDerivative( const TransformParametersType & parameters, MeasureType & Value,
+                         DerivativeType & Derivative ) const;
 
 protected:
   AnalyticalMeshToMeshMetric();
-  virtual ~AnalyticalMeshToMeshMetric()
-  {
-  };
+  virtual ~AnalyticalMeshToMeshMetric(){};
+
 private:
   mutable unsigned int m_NumberOfPixelsCounted;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkAnalyticalMeshToMeshMetric.hxx"
+#  include "itkAnalyticalMeshToMeshMetric.hxx"
 #endif
 
 #endif

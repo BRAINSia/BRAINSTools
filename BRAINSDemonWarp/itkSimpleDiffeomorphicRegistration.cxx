@@ -47,40 +47,40 @@ itkSimpleDiffeomorphicRegistration::itkSimpleDiffeomorphicRegistration()
 }
 
 /*
-  * void itkSimpleDiffeomorphicRegistration::SetDeformedImageName(std::string
-  * name) {
-  * m_DeformedImageName = name;
-  * }
-  */
+ * void itkSimpleDiffeomorphicRegistration::SetDeformedImageName(std::string
+ * name) {
+ * m_DeformedImageName = name;
+ * }
+ */
 /*
-  * std::string itkSimpleDiffeomorphicRegistration::GetDeformedImageName(void) {
-  * return m_DeformedImageName;
-  * }
-  */
+ * std::string itkSimpleDiffeomorphicRegistration::GetDeformedImageName(void) {
+ * return m_DeformedImageName;
+ * }
+ */
 
-void itkSimpleDiffeomorphicRegistration::InitializePreprocessor()
+void
+itkSimpleDiffeomorphicRegistration::InitializePreprocessor()
 {
-  m_DemonsPreprocessor->SetInputFixedImage(m_FixedImage);
-  m_DemonsPreprocessor->SetInputMovingImage(m_MovingImage);
-  m_DemonsPreprocessor->SetUseHistogramMatching(true);
-  m_DemonsPreprocessor->SetNumberOfHistogramLevels(NumberOfHistogramLevels);
-  m_DemonsPreprocessor->SetNumberOfMatchPoints(NumberOfMatchPoints);
+  m_DemonsPreprocessor->SetInputFixedImage( m_FixedImage );
+  m_DemonsPreprocessor->SetInputMovingImage( m_MovingImage );
+  m_DemonsPreprocessor->SetUseHistogramMatching( true );
+  m_DemonsPreprocessor->SetNumberOfHistogramLevels( NumberOfHistogramLevels );
+  m_DemonsPreprocessor->SetNumberOfMatchPoints( NumberOfMatchPoints );
 }
 
-void itkSimpleDiffeomorphicRegistration::Initialization()
+void
+itkSimpleDiffeomorphicRegistration::Initialization()
 {
-  using RegistrationFilterType = itk::DiffeomorphicDemonsRegistrationWithMaskFilter<TRealImage,
-                                                             TRealImage,
-                                                             TDisplacementField>;
+  using RegistrationFilterType =
+    itk::DiffeomorphicDemonsRegistrationWithMaskFilter< TRealImage, TRealImage, TDisplacementField >;
   RegistrationFilterType::Pointer filter = RegistrationFilterType::New();
-  using BaseRegistrationFilterType = itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-                                               TDisplacementField>;
+  using BaseRegistrationFilterType = itk::PDEDeformableRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
   BaseRegistrationFilterType::Pointer actualfilter;
   // using TGradientType = RegistrationFilterType::GradientType;
   TRealImage::Pointer movingBinaryVolumeImage;
   TRealImage::Pointer fixedBinaryVolumeImage;
-  constexpr double otsuPercentileThreshold = 0.01;
-  constexpr int closingSize = 7;
+  constexpr double    otsuPercentileThreshold = 0.01;
+  constexpr int       closingSize = 7;
   //   fixedBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
   //     m_FixedImage,
   //     otsuPercentileThreshold,
@@ -89,39 +89,39 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   //     m_MovingImage,
   //     otsuPercentileThreshold,
   //     closingSize);
-  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TRealImage>;
+  using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter< TRealImage >;
   LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
-  LFF->SetInput(m_FixedImage);
-  LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
-  LFF->SetClosingSize(closingSize);
+  LFF->SetInput( m_FixedImage );
+  LFF->SetOtsuPercentileThreshold( otsuPercentileThreshold );
+  LFF->SetClosingSize( closingSize );
   LFF->UpdateLargestPossibleRegion();
   fixedBinaryVolumeImage = LFF->GetOutput();
   //  LFF = LFFMaskFilterType::New();
-  LFF->SetInput(m_MovingImage);
-  LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
-  LFF->SetClosingSize(closingSize);
+  LFF->SetInput( m_MovingImage );
+  LFF->SetOtsuPercentileThreshold( otsuPercentileThreshold );
+  LFF->SetClosingSize( closingSize );
   LFF->UpdateLargestPossibleRegion();
   movingBinaryVolumeImage = LFF->GetOutput();
 
   using MaskPixelType = unsigned char;
-  using MaskImageType = itk::Image<MaskPixelType, DIM>;
-  using CastImageFilter = itk::CastImageFilter<TRealImage, MaskImageType>;
+  using MaskImageType = itk::Image< MaskPixelType, DIM >;
+  using CastImageFilter = itk::CastImageFilter< TRealImage, MaskImageType >;
 
-  using ImageMaskType = itk::SpatialObject<DIM>;
+  using ImageMaskType = itk::SpatialObject< DIM >;
   using ImageMaskPointer = ImageMaskType::Pointer;
 
   CastImageFilter::Pointer castFixedMaskImage = CastImageFilter::New();
-  castFixedMaskImage->SetInput(fixedBinaryVolumeImage);
+  castFixedMaskImage->SetInput( fixedBinaryVolumeImage );
   castFixedMaskImage->Update();
 
   // convert mask image to mask
-  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<DIM>;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject< DIM >;
   ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
   fixedMask->SetImage( castFixedMaskImage->GetOutput() );
   fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
   CastImageFilter::Pointer castMovingMaskImage = CastImageFilter::New();
-  castMovingMaskImage->SetInput(movingBinaryVolumeImage);
+  castMovingMaskImage->SetInput( movingBinaryVolumeImage );
   castMovingMaskImage->Update();
 
   // convert mask image to mask
@@ -130,83 +130,81 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   movingMask->SetImage( castMovingMaskImage->GetOutput() );
   movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
-  filter->SetFixedImageMask( dynamic_cast<ImageMaskType *>( fixedMask.GetPointer() ) );
-  filter->SetMovingImageMask( dynamic_cast<ImageMaskType *>( fixedMask.GetPointer() ) );
+  filter->SetFixedImageMask( dynamic_cast< ImageMaskType * >( fixedMask.GetPointer() ) );
+  filter->SetMovingImageMask( dynamic_cast< ImageMaskType * >( fixedMask.GetPointer() ) );
 
-  filter->SetMaximumUpdateStepLength(MaxStepLength);
+  filter->SetMaximumUpdateStepLength( MaxStepLength );
   //  filter->SetUseGradientType(static_cast<TGradientType> (0));
   filter->SmoothDisplacementFieldOn();
-  filter->SetStandardDeviations(SmoothDisplacementFieldSigma);
+  filter->SetStandardDeviations( SmoothDisplacementFieldSigma );
   filter->SmoothUpdateFieldOff();
   actualfilter = filter;
-  m_DemonsRegistrator->SetRegistrationFilter(actualfilter);
+  m_DemonsRegistrator->SetRegistrationFilter( actualfilter );
 
-  using IterationsArrayType = itk::Array<unsigned int>;
+  using IterationsArrayType = itk::Array< unsigned int >;
   IterationsArrayType numberOfIterations;
-  numberOfIterations.SetSize(NumberOfLevels);
-  numberOfIterations.SetElement(0, NumberOfIteration0);
-  numberOfIterations.SetElement(1, NumberOfIteration1);
-  numberOfIterations.SetElement(2, NumberOfIteration2);
-  numberOfIterations.SetElement(3, NumberOfIteration3);
-  numberOfIterations.SetElement(4, NumberOfIteration4);
+  numberOfIterations.SetSize( NumberOfLevels );
+  numberOfIterations.SetElement( 0, NumberOfIteration0 );
+  numberOfIterations.SetElement( 1, NumberOfIteration1 );
+  numberOfIterations.SetElement( 2, NumberOfIteration2 );
+  numberOfIterations.SetElement( 3, NumberOfIteration3 );
+  numberOfIterations.SetElement( 4, NumberOfIteration4 );
 
-  using ShrinkFactorsType = itk::FixedArray<unsigned int, 3>;
+  using ShrinkFactorsType = itk::FixedArray< unsigned int, 3 >;
   ShrinkFactorsType theMovingImageShrinkFactors;
   ShrinkFactorsType theFixedImageShrinkFactors;
-  for( int i = 0; i < 3; i++ )
-    {
+  for ( int i = 0; i < 3; i++ )
+  {
     theMovingImageShrinkFactors[i] = FixedPyramid;
     theFixedImageShrinkFactors[i] = FixedPyramid;
-    }
+  }
 
   m_DemonsRegistrator->SetFixedImage( m_DemonsPreprocessor->GetOutputFixedImage() );
-  m_DemonsRegistrator->SetMovingImage(
-    m_DemonsPreprocessor->GetOutputMovingImage() );
-  m_DemonsRegistrator->SetMovingImageShrinkFactors(theMovingImageShrinkFactors);
-  m_DemonsRegistrator->SetFixedImageShrinkFactors(theFixedImageShrinkFactors);
-  m_DemonsRegistrator->SetNumberOfLevels(NumberOfLevels);
-  m_DemonsRegistrator->SetNumberOfIterations(numberOfIterations);
+  m_DemonsRegistrator->SetMovingImage( m_DemonsPreprocessor->GetOutputMovingImage() );
+  m_DemonsRegistrator->SetMovingImageShrinkFactors( theMovingImageShrinkFactors );
+  m_DemonsRegistrator->SetFixedImageShrinkFactors( theFixedImageShrinkFactors );
+  m_DemonsRegistrator->SetNumberOfLevels( NumberOfLevels );
+  m_DemonsRegistrator->SetNumberOfIterations( numberOfIterations );
   m_DemonsRegistrator->SetWarpedImageName( this->GetDeformedImageName() );
   // m_DemonsRegistrator->SetDisplacementFieldOutputName(m_DisplacementFieldName);
-  m_DemonsRegistrator->SetUseHistogramMatching(true);
+  m_DemonsRegistrator->SetUseHistogramMatching( true );
 }
 
 // EXPORT
-void itkSimpleDiffeomorphicRegistration::Update()
+void
+itkSimpleDiffeomorphicRegistration::Update()
 {
   InitializePreprocessor();
   try
-    {
+  {
     m_DemonsPreprocessor->Execute();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
-    }
-  catch( ... )
-    {
+  }
+  catch ( ... )
+  {
     std::cout << "Error occured during preprocessing." << std::endl;
     throw;
-    }
+  }
   Initialization();
   try
-    {
+  {
     m_DemonsRegistrator->Execute();
-    }
-  catch( itk::ExceptionObject & err )
-    {
+  }
+  catch ( itk::ExceptionObject & err )
+  {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
-    }
-  catch( ... )
-    {
-    std::
-    cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
-         << std::endl;
-    }
+  }
+  catch ( ... )
+  {
+    std::cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__ << std::endl;
+  }
 
   m_DisplacementField = m_DemonsRegistrator->GetDisplacementField();
 }

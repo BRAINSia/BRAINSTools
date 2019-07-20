@@ -54,18 +54,17 @@
 #include <map>
 /** \class LLSBiasCorrector
  */
-template <typename TInputImage, typename TProbabilityImage>
+template < typename TInputImage, typename TProbabilityImage >
 class LLSBiasCorrector : public itk::Object
 {
 public:
-
   /** Standard class type alias. */
   using Self = LLSBiasCorrector;
-  using Pointer = itk::SmartPointer<Self>;
-  using ConstPointer = itk::SmartPointer<const Self>;
+  using Pointer = itk::SmartPointer< Self >;
+  using ConstPointer = itk::SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** The dimension of the image. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -79,10 +78,10 @@ public:
   using InputImageSizeType = typename TInputImage::SizeType;
   using InputImageSpacingType = typename TInputImage::SpacingType;
 
-  using InputImageVector = std::vector<InputImagePointer>;
-  using MapOfInputImageVectors = orderedmap<std::string,InputImageVector>;
+  using InputImageVector = std::vector< InputImagePointer >;
+  using MapOfInputImageVectors = orderedmap< std::string, InputImageVector >;
 
-  using ByteImageType = itk::Image<unsigned char, Self::ImageDimension>;
+  using ByteImageType = itk::Image< unsigned char, Self::ImageDimension >;
   using ByteImagePointer = typename ByteImageType::Pointer;
   using ByteImageIndexType = typename ByteImageType::IndexType;
   using ByteImageOffsetType = typename ByteImageType::OffsetType;
@@ -97,7 +96,7 @@ public:
   using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
   using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
 
-  using InternalImageType = itk::Image<float, 3>;
+  using InternalImageType = itk::Image< float, 3 >;
   using InternalImagePointer = InternalImageType::Pointer;
   using InternalImageIndexType = InternalImageType::IndexType;
   using InternalImagePixelType = InternalImageType::PixelType;
@@ -109,83 +108,93 @@ public:
 
   using ScalarType = double;
 
-  using MatrixType = vnl_matrix<ScalarType>;
-  using VectorType = vnl_vector<ScalarType>;
+  using MatrixType = vnl_matrix< ScalarType >;
+  using VectorType = vnl_vector< ScalarType >;
 
-  using MatrixInverseType = vnl_matrix_inverse<ScalarType>;
-  using MatrixQRType = vnl_qr<ScalarType>;
-  using MatrixSVDType = vnl_svd<ScalarType>;
+  using MatrixInverseType = vnl_matrix_inverse< ScalarType >;
+  using MatrixQRType = vnl_qr< ScalarType >;
+  using MatrixSVDType = vnl_svd< ScalarType >;
 
   // The maximum polynomial degree of the bias field estimate
-  void SetMaxDegree(unsigned int);
+  void
+  SetMaxDegree( unsigned int );
 
-  itkGetMacro(MaxDegree, unsigned int);
+  itkGetMacro( MaxDegree, unsigned int );
 
   // Spacing for determining voxels in LLS
-  void SetSampleSpacing(double s);
+  void
+  SetSampleSpacing( double s );
 
-  itkGetMacro(SampleSpacing, double);
+  itkGetMacro( SampleSpacing, double );
 
   // Spacing for determining which voxels need to be updated
   // if correction is not done at full resolution
-  itkSetMacro(WorkingSpacing, double);
-  itkGetMacro(WorkingSpacing, double);
+  itkSetMacro( WorkingSpacing, double );
+  itkGetMacro( WorkingSpacing, double );
 
   // Bias field max magnitude
   // itkSetMacro(MaximumBiasMagnitude, double);
   // itkGetMacro(MaximumBiasMagnitude, double);
 
-  void Initialize();
+  void
+  Initialize();
 
-  itkSetObjectMacro(AllTissueMask, ByteImageType);
-  itkGetConstObjectMacro(AllTissueMask, ByteImageType);
+  itkSetObjectMacro( AllTissueMask, ByteImageType );
+  itkGetConstObjectMacro( AllTissueMask, ByteImageType );
 
-  void SetForegroundBrainMask(ByteImageType *mask);
+  void
+  SetForegroundBrainMask( ByteImageType * mask );
 
-  void SetInputImages(MapOfInputImageVectors inputs)
+  void
+  SetInputImages( MapOfInputImageVectors inputs )
   {
     this->m_InputImages = inputs;
     this->Modified();
   }
 
-  void SetProbabilities(const std::vector<ProbabilityImagePointer> & probs,
-                        const std::vector<typename ByteImageType::Pointer> & candidateRegions);
+  void
+  SetProbabilities( const std::vector< ProbabilityImagePointer > &         probs,
+                    const std::vector< typename ByteImageType::Pointer > & candidateRegions );
 
-  void SetListOfClassStatistics(const std::vector<RegionStats> & regionStats);
-
-  // Set/Get the Debugging level for filter verboseness
-  itkSetMacro(DebugLevel, unsigned int);
-  itkGetMacro(DebugLevel, unsigned int);
+  void
+  SetListOfClassStatistics( const std::vector< RegionStats > & regionStats );
 
   // Set/Get the Debugging level for filter verboseness
-  itkSetMacro(OutputDebugDir, std::string);
-  itkGetMacro(OutputDebugDir, std::string);
+  itkSetMacro( DebugLevel, unsigned int );
+  itkGetMacro( DebugLevel, unsigned int );
+
+  // Set/Get the Debugging level for filter verboseness
+  itkSetMacro( OutputDebugDir, std::string );
+  itkGetMacro( OutputDebugDir, std::string );
   // Correct input images and write it to the designated output
   // fullRes flag selects whether to correct whole image or just grid points
   // defined by WorkingSpacing
-  MapOfInputImageVectors CorrectImages(const unsigned int CurrentIterationID);
+  MapOfInputImageVectors
+  CorrectImages( const unsigned int CurrentIterationID );
 
 protected:
-
   LLSBiasCorrector();
   ~LLSBiasCorrector();
 
-  void CheckInputs();
+  void
+  CheckInputs();
 
-  void ComputeDistributions();
+  void
+  ComputeDistributions();
 
 private:
-  InputImagePointer GetFirstInputImage()
-    {
-      return GetMapVectorFirstElement(this->m_InputImages);
-    }
+  InputImagePointer
+  GetFirstInputImage()
+  {
+    return GetMapVectorFirstElement( this->m_InputImages );
+  }
   MapOfInputImageVectors                   m_InputImages;
-  std::vector<ProbabilityImageIndexType> m_ValidIndicies;
-  ByteImagePointer                       m_ForegroundBrainMask;
-  ByteImagePointer                       m_AllTissueMask;
+  std::vector< ProbabilityImageIndexType > m_ValidIndicies;
+  ByteImagePointer                         m_ForegroundBrainMask;
+  ByteImagePointer                         m_AllTissueMask;
 
-  std::vector<ProbabilityImagePointer>         m_BiasPosteriors;
-  std::vector<typename ByteImageType::Pointer> m_CandidateRegions;
+  std::vector< ProbabilityImagePointer >         m_BiasPosteriors;
+  std::vector< typename ByteImageType::Pointer > m_CandidateRegions;
 
   unsigned int m_DebugLevel;
   std::string  m_OutputDebugDir;
@@ -197,8 +206,8 @@ private:
 
   // double m_MaximumBiasMagnitude;
 
-  std::vector<RegionStats> m_ListOfClassStatistics;
-  MatrixType               m_Basis;
+  std::vector< RegionStats > m_ListOfClassStatistics;
+  MatrixType                 m_Basis;
 
   // Coordinate scaling and offset, computed from input probabilities
   // for preconditioning the polynomial basis equations
@@ -207,7 +216,7 @@ private:
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "LLSBiasCorrector.hxx"
+#  include "LLSBiasCorrector.hxx"
 #endif
 
 #endif

@@ -41,25 +41,24 @@ class AtlasDefinition;
 /**
  * \class EMSegmentationFilter
  */
-template <typename TInputImage, typename TProbabilityImage>
+template < typename TInputImage, typename TProbabilityImage >
 class EMSegmentationFilter : public itk::ProcessObject
 {
 public:
-
   // Standard class type alias
   using Self = EMSegmentationFilter;
-  using Pointer = itk::SmartPointer<Self>;
-  using ConstPointer = itk::SmartPointer<const Self>;
+  using Pointer = itk::SmartPointer< Self >;
+  using ConstPointer = itk::SmartPointer< const Self >;
 
   // Method for creation through the object factory
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   // The dimension of the image we're working with
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   using CoordinateRepType = double;
 
-  using RangeDBType = orderedmap<std::string,  orderedmap<std::string, AtlasDefinition::BoundsType> >;
+  using RangeDBType = orderedmap< std::string, orderedmap< std::string, AtlasDefinition::BoundsType > >;
   // Image types
   using InputImageType = TInputImage;
   using InputImagePointer = typename TInputImage::Pointer;
@@ -70,10 +69,10 @@ public:
   using InputImageSizeType = typename TInputImage::SizeType;
   using InputImageSpacingType = typename TInputImage::SpacingType;
 
-  using BackgroundValueVector = std::vector<InputImagePixelType>;
+  using BackgroundValueVector = std::vector< InputImagePixelType >;
 
-  using InputImageVector = std::vector<InputImagePointer>;
-  using MapOfInputImageVectors = orderedmap<std::string, InputImageVector>;
+  using InputImageVector = std::vector< InputImagePointer >;
+  using MapOfInputImageVectors = orderedmap< std::string, InputImageVector >;
 
   using ByteImagePointer = typename ByteImageType::Pointer;
   using ByteImageIndexType = typename ByteImageType::IndexType;
@@ -81,9 +80,9 @@ public:
   using ByteImagePixelType = typename ByteImageType::PixelType;
   using ByteImageRegionType = typename ByteImageType::RegionType;
   using ByteImageSizeType = typename ByteImageType::SizeType;
-  using ByteImageVectorType = std::vector<ByteImagePointer>;
+  using ByteImageVectorType = std::vector< ByteImagePointer >;
 
-  using ShortImageType = itk::Image<short, Self::ImageDimension>;
+  using ShortImageType = itk::Image< short, Self::ImageDimension >;
   using ShortImagePointer = typename ShortImageType::Pointer;
   using ShortImageIndexType = typename ShortImageType::IndexType;
   using ShortImageOffsetType = typename ShortImageType::OffsetType;
@@ -99,18 +98,18 @@ public:
   using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
   using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
   using ProbabilityImageSpacingType = typename ProbabilityImageType::SpacingType;
-  using ProbabilityImageVectorType = std::vector<ProbabilityImagePointer>;
+  using ProbabilityImageVectorType = std::vector< ProbabilityImagePointer >;
 
-  using VectorType = vnl_vector<FloatingPrecision>;
-  using IntVectorType = vnl_vector<unsigned int>;
-  using BoolVectorType = std::vector<bool>;
-  using MatrixType = vnl_matrix<FloatingPrecision>;
-  using MatrixInverseType = vnl_matrix_inverse<FloatingPrecision>;
+  using VectorType = vnl_vector< FloatingPrecision >;
+  using IntVectorType = vnl_vector< unsigned int >;
+  using BoolVectorType = std::vector< bool >;
+  using MatrixType = vnl_matrix< FloatingPrecision >;
+  using MatrixInverseType = vnl_matrix_inverse< FloatingPrecision >;
 
-  using BSplineTransformType = itk::BSplineTransform<CoordinateRepType, 3, 3 >;
+  using BSplineTransformType = itk::BSplineTransform< CoordinateRepType, 3, 3 >;
   using BSplineTransformPointer = BSplineTransformType::Pointer;
 
-  using GenericTransformType = itk::Transform<double, 3, 3>;
+  using GenericTransformType = itk::Transform< double, 3, 3 >;
 
   using MeasurementVectorType = itk::Array< FloatingPrecision >;
   using SampleType = itk::Statistics::ListSample< MeasurementVectorType >;
@@ -118,118 +117,140 @@ public:
   using InputImageNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< InputImageType, double >;
   using MaskNNInterpolationType = itk::NearestNeighborInterpolateImageFunction< ByteImageType, double >;
 
-  using InputImageInterpolatorVector = std::vector<typename InputImageNNInterpolationType::Pointer>;
-  using MapOfInputImageInterpolatorVectors = orderedmap<std::string, InputImageInterpolatorVector>;
+  using InputImageInterpolatorVector = std::vector< typename InputImageNNInterpolationType::Pointer >;
+  using MapOfInputImageInterpolatorVectors = orderedmap< std::string, InputImageInterpolatorVector >;
 
-  itkSetMacro(UseKNN, bool);
-  itkGetMacro(UseKNN, bool);
+  itkSetMacro( UseKNN, bool );
+  itkGetMacro( UseKNN, bool );
 
-  itkSetMacro(UsePurePlugs, bool);
-  itkGetMacro(UsePurePlugs, bool);
+  itkSetMacro( UsePurePlugs, bool );
+  itkGetMacro( UsePurePlugs, bool );
 
-  itkSetMacro(PurePlugsThreshold, float);
-  itkGetMacro(PurePlugsThreshold, float);
+  itkSetMacro( PurePlugsThreshold, float );
+  itkGetMacro( PurePlugsThreshold, float );
 
-  void SetNumberOfSubSamplesInEachPlugArea(unsigned int nx, unsigned int ny, unsigned int nz)
-    {
+  void
+  SetNumberOfSubSamplesInEachPlugArea( unsigned int nx, unsigned int ny, unsigned int nz )
+  {
     m_NumberOfSubSamplesInEachPlugArea[0] = nx;
     m_NumberOfSubSamplesInEachPlugArea[1] = ny;
     m_NumberOfSubSamplesInEachPlugArea[2] = nz;
     this->Modified();
-    }
+  }
 
   // Set/Get the maximum polynomial degree of the bias field estimate
-  itkSetMacro(MaxBiasDegree, unsigned int);
-  itkGetMacro(MaxBiasDegree, unsigned int);
+  itkSetMacro( MaxBiasDegree, unsigned int );
+  itkGetMacro( MaxBiasDegree, unsigned int );
   //
   // Set/Get the Debugging level for filter verboseness
-  itkSetMacro(DebugLevel, unsigned int);
-  itkGetMacro(DebugLevel, unsigned int);
+  itkSetMacro( DebugLevel, unsigned int );
+  itkGetMacro( DebugLevel, unsigned int );
 
-  itkSetMacro(BiasLikelihoodTolerance, FloatingPrecision);
-  itkGetMacro(BiasLikelihoodTolerance, FloatingPrecision);
+  itkSetMacro( BiasLikelihoodTolerance, FloatingPrecision );
+  itkGetMacro( BiasLikelihoodTolerance, FloatingPrecision );
 
-  itkSetMacro(OutputDebugDir, std::string);
-  itkGetMacro(OutputDebugDir, std::string);
+  itkSetMacro( OutputDebugDir, std::string );
+  itkGetMacro( OutputDebugDir, std::string );
 
-  itkSetMacro(LikelihoodTolerance, FloatingPrecision);
-  itkGetMacro(LikelihoodTolerance, FloatingPrecision);
+  itkSetMacro( LikelihoodTolerance, FloatingPrecision );
+  itkGetMacro( LikelihoodTolerance, FloatingPrecision );
 
-  itkSetMacro(MaximumIterations, unsigned int);
-  itkGetMacro(MaximumIterations, unsigned int);
+  itkSetMacro( MaximumIterations, unsigned int );
+  itkGetMacro( MaximumIterations, unsigned int );
 
-  itkSetMacro(SampleSpacing, FloatingPrecision);
-  itkGetMacro(SampleSpacing, FloatingPrecision);
+  itkSetMacro( SampleSpacing, FloatingPrecision );
+  itkGetMacro( SampleSpacing, FloatingPrecision );
 
-  void SetInputImages(const MapOfInputImageVectors newInputImages);
+  void
+  SetInputImages( const MapOfInputImageVectors newInputImages );
 
-  void SetRawInputImages(const MapOfInputImageVectors newInputImages);
+  void
+  SetRawInputImages( const MapOfInputImageVectors newInputImages );
 
-  void SetOriginalAtlasImages(const MapOfInputImageVectors newTemplateImages);
+  void
+  SetOriginalAtlasImages( const MapOfInputImageVectors newTemplateImages );
 
   //
   //  itkGetMacro(WarpedAtlasImages,std::vector<InputImagePointer>);
-  MapOfInputImageVectors GenerateWarpedAtlasImages(void);
+  MapOfInputImageVectors
+  GenerateWarpedAtlasImages( void );
 
-  itkSetMacro(TemplateBrainMask, ByteImagePointer);
-  itkGetMacro(TemplateBrainMask, ByteImagePointer);
+  itkSetMacro( TemplateBrainMask, ByteImagePointer );
+  itkGetMacro( TemplateBrainMask, ByteImagePointer );
 
-  void SetPriors(ProbabilityImageVectorType probs);
+  void
+  SetPriors( ProbabilityImageVectorType probs );
 
-  void SetPriorWeights(VectorType w);
+  void
+  SetPriorWeights( VectorType w );
 
-  IntVectorType GetPriorLabelCodeVector( void ) const
-    {
-      return m_PriorLabelCodeVector;
-    }
+  IntVectorType
+  GetPriorLabelCodeVector( void ) const
+  {
+    return m_PriorLabelCodeVector;
+  }
 
-  void SetPriorLabelCodeVector(IntVectorType n);
+  void
+  SetPriorLabelCodeVector( IntVectorType n );
 
-  BoolVectorType GetPriorUseForBiasVector( void ) const
-    {
-      return m_PriorUseForBiasVector;
-    }
+  BoolVectorType
+  GetPriorUseForBiasVector( void ) const
+  {
+    return m_PriorUseForBiasVector;
+  }
 
-  void SetPriorUseForBiasVector(const BoolVectorType& n);
+  void
+  SetPriorUseForBiasVector( const BoolVectorType & n );
 
-  BoolVectorType GetPriorIsForegroundPriorVector( void ) const
-    {
-      return m_PriorIsForegroundPriorVector;
-    }
+  BoolVectorType
+  GetPriorIsForegroundPriorVector( void ) const
+  {
+    return m_PriorIsForegroundPriorVector;
+  }
 
-  void SetPriorIsForegroundPriorVector(const BoolVectorType& n);
+  void
+  SetPriorIsForegroundPriorVector( const BoolVectorType & n );
 
-  void SetPriorNames(const std::vector<std::string> & newPriorNames)
-    {
-      this->m_PriorNames = newPriorNames;
-    }
+  void
+  SetPriorNames( const std::vector< std::string > & newPriorNames )
+  {
+    this->m_PriorNames = newPriorNames;
+  }
 
-  std::vector<std::string> GetPriorNames(void) const
-    {
-      return this->m_PriorNames;
-    }
+  std::vector< std::string >
+  GetPriorNames( void ) const
+  {
+    return this->m_PriorNames;
+  }
 
-  ByteImagePointer GetOutput(void);
+  ByteImagePointer
+  GetOutput( void );
 
-  ByteImagePointer GetCleanedOutput(void);
+  ByteImagePointer
+  GetCleanedOutput( void );
 
-  ByteImagePointer GetThresholdedOutput(void);
+  ByteImagePointer
+  GetThresholdedOutput( void );
 
-  ProbabilityImageVectorType GetPosteriors();
+  ProbabilityImageVectorType
+  GetPosteriors();
 
-  MapOfInputImageVectors GetCorrected();
+  MapOfInputImageVectors
+  GetCorrected();
 
-  MapOfInputImageVectors  GetRawCorrected();
+  MapOfInputImageVectors
+  GetRawCorrected();
 
-  void Update() override;
+  void
+  Update() override;
 
-  itkGetMacro(AtlasTransformType, std::string);
-  itkSetMacro(AtlasTransformType, std::string);
+  itkGetMacro( AtlasTransformType, std::string );
+  itkSetMacro( AtlasTransformType, std::string );
 
   // Standard ITK style get/set macros for DoWarp
-  itkGetMacro(UpdateTransformation, bool);
-  itkSetMacro(UpdateTransformation, bool);
-  itkBooleanMacro(UpdateTransformation);
+  itkGetMacro( UpdateTransformation, bool );
+  itkSetMacro( UpdateTransformation, bool );
+  itkBooleanMacro( UpdateTransformation );
 
   /*  For backwards compatibility */
   /*
@@ -237,171 +258,175 @@ public:
   void WarpingOff() { this->SetDoWarp(false); }
   */
 
-  itkGetMacro(TemplateGenericTransform, GenericTransformType::Pointer);
-  itkSetMacro(TemplateGenericTransform, GenericTransformType::Pointer);
+  itkGetMacro( TemplateGenericTransform, GenericTransformType::Pointer );
+  itkSetMacro( TemplateGenericTransform, GenericTransformType::Pointer );
 
   /**
    * Set the index of the background region
    */
-  itkGetMacro(AirIndex, LOOPITERTYPE);
-  itkSetMacro(AirIndex, LOOPITERTYPE);
-
-  void SetWarpGrid(unsigned int gx, unsigned int gy, unsigned int gz)
-    {
-      m_WarpGrid[0] = gx;
-      m_WarpGrid[1] = gy;
-      m_WarpGrid[2] = gz;
-      this->Modified();
-    }
-
-  void SetTissueTypeThresholdMapsRange(const RangeDBType & newRangeDB)
-    {
-      this->m_TissueTypeThresholdMapsRange = newRangeDB;
-      this->Modified();
-    }
-
-protected:
-
-  EMSegmentationFilter(void);
-  ~EMSegmentationFilter(void);
-
-  void CheckInput(void);
-
-  FloatingPrecision ComputeLogLikelihood(void) const;
-
-  void EMLoop(void);
-
-  void UpdateTransformation(const unsigned int CurrentEMIteration);
-
-  ByteImageVectorType
-  UpdateIntensityBasedClippingOfPriors(const unsigned int CurrentEMIteration,
-                                       const MapOfInputImageVectors  &intensityList,
-                                       const ProbabilityImageVectorType &WarpedPriorsList,
-                                       ByteImagePointer &NonAirRegion);
-
-  ByteImageVectorType ForceToOne(ProbabilityImageVectorType &WarpedPriorsList);
-private:
-
-  void WritePartitionTable(const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugLabels(const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugHeadRegion(const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugPosteriors(const unsigned int CurrentEMIteration,
-                            const std::string ClassifierID,
-                            const ProbabilityImageVectorType & Posteriors) const;
-
-  void WriteDebugBlendClippedPriors(const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugWarpedAtlasPriors(const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugWarpedAtlasImages(const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugForegroundMask(const ByteImageType::Pointer & currForegroundMask,
-                                const unsigned int CurrentEMIteration) const;
-
-  void WriteDebugCorrectedImages(const MapOfInputImageVectors & correctImageList,
-                                 const unsigned int CurrentEMIteration ) const;
-
-  unsigned int ComputePriorLookupTable(void);
-
-  void InitializePosteriors(void);
+  itkGetMacro( AirIndex, LOOPITERTYPE );
+  itkSetMacro( AirIndex, LOOPITERTYPE );
 
   void
-  kNNCore( SampleType * trainMatrix,
-           const vnl_vector<FloatingPrecision> & labelVector,
-           const vnl_matrix<FloatingPrecision> & testMatrix,
-           vnl_matrix<FloatingPrecision> & liklihoodMatrix,
+  SetWarpGrid( unsigned int gx, unsigned int gy, unsigned int gz )
+  {
+    m_WarpGrid[0] = gx;
+    m_WarpGrid[1] = gy;
+    m_WarpGrid[2] = gz;
+    this->Modified();
+  }
+
+  void
+  SetTissueTypeThresholdMapsRange( const RangeDBType & newRangeDB )
+  {
+    this->m_TissueTypeThresholdMapsRange = newRangeDB;
+    this->Modified();
+  }
+
+protected:
+  EMSegmentationFilter( void );
+  ~EMSegmentationFilter( void );
+
+  void
+  CheckInput( void );
+
+  FloatingPrecision
+  ComputeLogLikelihood( void ) const;
+
+  void
+  EMLoop( void );
+
+  void
+  UpdateTransformation( const unsigned int CurrentEMIteration );
+
+  ByteImageVectorType
+  UpdateIntensityBasedClippingOfPriors( const unsigned int                 CurrentEMIteration,
+                                        const MapOfInputImageVectors &     intensityList,
+                                        const ProbabilityImageVectorType & WarpedPriorsList,
+                                        ByteImagePointer &                 NonAirRegion );
+
+  ByteImageVectorType
+  ForceToOne( ProbabilityImageVectorType & WarpedPriorsList );
+
+private:
+  void
+  WritePartitionTable( const unsigned int CurrentEMIteration ) const;
+
+  void
+  WriteDebugLabels( const unsigned int CurrentEMIteration ) const;
+
+  void
+  WriteDebugHeadRegion( const unsigned int CurrentEMIteration ) const;
+
+  void
+  WriteDebugPosteriors( const unsigned int CurrentEMIteration, const std::string ClassifierID,
+                        const ProbabilityImageVectorType & Posteriors ) const;
+
+  void
+  WriteDebugBlendClippedPriors( const unsigned int CurrentEMIteration ) const;
+
+  void
+  WriteDebugWarpedAtlasPriors( const unsigned int CurrentEMIteration ) const;
+
+  void
+  WriteDebugWarpedAtlasImages( const unsigned int CurrentEMIteration ) const;
+
+  void
+  WriteDebugForegroundMask( const ByteImageType::Pointer & currForegroundMask,
+                            const unsigned int             CurrentEMIteration ) const;
+
+  void
+  WriteDebugCorrectedImages( const MapOfInputImageVectors & correctImageList,
+                             const unsigned int             CurrentEMIteration ) const;
+
+  unsigned int
+  ComputePriorLookupTable( void );
+
+  void
+  InitializePosteriors( void );
+
+  void
+  kNNCore( SampleType * trainMatrix, const vnl_vector< FloatingPrecision > & labelVector,
+           const vnl_matrix< FloatingPrecision > & testMatrix, vnl_matrix< FloatingPrecision > & liklihoodMatrix,
            unsigned int K );
 
   typename TProbabilityImage::Pointer
-  assignVectorToImage(const typename TProbabilityImage::Pointer prior,
-                      const vnl_vector<FloatingPrecision> & vector);
+  assignVectorToImage( const typename TProbabilityImage::Pointer prior,
+                       const vnl_vector< FloatingPrecision > &   vector );
 
-  std::vector<typename TProbabilityImage::Pointer>
-  ComputekNNPosteriors(const ProbabilityImageVectorType & Priors,
-                        const MapOfInputImageVectors & IntensityImages,
-                        ByteImagePointer & CleanedLabels,
-                        const IntVectorType & labelClasses,
-                        const std::vector<bool> & priorIsForegroundPriorVector);
+  std::vector< typename TProbabilityImage::Pointer >
+  ComputekNNPosteriors( const ProbabilityImageVectorType & Priors, const MapOfInputImageVectors & IntensityImages,
+                        ByteImagePointer & CleanedLabels, const IntVectorType & labelClasses,
+                        const std::vector< bool > & priorIsForegroundPriorVector );
 
   typename TProbabilityImage::Pointer
-  ComputeOnePosterior(const FloatingPrecision priorScale,
-                      const typename TProbabilityImage::Pointer prior,
-                      const vnl_matrix<FloatingPrecision> currCovariance,
-                      typename RegionStats::MeanMapType &currMeans,
-                      const MapOfInputImageVectors & intensityImages);
+  ComputeOnePosterior( const FloatingPrecision priorScale, const typename TProbabilityImage::Pointer prior,
+                       const vnl_matrix< FloatingPrecision > currCovariance,
+                       typename RegionStats::MeanMapType & currMeans, const MapOfInputImageVectors & intensityImages );
 
-  std::vector<typename TProbabilityImage::Pointer>
-  ComputeEMPosteriors(const std::vector<typename TProbabilityImage::Pointer> & Priors,
-                      const vnl_vector<FloatingPrecision> & PriorWeights,
-                      const MapOfInputImageVectors & IntensityImages,
-                      std::vector<RegionStats> & ListOfClassStatistics);
+  std::vector< typename TProbabilityImage::Pointer >
+  ComputeEMPosteriors( const std::vector< typename TProbabilityImage::Pointer > & Priors,
+                       const vnl_vector< FloatingPrecision > &                    PriorWeights,
+                       const MapOfInputImageVectors &                             IntensityImages,
+                       std::vector< RegionStats > &                               ListOfClassStatistics );
 
-  std::vector<typename TProbabilityImage::Pointer>
-  ComputePosteriors(const std::vector<typename TProbabilityImage::Pointer> & Priors,
-                    const vnl_vector<FloatingPrecision> & PriorWeights,
-                    const MapOfInputImageVectors & IntensityImages,
-                    std::vector<RegionStats> & ListOfClassStatistics,
-                    const IntVectorType & priorLabelCodeVector,
-                    std::vector<bool> & priorIsForegroundPriorVector,
-                    typename ByteImageType::Pointer & nonAirRegion,
-                    const unsigned int IterationID);
+  std::vector< typename TProbabilityImage::Pointer >
+  ComputePosteriors( const std::vector< typename TProbabilityImage::Pointer > & Priors,
+                     const vnl_vector< FloatingPrecision > &                    PriorWeights,
+                     const MapOfInputImageVectors & IntensityImages, std::vector< RegionStats > & ListOfClassStatistics,
+                     const IntVectorType & priorLabelCodeVector, std::vector< bool > & priorIsForegroundPriorVector,
+                     typename ByteImageType::Pointer & nonAirRegion, const unsigned int IterationID );
 
-  std::vector<RegionStats> ComputeDistributions(const ByteImageVectorType &SubjectCandidateRegions,
-                                                const ProbabilityImageVectorType &probAllDistributions);
+  std::vector< RegionStats >
+  ComputeDistributions( const ByteImageVectorType &        SubjectCandidateRegions,
+                        const ProbabilityImageVectorType & probAllDistributions );
 
-  void BlendPosteriorsAndPriors(const double blendPosteriorPercentage,
-                                const ProbabilityImageVectorType & ProbList1,
-                                const ProbabilityImageVectorType & ProbList2,
-                                ProbabilityImageVectorType & ReturnBlendedProbList);
+  void
+  BlendPosteriorsAndPriors( const double blendPosteriorPercentage, const ProbabilityImageVectorType & ProbList1,
+                            const ProbabilityImageVectorType & ProbList2,
+                            ProbabilityImageVectorType &       ReturnBlendedProbList );
 
-  void CheckLoopAgainstFilterOutput(ByteImagePointer &loopImg, ByteImagePointer & filterImg);
+  void
+  CheckLoopAgainstFilterOutput( ByteImagePointer & loopImg, ByteImagePointer & filterImg );
 
-  ProbabilityImageVectorType  WarpImageList(ProbabilityImageVectorType& originalList,
-                                            const typename TInputImage::Pointer referenceOutput,
-                                            const BackgroundValueVector & backgroundValues,
-                                            const GenericTransformType::Pointer warpTransform);
-  MapOfInputImageVectors WarpImageList(MapOfInputImageVectors &originalList,
-                                     const InputImagePointer referenceOutput,
-                                     const GenericTransformType::Pointer warpTransform);
-   // External Templates to improve compilation times.
+  ProbabilityImageVectorType
+  WarpImageList( ProbabilityImageVectorType & originalList, const typename TInputImage::Pointer referenceOutput,
+                 const BackgroundValueVector & backgroundValues, const GenericTransformType::Pointer warpTransform );
   MapOfInputImageVectors
-  CorrectBias(const unsigned int degree,
-              const unsigned int CurrentEMIteration,
-              const ByteImageVectorType & CandidateRegions,
-              MapOfInputImageVectors & inputImages,
-              const ByteImageType::Pointer currentBrainMask,
-              const ByteImageType::Pointer currentForegroundMask,
-              const ProbabilityImageVectorType & probImages,
-              const BoolVectorType & probUseForBias,
-              const FloatingPrecision sampleSpacing,
-              const int DebugLevel,
-              const std::string& OutputDebugDir);
+  WarpImageList( MapOfInputImageVectors & originalList, const InputImagePointer referenceOutput,
+                 const GenericTransformType::Pointer warpTransform );
+  // External Templates to improve compilation times.
+  MapOfInputImageVectors
+  CorrectBias( const unsigned int degree, const unsigned int CurrentEMIteration,
+               const ByteImageVectorType & CandidateRegions, MapOfInputImageVectors & inputImages,
+               const ByteImageType::Pointer currentBrainMask, const ByteImageType::Pointer currentForegroundMask,
+               const ProbabilityImageVectorType & probImages, const BoolVectorType & probUseForBias,
+               const FloatingPrecision sampleSpacing, const int DebugLevel, const std::string & OutputDebugDir );
 
-  InputImagePointer GetFirstInputImage()
+  InputImagePointer
+  GetFirstInputImage()
+  {
+    return GetMapVectorFirstElement( this->m_InputImages );
+  }
+  InputImagePointer
+  GetFirstOriginalAtlasImage()
+  {
+    return GetMapVectorFirstElement( this->m_OriginalAtlasImages );
+  }
+  template < typename TMap >
+  unsigned long
+  MapofListsSize( const TMap & theMap )
+  {
+    unsigned long count = 0;
+    for ( typename TMap::iterator mapIt = theMap.begin(); mapIt != theMap.end(); ++mapIt )
     {
-      return GetMapVectorFirstElement(this->m_InputImages);
+      for ( typename TMap::mapped_type::iterator it = mapIt->second.begin(); it != mapIt->second.end(); ++it )
+      {
+        ++count;
+      }
     }
-  InputImagePointer GetFirstOriginalAtlasImage()
-    {
-      return GetMapVectorFirstElement(this->m_OriginalAtlasImages);
-    }
-  template <typename TMap>
-  unsigned long MapofListsSize(const TMap &theMap)
-    {
-      unsigned long count = 0;
-      for(typename TMap::iterator mapIt = theMap.begin(); mapIt != theMap.end(); ++mapIt)
-        {
-        for(typename TMap::mapped_type::iterator it = mapIt->second.begin();
-            it != mapIt->second.end(); ++it)
-          {
-          ++count;
-          }
-        }
-      return count;
-    }
+    return count;
+  }
 
   ProbabilityImageVectorType m_WarpedPriors;
   ProbabilityImageVectorType m_OriginalSpacePriors;
@@ -417,7 +442,7 @@ private:
   MapOfInputImageVectors m_OriginalAtlasImages;
   MapOfInputImageVectors m_WarpedAtlasImages;
 
-  ByteImagePointer           m_TemplateBrainMask;
+  ByteImagePointer m_TemplateBrainMask;
 
   // final output
   ByteImagePointer m_DirtyLabels;
@@ -452,14 +477,14 @@ private:
 
   std::string m_OutputDebugDir;
 
-  std::vector<RegionStats> m_ListOfClassStatistics;
+  std::vector< RegionStats > m_ListOfClassStatistics;
 
-  bool              m_UseKNN;
+  bool m_UseKNN;
 
-  bool              m_UsePurePlugs;
-  float             m_PurePlugsThreshold;
-  unsigned int      m_NumberOfSubSamplesInEachPlugArea[3];
-  ByteImagePointer  m_PurePlugsMask;
+  bool             m_UsePurePlugs;
+  float            m_PurePlugsThreshold;
+  unsigned int     m_NumberOfSubSamplesInEachPlugArea[3];
+  ByteImagePointer m_PurePlugsMask;
 
   bool         m_UpdateTransformation;
   unsigned int m_DebugLevel;
@@ -470,14 +495,14 @@ private:
   FloatingPrecision m_WarpLikelihoodTolerance;
   bool              m_UpdateRequired;
 
-  std::vector<std::string> m_PriorNames;
-  std::vector<size_t>      m_ClassToPriorMapping;
-  RangeDBType              m_TissueTypeThresholdMapsRange;
-  LOOPITERTYPE             m_AirIndex;
+  std::vector< std::string > m_PriorNames;
+  std::vector< size_t >      m_ClassToPriorMapping;
+  RangeDBType                m_TissueTypeThresholdMapsRange;
+  LOOPITERTYPE               m_AirIndex;
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "EMSegmentationFilter.hxx"
+#  include "EMSegmentationFilter.hxx"
 #endif
 
 #endif

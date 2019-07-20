@@ -19,13 +19,14 @@
 /** Authors: Marius Staring and Stefan Klein **/
 #include "castconverthelpers.h"
 
-int DicomFileConverterScalar( const std::string & inputPixelComponentType,
-                              const std::string & outputPixelComponentType, const std::string & inputDirectoryName,
-                              const std::string & outputFileName, int inputDimension )
+int
+DicomFileConverterScalar( const std::string & inputPixelComponentType, const std::string & outputPixelComponentType,
+                          const std::string & inputDirectoryName, const std::string & outputFileName,
+                          int inputDimension )
 {
   /** Support for 3D images. */
-  if( inputDimension == 3 )
-    {
+  if ( inputDimension == 3 )
+  {
     /** From unsigned char to something else. */
     callCorrectReadDicomWriterMacro( unsigned char, unsigned char );
     callCorrectReadDicomWriterMacro( unsigned char, char );
@@ -85,13 +86,13 @@ int DicomFileConverterScalar( const std::string & inputPixelComponentType,
     callCorrectReadDicomWriterMacro( unsigned int, long );
     callCorrectReadDicomWriterMacro( unsigned int, float );
     callCorrectReadDicomWriterMacro( unsigned int, double );
-    }
+  }
   else
-    {
+  {
     std::cerr << "Dimension equals " << inputDimension << ", which is not supported." << std::endl;
     std::cerr << "Only 3D images are supported." << std::endl;
     return 1;
-    } // end if over inputDimension
+  } // end if over inputDimension
 
   /** Return a value. */
   return 0;

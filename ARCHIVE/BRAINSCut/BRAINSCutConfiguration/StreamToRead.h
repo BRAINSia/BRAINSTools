@@ -25,26 +25,30 @@
 
 using FileStreamType = std::fstream;
 
-class StreamToRead :
-  public FileToRead<FileStreamType *>
+class StreamToRead : public FileToRead< FileStreamType * >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(StreamToRead);
+  ITK_DISALLOW_COPY_AND_ASSIGN( StreamToRead );
 
   using Self = StreamToRead;
-  using Superclass = FileToRead<std::fstream *>;
+  using Superclass = FileToRead< std::fstream * >;
   using OutputType = Superclass::OutputType;
 
-  OutputType GetValue() const override;
+  OutputType
+  GetValue() const override;
 
-  void Close() override;
+  void
+  Close() override;
 
-  int PrintSelf(std::ostream & os, int indent) const override;
+  int
+  PrintSelf( std::ostream & os, int indent ) const override;
 
-  StreamToRead(const std::string & name, const std::string & filename);
+  StreamToRead( const std::string & name, const std::string & filename );
   ~StreamToRead() override;
+
 protected:
   StreamToRead() ITK_DELETED_FUNCTION;
+
 private:
   OutputType m_F;
 };

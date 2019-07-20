@@ -24,141 +24,140 @@
 
 constexpr size_t IM2DSIZE = 3;
 
-template<typename IMTYPE>
-void DumpImage(IMTYPE out)
+template < typename IMTYPE >
+void
+DumpImage( IMTYPE out )
 {
   const typename IMTYPE::ObjectType::SizeType size = out->GetLargestPossibleRegion().GetSize();
-  typename IMTYPE::ObjectType::IndexType idx;
+  typename IMTYPE::ObjectType::IndexType      idx;
   std::cout << "==========================================" << std::endl;
-  for(size_t k = 0; k < size[2]; ++k)
+  for ( size_t k = 0; k < size[2]; ++k )
   {
     idx[2] = k;
-  for(size_t j = 0; j < size[1]; ++j)
-  {
-    idx[1]=j;
-    for(size_t i = 0; i< size[0]; ++i)
+    for ( size_t j = 0; j < size[1]; ++j )
     {
-      idx[0]=i;
-      std::cout.width(16);
-      std::cout.fill(' ');
-      std::cout << std::right << out->GetPixel(idx);
+      idx[1] = j;
+      for ( size_t i = 0; i < size[0]; ++i )
+      {
+        idx[0] = i;
+        std::cout.width( 16 );
+        std::cout.fill( ' ' );
+        std::cout << std::right << out->GetPixel( idx );
+      }
+      std::cout << "  y=" << j << std::endl;
     }
-    std::cout << "  y=" << j << std::endl;
-  }
-  std::cout << "z= " << k << ". - . - . - . - . - . - . - . - . - . - . " << std::endl;
+    std::cout << "z= " << k << ". - . - . - . - . - . - . - . - . - . - . " << std::endl;
   }
   std::cout << "==========================================" << std::endl;
 }
 
-static void FillWithIndexValue(HalfHermetianImageType::Pointer img)
+static void
+FillWithIndexValue( HalfHermetianImageType::Pointer img )
 {
   const HalfHermetianImageType::SizeType size = img->GetLargestPossibleRegion().GetSize();
-  HalfHermetianImageType::IndexType idx;
+  HalfHermetianImageType::IndexType      idx;
 
-  for(idx[2]= 0; idx[2] < size[2]; ++idx[2]) {
-    for(idx[1]= 0; idx[1] < size[1]; ++idx[1]) {
-      for (idx[0] = 0; idx[0] < size[0]; ++idx[0]) {
-        img->SetPixel(idx,std::complex<float>(idx[0],idx[1]));
+  for ( idx[2] = 0; idx[2] < size[2]; ++idx[2] )
+  {
+    for ( idx[1] = 0; idx[1] < size[1]; ++idx[1] )
+    {
+      for ( idx[0] = 0; idx[0] < size[0]; ++idx[0] )
+      {
+        img->SetPixel( idx, std::complex< float >( idx[0], idx[1] ) );
       }
     }
   }
 }
 
-int main( int argc, char * argv[])
+int
+main( int argc, char * argv[] )
 {
-  const std::complex<float> Zero(0.8F,0.8F);
+  const std::complex< float >                   Zero( 0.8F, 0.8F );
   HalfHermetianImageType::RegionType::IndexType startIndex;
-  startIndex.Fill(0);
+  startIndex.Fill( 0 );
   HalfHermetianImageType::RegionType region;
-  region.SetIndex(startIndex);
+  region.SetIndex( startIndex );
   HalfHermetianImageType::RegionType::SizeType size;
-  size[0]=3;
-  size[1]=4;
-  size[2]=4;
+  size[0] = 3;
+  size[1] = 4;
+  size[2] = 4;
   HalfHermetianImageType::Pointer inEvenSmall = HalfHermetianImageType::New();
-  region.SetSize(size);
-  inEvenSmall->SetRegions(region);
+  region.SetSize( size );
+  inEvenSmall->SetRegions( region );
   inEvenSmall->Allocate();
-  inEvenSmall->FillBuffer(Zero);
-  FillWithIndexValue(inEvenSmall);
-  //DumpImage(inEvenSmall);
+  inEvenSmall->FillBuffer( Zero );
+  FillWithIndexValue( inEvenSmall );
+  // DumpImage(inEvenSmall);
 
   HalfHermetianImageType::Pointer inEvenLarge = HalfHermetianImageType::New();
-  size[0]=4;
-  size[1]=6;
-  size[2]=6;
-  region.SetSize(size);
-  inEvenLarge->SetRegions(region);
+  size[0] = 4;
+  size[1] = 6;
+  size[2] = 6;
+  region.SetSize( size );
+  inEvenLarge->SetRegions( region );
   inEvenLarge->Allocate();
-  inEvenLarge->FillBuffer(Zero);
-  FillWithIndexValue(inEvenLarge);
-  //DumpImage(inEvenLarge);
+  inEvenLarge->FillBuffer( Zero );
+  FillWithIndexValue( inEvenLarge );
+  // DumpImage(inEvenLarge);
   HalfHermetianImageType::Pointer inEven2Large = HalfHermetianImageType::New();
-  size[0]=4;
-  size[1]=6;
-  size[2]=6;
-  region.SetSize(size);
-  inEven2Large->SetRegions(region);
+  size[0] = 4;
+  size[1] = 6;
+  size[2] = 6;
+  region.SetSize( size );
+  inEven2Large->SetRegions( region );
   inEven2Large->Allocate();
-  inEven2Large->FillBuffer(Zero);
-  FillWithIndexValue(inEven2Large);
-  //DumpImage(inEvenLarge);
+  inEven2Large->FillBuffer( Zero );
+  FillWithIndexValue( inEven2Large );
+  // DumpImage(inEvenLarge);
 
-  const bool evenLargeFirstIsOdd  = true;
+  const bool evenLargeFirstIsOdd = true;
   const bool evenLarge2FirstIsOdd = true;
-  const bool evenSmallFirstIsOdd  = true;
+  const bool evenSmallFirstIsOdd = true;
 
   size_t test_num = 1;
   switch ( test_num )
   {
     case 1:
     {
-      DumpImage(inEvenSmall);
-      MoveFFTCoeffs(inEvenLarge,
-                    evenLargeFirstIsOdd,
-                    inEvenSmall,
-                    evenSmallFirstIsOdd
-      );
+      DumpImage( inEvenSmall );
+      MoveFFTCoeffs( inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd );
       std::cout << "Modified Large" << std::endl;
-      DumpImage(inEvenLarge);
+      DumpImage( inEvenLarge );
 
-      MoveFFTCoeffs(inEvenSmall,
-                    evenSmallFirstIsOdd,
-                    inEvenLarge,
-      evenLargeFirstIsOdd);
+      MoveFFTCoeffs( inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
       std::cout << "Modified Small" << std::endl;
-      DumpImage(inEvenSmall);
+      DumpImage( inEvenSmall );
     }
     break;
     case 2:
     {
-      DumpImage(inEvenLarge);
-      MoveFFTCoeffs(inEvenSmall,evenSmallFirstIsOdd, inEvenLarge,evenLargeFirstIsOdd );
+      DumpImage( inEvenLarge );
+      MoveFFTCoeffs( inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
       std::cout << "Modified Small" << std::endl;
-      DumpImage(inEvenSmall);
+      DumpImage( inEvenSmall );
 
-      MoveFFTCoeffs(inEvenLarge,evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd );
+      MoveFFTCoeffs( inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd );
       std::cout << "Modified Large" << std::endl;
-      DumpImage(inEvenLarge);
+      DumpImage( inEvenLarge );
     }
     break;
     case 3:
     {
-      DumpImage(inEvenLarge);
-      MoveFFTCoeffs(inEven2Large, evenLarge2FirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
+      DumpImage( inEvenLarge );
+      MoveFFTCoeffs( inEven2Large, evenLarge2FirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
       std::cout << "Modified Small" << std::endl;
-      DumpImage(inEven2Large);
+      DumpImage( inEven2Large );
 
-      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEven2Large, evenLarge2FirstIsOdd );
+      MoveFFTCoeffs( inEvenLarge, evenLargeFirstIsOdd, inEven2Large, evenLarge2FirstIsOdd );
       std::cout << "Modified Large" << std::endl;
-      DumpImage(inEvenLarge);
+      DumpImage( inEvenLarge );
     }
     break;
     default:
       break;
   }
 
-  //=================================================
+    //=================================================
 #if 0
   using Image2D = itk::Image<float,3>;
   Image2D::Pointer im2 = Image2D::New();
@@ -239,7 +238,7 @@ int main( int argc, char * argv[])
   hriWriter->SetFileName("/tmp/SR/upsampled.nii.gz");
   hriWriter->Update();
 
-#if 0
+#  if 0
   const std::string lriFileName = "/Shared/johnsonhj/HDNI/20160709_SuperResolution_MatlabExample/input_nrrd/dwi_b0_lr.nrrd";//argv[1];
   ReaderType::Pointer intensityReader = ReaderType::New();
   intensityReader->SetFileName(lriFileName);
@@ -261,7 +260,7 @@ int main( int argc, char * argv[])
   }
 
 
-#if 1
+#    if 1
   std::cout << "===============\n" << upsampledFreq << std::endl;
 
   TForwardFFT::Pointer TEMP = TForwardFFT::New();
@@ -279,7 +278,7 @@ int main( int argc, char * argv[])
   }
   upsampledFreq->FillBuffer(std::complex<float>(0,0));
   std::cout << "===============\n" << upsampledFreq << std::endl;
-#endif
+#    endif
   TForwardFFT::Pointer fft = TForwardFFT::New();
   fft->SetInput( lri );
   const bool lri_ActualXDimensionIsOdd = ( lri->GetLargestPossibleRegion().GetSize()[0] % 2 ) ? true: false;
@@ -332,7 +331,7 @@ int main( int argc, char * argv[])
   hriWriter->SetFileName(outFileName);
   hriWriter->Update();
 
-#endif
+#  endif
 #endif
   return EXIT_SUCCESS;
 }

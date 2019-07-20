@@ -16,12 +16,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+#if defined( _MSC_VER )
+#  pragma warning( disable : 4786 )
 #endif
 
 #ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
+#  define ITK_LEAN_AND_MEAN
 #endif
 
 #include "itkBinaryThresholdImageFilter.h"
@@ -32,7 +32,8 @@
 
 #include "CombineLabelToMaskCLP.h"
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -42,14 +43,13 @@ int main( int argc, char * argv[] )
 
   constexpr unsigned char Dim = 3;
 
-  using InputImageType = itk::Image<InputPixelType,  Dim>;
-  using OutputImageType = itk::Image<OutputPixelType, Dim>;
+  using InputImageType = itk::Image< InputPixelType, Dim >;
+  using OutputImageType = itk::Image< OutputPixelType, Dim >;
 
-  using FilterType = itk::BinaryThresholdImageFilter<
-      InputImageType, OutputImageType>;
+  using FilterType = itk::BinaryThresholdImageFilter< InputImageType, OutputImageType >;
 
-  using ReaderType = itk::ImageFileReader<InputImageType>;
-  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  using ReaderType = itk::ImageFileReader< InputImageType >;
+  using WriterType = itk::ImageFileWriter< OutputImageType >;
 
   ReaderType::Pointer reader = ReaderType::New();
   FilterType::Pointer filter = FilterType::New();
@@ -61,13 +61,13 @@ int main( int argc, char * argv[] )
   filter->SetInput( reader->GetOutput() );
 
   filter->SetOutsideValue( outsideValue );
-  filter->SetInsideValue(  insideValue  );
+  filter->SetInsideValue( insideValue );
 
   filter->SetLowerThreshold( lowerThreshold );
-  if( upperThreshold > 0 )
-    {
+  if ( upperThreshold > 0 )
+  {
     filter->SetUpperThreshold( upperThreshold );
-    }
+  }
 
   filter->Update();
 

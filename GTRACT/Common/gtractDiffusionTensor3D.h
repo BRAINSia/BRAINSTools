@@ -39,7 +39,7 @@
 
 // Undefine an eventual DiffusionTensor3D macro
 #ifdef DiffusionTensor3D
-#undef DiffusionTensor3D
+#  undef DiffusionTensor3D
 #endif
 
 #include "itkDiffusionTensor3D.h"
@@ -87,32 +87,36 @@ namespace itk
  * E. R. Melhem, S. Mori, G. Mukundan, M. A. Kraut, M. G. Pomper, and
  * P. C. M. van Zijl, "Diffusion tensor MR imaging of the brain and white
  * matter tractography," Am. J. Roentgenol., vol. 178, pp. 3-16, 2002.
-*
+ *
  * \sa SymmetricSecondRankTensor
  *
  * \ingroup ImageObjects   TensorObjects    Geometry
  */
 
-template <typename TComponent>
-class gtractDiffusionTensor3D : public DiffusionTensor3D<TComponent>
+template < typename TComponent >
+class gtractDiffusionTensor3D : public DiffusionTensor3D< TComponent >
 {
 public:
   /** Standard class type alias. */
   using Self = gtractDiffusionTensor3D;
-  using Superclass = itk::DiffusionTensor3D<TComponent>;
+  using Superclass = itk::DiffusionTensor3D< TComponent >;
   using RealValueType = typename Superclass::RealValueType;
   using EigenValuesArrayType = typename Superclass::EigenValuesArrayType;
   /** Get the Volume Ratio from the Tensor. */
-  RealValueType GetVolumeRatio() const;
+  RealValueType
+  GetVolumeRatio() const;
 
   /** Get the value of Axial Diffusivity from the Tensor. */
-  RealValueType GetAxialDiffusivity() const;
+  RealValueType
+  GetAxialDiffusivity() const;
 
   /** Get the value of Radial Diffusivity from the Tensor. */
-  RealValueType GetRadialDiffusivity() const;
+  RealValueType
+  GetRadialDiffusivity() const;
 
   /** Get the Lattice Index from the Tensor. */
-  RealValueType GetLatticeIndex() const;
+  RealValueType
+  GetLatticeIndex() const;
 };
 } // namespace itk
 #include "gtractDiffusionTensor3D.hxx"

@@ -26,134 +26,120 @@
 // #include <fcntl.h>
 
 // ---------------------------//
-BRAINSCutVectorTrainingSet
-::BRAINSCutVectorTrainingSet( const std::string vectorFilename)
-  : trainingVectorFilename( vectorFilename),
-  trainingHeaderFilename( vectorFilename + ".hdr" ),
-  totalVectorSize(0),
-  inputVectorSize(0),
-  outputVectorSize(0),
-  shuffled(false),
-  recordSize(0),
-  bufferRecordSize(0),
-  numberOfSubSet(1),
-  currentTrainingSubSet(nullptr)
+BRAINSCutVectorTrainingSet ::BRAINSCutVectorTrainingSet( const std::string vectorFilename )
+  : trainingVectorFilename( vectorFilename )
+  , trainingHeaderFilename( vectorFilename + ".hdr" )
+  , totalVectorSize( 0 )
+  , inputVectorSize( 0 )
+  , outputVectorSize( 0 )
+  , shuffled( false )
+  , recordSize( 0 )
+  , bufferRecordSize( 0 )
+  , numberOfSubSet( 1 )
+  , currentTrainingSubSet( nullptr )
 
 {
   // trainingVectorFilename = vectorFilename;
   // trainingHeaderFilename += ".hdr";
 }
 
-BRAINSCutVectorTrainingSet
-::~BRAINSCutVectorTrainingSet()
-{
-}
+BRAINSCutVectorTrainingSet ::~BRAINSCutVectorTrainingSet() {}
 
 // ---------------------------//
 void
-BRAINSCutVectorTrainingSet
-::ReadHeaderFileInformation()
+BRAINSCutVectorTrainingSet ::ReadHeaderFileInformation()
 {
   std::ifstream headerFileStream;
 
-  headerFileStream.open( trainingHeaderFilename.c_str(),
-                         std::ios::in );
+  headerFileStream.open( trainingHeaderFilename.c_str(), std::ios::in );
 
-  if( !headerFileStream.is_open() )
-    {
+  if ( !headerFileStream.is_open() )
+  {
     std::string error = "Cannot Open the file of ";
     error += trainingHeaderFilename;
     error += " ";
     error += __FILE__;
     throw BRAINSCutExceptionStringHandler( error );
-    }
-  for( int tags = 0; tags < 4; tags++ )  // Read header file for input/output
+  }
+  for ( int tags = 0; tags < 4; tags++ ) // Read header file for input/output
                                          // vectors and total vectors.
-    {
+  {
     std::string temp;
     char        currentline[MAXIMUMCHAR];
-    headerFileStream.getline(currentline, MAXIMUMCHAR - 1);
-    std::istringstream iss(currentline, std::istringstream::in);
+    headerFileStream.getline( currentline, MAXIMUMCHAR - 1 );
+    std::istringstream iss( currentline, std::istringstream::in );
     iss >> temp;
-    if( temp == "IVS" )
-      {
+    if ( temp == "IVS" )
+    {
       iss >> inputVectorSize;
-      }
-    else if( temp == "OVS" )
-      {
-      iss >> outputVectorSize;
-      }
-    else if( temp == "TVC" )
-      {
-      iss >> totalVectorSize;
-      }
-    else if( temp == "SHUFFLED" )
-      {
-      iss >> shuffled;
-      }
     }
+    else if ( temp == "OVS" )
+    {
+      iss >> outputVectorSize;
+    }
+    else if ( temp == "TVC" )
+    {
+      iss >> totalVectorSize;
+    }
+    else if ( temp == "SHUFFLED" )
+    {
+      iss >> shuffled;
+    }
+  }
   headerFileStream.close();
 }
 
 // ---------------------------//
 int
-BRAINSCutVectorTrainingSet
-::GetInputVectorSize()
+BRAINSCutVectorTrainingSet ::GetInputVectorSize()
 {
   return inputVectorSize;
 }
 
 // ---------------------------//
 int
-BRAINSCutVectorTrainingSet
-::GetOutputVectorSize()
+BRAINSCutVectorTrainingSet ::GetOutputVectorSize()
 {
   return outputVectorSize;
 }
 
 // ---------------------------//
 int
-BRAINSCutVectorTrainingSet
-::GetTotalVectorSize()
+BRAINSCutVectorTrainingSet ::GetTotalVectorSize()
 {
   return totalVectorSize;
 }
 
 // ---------------------------//
 void
-BRAINSCutVectorTrainingSet
-::SetBufferRecordSize()
+BRAINSCutVectorTrainingSet ::SetBufferRecordSize()
 {
   bufferRecordSize = ( inputVectorSize + outputVectorSize + LineGuardSize );
 }
 
 void
-BRAINSCutVectorTrainingSet
-::SetShuffled(bool shuffledTrue)
+BRAINSCutVectorTrainingSet ::SetShuffled( bool shuffledTrue )
 {
   shuffled = shuffledTrue;
 }
 
 // ---------------------------//
 void
-BRAINSCutVectorTrainingSet
-::SetRecordSize()
+BRAINSCutVectorTrainingSet ::SetRecordSize()
 {
   recordSize = ( inputVectorSize + outputVectorSize + LineGuardSize ) * sizeof( scalarType );
 }
 
 // ---------------------------//
 unsigned int
-BRAINSCutVectorTrainingSet
-::GetRecordSize()
+BRAINSCutVectorTrainingSet ::GetRecordSize()
 {
   return recordSize;
 }
 
 // ---------------------------//
 void
-BRAINSCutVectorTrainingSet
-::PrintDebuggingMessage(std::string msg )
+BRAINSCutVectorTrainingSet ::PrintDebuggingMessage( std::string msg )
 {
   std::cout << " ***** note                                                   **** " << std::endl
             << " *" << msg << std::endl
@@ -163,44 +149,39 @@ BRAINSCutVectorTrainingSet
 }
 
 // ---------------------------//
-inline
-void
-GetFileStreamToRead( std::string filename, std::ifstream& fileStreamToRead)
+inline void
+GetFileStreamToRead( std::string filename, std::ifstream & fileStreamToRead )
 {
-  if( !itksys::SystemTools::FileExists( filename.c_str() ) )
-    {
+  if ( !itksys::SystemTools::FileExists( filename.c_str() ) )
+  {
     std::string msg( "Vector File has not been created. " + filename );
-    throw BRAINSCutExceptionStringHandler( msg);
-    }
+    throw BRAINSCutExceptionStringHandler( msg );
+  }
   try
-    {
-    fileStreamToRead.open( filename.c_str(),
-                           std::ios::in | std::ios::binary );
-    }
-  catch( std::ifstream::failure & e )
-    {
-    std::cout << "Exception opening file::"
-              << filename << std::endl
-              << e.what() << std::endl;
-    }
-  catch( BRAINSCutExceptionStringHandler & e )
-    {
+  {
+    fileStreamToRead.open( filename.c_str(), std::ios::in | std::ios::binary );
+  }
+  catch ( std::ifstream::failure & e )
+  {
+    std::cout << "Exception opening file::" << filename << std::endl << e.what() << std::endl;
+  }
+  catch ( BRAINSCutExceptionStringHandler & e )
+  {
     std::cout << e.Error();
-    exit(EXIT_FAILURE);
-    }
-  if( !fileStreamToRead.is_open() )
-    {
+    exit( EXIT_FAILURE );
+  }
+  if ( !fileStreamToRead.is_open() )
+  {
     std::string msg( "Cannot Open FileStream of " );
     msg += filename;
     throw BRAINSCutExceptionStringHandler( msg );
-    }
+  }
   return;
 }
 
 // ---------------------------//
 scalarType *
-BRAINSCutVectorTrainingSet
-::ReadBufferFromFileStream( std::ifstream& fileStream )
+BRAINSCutVectorTrainingSet ::ReadBufferFromFileStream( std::ifstream & fileStream )
 {
   scalarType * buffer = new scalarType[bufferRecordSize];
 
@@ -213,86 +194,80 @@ BRAINSCutVectorTrainingSet
   std::cout << std::endl;
   */
 
-  if( buffer[bufferRecordSize - 1] != LineGuard )
-    {
-    delete [] buffer;
-    throw ( BRAINSCutExceptionStringHandler( "Record not properly terminated by sentinel value") );
-    }
+  if ( buffer[bufferRecordSize - 1] != LineGuard )
+  {
+    delete[] buffer;
+    throw( BRAINSCutExceptionStringHandler( "Record not properly terminated by sentinel value" ) );
+  }
   return buffer;
 }
 
 // ---------------------------//
 void
-BRAINSCutVectorTrainingSet
-::RandomizeTrainingVector()
+BRAINSCutVectorTrainingSet ::RandomizeTrainingVector()
 {
   PrintDebuggingMessage( "this shuffling process will override current version of vector *" );
 
   std::string temporaryResultFilename = trainingVectorFilename;
   temporaryResultFilename += "Shuffled";
 
-  constexpr int samplingProportion = 1; // shuffle order only (without up/down sampling)
-  ShuffleVectors * my_ShuffleVector = new ShuffleVectors(  trainingVectorFilename,
-                                                           temporaryResultFilename,
-                                                           samplingProportion );
+  constexpr int    samplingProportion = 1; // shuffle order only (without up/down sampling)
+  ShuffleVectors * my_ShuffleVector =
+    new ShuffleVectors( trainingVectorFilename, temporaryResultFilename, samplingProportion );
 
   my_ShuffleVector->ReadHeader();
   my_ShuffleVector->Shuffling();
   my_ShuffleVector->WriteHeader();
 
-  if( rename( temporaryResultFilename.c_str(), trainingVectorFilename.c_str() ) != 0 )
-    {
+  if ( rename( temporaryResultFilename.c_str(), trainingVectorFilename.c_str() ) != 0 )
+  {
     std::string msg = "Fail to rename from " + temporaryResultFilename + " to " + trainingVectorFilename;
-    throw ( BRAINSCutExceptionStringHandler( msg) );
-    }
+    throw( BRAINSCutExceptionStringHandler( msg ) );
+  }
   else
-    {
+  {
     std::string msg = "The " + temporaryResultFilename + " successfully renamed to " + trainingVectorFilename;
     PrintDebuggingMessage( msg );
-    }
+  }
 }
 
 // ---------------------------//
 unsigned int
-BRAINSCutVectorTrainingSet
-::GetNumberOfSubSet()
+BRAINSCutVectorTrainingSet ::GetNumberOfSubSet()
 {
   return numberOfSubSet;
 }
 
 void
-BRAINSCutVectorTrainingSet
-::SetNumberOfSubSet( const unsigned int count )
+BRAINSCutVectorTrainingSet ::SetNumberOfSubSet( const unsigned int count )
 {
   numberOfSubSet = count;
 }
 
 // ---------------------------//
 pairedTrainingSetType *
-BRAINSCutVectorTrainingSet
-::GetTrainingSubSet( unsigned int count )
+BRAINSCutVectorTrainingSet ::GetTrainingSubSet( unsigned int count )
 {
-  std::cout<<currentTrainingSubSet<<std::endl;
-  if( !(count < numberOfSubSet) )
-    {
-    throw (  BRAINSCutExceptionStringHandler( "Specified SubSet is not valid") );
-    }
-  else if( count == currentSubSetID && currentTrainingSubSet != nullptr )
-    {
+  std::cout << currentTrainingSubSet << std::endl;
+  if ( !( count < numberOfSubSet ) )
+  {
+    throw( BRAINSCutExceptionStringHandler( "Specified SubSet is not valid" ) );
+  }
+  else if ( count == currentSubSetID && currentTrainingSubSet != nullptr )
+  {
     return currentTrainingSubSet;
-    }
+  }
   else
-    {
+  {
     std::cout << " Read in New Sub Set" << std::endl;
     SetTrainingSubSet( count );
     return currentTrainingSubSet;
-    }
+  }
 }
 
 // ---------------------------//
 void
-BRAINSCutVectorTrainingSet
-::SetTrainingSubSet( unsigned int count )
+BRAINSCutVectorTrainingSet ::SetTrainingSubSet( unsigned int count )
 {
   currentSubSetID = count;
   unsigned int subSetSize = totalVectorSize / numberOfSubSet;
@@ -302,67 +277,57 @@ BRAINSCutVectorTrainingSet
   GetFileStreamToRead( trainingVectorFilename, readInFile );
 
   /* set to the location of this subset */
-  std::ios::off_type seekval = static_cast<std::ios::off_type>( recordSize * subSetSize * count );
-  readInFile.seekg( seekval, std::ios::beg);
+  std::ios::off_type seekval = static_cast< std::ios::off_type >( recordSize * subSetSize * count );
+  readInFile.seekg( seekval, std::ios::beg );
 
   scalarType * currentBuffer = new scalarType[bufferRecordSize];
 
   scalarType * pairedInputBuffer = new scalarType[subSetSize * inputVectorSize];
   scalarType * pairedOutputBuffer = new scalarType[subSetSize * outputVectorSize];
-  scalarType * pairedOutputBufferRF = new scalarType[subSetSize];  // RandomForest
+  scalarType * pairedOutputBufferRF = new scalarType[subSetSize]; // RandomForest
 
-  for( unsigned int i = 0; i < subSetSize  && !readInFile.eof(); i++ )
-    {
+  for ( unsigned int i = 0; i < subSetSize && !readInFile.eof(); i++ )
+  {
     currentBuffer = ReadBufferFromFileStream( readInFile );
     /* move this to one line buffer for open cv matrix type */
     scalarType tempOutput = 0;
-    for( int j = 0; j < outputVectorSize; j++ )
-      {
+    for ( int j = 0; j < outputVectorSize; j++ )
+    {
       pairedOutputBuffer[i * outputVectorSize + j] = currentBuffer[j];
-      if( currentBuffer[j] > 0.5F && tempOutput == 0 )
-        {
+      if ( currentBuffer[j] > 0.5F && tempOutput == 0 )
+      {
         tempOutput = j + 1;
-        }
-      else if(  currentBuffer[j] > 0.5F && tempOutput != 0 )
-        {
-        std::cout << "A voxel belongs to more than a structure" << std::endl;
-        exit(EXIT_FAILURE);
-        }
       }
+      else if ( currentBuffer[j] > 0.5F && tempOutput != 0 )
+      {
+        std::cout << "A voxel belongs to more than a structure" << std::endl;
+        exit( EXIT_FAILURE );
+      }
+    }
     pairedOutputBufferRF[i] = tempOutput;
 
-    for( int j = 0; j < inputVectorSize; j++ )
-      {
+    for ( int j = 0; j < inputVectorSize; j++ )
+    {
       pairedInputBuffer[i * inputVectorSize + j] = currentBuffer[j + outputVectorSize];
-      }
-    std::cout<<std::endl;
     }
+    std::cout << std::endl;
+  }
   delete[] currentBuffer;
 
   currentTrainingSubSet = new pairedTrainingSetType;
-  currentTrainingSubSet->pairedInput = cv::Mat( subSetSize,
-                   inputVectorSize,
-                   CV_32F,
-                   pairedInputBuffer);
-  currentTrainingSubSet->pairedOutput = cv::Mat( subSetSize,
-                   outputVectorSize,
-                   CV_32F,
-                   pairedOutputBuffer);
+  currentTrainingSubSet->pairedInput = cv::Mat( subSetSize, inputVectorSize, CV_32F, pairedInputBuffer );
+  currentTrainingSubSet->pairedOutput = cv::Mat( subSetSize, outputVectorSize, CV_32F, pairedOutputBuffer );
 
-  currentTrainingSubSet->pairedOutputRF = cv::Mat( subSetSize,
-                   1,
-                   CV_32F,
-                   pairedOutputBufferRF);
+  currentTrainingSubSet->pairedOutputRF = cv::Mat( subSetSize, 1, CV_32F, pairedOutputBufferRF );
 
-  std::cout<< " n row input= " << (currentTrainingSubSet->pairedInput).rows
-           << " n row output = " << (currentTrainingSubSet->pairedOutput).rows
-           << std::endl;
-  if( (currentTrainingSubSet->pairedInput).rows != (currentTrainingSubSet->pairedOutput).rows)
-    {
-    throw (  BRAINSCutExceptionStringHandler( "Input and Output row do not match!! ") );
-    }
-  if( (currentTrainingSubSet->pairedInput).rows == 0)
-    {
-    throw (  BRAINSCutExceptionStringHandler( "Vector File is Empty!! ") );
-    }
+  std::cout << " n row input= " << ( currentTrainingSubSet->pairedInput ).rows
+            << " n row output = " << ( currentTrainingSubSet->pairedOutput ).rows << std::endl;
+  if ( ( currentTrainingSubSet->pairedInput ).rows != ( currentTrainingSubSet->pairedOutput ).rows )
+  {
+    throw( BRAINSCutExceptionStringHandler( "Input and Output row do not match!! " ) );
+  }
+  if ( ( currentTrainingSubSet->pairedInput ).rows == 0 )
+  {
+    throw( BRAINSCutExceptionStringHandler( "Vector File is Empty!! " ) );
+  }
 }

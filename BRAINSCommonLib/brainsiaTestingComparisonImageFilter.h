@@ -39,12 +39,11 @@ using namespace itk;
  * \ingroup IntensityImageFilters   MultiThreaded
  * \ingroup ITKTestKernel
  */
-template< typename TInputImage, typename TOutputImage >
-class ITK_TEMPLATE_EXPORT ComparisonImageFilter:
-  public ImageToImageFilter< TInputImage, TOutputImage >
+template < typename TInputImage, typename TOutputImage >
+class ITK_TEMPLATE_EXPORT ComparisonImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ComparisonImageFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( ComparisonImageFilter );
 
   /** Standard class type aliases. */
   using Self = ComparisonImageFilter;
@@ -53,10 +52,10 @@ public:
   using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ComparisonImageFilter, ImageToImageFilter);
+  itkTypeMacro( ComparisonImageFilter, ImageToImageFilter );
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
@@ -68,46 +67,47 @@ public:
   using AccumulateType = typename NumericTraits< RealType >::AccumulateType;
 
   /** Set the valid image input.  This will be input 0.  */
-  itkSetInputMacro(ValidInput, InputImageType);
+  itkSetInputMacro( ValidInput, InputImageType );
 
   /** Set the test image input.  This will be input 1.  */
-  itkSetInputMacro(TestInput, InputImageType);
+  itkSetInputMacro( TestInput, InputImageType );
 
   /** Verify that the origin, spacing, and direction of both images match
-  */
-  itkSetMacro(VerifyInputInformation, bool);
-  itkGetConstMacro(VerifyInputInformation, bool);
-  itkBooleanMacro(VerifyInputInformation);
+   */
+  itkSetMacro( VerifyInputInformation, bool );
+  itkGetConstMacro( VerifyInputInformation, bool );
+  itkBooleanMacro( VerifyInputInformation );
 
   /** Set/Get the maximum distance away to look for a matching pixel.
       Default is 0. */
-  itkSetMacro(ToleranceRadius, int);
-  itkGetConstMacro(ToleranceRadius, int);
+  itkSetMacro( ToleranceRadius, int );
+  itkGetConstMacro( ToleranceRadius, int );
 
   /** Set/Get the minimum threshold for pixels to be different.
       Default is 0. */
-  itkSetMacro(DifferenceThreshold, OutputPixelType);
-  itkGetConstMacro(DifferenceThreshold, OutputPixelType);
+  itkSetMacro( DifferenceThreshold, OutputPixelType );
+  itkGetConstMacro( DifferenceThreshold, OutputPixelType );
 
   /** Set/Get ignore boundary pixels.  Useful when resampling may have
    *    introduced difference pixel values along the image edge
    *    Default = false */
-  itkSetMacro(IgnoreBoundaryPixels, bool);
-  itkGetConstMacro(IgnoreBoundaryPixels, bool);
+  itkSetMacro( IgnoreBoundaryPixels, bool );
+  itkGetConstMacro( IgnoreBoundaryPixels, bool );
 
   /** Get statistical attributes for those pixels which exceed the
    * tolerance and radius parameters */
-  itkGetConstMacro(MinimumDifference, OutputPixelType);
-  itkGetConstMacro(MaximumDifference, OutputPixelType);
-  itkGetConstMacro(MeanDifference, RealType);
-  itkGetConstMacro(TotalDifference, AccumulateType);
-  itkGetConstMacro(NumberOfPixelsWithDifferences, SizeValueType);
+  itkGetConstMacro( MinimumDifference, OutputPixelType );
+  itkGetConstMacro( MaximumDifference, OutputPixelType );
+  itkGetConstMacro( MeanDifference, RealType );
+  itkGetConstMacro( TotalDifference, AccumulateType );
+  itkGetConstMacro( NumberOfPixelsWithDifferences, SizeValueType );
 
 protected:
   ComparisonImageFilter();
   ~ComparisonImageFilter() override = default;
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** ComparisonImageFilter can be implemented as a multithreaded
    * filter.  Therefore, this implementation provides a
@@ -118,19 +118,23 @@ protected:
    * the portion of the output image specified by the parameter
    * "outputRegionForThread"
    */
-  void ThreadedGenerateData(const OutputImageRegionType & threadRegion,
-                            ThreadIdType threadId) override;
+  void
+  ThreadedGenerateData( const OutputImageRegionType & threadRegion, ThreadIdType threadId ) override;
 
-  void DynamicThreadedGenerateData( const OutputImageRegionType & ) override
+  void
+  DynamicThreadedGenerateData( const OutputImageRegionType & ) override
   {
-    itkExceptionMacro("This class requires threadId so it must use classic multi-threading model");
+    itkExceptionMacro( "This class requires threadId so it must use classic multi-threading model" );
   }
 
-  void BeforeThreadedGenerateData() override;
+  void
+  BeforeThreadedGenerateData() override;
 
-  void AfterThreadedGenerateData() override;
+  void
+  AfterThreadedGenerateData() override;
 
-  void VerifyInputInformation() ITKv5_CONST override;
+  void
+  VerifyInputInformation() ITKv5_CONST override;
 
   OutputPixelType m_DifferenceThreshold;
 
@@ -145,20 +149,20 @@ protected:
 
   int m_ToleranceRadius;
 
-  Array< AccumulateType >    m_ThreadDifferenceSum;
-  Array< SizeValueType >     m_ThreadNumberOfPixels;
+  Array< AccumulateType > m_ThreadDifferenceSum;
+  Array< SizeValueType >  m_ThreadNumberOfPixels;
 
-  Array< OutputPixelType >    m_ThreadMinimumDifference;
-  Array< OutputPixelType >    m_ThreadMaximumDifference;
+  Array< OutputPixelType > m_ThreadMinimumDifference;
+  Array< OutputPixelType > m_ThreadMaximumDifference;
 
 private:
   bool m_IgnoreBoundaryPixels;
 };
 } // end namespace Testing
-} // end namespace itk
+} // namespace brainsia
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "brainsiaTestingComparisonImageFilter.hxx"
+#  include "brainsiaTestingComparisonImageFilter.hxx"
 #endif
 
 

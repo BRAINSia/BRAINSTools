@@ -39,68 +39,70 @@
 #include "itkImageFileWriter.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   constexpr int dimension = 3;
-  using ImageType = itk::Image<unsigned char, dimension>;
-  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageType = itk::Image< unsigned char, dimension >;
+  using ImageReaderType = itk::ImageFileReader< ImageType >;
 
   ImageReaderType::Pointer reader = ImageReaderType::New();
-  reader->SetFileName(inputVolume);
+  reader->SetFileName( inputVolume );
   reader->Update();
 
-  vtkStructuredGrid *talairach;
-  const std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension( talairachParameters ) );
+  vtkStructuredGrid * talairach;
+  const std::string   extension =
+    vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension( talairachParameters ) );
 
-  if( extension == ".vtk" )
-    {
-    vtkStructuredGridReader *gridReader = vtkStructuredGridReader::New();
+  if ( extension == ".vtk" )
+  {
+    vtkStructuredGridReader * gridReader = vtkStructuredGridReader::New();
     gridReader->SetFileName( talairachParameters.c_str() );
     gridReader->Update();
     talairach = gridReader->GetOutput();
-    }
+  }
   else
-    {
-    vtkXMLStructuredGridReader *gridReader = vtkXMLStructuredGridReader::New();
+  {
+    vtkXMLStructuredGridReader * gridReader = vtkXMLStructuredGridReader::New();
     gridReader->SetFileName( talairachParameters.c_str() );
     gridReader->Update();
     talairach = gridReader->GetOutput();
-    }
+  }
 
-  vtkTalairachConversion *tConv = vtkTalairachConversion::New();
+  vtkTalairachConversion * tConv = vtkTalairachConversion::New();
   tConv->SetImageInformation( reader->GetOutput() );
   tConv->SetTalairachGrid( talairach );
-  if( hemisphereMode == "right" )
-    {
+  if ( hemisphereMode == "right" )
+  {
     tConv->SetHemisphereMode( vtkTalairachConversion::right );
-    }
-  else if( hemisphereMode == "left" )
-    {
+  }
+  else if ( hemisphereMode == "left" )
+  {
     tConv->SetHemisphereMode( vtkTalairachConversion::left );
-    }
+  }
   else
-    {
+  {
     tConv->SetHemisphereMode( vtkTalairachConversion::both );
-    }
+  }
   tConv->SetSegmentationMode( expand );
 
   ifstream    fin( talairachBox.c_str() );
   std::string line;
-  getline(fin, line);
+  getline( fin, line );
 
-  while( !line.empty() )
-    {
+  while ( !line.empty() )
+  {
     tConv->AddTalairachBox( line );
     line.clear();
-    getline(fin, line);
-    }
+    getline( fin, line );
+  }
 
   tConv->Update();
 
-  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter< ImageType >;
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->SetFileName( outputVolume );
   writer->SetInput( tConv->GetImage() );

@@ -26,9 +26,8 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputMesh, typename TOutput>
-MeshFunction<TInputMesh, TOutput>
-::MeshFunction()
+template < typename TInputMesh, typename TOutput >
+MeshFunction< TInputMesh, TOutput >::MeshFunction()
 {
   m_Mesh = nullptr;
 }
@@ -36,10 +35,9 @@ MeshFunction<TInputMesh, TOutput>
 /**
  * Standard "PrintSelf" method
  */
-template <typename TInputMesh, typename TOutput>
+template < typename TInputMesh, typename TOutput >
 void
-MeshFunction<TInputMesh, TOutput>
-::PrintSelf( std::ostream& os, Indent indent) const
+MeshFunction< TInputMesh, TOutput >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
 
@@ -49,29 +47,27 @@ MeshFunction<TInputMesh, TOutput>
 /**
  * Initialize by setting the input mesh
  */
-template <typename TInputMesh, typename TOutput>
+template < typename TInputMesh, typename TOutput >
 void
-MeshFunction<TInputMesh, TOutput>
-::SetInputMesh( const InputMeshType * ptr )
+MeshFunction< TInputMesh, TOutput >::SetInputMesh( const InputMeshType * ptr )
 {
   this->m_Mesh = ptr;
 
-  if( ptr )
-    {
+  if ( ptr )
+  {
     // FIXME Add here the point locator...
-    }
+  }
 }
 
 /**
  * Return the input mesh
  */
-template <typename TInputMesh, typename TOutput>
-const typename MeshFunction<TInputMesh, TOutput>::InputMeshType
-* MeshFunction<TInputMesh, TOutput>
-::GetInputMesh() const
-  {
+template < typename TInputMesh, typename TOutput >
+const typename MeshFunction< TInputMesh, TOutput >::InputMeshType *
+MeshFunction< TInputMesh, TOutput >::GetInputMesh() const
+{
   return m_Mesh;
-  }
+}
 } // end namespace itk
 
 #endif

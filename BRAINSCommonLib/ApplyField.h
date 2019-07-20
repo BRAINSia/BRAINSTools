@@ -17,9 +17,9 @@
  *
  *=========================================================================*/
 /**
-  * \defgroup AF Apply Field
-  * \ingroup Reg
-  */
+ * \defgroup AF Apply Field
+ * \ingroup Reg
+ */
 #ifndef __ApplyField_h
 #define __ApplyField_h
 
@@ -28,19 +28,18 @@
 
 namespace itk
 {
-template <typename TDisplacementField, typename TInputImage,
-          typename TOutputImage>
+template < typename TDisplacementField, typename TInputImage, typename TOutputImage >
 class ApplyField : public Object
 {
 public:
   using Self = ApplyField;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
-  itkTypeMacro(MIMApplication, Object);
+  itkTypeMacro( MIMApplication, Object );
 
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   using InputImageType = TInputImage;
   using OutputImageType = TOutputImage;
@@ -49,33 +48,36 @@ public:
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  itkSetObjectMacro(InputImage, InputImageType);
-  itkGetConstObjectMacro(InputImage, InputImageType);
-  itkGetConstObjectMacro(OutputImage, OutputImageType);
+  itkSetObjectMacro( InputImage, InputImageType );
+  itkGetConstObjectMacro( InputImage, InputImageType );
+  itkGetConstObjectMacro( OutputImage, OutputImageType );
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
-    *  within Lower and Upper (inclusive) will be replaced with this
-    *  value. The default is 1. */
-  itkSetMacro(DefaultPixelValue,  PixelType);
-  itkGetMacro(DefaultPixelValue,  PixelType);
+   *  within Lower and Upper (inclusive) will be replaced with this
+   *  value. The default is 1. */
+  itkSetMacro( DefaultPixelValue, PixelType );
+  itkGetMacro( DefaultPixelValue, PixelType );
 
-  itkSetObjectMacro(DisplacementField, TDisplacementField);
+  itkSetObjectMacro( DisplacementField, TDisplacementField );
 
-  void Execute();
+  void
+  Execute();
 
-  void ReleaseDataFlagOn();
+  void
+  ReleaseDataFlagOn();
 
 protected:
   ApplyField();
   ~ApplyField() override;
+
 private:
-  typename InputImageType::Pointer m_InputImage;
-  typename OutputImageType::Pointer m_OutputImage;
+  typename InputImageType::Pointer     m_InputImage;
+  typename OutputImageType::Pointer    m_OutputImage;
   typename TDisplacementField::Pointer m_DisplacementField;
-  PixelType m_DefaultPixelValue;
+  PixelType                            m_DefaultPixelValue;
 };
-}
+} // namespace itk
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ApplyField.hxx"
+#  include "ApplyField.hxx"
 #endif
 #endif

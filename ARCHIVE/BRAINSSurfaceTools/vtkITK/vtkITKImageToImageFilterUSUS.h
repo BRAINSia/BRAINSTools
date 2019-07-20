@@ -27,53 +27,56 @@
 class VTK_ITK_EXPORT vtkITKImageToImageFilterUSUS : public vtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterUSUS,vtkITKImageToImageFilter);
-  static vtkITKImageToImageFilterUSUS* New() { return 0; };
-  void PrintSelf(ostream& os, vtkIndent indent)
+  vtkTypeMacro( vtkITKImageToImageFilterUSUS, vtkITKImageToImageFilter );
+  static vtkITKImageToImageFilterUSUS *
+  New()
   {
-    Superclass::PrintSelf ( os, indent );
+    return 0;
+  };
+  void
+  PrintSelf( ostream & os, vtkIndent indent )
+  {
+    Superclass::PrintSelf( os, indent );
     os << m_Filter;
   };
 
 protected:
-
   /// To/from ITK
   using InputImagePixelType = unsigned short;
   using OutputImagePixelType = unsigned short;
-  using InputImageType = itk::Image<InputImagePixelType, 3>;
-  using OutputImageType = itk::Image<OutputImagePixelType, 3>;
+  using InputImageType = itk::Image< InputImagePixelType, 3 >;
+  using OutputImageType = itk::Image< OutputImagePixelType, 3 >;
 
-  using ImageImportType = itk::VTKImageImport<InputImageType>;
-  using ImageExportType = itk::VTKImageExport<OutputImageType>;
+  using ImageImportType = itk::VTKImageImport< InputImageType >;
+  using ImageExportType = itk::VTKImageExport< OutputImageType >;
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
 
-  using GenericFilterType = itk::ImageToImageFilter<InputImageType,OutputImageType>;
+  using GenericFilterType = itk::ImageToImageFilter< InputImageType, OutputImageType >;
   GenericFilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterUSUS ( GenericFilterType* filter )
+  vtkITKImageToImageFilterUSUS( GenericFilterType * filter )
   {
     /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
     this->itkImporter = ImageImportType::New();
     this->itkExporter = ImageExportType::New();
-    ConnectPipelines(this->vtkExporter, this->itkImporter);
-    ConnectPipelines(this->itkExporter, this->vtkImporter);
-    this->LinkITKProgressToVTKProgress ( m_Filter );
+    ConnectPipelines( this->vtkExporter, this->itkImporter );
+    ConnectPipelines( this->itkExporter, this->vtkImporter );
+    this->LinkITKProgressToVTKProgress( m_Filter );
 
     /// Set up the filter pipeline
-    m_Filter->SetInput ( this->itkImporter->GetOutput() );
-    this->itkExporter->SetInput ( m_Filter->GetOutput() );
+    m_Filter->SetInput( this->itkImporter->GetOutput() );
+    this->itkExporter->SetInput( m_Filter->GetOutput() );
     this->vtkCast->SetOutputScalarTypeToUnsignedShort();
   };
 
-  ~vtkITKImageToImageFilterUSUS()
-  {
-  };
+  ~vtkITKImageToImageFilterUSUS(){};
 
 private:
-  vtkITKImageToImageFilterUSUS(const vtkITKImageToImageFilterUSUS&);  /// Not implemented.
-  void operator=(const vtkITKImageToImageFilterUSUS&);  /// Not implemented.
+  vtkITKImageToImageFilterUSUS( const vtkITKImageToImageFilterUSUS & ); /// Not implemented.
+  void
+  operator=( const vtkITKImageToImageFilterUSUS & ); /// Not implemented.
 };
 
 #endif

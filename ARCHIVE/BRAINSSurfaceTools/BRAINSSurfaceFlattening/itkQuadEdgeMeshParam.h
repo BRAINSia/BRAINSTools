@@ -32,19 +32,17 @@ namespace itk
  *  \note Here we have only implemented some parameterizations with fixed
  *        boundary.
  */
-template <typename TInputMesh, typename TOutputMesh, typename TSolverTraits>
-class QuadEdgeMeshParam :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh, typename TSolverTraits >
+class QuadEdgeMeshParam : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshParam);
+  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshParam );
 
   /** Basic types. */
   using Self = QuadEdgeMeshParam;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh,
-                                           TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -63,20 +61,17 @@ public:
   static constexpr unsigned int InputVDimension = InputMeshType::PointDimension;
 
   using InputPointsContainer = typename InputMeshType::PointsContainer;
-  typedef typename InputMeshType::PointsContainerConstIterator
-    InputPointsContainerConstIterator;
+  typedef typename InputMeshType::PointsContainerConstIterator InputPointsContainerConstIterator;
 
-  typedef typename InputMeshType::CellsContainerConstIterator
-    InputCellsContainerConstIterator;
+  typedef typename InputMeshType::CellsContainerConstIterator InputCellsContainerConstIterator;
   using InputEdgeCellType = typename InputMeshType::EdgeCellType;
   using InputPolygonCellType = typename InputMeshType::PolygonCellType;
   using InputPointIdList = typename InputMeshType::PointIdList;
 
   using InputQEIterator = typename InputQEType::IteratorGeom;
 
-  using InputMapPointIdentifier = std::map<InputPointIdentifier, InputPointIdentifier>;
-  typedef typename InputMapPointIdentifier::iterator
-    InputMapPoinIdentifierIterator;
+  using InputMapPointIdentifier = std::map< InputPointIdentifier, InputPointIdentifier >;
+  typedef typename InputMapPointIdentifier::iterator InputMapPoinIdentifierIterator;
 
   /** Output types. */
   using OutputMeshType = TOutputMesh;
@@ -88,8 +83,7 @@ public:
   using OutputQEType = typename OutputMeshType::QEType;
   using OutputVectorType = typename OutputMeshType::VectorType;
   using OutputQEIterator = typename OutputQEType::IteratorGeom;
-  typedef typename OutputMeshType::PointsContainerIterator
-    OutputPointsContainerIterator;
+  typedef typename OutputMeshType::PointsContainerIterator OutputPointsContainerIterator;
 
   static constexpr unsigned int OutputVDimension = OutputMeshType::PointDimension;
 
@@ -98,14 +92,14 @@ public:
   using MatrixType = typename SolverTraits::MatrixType;
   using VectorType = typename SolverTraits::VectorType;
 
-  using MeshBorderTransform = QuadEdgeMeshBorderTransform<
-      InputMeshType, InputMeshType>;
+  using MeshBorderTransform = QuadEdgeMeshBorderTransform< InputMeshType, InputMeshType >;
   using MeshBorderTransformPointer = typename MeshBorderTransform::Pointer;
 
-  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
-public:
+  using CoefficientsComputation = MatrixCoefficients< InputMeshType >;
 
-  void SetCoefficientsMethod( CoefficientsComputation* iMethod )
+public:
+  void
+  SetCoefficientsMethod( CoefficientsComputation * iMethod )
   {
     this->m_CoefficientsMethod = iMethod;
   }
@@ -115,12 +109,10 @@ public:
 
   itkSetObjectMacro( BorderTransform, MeshBorderTransform );
   itkGetConstObjectMacro( BorderTransform, MeshBorderTransform );
-protected:
 
+protected:
   QuadEdgeMeshParam();
-  virtual ~QuadEdgeMeshParam()
-  {
-  };
+  virtual ~QuadEdgeMeshParam(){};
 
   CoefficientsComputation * m_CoefficientsMethod;
 
@@ -134,9 +126,10 @@ protected:
   // in m_InternalPtList
   InputMapPointIdentifier m_InternalPtMap;
 
-  std::vector<OutputPointType> m_Border;
+  std::vector< OutputPointType > m_Border;
 
-  void CopyToOutputBorder();
+  void
+  CopyToOutputBorder();
 
   /**
    *  \brief From the list of all vertices from the input mesh InputList
@@ -147,7 +140,8 @@ protected:
    *  \note I consider ids of points are well chosen (from 0 to
    *        NumberOfPoints)
    */
-  void ComputeListOfInteriorVertices();
+  void
+  ComputeListOfInteriorVertices();
 
   /**
    *  \brief Fill matrix iM and vectors Bx and m_By depending on if one
@@ -156,7 +150,8 @@ protected:
    *  \param[in,out] ioBx
    *  \param[in,out] ioBy
    */
-  void FillMatrix( MatrixType& iM, VectorType& ioBx, VectorType& ioBy );
+  void
+  FillMatrix( MatrixType & iM, VectorType & ioBx, VectorType & ioBy );
 
   /**
    *  \brief Solve linears systems : \f$ iM \cdot oX = iBx \f$ and
@@ -168,13 +163,14 @@ protected:
    *  \param[out] oX
    *  \param[out] oY
    */
-  void SolveLinearSystems( const MatrixType& iM, const VectorType& iBx, const VectorType& iBy, VectorType& oX,
-                           VectorType& oY );
+  void
+  SolveLinearSystems( const MatrixType & iM, const VectorType & iBx, const VectorType & iBy, VectorType & oX,
+                      VectorType & oY );
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
 };
 } // end namespace itk
 

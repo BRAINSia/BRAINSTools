@@ -25,44 +25,47 @@
 #include "itkVersorTransform.h"
 
 #ifdef USE_VTK
-#include "MultiResolutionDeformableAndAffineRegistrationMonitor.h"
+#  include "MultiResolutionDeformableAndAffineRegistrationMonitor.h"
 #endif
 
 namespace itk
 {
-template <typename TMesh>
-class MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
+template < typename TMesh >
+class MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter
+  : public QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >
 {
 public:
   using Self = MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >;
 
   /** Method that instantiates a new object */
   itkNewMacro( Self );
 
   /** Method that provides the name of the class as a string as well as the
    * name of the parent class. */
-  itkTypeMacro(
-    MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro( MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
 
   /** Using a unique mesh type. */
   using MeshType = TMesh;
-  using PointType = typename  MeshType::PointType;
+  using PointType = typename MeshType::PointType;
 
   /** Set the Fixed mesh. */
-  void SetFixedMesh( const MeshType * fixedMesh );
+  void
+  SetFixedMesh( const MeshType * fixedMesh );
 
   /** Set the Moving mesh. */
-  void SetMovingMesh( const MeshType * movingMesh );
+  void
+  SetMovingMesh( const MeshType * movingMesh );
 
   /** Set the Fixed mesh for a given resolution level. */
-  void SetFixedMesh( unsigned int level, const MeshType * fixedMesh );
+  void
+  SetFixedMesh( unsigned int level, const MeshType * fixedMesh );
 
   /** Set the Moving mesh for a given resolution level. */
-  void SetMovingMesh( unsigned int level, const MeshType * movingMesh );
+  void
+  SetMovingMesh( unsigned int level, const MeshType * movingMesh );
 
   /** Set Sphere Center.  The implementation of this filter assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -89,9 +92,10 @@ public:
 
   using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
-  virtual DataObject::Pointer MakeOutput(size_t idx) override;
+  virtual DataObject::Pointer
+  MakeOutput( size_t idx ) override;
 
-  using TransformType = VersorTransform<double>;
+  using TransformType = VersorTransform< double >;
 
   itkGetConstObjectMacro( RigidTransform, TransformType );
 
@@ -99,8 +103,7 @@ public:
 
   itkGetConstObjectMacro( RigidOptimizer, RigidOptimizerType );
 
-  using DemonsRegistrationFilterType = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
-      MeshType, MeshType, MeshType>;
+  using DemonsRegistrationFilterType = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< MeshType, MeshType, MeshType >;
 
   using DeformationFilterType = DemonsRegistrationFilterType;
 
@@ -114,8 +117,8 @@ public:
   using PointsContainerPointer = typename PointsContainer::Pointer;
   using PointsContainerIterator = typename MeshType::PointsContainerIterator;
 
-  using IntegerArrayType = Array<unsigned int>;
-  using DoubleArrayType = Array<double>;
+  using IntegerArrayType = Array< unsigned int >;
+  using DoubleArrayType = Array< double >;
 
   /** Schedule of smoothing iterations to be used at every resolution level. */
   itkSetMacro( SmoothingIterations, IntegerArrayType );
@@ -175,10 +178,11 @@ public:
   itkGetConstObjectMacro( CurrentLevelInitialFixedMesh, MeshType );
 
 #ifdef USE_VTK
-  using RegistrationMonitorType = MultiResolutionDeformableAndAffineRegistrationMonitor<
-      Self, DestinationPointSetType>;
+  using RegistrationMonitorType =
+    MultiResolutionDeformableAndAffineRegistrationMonitor< Self, DestinationPointSetType >;
 
-  void SetRegistrationMonitor( RegistrationMonitorType * monitor )
+  void
+  SetRegistrationMonitor( RegistrationMonitorType * monitor )
   {
     this->m_RegistrationMonitor = monitor;
   }
@@ -186,53 +190,67 @@ public:
 #endif
 
   typedef enum
-    {
+  {
     RIGID,
     DEFORMABLE
-    }  RegistrationModeType;
+  } RegistrationModeType;
 
-  RegistrationModeType GetRegistrationMode() const;
+  RegistrationModeType
+  GetRegistrationMode() const;
 
   /** Get the destination points from the demons filter. */
-  const DestinationPointSetType * GetCurrentDestinationPoints() const;
+  const DestinationPointSetType *
+  GetCurrentDestinationPoints() const;
 
 protected:
   MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
   ~MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
-  virtual void GenerateData() override;
+  virtual void
+  GenerateData() override;
 
 private:
   MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter( const Self & );
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 
   /** Perform rigid registration between two meshes at the current resolution level. */
-  void ComputeRigidRegistration();
+  void
+  ComputeRigidRegistration();
 
   /** Map the points of the fixed mesh using the rigid transform. */
-  void RigidlyTransformPointsOfFixedMesh();
+  void
+  RigidlyTransformPointsOfFixedMesh();
 
   /** Perform demons registration between two meshes at the current resolution level. */
-  void ComputeDemonsRegistration();
+  void
+  ComputeDemonsRegistration();
 
   /** Configure the meshs to be used for the coarsest resolution */
-  void PrepareCoarsestResolutionMeshes();
+  void
+  PrepareCoarsestResolutionMeshes();
 
   /** Setup initial parameters of internal classes */
-  void InitializeRigidRegistrationParameters();
+  void
+  InitializeRigidRegistrationParameters();
 
-  void InitializeDemonsRegistrationParameters();
+  void
+  InitializeDemonsRegistrationParameters();
 
   /** Deforme the next resolution level fixed mesh by using the destination
    * points from the current resolution level demons registration. */
-  void DeformNextResolutionLevelFixedMesh();
+  void
+  DeformNextResolutionLevelFixedMesh();
 
   /** Prepare the input meshes for the next resolution level. */
-  void PrepareNextResolutionLevelMeshes();
+  void
+  PrepareNextResolutionLevelMeshes();
 
   /** Set the rigid transform to Identity. */
-  void SetRigidTransformToIdentity();
+  void
+  SetRigidTransformToIdentity();
 
   /** Center of spherical mesh. We assume that both the Fixed and
    * Moving meshes have spherical geometry and that they share the same
@@ -248,24 +266,24 @@ private:
 
   unsigned int m_NumberOfResolutionLevels;
 
-  typename TransformType::Pointer  m_RigidTransform;
+  typename TransformType::Pointer m_RigidTransform;
 
-  typename RigidOptimizerType::Pointer  m_RigidOptimizer;
+  typename RigidOptimizerType::Pointer m_RigidOptimizer;
 
-  typename MeshType::ConstPointer   m_CurrentLevelInitialFixedMesh;
+  typename MeshType::ConstPointer m_CurrentLevelInitialFixedMesh;
 
-  typename MeshType::ConstPointer   m_CurrentLevelFixedMesh;
-  typename MeshType::ConstPointer   m_CurrentLevelMovingMesh;
+  typename MeshType::ConstPointer m_CurrentLevelFixedMesh;
+  typename MeshType::ConstPointer m_CurrentLevelMovingMesh;
 
-  typename MeshType::Pointer        m_CurrentLevelRigidlyMappedFixedMesh;
-  typename MeshType::Pointer        m_CurrentLevelDemonsMappedFixedMesh;
+  typename MeshType::Pointer m_CurrentLevelRigidlyMappedFixedMesh;
+  typename MeshType::Pointer m_CurrentLevelDemonsMappedFixedMesh;
 
-  typename MeshType::ConstPointer   m_NextLevelFixedMesh;
-  typename MeshType::ConstPointer   m_NextLevelMovingMesh;
+  typename MeshType::ConstPointer m_NextLevelFixedMesh;
+  typename MeshType::ConstPointer m_NextLevelMovingMesh;
 
-  typename DemonsRegistrationFilterType::Pointer   m_DemonsRegistrationFilter;
+  typename DemonsRegistrationFilterType::Pointer m_DemonsRegistrationFilter;
 
-  typename DestinationPointSetType::ConstPointer    m_FinalDestinationPoints;
+  typename DestinationPointSetType::ConstPointer m_FinalDestinationPoints;
 
   IntegerArrayType m_SmoothingIterations;
   IntegerArrayType m_DemonsIterations;
@@ -294,10 +312,10 @@ private:
   RegistrationMonitorType * m_RegistrationMonitor;
 #endif
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter.hxx"
+#  include "itkMultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter.hxx"
 #endif
 
 #endif

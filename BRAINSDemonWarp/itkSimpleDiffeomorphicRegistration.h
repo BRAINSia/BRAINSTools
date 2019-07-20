@@ -27,49 +27,50 @@
 #include "DemonsPreprocessor.h"
 #include "DemonsRegistrator.h"
 
-#define DIM                         3
-#define MaxStepLength               2
+#define DIM 3
+#define MaxStepLength 2
 #define SmoothDisplacementFieldSigma 1.5
-#define NumberOfLevels              5
-#define NumberOfIteration0          300
-#define NumberOfIteration1          100                              // 100
-#define NumberOfIteration2          30                               // 30
-#define NumberOfIteration3          20                               // 20
-#define NumberOfIteration4          15                               // 15
-#define FixedPyramid                16
-#define NumberOfMatchPoints         7
-#define NumberOfHistogramLevels     1024
+#define NumberOfLevels 5
+#define NumberOfIteration0 300
+#define NumberOfIteration1 100 // 100
+#define NumberOfIteration2 30  // 30
+#define NumberOfIteration3 20  // 20
+#define NumberOfIteration4 15  // 15
+#define FixedPyramid 16
+#define NumberOfMatchPoints 7
+#define NumberOfHistogramLevels 1024
 
 /** TODO:  Need to document this class
-  */
+ */
 class itkSimpleDiffeomorphicRegistration : public itk::Object
 {
 public:
-  using TRealImage = itk::Image<float, DIM>;
-  using DemonsPreprocessorType = itk::DemonsPreprocessor<TRealImage,
-                                  TRealImage>;
-  using DemonsRegistratorType = itk::DemonsRegistrator<TRealImage, TRealImage,
-                                 float>;
-  using TDisplacementField = itk::Image<itk::Vector<float, DIM>, DIM>;
+  using TRealImage = itk::Image< float, DIM >;
+  using DemonsPreprocessorType = itk::DemonsPreprocessor< TRealImage, TRealImage >;
+  using DemonsRegistratorType = itk::DemonsRegistrator< TRealImage, TRealImage, float >;
+  using TDisplacementField = itk::Image< itk::Vector< float, DIM >, DIM >;
 
   itkSimpleDiffeomorphicRegistration();
-  itkSetObjectMacro(FixedImage, TRealImage);
-  itkSetObjectMacro(MovingImage, TRealImage);
+  itkSetObjectMacro( FixedImage, TRealImage );
+  itkSetObjectMacro( MovingImage, TRealImage );
 
-  itkSetStringMacro(DisplacementFieldName);
-  itkSetStringMacro(DeformedImageName);
-  itkGetStringMacro(DeformedImageName);
-  itkGetConstObjectMacro(DisplacementField, TDisplacementField);
-  void Update();
+  itkSetStringMacro( DisplacementFieldName );
+  itkSetStringMacro( DeformedImageName );
+  itkGetStringMacro( DeformedImageName );
+  itkGetConstObjectMacro( DisplacementField, TDisplacementField );
+  void
+  Update();
 
 protected:
   // std::string GetFixedImage(void);
   // std::string GetMovingImage(void);
   // std::string GetDeformedImageName(void);
   // std::string GetDisplacementPrefixName(void);
-  void InitializePreprocessor();
+  void
+  InitializePreprocessor();
 
-  void Initialization(void);
+  void
+  Initialization( void );
 
 private:
   DemonsPreprocessorType::Pointer m_DemonsPreprocessor;

@@ -46,108 +46,134 @@ class QLabelList : public QListWidget
 {
   Q_OBJECT
 
-  using LandmarksMapType = std::map<QString, std::vector<double> >;
-public:
+  using LandmarksMapType = std::map< QString, std::vector< double > >;
 
-  QLabelList( QWidget *myParent = nullptr ) :
-    QListWidget( myParent )
+public:
+  QLabelList( QWidget * myParent = nullptr )
+    : QListWidget( myParent )
   {
     m_color = 0;
   }
 
-  void SetInputVolume( std::string filename )
+  void
+  SetInputVolume( std::string filename )
   {
     m_inputVolume = QString::fromStdString( filename );
   }
 
-  void SetInputLandmarks( std::string filename )
+  void
+  SetInputLandmarks( std::string filename )
   {
     m_inputLandmarks = QString::fromStdString( filename );
   }
 
-  void SetOutputLandmarks( std::string filename )
+  void
+  SetOutputLandmarks( std::string filename )
   {
     m_outputLandmarks = QString::fromStdString( filename );
   }
 
-  LandmarksMapType GetLandmarks()
+  LandmarksMapType
+  GetLandmarks()
   {
     return m_landmarks;
   }
 
-  void createListItem( const QString & label, const QString & name ); // UI for
+  void
+  createListItem( const QString & label, const QString & name ); // UI for
 
   // creating
   // named
   // points
   // load landmarks from file
-  void loadLandmarks();
+  void
+  loadLandmarks();
 
   // read landmarks from label list class to the internal map
-  void readLandmarks();
+  void
+  readLandmarks();
 
   // write landmarks to file
-  void writeLandmarks();
+  void
+  writeLandmarks();
 
 public slots:
 
   // respond to keyboard signal from viewer
-  void createListItemSlot( const QString & label );
+  void
+  createListItemSlot( const QString & label );
 
-  void createListItemAddButtonSlot(); // a wrap for add label button
+  void
+  createListItemAddButtonSlot(); // a wrap for add label button
 
-  void editListItemSlot( const QString & );
+  void
+  editListItemSlot( const QString & );
 
-  void switchListItemSlot();
+  void
+  switchListItemSlot();
 
-  void deleteListItemSlot();
+  void
+  deleteListItemSlot();
 
-  void deleteListSlot();
+  void
+  deleteListSlot();
 
   // respond to mouse signal from itself
-  void cancelHighlight( QListWidgetItem * ); // haven't find a direct way of
+  void
+  cancelHighlight( QListWidgetItem * ); // haven't find a direct way of
 
   // disabling highlight;(
 
-  void deleteListItemMouseSlot( QListWidgetItem * );
+  void
+  deleteListItemMouseSlot( QListWidgetItem * );
 
-  void sliceChangedSlot();
+  void
+  sliceChangedSlot();
 
   // determine which label should be displayed
-  void checkVisibilitySlot();
+  void
+  checkVisibilitySlot();
 
-  void checkVisibilitySlot( double *tag ); // a wrap for slider bar
+  void
+  checkVisibilitySlot( double * tag ); // a wrap for slider bar
 
-  void checkVisibilitySlot( QListWidgetItem * ); // a wrap for double click on
+  void
+  checkVisibilitySlot( QListWidgetItem * ); // a wrap for double click on
 
   // list item
 
   // respond to callback, help to find the initial position due to wheeling
-  void ackWheelChanged();
+  void
+  ackWheelChanged();
 
   // save landmarks to a file
-  void saveLandmarks();
+  void
+  saveLandmarks();
 
-  void saveAsLandmarks();
+  void
+  saveAsLandmarks();
 
 signals:
 
-  void sliceChangedList(); // signal to sliceChangeSlot indicating the update of
+  void
+  sliceChangedList(); // signal to sliceChangeSlot indicating the update of
 
   // slice viewer
 
-  void sendLabelPosition( double *pos );
+  void
+  sendLabelPosition( double * pos );
 
   // determine which label should be displayed
   // *[0] = sagittal, *[1] = coronal, *[2] = axial
   // table = 1 means the label is visible in certain viewer
-  void visibilityTable( int *table );
+  void
+  visibilityTable( int * table );
 
   // send to viewer, help to find the initial position due to wheeling
-  void sendLabelPositions( double *pos );
+  void
+  sendLabelPositions( double * pos );
 
 protected:
-
   // color seed
   int m_color;
 

@@ -37,12 +37,13 @@
 
 /* Iadd adds 2 images at every pixel location and outputs the resulting image.*/
 
-template <typename ImageType>
-typename ImageType::Pointer Iadd(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
+template < typename ImageType >
+typename ImageType::Pointer
+Iadd( typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
-  using FilterType = itk::AddImageFilter<ImageType, ImageType, ImageType>;
+  using FilterType = itk::AddImageFilter< ImageType, ImageType, ImageType >;
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput1( input1  );
+  filter->SetInput1( input1 );
   filter->SetInput2( input2 );
   filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
@@ -52,12 +53,13 @@ typename ImageType::Pointer Iadd(typename ImageType::Pointer input1, typename Im
 
 /* Isub subtracts 2 images at every pixel location and outputs the resulting image.*/
 
-template <typename ImageType>
-typename ImageType::Pointer Isub(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
+template < typename ImageType >
+typename ImageType::Pointer
+Isub( typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
-  using FilterType = itk::SubtractImageFilter<ImageType, ImageType, ImageType>;
+  using FilterType = itk::SubtractImageFilter< ImageType, ImageType, ImageType >;
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput1( input1  );
+  filter->SetInput1( input1 );
   filter->SetInput2( input2 );
   filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
@@ -67,12 +69,13 @@ typename ImageType::Pointer Isub(typename ImageType::Pointer input1, typename Im
 
 /* Imul multiplies 2 images at every pixel location and outputs the resulting image.*/
 
-template <typename ImageType>
-typename ImageType::Pointer Imul(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
+template < typename ImageType >
+typename ImageType::Pointer
+Imul( typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
-  using FilterType = itk::MultiplyImageFilter<ImageType, ImageType, ImageType>;
+  using FilterType = itk::MultiplyImageFilter< ImageType, ImageType, ImageType >;
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput1( input1  );
+  filter->SetInput1( input1 );
   filter->SetInput2( input2 );
   filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
@@ -82,12 +85,13 @@ typename ImageType::Pointer Imul(typename ImageType::Pointer input1, typename Im
 
 /* Idiv divides 2 images at every pixel location and outputs the resulting image.*/
 
-template <typename ImageType>
-typename ImageType::Pointer Idiv(typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
+template < typename ImageType >
+typename ImageType::Pointer
+Idiv( typename ImageType::Pointer input1, typename ImageType::Pointer input2 )
 {
-  using FilterType = itk::DivideImageFilter<ImageType, ImageType, ImageType>;
+  using FilterType = itk::DivideImageFilter< ImageType, ImageType, ImageType >;
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput1( input1  );
+  filter->SetInput1( input1 );
   filter->SetInput2( input2 );
   filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
@@ -98,100 +102,102 @@ typename ImageType::Pointer Idiv(typename ImageType::Pointer input1, typename Im
 /* Iavg takes an image and the number of images as inputs , divides each pixel location of the image by the number of
   images outputs the resulting image.*/
 
-template <typename ImageType>
-typename ImageType::Pointer Iavg(typename ImageType::Pointer input1, int nimgs)
+template < typename ImageType >
+typename ImageType::Pointer
+Iavg( typename ImageType::Pointer input1, int nimgs )
 {
   typename ImageType::Pointer image = ImageType::New();
-  image->SetRegions(input1->GetLargestPossibleRegion() );
-  image->CopyInformation(input1);
+  image->SetRegions( input1->GetLargestPossibleRegion() );
+  image->CopyInformation( input1 );
   image->Allocate();
-  using ConstIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  ConstIteratorType in1(input1, input1->GetLargestPossibleRegion() );
-  ConstIteratorType out(image, image->GetLargestPossibleRegion() );
-  for( in1.GoToBegin(), out.GoToBegin(); !in1.IsAtEnd(); ++in1, ++out )
-    {
-    out.Set(in1.Get() / nimgs);
-    }
+  using ConstIteratorType = typename itk::ImageRegionIterator< ImageType >;
+  ConstIteratorType in1( input1, input1->GetLargestPossibleRegion() );
+  ConstIteratorType out( image, image->GetLargestPossibleRegion() );
+  for ( in1.GoToBegin(), out.GoToBegin(); !in1.IsAtEnd(); ++in1, ++out )
+  {
+    out.Set( in1.Get() / nimgs );
+  }
 
   return image;
 }
 
-template <typename ImageType>
-typename ImageType::Pointer IMask(typename ImageType::Pointer input1, typename ImageType::Pointer mask )
+template < typename ImageType >
+typename ImageType::Pointer
+IMask( typename ImageType::Pointer input1, typename ImageType::Pointer mask )
 
 {
   typename ImageType::Pointer image = ImageType::New();
-  image->SetRegions(input1->GetLargestPossibleRegion() );
-  image->CopyInformation(input1);
+  image->SetRegions( input1->GetLargestPossibleRegion() );
+  image->CopyInformation( input1 );
   image->Allocate();
-  using ConstIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  ConstIteratorType in1(input1, input1->GetLargestPossibleRegion() );
-  ConstIteratorType in2(mask, mask->GetLargestPossibleRegion() );
-  ConstIteratorType out(image, image->GetLargestPossibleRegion() );
-  for( in1.GoToBegin(), out.GoToBegin(), in2.GoToBegin(); !in1.IsAtEnd(); ++in1, ++in2, ++out )
-    {
+  using ConstIteratorType = typename itk::ImageRegionIterator< ImageType >;
+  ConstIteratorType in1( input1, input1->GetLargestPossibleRegion() );
+  ConstIteratorType in2( mask, mask->GetLargestPossibleRegion() );
+  ConstIteratorType out( image, image->GetLargestPossibleRegion() );
+  for ( in1.GoToBegin(), out.GoToBegin(), in2.GoToBegin(); !in1.IsAtEnd(); ++in1, ++in2, ++out )
+  {
     const typename ImageType::PixelType temp = in1.Get();
-    out.Set( (in2.Get() > 0) ? temp : 0);
-    }
+    out.Set( ( in2.Get() > 0 ) ? temp : 0 );
+  }
   return image;
 }
 
 /*ImageMultiplyConstant multiplies the entire image with a constant value and outputs the resultant image*/
 
-template <typename ImageType>
-typename ImageType::Pointer ImageMultiplyConstant(typename ImageType::Pointer input1,
-                                                  typename ImageType::PixelType constant)
+template < typename ImageType >
+typename ImageType::Pointer
+ImageMultiplyConstant( typename ImageType::Pointer input1, typename ImageType::PixelType constant )
 {
-  using ConstIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  ConstIteratorType in1(input1, input1->GetLargestPossibleRegion() );
-  for( in1.GoToBegin(); !in1.IsAtEnd(); ++in1 )
-    {
-    in1.Set( (in1.Get() * constant) );
-    }
+  using ConstIteratorType = typename itk::ImageRegionIterator< ImageType >;
+  ConstIteratorType in1( input1, input1->GetLargestPossibleRegion() );
+  for ( in1.GoToBegin(); !in1.IsAtEnd(); ++in1 )
+  {
+    in1.Set( ( in1.Get() * constant ) );
+  }
 
   return input1;
 }
 
-template <typename ImageType>
-typename ImageType::Pointer ImageDivideConstant(typename ImageType::Pointer input1,
-                                                typename ImageType::PixelType constant)
+template < typename ImageType >
+typename ImageType::Pointer
+ImageDivideConstant( typename ImageType::Pointer input1, typename ImageType::PixelType constant )
 {
-  using ConstIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  ConstIteratorType in1(input1, input1->GetRequestedRegion() );
-  for( in1.GoToBegin(); !in1.IsAtEnd(); ++in1 )
-    {
-    in1.Set( (in1.Get() / constant) );
-    }
+  using ConstIteratorType = typename itk::ImageRegionIterator< ImageType >;
+  ConstIteratorType in1( input1, input1->GetRequestedRegion() );
+  for ( in1.GoToBegin(); !in1.IsAtEnd(); ++in1 )
+  {
+    in1.Set( ( in1.Get() / constant ) );
+  }
 
   return input1;
 }
 
-template <typename ImageType>
-void ImageSqrtValue(typename ImageType::Pointer Output,
-                    const typename ImageType::Pointer Input)
+template < typename ImageType >
+void
+ImageSqrtValue( typename ImageType::Pointer Output, const typename ImageType::Pointer Input )
 {
   typename ImageType::Pointer image = ImageType::New();
-  image->SetRegions(Input->GetLargestPossibleRegion() );
-  image->CopyInformation(Input);
+  image->SetRegions( Input->GetLargestPossibleRegion() );
+  image->CopyInformation( Input );
   image->Allocate();
-  using ConstIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  ConstIteratorType in(Input, Input->GetLargestPossibleRegion() );
-  ConstIteratorType out(image, image->GetLargestPossibleRegion() );
-  for( in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd(); ++in, ++out )
-    {
-    out.Set(static_cast<typename ImageType::PixelType>(in.Get() ) );
-    }
+  using ConstIteratorType = typename itk::ImageRegionIterator< ImageType >;
+  ConstIteratorType in( Input, Input->GetLargestPossibleRegion() );
+  ConstIteratorType out( image, image->GetLargestPossibleRegion() );
+  for ( in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd(); ++in, ++out )
+  {
+    out.Set( static_cast< typename ImageType::PixelType >( in.Get() ) );
+  }
 
   Output = image;
   return;
 }
 
-template <typename ImageType>
+template < typename ImageType >
 typename ImageType::Pointer
-ImageSqrtValue(typename ImageType::Pointer input)
+ImageSqrtValue( typename ImageType::Pointer input )
 {
   typename ImageType::Pointer rval;
-  ImageSqrtValue<ImageType>(rval, input);
+  ImageSqrtValue< ImageType >( rval, input );
   return rval;
 }
 

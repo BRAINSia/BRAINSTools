@@ -39,66 +39,69 @@
 
 namespace itk
 {
-template <typename TPixelType, unsigned Dimension>
+template < typename TPixelType, unsigned Dimension >
 class Brains2LandmarkReader : public LightProcessObject
 {
 public:
   using Self = Brains2LandmarkReader;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   using PixelType = float;
   using PointType = float;
 
-  using PointSetType = PointSet<PointType, Dimension>;
-  using InputPointSetType = PointSet<TPixelType, Dimension>;
+  using PointSetType = PointSet< PointType, Dimension >;
+  using InputPointSetType = PointSet< TPixelType, Dimension >;
 
-  using ImageType = Image<PixelType, Dimension>;
+  using ImageType = Image< PixelType, Dimension >;
   using ImagePointer = typename ImageType::Pointer;
 
-  itkNewMacro(Self);
+  itkNewMacro( Self );
   using Superclass = Object;
-  itkTypeMacro(Brains2LandmarkReader, LightProcessObject);
+  itkTypeMacro( Brains2LandmarkReader, LightProcessObject );
 
-  itkSetStringMacro(FileName);
-  itkGetStringMacro(FileName);
+  itkSetStringMacro( FileName );
+  itkGetStringMacro( FileName );
 
-  PointSetType * GetPointSet()
+  PointSetType *
+  GetPointSet()
   {
     return m_PointSet;
   }
 
-  PointSetType * GetPhysicalPointSet()
+  PointSetType *
+  GetPhysicalPointSet()
   {
     return m_PPointSet;
   }
 
-  void SetReferenceImage(ImageType * ig)
+  void
+  SetReferenceImage( ImageType * ig )
   {
     m_ReferenceImage = ig;
   }
 
-  void Update();
+  void
+  Update();
 
 protected:
-  Brains2LandmarkReader(const Self &);
-  Brains2LandmarkReader & operator=(const Self &);
+  Brains2LandmarkReader( const Self & );
+  Brains2LandmarkReader &
+  operator=( const Self & );
 
   Brains2LandmarkReader();
-  ~Brains2LandmarkReader() override
-  {
-  };
-//   void GenerateData();
+  ~Brains2LandmarkReader() override{};
+  //   void GenerateData();
 private:
-  std::string m_FileName;
-  typename InputPointSetType::Pointer  m_PointSet;
-  typename PointSetType::Pointer  m_PPointSet;
-  ImagePointer m_ReferenceImage;
+  std::string                         m_FileName;
+  typename InputPointSetType::Pointer m_PointSet;
+  typename PointSetType::Pointer      m_PPointSet;
+  ImagePointer                        m_ReferenceImage;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBrains2LandmarkReader.hxx"
+#  include "itkBrains2LandmarkReader.hxx"
 #endif
 
 #endif // _itkBrains2LandmarkReader_h

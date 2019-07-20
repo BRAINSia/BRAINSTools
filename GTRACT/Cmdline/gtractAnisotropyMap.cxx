@@ -51,117 +51,120 @@
 #include "BRAINSThreadControl.h"
 #include <BRAINSCommonLib.h>
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   using TensorComponentType = double;
-  using TensorPixelType = itk::gtractDiffusionTensor3D<TensorComponentType>;
-  using TensorImageType = itk::Image<TensorPixelType, 3>;
-  using AnisotropyImageType = itk::Image<float, 3>;
+  using TensorPixelType = itk::gtractDiffusionTensor3D< TensorComponentType >;
+  using TensorImageType = itk::Image< TensorPixelType, 3 >;
+  using AnisotropyImageType = itk::Image< float, 3 >;
 
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
 
   bool debug = true;
-  if( debug )
-    {
+  if ( debug )
+  {
     std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Tensor Image: " <<  inputTensorVolume << std::endl;
-    std::cout << "Output Anisotropy Image: " <<  outputVolume << std::endl;
-    std::cout << "Anisotropy Type: " <<  anisotropyType << std::endl;
+    std::cout << "Input Tensor Image: " << inputTensorVolume << std::endl;
+    std::cout << "Output Anisotropy Image: " << outputVolume << std::endl;
+    std::cout << "Anisotropy Type: " << anisotropyType << std::endl;
     std::cout << "=====================================================" << std::endl;
-    }
+  }
 
   bool violated = false;
-  if( inputTensorVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputTensorVolume Required! "  << std::endl;
-    }
-  if( outputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
-    }
-  if( violated )
-    {
+  if ( inputTensorVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --inputTensorVolume Required! " << std::endl;
+  }
+  if ( outputVolume.size() == 0 )
+  {
+    violated = true;
+    std::cout << "  --outputVolume Required! " << std::endl;
+  }
+  if ( violated )
+  {
     return EXIT_FAILURE;
-    }
+  }
 
-  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
+  using TensorImageReaderType = itk::ImageFileReader< TensorImageType >;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
 
   try
-    {
+  {
     tensorImageReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
 
-  AnisotropyImageType::Pointer anisotropyImage =  AnisotropyImageType::New();
+  AnisotropyImageType::Pointer anisotropyImage = AnisotropyImageType::New();
   anisotropyImage->SetRegions( tensorImage->GetLargestPossibleRegion() );
   anisotropyImage->SetSpacing( tensorImage->GetSpacing() );
   anisotropyImage->SetOrigin( tensorImage->GetOrigin() );
   anisotropyImage->SetDirection( tensorImage->GetDirection() );
   anisotropyImage->Allocate();
 
-  using IteratorType = itk::ImageRegionIterator<AnisotropyImageType>;
+  using IteratorType = itk::ImageRegionIterator< AnisotropyImageType >;
   IteratorType anisoIt( anisotropyImage, anisotropyImage->GetRequestedRegion() );
 
-  using ConstIteratorType = itk::ImageRegionConstIterator<TensorImageType>;
+  using ConstIteratorType = itk::ImageRegionConstIterator< TensorImageType >;
   ConstIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
 
   float anisotropy = 0.0;
-  for( anisoIt.GoToBegin(), tensorIt.GoToBegin(); !anisoIt.IsAtEnd(); ++anisoIt, ++tensorIt )
-    {
+  for ( anisoIt.GoToBegin(), tensorIt.GoToBegin(); !anisoIt.IsAtEnd(); ++anisoIt, ++tensorIt )
+  {
     TensorPixelType tensorPixel = tensorIt.Get();
-    if( anisotropyType == "ADC"  ||  anisotropyType == "adc" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetTrace() / 3.0 );
-      }
-    else if( anisotropyType == "FA"  ||  anisotropyType == "fa" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetFractionalAnisotropy() );
-      }
-    else if( anisotropyType == "RA"  ||  anisotropyType == "ra" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetRelativeAnisotropy() );
-      }
-    else if( anisotropyType == "VR"  ||  anisotropyType == "vr" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetVolumeRatio() );
-      }
-    else if( anisotropyType == "AD"  ||  anisotropyType == "ad" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetAxialDiffusivity() );
-      }
-    else if( anisotropyType == "RD"  ||  anisotropyType == "rd" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetRadialDiffusivity() );
-      }
-    else if( anisotropyType == "LI"  ||  anisotropyType == "li" )
-      {
-      anisotropy = static_cast<float>( tensorPixel.GetLatticeIndex() );
-      }
-    anisoIt.Set( anisotropy );
+    if ( anisotropyType == "ADC" || anisotropyType == "adc" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetTrace() / 3.0 );
     }
+    else if ( anisotropyType == "FA" || anisotropyType == "fa" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetFractionalAnisotropy() );
+    }
+    else if ( anisotropyType == "RA" || anisotropyType == "ra" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetRelativeAnisotropy() );
+    }
+    else if ( anisotropyType == "VR" || anisotropyType == "vr" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetVolumeRatio() );
+    }
+    else if ( anisotropyType == "AD" || anisotropyType == "ad" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetAxialDiffusivity() );
+    }
+    else if ( anisotropyType == "RD" || anisotropyType == "rd" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetRadialDiffusivity() );
+    }
+    else if ( anisotropyType == "LI" || anisotropyType == "li" )
+    {
+      anisotropy = static_cast< float >( tensorPixel.GetLatticeIndex() );
+    }
+    anisoIt.Set( anisotropy );
+  }
 
-  using WriterType = itk::ImageFileWriter<AnisotropyImageType>;
+  using WriterType = itk::ImageFileWriter< AnisotropyImageType >;
   WriterType::Pointer anisotropyWriter = WriterType::New();
   anisotropyWriter->UseCompressionOn();
   anisotropyWriter->SetInput( anisotropyImage );
   anisotropyWriter->SetFileName( outputVolume );
   try
-    {
+  {
     anisotropyWriter->Update();
-    }
-  catch( itk::ExceptionObject & e )
-    {
+  }
+  catch ( itk::ExceptionObject & e )
+  {
     std::cout << e << std::endl;
-    }
+  }
   return EXIT_SUCCESS;
 }

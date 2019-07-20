@@ -23,101 +23,103 @@
 #include <cstdlib>
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   // inputLandmarkFile2 can contain several baselines, and this program is modified
   // to work with different baselines
-  std::vector<std::string> inputLandmarkFile2Names;
+  std::vector< std::string > inputLandmarkFile2Names;
   inputLandmarkFile2Names = inputLandmarkFile2;
 
   const unsigned int numBaselines = inputLandmarkFile2Names.size(); // The number of landmark baseline files
-  if( numBaselines == 0 )
-    {
+  if ( numBaselines == 0 )
+  {
     std::cerr << "ERROR: No input baseline file is defined!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool testIterationIsPassed = false;
 
-  for( unsigned int l = 0; l < numBaselines; ++l)
-     {
-     std::cout << "\nCompare the input landmark file with the baseline files number: " << l+1 << std::endl;
+  for ( unsigned int l = 0; l < numBaselines; ++l )
+  {
+    std::cout << "\nCompare the input landmark file with the baseline files number: " << l + 1 << std::endl;
 
-     // load corresponding landmarks in EMSP aligned space from file if possible
-     const LandmarksMapType landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
-     const LandmarksMapType landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2Names[l] );
+    // load corresponding landmarks in EMSP aligned space from file if possible
+    const LandmarksMapType landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
+    const LandmarksMapType landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2Names[l] );
 
-     if( landmarks1.empty() )
-       {
-       std::cout << "ERROR: " << inputLandmarkFile1 << " is empty" << std::endl;
-       return EXIT_FAILURE;
-       }
-     if( landmarks2.empty() )
-       {
-       std::cout << "ERROR: " << inputLandmarkFile2Names[l] << " is empty" << std::endl;
-       return EXIT_FAILURE;
-       }
-     if( landmarks1.size() != landmarks2.size() )
-       {
-       std::cout << "ERROR: number of landmarks differ." << std::endl;
-       return EXIT_FAILURE;
-       }
-     LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
-     bool allSame = true;
-     while( lmk1iter != landmarks1.end() )
-       {
-       const LandmarksMapType::const_iterator lmk2iter = landmarks2.find(lmk1iter->first);
-       if ( lmk2iter == landmarks2.end() )
-         {
-         std::cout << "Missing landmark in second file" << lmk1iter->first << std::endl;
-         allSame = false;
-         continue;
-         }
-       else
-         {
-         bool thisLmkOK = true;
-         double error_term = 0.0;
-         for( unsigned int i = 0 ; i < 3 ; ++i )
-           {
-           error_term += std::pow((lmk1iter->second[i] - lmk2iter->second[i]), 2);
-           }
-         error_term = std::sqrt( error_term );
-         if ( error_term > tolerance )
-           {
-           std::cout << "\nFAIL: lmk" << lmk1iter->first << " differ by greater than tolerance" << std::endl;
-           std::cout << "FAIL: euclidean distance  = " << error_term << " is greater than " << tolerance << std::endl;
-           allSame = false;
-           thisLmkOK = false;
-           }
-         if (thisLmkOK)
-           {
-           std::cout << "PASS:  lmk" << lmk1iter->first << std::endl;
-           }
-         }
-       ++lmk1iter;
-       }
-     if( allSame )
-       {
-       std::cout << "The input landmark file is identical to the baseline file: " << l+1 << "!" << std::endl;
-       testIterationIsPassed = true;
-       break;
-       }
-      else
-       {
-       std::cout << "WARINING: The input landmark file is too different than the baseline file: " << l+1 << "!" << std::endl;
-       }
-     }
-
-  if( testIterationIsPassed )
+    if ( landmarks1.empty() )
     {
-    return EXIT_SUCCESS;
+      std::cout << "ERROR: " << inputLandmarkFile1 << " is empty" << std::endl;
+      return EXIT_FAILURE;
     }
-  else
+    if ( landmarks2.empty() )
     {
+      std::cout << "ERROR: " << inputLandmarkFile2Names[l] << " is empty" << std::endl;
+      return EXIT_FAILURE;
+    }
+    if ( landmarks1.size() != landmarks2.size() )
+    {
+      std::cout << "ERROR: number of landmarks differ." << std::endl;
+      return EXIT_FAILURE;
+    }
+    LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
+    bool                             allSame = true;
+    while ( lmk1iter != landmarks1.end() )
+    {
+      const LandmarksMapType::const_iterator lmk2iter = landmarks2.find( lmk1iter->first );
+      if ( lmk2iter == landmarks2.end() )
+      {
+        std::cout << "Missing landmark in second file" << lmk1iter->first << std::endl;
+        allSame = false;
+        continue;
+      }
+      else
+      {
+        bool   thisLmkOK = true;
+        double error_term = 0.0;
+        for ( unsigned int i = 0; i < 3; ++i )
+        {
+          error_term += std::pow( ( lmk1iter->second[i] - lmk2iter->second[i] ), 2 );
+        }
+        error_term = std::sqrt( error_term );
+        if ( error_term > tolerance )
+        {
+          std::cout << "\nFAIL: lmk" << lmk1iter->first << " differ by greater than tolerance" << std::endl;
+          std::cout << "FAIL: euclidean distance  = " << error_term << " is greater than " << tolerance << std::endl;
+          allSame = false;
+          thisLmkOK = false;
+        }
+        if ( thisLmkOK )
+        {
+          std::cout << "PASS:  lmk" << lmk1iter->first << std::endl;
+        }
+      }
+      ++lmk1iter;
+    }
+    if ( allSame )
+    {
+      std::cout << "The input landmark file is identical to the baseline file: " << l + 1 << "!" << std::endl;
+      testIterationIsPassed = true;
+      break;
+    }
+    else
+    {
+      std::cout << "WARINING: The input landmark file is too different than the baseline file: " << l + 1 << "!"
+                << std::endl;
+    }
+  }
+
+  if ( testIterationIsPassed )
+  {
+    return EXIT_SUCCESS;
+  }
+  else
+  {
     std::cout << "ERROR: The landmark files are too different!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 }

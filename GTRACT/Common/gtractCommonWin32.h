@@ -40,13 +40,13 @@
 #include "gtractConfigure.h"
 
 #if defined( WIN32 ) && !defined( GTRACTSTATIC )
-#if defined( GTRACTCommon_EXPORTS )
-#define GTRACT_COMMON_EXPORT __declspec( dllexport )
+#  if defined( GTRACTCommon_EXPORTS )
+#    define GTRACT_COMMON_EXPORT __declspec( dllexport )
+#  else
+#    define GTRACT_COMMON_EXPORT __declspec( dllimport )
+#  endif
 #else
-#define GTRACT_COMMON_EXPORT __declspec( dllimport )
-#endif
-#else
-#define GTRACT_COMMON_EXPORT
+#  define GTRACT_COMMON_EXPORT
 #endif
 
-#endif   // __gtractCommonWin32_h
+#endif // __gtractCommonWin32_h

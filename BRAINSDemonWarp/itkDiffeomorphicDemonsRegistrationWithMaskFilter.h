@@ -75,23 +75,22 @@ namespace itk
  * \ingroup DeformableImageRegistration MultiThreaded
  * \ingroup ITKReview
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-class DiffeomorphicDemonsRegistrationWithMaskFilter :
-  public         PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
-                                                 TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+class DiffeomorphicDemonsRegistrationWithMaskFilter
+  : public PDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >
 {
 public:
   /** Standard class type alias. */
   using Self = DiffeomorphicDemonsRegistrationWithMaskFilter;
-  using Superclass = PDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = PDEDeformableRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DiffeomorphicDemonsRegistrationWithMaskFilter, PDEDeformableRegistrationFilter);
+  itkTypeMacro( DiffeomorphicDemonsRegistrationWithMaskFilter, PDEDeformableRegistrationFilter );
 
   /** FixedImage image type. */
   using FixedImageType = typename Superclass::FixedImageType;
@@ -116,8 +115,8 @@ public:
   using TimeStepType = typename FiniteDifferenceFunctionType::TimeStepType;
 
   /** DemonsRegistrationFilterFunction type. */
-  using DemonsRegistrationFunctionType = ESMDemonsRegistrationWithMaskFunction<FixedImageType, MovingImageType,
-                                                DisplacementFieldType>;
+  using DemonsRegistrationFunctionType =
+    ESMDemonsRegistrationWithMaskFunction< FixedImageType, MovingImageType, DisplacementFieldType >;
   using GradientType = typename DemonsRegistrationFunctionType::GradientType;
 
   /** Inherit some enums from the superclass. */
@@ -127,100 +126,114 @@ public:
    * in intensity between the fixed image and transforming moving image
    * computed over the the overlapping region between the two images.
    * This value is calculated for the current iteration */
-  virtual double GetMetric() const;
+  virtual double
+  GetMetric() const;
 
-  const double & GetRMSChange() const override;
+  const double &
+  GetRMSChange() const override;
 
-  virtual void SetUseGradientType(GradientType gtype);
+  virtual void
+  SetUseGradientType( GradientType gtype );
 
-  virtual GradientType GetUseGradientType() const;
+  virtual GradientType
+  GetUseGradientType() const;
 
   /** Use a first-order approximation of the exponential.
    *  This amounts to using an update rule of the type
    *  s <- s o (Id + u) instead of s <- s o exp(u) */
-  itkSetMacro(UseFirstOrderExp, bool);
-  itkGetConstMacro(UseFirstOrderExp, bool);
-  itkBooleanMacro(UseFirstOrderExp);
+  itkSetMacro( UseFirstOrderExp, bool );
+  itkGetConstMacro( UseFirstOrderExp, bool );
+  itkBooleanMacro( UseFirstOrderExp );
 
   /** Set/Get the threshold below which the absolute difference of
    * intensity yields a match. When the intensities match between a
    * moving and fixed image pixel, the update vector (for that
    * iteration) will be the zero vector. Default is 0.001. */
-  virtual void SetIntensityDifferenceThreshold(double);
+  virtual void
+  SetIntensityDifferenceThreshold( double );
 
-  virtual double GetIntensityDifferenceThreshold() const;
+  virtual double
+  GetIntensityDifferenceThreshold() const;
 
   /** Set/Get the maximum length in terms of pixels of
    *  the vectors in the update buffer. */
-  virtual void SetMaximumUpdateStepLength(double);
+  virtual void
+  SetMaximumUpdateStepLength( double );
 
-  virtual double GetMaximumUpdateStepLength() const;
+  virtual double
+  GetMaximumUpdateStepLength() const;
 
-  using MaskType = itk::SpatialObject<Self::ImageDimension>;
+  using MaskType = itk::SpatialObject< Self::ImageDimension >;
 
-  virtual void SetMovingImageMask(MaskType *mask);
+  virtual void
+  SetMovingImageMask( MaskType * mask );
 
-  virtual void SetFixedImageMask(MaskType *mask);
+  virtual void
+  SetFixedImageMask( MaskType * mask );
 
-  virtual const MaskType * GetMovingImageMask() const;
+  virtual const MaskType *
+  GetMovingImageMask() const;
 
-  virtual const MaskType * GetFixedImageMask() const;
+  virtual const MaskType *
+  GetFixedImageMask() const;
 
 protected:
   DiffeomorphicDemonsRegistrationWithMaskFilter();
-  ~DiffeomorphicDemonsRegistrationWithMaskFilter() override
-  {
-  }
+  ~DiffeomorphicDemonsRegistrationWithMaskFilter() override {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** Initialize the state of filter and equation before each iteration. */
-  void InitializeIteration() override;
+  void
+  InitializeIteration() override;
 
   /** This method allocates storage in m_UpdateBuffer.  It is called from
    * FiniteDifferenceFilter::GenerateData(). */
-  void AllocateUpdateBuffer() override;
+  void
+  AllocateUpdateBuffer() override;
 
   /** Apply update. */
-  void ApplyUpdate(const TimeStepType& dt) override;
+  void
+  ApplyUpdate( const TimeStepType & dt ) override;
 
 
   /** override to do nothing since by definition input image spaces
    *  won't match
    */
-  void VerifyInputInformation() const override;
+  void
+  VerifyInputInformation() const override;
 
 private:
-  DiffeomorphicDemonsRegistrationWithMaskFilter(const Self &); // purposely not
+  DiffeomorphicDemonsRegistrationWithMaskFilter( const Self & ); // purposely not
   // implemented
-  void operator=(const Self &);                        // purposely not
+  void
+  operator=( const Self & ); // purposely not
 
   // implemented
 
   /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
    * this method will throw an exception if the function is not of the expected type. */
-  DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType();
+  DemonsRegistrationFunctionType *
+  DownCastDifferenceFunctionType();
 
-  const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType() const;
+  const DemonsRegistrationFunctionType *
+  DownCastDifferenceFunctionType() const;
 
   /** Exp and composition type alias */
-  using MultiplyByConstantType = MultiplyImageFilter<DisplacementFieldType,
-                              Image<TimeStepType,DisplacementFieldType::ImageDimension>,
-                              DisplacementFieldType>;
+  using MultiplyByConstantType =
+    MultiplyImageFilter< DisplacementFieldType, Image< TimeStepType, DisplacementFieldType::ImageDimension >,
+                         DisplacementFieldType >;
 
-  using FieldExponentiatorType = ExponentialDisplacementFieldImageFilter<
-      DisplacementFieldType, DisplacementFieldType>;
+  using FieldExponentiatorType =
+    ExponentialDisplacementFieldImageFilter< DisplacementFieldType, DisplacementFieldType >;
 
-  using VectorWarperType = WarpVectorImageFilter<
-      DisplacementFieldType,
-      DisplacementFieldType, DisplacementFieldType>;
+  using VectorWarperType = WarpVectorImageFilter< DisplacementFieldType, DisplacementFieldType, DisplacementFieldType >;
 
-  using FieldInterpolatorType = VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      DisplacementFieldType, double>;
+  using FieldInterpolatorType =
+    VectorLinearInterpolateNearestNeighborExtrapolateImageFunction< DisplacementFieldType, double >;
 
-  using AdderType = AddImageFilter<
-      DisplacementFieldType,
-      DisplacementFieldType, DisplacementFieldType>;
+  using AdderType = AddImageFilter< DisplacementFieldType, DisplacementFieldType, DisplacementFieldType >;
 
   using MultiplyByConstantPointer = typename MultiplyByConstantType::Pointer;
   using FieldExponentiatorPointer = typename FieldExponentiatorType::Pointer;
@@ -238,7 +251,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffeomorphicDemonsRegistrationWithMaskFilter.hxx"
+#  include "itkDiffeomorphicDemonsRegistrationWithMaskFilter.hxx"
 #endif
 
 #endif

@@ -21,34 +21,34 @@
 #include "NumericValue.h"
 #include "itkMacro.h" //Needed for override
 
-class FloatValue :
-  public NumericValue<double>
+class FloatValue : public NumericValue< double >
 {
 public:
-  using SuperClass = NumericValue<double>;
-  int PrintSelf(std::ostream & os, int indent) const override
+  using SuperClass = NumericValue< double >;
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent += SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== FloatValue === !"
-       <<  this->m_Value << "!" << std::endl;
+    indent += SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== FloatValue === !" << this->m_Value << "!" << std::endl;
     return indent + 2;
   }
 
   using ReturnType = double;
-  FloatValue(const std::string & name, ReturnType value) :
-    NumericValue<ReturnType>(name, value)
+  FloatValue( const std::string & name, ReturnType value )
+    : NumericValue< ReturnType >( name, value )
+  {}
+
+  FloatValue( const std::string & name, const std::string & stringval )
+    : NumericValue< ReturnType >( name, 0.0 )
   {
+    this->SetValue( stringval );
   }
 
-  FloatValue(const std::string & name, const std::string & stringval) :
-    NumericValue<ReturnType>(name, 0.0)
-  {
-    this->SetValue(stringval);
-  }
+  void
+  SetValue( const std::string & stringval );
 
-  void SetValue(const std::string & stringval);
-
-  bool Verify() const override;
+  bool
+  Verify() const override;
 
 private:
 };

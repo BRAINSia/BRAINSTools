@@ -35,18 +35,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TOutputMesh>
-class DeformationFieldFromTransformMeshFilter :
-  public MeshToMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class DeformationFieldFromTransformMeshFilter : public MeshToMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DeformationFieldFromTransformMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( DeformationFieldFromTransformMeshFilter );
 
   using Self = DeformationFieldFromTransformMeshFilter;
-  using Superclass = MeshToMeshFilter<
-      TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = MeshToMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( DeformationFieldFromTransformMeshFilter, MeshToMeshFilter );
@@ -67,9 +65,7 @@ public:
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   /** Transform type alias. */
-  using TransformType = Transform<double,
-                    Self::PointDimension,
-                    Self::PointDimension>;
+  using TransformType = Transform< double, Self::PointDimension, Self::PointDimension >;
   using TransformPointerType = typename TransformType::ConstPointer;
 
   /** Set the coordinate transformation.  Set the coordinate transform that
@@ -81,24 +77,27 @@ public:
 
   /** Get a pointer to the coordinate transform. */
   itkGetConstObjectMacro( Transform, TransformType );
+
 protected:
   DeformationFieldFromTransformMeshFilter();
   ~DeformationFieldFromTransformMeshFilter();
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const;
 
-  void GenerateOutputInformation();
+  void
+  GenerateOutputInformation();
 
-  void GenerateData();
+  void
+  GenerateData();
 
 private:
-
-  TransformPointerType m_Transform;             // Coordinate transform to use
+  TransformPointerType m_Transform; // Coordinate transform to use
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDeformationFieldFromTransformMeshFilter.hxx"
+#  include "itkDeformationFieldFromTransformMeshFilter.hxx"
 #endif
 
 #endif

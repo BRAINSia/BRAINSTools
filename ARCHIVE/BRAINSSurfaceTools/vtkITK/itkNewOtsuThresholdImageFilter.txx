@@ -22,77 +22,75 @@
 #include "itkNewOtsuThresholdImageCalculator.h"
 #include "itkProgressAccumulator.h"
 
-namespace itk {
-
-template<typename TInputImage, typename TOutputImage>
-NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
-::NewOtsuThresholdImageFilter()
+namespace itk
 {
-  m_OutsideValue   = NumericTraits<OutputPixelType>::ZeroValue();
-  m_InsideValue    = NumericTraits<OutputPixelType>::max();
-  m_Threshold      = NumericTraits<InputPixelType>::ZeroValue();
+
+template < typename TInputImage, typename TOutputImage >
+NewOtsuThresholdImageFilter< TInputImage, TOutputImage >::NewOtsuThresholdImageFilter()
+{
+  m_OutsideValue = NumericTraits< OutputPixelType >::ZeroValue();
+  m_InsideValue = NumericTraits< OutputPixelType >::max();
+  m_Threshold = NumericTraits< InputPixelType >::ZeroValue();
   m_NumberOfHistogramBins = 128;
   m_Omega = 2;
 }
 
-template<typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
-::GenerateData()
+NewOtsuThresholdImageFilter< TInputImage, TOutputImage >::GenerateData()
 {
   typename ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
-  progress->SetMiniPipelineFilter(this);
+  progress->SetMiniPipelineFilter( this );
 
   // Compute the Otsu Threshold for the input image
-  typename NewOtsuThresholdImageCalculator<TInputImage>::Pointer otsu =
-    NewOtsuThresholdImageCalculator<TInputImage>::New();
-  otsu->SetImage (this->GetInput());
-  otsu->SetNumberOfHistogramBins (m_NumberOfHistogramBins);
-  otsu->SetOmega(m_Omega);
+  typename NewOtsuThresholdImageCalculator< TInputImage >::Pointer otsu =
+    NewOtsuThresholdImageCalculator< TInputImage >::New();
+  otsu->SetImage( this->GetInput() );
+  otsu->SetNumberOfHistogramBins( m_NumberOfHistogramBins );
+  otsu->SetOmega( m_Omega );
   otsu->Compute();
   m_Threshold = otsu->GetThreshold();
 
-  typename BinaryThresholdImageFilter<TInputImage,TOutputImage>::Pointer threshold =
-    BinaryThresholdImageFilter<TInputImage,TOutputImage>::New();
+  typename BinaryThresholdImageFilter< TInputImage, TOutputImage >::Pointer threshold =
+    BinaryThresholdImageFilter< TInputImage, TOutputImage >::New();
 
-  progress->RegisterInternalFilter(threshold,.5f);
-  threshold->GraftOutput (this->GetOutput());
-  threshold->SetInput (this->GetInput());
-  threshold->SetLowerThreshold(NumericTraits<InputPixelType>::NonpositiveMin());
-  threshold->SetUpperThreshold(otsu->GetThreshold());
-  threshold->SetInsideValue (m_InsideValue);
-  threshold->SetOutsideValue (m_OutsideValue);
+  progress->RegisterInternalFilter( threshold, .5f );
+  threshold->GraftOutput( this->GetOutput() );
+  threshold->SetInput( this->GetInput() );
+  threshold->SetLowerThreshold( NumericTraits< InputPixelType >::NonpositiveMin() );
+  threshold->SetUpperThreshold( otsu->GetThreshold() );
+  threshold->SetInsideValue( m_InsideValue );
+  threshold->SetOutsideValue( m_OutsideValue );
   threshold->Update();
 
-  this->GraftOutput(threshold->GetOutput());
+  this->GraftOutput( threshold->GetOutput() );
 }
 
-template<typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
-::GenerateInputRequestedRegion()
+NewOtsuThresholdImageFilter< TInputImage, TOutputImage >::GenerateInputRequestedRegion()
 {
-  const_cast<TInputImage *>(this->GetInput())->SetRequestedRegionToLargestPossibleRegion();
+  const_cast< TInputImage * >( this->GetInput() )->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template<typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-NewOtsuThresholdImageFilter<TInputImage,TOutputImage>
-::PrintSelf(std::ostream& os, Indent indent) const
+NewOtsuThresholdImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf( os, indent );
 
-  os << indent << "OutsideValue: "
-     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>(m_OutsideValue) << std::endl;
-  os << indent << "InsideValue: "
-     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>(m_InsideValue) << std::endl;
-  os << indent << "NumberOfHistogramBins: "
-     << m_NumberOfHistogramBins << std::endl;
-  os << indent << "Threshold (computed): "
-     << static_cast<typename NumericTraits<InputPixelType>::PrintType>(m_Threshold) << std::endl;
-
+  os << indent
+     << "OutsideValue: " << static_cast< typename NumericTraits< OutputPixelType >::PrintType >( m_OutsideValue )
+     << std::endl;
+  os << indent
+     << "InsideValue: " << static_cast< typename NumericTraits< OutputPixelType >::PrintType >( m_InsideValue )
+     << std::endl;
+  os << indent << "NumberOfHistogramBins: " << m_NumberOfHistogramBins << std::endl;
+  os << indent
+     << "Threshold (computed): " << static_cast< typename NumericTraits< InputPixelType >::PrintType >( m_Threshold )
+     << std::endl;
 }
 
 
-}// end namespace itk
+} // end namespace itk
 #endif

@@ -19,28 +19,32 @@
 #include <vtkVersion.h>
 namespace itk
 {
-  class ProcessObject;
-  class ProgressEvent;
-};
+class ProcessObject;
+class ProgressEvent;
+}; // namespace itk
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkITKArchetypeImageSeriesReader
 {
 public:
-  static vtkITKArchetypeImageSeriesVectorReaderSeries *New();
-  vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkITKArchetypeImageSeriesVectorReaderSeries *
+  New();
+  vtkTypeMacro( vtkITKArchetypeImageSeriesVectorReaderSeries, vtkITKArchetypeImageSeriesReader );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
-  static void ReadProgressCallback(itk::ProcessObject* obj,
-                                   const itk::ProgressEvent&,
-                                   void* data);
+  static void
+  ReadProgressCallback( itk::ProcessObject * obj, const itk::ProgressEvent &, void * data );
+
 protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *data);
+#if ( VTK_MAJOR_VERSION <= 5 )
+  void
+  ExecuteData( vtkDataObject * data );
 #else
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
+  void
+  ExecuteDataWithInformation( vtkDataObject * output, vtkInformation * outInfo ) override;
 #endif
 };
 

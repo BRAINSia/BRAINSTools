@@ -25,34 +25,34 @@ namespace itk
 /** \class BlendImageFilter
  *  \brief Blend 2 images based using weights for each images
  */
-template <typename TInputImage, typename TOutputImage>
-class BlendImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+template < typename TInputImage, typename TOutputImage >
+class BlendImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BlendImageFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( BlendImageFilter );
 
   /** Standard class type alias. */
   using Self = BlendImageFilter;
-  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BlendImageFilter, ImageToImageFilter);
+  itkTypeMacro( BlendImageFilter, ImageToImageFilter );
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
-  using InputImagePointer = typename    InputImageType::Pointer;
-  using InputImageRegionType = typename    InputImageType::RegionType;
-  using InputImagePixelType = typename    InputImageType::PixelType;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputImagePixelType = typename InputImageType::PixelType;
 
   using OutputImageType = TOutputImage;
-  using OutputImagePointer = typename     OutputImageType::Pointer;
-  using OutputImageRegionType = typename     OutputImageType::RegionType;
-  using OutputImagePixelType = typename     OutputImageType::PixelType;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using OutputImagePixelType = typename OutputImageType::PixelType;
 
   /** ImageDimension enumeration */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
@@ -63,39 +63,39 @@ public:
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( ImageDimensionCheck,
-                   ( Concept::SameDimension<Self::InputImageDimension,
-                                            Self::OutputImageDimension> ) );
+                   (Concept::SameDimension< Self::InputImageDimension, Self::OutputImageDimension >));
   /** End concept checking */
 #endif
 
   /** Set the blend amounts for each input image.
    * set before the update of the filter.
    */
-  itkGetConstMacro(Blend1, double);
-  itkSetMacro(Blend1, double);
-  itkGetConstMacro(Blend2, double);
-  itkSetMacro(Blend2, double);
+  itkGetConstMacro( Blend1, double );
+  itkSetMacro( Blend1, double );
+  itkGetConstMacro( Blend2, double );
+  itkSetMacro( Blend2, double );
 
-  void SetInput1(const TInputImage *image1)
+  void
+  SetInput1( const TInputImage * image1 )
   {
-    this->SetNthInput(0, const_cast<TInputImage *>(image1) );
+    this->SetNthInput( 0, const_cast< TInputImage * >( image1 ) );
   }
 
-  void SetInput2(const TInputImage *image2)
+  void
+  SetInput2( const TInputImage * image2 )
   {
-    this->SetNthInput(1, const_cast<TInputImage *>(image2) );
+    this->SetNthInput( 1, const_cast< TInputImage * >( image2 ) );
   }
 
 protected:
   BlendImageFilter();
-  virtual ~BlendImageFilter()
-  {
-  }
+  virtual ~BlendImageFilter() {}
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const override;
+  virtual void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
-  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId)
-      override;
+  virtual void
+  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) override;
 
 private:
   double m_Blend1, m_Blend2;
@@ -103,7 +103,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBlendImageFilter.hxx"
+#  include "itkBlendImageFilter.hxx"
 #endif
 
 #endif

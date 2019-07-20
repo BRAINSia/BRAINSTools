@@ -41,23 +41,23 @@ namespace itk
  *
  */
 
-template <typename TFixedMesh,  typename TMovingMesh>
+template < typename TFixedMesh, typename TMovingMesh >
 class MeshToMeshMetric : public SingleValuedCostFunction
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshMetric);
+  ITK_DISALLOW_COPY_AND_ASSIGN( MeshToMeshMetric );
 
   /** Standard class type alias. */
   using Self = MeshToMeshMetric;
   using Superclass = SingleValuedCostFunction;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Type used for representing point components  */
   using CoordinateRepresentationType = typename TFixedMesh::CoordRepType;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MeshToMeshMetric, SingleValuedCostFunction);
+  itkTypeMacro( MeshToMeshMetric, SingleValuedCostFunction );
 
   /**  Type of the moving Mesh. */
   using MovingMeshType = TMovingMesh;
@@ -76,10 +76,8 @@ public:
   using PointDataIterator = typename FixedMeshType::PointDataContainer::ConstIterator;
 
   /**  Type of the Transform Base class */
-  using TransformComputationType = typename NumericTraits<CoordinateRepresentationType>::RealType;
-  using TransformType = Transform<TransformComputationType,
-                    Self::MovingMeshDimension,
-                    Self::FixedMeshDimension>;
+  using TransformComputationType = typename NumericTraits< CoordinateRepresentationType >::RealType;
+  using TransformType = Transform< TransformComputationType, Self::MovingMeshDimension, Self::FixedMeshDimension >;
 
   using TransformPointer = typename TransformType::Pointer;
   using InputPointType = typename TransformType::InputPointType;
@@ -88,7 +86,7 @@ public:
   using TransformJacobianType = typename TransformType::JacobianType;
 
   /**  Type of the Interpolator Base class */
-  using InterpolatorType = InterpolateMeshFunction<MovingMeshType>;
+  using InterpolatorType = InterpolateMeshFunction< MovingMeshType >;
   using InterpolatorPointer = typename InterpolatorType::Pointer;
   using RealDataType = typename InterpolatorType::RealType;
   using DerivativeDataType = typename InterpolatorType::DerivativeType;
@@ -104,13 +102,13 @@ public:
 
   /**  Type for the mask of the fixed image. Only pixels that are "inside"
        this mask will be considered for the computation of the metric */
-  using FixedMaskType = SpatialObject<Self::FixedMeshDimension>;
-  using FixedMaskPointer = typename  FixedMaskType::ConstPointer;
+  using FixedMaskType = SpatialObject< Self::FixedMeshDimension >;
+  using FixedMaskPointer = typename FixedMaskType::ConstPointer;
 
   /**  Type for the mask of the moving image. Only pixels that are "inside"
        this mask will be considered for the computation of the metric */
-  using MovingMaskType = SpatialObject<Self::MovingMeshDimension>;
-  using MovingMaskPointer = typename  MovingMaskType::ConstPointer;
+  using MovingMaskType = SpatialObject< Self::MovingMeshDimension >;
+  using MovingMaskPointer = typename MovingMaskType::ConstPointer;
 
   /** Connect the Fixed Pointset.  */
   itkSetConstObjectMacro( FixedMesh, FixedMeshType );
@@ -131,7 +129,8 @@ public:
   itkGetConstObjectMacro( Transform, TransformType );
 
   /** Set the parameters defining the Transform. */
-  void SetTransformParameters( const ParametersType & parameters ) const;
+  void
+  SetTransformParameters( const ParametersType & parameters ) const;
 
   /** Connect the Interpolator. */
   itkSetObjectMacro( Interpolator, InterpolatorType );
@@ -140,7 +139,8 @@ public:
   itkGetConstObjectMacro( Interpolator, InterpolatorType );
 
   /** Return the number of parameters required by the Transform */
-  unsigned int GetNumberOfParameters(void) const override
+  unsigned int
+  GetNumberOfParameters( void ) const override
   {
     return m_Transform->GetNumberOfParameters();
   }
@@ -159,14 +159,14 @@ public:
 
   /** Initialize the Metric by making sure that all the components
    *  are present and plugged together correctly     */
-  virtual void Initialize(void) throw ( ExceptionObject );
+  virtual void
+  Initialize( void ) throw( ExceptionObject );
 
 protected:
   MeshToMeshMetric();
-  virtual ~MeshToMeshMetric()
-  {
-  };
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  virtual ~MeshToMeshMetric(){};
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   FixedMeshConstPointer  m_FixedMesh;
   MovingMeshConstPointer m_MovingMesh;
@@ -180,7 +180,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMeshToMeshMetric.hxx"
+#  include "itkMeshToMeshMetric.hxx"
 #endif
 
 #endif

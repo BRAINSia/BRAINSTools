@@ -60,47 +60,45 @@ namespace itk
 /** \class DtiStreamlineTrackingFilter
  */
 
-template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
-class DtiStreamlineTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
-                                                                      TAnisotropyImageType,
-                                                                      TMaskImageType>
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+class DtiStreamlineTrackingFilter
+  : public itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiStreamlineTrackingFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( DtiStreamlineTrackingFilter );
 
   /** Standard class type alias. */
   using Self = DtiStreamlineTrackingFilter;
-  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Standard New method. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Runtime information support. */
-  itkTypeMacro(DtiStreamlineTrackingFilter, itk::DtiTrackingFilterBase);
+  itkTypeMacro( DtiStreamlineTrackingFilter, itk::DtiTrackingFilterBase );
 
-  itkSetMacro(CurvatureThreshold, double);
-  itkGetMacro(CurvatureThreshold, double);
+  itkSetMacro( CurvatureThreshold, double );
+  itkGetMacro( CurvatureThreshold, double );
 
   // void SetSeeds(SeedListType);
   // void SetTrackingDirections(DirectionListType);
 
-  void Update();
+  void
+  Update();
 
 protected:
   DtiStreamlineTrackingFilter();
-  ~DtiStreamlineTrackingFilter() override
-  {
-  }
+  ~DtiStreamlineTrackingFilter() override {}
 
 private:
   double m_CurvatureThreshold;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDtiStreamlineTrackingFilter.hxx"
+#  include "itkDtiStreamlineTrackingFilter.hxx"
 #endif
 
 #endif

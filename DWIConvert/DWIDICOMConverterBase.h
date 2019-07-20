@@ -15,31 +15,35 @@
 #include "itkNumberToString.h"
 #include "DWIConvertUtils.h"
 
-class DWIDICOMConverterBase : public DWIConverter {
- public:
-
+class DWIDICOMConverterBase : public DWIConverter
+{
+public:
   using InputNamesGeneratorType = itk::DCMTKSeriesFileNames;
-  using DCMTKFileVector = std::vector<itk::DCMTKFileReader *>;
+  using DCMTKFileVector = std::vector< itk::DCMTKFileReader * >;
 
-  DWIDICOMConverterBase(const DCMTKFileVector &allHeaders,
-                          const FileNamesContainer &inputFileNames,
-                          const bool useBMatrixGradientDirections
-                        );
+  DWIDICOMConverterBase( const DCMTKFileVector & allHeaders, const FileNamesContainer & inputFileNames,
+                         const bool useBMatrixGradientDirections );
 
   /**
    * @brief Return common fields.  Does nothing for FSL
    * @return empty map
    */
-  CommonDicomFieldMapType GetCommonDicomFieldsMap() const override;
+  CommonDicomFieldMapType
+  GetCommonDicomFieldsMap() const override;
 
-  void LoadFromDisk() override;
+  void
+  LoadFromDisk() override;
 
-  virtual void LoadDicomDirectory();
-  double readThicknessFromDicom() const;
-  int getDicomSpacing(double * const spacing) const;
+  virtual void
+  LoadDicomDirectory();
+  double
+  readThicknessFromDicom() const;
+  int
+  getDicomSpacing( double * const spacing ) const;
 
 protected:
-  enum VRType{
+  enum VRType
+  {
     DCM_CS,
     DCM_LO,
     DCM_SH,
@@ -55,46 +59,44 @@ protected:
    * @param dcm_human_readable_name "FlipAngle" in example above
    * @param vr "DCM_DS" for enumeration as indicated by vr in example above
    */
-  void _addToStringDictionary(const std::string dcm_primary_name,
-    const std::string dcm_seconary_name,
-    const std::string dcm_human_readable_name, const enum VRType vr);
+  void
+  _addToStringDictionary( const std::string dcm_primary_name, const std::string dcm_seconary_name,
+                          const std::string dcm_human_readable_name, const enum VRType vr );
 
   /** the SliceOrderIS flag can be computed (as above) but if it's
    *  invariant, the derived classes can just set the flag. This method
    *  fixes up the VolumeDirectionCos after the flag is set.
    */
-  void SetDirectionsFromSliceOrder();
+  void
+  SetDirectionsFromSliceOrder();
 
 
   /* given a sequence of dicom files where all the slices for location
    * 0 are folled by all the slices for location 1, etc. This method
    * transforms it into a sequence of volumes
    */
-  void DeInterleaveVolume();
+  void
+  DeInterleaveVolume();
   /* determine if slice order is inferior to superior */
-  void DetermineSliceOrderIS();
+  void
+  DetermineSliceOrderIS();
 
   /** force use of the BMatrix to compute gradients in Siemens data instead of
    *  the reported gradients. which are in many cases bogus.
    */
   const bool m_UseBMatrixGradientDirections;
   /** one file reader per DICOM file in dataset */
-  const DCMTKFileVector    m_Headers;
+  const DCMTKFileVector m_Headers;
 
   /** matrix with just spacing information, used a couple places */
   /** the current dataset is represented in a single file */
-  bool                m_MultiSliceVolume;
+  bool m_MultiSliceVolume;
   /** slice order is inferior/superior? */
-  bool                m_SliceOrderIS;
-
-
+  bool m_SliceOrderIS;
 
 
   /** track if images is interleaved */
-  bool                        m_IsInterleaved;
-
-
-
+  bool m_IsInterleaved;
 };
 
-#endif //BRAINSTOOLS_DWIDICOMCONVERTERBASE_H
+#endif // BRAINSTOOLS_DWIDICOMCONVERTERBASE_H

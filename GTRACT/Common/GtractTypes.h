@@ -41,8 +41,8 @@
 #include <vnl/vnl_vector.h>
 #include <itkContinuousIndex.h>
 
-using TMatrix = vnl_matrix<float>;
-using TVector = vnl_vector<float>;
+using TMatrix = vnl_matrix< float >;
+using TVector = vnl_vector< float >;
 
 class BranchPointType
 {
@@ -54,9 +54,9 @@ public:
 class FiberPointType
 {
 public:
-  itk::ContinuousIndex<float, 3> m_Point;
-  float                          m_AI;
-  float                          m_AISum;
+  itk::ContinuousIndex< float, 3 > m_Point;
+  float                            m_AI;
+  float                            m_AISum;
 };
 
 #endif

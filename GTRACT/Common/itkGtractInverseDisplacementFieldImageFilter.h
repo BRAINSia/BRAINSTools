@@ -61,16 +61,15 @@ namespace itk
  *
  * \ingroup ImageToImageFilter
  */
-template <typename TInputImage, typename TOutputImage>
-class GtractInverseDisplacementFieldImageFilter :
-  public         ImageToImageFilter<TInputImage, TOutputImage>
+template < typename TInputImage, typename TOutputImage >
+class GtractInverseDisplacementFieldImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class type alias. */
   using Self = GtractInverseDisplacementFieldImageFilter;
-  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;
@@ -80,10 +79,10 @@ public:
   using OutputImagePointer = typename OutputImageType::Pointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(GtractInverseDisplacementFieldImageFilter, ImageToImageFilter);
+  itkTypeMacro( GtractInverseDisplacementFieldImageFilter, ImageToImageFilter );
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
@@ -91,9 +90,8 @@ public:
   /** Transform type alias.
    *
    * \todo Check that input and output images have the same number of
-     * dimensions; this is required for consistency.  */
-  using KernelTransformType = KernelTransform<
-      double, Self::ImageDimension>;
+   * dimensions; this is required for consistency.  */
+  using KernelTransformType = KernelTransform< double, Self::ImageDimension >;
   using KernelTransformPointerType = typename KernelTransformType::Pointer;
 
   /** Image size type alias. */
@@ -131,21 +129,23 @@ public:
   itkGetConstReferenceMacro( Size, SizeType );
 
   /** Set the output image spacing. */
-  itkSetMacro(OutputSpacing, SpacingType);
-  virtual void SetOutputSpacing(const double *values);
+  itkSetMacro( OutputSpacing, SpacingType );
+  virtual void
+  SetOutputSpacing( const double * values );
 
   /** Get the output image spacing. */
   itkGetConstReferenceMacro( OutputSpacing, SpacingType );
 
   /** Set the output image origin. */
-  itkSetMacro(OutputOrigin, OriginPointType);
-  virtual void SetOutputOrigin( const double *values);
+  itkSetMacro( OutputOrigin, OriginPointType );
+  virtual void
+  SetOutputOrigin( const double * values );
 
   /** Get the output image origin. */
   itkGetConstReferenceMacro( OutputOrigin, OriginPointType );
 
   /** Set the output image direction. */
-  itkSetMacro(OutputDirection, DirectionType);
+  itkSetMacro( OutputDirection, DirectionType );
 
   /** Get the output image direction. */
   itkGetConstReferenceMacro( OutputDirection, DirectionType );
@@ -163,64 +163,68 @@ public:
    * for GenerateOutputInformation() in order to inform the pipeline
    * execution model.  The original documentation of this method is
    * below. \sa ProcessObject::GenerateOutputInformaton() */
-  void GenerateOutputInformation() override;
+  void
+  GenerateOutputInformation() override;
 
   /** GtractInverseDisplacementFieldImageFilter needs a different input requested region than
    * the output requested region.  As such, GtractInverseDisplacementFieldImageFilter needs
    * to provide an implementation for GenerateInputRequestedRegion()
    * in order to inform the pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  void GenerateInputRequestedRegion() override;
+  void
+  GenerateInputRequestedRegion() override;
 
   /** Method Compute the Modified Time based on changed to the components. */
-  unsigned long GetMTime( void ) const override;
+  unsigned long
+  GetMTime( void ) const override;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( OutputHasNumericTraitsCheck,
-                   ( Concept::HasNumericTraits<OutputPixelComponentType> ) );
+  itkConceptMacro( OutputHasNumericTraitsCheck, (Concept::HasNumericTraits< OutputPixelComponentType >));
   /** End concept checking */
 #endif
 protected:
   GtractInverseDisplacementFieldImageFilter();
-  ~GtractInverseDisplacementFieldImageFilter() override
-  {
-  }
+  ~GtractInverseDisplacementFieldImageFilter() override {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /**
    * GenerateData() computes the internal KernelBase spline and resamples
    * the deformation field.
    */
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
   /** Subsample the input deformation field and generate the
    *  landmarks for the kernel base spline
    */
-  void PrepareKernelBaseSpline();
+  void
+  PrepareKernelBaseSpline();
 
 private:
-  GtractInverseDisplacementFieldImageFilter(const Self &); // purposely not
-                                                           // implemented
-  void operator=(const Self &);                            // purposely not
+  GtractInverseDisplacementFieldImageFilter( const Self & ); // purposely not
+                                                             // implemented
+  void
+  operator=( const Self & ); // purposely not
 
   // implemented
 
-  SizeType                   m_Size;                 // Size of the output image
-  KernelTransformPointerType m_KernelTransform;      // Coordinate transform to
-                                                     // use
-  SpacingType     m_OutputSpacing;                   // output image spacing
-  OriginPointType m_OutputOrigin;                    // output image origin
-  DirectionType   m_OutputDirection;                 // output image direction
+  SizeType                   m_Size;            // Size of the output image
+  KernelTransformPointerType m_KernelTransform; // Coordinate transform to
+                                                // use
+  SpacingType     m_OutputSpacing;              // output image spacing
+  OriginPointType m_OutputOrigin;               // output image origin
+  DirectionType   m_OutputDirection;            // output image direction
 
-  unsigned int m_SubsamplingFactor;                  // factor to subsample the
-                                                     // input field.
+  unsigned int m_SubsamplingFactor; // factor to subsample the
+                                    // input field.
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGtractInverseDisplacementFieldImageFilter.hxx"
+#  include "itkGtractInverseDisplacementFieldImageFilter.hxx"
 #endif
 
 #endif // __itkGtractInverseDisplacementFieldImageFilter_h

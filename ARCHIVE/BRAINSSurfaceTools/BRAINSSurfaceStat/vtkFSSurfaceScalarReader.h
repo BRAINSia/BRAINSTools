@@ -48,47 +48,56 @@ class vtkFloatArray;
 class vtkFSSurfaceScalarReader : public vtkDataReader
 {
 public:
-  static vtkFSSurfaceScalarReader * New();
+  static vtkFSSurfaceScalarReader *
+  New();
 
-  vtkTypeMacro(vtkFSSurfaceScalarReader, vtkDataReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro( vtkFSSurfaceScalarReader, vtkDataReader );
+  void
+  PrintSelf( ostream & os, vtkIndent indent );
 
-  vtkFloatArray * GetOutput()
+  vtkFloatArray *
+  GetOutput()
   {
     return this->scalars;
   };
-  void SetOutput(vtkFloatArray *output)
+  void
+  SetOutput( vtkFloatArray * output )
   {
     this->scalars = output;
   };
 
   ///
   /// Read the scalars from a file. Return 1 on success, 0 on failure
-  int ReadFSScalars();
+  int
+  ReadFSScalars();
 
   /// file type magic numbers
   /// const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;
   // BTX
   enum
-    {
+  {
     FS_NEW_SCALAR_MAGIC_NUMBER = 16777215,
-    };
+  };
   // ETX
 protected:
   vtkFSSurfaceScalarReader();
   ~vtkFSSurfaceScalarReader();
 
-  vtkFloatArray *scalars;
+  vtkFloatArray * scalars;
 
-  int ReadInt3(FILE* iFile, int& oInt);
+  int
+  ReadInt3( FILE * iFile, int & oInt );
 
-  int ReadInt2(FILE* iFile, int& oInt);
+  int
+  ReadInt2( FILE * iFile, int & oInt );
 
-  int ReadFloat(FILE* iFile, float& oInt);
+  int
+  ReadFloat( FILE * iFile, float & oInt );
 
 private:
-  vtkFSSurfaceScalarReader(const vtkFSSurfaceScalarReader &); /// Not implemented.
-  void operator=(const vtkFSSurfaceScalarReader &);           /// Not implemented.
+  vtkFSSurfaceScalarReader( const vtkFSSurfaceScalarReader & ); /// Not implemented.
+  void
+  operator=( const vtkFSSurfaceScalarReader & ); /// Not implemented.
 };
 
 #endif

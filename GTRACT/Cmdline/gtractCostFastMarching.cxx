@@ -67,12 +67,10 @@ namespace
 class ShowProgressObject
 {
 public:
-  ShowProgressObject(itk::ProcessObject *o)
-  {
-    m_Process = o;
-  }
+  ShowProgressObject( itk::ProcessObject * o ) { m_Process = o; }
 
-  void ShowProgress()
+  void
+  ShowProgress()
   {
     std::cout << "Progress " << m_Process->GetProgress() << std::endl;
   }
@@ -81,147 +79,148 @@ public:
 };
 } // end namespace
 
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
 
   const bool debug = true;
-  if( debug )
-    {
+  if ( debug )
+  {
     std::cout << "=====================================================" << std::endl;
-    std::cout << "Tensor Image: " <<  inputTensorVolume << std::endl;
-    std::cout << "Anisotropy Image: " <<  inputAnisotropyVolume << std::endl;
-    std::cout << "Starting Seeds LabelMap Image: " <<  inputStartingSeedsLabelMapVolume << std::endl;
-    std::cout << "Starting Label: " <<  startingSeedsLabel << std::endl;
-    std::cout << "Output Cost Image: " <<  outputCostVolume << std::endl;
-    std::cout << "Output Speed Image: " <<  outputSpeedVolume << std::endl;
-    std::cout << "Seed Threshold: " <<  seedThreshold << std::endl;
-    std::cout << "Anisotropy Weight: " <<  anisotropyWeight << std::endl;
-    std::cout << "Stopping Value: " <<  stoppingValue << std::endl;
+    std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
+    std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
+    std::cout << "Starting Seeds LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
+    std::cout << "Starting Label: " << startingSeedsLabel << std::endl;
+    std::cout << "Output Cost Image: " << outputCostVolume << std::endl;
+    std::cout << "Output Speed Image: " << outputSpeedVolume << std::endl;
+    std::cout << "Seed Threshold: " << seedThreshold << std::endl;
+    std::cout << "Anisotropy Weight: " << anisotropyWeight << std::endl;
+    std::cout << "Stopping Value: " << stoppingValue << std::endl;
     std::cout << "=====================================================" << std::endl;
-    }
+  }
 
   using PixelType = float;
-  using AnisotropyImageType = itk::Image<PixelType, 3>;
-  using CostImageType = itk::Image<PixelType, 3>;
-  using SpeedImageType = itk::Image<PixelType, 3>;
+  using AnisotropyImageType = itk::Image< PixelType, 3 >;
+  using CostImageType = itk::Image< PixelType, 3 >;
+  using SpeedImageType = itk::Image< PixelType, 3 >;
   using TensorElementType = double;
-  using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
-  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using TensorPixelType = itk::DiffusionTensor3D< TensorElementType >;
+  using TensorImageType = itk::Image< TensorPixelType, 3 >;
   using seedIndexType = TensorImageType::IndexType;
-  using FloatFMType = itk::DtiFastMarchingCostFilter<CostImageType, TensorImageType>;
+  using FloatFMType = itk::DtiFastMarchingCostFilter< CostImageType, TensorImageType >;
 
   // Read Tensor Image to set principal eigenvector image
-  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
+  using TensorImageReaderType = itk::ImageFileReader< TensorImageType >;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
 
   try
-    {
+  {
     tensorImageReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
 
   // Read Anisotropy Image
-  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
+  using AnisotropyImageReaderType = itk::ImageFileReader< AnisotropyImageType >;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
-  anisotropyImageReader->SetFileName(  inputAnisotropyVolume );
+  anisotropyImageReader->SetFileName( inputAnisotropyVolume );
 
   try
-    {
+  {
     anisotropyImageReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   AnisotropyImageType::Pointer anisotropyImage = anisotropyImageReader->GetOutput();
 
   using MaskPixelType = signed short;
-  using MaskImageType = itk::Image<MaskPixelType, 3>;
-  using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
+  using MaskImageType = itk::Image< MaskPixelType, 3 >;
+  using MaskImageReaderType = itk::ImageFileReader< MaskImageType >;
   MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName( inputStartingSeedsLabelMapVolume );
 
   try
-    {
+  {
     startingSeedImageReader->Update();
-    }
-  catch( itk::ExceptionObject & ex )
-    {
+  }
+  catch ( itk::ExceptionObject & ex )
+  {
     std::cout << ex << std::endl;
     throw;
-    }
+  }
 
   /* Threshold Starting Label Map */
-  using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
+  using ThresholdFilterType = itk::ThresholdImageFilter< MaskImageType >;
   ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput( startingSeedImageReader->GetOutput() );
-  startingThresholdFilter->SetLower( static_cast<MaskPixelType>( startingSeedsLabel ) );
-  startingThresholdFilter->SetUpper( static_cast<MaskPixelType>( startingSeedsLabel ) );
+  startingThresholdFilter->SetLower( static_cast< MaskPixelType >( startingSeedsLabel ) );
+  startingThresholdFilter->SetUpper( static_cast< MaskPixelType >( startingSeedsLabel ) );
   startingThresholdFilter->Update();
 
   MaskImageType::Pointer startingSeedMask = startingThresholdFilter->GetOutput();
 
   /* Now Generate the Seed points for the Fast Marching Algorithm */
-  using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
+  using ConstMaskIteratorType = itk::ImageRegionConstIterator< MaskImageType >;
   ConstMaskIteratorType maskIt( startingSeedMask, startingSeedMask->GetLargestPossibleRegion() );
-  using ConstAnisotropyIteratorType = itk::ImageRegionConstIterator<AnisotropyImageType>;
+  using ConstAnisotropyIteratorType = itk::ImageRegionConstIterator< AnisotropyImageType >;
   ConstAnisotropyIteratorType anisoIt( anisotropyImage, anisotropyImage->GetLargestPossibleRegion() );
 
   using NodeType = FloatFMType::NodeType; // NodeType is float type
   using NodeContainer = FloatFMType::NodeContainer;
   using seedIndexType = CostImageType::IndexType;
-  using SeedListType = std::list<seedIndexType>;
-  using SeedValueListType = std::list<float>;
+  using SeedListType = std::list< seedIndexType >;
+  using SeedValueListType = std::list< float >;
   SeedValueListType seedValueList;
 
   SeedListType seedList;
 
   unsigned int numSeeds = 0;
   anisoIt.GoToBegin();
-  for( maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt, ++anisoIt )
+  for ( maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt, ++anisoIt )
+  {
+    if ( ( maskIt.Get() ) && ( anisoIt.Get() >= seedThreshold ) )
     {
-    if( ( maskIt.Get() )  &&  ( anisoIt.Get() >= seedThreshold ) )
-      {
       seedList.push_front( maskIt.GetIndex() );
       seedValueList.push_front( 0.0 );
       numSeeds++;
-      }
     }
+  }
 
   // setup seed points
   NodeContainer::Pointer seedPoints = NodeContainer::New();
   NodeType               node;
-  for( unsigned int j = 0; j < numSeeds; j++ )
-    {
+  for ( unsigned int j = 0; j < numSeeds; j++ )
+  {
     seedIndexType seedIndex;
     seedIndex = seedList.back();
     seedList.pop_back();
     node.SetIndex( seedIndex );
     node.SetValue( 0.0 );
-    seedPoints->InsertElement(j, node);
-    }
+    seedPoints->InsertElement( j, node );
+  }
 
   // Run the Fast Marching Algorithm if seeds are defined
-  if( numSeeds > 0 )
-    {
+  if ( numSeeds > 0 )
+  {
     /* Set Parameters for the Fast Marching Calculations */
 
     FloatFMType::Pointer marcher = FloatFMType::New();
     marcher->SetAlivePoints( seedPoints );
     marcher->SetOverrideOutputInformation( true );
-#if  1
+#if 1
     // const CostImageType::SizeType size = tensorImage->GetLargestPossibleRegion().GetSize();
     marcher->SetOutputSize( tensorImage->GetLargestPossibleRegion().GetSize() );
     marcher->SetOutputRegion( tensorImage->GetLargestPossibleRegion() );
@@ -241,12 +240,11 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     std::cout << std::endl;
 
-    ShowProgressObject                                    progressWatch(marcher);
-    itk::SimpleMemberCommand<ShowProgressObject>::Pointer command;
-    command = itk::SimpleMemberCommand<ShowProgressObject>::New();
-    command->SetCallbackFunction(&progressWatch,
-                                 &ShowProgressObject::ShowProgress);
-    marcher->AddObserver( itk::ProgressEvent(), command);
+    ShowProgressObject                                      progressWatch( marcher );
+    itk::SimpleMemberCommand< ShowProgressObject >::Pointer command;
+    command = itk::SimpleMemberCommand< ShowProgressObject >::New();
+    command->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
+    marcher->AddObserver( itk::ProgressEvent(), command );
 
     itk::OutputWindow::SetInstance( itk::TextOutput::New().GetPointer() );
 
@@ -255,25 +253,25 @@ int main(int argc, char *argv[])
     marcher->Update();
 
     /* Save the Cost and Speed Images */
-    using WriterType = itk::ImageFileWriter<CostImageType>;
+    using WriterType = itk::ImageFileWriter< CostImageType >;
     WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetInput( marcher->GetOutput() );
     writer->SetFileName( outputCostVolume );
     writer->Write();
 
-    using SpeedWriterType = itk::ImageFileWriter<SpeedImageType>;
+    using SpeedWriterType = itk::ImageFileWriter< SpeedImageType >;
     SpeedWriterType::Pointer writer2 = SpeedWriterType::New();
     writer2->UseCompressionOn();
     writer2->SetInput( marcher->GetOutputSpeedImage() );
     writer2->SetFileName( outputSpeedVolume );
     writer2->Write();
-    }
+  }
   else
-    {
+  {
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << " !!!Warning: No Seeds Selected!!!" << std::endl;
-    }
+  }
   return EXIT_SUCCESS;
 }

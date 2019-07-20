@@ -24,10 +24,10 @@
 namespace itk
 {
 /**
-*  \class QuadEdgeMeshDualMetric
-*  \brief Functor which computes a distance between two dual cells.
-* */
-template <typename TMesh>
+ *  \class QuadEdgeMeshDualMetric
+ *  \brief Functor which computes a distance between two dual cells.
+ * */
+template < typename TMesh >
 class QuadEdgeMeshDualMetric
 {
 public:
@@ -39,39 +39,38 @@ public:
   using PointType = typename MeshType::PointType;
   using ValueType = typename PointType::RealType;
 
-  QuadEdgeMeshDualMetric() : m_Mesh( nullptr )
-  {
-  }
+  QuadEdgeMeshDualMetric()
+    : m_Mesh( nullptr )
+  {}
 
-  QuadEdgeMeshDualMetric( MeshType* iMesh ) : m_Mesh( iMesh )
-  {
-  }
+  QuadEdgeMeshDualMetric( MeshType * iMesh )
+    : m_Mesh( iMesh )
+  {}
 
-  virtual ~QuadEdgeMeshDualMetric()
-  {
-  }
+  virtual ~QuadEdgeMeshDualMetric() {}
 
-  void SetMesh( const MeshType* iMesh )
+  void
+  SetMesh( const MeshType * iMesh )
   {
     m_Mesh = iMesh;
   }
 
-  virtual ValueType operator ()( constexpr CellIdentifier& iFace1, constexpr CellIdentifier& iFace2 ) const = 0;
+  virtual ValueType
+  operator()( constexpr CellIdentifier & iFace1, constexpr CellIdentifier & iFace2 ) const = 0;
 
 protected:
   MeshConstPointer m_Mesh;
 };
 
 /** \class QuadEdgeMeshDualSquaredEuclideanMetric
-* \brief Functor which computes the distance between 2 faces as the squared
-* Euclidean distance between their center of mass.
-* */
-template <typename TMesh>
-class QuadEdgeMeshDualSquaredEuclideanMetric : public
-  QuadEdgeMeshDualMetric<TMesh>
+ * \brief Functor which computes the distance between 2 faces as the squared
+ * Euclidean distance between their center of mass.
+ * */
+template < typename TMesh >
+class QuadEdgeMeshDualSquaredEuclideanMetric : public QuadEdgeMeshDualMetric< TMesh >
 {
 public:
-  using Superclass = QuadEdgeMeshDualMetric<TMesh>;
+  using Superclass = QuadEdgeMeshDualMetric< TMesh >;
   using Self = QuadEdgeMeshDualSquaredEuclideanMetric;
 
   using MeshType = typename Superclass::MeshType;
@@ -82,23 +81,20 @@ public:
   using PointType = typename Superclass::PointType;
   using ValueType = typename Superclass::ValueType;
 
-  using TriangleType = TriangleHelper<PointType>;
+  using TriangleType = TriangleHelper< PointType >;
 
-  QuadEdgeMeshDualSquaredEuclideanMetric() : Superclass()
-  {
-  }
+  QuadEdgeMeshDualSquaredEuclideanMetric()
+    : Superclass()
+  {}
 
-  QuadEdgeMeshDualSquaredEuclideanMetric( MeshType* iMesh ) :
-    Superclass( iMesh )
-  {
-  }
+  QuadEdgeMeshDualSquaredEuclideanMetric( MeshType * iMesh )
+    : Superclass( iMesh )
+  {}
 
-  ~QuadEdgeMeshDualSquaredEuclideanMetric()
-  {
-  }
+  ~QuadEdgeMeshDualSquaredEuclideanMetric() {}
 
-  ValueType operator ()( const CellIdentifier& iFace1,
-                         const CellIdentifier& iFace2 ) const
+  ValueType
+  operator()( const CellIdentifier & iFace1, const CellIdentifier & iFace2 ) const
   {
     CellAutoPointer cell1, cell2;
 
@@ -109,32 +105,29 @@ public:
     PointIdIterator it2 = cell2->PointIdsBegin();
 
     PointType pt1[3], pt2[3];
-    for( int k = 0; k < 3; ++it1, ++it2, ++k )
-      {
+    for ( int k = 0; k < 3; ++it1, ++it2, ++k )
+    {
       pt1[k] = this->m_Mesh->GetPoint( *it1 );
       pt2[k] = this->m_Mesh->GetPoint( *it2 );
-      }
-    PointType center1 =
-      TriangleType::ComputeGravityCenter( pt1[0], pt1[1], pt1[2] );
+    }
+    PointType center1 = TriangleType::ComputeGravityCenter( pt1[0], pt1[1], pt1[2] );
 
-    PointType center2 =
-      TriangleType::ComputeGravityCenter( pt2[0], pt2[1], pt2[2] );
+    PointType center2 = TriangleType::ComputeGravityCenter( pt2[0], pt2[1], pt2[2] );
 
     return center1.SquaredEuclideanDistanceTo( center2 );
   }
 };
 
 /** \class QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric
-* \brief Functors which computes the distance between two faces as the
-* squared Euclidean distance between their center of mass, weighted by the
-* area of the first face.
-* */
-template <typename TMesh>
-class QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric
-  : public QuadEdgeMeshDualMetric<TMesh>
+ * \brief Functors which computes the distance between two faces as the
+ * squared Euclidean distance between their center of mass, weighted by the
+ * area of the first face.
+ * */
+template < typename TMesh >
+class QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric : public QuadEdgeMeshDualMetric< TMesh >
 {
 public:
-  using Superclass = QuadEdgeMeshDualMetric<TMesh>;
+  using Superclass = QuadEdgeMeshDualMetric< TMesh >;
   using Self = QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric;
 
   using MeshType = typename Superclass::MeshType;
@@ -145,23 +138,20 @@ public:
   using PointType = typename Superclass::PointType;
   using ValueType = typename Superclass::ValueType;
 
-  using TriangleType = TriangleHelper<PointType>;
+  using TriangleType = TriangleHelper< PointType >;
 
-  QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric() : Superclass()
-  {
-  }
+  QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric()
+    : Superclass()
+  {}
 
-  QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric( MeshType* iMesh ) :
-    Superclass( iMesh )
-  {
-  }
+  QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric( MeshType * iMesh )
+    : Superclass( iMesh )
+  {}
 
-  ~QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric()
-  {
-  }
+  ~QuadEdgeMeshDualSquaredEuclideanWithAreaWeightMetric() {}
 
-  ValueType operator ()( const CellIdentifier& iOrg,
-                         const CellIdentifier& iDest ) const
+  ValueType
+  operator()( const CellIdentifier & iOrg, const CellIdentifier & iDest ) const
   {
     CellAutoPointer cell1, cell2;
 
@@ -172,11 +162,11 @@ public:
     PointIdIterator it2 = cell2->PointIdsBegin();
 
     PointType pt1[3], pt2[3];
-    for( int k = 0; k < 3; ++it1, ++it2, ++k )
-      {
+    for ( int k = 0; k < 3; ++it1, ++it2, ++k )
+    {
       pt1[k] = this->m_Mesh->GetPoint( *it1 );
       pt2[k] = this->m_Mesh->GetPoint( *it2 );
-      }
+    }
     typename TriangleType::Pointer t1 = TriangleType::New();
     t1->SetPoints( pt1[0], pt1[1], pt1[2] );
 
@@ -192,6 +182,6 @@ public:
     return Area * d_2;
   }
 };
-}
+} // namespace itk
 
 #endif

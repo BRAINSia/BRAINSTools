@@ -37,17 +37,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TMesh>
-class RescaleScalarsQuadEdgeMeshFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
+template < typename TMesh >
+class RescaleScalarsQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(RescaleScalarsQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( RescaleScalarsQuadEdgeMeshFilter );
 
   using Self = RescaleScalarsQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( RescaleScalarsQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -66,9 +65,11 @@ public:
   using OutputPointDataContainerPointer = typename OutputMeshType::PointDataContainerPointer;
 
   /** Set/Get the mesh that will be deformed. */
-  void SetInputMesh( const InputMeshType * mesh );
+  void
+  SetInputMesh( const InputMeshType * mesh );
 
-  const InputMeshType * GetInputMesh( void ) const;
+  const InputMeshType *
+  GetInputMesh( void ) const;
 
   /** Set/Get min value of the output mesh scalars. */
   itkSetMacro( OutputMinimum, OutputPixelType );
@@ -86,14 +87,15 @@ public:
 
   /** Get scale to transform mesh scalars. */
   itkGetMacro( Scale, double );
+
 protected:
   RescaleScalarsQuadEdgeMeshFilter();
   ~RescaleScalarsQuadEdgeMeshFilter();
 
-  void GenerateData();
+  void
+  GenerateData();
 
 private:
-
   OutputPixelType m_OutputMinimum;
   OutputPixelType m_OutputMaximum;
 
@@ -102,10 +104,10 @@ private:
 
   double m_Scale;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkRescaleScalarsQuadEdgeMeshFilter.hxx"
+#  include "itkRescaleScalarsQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

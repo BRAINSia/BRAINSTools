@@ -26,9 +26,8 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputMesh>
-InterpolateMeshFunction<TInputMesh>
-::InterpolateMeshFunction()
+template < typename TInputMesh >
+InterpolateMeshFunction< TInputMesh >::InterpolateMeshFunction()
 {
   this->m_PointLocator = PointLocatorType::New();
 }
@@ -36,41 +35,34 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Destructor
  */
-template <typename TInputMesh>
-InterpolateMeshFunction<TInputMesh>
-::~InterpolateMeshFunction()
-{
-}
+template < typename TInputMesh >
+InterpolateMeshFunction< TInputMesh >::~InterpolateMeshFunction()
+{}
 
 /**
  * Prepare the internal data structures of the point locator
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-InterpolateMeshFunction<TInputMesh>
-::Initialize()
+InterpolateMeshFunction< TInputMesh >::Initialize()
 {
   this->m_PointLocator->SetPointSet( this->m_Mesh );
   this->m_PointLocator->Initialize();
 }
 
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-InterpolateMeshFunction<TInputMesh>
-::Search(const PointType & query,
-         unsigned int numberOfNeighborsRequested,
-         InstanceIdentifierVectorType& result) const
+InterpolateMeshFunction< TInputMesh >::Search( const PointType & query, unsigned int numberOfNeighborsRequested,
+                                               InstanceIdentifierVectorType & result ) const
 {
   typename PointLocatorType::PointType point( query );
   this->m_PointLocator->Search( point, numberOfNeighborsRequested, result );
 }
 
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-InterpolateMeshFunction<TInputMesh>
-::Search(const PointType & query,
-         double radius,
-         InstanceIdentifierVectorType& result) const
+InterpolateMeshFunction< TInputMesh >::Search( const PointType & query, double radius,
+                                               InstanceIdentifierVectorType & result ) const
 {
   typename PointLocatorType::PointType point( query );
   this->m_PointLocator->Search( point, radius, result );
@@ -79,10 +71,9 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Return the pixel value by delegating to the mesh.
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-InterpolateMeshFunction<TInputMesh>
-::GetPointData( PointIdentifier pointId, PixelType * value ) const
+InterpolateMeshFunction< TInputMesh >::GetPointData( PointIdentifier pointId, PixelType * value ) const
 {
   this->m_Mesh->GetPointData( pointId, value );
 }
@@ -90,10 +81,9 @@ InterpolateMeshFunction<TInputMesh>
 /**
  * Standard "PrintSelf" method
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-InterpolateMeshFunction<TInputMesh>
-::PrintSelf( std::ostream& os, Indent indent) const
+InterpolateMeshFunction< TInputMesh >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf( os, indent );
 }

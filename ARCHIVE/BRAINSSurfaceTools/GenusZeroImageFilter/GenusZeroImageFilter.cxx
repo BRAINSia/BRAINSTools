@@ -49,37 +49,38 @@ Version:   $Revision: 1.4 $
 #include <map>
 #include <string>
 
-int main(int argc, char * argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
   bool debug = true;
 
   // vtk and helper variables
-  vtkITKArchetypeImageSeriesReader* reader = nullptr;
-  vtkImageData *                    image;
-  vtkTransform *                    transformIJKtoRAS = nullptr;
-  vtkTransformPolyDataFilter *      transformer = nullptr;
-  vtkPolyDataWriter *               writer = nullptr;
+  vtkITKArchetypeImageSeriesReader * reader = nullptr;
+  vtkImageData *                     image;
+  vtkTransform *                     transformIJKtoRAS = nullptr;
+  vtkTransformPolyDataFilter *       transformer = nullptr;
+  vtkPolyDataWriter *                writer = nullptr;
 
-  using ImageType = itk::Image<unsigned short, 3>;
-  using VTKToITKImageFilterType = itk::VTKImageToImageFilter<ImageType>;
-  using ITKToVTKImageFilterType = itk::ImageToVTKImageFilter<ImageType>;
-  using ConnectedComponentImageFilterType = itk::ScalarConnectedComponentImageFilter<ImageType, ImageType>;
-  using LabelExtracterImageFilterType = itk::LabelExtracterImageFilter<ImageType, ImageType>;
+  using ImageType = itk::Image< unsigned short, 3 >;
+  using VTKToITKImageFilterType = itk::VTKImageToImageFilter< ImageType >;
+  using ITKToVTKImageFilterType = itk::ImageToVTKImageFilter< ImageType >;
+  using ConnectedComponentImageFilterType = itk::ScalarConnectedComponentImageFilter< ImageType, ImageType >;
+  using LabelExtracterImageFilterType = itk::LabelExtracterImageFilter< ImageType, ImageType >;
   // check for the input file
   FILE * infile;
-  infile = fopen(inputVolume.c_str(), "r");
-  if( infile == nullptr )
-    {
+  infile = fopen( inputVolume.c_str(), "r" );
+  if ( infile == nullptr )
+  {
     std::cerr << "ERROR: cannot open input volume file " << inputVolume << endl;
     return EXIT_FAILURE;
-    }
-  fclose(infile);
+  }
+  fclose( infile );
 
   // Read the file
   reader = vtkITKArchetypeImageSeriesScalarReader::New();
-  reader->SetArchetype(inputVolume.c_str() );
+  reader->SetArchetype( inputVolume.c_str() );
   reader->SetOutputScalarTypeToDouble();
   reader->SetDesiredCoordinateOrientationToNative();
   reader->SetUseNativeOriginOn();
@@ -90,8 +91,8 @@ int main(int argc, char * argv[])
   // change the image information to a canonical form that we can easily process
   // in the vtk filter
 
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
-  ici->SetInputData(reader->GetOutput() );
+  vtkImageChangeInformation * ici = vtkImageChangeInformation::New();
+  ici->SetInputData( reader->GetOutput() );
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
@@ -101,33 +102,31 @@ int main(int argc, char * argv[])
 
   // Get the dimensions, marching cubes only works on 3d
   int extents[6];
-  image->GetExtent(extents);
-  if( debug )
-    {
+  image->GetExtent( extents );
+  if ( debug )
+  {
     std::cout << "Image data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3]
               << " " << extents[4] << " " << extents[5] << endl;
-    }
-  if( extents[0] == extents[1] ||
-      extents[2] == extents[3] ||
-      extents[4] == extents[5] )
-    {
+  }
+  if ( extents[0] == extents[1] || extents[2] == extents[3] || extents[4] == extents[5] )
+  {
     std::cerr << "The volume is not 3D.\n";
-    std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " "
-              << extents[3] << " " << extents[4] << " " << extents[5] << endl;
+    std::cerr << "\tImage data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3]
+              << " " << extents[4] << " " << extents[5] << endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Get the RAS to IJK matrix and invert it to get the IJK to RAS which will
   // need
   // to be applied to the model as it will be built in pixel space
 
   transformIJKtoRAS = vtkTransform::New();
-  transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix() );
-  if( debug )
-    {
+  transformIJKtoRAS->SetMatrix( reader->GetRasToIjkMatrix() );
+  if ( debug )
+  {
     std::cout << "RasToIjk matrix from file = ";
-    transformIJKtoRAS->GetMatrix()->Print(std::cout);
-    }
+    transformIJKtoRAS->GetMatrix()->Print( std::cout );
+  }
   transformIJKtoRAS->Inverse();
 
   // set up the genus zero marching cubes filter
@@ -140,73 +139,73 @@ int main(int argc, char * argv[])
 
   // pass the command line arguments to the filter
 
-  marchingcubes->SetInputData(ici->GetOutput() );
+  marchingcubes->SetInputData( ici->GetOutput() );
 
   // check the supported cases and abort in case of an unsupported
   // case
 
-  if( !( connectivityModel == 18 && computeSurface)
-      && !( connectivityModel == 6 ) )
-    {
-    std::cerr << "Mode: " << " connectivityModel =  " << connectivityModel << "; computeSurface = " << computeSurface
+  if ( !( connectivityModel == 18 && computeSurface ) && !( connectivityModel == 6 ) )
+  {
+    std::cerr << "Mode: "
+              << " connectivityModel =  " << connectivityModel << "; computeSurface = " << computeSurface
               << "  not supported in current implementation. ABORT." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "biggestComponent = " << biggestComponent << std::endl;
   std::cout << "connectivityModel = " << connectivityModel << std::endl;
   std::cout << "cutLoops = " << cutLoops << std::endl;
   std::cout << "computeSurface = " << computeSurface << std::endl;
 
-  if( computeSurface )
-    {
+  if ( computeSurface )
+  {
     marchingcubes->ComputeSurfaceOn();
-    }
+  }
   else
-    {
+  {
     marchingcubes->ComputeSurfaceOff();
-    }
+  }
 
-  if( !biggestComponent )
-    {
+  if ( !biggestComponent )
+  {
     marchingcubes->BiggestComponentOff();
-    }
+  }
   else
-    {
+  {
     marchingcubes->BiggestComponentOn();
-    }
+  }
 
-  if( connectivityModel == 18 )
-    {
+  if ( connectivityModel == 18 )
+  {
     marchingcubes->Use18Connectivity();
-    }
+  }
   else
-    {
+  {
     marchingcubes->Use6Connectivity();
-    }
+  }
 
-  if( connectedComponent )
-    {
+  if ( connectedComponent )
+  {
     marchingcubes->ConnectedComponentOn();
-    }
+  }
   else
-    {
+  {
     marchingcubes->ConnectedComponentOff();
-    }
+  }
 
-  if( cutLoops )
-    {
+  if ( cutLoops )
+  {
     marchingcubes->CutLoopsOn();
-    }
+  }
   else
-    {
+  {
     marchingcubes->CutLoopsOff();
-    }
+  }
 
   marchingcubes->Update();
 
-  if( 1 )    // computeSurface )
-    {
+  if ( 1 ) // computeSurface )
+  {
 
     // if the surface was computed, compute it's topology
 
@@ -219,7 +218,7 @@ int main(int argc, char * argv[])
 
     // determine number of edges
 
-    vtkExtractEdges *extractEdges = vtkExtractEdges::New();
+    vtkExtractEdges * extractEdges = vtkExtractEdges::New();
     extractEdges->SetInputData( marchingcubes->GetOutput() );
     extractEdges->Update();
 
@@ -232,12 +231,11 @@ int main(int argc, char * argv[])
     std::cout << "number of edges = " << iNumberOfEdges << std::endl;
     std::cout << "Euler characteristic (sphere==2) = " << iEulerCharacteristic << std::endl;
 
-    if( iEulerCharacteristic != 2 * iNumberOfConnectedComponents )
-      {
+    if ( iEulerCharacteristic != 2 * iNumberOfConnectedComponents )
+    {
       std::cerr << "Object deviates topologically from a sphere. Results may not be the desired one ..." << std::endl;
-      }
-
     }
+  }
 
   // transform the vtk polydata back to RAS
 
@@ -246,14 +244,14 @@ int main(int argc, char * argv[])
                                          "Transformer",
                                          CLPProcessInformation,
                                          1.0/7.0, 4.0/7.0);*/
-  transformer->SetInputData(marchingcubes->GetOutput() );
+  transformer->SetInputData( marchingcubes->GetOutput() );
 
-  transformer->SetTransform(transformIJKtoRAS);
-  if( debug )
-    {
+  transformer->SetTransform( transformIJKtoRAS );
+  if ( debug )
+  {
     std::cout << "Transforming using inversed matrix:\n";
-    transformIJKtoRAS->GetMatrix()->Print(std::cout);
-    }
+    transformIJKtoRAS->GetMatrix()->Print( std::cout );
+  }
   transformer->Update();
 
   // TODO: add progress
@@ -262,30 +260,30 @@ int main(int argc, char * argv[])
   // but for now we're just going to write it out
 
   writer = vtkPolyDataWriter::New();
-  writer->SetInputData(transformer->GetOutput() );
+  writer->SetInputData( transformer->GetOutput() );
 
-  if( computeSurface )
-    {
-    writer->SetFileName(vtkOutput.c_str() );
+  if ( computeSurface )
+  {
+    writer->SetFileName( vtkOutput.c_str() );
     // TODO: add progress
     writer->Write();
-    }
+  }
 
   // now write out the topology corrected volume
 
-  vtkITKImageWriter *imageWriter = vtkITKImageWriter::New();
+  vtkITKImageWriter * imageWriter = vtkITKImageWriter::New();
   imageWriter->SetRasToIJKMatrix( reader->GetRasToIjkMatrix() );
 
-  if( !computeSurface )
-    {
+  if ( !computeSurface )
+  {
 
-    vtkImageCast *imageCast = vtkImageCast::New();
+    vtkImageCast * imageCast = vtkImageCast::New();
     imageCast->SetInputData( marchingcubes->GetCorrectedImageData() );
     imageCast->SetOutputScalarTypeToUnsignedShort();
     imageCast->Update();
 
-    if( extractFinalConnectedComponent )
-      {
+    if ( extractFinalConnectedComponent )
+    {
       std::cout << "Extracting the largest connected component of the resulting image volume." << std::endl;
 
       // need to go back and forth from vtk to itk (and back)
@@ -303,13 +301,12 @@ int main(int argc, char * argv[])
       connectedComponentFilter->SetDistanceThreshold( 0 );
       connectedComponentFilter->FullyConnectedOff();
 
-      if( connectivityModel != 6 )
-        {
-        std::cerr
-          <<
-        "WARNING: Only 6 connectivity is supported for the extraction of the largest connected component of the result. DEFAULTING to 6 connectivity."
-          << std::endl;
-        }
+      if ( connectivityModel != 6 )
+      {
+        std::cerr << "WARNING: Only 6 connectivity is supported for the extraction of the largest connected component "
+                     "of the result. DEFAULTING to 6 connectivity."
+                  << std::endl;
+      }
 
       connectedComponentFilter->SetInput( vtk2itkImageFilter->GetOutput() );
       connectedComponentFilter->Update();
@@ -319,27 +316,26 @@ int main(int argc, char * argv[])
       // iterate throught the output and figure out how many elements we have,
       // do this with a map
 
-      std::map<int, int> ccsMap;
+      std::map< int, int > ccsMap;
 
-      using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
-      ImageType::ConstPointer ccs  = connectedComponentFilter->GetOutput();
+      using ConstIteratorType = itk::ImageRegionConstIterator< ImageType >;
+      ImageType::ConstPointer ccs = connectedComponentFilter->GetOutput();
 
       ConstIteratorType it( ccs, ccs->GetLargestPossibleRegion() );
-      for( it.GoToBegin(); !it.IsAtEnd(); ++it )
-        {
+      for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+      {
 
         int ip = (int)round( it.Get() );
 
-        if( ccsMap.count( ip ) == 0 )
-          {
+        if ( ccsMap.count( ip ) == 0 )
+        {
           ccsMap[ip] = 1;
-          }
-        else
-          {
-          ccsMap[ip] += 1;
-          }
-
         }
+        else
+        {
+          ccsMap[ip] += 1;
+        }
+      }
 
       // determine the largest connected component
 
@@ -350,20 +346,20 @@ int main(int argc, char * argv[])
 
       std::cout << "Connected components found = " << std::endl;
 
-      std::map<int, int>::iterator iterMap;
-      for( iterMap = ccsMap.begin(); iterMap != ccsMap.end(); iterMap++ )
-        {
-        int iId = (*iterMap).first;
-        int iCount = (*iterMap).second;
+      std::map< int, int >::iterator iterMap;
+      for ( iterMap = ccsMap.begin(); iterMap != ccsMap.end(); iterMap++ )
+      {
+        int iId = ( *iterMap ).first;
+        int iCount = ( *iterMap ).second;
 
         std::cout << iId << " -> " << iCount << std::endl;
 
-        if( iId > 1 && iCount > iNumber )
-          {
+        if ( iId > 1 && iCount > iNumber )
+        {
           iNumber = iCount;
           iLargestComponentId = iId;
-          }
         }
+      }
 
       std::cout << "Extracting component " << iLargestComponentId << std::endl;
 
@@ -389,10 +385,9 @@ int main(int argc, char * argv[])
       imageWriter->SetUseCompression( 1 );
 #endif
       imageWriter->Write();
-
-      }
-    else    // just write out everything there is
-      {
+    }
+    else // just write out everything there is
+    {
 
       imageWriter->SetInputData( imageCast->GetOutput() );
 
@@ -401,38 +396,37 @@ int main(int argc, char * argv[])
       imageWriter->SetUseCompression( 1 );
 #endif
       imageWriter->Write();
-
-      }
     }
+  }
 
-// Cleanup
-  if( reader )
-    {
+  // Cleanup
+  if ( reader )
+  {
     reader->Delete();
-    }
-  if( ici )
-    {
+  }
+  if ( ici )
+  {
     ici->Delete();
-    }
-  if( transformIJKtoRAS )
-    {
+  }
+  if ( transformIJKtoRAS )
+  {
     transformIJKtoRAS->Delete();
-    }
-  if( marchingcubes )
-    {
+  }
+  if ( marchingcubes )
+  {
     marchingcubes->Delete();
-    }
-  if( transformer )
-    {
+  }
+  if ( transformer )
+  {
     transformer->Delete();
-    }
-  if( writer )
-    {
+  }
+  if ( writer )
+  {
     writer->Delete();
-    }
-  if( imageWriter )
-    {
+  }
+  if ( imageWriter )
+  {
     imageWriter->Delete();
-    }
+  }
   return EXIT_SUCCESS;
 }

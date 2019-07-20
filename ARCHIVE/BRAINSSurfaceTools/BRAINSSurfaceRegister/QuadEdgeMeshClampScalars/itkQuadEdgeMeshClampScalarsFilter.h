@@ -36,18 +36,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TOutputMesh>
-class QuadEdgeMeshClampScalarsFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class QuadEdgeMeshClampScalarsFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshClampScalarsFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshClampScalarsFilter );
 
   using Self = QuadEdgeMeshClampScalarsFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshClampScalarsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -55,19 +53,19 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro( Self );
 
-  using OutputMeshType = typename  Superclass::OutputMeshType;
-  using OutputMeshPointer = typename  OutputMeshType::Pointer;
-  using OutputPixelType = typename  OutputMeshType::PixelType;
-  using OutputPointDataContainer = typename  Superclass::OutputPointDataContainer;
-  using OutputPointDataContainerPointer = typename  OutputPointDataContainer::Pointer;
-  using OutputPointDataContainerIterator = typename  OutputPointDataContainer::Iterator;
+  using OutputMeshType = typename Superclass::OutputMeshType;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputPixelType = typename OutputMeshType::PixelType;
+  using OutputPointDataContainer = typename Superclass::OutputPointDataContainer;
+  using OutputPointDataContainerPointer = typename OutputPointDataContainer::Pointer;
+  using OutputPointDataContainerIterator = typename OutputPointDataContainer::Iterator;
 
-  using InputMeshType = typename  Superclass::InputMeshType;
-  using InputMeshPointer = typename  InputMeshType::Pointer;
-  using InputPixelType = typename  InputMeshType::PixelType;
-  using InputPointDataContainer = typename  Superclass::InputPointDataContainer;
-  using InputPointDataContainerConstPointer = typename  InputPointDataContainer::ConstPointer;
-  using InputPointDataContainerConstIterator = typename  InputPointDataContainer::ConstIterator;
+  using InputMeshType = typename Superclass::InputMeshType;
+  using InputMeshPointer = typename InputMeshType::Pointer;
+  using InputPixelType = typename InputMeshType::PixelType;
+  using InputPointDataContainer = typename Superclass::InputPointDataContainer;
+  using InputPointDataContainerConstPointer = typename InputPointDataContainer::ConstPointer;
+  using InputPointDataContainerConstIterator = typename InputPointDataContainer::ConstIterator;
 
   /** Set/Get ClampMin. */
   itkSetMacro( ClampMin, bool );
@@ -86,24 +84,25 @@ public:
   /** Set/Get OutputMaximum. */
   itkSetMacro( OutputMaximum, OutputPixelType );
   itkGetMacro( OutputMaximum, OutputPixelType );
+
 protected:
   QuadEdgeMeshClampScalarsFilter();
   ~QuadEdgeMeshClampScalarsFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
   bool m_ClampMin;
   bool m_ClampMax;
 
   OutputPixelType m_OutputMinimum;
   OutputPixelType m_OutputMaximum;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshClampScalarsFilter.hxx"
+#  include "itkQuadEdgeMeshClampScalarsFilter.hxx"
 #endif
 
 #endif

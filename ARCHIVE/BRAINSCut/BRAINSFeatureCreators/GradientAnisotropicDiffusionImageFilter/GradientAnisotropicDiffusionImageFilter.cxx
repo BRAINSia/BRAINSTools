@@ -16,12 +16,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+#if defined( _MSC_VER )
+#  pragma warning( disable : 4786 )
 #endif
 
 #ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
+#  define ITK_LEAN_AND_MEAN
 #endif
 
 #include "itkImage.h"
@@ -34,7 +34,8 @@
 #include "GradientAnisotropicDiffusionImageFilterCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -46,13 +47,12 @@ int main( int argc, char * argv[] )
   using OutputPixelType = float;
   constexpr int Dimension = 3;
 
-  using InputImageType = itk::Image<InputPixelType,  Dimension>;
-  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+  using InputImageType = itk::Image< InputPixelType, Dimension >;
+  using OutputImageType = itk::Image< OutputPixelType, Dimension >;
 
-  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using ReaderType = itk::ImageFileReader< InputImageType >;
 
-  using FilterType = itk::GradientAnisotropicDiffusionImageFilter<
-      InputImageType, OutputImageType>;
+  using FilterType = itk::GradientAnisotropicDiffusionImageFilter< InputImageType, OutputImageType >;
   FilterType::Pointer filter = FilterType::New();
 
   ReaderType::Pointer reader = ReaderType::New();
@@ -68,15 +68,14 @@ int main( int argc, char * argv[] )
 
   //  The output of the filter is rescaled here and then sent to a writer.
   using WritePixelType = unsigned char;
-  using WriteImageType = itk::Image<WritePixelType, Dimension>;
-  using RescaleFilterType = itk::RescaleIntensityImageFilter<
-      OutputImageType, WriteImageType>;
+  using WriteImageType = itk::Image< WritePixelType, Dimension >;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter< OutputImageType, WriteImageType >;
 
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
-  rescaler->SetOutputMinimum(   0 );
+  rescaler->SetOutputMinimum( 0 );
   rescaler->SetOutputMaximum( 255 );
 
-  using WriterType = itk::ImageFileWriter<WriteImageType>;
+  using WriterType = itk::ImageFileWriter< WriteImageType >;
 
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputVolume );

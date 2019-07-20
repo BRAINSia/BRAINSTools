@@ -58,28 +58,26 @@
 
 namespace itk
 {
-template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
-DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
-::DtiStreamlineTrackingFilter() : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType,
-                                                        TMaskImageType >::DtiTrackingFilterBase()
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+DtiStreamlineTrackingFilter< TTensorImageType, TAnisotropyImageType, TMaskImageType >::DtiStreamlineTrackingFilter()
+  : DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::DtiTrackingFilterBase()
 {
   this->m_CurvatureThreshold = 45;
 }
 
-template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
 void
-DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
-::Update()
+DtiStreamlineTrackingFilter< TTensorImageType, TAnisotropyImageType, TMaskImageType >::Update()
 {
   using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
   using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  float   anisotropy, anisotropySum(0);
-  TVector vin(3), vout(3);
+  float   anisotropy, anisotropySum( 0 );
+  TVector vin( 3 ), vout( 3 );
 
   typename Self::ContinuousIndexType index, tmpIndex;
-  bool stop;
-  bool addFiber;
+  bool                               stop;
+  bool                               addFiber;
 
   const double inRadians = this->pi / 180.0;
   double       curvatureThreshold = std::cos( this->m_CurvatureThreshold * inRadians );
@@ -87,46 +85,48 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
   this->m_Output = vtkPolyData::New();
   this->m_TrackingDirections.clear();
   this->m_Seeds.clear();
-  this->m_ScalarIP->SetInputImage(this->m_AnisotropyImage);
-  this->m_VectorIP->SetInputImage(this->m_TensorImage);
-  this->m_EndIP->SetInputImage(this->m_EndingRegion);
+  this->m_ScalarIP->SetInputImage( this->m_AnisotropyImage );
+  this->m_VectorIP->SetInputImage( this->m_TensorImage );
+  this->m_EndIP->SetInputImage( this->m_EndingRegion );
   typename Self::AnisotropyImageRegionType ImageRegion = this->m_AnisotropyImage->GetLargestPossibleRegion();
 
-  this->m_StartIP->SetInputImage(this->m_StartingRegion);
+  this->m_StartIP->SetInputImage( this->m_StartingRegion );
   Self::InitializeSeeds();
 
   // std::cout << "Image Region for Tracking: " << ImageRegion << std::endl;
   /*** Add length and Loop Detection ***/
-  while( !this->m_Seeds.empty() )
-    {
-    index = this->m_Seeds.back();              this->m_Seeds.pop_back();
-    vin = vout  = this->m_TrackingDirections.back();  this->m_TrackingDirections.pop_back();
+  while ( !this->m_Seeds.empty() )
+  {
+    index = this->m_Seeds.back();
+    this->m_Seeds.pop_back();
+    vin = vout = this->m_TrackingDirections.back();
+    this->m_TrackingDirections.pop_back();
 
     stop = false;
     addFiber = false;
-    vtkPoints *    fiber = vtkPoints::New();
-    vtkFloatArray *fiberTensors = vtkFloatArray::New();
-    fiberTensors->SetName("Tensors");
-    fiberTensors->SetNumberOfComponents(9);
-    vtkFloatArray *fiberAnisotropy = vtkFloatArray::New();
-    fiberAnisotropy->SetName("Anisotropy");
-    vtkFloatArray *fiberAnisotropySum = vtkFloatArray::New();
-    fiberAnisotropySum->SetName("Anisotropy-Sum");
+    vtkPoints *     fiber = vtkPoints::New();
+    vtkFloatArray * fiberTensors = vtkFloatArray::New();
+    fiberTensors->SetName( "Tensors" );
+    fiberTensors->SetNumberOfComponents( 9 );
+    vtkFloatArray * fiberAnisotropy = vtkFloatArray::New();
+    fiberAnisotropy->SetName( "Anisotropy" );
+    vtkFloatArray * fiberAnisotropySum = vtkFloatArray::New();
+    fiberAnisotropySum->SetName( "Anisotropy-Sum" );
     int   currentPointId = 0;
     float pathLength = 0.0;
 
     // ////////////////////////////////////////////////////////////////////////
     // Tracking start from given 'index' and 'vout'
-    while( !stop )
+    while ( !stop )
+    {
+      if ( ImageRegion.IsInside( index ) )
       {
-      if( ImageRegion.IsInside(index) )
-        {
-        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex(index);
-        }
+        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex( index );
+      }
       else
-        {
+      {
         anisotropy = -1;
-        }
+      }
 
       //
       // ////////////////////////////////////////////////////////////////////////
@@ -136,82 +136,86 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
       // evaluate the stopping criteria
       // std::cerr << "Test anisotropy " << anisotropy << " >= " <<
       // this->m_AnisotropyThreshold << std::endl;
-      if( anisotropy >= this->m_AnisotropyThreshold )
+      if ( anisotropy >= this->m_AnisotropyThreshold )
+      {
+        if ( this->m_EndIP->EvaluateAtContinuousIndex( index ) >= 0.5 )
         {
-        if( this->m_EndIP->EvaluateAtContinuousIndex(index) >= 0.5 )
-          {
           stop = true;
           addFiber = true;
           // std::cerr << "Stop - Found End" << std::endl;
-          }
+        }
         // std::cerr << "Test Pathlength " << pathLength << " > " <<
         // this->m_MaximumLength << std::endl;
 
-        if( pathLength > this->m_MaximumLength )
-          {
+        if ( pathLength > this->m_MaximumLength )
+        {
           stop = true;
           // std::cerr << "Stop Max Length" << std::endl;
-          }
+        }
 
         //
         // ////////////////////////////////////////////////////////////////////////
         // forward propagating
-        if( currentPointId )
-          {
+        if ( currentPointId )
+        {
           anisotropySum = anisotropySum + anisotropy;
-          }
+        }
         else
-          {
+        {
           anisotropySum = anisotropy;
-          }
+        }
         fiberAnisotropy->InsertNextValue( anisotropy );
         fiberAnisotropySum->InsertNextValue( anisotropySum );
 
         typename Self::PointType p;
-        this->ContinuousIndexToMM(index, p);
+        this->ContinuousIndexToMM( index, p );
         fiber->InsertNextPoint( p.GetDataPointer() );
         currentPointId++;
 
-        EigenValuesArrayType   eigenValues;
-        EigenVectorsMatrixType eigenVectors;
-        typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
+        EigenValuesArrayType                eigenValues;
+        EigenVectorsMatrixType              eigenVectors;
+        typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex( index );
 
-        TMatrix fullTensorPixel(3, 3); fullTensorPixel = Tensor2Matrix( tensorPixel );
+        TMatrix fullTensorPixel( 3, 3 );
+        fullTensorPixel = Tensor2Matrix( tensorPixel );
         fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
 
-        tensorPixel.ComputeEigenAnalysis(eigenValues, eigenVectors);
+        tensorPixel.ComputeEigenAnalysis( eigenValues, eigenVectors );
 
         //
         // ////////////////////////////////////////////////////////////////////////
         // Get major vector
-        TVector e2(3); e2[0] = eigenVectors[2][0]; e2[1] = eigenVectors[2][1]; e2[2] = eigenVectors[2][2];
-        if( dot_product(vin, e2) < 0 )
-          {
+        TVector e2( 3 );
+        e2[0] = eigenVectors[2][0];
+        e2[1] = eigenVectors[2][1];
+        e2[2] = eigenVectors[2][2];
+        if ( dot_product( vin, e2 ) < 0 )
+        {
           e2 *= -1;
-          }
+        }
 
         //
         // ////////////////////////////////////////////////////////////////////////
         // Choose an outgoing direction
-        double vin_dot_e2 = dot_product(vin, e2);
+        double vin_dot_e2 = dot_product( vin, e2 );
         // std::cerr << "Compare " << vin_dot_e2 << " > " <<
         // this->m_CurvatureThreshold << std::endl;
         // std::cerr << "Vin " << vin << " E2 " << e2 << std::endl;
-        if( vin_dot_e2 > curvatureThreshold )
-          {
+        if ( vin_dot_e2 > curvatureThreshold )
+        {
           // Use TEND ???
-          if( this->m_UseTend )
-            {
-            this->ApplyTensorDeflection(vin, fullTensorPixel, e2, vout);
-            }
+          if ( this->m_UseTend )
+          {
+            this->ApplyTensorDeflection( vin, fullTensorPixel, e2, vout );
+          }
           else
-            {
+          {
             vout = e2;
-            }
+          }
           //
           // ////////////////////////////////////////////////////////////////////////
           // Calculate the new index
-          this->StepIndex(tmpIndex, index, vout);
+          this->StepIndex( tmpIndex, index, vout );
           pathLength += this->m_StepSize;
 
           //
@@ -219,26 +223,26 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
           // Update the current index
           index = tmpIndex;
           vin = vout;
-          }
-        else  // Curvature Threshold
-          {
+        }
+        else // Curvature Threshold
+        {
           stop = true;
           // std::cerr << "Stop Curvature" << std::endl;
-          }
         }
-      else   // Anisotropy Threshold
-        {
+      }
+      else // Anisotropy Threshold
+      {
         stop = true;
         // std::cerr << "Stop Anisotropy" << std::endl;
-        }
-      }
-
-    if( addFiber && ( pathLength >= this->m_MinimumLength ) )
-      {
-      std::cerr << "Fiber (" << pathLength << "); ";
-      this->AddFiberToOutput( fiber, fiberTensors );
       }
     }
+
+    if ( addFiber && ( pathLength >= this->m_MinimumLength ) )
+    {
+      std::cerr << "Fiber (" << pathLength << "); ";
+      this->AddFiberToOutput( fiber, fiberTensors );
+    }
+  }
 }
 } // end namespace itk
 #endif

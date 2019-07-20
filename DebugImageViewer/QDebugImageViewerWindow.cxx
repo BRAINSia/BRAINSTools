@@ -26,65 +26,62 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
-QDebugImageViewerWindow::QDebugImageViewerWindow(QWidget *parent,
-                                                 Qt::WindowFlags flags) :
-  QMainWindow(parent, flags)
+QDebugImageViewerWindow::QDebugImageViewerWindow( QWidget * parent, Qt::WindowFlags flags )
+  : QMainWindow( parent, flags )
 {
   this->m_ViewCount = 1;
   std::string cmdLineImageName;
-  for( int i = 0; i < qApp->arguments().size(); i++ )
+  for ( int i = 0; i < qApp->arguments().size(); i++ )
+  {
+    QString current( qApp->arguments().at( i ) );
+    if ( current == "--numviews" )
     {
-    QString current(qApp->arguments().at(i) );
-    if( current == "--numviews" )
-      {
       ++i;
-      if( i >= qApp->arguments().size() )
-        {
+      if ( i >= qApp->arguments().size() )
+      {
         break;
-        }
-      QString currentArg(qApp->arguments().at(i) );
+      }
+      QString currentArg( qApp->arguments().at( i ) );
       this->m_ViewCount = currentArg.toInt();
-      }
-    else if( current == "--input" )
-      {
+    }
+    else if ( current == "--input" )
+    {
       ++i;
-      if( i >= qApp->arguments().size() )
-        {
+      if ( i >= qApp->arguments().size() )
+      {
         break;
-        }
-      QString currentArg(qApp->arguments().at(i) );
+      }
+      QString currentArg( qApp->arguments().at( i ) );
       cmdLineImageName = currentArg.toStdString();
-      }
     }
-  QWidget *main = new QWidget(this);
-  main->setSizePolicy(QSizePolicy::Expanding,
-                      QSizePolicy::Expanding);
-  this->setCentralWidget(main);
+  }
+  QWidget * main = new QWidget( this );
+  main->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+  this->setCentralWidget( main );
 
-  QHBoxLayout *mainLayout = new QHBoxLayout(main);
-  main->setLayout(mainLayout);
-  for( int i = 0; i < this->m_ViewCount; i++ )
+  QHBoxLayout * mainLayout = new QHBoxLayout( main );
+  main->setLayout( mainLayout );
+  for ( int i = 0; i < this->m_ViewCount; i++ )
+  {
+    QImageDisplay * current = new QImageDisplay( this );
+    mainLayout->addWidget( current );
+    this->m_ImageDisplayList.push_back( current );
+    if ( cmdLineImageName != "" )
     {
-    QImageDisplay *current = new QImageDisplay(this);
-    mainLayout->addWidget(current);
-    this->m_ImageDisplayList.push_back(current);
-    if( cmdLineImageName != "" )
-      {
-      current->SetImage(cmdLineImageName);
-      }
+      current->SetImage( cmdLineImageName );
+    }
     else
-      {
-      current->SetBlankImage();
-      }
-    }
-  // set up server
-  this->m_Server = new QTcpServer(this);
-  connect(this->m_Server, SIGNAL(newConnection() ),
-          this, SLOT(newConnection() ) );
-  if( !this->m_Server->listen(QHostAddress::LocalHost, 19345) )
     {
-    std::cerr << "Can't start server on port 19345" << std::endl;
+      current->SetBlankImage();
     }
+  }
+  // set up server
+  this->m_Server = new QTcpServer( this );
+  connect( this->m_Server, SIGNAL( newConnection() ), this, SLOT( newConnection() ) );
+  if ( !this->m_Server->listen( QHostAddress::LocalHost, 19345 ) )
+  {
+    std::cerr << "Can't start server on port 19345" << std::endl;
+  }
 }
 
 void
@@ -98,32 +95,33 @@ QDebugImageViewerWindow::newConnection()
 void
 QDebugImageViewerWindow::SetupSocketConnections()
 {
-  connect(this->m_Socket, SIGNAL(readyRead() ),
-          this, SLOT(readImage() ) );
+  connect( this->m_Socket, SIGNAL( readyRead() ), this, SLOT( readImage() ) );
 
-  connect(this->m_Socket, SIGNAL(stateChanged(QAbstractSocket::SocketState) ),
-          this, SLOT(stateChanged(QAbstractSocket::SocketState) ) );
+  connect( this->m_Socket,
+           SIGNAL( stateChanged( QAbstractSocket::SocketState ) ),
+           this,
+           SLOT( stateChanged( QAbstractSocket::SocketState ) ) );
 }
 
 //
 // this function sort of apes the fread signature
 qint64
-QDebugImageViewerWindow::SocketRead(void *buf, qint64 objectSize, qint64 objectCount)
+QDebugImageViewerWindow::SocketRead( void * buf, qint64 objectSize, qint64 objectCount )
 {
   qint64 toRead = objectSize * objectCount;
 
-  qint64 readCount(0);
-  qint64 leftToRead(toRead);
+  qint64 readCount( 0 );
+  qint64 leftToRead( toRead );
 
-  char *readPtr(reinterpret_cast<char *>(buf) );
+  char * readPtr( reinterpret_cast< char * >( buf ) );
 
-  while( leftToRead > 0 )
-    {
+  while ( leftToRead > 0 )
+  {
     this->m_Socket->waitForReadyRead();
-    qint64 readAmt = this->m_Socket->read(readPtr, leftToRead);
+    qint64 readAmt = this->m_Socket->read( readPtr, leftToRead );
 
-    switch( readAmt )
-      {
+    switch ( readAmt )
+    {
       case -1:
         return -1;
       case 0:
@@ -132,17 +130,17 @@ QDebugImageViewerWindow::SocketRead(void *buf, qint64 objectSize, qint64 objectC
         readPtr += readAmt;
         readCount += readAmt;
         leftToRead -= readAmt;
-      }
     }
+  }
 
   return readCount / objectSize;
 }
 
 void
-QDebugImageViewerWindow::stateChanged(QAbstractSocket::SocketState state)
+QDebugImageViewerWindow::stateChanged( QAbstractSocket::SocketState state )
 {
-  switch( state )
-    {
+  switch ( state )
+  {
     //   6       The socket is about to close (data may
     //           still be waiting to be written).
     case QAbstractSocket::ClosingState:
@@ -164,7 +162,7 @@ QDebugImageViewerWindow::stateChanged(QAbstractSocket::SocketState state)
     //   5       For internal use only.
     case QAbstractSocket::ListeningState:
       break;
-    }
+  }
 }
 
 void
@@ -172,82 +170,78 @@ QDebugImageViewerWindow::readImage()
 {
   QImageDisplay::ImageType::SizeType imageSize;
 
-  for( unsigned i = 0; i < 3; i++ )
+  for ( unsigned i = 0; i < 3; i++ )
+  {
+    if ( this->SocketRead( &imageSize[i], sizeof( imageSize[0] ), 1 ) != 1 )
     {
-    if( this->SocketRead(&imageSize[i], sizeof( imageSize[0] ), 1) != 1 )
-      {
       std::cerr << "Error reading socket" << std::endl;
-      exit(1);
+      exit( 1 );
       return;
-      }
     }
+  }
 
   QImageDisplay::ImageType::SpacingType imageSpacing;
   QImageDisplay::ImageType::IndexType   imageIndex;
-  for( unsigned i = 0; i < 3; i++ )
+  for ( unsigned i = 0; i < 3; i++ )
+  {
+    imageIndex[i] = 0; // sneak initializing index into this loop
+    if ( this->SocketRead( &imageSpacing[i], sizeof( imageSpacing[0] ), 1 ) != 1 )
     {
-    imageIndex[i] = 0;          // sneak initializing index into this loop
-    if( this->SocketRead(&imageSpacing[i], sizeof( imageSpacing[0] ), 1) != 1 )
-      {
       std::cerr << "Error reading socket" << std::endl;
-      exit(1);
-      }
+      exit( 1 );
     }
+  }
   QImageDisplay::ImageType::RegionType imageRegion;
-  imageRegion.SetSize(imageSize);
-  imageRegion.SetIndex(imageIndex);
+  imageRegion.SetSize( imageSize );
+  imageRegion.SetIndex( imageIndex );
 
   QImageDisplay::ImageType::Pointer xferImage = QImageDisplay::ImageType::New();
-  xferImage->SetSpacing(imageSpacing);
-  xferImage->SetRegions(imageRegion);
+  xferImage->SetSpacing( imageSpacing );
+  xferImage->SetRegions( imageRegion );
   xferImage->Allocate();
 
   // set orientation
   itk::SpatialOrientation::ValidCoordinateOrientationFlags orientation;
-  if( this->SocketRead(&orientation, sizeof( orientation ), 1) != 1 )
-    {
+  if ( this->SocketRead( &orientation, sizeof( orientation ), 1 ) != 1 )
+  {
     std::cerr << "Error reading socket" << std::endl;
-    exit(1);
-    }
-  xferImage->SetDirection
-    ( itk::SpatialOrientationAdapter().ToDirectionCosines(orientation) );
+    exit( 1 );
+  }
+  xferImage->SetDirection( itk::SpatialOrientationAdapter().ToDirectionCosines( orientation ) );
 
   QImageDisplay::ImageType::PointType origin;
-  for( unsigned i = 0; i < 3; i++ )
-    {
+  for ( unsigned i = 0; i < 3; i++ )
+  {
     double oVal;
-    if( this->SocketRead(&oVal, sizeof( double ), 1) != 1 )
-      {
+    if ( this->SocketRead( &oVal, sizeof( double ), 1 ) != 1 )
+    {
       std::cerr << "Error reading socket" << std::endl;
-      exit(1);
-      }
-    origin[i] = oVal;
+      exit( 1 );
     }
-  xferImage->SetOrigin(origin);
+    origin[i] = oVal;
+  }
+  xferImage->SetOrigin( origin );
 
   unsigned int viewIndex;
-  if( this->SocketRead(&viewIndex, sizeof( viewIndex ), 1) != 1 )
-    {
+  if ( this->SocketRead( &viewIndex, sizeof( viewIndex ), 1 ) != 1 )
+  {
     std::cerr << "Error reading socket" << std::endl;
-    exit(1);
-    }
-  unsigned char *pixelData = xferImage->GetBufferPointer();
+    exit( 1 );
+  }
+  unsigned char * pixelData = xferImage->GetBufferPointer();
 
-  qint64 bufferSize(imageSize[0] * imageSize[1] * imageSize[2]);
-  if( this->SocketRead(pixelData,
-                       sizeof(QImageDisplay::ImageType::PixelType),
-                       bufferSize) != bufferSize )
-    {
+  qint64 bufferSize( imageSize[0] * imageSize[1] * imageSize[2] );
+  if ( this->SocketRead( pixelData, sizeof( QImageDisplay::ImageType::PixelType ), bufferSize ) != bufferSize )
+  {
     std::cerr << "Error reading socket" << std::endl;
-    exit(1);
-    }
-  if( viewIndex < this->m_ViewCount )
-    {
-    this->m_ImageDisplayList[viewIndex]->SetImage(xferImage);
-    }
+    exit( 1 );
+  }
+  if ( viewIndex < this->m_ViewCount )
+  {
+    this->m_ImageDisplayList[viewIndex]->SetImage( xferImage );
+  }
 }
 
 void
 QDebugImageViewerWindow::exiting()
-{
-}
+{}

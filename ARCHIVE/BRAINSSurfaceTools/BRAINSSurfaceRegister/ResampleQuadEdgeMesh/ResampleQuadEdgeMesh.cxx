@@ -48,7 +48,8 @@
 #include "ResampleQuadEdgeMeshCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -67,10 +68,10 @@ int main( int argc, char * argv [] )
   constexpr unsigned int Dimension = 3;
 
   // Declaration of the type of Mesh
-  using MeshType = itk::QuadEdgeMesh<PixelType, Dimension>;
+  using MeshType = itk::QuadEdgeMesh< PixelType, Dimension >;
 
   // Here read a mesh from a file
-  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
   ReaderType::Pointer inputReader = ReaderType::New();
   inputReader->SetFileName( inputMeshFile.c_str() );
   inputReader->Update();
@@ -79,35 +80,35 @@ int main( int argc, char * argv [] )
   refReader->SetFileName( refMeshFile.c_str() );
   refReader->Update();
 
-  using TransformType = itk::IdentityTransform<double, Dimension>;
+  using TransformType = itk::IdentityTransform< double, Dimension >;
   TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
 
-  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction< MeshType >;
   LinearInterpolatorType::Pointer interpolator_l = LinearInterpolatorType::New();
 
-  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction<MeshType>;
+  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction< MeshType >;
   NearestInterpolatorType::Pointer interpolator_n = NearestInterpolatorType::New();
 
-  using MeshFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
+  using MeshFilterType = itk::ResampleQuadEdgeMeshFilter< MeshType, MeshType >;
   MeshFilterType::Pointer filter = MeshFilterType::New();
-  filter->SetReferenceMesh(refReader->GetOutput() );
-  filter->SetInput(inputReader->GetOutput() );
+  filter->SetReferenceMesh( refReader->GetOutput() );
+  filter->SetInput( inputReader->GetOutput() );
   filter->SetTransform( transform );
 
   // set the interpolation type
-  if( interpolateType == "Nearest" )
-    {
+  if ( interpolateType == "Nearest" )
+  {
     filter->SetInterpolator( interpolator_n );
-    }
-  else if( interpolateType == "Linear" )
-    {
+  }
+  else if ( interpolateType == "Linear" )
+  {
     filter->SetInterpolator( interpolator_l );
-    }
+  }
 
   filter->Update();
 
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( filter->GetOutput() );
   writer->SetFileName( outputMeshFile.c_str() );

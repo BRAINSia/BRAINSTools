@@ -30,59 +30,55 @@
 namespace itk
 {
 /** \class DemonsRegistrator
-  *
-  * This component computes the transform to register a
-  * moving image onto a fixed image.
-  *
-  * In particular, it uses the deformable demons registration
-  * algorithm.
-  *
-  * The registration is done using a multiresolution strategy.
-  * At each resolution level, the downsampled images are obtained
-  * using a RecursiveMultiResolutionPyramidImageFilter.
-  *
-  * \warning This class requires both images to be 3D.
-  * It can write out the deformation field and the checker board image
-  * of the fixed and output image.
-  *
-  * The registration process is activated by method Execute().
-  *
-  * Inputs:
-  *   - pointer to fixed image
-  *   - pointer to moving image
-  *   - number of resolution levels
-  *   - number of optimization iterations at each level
-  *   - the initial rigid (quaternion) transform parameters
-  *   - the coarest level shrink factors for the fixed image
-  *   - the coarest level shrink factors for the moving image
-  *
-  * Outputs:
-  *   - output deformation field
-  *   - output image
-  *   - Checkerboard image
-  *   - x,y,z components of displacement fields.
-  */
-template <
-  typename TRealImage,
-  typename TOutputImage,
-  typename TFieldValue = typename TRealImage::PixelType
-  >
+ *
+ * This component computes the transform to register a
+ * moving image onto a fixed image.
+ *
+ * In particular, it uses the deformable demons registration
+ * algorithm.
+ *
+ * The registration is done using a multiresolution strategy.
+ * At each resolution level, the downsampled images are obtained
+ * using a RecursiveMultiResolutionPyramidImageFilter.
+ *
+ * \warning This class requires both images to be 3D.
+ * It can write out the deformation field and the checker board image
+ * of the fixed and output image.
+ *
+ * The registration process is activated by method Execute().
+ *
+ * Inputs:
+ *   - pointer to fixed image
+ *   - pointer to moving image
+ *   - number of resolution levels
+ *   - number of optimization iterations at each level
+ *   - the initial rigid (quaternion) transform parameters
+ *   - the coarest level shrink factors for the fixed image
+ *   - the coarest level shrink factors for the moving image
+ *
+ * Outputs:
+ *   - output deformation field
+ *   - output image
+ *   - Checkerboard image
+ *   - x,y,z components of displacement fields.
+ */
+template < typename TRealImage, typename TOutputImage, typename TFieldValue = typename TRealImage::PixelType >
 class DemonsRegistrator : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DemonsRegistrator);
+  ITK_DISALLOW_COPY_AND_ASSIGN( DemonsRegistrator );
 
   /** Standard class type alias. */
   using Self = DemonsRegistrator;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DemonsRegistrator, Object);
+  itkTypeMacro( DemonsRegistrator, Object );
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Fixed Image Type. */
   using RealImageType = TRealImage;
@@ -94,129 +90,123 @@ public:
   static constexpr unsigned int ImageDimension = TRealImage::ImageDimension;
 
   /** Type to hold the number of checker boxes per dimension */
-  using PatternArrayType = FixedArray<unsigned int, TRealImage::ImageDimension>;
+  using PatternArrayType = FixedArray< unsigned int, TRealImage::ImageDimension >;
 
   /** Set Checker pattern */
-  itkSetMacro(CheckerBoardPattern, PatternArrayType);
-  itkGetConstReferenceMacro(CheckerBoardPattern, PatternArrayType);
+  itkSetMacro( CheckerBoardPattern, PatternArrayType );
+  itkGetConstReferenceMacro( CheckerBoardPattern, PatternArrayType );
 
   /** Displacement field value type. */
   using FieldValueType = TFieldValue;
 
   /** Displacement field pixel type. */
-  using FieldPixelType = Vector<FieldValueType,
-                 Self::ImageDimension>;
+  using FieldPixelType = Vector< FieldValueType, Self::ImageDimension >;
 
   /** Displacement field type. */
-  using TDisplacementField = Image<FieldPixelType,
-                Self::ImageDimension>;
+  using TDisplacementField = Image< FieldPixelType, Self::ImageDimension >;
 
   /** Fixed Image Pyramid Type. */
-  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
-      RealImageType,
-      RealImageType>;
+  using FixedImagePyramidType = RecursiveMultiResolutionPyramidImageFilter< RealImageType, RealImageType >;
 
   /** Moving Image Pyramid Type. */
-  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter<
-      RealImageType,
-      RealImageType>;
+  using MovingImagePyramidType = RecursiveMultiResolutionPyramidImageFilter< RealImageType, RealImageType >;
 
   /** Registration Method. */
-  using RegistrationType = MultiResolutionPDEDeformableRegistration<
-      RealImageType,
-      RealImageType,
-      TDisplacementField, float>;
+  using RegistrationType =
+    MultiResolutionPDEDeformableRegistration< RealImageType, RealImageType, TDisplacementField, float >;
 
   /** UnsignedIntArray type. */
-  using UnsignedIntArray = Array<unsigned int>;
+  using UnsignedIntArray = Array< unsigned int >;
 
   /** ShrinkFactorsArray type. */
-  using ShrinkFactorsArray = FixedArray<unsigned int,
-                     Self::ImageDimension>;
+  using ShrinkFactorsArray = FixedArray< unsigned int, Self::ImageDimension >;
 
   /** Set the intial deformation field */
-  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
 
   /** Set the fixed image. */
-  itkSetObjectMacro(FixedImage, RealImageType);
+  itkSetObjectMacro( FixedImage, RealImageType );
 
   /** Set the moving image. */
-  itkSetObjectMacro(MovingImage, RealImageType);
+  itkSetObjectMacro( MovingImage, RealImageType );
 
   /** Set the Unnormalized moving image. */
-  itkSetObjectMacro(UnNormalizedMovingImage, RealImageType);
+  itkSetObjectMacro( UnNormalizedMovingImage, RealImageType );
 
   /** Set the Unnormalized moving image. */
-  itkSetObjectMacro(UnNormalizedFixedImage, RealImageType);
+  itkSetObjectMacro( UnNormalizedFixedImage, RealImageType );
 
   /** Set the number of resolution levels. */
-  itkSetClampMacro( NumberOfLevels, unsigned short, 1,
-                    NumericTraits<unsigned short>::max() );
+  itkSetClampMacro( NumberOfLevels, unsigned short, 1, NumericTraits< unsigned short >::max() );
 
   /** Set the number of iterations per level. */
-  itkSetMacro(NumberOfIterations, UnsignedIntArray);
+  itkSetMacro( NumberOfIterations, UnsignedIntArray );
 
   /** Set the fixed and moving image shrink factors. */
-  itkSetMacro(FixedImageShrinkFactors, ShrinkFactorsArray);
-  itkSetMacro(MovingImageShrinkFactors, ShrinkFactorsArray);
+  itkSetMacro( FixedImageShrinkFactors, ShrinkFactorsArray );
+  itkSetMacro( MovingImageShrinkFactors, ShrinkFactorsArray );
 
   /** Set Displacementname */
-  itkSetStringMacro(DisplacementBaseName);
-  itkGetStringMacro(DisplacementBaseName);
+  itkSetStringMacro( DisplacementBaseName );
+  itkGetStringMacro( DisplacementBaseName );
 
   /** Set WarpedImageName */
-  itkSetStringMacro(WarpedImageName);
-  itkGetStringMacro(WarpedImageName);
+  itkSetStringMacro( WarpedImageName );
+  itkGetStringMacro( WarpedImageName );
 
   /** Set CheckerBoard ImageName */
-  itkSetStringMacro(CheckerBoardFilename);
-  itkGetStringMacro(CheckerBoardFilename);
+  itkSetStringMacro( CheckerBoardFilename );
+  itkGetStringMacro( CheckerBoardFilename );
 
   /** Set Displacement field output file Name */
-  itkSetStringMacro(DisplacementFieldOutputName);
-  itkGetStringMacro(DisplacementFieldOutputName);
+  itkSetStringMacro( DisplacementFieldOutputName );
+  itkGetStringMacro( DisplacementFieldOutputName );
 
   /**Set histogram matching */
-  itkSetMacro(UseHistogramMatching, bool);
-  itkGetConstMacro(UseHistogramMatching, bool);
+  itkSetMacro( UseHistogramMatching, bool );
+  itkGetConstMacro( UseHistogramMatching, bool );
 
   /** Method to execute the registration. */
-  virtual void Execute();
+  virtual void
+  Execute();
 
   /** Get the deformation field. */
-  itkGetConstObjectMacro(DisplacementField, TDisplacementField);
+  itkGetConstObjectMacro( DisplacementField, TDisplacementField );
 
   /** Initialize registration at the start of new level. */
-  void StartNewLevel();
+  void
+  StartNewLevel();
 
   /** Output Normalized Image.*/
-  itkSetStringMacro(OutNormalized);
-  itkGetStringMacro(OutNormalized);
+  itkSetStringMacro( OutNormalized );
+  itkGetStringMacro( OutNormalized );
 
   /** Set Debug mode */
-  itkSetMacro(OutDebug, bool);
-  itkGetConstMacro(OutDebug,  bool);
+  itkSetMacro( OutDebug, bool );
+  itkGetConstMacro( OutDebug, bool );
 
-  itkSetStringMacro(FixedLandmarkFilename);
-  itkGetStringMacro(FixedLandmarkFilename);
-  itkSetStringMacro(MovingLandmarkFilename);
-  itkGetStringMacro(MovingLandmarkFilename);
+  itkSetStringMacro( FixedLandmarkFilename );
+  itkGetStringMacro( FixedLandmarkFilename );
+  itkSetStringMacro( MovingLandmarkFilename );
+  itkGetStringMacro( MovingLandmarkFilename );
 
-  itkSetMacro(DefaultPixelValue, typename RealImageType::PixelType);
-  itkGetMacro(DefaultPixelValue, typename RealImageType::PixelType);
+  itkSetMacro( DefaultPixelValue, typename RealImageType::PixelType );
+  itkGetMacro( DefaultPixelValue, typename RealImageType::PixelType );
 
   /** Get the interpolation Mode. */
-  itkGetMacro(InterpolationMode, std::string);
-  itkSetMacro(InterpolationMode, std::string);
+  itkGetMacro( InterpolationMode, std::string );
+  itkSetMacro( InterpolationMode, std::string );
 
-  using BaseRegistrationFilterType = itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-                                               TDisplacementField>;
-  void SetRegistrationFilter(BaseRegistrationFilterType *filter)
+  using BaseRegistrationFilterType =
+    itk::PDEDeformableRegistrationFilter< RealImageType, RealImageType, TDisplacementField >;
+  void
+  SetRegistrationFilter( BaseRegistrationFilterType * filter )
   {
-    this->m_Registration->SetRegistrationFilter(filter);
+    this->m_Registration->SetRegistrationFilter( filter );
   }
 
-  RegistrationType * GetRegistrationType(void)
+  RegistrationType *
+  GetRegistrationType( void )
   {
     return m_Registration;
   }
@@ -224,18 +214,20 @@ public:
 protected:
   DemonsRegistrator();
   ~DemonsRegistrator() override;
-private:
-  void WriteDisplacementComponents();
 
-  typename TDisplacementField::Pointer m_InitialDisplacementField;
-  typename RealImageType::Pointer m_FixedImage;
-  typename RealImageType::Pointer m_MovingImage;
-  typename RealImageType::Pointer m_UnNormalizedMovingImage;
-  typename RealImageType::Pointer m_UnNormalizedFixedImage;
-  typename FixedImagePyramidType::Pointer m_FixedImagePyramid;
+private:
+  void
+  WriteDisplacementComponents();
+
+  typename TDisplacementField::Pointer     m_InitialDisplacementField;
+  typename RealImageType::Pointer          m_FixedImage;
+  typename RealImageType::Pointer          m_MovingImage;
+  typename RealImageType::Pointer          m_UnNormalizedMovingImage;
+  typename RealImageType::Pointer          m_UnNormalizedFixedImage;
+  typename FixedImagePyramidType::Pointer  m_FixedImagePyramid;
   typename MovingImagePyramidType::Pointer m_MovingImagePyramid;
-  typename RegistrationType::Pointer m_Registration;
-  typename RealImageType::PixelType m_DefaultPixelValue;
+  typename RegistrationType::Pointer       m_Registration;
+  typename RealImageType::PixelType        m_DefaultPixelValue;
 
   unsigned short   m_NumberOfLevels;
   UnsignedIntArray m_NumberOfIterations;
@@ -244,23 +236,23 @@ private:
   ShrinkFactorsArray m_FixedImageShrinkFactors;
 
   typename TDisplacementField::Pointer m_DisplacementField;
-  std::string      m_FixedLandmarkFilename;
-  std::string      m_MovingLandmarkFilename;
-  unsigned long    m_Tag;
-  std::string      m_DisplacementBaseName;
-  std::string      m_WarpedImageName;
-  std::string      m_CheckerBoardFilename;
-  std::string      m_DisplacementFieldOutputName;
-  PatternArrayType m_CheckerBoardPattern;
-  std::string      m_OutNormalized;
-  bool             m_OutDebug;
-  bool             m_UseHistogramMatching;
-  std::string      m_InterpolationMode;
+  std::string                          m_FixedLandmarkFilename;
+  std::string                          m_MovingLandmarkFilename;
+  unsigned long                        m_Tag;
+  std::string                          m_DisplacementBaseName;
+  std::string                          m_WarpedImageName;
+  std::string                          m_CheckerBoardFilename;
+  std::string                          m_DisplacementFieldOutputName;
+  PatternArrayType                     m_CheckerBoardPattern;
+  std::string                          m_OutNormalized;
+  bool                                 m_OutDebug;
+  bool                                 m_UseHistogramMatching;
+  std::string                          m_InterpolationMode;
 };
-}   // namespace itk
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "DemonsRegistrator.hxx"
+#  include "DemonsRegistrator.hxx"
 #endif
 
 #endif

@@ -32,17 +32,15 @@ namespace itk
  *
  * To Write.
  */
-template <typename TInputMesh, typename TOutputMesh>
-class QuadEdgeMeshBorderTransform :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class QuadEdgeMeshBorderTransform : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
   /** Basic types. */
   using Self = QuadEdgeMeshBorderTransform;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh,
-                                           TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   using InputMeshType = TInputMesh;
   using InputMeshConstPointer = typename InputMeshType::ConstPointer;
@@ -60,10 +58,8 @@ public:
   using InputPolygonCellType = typename InputMeshType::PolygonCellType;
   using InputPointIdList = typename InputMeshType::PointIdList;
   using InputPointsContainer = typename InputMeshType::PointsContainer;
-  typedef typename InputMeshType::PointsContainerConstIterator
-    InputPointsContainerConstIterator;
-  typedef typename InputMeshType::CellsContainerConstIterator
-    InputCellsContainerConstIterator;
+  typedef typename InputMeshType::PointsContainerConstIterator InputPointsContainerConstIterator;
+  typedef typename InputMeshType::CellsContainerConstIterator  InputCellsContainerConstIterator;
 
   using OutputMeshType = TOutputMesh;
   using OutputMeshPointer = typename OutputMeshType::Pointer;
@@ -78,28 +74,26 @@ public:
   using OutputPolygonCellType = typename OutputMeshType::PolygonCellType;
   using OutputPointIdList = typename OutputMeshType::PointIdList;
   using OutputPointsContainer = typename OutputMeshType::PointsContainer;
-  typedef typename OutputMeshType::PointsContainerConstIterator
-    OutputPointsContainerConstIterator;
-  typedef typename OutputMeshType::CellsContainerConstIterator
-    OutputCellsContainerConstIterator;
+  typedef typename OutputMeshType::PointsContainerConstIterator OutputPointsContainerConstIterator;
+  typedef typename OutputMeshType::CellsContainerConstIterator  OutputCellsContainerConstIterator;
 
   itkNewMacro( Self );
   itkTypeMacro( QuadEdgeMeshBorderTransform, QuadEdgeMeshToQuadEdgeMeshFilter );
   static constexpr unsigned int PointDimension = InputTraits::PointDimension;
 
-  using InputVectorPointType = std::vector<InputPointType>;
-  using MapPointIdentifier = std::map<InputPointIdentifier, OutputPointIdentifier>;
+  using InputVectorPointType = std::vector< InputPointType >;
+  using MapPointIdentifier = std::map< InputPointIdentifier, OutputPointIdentifier >;
   using MapPointIdentifierIterator = typename MapPointIdentifier::iterator;
 
-  using BoundaryRepresentativeEdgesType = QuadEdgeMeshBoundaryEdgesMeshFunction<InputMeshType>;
+  using BoundaryRepresentativeEdgesType = QuadEdgeMeshBoundaryEdgesMeshFunction< InputMeshType >;
   using BoundaryRepresentativeEdgesPointer = typename BoundaryRepresentativeEdgesType::Pointer;
-public:
 
+public:
   enum BorderTransformType
-    {
+  {
     SQUARE_BORDER_TRANSFORM = 0,
     DISK_BORDER_TRANSFORM
-    };
+  };
 
   itkSetMacro( TransformType, BorderTransformType );
   itkGetConstMacro( TransformType, BorderTransformType );
@@ -107,17 +101,18 @@ public:
   itkSetMacro( Radius, InputCoordRepType );
   itkGetConstMacro( Radius, InputCoordRepType );
 
-  void ComputeTransform();
+  void
+  ComputeTransform();
 
-  MapPointIdentifier GetBoundaryPtMap();
+  MapPointIdentifier
+  GetBoundaryPtMap();
 
-  InputVectorPointType GetBorder();
+  InputVectorPointType
+  GetBorder();
 
 protected:
   QuadEdgeMeshBorderTransform();
-  ~QuadEdgeMeshBorderTransform()
-  {
-  };
+  ~QuadEdgeMeshBorderTransform(){};
 
   BorderTransformType m_TransformType;
 
@@ -126,30 +121,39 @@ protected:
 
   MapPointIdentifier m_BoundaryPtMap;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
-  void ComputeBoundary();
+  void
+  ComputeBoundary();
 
-  InputEdgeListIterator ComputeLongestBorder();
+  InputEdgeListIterator
+  ComputeLongestBorder();
 
-  InputEdgeListIterator ComputeLargestBorder();
+  InputEdgeListIterator
+  ComputeLargestBorder();
 
-  void DiskTransform();
+  void
+  DiskTransform();
 
-  InputPointType GetMeshBarycentre();
+  InputPointType
+  GetMeshBarycentre();
 
-  InputCoordRepType RadiusMaxSquare();
+  InputCoordRepType
+  RadiusMaxSquare();
 
-  void ArcLengthSquareTransform();
+  void
+  ArcLengthSquareTransform();
 
 private:
   /** Not implemented */
   QuadEdgeMeshBorderTransform( const Self & );
 
   /** Not implemented */
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 };
-}
+} // namespace itk
 #include "itkQuadEdgeMeshBorderTransform.hxx"
 
 #endif

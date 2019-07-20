@@ -42,15 +42,21 @@ class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageAlgorithm
 {
 public:
   /// vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
-  static vtkITKTimeSeriesDatabase *New();
-  void PrintSelf(ostream& os, vtkIndent indent) override{ Superclass::PrintSelf(os, indent);};
-  vtkTypeMacro(vtkITKTimeSeriesDatabase,vtkImageAlgorithm);
+  static vtkITKTimeSeriesDatabase *
+  New();
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override
+  {
+    Superclass::PrintSelf( os, indent );
+  };
+  vtkTypeMacro( vtkITKTimeSeriesDatabase, vtkImageAlgorithm );
 
 public:
   /// Create a TimeSeriesDatabase from a series of volumes
-  static void CreateFromFileArchetype ( const char* TSDFilename, const char* ArchetypeFilename )
+  static void
+  CreateFromFileArchetype( const char * TSDFilename, const char * ArchetypeFilename )
   {
-    itk::TimeSeriesDatabase<OutputImagePixelType>::CreateFromFileArchetype ( TSDFilename, ArchetypeFilename );
+    itk::TimeSeriesDatabase< OutputImagePixelType >::CreateFromFileArchetype( TSDFilename, ArchetypeFilename );
   };
 
   /// Connect/Disconnect to a database
@@ -58,50 +64,59 @@ public:
   /// void Disconnect() { this->m_Filter->Disconnect(); }
 
   /// Get/Set the current time stamp to read
-  void SetCurrentImage ( unsigned int value )
-  { DelegateITKInputMacro ( SetCurrentImage, value); };
-  unsigned int GetCurrentImage ( unsigned int vtkNotUsed(value) )
-  { DelegateITKOutputMacro ( GetCurrentImage ); };
+  void
+  SetCurrentImage( unsigned int value )
+  {
+    DelegateITKInputMacro( SetCurrentImage, value );
+  };
+  unsigned int
+  GetCurrentImage( unsigned int vtkNotUsed( value ) )
+  {
+    DelegateITKOutputMacro( GetCurrentImage );
+  };
 
-  int GetNumberOfVolumes()
-  { DelegateITKOutputMacro ( GetNumberOfVolumes ); };
+  int
+  GetNumberOfVolumes()
+  {
+    DelegateITKOutputMacro( GetNumberOfVolumes );
+  };
 
 protected:
   vtkITKTimeSeriesDatabase()
-    {
+  {
     m_Filter = SourceType::New();
     this->itkExporter = ImageExportType::New();
     this->vtkImporter = vtkImageImport::New();
-    ConnectPipelines ( this->itkExporter, this->vtkImporter );
-    this->itkExporter->SetInput ( m_Filter->GetOutput() );
-    };
-  ~vtkITKTimeSeriesDatabase()
-    {
-    this->vtkImporter->Delete();
-    }
+    ConnectPipelines( this->itkExporter, this->vtkImporter );
+    this->itkExporter->SetInput( m_Filter->GetOutput() );
+  };
+  ~vtkITKTimeSeriesDatabase() { this->vtkImporter->Delete(); }
   using InputImagePixelType = short;
   using OutputImagePixelType = short;
-  using OutputImageType = itk::Image<OutputImagePixelType, 3>;
-  using ImageExportType = itk::VTKImageExport<OutputImageType>;
-  using SourceType = itk::TimeSeriesDatabase<OutputImagePixelType>;
+  using OutputImageType = itk::Image< OutputImagePixelType, 3 >;
+  using ImageExportType = itk::VTKImageExport< OutputImageType >;
+  using SourceType = itk::TimeSeriesDatabase< OutputImagePixelType >;
   using ImageFilterType = SourceType;
 
-  SourceType::Pointer m_Filter;
+  SourceType::Pointer      m_Filter;
   ImageExportType::Pointer itkExporter;
-  vtkImageImport* vtkImporter;
+  vtkImageImport *         vtkImporter;
 
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int
+  RequestInformation( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
   /// defined in the subclasses
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void ExecuteData(vtkDataObject *output);
+#if ( VTK_MAJOR_VERSION <= 5 )
+  virtual void
+  ExecuteData( vtkDataObject * output );
 #else
-  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
+  virtual void
+  ExecuteDataWithInformation( vtkDataObject * output, vtkInformation * outInfo ) override;
 #endif
 
 private:
-  vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
-  void operator=(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
-
+  vtkITKTimeSeriesDatabase( const vtkITKTimeSeriesDatabase & ); /// Not implemented.
+  void
+  operator=( const vtkITKTimeSeriesDatabase & ); /// Not implemented.
 };
 
 #endif

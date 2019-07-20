@@ -20,24 +20,28 @@
 
 #include "itkImageFileReader.h"
 
-class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
-  : public vtkITKArchetypeImageSeriesReader
+class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile : public vtkITKArchetypeImageSeriesReader
 {
- public:
-  static vtkITKArchetypeDiffusionTensorImageReaderFile *New();
-  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+public:
+  static vtkITKArchetypeDiffusionTensorImageReaderFile *
+  New();
+  vtkTypeMacro( vtkITKArchetypeDiffusionTensorImageReaderFile, vtkITKArchetypeImageSeriesReader );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
- protected:
+protected:
   vtkITKArchetypeDiffusionTensorImageReaderFile();
   ~vtkITKArchetypeDiffusionTensorImageReaderFile();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *data);
+#if ( VTK_MAJOR_VERSION <= 5 )
+  void
+  ExecuteData( vtkDataObject * data );
 #else
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int
+  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
 #endif
-  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
+  static void
+  ReadProgressCallback( itk::ProcessObject * obj, const itk::ProgressEvent &, void * data );
   /// private:
 };
 

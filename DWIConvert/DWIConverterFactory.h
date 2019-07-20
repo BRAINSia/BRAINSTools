@@ -32,20 +32,22 @@
 #include "NRRDDWIConverter.h"
 
 /** 'factory' object. Does initial scanning of the DICOM directory and
-* then it can instantiate the correct DWIConverter class
-*/
+ * then it can instantiate the correct DWIConverter class
+ */
 class DWIConverterFactory
 {
 public:
-  DWIConverterFactory(const std::string DicomDirectory,
-                        const bool UseBMatrixGradientDirections,
-                        const double smallGradientThreshold);
+  DWIConverterFactory( const std::string DicomDirectory, const bool UseBMatrixGradientDirections,
+                       const double smallGradientThreshold );
 
   ~DWIConverterFactory();
 
-  bool isNIIorNrrd( const std::string & filename );
-  DWIConverter* New();
-  std::string GetVendor();
+  bool
+  isNIIorNrrd( const std::string & filename );
+  DWIConverter *
+  New();
+  std::string
+  GetVendor();
 
 private:
   std::string m_DicomDirectory;
@@ -54,8 +56,7 @@ private:
   double      m_SmallGradientThreshold;
 
   DWIDICOMConverterBase::DCMTKFileVector m_Headers;
-  DWIConverter::FileNamesContainer m_InputFileNames;
-
+  DWIConverter::FileNamesContainer       m_InputFileNames;
 };
 
 #endif // __DWIConverterFactory_h

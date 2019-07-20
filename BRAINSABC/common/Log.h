@@ -41,41 +41,48 @@ namespace mu
 class Log
 {
 public:
+  static Log *
+  GetInstance();
 
-  static Log * GetInstance();
-
-  void CloseFile();
+  void
+  CloseFile();
 
   // Enable / disable writes to terminal
-  inline void EchoOn()
+  inline void
+  EchoOn()
   {
     m_EchoFlag = true;
   }
 
-  inline void EchoOff()
+  inline void
+  EchoOff()
   {
     m_EchoFlag = false;
   }
 
-  void SetOutputFileName(const char *s);
+  void
+  SetOutputFileName( const char * s );
 
-  void SetOutputFileName(const std::string & s);
+  void
+  SetOutputFileName( const std::string & s );
 
-  void WriteString(const char *s);
+  void
+  WriteString( const char * s );
 
-  void WriteString(const std::string & s);
+  void
+  WriteString( const std::string & s );
 
-  std::ofstream & GetFileObject()
+  std::ofstream &
+  GetFileObject()
   {
     return m_Output;
   }
 
 private:
-
   // Restrict access to constructors
   Log();
   ~Log();
-  Log(const Log & l);
+  Log( const Log & l );
 
   bool m_EchoFlag;
 
@@ -86,11 +93,11 @@ private:
 } // namespace mu
 
 // Allows declarations such as: muLogMacro(<< "Message: " << 1.1234);
-#define muLogMacro(x)                                                   \
-    {                                                                     \
-    std::ostringstream outss;                                           \
-    outss << "" x << std::ends;                                         \
-    ( mu::Log::GetInstance() )->WriteString( outss.str().c_str() );     \
-    }
+#define muLogMacro( x )                                                                                                \
+  {                                                                                                                    \
+    std::ostringstream outss;                                                                                          \
+    outss << "" x << std::ends;                                                                                        \
+    ( mu::Log::GetInstance() )->WriteString( outss.str().c_str() );                                                    \
+  }
 
 #endif

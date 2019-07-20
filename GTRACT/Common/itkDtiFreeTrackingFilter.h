@@ -60,47 +60,45 @@ namespace itk
 /** \class DtiFreeTrackingFilter
  */
 
-template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
-class DtiFreeTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
-                                                                TAnisotropyImageType,
-                                                                TMaskImageType>
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+class DtiFreeTrackingFilter
+  : public itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFreeTrackingFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( DtiFreeTrackingFilter );
 
   /** Standard class type alias. */
   using Self = DtiFreeTrackingFilter;
-  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Standard New method. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Runtime information support. */
-  itkTypeMacro(DtiFreeTrackingFilter, itk::DtiTrackingFilterBase);
+  itkTypeMacro( DtiFreeTrackingFilter, itk::DtiTrackingFilterBase );
 
-  itkSetMacro(CurvatureThreshold, double);
-  itkGetMacro(CurvatureThreshold, double);
+  itkSetMacro( CurvatureThreshold, double );
+  itkGetMacro( CurvatureThreshold, double );
 
   // void SetSeeds(SeedListType);
   // void SetTrackingDirections(DirectionListType);
 
-  void Update();
+  void
+  Update();
 
 protected:
   DtiFreeTrackingFilter();
-  ~DtiFreeTrackingFilter() override
-  {
-  }
+  ~DtiFreeTrackingFilter() override {}
 
 private:
   double m_CurvatureThreshold;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDtiFreeTrackingFilter.hxx"
+#  include "itkDtiFreeTrackingFilter.hxx"
 #endif
 
 #endif

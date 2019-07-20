@@ -35,38 +35,33 @@
  */
 
 int
-main(int argc, char *argv[])
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  if( inputVolumes.size() < 1 )
-    {
-    std::cerr << argv[0] << ": Missing required probability maps"
-              << std::endl;
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  if ( inputVolumes.size() < 1 )
+  {
+    std::cerr << argv[0] << ": Missing required probability maps" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   const unsigned int numberOfProbabilityMaps = inputVolumes.size();
 
   // Define Image Type
   using ProbabilityMapPixelType = float;
   constexpr unsigned int Dimension = 3;
-  using ProbabilityMapImageType = itk::Image<ProbabilityMapPixelType, Dimension>;
+  using ProbabilityMapImageType = itk::Image< ProbabilityMapPixelType, Dimension >;
 
   // Label Index should start from zero and increasing order.
 
   // read in images
 
-  std::vector<ProbabilityMapImageType::Pointer> probabilityImages( numberOfProbabilityMaps );
-  for( unsigned int indexInputImages = 0;
-       indexInputImages < numberOfProbabilityMaps;
-       indexInputImages++ )
-    {
-    std::cout << "- Read image::"
-              << inputVolumes[indexInputImages]
-              << std::endl;
-    using ProbabilityImageReaderType = itk::ImageFileReader<ProbabilityMapImageType>;
+  std::vector< ProbabilityMapImageType::Pointer > probabilityImages( numberOfProbabilityMaps );
+  for ( unsigned int indexInputImages = 0; indexInputImages < numberOfProbabilityMaps; indexInputImages++ )
+  {
+    std::cout << "- Read image::" << inputVolumes[indexInputImages] << std::endl;
+    using ProbabilityImageReaderType = itk::ImageFileReader< ProbabilityMapImageType >;
 
     ProbabilityImageReaderType::Pointer probabilityReader = ProbabilityImageReaderType::New();
 
@@ -74,12 +69,12 @@ main(int argc, char *argv[])
     probabilityReader->Update();
 
     probabilityImages[indexInputImages] = probabilityReader->GetOutput();
-    }
+  }
 
   // crerate empty label maps
   std::cout << "Create Label Map" << std::endl;
   using LabelMapPixelType = unsigned int;
-  using LabelMapImageType = itk::Image<LabelMapPixelType, Dimension>;
+  using LabelMapImageType = itk::Image< LabelMapPixelType, Dimension >;
 
   LabelMapImageType::Pointer labelImage = LabelMapImageType::New();
 
@@ -91,41 +86,38 @@ main(int argc, char *argv[])
   std::cerr << "here" << __FILE__ << " " << __LINE__ << std::endl;
   labelImage->Allocate();
   std::cerr << "here" << __FILE__ << " " << __LINE__ << std::endl;
-  labelImage->FillBuffer(0);
+  labelImage->FillBuffer( 0 );
   std::cerr << "here" << __FILE__ << " " << __LINE__ << std::endl;
 
   std::cout << "start iteration " << std::endl;
   // Iterate Images
-  using IteratorType = itk::ImageRegionIterator<ProbabilityMapImageType>;
+  using IteratorType = itk::ImageRegionIterator< ProbabilityMapImageType >;
 
-  IteratorType probabilityIterator( probabilityImages[0],
-                                    probabilityImages[0]->GetLargestPossibleRegion() );
+  IteratorType probabilityIterator( probabilityImages[0], probabilityImages[0]->GetLargestPossibleRegion() );
 
-  using LabelIteratorType = itk::ImageRegionIterator<LabelMapImageType>;
+  using LabelIteratorType = itk::ImageRegionIterator< LabelMapImageType >;
   LabelIteratorType labelIterator( labelImage, labelImage->GetLargestPossibleRegion() );
-  for( probabilityIterator.GoToBegin(), labelIterator.GoToBegin();
-       !probabilityIterator.IsAtEnd();
-       ++probabilityIterator, ++labelIterator )
-    {
+  for ( probabilityIterator.GoToBegin(), labelIterator.GoToBegin(); !probabilityIterator.IsAtEnd();
+        ++probabilityIterator, ++labelIterator )
+  {
     ProbabilityMapPixelType max = probabilityIterator.Get();
     LabelMapPixelType       label = 0;
-    for( unsigned int indexInputImages = 1; indexInputImages < numberOfProbabilityMaps;
-         indexInputImages++ )
-      {
+    for ( unsigned int indexInputImages = 1; indexInputImages < numberOfProbabilityMaps; indexInputImages++ )
+    {
       ProbabilityMapPixelType pixelValue =
         probabilityImages[indexInputImages]->GetPixel( probabilityIterator.GetIndex() );
-      if(  pixelValue > max )
-        {
+      if ( pixelValue > max )
+      {
         max = pixelValue;
         label = indexInputImages;
-        }
       }
-
-    labelIterator.Set( label );
     }
 
+    labelIterator.Set( label );
+  }
+
   // Image Writer
-  using LabelWriterType = itk::ImageFileWriter<LabelMapImageType>;
+  using LabelWriterType = itk::ImageFileWriter< LabelMapImageType >;
 
   LabelWriterType::Pointer labelWriter = LabelWriterType::New();
 

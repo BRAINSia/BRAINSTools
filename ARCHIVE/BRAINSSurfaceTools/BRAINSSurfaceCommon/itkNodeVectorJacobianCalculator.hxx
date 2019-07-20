@@ -27,9 +27,8 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputMesh, typename TScalar>
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::NodeVectorJacobianCalculator()
+template < typename TInputMesh, typename TScalar >
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::NodeVectorJacobianCalculator()
 {
   this->m_AreaList = AreaListType::New();
   this->m_PointAreaAccumulatorList = CoordRepListType::New();
@@ -42,19 +41,16 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Destructor
  */
-template <typename TInputMesh, typename TScalar>
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::~NodeVectorJacobianCalculator()
-{
-}
+template < typename TInputMesh, typename TScalar >
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::~NodeVectorJacobianCalculator()
+{}
 
 /**
  * Check inputs
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::Initialize()
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::Initialize()
 {
   this->VerifyInputs();
   this->AllocateInternalContainers();
@@ -64,34 +60,32 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Check inputs
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::VerifyInputs() const
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::VerifyInputs() const
 {
-  if( this->m_InputMesh.IsNull() )
-    {
-    itkExceptionMacro(<< "NodeVectorJacobianCalculator Initialize  m_InputMesh is NULL.");
-    }
+  if ( this->m_InputMesh.IsNull() )
+  {
+    itkExceptionMacro( << "NodeVectorJacobianCalculator Initialize  m_InputMesh is NULL." );
+  }
 
-  if( this->m_VectorContainer.IsNull() )
-    {
-    itkExceptionMacro(<< "NodeVectorJacobianCalculator Initialize  m_VectorContainer is NULL.");
-    }
+  if ( this->m_VectorContainer.IsNull() )
+  {
+    itkExceptionMacro( << "NodeVectorJacobianCalculator Initialize  m_VectorContainer is NULL." );
+  }
 
-  if( this->m_BasisSystemList.IsNull() )
-    {
-    itkExceptionMacro(<< "NodeVectorJacobianCalculator Initialize  m_BasisSystemList is NULL.");
-    }
+  if ( this->m_BasisSystemList.IsNull() )
+  {
+    itkExceptionMacro( << "NodeVectorJacobianCalculator Initialize  m_BasisSystemList is NULL." );
+  }
 }
 
 /**
  * Allocate internal Containers
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::AllocateInternalContainers()
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::AllocateInternalContainers()
 {
   this->m_AreaList->Reserve( this->m_InputMesh->GetNumberOfCells() );
   this->m_PointAreaAccumulatorList->Reserve( this->m_InputMesh->GetNumberOfPoints() );
@@ -105,14 +99,13 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::Compute()
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::Compute()
 {
   this->SetContainersToNullValues();
 
-  const CellsContainer * cells =  this->m_InputMesh->GetCells();
+  const CellsContainer * cells = this->m_InputMesh->GetCells();
 
   CellsContainerConstIterator cellIterator = cells->Begin();
   CellsContainerConstIterator cellEnd = cells->End();
@@ -136,8 +129,8 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
   PointIdentifier pointIds[numberOfVerticesInTriangle];
   PointType       point[numberOfVerticesInTriangle];
 
-  while( cellIterator != cellEnd )
-    {
+  while ( cellIterator != cellEnd )
+  {
     CellType * cellPointer = cellIterator.Value();
 
     // Consider current cell. Iterate through its points.
@@ -146,37 +139,36 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
     PointIdIterator pointIdEnd = cellPointer->PointIdsEnd();
 
     unsigned int i = 0;
-    while( pointIdIterator != pointIdEnd )
-      {
+    while ( pointIdIterator != pointIdEnd )
+    {
       const PointIdentifier pointId = *pointIdIterator;
       pointIds[i] = pointId;
       pixelValue[i] = this->m_VectorContainer->GetElement( pointId );
       point[i] = this->m_InputMesh->GetPoint( pointId );
       i++;
       ++pointIdIterator;
-      }
+    }
 
     const AreaType area = areaIterator.Value();
     //
     // contribute to accumulated area around each point of triangle
     //
-    for( unsigned int ik = 0; ik < numberOfVerticesInTriangle; ik++ )
-      {
+    for ( unsigned int ik = 0; ik < numberOfVerticesInTriangle; ik++ )
+    {
       this->m_PointAreaAccumulatorList->ElementAt( pointIds[ik] ) += area;
-      }
+    }
 
     const TriangleBasisSystemType & basisSystem = basisSystemListIterator.Value();
 
-    const VectorType & u12 = basisSystem.GetVector(0);
-    const VectorType & u32 = basisSystem.GetVector(1);
+    const VectorType & u12 = basisSystem.GetVector( 0 );
+    const VectorType & u32 = basisSystem.GetVector( 1 );
 
     //
     //  Compute the coordinates of the point at the center of the cell.
     //
     const double equalWeight = 1.0 / 3.0;
     PointType    cellCenter;
-    cellCenter.SetToBarycentricCombination(
-      point[0], point[1], point[2], equalWeight, equalWeight );
+    cellCenter.SetToBarycentricCombination( point[0], point[1], point[2], equalWeight, equalWeight );
 
     VectorType vectorToCenter = cellCenter - this->m_SphereCenter;
     vectorToCenter *= this->m_SphereRadius / vectorToCenter.GetNorm();
@@ -189,52 +181,51 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
     //
     VectorType vectorToCenterNormalized = vectorToCenter;
     vectorToCenterNormalized.Normalize();
-    for( unsigned int il = 0; il < numberOfVerticesInTriangle; il++ )
-      {
+    for ( unsigned int il = 0; il < numberOfVerticesInTriangle; il++ )
+    {
       ArrayValueType pixelValue1 = pixelValue[0][il];
       ArrayValueType pixelValue2 = pixelValue[1][il];
       ArrayValueType pixelValue3 = pixelValue[2][il];
 
-      InterpolatorType::GetDerivativeFromPixelsAndBasis(
-        pixelValue1, pixelValue2, pixelValue3, u12, u32, derivative );
+      InterpolatorType::GetDerivativeFromPixelsAndBasis( pixelValue1, pixelValue2, pixelValue3, u12, u32, derivative );
 
       const double radialComponent = derivative * vectorToCenterNormalized;
-      for( unsigned int k = 0; k < MeshDimension; k++ )
-        {
+      for ( unsigned int k = 0; k < MeshDimension; k++ )
+      {
         projectedDerivative[il][k] = derivative[k] - vectorToCenterNormalized[k] * radialComponent;
-        }
+      }
 
       projectedDerivative[il] *= area;
-      }
+    }
     // Store at each vertex the value equal to triangle area x
     // Jacobian. Later, area-based weighting will use the total value
     // and divide by the sum of triangle areas about each vertex.
     // Begin by weighting contribution to point of this triangle by its area.
-    for( unsigned int im = 0; im < numberOfVerticesInTriangle; im++ )
+    for ( unsigned int im = 0; im < numberOfVerticesInTriangle; im++ )
+    {
+      for ( unsigned int k = 0; k < MeshDimension; k++ )
       {
-      for( unsigned int k = 0; k < MeshDimension; k++ )
-        {
         //
         // Parallel transport the derivative vector to each neighbor point
         //
-        this->ParallelTransport( cellCenterProjectedInSphere, point[im],
-                                 projectedDerivative[k], parallelTransportedDerivative[k] );
-        for( unsigned int h = 0; h < MeshDimension; h++ )
-          {
+        this->ParallelTransport(
+          cellCenterProjectedInSphere, point[im], projectedDerivative[k], parallelTransportedDerivative[k] );
+        for ( unsigned int h = 0; h < MeshDimension; h++ )
+        {
           projectedJacobian[k][h] = parallelTransportedDerivative[k][h];
-          }
         }
+      }
 
       //
       // then accumulate them there.
       //
       this->m_PointJacobianAccumulatorList->ElementAt( pointIds[im] ) += projectedJacobian;
-      }
+    }
 
     ++cellIterator;
     ++areaIterator;
     ++basisSystemListIterator;
-    }
+  }
 
   this->NormalizeDerivativesByTotalArea();
 }
@@ -242,49 +233,47 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Initialize several containers with null values in all their elements.
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::SetContainersToNullValues()
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::SetContainersToNullValues()
 {
   using DerivativeValueType = typename DerivativeType::ValueType;
 
   JacobianType nullJacobian;
-  nullJacobian.Fill( NumericTraits<DerivativeValueType>::ZeroValue() );
+  nullJacobian.Fill( NumericTraits< DerivativeValueType >::ZeroValue() );
 
   JacobianListIterator jacobianItr = this->m_PointJacobianAccumulatorList->Begin();
   JacobianListIterator jacobianEnd = this->m_PointJacobianAccumulatorList->End();
   AreaListIterator     areaItr = this->m_PointAreaAccumulatorList->Begin();
 
-  while( jacobianItr != jacobianEnd )
-    {
+  while ( jacobianItr != jacobianEnd )
+  {
     jacobianItr.Value() = nullJacobian;
-    areaItr.Value() = NumericTraits<AreaType>::ZeroValue();
+    areaItr.Value() = NumericTraits< AreaType >::ZeroValue();
     ++jacobianItr;
     ++areaItr;
-    }
+  }
 }
 
 /**
  * Compute the area of each cell and store them in a container
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::ComputeAreaForAllCells()
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::ComputeAreaForAllCells()
 {
-  const CellsContainer * cells =  this->m_InputMesh->GetCells();
+  const CellsContainer * cells = this->m_InputMesh->GetCells();
 
   constexpr unsigned int numberOfVerticesInTriangle = 3;
-  PointType          point[numberOfVerticesInTriangle];
+  PointType              point[numberOfVerticesInTriangle];
 
   AreaListIterator areaIterator = this->m_AreaList->Begin();
 
   CellsContainerConstIterator cellIterator = cells->Begin();
   CellsContainerConstIterator cellEnd = cells->End();
 
-  while( cellIterator != cellEnd )
-    {
+  while ( cellIterator != cellEnd )
+  {
     CellType * cellPointer = cellIterator.Value();
 
     // Consider current cell. Iterate through its points.
@@ -292,13 +281,13 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
     PointIdIterator pointIdEnd = cellPointer->PointIdsEnd();
 
     unsigned int i = 0;
-    while( pointIdIterator != pointIdEnd )
-      {
+    while ( pointIdIterator != pointIdEnd )
+    {
       const PointIdentifier pointId = *pointIdIterator;
       point[i] = m_InputMesh->GetPoint( pointId );
       i++;
       ++pointIdIterator;
-      }
+    }
 
     const AreaType area = TriangleHelperType::ComputeArea( point[0], point[1], point[2] );
 
@@ -306,48 +295,45 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 
     ++cellIterator;
     ++areaIterator;
-    }
+  }
 }
 
 /**
  * Compute the function
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::NormalizeDerivativesByTotalArea()
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::NormalizeDerivativesByTotalArea()
 {
   JacobianListIterator  jacobianItr = this->m_PointJacobianAccumulatorList->Begin();
   JacobianListIterator  jacobianEnd = this->m_PointJacobianAccumulatorList->End();
   AreaListConstIterator areaItr = this->m_PointAreaAccumulatorList->Begin();
 
-  while( jacobianItr != jacobianEnd )
-    {
+  while ( jacobianItr != jacobianEnd )
+  {
     jacobianItr.Value() /= areaItr.Value();
     ++jacobianItr;
     ++areaItr;
-    }
+  }
 }
 
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::ParallelTransport(
-  const PointType src, const PointType dst,
-  const DerivativeType & inputVector,
-  DerivativeType & transportedVector ) const
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::ParallelTransport( const PointType src, const PointType dst,
+                                                                        const DerivativeType & inputVector,
+                                                                        DerivativeType &       transportedVector ) const
 {
   VectorType vsrc = src - this->m_SphereCenter;
   VectorType vdst = dst - this->m_SphereCenter;
 
   VectorType axis = CrossProduct( vsrc, vdst );
 
-  const double scaledSinus   = axis.GetNorm();
+  const double scaledSinus = axis.GetNorm();
   const double scaledCosinus = vsrc * vdst;
 
   double angle = std::atan2( scaledSinus, scaledCosinus );
 
-  using VersorType = Versor<double>;
+  using VersorType = Versor< double >;
 
   VersorType versor;
   versor.Set( axis, angle );
@@ -358,10 +344,9 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Compute the function
  */
-template <typename TInputMesh, typename TScalar>
-typename NodeVectorJacobianCalculator<TInputMesh, TScalar>::OutputType
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::Evaluate( const InputType & input  ) const
+template < typename TInputMesh, typename TScalar >
+typename NodeVectorJacobianCalculator< TInputMesh, TScalar >::OutputType
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::Evaluate( const InputType & input ) const
 {
   return this->m_PointJacobianAccumulatorList->ElementAt( input );
 }
@@ -369,10 +354,9 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
 /**
  * Standard "PrintSelf" method
  */
-template <typename TInputMesh, typename TScalar>
+template < typename TInputMesh, typename TScalar >
 void
-NodeVectorJacobianCalculator<TInputMesh, TScalar>
-::PrintSelf( std::ostream& os, Indent indent) const
+NodeVectorJacobianCalculator< TInputMesh, TScalar >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf( os, indent );
   os << indent << "Input mesh = " << this->m_InputMesh.GetPointer() << std::endl;

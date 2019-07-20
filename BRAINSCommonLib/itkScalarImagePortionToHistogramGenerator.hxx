@@ -37,44 +37,39 @@ namespace itk
 {
 namespace Statistics
 {
-template <typename TImageType, typename TMaskType>
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::ScalarImagePortionToHistogramGenerator() :
-  m_HistogramGenerator(GeneratorType::New() )
+template < typename TImageType, typename TMaskType >
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::ScalarImagePortionToHistogramGenerator()
+  : m_HistogramGenerator( GeneratorType::New() )
 {
   m_ImageToListSampleGenerator = ListSampleGeneratorType::New();
   m_HistogramGenerator->SetInput( m_ImageToListSampleGenerator->GetOutput() );
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetInput(const ImageType *image)
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::SetInput( const ImageType * image )
 {
-  m_ImageToListSampleGenerator->SetInput(image);
+  m_ImageToListSampleGenerator->SetInput( image );
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetBinaryPortionImage(const TMaskType *binaryImage)
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::SetBinaryPortionImage( const TMaskType * binaryImage )
 {
-  m_ImageToListSampleGenerator->SetMaskImage(binaryImage);
-  m_ImageToListSampleGenerator->SetMaskValue(NumericTraits<typename TMaskType::PixelType>::OneValue());
+  m_ImageToListSampleGenerator->SetMaskImage( binaryImage );
+  m_ImageToListSampleGenerator->SetMaskValue( NumericTraits< typename TMaskType::PixelType >::OneValue() );
 }
 
-template <typename TImageType, typename TMaskType>
-const typename ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>::HistogramType
-* ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::GetOutput() const
-  {
+template < typename TImageType, typename TMaskType >
+const typename ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::HistogramType *
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::GetOutput() const
+{
   return m_HistogramGenerator->GetOutput();
-  }
+}
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::Compute()
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::Compute()
 {
   m_ImageToListSampleGenerator->Update();
   std::cout << "ListSample TotalFrequency is  " << m_ImageToListSampleGenerator->GetOutput()->GetTotalFrequency()
@@ -82,56 +77,51 @@ ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
   m_HistogramGenerator->Update();
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetNumberOfBins(unsigned int numberOfBins)
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::SetNumberOfBins( unsigned int numberOfBins )
 {
   typename HistogramType::SizeType size;
 
-  size.SetSize(1);
-  size.Fill(numberOfBins);
-  m_HistogramGenerator->SetHistogramSize(size);
+  size.SetSize( 1 );
+  size.Fill( numberOfBins );
+  m_HistogramGenerator->SetHistogramSize( size );
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetHistogramMin(RealPixelType minimumValue)
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::SetHistogramMin( RealPixelType minimumValue )
 {
   using MeasurementVectorType = typename GeneratorType::HistogramMeasurementVectorType;
-  MeasurementVectorType minVector(1);
+  MeasurementVectorType minVector( 1 );
 
   minVector[0] = minimumValue;
-  m_HistogramGenerator->SetHistogramBinMinimum(minVector);
+  m_HistogramGenerator->SetHistogramBinMinimum( minVector );
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetHistogramMax(RealPixelType maximumValue)
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::SetHistogramMax( RealPixelType maximumValue )
 {
   using MeasurementVectorType = typename GeneratorType::HistogramMeasurementVectorType;
-  MeasurementVectorType maxVector(1);
+  MeasurementVectorType maxVector( 1 );
 
   maxVector[0] = maximumValue;
-  m_HistogramGenerator->SetHistogramBinMaximum(maxVector);
+  m_HistogramGenerator->SetHistogramBinMaximum( maxVector );
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetMarginalScale(double marginalScale)
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::SetMarginalScale( double marginalScale )
 {
-  m_HistogramGenerator->SetMarginalScale(marginalScale);
+  m_HistogramGenerator->SetMarginalScale( marginalScale );
 }
 
-template <typename TImageType, typename TMaskType>
+template < typename TImageType, typename TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::PrintSelf(std::ostream & os, Indent indent) const
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf( os, indent );
 
   os << "ImageToListSampleGenerator = " << m_ImageToListSampleGenerator << std::endl;
   os << "HistogramGenerator = " << m_HistogramGenerator << std::endl;

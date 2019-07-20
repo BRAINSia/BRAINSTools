@@ -73,42 +73,43 @@ namespace
 {
 using InputPixelType = unsigned char;
 using PixelType = float;
-using ImageType = itk::Image<PixelType, 3>;
+using ImageType = itk::Image< PixelType, 3 >;
 using MaskPixelType = signed short;
-using MaskImageType = itk::Image<MaskPixelType, 3>;
+using MaskImageType = itk::Image< MaskPixelType, 3 >;
 using MaskIndexType = MaskImageType::IndexType;
 
-using MaskImageWriterType = itk::ImageFileWriter<MaskImageType>;
+using MaskImageWriterType = itk::ImageFileWriter< MaskImageType >;
 
-using ReaderType = itk::ImageFileReader<ImageType>;
-using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+using ReaderType = itk::ImageFileReader< ImageType >;
+using MaskReaderType = itk::ImageFileReader< MaskImageType >;
 
-using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
-using MaskIteratorType = itk::ImageRegionIterator<MaskImageType>;
-using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
+using ConstIteratorType = itk::ImageRegionConstIterator< ImageType >;
+using MaskIteratorType = itk::ImageRegionIterator< MaskImageType >;
+using ConstMaskIteratorType = itk::ImageRegionConstIterator< MaskImageType >;
 
-using StructuringElementType = itk::BinaryBallStructuringElement<InputPixelType,
-                                          BRAINSMush::Dimension>;
-}
+using StructuringElementType = itk::BinaryBallStructuringElement< InputPixelType, BRAINSMush::Dimension >;
+} // namespace
 
-ImageType::Pointer LoadImage(std::string);
+ImageType::Pointer LoadImage( std::string );
 
-MaskImageType::Pointer LoadMaskImage(std::string);
+MaskImageType::Pointer LoadMaskImage( std::string );
 
-MaskImageType::Pointer GenerateInitializerRegion(ImageType::Pointer & referenceImage, std::vector<int> boundingBoxSize,
-                                                 std::vector<int> boundingBoxStart);
+MaskImageType::Pointer
+GenerateInitializerRegion( ImageType::Pointer & referenceImage, std::vector< int > boundingBoxSize,
+                           std::vector< int > boundingBoxStart );
 
-ImageType::Pointer MixtureOptimizer(ImageType::Pointer & firstImage, ImageType::Pointer & secondImage,
-                                    MaskImageType::Pointer & maskImage, double desiredMean, double desiredVariance,
-                                    std::string outputWeightsFile);
+ImageType::Pointer
+MixtureOptimizer( ImageType::Pointer & firstImage, ImageType::Pointer & secondImage, MaskImageType::Pointer & maskImage,
+                  double desiredMean, double desiredVariance, std::string outputWeightsFile );
 
-void GenerateBrainVolume(ImageType::Pointer & firstImage, ImageType::Pointer & secondImage,
-                         MaskImageType::Pointer & maskImage, std::string inputMaskVolume, double desiredMean,
-                         double desiredVariance, double lowerThresholdFactor, double upperThresholdFactor,
-                         std::vector<int> boundingBoxSize, std::vector<int> boundingBoxStart,
-                         //  std::vector<int> seed,
-                         std::string outputVolume,
-                         //  std::string outputMask,
-                         std::string outputWeightsFile, MaskImageType::Pointer & resultImage);
+void
+GenerateBrainVolume( ImageType::Pointer & firstImage, ImageType::Pointer & secondImage,
+                     MaskImageType::Pointer & maskImage, std::string inputMaskVolume, double desiredMean,
+                     double desiredVariance, double lowerThresholdFactor, double upperThresholdFactor,
+                     std::vector< int > boundingBoxSize, std::vector< int > boundingBoxStart,
+                     //  std::vector<int> seed,
+                     std::string outputVolume,
+                     //  std::string outputMask,
+                     std::string outputWeightsFile, MaskImageType::Pointer & resultImage );
 
 #endif /* __BrainMUSH_h__ */

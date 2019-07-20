@@ -42,26 +42,27 @@
 #include "QuadEdgeMeshHistogramMatchingCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if( inputSurfaceFile == "" )
-    {
+  if ( inputSurfaceFile == "" )
+  {
     std::cerr << "No input file specified" << std::endl;
     return 1;
-    }
-  if( refSurfaceFile == "" )
-    {
+  }
+  if ( refSurfaceFile == "" )
+  {
     std::cerr << "No reference file specified" << std::endl;
     return 1;
-    }
-  if( outputSurfaceFile == "" )
-    {
+  }
+  if ( outputSurfaceFile == "" )
+  {
     std::cerr << "No output file specified" << std::endl;
     return 1;
-    }
+  }
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Input Surface: " << inputSurfaceFile << std::endl;
@@ -77,10 +78,10 @@ int main( int argc, char * argv [] )
   using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using MeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
 
-  using SourceReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
-  using ReferenceReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
+  using SourceReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
+  using ReferenceReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
 
   SourceReaderType::Pointer srcReader = SourceReaderType::New();
   srcReader->SetFileName( inputSurfaceFile.c_str() );
@@ -91,20 +92,20 @@ int main( int argc, char * argv [] )
   srcReader->Update();
   refReader->Update();
 
-  using FilterType = itk::HistogramMatchingQuadEdgeMeshFilter<MeshType, MeshType>;
+  using FilterType = itk::HistogramMatchingQuadEdgeMeshFilter< MeshType, MeshType >;
 
-  FilterType::Pointer filter  = FilterType::New();
+  FilterType::Pointer filter = FilterType::New();
 
-  filter->SetInput(srcReader->GetOutput() );
-  filter->SetReferenceMesh(refReader->GetOutput() );
+  filter->SetInput( srcReader->GetOutput() );
+  filter->SetReferenceMesh( refReader->GetOutput() );
   filter->SetNumberOfHistogramLevels( numberOfHistogramLevels );
   filter->SetNumberOfMatchPoints( numberOfMatchPoints );
   filter->Update();
 
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( filter->GetOutput() );
-  writer->SetFileName(outputSurfaceFile.c_str() );
+  writer->SetFileName( outputSurfaceFile.c_str() );
   writer->Update();
 
   return 0;

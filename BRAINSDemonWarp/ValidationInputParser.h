@@ -34,55 +34,55 @@
 namespace itk
 {
 // 6 Parameters
-using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
+using VersorRigid3DTransformType = itk::VersorRigid3DTransform< double >;
 // 9 Parameters
-using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
+using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform< double >;
 // 15 Parameters
-using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
+using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform< double >;
 // 12 Parameters
-using AffineTransformType = itk::AffineTransform<double, 3>;
+using AffineTransformType = itk::AffineTransform< double, 3 >;
 /** \class ValidationInputParser
-  *
-  * This component parse an input parameter file for a simple
-  * atlas based segmentation application.
-  *
-  * This class is activated by method Execute().
-  *
-  * Inputs:
-  *  - altas image name
-  *  - subject image name
-  *  - the  parameter filename
-  *
-  *
-  * Outputs:
-  *  - pointer to the subject (fixed) image
-  *  - pointer to the atlas (moving) image
-  *  - the number of histogram levels to use
-  *  - the number of histogram match points to use
-  *  - the number of levels
-  *  - the number of iterations at each level
-  *  - the fixed image starting shrink factors
-  *  - the moving image starting shrink factors
-  *
-  */
+ *
+ * This component parse an input parameter file for a simple
+ * atlas based segmentation application.
+ *
+ * This class is activated by method Execute().
+ *
+ * Inputs:
+ *  - altas image name
+ *  - subject image name
+ *  - the  parameter filename
+ *
+ *
+ * Outputs:
+ *  - pointer to the subject (fixed) image
+ *  - pointer to the atlas (moving) image
+ *  - the number of histogram levels to use
+ *  - the number of histogram match points to use
+ *  - the number of levels
+ *  - the number of iterations at each level
+ *  - the fixed image starting shrink factors
+ *  - the moving image starting shrink factors
+ *
+ */
 
-template <typename TImage>
+template < typename TImage >
 class ValidationInputParser : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ValidationInputParser);
+  ITK_DISALLOW_COPY_AND_ASSIGN( ValidationInputParser );
 
   /** Standard class type alias. */
   using Self = ValidationInputParser;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ValidationInputParser, Object);
+  itkTypeMacro( ValidationInputParser, Object );
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Image Type. */
   using ImageType = TImage;
@@ -93,104 +93,101 @@ public:
   static constexpr unsigned int SplineOrder = 3;
 
   /** Transform Types. */
-  using VersorRigid3DTransformType = VersorRigid3DTransform<double>;
-  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform<double>;
-  using AffineTransformType = AffineTransform<double, Self::ImageDimension>;
+  using VersorRigid3DTransformType = VersorRigid3DTransform< double >;
+  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform< double >;
+  using AffineTransformType = AffineTransform< double, Self::ImageDimension >;
 
   using CoordinateRepType = double;
-  using BSplineTransformType = typename itk::BSplineTransform<
-      CoordinateRepType,
-      Self::ImageDimension,
-      Self::SplineOrder>;
+  using BSplineTransformType =
+    typename itk::BSplineTransform< CoordinateRepType, Self::ImageDimension, Self::SplineOrder >;
 
   /** Displacement field value type. */
   using FieldValueType = float;
 
   /** Displacement field pixel type. */
-  using FieldPixelType = Vector<FieldValueType,
-                 Self::ImageDimension>;
+  using FieldPixelType = Vector< FieldValueType, Self::ImageDimension >;
 
   /** Displacement field type. */
-  using TDisplacementField = Image<FieldPixelType,
-                Self::ImageDimension>;
+  using TDisplacementField = Image< FieldPixelType, Self::ImageDimension >;
 
   /** ShrinkFactors type. */
-  using ShrinkFactorsType = FixedArray<unsigned int,
-                     Self::ImageDimension>;
+  using ShrinkFactorsType = FixedArray< unsigned int, Self::ImageDimension >;
 
   /** IterationArray type. */
-  using IterationsArrayType = Array<unsigned int>;
+  using IterationsArrayType = Array< unsigned int >;
 
   /** Set the atlas patient. */
-  itkSetStringMacro(TheMovingImageFilename);
+  itkSetStringMacro( TheMovingImageFilename );
 
   /** Set the subject patient. */
-  itkSetStringMacro(TheFixedImageFilename);
+  itkSetStringMacro( TheFixedImageFilename );
 
   /** Set the initial Displacement Field one of 3 ways. */
-  itkSetStringMacro(InitialDisplacementFieldFilename);
-  itkSetStringMacro(InitialCoefficientFilename);
-  itkSetStringMacro(InitialTransformFilename);
+  itkSetStringMacro( InitialDisplacementFieldFilename );
+  itkSetStringMacro( InitialCoefficientFilename );
+  itkSetStringMacro( InitialTransformFilename );
 
   /** Set input parameter file name. */
   //            itkSetStringMacro( ParameterFilename );
 
   /** Parse the input file. */
-  void Execute();
+  void
+  Execute();
 
   /** Get pointer to the atlas image. */
-  itkGetModifiableObjectMacro(TheMovingImage, ImageType);
-  itkGetModifiableObjectMacro(TheFixedImage, ImageType);
+  itkGetModifiableObjectMacro( TheMovingImage, ImageType );
+  itkGetModifiableObjectMacro( TheFixedImage, ImageType );
 
   /**force Centered Image.*/
-  itkSetMacro(ForceCoronalZeroOrigin, bool);
-  itkGetConstMacro(ForceCoronalZeroOrigin, bool);
+  itkSetMacro( ForceCoronalZeroOrigin, bool );
+  itkGetConstMacro( ForceCoronalZeroOrigin, bool );
 
   /** Get pointer to the subject image. */
-  itkGetModifiableObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetModifiableObjectMacro( InitialDisplacementField, TDisplacementField );
 
   /** Get the number of histogram bins. */
-  itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
-  itkSetMacro(NumberOfHistogramLevels, unsigned long);
+  itkGetConstMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro( NumberOfHistogramLevels, unsigned long );
 
   /** Get the number of match points. */
-  itkGetConstMacro(NumberOfMatchPoints, unsigned long);
-  itkSetMacro(NumberOfMatchPoints, unsigned long);
+  itkGetConstMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro( NumberOfMatchPoints, unsigned long );
 
   /** Get the number of levels. */
-  itkGetMacro(NumberOfLevels, unsigned short);
-  itkSetMacro(NumberOfLevels, unsigned short);
+  itkGetMacro( NumberOfLevels, unsigned short );
+  itkSetMacro( NumberOfLevels, unsigned short );
 
   /**Set Debug mode*/
-  itkSetMacro(OutDebug, bool);
-  itkGetConstMacro(OutDebug, bool);
+  itkSetMacro( OutDebug, bool );
+  itkGetConstMacro( OutDebug, bool );
 
   /** Get the atlas image starting shrink factors. */
-  itkGetConstReferenceMacro(TheMovingImageShrinkFactors, ShrinkFactorsType);
-  void SetTheMovingImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
+  itkGetConstReferenceMacro( TheMovingImageShrinkFactors, ShrinkFactorsType );
+  void
+  SetTheMovingImageShrinkFactors( const ShrinkFactorsType & shrinkfactors )
   {
     this->m_TheMovingImageShrinkFactors = shrinkfactors;
   }
 
   /** Get the subject image starting shrink factors. */
-  itkGetConstReferenceMacro(TheFixedImageShrinkFactors, ShrinkFactorsType);
-  void SetTheFixedImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
+  itkGetConstReferenceMacro( TheFixedImageShrinkFactors, ShrinkFactorsType );
+  void
+  SetTheFixedImageShrinkFactors( const ShrinkFactorsType & shrinkfactors )
   {
     this->m_TheFixedImageShrinkFactors = shrinkfactors;
   }
 
   /** Get the number of iterations at each level. */
-  itkGetConstReferenceMacro(NumberOfIterations, IterationsArrayType);
-  void SetNumberOfIterations(const IterationsArrayType & iterations)
+  itkGetConstReferenceMacro( NumberOfIterations, IterationsArrayType );
+  void
+  SetNumberOfIterations( const IterationsArrayType & iterations )
   {
     m_NumberOfIterations = iterations;
   }
 
 protected:
   ValidationInputParser();
-  ~ValidationInputParser() override
-  {
-  }
+  ~ValidationInputParser() override {}
 
 private:
   std::string m_TheMovingImageFilename;
@@ -216,10 +213,10 @@ private:
   ShrinkFactorsType   m_TheFixedImageShrinkFactors;
   IterationsArrayType m_NumberOfIterations;
 };
-}   // namespace itk
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ValidationInputParser.hxx"
+#  include "ValidationInputParser.hxx"
 #endif
 
 #endif

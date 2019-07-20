@@ -20,14 +20,16 @@
 // library CLP to prevent the need to compile twice.
 
 #ifdef WIN32
-#define MODULE_IMPORT __declspec(dllimport)
+#  define MODULE_IMPORT __declspec( dllimport )
 #else
-#define MODULE_IMPORT
+#  define MODULE_IMPORT
 #endif
 
-extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
+extern "C" MODULE_IMPORT int
+ModuleEntryPoint( int, char *[] );
 
-int main(int argc, char* * argv)
+int
+main( int argc, char ** argv )
 {
-  return ModuleEntryPoint(argc, argv);
+  return ModuleEntryPoint( argc, argv );
 }

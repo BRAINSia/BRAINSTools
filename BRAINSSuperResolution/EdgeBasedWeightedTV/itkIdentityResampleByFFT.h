@@ -79,14 +79,11 @@ namespace itk
  * \wikiexample{ImageProcessing/IdentityResampleByFFT,Resample (stretch or compress) an image}
  * \endwiki
  */
-template< typename TInputImage,
-          typename TOutputImage,
-          typename TInterpolatorPrecisionType = double>
-class IdentityResampleByFFT :
-  public ImageToImageFilter< TInputImage, TOutputImage >
+template < typename TInputImage, typename TOutputImage, typename TInterpolatorPrecisionType = double >
+class IdentityResampleByFFT : public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IdentityResampleByFFT);
+  ITK_DISALLOW_COPY_AND_ASSIGN( IdentityResampleByFFT );
 
   /** Standard class type alias. */
   using Self = IdentityResampleByFFT;
@@ -102,10 +99,10 @@ public:
   using InputImageRegionType = typename InputImageType::RegionType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(IdentityResampleByFFT, ImageToImageFilter);
+  itkTypeMacro( IdentityResampleByFFT, ImageToImageFilter );
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
@@ -122,13 +119,13 @@ public:
 
   /** Image point type alias. */
   using PointType = typename InterpolatorType::PointType;
-  //using PointType = typename TOutputImage::PointType;
+  // using PointType = typename TOutputImage::PointType;
 
   /** Image pixel value type alias. */
   using PixelType = typename TOutputImage::PixelType;
   using InputPixelType = typename TInputImage::PixelType;
 
-  using PixelConvertType = DefaultConvertPixelTraits<PixelType>;
+  using PixelConvertType = DefaultConvertPixelTraits< PixelType >;
 
   using PixelComponentType = typename PixelConvertType::ComponentType;
 
@@ -144,100 +141,109 @@ public:
   using DirectionType = typename TOutputImage::DirectionType;
 
   /** Typedef the reference image type to be the ImageBase of the OutputImageType */
-  using ReferenceImageBaseType = ImageBase<ImageDimension>;
+  using ReferenceImageBaseType = ImageBase< ImageDimension >;
 
-  itkSetMacro(Size, SizeType);
-  itkGetConstReferenceMacro(Size, SizeType);
+  itkSetMacro( Size, SizeType );
+  itkGetConstReferenceMacro( Size, SizeType );
 
   /** Set the output image spacing. */
-  itkSetMacro(OutputSpacing, SpacingType);
-  virtual void SetOutputSpacing(const double *values);
+  itkSetMacro( OutputSpacing, SpacingType );
+  virtual void
+  SetOutputSpacing( const double * values );
 
   /** Get the output image spacing. */
-  itkGetConstReferenceMacro(OutputSpacing, SpacingType);
+  itkGetConstReferenceMacro( OutputSpacing, SpacingType );
 
   /** Set the output image origin. */
-  itkSetMacro(OutputOrigin, OriginPointType);
-  virtual void SetOutputOrigin(const double *values);
+  itkSetMacro( OutputOrigin, OriginPointType );
+  virtual void
+  SetOutputOrigin( const double * values );
 
   /** Get the output image origin. */
-  itkGetConstReferenceMacro(OutputOrigin, OriginPointType);
+  itkGetConstReferenceMacro( OutputOrigin, OriginPointType );
 
   /** Set the output direciton cosine matrix. */
-  itkSetMacro(OutputDirection, DirectionType);
-  itkGetConstReferenceMacro(OutputDirection, DirectionType);
+  itkSetMacro( OutputDirection, DirectionType );
+  itkGetConstReferenceMacro( OutputDirection, DirectionType );
 
   /** Helper method to set the output parameters based on this image */
-  void SetOutputParametersFromImage(const ImageBaseType *image);
+  void
+  SetOutputParametersFromImage( const ImageBaseType * image );
 
   /** Set the start index of the output largest possible region.
    * The default is an index of all zeros. */
-  itkSetMacro(OutputStartIndex, IndexType);
+  itkSetMacro( OutputStartIndex, IndexType );
 
   /** Get the start index of the output largest possible region. */
-  itkGetConstReferenceMacro(OutputStartIndex, IndexType);
+  itkGetConstReferenceMacro( OutputStartIndex, IndexType );
 
-   /** Set a reference image to use to define the output information.
-    *  By default, output information is specificed through the
-    *  SetOutputSpacing, Origin, and Direction methods.  Alternatively,
-    *  this method can be used to specify an image from which to
-    *  copy the information. UseReferenceImageOn must be set to utilize the
-    *  reference image. */
-  itkSetInputMacro(ReferenceImage, ReferenceImageBaseType);
+  /** Set a reference image to use to define the output information.
+   *  By default, output information is specificed through the
+   *  SetOutputSpacing, Origin, and Direction methods.  Alternatively,
+   *  this method can be used to specify an image from which to
+   *  copy the information. UseReferenceImageOn must be set to utilize the
+   *  reference image. */
+  itkSetInputMacro( ReferenceImage, ReferenceImageBaseType );
 
   /** Get the reference image that is defining the output information. */
-  itkGetInputMacro(ReferenceImage, ReferenceImageBaseType);
+  itkGetInputMacro( ReferenceImage, ReferenceImageBaseType );
 
   /** Turn on/off whether a specified reference image should be used to define
    *  the output information. */
-  itkSetMacro(UseReferenceImage, bool);
-  itkBooleanMacro(UseReferenceImage);
-  itkGetConstMacro(UseReferenceImage, bool);
+  itkSetMacro( UseReferenceImage, bool );
+  itkBooleanMacro( UseReferenceImage );
+  itkGetConstMacro( UseReferenceImage, bool );
 
   /** IdentityResampleByFFT produces an image which is a different size
    * than its input.  As such, it needs to provide an implementation
    * for GenerateOutputInformation() in order to inform the pipeline
    * execution model.  The original documentation of this method is
    * below. \sa ProcessObject::GenerateOutputInformaton() */
-  virtual void GenerateOutputInformation() override;
+  virtual void
+  GenerateOutputInformation() override;
 
   /** IdentityResampleByFFT needs a different input requested region than
    * the output requested region.  As such, IdentityResampleByFFT needs
    * to provide an implementation for GenerateInputRequestedRegion()
    * in order to inform the pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion() override;
+  virtual void
+  GenerateInputRequestedRegion() override;
 
   /** This method is used to set the state of the filter before
    * multi-threading. */
-  virtual void BeforeThreadedGenerateData() override;
+  virtual void
+  BeforeThreadedGenerateData() override;
 
   /** This method is used to set the state of the filter after
    * multi-threading. */
-  virtual void AfterThreadedGenerateData() override;
+  virtual void
+  AfterThreadedGenerateData() override;
 
   /** Method Compute the Modified Time based on changed to the components. */
-  ModifiedTimeType GetMTime(void) const override;
+  ModifiedTimeType
+  GetMTime( void ) const override;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
-  itkConceptMacro( OutputHasNumericTraitsCheck,
-                   ( Concept::HasNumericTraits< PixelComponentType > ) );
+  itkConceptMacro( OutputHasNumericTraitsCheck, (Concept::HasNumericTraits< PixelComponentType >));
   // End concept checking
 #endif
 
 protected:
   IdentityResampleByFFT();
-  ~IdentityResampleByFFT() {
-  }
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  ~IdentityResampleByFFT() {}
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** Override VeriyInputInformation() since this filter's inputs do
    * not need to occoupy the same physical space.
    *
    * \sa ProcessObject::VerifyInputInformation
    */
-  void VerifyInputInformation() const override { }
+  void
+  VerifyInputInformation() const override
+  {}
 
   /** IdentityResampleByFFT can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
@@ -248,20 +254,18 @@ protected:
    * specified by the parameter "outputRegionForThread"
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                                    ThreadIdType threadId) override;
+  void
+  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) override;
 
   /** Default implementation for resampling that works for any
    * transformation type. */
-  virtual void NonlinearThreadedGenerateData(const OutputImageRegionType &
-                                             outputRegionForThread,
-                                             ThreadIdType threadId);
-
+  virtual void
+  NonlinearThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkIdentityResampleByFFT.hxx"
+#  include "itkIdentityResampleByFFT.hxx"
 #endif
 
 #endif

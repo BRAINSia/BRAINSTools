@@ -50,21 +50,22 @@
 #include "IcosahedronResamplerCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if( inputSurfaceFile == "" )
-    {
+  if ( inputSurfaceFile == "" )
+  {
     std::cerr << "No input file specified" << std::endl;
     return 1;
-    }
-  if( outputSurfaceFile == "" )
-    {
+  }
+  if ( outputSurfaceFile == "" )
+  {
     std::cerr << "No output file specified" << std::endl;
     return 1;
-    }
+  }
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Input Surface: " << inputSurfaceFile << std::endl;
@@ -75,51 +76,51 @@ int main( int argc, char * argv [] )
   std::cout << "Interpolation Type: " << interpolateType << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
 
-  using MeshType = itk::QuadEdgeMesh<float, 3>;
+  using MeshType = itk::QuadEdgeMesh< float, 3 >;
 
   // read original mesh
-  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
 
   ReaderType::Pointer inputReader = ReaderType::New();
   inputReader->SetFileName( inputSurfaceFile.c_str() );
   inputReader->Update();
 
   // writer type
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
 
   WriterType::Pointer writer = WriterType::New();
 
   // define reample type
-  using TransformType = itk::IdentityTransform<double>;
+  using TransformType = itk::IdentityTransform< double >;
 
   TransformType::Pointer transform = TransformType::New();
 
-  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
-  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction<MeshType>;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction< MeshType >;
+  using NearestInterpolatorType = itk::NearestNeighborInterpolateMeshFunction< MeshType >;
 
   LinearInterpolatorType::Pointer interpolator_l = LinearInterpolatorType::New();
-  interpolator_l->SetUseNearestNeighborInterpolationAsBackup(false);
+  interpolator_l->SetUseNearestNeighborInterpolationAsBackup( false );
 
   NearestInterpolatorType::Pointer interpolator_n = NearestInterpolatorType::New();
 
-  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
+  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter< MeshType, MeshType >;
 
   ResamplingFilterType::Pointer resampler = ResamplingFilterType::New();
 
   resampler->SetTransform( transform );
 
   // set the interpolation type
-  if( interpolateType == "Nearest" )
-    {
+  if ( interpolateType == "Nearest" )
+  {
     resampler->SetInterpolator( interpolator_n );
-    }
-  else if( interpolateType == "Linear" )
-    {
+  }
+  else if ( interpolateType == "Linear" )
+  {
     resampler->SetInterpolator( interpolator_l );
-    }
+  }
 
   // sphere source type
-  using SphereMeshSourceType = itk::IcosahedralRegularSphereMeshSource<MeshType>;
+  using SphereMeshSourceType = itk::IcosahedralRegularSphereMeshSource< MeshType >;
 
   SphereMeshSourceType::Pointer sphereMeshSource = SphereMeshSourceType::New();
 
@@ -139,12 +140,12 @@ int main( int argc, char * argv [] )
   sphereMeshSource->Update();
 
   // resample
-  resampler->SetReferenceMesh(sphereMeshSource->GetOutput() );
+  resampler->SetReferenceMesh( sphereMeshSource->GetOutput() );
   resampler->SetInput( inputReader->GetOutput() );
   resampler->Update();
 
-  writer->SetInput(resampler->GetOutput() );
-  writer->SetFileName(outputSurfaceFile.c_str() );
+  writer->SetInput( resampler->GetOutput() );
+  writer->SetFileName( outputSurfaceFile.c_str() );
   writer->Update();
 
   return 0;

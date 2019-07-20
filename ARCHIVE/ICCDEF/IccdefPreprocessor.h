@@ -33,8 +33,8 @@ namespace itk
  *
  * This component pre-processes the moving and fixed image before
  * registration.
- * If the fixed image dimensions are different from the moving image it will     * resample the moving image to match the fixed image dimensions.
- * Histogram matching is done to solve the intensity mismatch problem.
+ * If the fixed image dimensions are different from the moving image it will     * resample the moving image to match
+ * the fixed image dimensions. Histogram matching is done to solve the intensity mismatch problem.
  *
  * The preprocessor also called the skull-stripping filter itkBOBF
  * if an atlas and subject whole brain masks are specified.
@@ -54,23 +54,23 @@ namespace itk
  *    - the minimum value of original moving image
  *
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 class IccdefPreprocessor : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefPreprocessor);
+  ITK_DISALLOW_COPY_AND_ASSIGN( IccdefPreprocessor );
 
   /** Standard class type alias. */
   using Self = IccdefPreprocessor;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(IccdefPreprocessor, Object);
+  itkTypeMacro( IccdefPreprocessor, Object );
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Input Image Type. */
   using InputImageType = TInputImage;
@@ -87,25 +87,23 @@ public:
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Set the atlas patient ID. */
-  itkSetStringMacro(TheMovingImageFilename);
-  itkGetStringMacro(TheMovingImageFilename);
+  itkSetStringMacro( TheMovingImageFilename );
+  itkGetStringMacro( TheMovingImageFilename );
 
   /** Set the subject patient ID. */
-  itkSetStringMacro(TheFixedImageFilename);
-  itkGetStringMacro(TheFixedImageFilename);
+  itkSetStringMacro( TheFixedImageFilename );
+  itkGetStringMacro( TheFixedImageFilename );
 
   /** Deformation field value type. */
   using FieldValueType = float;
 
-  using TImageType = itk::Image<unsigned char, Self::ImageDimension>;
+  using TImageType = itk::Image< unsigned char, Self::ImageDimension >;
 
   /** Deformation field pixel type. */
-  using FieldPixelType = Vector<FieldValueType,
-                 Self::ImageDimension>;
+  using FieldPixelType = Vector< FieldValueType, Self::ImageDimension >;
 
   /** Deformation field type. */
-  using TDisplacementField = Image<FieldPixelType,
-                Self::ImageDimension>;
+  using TDisplacementField = Image< FieldPixelType, Self::ImageDimension >;
 
   /** Set the initial Deformation Field. */
   itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
@@ -118,7 +116,8 @@ public:
   itkSetMacro( NumberOfMatchPoints, unsigned long );
 
   /** Method to execute the preprocessing. */
-  virtual void Execute();
+  virtual void
+  Execute();
 
   /** Get the output fixed image. */
   itkGetModifiableObjectMacro( OutputFixedImage, OutputImageType );
@@ -135,56 +134,54 @@ public:
   itkGetMacro( MovingImageMinimum, InputPixelType );
 
   /** Transform Types. */
-  using VersorRigid3DTransformType = VersorRigid3DTransform<double>;
-  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform<double>;
-  using AffineTransformType = AffineTransform<double, Self::ImageDimension>;
+  using VersorRigid3DTransformType = VersorRigid3DTransform< double >;
+  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform< double >;
+  using AffineTransformType = AffineTransform< double, Self::ImageDimension >;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int SplineOrder = 3;
 
   using CoordinateRepType = double;
-  using BSplineTransformType = typename itk::BSplineTransform<
-      CoordinateRepType,
-      Self::ImageDimension,
-      Self::SplineOrder>;
+  using BSplineTransformType =
+    typename itk::BSplineTransform< CoordinateRepType, Self::ImageDimension, Self::SplineOrder >;
 
   /*BOBF macros*/
   /**Set Target Mask filename*/
-  itkSetStringMacro(FixedBinaryVolume );
+  itkSetStringMacro( FixedBinaryVolume );
   itkGetStringMacro( FixedBinaryVolume );
 
   /**Set Template Mask filename*/
-  itkSetStringMacro(MovingBinaryVolume );
+  itkSetStringMacro( MovingBinaryVolume );
   itkGetStringMacro( MovingBinaryVolume );
 
 
-  itkSetMacro(DefaultPixelValue,  PixelType);
-  itkGetMacro(DefaultPixelValue,  PixelType);
+  itkSetMacro( DefaultPixelValue, PixelType );
+  itkGetMacro( DefaultPixelValue, PixelType );
 
-  itkSetMacro(MedianFilterSize,  SizeType);
-  itkGetMacro(MedianFilterSize,  SizeType);
+  itkSetMacro( MedianFilterSize, SizeType );
+  itkGetMacro( MedianFilterSize, SizeType );
 
   itkSetStringMacro( InitialTransformFilename );
 
   /**Set Debug mode*/
-  itkSetMacro(OutDebug, bool);
-  itkGetConstMacro(OutDebug, bool);
+  itkSetMacro( OutDebug, bool );
+  itkGetConstMacro( OutDebug, bool );
 
   /**Set histogram matching*/
-  itkSetMacro(UseHistogramMatching, bool);
-  itkGetConstMacro(UseHistogramMatching, bool);
+  itkSetMacro( UseHistogramMatching, bool );
+  itkGetConstMacro( UseHistogramMatching, bool );
+
 protected:
   IccdefPreprocessor();
-  ~IccdefPreprocessor() override
-  {
-  };
+  ~IccdefPreprocessor() override{};
+
 private:
-  typename InputImageType::Pointer m_InputFixedImage;
-  typename InputImageType::Pointer m_InputMovingImage;
-  typename OutputImageType::Pointer m_OutputFixedImage;
-  typename OutputImageType::Pointer m_OutputMovingImage;
-  typename OutputImageType::Pointer m_UnNormalizedMovingImage;
-  typename OutputImageType::Pointer m_UnNormalizedFixedImage;
+  typename InputImageType::Pointer     m_InputFixedImage;
+  typename InputImageType::Pointer     m_InputMovingImage;
+  typename OutputImageType::Pointer    m_OutputFixedImage;
+  typename OutputImageType::Pointer    m_OutputMovingImage;
+  typename OutputImageType::Pointer    m_UnNormalizedMovingImage;
+  typename OutputImageType::Pointer    m_UnNormalizedFixedImage;
   typename TDisplacementField::Pointer m_InitialDisplacementField;
 
   unsigned long m_NumberOfHistogramLevels;
@@ -195,10 +192,10 @@ private:
 
   std::string m_FixedBinaryVolume;
   std::string m_MovingBinaryVolume;
-//  IndexType   m_Seed;
-//  PixelType   m_Lower;
-//  PixelType   m_Upper;
-//  SizeType    m_Radius;
+  //  IndexType   m_Seed;
+  //  PixelType   m_Lower;
+  //  PixelType   m_Upper;
+  //  SizeType    m_Radius;
   PixelType m_DefaultPixelValue;
   bool      m_OutDebug;
   SizeType  m_MedianFilterSize;
@@ -212,12 +209,13 @@ private:
 
   /*MakeBOBF function takes in a brain image and a whole brain mask and strips
     the skull of the image.*/
-  InputImagePointer MakeBOBFImage( InputImagePointer input, std::string MaskName );
+  InputImagePointer
+  MakeBOBFImage( InputImagePointer input, std::string MaskName );
 };
-}   // namespace itk
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "IccdefPreprocessor.hxx"
+#  include "IccdefPreprocessor.hxx"
 #endif
 
 #endif // _IccdefPreprocessor_h

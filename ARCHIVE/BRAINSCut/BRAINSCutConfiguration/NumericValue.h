@@ -20,13 +20,13 @@
 #define NumericValue_h
 #include "ElementContainer.h"
 
-template <typename T>
-class NumericValue :
-  public XMLContents<T>
+template < typename T >
+class NumericValue : public XMLContents< T >
 {
 public:
-  using SuperClass = XMLContents<T>;
-  int PrintSelf(std::ostream &, int indent) const override
+  using SuperClass = XMLContents< T >;
+  int
+  PrintSelf( std::ostream &, int indent ) const override
   {
     // indent+=SuperClass::PrintSelf(os, indent);
     // os << this->PrintSpaces(indent) << "=== NumericValue ===" <<
@@ -34,18 +34,19 @@ public:
     return indent;
   }
 
-  NumericValue(const std::string & name, T value) :
-    XMLContents<T>(name),
-    m_Value(value)
-  {
-  }
+  NumericValue( const std::string & name, T value )
+    : XMLContents< T >( name )
+    , m_Value( value )
+  {}
 
-  T GetValue(void) const override
+  T
+  GetValue( void ) const override
   {
     return this->m_Value;
   }
 
-  void SetValue(T val)
+  void
+  SetValue( T val )
   {
     this->m_Value = val;
   }

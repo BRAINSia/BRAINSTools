@@ -38,18 +38,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputPointSet, typename TFixedMesh, typename TReferenceMesh, typename TOutputPointSet>
-class ResampleDestinationPointsQuadEdgeMeshFilter :
-  public MeshToMeshFilter<TInputPointSet, TOutputPointSet>
+template < typename TInputPointSet, typename TFixedMesh, typename TReferenceMesh, typename TOutputPointSet >
+class ResampleDestinationPointsQuadEdgeMeshFilter : public MeshToMeshFilter< TInputPointSet, TOutputPointSet >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleDestinationPointsQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( ResampleDestinationPointsQuadEdgeMeshFilter );
 
   using Self = ResampleDestinationPointsQuadEdgeMeshFilter;
-  using Superclass = MeshToMeshFilter<
-      TInputPointSet, TOutputPointSet>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = MeshToMeshFilter< TInputPointSet, TOutputPointSet >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( ResampleDestinationPointsQuadEdgeMeshFilter, MeshToMeshFilter );
@@ -81,29 +79,30 @@ public:
   static constexpr unsigned int PointDimension = OutputPointSetType::PointDimension;
 
   /** Transform type alias. */
-  using TransformType = Transform<double,
-                    Self::PointDimension,
-                    Self::PointDimension>;
+  using TransformType = Transform< double, Self::PointDimension, Self::PointDimension >;
   using TransformPointerType = typename TransformType::ConstPointer;
 
   /** Interpolator type alias. */
-  using InterpolatorType = LinearInterpolateDeformationFieldMeshFunction<
-      ReferenceMeshType, InputPointsContainer>;
+  using InterpolatorType = LinearInterpolateDeformationFieldMeshFunction< ReferenceMeshType, InputPointsContainer >;
   using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Fixed
    *  mesh at the current higher resolution level. */
-  void SetFixedMesh( const FixedMeshType * mesh );
+  void
+  SetFixedMesh( const FixedMeshType * mesh );
 
-  const FixedMeshType * GetFixedMesh( void ) const;
+  const FixedMeshType *
+  GetFixedMesh( void ) const;
 
   /** Set Mesh whose grid will define the geometry of the output PointSet.
    *  In a multi-resolution registration scenario, this will typically be
    *  the Fixed mesh at the next higher resolution level. */
-  void SetReferenceMesh( const ReferenceMeshType * mesh );
+  void
+  SetReferenceMesh( const ReferenceMeshType * mesh );
 
-  const ReferenceMeshType * GetReferenceMesh( void ) const;
+  const ReferenceMeshType *
+  GetReferenceMesh( void ) const;
 
   /** Set the coordinate transformation.
    * Set the coordinate transform to use for resampling.  Note that this must
@@ -139,26 +138,28 @@ public:
    */
   itkSetMacro( SphereRadius, double );
   itkGetConstMacro( SphereRadius, double );
+
 protected:
   ResampleDestinationPointsQuadEdgeMeshFilter();
   ~ResampleDestinationPointsQuadEdgeMeshFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
+  void
+  ProjectPointToSphereSurface( OutputPointType & point ) const;
 
-  void ProjectPointToSphereSurface( OutputPointType & point ) const;
-
-  TransformPointerType    m_Transform;           // Coordinate transform to use
-  InterpolatorPointerType m_Interpolator;        // Image function for
+  TransformPointerType    m_Transform;    // Coordinate transform to use
+  InterpolatorPointerType m_Interpolator; // Image function for
 
   OutputPointType m_SphereCenter;
   double          m_SphereRadius;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkResampleDestinationPointsQuadEdgeMeshFilter.hxx"
+#  include "itkResampleDestinationPointsQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

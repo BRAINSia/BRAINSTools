@@ -35,18 +35,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TInputPointSet>
-class ReplaceDestinationPointsQuadEdgeMeshFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
+template < typename TInputMesh, typename TInputPointSet >
+class ReplaceDestinationPointsQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TInputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ReplaceDestinationPointsQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( ReplaceDestinationPointsQuadEdgeMeshFilter );
 
   using Self = ReplaceDestinationPointsQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TInputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TInputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( ReplaceDestinationPointsQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -64,30 +62,34 @@ public:
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Input
    *  mesh at the current higher resolution level. */
-  void SetInputMesh( const InputMeshType * inputMesh );
+  void
+  SetInputMesh( const InputMeshType * inputMesh );
 
-  const InputMeshType * GetInputMesh( void ) const;
+  const InputMeshType *
+  GetInputMesh( void ) const;
 
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Input
    *  mesh at the current higher resolution level. */
-  void SetDestinationPoints( const InputPointSetType * destinationPointSet );
+  void
+  SetDestinationPoints( const InputPointSetType * destinationPointSet );
 
-  const InputPointSetType * GetDestinationPoints( void ) const;
+  const InputPointSetType *
+  GetDestinationPoints( void ) const;
 
 protected:
   ReplaceDestinationPointsQuadEdgeMeshFilter();
   ~ReplaceDestinationPointsQuadEdgeMeshFilter();
 
-  void GenerateData();
+  void
+  GenerateData();
 
 private:
-
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkReplaceDestinationPointsQuadEdgeMeshFilter.hxx"
+#  include "itkReplaceDestinationPointsQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

@@ -22,66 +22,85 @@
 #include "vtkObjectFactory.h"
 
 /// \brief Wrapper class around itk::NewOtsuThresholdImageFilter.
-class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter
-  : public vtkITKImageToImageFilterSS
+class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter : public vtkITKImageToImageFilterSS
 {
 public:
-  static vtkITKNewOtsuThresholdImageFilter *New();
-  vtkTypeMacro(vtkITKNewOtsuThresholdImageFilter, vtkITKImageToImageFilterSS);
+  static vtkITKNewOtsuThresholdImageFilter *
+  New();
+  vtkTypeMacro( vtkITKNewOtsuThresholdImageFilter, vtkITKImageToImageFilterSS );
 
-  void SetNumberOfHistogramBins( unsigned long value)
+  void
+  SetNumberOfHistogramBins( unsigned long value )
   {
-    DelegateITKInputMacro ( SetNumberOfHistogramBins, value );
+    DelegateITKInputMacro( SetNumberOfHistogramBins, value );
   };
-  unsigned long GetNumberOfHistogramBins ()
-  { DelegateITKOutputMacro ( GetNumberOfHistogramBins ); };
-
-  void SetOmega (double value)
+  unsigned long
+  GetNumberOfHistogramBins()
   {
-    DelegateITKInputMacro( SetOmega, value);
-   };
+    DelegateITKOutputMacro( GetNumberOfHistogramBins );
+  };
 
-  double GetOmega()
+  void
+  SetOmega( double value )
+  {
+    DelegateITKInputMacro( SetOmega, value );
+  };
+
+  double
+  GetOmega()
   {
     DelegateITKOutputMacro( GetOmega );
   };
 
-  void SetInsideValue (short value)
+  void
+  SetInsideValue( short value )
   {
-    OutputImagePixelType d = static_cast<OutputImagePixelType> ( value );
-    DelegateITKInputMacro (SetInsideValue,d);
+    OutputImagePixelType d = static_cast< OutputImagePixelType >( value );
+    DelegateITKInputMacro( SetInsideValue, d );
   }
 
-  void SetOutsideValue (short value)
+  void
+  SetOutsideValue( short value )
   {
-    OutputImagePixelType d = static_cast<OutputImagePixelType> ( value );
-    DelegateITKInputMacro (SetOutsideValue,d);
+    OutputImagePixelType d = static_cast< OutputImagePixelType >( value );
+    DelegateITKInputMacro( SetOutsideValue, d );
   }
 
-  short GetInsideValue ()
-  { DelegateITKOutputMacro ( GetInsideValue ); };
+  short
+  GetInsideValue()
+  {
+    DelegateITKOutputMacro( GetInsideValue );
+  };
 
-  short GetOutsideValue ()
-  { DelegateITKOutputMacro ( GetOutsideValue ); };
+  short
+  GetOutsideValue()
+  {
+    DelegateITKOutputMacro( GetOutsideValue );
+  };
 
-  short GetThreshold()
-  { DelegateITKOutputMacro ( GetThreshold ); };
+  short
+  GetThreshold()
+  {
+    DelegateITKOutputMacro( GetThreshold );
+  };
 
 protected:
-  using ImageFilterType = itk::NewOtsuThresholdImageFilter<Superclass::InputImageType, Superclass::OutputImageType>;
-  vtkITKNewOtsuThresholdImageFilter() : Superclass ( ImageFilterType::New() ){};
-  ~vtkITKNewOtsuThresholdImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
+  using ImageFilterType = itk::NewOtsuThresholdImageFilter< Superclass::InputImageType, Superclass::OutputImageType >;
+  vtkITKNewOtsuThresholdImageFilter()
+    : Superclass( ImageFilterType::New() ){};
+  ~vtkITKNewOtsuThresholdImageFilter(){};
+  ImageFilterType *
+  GetImageFilterPointer()
+  {
+    return dynamic_cast< ImageFilterType * >( m_Filter.GetPointer() );
+  }
 
 private:
-  vtkITKNewOtsuThresholdImageFilter(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.
-  void operator=(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.
+  vtkITKNewOtsuThresholdImageFilter( const vtkITKNewOtsuThresholdImageFilter & ); /// Not implemented.
+  void
+  operator=( const vtkITKNewOtsuThresholdImageFilter & ); /// Not implemented.
 };
 
-//vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);
+// vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);
 
 #endif
-
-
-
-

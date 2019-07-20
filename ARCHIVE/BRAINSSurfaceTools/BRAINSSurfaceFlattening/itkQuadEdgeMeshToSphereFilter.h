@@ -34,18 +34,15 @@ namespace itk
  * two meshes. These two meshes are then parameterized onto a planar disk.
  * Then each disk is mapped to one sphere hemisphere by inverse stereo
  * projection.
-*/
-template <typename TInputMesh,
-          typename TOutputMesh,
-          typename TSolverTraits>
-class QuadEdgeMeshToSphereFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+ */
+template < typename TInputMesh, typename TOutputMesh, typename TSolverTraits >
+class QuadEdgeMeshToSphereFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
   using Self = QuadEdgeMeshToSphereFilter;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshToSphereFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -67,17 +64,15 @@ public:
   using InputTraits = typename InputMeshType::Traits;
 
   using InputPointsContainer = typename InputMeshType::PointsContainer;
-  typedef typename InputMeshType::PointsContainerConstIterator
-    InputPointsContainerConstIterator;
+  typedef typename InputMeshType::PointsContainerConstIterator InputPointsContainerConstIterator;
 
-  typedef typename InputMeshType::CellsContainerConstIterator
-    InputCellsContainerConstIterator;
+  typedef typename InputMeshType::CellsContainerConstIterator InputCellsContainerConstIterator;
   using InputEdgeCellType = typename InputMeshType::EdgeCellType;
   using InputPolygonCellType = typename InputMeshType::PolygonCellType;
   using InputPointIdList = typename InputMeshType::PointIdList;
   using InputCellIdentifier = typename InputMeshType::CellIdentifier;
 
-  using SeedVectorType = std::vector<InputCellIdentifier>;
+  using SeedVectorType = std::vector< InputCellIdentifier >;
 
   /** Output types. */
   using OutputMeshType = TOutputMesh;
@@ -89,62 +84,59 @@ public:
   using OutputQEType = typename OutputMeshType::QEType;
   using OutputVectorType = typename OutputMeshType::VectorType;
   using OutputQEIterator = typename OutputQEType::IteratorGeom;
-  typedef typename OutputMeshType::PointsContainerPointer
-    OutputPointsContainerPointer;
-  typedef typename OutputMeshType::PointsContainerIterator
-    OutputPointsContainerIterator;
+  typedef typename OutputMeshType::PointsContainerPointer  OutputPointsContainerPointer;
+  typedef typename OutputMeshType::PointsContainerIterator OutputPointsContainerIterator;
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   using SolverTraits = TSolverTraits;
 
-  using SplitFilterType = QuadEdgeMeshSplitFilter<InputMeshType,
-                                  OutputMeshType>;
+  using SplitFilterType = QuadEdgeMeshSplitFilter< InputMeshType, OutputMeshType >;
   using SplitFilterPointer = typename SplitFilterType::Pointer;
 
-  using BoundarySmoothFilterType = QuadEdgeMeshBoundarySmoothFilter<InputMeshType,
-                                           OutputMeshType>;
+  using BoundarySmoothFilterType = QuadEdgeMeshBoundarySmoothFilter< InputMeshType, OutputMeshType >;
   using BoundarySmoothFilterPointer = typename BoundarySmoothFilterType::Pointer;
 
-  using BorderTransformType = QuadEdgeMeshBorderTransform<OutputMeshType, OutputMeshType>;
-  typedef typename BorderTransformType::Pointer
-    BorderTransformPointer;
+  using BorderTransformType = QuadEdgeMeshBorderTransform< OutputMeshType, OutputMeshType >;
+  typedef typename BorderTransformType::Pointer BorderTransformPointer;
 
-  using ParametrizationType = QuadEdgeMeshParam<OutputMeshType, OutputMeshType, SolverTraits>;
-  typedef typename ParametrizationType::Pointer
-    ParametrizationPointer;
+  using ParametrizationType = QuadEdgeMeshParam< OutputMeshType, OutputMeshType, SolverTraits >;
+  typedef typename ParametrizationType::Pointer ParametrizationPointer;
 
-  using CoefficientsComputation = MatrixCoefficients<OutputMeshType>;
+  using CoefficientsComputation = MatrixCoefficients< OutputMeshType >;
 
   /**
    * \brief Provide matrix coefficients method for planar parameterization.
-  */
-  void SetCoefficientsMethod( CoefficientsComputation* iMethod )
+   */
+  void
+  SetCoefficientsMethod( CoefficientsComputation * iMethod )
   {
     this->m_CoefficientsMethod = iMethod;
   }
 
-  void SetSeedFaces( const SeedVectorType& iSeeds )
+  void
+  SetSeedFaces( const SeedVectorType & iSeeds )
   {
     m_SeedFaces = iSeeds;
   }
 
   itkSetMacro( Radius, OutputCoordRepType );
-protected:
-  QuadEdgeMeshToSphereFilter() : Superclass(),
-    m_CoefficientsMethod( nullptr ), m_Radius( 1. )
-  {
-  }
 
-  ~QuadEdgeMeshToSphereFilter()
-  {
-  }
+protected:
+  QuadEdgeMeshToSphereFilter()
+    : Superclass()
+    , m_CoefficientsMethod( nullptr )
+    , m_Radius( 1. )
+  {}
+
+  ~QuadEdgeMeshToSphereFilter() {}
 
   CoefficientsComputation * m_CoefficientsMethod;
   OutputCoordRepType        m_Radius;
   SeedVectorType            m_SeedFaces;
 
-  void GenerateData() override
+  void
+  GenerateData() override
   {
     assert( m_CoefficientsMethod != 0 );
     this->CopyInputMeshToOutputMesh();
@@ -153,21 +145,20 @@ protected:
     // split the input mesh into two meshes
     SplitFilterPointer split_filter = SplitFilterType::New();
     split_filter->SetInput( this->GetInput() );
-    split_filter->SetSeedFaces(m_SeedFaces);
+    split_filter->SetSeedFaces( m_SeedFaces );
     split_filter->Update();
 
     std::cout << "Split DONE!" << std::endl;
 
     BoundarySmoothFilterPointer boundary_smooth = BoundarySmoothFilterType::New();
-    boundary_smooth->SetInputMesh1(split_filter->GetOutput(0) );
-    boundary_smooth->SetInputMesh2(split_filter->GetOutput(1) );
-    boundary_smooth->SetIterations(5);
+    boundary_smooth->SetInputMesh1( split_filter->GetOutput( 0 ) );
+    boundary_smooth->SetInputMesh2( split_filter->GetOutput( 1 ) );
+    boundary_smooth->SetIterations( 5 );
     boundary_smooth->Update();
 
     BorderTransformPointer border_transform = BorderTransformType::New();
     border_transform->SetInput( boundary_smooth->GetOutputMesh1() );
-    border_transform->SetTransformType(
-      BorderTransformType::DISK_BORDER_TRANSFORM );
+    border_transform->SetTransformType( BorderTransformType::DISK_BORDER_TRANSFORM );
     border_transform->SetRadius( 1. );
 
     // Inverse stereo projection
@@ -176,7 +167,7 @@ protected:
     OutputCoordRepType            den, r2;
     OutputPointsContainerIterator p_it;
 
-      {
+    {
       ParametrizationPointer param0 = ParametrizationType::New();
       param0->SetInput( boundary_smooth->GetOutputMesh1() );
       param0->SetBorderTransform( border_transform );
@@ -186,25 +177,25 @@ protected:
       std::cout << "First part parameterization on a disk: DONE!" << std::endl;
 
       points = param0->GetOutput()->GetPoints();
-      for( p_it = points->Begin(); p_it != points->End(); ++p_it )
-        {
+      for ( p_it = points->Begin(); p_it != points->End(); ++p_it )
+      {
         q = output->GetPoint( p_it->Index() );
         p = p_it->Value();
         r2 = p[0] * p[0] + p[1] * p[1];
         den = 1. / ( 1. + r2 );
         q[0] = m_Radius * ( 2. * p[0] * den );
         q[1] = m_Radius * ( 2. * p[1] * den );
-        q[2] = m_Radius * ( 2. * r2 * den  - 1. );
+        q[2] = m_Radius * ( 2. * r2 * den - 1. );
 
         output->SetPoint( p_it->Index(), q );
-        }
-
-      std::cout << "Inverse stereo projection Part 1: DONE!" << std::endl;
       }
 
-      {
+      std::cout << "Inverse stereo projection Part 1: DONE!" << std::endl;
+    }
+
+    {
       ParametrizationPointer param1 = ParametrizationType::New();
-      param1->SetInput(boundary_smooth->GetOutputMesh2() );
+      param1->SetInput( boundary_smooth->GetOutputMesh2() );
       param1->SetBorderTransform( border_transform );
       param1->SetCoefficientsMethod( m_CoefficientsMethod );
       param1->Update();
@@ -212,8 +203,8 @@ protected:
       std::cout << "Second part parameterization on a disk: DONE!" << std::endl;
 
       points = param1->GetOutput()->GetPoints();
-      for( p_it = points->Begin(); p_it != points->End(); ++p_it )
-        {
+      for ( p_it = points->Begin(); p_it != points->End(); ++p_it )
+      {
         q = output->GetPoint( p_it->Index() );
         p = p_it->Value();
         r2 = p[0] * p[0] + p[1] * p[1];
@@ -223,15 +214,16 @@ protected:
         q[2] = m_Radius * ( -2. * r2 * den + 1. );
 
         output->SetPoint( p_it->Index(), q );
-        }
+      }
 
       std::cout << "Inverse stereo projection Part 2: DONE!" << std::endl;
-      }
+    }
   }
 
 private:
   QuadEdgeMeshToSphereFilter( const Self & );
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 };
-}
+} // namespace itk
 #endif

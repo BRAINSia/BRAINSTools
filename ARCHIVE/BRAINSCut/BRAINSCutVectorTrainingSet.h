@@ -26,21 +26,22 @@ using neuralNetType = cv::ml::ANN_MLP;
 
 namespace
 {
-template <size_t LongSize>
+template < size_t LongSize >
 class findUINT64Type
+{};
+template <>
+class findUINT64Type< 4 >
 {
+public:
+  using unsigned64 = unsigned long long;
 };
 template <>
-class findUINT64Type<4>
+class findUINT64Type< 8 >
 {
-public: using unsigned64 = unsigned long long;
+public:
+  using unsigned64 = unsigned long;
 };
-template <>
-class findUINT64Type<8>
-{
-public:  using unsigned64 = unsigned long;
-};
-}
+} // namespace
 
 class BRAINSCutVectorTrainingSet
 {
@@ -48,51 +49,70 @@ public:
   /* constructor
    * :: the paried training set should be constructed with vector file name.
    */
-  BRAINSCutVectorTrainingSet(std::string vectorFilenamePrefix);
+  BRAINSCutVectorTrainingSet( std::string vectorFilenamePrefix );
   ~BRAINSCutVectorTrainingSet();
 
   static const unsigned int MAXIMUMCHAR = 100;
 
-  void         ReadHeaderFileInformation();
+  void
+  ReadHeaderFileInformation();
 
-  void         SetRecordSize();   // TODO : name is subject change. Keep it for now consistency to the previous version
+  void
+  SetRecordSize(); // TODO : name is subject change. Keep it for now consistency to the previous version
 
-  unsigned int GetRecordSize();
+  unsigned int
+  GetRecordSize();
 
-  void SetBufferRecordSize();
+  void
+  SetBufferRecordSize();
 
-  void SetShuffled(bool shuffled);
+  void
+  SetShuffled( bool shuffled );
 
-  int GetTotalVectorSize();
+  int
+  GetTotalVectorSize();
 
-  int GetInputVectorSize();
+  int
+  GetInputVectorSize();
 
-  int GetOutputVectorSize();
+  int
+  GetOutputVectorSize();
 
-  void                    PrintDebuggingMessage(std::string msg);
+  void
+  PrintDebuggingMessage( std::string msg );
 
-  scalarType *            ReadBufferFromFileStream( std::ifstream& fileStream );
+  scalarType *
+  ReadBufferFromFileStream( std::ifstream & fileStream );
 
-  void                    RandomizeTrainingVector();
+  void
+  RandomizeTrainingVector();
 
-  pairedTrainingSetType * GetTrainingDataSet();
+  pairedTrainingSetType *
+  GetTrainingDataSet();
 
-  void                    SetTrainingSubSet( unsigned int count );
+  void
+  SetTrainingSubSet( unsigned int count );
 
-  pairedTrainingSetType * GetTrainingSubSet( unsigned int count );
+  pairedTrainingSetType *
+  GetTrainingSubSet( unsigned int count );
 
-  pairedTrainingSetType * DownSampleTrainingDataSet( const unsigned int subSampleSize );
+  pairedTrainingSetType *
+  DownSampleTrainingDataSet( const unsigned int subSampleSize );
 
-  void                    WriteVectorFile();
+  void
+  WriteVectorFile();
 
-  void                    SetNumberOfSubSet( const unsigned int count = 1 );
+  void
+  SetNumberOfSubSet( const unsigned int count = 1 );
 
   // TODO: REGINA  All "Get" functions should be const
-  unsigned int            GetNumberOfSubSet();
+  unsigned int
+  GetNumberOfSubSet();
 
   // TODO
   // IMPLEMEMNT THIS::
-  void                    SaveCurrentSubSet( std::string filename );
+  void
+  SaveCurrentSubSet( std::string filename );
 
 private:
   // TODO: REGINA these all need to have "m_" prefix
@@ -113,6 +133,6 @@ private:
   unsigned int            numberOfSubSet;
   pairedTrainingSetType * currentTrainingSubSet;
 
-  unsigned int currentSubSetID;   // goes from 0,1,..
+  unsigned int currentSubSetID; // goes from 0,1,..
 };
 #endif

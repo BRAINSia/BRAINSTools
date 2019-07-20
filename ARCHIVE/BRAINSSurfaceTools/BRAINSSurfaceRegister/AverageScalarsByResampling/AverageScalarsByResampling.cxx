@@ -47,44 +47,45 @@
 #include "AverageScalarsByResamplingCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * argv [] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   // check the deformed template files
-  if( int(deformedTemplateMeshList.size() ) != numSubs )
-    {
+  if ( int( deformedTemplateMeshList.size() ) != numSubs )
+  {
     std::cerr << "number of deformed meshes do not agree with number of subjects" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // check the sphere files with scalar values
-  if( int(sphereWithScalarsList.size() ) != numSubs )
-    {
+  if ( int( sphereWithScalarsList.size() ) != numSubs )
+  {
     std::cerr << "number of spheres with scalars do not agree with number of subjects" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // check template surface
-  if( templateSurfaceFile == "" )
-    {
+  if ( templateSurfaceFile == "" )
+  {
     std::cerr << "the template surface file should be specified" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // check the template sphere with scalars
-  if( templateSphereFile == "" )
-    {
+  if ( templateSphereFile == "" )
+  {
     std::cerr << "the template sphere with scalar values should be specified" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Add scalar values from: " << templateSphereFile << std::endl;
   std::cout << "Template sphere: " << templateSphereFile << std::endl;
   std::cout << "With scalar values from " << numSubs << " subjects calculated as: " << std::endl;
-  for( int i = 0; i < numSubs; i++ )
-    {
+  for ( int i = 0; i < numSubs; i++ )
+  {
     std::cout << "Use deformed template sphere: " << deformedTemplateMeshList[i] << std::endl;
     std::cout << "To resample scalar values of: " << sphereWithScalarsList[i] << std::endl;
-    }
+  }
   std::cout << "Map the average scalars onto: " << templateSurfaceFile << std::endl;
   std::cout << "Output surface: " << templateSurfaceWithAverageScalars << std::endl;
   std::cout << "---------------------------------------------------" << std::endl;
@@ -92,13 +93,13 @@ int main( int argc, char * argv [] )
   using MeshPixelType = double;
   constexpr unsigned int Dimension = 3;
 
-  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using MeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
 
-  using InputMeshReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
+  using InputMeshReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
 
   // read input fixed mesh
   InputMeshReaderType::Pointer fixedMeshReader = InputMeshReaderType::New();
-  fixedMeshReader->SetFileName(templateSurfaceFile.c_str() );
+  fixedMeshReader->SetFileName( templateSurfaceFile.c_str() );
   fixedMeshReader->Update();
 
   // set up deformed fixed mesh reader
@@ -108,16 +109,16 @@ int main( int argc, char * argv [] )
   InputMeshReaderType::Pointer referenceMeshReader = InputMeshReaderType::New();
 
   // set up Interpolators Filter
-  using TransformType = itk::IdentityTransform<double>;
+  using TransformType = itk::IdentityTransform< double >;
 
   TransformType::Pointer transform = TransformType::New();
 
-  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction<MeshType>;
+  using LinearInterpolatorType = itk::LinearInterpolateMeshFunction< MeshType >;
 
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
 
   // set up Reample filter
-  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter<MeshType, MeshType>;
+  using ResamplingFilterType = itk::ResampleQuadEdgeMeshFilter< MeshType, MeshType >;
 
   ResamplingFilterType::Pointer resampleFilter = ResamplingFilterType::New();
 
@@ -125,18 +126,14 @@ int main( int argc, char * argv [] )
   resampleFilter->SetInterpolator( interpolator );
 
   // set up Add Scalar Filter
-  using AddScalarsFilterType = itk::QuadEdgeMeshAddScalarsFilter<
-      MeshType, MeshType, MeshType>;
+  using AddScalarsFilterType = itk::QuadEdgeMeshAddScalarsFilter< MeshType, MeshType, MeshType >;
 
   AddScalarsFilterType::Pointer addFilter = AddScalarsFilterType::New();
 
   // set up Assign Scalar Filter
-  using AssignFilterType = itk::AssignScalarValuesQuadEdgeMeshFilter<
-      MeshType,
-      MeshType,
-      MeshType>;
+  using AssignFilterType = itk::AssignScalarValuesQuadEdgeMeshFilter< MeshType, MeshType, MeshType >;
 
-  AssignFilterType::Pointer assignFilter  = AssignFilterType::New();
+  AssignFilterType::Pointer assignFilter = AssignFilterType::New();
 
   // read one deformed fixed mesh and one reference mesh once at a time
   // perform resampling and adding in one loop
@@ -147,13 +144,13 @@ int main( int argc, char * argv [] )
   MeshType::Pointer newMesh = MeshType::New();
 
   InputMeshReaderType::Pointer inputWithScalarsReader = InputMeshReaderType::New();
-  inputWithScalarsReader->SetFileName(templateSphereFile.c_str() );
+  inputWithScalarsReader->SetFileName( templateSphereFile.c_str() );
   inputWithScalarsReader->Update();
 
   MeshType::Pointer outputMesh = inputWithScalarsReader->GetOutput();
   outputMesh->DisconnectPipeline();
-  for( int i = 0; i < numSubs; i++ )
-    {
+  for ( int i = 0; i < numSubs; i++ )
+  {
     // read deformed fixed mesh
     deformedFixedMeshReader->SetFileName( deformedTemplateMeshList[i] );
     deformedFixedMeshReader->Update();
@@ -170,30 +167,30 @@ int main( int argc, char * argv [] )
 
     // resample reference mesh by deformed fixed mesh
     // resample the input by the reference
-    resampleFilter->SetInput(referenceMesh);
-    resampleFilter->SetReferenceMesh(deformedFixedMesh);
+    resampleFilter->SetInput( referenceMesh );
+    resampleFilter->SetReferenceMesh( deformedFixedMesh );
     resampleFilter->Update();
 
     resampledMesh = resampleFilter->GetOutput();
     resampledMesh->DisconnectPipeline();
 
     // assign the resampled scalars to input fixed mesh
-    assignFilter->SetInputMesh(fixedMeshReader->GetOutput() );
-    assignFilter->SetSourceMesh(resampledMesh);
+    assignFilter->SetInputMesh( fixedMeshReader->GetOutput() );
+    assignFilter->SetSourceMesh( resampledMesh );
     assignFilter->Update();
 
     newMesh = assignFilter->GetOutput();
     newMesh->DisconnectPipeline();
 
     // add point.Value of newDF to point.Value of output
-    addFilter->SetInput1(newMesh);
-    addFilter->SetInput2(outputMesh);
+    addFilter->SetInput1( newMesh );
+    addFilter->SetInput2( outputMesh );
     addFilter->Update();
 
     outputMesh = addFilter->GetOutput();
 
     outputMesh->DisconnectPipeline();
-    }
+  }
 
   // divide the sum of scalars with numSubs
   // iterate through pointData of output
@@ -206,17 +203,17 @@ int main( int argc, char * argv [] )
   scalarIterator scalarItr = scalars->Begin();
   scalarIterator scalarEnd = scalars->End();
 
-  while( scalarItr != scalarEnd )
+  while ( scalarItr != scalarEnd )
+  {
+    if ( numSubs != 0 )
     {
-    if( numSubs != 0 )
-      {
-      scalarItr.Value() = scalarItr.Value() / double(numSubs + 1);
-      }
-    ++scalarItr;
+      scalarItr.Value() = scalarItr.Value() / double( numSubs + 1 );
     }
+    ++scalarItr;
+  }
 
   // write out deformation field
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
   WriterType::Pointer writer = WriterType::New();
 
   writer->SetInput( outputMesh );

@@ -47,41 +47,39 @@
 using ImagePointType = SImageType::PointType;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
-RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
+RigidTransformType::Pointer
+GetACPCAlignedZeroCenteredTransform( const LandmarksMapType & landmarks )
 {
   SImageType::PointType ZeroCenter;
 
-  ZeroCenter.Fill(0.0);
-  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform = computeTmspFromPoints(
-    GetNamedPointFromLandmarkList( landmarks, "RP"),
-    GetNamedPointFromLandmarkList( landmarks, "AC"),
-    GetNamedPointFromLandmarkList( landmarks, "PC"),
-    ZeroCenter);
+  ZeroCenter.Fill( 0.0 );
+  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
+    computeTmspFromPoints( GetNamedPointFromLandmarkList( landmarks, "RP" ),
+                           GetNamedPointFromLandmarkList( landmarks, "AC" ),
+                           GetNamedPointFromLandmarkList( landmarks, "PC" ),
+                           ZeroCenter );
   return landmarkDefinedACPCAlignedToZeroTransform;
 }
 
 // M A I N ////////////////////////////////////////////////////////////////////
-int main( int argc, char *argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   // Verify input parameters
-  if( ( ( outputLandmarksPaired.compare( "" ) != 0 ) &&
-        ( inputLandmarksPaired.compare( "" ) == 0 ) )
-      ||
-      ( ( outputLandmarksPaired.compare( "" ) == 0 ) &&
-        ( inputLandmarksPaired.compare( "" ) != 0 ) ) )
-    {
+  if ( ( ( outputLandmarksPaired.compare( "" ) != 0 ) && ( inputLandmarksPaired.compare( "" ) == 0 ) ) ||
+       ( ( outputLandmarksPaired.compare( "" ) == 0 ) && ( inputLandmarksPaired.compare( "" ) != 0 ) ) )
+  {
     std::cerr << "The outputLandmark parameter should be paired with"
               << "the inputLandmark parameter." << std::endl;
     std::cerr << "No output acpc-aligned landmark list file is generated" << std::endl;
     std::cerr << "Type " << argv[0] << " -h for more help." << std::endl;
-    }
+  }
 
-  if( ( outputLandmarksPaired.compare( "" ) != 0 ) &&
-      ( inputLandmarksPaired.compare( "" ) != 0 ) )
-    {
+  if ( ( outputLandmarksPaired.compare( "" ) != 0 ) && ( inputLandmarksPaired.compare( "" ) != 0 ) )
+  {
     LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksPaired );
     LandmarksMapType alignedLandmarks;
 
@@ -90,9 +88,9 @@ int main( int argc, char *argv[] )
 
     VersorTransformType::Pointer finalTransform = VersorTransformType::New();
     finalTransform->SetFixedParameters( ZeroCenteredTransform->GetFixedParameters() );
-    itk::Versor<double>               versorRotation;
-    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-        ZeroCenteredTransform->GetMatrix() );
+    itk::Versor< double >               versorRotation;
+    const itk::Matrix< double, 3, 3 > & CleanedOrthogonalized =
+      itk::Orthogonalize3DRotationMatrix( ZeroCenteredTransform->GetMatrix() );
     versorRotation.Set( CleanedOrthogonalized );
     finalTransform->SetRotation( versorRotation );
     finalTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
@@ -105,14 +103,14 @@ int main( int argc, char *argv[] )
 
     // converting the original landmark file to the aligned landmark file
     LandmarksMapType::const_iterator olit = origLandmarks.begin();
-    for(; olit != origLandmarks.end(); ++olit )
-      {
+    for ( ; olit != origLandmarks.end(); ++olit )
+    {
       alignedLandmarks[olit->first] = invFinalTransform->TransformPoint( olit->second );
-      }
+    }
     // writing the acpc-aligned landmark file
     WriteITKtoSlicer3Lmk( outputLandmarksPaired, alignedLandmarks );
     std::cout << "The acpc-aligned landmark list file is written." << std::endl;
-    }
+  }
 
   return 0;
 }

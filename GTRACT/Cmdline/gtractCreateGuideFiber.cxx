@@ -57,41 +57,42 @@
 
 #include "gtractCreateGuideFiberCLP.h"
 #include "BRAINSThreadControl.h"
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
 
   const bool debug = true;
-  if( debug )
-    {
+  if ( debug )
+  {
     std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Fiber Tract: " <<  inputFiber << std::endl;
-    std::cout << "Output Guide Fiber Tract: " <<  outputFiber << std::endl;
-    std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile  << std::endl;
-    std::cout << "Number Of Guide Fiber Points: " <<  numberOfPoints << std::endl;
+    std::cout << "Input Fiber Tract: " << inputFiber << std::endl;
+    std::cout << "Output Guide Fiber Tract: " << outputFiber << std::endl;
+    std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile << std::endl;
+    std::cout << "Number Of Guide Fiber Points: " << numberOfPoints << std::endl;
     std::cout << "=====================================================" << std::endl;
-    }
+  }
 
-  vtkPolyData *fiberTract;
-  if( writeXMLPolyDataFile )
-    {
-    vtkXMLPolyDataReader *tractReader = vtkXMLPolyDataReader::New();
+  vtkPolyData * fiberTract;
+  if ( writeXMLPolyDataFile )
+  {
+    vtkXMLPolyDataReader * tractReader = vtkXMLPolyDataReader::New();
     tractReader->SetFileName( inputFiber.c_str() );
     tractReader->Update();
     fiberTract = tractReader->GetOutput();
-    }
+  }
   else
-    {
-    vtkPolyDataReader *tractReader = vtkPolyDataReader::New();
+  {
+    vtkPolyDataReader * tractReader = vtkPolyDataReader::New();
     tractReader->SetFileName( inputFiber.c_str() );
     tractReader->Update();
     fiberTract = tractReader->GetOutput();
-    }
+  }
 
-  vtkSplineFilter *spline = vtkSplineFilter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkSplineFilter * spline = vtkSplineFilter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   spline->SetInput( fiberTract );
 #else
   spline->SetInputData( fiberTract );
@@ -100,62 +101,66 @@ int main(int argc, char *argv[])
   spline->SetNumberOfSubdivisions( numberOfPoints );
   spline->Update();
 
-  vtkPolyData *resampledFibers = spline->GetOutput();
+  vtkPolyData * resampledFibers = spline->GetOutput();
   /* Average */
-  vtkPoints *guidePoints = vtkPoints::New();
-  for( int i = 0; i < numberOfPoints; i++ )
-    {
+  vtkPoints * guidePoints = vtkPoints::New();
+  for ( int i = 0; i < numberOfPoints; i++ )
+  {
     double avgPoint[3];
-    avgPoint[0] = 0; avgPoint[1] = 0; avgPoint[2] = 0;
+    avgPoint[0] = 0;
+    avgPoint[1] = 0;
+    avgPoint[2] = 0;
     int N = 0;
-    for( int j = 0; j < resampledFibers->GetNumberOfCells(); j++ )
+    for ( int j = 0; j < resampledFibers->GetNumberOfCells(); j++ )
+    {
+      if ( resampledFibers->GetCellType( j ) == VTK_POLY_LINE )
       {
-      if( resampledFibers->GetCellType(j) == VTK_POLY_LINE )
-        {
         N++;
-        vtkIdList *cellPointList = vtkIdList::New();
-        resampledFibers->GetCellPoints(j, cellPointList);
+        vtkIdList * cellPointList = vtkIdList::New();
+        resampledFibers->GetCellPoints( j, cellPointList );
         double currentPoint[3];
-        resampledFibers->GetPoint(cellPointList->GetId(i), currentPoint);
-        avgPoint[0] += currentPoint[0]; avgPoint[1] += currentPoint[1]; avgPoint[2] += currentPoint[2];
-        }
+        resampledFibers->GetPoint( cellPointList->GetId( i ), currentPoint );
+        avgPoint[0] += currentPoint[0];
+        avgPoint[1] += currentPoint[1];
+        avgPoint[2] += currentPoint[2];
       }
+    }
     avgPoint[0] /= (double)( N );
     avgPoint[1] /= (double)( N );
     avgPoint[2] /= (double)( N );
     guidePoints->InsertNextPoint( avgPoint );
-    }
-  vtkCellArray *line = vtkCellArray::New();
+  }
+  vtkCellArray * line = vtkCellArray::New();
   line->InsertNextCell( guidePoints->GetNumberOfPoints() );
-  for( int i = 0; i < guidePoints->GetNumberOfPoints(); i++ )
-    {
-    line->InsertCellPoint(i);
-    }
-  vtkPolyData *guideFiber = vtkPolyData::New();
+  for ( int i = 0; i < guidePoints->GetNumberOfPoints(); i++ )
+  {
+    line->InsertCellPoint( i );
+  }
+  vtkPolyData * guideFiber = vtkPolyData::New();
   guideFiber->SetPoints( guidePoints );
-  guideFiber->SetLines(line);
+  guideFiber->SetLines( line );
 
-  if( writeXMLPolyDataFile )
-    {
-    vtkXMLPolyDataWriter *tractWriter = vtkXMLPolyDataWriter::New();
+  if ( writeXMLPolyDataFile )
+  {
+    vtkXMLPolyDataWriter * tractWriter = vtkXMLPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
-#if (VTK_MAJOR_VERSION < 6)
+#if ( VTK_MAJOR_VERSION < 6 )
     tractWriter->SetInput( guideFiber );
 #else
     tractWriter->SetInputData( guideFiber );
 #endif
     tractWriter->Update();
-    }
+  }
   else
-    {
-    vtkPolyDataWriter *tractWriter = vtkPolyDataWriter::New();
+  {
+    vtkPolyDataWriter * tractWriter = vtkPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
-#if (VTK_MAJOR_VERSION < 6)
+#if ( VTK_MAJOR_VERSION < 6 )
     tractWriter->SetInput( guideFiber );
 #else
     tractWriter->SetInputData( guideFiber );
 #endif
     tractWriter->Update();
-    }
+  }
   return EXIT_SUCCESS;
 }

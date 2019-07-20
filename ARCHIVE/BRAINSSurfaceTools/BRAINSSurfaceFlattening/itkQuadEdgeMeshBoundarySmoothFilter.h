@@ -52,15 +52,14 @@ namespace itk
  * \sa itkQuadEdgeMeshSplitFilter
  *
  */
-template <typename TInputMesh, typename TOutputMesh>
-class QuadEdgeMeshBoundarySmoothFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class QuadEdgeMeshBoundarySmoothFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
   using Self = QuadEdgeMeshBoundarySmoothFilter;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -75,22 +74,17 @@ public:
   using InputCellType = typename InputMeshType::CellType;
   using InputCellIdentifier = typename InputMeshType::CellIdentifier;
 
-  typedef typename InputMeshType::PointsContainerConstPointer
-    InputPointsContainerConstPointer;
-  typedef typename InputMeshType::PointsContainerConstIterator
-    InputPointsContainerConstIterator;
-  typedef typename InputMeshType::CellsContainerConstPointer
-    InputCellsContainerConstPointer;
-  typedef typename InputMeshType::CellsContainerConstIterator
-    InputCellsContainerConstIterator;
+  typedef typename InputMeshType::PointsContainerConstPointer  InputPointsContainerConstPointer;
+  typedef typename InputMeshType::PointsContainerConstIterator InputPointsContainerConstIterator;
+  typedef typename InputMeshType::CellsContainerConstPointer   InputCellsContainerConstPointer;
+  typedef typename InputMeshType::CellsContainerConstIterator  InputCellsContainerConstIterator;
 
   using InputEdgeCellType = typename InputMeshType::EdgeCellType;
   using InputPolygonCellType = typename InputMeshType::PolygonCellType;
   using InputPointIdList = typename InputMeshType::PointIdList;
   using InputCellTraits = typename InputMeshType::CellTraits;
-  typedef typename InputCellTraits::PointIdInternalIterator
-    InputPointsIdInternalIterator;
-//    using InputQEIterator = typename InputQEPrimal::IteratorGeom;
+  typedef typename InputCellTraits::PointIdInternalIterator InputPointsIdInternalIterator;
+  //    using InputQEIterator = typename InputQEPrimal::IteratorGeom;
 
   /** Output types. */
   using OutputMeshType = TOutputMesh;
@@ -105,57 +99,65 @@ public:
   using OutputQEPrimal = typename OutputMeshType::QEPrimal;
   using OutputQEIterator = typename OutputQEPrimal::IteratorGeom;
   using OutputPolygonCellType = typename OutputMeshType::PolygonCellType;
-  typedef typename OutputMeshType::PointsContainerPointer
-    OutputPointsContainerPointer;
-  typedef typename OutputMeshType::PointsContainerIterator
-    OutputPointsContainerIterator;
-  typedef typename OutputMeshType::CellsContainerConstPointer
-    OutputCellsContainerConstPointer;
-  typedef typename OutputMeshType::CellsContainerConstIterator
-    OutputCellsContainerConstIterator;
+  typedef typename OutputMeshType::PointsContainerPointer      OutputPointsContainerPointer;
+  typedef typename OutputMeshType::PointsContainerIterator     OutputPointsContainerIterator;
+  typedef typename OutputMeshType::CellsContainerConstPointer  OutputCellsContainerConstPointer;
+  typedef typename OutputMeshType::CellsContainerConstIterator OutputCellsContainerConstIterator;
+
 public:
   itkNewMacro( Self );
   itkTypeMacro( QuadEdgeMeshBoundarySmoothFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
 
   /** Set/Get the first input mesh */
-  void SetInputMesh1( const InputMeshType * mesh1 );
+  void
+  SetInputMesh1( const InputMeshType * mesh1 );
 
-  const InputMeshType * GetInputMesh1( void ) const;
+  const InputMeshType *
+  GetInputMesh1( void ) const;
 
   /** Set/Get the second input mesh */
-  void SetInputMesh2( const InputMeshType * mesh2 );
+  void
+  SetInputMesh2( const InputMeshType * mesh2 );
 
-  const InputMeshType * GetInputMesh2( void ) const;
+  const InputMeshType *
+  GetInputMesh2( void ) const;
 
   /** Get the first smoothed hemisphere */
-  OutputMeshType * GetOutputMesh1( void );
+  OutputMeshType *
+  GetOutputMesh1( void );
 
   /** Get the second smoothed hemisphere */
-  OutputMeshType * GetOutputMesh2( void );
+  OutputMeshType *
+  GetOutputMesh2( void );
 
   /** Set/Get the number of iterations. */
   itkSetMacro( Iterations, int );
   itkGetMacro( Iterations, int );
+
 protected:
   QuadEdgeMeshBoundarySmoothFilter();
   ~QuadEdgeMeshBoundarySmoothFilter();
 
-  void CopyInputMeshesToOutputMeshes();
+  void
+  CopyInputMeshesToOutputMeshes();
 
-  int AdjustBoundary( OutputMeshType * deleteMesh, OutputMeshType * addMesh);
+  int
+  AdjustBoundary( OutputMeshType * deleteMesh, OutputMeshType * addMesh );
 
-  virtual void GenerateData() override;
+  virtual void
+  GenerateData() override;
 
 private:
   QuadEdgeMeshBoundarySmoothFilter( const Self & );
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 
   int m_Iterations;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshBoundarySmoothFilter.hxx"
+#  include "itkQuadEdgeMeshBoundarySmoothFilter.hxx"
 #endif
 
 #endif

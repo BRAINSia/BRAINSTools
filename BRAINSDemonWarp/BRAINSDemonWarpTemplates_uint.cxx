@@ -18,7 +18,8 @@
  *=========================================================================*/
 #include "BRAINSDemonWarpTemplates.h"
 
-void ProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command)
+void
+ProcessOutputType_uint( struct BRAINSDemonWarpAppParameters & command )
 {
-  ProcessOutputType<unsigned int>(command);
+  ProcessOutputType< unsigned int >( command );
 }

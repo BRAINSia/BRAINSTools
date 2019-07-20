@@ -26,142 +26,138 @@
 namespace SyN
 {
 using RealType = double;
-using RegistrationHelperType = ants::RegistrationHelper<SyN::RealType,3>;
+using RegistrationHelperType = ants::RegistrationHelper< SyN::RealType, 3 >;
 using ImageType = RegistrationHelperType::ImageType;
 using CompositeTransformType = RegistrationHelperType::CompositeTransformType;
-}
+} // namespace SyN
 
-template <typename FixedImageType, typename MovingimageType>
+template < typename FixedImageType, typename MovingimageType >
 typename SyN::CompositeTransformType::Pointer
-simpleSynReg( typename FixedImageType::Pointer & infixedImage,
-              typename MovingimageType::Pointer & inmovingImage,
-              typename SyN::CompositeTransformType::Pointer compositeInitialTransform,
+simpleSynReg( typename FixedImageType::Pointer & infixedImage, typename MovingimageType::Pointer & inmovingImage,
+              typename SyN::CompositeTransformType::Pointer   compositeInitialTransform,
               typename SyN::CompositeTransformType::Pointer & internalSavedState,
-              typename FixedImageType::Pointer & infixedImage2 = NULL,
-              typename MovingimageType::Pointer & inmovingImage2 = NULL,
-              SyN::RealType samplingPercentage = 1.0,
-              std::string whichMetric = "cc",
-              const bool synFull = true,
+              typename FixedImageType::Pointer &              infixedImage2 = NULL,
+              typename MovingimageType::Pointer & inmovingImage2 = NULL, SyN::RealType samplingPercentage = 1.0,
+              std::string whichMetric = "cc", const bool synFull = true,
               typename SyN::CompositeTransformType::Pointer restoreState = nullptr )
 {
   typename SyN::RegistrationHelperType::Pointer regHelper = SyN::RegistrationHelperType::New();
-    {
+  {
     /*
     constexpr float lowerQuantile = 0.025;
     constexpr float upperQuantile = 0.975;
     const bool  doWinsorize(false);
     regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
     */
-    }
-    {
-    const bool doHistogramMatch(true);
-    regHelper->SetUseHistogramMatching(doHistogramMatch);
-    }
+  } {
+    const bool doHistogramMatch( true );
+    regHelper->SetUseHistogramMatching( doHistogramMatch );
+  }
 
-    {
+  {
     /*
     const bool doEstimateLearningRateAtEachIteration = true;
     regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
     */
-    }
+  }
 
+  {
+    std::vector< std::vector< unsigned int > > iterationList;
+    if ( synFull == true )
     {
-    std::vector<std::vector<unsigned int> > iterationList;
-    if( synFull == true )
-      {
-      std::vector<unsigned int>  iterations(4);
+      std::vector< unsigned int > iterations( 4 );
       iterations[0] = 1000;
       iterations[1] = 500;
       iterations[2] = 250;
       iterations[3] = 100;
-      iterationList.push_back(iterations);
-      }
+      iterationList.push_back( iterations );
+    }
     else
-      {
-      std::vector<unsigned int>  iterations(1);
+    {
+      std::vector< unsigned int > iterations( 1 );
       iterations[0] = 100;
-      iterationList.push_back(iterations);
-      }
+      iterationList.push_back( iterations );
+    }
     regHelper->SetIterations( iterationList );
-    }
+  }
 
-    {
-    std::vector<SyN::RealType> convergenceThresholdList;
-    const SyN::RealType        convergenceThreshold = 1e-6;
-    convergenceThresholdList.push_back(convergenceThreshold);
+  {
+    std::vector< SyN::RealType > convergenceThresholdList;
+    const SyN::RealType          convergenceThreshold = 1e-6;
+    convergenceThresholdList.push_back( convergenceThreshold );
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
-    }
+  }
 
-    {
-    std::vector<unsigned int> convergenceWindowSizeList;
-    constexpr unsigned int convergenceWindowSize = 10;
-    convergenceWindowSizeList.push_back(convergenceWindowSize);
+  {
+    std::vector< unsigned int > convergenceWindowSizeList;
+    constexpr unsigned int      convergenceWindowSize = 10;
+    convergenceWindowSizeList.push_back( convergenceWindowSize );
     regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
-    }
+  }
 
+  {
+    std::vector< std::vector< unsigned int > > shrinkFactorsList;
+    if ( synFull == true )
     {
-    std::vector<std::vector<unsigned int> > shrinkFactorsList;
-    if( synFull == true )
-      {
       // --shrink-factors 3x2x1
-      std::vector<unsigned int>   factors(4);
+      std::vector< unsigned int > factors( 4 );
       factors[0] = 8;
       factors[1] = 4;
       factors[2] = 2;
       factors[3] = 1;
-      shrinkFactorsList.push_back(factors);
-      }
-    else
-      {
-      // --shrink-factors 1
-      std::vector<unsigned int>   factors(1);
-      factors[0] = 1;
-      shrinkFactorsList.push_back(factors);
-      }
-    regHelper->SetShrinkFactors( shrinkFactorsList );
+      shrinkFactorsList.push_back( factors );
     }
-
+    else
     {
-    std::vector<std::vector<float> > smoothingSigmasList;
-    if( synFull == true )
-      {
+      // --shrink-factors 1
+      std::vector< unsigned int > factors( 1 );
+      factors[0] = 1;
+      shrinkFactorsList.push_back( factors );
+    }
+    regHelper->SetShrinkFactors( shrinkFactorsList );
+  }
+
+  {
+    std::vector< std::vector< float > > smoothingSigmasList;
+    if ( synFull == true )
+    {
       // --smoothing-sigmas 3x2x0
-      std::vector<float>    sigmas(4);
+      std::vector< float > sigmas( 4 );
       sigmas[0] = 3;
       sigmas[1] = 2;
       sigmas[2] = 1;
       sigmas[3] = 0;
-      smoothingSigmasList.push_back(sigmas);
-      }
+      smoothingSigmasList.push_back( sigmas );
+    }
     else
-      {
+    {
       // --smoothing-sigmas 0
-      std::vector<float>    sigmas(1);
+      std::vector< float > sigmas( 1 );
       sigmas[0] = 0;
-      smoothingSigmasList.push_back(sigmas);
-      }
+      smoothingSigmasList.push_back( sigmas );
+    }
     regHelper->SetSmoothingSigmas( smoothingSigmasList );
-    }
+  }
 
-    {
+  {
     // Force all units to be in physcial space
-    std::vector<bool> smoothingSigmasAreInPhysicalUnitsList;
-    smoothingSigmasAreInPhysicalUnitsList.push_back(true);
+    std::vector< bool > smoothingSigmasAreInPhysicalUnitsList;
+    smoothingSigmasAreInPhysicalUnitsList.push_back( true );
     regHelper->SetSmoothingSigmasAreInPhysicalUnits( smoothingSigmasAreInPhysicalUnitsList );
-    }
-    //
-    // Add metric to regHelper
-    //
-    {
+  }
+  //
+  // Add metric to regHelper
+  //
+  {
     // Note that here we run only one stage of registration, so stageID does not change
     constexpr unsigned int stageID = 0;
     // However, this stage can have one or two metrics (for multi-modality registration).
     // All the parameters of the second metric is the same as the first metric except for fixed and moving volumes.
     // Common parameters are:
     // - Metric type (MMI->mattes, MSE->meansquares, NC->cc, MIH->mi)
-    typename SyN::RegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
+    typename SyN::RegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType( whichMetric );
     // - Metric weight
-    constexpr SyN::RealType weighting  = 1.0;
+    constexpr SyN::RealType weighting = 1.0;
     // - Sampling strategy (alway random)
     typename SyN::RegistrationHelperType::SamplingStrategy samplingStrategy = SyN::RegistrationHelperType::random;
     // - Sampling percentage (defined by input)
@@ -172,33 +168,33 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     //
     // Add the first metric with the first mandatory fixed and moving volumes
     //
-    using FixedCasterType = itk::CastImageFilter<FixedImageType,SyN::ImageType>;
+    using FixedCasterType = itk::CastImageFilter< FixedImageType, SyN::ImageType >;
     typename FixedCasterType::Pointer fixedCaster = FixedCasterType::New();
     fixedCaster->SetInput( infixedImage );
     fixedCaster->Update();
     typename SyN::ImageType::Pointer dblFixedImage = fixedCaster->GetOutput();
 
-    using MovingCasterType = itk::CastImageFilter<MovingimageType,SyN::ImageType>;
+    using MovingCasterType = itk::CastImageFilter< MovingimageType, SyN::ImageType >;
     typename MovingCasterType::Pointer movingCaster = MovingCasterType::New();
     movingCaster->SetInput( inmovingImage );
     movingCaster->Update();
     typename SyN::ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
 
-    regHelper->AddMetric(curMetric,
-                         dblFixedImage,
-                         dblMovingImage,
-                         stageID,
-                         weighting,
-                         samplingStrategy,
-                         bins,
-                         radius,
-                         samplingPercentage);
+    regHelper->AddMetric( curMetric,
+                          dblFixedImage,
+                          dblMovingImage,
+                          stageID,
+                          weighting,
+                          samplingStrategy,
+                          bins,
+                          radius,
+                          samplingPercentage );
 
     // Now if fixedVolume2 and movingVolume2 are not NULL, we add the second metric
     // to our only stage of registration. Second metric has the same parameters but different input images.
-    if( infixedImage2.IsNotNull() && inmovingImage2.IsNotNull() )
-      {
-      std::cout<<"Do Multimodal Registration..."<<std::endl;
+    if ( infixedImage2.IsNotNull() && inmovingImage2.IsNotNull() )
+    {
+      std::cout << "Do Multimodal Registration..." << std::endl;
       typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
       fixedCaster2->SetInput( infixedImage2 );
       fixedCaster2->Update();
@@ -209,59 +205,57 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
       movingCaster2->Update();
       typename SyN::ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();
 
-      regHelper->AddMetric(curMetric,
-                           dblFixedImage2,
-                           dblMovingImage2,
-                           stageID,
-                           weighting,
-                           samplingStrategy,
-                           bins,
-                           radius,
-                           samplingPercentage);
-      }
+      regHelper->AddMetric( curMetric,
+                            dblFixedImage2,
+                            dblMovingImage2,
+                            stageID,
+                            weighting,
+                            samplingStrategy,
+                            bins,
+                            radius,
+                            samplingPercentage );
     }
+  }
 
-    {
+  {
     // --transform "SyN[0.33,3.0,0.0]"
     constexpr float learningRate = 0.15;
     constexpr float varianceForUpdateField = 3.0;
     constexpr float varianceForTotalField = 0.0;
-    regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);
-    }
+    regHelper->AddSyNTransform( learningRate, varianceForUpdateField, varianceForTotalField );
+  }
 
-  if( restoreState.IsNotNull() )
-    {
+  if ( restoreState.IsNotNull() )
+  {
     regHelper->SetRestoreStateTransform( restoreState );
-    }
+  }
   else
+  {
+    if ( compositeInitialTransform.IsNotNull() )
     {
-    if( compositeInitialTransform.IsNotNull() )
-      {
       regHelper->SetMovingInitialTransform( compositeInitialTransform );
-      }
     }
+  }
 
   regHelper->SetInitializeTransformsPerStage( true );
 
-  regHelper->SetLogStream(std::cout);
+  regHelper->SetLogStream( std::cout );
 
-  if( regHelper->DoRegistration() != EXIT_SUCCESS )
-    {
+  if ( regHelper->DoRegistration() != EXIT_SUCCESS )
+  {
     std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
     std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
     std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
     std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
-    }
+  }
   else
-    {
+  {
     std::cerr << "Finshed SyN stage" << std::endl;
-    }
+  }
   // Get the output transform
-  typename SyN::CompositeTransformType::Pointer outputCompositeTransform =
-    regHelper->GetModifiableCompositeTransform();
+  typename SyN::CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetModifiableCompositeTransform();
   // Get the registration state file
-  internalSavedState =
-    dynamic_cast<SyN::CompositeTransformType *>( regHelper->GetModifiableRegistrationState() );
+  internalSavedState = dynamic_cast< SyN::CompositeTransformType * >( regHelper->GetModifiableRegistrationState() );
   // return composite result Transform;
   return outputCompositeTransform;
 }

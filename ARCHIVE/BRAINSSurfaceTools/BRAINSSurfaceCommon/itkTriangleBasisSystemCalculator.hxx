@@ -27,38 +27,36 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TMesh, typename TBasisSystem>
-TriangleBasisSystemCalculator<TMesh, TBasisSystem>
-::TriangleBasisSystemCalculator()
+template < typename TMesh, typename TBasisSystem >
+TriangleBasisSystemCalculator< TMesh, TBasisSystem >::TriangleBasisSystemCalculator()
 {
-  itkDebugMacro("Constructor");
+  itkDebugMacro( "Constructor" );
   this->m_InputMesh = nullptr;
 }
 
 /**
  * Destructor
  */
-template <typename TMesh, typename TBasisSystem>
-TriangleBasisSystemCalculator<TMesh, TBasisSystem>
-::~TriangleBasisSystemCalculator()
+template < typename TMesh, typename TBasisSystem >
+TriangleBasisSystemCalculator< TMesh, TBasisSystem >::~TriangleBasisSystemCalculator()
 {
-  itkDebugMacro("Destructor");
+  itkDebugMacro( "Destructor" );
 }
 
-template <typename TMesh, typename TBasisSystem>
+template < typename TMesh, typename TBasisSystem >
 void
-TriangleBasisSystemCalculator<TMesh, TBasisSystem>
-::CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs ) const
+TriangleBasisSystemCalculator< TMesh, TBasisSystem >::CalculateTriangle( unsigned int   cellIndex,
+                                                                         TBasisSystem & bs ) const
 {
-  if( this->m_InputMesh.IsNull() )
-    {
-    itkExceptionMacro(<< "TriangleBasisSystemCalculator CalculateTriangle  m_InputMesh is NULL.");
-    }
+  if ( this->m_InputMesh.IsNull() )
+  {
+    itkExceptionMacro( << "TriangleBasisSystemCalculator CalculateTriangle  m_InputMesh is NULL." );
+  }
 
-  if( cellIndex >= this->m_InputMesh->GetNumberOfCells() )
-    {
-    itkExceptionMacro(<< "TriangleBasisSystemCalculator CalculateTriangle  cellIndex is too high.");
-    }
+  if ( cellIndex >= this->m_InputMesh->GetNumberOfCells() )
+  {
+    itkExceptionMacro( << "TriangleBasisSystemCalculator CalculateTriangle  cellIndex is too high." );
+  }
 
   const PointsContainer * points = this->m_InputMesh->GetPoints();
   const CellsContainer *  cells = this->m_InputMesh->GetCells();
@@ -79,10 +77,10 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   this->CalculateBasis( pt1, pt2, pt3, bs );
 }
 
-template <typename TMesh, typename TBasisSystem>
+template < typename TMesh, typename TBasisSystem >
 void
-TriangleBasisSystemCalculator<TMesh, TBasisSystem>
-::CalculateBasis(PointType pt1, PointType pt2, PointType pt3, TBasisSystem & bs ) const
+TriangleBasisSystemCalculator< TMesh, TBasisSystem >::CalculateBasis( PointType pt1, PointType pt2, PointType pt3,
+                                                                      TBasisSystem & bs ) const
 {
   //
   // Compute Vectors along the edges.
@@ -96,7 +94,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   // u12 is orthogonal to v32
   // u32 is orthogonal to v12
   //
-  const double dotproduct =  v12 * v32;
+  const double dotproduct = v12 * v32;
   VectorType   u12 = v12 - v32 * ( dotproduct / v32.GetSquaredNorm() );
   VectorType   u32 = v32 - v12 * ( dotproduct / v12.GetSquaredNorm() );
 
@@ -110,20 +108,20 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   bs.SetVector( 1, u32 );
 }
 
-template <typename TMesh, typename TBasisSystem>
+template < typename TMesh, typename TBasisSystem >
 void
-TriangleBasisSystemCalculator<TMesh, TBasisSystem>
-::CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs, TBasisSystem & bt ) const
+TriangleBasisSystemCalculator< TMesh, TBasisSystem >::CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs,
+                                                                         TBasisSystem & bt ) const
 {
-  if( this->m_InputMesh.IsNull() )
-    {
-    itkExceptionMacro(<< "TriangleBasisSystemCalculator CalculateTriangle  m_InputMesh is NULL.");
-    }
+  if ( this->m_InputMesh.IsNull() )
+  {
+    itkExceptionMacro( << "TriangleBasisSystemCalculator CalculateTriangle  m_InputMesh is NULL." );
+  }
 
-  if( cellIndex >= this->m_InputMesh->GetNumberOfCells() )
-    {
-    itkExceptionMacro(<< "TriangleBasisSystemCalculator CalculateTriangle  cellIndex is too high.");
-    }
+  if ( cellIndex >= this->m_InputMesh->GetNumberOfCells() )
+  {
+    itkExceptionMacro( << "TriangleBasisSystemCalculator CalculateTriangle  cellIndex is too high." );
+  }
 
   const PointsContainer * points = this->m_InputMesh->GetPoints();
   const CellsContainer *  cells = this->m_InputMesh->GetCells();
@@ -144,11 +142,10 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   this->CalculateBasis( pt1, pt2, pt3, bs, bt );
 }
 
-template <typename TMesh, typename TBasisSystem>
+template < typename TMesh, typename TBasisSystem >
 void
-TriangleBasisSystemCalculator<TMesh, TBasisSystem>
-::CalculateBasis(PointType pt1, PointType pt2, PointType pt3,
-                 TBasisSystem & bs, TBasisSystem & bt ) const
+TriangleBasisSystemCalculator< TMesh, TBasisSystem >::CalculateBasis( PointType pt1, PointType pt2, PointType pt3,
+                                                                      TBasisSystem & bs, TBasisSystem & bt ) const
 {
   //
   // Compute Vectors along the edges.
@@ -162,7 +159,7 @@ TriangleBasisSystemCalculator<TMesh, TBasisSystem>
   // u12 is orthogonal to v32
   // u32 is orthogonal to v12
   //
-  const double dotproduct =  v12 * v32;
+  const double dotproduct = v12 * v32;
   VectorType   u12 = v12 - v32 * ( dotproduct / v32.GetSquaredNorm() );
   VectorType   u32 = v32 - v12 * ( dotproduct / v12.GetSquaredNorm() );
 

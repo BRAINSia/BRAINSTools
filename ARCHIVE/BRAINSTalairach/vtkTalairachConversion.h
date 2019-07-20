@@ -31,112 +31,139 @@ class vtkStructuredGrid;
 class VTK_FILTERING_EXPORT vtkTalairachConversion : public vtkDataObjectAlgorithm
 {
 public:
-  static vtkTalairachConversion * New();
+  static vtkTalairachConversion *
+  New();
 
   /* Declare image type */
   using PixelType = unsigned char;
   static constexpr int Dimension = 3;
-  using ImageType = itk::Image<PixelType, Dimension>;
+  using ImageType = itk::Image< PixelType, Dimension >;
 
   /* Define the Hemisphere Types */
-  enum { right = 0, left = 1, both = 2 };
+  enum
+  {
+    right = 0,
+    left = 1,
+    both = 2
+  };
 
   /* Description:
    * Clear out the memory */
-  void Initialize();
+  void
+  Initialize();
 
   /* Description:
    * Write out the appropriate data when the talairachConversion object
    * is added to an IO stream */
-  void PrintSelf(ostream & os, vtkIndent indent) override;
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
   /* Description:
    * Set the origin, direction, etc. of the mask image from
    * an input image */
-  void SetImageInformation(ImageType::Pointer exampleImage);
+  void
+  SetImageInformation( ImageType::Pointer exampleImage );
 
   /* Description:
    * Create a binary mask image from all talairach grids in the grid list
    * that are currently turned on; size, origin and spacing should be set
    * prior to running this function */
-  void GenerateImage();
+  void
+  GenerateImage();
 
   /* Description:
    * Returns the binary mask image generated from the talairach grids;
    * returned as an ITK image */
-  ImageType::Pointer GetImage();
+  ImageType::Pointer
+  GetImage();
 
   /* Description:
    * Set the talairach grid */
-  void SetTalairachGrid( vtkStructuredGrid *grid);
+  void
+  SetTalairachGrid( vtkStructuredGrid * grid );
 
   /* Description:
    * Return the talairach grid */
-  vtkStructuredGrid * GetTalairachGrid();
+  vtkStructuredGrid *
+  GetTalairachGrid();
 
   /* Description:
    * Add a talairach grid range to the binary mask image */
-  int AddTalairachBox(std::string talairachBox);
+  int
+  AddTalairachBox( std::string talairachBox );
 
   /* Description:
    * Remove a talairach grid range from the binary mask image */
-  void RemoveTalairachBox(int index);
+  void
+  RemoveTalairachBox( int index );
 
-  void RemoveTalairachBox(std::string talairachBox);
+  void
+  RemoveTalairachBox( std::string talairachBox );
 
   /* Description:
    * Clear the Talairach Box List */
-  void EraseTalairachBoxList();
+  void
+  EraseTalairachBoxList();
 
   /* Description:
    * Set the Mode for Talairach Box Generation */
-  void SetHemisphereMode(int mode);
+  void
+  SetHemisphereMode( int mode );
 
-  void SetHemisphereModeBoth();
+  void
+  SetHemisphereModeBoth();
 
-  void SetHemisphereModeLeft();
+  void
+  SetHemisphereModeLeft();
 
-  void SetHemisphereModeRight();
+  void
+  SetHemisphereModeRight();
 
   /* Description:
    * Get the Mode for Talairach Box Generation */
-  int GetHemisphereMode();
+  int
+  GetHemisphereMode();
 
   /* Description:
    * Set the Mode for Expanded Segmentation Mode Boxes */
-  void SetSegmentationMode(bool mode);
+  void
+  SetSegmentationMode( bool mode );
 
-  void SetSegmentationModeOn();
+  void
+  SetSegmentationModeOn();
 
-  void SetSegmentationModeOff();
+  void
+  SetSegmentationModeOff();
 
   /* Description:
    * Get the Mode for Talairach Box Generation */
-  bool GetSegmentationMode();
+  bool
+  GetSegmentationMode();
 
   /* Description:
    * Returns the number of boxes in the list */
-  int GetTalairachBoxLength();
+  int
+  GetTalairachBoxLength();
 
   /* Description:
    * Update the image */
-  using vtkAlgorithm::Update;   // silence warning about this Update
-                                // hiding the one in vtkAlgorithm
-  void Update() override;
+  using vtkAlgorithm::Update; // silence warning about this Update
+                              // hiding the one in vtkAlgorithm
+  void
+  Update() override;
 
 protected:
-
   vtkTalairachConversion();
   ~vtkTalairachConversion() override;
 
   /* Description:
    * Process a box file to calculate the regions of active masking */
-  void ProcessBOX(bool _left);
+  void
+  ProcessBOX( bool _left );
 
 private:
-
-  vtkStructuredGrid *    TalairachGrid;
-  std::list<std::string> TalairachBoxList;
+  vtkStructuredGrid *      TalairachGrid;
+  std::list< std::string > TalairachBoxList;
 
   bool SegmentationMode;
   int  HemisphereMode;

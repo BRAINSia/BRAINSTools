@@ -26,28 +26,23 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputMesh>
-NearestNeighborInterpolateMeshFunction<TInputMesh>
-::NearestNeighborInterpolateMeshFunction()
-{
-}
+template < typename TInputMesh >
+NearestNeighborInterpolateMeshFunction< TInputMesh >::NearestNeighborInterpolateMeshFunction()
+{}
 
 /**
  * Destructor
  */
-template <typename TInputMesh>
-NearestNeighborInterpolateMeshFunction<TInputMesh>
-::~NearestNeighborInterpolateMeshFunction()
-{
-}
+template < typename TInputMesh >
+NearestNeighborInterpolateMeshFunction< TInputMesh >::~NearestNeighborInterpolateMeshFunction()
+{}
 
 /**
  * Standard "PrintSelf" method
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-NearestNeighborInterpolateMeshFunction<TInputMesh>
-::PrintSelf( std::ostream& os, Indent indent) const
+NearestNeighborInterpolateMeshFunction< TInputMesh >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf( os, indent );
 }
@@ -55,34 +50,31 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>
 /**
  * Evaluate the mesh at a given point position.
  */
-template <typename TInputMesh>
+template < typename TInputMesh >
 void
-NearestNeighborInterpolateMeshFunction<TInputMesh>
-::EvaluateDerivative( const PointType & itkNotUsed(point), DerivativeType & itkNotUsed(derivative) ) const
-{
-}
+NearestNeighborInterpolateMeshFunction< TInputMesh >::EvaluateDerivative(
+  const PointType & itkNotUsed( point ), DerivativeType & itkNotUsed( derivative ) ) const
+{}
 
 /**
  * Evaluate the mesh at a given point position.
  */
-template <typename TInputMesh>
-typename
-NearestNeighborInterpolateMeshFunction<TInputMesh>::OutputType
-NearestNeighborInterpolateMeshFunction<TInputMesh>
-::Evaluate( const PointType& point ) const
+template < typename TInputMesh >
+typename NearestNeighborInterpolateMeshFunction< TInputMesh >::OutputType
+NearestNeighborInterpolateMeshFunction< TInputMesh >::Evaluate( const PointType & point ) const
 {
-  constexpr unsigned int numberOfNeighbors = 1;
+  constexpr unsigned int       numberOfNeighbors = 1;
   InstanceIdentifierVectorType result;
 
   this->Search( point, numberOfNeighbors, result );
 
-  PixelType pixelValue = itk::NumericTraits<PixelType>::ZeroValue();
+  PixelType pixelValue = itk::NumericTraits< PixelType >::ZeroValue();
 
   const PointIdentifier pointId = result[0];
 
   this->GetPointData( pointId, &pixelValue );
 
-  OutputType returnValue = static_cast<OutputType>( pixelValue );
+  OutputType returnValue = static_cast< OutputType >( pixelValue );
 
   return returnValue;
 }

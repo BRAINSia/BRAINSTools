@@ -31,25 +31,30 @@ class QImageDisplay : public QWidget
 {
   Q_OBJECT
 public slots:
-  void viewChanged(const QString & newView);
+  void
+  viewChanged( const QString & newView );
 
 public:
-  using ReadImageType = itk::Image<float, 3>;
-  using ImageType = itk::Image<unsigned char, 3>;
+  using ReadImageType = itk::Image< float, 3 >;
+  using ImageType = itk::Image< unsigned char, 3 >;
   using ImagePointer = ImageType::Pointer;
-  QImageDisplay(QWidget *parent = 0);
-  void SetImage(const std::string & fileName);
+  QImageDisplay( QWidget * parent = 0 );
+  void
+  SetImage( const std::string & fileName );
 
-  void SetImage(ImagePointer & image);
+  void
+  SetImage( ImagePointer & image );
 
-  void SetBlankImage();
+  void
+  SetBlankImage();
 
 private:
-  void SetSliceScaleRange();
+  void
+  SetSliceScaleRange();
 
-  QImageViewerWidget* m_ImageViewer;
-  vtkKWImage*         m_Image;
-  QSlider*            m_Slider;
+  QImageViewerWidget * m_ImageViewer;
+  vtkKWImage *         m_Image;
+  QSlider *            m_Slider;
 };
 
 #endif // QImageDisplay_h

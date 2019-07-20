@@ -55,61 +55,62 @@
 //
 //
 // ////////////////////////////////////////////////////////////////////////////////////////////////
-int main(int argc, char *argv[])
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
   bool                                                  verbose = true;
 
   std::cout << "================================================================" << std::endl;
   std::cout << "Processing: " << inputVolume << std::endl;
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  if( verbose )
-    {
-    printf("-------------------------------------------------------\n");
+  if ( verbose )
+  {
+    printf( "-------------------------------------------------------\n" );
     printf( "inputVolume: %s\n", inputVolume.c_str() );
     printf( "outputVolume: %s\n", outputVolume.c_str() );
-    printf("acLowerBound: %f\n", acLowerBound);
-    }
-  if( outputVolume == "" )
-    {
+    printf( "acLowerBound: %f\n", acLowerBound );
+  }
+  if ( outputVolume == "" )
+  {
     std::cout << "ERROR:  Missing output file name." << std::endl;
     std::cout << "        Please specify -o <filename> or --outputVolume <filename>" << std::endl;
     return -1;
-    }
+  }
   // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;
-  if( backgroundFillValueString == std::string("BIGNEG") )
-    {
+  if ( backgroundFillValueString == std::string( "BIGNEG" ) )
+  {
     BackgroundFillValue = -32768;
-    }
+  }
   else
-    {
+  {
     BackgroundFillValue = std::stoi( backgroundFillValueString.c_str() );
-    }
+  }
   // //////////////////////////////////////////////////////////////////////////
-  SImageType::Pointer image = itkUtil::ReadImage<SImageType>(inputVolume);
-  if( image.IsNull() )
-    {
+  SImageType::Pointer image = itkUtil::ReadImage< SImageType >( inputVolume );
+  if ( image.IsNull() )
+  {
     printf( "\nCould not open image %s, aborting ...\n\n", inputVolume.c_str() );
     return EXIT_FAILURE;
-    }
+  }
 
   // we need a DOUBLE constant, not a FLOAT constant, for exact switch
   // comparisons.
   constexpr double thousand = 1000.0;
-  if( acLowerBound != thousand )
-    {
+  if ( acLowerBound != thousand )
+  {
     double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - acLowerBound;
-    ChopImageBelowLowerBound<SImageType>(image, BackgroundFillValue, PhysicalLowerBound);
-    }
-  itkUtil::WriteImage<SImageType>(image, outputVolume);
-  if( verbose )
-    {
+    ChopImageBelowLowerBound< SImageType >( image, BackgroundFillValue, PhysicalLowerBound );
+  }
+  itkUtil::WriteImage< SImageType >( image, outputVolume );
+  if ( verbose )
+  {
     printf( "Wrote outputVolume: %s\n", outputVolume.c_str() );
-    printf("-------------------------------------------------------\n");
-    }
+    printf( "-------------------------------------------------------\n" );
+  }
   return 0;
 }

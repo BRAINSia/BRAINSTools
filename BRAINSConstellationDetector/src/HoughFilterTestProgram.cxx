@@ -23,25 +23,26 @@
 #include "itkImageFileWriter.h"
 #include "itkHoughTransformRadialVotingImageFilter.h"
 
-int main( int argc, char * argv[] )
+int
+main( int argc, char * argv[] )
 {
   constexpr unsigned int LocalImageDimension = 3;
 
   using InputPixelType = short;
   using OutputPixelType = double;
-  using InputImageType = itk::Image<InputPixelType, LocalImageDimension>;
-  using OutputImageType = itk::Image<OutputPixelType, LocalImageDimension>;
+  using InputImageType = itk::Image< InputPixelType, LocalImageDimension >;
+  using OutputImageType = itk::Image< OutputPixelType, LocalImageDimension >;
 
-  using HoughFilterType = itk::HoughTransformRadialVotingImageFilter<InputImageType, OutputImageType>;
+  using HoughFilterType = itk::HoughTransformRadialVotingImageFilter< InputImageType, OutputImageType >;
   using SpheresListType = HoughFilterType::SpheresListType;
   using HoughFilterPointer = HoughFilterType::Pointer;
   HoughFilterPointer houghFilter = HoughFilterType::New();
 
-// Reader type
-  using ReaderType = itk::ImageFileReader<InputImageType>;
+  // Reader type
+  using ReaderType = itk::ImageFileReader< InputImageType >;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( argv[1] );
-// reader->Update();
+  // reader->Update();
 
   houghFilter->SetInput( reader->GetOutput() );
 
@@ -60,60 +61,60 @@ int main( int argc, char * argv[] )
   houghFilter->SetHoughEyeDetectorMode( 1 );
 
   try
-    {
+  {
     houghFilter->Update();
-    }
-  catch( itk::ExceptionObject & excep )
-    {
+  }
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << "Failed houghFilter " << std::endl;
     std::cerr << excep << std::endl;
-    }
-  catch( ... )
-    {
+  }
+  catch ( ... )
+  {
     std::cout << "Failed on houghFilter exception occured" << std::endl;
-    }
+  }
 
-/*
-this->m_AccumulatorImage = houghFilter->GetOutput();
+  /*
+  this->m_AccumulatorImage = houghFilter->GetOutput();
 
-// Write debug accumulator image
-typename WriterType::Pointer writer = WriterType::New();
-writer->SetFileName( this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz" );
-writer->SetInput( this->m_AccumulatorImage );
-#if ITK_VERSION_MAJOR >= 5
-writer->SetUseCompression( true );
-#endif
+  // Write debug accumulator image
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName( this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz" );
+  writer->SetInput( this->m_AccumulatorImage );
+  #if ITK_VERSION_MAJOR >= 5
+  writer->SetUseCompression( true );
+  #endif
 
-*/
+  */
 
-// writer type
-  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  // writer type
+  using WriterType = itk::ImageFileWriter< OutputImageType >;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName(argv[2]);
+  writer->SetFileName( argv[2] );
   writer->SetInput( houghFilter->GetOutput() );
   try
-    {
+  {
     writer->Update();
-    }
-  catch( itk::ExceptionObject & excep )
-    {
+  }
+  catch ( itk::ExceptionObject & excep )
+  {
     std::cerr << "Cannot write the Accumulator image!" << std::endl;
     std::cerr << excep << std::endl;
-    }
+  }
 
   const SpheresListType spheres = houghFilter->GetSpheres();
-  if( spheres.size() < 2 )
-    {
+  if ( spheres.size() < 2 )
+  {
     std::cerr << "Error: The number of detected spheres is less than 2!" << std::endl;
     // std::cerr << "The program will continue to run for generating some debug output for GUI corrector." << std::endl;
     // std::cerr << "Make sure you set the debug level > 4." << std::endl;
     // this->m_Failure = true;
     // return -1;
-    }
+  }
   else
-    {
+  {
     std::cout << "It works! The number of detected spheres is not less than 2!" << std::endl;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

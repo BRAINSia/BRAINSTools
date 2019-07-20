@@ -26,16 +26,15 @@ namespace itk
 /**
  * Default constructor
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::VectorDiffeomorphicDemonsRegistrationFilter() :
-  m_UseFirstOrderExp(false)
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::VectorDiffeomorphicDemonsRegistrationFilter()
+  : m_UseFirstOrderExp( false )
 {
   typename DemonsRegistrationFunctionType::Pointer drfp;
   drfp = DemonsRegistrationFunctionType::New();
 
-  this->SetDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
-                                 drfp.GetPointer() ) );
+  this->SetDifferenceFunction( static_cast< FiniteDifferenceFunctionType * >( drfp.GetPointer() ) );
 
   m_Multiplier = MultiplyByConstantType::New();
   m_Multiplier->InPlaceOn();
@@ -43,9 +42,8 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
   m_Exponentiator = FieldExponentiatorType::New();
 
   m_Warper = VectorWarperType::New();
-  FieldInterpolatorPointer VectorInterpolator =
-    FieldInterpolatorType::New();
-  m_Warper->SetInterpolator(VectorInterpolator);
+  FieldInterpolatorPointer VectorInterpolator = FieldInterpolatorType::New();
+  m_Warper->SetInterpolator( VectorInterpolator );
 
   m_Adder = AdderType::New();
   m_Adder->InPlaceOn();
@@ -55,70 +53,65 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
  * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
  * It throws and exception, if it is not.
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-typename VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage,
-                                                     TDisplacementField>::DemonsRegistrationFunctionType
-* VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::DownCastDifferenceFunctionType()
-  {
-  DemonsRegistrationFunctionType *drfp =
-    dynamic_cast<DemonsRegistrationFunctionType *>
-    ( this->GetDifferenceFunction().GetPointer() );
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+typename VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                                      TDisplacementField >::DemonsRegistrationFunctionType *
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::DownCastDifferenceFunctionType()
+{
+  DemonsRegistrationFunctionType * drfp =
+    dynamic_cast< DemonsRegistrationFunctionType * >( this->GetDifferenceFunction().GetPointer() );
 
-  if( !drfp )
-    {
-    itkExceptionMacro(
-      << "Could not cast difference function to SymmetricDemonsRegistrationFunction");
-    }
+  if ( !drfp )
+  {
+    itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
+  }
 
   return drfp;
-  }
+}
 
 /**
  * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
  * It throws and exception, if it is not.
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-const typename VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage,
-                                                           TDisplacementField>::DemonsRegistrationFunctionType
-* VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::DownCastDifferenceFunctionType() const
-  {
-  const DemonsRegistrationFunctionType *drfp =
-    dynamic_cast<const DemonsRegistrationFunctionType *>
-    ( this->GetDifferenceFunction().GetPointer() );
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+const typename VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                                            TDisplacementField >::DemonsRegistrationFunctionType *
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::DownCastDifferenceFunctionType() const
+{
+  const DemonsRegistrationFunctionType * drfp =
+    dynamic_cast< const DemonsRegistrationFunctionType * >( this->GetDifferenceFunction().GetPointer() );
 
-  if( !drfp )
-    {
-    itkExceptionMacro(
-      << "Could not cast difference function to SymmetricDemonsRegistrationFunction");
-    }
+  if ( !drfp )
+  {
+    itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
+  }
 
   return drfp;
-  }
+}
 
 /**
  * Set the function state values before each iteration
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::InitializeIteration()
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::InitializeIteration()
 {
   MovingImageConstPointer movingPtr = this->GetMovingImage();
   FixedImageConstPointer  fixedPtr = this->GetFixedImage();
 
-  if( !movingPtr || !fixedPtr )
-    {
-    itkExceptionMacro(<< "Fixed and/or moving image not set");
-    }
+  if ( !movingPtr || !fixedPtr )
+  {
+    itkExceptionMacro( << "Fixed and/or moving image not set" );
+  }
 
   // update variables in the equation object
-  DemonsRegistrationFunctionType *f = this->DownCastDifferenceFunctionType();
+  DemonsRegistrationFunctionType * f = this->DownCastDifferenceFunctionType();
   f->SetDisplacementField( this->GetDisplacementField() );
 
-  f->SetFixedImage(fixedPtr);
-  f->SetMovingImage(movingPtr);
+  f->SetFixedImage( fixedPtr );
+  f->SetMovingImage( movingPtr );
   f->InitializeIteration();
 
   // call the superclass  implementation ( initializes f )
@@ -128,12 +121,11 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /*
  * Get the metric value from the difference function
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 double
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GetMetric() const
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::GetMetric() const
 {
-  const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  const DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
   return drfp->GetMetric();
 }
@@ -141,12 +133,12 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /**
  *  Get Intensity Difference Threshold
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 double
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GetIntensityDifferenceThreshold() const
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::GetIntensityDifferenceThreshold() const
 {
-  const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  const DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
   return drfp->GetIntensityDifferenceThreshold();
 }
@@ -154,25 +146,25 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /**
  *  Set Intensity Difference Threshold
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::SetIntensityDifferenceThreshold(double threshold)
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::SetIntensityDifferenceThreshold( double threshold )
 {
-  DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
-  drfp->SetIntensityDifferenceThreshold(threshold);
+  drfp->SetIntensityDifferenceThreshold( threshold );
 }
 
 /**
  *  Get Maximum Update Step Length
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 double
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GetMaximumUpdateStepLength() const
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::GetMaximumUpdateStepLength() const
 {
-  const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  const DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
   return drfp->GetMaximumUpdateStepLength();
 }
@@ -180,25 +172,24 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /**
  *  Set Maximum Update Step Length
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::SetMaximumUpdateStepLength(double threshold)
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
+                                             TDisplacementField >::SetMaximumUpdateStepLength( double threshold )
 {
-  DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
-  drfp->SetMaximumUpdateStepLength(threshold);
+  drfp->SetMaximumUpdateStepLength( threshold );
 }
 
 /**
  * Get the metric value from the difference function
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 const double &
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GetRMSChange() const
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::GetRMSChange() const
 {
-  const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  const DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
   return drfp->GetRMSChange();
 }
@@ -206,13 +197,11 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /**
  *
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-typename VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GradientType
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GetUseGradientType() const
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+typename VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::GradientType
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::GetUseGradientType() const
 {
-  const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  const DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
   return drfp->GetUseGradientType();
 }
@@ -220,23 +209,22 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /**
  *
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::SetUseGradientType(GradientType gtype)
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::SetUseGradientType(
+  GradientType gtype )
 {
-  DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
-  drfp->SetUseGradientType(gtype);
+  drfp->SetUseGradientType( gtype );
 }
 
 /**
  *
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::AllocateUpdateBuffer()
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::AllocateUpdateBuffer()
 {
   // The update buffer looks just like the output.
   DisplacementFieldPointer output = this->GetOutput();
@@ -254,34 +242,34 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 /**
  * Get the metric value from the difference function
  */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::ApplyUpdate(const TimeStepType &dt)
-  {
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::ApplyUpdate(
+  const TimeStepType & dt )
+{
   // If we smooth the update buffer before applying it, then the are
   // approximating a viscuous problem as opposed to an elastic problem
-  if( this->GetSmoothUpdateField() )
-    {
+  if ( this->GetSmoothUpdateField() )
+  {
     this->SmoothUpdateField();
-    }
+  }
 
   // Use time step if necessary. In many cases
   // the time step is one so this will be skipped
-  if( std::fabs(dt - 1.0) > 1.0e-4 )
-    {
-    itkDebugMacro("Using timestep: " << dt);
-    m_Multiplier->SetInput2(dt);
+  if ( std::fabs( dt - 1.0 ) > 1.0e-4 )
+  {
+    itkDebugMacro( "Using timestep: " << dt );
+    m_Multiplier->SetInput2( dt );
     m_Multiplier->SetInput( this->GetUpdateBuffer() );
     m_Multiplier->GraftOutput( this->GetUpdateBuffer() );
     // in place update
     m_Multiplier->Update();
     // graft output back to this->GetUpdateBuffer()
     this->GetUpdateBuffer()->Graft( m_Multiplier->GetOutput() );
-    }
+  }
 
-  if( this->m_UseFirstOrderExp )
-    {
+  if ( this->m_UseFirstOrderExp )
+  {
     // use s <- s o (Id +u)
 
     // skip exponential and compose the vector fields
@@ -294,40 +282,38 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
     m_Adder->SetInput1( m_Warper->GetOutput() );
     m_Adder->SetInput2( this->GetUpdateBuffer() );
 
-    m_Adder->GetOutput()->SetRequestedRegion(
-      this->GetOutput()->GetRequestedRegion() );
-    }
+    m_Adder->GetOutput()->SetRequestedRegion( this->GetOutput()->GetRequestedRegion() );
+  }
   else
-    {
+  {
     // use s <- s o exp(u)
 
     // compute the exponential
     m_Exponentiator->SetInput( this->GetUpdateBuffer() );
 
     const double imposedMaxUpStep = this->GetMaximumUpdateStepLength();
-    if( imposedMaxUpStep > 0.0 )
-      {
+    if ( imposedMaxUpStep > 0.0 )
+    {
       // max(norm(Phi))/2^N <= 0.25*pixelspacing
-      const double numiterfloat = 2.0 + std::log(imposedMaxUpStep) / itk::Math::ln2;
+      const double numiterfloat = 2.0 + std::log( imposedMaxUpStep ) / itk::Math::ln2;
       unsigned int numiter = 0;
-      if( numiterfloat > 0.0 )
-        {
-        numiter = Math::Ceil<unsigned int>(numiterfloat);
-        }
+      if ( numiterfloat > 0.0 )
+      {
+        numiter = Math::Ceil< unsigned int >( numiterfloat );
+      }
 
       m_Exponentiator->AutomaticNumberOfIterationsOff();
-      m_Exponentiator->SetMaximumNumberOfIterations(numiter);
-      }
+      m_Exponentiator->SetMaximumNumberOfIterations( numiter );
+    }
     else
-      {
+    {
       m_Exponentiator->AutomaticNumberOfIterationsOn();
       // just set a high value so that automatic number of step
       // is not thresholded
-      m_Exponentiator->SetMaximumNumberOfIterations(2000u);
-      }
+      m_Exponentiator->SetMaximumNumberOfIterations( 2000u );
+    }
 
-    m_Exponentiator->GetOutput()->SetRequestedRegion(
-      this->GetOutput()->GetRequestedRegion() );
+    m_Exponentiator->GetOutput()->SetRequestedRegion( this->GetOutput()->GetRequestedRegion() );
 
     m_Exponentiator->Update();
 
@@ -343,47 +329,44 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
     m_Adder->SetInput1( m_Warper->GetOutput() );
     m_Adder->SetInput2( m_Exponentiator->GetOutput() );
 
-    m_Adder->GetOutput()->SetRequestedRegion(
-      this->GetOutput()->GetRequestedRegion() );
-    }
+    m_Adder->GetOutput()->SetRequestedRegion( this->GetOutput()->GetRequestedRegion() );
+  }
 
   // Triggers update
   m_Adder->Update();
 
   // Region passing stuff
   this->GraftOutput( m_Adder->GetOutput() );
-// HACK:  This is not in ITKv4  this->GetOutput()->Modified();
+  // HACK:  This is not in ITKv4  this->GetOutput()->Modified();
 
-  DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
+  DemonsRegistrationFunctionType * drfp = this->DownCastDifferenceFunctionType();
 
   this->SetRMSChange( drfp->GetRMSChange() );
 
   /**
    * Smooth the deformation field
    */
-  if( this->GetSmoothDisplacementField() )
-    {
+  if ( this->GetSmoothDisplacementField() )
+  {
     this->SmoothDisplacementField();
-    }
   }
-
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::PrintSelf(std::ostream & os, Indent indent) const
-{
-  Superclass::PrintSelf(os, indent);
-
-  os << indent << "Intensity difference threshold: "
-     << this->GetIntensityDifferenceThreshold() << std::endl;
-  os << indent << "Use First Order exponential: "
-     << this->m_UseFirstOrderExp << std::endl;
 }
 
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
 void
-VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::VerifyInputInformation() const
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::PrintSelf(
+  std::ostream & os, Indent indent ) const
+{
+  Superclass::PrintSelf( os, indent );
+
+  os << indent << "Intensity difference threshold: " << this->GetIntensityDifferenceThreshold() << std::endl;
+  os << indent << "Use First Order exponential: " << this->m_UseFirstOrderExp << std::endl;
+}
+
+template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+void
+VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplacementField >::VerifyInputInformation()
+  const
 {
   // Do nothing, since images to be registered will not be in the same space
 }

@@ -53,41 +53,49 @@ class vtkImageImport;
 class vtkKWImage : public vtkObject
 {
 public:
-  static vtkKWImage * New();
+  static vtkKWImage *
+  New();
 
-  vtkTypeRevisionMacro(vtkKWImage, vtkObject);
+  vtkTypeRevisionMacro( vtkKWImage, vtkObject );
 
-  using ImageBaseType = itk::ImageBase<3>;
+  using ImageBaseType = itk::ImageBase< 3 >;
   using ImagePointer = ImageBaseType::Pointer;
   using ImageConstPointer = ImageBaseType::ConstPointer;
   using ITKScalarPixelType = itk::ImageIOBase::IOComponentType;
 
   // Set the untyped ITK image
-  void SetITKImageBase( ImageBaseType * );
+  void
+  SetITKImageBase( ImageBaseType * );
 
   // Return the pixel type using ITK enums.
-  ITKScalarPixelType GetITKScalarPixelType() const;
+  ITKScalarPixelType
+  GetITKScalarPixelType() const;
 
   // Return the pixel type using VTK enums.
-  int GetVTKScalarPixelType();
+  int
+  GetVTKScalarPixelType();
 
-  vtkImageData * GetVTKImage();
+  vtkImageData *
+  GetVTKImage();
 
   // Return the ITK image base. This is independent of the pixel type
-  const ImageBaseType * GetITKImageBase() const;
+  const ImageBaseType *
+  GetITKImageBase() const;
 
 protected:
   vtkKWImage();
   ~vtkKWImage();
+
 private:
-  vtkKWImage(const vtkKWImage &);      // Not implemented.
-  void operator=(const vtkKWImage &);  // Not implemented.
+  vtkKWImage( const vtkKWImage & ); // Not implemented.
+  void
+  operator=( const vtkKWImage & ); // Not implemented.
 
   ImagePointer ItkImage;
 
   itk::ProcessObject::Pointer Exporter;
 
-  vtkImageImport *Importer;
+  vtkImageImport * Importer;
 };
 
 #endif

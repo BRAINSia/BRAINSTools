@@ -25,26 +25,28 @@ class MaskType : public ElementParser
 {
 public:
   using SuperClass = ElementParser;
-  int PrintSelf(std::ostream & os, int indent) const override
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent += SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== MaskType ===" << std::endl;
+    indent += SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== MaskType ===" << std::endl;
     return indent + 2;
   }
 
-  MaskType() : ElementParser("Mask")
+  MaskType()
+    : ElementParser( "Mask" )
   {
-    this->Add(new StringValue("Type", ""), "Type");
-    this->Add(new StringValue("Filename", ""), "Filename");
+    this->Add( new StringValue( "Type", "" ), "Type" );
+    this->Add( new StringValue( "Filename", "" ), "Filename" );
   }
 };
 
 class MaskList : public ElementParser
 {
 public:
-  MaskList() : ElementParser("MaskList")
-  {
-  }
+  MaskList()
+    : ElementParser( "MaskList" )
+  {}
 };
 
 #endif // MaskType

@@ -28,127 +28,124 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputImage, typename TOutputImage>
-NaryRelabelImageFilter<TInputImage, TOutputImage>
-::NaryRelabelImageFilter()
+template < typename TInputImage, typename TOutputImage >
+NaryRelabelImageFilter< TInputImage, TOutputImage >::NaryRelabelImageFilter()
 {
-  m_BackgroundValue = NumericTraits<InputImagePixelType>::ZeroValue();
+  m_BackgroundValue = NumericTraits< InputImagePixelType >::ZeroValue();
   m_IgnoreCollision = true;
 }
 
 /**
  * ThreadedGenerateData Performs the pixel-wise addition
  */
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-NaryRelabelImageFilter<TInputImage, TOutputImage>
-::GenerateData()
+NaryRelabelImageFilter< TInputImage, TOutputImage >::GenerateData()
 {
   this->AllocateOutputs();
 
   const OutputImageRegionType & outputRegionForThread = this->GetOutput()->GetRequestedRegion();
 
-  using ImageRegionConstIteratorType = ImageRegionConstIterator<TInputImage>;
-  std::vector<ImageRegionConstIteratorType *> inputIterators;
+  using ImageRegionConstIteratorType = ImageRegionConstIterator< TInputImage >;
+  std::vector< ImageRegionConstIteratorType * > inputIterators;
   // create the iterators for the input images
-  for( unsigned int i = 0; i < this->GetNumberOfInputs(); ++i )
-    {
+  for ( unsigned int i = 0; i < this->GetNumberOfInputs(); ++i )
+  {
     const InputImageType * input = this->GetInput( i );
 
-    if( input )
-      {
+    if ( input )
+    {
       ImageRegionConstIteratorType * inputIt = new ImageRegionConstIteratorType( input, outputRegionForThread );
       inputIterators.push_back( inputIt );
-      }
     }
+  }
 
   // create the progress reporter
-  ProgressReporter progress(this, 0, outputRegionForThread.GetNumberOfPixels() * 2 * inputIterators.size() );
+  ProgressReporter progress( this, 0, outputRegionForThread.GetNumberOfPixels() * 2 * inputIterators.size() );
 
   // found the labels in the input images and compute their new value
-  using TranslatorType = std::vector<std::map<InputImagePixelType, OutputImagePixelType> >;
+  using TranslatorType = std::vector< std::map< InputImagePixelType, OutputImagePixelType > >;
   TranslatorType translator;
   translator.resize( inputIterators.size() );
 
-  OutputImagePixelType label = NumericTraits<OutputImagePixelType>::ZeroValue();
-  for( unsigned int i = 0; i < inputIterators.size(); ++i )
-    {
+  OutputImagePixelType label = NumericTraits< OutputImagePixelType >::ZeroValue();
+  for ( unsigned int i = 0; i < inputIterators.size(); ++i )
+  {
     ImageRegionConstIteratorType * inputIt = inputIterators[i];
-    for( inputIt->GoToBegin(); !inputIt->IsAtEnd(); ++(*inputIt) )
-      {
+    for ( inputIt->GoToBegin(); !inputIt->IsAtEnd(); ++( *inputIt ) )
+    {
       const InputImagePixelType & v = inputIt->Get();
-      if( v != m_BackgroundValue && translator[i].find( v ) == translator[i].end() )
-        {
+      if ( v != m_BackgroundValue && translator[i].find( v ) == translator[i].end() )
+      {
         // a new label to translate
-        if( label == m_BackgroundValue )
-          {
+        if ( label == m_BackgroundValue )
+        {
           // avoid the background label
           label++;
-          }
+        }
         // std::cout << i << " " << v+0.0 << " " << label+0.0 << std::endl;
         translator[i][v] = label;
 
         // increment the label for the next to translate
         // TODO: throw an exception if the maximum number of labels is exceeded
         label++;
-        }
-      progress.CompletedPixel();
       }
+      progress.CompletedPixel();
     }
+  }
 
   // now write the output image
-  OutputImagePointer                output = this->GetOutput();
-  ImageRegionIterator<TOutputImage> outputIt( output, outputRegionForThread );
-  for( unsigned int i = 0; i < inputIterators.size(); ++i )
-    {
+  OutputImagePointer                  output = this->GetOutput();
+  ImageRegionIterator< TOutputImage > outputIt( output, outputRegionForThread );
+  for ( unsigned int i = 0; i < inputIterators.size(); ++i )
+  {
     inputIterators[i]->GoToBegin();
-    }
-  for( outputIt.GoToBegin(); !outputIt.IsAtEnd(); ++outputIt )
-    {
+  }
+  for ( outputIt.GoToBegin(); !outputIt.IsAtEnd(); ++outputIt )
+  {
     // find the output label
     OutputImagePixelType outputLabel = m_BackgroundValue;
     bool                 labelFound = false;
-    for( unsigned int i = 0; i < inputIterators.size(); i++ )
-      {
+    for ( unsigned int i = 0; i < inputIterators.size(); i++ )
+    {
       const InputImagePixelType & v = inputIterators[i]->Get();
-      if( v != m_BackgroundValue )
+      if ( v != m_BackgroundValue )
+      {
+        if ( !m_IgnoreCollision && labelFound )
         {
-        if( !m_IgnoreCollision && labelFound )
-          {
           itkExceptionMacro( << "Label collision detected." );
-          }
+        }
 
         outputLabel = translator[i][v];
         labelFound = true;
-        }
       }
+    }
 
     // write the output
     outputIt.Set( outputLabel );
     // now update the input iterators
-    for( unsigned int i = 0; i < inputIterators.size(); i++ )
-      {
-      ++(*inputIterators[i]);
-      progress.CompletedPixel();
-      }
-    }
-  // delete the input iterators
-  for( unsigned int i = 0; i < inputIterators.size(); ++i )
+    for ( unsigned int i = 0; i < inputIterators.size(); i++ )
     {
-    delete inputIterators[i];
+      ++( *inputIterators[i] );
+      progress.CompletedPixel();
     }
+  }
+  // delete the input iterators
+  for ( unsigned int i = 0; i < inputIterators.size(); ++i )
+  {
+    delete inputIterators[i];
+  }
 }
 
-template <typename TInputImage, typename TOutputImage>
+template < typename TInputImage, typename TOutputImage >
 void
-NaryRelabelImageFilter<TInputImage, TOutputImage>
-::PrintSelf( std::ostream& os, Indent indent) const
+NaryRelabelImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
 
   os << indent << "Background Value: "
-     << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
-  os << indent << "Ignore Collision: " << static_cast<typename NumericTraits<bool>::PrintType>(m_IgnoreCollision)
+     << static_cast< typename NumericTraits< InputImagePixelType >::PrintType >( m_BackgroundValue ) << std::endl;
+  os << indent << "Ignore Collision: " << static_cast< typename NumericTraits< bool >::PrintType >( m_IgnoreCollision )
      << std::endl;
 }
 } // end namespace itk

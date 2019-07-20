@@ -29,28 +29,26 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TInputMesh, typename TDestinationPointsContainer>
-LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
-::LinearInterpolateDeformationFieldMeshFunction()
-{
-}
+template < typename TInputMesh, typename TDestinationPointsContainer >
+LinearInterpolateDeformationFieldMeshFunction<
+  TInputMesh, TDestinationPointsContainer >::LinearInterpolateDeformationFieldMeshFunction()
+{}
 
 /**
  * Destructor
  */
-template <typename TInputMesh, typename TDestinationPointsContainer>
-LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
-::~LinearInterpolateDeformationFieldMeshFunction()
-{
-}
+template < typename TInputMesh, typename TDestinationPointsContainer >
+LinearInterpolateDeformationFieldMeshFunction<
+  TInputMesh, TDestinationPointsContainer >::~LinearInterpolateDeformationFieldMeshFunction()
+{}
 
 /**
  * Standard "PrintSelf" method
  */
-template <typename TInputMesh, typename TDestinationPointsContainer>
+template < typename TInputMesh, typename TDestinationPointsContainer >
 void
-LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
-::PrintSelf( std::ostream& os, Indent indent) const
+LinearInterpolateDeformationFieldMeshFunction< TInputMesh, TDestinationPointsContainer >::PrintSelf(
+  std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf( os, indent );
 }
@@ -59,11 +57,10 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
  * Method provided for completness of the base class API.
  * This method is not expected to be used here.
  */
-template <typename TInputMesh, typename TDestinationPointsContainer>
-typename
-LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>::OutputType
-LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
-::Evaluate( const PointType & itkNotUsed(point) ) const
+template < typename TInputMesh, typename TDestinationPointsContainer >
+typename LinearInterpolateDeformationFieldMeshFunction< TInputMesh, TDestinationPointsContainer >::OutputType
+LinearInterpolateDeformationFieldMeshFunction< TInputMesh, TDestinationPointsContainer >::Evaluate(
+  const PointType & itkNotUsed( point ) ) const
 {
   return OutputType();
 }
@@ -71,43 +68,42 @@ LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsCont
 /**
  * Evaluate the mesh at a given point position.
  */
-template <typename TInputMesh, typename TDestinationPointsContainer>
+template < typename TInputMesh, typename TDestinationPointsContainer >
 bool
-LinearInterpolateDeformationFieldMeshFunction<TInputMesh, TDestinationPointsContainer>
-::Evaluate( const DestinationPointsContainerType * field,
-            const PointType & point, PointType & outputPoint ) const
+LinearInterpolateDeformationFieldMeshFunction< TInputMesh, TDestinationPointsContainer >::Evaluate(
+  const DestinationPointsContainerType * field, const PointType & point, PointType & outputPoint ) const
 {
-  InstanceIdentifierVectorType pointIds(3);
+  InstanceIdentifierVectorType pointIds( 3 );
 
   bool foundTriangle = this->FindTriangle( point, pointIds );
 
-  if( !foundTriangle )
+  if ( !foundTriangle )
+  {
+    if ( this->GetUseNearestNeighborInterpolationAsBackup() )
     {
-    if( this->GetUseNearestNeighborInterpolationAsBackup() )
-      {
       constexpr unsigned int numberOfNeighbors = 1;
 
-      InstanceIdentifierVectorType closestPointIds(numberOfNeighbors);
+      InstanceIdentifierVectorType closestPointIds( numberOfNeighbors );
 
       this->Search( point, numberOfNeighbors, closestPointIds );
 
       outputPoint = field->ElementAt( closestPointIds[0] );
 
       return true;
-      }
+    }
     else
-      {
+    {
       std::cout << "no triangle is found in DF interpolation." << std::endl;
       return false;
-      }
     }
+  }
 
   const PointType & point1 = field->ElementAt( pointIds[0] );
   const PointType & point2 = field->ElementAt( pointIds[1] );
   const PointType & point3 = field->ElementAt( pointIds[2] );
 
-  const RealType & weight1 = this->GetInterpolationWeight(0);
-  const RealType & weight2 = this->GetInterpolationWeight(1);
+  const RealType & weight1 = this->GetInterpolationWeight( 0 );
+  const RealType & weight2 = this->GetInterpolationWeight( 1 );
 
   outputPoint.SetToBarycentricCombination( point1, point2, point3, weight1, weight2 );
 

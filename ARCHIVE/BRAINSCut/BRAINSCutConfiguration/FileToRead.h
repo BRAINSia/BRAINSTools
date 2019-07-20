@@ -21,47 +21,45 @@
 #include "FileSystemDescriptor.h"
 #include <iostream>
 
-template <typename OutputType>
-class FileToRead :
-  public FileSystemDescriptor<OutputType>
+template < typename OutputType >
+class FileToRead : public FileSystemDescriptor< OutputType >
 {
 public:
-  using SuperClass = FileSystemDescriptor<OutputType>;
-  int PrintSelf(std::ostream & os, int indent) const override
+  using SuperClass = FileSystemDescriptor< OutputType >;
+  int
+  PrintSelf( std::ostream & os, int indent ) const override
   {
-    indent += SuperClass::PrintSelf(os, indent);
-    os << this->PrintSpaces(indent) << "=== FileToRead ===" << std::endl;
+    indent += SuperClass::PrintSelf( os, indent );
+    os << this->PrintSpaces( indent ) << "=== FileToRead ===" << std::endl;
     return indent + 2;
   }
 
-  FileToRead(const std::string & name, const std::string & filename) : FileSystemDescriptor<OutputType>(name,
-                                                                                                        filename)
-  {
-  }
+  FileToRead( const std::string & name, const std::string & filename )
+    : FileSystemDescriptor< OutputType >( name, filename )
+  {}
 
-  FileToRead()
-  {
-  }
+  FileToRead() {}
 
-  bool Verify() const override
+  bool
+  Verify() const override
   {
     bool returnvalue = true;
 
-    if( this->m_Filename == "" )
-      {
+    if ( this->m_Filename == "" )
+    {
       std::cerr << "No filename specified." << std::endl;
       returnvalue = false;
-      }
-    if( !this->Exists() )
-      {
+    }
+    if ( !this->Exists() )
+    {
       std::cerr << "File does not exists" << this->m_Filename << std::endl;
       returnvalue = false;
-      }
-    if( !this->IsReadable() )
-      {
+    }
+    if ( !this->IsReadable() )
+    {
       std::cerr << "File is not readable " << this->m_Filename << std::endl;
       returnvalue = false;
-      }
+    }
     return returnvalue;
   }
 };

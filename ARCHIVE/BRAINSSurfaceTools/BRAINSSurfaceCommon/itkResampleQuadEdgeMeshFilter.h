@@ -33,18 +33,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TOutputMesh>
-class ResampleQuadEdgeMeshFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TOutputMesh >
+class ResampleQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleQuadEdgeMeshFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( ResampleQuadEdgeMeshFilter );
 
   using Self = ResampleQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( ResampleQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -89,20 +87,20 @@ public:
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   /** Transform type alias. */
-  using TransformType = Transform<double,
-                    Self::PointDimension,
-                    Self::PointDimension>;
+  using TransformType = Transform< double, Self::PointDimension, Self::PointDimension >;
   using TransformPointerType = typename TransformType::ConstPointer;
 
   /** Interpolator type alias. */
-  using InterpolatorType = InterpolateMeshFunction<InputMeshType>;
+  using InterpolatorType = InterpolateMeshFunction< InputMeshType >;
   using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set Mesh whose grid will define the geometry and topology of the output Mesh.
    *  In a registration scenario, this will typically be the Fixed mesh. */
-  void SetReferenceMesh( const OutputMeshType * mesh );
+  void
+  SetReferenceMesh( const OutputMeshType * mesh );
 
-  const OutputMeshType * GetReferenceMesh( void ) const;
+  const OutputMeshType *
+  GetReferenceMesh( void ) const;
 
   /** Set the coordinate transformation.
    * Set the coordinate transform to use for resampling.  Note that this must
@@ -126,37 +124,46 @@ public:
 
   /** Get a pointer to the interpolator function. */
   itkGetConstObjectMacro( Interpolator, InterpolatorType );
+
 protected:
   ResampleQuadEdgeMeshFilter();
   ~ResampleQuadEdgeMeshFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
+  virtual void
+  CopyReferenceMeshToOutputMesh();
 
-  virtual void CopyReferenceMeshToOutputMesh();
+  virtual void
+  CopyReferenceMeshToOutputMeshGeometry();
 
-  virtual void CopyReferenceMeshToOutputMeshGeometry();
+  virtual void
+  CopyReferenceMeshToOutputMeshPoints();
 
-  virtual void CopyReferenceMeshToOutputMeshPoints();
+  virtual void
+  CopyReferenceMeshToOutputMeshCells();
 
-  virtual void CopyReferenceMeshToOutputMeshCells();
+  virtual void
+  CopyReferenceMeshToOutputMeshEdgeCells();
 
-  virtual void CopyReferenceMeshToOutputMeshEdgeCells();
+  virtual void
+  CopyReferenceMeshToOutputMeshFieldData();
 
-  virtual void CopyReferenceMeshToOutputMeshFieldData();
+  virtual void
+  CopyReferenceMeshToOutputMeshPointData();
 
-  virtual void CopyReferenceMeshToOutputMeshPointData();
+  virtual void
+  CopyReferenceMeshToOutputMeshCellData();
 
-  virtual void CopyReferenceMeshToOutputMeshCellData();
-
-  TransformPointerType    m_Transform;          // Coordinate transform to use
-  InterpolatorPointerType m_Interpolator;       // Image function for
+  TransformPointerType    m_Transform;    // Coordinate transform to use
+  InterpolatorPointerType m_Interpolator; // Image function for
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkResampleQuadEdgeMeshFilter.hxx"
+#  include "itkResampleQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

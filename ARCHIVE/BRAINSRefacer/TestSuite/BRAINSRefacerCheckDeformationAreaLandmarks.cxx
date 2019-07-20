@@ -13,13 +13,16 @@
 
 #include "../MaskFromLandmarksFilter.h"
 
-void outputError(itk::ExceptionObject &err)
+void
+outputError( itk::ExceptionObject & err )
 {
   std::cerr << "Exception: " << std::endl;
   std::cerr << err << std::endl;
 }
 
-int main(int argc, char *argv[]) {
+int
+main( int argc, char * argv[] )
+{
   PARSE_ARGS;
 
   const bool checkDeformedArea = !checkNonDeformedArea;
@@ -27,56 +30,56 @@ int main(int argc, char *argv[]) {
   using InputPixelType = float;
   constexpr int Dimension = 3;
 
-  using ImageType = itk::Image<InputPixelType, Dimension>;
-  using MaskImageType = itk::Image<unsigned char, Dimension>;
+  using ImageType = itk::Image< InputPixelType, Dimension >;
+  using MaskImageType = itk::Image< unsigned char, Dimension >;
 
-  using ReaderType = itk::ImageFileReader<ImageType>;
+  using ReaderType = itk::ImageFileReader< ImageType >;
 
-  using AbsValDiffFilterType = itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>;
-  using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
+  using AbsValDiffFilterType = itk::AbsoluteValueDifferenceImageFilter< ImageType, ImageType, ImageType >;
+  using StatisticsFilterType = itk::StatisticsImageFilter< ImageType >;
 
   ReaderType::Pointer originalReader = ReaderType::New();
-  originalReader->SetFileName(inputOriginal);
+  originalReader->SetFileName( inputOriginal );
 
   ReaderType::Pointer defacedReader = ReaderType::New();
-  defacedReader->SetFileName(inputRefaced);
+  defacedReader->SetFileName( inputRefaced );
 
-  using MaskImageFromLandmarksFilterType = MaskFromLandmarksFilter<ImageType, MaskImageType>;
-  using MaskMultiplierType = itk::MultiplyImageFilter<MaskImageType, ImageType, ImageType>;
+  using MaskImageFromLandmarksFilterType = MaskFromLandmarksFilter< ImageType, MaskImageType >;
+  using MaskMultiplierType = itk::MultiplyImageFilter< MaskImageType, ImageType, ImageType >;
 
   // setup original image masked for deformation area
   MaskImageFromLandmarksFilterType::Pointer areaMaskFilterOriginal = MaskImageFromLandmarksFilterType::New();
-  areaMaskFilterOriginal->SetLandmarksFileName(brainLandmarksFile);
-  areaMaskFilterOriginal->SetInput(originalReader->GetOutput());
+  areaMaskFilterOriginal->SetLandmarksFileName( brainLandmarksFile );
+  areaMaskFilterOriginal->SetInput( originalReader->GetOutput() );
 
   MaskMultiplierType::Pointer areaOriginalMaskMultiplier = MaskMultiplierType::New();
-  areaOriginalMaskMultiplier->SetInput1(areaMaskFilterOriginal->GetOutput());
-  areaOriginalMaskMultiplier->SetInput2(originalReader->GetOutput());
+  areaOriginalMaskMultiplier->SetInput1( areaMaskFilterOriginal->GetOutput() );
+  areaOriginalMaskMultiplier->SetInput2( originalReader->GetOutput() );
 
   // setup refaced image masked for deformation area
   MaskImageFromLandmarksFilterType::Pointer areaMaskFilterRefaced = MaskImageFromLandmarksFilterType::New();
-  areaMaskFilterRefaced->SetLandmarksFileName(brainLandmarksFile);
-  areaMaskFilterRefaced->SetInput(defacedReader->GetOutput());
+  areaMaskFilterRefaced->SetLandmarksFileName( brainLandmarksFile );
+  areaMaskFilterRefaced->SetInput( defacedReader->GetOutput() );
 
-  //set which area to check
-  if (checkDeformedArea)
+  // set which area to check
+  if ( checkDeformedArea )
   {
-    areaMaskFilterOriginal->SetReverseMask(true);
-    areaMaskFilterRefaced->SetReverseMask(true);
+    areaMaskFilterOriginal->SetReverseMask( true );
+    areaMaskFilterRefaced->SetReverseMask( true );
   }
 
   MaskMultiplierType::Pointer areaRefacedMaskMultiplier = MaskMultiplierType::New();
-  areaRefacedMaskMultiplier->SetInput1(areaMaskFilterRefaced->GetOutput());
-  areaRefacedMaskMultiplier->SetInput2(defacedReader->GetOutput());
+  areaRefacedMaskMultiplier->SetInput1( areaMaskFilterRefaced->GetOutput() );
+  areaRefacedMaskMultiplier->SetInput2( defacedReader->GetOutput() );
 
   // Get the absolute value difference of the two deformed area masked images
   AbsValDiffFilterType::Pointer absDiffAreaFilter = AbsValDiffFilterType::New();
-  absDiffAreaFilter->SetInput1(areaOriginalMaskMultiplier->GetOutput());
-  absDiffAreaFilter->SetInput2(areaRefacedMaskMultiplier->GetOutput());
+  absDiffAreaFilter->SetInput1( areaOriginalMaskMultiplier->GetOutput() );
+  absDiffAreaFilter->SetInput2( areaRefacedMaskMultiplier->GetOutput() );
 
   // Setup the statistics filter
   StatisticsFilterType::Pointer areaStatsFilter = StatisticsFilterType::New();
-  areaStatsFilter->SetInput(absDiffAreaFilter->GetOutput());
+  areaStatsFilter->SetInput( absDiffAreaFilter->GetOutput() );
 
   try
   {
@@ -85,7 +88,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Sum of Absolute Difference: " << absDiffSum << std::endl;
 
-    if( checkDeformedArea )
+    if ( checkDeformedArea )
     {
       //
       return absDiffSum > 0 ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -97,9 +100,9 @@ int main(int argc, char *argv[]) {
       return absDiffSum == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
     }
   }
-  catch (itk::ExceptionObject &err)
+  catch ( itk::ExceptionObject & err )
   {
-    outputError(err);
+    outputError( err );
     return EXIT_FAILURE;
   }
 

@@ -45,24 +45,23 @@ namespace itk
  *
  * \ingroup RegistrationMetrics
  */
-template <typename TFixedMesh, typename TMovingMesh>
-class MeanSquaresMeshToMeshMetric :
-  public         MeshToMeshMetric<TFixedMesh, TMovingMesh>
+template < typename TFixedMesh, typename TMovingMesh >
+class MeanSquaresMeshToMeshMetric : public MeshToMeshMetric< TFixedMesh, TMovingMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeanSquaresMeshToMeshMetric);
+  ITK_DISALLOW_COPY_AND_ASSIGN( MeanSquaresMeshToMeshMetric );
 
   /** Standard class type alias. */
   using Self = MeanSquaresMeshToMeshMetric;
-  using Superclass = MeshToMeshMetric<TFixedMesh, TMovingMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = MeshToMeshMetric< TFixedMesh, TMovingMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MeanSquaresMeshToMeshMetric, MeshToMeshMetric);
+  itkTypeMacro( MeanSquaresMeshToMeshMetric, MeshToMeshMetric );
 
   /** Types transferred from the base class */
   using TransformType = typename Superclass::TransformType;
@@ -91,27 +90,29 @@ public:
   static constexpr unsigned int FixedMeshDimension = Superclass::FixedMeshDimension;
 
   /** Get the derivatives of the match measure. */
-  void GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const override;
+  void
+  GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const override;
 
   /**  Get the value for single valued optimizers. */
-  MeasureType GetValue( const TransformParametersType & parameters ) const override;
+  MeasureType
+  GetValue( const TransformParametersType & parameters ) const override;
 
   /**  Get value and derivatives for multiple valued optimizers. */
-  void GetValueAndDerivative( const TransformParametersType & parameters, MeasureType& Value,
-                              DerivativeType& Derivative ) const override;
+  void
+  GetValueAndDerivative( const TransformParametersType & parameters, MeasureType & Value,
+                         DerivativeType & Derivative ) const override;
 
 protected:
   MeanSquaresMeshToMeshMetric();
-  virtual ~MeanSquaresMeshToMeshMetric()
-  {
-  };
+  virtual ~MeanSquaresMeshToMeshMetric(){};
+
 private:
   mutable unsigned int m_NumberOfPixelsCounted;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMeanSquaresMeshToMeshMetric.hxx"
+#  include "itkMeanSquaresMeshToMeshMetric.hxx"
 #endif
 
 #endif

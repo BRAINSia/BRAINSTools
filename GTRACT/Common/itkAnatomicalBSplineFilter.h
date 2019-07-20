@@ -75,16 +75,16 @@ namespace itk
 class GTRACT_COMMON_EXPORT AnatomicalBSplineFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalBSplineFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( AnatomicalBSplineFilter );
 
   /** Standard class type alias. */
   using Self = AnatomicalBSplineFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Fixed Image type alias. */
-  using RegisterImageType = itk::Image<signed short, 3>;
+  using RegisterImageType = itk::Image< signed short, 3 >;
   using RegisterImagePointer = RegisterImageType::Pointer;
   using RegisterImageConstPointer = RegisterImageType::ConstPointer;
   using RegisterImageRegionType = RegisterImageType::RegionType;
@@ -98,10 +98,7 @@ public:
   static constexpr unsigned int SpaceDimension = 3;
   static constexpr unsigned int SplineOrder = 3;
   using CoordinateRepType = double;
-  using TransformType = itk::BSplineDeformableTransform<
-      CoordinateRepType,
-      SpaceDimension,
-      SplineOrder>;
+  using TransformType = itk::BSplineDeformableTransform< CoordinateRepType, SpaceDimension, SplineOrder >;
   using TransformRegionType = TransformType::RegionType;
   using TransformSizeType = TransformRegionType::SizeType;
   using TransformSpacingType = TransformType::SpacingType;
@@ -110,17 +107,11 @@ public:
 
   using OptimizerType = itk::LBFGSBOptimizer;
 
-  using MetricType = itk::MattesMutualInformationImageToImageMetric<
-      RegisterImageType,
-      RegisterImageType>;
+  using MetricType = itk::MattesMutualInformationImageToImageMetric< RegisterImageType, RegisterImageType >;
 
-  using InterpolatorType = itk::LinearInterpolateImageFunction<
-      RegisterImageType,
-      double>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction< RegisterImageType, double >;
 
-  using RegistrationType = itk::ImageRegistrationMethod<
-      RegisterImageType,
-      RegisterImageType>;
+  using RegistrationType = itk::ImageRegistrationMethod< RegisterImageType, RegisterImageType >;
 
   using TransformTypePointer = TransformType::Pointer;
   using MetricTypePointer = MetricType::Pointer;
@@ -138,57 +129,55 @@ public:
   using BulkTransformType = itk::VersorRigid3DTransform< double >;
   using BulkTransformPointer = BulkTransformType::Pointer;
    */
-  using BulkTransformType = Transform<CoordinateRepType, Self::SpaceDimension,
-                    Self::SpaceDimension>;
+  using BulkTransformType = Transform< CoordinateRepType, Self::SpaceDimension, Self::SpaceDimension >;
   using BulkTransformPointer = BulkTransformType::ConstPointer;
   /** Standard New method. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Runtime information support. */
-  itkTypeMacro(AnatomicalBSplineFilter, itk::Object);
+  itkTypeMacro( AnatomicalBSplineFilter, itk::Object );
 
   /* SetInput and GetOutput Macros */
-  itkSetObjectMacro(FixedImage, RegisterImageType);
-  itkSetObjectMacro(MovingImage, RegisterImageType);
-  itkSetConstObjectMacro(BulkTransform, BulkTransformType);
-  itkGetConstObjectMacro(Output, TransformType);
+  itkSetObjectMacro( FixedImage, RegisterImageType );
+  itkSetObjectMacro( MovingImage, RegisterImageType );
+  itkSetConstObjectMacro( BulkTransform, BulkTransformType );
+  itkGetConstObjectMacro( Output, TransformType );
 
-  itkSetMacro(SpatialSampleScale, int);
-  itkSetMacro(MaximumNumberOfIterations, int);
-  itkSetMacro(MaximumNumberOfEvaluations, int);
-  itkSetMacro(MaximumNumberOfCorrections, int);
-  itkSetMacro(BSplineHistogramBins, int);
-  itkSetMacro(GridSize, TransformSizeType);
-  itkSetMacro(GridBorderSize, int);
-  itkSetMacro(CostFunctionConvergenceFactor, float);
-  itkSetMacro(ProjectedGradientTolerance, float);
+  itkSetMacro( SpatialSampleScale, int );
+  itkSetMacro( MaximumNumberOfIterations, int );
+  itkSetMacro( MaximumNumberOfEvaluations, int );
+  itkSetMacro( MaximumNumberOfCorrections, int );
+  itkSetMacro( BSplineHistogramBins, int );
+  itkSetMacro( GridSize, TransformSizeType );
+  itkSetMacro( GridBorderSize, int );
+  itkSetMacro( CostFunctionConvergenceFactor, float );
+  itkSetMacro( ProjectedGradientTolerance, float );
 
-  itkSetMacro(BoundTypeX, int);
-  itkGetMacro(BoundTypeX, int);
-  itkSetMacro(BoundTypeY, int);
-  itkGetMacro(BoundTypeY, int);
-  itkSetMacro(BoundTypeZ, int);
-  itkGetMacro(BoundTypeZ, int);
-  itkSetMacro(LowerBoundX, float);
-  itkGetMacro(LowerBoundX, float);
-  itkSetMacro(LowerBoundY, float);
-  itkGetMacro(LowerBoundY, float);
-  itkSetMacro(LowerBoundZ, float);
-  itkGetMacro(LowerBoundZ, float);
-  itkSetMacro(UpperBoundX, float);
-  itkGetMacro(UpperBoundX, float);
-  itkSetMacro(UpperBoundY, float);
-  itkGetMacro(UpperBoundY, float);
-  itkSetMacro(UpperBoundZ, float);
-  itkGetMacro(UpperBoundZ, float);
+  itkSetMacro( BoundTypeX, int );
+  itkGetMacro( BoundTypeX, int );
+  itkSetMacro( BoundTypeY, int );
+  itkGetMacro( BoundTypeY, int );
+  itkSetMacro( BoundTypeZ, int );
+  itkGetMacro( BoundTypeZ, int );
+  itkSetMacro( LowerBoundX, float );
+  itkGetMacro( LowerBoundX, float );
+  itkSetMacro( LowerBoundY, float );
+  itkGetMacro( LowerBoundY, float );
+  itkSetMacro( LowerBoundZ, float );
+  itkGetMacro( LowerBoundZ, float );
+  itkSetMacro( UpperBoundX, float );
+  itkGetMacro( UpperBoundX, float );
+  itkSetMacro( UpperBoundY, float );
+  itkGetMacro( UpperBoundY, float );
+  itkSetMacro( UpperBoundZ, float );
+  itkGetMacro( UpperBoundZ, float );
 
-  void Update();
+  void
+  Update();
 
 protected:
   AnatomicalBSplineFilter();
-  ~AnatomicalBSplineFilter() override
-  {
-  }
+  ~AnatomicalBSplineFilter() override {}
 
 private:
   /*** Input and Output Objects ***/
@@ -217,7 +206,7 @@ private:
   float m_UpperBoundX;
   float m_UpperBoundY;
   float m_UpperBoundZ;
-};  // end of class
+}; // end of class
 } // end namespace itk
 
 #endif

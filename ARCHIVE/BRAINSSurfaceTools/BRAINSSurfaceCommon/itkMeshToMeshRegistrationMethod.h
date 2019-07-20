@@ -59,23 +59,23 @@ namespace itk
  *
  * \ingroup RegistrationFilters
  */
-template <typename TFixedMesh, typename TMovingMesh>
+template < typename TFixedMesh, typename TMovingMesh >
 class MeshToMeshRegistrationMethod : public ProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);
+  ITK_DISALLOW_COPY_AND_ASSIGN( MeshToMeshRegistrationMethod );
 
   /** Standard class type alias. */
   using Self = MeshToMeshRegistrationMethod;
   using Superclass = ProcessObject;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MeshToMeshRegistrationMethod, ProcessObject);
+  itkTypeMacro( MeshToMeshRegistrationMethod, ProcessObject );
 
   /**  Type of the Fixed Mesh. */
   using FixedMeshType = TFixedMesh;
@@ -86,8 +86,7 @@ public:
   using MovingMeshConstPointer = typename MovingMeshType::ConstPointer;
 
   /**  Type of the metric. */
-  using MetricType = MeshToMeshMetric<FixedMeshType,
-                           MovingMeshType>;
+  using MetricType = MeshToMeshMetric< FixedMeshType, MovingMeshType >;
   using MetricPointer = typename MetricType::Pointer;
 
   /**  Type of the Transform . */
@@ -100,7 +99,7 @@ public:
 
   /** Type for the output: Using Decorator pattern for enabling
    *  the Transform to be passed in the data pipeline */
-  using TransformOutputType = DataObjectDecorator<TransformType>;
+  using TransformOutputType = DataObjectDecorator< TransformType >;
   using TransformOutputPointer = typename TransformOutputType::Pointer;
   using TransformOutputConstPointer = typename TransformOutputType::ConstPointer;
 
@@ -123,8 +122,8 @@ public:
   itkGetConstObjectMacro( MovingMesh, MovingMeshType );
 
   /** Set/Get the Optimizer. */
-  itkSetObjectMacro( Optimizer,  OptimizerType );
-  itkGetConstObjectMacro( Optimizer,  OptimizerType );
+  itkSetObjectMacro( Optimizer, OptimizerType );
+  itkGetConstObjectMacro( Optimizer, OptimizerType );
 
   /** Set/Get the Metric. */
   itkSetObjectMacro( Metric, MetricType );
@@ -139,7 +138,8 @@ public:
   itkGetConstObjectMacro( Interpolator, InterpolatorType );
 
   /** Set/Get the initial transformation parameters. */
-  virtual void SetInitialTransformParameters( const ParametersType & param );
+  virtual void
+  SetInitialTransformParameters( const ParametersType & param );
 
   itkGetConstReferenceMacro( InitialTransformParameters, ParametersType );
 
@@ -148,30 +148,34 @@ public:
   itkGetConstReferenceMacro( LastTransformParameters, ParametersType );
 
   /** Initialize by setting the interconnects between the components. */
-  void Initialize() throw (ExceptionObject);
+  void
+  Initialize() throw( ExceptionObject );
 
   /** Returns the transform resulting from the registration process  */
-  const TransformOutputType * GetOutput() const;
+  const TransformOutputType *
+  GetOutput() const;
 
   using Superclass::MakeOutput;
   /** Make a DataObject of the correct type to be used as the specified
    * output. */
-  virtual DataObjectPointer MakeOutput(size_t idx) override;
+  virtual DataObjectPointer
+  MakeOutput( size_t idx ) override;
 
   /** Method to return the latest modified time of this object or
    * any of its cached ivars */
-  unsigned long GetMTime() const override;
+  unsigned long
+  GetMTime() const override;
 
 protected:
   MeshToMeshRegistrationMethod();
-  virtual ~MeshToMeshRegistrationMethod()
-  {
-  };
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  virtual ~MeshToMeshRegistrationMethod(){};
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
   /** Method invoked by the pipeline in order to trigger the computation of
    * the registration. */
-  void  GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
   MetricPointer          m_Metric;
@@ -189,7 +193,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMeshToMeshRegistrationMethod.hxx"
+#  include "itkMeshToMeshRegistrationMethod.hxx"
 #endif
 
 #endif

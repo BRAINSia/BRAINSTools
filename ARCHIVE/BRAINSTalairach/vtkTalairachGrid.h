@@ -40,98 +40,123 @@
 #include "vtkVersion.h"
 #include "itkMacro.h" //Needed for override
 
-#if (VTK_MAJOR_VERSION >= 6)
-#define VTK_FILTERING_EXPORT /* */
+#if ( VTK_MAJOR_VERSION >= 6 )
+#  define VTK_FILTERING_EXPORT /* */
 #endif
 
 class VTK_FILTERING_EXPORT vtkTalairachGrid : public vtkStructuredGrid
 {
 public:
-  static vtkTalairachGrid * New();
+  static vtkTalairachGrid *
+  New();
 
-  vtkTypeMacro(vtkTalairachGrid, vtkDataSet);
+  vtkTypeMacro( vtkTalairachGrid, vtkDataSet );
 
   /* Description:
    * Clear out the memory associated with both the box and grid */
-  void Initialize() override;
+  void
+  Initialize() override;
 
   /* Description:
    * Get the dimensions of the bounding box and the talairach grid */
-  int * GetBoundingBoxDimensions();
+  int *
+  GetBoundingBoxDimensions();
 
-  int * GetTalairachGridDimensions();
+  int *
+  GetTalairachGridDimensions();
 
   /* Description:
    * Set the AC, PC, SLA, and IRP Points. These points define the talairach
    * grid. Call EstablishGrid() to create the underlying vtkStructuredGrid */
-  void SetACPoint(double ac[3]);
-  void SetPCPoint(double pc[3]);
-  void SetIRPPoint(double irp[3]);
-  void SetSLAPoint(double sla[3]);
+  void
+  SetACPoint( double ac[3] );
+  void
+  SetPCPoint( double pc[3] );
+  void
+  SetIRPPoint( double irp[3] );
+  void
+  SetSLAPoint( double sla[3] );
 
   /* Description:
    * Get the AC, PC, SLA, and IRP Points. These points define the
    * talairach grid. */
-  double * GetACPoint();
+  double *
+  GetACPoint();
 
-  double * GetPCPoint();
+  double *
+  GetPCPoint();
 
-  double * GetIRPPoint();
+  double *
+  GetIRPPoint();
 
-  double * GetSLAPoint();
+  double *
+  GetSLAPoint();
 
   /* Description:
    * Get the underlying vtkStructuredGrid representations for the Talairach
    * coordinate system */
-  vtkStructuredGrid * GetTalairachGrid();
+  vtkStructuredGrid *
+  GetTalairachGrid();
 
-  vtkStructuredGrid * GetBoundingBoxGrid();
+  vtkStructuredGrid *
+  GetBoundingBoxGrid();
 
   /* Description:
    * Set the underlying vtkStructuredGrid representations for the Talairach
    * coordinate system */
-  void SetTalairachGrid( vtkStructuredGrid * );
+  void
+  SetTalairachGrid( vtkStructuredGrid * );
 
-  void SetBoundingBoxGrid( vtkStructuredGrid * );
+  void
+  SetBoundingBoxGrid( vtkStructuredGrid * );
 
   /* Description:
    * Get the points list for the box and grid */
-  vtkPoints * GetTalairachGridPoints();
+  vtkPoints *
+  GetTalairachGridPoints();
 
-  vtkPoints * GetBoundingBoxGridPoints();
+  vtkPoints *
+  GetBoundingBoxGridPoints();
 
   /* Description:
    * Insert the points for both the box and grid using the provided AC, PC,
    * SLA and IRP points */
-  void EstablishTalairachGrid();
+  void
+  EstablishTalairachGrid();
 
-  void EstablishBoundingBoxGrid();
+  void
+  EstablishBoundingBoxGrid();
 
   /* Description:
    * Set the points and generate both the box and grid */
-  void Update();
+  void
+  Update();
 
   /* Description:
    * Write out the box and grid to a file */
-  void WriteTalairachGrid(std::string filename);
+  void
+  WriteTalairachGrid( std::string filename );
 
-  void WriteBoundingBoxGrid(std::string filename);
+  void
+  WriteBoundingBoxGrid( std::string filename );
 
   /* Description:
    * Write out the appropriate data when the talairachGrid object is added to
    * an IO stream */
-  void PrintSelf(ostream & os, vtkIndent indent) override;
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
 protected:
-
   vtkTalairachGrid();
   ~vtkTalairachGrid() override;
+
 private:
-
   /* Convert between talairach and voxel points */
-  std::vector<double> ConvertTalairachPointToPixelPoint(double *talPoint);
+  std::vector< double >
+  ConvertTalairachPointToPixelPoint( double * talPoint );
 
-  std::vector<double> ConvertPixelPointToTalairachPoint(double *voxelPoint);
+  std::vector< double >
+  ConvertPixelPointToTalairachPoint( double * voxelPoint );
 
   /* Stores the 4 points used to define all other points in the box and grid */
   double ACPoint[3];
@@ -140,19 +165,19 @@ private:
   double IRPPoint[3];
 
   /* Stores the complete set of points that define the box and grid */
-  vtkPoints *boundingBoxGridPoints;
-  vtkPoints *talairachGridPoints;
+  vtkPoints * boundingBoxGridPoints;
+  vtkPoints * talairachGridPoints;
 
   /* The two Grid representations */
-  vtkStructuredGrid *boundingBoxGrid;
-  vtkStructuredGrid *talairachGrid;
+  vtkStructuredGrid * boundingBoxGrid;
+  vtkStructuredGrid * talairachGrid;
 
   /* The data extent */
   int Extent[6];
 
-  vtkTalairachGrid(const vtkTalairachGrid &); /* Not implemented. */
-  void operator=(const vtkTalairachGrid &);   /* Not implemented. */
-
+  vtkTalairachGrid( const vtkTalairachGrid & ); /* Not implemented. */
+  void
+  operator=( const vtkTalairachGrid & ); /* Not implemented. */
 };
 
 #endif

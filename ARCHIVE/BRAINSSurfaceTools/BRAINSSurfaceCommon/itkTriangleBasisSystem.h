@@ -38,22 +38,25 @@ namespace itk
  *
  * \ingroup TriangleBasisSystems
  */
-template <typename TVector, unsigned int NSubspaceDimension>
+template < typename TVector, unsigned int NSubspaceDimension >
 class TriangleBasisSystem
 {
 public:
   using VectorType = TVector;
 
   /** Set/Get the vector at index k. */
-  void SetVector( unsigned int k, const VectorType & v );
+  void
+  SetVector( unsigned int k, const VectorType & v );
 
-  const VectorType & GetVector( unsigned int k ) const;
+  const VectorType &
+  GetVector( unsigned int k ) const;
 
   TriangleBasisSystem();
   virtual ~TriangleBasisSystem();
 
   TriangleBasisSystem( const TriangleBasisSystem & rhs );
-  const TriangleBasisSystem & operator=( const TriangleBasisSystem & rhs );
+  const TriangleBasisSystem &
+  operator=( const TriangleBasisSystem & rhs );
 
 private:
   VectorType m_Basis[NSubspaceDimension];
@@ -61,7 +64,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkTriangleBasisSystem.hxx"
+#  include "itkTriangleBasisSystem.hxx"
 #endif
 
 #endif

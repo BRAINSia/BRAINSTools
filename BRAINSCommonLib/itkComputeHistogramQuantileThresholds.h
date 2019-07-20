@@ -25,16 +25,15 @@
 namespace itk
 {
 /**
-  * \class ComputeHistogramQuantileThresholds
-  * \author Hans J. Johnson
-  *
-  * This filter just computes Histogram Quantile Thresholds.  It does not apply
-  *the thresholds.
-  *
-  */
-template <typename TInputImage, typename TMaskImage>
-class ComputeHistogramQuantileThresholds :
-  public         Object
+ * \class ComputeHistogramQuantileThresholds
+ * \author Hans J. Johnson
+ *
+ * This filter just computes Histogram Quantile Thresholds.  It does not apply
+ *the thresholds.
+ *
+ */
+template < typename TInputImage, typename TMaskImage >
+class ComputeHistogramQuantileThresholds : public Object
 {
 public:
   /** Extract dimension from input and output image. */
@@ -48,51 +47,54 @@ public:
 
   using Self = ComputeHistogramQuantileThresholds;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
+  using Pointer = SmartPointer< Self >;
   using MaskPixelType = typename TMaskImage::PixelType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ComputeHistogramQuantileThresholds, Object);
+  itkTypeMacro( ComputeHistogramQuantileThresholds, Object );
 
   /** set Quantile Threshold */
-  itkSetMacro(QuantileLowerThreshold, double);
-  itkGetConstMacro(QuantileLowerThreshold, double);
-  itkSetMacro(QuantileUpperThreshold, double);
-  itkGetConstMacro(QuantileUpperThreshold, double);
+  itkSetMacro( QuantileLowerThreshold, double );
+  itkGetConstMacro( QuantileLowerThreshold, double );
+  itkSetMacro( QuantileUpperThreshold, double );
+  itkGetConstMacro( QuantileUpperThreshold, double );
 
-  itkGetConstMacro(LowerIntensityThresholdValue, typename InputImageType::PixelType);
-  itkGetConstMacro(UpperIntensityThresholdValue, typename InputImageType::PixelType);
-  itkGetConstMacro(NumberOfValidHistogramsEntries, unsigned int);
+  itkGetConstMacro( LowerIntensityThresholdValue, typename InputImageType::PixelType );
+  itkGetConstMacro( UpperIntensityThresholdValue, typename InputImageType::PixelType );
+  itkGetConstMacro( NumberOfValidHistogramsEntries, unsigned int );
 
-  itkGetConstObjectMacro(Image, InputImageType);
-  itkSetConstObjectMacro(Image, InputImageType);
+  itkGetConstObjectMacro( Image, InputImageType );
+  itkSetConstObjectMacro( Image, InputImageType );
 
-  itkSetMacro(ImageMin, typename TInputImage::PixelType);
-  itkGetConstMacro(ImageMin, typename TInputImage::PixelType);
-  itkSetMacro(ImageMax, typename TInputImage::PixelType);
-  itkGetConstMacro(ImageMax, typename TInputImage::PixelType);
+  itkSetMacro( ImageMin, typename TInputImage::PixelType );
+  itkGetConstMacro( ImageMin, typename TInputImage::PixelType );
+  itkSetMacro( ImageMax, typename TInputImage::PixelType );
+  itkGetConstMacro( ImageMax, typename TInputImage::PixelType );
 
-  itkGetConstObjectMacro(BinaryPortionImage, TMaskImage);
-  itkSetObjectMacro(BinaryPortionImage, TMaskImage);
+  itkGetConstObjectMacro( BinaryPortionImage, TMaskImage );
+  itkSetObjectMacro( BinaryPortionImage, TMaskImage );
 
-  void Calculate();
+  void
+  Calculate();
 
 protected:
   ComputeHistogramQuantileThresholds();
   ~ComputeHistogramQuantileThresholds() override;
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
 private:
-  void ImageMinMax(InputPixelType & min, InputPixelType & max);
+  void
+  ImageMinMax( InputPixelType & min, InputPixelType & max );
 
-  InputImagePointer m_Image;
+  InputImagePointer            m_Image;
   typename TMaskImage::Pointer m_BinaryPortionImage;
 
-  double m_QuantileLowerThreshold;
-  double m_QuantileUpperThreshold;
+  double       m_QuantileLowerThreshold;
+  double       m_QuantileUpperThreshold;
   unsigned int m_NumberOfValidHistogramsEntries;
 
   typename TInputImage::PixelType m_ImageMin;
@@ -104,7 +106,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkComputeHistogramQuantileThresholds.hxx"
+#  include "itkComputeHistogramQuantileThresholds.hxx"
 #endif
 
 #endif

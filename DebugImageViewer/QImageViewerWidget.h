@@ -30,42 +30,57 @@ class QImageViewerWidget : public QVTKWidget
 {
   Q_OBJECT
 public slots:
-  void SetSlice(int slice);
+  void
+  SetSlice( int slice );
 
-  void SetSliceOrientationToXY();
+  void
+  SetSliceOrientationToXY();
 
-  void SetSliceOrientationToXZ();
+  void
+  SetSliceOrientationToXZ();
 
-  void SetSliceOrientationToYZ();
+  void
+  SetSliceOrientationToYZ();
 
 public:
-  QImageViewerWidget(QWidget *parent = NULL);
+  QImageViewerWidget( QWidget * parent = NULL );
   ~QImageViewerWidget();
 
-  double GetColorWindow();
+  double
+  GetColorWindow();
 
-  double GetColorLevel();
+  double
+  GetColorLevel();
 
-  vtkRenderer * GetRenderer();
+  vtkRenderer *
+  GetRenderer();
 
-  void SetColorWindow(double s);
+  void
+  SetColorWindow( double s );
 
-  void SetColorLevel(double s);
+  void
+  SetColorLevel( double s );
 
-  void SetInput(vtkImageData *in);
+  void
+  SetInput( vtkImageData * in );
 
-  int * GetSliceRange();
+  int *
+  GetSliceRange();
 
-  void Render();
+  void
+  Render();
 
-  int GetSlice();
+  int
+  GetSlice();
 
-  int GetSliceMin();
+  int
+  GetSliceMin();
 
-  int GetSliceMax();
+  int
+  GetSliceMax();
 
 private:
-  vtkImageViewer2* m_ImageViewer;
+  vtkImageViewer2 * m_ImageViewer;
 };
 
 #endif // QImageViewerWidget_h

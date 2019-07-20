@@ -37,15 +37,16 @@
 #include "vtkFloatArray.h"
 
 // -------------------------------------------------------------------------
-vtkFSSurfaceScalarReader * vtkFSSurfaceScalarReader::New()
+vtkFSSurfaceScalarReader *
+vtkFSSurfaceScalarReader::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceScalarReader");
+  vtkObject * ret = vtkObjectFactory::CreateInstance( "vtkFSSurfaceScalarReader" );
 
-  if( ret )
-    {
-    return dynamic_cast<vtkFSSurfaceScalarReader *> ret;
-    }
+  if ( ret )
+  {
+    return dynamic_cast< vtkFSSurfaceScalarReader * > ret;
+  }
   // If the factory was unable to create the object, then create it here.
   return new vtkFSSurfaceScalarReader;
 }
@@ -55,45 +56,44 @@ vtkFSSurfaceScalarReader::vtkFSSurfaceScalarReader()
   this->scalars = NULL;
 }
 
-vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader()
-{
-}
+vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader() {}
 
-int vtkFSSurfaceScalarReader::ReadFSScalars()
+int
+vtkFSSurfaceScalarReader::ReadFSScalars()
 {
-  FILE*          scalarFile;
-  int            magicNumber;
-  int            numValues = 0;
-  int            numFaces = 0;
-  int            numValuesPerPoint = 0;
-  int            vIndex;
-  int            ivalue;
-  float          fvalue;
-  float *        FSscalars;
-  vtkFloatArray *output = this->scalars;
+  FILE *          scalarFile;
+  int             magicNumber;
+  int             numValues = 0;
+  int             numFaces = 0;
+  int             numValuesPerPoint = 0;
+  int             vIndex;
+  int             ivalue;
+  float           fvalue;
+  float *         FSscalars;
+  vtkFloatArray * output = this->scalars;
 
-  if( output == NULL )
-    {
+  if ( output == NULL )
+  {
     cerr << "ERROR vtkFSSurfaceScalarReader ReadFSScalars() : output is null" << endl;
     return 0;
-    }
-  vtkDebugMacro( << "vtkFSSurfaceScalarReader Execute() " << endl);
+  }
+  vtkDebugMacro( << "vtkFSSurfaceScalarReader Execute() " << endl );
 
-  if( !this->FileName )
-    {
-    vtkErrorMacro(<< "vtkFSSurfaceScalarReader Execute: FileName not specified.");
+  if ( !this->FileName )
+  {
+    vtkErrorMacro( << "vtkFSSurfaceScalarReader Execute: FileName not specified." );
     return 0;
-    }
+  }
 
-  vtkDebugMacro(<< "Reading surface scalar data...");
+  vtkDebugMacro( << "Reading surface scalar data..." );
 
   // Try to open the file.
-  scalarFile = fopen(this->FileName, "rb");
-  if( !scalarFile )
-    {
-    vtkErrorMacro(<< "Could not open file " << this->FileName);
+  scalarFile = fopen( this->FileName, "rb" );
+  if ( !scalarFile )
+  {
+    vtkErrorMacro( << "Could not open file " << this->FileName );
     return 0;
-    }
+  }
 
   // In the old file type, there is no magin number; the first three
   // byte int is the number of values. In the (more common) new type,
@@ -101,110 +101,111 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
   // and assume it's a magic number, check and assign it to the number
   // of values if not. New style files also have a number of faces and
   // values per point, which aren't really used.
-  vtkFSIO::ReadInt3(scalarFile, magicNumber);
-  if( this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber )
-    {
+  vtkFSIO::ReadInt3( scalarFile, magicNumber );
+  if ( this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber )
+  {
     size_t retval;
-    retval = fread(&numValues, sizeof(int), 1, scalarFile);
-    if( retval == 1 )
-      {
-      vtkByteSwap::Swap4BE(&numValues);
-      }
+    retval = fread( &numValues, sizeof( int ), 1, scalarFile );
+    if ( retval == 1 )
+    {
+      vtkByteSwap::Swap4BE( &numValues );
+    }
     else
-      {
-      vtkErrorMacro("Error reading number of values from file " << this->FileName);
-      }
-    retval = fread(&numFaces, sizeof(int), 1, scalarFile);
-    if( retval == 1 )
-      {
-      vtkByteSwap::Swap4BE(&numFaces);
-      }
+    {
+      vtkErrorMacro( "Error reading number of values from file " << this->FileName );
+    }
+    retval = fread( &numFaces, sizeof( int ), 1, scalarFile );
+    if ( retval == 1 )
+    {
+      vtkByteSwap::Swap4BE( &numFaces );
+    }
     else
-      {
-      vtkErrorMacro("Error reading number of faces from file " << this->FileName);
-      }
-    retval = fread(&numValuesPerPoint, sizeof(int), 1, scalarFile);
-    if( retval == 1 )
-      {
-      vtkByteSwap::Swap4BE(&numValuesPerPoint);
-      }
+    {
+      vtkErrorMacro( "Error reading number of faces from file " << this->FileName );
+    }
+    retval = fread( &numValuesPerPoint, sizeof( int ), 1, scalarFile );
+    if ( retval == 1 )
+    {
+      vtkByteSwap::Swap4BE( &numValuesPerPoint );
+    }
     else
-      {
-      vtkErrorMacro("Error reading number of values per point, should be 1, in filename " << this->FileName);
-      }
+    {
+      vtkErrorMacro( "Error reading number of values per point, should be 1, in filename " << this->FileName );
+    }
 
-    if( numValuesPerPoint != 1 )
-      {
+    if ( numValuesPerPoint != 1 )
+    {
       vtkErrorMacro(
-        << "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file.");
+        << "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file." );
       return 0;
-      }
     }
+  }
   else
-    {
+  {
     numValues = magicNumber;
-    }
+  }
 
-  if( numValues <= 0 )
-    {
-    vtkErrorMacro(<< "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
+  if ( numValues <= 0 )
+  {
+    vtkErrorMacro(
+      << "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file." );
     return 0;
-    }
+  }
 
   // Make our float array.
-  FSscalars = (float *) calloc(numValues, sizeof(float) );
+  FSscalars = (float *)calloc( numValues, sizeof( float ) );
   // For each value, if it's a new style file read a float, otherwise
   // read a two byte int and divide it by 100. Add this value to the
   // array.
-  for( vIndex = 0; vIndex < numValues; vIndex++ )
+  for ( vIndex = 0; vIndex < numValues; vIndex++ )
+  {
+    if ( feof( scalarFile ) )
     {
-    if( feof(scalarFile) )
-      {
-      vtkErrorMacro(<< "vtkFSSurfaceScalarReader.cxx Execute: Unexpected EOF after " << vIndex << " values read.");
-      free(FSscalars);
+      vtkErrorMacro( << "vtkFSSurfaceScalarReader.cxx Execute: Unexpected EOF after " << vIndex << " values read." );
+      free( FSscalars );
       return 0;
-      }
+    }
 
-    if( this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber )
+    if ( this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber )
+    {
+      size_t retval = fread( &fvalue, sizeof( float ), 1, scalarFile );
+      if ( retval == 1 )
       {
-      size_t retval = fread(&fvalue, sizeof(float), 1, scalarFile);
-      if( retval == 1 )
-        {
-        vtkByteSwap::Swap4BE(&fvalue);
-        }
+        vtkByteSwap::Swap4BE( &fvalue );
+      }
       else
-        {
-        vtkErrorMacro("Error reading fvalue from file " << this->FileName);
-        }
-      }
-    else
       {
-      vtkFSIO::ReadInt2(scalarFile, ivalue);
-      fvalue = ivalue / 100.0;
+        vtkErrorMacro( "Error reading fvalue from file " << this->FileName );
       }
+    }
+    else
+    {
+      vtkFSIO::ReadInt2( scalarFile, ivalue );
+      fvalue = ivalue / 100.0;
+    }
 
     FSscalars[vIndex] = fvalue;
 
-    if( numValues < 10000 ||
-        (vIndex % 100) == 0 )
-      {
-      this->UpdateProgress(1.0 * vIndex / numValues);
-      }
+    if ( numValues < 10000 || ( vIndex % 100 ) == 0 )
+    {
+      this->UpdateProgress( 1.0 * vIndex / numValues );
     }
+  }
 
-  this->SetProgressText("");
-  this->UpdateProgress(0.0);
+  this->SetProgressText( "" );
+  this->UpdateProgress( 0.0 );
 
   // Close the file.
-  fclose(scalarFile);
+  fclose( scalarFile );
 
   // Set the array in our output.
-  output->SetArray(FSscalars, numValues, 0);
+  output->SetArray( FSscalars, numValues, 0 );
 
   return 1;
 }
 
-void vtkFSSurfaceScalarReader::PrintSelf(ostream& os, vtkIndent indent)
+void
+vtkFSSurfaceScalarReader::PrintSelf( ostream & os, vtkIndent indent )
 {
-  vtkDataReader::PrintSelf(os, indent);
+  vtkDataReader::PrintSelf( os, indent );
 }

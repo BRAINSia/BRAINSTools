@@ -27,52 +27,56 @@
 class BRAINSCutGenerateProbability
 {
 public:
-  BRAINSCutGenerateProbability( BRAINSCutDataHandler& dataHandler);
+  BRAINSCutGenerateProbability( BRAINSCutDataHandler & dataHandler );
 
-  void SetTrainingDataSetsList();
+  void
+  SetTrainingDataSetsList();
 
-  void GenerateProbabilityMaps();
+  void
+  GenerateProbabilityMaps();
 
 private:
-  BRAINSCutDataHandler* myDataHandler;
+  BRAINSCutDataHandler * myDataHandler;
 
   /** DataSets */
-  std::list<DataSet *> trainingDataSetList;
+  std::list< DataSet * > trainingDataSetList;
 
-  void GenerateSymmetricalSphericalCoordinateImage();
+  void
+  GenerateSymmetricalSphericalCoordinateImage();
 
-  void CreateNewFloatImageFromTemplate( WorkingImageType::Pointer & PointerToOutputImage,
-                                        const WorkingImageType::Pointer & PreInitializedImage);
+  void
+  CreateNewFloatImageFromTemplate( WorkingImageType::Pointer &       PointerToOutputImage,
+                                   const WorkingImageType::Pointer & PreInitializedImage );
 
-  void XYZToSpherical( const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
-                       float & theta);
+  void
+  XYZToSpherical( const itk::Point< float, 3 > & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
+                  float & theta );
 
-  template <typename WarperImageType>
-  typename WarperImageType::Pointer ImageWarper(  const std::string & RegistrationFilename,
-                                                  const std::string & ImageName,
-                                                  typename WarperImageType::Pointer ReferenceImage  )
+  template < typename WarperImageType >
+  typename WarperImageType::Pointer
+  ImageWarper( const std::string & RegistrationFilename, const std::string & ImageName,
+               typename WarperImageType::Pointer ReferenceImage )
   {
-    const bool useTransform = ( RegistrationFilename.find(".mat") != std::string::npos ||
-                                RegistrationFilename.find(".h5") != std::string::npos ||
-                                RegistrationFilename.find(".hdf5") != std::string::npos ||
-                                RegistrationFilename.find(".txt") != std::string::npos
-                                );
+    const bool useTransform = ( RegistrationFilename.find( ".mat" ) != std::string::npos ||
+                                RegistrationFilename.find( ".h5" ) != std::string::npos ||
+                                RegistrationFilename.find( ".hdf5" ) != std::string::npos ||
+                                RegistrationFilename.find( ".txt" ) != std::string::npos );
 
     typename WarperImageType::Pointer PrincipalOperandImage; // One name for the
                                                              // image to be
                                                              // warped.
-      {
-      using ReaderType = typename itk::ImageFileReader<WarperImageType>;
+    {
+      using ReaderType = typename itk::ImageFileReader< WarperImageType >;
       typename ReaderType::Pointer imageReader = ReaderType::New();
 
-      imageReader->SetFileName(ImageName);
+      imageReader->SetFileName( ImageName );
       imageReader->Update();
       PrincipalOperandImage = imageReader->GetOutput();
-      }
+    }
 
     using VectorComponentType = double;
-    using VectorPixelType = typename itk::Vector<VectorComponentType, 3>;
-    using LocalDisplacementFieldType = typename itk::Image<VectorPixelType,  3>;
+    using VectorPixelType = typename itk::Vector< VectorComponentType, 3 >;
+    using LocalDisplacementFieldType = typename itk::Image< VectorPixelType, 3 >;
 
     // An empty SmartPointer constructor sets up someImage.IsNull() to represent
     // a
@@ -80,7 +84,7 @@ private:
     typename LocalDisplacementFieldType::Pointer DisplacementField;
     // An empty SmartPointer constructor sets up someTransform.IsNull() to
     // represent a not-supplied state:
-    using GenericTransformType = itk::Transform<double, 3, 3>;
+    using GenericTransformType = itk::Transform< double, 3, 3 >;
     typename GenericTransformType::Pointer genericTransform;
     // typename WarperImageType::Pointer ReferenceImage;
     // if there is no *mat file.
@@ -92,11 +96,11 @@ private:
     // the same behavior with the DisplacementField parameter removed
     // you have to enforce this 'OR NOT AND' behavior at the point of
     // call
-    if( !useTransform )  // that is, it's a warp by deformation field:
-      {
-      using DefFieldReaderType = typename itk::ImageFileReader<LocalDisplacementFieldType>;
+    if ( !useTransform ) // that is, it's a warp by deformation field:
+    {
+      using DefFieldReaderType = typename itk::ImageFileReader< LocalDisplacementFieldType >;
       typename DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
-      fieldImageReader->SetFileName(RegistrationFilename);
+      fieldImageReader->SetFileName( RegistrationFilename );
       fieldImageReader->Update();
       DisplacementField = fieldImageReader->GetOutput();
 
@@ -105,31 +109,31 @@ private:
       // field and reference image have same dimensions.
 
       // and---  ReferenceImage.IsNull() represents the delayed default
-      using DisplacementFieldTransformType = itk::DisplacementFieldTransform<DeformationScalarType,LocalDisplacementFieldType::ImageDimension>;
-      typename DisplacementFieldTransformType::Pointer dispXfrm =
-        DisplacementFieldTransformType::New();
-      dispXfrm->SetDisplacementField(DisplacementField.GetPointer());
+      using DisplacementFieldTransformType =
+        itk::DisplacementFieldTransform< DeformationScalarType, LocalDisplacementFieldType::ImageDimension >;
+      typename DisplacementFieldTransformType::Pointer dispXfrm = DisplacementFieldTransformType::New();
+      dispXfrm->SetDisplacementField( DisplacementField.GetPointer() );
       genericTransform = dispXfrm.GetPointer();
-      }
+    }
     else // there EXIST *mat file.
-      {
+    {
       std::cout << "!!!!!!!!!!!! CAUTION !!!!!!!!!!!!!!!!!!!" << std::endl
                 << "* Mat file exists!" << std::endl
                 << "!!!!!!!!!!!! CAUTION !!!!!!!!!!!!!!!!!!!" << std::endl;
-      genericTransform = itk::ReadTransformFromDisk(RegistrationFilename);
-      }
-    constexpr double defaultValue = 0;
+      genericTransform = itk::ReadTransformFromDisk( RegistrationFilename );
+    }
+    constexpr double           defaultValue = 0;
     const typename std::string interpolationMode = "Linear";
     const typename std::string pixelType = "short";
 
     typename WarperImageType::Pointer TransformedImage =
-      GenericTransformImage<WarperImageType, WarperImageType, LocalDisplacementFieldType>(
+      GenericTransformImage< WarperImageType, WarperImageType, LocalDisplacementFieldType >(
         PrincipalOperandImage,
         ReferenceImage,
         genericTransform.GetPointer(),
         defaultValue,
         interpolationMode,
-        pixelType == "binary");
+        pixelType == "binary" );
 
     return TransformedImage;
   }

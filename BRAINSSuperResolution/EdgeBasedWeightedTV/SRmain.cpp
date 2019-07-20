@@ -10,36 +10,39 @@
 
 #include <itkTimeProbe.h>
 
-int main(int argc, char *argv[]) {
-  if (argc != 4) {
+int
+main( int argc, char * argv[] )
+{
+  if ( argc != 4 )
+  {
     std::cout << "ERROR: Incorrrect number of arguments <Intensity_LR> <edgement_HR> <output>" << std::endl;
   }
-  FFTWInit(""); //Just use the default in the home account
+  FFTWInit( "" ); // Just use the default in the home account
   itk::TimeProbe tp;
   tp.Start();
-  using ReaderType = itk::ImageFileReader<FloatImageType>;
-  using WriterType = itk::ImageFileWriter<FloatImageType>;
+  using ReaderType = itk::ImageFileReader< FloatImageType >;
+  using WriterType = itk::ImageFileWriter< FloatImageType >;
 
-  const std::string edgeFileName = argv[2];
+  const std::string   edgeFileName = argv[2];
   ReaderType::Pointer edgeReader = ReaderType::New();
-  edgeReader->SetFileName(edgeFileName);
+  edgeReader->SetFileName( edgeFileName );
   edgeReader->Update();
   FloatImageType::Pointer highResEdgeImage = edgeReader->GetOutput();
 
-  const std::string lriFileName = argv[1];
+  const std::string   lriFileName = argv[1];
   ReaderType::Pointer intensityReader = ReaderType::New();
-  intensityReader->SetFileName(lriFileName);
+  intensityReader->SetFileName( lriFileName );
   intensityReader->Update();
   FloatImageType::Pointer lriImage = intensityReader->GetOutput();
-  FloatImageType::Pointer X_lr = NormalizeDataComponent(lriImage);
-  lriImage=nullptr;
+  FloatImageType::Pointer X_lr = NormalizeDataComponent( lriImage );
+  lriImage = nullptr;
 
-  FloatImageType::Pointer SRImage = OpWeightedL2(X_lr, highResEdgeImage);
+  FloatImageType::Pointer SRImage = OpWeightedL2( X_lr, highResEdgeImage );
 
-  const std::string hriFileName = argv[3];
+  const std::string   hriFileName = argv[3];
   WriterType::Pointer hriWriter = WriterType::New();
-  hriWriter->SetInput(SRImage);
-  hriWriter->SetFileName(hriFileName);
+  hriWriter->SetInput( SRImage );
+  hriWriter->SetFileName( hriFileName );
   hriWriter->Update();
 
   tp.Stop();

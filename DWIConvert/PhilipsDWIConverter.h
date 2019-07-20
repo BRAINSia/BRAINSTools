@@ -26,18 +26,20 @@
 class PhilipsDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector &allHeaders,
-                      DWIConverter::FileNamesContainer &inputFileNames,
-                      const bool useBMatrixGradientDirections
-                      ) ;
+  PhilipsDWIConverter( DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
+                       DWIConverter::FileNamesContainer & inputFileNames, const bool useBMatrixGradientDirections );
   ~PhilipsDWIConverter() override;
 
-  void LoadDicomDirectory() override;
-  void ExtractDWIData() override;
+  void
+  LoadDicomDirectory() override;
+  void
+  ExtractDWIData() override;
+
 protected:
-  void AddFlagsToDictionary() override;
+  void
+  AddFlagsToDictionary() override;
   /** # of trailing images to ignore */
-  unsigned int        m_NTrailingImagesToIgnore;
+  unsigned int m_NTrailingImagesToIgnore;
 };
 
 #endif // __PhilipsDWIConverter_h

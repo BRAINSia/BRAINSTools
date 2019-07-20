@@ -20,9 +20,10 @@
 #include <iostream>
 #include "itkBRAINSToolsTestMain.h"
 
-void RegisterTests()
+void
+RegisterTests()
 {
-  REGISTER_TEST(gtractConcatDwiTest);
+  REGISTER_TEST( gtractConcatDwiTest );
 }
 
 #undef main

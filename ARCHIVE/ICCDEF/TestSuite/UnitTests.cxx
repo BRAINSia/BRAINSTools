@@ -20,9 +20,10 @@
 #include "itkBRAINSToolsTestMain.h"
 #include "itkConfigure.h"
 
-void RegisterTests()
+void
+RegisterTests()
 {
-  REGISTER_TEST(itkVectorFFTWTest);
-  REGISTER_TEST(itkIterativeInverseDisplacementFieldFilterTest);
-  REGISTER_TEST(itkIterativeInverseDisplacementFieldFilterTest2);
+  REGISTER_TEST( itkVectorFFTWTest );
+  REGISTER_TEST( itkIterativeInverseDisplacementFieldFilterTest );
+  REGISTER_TEST( itkIterativeInverseDisplacementFieldFilterTest2 );
 }

@@ -21,17 +21,22 @@
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesScalarReader : public vtkITKArchetypeImageSeriesReader
 {
- public:
-  static vtkITKArchetypeImageSeriesScalarReader *New();
-  vtkTypeMacro(vtkITKArchetypeImageSeriesScalarReader,vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+public:
+  static vtkITKArchetypeImageSeriesScalarReader *
+  New();
+  vtkTypeMacro( vtkITKArchetypeImageSeriesScalarReader, vtkITKArchetypeImageSeriesReader );
+  void
+  PrintSelf( ostream & os, vtkIndent indent ) override;
 
- protected:
+protected:
   vtkITKArchetypeImageSeriesScalarReader();
   ~vtkITKArchetypeImageSeriesScalarReader();
 
-  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
-  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
+  int
+  RequestData( vtkInformation * request, vtkInformationVector ** inputVector,
+               vtkInformationVector * outputVector ) override;
+  static void
+  ReadProgressCallback( itk::ProcessObject * obj, const itk::ProgressEvent &, void * data );
   /// private:
 };
 

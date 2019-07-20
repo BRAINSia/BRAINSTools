@@ -30,27 +30,33 @@ class QDebugImageViewerWindow : public QMainWindow
 {
   Q_OBJECT
 public slots:
-  void exiting();
+  void
+  exiting();
 
-  void newConnection();
+  void
+  newConnection();
 
-  void readImage();
+  void
+  readImage();
 
-  void stateChanged(QAbstractSocket::SocketState state);
+  void
+  stateChanged( QAbstractSocket::SocketState state );
 
 public:
-  QDebugImageViewerWindow(QWidget *parent = 0,
-                          Qt::WindowFlags flags = 0);
+  QDebugImageViewerWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
+
 private:
-  qint64 SocketRead(void *buf, qint64 objectSize, qint64 objectCount);
+  qint64
+  SocketRead( void * buf, qint64 objectSize, qint64 objectCount );
 
-  void SetupSocketConnections();
+  void
+  SetupSocketConnections();
 
-  using ImageDisplayListType = std::vector<QImageDisplay *>;
+  using ImageDisplayListType = std::vector< QImageDisplay * >;
   ImageDisplayListType m_ImageDisplayList;
   int                  m_ViewCount;
-  QTcpServer*          m_Server;
-  QTcpSocket*          m_Socket;
+  QTcpServer *         m_Server;
+  QTcpSocket *         m_Socket;
 };
 
 #endif // QDebugImageViewerWindow_h

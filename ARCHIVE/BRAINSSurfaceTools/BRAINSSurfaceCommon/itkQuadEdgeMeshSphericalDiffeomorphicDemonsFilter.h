@@ -31,15 +31,15 @@
 
 namespace itk
 {
-template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
-class QuadEdgeMeshSphericalDiffeomorphicDemonsFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TFixedMesh, TOutputMesh>
+template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+class QuadEdgeMeshSphericalDiffeomorphicDemonsFilter
+  : public QuadEdgeMeshToQuadEdgeMeshFilter< TFixedMesh, TOutputMesh >
 {
 public:
   using Self = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TFixedMesh, TOutputMesh>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TFixedMesh, TOutputMesh >;
 
   /** Method that instantiates a new object */
   itkNewMacro( Self );
@@ -51,71 +51,73 @@ public:
   /** Input types. */
   using FixedMeshType = TFixedMesh;
   using MovingMeshType = TMovingMesh;
-  using FixedMeshPointer = typename  FixedMeshType::Pointer;
-  using FixedMeshConstPointer = typename  FixedMeshType::ConstPointer;
-  using PointType = typename  FixedMeshType::PointType;
-  using FixedPixelType = typename  FixedMeshType::PixelType;
-  using FixedPointsContainer = typename  FixedMeshType::PointsContainer;
-  using FixedPointsIterator = typename  FixedPointsContainer::Iterator;
-  using FixedPointsConstIterator = typename  FixedPointsContainer::ConstIterator;
-  using FixedPointDataContainer = typename  FixedMeshType::PointDataContainer;
-  using FixedPointDataConstIterator = typename  FixedPointDataContainer::ConstIterator;
-  using MovingMeshConstPointer = typename  MovingMeshType::ConstPointer;
+  using FixedMeshPointer = typename FixedMeshType::Pointer;
+  using FixedMeshConstPointer = typename FixedMeshType::ConstPointer;
+  using PointType = typename FixedMeshType::PointType;
+  using FixedPixelType = typename FixedMeshType::PixelType;
+  using FixedPointsContainer = typename FixedMeshType::PointsContainer;
+  using FixedPointsIterator = typename FixedPointsContainer::Iterator;
+  using FixedPointsConstIterator = typename FixedPointsContainer::ConstIterator;
+  using FixedPointDataContainer = typename FixedMeshType::PointDataContainer;
+  using FixedPointDataConstIterator = typename FixedPointDataContainer::ConstIterator;
+  using MovingMeshConstPointer = typename MovingMeshType::ConstPointer;
 
   static constexpr unsigned int PointDimension = FixedMeshType::PointDimension;
 
   /** Output types. */
   using OutputMeshType = TOutputMesh;
-  using OutputMeshPointer = typename  OutputMeshType::Pointer;
-  using OutputPointDataContainer = typename  Superclass::OutputPointDataContainer;
+  using OutputMeshPointer = typename OutputMeshType::Pointer;
+  using OutputPointDataContainer = typename Superclass::OutputPointDataContainer;
   using OutputPointDataContainerPointer = typename OutputPointDataContainer::Pointer;
   using OutputPointDataContainerIterator = typename OutputPointDataContainer::Iterator;
 
   /** Declaration of internal types, some of which are exposed for monitoring purposes */
   using VectorType = typename PointType::VectorType;
-  using BasisSystemType = TriangleBasisSystem<VectorType, 2>;
+  using BasisSystemType = TriangleBasisSystem< VectorType, 2 >;
   using PointIdentifier = typename FixedMeshType::PointIdentifier;
-  using BasisSystemContainerType = VectorContainer<PointIdentifier, BasisSystemType>;
+  using BasisSystemContainerType = VectorContainer< PointIdentifier, BasisSystemType >;
   using BasisSystemContainerPointer = typename BasisSystemContainerType::Pointer;
   using BasisSystemContainerIterator = typename BasisSystemContainerType::Iterator;
   using FixedMeshTraits = typename FixedMeshType::Traits;
-  using DestinationPointSetType = PointSet<FixedPixelType, PointDimension, FixedMeshTraits>;
+  using DestinationPointSetType = PointSet< FixedPixelType, PointDimension, FixedMeshTraits >;
   using DestinationPointContainerType = typename DestinationPointSetType::PointsContainer;
   using DestinationPointContainerPointer = typename DestinationPointContainerType::Pointer;
   using DestinationPointIterator = typename DestinationPointContainerType::Iterator;
   using DestinationPointConstIterator = typename DestinationPointContainerType::ConstIterator;
-  using NodeSigmaContainerType = VectorContainer<PointIdentifier, double>;
+  using NodeSigmaContainerType = VectorContainer< PointIdentifier, double >;
   using NodeSigmaContainerPointer = typename NodeSigmaContainerType::Pointer;
   using NodeSigmaContainerIterator = typename NodeSigmaContainerType::Iterator;
   using NodeSigmaContainerConstPointer = typename NodeSigmaContainerType::ConstPointer;
   using NodeSigmaContainerConstIterator = typename NodeSigmaContainerType::ConstIterator;
 
-  using VelocityVectorType = Vector<double, 3>;
-  using VelocityVectorContainer = VectorContainer<PointIdentifier, VelocityVectorType>;
+  using VelocityVectorType = Vector< double, 3 >;
+  using VelocityVectorContainer = VectorContainer< PointIdentifier, VelocityVectorType >;
   using VelocityVectorPointer = typename VelocityVectorContainer::Pointer;
   using VelocityVectorIterator = typename VelocityVectorContainer::Iterator;
   using VelocityVectorConstPointer = typename VelocityVectorContainer::ConstPointer;
   using VelocityVectorConstIterator = typename VelocityVectorContainer::ConstIterator;
 
-  using TangentVectorType = Vector<double, 3>;
-  using TangentVectorContainer = VectorContainer<PointIdentifier, TangentVectorType>;
+  using TangentVectorType = Vector< double, 3 >;
+  using TangentVectorContainer = VectorContainer< PointIdentifier, TangentVectorType >;
   using TangentVectorPointer = typename TangentVectorContainer::Pointer;
   using TangentVectorIterator = typename TangentVectorContainer::Iterator;
   using TangentVectorConstPointer = typename TangentVectorContainer::ConstPointer;
   using TangentVectorConstIterator = typename TangentVectorContainer::ConstIterator;
 
-  using ShortestLengthContainerType = VectorContainer<PointIdentifier, double>;
+  using ShortestLengthContainerType = VectorContainer< PointIdentifier, double >;
   using ShortestLengthContainerPointer = typename ShortestLengthContainerType::Pointer;
   using ShortestLengthContainerIterator = typename ShortestLengthContainerType::Iterator;
   using ShortestLengthContainerConstIterator = typename ShortestLengthContainerType::ConstIterator;
 
   /** Set/Get the Fixed mesh. */
-  void SetFixedMesh( const FixedMeshType * fixedMesh );
+  void
+  SetFixedMesh( const FixedMeshType * fixedMesh );
 
   itkGetConstObjectMacro( FixedMesh, FixedMeshType );
 
   /** Set/Get the Moving mesh. */
-  void SetMovingMesh( const MovingMeshType * movingMesh );
+  void
+  SetMovingMesh( const MovingMeshType * movingMesh );
 
   itkGetConstObjectMacro( MovingMesh, MovingMeshType );
 
@@ -127,7 +129,8 @@ public:
   /** Returns the array of destination points used for initializing the
    * deformation field to all nodes of the Fixed Mesh. The points are stored
    * in the point container of an itk::PointSet. */
-  const DestinationPointSetType * GetInitialDestinationPoints() const;
+  const DestinationPointSetType *
+  GetInitialDestinationPoints() const;
 
   /** Set the initial list of destination points. This makes possible to use the
    * outcome of a deformable registration as the input for another one. It is
@@ -138,7 +141,8 @@ public:
    * in this filter, the pipeline is going to verify if the content of the
    * PointSet is computed by a preceding filter, and in such case, whether
    * the preceding filter must be re-executed or not. */
-  void SetInitialDestinationPoints( const DestinationPointSetType * );
+  void
+  SetInitialDestinationPoints( const DestinationPointSetType * );
 
   /** Returns the array of destination points resulting from applying the
    * deformation field to all nodes of the Fixed Mesh. The points are stored
@@ -147,7 +151,8 @@ public:
    * completed. It can be used for tracking the progress of the filter. The
    * returned point is non-const just to allow users to call
    * DisconnectPipeline(). */
-  DestinationPointSetType * GetFinalDestinationPoints() const;
+  DestinationPointSetType *
+  GetFinalDestinationPoints() const;
 
   /** Set/Get the maximum number of iterations that the filter will be
    * allowed to run.  The default is set to 50. */
@@ -237,7 +242,8 @@ public:
    * points. This is equivalent to deforming the input fixed mesh by applying to
    * it the deformation field that is computed by this filter.  This output is
    * only valid after you have successfully called the Update() method. */
-  const FixedMeshType * GetDeformedFixedMesh() const;
+  const FixedMeshType *
+  GetDeformedFixedMesh() const;
 
   /** Square root of sum of squared differences of intensities between nodes in
    * the mesh. This value is not used directly in the algorithm. We simply
@@ -259,95 +265,134 @@ public:
 
   using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
-  virtual DataObject::Pointer MakeOutput(size_t idx) override;
+  virtual DataObject::Pointer
+  MakeOutput( size_t idx ) override;
 
   /** Print out in the argument ostream the results of the chronometer
    * measurements. This is intended to be used for profiling the deformation
    * filter. */
-  void ChronometerReport( std::ofstream & os ) const;
+  void
+  ChronometerReport( std::ofstream & os ) const;
 
 protected:
   QuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
   ~QuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const override;
+  void
+  PrintSelf( std::ostream & os, Indent indent ) const override;
 
-  virtual void GenerateData() override;
+  virtual void
+  GenerateData() override;
 
 private:
   QuadEdgeMeshSphericalDiffeomorphicDemonsFilter( const Self & );
-  void operator =( const Self & );
+  void
+  operator=( const Self & );
 
-  void AllocateInternalArrays();
+  void
+  AllocateInternalArrays();
 
-  void InitializeFixedNodesSigmas();
+  void
+  InitializeFixedNodesSigmas();
 
-  void ComputeBasisSystemAtEveryNode();
+  void
+  ComputeBasisSystemAtEveryNode();
 
-  void ComputeInitialArrayOfDestinationPoints();
+  void
+  ComputeInitialArrayOfDestinationPoints();
 
-  void InitializeInterpolators();
+  void
+  InitializeInterpolators();
 
-  void InitializeGradientCalculators();
+  void
+  InitializeGradientCalculators();
 
-  void CopyInitialDestinationPoints();
+  void
+  CopyInitialDestinationPoints();
 
-  void CopySourcePoinstAsDestinationPoints();
+  void
+  CopySourcePoinstAsDestinationPoints();
 
-  void RunIterations();
+  void
+  RunIterations();
 
-  void ComputeMappedMovingValueAtEveryNode();
+  void
+  ComputeMappedMovingValueAtEveryNode();
 
-  void ComputeGradientsOfMappedMovingValueAtEveryNode();
+  void
+  ComputeGradientsOfMappedMovingValueAtEveryNode();
 
-  void ComputeVelocityField();
+  void
+  ComputeVelocityField();
 
-  void ComputeSelfRegulatedVelocityField();
+  void
+  ComputeSelfRegulatedVelocityField();
 
-  void SmoothDeformationField();
+  void
+  SmoothDeformationField();
 
-  void ConvertDeformationFieldToTangentVectorField();
+  void
+  ConvertDeformationFieldToTangentVectorField();
 
-  void SmoothTangentVectorField();
+  void
+  SmoothTangentVectorField();
 
-  void ConvertTangentVectorFieldToDeformationField();
+  void
+  ConvertTangentVectorFieldToDeformationField();
 
-  void AssignResampledMovingValuesToOutputMesh();
+  void
+  AssignResampledMovingValuesToOutputMesh();
 
-  void ComposeFixedMeshOutputDisplacedToMovingMesh();
+  void
+  ComposeFixedMeshOutputDisplacedToMovingMesh();
 
-  void ComposeDestinationPointsOutputPointSet();
+  void
+  ComposeDestinationPointsOutputPointSet();
 
-  void CopyDestinationPointsToDeformedFixedMesh();
+  void
+  CopyDestinationPointsToDeformedFixedMesh();
 
-  void ComputeScalingAndSquaringNumberOfIterations();
+  void
+  ComputeScalingAndSquaringNumberOfIterations();
 
-  void ComputeShortestEdgeLength();
+  void
+  ComputeShortestEdgeLength();
 
-  double ComputeLargestVelocityMagnitude() const;
+  double
+  ComputeLargestVelocityMagnitude() const;
 
-  void ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio();
+  void
+  ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio();
 
-  void ComputeDeformationByScalingAndSquaring();
+  void
+  ComputeDeformationByScalingAndSquaring();
 
-  void ComposeDeformationUpdateWithPreviousDeformation();
+  void
+  ComposeDeformationUpdateWithPreviousDeformation();
 
-  void ComputeSelfRegulatedSigmaXandEpsilon();
+  void
+  ComputeSelfRegulatedSigmaXandEpsilon();
 
-  void SwapOldAndNewDestinationPointContainers();
+  void
+  SwapOldAndNewDestinationPointContainers();
 
-  void SwapOldAndNewDisplacementFieldContainers();
+  void
+  SwapOldAndNewDisplacementFieldContainers();
 
-  void SwapOldAndNewTangetFieldContainers();
+  void
+  SwapOldAndNewTangetFieldContainers();
 
-  void ParalelTransport(const PointType sourcePoint, const PointType destinationPoint,
-                        const TangentVectorType & inputVector, TangentVectorType & transportedVector ) const;
+  void
+  ParalelTransport( const PointType sourcePoint, const PointType destinationPoint,
+                    const TangentVectorType & inputVector, TangentVectorType & transportedVector ) const;
 
-  void PrintOutDeformationVectors( std::ostream & os = std::cout );
+  void
+  PrintOutDeformationVectors( std::ostream & os = std::cout );
 
-  virtual PointType InterpolateDestinationFieldAtPoint(const DestinationPointContainerType * destinationField,
-                                                       const PointType & point );
+  virtual PointType
+  InterpolateDestinationFieldAtPoint( const DestinationPointContainerType * destinationField, const PointType & point );
 
-  virtual void ProjectPointToSphereSurface( PointType & point ) const;
+  virtual void
+  ProjectPointToSphereSurface( PointType & point ) const;
 
   MovingMeshConstPointer m_MovingMesh;
   FixedMeshConstPointer  m_FixedMesh;
@@ -378,8 +423,7 @@ private:
   /** Coefficient that controls the degree of smoothing applied to the tangent field. */
   double m_Lambda;
 
-  using TriangleListBasisSystemCalculatorType = TriangleListBasisSystemCalculator<
-      FixedMeshType, BasisSystemType>;
+  using TriangleListBasisSystemCalculatorType = TriangleListBasisSystemCalculator< FixedMeshType, BasisSystemType >;
 
   /** Helper class that will compute basis systems at every triangle of the Fixed Mesh. */
   typename TriangleListBasisSystemCalculatorType::Pointer m_TriangleListBasisSystemCalculator;
@@ -387,42 +431,41 @@ private:
   /** Types definitions for the container of values resampled from the Moving
    * mesh into the coordinates of the Fixed mesh nodes. */
   using MovingPixelType = typename MovingMeshType::PixelType;
-  using MovingPixelRealType = typename NumericTraits<MovingPixelType>::RealType;
-  using ResampledMovingValuesContainerType = VectorContainer<PointIdentifier, MovingPixelRealType>;
+  using MovingPixelRealType = typename NumericTraits< MovingPixelType >::RealType;
+  using ResampledMovingValuesContainerType = VectorContainer< PointIdentifier, MovingPixelRealType >;
   using ResampledMovingValuesContainerIterator = typename ResampledMovingValuesContainerType::Iterator;
 
-  using FixedPixelRealType = typename NumericTraits<FixedPixelType>::RealType;
+  using FixedPixelRealType = typename NumericTraits< FixedPixelType >::RealType;
 
   /** Container that stores values resampled from the Moving mesh field at the
    * coordinates resulting from mapping the fixed mesh nodes through the current
    * deformation field. */
-  typename ResampledMovingValuesContainerType::Pointer          m_ResampledMovingValuesContainer;
+  typename ResampledMovingValuesContainerType::Pointer m_ResampledMovingValuesContainer;
 
   /** Interpolator type for bringing scalar values from the Moving Mesh into the Fixed Mesh. */
-  using ScalarInterpolatorType = LinearInterpolateMeshFunction<MovingMeshType>;
+  using ScalarInterpolatorType = LinearInterpolateMeshFunction< MovingMeshType >;
 
   /** Interpolator object that will bring scalar values from the Moving Mesh into the Fixed Mesh. */
-  typename ScalarInterpolatorType::Pointer                      m_ScalarInterpolator;
+  typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
 
   /** Interpolator for the deformation field values on the grid of the Fixed mesh. */
-  using DeformationInterpolatorType = LinearInterpolateDeformationFieldMeshFunction<FixedMeshType>;
+  using DeformationInterpolatorType = LinearInterpolateDeformationFieldMeshFunction< FixedMeshType >;
 
   /** Interpolator object that will compute deformation destination points on the fixed mesh grid. */
-  typename DeformationInterpolatorType::Pointer                 m_DeformationInterpolator;
+  typename DeformationInterpolatorType::Pointer m_DeformationInterpolator;
 
   /** Helper class that will compute the gradient of resampled Moving mesh
    * values at every node of the Fixed mesh with respect to the coordinate system
    * of that node in the fixed mesh. */
-  using NodeScalarGradientCalculatorType = NodeScalarGradientCalculator<
-      FixedMeshType, ResampledMovingValuesContainerType>;
-  typename NodeScalarGradientCalculatorType::Pointer            m_NodeScalarGradientCalculator;
+  using NodeScalarGradientCalculatorType =
+    NodeScalarGradientCalculator< FixedMeshType, ResampledMovingValuesContainerType >;
+  typename NodeScalarGradientCalculatorType::Pointer m_NodeScalarGradientCalculator;
 
   /** Helper class that will compute the Jacobian of destination points
    * at every node of the Fixed mesh with respect to the coordinate system
    * of that node in the fixed mesh. */
-  using NodeVectorJacobianCalculatorType = NodeVectorJacobianCalculator<
-      FixedMeshType, DestinationPointContainerType>;
-  typename NodeVectorJacobianCalculatorType::Pointer            m_NodeVectorJacobianCalculator;
+  using NodeVectorJacobianCalculatorType = NodeVectorJacobianCalculator< FixedMeshType, DestinationPointContainerType >;
+  typename NodeVectorJacobianCalculatorType::Pointer m_NodeVectorJacobianCalculator;
 
   /** Center of spherical mesh. We assume that both the Fixed and
    * Moving meshes have spherical geometry and that they share the same
@@ -435,7 +478,7 @@ private:
   double m_SphereRadius;
 
   /** Regularization constant used during the update of the deformation field. */
-  double m_Epsilon;          // 1/sigmaX^2 == epsilon === > control step length of optimization.
+  double m_Epsilon; // 1/sigmaX^2 == epsilon === > control step length of optimization.
 
   /** This term controls the contribution of the Jacobian in the Levenberg
    * Marquardt term that computes the velocity field. Large values of SigmaX
@@ -496,10 +539,10 @@ private:
   /** Container of lengths corresponding to the shortest edge of every node. */
   ShortestLengthContainerPointer m_ShortestEdgeLengthPerPoint;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshSphericalDiffeomorphicDemonsFilter.hxx"
+#  include "itkQuadEdgeMeshSphericalDiffeomorphicDemonsFilter.hxx"
 #endif
 
 #endif

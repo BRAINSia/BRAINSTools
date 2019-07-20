@@ -41,10 +41,9 @@ namespace itk
            and if ITK_USE_FFTWD is defined, then only doubles are valid.
 */
 
-template <typename TPixel, unsigned int VDimension>
+template < typename TPixel, unsigned int VDimension >
 void
-VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
-::GenerateOutputInformation()
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter< TPixel, VDimension >::GenerateOutputInformation()
 {
   // call the superclass' implementation of this method
   Superclass::GenerateOutputInformation();
@@ -53,32 +52,30 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
   // If this implementation returns a full result
   // instead of a 'half-complex' matrix, then none of this
   // is necessary
-  if( this->FullMatrix() )
-    {
+  if ( this->FullMatrix() )
+  {
     return;
-    }
+  }
 
   // get pointers to the input and output
-  typename TInputImageType::ConstPointer  inputPtr  = this->GetInput();
-  typename TOutputImageType::Pointer      outputPtr = this->GetOutput();
+  typename TInputImageType::ConstPointer inputPtr = this->GetInput();
+  typename TOutputImageType::Pointer     outputPtr = this->GetOutput();
 
-  if( !inputPtr || !outputPtr )
-    {
+  if ( !inputPtr || !outputPtr )
+  {
     return;
-    }
+  }
 
   //
   // This is all based on the same function in itk::ShrinkImageFilter
   // ShrinkImageFilter also modifies the image spacing, but spacing
   // has no meaning in the result of an FFT.
-  unsigned int i;
-  const typename TInputImageType::SizeType&   inputSize
-    = inputPtr->GetLargestPossibleRegion().GetSize();
-  const typename TInputImageType::IndexType&  inputStartIndex
-    = inputPtr->GetLargestPossibleRegion().GetIndex();
+  unsigned int                                i;
+  const typename TInputImageType::SizeType &  inputSize = inputPtr->GetLargestPossibleRegion().GetSize();
+  const typename TInputImageType::IndexType & inputStartIndex = inputPtr->GetLargestPossibleRegion().GetIndex();
 
-  typename TOutputImageType::SizeType     outputSize;
-  typename TOutputImageType::IndexType    outputStartIndex;
+  typename TOutputImageType::SizeType  outputSize;
+  typename TOutputImageType::IndexType outputStartIndex;
 
   //
   // in 4.3.4 of the FFTW documentation, they indicate the size of
@@ -87,22 +84,20 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
   // complex numbers.
   // static_cast prob. not necessary but want to make sure integer
   // division is used.
-  outputSize[0] = static_cast<unsigned int>(inputSize[0]) / 2 + 1;
+  outputSize[0] = static_cast< unsigned int >( inputSize[0] ) / 2 + 1;
   outputStartIndex[0] = inputStartIndex[0];
-  for( i = 1; i < TOutputImageType::ImageDimension; i++ )
-    {
+  for ( i = 1; i < TOutputImageType::ImageDimension; i++ )
+  {
     outputSize[i] = inputSize[i];
     outputStartIndex[i] = inputStartIndex[i];
-    }
+  }
   //
   // the halving of the input size hides the actual size of the input.
   // to get the same size image out of the IFFT, need to send it as
   // Metadata.
   using SizeScalarType = typename TOutputImageType::SizeType::SizeValueType;
   itk::MetaDataDictionary & OutputDic = outputPtr->GetMetaDataDictionary();
-  itk::EncapsulateMetaData<SizeScalarType>(OutputDic,
-                                           std::string("FFT_Actual_RealImage_Size"),
-                                           inputSize[0]);
+  itk::EncapsulateMetaData< SizeScalarType >( OutputDic, std::string( "FFT_Actual_RealImage_Size" ), inputSize[0] );
   typename TOutputImageType::RegionType outputLargestPossibleRegion;
   outputLargestPossibleRegion.SetSize( outputSize );
   outputLargestPossibleRegion.SetIndex( outputStartIndex );
@@ -110,57 +105,53 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
   outputPtr->SetRegions( outputLargestPossibleRegion );
 }
 
-template <typename TPixel, unsigned int VDimension>
+template < typename TPixel, unsigned int VDimension >
 void
-VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
-::GenerateInputRequestedRegion()
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter< TPixel, VDimension >::GenerateInputRequestedRegion()
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
   // get pointers to the inputs
-  typename TInputImageType::Pointer input  =
-    const_cast<TInputImageType *>(this->GetInput() );
+  typename TInputImageType::Pointer input = const_cast< TInputImageType * >( this->GetInput() );
 
-  if( !input )
-    {
+  if ( !input )
+  {
     return;
-    }
+  }
 
   input->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <typename TPixel, unsigned int VDimension>
+template < typename TPixel, unsigned int VDimension >
 void
-VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
-::EnlargeOutputRequestedRegion(DataObject *output)
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter< TPixel, VDimension >::EnlargeOutputRequestedRegion(
+  DataObject * output )
 {
-  Superclass::EnlargeOutputRequestedRegion(output);
+  Superclass::EnlargeOutputRequestedRegion( output );
 
   output->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template <typename TPixel, unsigned int VDimension>
+template < typename TPixel, unsigned int VDimension >
 void
-VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>::GenerateData()
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter< TPixel, VDimension >::GenerateData()
 {
   // get pointers to the input and output
-  typename TInputImageType::ConstPointer  inputPtr  = this->GetInput();
-  typename TOutputImageType::Pointer      outputPtr = this->GetOutput();
+  typename TInputImageType::ConstPointer inputPtr = this->GetInput();
+  typename TOutputImageType::Pointer     outputPtr = this->GetOutput();
 
-  if( !inputPtr || !outputPtr )
-    {
+  if ( !inputPtr || !outputPtr )
+  {
     return;
-    }
+  }
 
   // allocate output buffer memory
   outputPtr->SetBufferedRegion( outputPtr->GetRequestedRegion() );
   outputPtr->Allocate();
 
-  const typename TInputImageType::SizeType&   inputSize
-    = inputPtr->GetLargestPossibleRegion().GetSize();
-  const typename TOutputImageType::SizeType&   outputSize
-    = outputPtr->GetLargestPossibleRegion().GetSize();
+  const typename TInputImageType::SizeType &  inputSize = inputPtr->GetLargestPossibleRegion().GetSize();
+  const typename TOutputImageType::SizeType & outputSize = outputPtr->GetLargestPossibleRegion().GetSize();
 
   // figure out sizes
   // size of input and output aren't the same which is handled in the superclass,
@@ -168,57 +159,60 @@ VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>::Generate
   // the input size and output size only differ in the fastest moving dimension
   unsigned int total_inputSize = 1;
   unsigned int total_outputSize = 1;
-  for( unsigned i = 0; i < VDimension; i++ )
-    {
+  for ( unsigned i = 0; i < VDimension; i++ )
+  {
     total_inputSize *= inputSize[i];
     total_outputSize *= outputSize[i];
-    }
+  }
 
-  if( this->m_PlanComputed )            // if we've already computed a plan
-    {
+  if ( this->m_PlanComputed ) // if we've already computed a plan
+  {
     // if the image sizes aren't the same,
     // we have to compute the plan again
-    if( this->m_LastImageSize != total_inputSize )
-      {
-      delete [] this->m_InputBuffer;
-      delete [] this->m_OutputBuffer;
-      fftwf_destroy_plan(this->m_Plan);
-      this->m_PlanComputed = false;
-      }
-    }
-  if( !this->m_PlanComputed )
+    if ( this->m_LastImageSize != total_inputSize )
     {
+      delete[] this->m_InputBuffer;
+      delete[] this->m_OutputBuffer;
+      fftwf_destroy_plan( this->m_Plan );
+      this->m_PlanComputed = false;
+    }
+  }
+  if ( !this->m_PlanComputed )
+  {
     this->m_InputBuffer = new float[total_inputSize * 3];
-    this->m_OutputBuffer =
-      new fftwf_complex[total_outputSize * 3];
+    this->m_OutputBuffer = new fftwf_complex[total_outputSize * 3];
     this->m_LastImageSize = total_inputSize;
 
-    int *sizes = new int[VDimension];
-    for( unsigned int i = 0; i < VDimension; i++ )
-      {
-      sizes[(VDimension - 1) - i] = inputSize[i];
-      }
-
-    this->m_Plan = fftwf_plan_many_dft_r2c(VDimension, sizes, 3,
-                                           this->m_InputBuffer, nullptr, 3, 1,
-                                           this->m_OutputBuffer, nullptr, 3, 1,
-                                           FFTW_MEASURE | FFTW_DESTROY_INPUT);
-
-    delete [] sizes;
-    this->m_PlanComputed = true;
+    int * sizes = new int[VDimension];
+    for ( unsigned int i = 0; i < VDimension; i++ )
+    {
+      sizes[( VDimension - 1 ) - i] = inputSize[i];
     }
-  memcpy(this->m_InputBuffer,
-         inputPtr->GetBufferPointer(),
-         total_inputSize * sizeof(float) * 3);
-  fftwf_execute(this->m_Plan);
-  memcpy(outputPtr->GetBufferPointer(),
-         this->m_OutputBuffer,
-         total_outputSize * sizeof(fftwf_complex) * 3);
+
+    this->m_Plan = fftwf_plan_many_dft_r2c( VDimension,
+                                            sizes,
+                                            3,
+                                            this->m_InputBuffer,
+                                            nullptr,
+                                            3,
+                                            1,
+                                            this->m_OutputBuffer,
+                                            nullptr,
+                                            3,
+                                            1,
+                                            FFTW_MEASURE | FFTW_DESTROY_INPUT );
+
+    delete[] sizes;
+    this->m_PlanComputed = true;
+  }
+  memcpy( this->m_InputBuffer, inputPtr->GetBufferPointer(), total_inputSize * sizeof( float ) * 3 );
+  fftwf_execute( this->m_Plan );
+  memcpy( outputPtr->GetBufferPointer(), this->m_OutputBuffer, total_outputSize * sizeof( fftwf_complex ) * 3 );
 }
 
-template <typename TPixel, unsigned int VDimension>
+template < typename TPixel, unsigned int VDimension >
 bool
-VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>::FullMatrix()
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter< TPixel, VDimension >::FullMatrix()
 {
   return false;
 }

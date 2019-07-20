@@ -18,7 +18,8 @@
  *=========================================================================*/
 #include "BRAINSDemonWarpTemplates.h"
 
-void VectorProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command)
+void
+VectorProcessOutputType_double( struct BRAINSDemonWarpAppParameters & command )
 {
-  VectorProcessOutputType<double>(command);
+  VectorProcessOutputType< double >( command );
 }

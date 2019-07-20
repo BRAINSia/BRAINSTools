@@ -36,21 +36,21 @@ namespace itk
  * \sa TriangleBasisSystem
  *
  */
-template <typename TMesh, typename TBasisSystem>
+template < typename TMesh, typename TBasisSystem >
 class TriangleBasisSystemCalculator : public Object
 {
 public:
   /** Standard class type alias. */
   using Self = TriangleBasisSystemCalculator;
   using Superclass = Object;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Standard part of every itk Object. */
-  itkTypeMacro(TriangleBasisSystemCalculator, Object);
+  itkTypeMacro( TriangleBasisSystemCalculator, Object );
 
   using BasisSystemType = TBasisSystem;
   using MeshType = TMesh;
@@ -67,30 +67,35 @@ public:
 
   /** Compute the basis system and its orthogonal at the triangular cell of the
    * Mesh that is identified by cellIndex. */
-  void CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs, TBasisSystem & orthogonalSystem ) const;
+  void
+  CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs, TBasisSystem & orthogonalSystem ) const;
 
   /** Compute the basis system and its orthogonal given the coordinates of
    * three points. */
-  void CalculateBasis(PointType pt1, PointType pt2, PointType pt3, TBasisSystem & basisSystem,
-                      TBasisSystem & orthogonalSystem ) const;
+  void
+  CalculateBasis( PointType pt1, PointType pt2, PointType pt3, TBasisSystem & basisSystem,
+                  TBasisSystem & orthogonalSystem ) const;
 
   /** Compute the basis system at the triangular cell of the
    * Mesh that is identified by cellIndex. */
-  void CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs ) const;
+  void
+  CalculateTriangle( unsigned int cellIndex, TBasisSystem & bs ) const;
 
   /** Compute the basis system given the coordinates of three points. */
-  void CalculateBasis(PointType pt1, PointType pt2, PointType pt3, TBasisSystem & basisSystem ) const;
+  void
+  CalculateBasis( PointType pt1, PointType pt2, PointType pt3, TBasisSystem & basisSystem ) const;
 
 protected:
   TriangleBasisSystemCalculator();
   virtual ~TriangleBasisSystemCalculator();
+
 private:
   MeshConstPointer m_InputMesh;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkTriangleBasisSystemCalculator.hxx"
+#  include "itkTriangleBasisSystemCalculator.hxx"
 #endif
 
 #endif

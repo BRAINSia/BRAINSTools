@@ -68,7 +68,8 @@
 #include "BRAINSApplySurfaceLabelsCLP.h"
 #include <BRAINSCommonLib.h>
 
-int main( int argc, char * *argv )
+int
+main( int argc, char ** argv )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -82,66 +83,63 @@ int main( int argc, char * *argv )
   std::cout << "-----------------------------------------------\n";
 
   // Read Label Map
-  using LabelMapType = itk::Image<signed short, 3>;
-  using LabelMapReaderType = itk::ImageFileReader<LabelMapType>;
+  using LabelMapType = itk::Image< signed short, 3 >;
+  using LabelMapReaderType = itk::ImageFileReader< LabelMapType >;
 
   LabelMapReaderType::Pointer labelMapReader = LabelMapReaderType::New();
   labelMapReader->SetFileName( inputLabelMap.c_str() );
   try
-    {
+  {
     labelMapReader->Update();
-    }
-  catch( itk::ExceptionObject & exp )
-    {
+  }
+  catch ( itk::ExceptionObject & exp )
+  {
     std::cerr << "Exception caught!\n";
     std::cerr << exp << std::endl;
-    }
+  }
 
   // Read Surface
-  vtkPolyData *surface;
-  std::string  fileExtension = vtksys::SystemTools::GetFilenameLastExtension(inputSurface);
-  std::string  extension = vtksys::SystemTools::LowerCase(fileExtension);
-  if( extension == ".vtk" )
-    {
-    vtkPolyDataReader *surfaceReader = vtkPolyDataReader::New();
+  vtkPolyData * surface;
+  std::string   fileExtension = vtksys::SystemTools::GetFilenameLastExtension( inputSurface );
+  std::string   extension = vtksys::SystemTools::LowerCase( fileExtension );
+  if ( extension == ".vtk" )
+  {
+    vtkPolyDataReader * surfaceReader = vtkPolyDataReader::New();
     surfaceReader->SetFileName( inputSurface.c_str() );
     try
-      {
+    {
       surfaceReader->Update();
-      }
-    catch( vtkErrorCode & exp )
-      {
-      std::cerr << "Exception caught!\n";
-      std::cerr << exp.GetStringFromErrorCode( vtkErrorCode::FileNotFoundError) << std::endl;
-      }
-    surface = surfaceReader->GetOutput();
     }
+    catch ( vtkErrorCode & exp )
+    {
+      std::cerr << "Exception caught!\n";
+      std::cerr << exp.GetStringFromErrorCode( vtkErrorCode::FileNotFoundError ) << std::endl;
+    }
+    surface = surfaceReader->GetOutput();
+  }
   else
-    {
-    vtkXMLPolyDataReader *surfaceReader = vtkXMLPolyDataReader::New();
+  {
+    vtkXMLPolyDataReader * surfaceReader = vtkXMLPolyDataReader::New();
     surfaceReader->SetFileName( inputSurface.c_str() );
     try
-      {
+    {
       surfaceReader->Update();
-      }
-    catch( vtkErrorCode & exp )
-      {
-      std::cerr << "Exception caught!\n";
-      std::cerr << exp.GetStringFromErrorCode( vtkErrorCode::FileNotFoundError) << std::endl;
-      }
-    surface = surfaceReader->GetOutput();
     }
+    catch ( vtkErrorCode & exp )
+    {
+      std::cerr << "Exception caught!\n";
+      std::cerr << exp.GetStringFromErrorCode( vtkErrorCode::FileNotFoundError ) << std::endl;
+    }
+    surface = surfaceReader->GetOutput();
+  }
 
   // Put surface into RAS orientation
-  vtkTransform *rasOrientation = vtkTransform::New();
-  const double  orientationMatrix[16] = { -1,  0, 0, 0,
-                                          0, -1, 0, 0,
-                                          0,  0, 1, 0,
-                                          0,  0, 0, 0  };
+  vtkTransform * rasOrientation = vtkTransform::New();
+  const double   orientationMatrix[16] = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
   rasOrientation->SetMatrix( orientationMatrix );
 
-  vtkTransformPolyDataFilter *resampleSurface = vtkTransformPolyDataFilter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkTransformPolyDataFilter * resampleSurface = vtkTransformPolyDataFilter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   resampleSurface->SetInput( surface );
 #else
   resampleSurface->SetInputData( surface );
@@ -165,10 +163,10 @@ int main( int argc, char * *argv )
   cellDataArray->SetName( cellDataName.c_str() );
   cellDataArray->SetNumberOfValues( numCells );
   // Iterate over the surface
-  for( int i = 0; i < numCells; i++ )
-    {
+  for ( int i = 0; i < numCells; i++ )
+  {
     // At each cell obtain all 3 of its points
-    surface->GetCellPoints( i, pointList);
+    surface->GetCellPoints( i, pointList );
 
     // Copy the cell's points into 3 double*'s
     surface->GetPoint( pointList->GetId( 0 ), pnt1 );
@@ -206,27 +204,27 @@ int main( int argc, char * *argv )
 
     // If 2+ points have the same label, assign that value to the label;
     // else assign the cell value to that of the initial point
-    if( labelValues[1] == labelValues[2] )
-      {
+    if ( labelValues[1] == labelValues[2] )
+    {
       finalLabelValue = labelValues[1];
-      }
+    }
     else
-      {
+    {
       finalLabelValue = labelValues[0];
-      }
+    }
 
     // Change the value of the cell to finalLabelValue
     cellDataArray->SetValue( i, finalLabelValue );
-    }
+  }
 
-  vtkCellData *cellData = surface->GetCellData();
+  vtkCellData * cellData = surface->GetCellData();
   cellData->AddArray( cellDataArray );
   //  vtkAbstractArray *tmpArray = surface->GetCellData()->GetAbstractArray( cellDataName.c_str() );
 
   // Put the surface back into its original orientation
 
-  vtkTransformPolyDataFilter *revertedSurface = vtkTransformPolyDataFilter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  vtkTransformPolyDataFilter * revertedSurface = vtkTransformPolyDataFilter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
   revertedSurface->SetInput( resampleSurface->GetOutput() );
 #else
   revertedSurface->SetInputData( resampleSurface->GetOutput() );
@@ -237,12 +235,12 @@ int main( int argc, char * *argv )
   surface = revertedSurface->GetOutput();
 
   // Write out the new surface
-  fileExtension = vtksys::SystemTools::GetFilenameLastExtension(outputSurface);
-  extension = vtksys::SystemTools::LowerCase(fileExtension);
-  if( extension == ".vtk" )
-    {
-    vtkPolyDataWriter *surfaceWriter = vtkPolyDataWriter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  fileExtension = vtksys::SystemTools::GetFilenameLastExtension( outputSurface );
+  extension = vtksys::SystemTools::LowerCase( fileExtension );
+  if ( extension == ".vtk" )
+  {
+    vtkPolyDataWriter * surfaceWriter = vtkPolyDataWriter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
     surfaceWriter->SetInput( surface );
 #else
     surfaceWriter->SetInputData( surface );
@@ -250,11 +248,11 @@ int main( int argc, char * *argv )
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->Update();
     surfaceWriter->Delete();
-    }
+  }
   else
-    {
-    vtkXMLPolyDataWriter *surfaceWriter = vtkXMLPolyDataWriter::New();
-#if (VTK_MAJOR_VERSION < 6)
+  {
+    vtkXMLPolyDataWriter * surfaceWriter = vtkXMLPolyDataWriter::New();
+#if ( VTK_MAJOR_VERSION < 6 )
     surfaceWriter->SetInput( surface );
 #else
     surfaceWriter->SetInputData( surface );
@@ -263,7 +261,7 @@ int main( int argc, char * *argv )
     surfaceWriter->SetDataModeToAscii();
     surfaceWriter->Update();
     surfaceWriter->Delete();
-    }
+  }
   // Clean-up Allocated Objects
   cellDataArray->Delete();
   pointList->Delete();

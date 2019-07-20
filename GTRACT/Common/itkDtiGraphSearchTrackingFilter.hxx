@@ -56,14 +56,9 @@
 
 namespace itk
 {
-template <typename TTensorImageType, typename TAnisotropyImageType,
-          typename TMaskImageType>
-DtiGraphSearchTrackingFilter<TTensorImageType,
-                             TAnisotropyImageType,
-                             TMaskImageType>::DtiGraphSearchTrackingFilter() :
-  DtiTrackingFilterBase<
-    TTensorImageType, TAnisotropyImageType,
-    TMaskImageType >::DtiTrackingFilterBase()
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+DtiGraphSearchTrackingFilter< TTensorImageType, TAnisotropyImageType, TMaskImageType >::DtiGraphSearchTrackingFilter()
+  : DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::DtiTrackingFilterBase()
 {
   this->m_UseRandomWalk = false;
   this->m_MaximumBranches = 5;
@@ -74,56 +69,47 @@ DtiGraphSearchTrackingFilter<TTensorImageType,
   this->m_RandomGenerator = RandomGeneratorType::New();
 }
 
-template <typename TTensorImageType, typename TAnisotropyImageType,
-          typename TMaskImageType>
-typename itk::Point<double,
-                    3> DtiGraphSearchTrackingFilter<TTensorImageType,
-                                                    TAnisotropyImageType,
-                                                    TMaskImageType>::InitializeCenterOfMask()
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+typename itk::Point< double, 3 >
+DtiGraphSearchTrackingFilter< TTensorImageType, TAnisotropyImageType, TMaskImageType >::InitializeCenterOfMask()
 {
   // ////////////////////////////////////////////////////////////////////////
   // Get the Center point for the Ending Region
   // ///////////////////////////////////////////////////////////////////////
 
-  using MomentsCalculatorType = itk::ImageMomentsCalculator<typename Self::MaskImageType>;
-  typename MomentsCalculatorType::Pointer centerOfMassFilter
-    = MomentsCalculatorType::New();
-  centerOfMassFilter->SetImage(this->m_EndingRegion);
+  using MomentsCalculatorType = itk::ImageMomentsCalculator< typename Self::MaskImageType >;
+  typename MomentsCalculatorType::Pointer centerOfMassFilter = MomentsCalculatorType::New();
+  centerOfMassFilter->SetImage( this->m_EndingRegion );
   centerOfMassFilter->Compute();
 
-  typename MomentsCalculatorType::VectorType com
-    = centerOfMassFilter->GetCenterOfGravity();
+  typename MomentsCalculatorType::VectorType com = centerOfMassFilter->GetCenterOfGravity();
 
-  typename itk::Point<double, 3> sum;
+  typename itk::Point< double, 3 > sum;
   sum[0] = com[0];
   sum[1] = com[1];
   sum[2] = com[2];
   return sum;
 }
 
-template <typename TTensorImageType, typename TAnisotropyImageType,
-          typename TMaskImageType>
-void DtiGraphSearchTrackingFilter<
-  TTensorImageType, TAnisotropyImageType, TMaskImageType>::Update()
+template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+void
+DtiGraphSearchTrackingFilter< TTensorImageType, TAnisotropyImageType, TMaskImageType >::Update()
 {
-  typedef typename Self::TensorImageType::PixelType::
-    EigenValuesArrayType EigenValuesArrayType;
-  typedef typename Self::TensorImageType::PixelType::
-    EigenVectorsMatrixType EigenVectorsMatrixType;
+  typedef typename Self::TensorImageType::PixelType::EigenValuesArrayType   EigenValuesArrayType;
+  typedef typename Self::TensorImageType::PixelType::EigenVectorsMatrixType EigenVectorsMatrixType;
 
   float   anisotropy, anisotropySum;
-  TVector vin(3), vout(3);
+  TVector vin( 3 ), vout( 3 );
 
   typename Self::ContinuousIndexType index, tmpIndex;
-  bool stop;
+  bool                               stop;
   typename Self::BranchListType      branchList;
   typename Self::SeedListType        newSeeds;
   typename Self::DirectionListType   newDirections;
 
   const double inRadians = this->pi / 180.0;
-  double       curvatureBranchAngle
-    = std::cos(this->m_CurvatureBranchAngle * inRadians);
-  double randomWalkAngle = std::cos(this->m_RandomWalkAngle / 2.0 * inRadians);
+  double       curvatureBranchAngle = std::cos( this->m_CurvatureBranchAngle * inRadians );
+  double       randomWalkAngle = std::cos( this->m_RandomWalkAngle / 2.0 * inRadians );
 
   // newSeeds.clear();
   // newDirections.clear();
@@ -133,14 +119,14 @@ void DtiGraphSearchTrackingFilter<
 
   /* Initialize the random number generator */
 
-  if( this->m_RandomSeed == -1 )
-    {
+  if ( this->m_RandomSeed == -1 )
+  {
     this->m_RandomGenerator->Initialize();
-    }
+  }
   else
-    {
-    this->m_RandomGenerator->Initialize(this->m_RandomSeed);
-    }
+  {
+    this->m_RandomGenerator->Initialize( this->m_RandomSeed );
+  }
 
   // std::cout << "AnisotropyImageRegion: " <<
   // this->m_AnisotropyImage->GetLargestPossibleRegion() << std::endl;
@@ -151,45 +137,44 @@ void DtiGraphSearchTrackingFilter<
   // std::cout << "StartingMaskRegion: " <<
   // this->m_StartingRegion->GetLargestPossibleRegion() << std::endl;;
 
-  this->m_ScalarIP->SetInputImage(this->m_AnisotropyImage);
-  this->m_VectorIP->SetInputImage(this->m_TensorImage);
-  this->m_EndIP->SetInputImage(this->m_EndingRegion);
-  typename Self::AnisotropyImageRegionType ImageRegion
-    = this->m_AnisotropyImage->GetLargestPossibleRegion();
+  this->m_ScalarIP->SetInputImage( this->m_AnisotropyImage );
+  this->m_VectorIP->SetInputImage( this->m_TensorImage );
+  this->m_EndIP->SetInputImage( this->m_EndingRegion );
+  typename Self::AnisotropyImageRegionType ImageRegion = this->m_AnisotropyImage->GetLargestPossibleRegion();
 
-  this->m_StartIP->SetInputImage(this->m_StartingRegion);
+  this->m_StartIP->SetInputImage( this->m_StartingRegion );
   Self::InitializeSeeds();
 
   constexpr int maxFibers = 25;
-  int       sizeOfOutput = 0;
-  int       oldsizeOfOutput = 0;
-  int       originalSeedCount = 0;
+  int           sizeOfOutput = 0;
+  int           oldsizeOfOutput = 0;
+  int           originalSeedCount = 0;
 
   // ////////////////////////////////////////////////////////////////////////
   // Get the Center Of Mass for the Ending Region
   // ///////////////////////////////////////////////////////////////////////
-  typename itk::Point<double, 3> midPoint = this->InitializeCenterOfMask();
-  double tmpPoint[3];
+  typename itk::Point< double, 3 > midPoint = this->InitializeCenterOfMask();
+  double                           tmpPoint[3];
   tmpPoint[0] = midPoint[0];
   tmpPoint[1] = midPoint[1];
   tmpPoint[2] = midPoint[2];
   typename Self::ContinuousIndexType endP;
 
-  this->MMToContinuousIndex(tmpPoint, endP);
+  this->MMToContinuousIndex( tmpPoint, endP );
   // std::cout << "Ending Bound Box: " << bb << std::endl;
   // std::cout << "Ending Center Point: " << endP << std::endl;
-  while( !( this->m_Seeds.empty() ) )
-    {
+  while ( !( this->m_Seeds.empty() ) )
+  {
     originalSeedCount++;
-    if( oldsizeOfOutput != sizeOfOutput )
-      {
+    if ( oldsizeOfOutput != sizeOfOutput )
+    {
       oldsizeOfOutput = sizeOfOutput;
       std::cout << std::endl;
-      }
-    if( sizeOfOutput > maxFibers )    // useful for some cases of debugging:
-      {
+    }
+    if ( sizeOfOutput > maxFibers ) // useful for some cases of debugging:
+    {
       // break;
-      }
+    }
 
     anisotropySum = 0.0;
 
@@ -206,30 +191,30 @@ void DtiGraphSearchTrackingFilter<
     stop = false;
     // int order = 1;
 
-    vtkPoints *    fiber = vtkPoints::New();
-    vtkFloatArray *fiberTensors = vtkFloatArray::New();
-    fiberTensors->SetName("Tensors");
-    fiberTensors->SetNumberOfComponents(9);
-    vtkFloatArray *fiberAnisotropy = vtkFloatArray::New();
-    fiberAnisotropy->SetName("Anisotropy");
-    vtkFloatArray *fiberAnisotropySum = vtkFloatArray::New();
-    fiberAnisotropySum->SetName("Anisotropy-Sum");
+    vtkPoints *     fiber = vtkPoints::New();
+    vtkFloatArray * fiberTensors = vtkFloatArray::New();
+    fiberTensors->SetName( "Tensors" );
+    fiberTensors->SetNumberOfComponents( 9 );
+    vtkFloatArray * fiberAnisotropy = vtkFloatArray::New();
+    fiberAnisotropy->SetName( "Anisotropy" );
+    vtkFloatArray * fiberAnisotropySum = vtkFloatArray::New();
+    fiberAnisotropySum->SetName( "Anisotropy-Sum" );
     int currentPointId = 0;
 
     branchList.clear();
 
     // ////////////////////////////////////////////////////////////////////////
     // Tracking start from given 'index' and 'vout'
-    while( !stop )
+    while ( !stop )
+    {
+      if ( ImageRegion.IsInside( index ) )
       {
-      if( ImageRegion.IsInside(index) )
-        {
-        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex(index);
-        }
+        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex( index );
+      }
       else
-        {
+      {
         anisotropy = -1;
-        }
+      }
 
       //
       // ////////////////////////////////////////////////////////////////////////
@@ -237,18 +222,17 @@ void DtiGraphSearchTrackingFilter<
       //
       // ////////////////////////////////////////////////////////////////////////
       bool isLoop = false;
-      if( this->m_UseLoopDetection )
-        {
-        isLoop = Self::IsLoop(fiber);
-        }
+      if ( this->m_UseLoopDetection )
+      {
+        isLoop = Self::IsLoop( fiber );
+      }
       bool outOfBounds = false;
 
-      if( ( currentPointId > ( this->m_MaximumLength / this->m_StepSize ) )
-          || ( anisotropy < this->m_AnisotropyThreshold )
-          || ( isLoop ) || ( outOfBounds ) )
+      if ( ( currentPointId > ( this->m_MaximumLength / this->m_StepSize ) ) ||
+           ( anisotropy < this->m_AnisotropyThreshold ) || ( isLoop ) || ( outOfBounds ) )
       // || ( branchList.size() > this->m_MaximumBranches) ) - Removed as a
       // stopping criteria
-        {
+      {
         // std::cout << "Stop Track" << std::endl;
         //
         // ////////////////////////////////////////////////////////////////////////
@@ -256,98 +240,97 @@ void DtiGraphSearchTrackingFilter<
         //
         // ////////////////////////////////////////////////////////////////////////
         // Backup to the previous branch restart tracking
-        if( !branchList.empty() )
-          {
+        if ( !branchList.empty() )
+        {
           BranchPointType bp = branchList.back();
           branchList.pop_back();
           // fiber.resize(bp.m_DivergePoint);
-          while( currentPointId > bp.m_DivergePoint )
-            {
+          while ( currentPointId > bp.m_DivergePoint )
+          {
             fiberTensors->RemoveLastTuple();
             fiberAnisotropy->RemoveLastTuple();
             fiberAnisotropySum->RemoveLastTuple();
             currentPointId--;
-            }
+          }
 
           // fiber->SetNumberOfPoints( currentPointId );
 
-          vtkPoints *newfiber = vtkPoints::New();
-          newfiber->SetNumberOfPoints(currentPointId);
-          for( int i = 0; i < currentPointId; i++ )
-            {
-            newfiber->SetPoint( i, fiber->GetPoint(i) );
-            }
+          vtkPoints * newfiber = vtkPoints::New();
+          newfiber->SetNumberOfPoints( currentPointId );
+          for ( int i = 0; i < currentPointId; i++ )
+          {
+            newfiber->SetPoint( i, fiber->GetPoint( i ) );
+          }
           fiber->Delete();
           fiber = newfiber;
 
           vout = bp.m_Direction;
-          double *p = fiber->GetPoint(currentPointId - 1);
-          this->MMToContinuousIndex(p, index);
-          }
-        else
-          {
-          stop = true;
-          }
+          double * p = fiber->GetPoint( currentPointId - 1 );
+          this->MMToContinuousIndex( p, index );
         }
-      else
+        else
         {
+          stop = true;
+        }
+      }
+      else
+      {
         //
         // ////////////////////////////////////////////////////////////////////////
         // forward propagating
         //
         // ////////////////////////////////////////////////////////////////////////
-        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex(index);
-        if( currentPointId )
-          {
+        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex( index );
+        if ( currentPointId )
+        {
           anisotropySum += anisotropy;
-          }
+        }
         else
-          {
+        {
           anisotropySum = anisotropy;
-          }
-        fiberAnisotropy->InsertNextValue(anisotropy);
-        fiberAnisotropySum->InsertNextValue(anisotropySum);
+        }
+        fiberAnisotropy->InsertNextValue( anisotropy );
+        fiberAnisotropySum->InsertNextValue( anisotropySum );
 
         typename Self::PointType t;
-        this->ContinuousIndexToMM(index, t);
+        this->ContinuousIndexToMM( index, t );
         fiber->InsertNextPoint( t.GetDataPointer() );
         currentPointId++;
 
-        EigenValuesArrayType   eigenValues;
-        EigenVectorsMatrixType eigenVectors;
-        typename Self::TensorImagePixelType tensorPixel
-          = this->m_VectorIP->EvaluateAtContinuousIndex(index);
+        EigenValuesArrayType                eigenValues;
+        EigenVectorsMatrixType              eigenVectors;
+        typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex( index );
 
-        TMatrix fullTensorPixel(3, 3);
+        TMatrix fullTensorPixel( 3, 3 );
 
-        fullTensorPixel = Tensor2Matrix(tensorPixel);
+        fullTensorPixel = Tensor2Matrix( tensorPixel );
         fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
 
-        tensorPixel.ComputeEigenAnalysis(eigenValues, eigenVectors);
+        tensorPixel.ComputeEigenAnalysis( eigenValues, eigenVectors );
 
         //
         // ////////////////////////////////////////////////////////////////////////
         // Get two tracking vectors - Primary and Secondary Eigen Value
         //
         // ////////////////////////////////////////////////////////////////////////
-        TVector e2(3);
+        TVector e2( 3 );
 
         e2[0] = eigenVectors[2][0];
         e2[1] = eigenVectors[2][1];
         e2[2] = eigenVectors[2][2];
-        if( dot_product(vin, e2) < 0 )
-          {
+        if ( dot_product( vin, e2 ) < 0 )
+        {
           e2 *= -1;
-          }
-        TVector e1(3);
+        }
+        TVector e1( 3 );
 
         e1[0] = eigenVectors[1][0];
         e1[1] = eigenVectors[1][1];
         e1[2] = eigenVectors[1][2];
-        if( dot_product(vin, e1) < 0 )
-          {
+        if ( dot_product( vin, e1 ) < 0 )
+        {
           e1 *= -1;
-          }
+        }
 
         // std::cout << "Forward Track Directions: (" << e2 << ") and (" << e1
         // << ")" << std::endl;
@@ -358,19 +341,19 @@ void DtiGraphSearchTrackingFilter<
         //
         // ////////////////////////////////////////////////////////////////////////
 
-        if( ( ( anisotropy < this->m_AnisotropyBranchingValue )
-              || ( dot_product(e2, vin) < curvatureBranchAngle ) )
-            && ( branchList.size() <= this->m_MaximumBranches ) )
-          {
+        if ( ( ( anisotropy < this->m_AnisotropyBranchingValue ) ||
+               ( dot_product( e2, vin ) < curvatureBranchAngle ) ) &&
+             ( branchList.size() <= this->m_MaximumBranches ) )
+        {
           // std::cout << "Branch Point" << std::endl;
 
           BranchPointType bp;
           // bp.m_AI = 0;        bp.m_Length = 0;
           bp.m_DivergePoint = currentPointId;
 
-          if( this->m_UseRandomWalk )
-            {
-            TVector v(3);
+          if ( this->m_UseRandomWalk )
+          {
+            TVector v( 3 );
 
             v[0] = endP[0] - index[0];
             v[1] = endP[1] - index[1];
@@ -380,18 +363,9 @@ void DtiGraphSearchTrackingFilter<
             // std::cout << "Random Walk Direction: " << v << std::endl;
 
             double x, y, z;
-            x
-              = ( 0.5
-                  - this->m_RandomGenerator->
-                  GetVariateWithOpenRange() ) * 2.0;
-            y
-              = ( 0.5
-                  - this->m_RandomGenerator->
-                  GetVariateWithOpenRange() ) * 2.0;
-            z
-              = ( 0.5
-                  - this->m_RandomGenerator->
-                  GetVariateWithOpenRange() ) * 2.0;
+            x = ( 0.5 - this->m_RandomGenerator->GetVariateWithOpenRange() ) * 2.0;
+            y = ( 0.5 - this->m_RandomGenerator->GetVariateWithOpenRange() ) * 2.0;
+            z = ( 0.5 - this->m_RandomGenerator->GetVariateWithOpenRange() ) * 2.0;
             double m = std::sqrt( ( x * x ) + ( y * y ) + ( z * z ) );
             x /= m;
             y /= m;
@@ -404,119 +378,116 @@ void DtiGraphSearchTrackingFilter<
             z *= ( randomWalkAngle / ( this->pi / 2.0 ) );
 
             // gsl_ran_dir_3d(r,&x,&y,&z);
-            TVector randDir(3);
+            TVector randDir( 3 );
 
             randDir[0] = x;
             randDir[1] = y;
             randDir[2] = z;
-            if( dot_product(v, randDir) < 0 )
-              {
+            if ( dot_product( v, randDir ) < 0 )
+            {
               randDir *= -1;
-              }
+            }
             v += randDir;
             v.normalize();
             vout = v;
             bp.m_Direction = e2;
-            branchList.push_back(bp);
+            branchList.push_back( bp );
             bp.m_Direction = e1;
-            branchList.push_back(bp);
-            }
-          else
-            {
-            bp.m_Direction = e1;
-            branchList.push_back(bp);
-            vout = e2;
-            }
+            branchList.push_back( bp );
           }
-        else
-          {
-          // Using TEND????
-          if( this->m_UseTend )
-            {
-            this->ApplyTensorDeflection(vin, fullTensorPixel, e2, vout);
-            }
           else
-            {
+          {
+            bp.m_Direction = e1;
+            branchList.push_back( bp );
             vout = e2;
-            }
           }
         }
+        else
+        {
+          // Using TEND????
+          if ( this->m_UseTend )
+          {
+            this->ApplyTensorDeflection( vin, fullTensorPixel, e2, vout );
+          }
+          else
+          {
+            vout = e2;
+          }
+        }
+      }
 
       //
       // ////////////////////////////////////////////////////////////////////////
       // Calculate the new index
-      this->StepIndex(tmpIndex, index, vout);
+      this->StepIndex( tmpIndex, index, vout );
       bool backTrack = false;
-      if( ImageRegion.IsInside(tmpIndex) )
-        {
+      if ( ImageRegion.IsInside( tmpIndex ) )
+      {
         //
         // ////////////////////////////////////////////////////////////////////////
         // Check if we are in the ending region?
         //
         // ////////////////////////////////////////////////////////////////////////
-        if( ( this->m_EndIP->EvaluateAtContinuousIndex(tmpIndex) >= 0.5 )
-            && ( fiber->GetNumberOfPoints() / this->m_StepSize >= this->m_MinimumLength ) )
-          {
+        if ( ( this->m_EndIP->EvaluateAtContinuousIndex( tmpIndex ) >= 0.5 ) &&
+             ( fiber->GetNumberOfPoints() / this->m_StepSize >= this->m_MinimumLength ) )
+        {
           // Add Fiber to the Current Fiber Track //
           sizeOfOutput++;
-          std::
-          cerr << "Fiber (" << originalSeedCount << "  "
-               << sizeOfOutput << "  " << currentPointId << "); ";
-          this->AddFiberToOutput(fiber, fiberTensors);
+          std::cerr << "Fiber (" << originalSeedCount << "  " << sizeOfOutput << "  " << currentPointId << "); ";
+          this->AddFiberToOutput( fiber, fiberTensors );
           // // newSeeds.push_back(index);
           // // newDirections.push_back(vout);
           // std::cout << "Add Track" << std::endl;
 
           backTrack = true;
-          }
         }
+      }
       else
-        {
+      {
         backTrack = true;
-        outOfBounds = true;       // back up to a previous branch point, if any.
-        }
+        outOfBounds = true; // back up to a previous branch point, if any.
+      }
 
-      if( backTrack )
-        {
+      if ( backTrack )
+      {
         //
         // ////////////////////////////////////////////////////////////////////////
         // back tracking
-        if( !branchList.empty() )
-          {
+        if ( !branchList.empty() )
+        {
           BranchPointType bp = branchList.back();
           branchList.pop_back();
           // fiber.resize(bp.m_DivergePoint);
-          while( currentPointId > bp.m_DivergePoint )
-            {
+          while ( currentPointId > bp.m_DivergePoint )
+          {
             fiberTensors->RemoveLastTuple();
             fiberAnisotropy->RemoveLastTuple();
             fiberAnisotropySum->RemoveLastTuple();
             currentPointId--;
-            }
+          }
 
           // fiber->SetNumberOfPoints( currentPointId );
 
-          vtkPoints *newfiber = vtkPoints::New();
-          newfiber->SetNumberOfPoints(currentPointId);
-          for( int i = 0; i < currentPointId; i++ )
-            {
-            newfiber->SetPoint( i, fiber->GetPoint(i) );
-            }
+          vtkPoints * newfiber = vtkPoints::New();
+          newfiber->SetNumberOfPoints( currentPointId );
+          for ( int i = 0; i < currentPointId; i++ )
+          {
+            newfiber->SetPoint( i, fiber->GetPoint( i ) );
+          }
           fiber->Delete();
           fiber = newfiber;
 
           vout = bp.m_Direction;
-          double *p
-            = fiber->GetPoint(currentPointId - 1);
+          double *                           p = fiber->GetPoint( currentPointId - 1 );
           typename Self::ContinuousIndexType prevIndex;
-          this->MMToContinuousIndex(p, prevIndex);
-          this->StepIndex(tmpIndex, prevIndex, vout);
-          }
-        else
-          {
-          stop = true;
-          }
+          this->MMToContinuousIndex( p, prevIndex );
+          this->StepIndex( tmpIndex, prevIndex, vout );
         }
+        else
+        {
+          stop = true;
+        }
+      }
 
       //
       // ////////////////////////////////////////////////////////////////////////
@@ -526,13 +497,13 @@ void DtiGraphSearchTrackingFilter<
 
       // std::cout << "New Index: " << index << std::endl;
       // std::cout << "Vin: " << vin << std::endl;
-      }                       // End Stop
-    }                         // End - Seeds not empty
+    } // End Stop
+  }   // End - Seeds not empty
 
   //  fiber.clear();
   //  branchList.clear();
   //  seeds               = newSeeds;
   //  directions  = newDirections;
 }
-}                               // end namespace itk
+} // end namespace itk
 #endif

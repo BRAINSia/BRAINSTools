@@ -37,24 +37,22 @@
 #include <BRAINSCommonLib.h>
 
 
-int main( int argc, char *argv[] )
+int
+main( int argc, char * argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if( inputLandmarksFile == ""
-     || inputTransformFile == ""
-     || outputLandmarksFile == "")
-    {
+  if ( inputLandmarksFile == "" || inputTransformFile == "" || outputLandmarksFile == "" )
+  {
     std::cerr << "Input and output file names should be given by commandline. " << std::endl;
     std::cerr << "Usage:\n"
               << "~/BRAINSConstellationLandmarksTransform\n"
               << "--inputLandmarksFile (-i)\n"
               << "--inputTransformFile (-t)\n"
-              << "--outputLandmarksFile (-o)"
-              << std::endl;
+              << "--outputLandmarksFile (-o)" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
   LandmarksMapType transformedLandmarks;
@@ -64,23 +62,23 @@ int main( int argc, char *argv[] )
   reader->SetFileName( inputTransformFile );
   reader->Update();
 
-  ReaderType::TransformListType *transformList = reader->GetModifiableTransformList();
+  ReaderType::TransformListType * transformList = reader->GetModifiableTransformList();
 
-  using BRAINSCompositeTransformType = itk::CompositeTransform<double, 3>;
+  using BRAINSCompositeTransformType = itk::CompositeTransform< double, 3 >;
 
   BRAINSCompositeTransformType::Pointer inputCompTrans =
-  dynamic_cast<BRAINSCompositeTransformType *>( transformList->front().GetPointer() );
-  if( inputCompTrans.IsNull() )
-    {
+    dynamic_cast< BRAINSCompositeTransformType * >( transformList->front().GetPointer() );
+  if ( inputCompTrans.IsNull() )
+  {
     std::cerr << "The input transform should be a composite transform." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   LandmarksMapType::const_iterator it = origLandmarks.begin();
-  for(; it!=origLandmarks.end(); it++)
-    {
+  for ( ; it != origLandmarks.end(); it++ )
+  {
     transformedLandmarks[it->first] = inputCompTrans->TransformPoint( it->second );
-    }
+  }
 
   WriteITKtoSlicer3Lmk( outputLandmarksFile, transformedLandmarks );
   std::cout << "The transformed landmarks file is written." << std::endl;

@@ -38,18 +38,16 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template <typename TInputMesh, typename TInputPointSet, typename TOutputMesh>
-class QuadEdgeMeshGenerateDeformationFieldFilter :
-  public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
+template < typename TInputMesh, typename TInputPointSet, typename TOutputMesh >
+class QuadEdgeMeshGenerateDeformationFieldFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshGenerateDeformationFieldFilter);
+  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshGenerateDeformationFieldFilter );
 
   using Self = QuadEdgeMeshGenerateDeformationFieldFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<
-      TInputMesh, TOutputMesh>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer< Self >;
+  using ConstPointer = SmartPointer< const Self >;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro( QuadEdgeMeshGenerateDeformationFieldFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
@@ -67,16 +65,20 @@ public:
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Input
    *  mesh at the current higher resolution level. */
-  void SetInputMesh( const InputMeshType * inputMesh );
+  void
+  SetInputMesh( const InputMeshType * inputMesh );
 
-  const InputMeshType * GetInputMesh( void ) const;
+  const InputMeshType *
+  GetInputMesh( void ) const;
 
   /** Set Mesh whose grid defines the geometry and topology of the input PointSet.
    *  In a multi-resolution registration scenario, this will typically be the Input
    *  mesh at the current higher resolution level. */
-  void SetDestinationPoints( const InputPointSetType * destinationPointSet );
+  void
+  SetDestinationPoints( const InputPointSetType * destinationPointSet );
 
-  const InputPointSetType * GetDestinationPoints( void ) const;
+  const InputPointSetType *
+  GetDestinationPoints( void ) const;
 
   /** Set Sphere Center.  The implementation of this filter assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -95,14 +97,15 @@ public:
    */
   itkSetMacro( SphereRadius, double );
   itkGetConstMacro( SphereRadius, double );
+
 protected:
   QuadEdgeMeshGenerateDeformationFieldFilter();
   ~QuadEdgeMeshGenerateDeformationFieldFilter();
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-
   /** Center of spherical mesh. We assume that both the Fixed and
    * Moving meshes have spherical geometry and that they share the same
    * center and radius. */
@@ -113,10 +116,10 @@ private:
    * center and radius. */
   double m_SphereRadius;
 };
-}
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshGenerateDeformationFieldFilter.hxx"
+#  include "itkQuadEdgeMeshGenerateDeformationFieldFilter.hxx"
 #endif
 
 #endif

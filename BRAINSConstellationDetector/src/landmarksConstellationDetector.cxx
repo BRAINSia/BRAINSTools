@@ -107,8 +107,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform( SImageT
     // affine transform
     // ( using logic from BRAINSLandmarkInitializer) and create initToAtlasAffineTransform.
 
-    using WeightType = std::map< std::string, float >;
-    WeightType landmarkWeights;
+    LandmarksWeightMapType landmarkWeights;
     if ( this->m_atlasLandmarkWeights != "" )
     {
       landmarkWeights = ReadLandmarkWeights( this->m_atlasLandmarkWeights.c_str() );

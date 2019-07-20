@@ -47,7 +47,7 @@ main()
   {
     std::cout << "Attempting to read in non-exitsant landmark weight file" << std::endl;
     // hopefully there is no landmarks file with this path in your system.
-    LandmarkWeightMapType bogusLandmarksWeights = ReadLandmarkWeights( "/this/file/does/not/exist/either.fcsv" );
+    LandmarksWeightMapType bogusLandmarksWeights = ReadLandmarkWeights( "/this/file/does/not/exist/either.fcsv" );
 
     // An exception should be thrown, and this code should never be reached
     std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" << std::endl;

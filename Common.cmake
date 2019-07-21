@@ -108,7 +108,7 @@ bt_option(USE_ANTS                           "Build ANTS"                       
 bt_option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
 bt_option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
 bt_option(USE_BRAINSROIAuto                  "Build BRAINSROIAuto"                  ON)
-bt_option(USE_DWIConvert                     "Build DWIConvert"                     ON)
+bt_option(USE_DWIConvert                     "Build DWIConvert"                     ${${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT})
 bt_option(USE_BRAINSLabelStats               "Build BRAINSLabelStats"               ON)
 bt_option(USE_BRAINSStripRotation            "Build BRAINSStripRotation"            ON)
 bt_option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
@@ -144,7 +144,7 @@ bt_option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"          
 
 cmake_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
 mark_as_superbuild(VARS USE_BRAINSDemonWarp:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
-cmake_dependent_option(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
+cmake_dependent_option(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" ${${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT})
 mark_as_superbuild(VARS USE_GTRACT:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 cmake_dependent_option(USE_ITKMatlabIO "Build ITKMatlabIO" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
 mark_as_superbuild(VARS USE_ITKMatlabIO:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )

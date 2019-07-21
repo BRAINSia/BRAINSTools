@@ -217,7 +217,7 @@ def xml_generator(
 
     #####################################################################################
     # ANN Parameters
-    # TODO: Simplify!!!
+    # INFO: Simplify!!!
     #
     outStream.write('   <ANNParameters Iterations             = "5"\n')
     outStream.write('                     MaximumVectorsPerEpoch = "700000"\n')

@@ -40,7 +40,7 @@ public:
   vtkSetMacro( MaximumSize, vtkIdType );
 
   ///
-  /// TODO: Not yet implemented
+  /// INFO: Not yet implemented
   /// If zero, islands are defined by 3D connectivity
   /// If non-zero, islands are evaluated in a sequence of 2D planes
   /// (IJ=3, IK=2, JK=1)

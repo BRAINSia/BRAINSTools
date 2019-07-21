@@ -560,7 +560,7 @@ if __name__ == "__main__":
         "subject-based-reference",
     ], "Unknown phase!"
     if args["--debug"]:
-        # TODO: Add and run doctests!
+        # INFO: Add and run doctests!
         pass
     output = parse_file(args["FILE"], args["ENV"], args["PHASE"])
     from pprint import pprint

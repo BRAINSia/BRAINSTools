@@ -34,7 +34,7 @@
 #include <iostream>
 #include <cmath>
 
-// TODO:  Need to make return types an input template type.
+// INFO:  Need to make return types an input template type.
 namespace AssignRigid
 {
 using AffineTransformType = itk::AffineTransform< double, 3 >;

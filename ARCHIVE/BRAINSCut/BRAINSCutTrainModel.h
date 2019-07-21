@@ -69,7 +69,7 @@ public:
   void
   FillANNLayerStructureArray3D( int * const layer ) const;
 
-  // TODO: REGINA all "Get" functions should be const
+  // INFO: REGINA all "Get" functions should be const
   /** setting function with net configuration */
   std::string
   GetModelBasename();
@@ -164,7 +164,7 @@ public:
   appendToFile( std::string filename, std::string line );
 
 private:
-  // TODO:  REGINA:  These all need to be called with "m_" prefix
+  // INFO:  REGINA:  These all need to be called with "m_" prefix
   BRAINSCutDataHandler m_myDataHandler;
 
   unsigned int m_trainIteration;

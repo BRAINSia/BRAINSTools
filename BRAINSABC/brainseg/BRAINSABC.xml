@@ -5,7 +5,7 @@
   <title>Intra-subject registration, bias Correction, and tissue classification (BRAINS)</title>
   <description>Atlas-based tissue segmentation method.  This is an algorithmic extension of work done by XXXX at UNC and Utah XXXX need more description here.
   </description>
-  <!-- TODO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->
+  <!-- INFO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->
 
   <parameters advanced="true">
     <label>Input</label>
@@ -42,7 +42,7 @@
       <channel>output</channel>
    </transform>
 
-    <!-- TODO:  Would rather have a string-enumeration  muliple="true" -->
+    <!-- INFO:  Would rather have a string-enumeration  muliple="true" -->
     <string-vector>
       <name>input_VolumeTypes</name>
       <label>Image Types</label>

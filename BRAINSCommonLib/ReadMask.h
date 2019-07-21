@@ -30,7 +30,7 @@ ReadImageMask( const std::string & filename, typename itk::ImageBase< VDimension
   using ReadMaskImageType = itk::Image< MaskPixelType, 3 >;
 
   typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage< ReadMaskImageType >( filename );
-  // TODO:  May want to check that physical spaces overlap?
+  // INFO:  May want to check that physical spaces overlap?
 
   // convert mask image to mask
   using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject< ReadMaskImageType::ImageDimension >;

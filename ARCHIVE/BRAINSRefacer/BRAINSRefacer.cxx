@@ -189,7 +189,7 @@ main( int argc, char ** argv )
   ThresholdFilterType::Pointer distanceThreshold = ThresholdFilterType::New();
   distanceThreshold->SetInput( distanceMapFilter->GetOutput() );
   distanceThreshold->SetLower( 0.0 );
-  distanceThreshold->SetUpper( 4096 ); // TODO: This should be changed to the max pixel value for the image type??? or
+  distanceThreshold->SetUpper( 4096 ); // INFO: This should be changed to the max pixel value for the image type??? or
                                        // will we always be using double for calculations??
   distanceThreshold->SetOutsideValue( 0.0 );
 

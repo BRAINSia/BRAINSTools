@@ -471,7 +471,7 @@ class FusionLabelWorkflow(Workflow):
         jointFusion = Node(interface=JointFusion(), name="jointFusion")
         jointFusion.inputs.num_threads = -1
         jointFusion.inputs.dimension = 3
-        jointFusion.inputs.modalities = 1  # TODO: verify 2 for T1/T2
+        jointFusion.inputs.modalities = 1  # INFO: verify 2 for T1/T2
         jointFusion.inputs.method = "Joint[0.1,2]"  # this does not work
         jointFusion.inputs.output_label_image = "fusion_neuro2012_20.nii.gz"
 

@@ -36,7 +36,7 @@
 
 namespace itk
 {
-/** TODO:  There should be compile time type checks so that
+/** INFO:  There should be compile time type checks so that
            if only ITK_USE_FFTWF is defined, then only floats are valid.
            and if ITK_USE_FFTWD is defined, then only doubles are valid.
 */

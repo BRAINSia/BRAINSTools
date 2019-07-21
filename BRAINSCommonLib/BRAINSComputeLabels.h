@@ -90,7 +90,7 @@ ComputeLabels( std::vector< typename TProbabilityImage::Pointer > & Posteriors,
             // region, then set to
             // zero vIndex!
             {
-              // TODO:  May want to specify this explicitly in the XML file for
+              // INFO:  May want to specify this explicitly in the XML file for
               // the proper background value
               DirtyLabels->SetPixel( currIndex, 0 ); // This is implied by the
               // FillBuffer(0) above;

@@ -233,7 +233,7 @@ public:
   // itkSetMacro( IntraSubjectTransformFileNames, std::vector<std::string> );
   itkSetMacro( AtlasToSubjectTransformFileName, std::string );
 
-  // TODO: KENT:  Move all code from class definition to the .hxx file outside the class definition
+  // INFO: KENT:  Move all code from class definition to the .hxx file outside the class definition
   void
   SetIntraSubjectTransformFileNames( MapOfStringVectors userlist )
   {
@@ -347,7 +347,7 @@ private:
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;
-  bool m_RegistrationUpdateNeeded; // TODO: KENT: The m_RegistrationUpdateNeeded is a hack to replicate the behavior
+  bool m_RegistrationUpdateNeeded; // INFO: KENT: The m_RegistrationUpdateNeeded is a hack to replicate the behavior
                                    // that should come from using the modified times of the itk::Object class
                                    //            All the Get/Set functions should use the itkSetMacro so that the
                                    // itk::Object->Modified times are updated correctly, then we can just use that

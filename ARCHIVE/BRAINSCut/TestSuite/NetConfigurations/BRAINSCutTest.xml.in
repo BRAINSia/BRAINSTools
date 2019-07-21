@@ -17,7 +17,7 @@
 
   <!-- ==========================================================================
         Registration Description
-        TODO:: Change BRAINSCut Registration Script to Python
+        INFO:: Change BRAINSCut Registration Script to Python
        ========================================================================== -->
   <RegistrationConfiguration
     ImageTypeToUse="T1"

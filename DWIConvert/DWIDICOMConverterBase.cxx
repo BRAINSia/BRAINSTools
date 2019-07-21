@@ -192,13 +192,13 @@ DWIDICOMConverterBase::LoadDicomDirectory()
   std::cout << this->m_Volume->GetDirection() << std::endl;
 
 
-  // TODO: Remove __1
+  // INFO: Remove __1
   std::cout << "this->m_SpacingMatrix" << std::endl;
   std::cout << this->GetSpacingMatrix() << std::endl;
 
   std::cout << "NRRDSpaceDirection" << std::endl;
   std::cout << this->GetNRRDSpaceDirection() << std::endl;
-  // TODO: Add metadata to the DWI images
+  // INFO: Add metadata to the DWI images
   {
     //<element tag="0008,0060" vr="CS" vm="1" len="2" name="Modality">MR</element>
     this->_addToStringDictionary( "0008", "0060", "Modality", DCM_CS );

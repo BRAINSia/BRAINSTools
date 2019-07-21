@@ -89,8 +89,8 @@ class runOneAW(object):
         print(line)
 
     def generate_config_file(self):
-        """ TODO: Move configString text to a separate text file
-        TODO: configString has many curly brackets and percent signs for use in python and bash environments.
+        """ INFO: Move configString text to a separate text file
+        INFO: configString has many curly brackets and percent signs for use in python and bash environments.
         Therefore the .format() or %s replace options are not usable.  So .replace() was used to replace key words
         in configString.
         """

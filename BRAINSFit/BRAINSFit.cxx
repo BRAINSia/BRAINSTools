@@ -587,7 +587,7 @@ main( int argc, char * argv[] )
   {
     //      std::cout << "=========== resampledImage :\n" <<
     // resampledImage->GetDirection() << std::endl;
-    // Set in PARSEARGS const bool scaleOutputValues=false;//TODO: Make this a
+    // Set in PARSEARGS const bool scaleOutputValues=false;//INFO: Make this a
     // command line parameter
     if ( outputVolumePixelType == "float" )
     {

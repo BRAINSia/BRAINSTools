@@ -110,7 +110,7 @@ def create_machine_learning_workflow(
         )
     else:
         print("workflow not yet created")
-        # TODO: create workflow that does not resample the input images
+        # INFO: create workflow that does not resample the input images
         return
 
     output_spec = Node(

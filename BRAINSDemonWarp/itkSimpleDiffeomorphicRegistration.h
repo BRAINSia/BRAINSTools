@@ -40,7 +40,7 @@
 #define NumberOfMatchPoints 7
 #define NumberOfHistogramLevels 1024
 
-/** TODO:  Need to document this class
+/** INFO:  Need to document this class
  */
 class itkSimpleDiffeomorphicRegistration : public itk::Object
 {

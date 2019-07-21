@@ -98,7 +98,7 @@ find_library(BLAS_LIB
                  PATHS ${LAPACKE_SEARCH_PATHS}
                  PATH_SUFFIXES ${PATH_SUFFIXES_LIST})
 
-## TODO: Get version components
+## INFO: Get version components
 # ------------------------------------------------------------------------
 #  Extract version information
 # ------------------------------------------------------------------------

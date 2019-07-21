@@ -433,7 +433,7 @@ EMSegmentationFilter< TInputImage, TProbabilityImage >::ComputekNNPosteriors(
   muLogMacro( << "having feature space size of: " << trainSampleSet->GetMeasurementVectorSize() << std::endl );
 
   //||||||||||
-  // HACK(ALI) TODO: FIX the debugging csv file
+  // HACK(ALI) INFO: FIX the debugging csv file
   //||||||||||
   // DEBUGGING: Write csv file
   {
@@ -1007,7 +1007,7 @@ template < typename TInputImage, typename TProbabilityImage >
 typename EMSegmentationFilter< TInputImage, TProbabilityImage >::ByteImagePointer
 EMSegmentationFilter< TInputImage, TProbabilityImage >::GetThresholdedOutput( void )
 {
-  // TODO:  This assumes that GetOutput was already called.  This should be made
+  // INFO:  This assumes that GetOutput was already called.  This should be made
   // more intelligent
   return m_DirtyThresholdedLabels;
 }
@@ -1016,7 +1016,7 @@ template < typename TInputImage, typename TProbabilityImage >
 typename EMSegmentationFilter< TInputImage, TProbabilityImage >::ByteImagePointer
 EMSegmentationFilter< TInputImage, TProbabilityImage >::GetCleanedOutput( void )
 {
-  // TODO:  This assumes that GetOutput was already called.  This should be made
+  // INFO:  This assumes that GetOutput was already called.  This should be made
   // more intelligent
   return m_CleanedLabels;
 }
@@ -1751,7 +1751,7 @@ EMSegmentationFilter< TInputImage, TProbabilityImage >::UpdateIntensityBasedClip
           typename ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold( numberOfModes );
           typename ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold( numberOfModes );
           typename ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
-          // TODO:  Need to define PortionMaskImage from deformed probspace
+          // INFO:  Need to define PortionMaskImage from deformed probspace
           thresholdRegionFinder->SetBinaryPortionImage( ForegroundBrainRegion );
           unsigned int modeIndex = 0;
           for ( typename MapOfInputImageVectors::const_iterator mapIt = intensityImagesList.begin();
@@ -2116,7 +2116,7 @@ EMSegmentationFilter< TInputImage, TProbabilityImage >::UpdateTransformation(
       if ( false /* m_AtlasTransformType == ID_TRANSFORM */ )
       {
         muLogMacro( << "Registering (Identity) atlas to first image." << std::endl );
-        // TODO: m_AtlasToSubjectTransform = MakeRigidIdentity();
+        // INFO: m_AtlasToSubjectTransform = MakeRigidIdentity();
       }
       else // continue;
       {
@@ -2311,7 +2311,7 @@ EMSegmentationFilter< TInputImage, TProbabilityImage >::Update()
   }
   if ( m_UpdateRequired )
   {
-    // TODO:  This should be filled out from the XML file eventually
+    // INFO:  This should be filled out from the XML file eventually
     this->m_PriorsBackgroundValues.resize( this->m_OriginalSpacePriors.size() );
     std::fill( this->m_PriorsBackgroundValues.begin(), this->m_PriorsBackgroundValues.end(), 0 );
     {
@@ -2560,7 +2560,7 @@ EMSegmentationFilter< TInputImage, TProbabilityImage >::EMLoop()
     // Compute log-likelihood and normalize posteriors
     logLikelihood = this->ComputeLogLikelihood();
     muLogMacro( << "log(likelihood) = " << logLikelihood << std::endl );
-    // TODO: move to before prevL update
+    // INFO: move to before prevL update
     deltaLogLikelihood = std::fabs( ( logLikelihood - prevLogLikelihood ) / prevLogLikelihood );
     // (logLikelihood - prevLogLikelihood) / std::fabs(prevLogLikelihood);
     CHECK_NAN( deltaLogLikelihood,

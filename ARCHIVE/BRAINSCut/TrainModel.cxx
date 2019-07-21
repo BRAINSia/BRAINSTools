@@ -292,18 +292,18 @@ ANNTrain( // NetConfiguration & prob,
 
   int           lastSubSetNumber = -1;
   std::ifstream testfilestr;
-  // TODO: DELETE neural_data_set_type *TestSetPtr = 0;
-  // TODO: DELETE int                   test_InputVectorSize = 0;
-  // TODO: DELETE int                   test_OutputVectorSize = 0;
-  // TODO: DELETE int                   test_NumberTrainingVectorsFromFile = 0;
+  // INFO: DELETE neural_data_set_type *TestSetPtr = 0;
+  // INFO: DELETE int                   test_InputVectorSize = 0;
+  // INFO: DELETE int                   test_OutputVectorSize = 0;
+  // INFO: DELETE int                   test_NumberTrainingVectorsFromFile = 0;
   testfilestr.close();
   // To trace minimum traininig point
   double TrainSet_MinimumMSE = 100.0;
   int    TrainSet_MinimumMSEPoint = 0;
 
   // To trace minimum traininig point
-  // TODO: DELETE double TestSet_MinimumMSE = 100.0;
-  // TODO: DELETE int TestSet_MinimumMSEPoint = 0;
+  // INFO: DELETE double TestSet_MinimumMSE = 100.0;
+  // INFO: DELETE int TestSet_MinimumMSEPoint = 0;
   // OPENCV Training Model Creation
   int                layer[] = { InputVectorSize, HiddenVectorSize, OutputVectorSize };
   neural_vector_type layerStructure = cvCreateMat( 1, 3, CV_32SC1 );
@@ -464,7 +464,7 @@ ANNTrain( // NetConfiguration & prob,
     }
   }
   // Printing out minimum training error
-  // TODO: Should I add this to the Header file??!!!! KEY
+  // INFO: Should I add this to the Header file??!!!! KEY
   if ( TrainSet_MinimumMSEPoint != 0 ) // if training has been proceeeded
   {
     std::cout << "###################################################\n"

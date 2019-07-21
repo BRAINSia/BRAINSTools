@@ -270,7 +270,7 @@ public:
     }
     //
     // GenerateHistogram
-    // TODO: KENT:  BRAINSFit tools need to define a common output directory for
+    // INFO: KENT:  BRAINSFit tools need to define a common output directory for
     // all debug images to be written.
     //             by default the it should be the same as the outputImage, and
     // if that does not exists, then it
@@ -367,7 +367,7 @@ private:
 
 namespace itk
 {
-// TODO:  Remove default MetricType here, and force a choice
+// INFO:  Remove default MetricType here, and force a choice
 template < typename TTransformType, typename TOptimizer, typename TFixedImage, typename TMovingImage,
            typename MetricType >
 class MultiModal3DMutualRegistrationHelper : public ProcessObject

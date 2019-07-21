@@ -110,7 +110,7 @@ def setup_environment(argv):
         )
         print(
             "FREESURFER needs to check for sane environment here!"
-        )  # TODO: raise warning, write method, what???
+        )  # INFO: raise warning, write method, what???
     for key, value in list(environment["env"].items()):
         if key in ["PATH", "PYTHONPATH"] + misc.FS_VARS:
             pass

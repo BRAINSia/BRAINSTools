@@ -27,7 +27,7 @@ from . import misc
 #####################################################################################
 #  FreeSurfer is extraordinarly finicky and is easily confused and incorrect.
 
-# TODO: Remove all FREESURFER vars in subsequent scripts!!!
+# INFO: Remove all FREESURFER vars in subsequent scripts!!!
 #  Force that all the FREESURFER env vars are set in subsequent scripts by
 #  ensuring that rough versions of these environmental variables are not
 #  set internal to this script.

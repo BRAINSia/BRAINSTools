@@ -182,7 +182,7 @@ required_qcache_files = [
 
 
 def mkfsscript(session, outscript, t1list, t2list, is3T, useT2):
-    ## TODO:  Work on staging files in/out
+    ## INFO:  Work on staging files in/out
     """
     This function...
 
@@ -568,7 +568,7 @@ def find_mgz(inlist_withNrrd):
         if os.path.exists(testmgz):
             outlist.append(testmgz)
         else:
-            ## TODO: fix to handle this better
+            ## INFO: fix to handle this better
             # print("WARNING: Missing MGZ version so using nii.gz version: {0}".format(ff))
             outlist.append(outfn)
             pass
@@ -675,7 +675,7 @@ for thisSubject in all_subjects:
                 os.unlink(fsscript)
             this_session_base_done = True
         else:
-            print(("1TODO:", session, ":", sentinal_file, ":"))
+            print(("1INFO:", session, ":", sentinal_file, ":"))
             job_name = mkfsscript(
                 session, fsscript, T1_files, T2_files, is3T, USE_T2_FOR_FREESURFER
             )
@@ -747,7 +747,7 @@ for thisSubject in all_subjects:
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
         else:
-            print(("2TODO:", templateID, ":"))
+            print(("2INFO:", templateID, ":"))
             template_job_name = mk_template_script(
                 templateID, ThreeT_sessions, fsscript, base3T_job_names
             )
@@ -787,7 +787,7 @@ for thisSubject in all_subjects:
             else:
                 print(
                     (
-                        "3TODO:",
+                        "3INFO:",
                         session,
                         "missing :",
                         len(missing_files),
@@ -823,7 +823,7 @@ for thisSubject in all_subjects:
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print(("3TODO:", session, " missing :", len(missing_files), ": files"))
+                print(("3INFO:", session, " missing :", len(missing_files), ": files"))
                 qcache_job_name = mklongscript(
                     templateID,
                     session,
@@ -861,7 +861,7 @@ for thisSubject in all_subjects:
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
         else:
-            print(("15TTODO:", templateID, ":", OneT_sessions))
+            print(("15TINFO:", templateID, ":", OneT_sessions))
             template_job_name = mk_template_script(
                 templateID, OneT_sessions, fsscript, base1T_job_names
             )
@@ -897,7 +897,7 @@ for thisSubject in all_subjects:
             else:
                 print(
                     (
-                        "15LTODO:",
+                        "15LINFO:",
                         session,
                         "missing :",
                         len(missing_files),
@@ -933,7 +933,7 @@ for thisSubject in all_subjects:
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print(("15QTODO:", session, ":", sentinal_file, ":"))
+                print(("15QINFO:", session, ":", sentinal_file, ":"))
                 qcache_job_name = mklongscript(
                     templateID,
                     session,

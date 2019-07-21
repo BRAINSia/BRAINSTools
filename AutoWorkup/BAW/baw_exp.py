@@ -59,7 +59,7 @@ def open_subject_database(
     subjectDatabaseFile = os.path.join(
         ExperimentBaseDirectoryCache, "InternalWorkflowSubjectDB.db"
     )
-    ## TODO:  Only make DB if db is older than subject_data_file.
+    ## INFO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or (
         os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)
     ):

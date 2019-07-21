@@ -322,8 +322,8 @@ foreach(PIXELTYPE ${PIXEL_LIST_BRAINSREFACER} )
     )
   set_property(TEST ${RefacerTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
-# #TODO: Test that the output pixel type is the same as the input
+# #INFO: Test that the output pixel type is the same as the input
 
-# #TODO: Test that the deformation field is symmetrical
+# #INFO: Test that the deformation field is symmetrical
 
 endforeach()

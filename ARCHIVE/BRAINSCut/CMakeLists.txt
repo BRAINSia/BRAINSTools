@@ -68,8 +68,8 @@ set(BRAINSCutCOMMONLIB_SRCS
   ${BRAINSCut_HDRS}
   )
 
-#TODO: DELETE CreateVectors.cxx
-#TODO:  Rename BRAINSCutDataHandler to something more meaningful
+#INFO: DELETE CreateVectors.cxx
+#INFO:  Rename BRAINSCutDataHandler to something more meaningful
 
 ## Build BRAINSCutCOMMONLIB library
 ##
@@ -100,7 +100,7 @@ endif()
 ##
 set(ALL_PROGS_LIST
   BRAINSCut
-  ShuffleVectorsModule  ## TODO: Make into SEM program
+  ShuffleVectorsModule  ## INFO: Make into SEM program
   SimilarityIndex
   )
 foreach( prog ${ALL_PROGS_LIST} )

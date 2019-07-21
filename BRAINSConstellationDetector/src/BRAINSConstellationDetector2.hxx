@@ -171,7 +171,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
 
     if ( this->m_TrimRescaledIntensities > 0.0 )
     {
-      // FUTURETODO:  Ali Consider updating this
+      // FUTUREINFO:  Ali Consider updating this
       //  REFACTOR: a histogram would be traditional here, but seem over-the-top;
       // I did this because it seemed to me if I knew mean, sigma, max and min,
       // then I know Something about extreme outliers.
@@ -181,7 +181,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
       const double meanOrig( stats->GetMean() );
       const double sigmaOrig( stats->GetSigma() );
 
-      // FUTURETODO:  Ali Consider updating this
+      // FUTUREINFO:  Ali Consider updating this
       // REFACTOR:  In percentiles, 0.0005 two-tailed has worked in the past.
       // It only makes sense to trim the upper bound since the lower bound would
       // most likely

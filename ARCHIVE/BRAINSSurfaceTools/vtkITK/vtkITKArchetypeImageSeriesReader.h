@@ -702,7 +702,7 @@ public:
   }
 
   /// insert unique item into array. Duplicate code for TCL wrapping.
-  /// TODO: need to clean up
+  /// INFO: need to clean up
   int
   InsertSeriesInstanceUIDs( const char * aUID )
   {

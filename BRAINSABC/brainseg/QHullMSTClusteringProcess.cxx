@@ -337,7 +337,7 @@ QHullMSTClusteringProcess ::GetClusters( unsigned int * treeMap, float T )
   {
     std::cerr << "No edges broken" << std::endl;
     delete[] breakArray;
-    // TODO: FIXME:
+    // INFO: FIXME:
     // return whole tree with same label
     return 0;
   }

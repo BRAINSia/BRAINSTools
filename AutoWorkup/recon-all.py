@@ -182,7 +182,7 @@ def procargs(argv):
         elif opt in ("--longbase"):
             config["longitudinal"] = True
             config["long_base"] = arg
-            # TODO: Check that the longitudinal base pre-exists
+            # INFO: Check that the longitudinal base pre-exists
         elif opt in ("--tp"):
             config["timepoints"].append(arg)
         elif opt in ("--openmp"):
@@ -243,7 +243,7 @@ def procargs(argv):
 
     if config["longitudinal"]:
         # set input requirements for running longitudinally
-        # TODO: print errors when inputs are not set correctly
+        # INFO: print errors when inputs are not set correctly
         print("Running longitudinally")
         print("Longitudinal Base: {0}".format(config["long_base"]))
     return config
@@ -382,7 +382,7 @@ def main(argv):
         config["current_id"] = config["subject_id"]
 
     # Experiment Info
-    # TODO: Have user input cache directory
+    # INFO: Have user input cache directory
     ExperimentInfo = {
         "Atlas": {
             "TEMP_CACHE": os.path.join(config["subjects_dir"], config["subject_id"]),

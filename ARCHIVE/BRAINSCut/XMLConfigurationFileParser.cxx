@@ -336,7 +336,7 @@ XMLConfigurationFileParser::ValidateDataSets()
   // return true;
 
   /*
-   * TODO:: change validation part to check the simple file existance checking
+   * INFO:: change validation part to check the simple file existance checking
    *
    *
   for( std::list<DataSet *>::iterator it = dataSets.begin();

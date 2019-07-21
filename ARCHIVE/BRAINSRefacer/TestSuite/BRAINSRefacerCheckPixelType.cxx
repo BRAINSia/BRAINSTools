@@ -23,7 +23,7 @@ main( int argc, char * argv[] )
   itk::ImageIOBase::Pointer inputImageIO =
     itk::ImageIOFactory::CreateImageIO( inputImageName.c_str(), itk::ImageIOFactory::ReadMode );
 
-  // TODO: add better error checking: file exists, read permissions...etc
+  // INFO: add better error checking: file exists, read permissions...etc
 
   if ( !inputImageIO )
   {

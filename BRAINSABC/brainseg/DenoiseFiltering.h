@@ -22,7 +22,7 @@
 #include "itkCurvatureFlowImageFilter.h"
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
 
-// TODO:  BRAINSFit currently has an option for doing a median filter to remove
+// INFO:  BRAINSFit currently has an option for doing a median filter to remove
 // noise,
 //       this should be expanded to allow for a richer set of pre-filter
 // denoising operations
@@ -32,7 +32,7 @@
 //
 
 template < typename TInputImageType >
-// TODO:  Input and outputs should be templated separately?
+// INFO:  Input and outputs should be templated separately?
 typename TInputImageType::Pointer
 DenoiseFiltering( typename TInputImageType::Pointer img,
                   const std::string &               PrefilteringMethod,     // Select the type of denoising to do
@@ -86,7 +86,7 @@ DenoiseFiltering( typename TInputImageType::Pointer img,
     }
     // else if( PrefilteringMethod.compare("MedianFilter") == 0 )
     //  {
-    //  // TODO:  Kent put a median filter in here, with filter radius equal to 1.
+    //  // INFO:  Kent put a median filter in here, with filter radius equal to 1.
     //  }
     else
     {

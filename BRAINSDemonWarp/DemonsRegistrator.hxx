@@ -105,7 +105,7 @@ DemonsRegistrator< TRealImage, TOutputImage, TFieldValue >::DemonsRegistrator()
   , m_UseHistogramMatching( false )
   , m_InterpolationMode( "Linear" )
 {
-  // TODO: Needed for ITKv4 registration m_Registration->InPlaceOn();
+  // INFO: Needed for ITKv4 registration m_Registration->InPlaceOn();
   // Set up internal registrator with default components
   m_FixedImagePyramid->UseShrinkImageFilterOff();
   m_MovingImagePyramid->UseShrinkImageFilterOff();

@@ -286,7 +286,7 @@ def create_brains_cut_workflow(
     cutWF.connect(
         atlasObject, "r_globus_ProbabilityMap", RF12BC, "probabilityMapsRightGlobus"
     )
-    # TODO:
+    # INFO:
     cutWF.connect(
         atlasObject,
         "RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060_gz",

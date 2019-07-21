@@ -18,7 +18,7 @@
  *=========================================================================*/
 /*==================================================================
 
-TODO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
+INFO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
 
 2009.08
 Zhao,Yongqiang

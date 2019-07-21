@@ -11,7 +11,7 @@ function [error_r1, error_r3, error_c1, error_c3] = testing_dispersion()
   addpath(fullfile(fileparts(pwd),'MATLAB_SCRIPTS'))
 
   % Determine if VTK or Mat files should be used
-  useVTK = 0;  % <---- TODO: Peter This needs to be changed to a 1 and this test pass.
+  useVTK = 0;  % <---- INFO: Peter This needs to be changed to a 1 and this test pass.
   useVTK = 1;
   for useVTK=1:1
       if useVTK

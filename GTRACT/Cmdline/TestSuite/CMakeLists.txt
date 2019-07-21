@@ -46,7 +46,7 @@ target_link_libraries( gtractCoregBvaluesTests GTRACTCommon BRAINSCommonLib DWIC
 set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(gtractCoregBvaluesTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
-## TODO: gtractCoregBvalues returns segfault after the registration step.
+## INFO: gtractCoregBvalues returns segfault after the registration step.
 ##       This test is commented out until the bug is fixed.
 ##       The use of this program seems to be deprecated, since DTIPrep is
 ##       used for coregistration and eddy current correction.

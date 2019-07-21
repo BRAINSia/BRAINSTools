@@ -97,10 +97,10 @@ VValidationInputParser< TImage >::Execute()
       m_TheMovingImages.push_back( itkUtil::ReadImage< TImage >( m_TheMovingImageFilename[i] ) );
     }
   }
-  // HACK:  TODO:  Need to ensure that the fixed and moving images have the same
+  // HACK:  INFO:  Need to ensure that the fixed and moving images have the same
   // orientations.
 
-  // TODO:  Need to figure out how to read in the initial deformation field.
+  // INFO:  Need to figure out how to read in the initial deformation field.
   // std::cerr << "About to check for deformation field file " <<
   // m_InitialDisplacementFieldFilename << std::endl;
   // std::cerr << "About to check for transform file " <<

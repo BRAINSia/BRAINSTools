@@ -152,7 +152,7 @@ bt_option(USE_BRAINSMush                     "Build BRAINSMush"                 
 bt_option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ${BUILD_FOR_DASHBOARD})
 
 ## These are not yet ready for prime time.
-## TODO: Move to ARCHIVE directory
+## INFO: Move to ARCHIVE directory
 bt_option(BUILD_ARCHIVE                                    "Build old tools from archive"        OFF)
 bt_option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
 
@@ -196,7 +196,7 @@ mark_as_superbuild(VARS USE_BRAINSCut:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 #      First you need to set ${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK to ON to be able to choose above application for build.")
 #endif()
 
-if(${LOCAL_PROJECT_NAME}_USE_QT) #//TODO:  BRAINSTools only indirectly needs QT!,
+if(${LOCAL_PROJECT_NAME}_USE_QT) #//INFO:  BRAINSTools only indirectly needs QT!,
   set(${LOCAL_PROJECT_NAME}_REQUIRED_QT_MODULES
     Core Widgets
     Multimedia

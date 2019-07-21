@@ -187,7 +187,7 @@ CreateField< TImage, T2Image >::Execute()
     m_FixedImage->SetMetaDataDictionary( m_ImageTwo->GetMetaDataDictionary() );
     m_MovingImage->SetMetaDataDictionary( m_ImageOne->GetMetaDataDictionary() );
     if ( ( m_FixedImage->GetDirection() != m_MovingImage->GetDirection() )
-         // TODO:  Remove dependance on RIP from
+         // INFO:  Remove dependance on RIP from
          ( itk::SpatialOrientationAdapter().FromDirectionCosines( m_FixedImage->GetDirection() ) !=
            itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP ) )
     {

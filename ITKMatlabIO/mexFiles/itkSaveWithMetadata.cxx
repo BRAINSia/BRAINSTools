@@ -82,7 +82,7 @@ typeMtoITK( const mxClassID mtype )
  */
 using DWIImage = itk::VectorImage< double, 3 >;
 
-// TODO: Remove this code
+// INFO: Remove this code
 
 template < typename TImage >
 void
@@ -412,7 +412,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
     typename ImageType::PointType itkOrigin;
     itkOrigin.Fill(0.0);
     const double *spaceorigin_temp = (double *) mxGetData(msm.GetField("spaceorigin"));
-    // TODO:  Make work for 2D, but currently only works for 3D and 3D vectors.
+    // INFO:  Make work for 2D, but currently only works for 3D and 3D vectors.
     constexpr unsigned int spatialDims = 3; // msm.GetNumberOfDimensions("data");
     if (spatialDims != 3) {
         myMexPrintf("ERROR: ONLY 3D images (3D+gradients OK) supported.\n");

@@ -120,11 +120,11 @@ GetAFP_of_b( sitk::Image norm01_lowres, sitk::Image edgemask )
 sitk::Image
 At_fhp( sitk::Image inLRCoeffs, const bool inputFirstDimIsOdd, sitk::Image desiredOutputRef )
 {
-  // TODO: Review this FFTScaler value why sqrt?
+  // INFO: Review this FFTScaler value why sqrt?
   sitk::Image         outputFreqCoeffs = ReshapeFFT( desiredOutputRef, inLRCoeffs, inputFirstDimIsOdd );
   const PrecisionType FFTScaler = std::sqrt( static_cast< PrecisionType >( desiredOutputRef.GetNumberOfPixels() ) );
 
-  // TODO: HalfHermitian
+  // INFO: HalfHermitian
   const bool referenceImageBase_ActualXDimensionIsOdd = desiredOutputRef.GetSize()[0] % 2 == 1;
 
   sitk::Image outHRRealImage = sitk::InverseFFT( outputFreqCoeffs ) * FFTScaler;
@@ -275,7 +275,7 @@ SimpleOpWeightedL2( sitk::Image & norm01_lowres, sitk::Image & edgemask )
   // Make high-res coefficients
   const sitkHalfHermetianImageType b_FC = GetAFP_of_b( norm01_lowres, edgemask );
 
-  // TODO: too many copies of Atb here.
+  // INFO: too many copies of Atb here.
   sitk::Image X = At_fhp( b_FC, edgemask.GetSize()[0] % 2 == 1, edgemask );
 
   sitk::Image TwoAtb = X * 2.0;
@@ -333,7 +333,7 @@ SimpleOpWeightedL2( sitk::Image & norm01_lowres, sitk::Image & edgemask )
     // resvec[i] = NormOfRatioImages(residue,Y);
 
     //
-    resvec[i] = 0; // TODO: Figure out the math for here
+    resvec[i] = 0; // INFO: Figure out the math for here
     if ( i == 99 )
     {
       tp.Stop();
@@ -348,7 +348,7 @@ SimpleOpWeightedL2( sitk::Image & norm01_lowres, sitk::Image & edgemask )
     // WDX = opII_CVmult(WDX,SqrtMu,'*',DX);
     // diff = opII(diff,A_fhp(X,norm01_lowres.GetPointer()),'-',b_FC);
     //
-    // cost[i] = 0; //TODO: Need to figure out math for here
+    // cost[i] = 0; //INFO: Need to figure out math for here
   }
   return X;
 }

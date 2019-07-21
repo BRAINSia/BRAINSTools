@@ -381,7 +381,7 @@ GenericTransformImage( InputImageType const * const                             
     {
       TransformedImage = TransformResample< InputImageType, OutputImageType >(
         PrincipalOperandImage.GetPointer(),
-        // TODO:  Change function signature to be a ConstPointer instead of a raw pointer ReferenceImage.GetPointer(),
+        // INFO:  Change function signature to be a ConstPointer instead of a raw pointer ReferenceImage.GetPointer(),
         ReferenceImage,
         suggestedDefaultValue,
         GetInterpolatorFromString< InputImageType >( interpolationMode ).GetPointer(),

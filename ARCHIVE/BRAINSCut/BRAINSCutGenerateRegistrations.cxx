@@ -177,9 +177,9 @@ BRAINSCutGenerateRegistrations ::CreateTransformFile( const std::string & Moving
 
   // Set Histogram Matching Options
   // BSplineRegistrationHelper->SetNumberOfHistogramBins(250);
-  // TODO: decide what to do here too much freedom?
+  // INFO: decide what to do here too much freedom?
   // BSplineRegistrationHelper->SetNumberOfMatchPoints(10);
-  // TODO:: HISTOGRAMMATCHING OPTION is now Disabled!
+  // INFO:: HISTOGRAMMATCHING OPTION is now Disabled!
   BSplineRegistrationHelper->SetHistogramMatch( false );
 
   // Set Fixed Volume
@@ -271,7 +271,7 @@ BRAINSCutGenerateRegistrations ::CreateTransformFile( const std::string & Moving
 
   //  Start Registration
 
-  // TODO: is this line really print before start registration????
+  // INFO: is this line really print before start registration????
 
   if ( verbose == true )
   {

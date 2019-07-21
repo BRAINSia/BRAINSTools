@@ -160,7 +160,7 @@ def modify_qsub_args(
             minThreads, maxThreads
         )
 
-    ## TODO:  May need to figure out how to set memory and threads for cluster.
+    ## INFO:  May need to figure out how to set memory and threads for cluster.
     ## for now just let the number of threads requested take care of this because
     ## the job manager on helium is really slow with lots of constraints
     ##  -l mem_free={mem}

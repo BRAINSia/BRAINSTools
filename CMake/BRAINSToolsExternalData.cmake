@@ -1,17 +1,6 @@
 get_filename_component(_ITKExternalData_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-
-#Need a long timeout for DWI huge data sets
-set(ExternalData_TIMEOUT_INACTIVITY 900)
-set(ExternalData_TIMEOUT_ABSOLUTE   1360)
-
-if(NOT COMMAND ExternalData_add_test)
-  if(EXISTS ${CMAKE_ROOT}/Modules/ExternalData.cmake)
-    include(ExternalData)
-  else()
-    include(${_ITKExternalData_DIR}/ExternalData.cmake)
-  endif()
-endif()
-
+set(ExternalData_LINK_CONTENT SHA512)
+include(ExternalData)
 
 ## The user can specify an environmental variable for shared locations of
 ## of object files to prevent continous downloading of common objects.
@@ -37,30 +26,37 @@ list(APPEND ExternalData_OBJECT_STORES
 
 set(ExternalData_BINARY_ROOT ${CMAKE_BINARY_DIR}/ExternalData)
 
+# Expands %(algo:lower)
+set(ExternalData_URL_ALGO_MD5_lower md5)
 set(ExternalData_URL_TEMPLATES "" CACHE STRING
   "Additional URL templates for the ExternalData CMake script to look for testing data. E.g.
 file:///var/bigharddrive/%(algo)/%(hash)")
 mark_as_advanced(ExternalData_URL_TEMPLATES)
-list(APPEND ExternalData_URL_TEMPLATES
-  # Local data store populated by the ITK pre-commit hook
-  "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
-  # Data published on Girder
-  "https://data.kitware.com:443/api/v1/file/hashsum/%(algo)/%(hash)/download"
-  # Data published by Iowa Psychiatry web interface
-  ## The primary home for data
-  "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)"
-  # Data published by MIDAS
-  "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+if(NOT ITK_FORBID_DOWNLOADS)
+  list(APPEND ExternalData_URL_TEMPLATES
+    # Data published on GitHub Pages
+    "https://insightsoftwareconsortium.github.io/ITKTestingData/%(algo)/%(hash)"
 
-  # Data published by developers using git-gerrit-push.
-  "http://www.itk.org/files/ExternalData/%(algo)/%(hash)"
-  )
+    # Data published on Girder
+    "https://data.kitware.com:443/api/v1/file/hashsum/%(algo)/%(hash)/download"
 
-# Tell ExternalData commands to transform raw files to content links.
-# TODO: Condition this feature on presence of our pre-commit hook.
-set(ExternalData_LINK_CONTENT MD5)
+    # Data published by developers using git-gerrit-push.
+    "https://itk.org/files/ExternalData/%(algo)/%(hash)"
+
+    # Mirror supported by the Slicer community.
+    "https://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+    )
+endif()
+
+# Emscripten currently has difficulty reading symlinks.
+if(EMSCRIPTEN)
+  set(ExternalData_NO_SYMLINKS 1)
+endif()
 
 # Match series of the form <base>.<ext>, <base>.<n>.<ext> such that <base> may
 # end in a (test) number that is not part of any series numbering.
 set(ExternalData_SERIES_PARSE "()(\\.[^./]*)$")
 set(ExternalData_SERIES_MATCH "(\\.[0-9]+)?")
+
+# Sometimes we want to download very large files.
+set(ExternalData_TIMEOUT_ABSOLUTE 900)

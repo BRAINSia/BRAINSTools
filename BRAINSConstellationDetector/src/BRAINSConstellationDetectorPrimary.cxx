@@ -168,13 +168,13 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     potentialLandmarkFileName += fcsv_extension;
     if ( itksys::SystemTools::FileExists( potentialLandmarkFileName, true ) )
     {
-      std::cerr << "WARNING: Using the side-car landmark override file to pre-load landmarks!: "
+      std::cerr << "NOTE: Using the side-car landmark override file to pre-load landmarks!: "
                 << "\n         " << potentialLandmarkFileName << std::endl;
       this->orig_lmks_filename = potentialLandmarkFileName;
     }
     else
     {
-      std::cerr << "WARNING: Side-car landmark file not found to pre-load landmarks!"
+      std::cerr << "NOTE: Side-car landmark file not found to pre-load landmarks!"
                 << "\n         " << potentialLandmarkFileName << std::endl;
       // Now looking for file encoded as meta data in header.
       const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";

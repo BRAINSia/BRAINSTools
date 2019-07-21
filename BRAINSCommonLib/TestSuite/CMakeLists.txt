@@ -111,7 +111,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 #  FindCenterOfBrainTest)
 #
 #
-### HACK: TODO: Make this test do something meaningful.
+### HACK: INFO: Make this test do something meaningful.
 ### HACK: DAVID: This test is failing, but needs to have valid data added so that it will pass
 #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
 #  NAME itkResampleInPlaceImageFilterTest

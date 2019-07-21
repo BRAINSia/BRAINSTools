@@ -163,11 +163,11 @@ template < typename TInputImage, typename TMaskImage >
 void
 ComputeRobustMinMaxMean( const float Qalpha, // Remove 1% from computations by setting Qalpha=0.005
                          typename TInputImage::ConstPointer image, typename TMaskImage::ConstPointer mask,
-                         float & minValue, // TODO:  Make this into
+                         float & minValue, // INFO:  Make this into
                                            // itk::NumericTraits<TInputImage::PixelType>::RealType;
-                         float & maxValue, // TODO:  Make this into
+                         float & maxValue, // INFO:  Make this into
                                            // itk::NumericTraits<TInputImage::PixelType>::RealType;
-                         float & meanValue // TODO:  Make this into
+                         float & meanValue // INFO:  Make this into
                                            // itk::NumericTraits<TInputImage::PixelType>::RealType;
 )
 {

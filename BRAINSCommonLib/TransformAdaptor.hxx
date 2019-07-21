@@ -314,7 +314,7 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >::EstablishCrossOve
  *  any affine representation.  Just initialize the conversion
  *  logic with the appropriate EstablishCrossOverSystem call.
  *
- *  TODO:  Add other conventions besides b2/xfrm, Air16:  matlab/spm, nifti.
+ *  INFO:  Add other conventions besides b2/xfrm, Air16:  matlab/spm, nifti.
  */
 
 template < typename TCoordinateType, unsigned int NDimensions, typename TInputImage >

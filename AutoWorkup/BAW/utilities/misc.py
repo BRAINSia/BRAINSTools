@@ -52,7 +52,7 @@ def common_ants_registration_settings(
     """
     if save_state:
         antsRegistrationNode.inputs.save_state = save_state
-    ## TODO: Consider registration masking
+    ## INFO: Consider registration masking
     if (registrationTypeDescription == "FiveStageAntsRegistrationT1Only") or (
         registrationTypeDescription == "FiveStageAntsRegistrationMultiModal"
     ):

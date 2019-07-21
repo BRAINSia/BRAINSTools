@@ -1,7 +1,7 @@
 
 // Author: Jeffrey Obadal
 /*
- * TODO: Refactor code into new paths
+ * INFO: Refactor code into new paths
  * Path 1: check brain data -- use labelmap as reference, do safety check that no brain data has changed
  * Path 2: (new file?) check deformation -- subpath1: labelmap - similar to path 1, but check non-brain data has changed
  *                                          subpath2: landmark - use landmark mask and check face area has changed

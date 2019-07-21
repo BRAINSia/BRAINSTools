@@ -924,7 +924,7 @@ BRAINSFitHelperTemplate< FixedImageType, MovingImageType >::Update( void )
                     ( transformFileType == "AffineTransform" ) )
           {
             // CONVERTING TO RIGID TRANSFORM TYPE from other type:
-            // TODO: we should preserve the Scale components
+            // INFO: we should preserve the Scale components
             std::cout << "WARNING:  Extracting Rigid component type from transform." << std::endl;
             VersorRigid3DTransformType::Pointer tempInitializerITKTransform =
               ComputeRigidTransformFromGeneric( currInitTransformFormGenericComposite.GetPointer() );
@@ -1017,7 +1017,7 @@ BRAINSFitHelperTemplate< FixedImageType, MovingImageType >::Update( void )
           else if ( ( transformFileType == "AffineTransform" ) )
           {
             // CONVERTING TO RIGID TRANSFORM TYPE from other type:
-            // TODO:  We should really preserve the Scale and Skew components
+            // INFO:  We should really preserve the Scale and Skew components
             std::cout << "WARNING:  Extracting Rigid component type from transform." << std::endl;
             VersorRigid3DTransformType::Pointer tempInitializerITKTransform =
               ComputeRigidTransformFromGeneric( currInitTransformFormGenericComposite.GetPointer() );
@@ -1315,7 +1315,7 @@ BRAINSFitHelperTemplate< FixedImageType, MovingImageType >::Update( void )
 
       LBFGSBOptimizerTypePointer LBFGSBoptimizer = LBFGSBOptimizerType::New();
 
-      // TODO:  For control points outside the fixed image mask, it might be good to
+      // INFO:  For control points outside the fixed image mask, it might be good to
       // constrian
       // the parameters to something different than those control points inside the
       // fixed image mask.
@@ -1364,7 +1364,7 @@ BRAINSFitHelperTemplate< FixedImageType, MovingImageType >::Update( void )
 
       using RegisterImageType = itk::Image< float, 3 >;
 
-      // TODO: pass this option by commandline
+      // INFO: pass this option by commandline
       const bool ObserveIterations = true;
       if ( ObserveIterations == true )
       {

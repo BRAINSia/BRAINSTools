@@ -152,7 +152,7 @@ def segmentation(
     currentA2SantsRegistrationPostABCSyN = (
         "A2SantsRegistrationPostABCSyN_" + str(subjectid) + "_" + str(sessionid)
     )
-    ## TODO: It would be great to update the BRAINSABC atlasToSubjectTransform at this point, but
+    ## INFO: It would be great to update the BRAINSABC atlasToSubjectTransform at this point, but
     ##       That requires more testing, and fixes to ANTS to properly collapse transforms.
     ##       For now we are simply creating a dummy node to pass through
 
@@ -176,7 +176,7 @@ def segmentation(
         initial_moving_transform=None,
     )
 
-    ## TODO: Try multi-modal registration here
+    ## INFO: Try multi-modal registration here
     baw200.connect(
         [
             (

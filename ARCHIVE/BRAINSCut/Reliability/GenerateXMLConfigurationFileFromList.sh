@@ -138,7 +138,7 @@ do
 
   #
   # Add Image
-  # TODO::deal with type of apply
+  # INFO::deal with type of apply
 
   ANNOutputDirectory="${ModelDirectory}/${currentSubject}_${ANNHN}/"
 

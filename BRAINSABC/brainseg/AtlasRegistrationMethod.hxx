@@ -195,7 +195,7 @@ AtlasRegistrationMethod< TOutputPixel, TProbabilityPixel >::RegisterIntraSubject
         intraSubjectRegistrationHelper->SetSkewScale( 1.0 );
         // Register each intrasubject image mode to first image
         intraSubjectRegistrationHelper->SetFixedVolume( this->GetModifiableKeySubjectImage() );
-        // TODO: Find way to turn on histogram equalization for same mode images
+        // INFO: Find way to turn on histogram equalization for same mode images
         constexpr int dilateSize = 15;
         constexpr int closingSize = 15;
         intraSubjectRegistrationHelper->SetMovingVolume( ( *intraImIt ).GetPointer() );
@@ -469,7 +469,7 @@ AtlasRegistrationMethod< TOutputPixel, TProbabilityPixel >::RegisterAtlasToSubje
       //
       // atlasToSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
       // atlasToSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
-      // TODO:  Need to make external/internal variable inside
+      // INFO:  Need to make external/internal variable inside
       // Update that changes a variable to set the initialization mode "useCenterOfHeadAlign" works well for brain
       // images, but
       // will break algorithm for many other segmentation types.

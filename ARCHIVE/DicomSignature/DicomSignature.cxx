@@ -243,7 +243,7 @@ main( int argc, char * argv[] )
     EVP_DigestUpdate( &mdctx, mySpacingInfo.str().c_str(), mySpacingInfo.str().size() );
     EVP_DigestUpdate( &mdctx, myOriginInfo.str().c_str(), myOriginInfo.str().size() );
     EVP_DigestUpdate( &mdctx, myDirectionInfo.str().c_str(), myDirectionInfo.str().size() );
-    // TODO:  Add EVP_DigestUpdate for gdcm strings for
+    // INFO:  Add EVP_DigestUpdate for gdcm strings for
     // <element tag="0008,0021" vr="DA" vm="1" len="8"
     // name="SeriesDate">20090430</element>
     const std::string SeriesDateKey( "0008|0021" );

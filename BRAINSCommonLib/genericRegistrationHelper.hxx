@@ -361,7 +361,7 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage, T
   m_Registration->MetricSamplingReinitializeSeed( 121212 );
 
   // Create the Command observer and register it with the optimizer.
-  // TODO:  make this output optional.
+  // INFO:  make this output optional.
   //
   if ( this->m_ObserveIterations == true )
   {

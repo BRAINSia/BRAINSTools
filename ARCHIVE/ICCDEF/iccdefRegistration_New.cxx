@@ -347,7 +347,7 @@ ThirionFunction( const struct ICCDEFWarpAppParameters & command )
   if ( command.outputDebug )
   {
     bool debug = true;
-    app->SetOutDebug( debug ); // TODO:  SetOutDebug should be a boolean not a
+    app->SetOutDebug( debug ); // INFO:  SetOutDebug should be a boolean not a
                                // string.
   }
 

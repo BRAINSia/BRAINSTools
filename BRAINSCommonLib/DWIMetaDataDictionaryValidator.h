@@ -24,7 +24,7 @@
  * meta-data dictionary is suitable to writing valid DWI data to disk in nrrd
  * file format.
  *
- * TODO: Determine if extensions may be made to facilitate writing
+ * INFO: Determine if extensions may be made to facilitate writing
  * nifti files with associated bvec and bval files
  *
  */

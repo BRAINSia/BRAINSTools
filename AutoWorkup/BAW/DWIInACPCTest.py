@@ -479,7 +479,7 @@ MasterDWIWorkflow.connect(
 # NOT USED IN THIS PATH! MasterDWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP_lowRes, 'referenceVolume')
 MasterDWIWorkflow.connect(GetFileNamesNode, "MovingDWI", DWIRIP_lowRes, "inputVolume")
 
-## TODO:  Replace with ANTS
+## INFO:  Replace with ANTS
 BSPLINE_T2_TO_RIPB0 = pe.Node(interface=BRAINSFit(), name="BSPLINE_T2_TO_RIPB0")
 # BSPLINE_T2_TO_RIPB0.plugin_args = BF_cpu_sge_options_dictionary
 BSPLINE_T2_TO_RIPB0.inputs.costMetric = "MMI"

@@ -228,7 +228,7 @@ WriteBothTransformsToDisk< double, float >( const itk::Transform< double, 3, 3 >
                                             const std::string &                                outputTransform,
                                             const std::string & strippedOutputTransform );
 /*
-// TODO: to make this function work for input float type, we need to change "ComputeRigidTransformFromGeneric" function
+// INFO: to make this function work for input float type, we need to change "ComputeRigidTransformFromGeneric" function
 to be a template over scalarType
 //
 template int WriteBothTransformsToDisk<float,double>(const itk::Transform<float, 3, 3>::ConstPointer
@@ -430,7 +430,7 @@ ReadTransformFromDisk( const std::string & initialTransform )
 template itk::Transform< double, 3, 3 >::Pointer
 ReadTransformFromDisk< double >( const std::string & initialTransform );
 //
-// TODO: to make ReadTransformFromDisk function work with float type, we need to change "AssignConvertedTransform"
+// INFO: to make ReadTransformFromDisk function work with float type, we need to change "AssignConvertedTransform"
 // functions
 //       to be templates over ScalarType
 // template itk::Transform<float, 3, 3>::Pointer ReadTransformFromDisk<float>(const std::string & initialTransform);

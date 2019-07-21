@@ -34,7 +34,7 @@
 #include <itkMultiplyImageFilter.h>
 #include "itkNumberToString.h"
 
-// TODO: consider using itk::LabelMap Hole filling process in ITK4
+// INFO: consider using itk::LabelMap Hole filling process in ITK4
 BRAINSCutApplyModel ::BRAINSCutApplyModel()
   : m_myDataHandler( nullptr )
   , m_applyDataSetList()

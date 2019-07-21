@@ -38,7 +38,7 @@
 
 #include "BRAINSCommonLibWin32Header.h"
 
-// TODO:  This needs to be moved to the top, and header files moved to this
+// INFO:  This needs to be moved to the top, and header files moved to this
 // header where needed.
 #include "BRAINSFitHelperTemplate.h"
 #include "BRAINSFitUtils.h"
@@ -141,7 +141,7 @@ public:
   itkSetMacro( OutputMovingVolumeROI, std::string );
   itkGetConstMacro( OutputMovingVolumeROI, std::string );
 
-  // TODO:  This should be converted to use the
+  // INFO:  This should be converted to use the
   //       interpolation mechanisms from GenericTransform
   typedef enum
   {
@@ -290,7 +290,7 @@ private:
   bool         m_HistogramMatch;
   float        m_RemoveIntensityOutliers;
   unsigned int m_NumberOfMatchPoints;
-  // TODO:  Would be better to have unsigned int
+  // INFO:  Would be better to have unsigned int
   std::vector< int >              m_NumberOfIterations;
   double                          m_MaximumStepLength;
   std::vector< double >           m_MinimumStepLength;

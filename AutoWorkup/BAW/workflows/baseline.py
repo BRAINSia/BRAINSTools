@@ -111,7 +111,7 @@ def get_all_t1s_length(allT1s):
     return len(allT1s)
 
 
-##TODO:  Move to module that can be re-used
+##INFO:  Move to module that can be re-used
 ##       get_largest_label is copied elsewhere
 def create_left_right_wm_hemispheres(
     BRAINLABELSFile,
@@ -787,7 +787,7 @@ def generate_single_session_template_wf(
             [
                 (
                     outputsSpec,
-                    DataSinkLandmarks,  # TODO: change to myLocalLMIWF -> DataSink
+                    DataSinkLandmarks,  # INFO: change to myLocalLMIWF -> DataSink
                     [
                         (
                             "outputLandmarksInACPCAlignedSpace",
@@ -990,7 +990,7 @@ def generate_single_session_template_wf(
             name=currentBRAINSCreateLabelMapName,
         )
 
-        ## TODO:  Fix the file names
+        ## INFO:  Fix the file names
         BRAINSCreateLabelMapNode.inputs.dirtyLabelVolume = "fixed_headlabels_seg.nii.gz"
         BRAINSCreateLabelMapNode.inputs.cleanLabelVolume = (
             "fixed_brainlabels_seg.nii.gz"

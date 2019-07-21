@@ -390,11 +390,11 @@ def find_mgz(inlist):
                 sitk.WriteImage(tempIm, outfn)
                 ff = outfn
         testmgz = ff.replace(".nii.gz", ".mgz")
-        ## TODO:  Search for .nrrd files and figure out what to do.
+        ## INFO:  Search for .nrrd files and figure out what to do.
         if os.path.exists(testmgz):
             outlist.append(testmgz)
         else:
-            ## TODO: fix to handle this better
+            ## INFO: fix to handle this better
             # print("WARNING: Missing MGZ version so using nii.gz version: {0}".format(ff))
             outlist.append(ff)
             pass
@@ -473,7 +473,7 @@ for thisSubject in all_subjects:
                 os.unlink(fsscript)
             this_session_base_done = True
         else:
-            print(("1TODO:", session, ":", sentinal_file, ":"))
+            print(("1INFO:", session, ":", sentinal_file, ":"))
             job_name = mkfsscript(session, fsscript, T1_files, T2_files, is3T)
             if is3T:
                 base3T_job_names.append(job_name)
@@ -512,7 +512,7 @@ for thisSubject in all_subjects:
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
         else:
-            print(("2TODO:", templateID, ":"))
+            print(("2INFO:", templateID, ":"))
             template_job_name = mk_template_script(
                 templateID, ThreeT_sessions, fsscript, base3T_job_names
             )
@@ -542,7 +542,7 @@ for thisSubject in all_subjects:
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print(("3TODO:", session, ":", sentinal_file, ":"))
+                print(("3INFO:", session, ":", sentinal_file, ":"))
                 long_job_name = mklongscript(
                     templateID, session, fsscript, template_job_names, "all", is3T
                 )
@@ -562,7 +562,7 @@ for thisSubject in all_subjects:
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print(("3TODO:", session, ":", sentinal_file, ":"))
+                print(("3INFO:", session, ":", sentinal_file, ":"))
                 qcache_job_name = mklongscript(
                     templateID, session, fsscript, long_job_names, "qcache", is3T
                 )
@@ -581,7 +581,7 @@ for thisSubject in all_subjects:
             if os.path.exists(fsscript):
                 os.unlink(fsscript)
         else:
-            print(("15TTODO:", templateID, ":", OneT_sessions))
+            print(("15TINFO:", templateID, ":", OneT_sessions))
             template_job_name = mk_template_script(
                 templateID, OneT_sessions, fsscript, base1T_job_names
             )
@@ -609,7 +609,7 @@ for thisSubject in all_subjects:
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print(("15LTODO:", session, ":", sentinal_file, ":"))
+                print(("15LINFO:", session, ":", sentinal_file, ":"))
                 long_job_name = mklongscript(
                     templateID, session, fsscript, template_job_names, "all", False
                 )
@@ -629,7 +629,7 @@ for thisSubject in all_subjects:
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print(("15QTODO:", session, ":", sentinal_file, ":"))
+                print(("15QINFO:", session, ":", sentinal_file, ":"))
                 qcache_job_name = mklongscript(
                     templateID, session, fsscript, long_job_names, "qcache", is3T
                 )

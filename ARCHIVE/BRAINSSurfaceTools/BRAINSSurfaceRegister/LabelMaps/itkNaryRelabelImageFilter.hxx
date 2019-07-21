@@ -87,7 +87,7 @@ NaryRelabelImageFilter< TInputImage, TOutputImage >::GenerateData()
         translator[i][v] = label;
 
         // increment the label for the next to translate
-        // TODO: throw an exception if the maximum number of labels is exceeded
+        // INFO: throw an exception if the maximum number of labels is exceeded
         label++;
       }
       progress.CompletedPixel();

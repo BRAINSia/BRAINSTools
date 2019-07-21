@@ -9,7 +9,7 @@ cp /Users/johnsonhj/src/BT-11/BRAINSTools-build/DWIConvert/SlicerDWIProcessing.s
 DWICONVERTBIN="/Users/johnsonhj/src/BT-11/bin/DWIConvert"
 SLICERPROC=/Users/johnsonhj/src/BT-11/BRAINSTools-build/DWIConvert/SlicerDWIProcessing.sh
 
-## TODO: READ THIS: http://neurohut.blogspot.com/2015/11/how-to-extract-bval-bvec-from-dicom.html
+## INFO: READ THIS: http://neurohut.blogspot.com/2015/11/how-to-extract-bval-bvec-from-dicom.html
 
 make -j 4
 if [[ $? -ne 0 ]]; then

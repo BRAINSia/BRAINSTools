@@ -49,7 +49,7 @@ def fix_label_map_from_neuromorphemetrics_2012(
         outlabels = outlabels + newmask * newmaskvalue
         return sitk.Cast(outlabels, sitk.sitkUInt32)
 
-    ## TODO: get_largest_label is copied from elsewhere
+    ## INFO: get_largest_label is copied from elsewhere
     def get_largest_label(inputMask, UseErosionCleaning):
         """
         This function...

@@ -178,7 +178,7 @@ else()
     message( FATAL_ERROR "Failed: ${Test_Compare_Command_Line_TEMP_OUTPUT}: ${TEST_RESULT}")
   endif()
 
-  if( 0 ) ## These NHDR images are oriented differently, and would need a new BASELINE_NHDR ##TODO:
+  if( 0 ) ## These NHDR images are oriented differently, and would need a new BASELINE_NHDR ##INFO:
   #------------------------------------------------------------------------------------------
   set(Test_Compare_Command_Line_NHDR_OUTPUT
     ${TEST_COMPARE_PROGRAM} --useIdentityMeasurementFrame --inputVolume2 ${TEST_INITIAL_NHDR_OUTPUT} --inputVolume1 ${TEST_BASELINE_NHDR}

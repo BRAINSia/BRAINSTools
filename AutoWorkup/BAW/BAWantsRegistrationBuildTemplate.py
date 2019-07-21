@@ -351,12 +351,12 @@ def baw_ants_registration_template_build_single_iteration_wf(
         run_without_submitting=True,
         name="inputspec",
     )
-    ## HACK: TODO: We need to have the AVG_AIR.nii.gz be warped with a default voxel value of 1.0
-    ## HACK: TODO: Need to move all local functions to a common untility file, or at the top of the file so that
+    ## HACK: INFO: We need to have the AVG_AIR.nii.gz be warped with a default voxel value of 1.0
+    ## HACK: INFO: Need to move all local functions to a common untility file, or at the top of the file so that
     ##             they do not change due to re-indenting.  Otherwise re-indenting for flow control will trigger
     ##             their hash to change.
-    ## HACK: TODO: REMOVE 'transforms_list' it is not used.  That will change all the hashes
-    ## HACK: TODO: Need to run all python files through the code beutifiers.  It has gotten pretty ugly.
+    ## HACK: INFO: REMOVE 'transforms_list' it is not used.  That will change all the hashes
+    ## HACK: INFO: Need to run all python files through the code beutifiers.  It has gotten pretty ugly.
     outputSpec = pe.Node(
         interface=util.IdentityInterface(
             fields=["template", "transforms_list", "passive_deformed_templates"]
@@ -499,7 +499,7 @@ def baw_ants_registration_template_build_single_iteration_wf(
     )
 
     ## Now average the images together
-    ## TODO:  For now GradientStep is set to 0.25 as a hard coded default value.
+    ## INFO:  For now GradientStep is set to 0.25 as a hard coded default value.
     GradientStep = 0.25
     GradientStepWarpImage = pe.Node(
         interface=MultiplyImages(), name="GradientStepWarpImage"
@@ -674,7 +674,7 @@ def baw_ants_registration_template_build_single_iteration_wf(
         "transforms",
     )
     ## FlattenTransformAndImagesListNode.inputs.invert_transform_flags = [False,False,False,False,False,False]
-    ## TODO: Please check of invert_transform_flags has a fixed number.
+    ## INFO: Please check of invert_transform_flags has a fixed number.
     ## PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_invert_flags', FlattenTransformAndImagesListNode, 'invert_transform_flags')
     wimtPassivedeformed = pe.MapNode(
         interface=ApplyTransforms(),
@@ -775,7 +775,7 @@ def baw_ants_registration_template_build_single_iteration_wf(
         "output_average_image",
     )
 
-    ## -- TODO:  Now neeed to reshape all the passive images as well
+    ## -- INFO:  Now neeed to reshape all the passive images as well
     ReshapeAveragePassiveImageWithShapeUpdate = pe.MapNode(
         interface=ApplyTransforms(),
         iterfield=["input_image", "reference_image", "output_image", "interpolation"],

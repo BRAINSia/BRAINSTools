@@ -131,7 +131,7 @@ class SQLiteGrabber(IOBase):
                 c.close()
                 conn.close()
             except:
-                raise  # TODO: Give warning of premature disconnect
+                raise  # INFO: Give warning of premature disconnect
         return retval
 
     def _gen_query(self):
@@ -140,7 +140,7 @@ class SQLiteGrabber(IOBase):
 
         :return:
         """
-        # TODO: write SQL query to prevent injection attacks
+        # INFO: write SQL query to prevent injection attacks
         if self.inputs.distinct:
             _select = "SELECT DISTINCT"
         else:
@@ -193,7 +193,7 @@ def open_subject_database(
     subjectDatabaseFile = os.path.join(
         ExperimentBaseDirectoryCache, "InternalWorkflowSubjectDB.db"
     )
-    ## TODO:  Only make DB if db is older than subject_data_file.
+    ## INFO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or (
         os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)
     ):

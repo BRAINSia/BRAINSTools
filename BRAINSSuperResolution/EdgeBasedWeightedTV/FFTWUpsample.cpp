@@ -103,7 +103,7 @@ ReshapeConvertIndex2( cmplxHHIteratorType & outputIter, const HalfHermetianImage
       return;
     }
 
-    // TODO: HACK FOR debugging
+    // INFO: HACK FOR debugging
     if ( static_cast< size_t >( inputIndex[dim] ) >= inSize[dim] || inputIndex[dim] < 0 )
     {
       std::cout << "XXX: " << dim << " : " << inputIndex[dim] << std::endl;
@@ -133,7 +133,7 @@ ReshapeConvertIndex2( cmplxHHIteratorType & outputIter, const HalfHermetianImage
   // if (origIndex[0] == 0 && origIndex[1] == 0 && origIndex[2] == 0  )
   //   std::cout << outputIter.GetIndex() << origIndex << "\t" << inputIndex <<  "\t\t\t" << inputFreqCoeffs->GetPixel
   //       (inputIndex) << std::endl;
-  // TODO: Use more effiecient form once verified
+  // INFO: Use more effiecient form once verified
   // outputIter.Set(outputIter.Value()+fftScale*inputFreqCoeffs->GetPixel(inputIndex));
   outputIter.Set( fftScale * inputFreqCoeffs->GetPixel( inputIndex ) );
 }
@@ -406,7 +406,7 @@ FloatImageType::Pointer
 At_fhp( HalfHermetianImageType::Pointer inLRCoeffs, const bool inputFirstDimIsOdd,
         itk::ImageBase< 3 >::Pointer desiredOutputRef )
 {
-  // TODO: Review this FFTScaler value why sqrt?
+  // INFO: Review this FFTScaler value why sqrt?
   HalfHermetianImageType::Pointer outputFreqCoeffs = ReshapeFFT( desiredOutputRef, inLRCoeffs, inputFirstDimIsOdd );
   const PrecisionType             FFTScaler =
     std::sqrt( static_cast< PrecisionType >( desiredOutputRef->GetLargestPossibleRegion().GetNumberOfPixels() ) );
@@ -457,7 +457,7 @@ GetLowPassFilterFFT( FloatImageType::Pointer inputImage, itk::ImageBase< 3 >::Po
                  inputImage->GetLargestPossibleRegion().GetSize()[0] % 2 == 1,
                  smallHH,
                  referenceImageBase->GetLargestPossibleRegion().GetSize()[0] % 2 == 1 );
-  // TODO: This could probably be more efficient.
+  // INFO: This could probably be more efficient.
   //============================
   inputImage_cmplHH->SetSpacing( inputImage->GetSpacing() );
   inputImage_cmplHH->SetOrigin( inputImage->GetOrigin() );

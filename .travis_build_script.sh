@@ -32,7 +32,7 @@ cmake \
     -DUSE_ReferenceAtlas:BOOL=OFF \
      ${SOURCE_DIR}
 
-#make -j 2 # BUILD EVERYTHING: TODO: BUILD_SUPPORT_SEPARATE.
+#make -j 2 # BUILD EVERYTHING: INFO: BUILD_SUPPORT_SEPARATE.
 make -j 2
 
 cd ${BUILD_DIR}/BRAINSTools-build/

@@ -18,10 +18,10 @@
 //#include "BRAINSCutApplyModel.h"
 #include "cnpy/cnpy.h"
 
-// TODO: Write VTK lines for visualization in Slicer3D
-// TODO: Fix command-line interface to use SlicerExecutionModel
-// TODO: Remove hard-coded elements of this file
-// TODO: Fix Gradient Magnitude mode to use "MaxGradient" of N Input feature images (or other strategy)
+// INFO: Write VTK lines for visualization in Slicer3D
+// INFO: Fix command-line interface to use SlicerExecutionModel
+// INFO: Remove hard-coded elements of this file
+// INFO: Fix Gradient Magnitude mode to use "MaxGradient" of N Input feature images (or other strategy)
 
 
 int

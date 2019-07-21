@@ -94,7 +94,7 @@ using WorkingIndexType = WorkingImageType::IndexType;
 using InputVectorType = std::vector< WorkingPixelType >;
 using OutputVectorType = std::vector< WorkingPixelType >;
 
-// HACK TODO:  Regina int below should be unsigned int to avoid negative index numbers
+// HACK INFO:  Regina int below should be unsigned int to avoid negative index numbers
 using InputVectorMapType = std::map< int, InputVectorType >; // < index ,feature vector > pair
 using OutputVectorMapType = std::map< int, OutputVectorType >;
 using PredictValueMapType = std::map< int, scalarType >;

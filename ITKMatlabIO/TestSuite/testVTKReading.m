@@ -17,12 +17,12 @@ function [ errorStatus, vtkStruct ] = testVTKReading( )
 
   vtkStruct = read_vtkMesh(testFn);
 
-  % KENT TODO:  Write a new binary vtk mex reader that emulates the
+  % KENT INFO:  Write a new binary vtk mex reader that emulates the
   % behavior of the slow "read_vtkMesh" function.
   % As an added bonus, the binary reader should be able to
   % vtkStruct = vtkReadPolyData();
 
-  % KENT TODO: Write a vtk polydata binary mex writer
+  % KENT INFO: Write a vtk polydata binary mex writer
   % Necesssary requirement:  the binary vtk readers/writers should
   % be able to read a "decorated" UKF generated .vtp file and write
   % it back out with loss of information.

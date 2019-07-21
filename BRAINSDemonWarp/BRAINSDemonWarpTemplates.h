@@ -233,7 +233,7 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
       using ActualRegistrationFilterType =
         typename itk::DemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
       ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
-      // TODO:  Review this value setting with Insight Journal Diffeomorphic
+      // INFO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
       // actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       // NOTE: GRADIENT TYPE NOT AVAILABLE IN DemonsRegistrationFilter
@@ -253,7 +253,7 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
       actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
       // It would be preferable that this would be part of the "Application"
-      // TODO:  Move this bit of data into the application portion.
+      // INFO:  Move this bit of data into the application portion.
       if ( command.maskProcessingMode == "ROIAUTO" )
       {
         if ( ( command.fixedBinaryVolume != "" ) || ( command.movingBinaryVolume != "" ) )
@@ -342,7 +342,7 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
         typename itk::FastSymmetricForcesDemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
-      // TODO:  Review this value setting.
+      // INFO:  Review this value setting.
       actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
       filter = actualfilter;
@@ -350,14 +350,14 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
     /*
     else if(command.registrationFilterType == "UseFirstOrderExpOn Diffeomorphic Registration")
     {
-    //TODO:  Review this value setting with Insight Journal Diffeomorphic implementation.
+    //INFO:  Review this value setting with Insight Journal Diffeomorphic implementation.
     // s <- s o (Id + u) (Diffeomorphic demons)
     // This is simply a crude diffeomorphic demons
     // where the exponential is computed in 0 iteration
     using ActualRegistrationFilterType = typename itk::DiffeomorphicDemonsRegistrationFilter  < TRealImage, TRealImage,
     TDisplacementField>; using GradientType = typename ActualRegistrationFilterType::GradientType;
     ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
-    //TODO:  HACK: Make sure that MaxLength and GradientTypes are set.
+    //INFO:  HACK: Make sure that MaxLength and GradientTypes are set.
     actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
     actualfilter->SetUseGradientType( static_cast<GradientType>(command.gradientType) );
     actualfilter->UseFirstOrderExpOn();
@@ -371,7 +371,7 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
       throw;
     }
 
-    // TODO:  Review this value setting with Insight Journal Diffeomorphic
+    // INFO:  Review this value setting with Insight Journal Diffeomorphic
     // implementation.
     if ( command.smoothDisplacementFieldSigma > 0.1 )
     {
@@ -462,7 +462,7 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
 
   if ( command.outputNormalized )
   {
-    std::string normalize = "ON"; // TODO:  SetOutNormalized should be a
+    std::string normalize = "ON"; // INFO:  SetOutNormalized should be a
                                   // boolean
                                   // not a string.
     app->SetOutNormalized( normalize.c_str() );
@@ -471,7 +471,7 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
   if ( command.outputDebug )
   {
     bool debug = true;
-    app->SetOutDebug( debug ); // TODO:  SetOutDebug should be a boolean not a
+    app->SetOutDebug( debug ); // INFO:  SetOutDebug should be a boolean not a
                                // string.
   }
 
@@ -668,7 +668,7 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
         typename itk::DiffeomorphicDemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
-      // TODO:  Review this value setting with Insight Journal Diffeomorphic
+      // INFO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
       actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
@@ -680,7 +680,7 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
         typename itk::VectorDiffeomorphicDemonsRegistrationFilter< TVectorImage, TVectorImage, TDisplacementField >;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer VDDfilter = ActualRegistrationFilterType::New();
-      // TODO:  Review this value setting with Insight Journal Diffeomorphic
+      // INFO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
       VDDfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       VDDfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
@@ -728,7 +728,7 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
         typename itk::FastSymmetricForcesDemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
-      // TODO:  Review this value setting.
+      // INFO:  Review this value setting.
       actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
       filter = actualfilter;
@@ -746,7 +746,7 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
     throw;
   }
 
-  // TODO:  Review this value setting with Insight Journal Diffeomorphic
+  // INFO:  Review this value setting with Insight Journal Diffeomorphic
   // implementation.
   if ( command.vectorMovingVolume.size() == 1 )
   {
@@ -839,7 +839,7 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
 
   if ( command.outputNormalized )
   {
-    std::string normalize = "ON"; // TODO:  SetOutNormalized should be a
+    std::string normalize = "ON"; // INFO:  SetOutNormalized should be a
                                   // boolean
                                   // not a string.
     app->SetOutNormalized( normalize.c_str() );
@@ -848,7 +848,7 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
   if ( command.outputDebug )
   {
     bool debug = true;
-    app->SetOutDebug( debug ); // TODO:  SetOutDebug should be a boolean not a
+    app->SetOutDebug( debug ); // INFO:  SetOutDebug should be a boolean not a
                                // string.
   }
 

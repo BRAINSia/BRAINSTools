@@ -429,7 +429,7 @@ def create_brains_cut_workflow(
         ]
     )
 
-    # TODO:
+    # INFO:
     if not t1Only:
         cutWF.connect(DenoisedT2, "outputVolume", RF12BC, "inputSubjectT2Filename")
         # cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
@@ -440,7 +440,7 @@ def create_brains_cut_workflow(
             inputsSpec, "trainModelFile_txtD0060NT0060_gz", RF12BC, "modelFilename"
         )
     else:
-        ### TODO:  Replace with proper atlas file name in the future!!! This is a HACK
+        ### INFO:  Replace with proper atlas file name in the future!!! This is a HACK
         ### to avoid changing the hash keys of the input files from the atlas.
         def ChangeModelPathDirectory(multiModalFileName):
             return multiModalFileName.replace("modelFiles", "T1OnlyModels")

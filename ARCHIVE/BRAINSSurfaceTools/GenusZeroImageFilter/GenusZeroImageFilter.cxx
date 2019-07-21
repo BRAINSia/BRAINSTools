@@ -254,7 +254,7 @@ main( int argc, char * argv[] )
   }
   transformer->Update();
 
-  // TODO: add progress
+  // INFO: add progress
   // (transformer->GetOutput())->ReleaseDataFlagOn();
 
   // but for now we're just going to write it out
@@ -265,7 +265,7 @@ main( int argc, char * argv[] )
   if ( computeSurface )
   {
     writer->SetFileName( vtkOutput.c_str() );
-    // TODO: add progress
+    // INFO: add progress
     writer->Write();
   }
 

@@ -57,7 +57,7 @@ def predict(clf, data, in_image, out_file, index, neg_proba=False):
     :param neg_proba:
     :return:
     """
-    # TODO: Add scoring to the predictions
+    # INFO: Add scoring to the predictions
     print("Making predictions")
     image_size = sitk.GetArrayFromImage(in_image).size
     image_shape = sitk.GetArrayFromImage(in_image).shape

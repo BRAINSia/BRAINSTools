@@ -223,7 +223,7 @@ OpWeightedL2( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edg
 
   // Make high-res coefficients
   const HalfHermetianImageType::Pointer b_FC = GetAFP_of_b( norm01_lowres, edgemask );
-  // TODO: too many copies of Atb here.
+  // INFO: too many copies of Atb here.
   FloatImageType::Pointer Atb =
     At_fhp( b_FC, edgemask->GetLargestPossibleRegion().GetSize()[0] % 2 == 1, edgemask.GetPointer() );
   FloatImageType::Pointer TwoAtb = MakeTwoAtb( Atb );
@@ -249,13 +249,13 @@ OpWeightedL2( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edg
   CVImageType::Pointer            gradIm = GetGradient( p_image );
   FloatImageType::Pointer         divIm = GetDivergence( gradIm );
   HalfHermetianImageType::Pointer DtDhat = GetForwardFFT( divIm );
-  // TODO:  ALL SAME TO HERE!
+  // INFO:  ALL SAME TO HERE!
   using FCType = HalfHermetianImageType::PixelType;
   HalfHermetianImageType::Pointer TwoTimesAtAhatPlusLamGamDtDhat = CreateEmptyImage< HalfHermetianImageType >( DtDhat );
   {
     HalfHermetianImageType::Pointer TwoTimesAtAhat = GetLowpassOperator( norm01_lowres, p_image, 2.0F );
     TwoTimesAtAhatPlusLamGamDtDhat = opIC( TwoTimesAtAhatPlusLamGamDtDhat, FCType( lambda * gam ), '*', DtDhat );
-    // TODO:  Make This an inverse!
+    // INFO:  Make This an inverse!
     TwoTimesAtAhatPlusLamGamDtDhat =
       opII( TwoTimesAtAhatPlusLamGamDtDhat, TwoTimesAtAhat, '+', TwoTimesAtAhatPlusLamGamDtDhat );
   }
@@ -326,15 +326,15 @@ OpWeightedL2( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edg
     // KEEP
     tempRatioFC = opII_scalar( tempRatioFC, tempNumeratorFC, '/', TwoTimesAtAhatPlusLamGamDtDhat );
 
-    X = GetInverseFFT( tempRatioFC, edgemask_ActualXDimensionIsOdd, 1.0 ); // TODO: Determine scale factor here. X
+    X = GetInverseFFT( tempRatioFC, edgemask_ActualXDimensionIsOdd, 1.0 ); // INFO: Determine scale factor here. X
 
     // should be on same dynamic range as b
     DX = GetGradient( X );
-    residue = opII( residue, DX, '-', Y ); // TODO:  Implement math graph output here
+    residue = opII( residue, DX, '-', Y ); // INFO:  Implement math graph output here
     L = opII( L, L, '+', residue );
 
     //
-    resvec[i] = 0; // TODO: Figure out the math for here
+    resvec[i] = 0; // INFO: Figure out the math for here
     if ( i > 900000 )
     {
       tp.Stop();
@@ -348,7 +348,7 @@ OpWeightedL2( FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edg
     // WDX = opII_CVmult(WDX,SqrtMu,'*',DX);
     // diff = opII(diff,A_fhp(X,norm01_lowres.GetPointer()),'-',b_FC);
     //
-    // cost[i] = 0; //TODO: Need to figure out math for here
+    // cost[i] = 0; //INFO: Need to figure out math for here
   }
   return X;
 }

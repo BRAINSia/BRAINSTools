@@ -109,7 +109,7 @@ main( int argc, char * argv[] )
   // thresholdRegionFinder->SetOutsideValue(0);//Greatly reduce the value to
   // zero.
   thresholdRegionFinder->Update();
-  // TODO:  Investigate if a small gaussian filter is needed here after
+  // INFO:  Investigate if a small gaussian filter is needed here after
   // clipping.
   MaskImageType::Pointer MaskImage = thresholdRegionFinder->GetOutput();
 

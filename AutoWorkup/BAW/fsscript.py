@@ -625,14 +625,14 @@ if __name__ == "__main__":
     )
     ## For the current nipype processing, the environments are set prior to running this script, so this code is not
     ## needed for using this script within the baw running envirionment.
-    # TODO: Make parser group "Environment"
-    # TODO: parser.add_argument('--FSHomeDir', action='store', dest='FREESURFER_HOME',
-    # TODO:                  default='/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer',
-    # TODO:                  help='Location of FreeSurfer (differs for Mac and Linux environments')
-    # TODO: parser.add_argument('--FSSource', action='store', dest='FS_SCRIPT',
-    # TODO:                  default='FreeSurferEnv.sh', help='')
-    # TODO: local_FREESURFER_HOME = all_args.FREESURFER_HOME
-    # TODO: local_FS_SCRIPT = all_args.FS_SCRIPT
+    # INFO: Make parser group "Environment"
+    # INFO: parser.add_argument('--FSHomeDir', action='store', dest='FREESURFER_HOME',
+    # INFO:                  default='/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer',
+    # INFO:                  help='Location of FreeSurfer (differs for Mac and Linux environments')
+    # INFO: parser.add_argument('--FSSource', action='store', dest='FS_SCRIPT',
+    # INFO:                  default='FreeSurferEnv.sh', help='')
+    # INFO: local_FREESURFER_HOME = all_args.FREESURFER_HOME
+    # INFO: local_FS_SCRIPT = all_args.FS_SCRIPT
     ### HACK:
     try:
         local_FREESURFER_HOME = os.environ["FREESURFER_HOME"]

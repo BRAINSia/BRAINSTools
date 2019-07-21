@@ -241,7 +241,7 @@ int
 main( int argc, char ** argv )
 {
   typenamesInit();
-  // TODO:  These globals should be removed!
+  // INFO:  These globals should be removed!
   std::string filename;
   int         x = -1, y = -1, z = -1, t = -1;
   PixelTypes  PType( Crap );

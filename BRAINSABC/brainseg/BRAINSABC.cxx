@@ -191,7 +191,7 @@ main( int argc, char ** argv )
   // Construct TBB task scheduler with matching threads to ITK threads
   tbb::task_scheduler_init init( itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() );
 
-  // TODO:  Need to figure out how to conserve memory better during the running
+  // INFO:  Need to figure out how to conserve memory better during the running
   // of this application:  itk::DataObject::GlobalReleaseDataFlagOn();
   itk::OutputWindow::SetInstance( itk::TextOutput::New() );
 
@@ -888,7 +888,7 @@ main( int argc, char ** argv )
                                                               intraSubjectTransforms,
                                                               intraSubjectRegisteredRawImageMap );
 
-          // TODO: The maps size needs to be the same, but so do the lists within the maps.
+          // INFO: The maps size needs to be the same, but so do the lists within the maps.
           assert( intraSubjectRegisteredImageMap.size() == intraSubjectNoiseRemovedImageMap.size() );
           assert( intraSubjectRegisteredImageMap.size() == intraSubjectRawImageMap.size() );
           intraSubjectNoiseRemovedImageMap.clear();
@@ -1089,7 +1089,7 @@ main( int argc, char ** argv )
     segfilter->SetPriorIsForegroundPriorVector( priorIsForegroundPriorVector );
 
     segfilter->SetMaxBiasDegree( maxBiasDegree );
-    // TODO: Expose the transform type to the BRAINSABC command line
+    // INFO: Expose the transform type to the BRAINSABC command line
     // segfilter->SetAtlasTransformType("SyN"); // atlasTransformType);
 
     if ( !atlasWarpingOff )

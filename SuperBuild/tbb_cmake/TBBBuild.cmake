@@ -61,7 +61,7 @@ function(tbb_build)
         set(result ${tbb_GMA_USER_DEFINED_ARGS})
 
         if (NOT tbb_GMA_USER_DEFINED_ARGS MATCHES "compiler=")
-            # TODO: add other supported compilers.
+            # INFO: add other supported compilers.
             if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                 set(compiler gcc)
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")

@@ -46,7 +46,7 @@
 #include "itkMultiplyImageFilter.h"
 #include "itkMinimumImageFilter.h"
 #include "itkMaximumImageFilter.h"
-// TODO:  add these correctly so we get multi-threading.
+// INFO:  add these correctly so we get multi-threading.
 #include "itkInvertIntensityImageFilter.h"
 #include "itkAddImageFilter.h"
 #include "itkDivideImageFilter.h"
@@ -196,7 +196,7 @@ template < typename ImageType >
 typename ImageType::Pointer
 ImageAddConstant( const typename ImageType::Pointer input, const double shiftvalue )
 {
-  // TODO:  This should be a UnaryImageFunctor operation to get multi-threading.
+  // INFO:  This should be a UnaryImageFunctor operation to get multi-threading.
   // KENT: Replace the use of this filter with itk::AddImageFilter
   typename ImageType::Pointer outImage = ImageType::New();
   outImage->SetRegions( input->GetLargestPossibleRegion() );
@@ -236,7 +236,7 @@ template < typename ImageType >
 typename ImageType::Pointer
 ImageComplementConstant( const typename ImageType::Pointer input, const double referencevalue )
 {
-  // TODO:  This should be a UnaryImageFunctor operation to get multi-threading.
+  // INFO:  This should be a UnaryImageFunctor operation to get multi-threading.
   typename ImageType::Pointer outImage = ImageType::New();
   outImage->SetRegions( input->GetLargestPossibleRegion() );
   outImage->CopyInformation( input );

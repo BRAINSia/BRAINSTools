@@ -161,7 +161,7 @@ public:
   itkSetObjectMacro( CostMetricObject, MetricType );
   itkGetModifiableObjectMacro( CostMetricObject, MetricType );
 
-  // TODO:  This should be converted to use the
+  // INFO:  This should be converted to use the
   //       interpolation mechanisms from GenericTransform
   typedef enum
   {
@@ -296,7 +296,7 @@ private:
   float        m_RemoveIntensityOutliers;
   unsigned int m_NumberOfMatchPoints;
 
-  // TODO:  Would be better to have unsigned int
+  // INFO:  Would be better to have unsigned int
   std::vector< int >           m_NumberOfIterations;
   double                       m_MaximumStepLength;
   std::vector< double >        m_MinimumStepLength;

@@ -105,7 +105,7 @@ public:
   void
   SetNumberOfSubSet( const unsigned int count = 1 );
 
-  // TODO: REGINA  All "Get" functions should be const
+  // INFO: REGINA  All "Get" functions should be const
   unsigned int
   GetNumberOfSubSet();
 
@@ -115,7 +115,7 @@ public:
   SaveCurrentSubSet( std::string filename );
 
 private:
-  // TODO: REGINA these all need to have "m_" prefix
+  // INFO: REGINA these all need to have "m_" prefix
   /** file names */
   std::string trainingVectorFilename;
   std::string trainingHeaderFilename;

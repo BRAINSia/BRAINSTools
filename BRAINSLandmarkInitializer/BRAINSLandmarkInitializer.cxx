@@ -51,7 +51,7 @@ CheckLandmarks( const LandmarksMapType & ldmk, const LandmarksWeightMapType & we
   //    exit(EXIT_FAILURE);
   //    }
 
-  for ( std::map< std::string, float >::const_iterator i = weightMap.begin(); i != weightMap.end(); ++i )
+  for ( std::map< std::string, double >::const_iterator i = weightMap.begin(); i != weightMap.end(); ++i )
   {
     if ( ldmk.find( i->first ) == ldmk.end() )
     {

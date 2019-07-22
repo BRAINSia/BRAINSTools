@@ -1505,9 +1505,7 @@ BRAINSFitHelperTemplate< FixedImageType, MovingImageType >::Update( void )
             itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
             dwriter1->SetInput( this->m_CurrentGenericTransform->GetNthTransform( 0 ) );
             dwriter1->SetFileName( "DEBUG_initial_transform_for_bspline.mat" );
-#if ITK_VERSION_MAJOR >= 5
             dwriter1->SetUseCompression( true );
-#endif
             dwriter1->Update();
           }
         }
@@ -1650,9 +1648,7 @@ BRAINSFitHelperTemplate< FixedImageType, MovingImageType >::Update( void )
             typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
             transformWriter->SetFileName( this->m_SaveState );
             transformWriter->AddTransform( internalSyNSavedState.GetPointer() );
-#  if ITK_VERSION_MAJOR >= 5
             transformWriter->SetUseCompression( true );
-#  endif
             try
             {
               transformWriter->Update();

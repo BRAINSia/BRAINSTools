@@ -448,9 +448,7 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage, T
     itk::TransformFileWriter::Pointer dwriter2 = itk::TransformFileWriter::New();
     dwriter2->SetInput( this->m_Transform );
     dwriter2->SetFileName("DEBUGTransform_RegFilterOutput.mat");
-#  if ITK_VERSION_MAJOR >= 5
     dwriter2->SetUseCompression(true);
-#  endif
     try
       {
       dwriter2->Update();

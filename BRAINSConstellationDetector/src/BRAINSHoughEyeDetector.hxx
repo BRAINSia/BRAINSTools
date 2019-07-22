@@ -315,6 +315,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
       std::cout << "Failed on houghFilter exception occured" << std::endl;
     }
     this->m_AccumulatorImage = houghFilter->GetOutput();
+    this->GraftOutput(m_AccumulatorImage);
 
     /*
      * Write debug image

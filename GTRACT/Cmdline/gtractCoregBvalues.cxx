@@ -263,9 +263,7 @@ main( int argc, char * argv[] )
       itk::TransformFileWriter::Pointer xfrmWriter = itk::TransformFileWriter::New();
       xfrmWriter->SetFileName( outputTransform );
       xfrmWriter->SetInput( transform );
-#if ITK_VERSION_MAJOR >= 5
       xfrmWriter->SetUseCompression( true );
-#endif
       xfrmWriter->Update();
     }
     using ResampleFilterType = itk::ResampleImageFilter< InputIndexImageType, OutputIndexImageType, double >;

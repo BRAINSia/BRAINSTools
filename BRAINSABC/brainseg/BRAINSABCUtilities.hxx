@@ -124,11 +124,7 @@ DuplicateImageList( const std::vector< typename TInputImage::Pointer > & inputLi
                              itk::ImageDuplicator< TInputImage >::New();
                            myDuplicator->SetInputImage( inputList[i] );
                            myDuplicator->Update();
-#if ITK_VERSION_MAJOR >= 5
                            outputList[i] = myDuplicator->GetOutput();
-#else
-                          outputList[i] = myDuplicator->GetModifiableOutput();
-#endif
                          }
                        } );
   }

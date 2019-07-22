@@ -474,9 +474,7 @@ DoConversion( int argc, char * argv[] )
       using TransformWriterType = typename itk::TransformFileWriterTemplate< TScalarType >;
       typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
       transformWriter->SetFileName( outputTransform );
-#if ITK_VERSION_MAJOR >= 5
       transformWriter->SetUseCompression( true );
-#endif
       for ( typename itk::TransformFileReaderTemplate< TScalarType >::TransformListType::iterator it =
               transformList->begin();
             it != transformList->end();

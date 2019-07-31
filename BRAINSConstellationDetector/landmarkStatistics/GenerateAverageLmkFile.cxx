@@ -46,16 +46,20 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
 
   std::vector<std::string> inputFileNames;
-  if( inputLandmarkFiles.size() >= 2 )
+  if( inputLandmarkFiles.size() >= 1 && inputLandmarkListFile != "")
+    {
+    std::cout<<"WARNING: inputLandmarkListFile will be ignored!"<<std::endl;
+    }
+  if( inputLandmarkFiles.size() >= 1 )
     {
     inputFileNames = inputLandmarkFiles;
     }
-  else if ( inputLandmarkFiles.size() == 1 )
+  else if ( inputLandmarkListFile != "" )
     {
     inputFileNames.reserve(1000); //Just reserve a huge memory footprint
-    std::cout << "ASSUMING single file is a list of files." << std::endl;
+    std::cout << "Read a list file: " << inputLandmarkListFile << std::endl;
     std::string oneLine;
-    std::ifstream infile(inputLandmarkFiles[0].c_str());
+    std::ifstream infile(inputLandmarkListFile.c_str());
     while (std::getline(infile, oneLine))
       {
       inputFileNames.push_back(oneLine);

@@ -21,8 +21,17 @@
       <longflag>inputLandmarkFiles</longflag>
       <label>Input file names</label>
       <channel>input</channel>
-      <description>Input landmark files names (.fcsv or .wts).  If a single file is provided with a ".list" extension, then it is assumed to be a list of filenames one per line. </description>
+      <description>Input landmark files names (.fcsv or .wts).</description>
     </string-vector>
+
+    <file>
+      <name>inputLandmarkListFile</name>
+      <longflag>inputLandmarkListFile</longflag>
+      <label>Input landmark list file name</label>
+      <channel>input</channel>
+      <description>A single file for a list of filenames one per line.</description>
+      <default></default>
+    </file>
 
     <file>
       <name>outputLandmarkFile</name>

@@ -503,7 +503,7 @@ public:
 
   /** Method to return the latest modified time of this object or
     * any of its cached ivars */
-  unsigned long GetMTime() const override;
+  ModifiedTimeType GetMTime() const override;
 
 protected:
   MultiModal3DMutualRegistrationHelper();

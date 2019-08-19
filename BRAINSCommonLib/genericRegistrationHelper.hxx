@@ -472,7 +472,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
  */
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
-unsigned long
+ModifiedTimeType
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
 ::GetMTime() const

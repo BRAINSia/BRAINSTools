@@ -38,7 +38,7 @@ if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT)
 endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
-set(${proj}_GIT_TAG 4dda1f75867fd066a52d60bca6d4e76323b833f9) # 20190609
+set(${proj}_GIT_TAG 44f1cb824be9efde54ff7bf4cc8699b6842e5fcd) # 20190816
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

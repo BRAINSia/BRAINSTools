@@ -40,7 +40,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG ad41f2ef29c2ce393104ba1c6ec417f58ed75260 ) #20190608 - ITKv5 post release
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG cf5b189d4c124ad41c2aa8a0e1b61f5c5d198a36 ) #20190816 - ITKv5 post release
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 

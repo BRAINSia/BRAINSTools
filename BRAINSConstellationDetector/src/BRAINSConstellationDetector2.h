@@ -152,7 +152,19 @@ public:
   /** Set Hough eye transform */
   itkSetObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
 
-  itkSetMacro( forced_orig_lmks, LandmarksMapType );
+  // TODO: Make LandmarksMapType a thin class with ostream overload
+  //       so that `std::cout << _arg << std::endl;` works from itkSetMacro
+  // LandmarksMapType needs ostream overloads for macro to work
+  // when buildng in debug mode itkSetMacro( forced_orig_lmks, LandmarksMapType );
+  virtual void Setforced_orig_lmks (const LandmarksMapType _arg)
+    {
+    if ( this->m_forced_orig_lmks != _arg )
+      {
+      this->m_forced_orig_lmks = _arg;
+      this->Modified();
+      }
+    }
+
 
   /** Set the original input image before the Hough eye detector */
   itkSetObjectMacro( OriginalInputImage, SImageType );

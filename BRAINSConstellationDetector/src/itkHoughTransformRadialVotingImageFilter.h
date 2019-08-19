@@ -62,11 +62,10 @@
 #include "itkImage.h"
 #include "itkEllipseSpatialObject.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkDiscreteGaussianImageFilter.h"
-#include "itkGaussianDerivativeImageFunction.h"
+
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkCastImageFilter.h"
-#include <itkGaussianDistribution.h>
+
 #include "itkAddImageFilter.h"
 #include "itkImageRegionIterator.h"
 
@@ -144,16 +143,6 @@ public:
   using InternalIteratorType = ImageRegionIterator< InternalImageType >;
   using OutputIteratorType = ImageRegionIterator< OutputImageType >;
 
-  using GaussianFilterType = DiscreteGaussianImageFilter< OutputImageType, InternalImageType >;
-  typedef typename GaussianFilterType::Pointer GaussianFilterPointer;
-
-  using GaussianFunctionType = itk::Statistics::GaussianDistribution;
-  using GaussianFunctionPointer = typename GaussianFunctionType::Pointer;
-
-  using DoGFunctionType = GaussianDerivativeImageFunction< InputImageType, InputCoordType >;
-  typedef typename DoGFunctionType::Pointer    DoGFunctionPointer;
-  typedef typename DoGFunctionType::VectorType DoGVectorType;
-
   using MinMaxCalculatorType = MinimumMaximumImageCalculator< InternalImageType >;
   using MinMaxCalculatorPointer = typename MinMaxCalculatorType::Pointer;
 
@@ -211,7 +200,7 @@ public:
 
   /** Get the list of circles. This recomputes the circles */
   SpheresListType &
-  GetSpheres();
+  GetSpheres() { return this->m_SpheresList; };
 
   /** Set/Get the number of circles to extract */
   itkSetMacro( NumberOfSpheres, unsigned int );
@@ -273,7 +262,6 @@ protected:
   InternalImagePointer m_AccumulatorImage;
   SpheresListType      m_SpheresList;
   unsigned int         m_NumberOfSpheres;
-  unsigned long        m_OldModifiedTime;
   unsigned int         m_NbOfThreads;
   bool                 m_AllSeedsProcessed;
 
@@ -310,6 +298,9 @@ protected:
   ComputeMeanRadiusImage();
 
 private:
+  SpheresListType & ComputeSpheres();
+
+
   HoughTransformRadialVotingImageFilter( const Self & ) {}
 
   void

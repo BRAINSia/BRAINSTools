@@ -315,7 +315,6 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
       std::cout << "Failed on houghFilter exception occured" << std::endl;
     }
     this->m_AccumulatorImage = houghFilter->GetOutput();
-    this->GraftOutput(m_AccumulatorImage);
 
     /*
      * Write debug image
@@ -421,6 +420,8 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
 
     this->m_orig2eyeFixedTransform =
       ResampleFromEyePoints< TInputImage, TOutputImage >( this->m_orig_lmk_LE, this->m_orig_lmk_RE, image );
+    auto output_resampled_image = RigidResampleInPlayByVersor3D< TInputImage, TOutputImage >(image,this->m_orig2eyeFixedTransform);
+    this->GraftOutput(output_resampled_image);
   }
 }
 

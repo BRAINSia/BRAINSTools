@@ -21,7 +21,6 @@
 #include <itkResampleImageFilter.h>
 #include <itkIdentityTransform.h>
 #include <itkLinearInterpolateImageFunction.h>
-#include <itkExceptionObject.h>
 #include "BRAINSResizeCLP.h"
 #include <BRAINSCommonLib.h>
 

@@ -134,6 +134,9 @@ cmake_dependent_option(USE_BRAINSABC
 mark_as_superbuild(VARS USE_BRAINSABC:BOOL
                    PROJECTS ${LOCAL_PROJECT_NAME} )
 
+if(USE_DWIConvert AND NOT ${${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT})
+  message(FATAL_ERROR "USE_DWIConvert requires ${${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT} to be ON.")
+endif()
 ## These are no longer needed on a day to day basis
 if(NOT BUILD_FOR_DASHBOARD)
   set(BUILD_FOR_DASHBOARD OFF)

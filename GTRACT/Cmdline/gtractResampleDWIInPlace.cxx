@@ -37,7 +37,6 @@
 #include <itkVectorImage.h>
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>
-#include <itkExceptionObject.h>
 #include <itkVectorIndexSelectionCastImageFilter.h>
 #include <itkComposeImageFilter.h>
 #include <itkImageRegionIterator.h>

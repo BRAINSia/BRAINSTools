@@ -37,7 +37,6 @@
 #define __itkVectorESMDemonsRegistrationFunction_hxx
 
 #include "itkVectorESMDemonsRegistrationFunction.h"
-#include "itkExceptionObject.h"
 #include "itkMath.h"
 
 namespace itk

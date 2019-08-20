@@ -19,7 +19,6 @@
 #define __itkESMDemonsRegistrationWithMaskFunction_hxx
 
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
-#include "itkExceptionObject.h"
 #include "itkMath.h"
 #include "itkImageMaskSpatialObject.h"
 

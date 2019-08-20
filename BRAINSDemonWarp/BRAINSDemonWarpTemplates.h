@@ -27,7 +27,6 @@
 #include "itkImage.h"
 #include "itkIndex.h"
 #include "itkSize.h"
-#include "itkExceptionObject.h"
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkSymmetricForcesDemonsRegistrationFilter.h"

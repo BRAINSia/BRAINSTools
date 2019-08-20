@@ -43,7 +43,6 @@
 #include <metaCommand.h>
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>
-#include <itkExceptionObject.h>
 #include <itkMetaDataObject.h>
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>

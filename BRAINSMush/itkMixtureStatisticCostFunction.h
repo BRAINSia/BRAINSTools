@@ -43,7 +43,6 @@
 #include "itkNumericTraits.h"
 #include "itkProgressReporter.h"
 #include "itkMultipleValuedCostFunction.h"
-#include "itkExceptionObject.h"
 
 namespace itk
 {

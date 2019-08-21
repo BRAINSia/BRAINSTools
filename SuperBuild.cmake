@@ -61,7 +61,10 @@ cmake_dependent_option(
   "BUILD_STYLE_UTILS" OFF
   )
 
+#-----------------------------------------------------------------------------
+# Set a default external project build type if none was specified
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
+set_property(CACHE EXTERNAL_PROJECT_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
 
 option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
@@ -243,7 +246,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BRAINSToolsArgs.sh ${WRITE_BRAINSTOOLS_AR
 ExternalProject_Add(${LOCAL_PROJECT_NAME}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  BINARY_DIR ${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-build
+  BINARY_DIR ${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build
   DOWNLOAD_COMMAND ""
   UPDATE_COMMAND ""
   CMAKE_GENERATOR ${gen}

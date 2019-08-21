@@ -90,7 +90,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   message(STATUS "Building against TBB_DIR:${TBB_DIR}:")
   ExternalProject_Add(${proj}
@@ -151,7 +151,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

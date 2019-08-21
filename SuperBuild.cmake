@@ -71,7 +71,6 @@ option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined versio
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)
 option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support" OFF)
 
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list
@@ -265,7 +264,6 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DCMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL=OFF
   INSTALL_COMMAND ""
-  BUILD_COMMAND ""
 )
 
 if(CMAKE_CONFIGURATION_TYPES)

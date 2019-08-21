@@ -44,7 +44,7 @@ ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
-  BINARY_DIR ${proj}-build
+  BINARY_DIR ${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build
   LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
   LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
   LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
@@ -60,7 +60,7 @@ ExternalProject_Add(${proj}
   )
 
 set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
-set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
+set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib)
 
 mark_as_superbuild(
   VARS

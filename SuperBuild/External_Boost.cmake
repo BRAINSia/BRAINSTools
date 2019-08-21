@@ -51,7 +51,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
-    #BINARY_DIR ${proj}-build
+    #BINARY_DIR ${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build
     BUILD_IN_SOURCE 1
 
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"

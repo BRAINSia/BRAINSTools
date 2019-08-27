@@ -40,10 +40,10 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
+#include "itkMacro.h"
 #include "itkNumericTraits.h"
 #include "itkProgressReporter.h"
 #include "itkMultipleValuedCostFunction.h"
-#include "itkExceptionObject.h"
 
 namespace itk
 {

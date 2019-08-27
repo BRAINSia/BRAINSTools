@@ -33,7 +33,7 @@
 #include <sstream>
 
 #include "itkICCDeformableFunction.h"
-#include "itkExceptionObject.h"
+#include "itkMacro.h"
 #include "itkMath.h"
 // #include "itkIterativeInverseDisplacementFieldImageFilter.h"
 // #include "itkIterativeInverseDisplacementFieldImageFilter1.h"

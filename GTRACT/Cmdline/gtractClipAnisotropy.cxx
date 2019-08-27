@@ -42,7 +42,7 @@
 #include <itkImage.h>
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>
-#include <itkExceptionObject.h>
+#include <itkMacro.h>
 #include <itkMetaDataObject.h>
 #include <itkImageRegionIteratorWithIndex.h>
 

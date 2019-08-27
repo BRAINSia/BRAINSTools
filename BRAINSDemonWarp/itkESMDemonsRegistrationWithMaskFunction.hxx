@@ -20,7 +20,7 @@
 
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
 #include "itkExceptionObject.h"
-#include "itkMath.h"
+#include "itkMacro.h"
 #include "itkImageMaskSpatialObject.h"
 
 namespace itk

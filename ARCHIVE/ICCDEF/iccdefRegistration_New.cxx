@@ -25,10 +25,10 @@
 // #include <fstream>
 // #include <cstdio>
 #include "itkArray.h"
-// #include "itkExceptionObject.h"
 #include "itkIO.h"
 // #include "itkImage.h"
 #include "itkLabelStatisticsImageFilter.h"
+// #include "itkMacro.h"
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkSpatialObjectReader.h"
 #include "BRAINSCommonLib.h"

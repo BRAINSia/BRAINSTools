@@ -22,7 +22,7 @@
 #include "itkTransform.h"
 #include "itkSingleValuedCostFunction.h"
 #include "itkInterpolateMeshFunction.h"
-#include "itkExceptionObject.h"
+#include "itkMacro.h"
 #include "itkSpatialObject.h"
 
 namespace itk

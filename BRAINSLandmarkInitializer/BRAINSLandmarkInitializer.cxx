@@ -34,7 +34,7 @@
 static void
 CheckLandmarks( const LandmarksMapType & ldmk, const LandmarksWeightMapType & weightMap )
 {
-  if ( ldmk.size() < 4 )
+  if ( ldmk.size() < 3 )
   {
     std::cerr << "At least 3 fiducial points must be specified. " << std::endl;
     exit( EXIT_FAILURE );
@@ -76,16 +76,17 @@ InitializeTransform( int argc, char * argv[] )
 
   /** read in *fcsv file */
   /** check four landmarks */
-  std::cout << "Reading: " << inputFixedLandmarkFilename << std::endl;
+  std::cout << "Reading fixed landmarks set: " << inputFixedLandmarkFilename << std::endl;
   LandmarksMapType fixedLandmarks = ReadSlicer3toITKLmk( inputFixedLandmarkFilename );
 
-  std::cout << "Reading: " << inputMovingLandmarkFilename << std::endl;
+  std::cout << "Reading moving landmarks set: " << inputMovingLandmarkFilename << std::endl;
   LandmarksMapType movingLandmarks = ReadSlicer3toITKLmk( inputMovingLandmarkFilename );
 
   /** Landmark Weights */
   LandmarksWeightMapType landmarkWeightMap;
   if ( !inputWeightFilename.empty() )
   {
+    std::cout << "Reading landmarks weight file: " << inputWeightFilename << std::endl;
     landmarkWeightMap = ReadLandmarkWeights( inputWeightFilename );
     CheckLandmarks( fixedLandmarks, landmarkWeightMap );
     CheckLandmarks( movingLandmarks, landmarkWeightMap );
@@ -180,6 +181,7 @@ InitializeTransform( int argc, char * argv[] )
     throw;
   }
 
+  std::cout << "Writing output transform file to disk: " << outputTransformFilename << std::endl;
   itk::WriteTransformToDisk< double >( transform, outputTransformFilename );
 
   return EXIT_SUCCESS;

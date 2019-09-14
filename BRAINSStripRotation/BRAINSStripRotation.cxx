@@ -141,7 +141,7 @@ main( int argc, char * argv[] )
   //
   // have to find out what type of file this is.
   itk::ImageIOBase::Pointer imageIO =
-    itk::ImageIOFactory::CreateImageIO( inputVolume.c_str(), itk::ImageIOFactory::ReadMode );
+    itk::ImageIOFactory::CreateImageIO( inputVolume.c_str(), itk::ImageIOFactory::FileModeType::ReadMode );
   if ( imageIO.IsNotNull() )
   {
     try

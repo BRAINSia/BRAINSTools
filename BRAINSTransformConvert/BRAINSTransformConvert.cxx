@@ -335,13 +335,13 @@ DoConversion( int argc, char * argv[] )
         //
         unsigned int numOfTransforms = compToWrite->GetNumberOfTransforms();
         if ( ( compToWrite->GetNthTransform( numOfTransforms - 1 )->GetTransformCategory() ==
-               GenericTransformType::DisplacementField ) &&
+               GenericTransformType::TransformCategoryType::DisplacementField ) &&
              ( compToWrite->GetNthTransform( numOfTransforms - 2 )->GetTransformCategory() ==
-               GenericTransformType::DisplacementField ) &&
+               GenericTransformType::TransformCategoryType::DisplacementField ) &&
              ( compToWrite->GetNthTransform( numOfTransforms - 3 )->GetTransformCategory() ==
-               GenericTransformType::DisplacementField ) &&
+               GenericTransformType::TransformCategoryType::DisplacementField ) &&
              ( compToWrite->GetNthTransform( numOfTransforms - 4 )->GetTransformCategory() ==
-               GenericTransformType::DisplacementField ) )
+               GenericTransformType::TransformCategoryType::DisplacementField ) )
         {
           typename DisplacementFieldTransformType::Pointer fixedToMiddleForwardTx =
             dynamic_cast< DisplacementFieldTransformType * >(

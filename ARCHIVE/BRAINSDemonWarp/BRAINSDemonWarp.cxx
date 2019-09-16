@@ -35,18 +35,18 @@ DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   struct BRAINSDemonWarpAppParameters command;
 
   {
     PARSE_ARGS;
     BRAINSRegisterAlternateIO();
-    const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+    const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
 #ifdef USE_DebugImageViewer
-    DebugImageDisplaySender.SetEnabled( UseDebugImageViewer );
-    DebugImageDisplaySender.SetPromptUser( PromptAfterImageSend );
+    DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
+    DebugImageDisplaySender.SetPromptUser(PromptAfterImageSend);
 #endif
 
     command.registrationFilterType = registrationFilterType;
@@ -78,7 +78,7 @@ main( int argc, char * argv[] )
     command.numberOfHistogramLevels = numberOfHistogramBins;
     command.numberOfMatchPoints = numberOfMatchPoints;
     command.numberOfLevels = numberOfPyramidLevels;
-    command.numberOfIterations.SetSize( numberOfPyramidLevels );
+    command.numberOfIterations.SetSize(numberOfPyramidLevels);
 
     command.maxStepLength = maxStepLength;
     command.gradientType = gradientType;
@@ -86,16 +86,16 @@ main( int argc, char * argv[] )
     command.smoothingUp = smoothingUp;
     command.numberOfBCHApproximationTerms = numberOfBCHApproximationTerms;
     command.interpolationMode = interpolationMode;
-    for ( int i = 0; i < numberOfPyramidLevels; i++ )
+    for (int i = 0; i < numberOfPyramidLevels; i++)
     {
       command.numberOfIterations[i] = arrayOfPyramidLevelIterations[i];
     }
-    for ( int i = 0; i < 3; i++ )
+    for (int i = 0; i < 3; i++)
     {
       command.theMovingImageShrinkFactors[i] = minimumMovingPyramid[i];
       command.theFixedImageShrinkFactors[i] = minimumFixedPyramid[i];
     }
-    for ( int i = 0; i < 3; i++ )
+    for (int i = 0; i < 3; i++)
     {
       command.checkerboardPatternSubdivisions[i] = checkerboardPatternSubdivisions[i];
       command.seedForBOBF[i] = seedForBOBF[i];
@@ -105,7 +105,7 @@ main( int argc, char * argv[] )
   }
 
   //  bool debug=true;
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     std::cout << "                   movingVolume: " << command.movingVolume << std::endl
               << "                    fixedVolume: " << command.fixedVolume << std::endl
@@ -147,43 +147,43 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( command.movingVolume.size() == 0 )
+  if (command.movingVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --movingVolume Required! " << std::endl;
   }
-  if ( command.fixedVolume.size() == 0 )
+  if (command.fixedVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --fixedVolume Required! " << std::endl;
   }
 
-  if ( ( command.checkerboardPatternSubdivisions[0] == 0 ) || ( command.checkerboardPatternSubdivisions[1] == 0 ) ||
-       ( command.checkerboardPatternSubdivisions[2] == 0 ) )
+  if ((command.checkerboardPatternSubdivisions[0] == 0) || (command.checkerboardPatternSubdivisions[1] == 0) ||
+      (command.checkerboardPatternSubdivisions[2] == 0))
   {
     std::cout << "Invalid Patameters. The value of checkboardPatternSubdivisions should not be zero!" << std::endl;
     return EXIT_FAILURE;
   }
 
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   // Test if the input data type is valid
-  if ( command.inputPixelType != "" )
+  if (command.inputPixelType != "")
   {
     // check to see if valid type
-    if ( ( CompareNoCase( command.inputPixelType, std::string( "uchar" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "short" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "ushort" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "int" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "float" ) ) )
+    if ((CompareNoCase(command.inputPixelType, std::string("uchar"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("short"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("ushort"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("int"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("float")))
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-         && ( CompareNoCase( command.inputPixelType, std::string( "uint" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "double" ) ) )
+        && (CompareNoCase(command.inputPixelType, std::string("uint"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("double")))
 #endif
     )
     {
@@ -194,19 +194,19 @@ main( int argc, char * argv[] )
     }
   }
 
-  if ( command.outputPixelType != "" )
+  if (command.outputPixelType != "")
   {
     // check to see if valid type
-    if ( ( CompareNoCase( command.outputPixelType, std::string( "uchar" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "SHORT" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "ushort" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "int" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "float" ) ) )
+    if ((CompareNoCase(command.outputPixelType, std::string("uchar"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("SHORT"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("ushort"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("int"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("float")))
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-         && ( CompareNoCase( command.outputPixelType, std::string( "uint" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "double" ) ) )
+        && (CompareNoCase(command.outputPixelType, std::string("uint"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("double")))
 #endif
     )
     {
@@ -218,36 +218,36 @@ main( int argc, char * argv[] )
   }
 
   // Call the process output data type function based on the input data type.
-  if ( CompareNoCase( command.inputPixelType, std::string( "uchar" ) ) == 0 )
+  if (CompareNoCase(command.inputPixelType, std::string("uchar")) == 0)
   {
-    ProcessOutputType_uchar( command );
+    ProcessOutputType_uchar(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "short" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("short")) == 0)
   {
-    ProcessOutputType_short( command );
+    ProcessOutputType_short(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "ushort" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("ushort")) == 0)
   {
-    ProcessOutputType_ushort( command );
+    ProcessOutputType_ushort(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "int" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("int")) == 0)
   {
-    ProcessOutputType_int( command );
+    ProcessOutputType_int(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "float" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("float")) == 0)
   {
-    ProcessOutputType_float( command );
+    ProcessOutputType_float(command);
   }
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-  else if ( CompareNoCase( command.inputPixelType, std::string( "uint" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("uint")) == 0)
   {
-    ProcessOutputType_uint( command );
+    ProcessOutputType_uint(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "double" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("double")) == 0)
   {
-    ProcessOutputType_double( command );
+    ProcessOutputType_double(command);
   }
 #endif
   else

@@ -23,21 +23,21 @@
 
 namespace itk
 {
-template < typename TInputImage, typename TOutputImage >
-class ApplyMaskImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class ApplyMaskImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public: /* define methods available to everyone */
   /** Standard class type alias */
   using Self = ApplyMaskImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** method for creation through the object factory */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** run-time type information (and related methods) */
-  itkTypeMacro( ApplyMaskImageFilter, ImageToImageFilter );
+  itkTypeMacro(ApplyMaskImageFilter, ImageToImageFilter);
 
   /** ImageDimension enumeration */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -57,22 +57,22 @@ public: /* define methods available to everyone */
   using InputPixelType = typename InputImageType::PixelType;
   using OutputPixelType = typename OutputImageType::PixelType;
 
-  itkSetMacro( InvertMask, bool );
-  itkGetMacro( InvertMask, bool );
+  itkSetMacro(InvertMask, bool);
+  itkGetMacro(InvertMask, bool);
 
   /** Set/get the mask to be applied to the image */
   void
-  SetMaskImage( const InputImageType * reference );
+  SetMaskImage(const InputImageType * reference);
 
   const InputImageType *
-  GetMaskImage( void );
+  GetMaskImage(void);
 
 protected: /* define methods available only to related classes */
   ApplyMaskImageFilter();
   ~ApplyMaskImageFilter() {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   void
   GenerateData();
@@ -80,7 +80,7 @@ protected: /* define methods available only to related classes */
 private: /* define methods available only to this class */
   bool m_InvertMask;
 
-  ITK_DISALLOW_COPY_AND_ASSIGN( ApplyMaskImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ApplyMaskImageFilter);
 };
 } // end namespace itk
 

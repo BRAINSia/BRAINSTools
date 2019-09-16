@@ -52,41 +52,41 @@
 
 namespace itk
 {
-template < typename TInputImage, typename TTransformType, typename TSpatialObject >
-CreateSpatialObjectFilter< TInputImage, TTransformType, TSpatialObject >::CreateSpatialObjectFilter()
+template <typename TInputImage, typename TTransformType, typename TSpatialObject>
+CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::CreateSpatialObjectFilter()
 {
   m_Input = NULL;
   m_Output = NULL;
   m_Transform = NULL;
 }
 
-template < typename TInputImage, typename TTransformType, typename TSpatialObject >
+template <typename TInputImage, typename TTransformType, typename TSpatialObject>
 void
-CreateSpatialObjectFilter< TInputImage, TTransformType, TSpatialObject >::Update()
+CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::Update()
 {
   SpatialObjectPointListType points;
 
   m_Output = SpatialObjectType::New();
 
-  using IteratorType = itk::ImageRegionConstIteratorWithIndex< InputImageType >;
-  IteratorType it( m_Input, m_Input->GetLargestPossibleRegion() );
+  using IteratorType = itk::ImageRegionConstIteratorWithIndex<InputImageType>;
+  IteratorType it(m_Input, m_Input->GetLargestPossibleRegion());
   // int count;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
-    if ( it.Get() > 0 )
+    if (it.Get() > 0)
     {
       //      count++;
       InputImageIndexType index = it.GetIndex();
       InputImagePointType p;
-      m_Input->TransformIndexToPhysicalPoint( index, p );
-      p = m_Transform->TransformPoint( p );
+      m_Input->TransformIndexToPhysicalPoint(index, p);
+      p = m_Transform->TransformPoint(p);
       BlobPointType blobPoint;
-      blobPoint.SetPosition( p );
-      points.push_back( blobPoint );
+      blobPoint.SetPosition(p);
+      points.push_back(blobPoint);
     }
   }
 
-  m_Output->SetPoints( points );
+  m_Output->SetPoints(points);
   m_Output->ComputeBoundingBox();
 
   return;

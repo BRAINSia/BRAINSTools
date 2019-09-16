@@ -4,10 +4,10 @@ class ErrorObserver : public vtkCommand
 {
 public:
   ErrorObserver()
-    : Error( false )
-    , Warning( false )
-    , ErrorMessage( "" )
-    , WarningMessage( "" )
+    : Error(false)
+    , Warning(false)
+    , ErrorMessage("")
+    , WarningMessage("")
   {}
 
   static ErrorObserver *
@@ -38,16 +38,16 @@ public:
   }
 
   virtual void
-  Execute( vtkObject * vtkNotUsed( caller ), unsigned long event, void * calldata )
+  Execute(vtkObject * vtkNotUsed(caller), unsigned long event, void * calldata)
   {
-    switch ( event )
+    switch (event)
     {
       case vtkCommand::ErrorEvent:
-        ErrorMessage = static_cast< char * >( calldata );
+        ErrorMessage = static_cast<char *>(calldata);
         this->Error = true;
         break;
       case vtkCommand::WarningEvent:
-        WarningMessage = static_cast< char * >( calldata );
+        WarningMessage = static_cast<char *>(calldata);
         this->Warning = true;
         break;
     }

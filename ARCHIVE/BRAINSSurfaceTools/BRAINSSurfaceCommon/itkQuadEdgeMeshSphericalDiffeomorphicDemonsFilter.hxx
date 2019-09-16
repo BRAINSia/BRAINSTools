@@ -25,19 +25,19 @@
 
 namespace itk
 {
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::QuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  QuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {
-  this->SetNumberOfIndexedInputs( 2 );
-  this->SetNumberOfIndexedOutputs( 3 );
+  this->SetNumberOfIndexedInputs(2);
+  this->SetNumberOfIndexedOutputs(3);
 
-  this->SetNumberOfRequiredInputs( 2 );
-  this->SetNumberOfRequiredOutputs( 3 );
+  this->SetNumberOfRequiredInputs(2);
+  this->SetNumberOfRequiredOutputs(3);
 
-  this->SetNthOutput( 0, OutputMeshType::New() );
-  this->SetNthOutput( 1, FixedMeshType::New() );
-  this->SetNthOutput( 2, DestinationPointSetType::New() );
+  this->SetNthOutput(0, OutputMeshType::New());
+  this->SetNthOutput(1, FixedMeshType::New());
+  this->SetNthOutput(2, DestinationPointSetType::New());
 
   this->m_BasisSystemAtNode = BasisSystemContainerType::New();
   this->m_DestinationPoints = DestinationPointContainerType::New();
@@ -53,18 +53,18 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   // this->m_ResampledMovingValuesContainer = ResampledMovingValuesContainerType::New();
 
   this->m_ScalarInterpolator = ScalarInterpolatorType::New();
-  this->m_ScalarInterpolator->SetUseNearestNeighborInterpolationAsBackup( false );
+  this->m_ScalarInterpolator->SetUseNearestNeighborInterpolationAsBackup(false);
 
   this->m_DeformationInterpolator = DeformationInterpolatorType::New();
-  this->m_DeformationInterpolator->SetUseNearestNeighborInterpolationAsBackup( true );
+  this->m_DeformationInterpolator->SetUseNearestNeighborInterpolationAsBackup(true);
 
   this->m_MaximumNumberOfIterations = 50;
 
-  this->m_SphereCenter.Fill( 0.0 );
+  this->m_SphereCenter.Fill(0.0);
   this->m_SphereRadius = 1.0;
 
   this->m_SigmaX = 1.0;
-  this->m_Epsilon = 1.0 / ( this->m_SigmaX * this->m_SigmaX );
+  this->m_Epsilon = 1.0 / (this->m_SigmaX * this->m_SigmaX);
 
   this->m_Lambda = 1.0;
   this->m_MaximumNumberOfSmoothingIterations = 1;
@@ -83,85 +83,85 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   this->m_FixedMeshAtInitialDestinationPoints = FixedMeshType::New();
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::~QuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ~QuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {}
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 DataObject::Pointer
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::MakeOutput( size_t idx )
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::MakeOutput(size_t idx)
 {
   DataObject::Pointer output;
 
-  switch ( idx )
+  switch (idx)
   {
     case 0:
     {
-      output = ( OutputMeshType::New() ).GetPointer();
+      output = (OutputMeshType::New()).GetPointer();
     }
     break;
     case 1:
     {
-      output = ( FixedMeshType::New() ).GetPointer();
+      output = (FixedMeshType::New()).GetPointer();
     }
     break;
     case 2:
     {
-      output = ( DestinationPointSetType::New() ).GetPointer();
+      output = (DestinationPointSetType::New()).GetPointer();
     }
     break;
   }
   return output.GetPointer();
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::SetFixedMesh(
-  const FixedMeshType * fixedMesh )
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::SetFixedMesh(
+  const FixedMeshType * fixedMesh)
 {
-  itkDebugMacro( "setting Fixed Mesh to " << fixedMesh );
+  itkDebugMacro("setting Fixed Mesh to " << fixedMesh);
 
-  if ( this->m_FixedMesh.GetPointer() != fixedMesh )
+  if (this->m_FixedMesh.GetPointer() != fixedMesh)
   {
     this->m_FixedMesh = fixedMesh;
 
     // Process object is not const-correct so the const_cast is required here
-    this->ProcessObject::SetNthInput( 0, const_cast< FixedMeshType * >( fixedMesh ) );
+    this->ProcessObject::SetNthInput(0, const_cast<FixedMeshType *>(fixedMesh));
 
     this->Modified();
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::SetMovingMesh(
-  const MovingMeshType * movingMesh )
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::SetMovingMesh(
+  const MovingMeshType * movingMesh)
 {
-  itkDebugMacro( "setting Moving Mesh to " << movingMesh );
+  itkDebugMacro("setting Moving Mesh to " << movingMesh);
 
-  if ( this->m_MovingMesh.GetPointer() != movingMesh )
+  if (this->m_MovingMesh.GetPointer() != movingMesh)
   {
     this->m_MovingMesh = movingMesh;
 
     // Process object is not const-correct so the const_cast is required here
-    this->ProcessObject::SetNthInput( 1, const_cast< MovingMeshType * >( movingMesh ) );
+    this->ProcessObject::SetNthInput(1, const_cast<MovingMeshType *>(movingMesh));
 
     this->Modified();
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::SetInitialDestinationPoints(
-  const DestinationPointSetType * destinationPointSet )
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::SetInitialDestinationPoints(
+  const DestinationPointSetType * destinationPointSet)
 {
-  itkDebugMacro( "setting Destination PointSet to " << destinationPointSet );
+  itkDebugMacro("setting Destination PointSet to " << destinationPointSet);
 
-  if ( this->GetInitialDestinationPoints() != destinationPointSet )
+  if (this->GetInitialDestinationPoints() != destinationPointSet)
   {
     // Process object is not const-correct so the const_cast is required here
-    this->ProcessObject::SetNthInput( 2, const_cast< DestinationPointSetType * >( destinationPointSet ) );
+    this->ProcessObject::SetNthInput(2, const_cast<DestinationPointSetType *>(destinationPointSet));
 
     this->m_UserProvidedInitialDestinationPoints = true;
 
@@ -169,67 +169,65 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
-const typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                               TOutputMesh >::DestinationPointSetType *
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::GetInitialDestinationPoints()
-  const
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
+const typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  DestinationPointSetType *
+  QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::GetInitialDestinationPoints()
+    const
 {
-  if ( this->GetNumberOfInputs() < 3 )
+  if (this->GetNumberOfInputs() < 3)
   {
     return nullptr;
   }
 
-  return static_cast< const DestinationPointSetType * >( this->ProcessObject::GetInput( 2 ) );
+  return static_cast<const DestinationPointSetType *>(this->ProcessObject::GetInput(2));
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
-typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                         TOutputMesh >::DestinationPointSetType *
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::GetFinalDestinationPoints()
-  const
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
+typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::DestinationPointSetType *
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::GetFinalDestinationPoints() const
 {
-  if ( this->GetNumberOfOutputs() < 3 )
+  if (this->GetNumberOfOutputs() < 3)
   {
     return nullptr;
   }
 
   const DestinationPointSetType * pointSet =
-    dynamic_cast< const DestinationPointSetType * >( this->ProcessObject::GetOutput( 2 ) );
+    dynamic_cast<const DestinationPointSetType *>(this->ProcessObject::GetOutput(2));
 
-  return const_cast< DestinationPointSetType * >( pointSet );
+  return const_cast<DestinationPointSetType *>(pointSet);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::CopyInitialDestinationPoints()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::CopyInitialDestinationPoints()
 {
   this->m_FixedMeshAtInitialDestinationPoints = FixedMeshType::New();
 
-  CopyMeshToMesh< TFixedMesh, TFixedMesh >( this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints );
+  CopyMeshToMesh<TFixedMesh, TFixedMesh>(this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints);
 
   const DestinationPointSetType *       destinationPointSet = this->GetInitialDestinationPoints();
   const DestinationPointContainerType * destinationPoints = destinationPointSet->GetPoints();
 
-  itkDebugMacro( "setting Destination Points to " << destinationPoints );
+  itkDebugMacro("setting Destination Points to " << destinationPoints);
 
-  if ( destinationPoints == nullptr )
+  if (destinationPoints == nullptr)
   {
-    itkExceptionMacro( "Pointer to DestinationPoints was NULL" );
+    itkExceptionMacro("Pointer to DestinationPoints was NULL");
   }
 
-  if ( destinationPoints->Size() != this->m_FixedMesh->GetNumberOfPoints() )
+  if (destinationPoints->Size() != this->m_FixedMesh->GetNumberOfPoints())
   {
-    itkExceptionMacro( "Number of destination points " << destinationPoints->Size()
-                                                       << " does not match fixed mesh number of points "
-                                                       << this->m_FixedMesh->GetNumberOfPoints() );
+    itkExceptionMacro("Number of destination points " << destinationPoints->Size()
+                                                      << " does not match fixed mesh number of points "
+                                                      << this->m_FixedMesh->GetNumberOfPoints());
   }
 
   FixedPointsContainer * fixedPoints = this->m_FixedMeshAtInitialDestinationPoints->GetPoints();
   FixedPointsIterator    fixedPointItr = fixedPoints->Begin();
 
   this->m_DestinationPoints = DestinationPointContainerType::New();
-  this->m_DestinationPoints->Reserve( destinationPoints->Size() );
+  this->m_DestinationPoints->Reserve(destinationPoints->Size());
 
   DestinationPointConstIterator srcPointItr = destinationPoints->Begin();
 
@@ -237,15 +235,15 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   DestinationPointIterator dstPointEnd = this->m_DestinationPoints->End();
 
   PointType point;
-  while ( dstPointItr != dstPointEnd )
+  while (dstPointItr != dstPointEnd)
   {
     point = srcPointItr.Value();
 
-    this->ProjectPointToSphereSurface( point );
+    this->ProjectPointToSphereSurface(point);
 
     dstPointItr.Value() = point;
 
-    fixedPointItr.Value().SetPoint( point );
+    fixedPointItr.Value().SetPoint(point);
 
     ++srcPointItr;
     ++dstPointItr;
@@ -253,11 +251,11 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::GenerateData()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::GenerateData()
 {
-  this->m_Chronometer.Start( "DataPreProcessing" );
+  this->m_Chronometer.Start("DataPreProcessing");
   // Prepare data
   this->CopyInputMeshToOutputMesh();
   this->AllocateInternalArrays();
@@ -268,32 +266,32 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   this->ComposeDestinationPointsOutputPointSet();
   this->InitializeInterpolators();
   this->InitializeGradientCalculators();
-  this->m_Chronometer.Stop( "DataPreProcessing" );
+  this->m_Chronometer.Stop("DataPreProcessing");
 
   // Compute deformations
-  this->m_Chronometer.Start( "RunIterations" );
+  this->m_Chronometer.Start("RunIterations");
   this->RunIterations();
-  this->m_Chronometer.Stop( "RunIterations" );
+  this->m_Chronometer.Stop("RunIterations");
 
   // Gathering outputs
-  this->m_Chronometer.Start( "DataPostProcessing" );
+  this->m_Chronometer.Start("DataPostProcessing");
   this->ComputeMappedMovingValueAtEveryNode();
   this->AssignResampledMovingValuesToOutputMesh();
   this->ComposeFixedMeshOutputDisplacedToMovingMesh();
-  this->m_Chronometer.Stop( "DataPostProcessing" );
+  this->m_Chronometer.Stop("DataPostProcessing");
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::ChronometerReport(
-  std::ofstream & os ) const
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ChronometerReport(
+  std::ofstream & os) const
 {
-  this->m_Chronometer.Report( os );
+  this->m_Chronometer.Report(os);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::AllocateInternalArrays()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::AllocateInternalArrays()
 {
   const PointIdentifier numberOfNodes = this->m_FixedMesh->GetNumberOfPoints();
 
@@ -304,64 +302,64 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   //
 
   this->m_BasisSystemAtNode = BasisSystemContainerType::New();
-  this->m_BasisSystemAtNode->Reserve( numberOfNodes );
+  this->m_BasisSystemAtNode->Reserve(numberOfNodes);
 
-  if ( !this->m_UserProvidedInitialDestinationPoints )
+  if (!this->m_UserProvidedInitialDestinationPoints)
   {
     this->m_DestinationPoints = DestinationPointContainerType::New();
-    this->m_DestinationPoints->Reserve( numberOfNodes );
+    this->m_DestinationPoints->Reserve(numberOfNodes);
   }
 
   this->m_DestinationPointsSwap = DestinationPointContainerType::New();
-  this->m_DestinationPointsSwap->Reserve( numberOfNodes );
+  this->m_DestinationPointsSwap->Reserve(numberOfNodes);
 
   this->m_DisplacementField = DestinationPointContainerType::New();
-  this->m_DisplacementField->Reserve( numberOfNodes );
+  this->m_DisplacementField->Reserve(numberOfNodes);
 
   this->m_DisplacementFieldSwap = DestinationPointContainerType::New();
-  this->m_DisplacementFieldSwap->Reserve( numberOfNodes );
+  this->m_DisplacementFieldSwap->Reserve(numberOfNodes);
 
   this->m_ResampledMovingValuesContainer = ResampledMovingValuesContainerType::New();
-  this->m_ResampledMovingValuesContainer->Reserve( numberOfNodes );
+  this->m_ResampledMovingValuesContainer->Reserve(numberOfNodes);
 
   this->m_VelocityField = VelocityVectorContainer::New();
-  this->m_VelocityField->Reserve( numberOfNodes );
+  this->m_VelocityField->Reserve(numberOfNodes);
 
   this->m_TangentVectorField = TangentVectorContainer::New();
-  this->m_TangentVectorField->Reserve( numberOfNodes );
+  this->m_TangentVectorField->Reserve(numberOfNodes);
 
   this->m_TangentVectorFieldSwap = TangentVectorContainer::New();
-  this->m_TangentVectorFieldSwap->Reserve( numberOfNodes );
+  this->m_TangentVectorFieldSwap->Reserve(numberOfNodes);
 
   this->m_ShortestEdgeLengthPerPoint = ShortestLengthContainerType::New();
-  this->m_ShortestEdgeLengthPerPoint->Reserve( numberOfNodes );
+  this->m_ShortestEdgeLengthPerPoint->Reserve(numberOfNodes);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::InitializeFixedNodesSigmas()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::InitializeFixedNodesSigmas()
 {
   const PointIdentifier numberOfNodes = this->m_FixedMeshAtInitialDestinationPoints->GetNumberOfPoints();
 
-  if ( this->m_FixedNodesSigmas.IsNull() || this->m_FixedNodesSigmas->Size() != numberOfNodes )
+  if (this->m_FixedNodesSigmas.IsNull() || this->m_FixedNodesSigmas->Size() != numberOfNodes)
   {
     NodeSigmaContainerPointer sigmas = NodeSigmaContainerType::New();
-    sigmas->Reserve( numberOfNodes );
+    sigmas->Reserve(numberOfNodes);
     NodeSigmaContainerIterator sigmaItr = sigmas->Begin();
     NodeSigmaContainerIterator sigmaEnd = sigmas->End();
-    while ( sigmaItr != sigmaEnd )
+    while (sigmaItr != sigmaEnd)
     {
       sigmaItr.Value() = 1.0;
       ++sigmaItr;
     }
 
-    this->SetFixedNodesSigmas( sigmas );
+    this->SetFixedNodesSigmas(sigmas);
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::ComputeBasisSystemAtEveryNode()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ComputeBasisSystemAtEveryNode()
 {
   const PointIdentifier numberOfNodes = this->m_FixedMeshAtInitialDestinationPoints->GetNumberOfPoints();
 
@@ -369,19 +367,19 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   const PointsContainer * points = this->m_FixedMeshAtInitialDestinationPoints->GetPoints();
 
   using EdgeType = typename TFixedMesh::QEPrimal;
-  for ( PointIdentifier pointId1 = 0; pointId1 < numberOfNodes; pointId1++ )
+  for (PointIdentifier pointId1 = 0; pointId1 < numberOfNodes; pointId1++)
   {
-    const EdgeType * edge = this->m_FixedMeshAtInitialDestinationPoints->FindEdge( pointId1 );
+    const EdgeType * edge = this->m_FixedMeshAtInitialDestinationPoints->FindEdge(pointId1);
 
-    if ( !edge )
+    if (!edge)
     {
-      itkExceptionMacro( "FindEdge() returned NULL for pointId " << pointId1 );
+      itkExceptionMacro("FindEdge() returned NULL for pointId " << pointId1);
     }
 
     PointIdentifier pointId2 = edge->GetDestination();
 
-    const PointType point1 = points->GetElement( pointId1 );
-    const PointType point2 = points->GetElement( pointId2 );
+    const PointType point1 = points->GetElement(pointId1);
+    const PointType point2 = points->GetElement(pointId2);
 
     const VectorType v12 = point1 - point2;
 
@@ -390,26 +388,26 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
 
     const VectorType radial = point1.GetVectorFromOrigin();
 
-    VectorType u12 = CrossProduct( v12, radial );
-    VectorType w12 = CrossProduct( radial, u12 );
+    VectorType u12 = CrossProduct(v12, radial);
+    VectorType w12 = CrossProduct(radial, u12);
 
     w12.Normalize();
     u12.Normalize();
 
     BasisSystemType basis;
-    basis.SetVector( 0, w12 );
-    basis.SetVector( 1, u12 );
+    basis.SetVector(0, w12);
+    basis.SetVector(1, u12);
 
-    this->m_BasisSystemAtNode->SetElement( pointId1, basis );
+    this->m_BasisSystemAtNode->SetElement(pointId1, basis);
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeInitialArrayOfDestinationPoints()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeInitialArrayOfDestinationPoints()
 {
-  if ( this->m_UserProvidedInitialDestinationPoints )
+  if (this->m_UserProvidedInitialDestinationPoints)
   {
     this->CopyInitialDestinationPoints();
   }
@@ -419,14 +417,14 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::CopySourcePoinstAsDestinationPoints()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  CopySourcePoinstAsDestinationPoints()
 {
   this->m_FixedMeshAtInitialDestinationPoints = FixedMeshType::New();
 
-  CopyMeshToMesh< FixedMeshType, FixedMeshType >( this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints );
+  CopyMeshToMesh<FixedMeshType, FixedMeshType>(this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints);
 
   const FixedPointsContainer * points = this->m_FixedMesh->GetPoints();
 
@@ -435,7 +433,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   DestinationPointIterator dstPointItr = this->m_DestinationPoints->Begin();
   DestinationPointIterator dstPointEnd = this->m_DestinationPoints->End();
 
-  while ( dstPointItr != dstPointEnd )
+  while (dstPointItr != dstPointEnd)
   {
     dstPointItr.Value() = srcPointItr.Value();
     ++srcPointItr;
@@ -443,77 +441,77 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::InitializeInterpolators()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::InitializeInterpolators()
 {
-  this->m_ScalarInterpolator->SetInputMesh( this->m_MovingMesh );
+  this->m_ScalarInterpolator->SetInputMesh(this->m_MovingMesh);
   this->m_ScalarInterpolator->Initialize();
 
-  this->m_DeformationInterpolator->SetInputMesh( this->m_FixedMeshAtInitialDestinationPoints );
+  this->m_DeformationInterpolator->SetInputMesh(this->m_FixedMeshAtInitialDestinationPoints);
   this->m_DeformationInterpolator->Initialize();
-  this->m_DeformationInterpolator->SetSphereCenter( this->m_SphereCenter );
+  this->m_DeformationInterpolator->SetSphereCenter(this->m_SphereCenter);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::InitializeGradientCalculators()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::InitializeGradientCalculators()
 {
-  this->m_TriangleListBasisSystemCalculator->SetInputMesh( this->m_FixedMeshAtInitialDestinationPoints );
+  this->m_TriangleListBasisSystemCalculator->SetInputMesh(this->m_FixedMeshAtInitialDestinationPoints);
   this->m_TriangleListBasisSystemCalculator->Calculate();
 
-  this->m_NodeScalarGradientCalculator->SetInputMesh( this->m_FixedMeshAtInitialDestinationPoints );
-  this->m_NodeScalarGradientCalculator->SetDataContainer( this->m_ResampledMovingValuesContainer );
+  this->m_NodeScalarGradientCalculator->SetInputMesh(this->m_FixedMeshAtInitialDestinationPoints);
+  this->m_NodeScalarGradientCalculator->SetDataContainer(this->m_ResampledMovingValuesContainer);
 
   this->m_NodeScalarGradientCalculator->SetBasisSystemList(
-    this->m_TriangleListBasisSystemCalculator->GetBasisSystemList() );
+    this->m_TriangleListBasisSystemCalculator->GetBasisSystemList());
 
-  this->m_NodeScalarGradientCalculator->SetSphereCenter( this->m_SphereCenter );
-  this->m_NodeScalarGradientCalculator->SetSphereRadius( this->m_SphereRadius );
+  this->m_NodeScalarGradientCalculator->SetSphereCenter(this->m_SphereCenter);
+  this->m_NodeScalarGradientCalculator->SetSphereRadius(this->m_SphereRadius);
 
-  this->m_NodeVectorJacobianCalculator->SetInputMesh( this->m_FixedMeshAtInitialDestinationPoints );
+  this->m_NodeVectorJacobianCalculator->SetInputMesh(this->m_FixedMeshAtInitialDestinationPoints);
   this->m_NodeVectorJacobianCalculator->SetBasisSystemList(
-    this->m_TriangleListBasisSystemCalculator->GetBasisSystemList() );
+    this->m_TriangleListBasisSystemCalculator->GetBasisSystemList());
 
-  this->m_NodeVectorJacobianCalculator->SetSphereCenter( this->m_SphereCenter );
-  this->m_NodeVectorJacobianCalculator->SetSphereRadius( this->m_SphereRadius );
+  this->m_NodeVectorJacobianCalculator->SetSphereCenter(this->m_SphereCenter);
+  this->m_NodeVectorJacobianCalculator->SetSphereRadius(this->m_SphereRadius);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::RunIterations()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::RunIterations()
 {
   // Report the progress
-  ProgressReporter progress( this, 0, this->m_MaximumNumberOfIterations );
+  ProgressReporter progress(this, 0, this->m_MaximumNumberOfIterations);
 
   double pre_Metric = 0.0; // to save the metric value of previous iteration
 
   unsigned int count = 0;
 
-  for ( unsigned int i = 0; i < this->m_MaximumNumberOfIterations; i++ )
+  for (unsigned int i = 0; i < this->m_MaximumNumberOfIterations; i++)
   {
-    this->m_Chronometer.Start( "ComputeMappedMovingValueAtEveryNode" );
+    this->m_Chronometer.Start("ComputeMappedMovingValueAtEveryNode");
     this->ComputeMappedMovingValueAtEveryNode();
-    this->m_Chronometer.Stop( "ComputeMappedMovingValueAtEveryNode" );
+    this->m_Chronometer.Stop("ComputeMappedMovingValueAtEveryNode");
 
-    this->m_Chronometer.Start( "ComputeGradientsOfMappedMovingValueAtEveryNode" );
+    this->m_Chronometer.Start("ComputeGradientsOfMappedMovingValueAtEveryNode");
     this->ComputeGradientsOfMappedMovingValueAtEveryNode();
-    this->m_Chronometer.Stop( "ComputeGradientsOfMappedMovingValueAtEveryNode" );
+    this->m_Chronometer.Stop("ComputeGradientsOfMappedMovingValueAtEveryNode");
 
     std::cout << "Iteration: " << i << std::endl;
-    this->m_Chronometer.Start( "ComputeSelfRegulatedVelocityField" );
+    this->m_Chronometer.Start("ComputeSelfRegulatedVelocityField");
     this->ComputeSelfRegulatedVelocityField();
-    this->m_Chronometer.Stop( "ComputeSelfRegulatedVelocityField" );
+    this->m_Chronometer.Stop("ComputeSelfRegulatedVelocityField");
 
     // metric calculation
     // iteration stops when there is no significant change in continuous 5 iterations
-    if ( m_SelfStopMode )
+    if (m_SelfStopMode)
     {
-      if ( ( i > 15 ) && ( pre_Metric != 0.0 ) )
+      if ((i > 15) && (pre_Metric != 0.0))
       {
-        m_MetricChange = fabs( this->GetMetricValue() - pre_Metric ) / pre_Metric * 100.0;
+        m_MetricChange = fabs(this->GetMetricValue() - pre_Metric) / pre_Metric * 100.0;
 
-        if ( m_MetricChange < m_MetricSignificance )
+        if (m_MetricChange < m_MetricSignificance)
         {
           count += 1;
         }
@@ -521,7 +519,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
         {
           count = 0;
         }
-        if ( count == 5 )
+        if (count == 5)
         {
           break;
         }
@@ -529,87 +527,87 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
       pre_Metric = this->GetMetricValue();
     }
 
-    this->m_Chronometer.Start( "ComputeScalingAndSquaringNumberOfIterations" );
+    this->m_Chronometer.Start("ComputeScalingAndSquaringNumberOfIterations");
     this->ComputeScalingAndSquaringNumberOfIterations();
-    this->m_Chronometer.Stop( "ComputeScalingAndSquaringNumberOfIterations" );
+    this->m_Chronometer.Stop("ComputeScalingAndSquaringNumberOfIterations");
 
-    this->m_Chronometer.Start( "ComputeDeformationByScalingAndSquaring" );
+    this->m_Chronometer.Start("ComputeDeformationByScalingAndSquaring");
     this->ComputeDeformationByScalingAndSquaring();
-    this->m_Chronometer.Stop( "ComputeDeformationByScalingAndSquaring" );
+    this->m_Chronometer.Stop("ComputeDeformationByScalingAndSquaring");
 
-    this->m_Chronometer.Start( "ComposeDeformationUpdateWithPreviousDeformation" );
+    this->m_Chronometer.Start("ComposeDeformationUpdateWithPreviousDeformation");
     this->ComposeDeformationUpdateWithPreviousDeformation();
-    this->m_Chronometer.Stop( "ComposeDeformationUpdateWithPreviousDeformation" );
+    this->m_Chronometer.Stop("ComposeDeformationUpdateWithPreviousDeformation");
 
-    this->m_Chronometer.Start( "SmoothDeformationField" );
+    this->m_Chronometer.Start("SmoothDeformationField");
     this->SmoothDeformationField();
-    this->m_Chronometer.Stop( "SmoothDeformationField" );
+    this->m_Chronometer.Stop("SmoothDeformationField");
 
-    this->m_Chronometer.Start( "ComposeDestinationPointsOutputPointSet" );
+    this->m_Chronometer.Start("ComposeDestinationPointsOutputPointSet");
     this->ComposeDestinationPointsOutputPointSet();
-    this->m_Chronometer.Stop( "ComposeDestinationPointsOutputPointSet" );
+    this->m_Chronometer.Stop("ComposeDestinationPointsOutputPointSet");
 
-    this->m_Chronometer.Start( "ComputeSelfRegulatedSigmaXandEpsilon" );
+    this->m_Chronometer.Start("ComputeSelfRegulatedSigmaXandEpsilon");
     this->ComputeSelfRegulatedSigmaXandEpsilon();
-    this->m_Chronometer.Stop( "ComputeSelfRegulatedSigmaXandEpsilon" );
+    this->m_Chronometer.Stop("ComputeSelfRegulatedSigmaXandEpsilon");
 
     // Report progress via Events
     progress.CompletedPixel();
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeGradientsOfMappedMovingValueAtEveryNode()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeGradientsOfMappedMovingValueAtEveryNode()
 {
   this->m_NodeScalarGradientCalculator->Initialize();
   this->m_NodeScalarGradientCalculator->Compute();
 
-  this->m_NodeVectorJacobianCalculator->SetVectorContainer( this->m_DestinationPoints );
+  this->m_NodeVectorJacobianCalculator->SetVectorContainer(this->m_DestinationPoints);
 
   this->m_NodeVectorJacobianCalculator->Initialize();
   this->m_NodeVectorJacobianCalculator->Compute();
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeMappedMovingValueAtEveryNode()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeMappedMovingValueAtEveryNode()
 {
   DestinationPointIterator pointItr = this->m_DestinationPoints->Begin();
   DestinationPointIterator pointEnd = this->m_DestinationPoints->End();
 
   ResampledMovingValuesContainerIterator resampledArrayItr = this->m_ResampledMovingValuesContainer->Begin();
 
-  while ( pointItr != pointEnd )
+  while (pointItr != pointEnd)
   {
-    resampledArrayItr.Value() = this->m_ScalarInterpolator->Evaluate( pointItr.Value() );
+    resampledArrayItr.Value() = this->m_ScalarInterpolator->Evaluate(pointItr.Value());
 
     ++pointItr;
     ++resampledArrayItr;
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeSelfRegulatedVelocityField()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeSelfRegulatedVelocityField()
 {
-  if ( this->m_SelfRegulatedMode )
+  if (this->m_SelfRegulatedMode)
   {
     unsigned int iterations = 0;
 
     do
     {
-      this->m_Chronometer.Start( "ComputeVelocityField" );
+      this->m_Chronometer.Start("ComputeVelocityField");
       this->ComputeVelocityField();
-      this->m_Chronometer.Stop( "ComputeVelocityField" );
+      this->m_Chronometer.Stop("ComputeVelocityField");
       this->ComputeSelfRegulatedSigmaXandEpsilon();
       // std::cout<<this->ComputeLargestVelocityMagnitude()<<std::endl;
       // std::cout<<this->m_Epsilon<<std::endl;
       // std::cout<<this->m_SigmaX<<std::endl;
-    } while ( ( this->m_LargestVelocityToEdgeLengthRatio > 1.5 ) && ( iterations++ < 10 ) );
+    } while ((this->m_LargestVelocityToEdgeLengthRatio > 1.5) && (iterations++ < 10));
   }
   else
   {
@@ -617,9 +615,9 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::ComputeVelocityField()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ComputeVelocityField()
 {
   const PointIdentifier numberOfNodes = this->m_FixedMeshAtInitialDestinationPoints->GetNumberOfPoints();
 
@@ -639,12 +637,12 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
 
   ResampledMovingValuesContainerIterator resampledArrayItr = this->m_ResampledMovingValuesContainer->Begin();
 
-  using VnlMatrix33Type = vnl_matrix_fixed< double, 3, 3 >;
-  using VnlVector2Type = vnl_vector_fixed< double, 2 >;
-  using VnlVector3Type = vnl_vector_fixed< double, 3 >;
-  using VnlMatrix32Type = vnl_matrix_fixed< double, 3, 2 >;
-  using VnlMatrix23Type = vnl_matrix_fixed< double, 2, 3 >;
-  using VnlMatrix22Type = vnl_matrix_fixed< double, 2, 2 >;
+  using VnlMatrix33Type = vnl_matrix_fixed<double, 3, 3>;
+  using VnlVector2Type = vnl_vector_fixed<double, 2>;
+  using VnlVector3Type = vnl_vector_fixed<double, 3>;
+  using VnlMatrix32Type = vnl_matrix_fixed<double, 3, 2>;
+  using VnlMatrix23Type = vnl_matrix_fixed<double, 2, 3>;
+  using VnlMatrix22Type = vnl_matrix_fixed<double, 2, 2>;
 
   VnlMatrix33Type Gn;
   VnlMatrix33Type Gn2;
@@ -672,55 +670,55 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   JacobianType destinationJacobian;
 
   EpsilonI22.set_identity();
-  EpsilonI22 *= ( this->m_Epsilon );
+  EpsilonI22 *= (this->m_Epsilon);
 
   double sumOfSquaredDifferences = 0.0;
 
-  const double sigmaX2 = ( this->m_SigmaX * this->m_SigmaX );
-  for ( PointIdentifier pointId = 0; pointId < numberOfNodes; pointId++ )
+  const double sigmaX2 = (this->m_SigmaX * this->m_SigmaX);
+  for (PointIdentifier pointId = 0; pointId < numberOfNodes; pointId++)
   {
     vectorToCenter = pointItr.Value() - this->m_SphereCenter;
 
     vectorToCenter.Normalize();
 
-    Gn( 0, 0 ) = 0.0;
-    Gn( 1, 1 ) = 0.0;
-    Gn( 2, 2 ) = 0.0;
+    Gn(0, 0) = 0.0;
+    Gn(1, 1) = 0.0;
+    Gn(2, 2) = 0.0;
 
-    Gn( 0, 1 ) = -vectorToCenter[2];
-    Gn( 0, 2 ) = vectorToCenter[1];
-    Gn( 1, 2 ) = -vectorToCenter[0];
+    Gn(0, 1) = -vectorToCenter[2];
+    Gn(0, 2) = vectorToCenter[1];
+    Gn(1, 2) = -vectorToCenter[0];
 
-    Gn( 1, 0 ) = vectorToCenter[2];
-    Gn( 2, 0 ) = -vectorToCenter[1];
-    Gn( 2, 1 ) = vectorToCenter[0];
+    Gn(1, 0) = vectorToCenter[2];
+    Gn(2, 0) = -vectorToCenter[1];
+    Gn(2, 1) = vectorToCenter[0];
 
     Gn2 = Gn * Gn;
 
     using DerivativeType = typename NodeScalarGradientCalculatorType::DerivativeType;
-    DerivativeType derivative = this->m_NodeScalarGradientCalculator->Evaluate( pointId );
+    DerivativeType derivative = this->m_NodeScalarGradientCalculator->Evaluate(pointId);
 
-    destinationJacobian = this->m_NodeVectorJacobianCalculator->Evaluate( pointId );
+    destinationJacobian = this->m_NodeVectorJacobianCalculator->Evaluate(pointId);
 
     const BasisSystemType &   basis = basisItr.Value();
-    const VectorType &        v0 = basis.GetVector( 0 );
-    const VectorType &        v1 = basis.GetVector( 1 );
+    const VectorType &        v0 = basis.GetVector(0);
+    const VectorType &        v1 = basis.GetVector(1);
     const MovingPixelRealType Mv = resampledArrayItr.Value();
     const FixedPixelRealType  Fv = fixedPointDataItr.Value();
-    for ( unsigned int i = 0; i < 3; i++ )
+    for (unsigned int i = 0; i < 3; i++)
     {
-      En( i, 0 ) = v0[i];
-      En( i, 1 ) = v1[i];
-      EnT( 0, i ) = v0[i];
-      EnT( 1, i ) = v1[i];
+      En(i, 0) = v0[i];
+      En(i, 1) = v1[i];
+      EnT(0, i) = v0[i];
+      EnT(1, i) = v1[i];
       mn[i] = derivative[i];
     }
-    for ( unsigned int r = 0; r < 3; r++ )
+    for (unsigned int r = 0; r < 3; r++)
     {
-      for ( unsigned int c = 0; c < 3; c++ )
+      for (unsigned int c = 0; c < 3; c++)
       {
-        mn2( r, c ) = mn[r] * mn[c];
-        SnT( r, c ) = destinationJacobian( c, r ); // FIXME : Check for potential transposition here...
+        mn2(r, c) = mn[r] * mn[c];
+        SnT(r, c) = destinationJacobian(c, r); // FIXME : Check for potential transposition here...
       }
     }
 
@@ -740,15 +738,15 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
 
     EnTGn2Sn2m2EnGI22 = EnTGn2Sn2m2En + EpsilonI22;
 
-    EnTGn2Sn2m2EnGI22I = vnl_matrix_inverse< double >( EnTGn2Sn2m2EnGI22 );
+    EnTGn2Sn2m2EnGI22I = vnl_matrix_inverse<double>(EnTGn2Sn2m2EnGI22);
 
     EnTmn = EnT * mn;
 
     intensitySlope = En * EnTGn2Sn2m2EnGI22I * EnTmn;
 
-    Vn.SetVnlVector( intensitySlope * ( Fv - Mv ) );
+    Vn.SetVnlVector(intensitySlope * (Fv - Mv));
 
-    sumOfSquaredDifferences += ( Fv - Mv ) * ( Fv - Mv ) / sigmaN2;
+    sumOfSquaredDifferences += (Fv - Mv) * (Fv - Mv) / sigmaN2;
 
     velocityItr.Value() = Vn;
 
@@ -765,25 +763,25 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   this->m_MetricValue = averageOfSquaredDifferences;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeScalingAndSquaringNumberOfIterations()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeScalingAndSquaringNumberOfIterations()
 {
   constexpr unsigned int minimumNumberOfIterations = 1;
 
-  if ( this->m_SelfRegulatedMode )
+  if (this->m_SelfRegulatedMode)
   {
-    if ( this->m_LargestVelocityToEdgeLengthRatio < 1.0 )
+    if (this->m_LargestVelocityToEdgeLengthRatio < 1.0)
     {
       this->m_ScalingAndSquaringNumberOfIterations = minimumNumberOfIterations;
     }
     else
     {
       unsigned int iterations =
-        static_cast< unsigned int >( std::log( this->m_LargestVelocityToEdgeLengthRatio ) / std::log( 2.0 ) ) + 2;
+        static_cast<unsigned int>(std::log(this->m_LargestVelocityToEdgeLengthRatio) / std::log(2.0)) + 2;
 
-      if ( iterations < minimumNumberOfIterations )
+      if (iterations < minimumNumberOfIterations)
       {
         iterations = minimumNumberOfIterations;
       }
@@ -795,15 +793,15 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   {
     const double ratio = this->ComputeLargestVelocityMagnitude() / this->m_ShortestEdgeLength;
 
-    if ( ratio < 1.0 )
+    if (ratio < 1.0)
     {
       this->m_ScalingAndSquaringNumberOfIterations = minimumNumberOfIterations;
     }
     else
     {
-      unsigned int iterations = static_cast< unsigned int >( std::log( ratio ) / std::log( 2.0 ) ) + 2;
+      unsigned int iterations = static_cast<unsigned int>(std::log(ratio) / std::log(2.0)) + 2;
 
-      if ( iterations < minimumNumberOfIterations )
+      if (iterations < minimumNumberOfIterations)
       {
         iterations = minimumNumberOfIterations;
       }
@@ -813,11 +811,11 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::ComputeShortestEdgeLength()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ComputeShortestEdgeLength()
 {
-  double shortestLength = NumericTraits< double >::max();
+  double shortestLength = NumericTraits<double>::max();
 
   using EdgeType = typename FixedMeshType::QEPrimal;
 
@@ -828,16 +826,16 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
 
   ShortestLengthContainerIterator shortestEdgeItr = this->m_ShortestEdgeLengthPerPoint->Begin();
 
-  while ( pointItr != pointEnd )
+  while (pointItr != pointEnd)
   {
-    EdgeType * edge1 = this->m_FixedMeshAtInitialDestinationPoints->FindEdge( pointItr.Index() );
+    EdgeType * edge1 = this->m_FixedMeshAtInitialDestinationPoints->FindEdge(pointItr.Index());
 
     EdgeType * temp1 = nullptr;
     EdgeType * temp2 = edge1;
 
     const PointType & point = pointItr.Value();
 
-    double localShortestLength = NumericTraits< double >::max();
+    double localShortestLength = NumericTraits<double>::max();
 
     do
     {
@@ -846,19 +844,19 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
 
       const PointIdentifier neighborPointId = temp1->GetDestination();
 
-      const PointType & neighborPoint = points->GetElement( neighborPointId );
+      const PointType & neighborPoint = points->GetElement(neighborPointId);
 
-      const double distance = point.EuclideanDistanceTo( neighborPoint );
+      const double distance = point.EuclideanDistanceTo(neighborPoint);
 
-      if ( distance < localShortestLength )
+      if (distance < localShortestLength)
       {
         localShortestLength = distance;
       }
-    } while ( temp2 != edge1 );
+    } while (temp2 != edge1);
 
     shortestEdgeItr.Value() = localShortestLength;
 
-    if ( localShortestLength < shortestLength )
+    if (localShortestLength < shortestLength)
     {
       shortestLength = localShortestLength;
     }
@@ -870,27 +868,27 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   this->m_ShortestEdgeLength = shortestLength;
   // std::cout << "m_ShortestEdgeLength = " << this->m_ShortestEdgeLength << std::endl;
 
-  if ( this->m_ShortestEdgeLength < itk::Math::eps )
+  if (this->m_ShortestEdgeLength < itk::Math::eps)
   {
-    itkExceptionMacro( "The shortest edge length is too close to zero = " << shortestLength );
+    itkExceptionMacro("The shortest edge length is too close to zero = " << shortestLength);
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 double
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeLargestVelocityMagnitude() const
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ComputeLargestVelocityMagnitude()
+  const
 {
-  double largestVelocityMagnitude = NumericTraits< double >::ZeroValue();
+  double largestVelocityMagnitude = NumericTraits<double>::ZeroValue();
 
   VelocityVectorConstIterator velocityItr = this->m_VelocityField->Begin();
   VelocityVectorConstIterator velocityEnd = this->m_VelocityField->End();
 
-  while ( velocityItr != velocityEnd )
+  while (velocityItr != velocityEnd)
   {
     const double velocityMagnitude = velocityItr.Value().GetNorm();
 
-    if ( velocityMagnitude > largestVelocityMagnitude )
+    if (velocityMagnitude > largestVelocityMagnitude)
     {
       largestVelocityMagnitude = velocityMagnitude;
     }
@@ -901,10 +899,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   return largestVelocityMagnitude;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeDeformationByScalingAndSquaring()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeDeformationByScalingAndSquaring()
 {
   unsigned long powerOfTwo = 1;
 
@@ -923,11 +921,11 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
 
   PointType destinationPoint;
 
-  while ( displacementItr != displacementEnd )
+  while (displacementItr != displacementEnd)
   {
     destinationPoint = pointItr.Value() + velocityItr.Value() * scalingFactor;
 
-    this->ProjectPointToSphereSurface( destinationPoint );
+    this->ProjectPointToSphereSurface(destinationPoint);
 
     displacementItr.Value() = destinationPoint;
 
@@ -935,21 +933,21 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
     ++pointItr;
     ++velocityItr;
   }
-  for ( unsigned int i = 0; i < this->m_ScalingAndSquaringNumberOfIterations; i++ )
+  for (unsigned int i = 0; i < this->m_ScalingAndSquaringNumberOfIterations; i++)
   {
     DestinationPointConstIterator oldDisplacementItr = this->m_DisplacementField->Begin();
     DestinationPointConstIterator oldDisplacementEnd = this->m_DisplacementField->End();
 
     DestinationPointIterator newDisplacementItr = this->m_DisplacementFieldSwap->Begin();
 
-    while ( oldDisplacementItr != oldDisplacementEnd )
+    while (oldDisplacementItr != oldDisplacementEnd)
     {
       destinationPoint = oldDisplacementItr.Value();
 
-      this->ProjectPointToSphereSurface( destinationPoint );
+      this->ProjectPointToSphereSurface(destinationPoint);
 
       newDisplacementItr.Value() =
-        this->InterpolateDestinationFieldAtPoint( this->m_DisplacementField, destinationPoint );
+        this->InterpolateDestinationFieldAtPoint(this->m_DisplacementField, destinationPoint);
 
       ++newDisplacementItr;
       ++oldDisplacementItr;
@@ -959,12 +957,12 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComputeSelfRegulatedSigmaXandEpsilon()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeSelfRegulatedSigmaXandEpsilon()
 {
-  if ( this->m_SelfRegulatedMode )
+  if (this->m_SelfRegulatedMode)
   {
     //
     // Largest velocity vector Vn  magnitude  / 2^(N-2) < 1/2 Vertex distance
@@ -974,30 +972,30 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
 
     this->ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio();
 
-    this->m_SigmaX /= std::sqrt( this->m_LargestVelocityToEdgeLengthRatio );
-    this->m_Epsilon = 1.0 / ( this->m_SigmaX * this->m_SigmaX );
+    this->m_SigmaX /= std::sqrt(this->m_LargestVelocityToEdgeLengthRatio);
+    this->m_Epsilon = 1.0 / (this->m_SigmaX * this->m_SigmaX);
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComposeDeformationUpdateWithPreviousDeformation()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComposeDeformationUpdateWithPreviousDeformation()
 {
   DestinationPointConstIterator displacementItr = this->m_DisplacementField->Begin();
   DestinationPointConstIterator displacementEnd = this->m_DisplacementField->End();
 
   DestinationPointIterator newDestinationPointItr = this->m_DestinationPointsSwap->Begin();
 
-  while ( displacementItr != displacementEnd )
+  while (displacementItr != displacementEnd)
   {
     PointType point = displacementItr.Value();
 
-    this->ProjectPointToSphereSurface( point );
+    this->ProjectPointToSphereSurface(point);
 
-    PointType destinationPoint = this->InterpolateDestinationFieldAtPoint( this->m_DestinationPoints, point );
+    PointType destinationPoint = this->InterpolateDestinationFieldAtPoint(this->m_DestinationPoints, point);
 
-    this->ProjectPointToSphereSurface( destinationPoint );
+    this->ProjectPointToSphereSurface(destinationPoint);
 
     newDestinationPointItr.Value() = destinationPoint;
 
@@ -1008,29 +1006,29 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   this->SwapOldAndNewDestinationPointContainers();
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
-typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::PointType
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::
-  InterpolateDestinationFieldAtPoint( const DestinationPointContainerType * destinationField, const PointType & point )
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
+typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::PointType
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  InterpolateDestinationFieldAtPoint(const DestinationPointContainerType * destinationField, const PointType & point)
 {
   PointType interpolatedDestinationPoint;
 
-  const bool found = this->m_DeformationInterpolator->Evaluate( destinationField, point, interpolatedDestinationPoint );
+  const bool found = this->m_DeformationInterpolator->Evaluate(destinationField, point, interpolatedDestinationPoint);
 
-  if ( !found )
+  if (!found)
   {
-    itkExceptionMacro( "Point not found in the interpolation" << point );
+    itkExceptionMacro("Point not found in the interpolation" << point);
   }
 
-  this->ProjectPointToSphereSurface( interpolatedDestinationPoint );
+  this->ProjectPointToSphereSurface(interpolatedDestinationPoint);
 
   return interpolatedDestinationPoint;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::ProjectPointToSphereSurface(
-  PointType & point ) const
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ProjectPointToSphereSurface(
+  PointType & point) const
 {
   VectorType vectorToCenter = point - this->m_SphereCenter;
 
@@ -1040,10 +1038,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   point = this->m_SphereCenter + vectorToCenter;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::SwapOldAndNewDisplacementFieldContainers()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  SwapOldAndNewDisplacementFieldContainers()
 {
   DestinationPointContainerPointer temp = this->m_DisplacementField;
 
@@ -1051,10 +1049,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   this->m_DisplacementFieldSwap = temp;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::SwapOldAndNewDestinationPointContainers()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  SwapOldAndNewDestinationPointContainers()
 {
   DestinationPointContainerPointer temp = this->m_DestinationPoints;
 
@@ -1062,10 +1060,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   this->m_DestinationPointsSwap = temp;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::SwapOldAndNewTangetFieldContainers()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  SwapOldAndNewTangetFieldContainers()
 {
   TangentVectorPointer temp = this->m_TangentVectorField;
 
@@ -1073,19 +1071,19 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   this->m_TangentVectorFieldSwap = temp;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::SmoothDeformationField()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::SmoothDeformationField()
 {
   this->ConvertDeformationFieldToTangentVectorField();
   this->SmoothTangentVectorField();
   this->ConvertTangentVectorFieldToDeformationField();
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ConvertDeformationFieldToTangentVectorField()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ConvertDeformationFieldToTangentVectorField()
 {
   DestinationPointIterator dstPointItr = this->m_DestinationPoints->Begin();
   DestinationPointIterator dstPointEnd = this->m_DestinationPoints->End();
@@ -1098,14 +1096,14 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
 
   const double factor = -1.0 / this->m_SphereRadius;
 
-  while ( dstPointItr != dstPointEnd )
+  while (dstPointItr != dstPointEnd)
   {
     VectorType vectorToCenter = pointItr.Value() - this->m_SphereCenter;
 
     vectorToCenter.Normalize();
 
     tangentItr.Value() =
-      CrossProduct( vectorToCenter, CrossProduct( vectorToCenter, dstPointItr.Value().GetVectorFromOrigin() ) );
+      CrossProduct(vectorToCenter, CrossProduct(vectorToCenter, dstPointItr.Value().GetVectorFromOrigin()));
 
     tangentItr.Value() *= factor;
 
@@ -1115,18 +1113,18 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::SmoothTangentVectorField()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::SmoothTangentVectorField()
 {
-  const double weightFactor = std::exp( -1.0 / ( 2.0 * this->m_Lambda ) );
+  const double weightFactor = std::exp(-1.0 / (2.0 * this->m_Lambda));
 
   const FixedPointsContainer * points = this->m_FixedMeshAtInitialDestinationPoints->GetPoints();
 
   TangentVectorType smoothedVector;
   TangentVectorType transportedTangentVector;
 
-  for ( unsigned int iter = 0; iter < this->m_MaximumNumberOfSmoothingIterations; ++iter )
+  for (unsigned int iter = 0; iter < this->m_MaximumNumberOfSmoothingIterations; ++iter)
   {
     using EdgeType = typename OutputMeshType::QEPrimal;
 
@@ -1137,18 +1135,18 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
 
     FixedPointsConstIterator pointItr = points->Begin();
 
-    using AccumulatePixelType = typename NumericTraits< TangentVectorType >::AccumulateType;
+    using AccumulatePixelType = typename NumericTraits<TangentVectorType>::AccumulateType;
 
-    while ( tangentItr != tangentEnd )
+    while (tangentItr != tangentEnd)
     {
       const TangentVectorType & centralTangentVector = tangentItr.Value();
 
       const EdgeType * edgeToFirstNeighborPoint =
-        this->m_FixedMeshAtInitialDestinationPoints->FindEdge( tangentItr.Index() );
+        this->m_FixedMeshAtInitialDestinationPoints->FindEdge(tangentItr.Index());
       const EdgeType * edgeToNeighborPoint = edgeToFirstNeighborPoint;
 
       AccumulatePixelType tangentVectorSum;
-      for ( unsigned int k = 0; k < PointDimension; k++ )
+      for (unsigned int k = 0; k < PointDimension; k++)
       {
         tangentVectorSum[k] = centralTangentVector[k];
       }
@@ -1158,11 +1156,11 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
       do
       {
         const PointIdentifier     neighborPointId = edgeToNeighborPoint->GetDestination();
-        const PointType &         neighborPoint = points->GetElement( neighborPointId );
-        const TangentVectorType & neighborTangentVector = this->m_TangentVectorField->GetElement( neighborPointId );
+        const PointType &         neighborPoint = points->GetElement(neighborPointId);
+        const TangentVectorType & neighborTangentVector = this->m_TangentVectorField->GetElement(neighborPointId);
 
-        this->ParalelTransport( neighborPoint, pointItr.Value(), neighborTangentVector, transportedTangentVector );
-        for ( unsigned int k = 0; k < PointDimension; k++ )
+        this->ParalelTransport(neighborPoint, pointItr.Value(), neighborTangentVector, transportedTangentVector);
+        for (unsigned int k = 0; k < PointDimension; k++)
         {
           tangentVectorSum[k] += weightFactor * transportedTangentVector[k];
         }
@@ -1170,10 +1168,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
         numberOfNeighbors++;
 
         edgeToNeighborPoint = edgeToNeighborPoint->GetOnext();
-      } while ( edgeToNeighborPoint != edgeToFirstNeighborPoint );
+      } while (edgeToNeighborPoint != edgeToFirstNeighborPoint);
 
-      const double normalizationFactor = 1.0 / ( 1.0 + numberOfNeighbors * weightFactor );
-      for ( unsigned int k = 0; k < PointDimension; k++ )
+      const double normalizationFactor = 1.0 / (1.0 + numberOfNeighbors * weightFactor);
+      for (unsigned int k = 0; k < PointDimension; k++)
       {
         smoothedVector[k] = tangentVectorSum[k] * normalizationFactor;
       }
@@ -1189,34 +1187,36 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::ParalelTransport(
-  const PointType sourcePoint, const PointType destinationPoint, const TangentVectorType & inputVector,
-  TangentVectorType & transportedVector ) const
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::ParalelTransport(
+  const PointType           sourcePoint,
+  const PointType           destinationPoint,
+  const TangentVectorType & inputVector,
+  TangentVectorType &       transportedVector) const
 {
   VectorType vsrc = sourcePoint - this->m_SphereCenter;
   VectorType vdst = destinationPoint - this->m_SphereCenter;
 
-  VectorType axis = CrossProduct( vsrc, vdst );
+  VectorType axis = CrossProduct(vsrc, vdst);
 
   const double scaledSinus = axis.GetNorm();
   const double scaledCosinus = vsrc * vdst;
 
-  double angle = std::atan2( scaledSinus, scaledCosinus );
+  double angle = std::atan2(scaledSinus, scaledCosinus);
 
-  using VersorType = Versor< double >;
+  using VersorType = Versor<double>;
 
   VersorType versor;
-  versor.Set( axis, angle );
+  versor.Set(axis, angle);
 
-  transportedVector = versor.Transform( inputVector );
+  transportedVector = versor.Transform(inputVector);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ConvertTangentVectorFieldToDeformationField()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ConvertTangentVectorFieldToDeformationField()
 {
   TangentVectorIterator tangentItr = this->m_TangentVectorField->Begin();
   TangentVectorIterator tangentEnd = this->m_TangentVectorField->End();
@@ -1227,12 +1227,12 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
 
   FixedPointsConstIterator pointItr = points->Begin();
 
-  using VersorType = Versor< double >;
+  using VersorType = Versor<double>;
   VersorType versor;
 
-  const double normEpsilon = itk::NumericTraits< double >::min();
+  const double normEpsilon = itk::NumericTraits<double>::min();
 
-  while ( tangentItr != tangentEnd )
+  while (tangentItr != tangentEnd)
   {
     VectorType vectorToCenter = pointItr.Value() - this->m_SphereCenter;
 
@@ -1242,15 +1242,15 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
 
     const double sinTheta = tangent.GetNorm();
 
-    if ( sinTheta > normEpsilon )
+    if (sinTheta > normEpsilon)
     {
-      const double theta = std::asin( sinTheta );
+      const double theta = std::asin(sinTheta);
 
-      const VectorType axis = CrossProduct( vectorToCenter, tangent );
+      const VectorType axis = CrossProduct(vectorToCenter, tangent);
 
-      versor.Set( axis, theta );
+      versor.Set(axis, theta);
 
-      dstPointItr.Value() = versor.Transform( pointItr.Value() );
+      dstPointItr.Value() = versor.Transform(pointItr.Value());
     }
     else
     {
@@ -1263,10 +1263,10 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::AssignResampledMovingValuesToOutputMesh()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  AssignResampledMovingValuesToOutputMesh()
 {
   OutputMeshPointer outputMesh = this->GetOutput();
 
@@ -1274,14 +1274,14 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
 
   const PointIdentifier numberOfNodes = this->m_FixedMesh->GetNumberOfPoints();
 
-  outputPointData->Reserve( numberOfNodes );
+  outputPointData->Reserve(numberOfNodes);
 
   OutputPointDataContainerIterator outputDataItr = outputPointData->Begin();
 
   ResampledMovingValuesContainerIterator resampledArrayItr = this->m_ResampledMovingValuesContainer->Begin();
   ResampledMovingValuesContainerIterator resampledArrayEnd = this->m_ResampledMovingValuesContainer->End();
 
-  while ( resampledArrayItr != resampledArrayEnd )
+  while (resampledArrayItr != resampledArrayEnd)
   {
     outputDataItr.Value() = resampledArrayItr.Value();
 
@@ -1290,78 +1290,78 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
-const typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::FixedMeshType *
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::GetDeformedFixedMesh() const
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
+const typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::FixedMeshType *
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::GetDeformedFixedMesh() const
 {
-  if ( this->GetNumberOfOutputs() < 2 )
+  if (this->GetNumberOfOutputs() < 2)
   {
     return 0;
   }
 
-  return dynamic_cast< const FixedMeshType * >( this->ProcessObject::GetOutput( 1 ) );
+  return dynamic_cast<const FixedMeshType *>(this->ProcessObject::GetOutput(1));
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComposeFixedMeshOutputDisplacedToMovingMesh()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComposeFixedMeshOutputDisplacedToMovingMesh()
 {
   const FixedMeshType * in = this->m_FixedMesh.GetPointer();
 
-  FixedMeshType * out = dynamic_cast< FixedMeshType * >( this->ProcessObject::GetOutput( 1 ) );
+  FixedMeshType * out = dynamic_cast<FixedMeshType *>(this->ProcessObject::GetOutput(1));
 
-  CopyMeshToMeshPoints( in, out );
-  CopyMeshToMeshEdgeCells( in, out );
-  CopyMeshToMeshCells( in, out );
-  CopyMeshToMeshPointData( in, out );
-  CopyMeshToMeshCellData( in, out );
+  CopyMeshToMeshPoints(in, out);
+  CopyMeshToMeshEdgeCells(in, out);
+  CopyMeshToMeshCells(in, out);
+  CopyMeshToMeshPointData(in, out);
+  CopyMeshToMeshCellData(in, out);
 
   this->CopyDestinationPointsToDeformedFixedMesh();
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::CopyDestinationPointsToDeformedFixedMesh()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  CopyDestinationPointsToDeformedFixedMesh()
 {
   DestinationPointConstIterator srcPointItr = this->m_DestinationPoints->Begin();
   DestinationPointConstIterator srcPointEnd = this->m_DestinationPoints->End();
 
-  FixedMeshType * deformedFixedMesh = dynamic_cast< FixedMeshType * >( this->ProcessObject::GetOutput( 1 ) );
+  FixedMeshType * deformedFixedMesh = dynamic_cast<FixedMeshType *>(this->ProcessObject::GetOutput(1));
 
   FixedPointsContainer * points = deformedFixedMesh->GetPoints();
 
   FixedPointsIterator dstPointItr = points->Begin();
 
-  while ( srcPointItr != srcPointEnd )
+  while (srcPointItr != srcPointEnd)
   {
-    dstPointItr.Value().SetPoint( srcPointItr.Value() );
+    dstPointItr.Value().SetPoint(srcPointItr.Value());
     ++dstPointItr;
     ++srcPointItr;
   }
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh,
-                                                TOutputMesh >::ComposeDestinationPointsOutputPointSet()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComposeDestinationPointsOutputPointSet()
 {
   DestinationPointSetType * destinationPointSet =
-    dynamic_cast< DestinationPointSetType * >( this->ProcessObject::GetOutput( 2 ) );
+    dynamic_cast<DestinationPointSetType *>(this->ProcessObject::GetOutput(2));
 
-  if ( !destinationPointSet )
+  if (!destinationPointSet)
   {
-    itkExceptionMacro( "Problem found while composing the destination PointSet" );
+    itkExceptionMacro("Problem found while composing the destination PointSet");
   }
 
-  destinationPointSet->SetPoints( this->m_DestinationPoints );
+  destinationPointSet->SetPoints(this->m_DestinationPoints);
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::PrintOutDeformationVectors(
-  std::ostream & os )
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::PrintOutDeformationVectors(
+  std::ostream & os)
 {
   os << std::endl;
   os << "Deformation Vectors at every node " << std::endl;
@@ -1371,7 +1371,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   const FixedPointsContainer * points = this->m_FixedMesh->GetPoints();
   FixedPointsConstIterator     srcPointItr = points->Begin();
 
-  while ( dstPointItr != dstPointEnd )
+  while (dstPointItr != dstPointEnd)
   {
     os << dstPointItr.Value() - srcPointItr.Value() << std::endl;
 
@@ -1382,25 +1382,25 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutput
   os << std::endl;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
-  TFixedMesh, TMovingMesh, TOutputMesh >::ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio()
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::
+  ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio()
 {
-  double largestRatio = NumericTraits< double >::ZeroValue();
+  double largestRatio = NumericTraits<double>::ZeroValue();
 
   VelocityVectorConstIterator velocityItr = this->m_VelocityField->Begin();
   VelocityVectorConstIterator velocityEnd = this->m_VelocityField->End();
 
   ShortestLengthContainerIterator shortestEdgeItr = this->m_ShortestEdgeLengthPerPoint->Begin();
 
-  while ( velocityItr != velocityEnd )
+  while (velocityItr != velocityEnd)
   {
     const double velocityMagnitude = velocityItr.Value().GetNorm();
 
-    const double ratio = velocityMagnitude / ( 2.0 * shortestEdgeItr.Value() );
+    const double ratio = velocityMagnitude / (2.0 * shortestEdgeItr.Value());
 
-    if ( ratio > largestRatio )
+    if (ratio > largestRatio)
     {
       largestRatio = ratio;
     }
@@ -1412,15 +1412,15 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<
   this->m_LargestVelocityToEdgeLengthRatio = largestRatio;
 }
 
-template < typename TFixedMesh, typename TMovingMesh, typename TOutputMesh >
+template <typename TFixedMesh, typename TMovingMesh, typename TOutputMesh>
 void
-QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< TFixedMesh, TMovingMesh, TOutputMesh >::PrintSelf( std::ostream & os,
-                                                                                                   Indent indent ) const
+QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>::PrintSelf(std::ostream & os,
+                                                                                                Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << "User provided initial destination points : "
-     << ( this->m_UserProvidedInitialDestinationPoints ? " true " : " false " ) << std::endl;
+     << (this->m_UserProvidedInitialDestinationPoints ? " true " : " false ") << std::endl;
   os << "Sphere center: " << this->m_SphereCenter << std::endl;
   os << "Sphere radius: " << this->m_SphereRadius << std::endl;
   os << "Epsilon : " << this->m_Epsilon << std::endl;

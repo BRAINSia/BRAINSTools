@@ -34,19 +34,19 @@ class Exception : public std::exception
 {
 public:
   Exception() throw()
-    : m_Message( "" )
+    : m_Message("")
   {}
 
   ~Exception() throw() {}
 
   void
-  SetMessage( const char * s )
+  SetMessage(const char * s)
   {
     m_Message = s;
   }
 
   void
-  Print( std::ostream & os ) const
+  Print(std::ostream & os) const
   {
     os << m_Message << std::endl;
   }
@@ -63,20 +63,20 @@ protected:
 } // namespace mu
 
 inline std::ostream &
-operator<<( std::ostream & os, mu::Exception & e )
+operator<<(std::ostream & os, mu::Exception & e)
 {
-  ( &e )->Print( os );
+  (&e)->Print(os);
   return os;
 }
 
-#define muExceptionMacro( x )                                                                                          \
+#define muExceptionMacro(x)                                                                                            \
   {                                                                                                                    \
-    muLogMacro( << "mu::Exception, in " << __FILE__ << " line " << __LINE__; std::cerr << "\n" x << "\n" );            \
+    muLogMacro(<< "mu::Exception, in " << __FILE__ << " line " << __LINE__; std::cerr << "\n" x << "\n");              \
     std::stringstream oss;                                                                                             \
     oss << "mu::Exception, in " << __FILE__ << " line " << __LINE__;                                                   \
     oss << "\n" x << std::ends;                                                                                        \
     mu::Exception e;                                                                                                   \
-    e.SetMessage( oss.str().c_str() );                                                                                 \
+    e.SetMessage(oss.str().c_str());                                                                                   \
     throw e;                                                                                                           \
   }
 

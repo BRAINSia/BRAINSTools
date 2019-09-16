@@ -52,19 +52,19 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   using TensorComponentType = double;
-  using TensorPixelType = itk::gtractDiffusionTensor3D< TensorComponentType >;
-  using TensorImageType = itk::Image< TensorPixelType, 3 >;
-  using AnisotropyImageType = itk::Image< float, 3 >;
+  using TensorPixelType = itk::gtractDiffusionTensor3D<TensorComponentType>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using AnisotropyImageType = itk::Image<float, 3>;
 
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Input Tensor Image: " << inputTensorVolume << std::endl;
@@ -74,30 +74,30 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputTensorVolume.size() == 0 )
+  if (inputTensorVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputTensorVolume Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
-  using TensorImageReaderType = itk::ImageFileReader< TensorImageType >;
+  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
-  tensorImageReader->SetFileName( inputTensorVolume );
+  tensorImageReader->SetFileName(inputTensorVolume);
 
   try
   {
     tensorImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -106,63 +106,63 @@ main( int argc, char * argv[] )
   TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
 
   AnisotropyImageType::Pointer anisotropyImage = AnisotropyImageType::New();
-  anisotropyImage->SetRegions( tensorImage->GetLargestPossibleRegion() );
-  anisotropyImage->SetSpacing( tensorImage->GetSpacing() );
-  anisotropyImage->SetOrigin( tensorImage->GetOrigin() );
-  anisotropyImage->SetDirection( tensorImage->GetDirection() );
+  anisotropyImage->SetRegions(tensorImage->GetLargestPossibleRegion());
+  anisotropyImage->SetSpacing(tensorImage->GetSpacing());
+  anisotropyImage->SetOrigin(tensorImage->GetOrigin());
+  anisotropyImage->SetDirection(tensorImage->GetDirection());
   anisotropyImage->Allocate();
 
-  using IteratorType = itk::ImageRegionIterator< AnisotropyImageType >;
-  IteratorType anisoIt( anisotropyImage, anisotropyImage->GetRequestedRegion() );
+  using IteratorType = itk::ImageRegionIterator<AnisotropyImageType>;
+  IteratorType anisoIt(anisotropyImage, anisotropyImage->GetRequestedRegion());
 
-  using ConstIteratorType = itk::ImageRegionConstIterator< TensorImageType >;
-  ConstIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
+  using ConstIteratorType = itk::ImageRegionConstIterator<TensorImageType>;
+  ConstIteratorType tensorIt(tensorImage, tensorImage->GetRequestedRegion());
 
   float anisotropy = 0.0;
-  for ( anisoIt.GoToBegin(), tensorIt.GoToBegin(); !anisoIt.IsAtEnd(); ++anisoIt, ++tensorIt )
+  for (anisoIt.GoToBegin(), tensorIt.GoToBegin(); !anisoIt.IsAtEnd(); ++anisoIt, ++tensorIt)
   {
     TensorPixelType tensorPixel = tensorIt.Get();
-    if ( anisotropyType == "ADC" || anisotropyType == "adc" )
+    if (anisotropyType == "ADC" || anisotropyType == "adc")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetTrace() / 3.0 );
+      anisotropy = static_cast<float>(tensorPixel.GetTrace() / 3.0);
     }
-    else if ( anisotropyType == "FA" || anisotropyType == "fa" )
+    else if (anisotropyType == "FA" || anisotropyType == "fa")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetFractionalAnisotropy() );
+      anisotropy = static_cast<float>(tensorPixel.GetFractionalAnisotropy());
     }
-    else if ( anisotropyType == "RA" || anisotropyType == "ra" )
+    else if (anisotropyType == "RA" || anisotropyType == "ra")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetRelativeAnisotropy() );
+      anisotropy = static_cast<float>(tensorPixel.GetRelativeAnisotropy());
     }
-    else if ( anisotropyType == "VR" || anisotropyType == "vr" )
+    else if (anisotropyType == "VR" || anisotropyType == "vr")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetVolumeRatio() );
+      anisotropy = static_cast<float>(tensorPixel.GetVolumeRatio());
     }
-    else if ( anisotropyType == "AD" || anisotropyType == "ad" )
+    else if (anisotropyType == "AD" || anisotropyType == "ad")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetAxialDiffusivity() );
+      anisotropy = static_cast<float>(tensorPixel.GetAxialDiffusivity());
     }
-    else if ( anisotropyType == "RD" || anisotropyType == "rd" )
+    else if (anisotropyType == "RD" || anisotropyType == "rd")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetRadialDiffusivity() );
+      anisotropy = static_cast<float>(tensorPixel.GetRadialDiffusivity());
     }
-    else if ( anisotropyType == "LI" || anisotropyType == "li" )
+    else if (anisotropyType == "LI" || anisotropyType == "li")
     {
-      anisotropy = static_cast< float >( tensorPixel.GetLatticeIndex() );
+      anisotropy = static_cast<float>(tensorPixel.GetLatticeIndex());
     }
-    anisoIt.Set( anisotropy );
+    anisoIt.Set(anisotropy);
   }
 
-  using WriterType = itk::ImageFileWriter< AnisotropyImageType >;
+  using WriterType = itk::ImageFileWriter<AnisotropyImageType>;
   WriterType::Pointer anisotropyWriter = WriterType::New();
   anisotropyWriter->UseCompressionOn();
-  anisotropyWriter->SetInput( anisotropyImage );
-  anisotropyWriter->SetFileName( outputVolume );
+  anisotropyWriter->SetInput(anisotropyImage);
+  anisotropyWriter->SetFileName(outputVolume);
   try
   {
     anisotropyWriter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }

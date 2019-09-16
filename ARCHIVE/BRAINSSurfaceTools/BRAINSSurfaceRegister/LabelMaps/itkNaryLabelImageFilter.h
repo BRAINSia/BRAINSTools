@@ -42,7 +42,7 @@ namespace itk
 
 namespace Functor
 {
-template < typename TInput, typename TOutput >
+template <typename TInput, typename TOutput>
 class NaryLabel
 {
 public:
@@ -51,21 +51,21 @@ public:
   ~NaryLabel() {}
 
   inline TOutput
-  operator()( const std::vector< TInput > & B )
+  operator()(const std::vector<TInput> & B)
   {
-    TOutput ret = static_cast< TOutput >( m_BackgroundValue );
+    TOutput ret = static_cast<TOutput>(m_BackgroundValue);
     bool    labelFound = false;
 
-    for ( int i = 0; i < B.size(); i++ )
+    for (int i = 0; i < B.size(); i++)
     {
-      if ( B[i] != m_BackgroundValue )
+      if (B[i] != m_BackgroundValue)
       {
-        if ( !m_IgnoreCollision && labelFound )
+        if (!m_IgnoreCollision && labelFound)
         {
-          itkGenericExceptionMacro( << "Label collision detected." );
+          itkGenericExceptionMacro(<< "Label collision detected.");
         }
 
-        ret = static_cast< TOutput >( B[i] + m_Shift * i );
+        ret = static_cast<TOutput>(B[i] + m_Shift * i);
         labelFound = true;
       }
     }
@@ -73,7 +73,7 @@ public:
   }
 
   bool
-  operator!=( const NaryLabel & n ) const
+  operator!=(const NaryLabel & n) const
   {
     return n.m_BackgroundValue != m_BackgroundValue || n.m_Shift != m_Shift;
   }
@@ -84,22 +84,23 @@ public:
 };
 } // namespace Functor
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 class NaryLabelImageFilter
-  : public NaryFunctorImageFilter<
-      TInputImage, TOutputImage,
-      Functor::NaryLabel< typename TInputImage::PixelType, typename TOutputImage::PixelType > >
+  : public NaryFunctorImageFilter<TInputImage,
+                                  TOutputImage,
+                                  Functor::NaryLabel<typename TInputImage::PixelType, typename TOutputImage::PixelType>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( NaryLabelImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(NaryLabelImageFilter);
 
   /** Standard class type alias. */
   using Self = NaryLabelImageFilter;
   using Superclass =
-    NaryFunctorImageFilter< TInputImage, TOutputImage,
-                            Functor::NaryLabel< typename TInputImage::PixelType, typename TOutputImage::PixelType > >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+    NaryFunctorImageFilter<TInputImage,
+                           TOutputImage,
+                           Functor::NaryLabel<typename TInputImage::PixelType, typename TOutputImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
@@ -115,11 +116,11 @@ public:
   using OutputImagePixelType = typename OutputImageType::PixelType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( InputHasZeroCheck, (Concept::HasZero< typename TInputImage::PixelType >));
+  itkConceptMacro(InputHasZeroCheck, (Concept::HasZero<typename TInputImage::PixelType>));
   /** End concept checking */
 #endif
 
@@ -127,21 +128,21 @@ public:
    * Set/Get the value used as "background" in the images.
    * Defaults to NumericTraits<PixelType>::ZeroValue().
    */
-  itkSetMacro( BackgroundValue, InputImagePixelType );
-  itkGetConstMacro( BackgroundValue, InputImagePixelType );
+  itkSetMacro(BackgroundValue, InputImagePixelType);
+  itkGetConstMacro(BackgroundValue, InputImagePixelType);
 
-  itkSetMacro( Shift, InputImagePixelType );
-  itkGetConstMacro( Shift, InputImagePixelType );
+  itkSetMacro(Shift, InputImagePixelType);
+  itkGetConstMacro(Shift, InputImagePixelType);
 
-  itkSetMacro( IgnoreCollision, bool );
-  itkGetConstMacro( IgnoreCollision, bool );
-  itkBooleanMacro( IgnoreCollision );
+  itkSetMacro(IgnoreCollision, bool);
+  itkGetConstMacro(IgnoreCollision, bool);
+  itkBooleanMacro(IgnoreCollision);
 
 protected:
   NaryLabelImageFilter()
   {
-    m_BackgroundValue = NumericTraits< InputImagePixelType >::ZeroValue();
-    m_Shift = NumericTraits< OutputImagePixelType >::ZeroValue();
+    m_BackgroundValue = NumericTraits<InputImagePixelType>::ZeroValue();
+    m_Shift = NumericTraits<OutputImagePixelType>::ZeroValue();
     m_IgnoreCollision = true;
   }
 
@@ -157,16 +158,16 @@ protected:
   }
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const
+  PrintSelf(std::ostream & os, Indent indent) const
   {
-    Superclass::PrintSelf( os, indent );
+    Superclass::PrintSelf(os, indent);
 
-    os << indent << "Background Value: "
-       << static_cast< typename NumericTraits< InputImagePixelType >::PrintType >( m_BackgroundValue ) << std::endl;
-    os << indent << "Shift: " << static_cast< typename NumericTraits< OutputImagePixelType >::PrintType >( m_Shift )
-       << std::endl;
     os << indent
-       << "Ignore Collision: " << static_cast< typename NumericTraits< bool >::PrintType >( m_IgnoreCollision )
+       << "Background Value: " << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_BackgroundValue)
+       << std::endl;
+    os << indent << "Shift: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_Shift)
+       << std::endl;
+    os << indent << "Ignore Collision: " << static_cast<typename NumericTraits<bool>::PrintType>(m_IgnoreCollision)
        << std::endl;
   }
 

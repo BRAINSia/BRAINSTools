@@ -37,7 +37,7 @@ public:
   /* Declare image type */
   using PixelType = unsigned char;
   static constexpr int Dimension = 3;
-  using ImageType = itk::Image< PixelType, Dimension >;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   /* Define the Hemisphere Types */
   enum
@@ -56,13 +56,13 @@ public:
    * Write out the appropriate data when the talairachConversion object
    * is added to an IO stream */
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   /* Description:
    * Set the origin, direction, etc. of the mask image from
    * an input image */
   void
-  SetImageInformation( ImageType::Pointer exampleImage );
+  SetImageInformation(ImageType::Pointer exampleImage);
 
   /* Description:
    * Create a binary mask image from all talairach grids in the grid list
@@ -80,7 +80,7 @@ public:
   /* Description:
    * Set the talairach grid */
   void
-  SetTalairachGrid( vtkStructuredGrid * grid );
+  SetTalairachGrid(vtkStructuredGrid * grid);
 
   /* Description:
    * Return the talairach grid */
@@ -90,15 +90,15 @@ public:
   /* Description:
    * Add a talairach grid range to the binary mask image */
   int
-  AddTalairachBox( std::string talairachBox );
+  AddTalairachBox(std::string talairachBox);
 
   /* Description:
    * Remove a talairach grid range from the binary mask image */
   void
-  RemoveTalairachBox( int index );
+  RemoveTalairachBox(int index);
 
   void
-  RemoveTalairachBox( std::string talairachBox );
+  RemoveTalairachBox(std::string talairachBox);
 
   /* Description:
    * Clear the Talairach Box List */
@@ -108,7 +108,7 @@ public:
   /* Description:
    * Set the Mode for Talairach Box Generation */
   void
-  SetHemisphereMode( int mode );
+  SetHemisphereMode(int mode);
 
   void
   SetHemisphereModeBoth();
@@ -127,7 +127,7 @@ public:
   /* Description:
    * Set the Mode for Expanded Segmentation Mode Boxes */
   void
-  SetSegmentationMode( bool mode );
+  SetSegmentationMode(bool mode);
 
   void
   SetSegmentationModeOn();
@@ -159,11 +159,11 @@ protected:
   /* Description:
    * Process a box file to calculate the regions of active masking */
   void
-  ProcessBOX( bool _left );
+  ProcessBOX(bool _left);
 
 private:
-  vtkStructuredGrid *      TalairachGrid;
-  std::list< std::string > TalairachBoxList;
+  vtkStructuredGrid *    TalairachGrid;
+  std::list<std::string> TalairachBoxList;
 
   bool SegmentationMode;
   int  HemisphereMode;

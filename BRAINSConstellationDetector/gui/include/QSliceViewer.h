@@ -49,9 +49,9 @@ class QSliceViewer : public QVTKWidget
 {
   Q_OBJECT
 public:
-  QSliceViewer( int type, QWidget * myParent = nullptr )
-    : QVTKWidget( myParent )
-    , m_bound( nullptr )
+  QSliceViewer(int type, QWidget * myParent = nullptr)
+    : QVTKWidget(myParent)
+    , m_bound(nullptr)
   {
     m_actors = vtkActor2DCollection::New();
     m_actor = nullptr;
@@ -62,7 +62,7 @@ public:
   }
 
   void
-  SetBound( double * bound )
+  SetBound(double * bound)
   {
     m_bound = bound;
   }
@@ -74,7 +74,7 @@ public:
   }
 
   void
-  createLabel( double * labelPos );
+  createLabel(double * labelPos);
 
 public slots:
 
@@ -85,7 +85,7 @@ public slots:
   switchLabelSlot();
 
   void
-  moveLabelSlot( double * labelPos ); // labelPos is a ratio
+  moveLabelSlot(double * labelPos); // labelPos is a ratio
 
   void
   deleteLabelSlot();
@@ -94,20 +94,20 @@ public slots:
   deleteAllLabelSlot();
 
   void
-  deleteLabelMouseSlot( QListWidgetItem * item ); // a mouse version wrap
+  deleteLabelMouseSlot(QListWidgetItem * item); // a mouse version wrap
 
   // for deleteLabelSlot
 
   void
-  pickLabelSlot( QListWidgetItem * item ); // deal with click signal from
+  pickLabelSlot(QListWidgetItem * item); // deal with click signal from
 
   // list
 
   void
-  wheelSlot( double * labelPos ); // handle wheeling event
+  wheelSlot(double * labelPos); // handle wheeling event
 
   void
-  visibilityUpdate( int * table ); // update labels according to their
+  visibilityUpdate(int * table); // update labels according to their
 
   // visibility
 signals:

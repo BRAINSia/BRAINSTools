@@ -32,17 +32,17 @@ public:
   BRAINSCutConfiguration();
 
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
+    indent += SuperClass::PrintSelf(os, indent);
     return indent + 2;
   }
 
-  using TrainDataSetListType = std::list< DataSet * >;
-  using ApplyDataSetListType = std::list< DataSet * >;
+  using TrainDataSetListType = std::list<DataSet *>;
+  using ApplyDataSetListType = std::list<DataSet *>;
 
   void
-  AddDataSet( DataSet * newSet );
+  AddDataSet(DataSet * newSet);
 
   DataSet *
   GetAtlasDataSet() const;
@@ -59,13 +59,13 @@ public:
   // Set/Get Functions
   //
   void
-  SetImageTypeToUse( std::string imageTypeToUse );
+  SetImageTypeToUse(std::string imageTypeToUse);
 
   std::string
   GetImageTypeToUse();
 
   void
-  SetRegistrationID( std::string registrationID );
+  SetRegistrationID(std::string registrationID);
 
   std::string
   GetRegistrationID();

@@ -67,32 +67,32 @@ InvertBSplineFilter::Update()
   PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
   PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
 
-  float xinr = (float)( imageSize[0] ) / (float)m_XgridSize;
-  float yinr = (float)( imageSize[1] ) / (float)m_YgridSize;
-  float zinr = (float)( imageSize[2] ) / (float)m_ZgridSize;
+  float xinr = (float)(imageSize[0]) / (float)m_XgridSize;
+  float yinr = (float)(imageSize[1]) / (float)m_YgridSize;
+  float zinr = (float)(imageSize[2]) / (float)m_ZgridSize;
 
-  PointIdType id = itk::NumericTraits< PointIdType >::ZeroValue();
+  PointIdType id = itk::NumericTraits<PointIdType>::ZeroValue();
   std::cout << "Xsize " << imageSize[0] << " Ysize " << imageSize[1] << " Zsize " << imageSize[2] << std::endl;
   std::cout << "Xinc " << xinr << " Yinc " << yinr << " Zinc " << zinr << std::endl;
 
-  for ( float z = 0; z <= imageSize[2] + 1; z += zinr )
+  for (float z = 0; z <= imageSize[2] + 1; z += zinr)
   {
-    for ( float y = 0; y <= imageSize[1] + 1; y += yinr )
+    for (float y = 0; y <= imageSize[1] + 1; y += yinr)
     {
-      for ( float x = 0; x <= imageSize[0] + 1; x += xinr )
+      for (float x = 0; x <= imageSize[0] + 1; x += xinr)
       {
-        PointType                         p1;
-        PointType                         p2;
-        itk::ContinuousIndex< double, 3 > imageIndex;
+        PointType                       p1;
+        PointType                       p2;
+        itk::ContinuousIndex<double, 3> imageIndex;
         imageIndex[0] = x;
         imageIndex[1] = y;
         imageIndex[2] = z;
-        m_ExampleImage->TransformContinuousIndexToPhysicalPoint( imageIndex, p1 );
-        p2 = m_Input->TransformPoint( p1 );
+        m_ExampleImage->TransformContinuousIndexToPhysicalPoint(imageIndex, p1);
+        p2 = m_Input->TransformPoint(p1);
 
         // Add Points and the Landmark Point Lists
-        sourceLandMarkContainer->InsertElement( id, p2 );
-        targetLandMarkContainer->InsertElement( id, p1 );
+        sourceLandMarkContainer->InsertElement(id, p2);
+        targetLandMarkContainer->InsertElement(id, p1);
         id++;
         // std::cout << "Set Z points " << z << " " << p1 << " " << p2 <<
         // std::endl;
@@ -103,8 +103,8 @@ InvertBSplineFilter::Update()
 
   // Create TPS Approximation of B-Spline Transform
   m_Output = TransformType::New();
-  m_Output->SetSourceLandmarks( sourceLandMarks );
-  m_Output->SetTargetLandmarks( targetLandMarks );
+  m_Output->SetSourceLandmarks(sourceLandMarks);
+  m_Output->SetTargetLandmarks(targetLandMarks);
   m_Output->ComputeWMatrix();
 
   std::cout << "Computed TPS Inverse transform" << std::endl;

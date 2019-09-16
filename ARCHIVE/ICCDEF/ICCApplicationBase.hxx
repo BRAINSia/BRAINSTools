@@ -23,23 +23,23 @@
 
 namespace itk
 {
-template < typename TPreprocessor, typename TRegistrator >
-ICCApplicationBase< TPreprocessor, TRegistrator >::ICCApplicationBase()
+template <typename TPreprocessor, typename TRegistrator>
+ICCApplicationBase<TPreprocessor, TRegistrator>::ICCApplicationBase()
 {
   m_Preprocessor = PreprocessorType::New();
   m_Registrator = RegistratorType::New();
   m_OutDebug = false;
 }
 
-template < typename TPreprocessor, typename TRegistrator >
+template <typename TPreprocessor, typename TRegistrator>
 void
-ICCApplicationBase< TPreprocessor, TRegistrator >::Execute()
+ICCApplicationBase<TPreprocessor, TRegistrator>::Execute()
 {
   /**************************
    * Preprocess the images before registration
    **************************/
 
-  if ( this->GetOutDebug() )
+  if (this->GetOutDebug())
   {
     std::cout << "Preprocess the images ... " << std::endl;
   }
@@ -49,13 +49,13 @@ ICCApplicationBase< TPreprocessor, TRegistrator >::Execute()
     this->InitializePreprocessor();
     m_Preprocessor->Execute();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Error occured during preprocessing." << std::endl;
     throw;
@@ -64,7 +64,7 @@ ICCApplicationBase< TPreprocessor, TRegistrator >::Execute()
   /**************************
    * Registered the processed images
    **************************/
-  if ( this->GetOutDebug() )
+  if (this->GetOutDebug())
   {
     std::cout << "Register the images ... " << std::endl;
   }
@@ -75,13 +75,13 @@ ICCApplicationBase< TPreprocessor, TRegistrator >::Execute()
     m_Preprocessor = nullptr;
     m_Registrator->Execute();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Error occured during registration" << std::endl;
     throw;

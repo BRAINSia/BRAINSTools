@@ -32,31 +32,31 @@ namespace itk
  * This class has no implementation, thus no .hxx file is needed.
  * \ingroup ITKTestKernel
  */
-template < typename TInputImage, typename TOutputImage >
-class DifferenceImageFilter : public Testing::ComparisonImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class DifferenceImageFilter : public Testing::ComparisonImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DifferenceImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DifferenceImageFilter);
 
   /** Standard class type alias. */
   using Self = DifferenceImageFilter;
-  using Superclass = Testing::ComparisonImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = Testing::ComparisonImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( DifferenceImageFilter, Testing::ComparisonImageFilter );
+  itkTypeMacro(DifferenceImageFilter, Testing::ComparisonImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
   using OutputImageType = TOutputImage;
   using OutputPixelType = typename OutputImageType::PixelType;
   using OutputImageRegionType = typename OutputImageType::RegionType;
-  using RealType = typename NumericTraits< OutputPixelType >::RealType;
-  using AccumulateType = typename NumericTraits< RealType >::AccumulateType;
+  using RealType = typename NumericTraits<OutputPixelType>::RealType;
+  using AccumulateType = typename NumericTraits<RealType>::AccumulateType;
 
   DifferenceImageFilter() {}
 

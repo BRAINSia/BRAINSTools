@@ -44,7 +44,7 @@
 #include <fstream>
 #include <string>
 
-#if defined( USE_DEBUG_IMAGE_VIEWER )
+#if defined(USE_DEBUG_IMAGE_VIEWER)
 #  include <DebugImageViewerClient.h>
 extern DebugImageViewerClient DebugImageDisplaySender;
 #  include <itkWarpImageFilter.h>
@@ -91,46 +91,45 @@ std::cout <<   filter->GetMetric() << std::endl;
 };
 */
 
-template < typename TPixel = float, unsigned int VImageDimension = 3 >
+template <typename TPixel = float, unsigned int VImageDimension = 3>
 class CommandIterationUpdate : public itk::Command
 {
 public:
   using Self = CommandIterationUpdate;
   using Superclass = itk::Command;
-  using Pointer = itk::SmartPointer< Self >;
+  using Pointer = itk::SmartPointer<Self>;
 
-  using InternalImageType = itk::Image< TPixel, VImageDimension >;
-  using VectorPixelType = itk::Vector< TPixel, VImageDimension >;
-  using DisplacementFieldType = itk::Image< VectorPixelType, VImageDimension >;
+  using InternalImageType = itk::Image<TPixel, VImageDimension>;
+  using VectorPixelType = itk::Vector<TPixel, VImageDimension>;
+  using DisplacementFieldType = itk::Image<VectorPixelType, VImageDimension>;
 
   using DemonsRegistrationFilterType =
-    itk::DemonsRegistrationFilter< InternalImageType, InternalImageType, DisplacementFieldType >;
+    itk::DemonsRegistrationFilter<InternalImageType, InternalImageType, DisplacementFieldType>;
 
   using DiffeomorphicDemonsRegistrationFilterType =
-    itk::DiffeomorphicDemonsRegistrationFilter< InternalImageType, InternalImageType, DisplacementFieldType >;
+    itk::DiffeomorphicDemonsRegistrationFilter<InternalImageType, InternalImageType, DisplacementFieldType>;
 
   using ICCDeformableRegistrationFilterType =
-    itk::ICCDeformableRegistrationFilter< InternalImageType, InternalImageType, DisplacementFieldType >;
+    itk::ICCDeformableRegistrationFilter<InternalImageType, InternalImageType, DisplacementFieldType>;
 
   using FastSymmetricForcesDemonsRegistrationFilterType =
-    itk::FastSymmetricForcesDemonsRegistrationFilter< InternalImageType, InternalImageType, DisplacementFieldType >;
+    itk::FastSymmetricForcesDemonsRegistrationFilter<InternalImageType, InternalImageType, DisplacementFieldType>;
 
   using MultiResRegistrationFilterType =
-    itk::MultiResolutionPDEDeformableRegistration< InternalImageType, InternalImageType, DisplacementFieldType,
-                                                   TPixel >;
+    itk::MultiResolutionPDEDeformableRegistration<InternalImageType, InternalImageType, DisplacementFieldType, TPixel>;
 
   using JacobianFilterType =
-    itk::DisplacementFieldJacobianDeterminantFilter< DisplacementFieldType, TPixel, InternalImageType >;
+    itk::DisplacementFieldJacobianDeterminantFilter<DisplacementFieldType, TPixel, InternalImageType>;
 
-  using MinMaxFilterType = itk::MinimumMaximumImageCalculator< InternalImageType >;
+  using MinMaxFilterType = itk::MinimumMaximumImageCalculator<InternalImageType>;
 
-  using HarmonicEnergyCalculatorType = itk::WarpHarmonicEnergyCalculator< DisplacementFieldType >;
+  using HarmonicEnergyCalculatorType = itk::WarpHarmonicEnergyCalculator<DisplacementFieldType>;
 
-  using WarpGradientCalculatorType = itk::VectorCentralDifferenceImageFunction< DisplacementFieldType >;
+  using WarpGradientCalculatorType = itk::VectorCentralDifferenceImageFunction<DisplacementFieldType>;
 
   using WarpGradientType = typename WarpGradientCalculatorType::OutputType;
 
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
 private:
   std::ofstream                                  m_Fid;
@@ -147,48 +146,48 @@ private:
 
 public:
   void
-  SetMovingImage( typename InternalImageType::Pointer & img )
+  SetMovingImage(typename InternalImageType::Pointer & img)
   {
     m_MovingImage = img;
   }
 
   void
-  SetFixedImage( typename InternalImageType::Pointer & img )
+  SetFixedImage(typename InternalImageType::Pointer & img)
   {
     m_FixedImage = img;
   }
 
   void
-  Execute( itk::Object * caller, const itk::EventObject & event ) override
+  Execute(itk::Object * caller, const itk::EventObject & event) override
   {
-    Execute( (const itk::Object *)caller, event );
+    Execute((const itk::Object *)caller, event);
   }
 
   void
-  Execute( const itk::Object * object, const itk::EventObject & event ) override
+  Execute(const itk::Object * object, const itk::EventObject & event) override
   {
-    if ( !( itk::IterationEvent().CheckEvent( &event ) ) )
+    if (!(itk::IterationEvent().CheckEvent(&event)))
     {
       return;
     }
 
     typename DisplacementFieldType::Pointer deffield = nullptr;
     typename DisplacementFieldType::Pointer backdeffield = nullptr;
-    unsigned int                            iter = std::numeric_limits< unsigned int >::max();
+    unsigned int                            iter = std::numeric_limits<unsigned int>::max();
     double                                  metricbefore = -1.0;
     double                                  backmetricbefore = -1.0;
 
-    if ( const ICCDeformableRegistrationFilterType * filter =
-           dynamic_cast< const ICCDeformableRegistrationFilterType * >( object ) )
+    if (const ICCDeformableRegistrationFilterType * filter =
+          dynamic_cast<const ICCDeformableRegistrationFilterType *>(object))
     {
       iter = filter->GetElapsedIterations() - 1;
       metricbefore = filter->GetForwardMetric();
       backmetricbefore = filter->GetBackwardMetric();
-      deffield = const_cast< ICCDeformableRegistrationFilterType * >( filter )->GetOutput( 0 );
-      backdeffield = const_cast< ICCDeformableRegistrationFilterType * >( filter )->GetOutput( 1 );
+      deffield = const_cast<ICCDeformableRegistrationFilterType *>(filter)->GetOutput(0);
+      backdeffield = const_cast<ICCDeformableRegistrationFilterType *>(filter)->GetOutput(1);
     }
-    else if ( const MultiResRegistrationFilterType * multiresfilter =
-                dynamic_cast< const MultiResRegistrationFilterType * >( object ) )
+    else if (const MultiResRegistrationFilterType * multiresfilter =
+               dynamic_cast<const MultiResRegistrationFilterType *>(object))
     {
       std::cout << "Finished Multi-resolution iteration :" << multiresfilter->GetCurrentLevel() - 1 << std::endl;
       std::cout << "==============================" << std::endl << std::endl;
@@ -198,68 +197,68 @@ public:
       return;
     }
 
-    if ( deffield.IsNotNull() )
+    if (deffield.IsNotNull())
     {
       std::cout << iter << ": MSE " << metricbefore << " - ";
 
       double fieldDist = -1.0;
       double fieldGradDist = -1.0;
       double tmp;
-      if ( m_TrueField )
+      if (m_TrueField)
       {
-        using FieldIteratorType = itk::ImageRegionConstIteratorWithIndex< DisplacementFieldType >;
-        FieldIteratorType currIter( deffield, deffield->GetLargestPossibleRegion() );
-        FieldIteratorType trueIter( m_TrueField, deffield->GetLargestPossibleRegion() );
+        using FieldIteratorType = itk::ImageRegionConstIteratorWithIndex<DisplacementFieldType>;
+        FieldIteratorType currIter(deffield, deffield->GetLargestPossibleRegion());
+        FieldIteratorType trueIter(m_TrueField, deffield->GetLargestPossibleRegion());
 
-        m_CompWarpGradientCalculator->SetInputImage( deffield );
+        m_CompWarpGradientCalculator->SetInputImage(deffield);
 
         fieldDist = 0.0;
         fieldGradDist = 0.0;
-        for ( currIter.GoToBegin(), trueIter.GoToBegin(); not currIter.IsAtEnd(); ++currIter, ++trueIter )
+        for (currIter.GoToBegin(), trueIter.GoToBegin(); not currIter.IsAtEnd(); ++currIter, ++trueIter)
         {
-          fieldDist += ( currIter.Value() - trueIter.Value() ).GetSquaredNorm();
+          fieldDist += (currIter.Value() - trueIter.Value()).GetSquaredNorm();
 
           // No need to add Id matrix here as we do a substraction
-          tmp = ( ( m_CompWarpGradientCalculator->EvaluateAtIndex( currIter.GetIndex() ) -
-                    m_TrueWarpGradientCalculator->EvaluateAtIndex( trueIter.GetIndex() ) )
-                    .GetVnlMatrix() )
+          tmp = ((m_CompWarpGradientCalculator->EvaluateAtIndex(currIter.GetIndex()) -
+                  m_TrueWarpGradientCalculator->EvaluateAtIndex(trueIter.GetIndex()))
+                   .GetVnlMatrix())
                   .frobenius_norm();
           fieldGradDist += tmp * tmp;
         }
-        fieldDist = sqrt( fieldDist / (double)( deffield->GetLargestPossibleRegion().GetNumberOfPixels() ) );
-        fieldGradDist = sqrt( fieldGradDist / (double)( deffield->GetLargestPossibleRegion().GetNumberOfPixels() ) );
+        fieldDist = sqrt(fieldDist / (double)(deffield->GetLargestPossibleRegion().GetNumberOfPixels()));
+        fieldGradDist = sqrt(fieldGradDist / (double)(deffield->GetLargestPossibleRegion().GetNumberOfPixels()));
 
         std::cout << "d(.,true) " << fieldDist << " - ";
         std::cout << "d(.,Jac(true)) " << fieldGradDist << " - ";
       }
 
-#if defined( USE_DEBUG_IMAGE_VIEWER )
-      if ( DebugImageDisplaySender.Enabled() )
+#if defined(USE_DEBUG_IMAGE_VIEWER)
+      if (DebugImageDisplaySender.Enabled())
       {
-        DebugImageDisplaySender.SendImage< DisplacementFieldType >( deffield, 0, 0 );
-        DebugImageDisplaySender.SendImage< DisplacementFieldType >( deffield, 1, 1 );
-        DebugImageDisplaySender.SendImage< DisplacementFieldType >( deffield, 2, 2 );
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>(deffield, 0, 0);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>(deffield, 1, 1);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>(deffield, 2, 2);
         using WarpFilterType =
-          typename itk::WarpImageFilter< InternalImageType, InternalImageType, DisplacementFieldType >;
+          typename itk::WarpImageFilter<InternalImageType, InternalImageType, DisplacementFieldType>;
         typename WarpFilterType::Pointer warper = WarpFilterType::New();
-        warper->SetInput( m_MovingImage );
-        warper->SetOutputSpacing( deffield->GetSpacing() );
-        warper->SetOutputOrigin( deffield->GetOrigin() );
-        warper->SetOutputDirection( deffield->GetDirection() );
-        warper->SetDisplacementField( deffield );
+        warper->SetInput(m_MovingImage);
+        warper->SetOutputSpacing(deffield->GetSpacing());
+        warper->SetOutputOrigin(deffield->GetOrigin());
+        warper->SetOutputDirection(deffield->GetDirection());
+        warper->SetDisplacementField(deffield);
         warper->Update();
         typename InternalImageType::Pointer DeformedMovingImagePtr = warper->GetOutput();
-        DebugImageDisplaySender.SendImage< InternalImageType >( DeformedMovingImagePtr, 3 );
+        DebugImageDisplaySender.SendImage<InternalImageType>(DeformedMovingImagePtr, 3);
         //       std::cerr << std::endl << "************IMAGES SENT*************" << std::endl;
       }
 #endif // defined(USE_DEBUG_IMAGE_VIEWER)
 
-      m_HarmonicEnergyCalculator->SetImage( deffield );
+      m_HarmonicEnergyCalculator->SetImage(deffield);
       m_HarmonicEnergyCalculator->Compute();
       const double harmonicEnergy = m_HarmonicEnergyCalculator->GetHarmonicEnergy();
       std::cout << "harmo. " << harmonicEnergy << " - ";
 
-      m_JacobianFilter->SetInput( deffield );
+      m_JacobianFilter->SetInput(deffield);
       m_JacobianFilter->UpdateLargestPossibleRegion();
 
       const unsigned int numPix = m_JacobianFilter->GetOutput()->GetLargestPossibleRegion().GetNumberOfPixels();
@@ -270,19 +269,19 @@ public:
       TPixel * jac_ptr;
 
       // Get percentage of det(Jac) below 0
-      unsigned int jacBelowZero( 0u );
-      for ( jac_ptr = pix_start; jac_ptr != pix_end; ++jac_ptr )
+      unsigned int jacBelowZero(0u);
+      for (jac_ptr = pix_start; jac_ptr != pix_end; ++jac_ptr)
       {
-        if ( *jac_ptr <= 0.0 )
+        if (*jac_ptr <= 0.0)
         {
           ++jacBelowZero;
         }
       }
-      const double jacBelowZeroPrc = static_cast< double >( jacBelowZero ) / static_cast< double >( numPix );
+      const double jacBelowZeroPrc = static_cast<double>(jacBelowZero) / static_cast<double>(numPix);
 
       // Get min an max jac
-      const double minJac = *( std::min_element( pix_start, pix_end ) );
-      const double maxJac = *( std::max_element( pix_start, pix_end ) );
+      const double minJac = *(std::min_element(pix_start, pix_end));
+      const double maxJac = *(std::max_element(pix_start, pix_end));
 
       // Get some quantiles
       // We don't need the jacobian image
@@ -291,9 +290,9 @@ public:
                 << "min|Jac| " << minJac << " - "
                 << "ratio(|Jac|<=0) " << jacBelowZeroPrc << std::endl;
 
-      if ( this->m_Fid.is_open() )
+      if (this->m_Fid.is_open())
       {
-        if ( not m_headerwritten )
+        if (not m_headerwritten)
         {
           this->m_Fid << "Iteration"
                       << ", MSE before"
@@ -301,7 +300,7 @@ public:
                       << ", min|Jac|"
                       << ", max|Jac|"
                       << ", ratio(|Jac|<=0)";
-          if ( backdeffield.IsNotNull() )
+          if (backdeffield.IsNotNull())
           {
             this->m_Bid << "Iteration"
                         << ", MSE before"
@@ -311,14 +310,14 @@ public:
                         << ", ratio(|Jac|<=0)";
           }
 
-          if ( m_TrueField )
+          if (m_TrueField)
           {
             this->m_Fid << ", dist(warp,true warp)"
                         << ", dist(Jac,true Jac)";
           }
 
           this->m_Fid << std::endl;
-          if ( backdeffield.IsNotNull() )
+          if (backdeffield.IsNotNull())
           {
             this->m_Bid << std::endl;
           }
@@ -329,7 +328,7 @@ public:
         this->m_Fid << iter << ", " << metricbefore << ", " << harmonicEnergy << ", " << minJac << ", " << maxJac
                     << ", " << jacBelowZeroPrc;
 
-        if ( m_TrueField )
+        if (m_TrueField)
         {
           this->m_Fid << ", " << fieldDist << ", " << fieldGradDist;
         }
@@ -337,7 +336,7 @@ public:
         this->m_Fid << std::endl;
       }
     }
-    if ( backdeffield.IsNotNull() )
+    if (backdeffield.IsNotNull())
     {
       std::cout << "  : (B)MSE " << backmetricbefore << " - ";
 
@@ -346,40 +345,39 @@ public:
       double tmp;
       //    m_headerwritten = false;
 
-      if ( m_TrueField )
+      if (m_TrueField)
       {
-        using FieldIteratorType = itk::ImageRegionConstIteratorWithIndex< DisplacementFieldType >;
-        FieldIteratorType currIter( backdeffield, backdeffield->GetLargestPossibleRegion() );
-        FieldIteratorType trueIter( m_TrueField, backdeffield->GetLargestPossibleRegion() );
+        using FieldIteratorType = itk::ImageRegionConstIteratorWithIndex<DisplacementFieldType>;
+        FieldIteratorType currIter(backdeffield, backdeffield->GetLargestPossibleRegion());
+        FieldIteratorType trueIter(m_TrueField, backdeffield->GetLargestPossibleRegion());
 
-        m_CompWarpGradientCalculator->SetInputImage( backdeffield );
+        m_CompWarpGradientCalculator->SetInputImage(backdeffield);
 
         fieldDist = 0.0;
         fieldGradDist = 0.0;
-        for ( currIter.GoToBegin(), trueIter.GoToBegin(); not currIter.IsAtEnd(); ++currIter, ++trueIter )
+        for (currIter.GoToBegin(), trueIter.GoToBegin(); not currIter.IsAtEnd(); ++currIter, ++trueIter)
         {
-          fieldDist += ( currIter.Value() - trueIter.Value() ).GetSquaredNorm();
+          fieldDist += (currIter.Value() - trueIter.Value()).GetSquaredNorm();
 
           // No need to add Id matrix here as we do a substraction
-          tmp = ( ( m_CompWarpGradientCalculator->EvaluateAtIndex( currIter.GetIndex() ) -
-                    m_TrueWarpGradientCalculator->EvaluateAtIndex( trueIter.GetIndex() ) )
-                    .GetVnlMatrix() )
+          tmp = ((m_CompWarpGradientCalculator->EvaluateAtIndex(currIter.GetIndex()) -
+                  m_TrueWarpGradientCalculator->EvaluateAtIndex(trueIter.GetIndex()))
+                   .GetVnlMatrix())
                   .frobenius_norm();
           fieldGradDist += tmp * tmp;
         }
-        fieldDist = sqrt( fieldDist / (double)( backdeffield->GetLargestPossibleRegion().GetNumberOfPixels() ) );
-        fieldGradDist =
-          sqrt( fieldGradDist / (double)( backdeffield->GetLargestPossibleRegion().GetNumberOfPixels() ) );
+        fieldDist = sqrt(fieldDist / (double)(backdeffield->GetLargestPossibleRegion().GetNumberOfPixels()));
+        fieldGradDist = sqrt(fieldGradDist / (double)(backdeffield->GetLargestPossibleRegion().GetNumberOfPixels()));
 
         std::cout << "d(.,true) " << fieldDist << " - ";
         std::cout << "d(.,Jac(true)) " << fieldGradDist << " - ";
       }
-      m_HarmonicEnergyCalculator->SetImage( backdeffield );
+      m_HarmonicEnergyCalculator->SetImage(backdeffield);
       m_HarmonicEnergyCalculator->Compute();
       const double backharmonicEnergy = m_HarmonicEnergyCalculator->GetHarmonicEnergy();
       std::cout << "harmo. " << backharmonicEnergy << " - ";
 
-      m_JacobianFilter->SetInput( backdeffield );
+      m_JacobianFilter->SetInput(backdeffield);
       m_JacobianFilter->UpdateLargestPossibleRegion();
 
       const unsigned int numPix = m_JacobianFilter->GetOutput()->GetLargestPossibleRegion().GetNumberOfPixels();
@@ -390,27 +388,27 @@ public:
       TPixel * jac_ptr;
 
       // Get percentage of det(Jac) below 0
-      unsigned int jacBelowZero( 0u );
-      for ( jac_ptr = pix_start; jac_ptr != pix_end; ++jac_ptr )
+      unsigned int jacBelowZero(0u);
+      for (jac_ptr = pix_start; jac_ptr != pix_end; ++jac_ptr)
       {
-        if ( *jac_ptr <= 0.0 )
+        if (*jac_ptr <= 0.0)
         {
           ++jacBelowZero;
         }
       }
-      const double jacBelowZeroPrcb = static_cast< double >( jacBelowZero ) / static_cast< double >( numPix );
+      const double jacBelowZeroPrcb = static_cast<double>(jacBelowZero) / static_cast<double>(numPix);
 
       // Get min an max jac
-      const double minJacb = *( std::min_element( pix_start, pix_end ) );
-      const double maxJacb = *( std::max_element( pix_start, pix_end ) );
+      const double minJacb = *(std::min_element(pix_start, pix_end));
+      const double maxJacb = *(std::max_element(pix_start, pix_end));
 
       std::cout << "max|Jac| " << maxJacb << " - "
                 << "min|Jac| " << minJacb << " - "
                 << "ratio(|Jac|<=0) " << jacBelowZeroPrcb << std::endl;
 
-      if ( this->m_Bid.is_open() )
+      if (this->m_Bid.is_open())
       {
-        if ( not m_headerwritten )
+        if (not m_headerwritten)
         {
           this->m_Bid << "Iteration"
                       << ", MSE before"
@@ -419,7 +417,7 @@ public:
                       << ", max|Jac|"
                       << ", ratio(|Jac|<=0)";
 
-          if ( m_TrueField )
+          if (m_TrueField)
           {
             this->m_Bid << ", dist(warp,true warp)"
                         << ", dist(Jac,true Jac)";
@@ -433,7 +431,7 @@ public:
         this->m_Bid << iter << ", " << backmetricbefore << ", " << backharmonicEnergy << ", " << minJacb << ", "
                     << maxJacb << ", " << jacBelowZeroPrcb;
 
-        if ( m_TrueField )
+        if (m_TrueField)
         {
           this->m_Bid << ", " << fieldDist << ", " << fieldGradDist;
         }
@@ -445,12 +443,12 @@ public:
 
 protected:
   CommandIterationUpdate()
-    : m_Fid( "f_metricvalues.csv" )
-    , m_Bid( "b_metricvalues.csv" )
-    , m_headerwritten( false )
+    : m_Fid("f_metricvalues.csv")
+    , m_Bid("b_metricvalues.csv")
+    , m_headerwritten(false)
   {
     m_JacobianFilter = JacobianFilterType::New();
-    m_JacobianFilter->SetUseImageSpacing( true );
+    m_JacobianFilter->SetUseImageSpacing(true);
     m_JacobianFilter->ReleaseDataFlagOn();
 
     m_Minmaxfilter = MinMaxFilterType::New();

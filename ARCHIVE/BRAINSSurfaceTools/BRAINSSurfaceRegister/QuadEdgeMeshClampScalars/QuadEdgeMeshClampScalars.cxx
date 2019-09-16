@@ -44,17 +44,17 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if ( inputSurfaceFile == "" )
+  if (inputSurfaceFile == "")
   {
     std::cerr << "No input file specified" << std::endl;
     return 1;
   }
-  if ( outputSurfaceFile == "" )
+  if (outputSurfaceFile == "")
   {
     std::cerr << "No output file specified" << std::endl;
     return 1;
@@ -70,32 +70,32 @@ main( int argc, char * argv[] )
   using MeshPixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using MeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
+  using MeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
 
   ReaderType::Pointer inputReader = ReaderType::New();
-  inputReader->SetFileName( inputSurfaceFile.c_str() );
+  inputReader->SetFileName(inputSurfaceFile.c_str());
   inputReader->Update();
 
-  using FilterType = itk::QuadEdgeMeshClampScalarsFilter< MeshType, MeshType >;
+  using FilterType = itk::QuadEdgeMeshClampScalarsFilter<MeshType, MeshType>;
 
   FilterType::Pointer filter = FilterType::New();
 
-  filter->SetInput( inputReader->GetOutput() );
+  filter->SetInput(inputReader->GetOutput());
 
   filter->ClampMinOn();
-  filter->SetOutputMinimum( outputMin );
+  filter->SetOutputMinimum(outputMin);
 
   filter->ClampMaxOn();
-  filter->SetOutputMaximum( outputMax );
+  filter->SetOutputMaximum(outputMax);
 
   filter->Update();
 
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( filter->GetOutput() );
-  writer->SetFileName( outputSurfaceFile.c_str() );
+  writer->SetInput(filter->GetOutput());
+  writer->SetFileName(outputSurfaceFile.c_str());
   writer->Update();
 
   return 0;

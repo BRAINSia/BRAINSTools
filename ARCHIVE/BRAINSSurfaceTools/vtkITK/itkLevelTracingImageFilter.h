@@ -26,23 +26,23 @@ namespace itk
  *
  */
 
-template < typename TInputImage, typename TOutputImage >
-class LevelTracingImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class LevelTracingImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( LevelTracingImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(LevelTracingImageFilter);
 
   /** Standard class type alias. */
   using Self = LevelTracingImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods).  */
-  itkTypeMacro( LevelTracingImageFilter, ImageToImageFilter );
+  itkTypeMacro(LevelTracingImageFilter, ImageToImageFilter);
 
   /** Image related type alias. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -60,7 +60,7 @@ public:
   using OutputImageRegionType = typename OutputImageType::RegionType;
   using OutputImagePixelType = typename OutputImageType::PixelType;
 
-  using ChainCodePathType = ChainCodePath< ImageDimension >;
+  using ChainCodePathType = ChainCodePath<ImageDimension>;
   using ChainCodePathPointer = typename ChainCodePathType::Pointer;
 
   using OffsetType = typename ChainCodePathType::OffsetType;
@@ -73,14 +73,14 @@ public:
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /// Set/Get the seed
-  itkSetMacro( Seed, IndexType );
-  itkGetMacro( Seed, IndexType );
+  itkSetMacro(Seed, IndexType);
+  itkGetMacro(Seed, IndexType);
 
   /// Did we move the seed point to put in on a boundary?
-  itkGetMacro( MovedSeed, bool );
+  itkGetMacro(MovedSeed, bool);
 
   int
   GetThreshold();
@@ -99,7 +99,7 @@ public:
   ChainCodePathType *
   GetPathOutput()
   {
-    return static_cast< ChainCodePathType * >( this->ProcessObject::GetOutput( 1 ) );
+    return static_cast<ChainCodePathType *>(this->ProcessObject::GetOutput(1));
   }
 
 protected:
@@ -112,27 +112,27 @@ protected:
 
   /// Override since the filter produces the entire dataset
   void
-  EnlargeOutputRequestedRegion( DataObject * output ) override;
+  EnlargeOutputRequestedRegion(DataObject * output) override;
 
   void
   GenerateData() override;
 
   using Superclass::MakeOutput;
   DataObjectPointer
-  MakeOutput( unsigned int output );
+  MakeOutput(unsigned int output);
 
   /// To control overloaded versions of ComputeThreshold
   struct DispatchBase
   {};
-  template < signed int VDimension >
+  template <signed int VDimension>
   struct Dispatch : DispatchBase
   {};
 
   /** This method traces the level curve/surface. */
   virtual void
-  Trace( const Dispatch< 2 > & );
+  Trace(const Dispatch<2> &);
   virtual void
-  Trace( const DispatchBase & );
+  Trace(const DispatchBase &);
 
 private:
   IndexType           m_Seed;

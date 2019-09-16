@@ -29,15 +29,15 @@ DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   struct BRAINSDemonWarpAppParameters command;
   {
     PARSE_ARGS;
     BRAINSRegisterAlternateIO();
-    const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+    const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 #ifdef USE_DebugImageViewer
-    DebugImageDisplaySender.SetEnabled( UseDebugImageViewer );
+    DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
 #endif
 
     command.registrationFilterType = registrationFilterType;
@@ -70,33 +70,33 @@ main( int argc, char * argv[] )
     command.numberOfHistogramLevels = numberOfHistogramBins;
     command.numberOfMatchPoints = numberOfMatchPoints;
     command.numberOfLevels = numberOfPyramidLevels;
-    command.numberOfIterations.SetSize( numberOfPyramidLevels );
-    command.weightFactors.SetSize( movingVolume.size() );
+    command.numberOfIterations.SetSize(numberOfPyramidLevels);
+    command.weightFactors.SetSize(movingVolume.size());
 
     command.maxStepLength = maxStepLength;
     command.gradientType = gradientType;
     command.smoothDisplacementFieldSigma = smoothDisplacementFieldSigma;
     command.smoothingUp = smoothingUp;
     command.interpolationMode = interpolationMode;
-    for ( int i = 0; i < numberOfPyramidLevels; i++ )
+    for (int i = 0; i < numberOfPyramidLevels; i++)
     {
       command.numberOfIterations[i] = arrayOfPyramidLevelIterations[i];
     }
-    for ( unsigned int i = 0; i < movingVolume.size(); i++ )
+    for (unsigned int i = 0; i < movingVolume.size(); i++)
     {
       command.weightFactors[i] = weightFactors[i];
-      if ( command.weightFactors[i] == 0.0 )
+      if (command.weightFactors[i] == 0.0)
       {
-        command.vectorMovingVolume.erase( command.vectorMovingVolume.begin() + i );
-        command.vectorFixedVolume.erase( command.vectorFixedVolume.begin() + i );
+        command.vectorMovingVolume.erase(command.vectorMovingVolume.begin() + i);
+        command.vectorFixedVolume.erase(command.vectorFixedVolume.begin() + i);
       }
     }
-    for ( int i = 0; i < 3; i++ )
+    for (int i = 0; i < 3; i++)
     {
       command.theMovingImageShrinkFactors[i] = minimumMovingPyramid[i];
       command.theFixedImageShrinkFactors[i] = minimumFixedPyramid[i];
     }
-    for ( int i = 0; i < 3; i++ )
+    for (int i = 0; i < 3; i++)
     {
       command.checkerboardPatternSubdivisions[i] = checkerboardPatternSubdivisions[i];
       command.seedForBOBF[i] = seedForBOBF[i];
@@ -106,14 +106,14 @@ main( int argc, char * argv[] )
   }
 
   //  bool debug=true;
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
-    for ( unsigned int i = 0; i < command.vectorMovingVolume.size(); ++i )
+    for (unsigned int i = 0; i < command.vectorMovingVolume.size(); ++i)
     {
       std::cout << "                   movingVolume: " << command.vectorMovingVolume[i] << std::endl
                 << "                   weightFactor: " << command.weightFactors[i] << std::endl;
     }
-    for ( unsigned int i = 0; i < command.vectorFixedVolume.size(); ++i )
+    for (unsigned int i = 0; i < command.vectorFixedVolume.size(); ++i)
     {
       std::cout << "                    fixedVolume: " << command.vectorFixedVolume[i] << std::endl;
     }
@@ -153,24 +153,24 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( command.vectorMovingVolume.empty() )
+  if (command.vectorMovingVolume.empty())
   {
     violated = true;
     std::cout << "  --movingVolume Required! " << std::endl;
   }
-  if ( command.vectorFixedVolume.empty() )
+  if (command.vectorFixedVolume.empty())
   {
     violated = true;
     std::cout << "  --fixedVolume Required! " << std::endl;
   }
-  if ( command.vectorMovingVolume.size() != command.vectorFixedVolume.size() )
+  if (command.vectorMovingVolume.size() != command.vectorFixedVolume.size())
   {
     violated = true;
     std::cout << "Volumes of fixed images and moving images are not matched!" << std::endl;
   }
 
-  if ( ( command.checkerboardPatternSubdivisions[0] == 0 ) || ( command.checkerboardPatternSubdivisions[1] == 0 ) ||
-       ( command.checkerboardPatternSubdivisions[2] == 0 ) )
+  if ((command.checkerboardPatternSubdivisions[0] == 0) || (command.checkerboardPatternSubdivisions[1] == 0) ||
+      (command.checkerboardPatternSubdivisions[2] == 0))
   {
     std::cout << "Invalid Patameters. The value of checkboardPatternSubdivisions should not be zero!" << std::endl;
     return EXIT_FAILURE;
@@ -184,25 +184,25 @@ main( int argc, char * argv[] )
   //  --registrationParameters Required! "  << std::endl; }
   // if (inputPixelType.size() == 0) { violated = true; std::cout << "
   //  --inputPixelType Required! "  << std::endl; }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   // Test if the input data type is valid
-  if ( command.inputPixelType != "" )
+  if (command.inputPixelType != "")
   {
     // check to see if valid type
-    if ( ( CompareNoCase( command.inputPixelType, std::string( "uchar" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "short" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "ushort" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "int" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "float" ) ) )
+    if ((CompareNoCase(command.inputPixelType, std::string("uchar"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("short"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("ushort"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("int"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("float")))
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-         && ( CompareNoCase( command.inputPixelType, std::string( "uint" ) ) ) &&
-         ( CompareNoCase( command.inputPixelType, std::string( "double" ) ) )
+        && (CompareNoCase(command.inputPixelType, std::string("uint"))) &&
+        (CompareNoCase(command.inputPixelType, std::string("double")))
 #endif
     )
     {
@@ -213,19 +213,19 @@ main( int argc, char * argv[] )
     }
   }
 
-  if ( command.outputPixelType != "" )
+  if (command.outputPixelType != "")
   {
     // check to see if valid type
-    if ( ( CompareNoCase( command.outputPixelType, std::string( "uchar" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "SHORT" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "ushort" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "int" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "float" ) ) )
+    if ((CompareNoCase(command.outputPixelType, std::string("uchar"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("SHORT"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("ushort"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("int"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("float")))
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-         && ( CompareNoCase( command.outputPixelType, std::string( "uint" ) ) ) &&
-         ( CompareNoCase( command.outputPixelType, std::string( "double" ) ) )
+        && (CompareNoCase(command.outputPixelType, std::string("uint"))) &&
+        (CompareNoCase(command.outputPixelType, std::string("double")))
 #endif
     )
     {
@@ -238,36 +238,36 @@ main( int argc, char * argv[] )
 
   // Call the process output data type function based on the input data type.
 
-  if ( CompareNoCase( command.inputPixelType, std::string( "uchar" ) ) == 0 )
+  if (CompareNoCase(command.inputPixelType, std::string("uchar")) == 0)
   {
-    VectorProcssOutputType< unsigned char >( command );
+    VectorProcssOutputType<unsigned char>(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "short" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("short")) == 0)
   {
-    VectorProcssOutputType< short >( command );
+    VectorProcssOutputType<short>(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "ushort" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("ushort")) == 0)
   {
-    VectorProcssOutputType< unsigned short >( command );
+    VectorProcssOutputType<unsigned short>(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "int" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("int")) == 0)
   {
-    VectorProcssOutputType< int >( command );
+    VectorProcssOutputType<int>(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "float" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("float")) == 0)
   {
-    VectorProcssOutputType< float >( command );
+    VectorProcssOutputType<float>(command);
   }
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-  else if ( CompareNoCase( command.inputPixelType, std::string( "uint" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("uint")) == 0)
   {
-    VectorProcssOutputType< unsigned int >( command );
+    VectorProcssOutputType<unsigned int>(command);
   }
-  else if ( CompareNoCase( command.inputPixelType, std::string( "double" ) ) == 0 )
+  else if (CompareNoCase(command.inputPixelType, std::string("double")) == 0)
   {
-    VectorProcssOutputType< double >( command );
+    VectorProcssOutputType<double>(command);
   }
 #endif
   else

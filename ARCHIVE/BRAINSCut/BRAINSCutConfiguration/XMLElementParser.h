@@ -35,29 +35,29 @@ class XMLElementParser : public XMLElementContainer
 private:
   using SuperClass = XMLElementContainer;
   void
-  toLower( std::string & s ) const
+  toLower(std::string & s) const
   {
-    for ( unsigned i = 0; i < s.size(); i++ )
+    for (unsigned i = 0; i < s.size(); i++)
     {
-      s[i] = ::tolower( s[i] );
+      s[i] = ::tolower(s[i]);
     }
   }
 
 public:
-  using MapType = std::map< std::string, XMLElementContainer * >;
+  using MapType = std::map<std::string, XMLElementContainer *>;
   using iterator = MapType::iterator;
   typedef MapType::const_iterator const_iterator;
-  using StringVectorType = std::vector< std::string >;
+  using StringVectorType = std::vector<std::string>;
 
-  XMLElementParser( const char * name )
-    : XMLElementContainer( name )
+  XMLElementParser(const char * name)
+    : XMLElementContainer(name)
   {}
 
   XMLElementParser() {}
 
   virtual ~XMLElementParser()
   {
-    for ( iterator it = m_Map.begin(); it != m_Map.end(); ++it )
+    for (iterator it = m_Map.begin(); it != m_Map.end(); ++it)
     {
       delete it->second;
     }
@@ -69,13 +69,13 @@ public:
     static bool             ErrorPrinted = false;
     MapType::const_iterator it;
 
-    for ( it = m_Map.begin(); it != m_Map.end(); ++it )
+    for (it = m_Map.begin(); it != m_Map.end(); ++it)
     {
-      if ( it->second->Verify() == false )
+      if (it->second->Verify() == false)
       {
-        if ( ErrorPrinted == false )
+        if (ErrorPrinted == false)
         {
-          it->second->PrintSelf( std::cerr, 0 );
+          it->second->PrintSelf(std::cerr, 0);
           ErrorPrinted = true;
         }
         return false;
@@ -85,133 +85,133 @@ public:
   }
 
   virtual int
-  PrintSelf( std::ostream & os, int indent ) const
+  PrintSelf(std::ostream & os, int indent) const
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== XMLElementParser ===" <<
     // std::endl;
     MapType::const_iterator errdump;
 
-    for ( errdump = m_Map.begin(); errdump != m_Map.end(); ++errdump )
+    for (errdump = m_Map.begin(); errdump != m_Map.end(); ++errdump)
     {
-      os << this->PrintSpaces( indent ) << "--" << errdump->first << "--" << std::endl;
-      errdump->second->PrintSelf( std::cerr, indent + 2 );
-      std::cerr << this->PrintSpaces( indent ) << "--------------------------------" << std::endl;
+      os << this->PrintSpaces(indent) << "--" << errdump->first << "--" << std::endl;
+      errdump->second->PrintSelf(std::cerr, indent + 2);
+      std::cerr << this->PrintSpaces(indent) << "--------------------------------" << std::endl;
     }
     return indent + 2;
   }
 
   // AddElementByName
   void
-  Add( XMLElementContainer * toAdd, const char * name )
+  Add(XMLElementContainer * toAdd, const char * name)
   {
-    std::string Name( name );
+    std::string Name(name);
 
-    this->toLower( Name );
-    if ( m_Map.find( Name ) != m_Map.end() )
+    this->toLower(Name);
+    if (m_Map.find(Name) != m_Map.end())
     {
-      std::string msg( "Duplicate object " );
+      std::string msg("Duplicate object ");
       msg += name;
-      toAdd->PrintSelf( std::cout, 2 );
-      throw BRAINSCutExceptionStringHandler( msg );
+      toAdd->PrintSelf(std::cout, 2);
+      throw BRAINSCutExceptionStringHandler(msg);
     }
     m_Map[Name] = toAdd;
   }
 
   void
-  Add( XMLElementContainer * toAdd, const std::string & name )
+  Add(XMLElementContainer * toAdd, const std::string & name)
   {
-    this->Add( toAdd, name.c_str() );
+    this->Add(toAdd, name.c_str());
   }
 
-  template < typename T >
+  template <typename T>
   const T *
-  Get( const char * name ) const
+  Get(const char * name) const
   {
-    std::string lowercaseName( name );
+    std::string lowercaseName(name);
 
-    this->toLower( lowercaseName );
-    MapType::const_iterator it = m_Map.find( lowercaseName );
-    if ( it == m_Map.end() )
+    this->toLower(lowercaseName);
+    MapType::const_iterator it = m_Map.find(lowercaseName);
+    if (it == m_Map.end())
     {
       std::cout << "ERROR:  map does not contain element for " << lowercaseName << std::endl;
       return 0;
     }
 
-    return dynamic_cast< const T * >( it->second ); // returns zero if it can't
+    return dynamic_cast<const T *>(it->second); // returns zero if it can't
     // cast to the required type.
   }
 
-  template < typename T >
+  template <typename T>
   T *
-  Get( const char * name )
+  Get(const char * name)
   {
-    std::string lowercaseName( name );
+    std::string lowercaseName(name);
 
-    this->toLower( lowercaseName );
-    MapType::iterator it = m_Map.find( lowercaseName );
-    if ( it == m_Map.end() )
+    this->toLower(lowercaseName);
+    MapType::iterator it = m_Map.find(lowercaseName);
+    if (it == m_Map.end())
     {
       std::cout << "ERROR:  map does not contain element for " << lowercaseName << std::endl;
       return 0;
     }
 
-    return dynamic_cast< T * >( it->second ); // returns zero if it can't
-                                              // cast to the required type.
+    return dynamic_cast<T *>(it->second); // returns zero if it can't
+                                          // cast to the required type.
   }
 
-  template < typename T, typename ValType >
+  template <typename T, typename ValType>
   void
-  SetAttribute( const char * name, const ValType & val )
+  SetAttribute(const char * name, const ValType & val)
   {
-    T * t = this->Get< T >( name );
+    T * t = this->Get<T>(name);
 
-    if ( t == 0 )
+    if (t == 0)
     {
       std::cout << "ERROR:  Can not set name " << name << " to value " << val << std::endl;
     }
-    t->SetValue( val );
+    t->SetValue(val);
   }
 
-  template < typename T >
+  template <typename T>
   const typename T::ReturnType
-  GetAttribute( const char * name ) const
+  GetAttribute(const char * name) const
   {
-    const T * t = this->Get< T >( name );
+    const T * t = this->Get<T>(name);
 
-    if ( t == 0 )
+    if (t == 0)
     {
       //      return std::string();
-      std::string err( "Can't find " );
+      std::string err("Can't find ");
       err += name;
-      throw BRAINSCutExceptionStringHandler( err );
+      throw BRAINSCutExceptionStringHandler(err);
     }
     return t->GetValue();
   }
 
-  template < typename T >
+  template <typename T>
   typename T::ReturnType
-  GetAttribute( const char * name )
+  GetAttribute(const char * name)
   {
-    T * t = this->Get< T >( name );
+    T * t = this->Get<T>(name);
 
-    if ( t == 0 )
+    if (t == 0)
     {
       //      return std::string();
-      std::string err( "Can't find " );
+      std::string err("Can't find ");
       err += name;
-      throw BRAINSCutExceptionStringHandler( err );
+      throw BRAINSCutExceptionStringHandler(err);
     }
     return t->GetValue();
   }
 
-  template < typename T >
+  template <typename T>
   typename T::ReturnType
-  GetAttributeIfExist( const char * name )
+  GetAttributeIfExist(const char * name)
   {
-    T * t = this->Get< T >( name );
+    T * t = this->Get<T>(name);
 
-    if ( t == 0 )
+    if (t == 0)
     {
       std::cout << " Can't find " << name << ", returning null." << std::endl;
 
@@ -220,13 +220,13 @@ public:
     return t->GetValue();
   }
 
-  template < typename T >
+  template <typename T>
   const typename T::ReturnType
-  GetAttributeIfExist( const char * name ) const
+  GetAttributeIfExist(const char * name) const
   {
-    T * t = this->Get< T >( name );
+    T * t = this->Get<T>(name);
 
-    if ( t == 0 )
+    if (t == 0)
     {
       std::cout << " Can't find " << name << ", returning null." << std::endl;
 
@@ -239,24 +239,24 @@ public:
   // given a particular attribute name, collect that
   // attributes. Only works on homogenous compound objects,
   // i.e. lists of a particular type
-  template < typename T >
+  template <typename T>
   // type
   StringVectorType
-  CollectAttValues( const char * attributeName ) const
+  CollectAttValues(const char * attributeName) const
   {
-    StringVectorType rval( this->size() );
+    StringVectorType rval(this->size());
     const_iterator   it;
     unsigned         i = 0;
 
-    for ( it = this->begin(); it != this->end(); ++it )
+    for (it = this->begin(); it != this->end(); ++it)
     {
-      T * current = dynamic_cast< T * >( it->second );
-      if ( current == 0 ) // skip everything not of the
-      {                   // requested type
+      T * current = dynamic_cast<T *>(it->second);
+      if (current == 0) // skip everything not of the
+      {                 // requested type
         continue;
       }
-      const std::string val( current->template GetAttribute< StringValue >( attributeName ) );
-      if ( val != "" )
+      const std::string val(current->template GetAttribute<StringValue>(attributeName));
+      if (val != "")
       {
         rval[i] = val;
         i++;
@@ -268,21 +268,21 @@ public:
   //
   // given an attribute with a particular value, return the
   // list element matching that value
-  template < typename T >
+  template <typename T>
   // list element type
   const T *
-  GetMatching( const char * attName, const char * attValue ) const
+  GetMatching(const char * attName, const char * attValue) const
   {
     const_iterator it;
 
-    for ( it = this->begin(); it != this->end(); ++it )
+    for (it = this->begin(); it != this->end(); ++it)
     {
-      const T * current = dynamic_cast< const T * >( it->second );
-      if ( current == 0 )
+      const T * current = dynamic_cast<const T *>(it->second);
+      if (current == 0)
       {
         continue;
       }
-      if ( current->template GetAttribute< StringValue >( attName ) == attValue )
+      if (current->template GetAttribute<StringValue>(attName) == attValue)
       {
         return current;
       }
@@ -293,21 +293,21 @@ public:
   //
   // given an attribute with a particular value, return the
   // list element matching that value
-  template < typename T >
+  template <typename T>
   // list element type
   T *
-  GetMatching( const char * attName, const char * attValue )
+  GetMatching(const char * attName, const char * attValue)
   {
     iterator it;
 
-    for ( it = this->begin(); it != this->end(); ++it )
+    for (it = this->begin(); it != this->end(); ++it)
     {
-      T * current = dynamic_cast< T * >( it->second );
-      if ( current == 0 )
+      T * current = dynamic_cast<T *>(it->second);
+      if (current == 0)
       {
         continue;
       }
-      if ( current->template GetAttribute< StringValue >( attName ) == attValue )
+      if (current->template GetAttribute<StringValue>(attName) == attValue)
       {
         return current;
       }

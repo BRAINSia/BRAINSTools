@@ -25,51 +25,51 @@
 
 namespace itk
 {
-template < typename TMesh >
-RescaleScalarsQuadEdgeMeshFilter< TMesh >::RescaleScalarsQuadEdgeMeshFilter()
+template <typename TMesh>
+RescaleScalarsQuadEdgeMeshFilter<TMesh>::RescaleScalarsQuadEdgeMeshFilter()
 {
-  this->SetNumberOfRequiredInputs( 1 );
-  this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfIndexedOutputs( 1 );
+  this->SetNumberOfRequiredInputs(1);
+  this->SetNumberOfRequiredOutputs(1);
+  this->SetNumberOfIndexedOutputs(1);
 
-  this->SetNthOutput( 0, OutputMeshType::New() );
+  this->SetNthOutput(0, OutputMeshType::New());
 
-  this->m_OutputMaximum = NumericTraits< OutputPixelType >::max();
-  this->m_OutputMinimum = NumericTraits< OutputPixelType >::NonpositiveMin();
+  this->m_OutputMaximum = NumericTraits<OutputPixelType>::max();
+  this->m_OutputMinimum = NumericTraits<OutputPixelType>::NonpositiveMin();
 
-  this->m_InputMaximum = NumericTraits< InputPixelType >::ZeroValue();
-  this->m_InputMinimum = NumericTraits< InputPixelType >::max();
+  this->m_InputMaximum = NumericTraits<InputPixelType>::ZeroValue();
+  this->m_InputMinimum = NumericTraits<InputPixelType>::max();
 }
 
-template < typename TMesh >
-RescaleScalarsQuadEdgeMeshFilter< TMesh >::~RescaleScalarsQuadEdgeMeshFilter()
+template <typename TMesh>
+RescaleScalarsQuadEdgeMeshFilter<TMesh>::~RescaleScalarsQuadEdgeMeshFilter()
 {}
 
-template < typename TMesh >
+template <typename TMesh>
 void
-RescaleScalarsQuadEdgeMeshFilter< TMesh >::SetInputMesh( const InputMeshType * mesh )
+RescaleScalarsQuadEdgeMeshFilter<TMesh>::SetInputMesh(const InputMeshType * mesh)
 {
-  itkDebugMacro( "setting input mesh to " << mesh );
-  if ( mesh != static_cast< const InputMeshType * >( this->ProcessObject::GetInput( 0 ) ) )
+  itkDebugMacro("setting input mesh to " << mesh);
+  if (mesh != static_cast<const InputMeshType *>(this->ProcessObject::GetInput(0)))
   {
-    this->ProcessObject::SetNthInput( 0, const_cast< InputMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(0, const_cast<InputMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TMesh >
-const typename RescaleScalarsQuadEdgeMeshFilter< TMesh >::InputMeshType *
-RescaleScalarsQuadEdgeMeshFilter< TMesh >::GetInputMesh() const
+template <typename TMesh>
+const typename RescaleScalarsQuadEdgeMeshFilter<TMesh>::InputMeshType *
+RescaleScalarsQuadEdgeMeshFilter<TMesh>::GetInputMesh() const
 {
-  Self *                surrogate = const_cast< Self * >( this );
-  const InputMeshType * inputMesh = static_cast< const InputMeshType * >( surrogate->ProcessObject::GetInput( 0 ) );
+  Self *                surrogate = const_cast<Self *>(this);
+  const InputMeshType * inputMesh = static_cast<const InputMeshType *>(surrogate->ProcessObject::GetInput(0));
 
   return inputMesh;
 }
 
-template < typename TMesh >
+template <typename TMesh>
 void
-RescaleScalarsQuadEdgeMeshFilter< TMesh >::GenerateData()
+RescaleScalarsQuadEdgeMeshFilter<TMesh>::GenerateData()
 {
   // Copy the input mesh into the output mesh.
   this->CopyInputMeshToOutputMesh();
@@ -87,14 +87,14 @@ RescaleScalarsQuadEdgeMeshFilter< TMesh >::GenerateData()
   InputPointDataIterator inputPointDataItr = inputPointData->Begin();
   InputPointDataIterator inputPointDataEnd = inputPointData->End();
 
-  while ( inputPointDataItr != inputPointDataEnd )
+  while (inputPointDataItr != inputPointDataEnd)
   {
-    if ( inputPointDataItr.Value() > this->m_InputMaximum )
+    if (inputPointDataItr.Value() > this->m_InputMaximum)
     {
       this->m_InputMaximum = inputPointDataItr.Value();
     }
 
-    if ( inputPointDataItr.Value() < this->m_InputMinimum )
+    if (inputPointDataItr.Value() < this->m_InputMinimum)
     {
       this->m_InputMinimum = inputPointDataItr.Value();
     }
@@ -102,17 +102,15 @@ RescaleScalarsQuadEdgeMeshFilter< TMesh >::GenerateData()
     ++inputPointDataItr;
   }
 
-  if ( this->m_InputMinimum != this->m_InputMaximum )
+  if (this->m_InputMinimum != this->m_InputMaximum)
   {
-    this->m_Scale =
-      ( static_cast< double >( this->m_OutputMaximum ) - static_cast< double >( this->m_OutputMinimum ) ) /
-      ( static_cast< double >( this->m_InputMaximum ) - static_cast< double >( this->m_InputMinimum ) );
+    this->m_Scale = (static_cast<double>(this->m_OutputMaximum) - static_cast<double>(this->m_OutputMinimum)) /
+                    (static_cast<double>(this->m_InputMaximum) - static_cast<double>(this->m_InputMinimum));
   }
-  else if ( this->m_InputMaximum != NumericTraits< InputPixelType >::ZeroValue() )
+  else if (this->m_InputMaximum != NumericTraits<InputPixelType>::ZeroValue())
   {
-    this->m_Scale =
-      ( static_cast< double >( this->m_OutputMaximum ) - static_cast< double >( this->m_OutputMinimum ) ) /
-      static_cast< double >( this->m_InputMaximum );
+    this->m_Scale = (static_cast<double>(this->m_OutputMaximum) - static_cast<double>(this->m_OutputMinimum)) /
+                    static_cast<double>(this->m_InputMaximum);
   }
   else
   {
@@ -129,10 +127,10 @@ RescaleScalarsQuadEdgeMeshFilter< TMesh >::GenerateData()
   PointDataIterator pointDataItr = pointData->Begin();
   PointDataIterator pointDataEnd = pointData->End();
 
-  while ( pointDataItr != pointDataEnd )
+  while (pointDataItr != pointDataEnd)
   {
-    pointDataItr.Value() = static_cast< OutputPixelType >(
-      this->m_OutputMinimum + ( ( pointDataItr.Value() - this->m_InputMinimum ) * this->m_Scale ) );
+    pointDataItr.Value() = static_cast<OutputPixelType>(
+      this->m_OutputMinimum + ((pointDataItr.Value() - this->m_InputMinimum) * this->m_Scale));
 
     ++pointDataItr;
   }

@@ -16,8 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined( _MSC_VER )
-#  pragma warning( disable : 4786 )
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4786)
 #endif
 
 #ifdef __BORLANDC__
@@ -34,7 +34,7 @@
 #include "SobelEdgeDetectorCLP.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -43,17 +43,17 @@ main( int argc, char * argv[] )
   using RealPixelType = float; //  Operations
   constexpr unsigned int Dimension = 3;
 
-  using CharImageType = itk::Image< CharPixelType, Dimension >;
-  using RealImageType = itk::Image< RealPixelType, Dimension >;
+  using CharImageType = itk::Image<CharPixelType, Dimension>;
+  using RealImageType = itk::Image<RealPixelType, Dimension>;
 
-  using ReaderType = itk::ImageFileReader< CharImageType >;
-  using WriterType = itk::ImageFileWriter< CharImageType >;
+  using ReaderType = itk::ImageFileReader<CharImageType>;
+  using WriterType = itk::ImageFileWriter<CharImageType>;
 
-  using CastToRealFilterType = itk::CastImageFilter< CharImageType, RealImageType >;
+  using CastToRealFilterType = itk::CastImageFilter<CharImageType, RealImageType>;
 
-  using RescaleFilter = itk::RescaleIntensityImageFilter< RealImageType, CharImageType >;
+  using RescaleFilter = itk::RescaleIntensityImageFilter<RealImageType, CharImageType>;
 
-  using CannyFilter = itk::SobelEdgeDetectionImageFilter< RealImageType, RealImageType >;
+  using CannyFilter = itk::SobelEdgeDetectionImageFilter<RealImageType, RealImageType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
@@ -63,26 +63,26 @@ main( int argc, char * argv[] )
 
   CannyFilter::Pointer sobelFilter = CannyFilter::New();
 
-  reader->SetFileName( inputVolume );
-  writer->SetFileName( outputVolume );
+  reader->SetFileName(inputVolume);
+  writer->SetFileName(outputVolume);
 
   // The output of an edge filter is 0 or 1
-  rescale->SetOutputMinimum( 0 );
-  rescale->SetOutputMaximum( 255 );
+  rescale->SetOutputMinimum(0);
+  rescale->SetOutputMaximum(255);
 
-  toReal->SetInput( reader->GetOutput() );
+  toReal->SetInput(reader->GetOutput());
 
-  sobelFilter->SetInput( toReal->GetOutput() );
+  sobelFilter->SetInput(toReal->GetOutput());
 
-  rescale->SetInput( sobelFilter->GetOutput() );
-  writer->SetInput( rescale->GetOutput() );
+  rescale->SetInput(sobelFilter->GetOutput());
+  writer->SetInput(rescale->GetOutput());
   writer->UseCompressionOn();
 
   try
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << err << std::endl;

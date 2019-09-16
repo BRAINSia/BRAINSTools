@@ -46,11 +46,11 @@ namespace itk
  * \brief Abstract base class for attribute vector used by Hammer
  *
  */
-class HammerTissueAttributeVector : public HammerAttributeVectorBase< unsigned char, 5 >
+class HammerTissueAttributeVector : public HammerAttributeVectorBase<unsigned char, 5>
 {
 public:
   using Self = HammerTissueAttributeVector;
-  using Superclass = HammerAttributeVectorBase< unsigned char, 5 >;
+  using Superclass = HammerAttributeVectorBase<unsigned char, 5>;
   using VectorType = Superclass::VectorType;
 
   /** Length constant */
@@ -70,30 +70,29 @@ public:
   /** define interface for computing similarity/difference between two
    * attribute vectors */
   double
-  ComputeSimilarity( const VectorType & vec2 ) const override
+  ComputeSimilarity(const VectorType & vec2) const override
   {
-    if ( this->operator[]( 0 ) != vec2.operator[]( 0 ) )
+    if (this->operator[](0) != vec2.operator[](0))
     {
       return 0;
     }
     else
     {
       double sim = 1;
-      for ( int k = 1; k < 5; k++ )
+      for (int k = 1; k < 5; k++)
       {
-        sim *= ( 1.0 - std::fabs( static_cast< double >( this->operator[]( k ) ) - static_cast< double >( vec2[k] ) ) /
-                         255.0 );
+        sim *= (1.0 - std::fabs(static_cast<double>(this->operator[](k)) - static_cast<double>(vec2[k])) / 255.0);
       }
       return sim;
     }
   }
 
   double
-  ComputeDifference( const VectorType & vec2 ) const override
+  ComputeDifference(const VectorType & vec2) const override
   {
-    const double diff = ComputeSimilarity( vec2 );
+    const double diff = ComputeSimilarity(vec2);
 
-    if ( diff == 0.0 )
+    if (diff == 0.0)
     {
       return -1.0;
     }
@@ -106,49 +105,49 @@ public:
   unsigned char
   GetEdge()
   {
-    return this->operator[]( 0 );
+    return this->operator[](0);
   }
 
   unsigned char
   GetTissueType()
   {
-    return this->operator[]( 1 );
+    return this->operator[](1);
   }
 
   unsigned char
   GetGeometry()
   {
-    return this->operator[]( 2 );
+    return this->operator[](2);
   }
 
   unsigned char
   GetVentricleVolume()
   {
-    return this->operator[]( 3 );
+    return this->operator[](3);
   }
 
   unsigned char
   GetCSFBackground()
   {
-    return this->operator[]( 4 );
+    return this->operator[](4);
   }
 
   bool
-  IsQualifiedDrivingVoxel( std::vector< float > & qualifier ) override
+  IsQualifiedDrivingVoxel(std::vector<float> & qualifier) override
   {
-    if ( this->GetEdge() == 0 )
+    if (this->GetEdge() == 0)
     {
       return false;
     }
 
-    if ( this->GetGeometry() <= qualifier[0] &&
-         ( this->GetGeometry() >= qualifier[1] || this->GetGeometry() <= qualifier[2] ) &&
-         this->GetVentricleVolume() <= qualifier[3] && this->GetCSFBackground() <= qualifier[5] )
+    if (this->GetGeometry() <= qualifier[0] &&
+        (this->GetGeometry() >= qualifier[1] || this->GetGeometry() <= qualifier[2]) &&
+        this->GetVentricleVolume() <= qualifier[3] && this->GetCSFBackground() <= qualifier[5])
     {
       return false;
     }
 
-    if ( this->GetVentricleVolume() > qualifier[4] )
+    if (this->GetVentricleVolume() > qualifier[4])
     {
       return false;
     }
@@ -157,16 +156,16 @@ public:
   }
 
   virtual bool
-  IsQualifiedDrivingVoxel_GR( std::vector< float > & qualifier )
+  IsQualifiedDrivingVoxel_GR(std::vector<float> & qualifier)
   {
-    if ( this->GetEdge() == 0 )
+    if (this->GetEdge() == 0)
     {
       return false;
     }
 
-    if ( this->GetGeometry() > qualifier[0] ||
-         ( this->GetGeometry() < qualifier[1] && this->GetGeometry() > qualifier[2] ) ||
-         this->GetVentricleVolume() > qualifier[3] || this->GetCSFBackground() > qualifier[5] )
+    if (this->GetGeometry() > qualifier[0] ||
+        (this->GetGeometry() < qualifier[1] && this->GetGeometry() > qualifier[2]) ||
+        this->GetVentricleVolume() > qualifier[3] || this->GetCSFBackground() > qualifier[5])
     {
       return true;
     }
@@ -181,7 +180,7 @@ public:
   ~HammerTissueAttributeVector() override {}
 
   void
-  PrintSelf( std::ostream & /* os */, Indent /* indent */ ) const
+  PrintSelf(std::ostream & /* os */, Indent /* indent */) const
   {}
 };
 } // end namespace itk

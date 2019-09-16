@@ -25,9 +25,9 @@
 #include <sstream>
 #include <string>
 
-#define muEcho( varname ) std::cout << #varname << " = " << varname << std::flush << std::endl;
+#define muEcho(varname) std::cout << #varname << " = " << varname << std::flush << std::endl;
 
-#define muStringMacro( strname, s )                                                                                    \
+#define muStringMacro(strname, s)                                                                                      \
   std::string strname;                                                                                                 \
   {                                                                                                                    \
     std::ostringstream outss;                                                                                          \
@@ -35,28 +35,28 @@
     strname = outss.str();                                                                                             \
   }
 
-#define muSelfFilterMacro( filter, obj )                                                                               \
+#define muSelfFilterMacro(filter, obj)                                                                                 \
   {                                                                                                                    \
-    filter->SetInput( obj );                                                                                           \
+    filter->SetInput(obj);                                                                                             \
     iterator copy                                                                                                      \
   }
 
-#define muReadMacro( type, filename, image )                                                                           \
+#define muReadMacro(type, filename, image)                                                                             \
   {                                                                                                                    \
-    using ReaderType = itk::ImageFileReader< type >;                                                                   \
+    using ReaderType = itk::ImageFileReader<type>;                                                                     \
     typename ReaderType::Pointer reader = ReaderType::New();                                                           \
-    reader->SetFileName( filename );                                                                                   \
+    reader->SetFileName(filename);                                                                                     \
     reader->Update();                                                                                                  \
     image = reader->GetOutput();                                                                                       \
   }
 
-#define muWriteMacro( type, filename, image )                                                                          \
+#define muWriteMacro(type, filename, image)                                                                            \
   {                                                                                                                    \
-    using WriterType = itk::ImageFileWriter< type >;                                                                   \
+    using WriterType = itk::ImageFileWriter<type>;                                                                     \
     typename WriterType::Pointer writer = WriterType::New();                                                           \
     writer->UseCompressionOn();                                                                                        \
-    writer->SetFileName( filename );                                                                                   \
-    writer->SetInput( image );                                                                                         \
+    writer->SetFileName(filename);                                                                                     \
+    writer->SetInput(image);                                                                                           \
     writer->Update();                                                                                                  \
   }
 

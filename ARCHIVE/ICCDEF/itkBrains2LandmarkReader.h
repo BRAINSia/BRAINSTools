@@ -39,29 +39,29 @@
 
 namespace itk
 {
-template < typename TPixelType, unsigned Dimension >
+template <typename TPixelType, unsigned Dimension>
 class Brains2LandmarkReader : public LightProcessObject
 {
 public:
   using Self = Brains2LandmarkReader;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   using PixelType = float;
   using PointType = float;
 
-  using PointSetType = PointSet< PointType, Dimension >;
-  using InputPointSetType = PointSet< TPixelType, Dimension >;
+  using PointSetType = PointSet<PointType, Dimension>;
+  using InputPointSetType = PointSet<TPixelType, Dimension>;
 
-  using ImageType = Image< PixelType, Dimension >;
+  using ImageType = Image<PixelType, Dimension>;
   using ImagePointer = typename ImageType::Pointer;
 
-  itkNewMacro( Self );
+  itkNewMacro(Self);
   using Superclass = Object;
-  itkTypeMacro( Brains2LandmarkReader, LightProcessObject );
+  itkTypeMacro(Brains2LandmarkReader, LightProcessObject);
 
-  itkSetStringMacro( FileName );
-  itkGetStringMacro( FileName );
+  itkSetStringMacro(FileName);
+  itkGetStringMacro(FileName);
 
   PointSetType *
   GetPointSet()
@@ -76,7 +76,7 @@ public:
   }
 
   void
-  SetReferenceImage( ImageType * ig )
+  SetReferenceImage(ImageType * ig)
   {
     m_ReferenceImage = ig;
   }
@@ -85,9 +85,9 @@ public:
   Update();
 
 protected:
-  Brains2LandmarkReader( const Self & );
+  Brains2LandmarkReader(const Self &);
   Brains2LandmarkReader &
-  operator=( const Self & );
+  operator=(const Self &);
 
   Brains2LandmarkReader();
   ~Brains2LandmarkReader() override{};

@@ -45,100 +45,99 @@
 #include "HammerAttributeCreatorCLP.h"
 #include <BRAINSCommonLib.h>
 
-using ImageType = itk::Image< float, 3 >;
+using ImageType = itk::Image<float, 3>;
 using AttributeVectorType = itk::HammerTissueAttributeVector;
-using AttributeImageType = itk::Image< AttributeVectorType, 3 >;
+using AttributeImageType = itk::Image<AttributeVectorType, 3>;
 #if PARTIALVOLUME > 0
-using AttributeFilterType =
-  itk::HammerTissueAttributeVectorFromPartialVolumeImageFilter< ImageType, AttributeImageType >;
+using AttributeFilterType = itk::HammerTissueAttributeVectorFromPartialVolumeImageFilter<ImageType, AttributeImageType>;
 #else
-using AttributeFilterType = itk::HammerTissueAttributeVectorImageFilter< ImageType, AttributeImageType >;
+using AttributeFilterType = itk::HammerTissueAttributeVectorImageFilter<ImageType, AttributeImageType>;
 #endif
 
 static void
-WriteAttributeComponent( const std::string & filename, AttributeImageType::Pointer avImg, const int idx )
+WriteAttributeComponent(const std::string & filename, AttributeImageType::Pointer avImg, const int idx)
 {
   ImageType::Pointer cImg = ImageType::New();
 
-  cImg->CopyInformation( avImg );
-  cImg->SetRegions( cImg->GetLargestPossibleRegion() );
+  cImg->CopyInformation(avImg);
+  cImg->SetRegions(cImg->GetLargestPossibleRegion());
   cImg->Allocate();
 
-  itk::ImageRegionIteratorWithIndex< ImageType > it( cImg, cImg->GetLargestPossibleRegion() );
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  itk::ImageRegionIteratorWithIndex<ImageType> it(cImg, cImg->GetLargestPossibleRegion());
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     ImageType::IndexType          imgIdx = it.GetIndex();
-    AttributeImageType::PixelType p = avImg->GetPixel( imgIdx );
-    it.Set( p[idx] );
+    AttributeImageType::PixelType p = avImg->GetPixel(imgIdx);
+    it.Set(p[idx]);
   }
 
-  itk::ImageFileWriter< ImageType >::Pointer w = itk::ImageFileWriter< ImageType >::New();
+  itk::ImageFileWriter<ImageType>::Pointer w = itk::ImageFileWriter<ImageType>::New();
   w->UseCompressionOn();
-  w->SetFileName( filename );
-  w->SetInput( cImg );
+  w->SetFileName(filename);
+  w->SetInput(cImg);
   w->Update();
   return;
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   /*** Load in fixed image and compute the attribute vectors ***/
-  itk::ImageFileReader< ImageType >::Pointer gmReader = itk::ImageFileReader< ImageType >::New();
-  itk::ImageFileReader< ImageType >::Pointer wmReader = itk::ImageFileReader< ImageType >::New();
-  itk::ImageFileReader< ImageType >::Pointer csfReader = itk::ImageFileReader< ImageType >::New();
-  gmReader->SetFileName( inputGMVolume );
-  wmReader->SetFileName( inputWMVolume );
-  csfReader->SetFileName( inputCSFVolume );
+  itk::ImageFileReader<ImageType>::Pointer gmReader = itk::ImageFileReader<ImageType>::New();
+  itk::ImageFileReader<ImageType>::Pointer wmReader = itk::ImageFileReader<ImageType>::New();
+  itk::ImageFileReader<ImageType>::Pointer csfReader = itk::ImageFileReader<ImageType>::New();
+  gmReader->SetFileName(inputGMVolume);
+  wmReader->SetFileName(inputWMVolume);
+  csfReader->SetFileName(inputCSFVolume);
   try
   {
     gmReader->Update();
     wmReader->Update();
     csfReader->Update();
   }
-  catch ( itk::ExceptionObject * ex )
+  catch (itk::ExceptionObject * ex)
   {
     std::cerr << ex << std::endl;
   }
   ImageType::Pointer myImage = gmReader->GetOutput();
 
   // HACK: Need to replace some values.
-  itk::ImageRegionIterator< ImageType > it( myImage, myImage->GetLargestPossibleRegion() );
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  itk::ImageRegionIterator<ImageType> it(myImage, myImage->GetLargestPossibleRegion());
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     const ImageType::PixelType tmp = it.Get();
-    if ( tmp == 3 )
+    if (tmp == 3)
     {
-      it.Set( 2 );
+      it.Set(2);
     }
-    if ( tmp == 5 )
+    if (tmp == 5)
     {
-      it.Set( 0 );
+      it.Set(0);
     }
   }
 
   std::cout << "Image read in\n";
 
   AttributeFilterType::Pointer modleAttributeFilter = AttributeFilterType::New();
-  modleAttributeFilter->SetCSFVolume( wmReader->GetOutput() );
-  modleAttributeFilter->SetGMVolume( gmReader->GetOutput() );
-  modleAttributeFilter->SetWMVolume( wmReader->GetOutput() );
+  modleAttributeFilter->SetCSFVolume(wmReader->GetOutput());
+  modleAttributeFilter->SetGMVolume(gmReader->GetOutput());
+  modleAttributeFilter->SetWMVolume(wmReader->GetOutput());
 
   // not thread-safe, yet!
-  modleAttributeFilter->SetNumberOfWorkUnits( 1 );
-  modleAttributeFilter->SetStrength( Strength );
-  modleAttributeFilter->SetScale( Scale );
+  modleAttributeFilter->SetNumberOfWorkUnits(1);
+  modleAttributeFilter->SetStrength(Strength);
+  modleAttributeFilter->SetScale(Scale);
   modleAttributeFilter->Update();
 
   AttributeImageType::Pointer fixedAVec = modleAttributeFilter->GetOutput();
 
-  WriteAttributeComponent( outputVolumeBase + "_GMIEdgiInformation.nii.gz", fixedAVec, 0 );
-  WriteAttributeComponent( outputVolumeBase + "_GMIInputLabel.nii.gz", fixedAVec, 1 );
-  WriteAttributeComponent( outputVolumeBase + "_GMINonWM.nii.gz", fixedAVec, 2 );
-  WriteAttributeComponent( outputVolumeBase + "_GMICSF.nii.gz", fixedAVec, 3 );
-  WriteAttributeComponent( outputVolumeBase + "_GMIGM.nii.gz", fixedAVec, 4 );
+  WriteAttributeComponent(outputVolumeBase + "_GMIEdgiInformation.nii.gz", fixedAVec, 0);
+  WriteAttributeComponent(outputVolumeBase + "_GMIInputLabel.nii.gz", fixedAVec, 1);
+  WriteAttributeComponent(outputVolumeBase + "_GMINonWM.nii.gz", fixedAVec, 2);
+  WriteAttributeComponent(outputVolumeBase + "_GMICSF.nii.gz", fixedAVec, 3);
+  WriteAttributeComponent(outputVolumeBase + "_GMIGM.nii.gz", fixedAVec, 4);
 
   return 0;
 }

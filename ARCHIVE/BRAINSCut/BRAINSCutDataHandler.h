@@ -29,7 +29,7 @@ class BRAINSCutDataHandler
 {
 public:
   BRAINSCutDataHandler();
-  BRAINSCutDataHandler( const std::string & modelConfigurationFilenameFilename );
+  BRAINSCutDataHandler(const std::string & modelConfigurationFilenameFilename);
 
   void
   SetNetConfiguration();
@@ -38,7 +38,7 @@ public:
   GetNetConfiguration();
 
   void
-  SetNetConfigurationFilename( const std::string & filename );
+  SetNetConfigurationFilename(const std::string & filename);
 
   std::string
   GetNetConfigurationFilename();
@@ -59,7 +59,7 @@ public:
   GetRegistrationID();
 
   void
-  SetRegistrationImageTypeToUse( std::string type );
+  SetRegistrationImageTypeToUse(std::string type);
 
   std::string
   GetRegistrationImageTypeToUse();
@@ -80,7 +80,7 @@ public:
   GetModelBaseName();
 
   void
-  SetANNModelFilenameAtIteration( const int iteration );
+  SetANNModelFilenameAtIteration(const int iteration);
 
   void
   SetANNTestingSSEFilename();
@@ -89,22 +89,22 @@ public:
   GetANNTestingSSEFilename();
 
   std::string
-  GetANNModelFilenameAtIteration( const int iteration );
+  GetANNModelFilenameAtIteration(const int iteration);
 
   std::string
   GetANNModelFilename();
 
   void
-  SetRandomForestModelFilename( int depth, int nTree );
+  SetRandomForestModelFilename(int depth, int nTree);
 
   void
-  SetRandomForestModelFilename( std::string name );
+  SetRandomForestModelFilename(std::string name);
 
   std::string
   GetRandomForestModelFilename();
 
   std::string
-  GetRFModelFilename( unsigned int depth, unsigned int NTrees );
+  GetRFModelFilename(unsigned int depth, unsigned int NTrees);
 
   DataSet::StringVectorType
   GetROIIDsInOrder() const;
@@ -116,14 +116,14 @@ public:
   GetTrainVectorFilename();
 
   void
-  GetDeformedSpatialLocationImages( std::map< std::string, WorkingImagePointer > & warpedSpatialLocationImages,
-                                    DataSet &                                      subject );
+  GetDeformedSpatialLocationImages(std::map<std::string, WorkingImagePointer> & warpedSpatialLocationImages,
+                                   DataSet &                                    subject);
 
   void
-  ReadImagesOfSubjectInOrder( WorkingImageVectorType & subjectImageList, DataSet & subject );
+  ReadImagesOfSubjectInOrder(WorkingImageVectorType & subjectImageList, DataSet & subject);
 
   void
-  GetDeformedROIs( std::map< std::string, WorkingImagePointer > & deformedROIs, DataSet & subject );
+  GetDeformedROIs(std::map<std::string, WorkingImagePointer> & deformedROIs, DataSet & subject);
 
   std::string
   GetNormalizationMethod();
@@ -168,13 +168,13 @@ public:
   GetGaussianSmoothingSigma();
 
   std::string
-  GetSubjectToAtlasRegistrationFilename( DataSet & subject );
+  GetSubjectToAtlasRegistrationFilename(DataSet & subject);
 
   std::string
-  GetAtlasToSubjectRegistrationFilename( DataSet & subject );
+  GetAtlasToSubjectRegistrationFilename(DataSet & subject);
 
   void
-  SetTrainConfiguration( std::string trainParamterName );
+  SetTrainConfiguration(std::string trainParamterName);
 
   unsigned int
   GetEpochIteration();
@@ -210,7 +210,7 @@ public:
   GetMaxTreeCount();
 
   WorkingImagePointer
-  GetCandidateRegion( DataSet & subject ) const;
+  GetCandidateRegion(DataSet & subject) const;
 
 protected:
   TrainingVectorConfigurationType * trainingVectorConfiguration;
@@ -257,6 +257,6 @@ private:
   BRAINSCutConfiguration * myConfiguration;
 
   WorkingImageType
-  GetDeformedImage( WorkingImageType image );
+  GetDeformedImage(WorkingImageType image);
 };
 #endif

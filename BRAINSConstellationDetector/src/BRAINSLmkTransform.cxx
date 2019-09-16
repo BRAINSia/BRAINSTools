@@ -37,21 +37,21 @@
 #include "itkThinPlateSplineKernelTransform.h"
 #include <BRAINSCommonLib.h>
 
-template < typename TScalarType, unsigned int NDimension >
-class BCDThinPlateSplineKernelTransform : public itk::ThinPlateSplineKernelTransform< TScalarType, NDimension >
+template <typename TScalarType, unsigned int NDimension>
+class BCDThinPlateSplineKernelTransform : public itk::ThinPlateSplineKernelTransform<TScalarType, NDimension>
 {
 public:
   /** Standard class type alias. */
   using Self = BCDThinPlateSplineKernelTransform;
-  using Superclass = itk::ThinPlateSplineKernelTransform< TScalarType, NDimension >;
-  using Pointer = itk::SmartPointer< Self >;
-  using ConstPointer = itk::SmartPointer< const Self >;
+  using Superclass = itk::ThinPlateSplineKernelTransform<TScalarType, NDimension>;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** New macro for creation of through a Smart Pointer */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( BCDThinPlateSplineKernelTransform, ThinPlateSplineKernelTransform );
+  itkTypeMacro(BCDThinPlateSplineKernelTransform, ThinPlateSplineKernelTransform);
   typename Superclass::Superclass::AMatrixType
   GetAMatrix()
   {
@@ -81,37 +81,37 @@ public:
 
 constexpr unsigned int ImageDimension = 3;
 using PixelType = short;
-using ImageType = itk::Image< PixelType, ImageDimension >;
-using LandmarksVectorType = std::vector< ImageType::PointType >;
+using ImageType = itk::Image<PixelType, ImageDimension>;
+using LandmarksVectorType = std::vector<ImageType::PointType>;
 
 LandmarksVectorType
-LoadLandmarks( std::string filename );
+LoadLandmarks(std::string filename);
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
-  if ( ( inputMovingLandmarks.compare( "" ) == 0 ) && ( inputFixedLandmarks.compare( "" ) == 0 ) &&
-       ( inputMovingVolume.compare( "" ) == 0 ) && ( inputReferenceVolume.compare( "" ) == 0 ) )
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  if ((inputMovingLandmarks.compare("") == 0) && (inputFixedLandmarks.compare("") == 0) &&
+      (inputMovingVolume.compare("") == 0) && (inputReferenceVolume.compare("") == 0))
   {
-    itkGenericExceptionMacro( << "Please set inputMovingLandmarks, inputFixedLandmarks, "
-                              << "inputMovingVolume, and inputReferenceVolume." );
+    itkGenericExceptionMacro(<< "Please set inputMovingLandmarks, inputFixedLandmarks, "
+                             << "inputMovingVolume, and inputReferenceVolume.");
   }
 
   // type alias
   using CoordinateRepType = double;
-  using ImageReaderType = itk::ImageFileReader< ImageType >;
-  using ImageWriterType = itk::ImageFileWriter< ImageType >;
-  using TPSTransformType = BCDThinPlateSplineKernelTransform< CoordinateRepType, ImageDimension >;
-  using AffineTransformType = itk::AffineTransform< CoordinateRepType, ImageDimension >;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
+  using TPSTransformType = BCDThinPlateSplineKernelTransform<CoordinateRepType, ImageDimension>;
+  using AffineTransformType = itk::AffineTransform<CoordinateRepType, ImageDimension>;
   using PointSetType = TPSTransformType::PointSetType;
   using TransformWriterType = itk::TransformFileWriter;
   using PointIdType = PointSetType::PointIdentifier;
-  using ResamplerType = itk::ResampleImageFilter< ImageType, ImageType >;
-  using InterpolatorType = itk::LinearInterpolateImageFunction< ImageType, double >;
+  using ResamplerType = itk::ResampleImageFilter<ImageType, ImageType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 
   // Read in landmarks
   PointSetType::Pointer sourceLandmarks = PointSetType::New();
@@ -119,22 +119,22 @@ main( int argc, char * argv[] )
   {
     PointSetType::PointsContainer::Pointer sourceLandmarkContainer = sourceLandmarks->GetPoints();
     PointSetType::PointsContainer::Pointer targetLandmarkContainer = targetLandmarks->GetPoints();
-    PointIdType                            id = itk::NumericTraits< PointIdType >::ZeroValue();
-    LandmarksVectorType                    targetLandmarksVec = LoadLandmarks( inputMovingLandmarks );
-    LandmarksVectorType                    sourceLandmarksVec = LoadLandmarks( inputFixedLandmarks );
+    PointIdType                            id = itk::NumericTraits<PointIdType>::ZeroValue();
+    LandmarksVectorType                    targetLandmarksVec = LoadLandmarks(inputMovingLandmarks);
+    LandmarksVectorType                    sourceLandmarksVec = LoadLandmarks(inputFixedLandmarks);
 
     // Sanity check
-    if ( targetLandmarksVec.size() != sourceLandmarksVec.size() )
+    if (targetLandmarksVec.size() != sourceLandmarksVec.size())
     {
       std::cerr << "Different number of fixed and moving landmarks!" << std::endl;
       return EXIT_FAILURE;
     }
 
     unsigned int idx = 0;
-    for ( idx = 0; idx < sourceLandmarksVec.size(); ++idx )
+    for (idx = 0; idx < sourceLandmarksVec.size(); ++idx)
     {
-      sourceLandmarkContainer->InsertElement( id, sourceLandmarksVec[idx] );
-      targetLandmarkContainer->InsertElement( id++, targetLandmarksVec[idx] );
+      sourceLandmarkContainer->InsertElement(id, sourceLandmarksVec[idx]);
+      targetLandmarkContainer->InsertElement(id++, targetLandmarksVec[idx]);
     }
   }
 
@@ -142,30 +142,30 @@ main( int argc, char * argv[] )
   AffineTransformType::Pointer affine = AffineTransformType::New();
   {
     TPSTransformType::Pointer tps = TPSTransformType::New();
-    tps->SetSourceLandmarks( sourceLandmarks );
-    tps->SetTargetLandmarks( targetLandmarks );
+    tps->SetSourceLandmarks(sourceLandmarks);
+    tps->SetTargetLandmarks(targetLandmarks);
     tps->ComputeWMatrix();
-    itk::Matrix< double, ImageDimension, ImageDimension > aMatrix( tps->GetAMatrix() );
-    itk::Vector< double, ImageDimension >                 bVector;
-    bVector.SetVnlVector( vnl_vector< double >( tps->GetBVector() ) );
-    itk::Matrix< double, ImageDimension, ImageDimension > identity;
+    itk::Matrix<double, ImageDimension, ImageDimension> aMatrix(tps->GetAMatrix());
+    itk::Vector<double, ImageDimension>                 bVector;
+    bVector.SetVnlVector(vnl_vector<double>(tps->GetBVector()));
+    itk::Matrix<double, ImageDimension, ImageDimension> identity;
     identity.SetIdentity();
-    affine->SetMatrix( aMatrix + identity );
-    affine->SetOffset( bVector );
+    affine->SetMatrix(aMatrix + identity);
+    affine->SetOffset(bVector);
   }
 
   // Write output aligning transform
-  if ( outputAffineTransform.compare( "" ) != 0 )
+  if (outputAffineTransform.compare("") != 0)
   {
     TransformWriterType::Pointer writer = TransformWriterType::New();
-    writer->SetInput( affine );
-    writer->SetFileName( outputAffineTransform );
-        writer->SetUseCompression( true );
+    writer->SetInput(affine);
+    writer->SetFileName(outputAffineTransform);
+    writer->SetUseCompression(true);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputTransform file!" << std::endl;
       std::cerr << excep << std::endl;
@@ -176,12 +176,12 @@ main( int argc, char * argv[] )
   ImageType::Pointer movingImage;
   {
     ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( inputMovingVolume );
+    reader->SetFileName(inputMovingVolume);
     try
     {
       reader->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown " << std::endl;
       std::cerr << excp << std::endl;
@@ -193,12 +193,12 @@ main( int argc, char * argv[] )
   ImageType::Pointer referenceImage;
   {
     ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( inputReferenceVolume );
+    reader->SetFileName(inputReferenceVolume);
     try
     {
       reader->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown " << std::endl;
       std::cerr << excp << std::endl;
@@ -211,25 +211,25 @@ main( int argc, char * argv[] )
   ResamplerType::Pointer resampler = ResamplerType::New();
   {
     InterpolatorType::Pointer interpolator = InterpolatorType::New();
-    resampler->SetUseReferenceImage( true );
-    resampler->SetInput( movingImage );
-    resampler->SetReferenceImage( referenceImage );
-    resampler->SetInterpolator( interpolator );
-    resampler->SetTransform( affine );
+    resampler->SetUseReferenceImage(true);
+    resampler->SetInput(movingImage);
+    resampler->SetReferenceImage(referenceImage);
+    resampler->SetInterpolator(interpolator);
+    resampler->SetTransform(affine);
   }
 
   // Write aligned image
-  if ( outputResampledVolume.compare( "" ) != 0 )
+  if (outputResampledVolume.compare("") != 0)
   {
     ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetInput( resampler->GetOutput() );
-    writer->SetFileName( outputResampledVolume );
-        writer->SetUseCompression( true );
+    writer->SetInput(resampler->GetOutput());
+    writer->SetFileName(outputResampledVolume);
+    writer->SetUseCompression(true);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown " << std::endl;
       std::cerr << excp << std::endl;
@@ -241,40 +241,40 @@ main( int argc, char * argv[] )
 }
 
 LandmarksVectorType
-LoadLandmarks( std::string filename )
+LoadLandmarks(std::string filename)
 {
   LandmarksVectorType landmarks;
   std::string         line;
-  std::ifstream       myfile( filename.c_str() );
+  std::ifstream       myfile(filename.c_str());
 
-  if ( !myfile.is_open() )
+  if (!myfile.is_open())
   {
-    itkGenericExceptionMacro( << "Fatal error: Failed to load landmarks file. Program abort!" );
+    itkGenericExceptionMacro(<< "Fatal error: Failed to load landmarks file. Program abort!");
   }
-  while ( getline( myfile, line ) )
+  while (getline(myfile, line))
   {
-    if ( line.compare( 0, 1, "#" ) != 0 )
+    if (line.compare(0, 1, "#") != 0)
     {
       unsigned int i;
-      int          pos1 = line.find( ',', 0 );
+      int          pos1 = line.find(',', 0);
       int          pos2;
-      std::string  name = line.substr( 0, pos1 );
-      if ( name.compare( "CM" ) == 0 ) // exclude CM
+      std::string  name = line.substr(0, pos1);
+      if (name.compare("CM") == 0) // exclude CM
       {
         continue;
       }
       ImageType::PointType labelPos;
-      for ( i = 0; i < 3; ++i )
+      for (i = 0; i < 3; ++i)
       {
-        pos2 = line.find( ',', pos1 + 1 );
-        labelPos[i] = std::stod( line.substr( pos1 + 1, pos2 - pos1 - 1 ).c_str() );
-        if ( i < 2 )
+        pos2 = line.find(',', pos1 + 1);
+        labelPos[i] = std::stod(line.substr(pos1 + 1, pos2 - pos1 - 1).c_str());
+        if (i < 2)
         {
           labelPos[i] *= -1; // RAS -> LPS
         }
         pos1 = pos2;
       }
-      landmarks.push_back( labelPos );
+      landmarks.push_back(labelPos);
     }
   }
 

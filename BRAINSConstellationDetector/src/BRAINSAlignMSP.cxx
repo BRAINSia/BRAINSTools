@@ -56,15 +56,15 @@
 #include "GenericTransformImage.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
-  std::cout.precision( 10 );
+  std::cout.precision(10);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   LMC::globalverboseFlag = verbose;
 
@@ -75,31 +75,31 @@ main( int argc, char * argv[] )
   // initialize some variables
 
   // Since these are oriented images, the reorientation should not be necessary.
-  SImageType::Pointer volOrig = itkUtil::ReadImage< SImageType >( inputVolume );
-  if ( volOrig.IsNull() )
+  SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(inputVolume);
+  if (volOrig.IsNull())
   {
-    printf( "\nCould not open image %s, aborting ...\n\n", inputVolume.c_str() );
+    printf("\nCould not open image %s, aborting ...\n\n", inputVolume.c_str());
     return EXIT_FAILURE;
   }
   SImageType::Pointer image;
 
-  if ( rescaleIntensities == true )
+  if (rescaleIntensities == true)
   {
-    itk::StatisticsImageFilter< SImageType >::Pointer stats = itk::StatisticsImageFilter< SImageType >::New();
-    stats->SetInput( volOrig );
+    itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+    stats->SetInput(volOrig);
     stats->Update();
-    SImageType::PixelType minPixel( stats->GetMinimum() );
-    SImageType::PixelType maxPixel( stats->GetMaximum() );
+    SImageType::PixelType minPixel(stats->GetMinimum());
+    SImageType::PixelType maxPixel(stats->GetMaximum());
 
-    if ( trimRescaledIntensities > 0.0 )
+    if (trimRescaledIntensities > 0.0)
     {
       // REFACTOR: a histogram would be traditional here, but seems
       // over-the-top;
       // I did this because it seemed to me if I knew mean, sigma, max and min,
       // then I know Something about extreme outliers.
 
-      double meanOrig( stats->GetMean() );
-      double sigmaOrig( stats->GetSigma() );
+      double meanOrig(stats->GetMean());
+      double sigmaOrig(stats->GetSigma());
 
       // REFACTOR:  In percentiles, 0.0005 two-tailed has worked in the past.
       // It only makes sense to trim the upper bound since the lower bound would
@@ -114,21 +114,21 @@ main( int argc, char * argv[] )
       // deviations of normal.
       // Naturally, the constant should default at the command line, ...
 
-      double variationBound( ( maxPixel - meanOrig ) / sigmaOrig );
-      double trimBound( variationBound - trimRescaledIntensities );
-      if ( trimBound > 0.0 )
+      double variationBound((maxPixel - meanOrig) / sigmaOrig);
+      double trimBound(variationBound - trimRescaledIntensities);
+      if (trimBound > 0.0)
       {
-        maxPixel = static_cast< SImageType::PixelType >( maxPixel - trimBound * sigmaOrig );
+        maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
       }
     }
 
-    itk::IntensityWindowingImageFilter< SImageType, SImageType >::Pointer remapIntensityFilter =
-      itk::IntensityWindowingImageFilter< SImageType, SImageType >::New();
-    remapIntensityFilter->SetInput( volOrig );
-    remapIntensityFilter->SetOutputMaximum( rescaleIntensitiesOutputRange[1] );
-    remapIntensityFilter->SetOutputMinimum( rescaleIntensitiesOutputRange[0] );
-    remapIntensityFilter->SetWindowMinimum( minPixel );
-    remapIntensityFilter->SetWindowMaximum( maxPixel );
+    itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
+      itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
+    remapIntensityFilter->SetInput(volOrig);
+    remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
+    remapIntensityFilter->SetOutputMinimum(rescaleIntensitiesOutputRange[0]);
+    remapIntensityFilter->SetWindowMinimum(minPixel);
+    remapIntensityFilter->SetWindowMaximum(maxPixel);
     remapIntensityFilter->Update();
 
     image = remapIntensityFilter->GetOutput();
@@ -140,46 +140,46 @@ main( int argc, char * argv[] )
 
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
-  using FindCenterFilter = itk::FindCenterOfBrainFilter< SImageType >;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput( image );
-  findCenterFilter->SetAxis( 2 );
-  findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
-  findCenterFilter->SetClosingSize( 7 );
-  findCenterFilter->SetHeadSizeLimit( 700 );
-  findCenterFilter->SetBackgroundValue( 0 );
+  findCenterFilter->SetInput(image);
+  findCenterFilter->SetAxis(2);
+  findCenterFilter->SetOtsuPercentileThreshold(0.01);
+  findCenterFilter->SetClosingSize(7);
+  findCenterFilter->SetHeadSizeLimit(700);
+  findCenterFilter->SetBackgroundValue(0);
   findCenterFilter->Update();
   SImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
 
   RigidTransformType::Pointer eyeFixed2msp_lmk_tfm = RigidTransformType::New();
-  ComputeMSP_Easy( image, eyeFixed2msp_lmk_tfm, orig_lmk_CenterOfHeadMass, mspQualityLevel );
+  ComputeMSP_Easy(image, eyeFixed2msp_lmk_tfm, orig_lmk_CenterOfHeadMass, mspQualityLevel);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;
-  if ( backgroundFillValueString == std::string( "BIGNEG" ) )
+  if (backgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;
   }
   else
   {
-    BackgroundFillValue = std::stoi( backgroundFillValueString.c_str() );
+    BackgroundFillValue = std::stoi(backgroundFillValueString.c_str());
   }
 
   {
     // Remember:  the Data is Moving's, the shape is Fixed's.
-    SImageType::Pointer interpImage = TransformResample< SImageType, SImageType >(
-      image.GetPointer(),
-      image.GetPointer(),
-      BackgroundFillValue,
-      GetInterpolatorFromString< SImageType >( interpolationMode ).GetPointer(),
-      eyeFixed2msp_lmk_tfm.GetPointer() );
-    itkUtil::WriteImage< SImageType >( interpImage, resampleMSP );
+    SImageType::Pointer interpImage =
+      TransformResample<SImageType, SImageType>(image.GetPointer(),
+                                                image.GetPointer(),
+                                                BackgroundFillValue,
+                                                GetInterpolatorFromString<SImageType>(interpolationMode).GetPointer(),
+                                                eyeFixed2msp_lmk_tfm.GetPointer());
+    itkUtil::WriteImage<SImageType>(interpImage, resampleMSP);
   }
-  if ( globalImagedebugLevel > 3 )
+  if (globalImagedebugLevel > 3)
   {
-    const std::string ORIG_ImagePlane( globalResultsDir + "/ORIG_PLANE_" +
-                                       itksys::SystemTools::GetFilenameName( inputVolume ) );
-    CreatedebugPlaneImage( image, eyeFixed2msp_lmk_tfm, ORIG_ImagePlane );
+    const std::string ORIG_ImagePlane(globalResultsDir + "/ORIG_PLANE_" +
+                                      itksys::SystemTools::GetFilenameName(inputVolume));
+    CreatedebugPlaneImage(image, eyeFixed2msp_lmk_tfm, ORIG_ImagePlane);
   }
   return 0;
 }

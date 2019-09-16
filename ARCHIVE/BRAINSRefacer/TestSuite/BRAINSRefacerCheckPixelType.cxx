@@ -13,7 +13,7 @@
 #include <itkImageFileReader.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
@@ -21,23 +21,23 @@ main( int argc, char * argv[] )
   std::cout << "Expected component type: " << pixelType << std::endl;
 
   itk::ImageIOBase::Pointer inputImageIO =
-    itk::ImageIOFactory::CreateImageIO( inputImageName.c_str(), itk::ImageIOFactory::ReadMode );
+    itk::ImageIOFactory::CreateImageIO(inputImageName.c_str(), itk::ImageIOFactory::ReadMode);
 
   // INFO: add better error checking: file exists, read permissions...etc
 
-  if ( !inputImageIO )
+  if (!inputImageIO)
   {
     std::cerr << "Unable to create ImageIOBase" << std::endl;
     std::cerr << "Most likely cause is the file doesn't exist" << std::endl;
     return EXIT_FAILURE;
   }
 
-  inputImageIO->SetFileName( inputImageName );
+  inputImageIO->SetFileName(inputImageName);
   inputImageIO->ReadImageInformation();
 
   using IOComponentType = itk::ImageIOBase::IOComponentType;
   const IOComponentType realComponentType = inputImageIO->GetComponentType();
-  const std::string     realComponentType_string = inputImageIO->GetComponentTypeAsString( realComponentType );
+  const std::string     realComponentType_string = inputImageIO->GetComponentTypeAsString(realComponentType);
 
   std::cout << "Actual component type: " << realComponentType_string << std::endl;
 

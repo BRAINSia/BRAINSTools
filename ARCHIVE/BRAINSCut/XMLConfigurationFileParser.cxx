@@ -24,260 +24,254 @@
 #include "BRAINSCutExceptionStringHandler.h"
 
 #define CheckDataSet()                                                                                                 \
-  if ( dataSet == 0 )                                                                                                  \
+  if (dataSet == 0)                                                                                                    \
   {                                                                                                                    \
-    std::string s( name );                                                                                             \
+    std::string s(name);                                                                                               \
     s += " occurs in XML file outside any dataset";                                                                    \
-    BRAINSCutExceptionStringHandler ex( s.c_str() );                                                                   \
+    BRAINSCutExceptionStringHandler ex(s.c_str());                                                                     \
     throw ex;                                                                                                          \
   }
 
 void
-XMLConfigurationFileParser::StartElement( void * userData, const XML_Char * name, const XML_Char ** atts )
+XMLConfigurationFileParser::StartElement(void * userData, const XML_Char * name, const XML_Char ** atts)
 {
   // collect attributes
 
   StringMap attribMap;
 
-  for ( unsigned i = 0; atts[i] != nullptr; i += 2 )
+  for (unsigned i = 0; atts[i] != nullptr; i += 2)
   {
-    attribMap[std::string( atts[i] )] = std::string( atts[i + 1] );
+    attribMap[std::string(atts[i])] = std::string(atts[i + 1]);
   }
 
   // in case of sub-attribute
-  std::list< ElementContainer * > * stack = static_cast< std::list< ElementContainer * > * >( userData );
+  std::list<ElementContainer *> * stack = static_cast<std::list<ElementContainer *> *>(userData);
 
-  ElementContainer * current = *( stack->begin() );
+  ElementContainer * current = *(stack->begin());
 
-  DataSet * dataSet = static_cast< DataSet * >( current );
+  DataSet * dataSet = static_cast<DataSet *>(current);
 
   // name
-  const std::string Name( name );
+  const std::string Name(name);
 
-  if ( Name == "AutoSegProcessDescription" )
+  if (Name == "AutoSegProcessDescription")
   {
     // nothing to do, top level object is on the top of stack
     return;
   }
-  else if ( Name == "DataSet" )
+  else if (Name == "DataSet")
   {
     DataSet * currentDataSet = new DataSet;
     try
     {
-      std::string currentDataSetName( attribMap.Get( Name.c_str(), "Name" ) );
-      currentDataSet->SetAttribute< StringValue, std::string >( "Name", currentDataSetName );
-      currentDataSet->SetAttribute< StringValue, std::string >( "Type", attribMap.Get( Name.c_str(), "Type" ) );
-      if ( currentDataSet->GetAttribute< StringValue >( "Type" ) == "Apply" )
+      std::string currentDataSetName(attribMap.Get(Name.c_str(), "Name"));
+      currentDataSet->SetAttribute<StringValue, std::string>("Name", currentDataSetName);
+      currentDataSet->SetAttribute<StringValue, std::string>("Type", attribMap.Get(Name.c_str(), "Type"));
+      if (currentDataSet->GetAttribute<StringValue>("Type") == "Apply")
       {
-        currentDataSet->SetAttribute< StringValue, std::string >( "OutputDir",
-                                                                  attribMap.Get( Name.c_str(), "OutputDir" ) );
+        currentDataSet->SetAttribute<StringValue, std::string>("OutputDir", attribMap.Get(Name.c_str(), "OutputDir"));
       }
 
-      myConfiguration->AddDataSet( currentDataSet );
+      myConfiguration->AddDataSet(currentDataSet);
 
-      stack->push_front( currentDataSet );
+      stack->push_front(currentDataSet);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "ProbabilityMap" )
+  else if (Name == "ProbabilityMap")
   {
     try
     {
-      ProbabilityMapList *   mapList = myConfiguration->Get< ProbabilityMapList >( "ProbabilityMapList" );
+      ProbabilityMapList *   mapList = myConfiguration->Get<ProbabilityMapList>("ProbabilityMapList");
       ProbabilityMapParser * map = new ProbabilityMapParser;
-      std::string            structureID( attribMap.Get( "ProbabilityMap", "StructureID" ) );
-      map->SetAttribute< StringValue >( "StructureID", structureID );
-      map->SetAttribute< StringValue >( "Filename", attribMap.Get( "ProbabilityMap", "Filename" ) );
-      map->SetAttribute< FloatValue >( "Gaussian", attribMap.Get( "ProbabilityMap", "Gaussian" ) );
-      map->SetAttribute< StringValue >( "GenerateVector", attribMap.Get( "GenerateVector", "GenerateVector" ) );
-      mapList->Add( map, structureID );
+      std::string            structureID(attribMap.Get("ProbabilityMap", "StructureID"));
+      map->SetAttribute<StringValue>("StructureID", structureID);
+      map->SetAttribute<StringValue>("Filename", attribMap.Get("ProbabilityMap", "Filename"));
+      map->SetAttribute<FloatValue>("Gaussian", attribMap.Get("ProbabilityMap", "Gaussian"));
+      map->SetAttribute<StringValue>("GenerateVector", attribMap.Get("GenerateVector", "GenerateVector"));
+      mapList->Add(map, structureID);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "Registration" )
+  else if (Name == "Registration")
   {
     try
     {
       CheckDataSet();
 
-      RegistrationList * regList = dataSet->Get< RegistrationList >( "RegistrationList" );
+      RegistrationList * regList = dataSet->Get<RegistrationList>("RegistrationList");
       RegistrationType * registration = new RegistrationType;
-      registration->SetAttribute< StringValue >( "SubjToAtlasRegistrationFilename",
-                                                 attribMap.Get( "Registration", "SubjToAtlasRegistrationFilename" ) );
-      registration->SetAttribute< StringValue >( "AtlasToSubjRegistrationFilename",
-                                                 attribMap.Get( "Registration", "AtlasToSubjRegistrationFilename" ) );
-      std::string id( attribMap.Get( "Registration", "ID" ) );
-      registration->SetAttribute< StringValue >( "ID", id );
-      regList->Add( registration, id );
+      registration->SetAttribute<StringValue>("SubjToAtlasRegistrationFilename",
+                                              attribMap.Get("Registration", "SubjToAtlasRegistrationFilename"));
+      registration->SetAttribute<StringValue>("AtlasToSubjRegistrationFilename",
+                                              attribMap.Get("Registration", "AtlasToSubjRegistrationFilename"));
+      std::string id(attribMap.Get("Registration", "ID"));
+      registration->SetAttribute<StringValue>("ID", id);
+      regList->Add(registration, id);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "RegistrationConfiguration" )
+  else if (Name == "RegistrationConfiguration")
   {
     try
     {
       RegistrationConfigurationParser * params =
-        myConfiguration->Get< RegistrationConfigurationParser >( "RegistrationConfiguration" );
-      params->SetAttribute< StringValue >( "ImageTypeToUse",
-                                           attribMap.Get( "RegistrationConfiguration", "ImageTypeToUse" ) );
-      params->SetAttribute< StringValue >( "ID", attribMap.Get( "RegistrationConfiguration", "ID" ) );
-      params->SetAttribute< IntValue >(
-        "BRAINSROIAutoDilateSize", attribMap.GetIfExist( "RegistrationConfiguration", "BRAINSROIAutoDilateSize" ) );
-      params->SetAttribute< BooleanValue >(
+        myConfiguration->Get<RegistrationConfigurationParser>("RegistrationConfiguration");
+      params->SetAttribute<StringValue>("ImageTypeToUse", attribMap.Get("RegistrationConfiguration", "ImageTypeToUse"));
+      params->SetAttribute<StringValue>("ID", attribMap.Get("RegistrationConfiguration", "ID"));
+      params->SetAttribute<IntValue>("BRAINSROIAutoDilateSize",
+                                     attribMap.GetIfExist("RegistrationConfiguration", "BRAINSROIAutoDilateSize"));
+      params->SetAttribute<BooleanValue>(
         "ProbabilityMapRegistrationToSubject",
-        attribMap.GetIfExist( "RegistrationConfiguration", "ProbabilityMapRegistrationToSubject" ) );
+        attribMap.GetIfExist("RegistrationConfiguration", "ProbabilityMapRegistrationToSubject"));
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "Mask" )
+  else if (Name == "Mask")
   {
     try
     {
       CheckDataSet();
       MaskType *  mask = new MaskType;
-      std::string type( attribMap.Get( "Mask", "Type" ) );
-      mask->SetAttribute< StringValue >( "Type", type );
-      mask->SetAttribute< StringValue >( "Filename", attribMap.Get( "Mask", "Filename" ) );
+      std::string type(attribMap.Get("Mask", "Type"));
+      mask->SetAttribute<StringValue>("Type", type);
+      mask->SetAttribute<StringValue>("Filename", attribMap.Get("Mask", "Filename"));
 
-      MaskList * maskList = dataSet->Get< MaskList >( "MaskList" );
-      maskList->Add( mask, type );
+      MaskList * maskList = dataSet->Get<MaskList>("MaskList");
+      maskList->Add(mask, type);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "Image" )
+  else if (Name == "Image")
   {
     try
     {
       CheckDataSet();
       ImageDescription * image = new ImageDescription;
-      std::string        type( attribMap.Get( "Image", "Type" ) );
-      image->SetAttribute< StringValue >( "Type", type );
-      image->SetAttribute< StringValue >( "Filename", attribMap.Get( "Image", "Filename" ) );
+      std::string        type(attribMap.Get("Image", "Type"));
+      image->SetAttribute<StringValue>("Type", type);
+      image->SetAttribute<StringValue>("Filename", attribMap.Get("Image", "Filename"));
 
-      ImageList * imageList = dataSet->Get< ImageList >( "ImageList" );
-      imageList->Add( image, type );
+      ImageList * imageList = dataSet->Get<ImageList>("ImageList");
+      imageList->Add(image, type);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "SpatialLocation" )
+  else if (Name == "SpatialLocation")
   {
     try
     {
       CheckDataSet();
       SpatialLocationType * image = new SpatialLocationType;
-      std::string           type( attribMap.Get( "SpatialLocation", "Type" ) );
-      image->SetAttribute< StringValue >( "Type", type );
-      image->SetAttribute< StringValue >( "Filename", attribMap.Get( "SpatialLocation", "Filename" ) );
+      std::string           type(attribMap.Get("SpatialLocation", "Type"));
+      image->SetAttribute<StringValue>("Type", type);
+      image->SetAttribute<StringValue>("Filename", attribMap.Get("SpatialLocation", "Filename"));
 
-      SpatialLocationList * imageList = dataSet->Get< SpatialLocationList >( "SpatialLocationList" );
-      imageList->Add( image, type );
+      SpatialLocationList * imageList = dataSet->Get<SpatialLocationList>("SpatialLocationList");
+      imageList->Add(image, type);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "TrainingVectorConfiguration" || Name == "NeuralNetParams" ) // TODO Change NeuralNet Param
+  else if (Name == "TrainingVectorConfiguration" || Name == "NeuralNetParams") // TODO Change NeuralNet Param
   {
     try
     {
       TrainingVectorConfigurationType * np = new TrainingVectorConfigurationType;
-      np->SetAttribute< FloatValue >( "MaskSmoothingValue", attribMap.Get( Name.c_str(), "MaskSmoothingValue" ) );
-      np->SetAttribute< IntValue >( "GradientProfileSize", attribMap.Get( Name.c_str(), "GradientProfileSize" ) );
-      np->SetAttribute< StringValue >( "TrainingVectorFilename",
-                                       attribMap.Get( Name.c_str(), "TrainingVectorFilename" ) );
-      np->SetAttribute< StringValue >( "TestVectorFilename", attribMap.Get( Name.c_str(), "TestVectorFilename" ) );
-      np->SetAttribute< StringValue >( "TrainingModelFilename",
-                                       attribMap.Get( Name.c_str(), "TrainingModelFilename" ) );
-      np->SetAttribute< StringValue >( "Normalization", attribMap.Get( Name.c_str(), "Normalization" ) );
-      myConfiguration->Add( np, "TrainingVectorConfiguration" );
+      np->SetAttribute<FloatValue>("MaskSmoothingValue", attribMap.Get(Name.c_str(), "MaskSmoothingValue"));
+      np->SetAttribute<IntValue>("GradientProfileSize", attribMap.Get(Name.c_str(), "GradientProfileSize"));
+      np->SetAttribute<StringValue>("TrainingVectorFilename", attribMap.Get(Name.c_str(), "TrainingVectorFilename"));
+      np->SetAttribute<StringValue>("TestVectorFilename", attribMap.Get(Name.c_str(), "TestVectorFilename"));
+      np->SetAttribute<StringValue>("TrainingModelFilename", attribMap.Get(Name.c_str(), "TrainingModelFilename"));
+      np->SetAttribute<StringValue>("Normalization", attribMap.Get(Name.c_str(), "Normalization"));
+      myConfiguration->Add(np, "TrainingVectorConfiguration");
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "RandomForestParameters" )
+  else if (Name == "RandomForestParameters")
   {
     try
     {
-      TrainingParameters * ap = new TrainingParameters( "RandomForestParameters" );
-      ap->SetAttribute< IntValue >( "MaxDepth", attribMap.Get( "RandomForestParameters", "MaxDepth" ) );
-      ap->SetAttribute< IntValue >( "MinSampleCount", attribMap.Get( "RandomForestParameters", "MinSampleCount" ) );
-      ap->SetAttribute< BooleanValue >( "UseSurrogates", attribMap.Get( "RandomForestParameters", "UseSurrogates" ) );
-      ap->SetAttribute< BooleanValue >( "CalcVarImportance",
-                                        attribMap.Get( "RandomForestParameters", "CalcVarImportance" ) );
-      ap->SetAttribute< IntValue >( "MaxTreeCount", attribMap.Get( "RandomForestParameters", "MaxTreeCount" ) );
-      myConfiguration->Add( ap, Name );
+      TrainingParameters * ap = new TrainingParameters("RandomForestParameters");
+      ap->SetAttribute<IntValue>("MaxDepth", attribMap.Get("RandomForestParameters", "MaxDepth"));
+      ap->SetAttribute<IntValue>("MinSampleCount", attribMap.Get("RandomForestParameters", "MinSampleCount"));
+      ap->SetAttribute<BooleanValue>("UseSurrogates", attribMap.Get("RandomForestParameters", "UseSurrogates"));
+      ap->SetAttribute<BooleanValue>("CalcVarImportance", attribMap.Get("RandomForestParameters", "CalcVarImportance"));
+      ap->SetAttribute<IntValue>("MaxTreeCount", attribMap.Get("RandomForestParameters", "MaxTreeCount"));
+      myConfiguration->Add(ap, Name);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "ANNParameters" )
+  else if (Name == "ANNParameters")
   {
     try
     {
-      TrainingParameters * ap = new TrainingParameters( "ANNParameters" );
+      TrainingParameters * ap = new TrainingParameters("ANNParameters");
       // ap->SetAttribute<IntValue>( "VectorSize",    attribMap.Get("TrainingParameters",
       //          "VectorSize") );
-      ap->SetAttribute< IntValue >( "Iterations", attribMap.Get( "ANNParameters", "Iterations" ) );
-      ap->SetAttribute< IntValue >( "MaximumVectorsPerEpoch",
-                                    attribMap.Get( "ANNParameters", "MaximumVectorsPerEpoch" ) );
-      ap->SetAttribute< IntValue >( "EpochIterations", attribMap.Get( "ANNParameters", "EpochIterations" ) );
-      ap->SetAttribute< IntValue >( "ErrorInterval", attribMap.Get( "ANNParameters", "ErrorInterval" ) );
-      ap->SetAttribute< FloatValue >( "ActivationSlope", attribMap.Get( "ANNParameters", "ActivationSlope" ) );
-      ap->SetAttribute< FloatValue >( "ActivationMinMax", attribMap.Get( "ANNParameters", "ActivationMinMax" ) );
-      ap->SetAttribute< FloatValue >( "DesiredError", attribMap.Get( "ANNParameters", "DesiredError" ) );
-      ap->SetAttribute< IntValue >( "NumberOfHiddenNodes", attribMap.Get( "ANNParameters", "NumberOfHiddenNodes" ) );
-      myConfiguration->Add( ap, Name );
+      ap->SetAttribute<IntValue>("Iterations", attribMap.Get("ANNParameters", "Iterations"));
+      ap->SetAttribute<IntValue>("MaximumVectorsPerEpoch", attribMap.Get("ANNParameters", "MaximumVectorsPerEpoch"));
+      ap->SetAttribute<IntValue>("EpochIterations", attribMap.Get("ANNParameters", "EpochIterations"));
+      ap->SetAttribute<IntValue>("ErrorInterval", attribMap.Get("ANNParameters", "ErrorInterval"));
+      ap->SetAttribute<FloatValue>("ActivationSlope", attribMap.Get("ANNParameters", "ActivationSlope"));
+      ap->SetAttribute<FloatValue>("ActivationMinMax", attribMap.Get("ANNParameters", "ActivationMinMax"));
+      ap->SetAttribute<FloatValue>("DesiredError", attribMap.Get("ANNParameters", "DesiredError"));
+      ap->SetAttribute<IntValue>("NumberOfHiddenNodes", attribMap.Get("ANNParameters", "NumberOfHiddenNodes"));
+      myConfiguration->Add(ap, Name);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
     }
   }
-  else if ( Name == "ApplyModel" )
+  else if (Name == "ApplyModel")
   {
     try
     {
       ApplyModelType * am = new ApplyModelType;
-      am->SetAttribute< FloatValue >( "MaskThresh", attribMap.Get( "ApplyModel", "MaskThresh" ) );
-      am->SetAttribute< FloatValue >( "GaussianSmoothingSigma",
-                                      attribMap.GetIfExist( "ApplyModel", "GaussianSmoothingSigma" ) );
+      am->SetAttribute<FloatValue>("MaskThresh", attribMap.Get("ApplyModel", "MaskThresh"));
+      am->SetAttribute<FloatValue>("GaussianSmoothingSigma",
+                                   attribMap.GetIfExist("ApplyModel", "GaussianSmoothingSigma"));
 
-      myConfiguration->Add( am, Name );
+      myConfiguration->Add(am, Name);
     }
-    catch ( BRAINSCutExceptionStringHandler & ex )
+    catch (BRAINSCutExceptionStringHandler & ex)
     {
       std::cerr << ex << std::endl;
       throw;
@@ -288,16 +282,16 @@ XMLConfigurationFileParser::StartElement( void * userData, const XML_Char * name
     std::string message = "The Element name of \"";
     message += Name;
     message += "\" does not exist. Please check if the xml file is well-formed\n";
-    throw BRAINSCutExceptionStringHandler( message );
+    throw BRAINSCutExceptionStringHandler(message);
   }
 }
 
 void
-XMLConfigurationFileParser::EndElement( void * userData, const XML_Char * name )
+XMLConfigurationFileParser::EndElement(void * userData, const XML_Char * name)
 {
-  std::list< ElementContainer * > * stack = static_cast< std::list< ElementContainer * > * >( userData );
+  std::list<ElementContainer *> * stack = static_cast<std::list<ElementContainer *> *>(userData);
 
-  if ( std::string( name ) == "DataSet" )
+  if (std::string(name) == "DataSet")
   {
     stack->pop_front();
   }

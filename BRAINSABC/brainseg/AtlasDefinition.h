@@ -30,21 +30,21 @@ class AtlasDefinition
 {
 public:
   //  static const char * tissueTypes[];
-  using TissueTypeVector = std::vector< std::string >;
-  using TemplateMap = std::map< std::string, std::string >;
-  using FloatVector = std::vector< float >;
-  using IntVector = std::vector< int >;
+  using TissueTypeVector = std::vector<std::string>;
+  using TemplateMap = std::map<std::string, std::string>;
+  using FloatVector = std::vector<float>;
+  using IntVector = std::vector<int>;
   /** \class BoundsType */
   class BoundsType
   {
   public:
     BoundsType()
-      : m_Low( 0 )
-      , m_High( 0 )
+      : m_Low(0)
+      , m_High(0)
     {}
 
     void
-    SetLower( const double v )
+    SetLower(const double v)
     {
       m_Low = v;
     }
@@ -56,7 +56,7 @@ public:
     }
 
     void
-    SetUpper( const double v )
+    SetUpper(const double v)
     {
       m_High = v;
     }
@@ -68,21 +68,21 @@ public:
     }
 
     void
-    Print( void ) const
+    Print(void) const
     {
-      itk::NumberToString< double > ds;
-      std::cout << "RANGE:  [" << ds( m_Low ) << "," << ds( m_High ) << "]" << std::endl;
+      itk::NumberToString<double> ds;
+      std::cout << "RANGE:  [" << ds(m_Low) << "," << ds(m_High) << "]" << std::endl;
     }
 
   private:
     double m_Low;
     double m_High;
   };
-  using BoundsMapType = std::map< std::string, BoundsType >;
+  using BoundsMapType = std::map<std::string, BoundsType>;
 
   AtlasDefinition();
   void
-  InitFromXML( const std::string & XMLFilename );
+  InitFromXML(const std::string & XMLFilename);
 
   void
   DebugPrint();
@@ -106,15 +106,15 @@ public:
   }
 
   std::string
-  GetPriorFilename( const std::string & tissueType ) const
+  GetPriorFilename(const std::string & tissueType) const
   {
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
@@ -124,15 +124,15 @@ public:
   }
 
   double
-  GetWeight( const std::string & tissueType ) const
+  GetWeight(const std::string & tissueType) const
   {
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
@@ -142,15 +142,15 @@ public:
   }
 
   int
-  GetGaussianClusterCount( const std::string & tissueType ) const
+  GetGaussianClusterCount(const std::string & tissueType) const
   {
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
@@ -160,16 +160,16 @@ public:
   }
 
   int
-  GetLabelCode( const std::string & tissueType ) const
+  GetLabelCode(const std::string & tissueType) const
   {
     // HACK:  All the get functions need review to remove duplicate code.
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING LABEL CODE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
@@ -179,15 +179,15 @@ public:
   }
 
   int
-  GetUseForBias( const std::string & tissueType ) const
+  GetUseForBias(const std::string & tissueType) const
   {
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
@@ -197,15 +197,15 @@ public:
   }
 
   bool
-  GetIsForegroundPrior( const std::string & tissueType ) const
+  GetIsForegroundPrior(const std::string & tissueType) const
   {
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING IsForegroungPrior IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
@@ -215,55 +215,55 @@ public:
   }
 
   const BoundsType &
-  GetBounds( const std::string & tissueType, const std::string & Modality ) const
+  GetBounds(const std::string & tissueType, const std::string & Modality) const
   {
-    if ( m_PriorMap.find( tissueType ) == m_PriorMap.end() )
+    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find( tissueType );
-    if ( mit == m_PriorMap.end() )
+    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
       std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
       throw;
     }
-    return mit->second.GetBounds( Modality );
+    return mit->second.GetBounds(Modality);
   }
 
   double
-  GetLow( const std::string & tissueType, const std::string & Modality ) const
+  GetLow(const std::string & tissueType, const std::string & Modality) const
   {
-    return this->GetBounds( tissueType, Modality ).GetLower();
+    return this->GetBounds(tissueType, Modality).GetLower();
   }
 
   double
-  GetHigh( const std::string & tissueType, const std::string & Modality ) const
+  GetHigh(const std::string & tissueType, const std::string & Modality) const
   {
-    return this->GetBounds( tissueType, Modality ).GetUpper();
+    return this->GetBounds(tissueType, Modality).GetUpper();
   }
 
   const TissueTypeVector &
   TissueTypes();
 
   void
-  XMLStart( const char * el );
+  XMLStart(const char * el);
 
   void
-  XMLEnd( const char * el );
+  XMLEnd(const char * el);
 
   void
-  XMLChar( const char * buf );
+  XMLChar(const char * buf);
 
 private:
   /** convert to float or throw exception on failure */
   double
-  StrToD( const char * str, const char * message ) const;
+  StrToD(const char * str, const char * message) const;
 
   /** convert to long or throw exception on failure */
   long
-  StrToL( const char * str, const char * message ) const;
+  StrToL(const char * str, const char * message) const;
 
   TemplateMap      m_TemplateVolumes;
   std::string      m_TemplateBrainMask;
@@ -273,11 +273,11 @@ private:
   {
   public:
     Prior()
-      : m_Weight( 0.0 )
-      , m_GaussianClusterCount( 0 )
-      , m_LabelCode( 0 )
-      , m_UseForBias( false )
-      , m_IsForegroundPrior( false )
+      : m_Weight(0.0)
+      , m_GaussianClusterCount(0)
+      , m_LabelCode(0)
+      , m_UseForBias(false)
+      , m_IsForegroundPrior(false)
     {}
 
     const std::string &
@@ -287,7 +287,7 @@ private:
     }
 
     void
-    SetFilename( const std::string & s )
+    SetFilename(const std::string & s)
     {
       m_Filename = s;
     }
@@ -299,7 +299,7 @@ private:
     }
 
     void
-    SetWeight( double x )
+    SetWeight(double x)
     {
       m_Weight = x;
     }
@@ -311,7 +311,7 @@ private:
     }
 
     void
-    SetGaussianClusterCount( int i )
+    SetGaussianClusterCount(int i)
     {
       m_GaussianClusterCount = i;
     }
@@ -323,7 +323,7 @@ private:
     }
 
     void
-    SetLabelCode( const int i )
+    SetLabelCode(const int i)
     {
       m_LabelCode = i;
     }
@@ -335,7 +335,7 @@ private:
     }
 
     void
-    SetUseForBias( const bool i )
+    SetUseForBias(const bool i)
     {
       m_UseForBias = i;
     }
@@ -347,17 +347,17 @@ private:
     }
 
     void
-    SetIsForegroundPrior( const bool i )
+    SetIsForegroundPrior(const bool i)
     {
       m_IsForegroundPrior = i;
     }
 
     const BoundsType &
-    GetBounds( const std::string & Modality ) const
+    GetBounds(const std::string & Modality) const
     {
-      BoundsMapType::const_iterator bit = m_BoundsMap.find( Modality );
+      BoundsMapType::const_iterator bit = m_BoundsMap.find(Modality);
 
-      if ( bit == m_BoundsMap.end() )
+      if (bit == m_BoundsMap.end())
       {
         std::cout << "MISSING MODALIITY TYPE IN ATLAS:  " << Modality << std::endl;
         throw;
@@ -367,23 +367,23 @@ private:
     }
 
     void
-    SetBounds( const std::string & Modality, const BoundsType & b )
+    SetBounds(const std::string & Modality, const BoundsType & b)
     {
       this->m_BoundsMap[Modality] = b;
     }
 
     void
-    SetBounds( const std::string & Modality, double lower, double upper )
+    SetBounds(const std::string & Modality, double lower, double upper)
     {
       BoundsType b;
 
-      b.SetLower( lower );
-      b.SetUpper( upper );
-      this->SetBounds( Modality, b );
+      b.SetLower(lower);
+      b.SetUpper(upper);
+      this->SetBounds(Modality, b);
     }
 
     void
-    SetBoundsList( BoundsMapType & boundsMap )
+    SetBoundsList(BoundsMapType & boundsMap)
     {
       this->m_BoundsMap = boundsMap;
     }
@@ -403,15 +403,15 @@ private:
     bool          m_IsForegroundPrior;
     BoundsMapType m_BoundsMap;
   };
-  using PriorMapType = std::map< std::string, Prior >;
+  using PriorMapType = std::map<std::string, Prior>;
   PriorMapType m_PriorMap;
   //
   // XML Parsing variables
-  std::string              m_LastXMLString;
-  std::string              m_LastPriorType;
-  std::string              m_LastFilename;
-  std::string              m_LastType;
-  std::list< std::string > m_XMLElementStack;
+  std::string            m_LastXMLString;
+  std::string            m_LastPriorType;
+  std::string            m_LastFilename;
+  std::string            m_LastType;
+  std::list<std::string> m_XMLElementStack;
 
   double m_LastWeight;
   double m_LastLower;

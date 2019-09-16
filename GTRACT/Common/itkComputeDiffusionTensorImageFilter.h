@@ -67,18 +67,18 @@ namespace itk
 class GTRACT_COMMON_EXPORT ComputeDiffusionTensorImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ComputeDiffusionTensorImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ComputeDiffusionTensorImageFilter);
 
   /** Standard class type alias. */
   using Self = ComputeDiffusionTensorImageFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Some convenient type alias. */
 
   /** Input Image Types */
-  using InputImageType = itk::Image< signed short, 4 >;
+  using InputImageType = itk::Image<signed short, 4>;
   using InputImagePointer = InputImageType::Pointer;
   using InputImageConstPointer = InputImageType::ConstPointer;
   using InputImageRegionType = InputImageType::RegionType;
@@ -90,8 +90,8 @@ public:
   using InputImageIndexType = InputImageType::IndexType;
 
   /** Output Image Types */
-  using OutputPixelType = itk::Vector< float, 6 >;
-  using OutputImageType = itk::Image< OutputPixelType, 3 >;
+  using OutputPixelType = itk::Vector<float, 6>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
   using OutputImagePointer = OutputImageType::Pointer;
   using OutputImageConstPointer = OutputImageType::ConstPointer;
   using OutputImageRegionType = OutputImageType::RegionType;
@@ -115,30 +115,30 @@ public:
     (Concept::SameDimension<Self::InputImageDimension,4>));
 */
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( ComputeDiffusionTensorImageFilter, itk::Object );
+  itkTypeMacro(ComputeDiffusionTensorImageFilter, itk::Object);
 
   /* SetInput and GetOutput Macros */
-  itkSetObjectMacro( Input, InputImageType );
-  itkGetConstObjectMacro( Output, OutputImageType );
+  itkSetObjectMacro(Input, InputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
 
-  itkSetMacro( UseMedianFilter, bool );
-  itkSetMacro( MedianFilterSize, InputImageSizeType );
-  itkSetMacro( BackgroundThreshold, int );
-  itkSetMacro( NumberOfDirections, int );
-  itkSetMacro( NumberOfBSteps, int );
-  itkSetMacro( DiffusionDirections, TMatrix );
-  itkSetMacro( BValues, TVector );
+  itkSetMacro(UseMedianFilter, bool);
+  itkSetMacro(MedianFilterSize, InputImageSizeType);
+  itkSetMacro(BackgroundThreshold, int);
+  itkSetMacro(NumberOfDirections, int);
+  itkSetMacro(NumberOfBSteps, int);
+  itkSetMacro(DiffusionDirections, TMatrix);
+  itkSetMacro(BValues, TVector);
 
-  itkGetMacro( UseMedianFilter, bool );
-  itkGetMacro( MedianFilterSize, InputImageSizeType );
-  itkGetMacro( BackgroundThreshold, int );
-  itkGetMacro( NumberOfDirections, int );
-  itkGetMacro( NumberOfBSteps, int );
-  itkGetMacro( DiffusionDirections, TMatrix );
-  itkGetMacro( BValues, TVector );
+  itkGetMacro(UseMedianFilter, bool);
+  itkGetMacro(MedianFilterSize, InputImageSizeType);
+  itkGetMacro(BackgroundThreshold, int);
+  itkGetMacro(NumberOfDirections, int);
+  itkGetMacro(NumberOfBSteps, int);
+  itkGetMacro(DiffusionDirections, TMatrix);
+  itkGetMacro(BValues, TVector);
 
   void
   Update();

@@ -39,15 +39,15 @@
 
 namespace itk
 {
-template < typename TInputImage, typename TOutputImage >
-class BRAINSHoughEyeDetector : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class BRAINSHoughEyeDetector : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard ITK type alias */
   using Self = BRAINSHoughEyeDetector;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int Dimension = TInputImage::ImageDimension;
 
@@ -61,7 +61,7 @@ public:
   using InputSpacingType = typename TInputImage::SpacingType;
   using InputPointType = typename TInputImage::PointType;
   using InputDirectionType = typename TInputImage::DirectionType;
-  using InputImageConstIterator = ImageRegionConstIterator< TInputImage >;
+  using InputImageConstIterator = ImageRegionConstIterator<TInputImage>;
 
   /** Output image type alias */
   using OutputImagePointer = typename TOutputImage::Pointer;
@@ -69,129 +69,129 @@ public:
   using OutputImageRegionType = typename TOutputImage::RegionType;
   using OutputPointType = typename TOutputImage::PointType;
 
-  using OutputImageIterator = ImageRegionIterator< TOutputImage >;
-  using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex< TOutputImage >;
+  using OutputImageIterator = ImageRegionIterator<TOutputImage>;
+  using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex<TOutputImage>;
 
   /* Transform and filter type alias */
-  using VersorTransformType = VersorRigid3DTransform< double >;
+  using VersorTransformType = VersorRigid3DTransform<double>;
   using VersorVectorType = typename VersorTransformType::OutputVectorType;
 
-  using WriterType = ImageFileWriter< TInputImage >;
-  using HoughFilterType = HoughTransformRadialVotingImageFilter< TInputImage, TOutputImage >;
+  using WriterType = ImageFileWriter<TInputImage>;
+  using HoughFilterType = HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>;
   using SpheresListType = typename HoughFilterType::SpheresListType;
   using SphereIterator = typename SpheresListType::const_iterator;
   using HoughFilterPointer = typename HoughFilterType::Pointer;
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( BRAINSHoughEyeDetector, ImageToImageFilter );
+  itkTypeMacro(BRAINSHoughEyeDetector, ImageToImageFilter);
 
   /** Method for creation through the object factory */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Display */
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Set/Get the number of circles to extract */
-  itkSetMacro( NumberOfSpheres, unsigned int );
+  itkSetMacro(NumberOfSpheres, unsigned int);
 
   /** Set the minimum radiu value the filter should look for */
-  itkSetMacro( MinimumRadius, double );
+  itkSetMacro(MinimumRadius, double);
 
   /** Set the maximum radius value the filter should look for */
-  itkSetMacro( MaximumRadius, double );
+  itkSetMacro(MaximumRadius, double);
 
   /** Set the scale of the derivative function (using DoG) */
-  itkSetMacro( SigmaGradient, double );
+  itkSetMacro(SigmaGradient, double);
 
   /** Set the variance of the gaussian bluring for the accumulator */
-  itkSetMacro( Variance, double );
+  itkSetMacro(Variance, double);
 
   /** Set the radius of the disc to remove from the accumulator
    *  for each circle found */
-  itkSetMacro( SphereRadiusRatio, double );
+  itkSetMacro(SphereRadiusRatio, double);
 
   /** Set the voting radius */
-  itkSetMacro( VotingRadiusRatio, double );
+  itkSetMacro(VotingRadiusRatio, double);
 
   /** Set the threshold above which the filter should consider
    the point as a valid point */
-  itkSetMacro( Threshold, double );
+  itkSetMacro(Threshold, double);
 
   /** Set the threshold above which the filter should consider
    the point as a valid point */
-  itkSetMacro( OutputThreshold, double );
+  itkSetMacro(OutputThreshold, double);
 
   /** Set the threshold above which the filter should consider
    the point as a valid point */
-  itkSetMacro( GradientThreshold, double );
+  itkSetMacro(GradientThreshold, double);
 
   /** Set the number of threads */
-  itkSetMacro( NbOfThreads, unsigned int );
+  itkSetMacro(NbOfThreads, unsigned int);
 
   /** Set the number of threads */
-  itkSetMacro( SamplingRatio, double );
+  itkSetMacro(SamplingRatio, double);
 
   /** Set the mode of the algorithm
    * HoughEyeDetectorMode = 0: Detecting bright spheres in a dark environment
    * HoughEyeDetectorMode = 1: Detecting dark spheres in a bright environment */
-  itkSetMacro( HoughEyeDetectorMode, int );
+  itkSetMacro(HoughEyeDetectorMode, int);
 
   /** Set the center of head mass of the image */
-  itkSetMacro( orig_lmk_CenterOfHeadMass, InputPointType );
+  itkSetMacro(orig_lmk_CenterOfHeadMass, InputPointType);
 
   /** Set the interior radius of the shell-like RoI */
-  itkSetMacro( R1, double );
+  itkSetMacro(R1, double);
 
   /** Set the exterior radius of the shell-like RoI */
-  itkSetMacro( R2, double );
+  itkSetMacro(R2, double);
 
   /** Set the spread angle of the shell-like RoI */
-  itkSetMacro( Theta, double );
+  itkSetMacro(Theta, double);
 
   /** Get the left eye center coordinate */
-  itkGetMacro( orig_lmk_LE, InputPointType );
+  itkGetMacro(orig_lmk_LE, InputPointType);
 
   /** Get the right eye center coordinate */
-  itkGetMacro( orig_lmk_RE, InputPointType );
+  itkGetMacro(orig_lmk_RE, InputPointType);
 
   /** Set the debug output dir */
-  itkSetMacro( ResultsDir, std::string );
+  itkSetMacro(ResultsDir, std::string);
 
   /** Set the write debug image level */
-  itkSetMacro( WritedebuggingImagesLevel, unsigned int );
+  itkSetMacro(WritedebuggingImagesLevel, unsigned int);
 
   /** Get the accumulator image */
-  itkGetConstObjectMacro( AccumulatorImage, TInputImage );
+  itkGetConstObjectMacro(AccumulatorImage, TInputImage);
 
   /** Get the RoI image */
-  itkGetConstObjectMacro( RoIImage, TInputImage );
+  itkGetConstObjectMacro(RoIImage, TInputImage);
 
   /** Get the maximum output pixel value */
-  itkGetConstMacro( MaxInputPixelValue, OutputPixelType );
+  itkGetConstMacro(MaxInputPixelValue, OutputPixelType);
 
   /** Get the minimum output pixel value */
-  itkGetConstMacro( MinInputPixelValue, OutputPixelType );
+  itkGetConstMacro(MinInputPixelValue, OutputPixelType);
 
   /** Get the versor transform of the detector */
-  itkGetModifiableObjectMacro( orig2eyeFixedTransform, VersorTransformType );
+  itkGetModifiableObjectMacro(orig2eyeFixedTransform, VersorTransformType);
 
   /** Get/Set the failure report */
-  itkGetConstMacro( Failure, bool );
-  itkSetMacro( Failure, bool );
+  itkGetConstMacro(Failure, bool);
+  itkSetMacro(Failure, bool);
 
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( IntConvertibleToOutputCheck, (Concept::Convertible< int, OutputPixelType >));
-  itkConceptMacro( InputGreaterThanDoubleCheck, (Concept::GreaterThanComparable< InputPixelType, double >));
-  itkConceptMacro( OutputPlusIntCheck, (Concept::AdditiveOperators< OutputPixelType, int >));
-  itkConceptMacro( OutputDividedByIntCheck, (Concept::DivisionOperators< OutputPixelType, int >));
+  itkConceptMacro(IntConvertibleToOutputCheck, (Concept::Convertible<int, OutputPixelType>));
+  itkConceptMacro(InputGreaterThanDoubleCheck, (Concept::GreaterThanComparable<InputPixelType, double>));
+  itkConceptMacro(OutputPlusIntCheck, (Concept::AdditiveOperators<OutputPixelType, int>));
+  itkConceptMacro(OutputDividedByIntCheck, (Concept::DivisionOperators<OutputPixelType, int>));
   /** End concept checking */
 #endif
-  BRAINSHoughEyeDetector( const Self & ) = delete;
+  BRAINSHoughEyeDetector(const Self &) = delete;
   void
-  operator=( const Self & ) = delete;
+  operator=(const Self &) = delete;
   virtual ~BRAINSHoughEyeDetector() = default;
 
 protected:

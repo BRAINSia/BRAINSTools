@@ -25,96 +25,96 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TInputPointSet >
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::ReplaceDestinationPointsQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TInputPointSet>
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::ReplaceDestinationPointsQuadEdgeMeshFilter()
 {
-  this->SetNumberOfRequiredInputs( 2 );
-  this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfIndexedOutputs( 1 );
+  this->SetNumberOfRequiredInputs(2);
+  this->SetNumberOfRequiredOutputs(1);
+  this->SetNumberOfIndexedOutputs(1);
 
-  this->SetNthOutput( 0, OutputMeshType::New() );
+  this->SetNthOutput(0, OutputMeshType::New());
 }
 
-template < typename TInputMesh, typename TInputPointSet >
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::~ReplaceDestinationPointsQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TInputPointSet>
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::~ReplaceDestinationPointsQuadEdgeMeshFilter()
 {}
 
-template < typename TInputMesh, typename TInputPointSet >
+template <typename TInputMesh, typename TInputPointSet>
 void
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::SetInputMesh( const InputMeshType * mesh )
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::SetInputMesh(const InputMeshType * mesh)
 {
-  itkDebugMacro( "setting input Mesh to " << mesh );
-  if ( mesh != static_cast< const InputMeshType * >( this->ProcessObject::GetInput( 0 ) ) )
+  itkDebugMacro("setting input Mesh to " << mesh);
+  if (mesh != static_cast<const InputMeshType *>(this->ProcessObject::GetInput(0)))
   {
-    this->ProcessObject::SetNthInput( 0, const_cast< InputMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(0, const_cast<InputMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TInputPointSet >
-const typename ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::InputMeshType *
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::GetInputMesh() const
+template <typename TInputMesh, typename TInputPointSet>
+const typename ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::InputMeshType *
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::GetInputMesh() const
 {
-  Self *                surrogate = const_cast< Self * >( this );
-  const InputMeshType * referenceMesh = static_cast< const InputMeshType * >( surrogate->ProcessObject::GetInput( 0 ) );
+  Self *                surrogate = const_cast<Self *>(this);
+  const InputMeshType * referenceMesh = static_cast<const InputMeshType *>(surrogate->ProcessObject::GetInput(0));
   return referenceMesh;
 }
 
-template < typename TInputMesh, typename TInputPointSet >
+template <typename TInputMesh, typename TInputPointSet>
 void
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::SetDestinationPoints(
-  const InputPointSetType * destinationPointSet )
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::SetDestinationPoints(
+  const InputPointSetType * destinationPointSet)
 {
-  itkDebugMacro( "setting input ReferenceMesh to " << destinationPointSet );
-  if ( destinationPointSet != static_cast< const InputPointSetType * >( this->ProcessObject::GetInput( 1 ) ) )
+  itkDebugMacro("setting input ReferenceMesh to " << destinationPointSet);
+  if (destinationPointSet != static_cast<const InputPointSetType *>(this->ProcessObject::GetInput(1)))
   {
-    this->ProcessObject::SetNthInput( 1, const_cast< InputPointSetType * >( destinationPointSet ) );
+    this->ProcessObject::SetNthInput(1, const_cast<InputPointSetType *>(destinationPointSet));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TInputPointSet >
-const typename ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::InputPointSetType *
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::GetDestinationPoints() const
+template <typename TInputMesh, typename TInputPointSet>
+const typename ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::InputPointSetType *
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::GetDestinationPoints() const
 {
-  Self *                    surrogate = const_cast< Self * >( this );
+  Self *                    surrogate = const_cast<Self *>(this);
   const InputPointSetType * destinationPointSet =
-    static_cast< const InputPointSetType * >( surrogate->ProcessObject::GetInput( 1 ) );
+    static_cast<const InputPointSetType *>(surrogate->ProcessObject::GetInput(1));
   return destinationPointSet;
 }
 
-template < typename TInputMesh, typename TInputPointSet >
+template <typename TInputMesh, typename TInputPointSet>
 void
-ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::GenerateData()
+ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>::GenerateData()
 {
   this->CopyInputMeshToOutputMesh();
 
   const InputPointSetType * inputPointSet = this->GetDestinationPoints();
 
-  if ( !inputPointSet )
+  if (!inputPointSet)
   {
-    itkExceptionMacro( "Input PointSet is missing" );
+    itkExceptionMacro("Input PointSet is missing");
   }
 
   using DestinationPointsContainer = typename InputPointSetType::PointsContainer;
 
   const DestinationPointsContainer * destinationPoints = inputPointSet->GetPoints();
 
-  if ( !destinationPoints )
+  if (!destinationPoints)
   {
-    itkExceptionMacro( "Input PointSet has no points" );
+    itkExceptionMacro("Input PointSet has no points");
   }
 
   OutputMeshType * outputMesh = this->GetOutput();
 
   const unsigned int numberOfPoints = outputMesh->GetNumberOfPoints();
 
-  if ( destinationPoints->Size() != numberOfPoints )
+  if (destinationPoints->Size() != numberOfPoints)
   {
-    itkExceptionMacro( "The PointSet does not have the same number of points as the Mesh" );
+    itkExceptionMacro("The PointSet does not have the same number of points as the Mesh");
   }
 
-  ProgressReporter progress( this, 0, numberOfPoints );
+  ProgressReporter progress(this, 0, numberOfPoints);
 
   using DestinationPointIterator = typename DestinationPointsContainer::ConstIterator;
 
@@ -128,10 +128,10 @@ ReplaceDestinationPointsQuadEdgeMeshFilter< TInputMesh, TInputPointSet >::Genera
 
   OutputPointIterator outputPointItr = outputPoints->Begin();
 
-  while ( destinationPointItr != destinationPointEnd )
+  while (destinationPointItr != destinationPointEnd)
   {
     OutputPointType & outputPoint = outputPointItr.Value();
-    outputPoint.SetPoint( destinationPointItr.Value() );
+    outputPoint.SetPoint(destinationPointItr.Value());
     ++outputPointItr;
     ++destinationPointItr;
   }

@@ -31,77 +31,77 @@ namespace itk
 /*
  *
  */
-template < typename TInputImage, typename TOutputImage >
-BOBFFilter< TInputImage, TOutputImage >::BOBFFilter()
-  : m_Lower( NumericTraits< InputPixelType >::NonpositiveMin() )
-  , m_Upper( NumericTraits< InputPixelType >::max() )
-  , m_ReplaceValue( NumericTraits< OutputPixelType >::OneValue() )
+template <typename TInputImage, typename TOutputImage>
+BOBFFilter<TInputImage, TOutputImage>::BOBFFilter()
+  : m_Lower(NumericTraits<InputPixelType>::NonpositiveMin())
+  , m_Upper(NumericTraits<InputPixelType>::max())
+  , m_ReplaceValue(NumericTraits<OutputPixelType>::OneValue())
 {
-  this->SetNumberOfRequiredInputs( 2 );
-  m_Seed.Fill( 0 );
-  m_Radius.Fill( 1 );
+  this->SetNumberOfRequiredInputs(2);
+  m_Seed.Fill(0);
+  m_Radius.Fill(1);
 }
 
 /*
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BOBFFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+BOBFFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 }
 
 /*
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BOBFFilter< TInputImage, TOutputImage >::SetInputMask(
-  const typename BOBFFilter< TInputImage, TOutputImage >::InputImageType * image )
+BOBFFilter<TInputImage, TOutputImage>::SetInputMask(
+  const typename BOBFFilter<TInputImage, TOutputImage>::InputImageType * image)
 {
-  this->SetNthInput( 1, const_cast< TInputImage * >( image ) );
+  this->SetNthInput(1, const_cast<TInputImage *>(image));
 }
 
-template < typename TInputImage, typename TOutputImage >
-const typename BOBFFilter< TInputImage, TOutputImage >::InputImageType *
-BOBFFilter< TInputImage, TOutputImage >::GetInputMask()
+template <typename TInputImage, typename TOutputImage>
+const typename BOBFFilter<TInputImage, TOutputImage>::InputImageType *
+BOBFFilter<TInputImage, TOutputImage>::GetInputMask()
 {
-  return static_cast< const TInputImage * >( this->ProcessObject::GetInput( 1 ) );
+  return static_cast<const TInputImage *>(this->ProcessObject::GetInput(1));
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BOBFFilter< TInputImage, TOutputImage >::GenerateData()
+BOBFFilter<TInputImage, TOutputImage>::GenerateData()
 {
   OutputImagePointer     OutputPtr = this->GetOutput();
   InputImageConstPointer InputImage = this->GetInputImage();
   InputImageConstPointer InputMask = this->GetInputMask();
 
   /*Allocate the output*/
-  OutputPtr->SetRequestedRegion( InputImage->GetRequestedRegion() );
-  OutputPtr->SetBufferedRegion( InputImage->GetBufferedRegion() );
-  OutputPtr->SetLargestPossibleRegion( InputImage->GetLargestPossibleRegion() );
-  OutputPtr->CopyInformation( InputImage );
+  OutputPtr->SetRequestedRegion(InputImage->GetRequestedRegion());
+  OutputPtr->SetBufferedRegion(InputImage->GetBufferedRegion());
+  OutputPtr->SetLargestPossibleRegion(InputImage->GetLargestPossibleRegion());
+  OutputPtr->CopyInformation(InputImage);
   OutputPtr->Allocate();
 
-  using InputIterator = ImageRegionConstIterator< TInputImage >;
-  using OutputIterator = ImageRegionIterator< TOutputImage >;
+  using InputIterator = ImageRegionConstIterator<TInputImage>;
+  using OutputIterator = ImageRegionIterator<TOutputImage>;
 
-  OutputIterator outItr( OutputPtr, OutputPtr->GetLargestPossibleRegion() );
+  OutputIterator outItr(OutputPtr, OutputPtr->GetLargestPossibleRegion());
 
-  InputIterator ImgItr( InputImage, InputImage->GetLargestPossibleRegion() );
+  InputIterator ImgItr(InputImage, InputImage->GetLargestPossibleRegion());
 
-  InputIterator MskItr( InputMask, InputMask->GetLargestPossibleRegion() );
-  for ( ImgItr.GoToBegin(), MskItr.GoToBegin(), outItr.GoToBegin(); !ImgItr.IsAtEnd(); ++ImgItr, ++MskItr, ++outItr )
+  InputIterator MskItr(InputMask, InputMask->GetLargestPossibleRegion());
+  for (ImgItr.GoToBegin(), MskItr.GoToBegin(), outItr.GoToBegin(); !ImgItr.IsAtEnd(); ++ImgItr, ++MskItr, ++outItr)
   {
-    if ( MskItr.Get() == 0 )
+    if (MskItr.Get() == 0)
     {
-      outItr.Set( m_ReplaceValue );
+      outItr.Set(m_ReplaceValue);
     }
     else
     {
-      outItr.Set( ImgItr.Get() );
+      outItr.Set(ImgItr.Get());
     }
   }
 }

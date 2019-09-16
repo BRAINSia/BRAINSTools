@@ -31,19 +31,19 @@ namespace itk
  * \brief Compute the Gauss map of a given mesh. It change the position of
  * each vertex to its computed normal.
  */
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshGaussMapFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshGaussMapFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
   using Self = QuadEdgeMeshGaussMapFilter;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( QuadEdgeMeshGaussMapFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(QuadEdgeMeshGaussMapFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -82,33 +82,39 @@ public:
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  typedef QuadEdgeMeshExtendedTraits< OutputVectorType, PointDimension, 2, OutputCoordRepType, OutputCoordRepType,
-                                      OutputVectorType, bool, bool >
+  typedef QuadEdgeMeshExtendedTraits<OutputVectorType,
+                                     PointDimension,
+                                     2,
+                                     OutputCoordRepType,
+                                     OutputCoordRepType,
+                                     OutputVectorType,
+                                     bool,
+                                     bool>
     OutputNormalMeshTraits;
-  using OutputNormalMeshType = QuadEdgeMesh< OutputVectorType, PointDimension, OutputNormalMeshTraits >;
+  using OutputNormalMeshType = QuadEdgeMesh<OutputVectorType, PointDimension, OutputNormalMeshTraits>;
   using OutputNormalMeshPointer = typename OutputNormalMeshType::Pointer;
   typedef typename OutputNormalMeshType::PointsContainerPointer     OutputNormalMeshPointsContainerPointer;
   typedef typename OutputNormalMeshType::PointsContainerIterator    OutputNormalMeshPointsContainerIterator;
   typedef typename OutputNormalMeshType::PointDataContainerPointer  OutputNormalMeshPointDataContainerPointer;
   typedef typename OutputNormalMeshType::PointDataContainerIterator OutputNormalMeshPointDataContainerIterator;
 
-  using NormalFilterType = QuadEdgeMeshNormalFilter< OutputMeshType, OutputNormalMeshType >;
+  using NormalFilterType = QuadEdgeMeshNormalFilter<OutputMeshType, OutputNormalMeshType>;
   using NormalFilterPointer = typename NormalFilterType::Pointer;
 
-  using CoefficientsComputation = MatrixCoefficients< InputMeshType >;
+  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
 
   void
-  SetCoefficientsMethod( CoefficientsComputation * iMethod )
+  SetCoefficientsMethod(CoefficientsComputation * iMethod)
   {
     (void)iMethod;
   }
 
-  itkSetMacro( Radius, OutputCoordRepType );
+  itkSetMacro(Radius, OutputCoordRepType);
 
 protected:
   QuadEdgeMeshGaussMapFilter()
     : Superclass()
-    , m_Radius( 1. )
+    , m_Radius(1.)
   {}
 
   ~QuadEdgeMeshGaussMapFilter() {}
@@ -123,35 +129,35 @@ protected:
     OutputMeshPointer output = this->GetOutput();
 
     NormalFilterPointer normals = NormalFilterType::New();
-    normals->SetInput( output );
-    normals->SetWeight( NormalFilterType::GOURAUD );
+    normals->SetInput(output);
+    normals->SetWeight(NormalFilterType::GOURAUD);
     normals->Update();
 
     OutputNormalMeshPointer mesh_with_normals = normals->GetOutput();
 
     OutputNormalMeshPointDataContainerPointer pointdata = mesh_with_normals->GetPointData();
 
-    OutputPointIdentifier id( 0 );
+    OutputPointIdentifier id(0);
     OutputPointType       p;
-    unsigned int          dim( 0 );
+    unsigned int          dim(0);
 
     OutputNormalMeshPointDataContainerIterator it = pointdata->Begin();
-    for ( ; it != pointdata->End(); ++it )
+    for (; it != pointdata->End(); ++it)
     {
       id = it->Index();
-      for ( dim = 0; dim < PointDimension; ++dim )
+      for (dim = 0; dim < PointDimension; ++dim)
       {
-        p[dim] = m_Radius * static_cast< OutputCoordRepType >( it.Value()[dim] );
+        p[dim] = m_Radius * static_cast<OutputCoordRepType>(it.Value()[dim]);
       }
-      p.SetEdge( output->FindEdge( id ) );
-      output->SetPoint( id, p );
+      p.SetEdge(output->FindEdge(id));
+      output->SetPoint(id, p);
     }
   }
 
 private:
-  QuadEdgeMeshGaussMapFilter( const Self & );
+  QuadEdgeMeshGaussMapFilter(const Self &);
   void
-  operator=( const Self & );
+  operator=(const Self &);
 };
 } // namespace itk
 #endif

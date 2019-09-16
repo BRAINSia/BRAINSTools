@@ -75,46 +75,46 @@ static const float            FLOAT_TOLERANCE = 0.01;
 constexpr unsigned char DIMENSION = 3;
 
 using ReadInPixelType = double;
-using ReadInImageType = itk::Image< ReadInPixelType, DIMENSION >;
+using ReadInImageType = itk::Image<ReadInPixelType, DIMENSION>;
 using ReadInImagePointer = ReadInImageType::Pointer;
 
 using WorkingPixelType = float;
-using WorkingImageType = itk::Image< WorkingPixelType, DIMENSION >;
+using WorkingImageType = itk::Image<WorkingPixelType, DIMENSION>;
 using WorkingImagePointer = WorkingImageType::Pointer;
 
-using WorkingImageVectorType = std::vector< WorkingImagePointer >;
+using WorkingImageVectorType = std::vector<WorkingImagePointer>;
 
 /* Deformations */
 using DeformationScalarType = double;
-using DeformationPixelType = itk::Vector< DeformationScalarType, DIMENSION >;
-using DisplacementFieldType = itk::Image< DeformationPixelType, DIMENSION >;
+using DeformationPixelType = itk::Vector<DeformationScalarType, DIMENSION>;
+using DisplacementFieldType = itk::Image<DeformationPixelType, DIMENSION>;
 
 using WorkingIndexType = WorkingImageType::IndexType;
 
-using InputVectorType = std::vector< WorkingPixelType >;
-using OutputVectorType = std::vector< WorkingPixelType >;
+using InputVectorType = std::vector<WorkingPixelType>;
+using OutputVectorType = std::vector<WorkingPixelType>;
 
 // HACK INFO:  Regina int below should be unsigned int to avoid negative index numbers
-using InputVectorMapType = std::map< int, InputVectorType >; // < index ,feature vector > pair
-using OutputVectorMapType = std::map< int, OutputVectorType >;
-using PredictValueMapType = std::map< int, scalarType >;
+using InputVectorMapType = std::map<int, InputVectorType>; // < index ,feature vector > pair
+using OutputVectorMapType = std::map<int, OutputVectorType>;
+using PredictValueMapType = std::map<int, scalarType>;
 
 std::string
-GetAtlasToSubjectRegistrationFilename( DataSet & subject );
+GetAtlasToSubjectRegistrationFilename(DataSet & subject);
 
 std::string
-GetSubjectToAtlasRegistrationFilename( DataSet & subject );
+GetSubjectToAtlasRegistrationFilename(DataSet & subject);
 
 WorkingImagePointer
-SmoothImage( const WorkingImagePointer & image, const float GaussianValue );
+SmoothImage(const WorkingImagePointer & image, const float GaussianValue);
 
 WorkingImagePointer
-ReadImageByFilename( const std::string & filename );
+ReadImageByFilename(const std::string & filename);
 
 DisplacementFieldType::Pointer
-GetDeformationField( std::string filename );
+GetDeformationField(std::string filename);
 
-itk::Transform< double, 3, 3 >::Pointer
-GetGenericTransform( std::string filename );
+itk::Transform<double, 3, 3>::Pointer
+GetGenericTransform(std::string filename);
 
 #endif

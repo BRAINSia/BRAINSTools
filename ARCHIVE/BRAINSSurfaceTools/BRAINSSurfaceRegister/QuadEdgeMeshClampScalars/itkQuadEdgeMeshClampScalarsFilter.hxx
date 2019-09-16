@@ -25,26 +25,26 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TOutputMesh >
-QuadEdgeMeshClampScalarsFilter< TInputMesh, TOutputMesh >::QuadEdgeMeshClampScalarsFilter()
+template <typename TInputMesh, typename TOutputMesh>
+QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshClampScalarsFilter()
 {
-  this->SetNumberOfRequiredInputs( 1 );
-  this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfIndexedOutputs( 1 );
+  this->SetNumberOfRequiredInputs(1);
+  this->SetNumberOfRequiredOutputs(1);
+  this->SetNumberOfIndexedOutputs(1);
 
-  this->SetNthOutput( 0, OutputMeshType::New() );
+  this->SetNthOutput(0, OutputMeshType::New());
 
   this->m_ClampMin = false;
   this->m_ClampMax = false;
 }
 
-template < typename TInputMesh, typename TOutputMesh >
-QuadEdgeMeshClampScalarsFilter< TInputMesh, TOutputMesh >::~QuadEdgeMeshClampScalarsFilter()
+template <typename TInputMesh, typename TOutputMesh>
+QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>::~QuadEdgeMeshClampScalarsFilter()
 {}
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-QuadEdgeMeshClampScalarsFilter< TInputMesh, TOutputMesh >::GenerateData()
+QuadEdgeMeshClampScalarsFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
   this->CopyInputMeshToOutputMesh();
 
@@ -61,17 +61,17 @@ QuadEdgeMeshClampScalarsFilter< TInputMesh, TOutputMesh >::GenerateData()
   //
 
   OutputPointDataContainerIterator outputDataItr = outputPointData->Begin();
-  while ( outputDataItr != outputDataEnd )
+  while (outputDataItr != outputDataEnd)
   {
-    if ( this->m_ClampMin || this->m_ClampMax )
+    if (this->m_ClampMin || this->m_ClampMax)
     {
       // minimum end
-      if ( outputDataItr.Value() < this->m_OutputMinimum )
+      if (outputDataItr.Value() < this->m_OutputMinimum)
       {
         outputDataItr.Value() = this->m_OutputMinimum;
       }
       // maximum end
-      if ( outputDataItr.Value() > this->m_OutputMaximum )
+      if (outputDataItr.Value() > this->m_OutputMaximum)
       {
         outputDataItr.Value() = this->m_OutputMaximum;
       }

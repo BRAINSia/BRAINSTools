@@ -34,97 +34,97 @@ public:
   using SuperClass = ElementParser;
 
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== DataSet ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== DataSet ===" << std::endl;
     return indent + 2;
   }
 
   using StringVectorType = SuperClass::StringVectorType;
 
   DataSet()
-    : ElementParser( "DataSet" )
+    : ElementParser("DataSet")
   {
-    this->Add( new StringValue( "Name", "" ), "Name" );
-    this->Add( new StringValue( "Type", "" ), "Type" );
-    this->Add( new StringValue( "OutputDir", "na" ), "OutputDir" );
-    this->Add( new ImageList, "ImageList" );
-    this->Add( new SpatialLocationList, "SpatialLocationList" );
-    this->Add( new MaskList, "MaskList" );
-    this->Add( new RegistrationList, "RegistrationList" );
+    this->Add(new StringValue("Name", ""), "Name");
+    this->Add(new StringValue("Type", ""), "Type");
+    this->Add(new StringValue("OutputDir", "na"), "OutputDir");
+    this->Add(new ImageList, "ImageList");
+    this->Add(new SpatialLocationList, "SpatialLocationList");
+    this->Add(new MaskList, "MaskList");
+    this->Add(new RegistrationList, "RegistrationList");
   }
 
   //
   // get the filename out of the list specified by listname.
   // templated over the list type and element typee.
   //
-  template < typename ListType, typename ElementType >
+  template <typename ListType, typename ElementType>
   std::string
-  GetFilenameByType( const char * listName, const char * type ) const
+  GetFilenameByType(const char * listName, const char * type) const
   {
-    const ListType *    list = this->Get< ListType >( listName );
-    const ElementType * element = list->template GetMatching< ElementType >( "Type", type );
+    const ListType *    list = this->Get<ListType>(listName);
+    const ElementType * element = list->template GetMatching<ElementType>("Type", type);
 
-    return element == nullptr ? std::string() : element->template GetAttribute< StringValue >( "Filename" );
+    return element == nullptr ? std::string() : element->template GetAttribute<StringValue>("Filename");
   }
 
   //
   // get the image with the type 'type'
   const std::string
-  GetImageFilenameByType( const char * type ) const
+  GetImageFilenameByType(const char * type) const
   {
-    return this->GetFilenameByType< ImageList, ImageDescription >( "ImageList", type );
+    return this->GetFilenameByType<ImageList, ImageDescription>("ImageList", type);
   }
 
   const std::string
-  GetImageFilenameByType( const std::string & type ) const
+  GetImageFilenameByType(const std::string & type) const
   {
-    return GetImageFilenameByType( type.c_str() );
+    return GetImageFilenameByType(type.c_str());
   }
 
   //
   // get the SpatialLocation with the type 'type'
   const std::string
-  GetSpatialLocationFilenameByType( const char * type ) const
+  GetSpatialLocationFilenameByType(const char * type) const
   {
-    return this->GetFilenameByType< SpatialLocationList, SpatialLocationType >( "SpatialLocationList", type );
+    return this->GetFilenameByType<SpatialLocationList, SpatialLocationType>("SpatialLocationList", type);
   }
 
   const std::string
-  GetSpatialLocationFilenameByType( const std::string & type ) const
+  GetSpatialLocationFilenameByType(const std::string & type) const
   {
-    return GetSpatialLocationFilenameByType( type.c_str() );
+    return GetSpatialLocationFilenameByType(type.c_str());
   }
 
   //
   // get the Mask with the type 'type'
   const std::string
-  GetMaskFilenameByType( const char * type ) const
+  GetMaskFilenameByType(const char * type) const
   {
-    return this->GetFilenameByType< MaskList, MaskType >( "MaskList", type );
+    return this->GetFilenameByType<MaskList, MaskType>("MaskList", type);
   }
 
   const std::string
-  GetMaskFilenameByType( const std::string & type ) const
+  GetMaskFilenameByType(const std::string & type) const
   {
-    return GetMaskFilenameByType( type.c_str() );
+    return GetMaskFilenameByType(type.c_str());
   }
 
   //
   // get the Registration with the ID 'id'
   const RegistrationType *
-  GetRegistrationWithID( const char * id ) const
+  GetRegistrationWithID(const char * id) const
   {
-    const RegistrationList * list = this->Get< RegistrationList >( "RegistrationList" );
+    const RegistrationList * list = this->Get<RegistrationList>("RegistrationList");
 
-    return list->GetMatching< RegistrationType >( "ID", id );
+    return list->GetMatching<RegistrationType>("ID", id);
   }
 
   const RegistrationType *
-  GetRegistrationWithID( const std::string & id ) const
+  GetRegistrationWithID(const std::string & id) const
   {
-    return GetRegistrationWithID( id.c_str() );
+    return GetRegistrationWithID(id.c_str());
   }
 
   //
@@ -132,9 +132,9 @@ public:
   const StringVectorType
   GetImageTypes() const
   {
-    const ImageList * imList = this->Get< ImageList >( "ImageList" );
+    const ImageList * imList = this->Get<ImageList>("ImageList");
 
-    return imList->CollectAttValues< ImageDescription >( "Type" );
+    return imList->CollectAttValues<ImageDescription>("Type");
   }
 
   //
@@ -142,9 +142,9 @@ public:
   const StringVectorType
   GetSpatialLocationTypes() const
   {
-    const SpatialLocationList * spatialLocationList = this->Get< SpatialLocationList >( "SpatialLocationList" );
+    const SpatialLocationList * spatialLocationList = this->Get<SpatialLocationList>("SpatialLocationList");
 
-    return spatialLocationList->CollectAttValues< SpatialLocationType >( "Type" );
+    return spatialLocationList->CollectAttValues<SpatialLocationType>("Type");
   }
 
   //
@@ -152,9 +152,9 @@ public:
   const StringVectorType
   GetMaskTypes() const
   {
-    const MaskList * maskList = this->Get< MaskList >( "MaskList" );
+    const MaskList * maskList = this->Get<MaskList>("MaskList");
 
-    return maskList->CollectAttValues< MaskType >( "Type" );
+    return maskList->CollectAttValues<MaskType>("Type");
   }
 };
 
@@ -162,7 +162,7 @@ class DataSetList : public ElementParser
 {
 public:
   DataSetList()
-    : ElementParser( "DataSetList" )
+    : ElementParser("DataSetList")
   {}
 };
 

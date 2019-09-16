@@ -33,7 +33,7 @@ void RegisterTests()
 void
 RegisterTests()
 {
-  REGISTER_TEST( DWIConvertTest );
+  REGISTER_TEST(DWIConvertTest);
 }
 
 #undef main

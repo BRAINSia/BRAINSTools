@@ -26,8 +26,9 @@
 class PhilipsDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  PhilipsDWIConverter( DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                       DWIConverter::FileNamesContainer & inputFileNames, const bool useBMatrixGradientDirections );
+  PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
+                      DWIConverter::FileNamesContainer &       inputFileNames,
+                      const bool                               useBMatrixGradientDirections);
   ~PhilipsDWIConverter() override;
 
   void

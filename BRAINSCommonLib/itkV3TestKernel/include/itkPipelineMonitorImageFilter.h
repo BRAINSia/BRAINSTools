@@ -61,14 +61,14 @@ namespace itk
  *
  * \ingroup ITKTestKernel
  */
-template < typename TImageType >
-class PipelineMonitorImageFilter : public InPlaceImageFilter< TImageType, TImageType >
+template <typename TImageType>
+class PipelineMonitorImageFilter : public InPlaceImageFilter<TImageType, TImageType>
 {
 public:
   using Self = PipelineMonitorImageFilter;
-  using Superclass = InPlaceImageFilter< TImageType, TImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = InPlaceImageFilter<TImageType, TImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   using PointType = typename TImageType::PointType;
   using DirectionType = typename TImageType::DirectionType;
@@ -77,13 +77,13 @@ public:
   using InputImageConstPointer = typename TImageType::ConstPointer;
   using ImageRegionType = typename Superclass::InputImageRegionType;
 
-  using RegionVectorType = std::vector< typename TImageType::RegionType >;
+  using RegionVectorType = std::vector<typename TImageType::RegionType>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( PipelineMonitorImageFilter, ImageToImageFilter );
+  itkTypeMacro(PipelineMonitorImageFilter, ImageToImageFilter);
 
   /** Enable/Disable clearing all saved pipeline information when
    * GenerateOutputInformation is called.
@@ -94,9 +94,9 @@ public:
    *
    * Defaults to On
    */
-  itkSetMacro( ClearPipelineOnGenerateOutputInformation, bool );
-  itkGetMacro( ClearPipelineOnGenerateOutputInformation, bool );
-  itkBooleanMacro( ClearPipelineOnGenerateOutputInformation );
+  itkSetMacro(ClearPipelineOnGenerateOutputInformation, bool);
+  itkGetMacro(ClearPipelineOnGenerateOutputInformation, bool);
+  itkBooleanMacro(ClearPipelineOnGenerateOutputInformation);
 
   /** This a meta verify method to check expected pipeline execution
    * when the pipeline is capable of streaming. See
@@ -104,22 +104,22 @@ public:
    * expectedNumber parameter.
    */
   bool
-  VerifyAllInputCanStream( int expectedNumber );
+  VerifyAllInputCanStream(int expectedNumber);
 
   /** Checks that the input filter didn't stream, and just updated
    * the largest possible region along with other correct behaviors.
    */
   bool
-  VerifyAllInputCanNotStream( void );
+  VerifyAllInputCanNotStream(void);
 
   /** This method verifies that propagation was executed yet no
    * updating was needed.
    */
   bool
-  VerifyAllNoUpdate( void );
+  VerifyAllNoUpdate(void);
 
   bool
-  VerifyDownStreamFilterExecutedPropagation( void );
+  VerifyDownStreamFilterExecutedPropagation(void);
 
   /** Verifies the the GenerateData executed the expected number of
    * times.
@@ -131,51 +131,51 @@ public:
    * performed.
    */
   bool
-  VerifyInputFilterExecutedStreaming( int expectedNumber );
+  VerifyInputFilterExecutedStreaming(int expectedNumber);
 
   /** Verifies that the output information didn't change between the
    * GenerateOutputInformation and the UpdateData phases of the
    * pipeline.
    */
   bool
-  VerifyInputFilterMatchedUpdateOutputInformation( void );
+  VerifyInputFilterMatchedUpdateOutputInformation(void);
 
   /** Verifies that the input filter buffered the requested region */
   bool
-  VerifyInputFilterBufferedRequestedRegions( void );
+  VerifyInputFilterBufferedRequestedRegions(void);
 
   bool
-  VerifyInputFilterMatchedRequestedRegions( void );
+  VerifyInputFilterMatchedRequestedRegions(void);
 
   bool
-  VerifyInputFilterRequestedLargestRegion( void );
+  VerifyInputFilterRequestedLargestRegion(void);
 
   unsigned int
-  GetNumberOfUpdates( void ) const
+  GetNumberOfUpdates(void) const
   {
     return m_NumberOfUpdates;
   }
 
   RegionVectorType
-  GetOutputRequestedRegions( void ) const
+  GetOutputRequestedRegions(void) const
   {
     return m_OutputRequestedRegions;
   }
 
   RegionVectorType
-  GetInputRequestedRegions( void ) const
+  GetInputRequestedRegions(void) const
   {
     return m_InputRequestedRegions;
   }
 
   RegionVectorType
-  GetUpdatedBufferedRegions( void ) const
+  GetUpdatedBufferedRegions(void) const
   {
     return m_UpdatedBufferedRegions;
   }
 
   RegionVectorType
-  GetUpdatedRequestedRegions( void ) const
+  GetUpdatedRequestedRegions(void) const
   {
     return m_UpdatedRequestedRegions;
   }
@@ -183,38 +183,38 @@ public:
   /** Clears all saved pipeline information, but increments
    * NumberOfClearPipeline. */
   void
-  ClearPipelineSavedInformation( void );
+  ClearPipelineSavedInformation(void);
 
   /** Standard pipeline methods are overloaded to call superclass's
    * implementation and record information.
    */
   virtual void
-  GenerateOutputInformation( void );
+  GenerateOutputInformation(void);
 
   virtual void
-  PropagateRequestedRegion( DataObject * output );
+  PropagateRequestedRegion(DataObject * output);
 
   virtual void
-  EnlargeOutputRequestedRegion( DataObject * output );
+  EnlargeOutputRequestedRegion(DataObject * output);
 
   virtual void
-  GenerateInputRequestedRegion( void );
+  GenerateInputRequestedRegion(void);
 
   virtual void
-  GenerateData( void );
+  GenerateData(void);
 
 protected:
-  PipelineMonitorImageFilter( void );
+  PipelineMonitorImageFilter(void);
 
   // ~PipelineMonitorImageFilter() { } default implementation OK
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
 private:
-  PipelineMonitorImageFilter( const PipelineMonitorImageFilter & ); // not implemented
+  PipelineMonitorImageFilter(const PipelineMonitorImageFilter &); // not implemented
   void
-  operator=( const PipelineMonitorImageFilter & ); // not implemented
+  operator=(const PipelineMonitorImageFilter &); // not implemented
 
   bool m_ClearPipelineOnGenerateOutputInformation;
 

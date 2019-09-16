@@ -26,7 +26,9 @@
 #  include <string>
 
 void
-filterFloatImages( std::vector< itk::Image< float, 3 >::Pointer > & images, std::string & method, unsigned int iters,
-                   double dt );
+filterFloatImages(std::vector<itk::Image<float, 3>::Pointer> & images,
+                  std::string &                                method,
+                  unsigned int                                 iters,
+                  double                                       dt);
 
 #endif

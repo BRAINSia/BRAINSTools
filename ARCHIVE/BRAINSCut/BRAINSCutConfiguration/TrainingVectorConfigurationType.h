@@ -28,22 +28,22 @@ class TrainingVectorConfigurationType : public ElementParser
 public:
   using SuperClass = ElementParser;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== TrainingVectorConfigurationType ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== TrainingVectorConfigurationType ===" << std::endl;
     return indent + 2;
   }
 
   TrainingVectorConfigurationType()
-    : ElementParser( "TrainingVectorConfiguration" )
+    : ElementParser("TrainingVectorConfiguration")
   {
-    this->Add( new FloatValue( "MaskSmoothingValue", 0.0 ), "MaskSmoothingValue" );
-    this->Add( new IntValue( "GradientProfileSize", 1 ), "GradientProfileSize" );
-    this->Add( new StringValue( "TrainingVectorFilename", "" ), "TrainingVectorFilename" );
-    this->Add( new StringValue( "TestVectorFilename", "" ), "TestVectorFilename" );
-    this->Add( new StringValue( "TrainingModelFilename", "" ), "TrainingModelFilename" );
-    this->Add( new StringValue( "Normalization", "" ), "Normalization" );
+    this->Add(new FloatValue("MaskSmoothingValue", 0.0), "MaskSmoothingValue");
+    this->Add(new IntValue("GradientProfileSize", 1), "GradientProfileSize");
+    this->Add(new StringValue("TrainingVectorFilename", ""), "TrainingVectorFilename");
+    this->Add(new StringValue("TestVectorFilename", ""), "TestVectorFilename");
+    this->Add(new StringValue("TrainingModelFilename", ""), "TrainingModelFilename");
+    this->Add(new StringValue("Normalization", ""), "Normalization");
   }
 };
 

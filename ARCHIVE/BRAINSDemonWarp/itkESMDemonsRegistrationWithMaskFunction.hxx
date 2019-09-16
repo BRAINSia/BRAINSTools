@@ -27,30 +27,30 @@ namespace itk
 /**
  * Default constructor
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
-                                       TDisplacementField >::ESMDemonsRegistrationWithMaskFunction()
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::
+  ESMDemonsRegistrationWithMaskFunction()
 {
   RadiusType   r;
   unsigned int j;
 
-  for ( j = 0; j < ImageDimension; j++ )
+  for (j = 0; j < ImageDimension; j++)
   {
     r[j] = 0;
   }
-  this->SetRadius( r );
+  this->SetRadius(r);
 
   m_TimeStep = 1.0;
   m_DenominatorThreshold = 1e-9;
   m_IntensityDifferenceThreshold = 0.001;
   m_MaximumUpdateStepLength = 0.5;
 
-  this->SetMovingImage( nullptr );
-  this->SetFixedImage( nullptr );
-  this->SetMovingImageMask( nullptr );
-  this->SetFixedImageMask( nullptr );
-  m_FixedImageSpacing.Fill( 1.0 );
-  m_FixedImageOrigin.Fill( 0.0 );
+  this->SetMovingImage(nullptr);
+  this->SetFixedImage(nullptr);
+  this->SetMovingImageMask(nullptr);
+  this->SetFixedImageMask(nullptr);
+  m_FixedImageSpacing.Fill(1.0);
+  m_FixedImageOrigin.Fill(0.0);
   m_FixedImageDirection.SetIdentity();
   m_Normalizer = 0.0;
   m_FixedImageGradientCalculator = GradientCalculatorType::New();
@@ -64,28 +64,28 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 
   typename DefaultInterpolatorType::Pointer interp = DefaultInterpolatorType::New();
 
-  m_MovingImageInterpolator = static_cast< InterpolatorType * >( interp.GetPointer() );
+  m_MovingImageInterpolator = static_cast<InterpolatorType *>(interp.GetPointer());
 
   m_MovingImageWarper = WarperType::New();
-  m_MovingImageWarper->SetInterpolator( m_MovingImageInterpolator );
-  m_MovingImageWarper->SetEdgePaddingValue( NumericTraits< MovingPixelType >::max() );
+  m_MovingImageWarper->SetInterpolator(m_MovingImageInterpolator);
+  m_MovingImageWarper->SetEdgePaddingValue(NumericTraits<MovingPixelType>::max());
 
-  m_Metric = NumericTraits< double >::max();
+  m_Metric = NumericTraits<double>::max();
   m_SumOfSquaredDifference = 0.0;
   m_NumberOfPixelsProcessed = 0L;
-  m_RMSChange = NumericTraits< double >::max();
+  m_RMSChange = NumericTraits<double>::max();
   m_SumOfSquaredChange = 0.0;
 }
 
 /*
  * Standard "PrintSelf" method.
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementField >::PrintSelf( std::ostream & os,
-                                                                                                   Indent indent ) const
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::PrintSelf(std::ostream & os,
+                                                                                                Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "UseGradientType: ";
   os << m_UseGradientType << std::endl;
@@ -118,10 +118,10 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
 /**
  *
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementField >::SetIntensityDifferenceThreshold(
-  double threshold )
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::SetIntensityDifferenceThreshold(
+  double threshold)
 {
   m_IntensityDifferenceThreshold = threshold;
 }
@@ -129,10 +129,10 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
 /**
  *
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 double
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
-                                       TDisplacementField >::GetIntensityDifferenceThreshold() const
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::GetIntensityDifferenceThreshold()
+  const
 {
   return m_IntensityDifferenceThreshold;
 }
@@ -140,13 +140,13 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 /**
  * Set the function state values before each iteration
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementField >::InitializeIteration()
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::InitializeIteration()
 {
-  if ( !this->GetMovingImage() || !this->GetFixedImage() || !m_MovingImageInterpolator )
+  if (!this->GetMovingImage() || !this->GetFixedImage() || !m_MovingImageInterpolator)
   {
-    itkExceptionMacro( << "MovingImage, FixedImage and/or Interpolator not set" );
+    itkExceptionMacro(<< "MovingImage, FixedImage and/or Interpolator not set");
   }
 
   // cache fixed image information
@@ -155,14 +155,14 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
   m_FixedImageDirection = this->GetFixedImage()->GetDirection();
 
   // compute the normalizer
-  if ( m_MaximumUpdateStepLength > 0.0 )
+  if (m_MaximumUpdateStepLength > 0.0)
   {
     m_Normalizer = 0.0;
-    for ( unsigned int k = 0; k < ImageDimension; k++ )
+    for (unsigned int k = 0; k < ImageDimension; k++)
     {
       m_Normalizer += m_FixedImageSpacing[k] * m_FixedImageSpacing[k];
     }
-    m_Normalizer *= m_MaximumUpdateStepLength * m_MaximumUpdateStepLength / static_cast< double >( ImageDimension );
+    m_Normalizer *= m_MaximumUpdateStepLength * m_MaximumUpdateStepLength / static_cast<double>(ImageDimension);
   }
   else
   {
@@ -172,20 +172,20 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
   }
 
   // setup gradient calculator
-  m_FixedImageGradientCalculator->SetInputImage( this->GetFixedImage() );
-  m_MappedMovingImageGradientCalculator->SetInputImage( this->GetMovingImage() );
+  m_FixedImageGradientCalculator->SetInputImage(this->GetFixedImage());
+  m_MappedMovingImageGradientCalculator->SetInputImage(this->GetMovingImage());
 
   // Compute warped moving image
-  m_MovingImageWarper->SetOutputOrigin( this->m_FixedImageOrigin );
-  m_MovingImageWarper->SetOutputSpacing( this->m_FixedImageSpacing );
-  m_MovingImageWarper->SetOutputDirection( this->m_FixedImageDirection );
-  m_MovingImageWarper->SetInput( this->GetMovingImage() );
-  m_MovingImageWarper->SetDisplacementField( this->GetDisplacementField() );
-  m_MovingImageWarper->GetOutput()->SetRequestedRegion( this->GetDisplacementField()->GetRequestedRegion() );
+  m_MovingImageWarper->SetOutputOrigin(this->m_FixedImageOrigin);
+  m_MovingImageWarper->SetOutputSpacing(this->m_FixedImageSpacing);
+  m_MovingImageWarper->SetOutputDirection(this->m_FixedImageDirection);
+  m_MovingImageWarper->SetInput(this->GetMovingImage());
+  m_MovingImageWarper->SetDisplacementField(this->GetDisplacementField());
+  m_MovingImageWarper->GetOutput()->SetRequestedRegion(this->GetDisplacementField()->GetRequestedRegion());
   m_MovingImageWarper->Update();
 
   // setup moving image interpolator for further access
-  m_MovingImageInterpolator->SetInputImage( this->GetMovingImage() );
+  m_MovingImageInterpolator->SetInputImage(this->GetMovingImage());
 
   // initialize metric computation variables
   m_SumOfSquaredDifference = 0.0;
@@ -196,12 +196,14 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
 /**
  * Compute update at a non boundary neighbourhood
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
-typename ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementField >::PixelType
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementField >::ComputeUpdate(
-  const NeighborhoodType & it, void * gd, const FloatOffsetType & itkNotUsed( offset ) )
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
+typename ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::PixelType
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::ComputeUpdate(
+  const NeighborhoodType & it,
+  void *                   gd,
+  const FloatOffsetType &  itkNotUsed(offset))
 {
-  GlobalDataStruct * globalData = reinterpret_cast< GlobalDataStruct * >( gd );
+  GlobalDataStruct * globalData = reinterpret_cast<GlobalDataStruct *>(gd);
 
   PixelType update;
   IndexType FirstIndex = this->GetFixedImage()->GetLargestPossibleRegion().GetIndex();
@@ -213,16 +215,16 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
   // Get fixed image related information
   // Note: no need to check if the index is within
   // fixed image buffer. This is done by the external filter.
-  const double fixedValue = static_cast< double >( this->GetFixedImage()->GetPixel( index ) );
+  const double fixedValue = static_cast<double>(this->GetFixedImage()->GetPixel(index));
 
   // Get moving image related information
   // check if the point was mapped outside of the moving image using
   // the "special value" NumericTraits<MovingPixelType>::max()
-  MovingPixelType movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( index );
+  MovingPixelType movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel(index);
 
-  if ( movingPixValue == NumericTraits< MovingPixelType >::max() )
+  if (movingPixValue == NumericTraits<MovingPixelType>::max())
   {
-    update.Fill( 0.0 );
+    update.Fill(0.0);
     return update;
   }
 
@@ -232,64 +234,64 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
   {
     const bool hasFixedMask = this->GetFixedImageMask();
     const bool hasMovingMask = this->GetMovingImageMask();
-    if ( hasFixedMask || hasMovingMask )
+    if (hasFixedMask || hasMovingMask)
     {
       typename FixedImageType::PointType fixedImageReferencePoint;
-      this->GetFixedImage()->TransformIndexToPhysicalPoint( index, fixedImageReferencePoint );
+      this->GetFixedImage()->TransformIndexToPhysicalPoint(index, fixedImageReferencePoint);
 
-      if ( hasFixedMask && !this->GetFixedImageMask()->IsInsideInWorldSpace( fixedImageReferencePoint ) )
+      if (hasFixedMask && !this->GetFixedImageMask()->IsInsideInWorldSpace(fixedImageReferencePoint))
       {
         // If not inside fixed mask
-        update.Fill( 0.0 );
+        update.Fill(0.0);
         return update;
       }
 
-      if ( hasMovingMask )
+      if (hasMovingMask)
       {
         const typename NeighborhoodType::PixelType displacementVector = it.GetCenterPixel();
         MovingImagePointType                       mappedPoint;
-        for ( unsigned int j = 0; j < ImageDimension; j++ )
+        for (unsigned int j = 0; j < ImageDimension; j++)
         {
           mappedPoint[j] = fixedImageReferencePoint[j] + displacementVector[j];
         }
 
-        if ( !this->GetMovingImageMask()->IsInsideInWorldSpace( mappedPoint ) )
+        if (!this->GetMovingImageMask()->IsInsideInWorldSpace(mappedPoint))
         {
           // If not inside masked point.
-          update.Fill( 0.0 );
+          update.Fill(0.0);
           return update;
         }
       }
     }
   }
 
-  const double movingValue = static_cast< double >( movingPixValue );
+  const double movingValue = static_cast<double>(movingPixValue);
 
   // We compute the gradient more or less by hand.
   // We first start by ignoring the image orientation and introduce it
   // afterwards
   CovariantVectorType usedOrientFreeGradientTimes2;
 
-  if ( ( this->m_UseGradientType == Symmetric ) || ( this->m_UseGradientType == WarpedMoving ) )
+  if ((this->m_UseGradientType == Symmetric) || (this->m_UseGradientType == WarpedMoving))
   {
     // we don't use a CentralDifferenceImageFunction here to be able to
     // check for NumericTraits<MovingPixelType>::max()
     CovariantVectorType warpedMovingGradient;
     IndexType           tmpIndex = index;
-    for ( unsigned int dim = 0; dim < ImageDimension; dim++ )
+    for (unsigned int dim = 0; dim < ImageDimension; dim++)
     {
       // bounds checking
-      if ( FirstIndex[dim] == LastIndex[dim] || index[dim] < FirstIndex[dim] || index[dim] >= LastIndex[dim] )
+      if (FirstIndex[dim] == LastIndex[dim] || index[dim] < FirstIndex[dim] || index[dim] >= LastIndex[dim])
       {
         warpedMovingGradient[dim] = 0.0;
         continue;
       }
-      else if ( index[dim] == FirstIndex[dim] )
+      else if (index[dim] == FirstIndex[dim])
       {
         // compute derivative
         tmpIndex[dim] += 1;
-        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex );
-        if ( movingPixValue == NumericTraits< MovingPixelType >::max() )
+        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel(tmpIndex);
+        if (movingPixValue == NumericTraits<MovingPixelType>::max())
         {
           // weird crunched border case
           warpedMovingGradient[dim] = 0.0;
@@ -297,18 +299,18 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
         else
         {
           // forward difference
-          warpedMovingGradient[dim] = static_cast< double >( movingPixValue ) - movingValue;
+          warpedMovingGradient[dim] = static_cast<double>(movingPixValue) - movingValue;
           warpedMovingGradient[dim] /= m_FixedImageSpacing[dim];
         }
         tmpIndex[dim] -= 1;
         continue;
       }
-      else if ( index[dim] == ( LastIndex[dim] - 1 ) )
+      else if (index[dim] == (LastIndex[dim] - 1))
       {
         // compute derivative
         tmpIndex[dim] -= 1;
-        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex );
-        if ( movingPixValue == NumericTraits< MovingPixelType >::max() )
+        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel(tmpIndex);
+        if (movingPixValue == NumericTraits<MovingPixelType>::max())
         {
           // weird crunched border case
           warpedMovingGradient[dim] = 0.0;
@@ -316,7 +318,7 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
         else
         {
           // backward difference
-          warpedMovingGradient[dim] = movingValue - static_cast< double >( movingPixValue );
+          warpedMovingGradient[dim] = movingValue - static_cast<double>(movingPixValue);
           warpedMovingGradient[dim] /= m_FixedImageSpacing[dim];
         }
         tmpIndex[dim] += 1;
@@ -325,15 +327,15 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
 
       // compute derivative
       tmpIndex[dim] += 1;
-      movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex );
-      if ( movingPixValue == NumericTraits< MovingPixelType >::max() )
+      movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel(tmpIndex);
+      if (movingPixValue == NumericTraits<MovingPixelType>::max())
       {
         // backward difference
         warpedMovingGradient[dim] = movingValue;
 
         tmpIndex[dim] -= 2;
-        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex );
-        if ( movingPixValue == NumericTraits< MovingPixelType >::max() )
+        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel(tmpIndex);
+        if (movingPixValue == NumericTraits<MovingPixelType>::max())
         {
           // weird crunched border case
           warpedMovingGradient[dim] = 0.0;
@@ -341,18 +343,18 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
         else
         {
           // backward difference
-          warpedMovingGradient[dim] -= static_cast< double >( m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex ) );
+          warpedMovingGradient[dim] -= static_cast<double>(m_MovingImageWarper->GetOutput()->GetPixel(tmpIndex));
 
           warpedMovingGradient[dim] /= m_FixedImageSpacing[dim];
         }
       }
       else
       {
-        warpedMovingGradient[dim] = static_cast< double >( movingPixValue );
+        warpedMovingGradient[dim] = static_cast<double>(movingPixValue);
 
         tmpIndex[dim] -= 2;
-        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex );
-        if ( movingPixValue == NumericTraits< MovingPixelType >::max() )
+        movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel(tmpIndex);
+        if (movingPixValue == NumericTraits<MovingPixelType>::max())
         {
           // forward difference
           warpedMovingGradient[dim] -= movingValue;
@@ -361,56 +363,56 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
         else
         {
           // normal case, central difference
-          warpedMovingGradient[dim] -= static_cast< double >( movingPixValue );
+          warpedMovingGradient[dim] -= static_cast<double>(movingPixValue);
           warpedMovingGradient[dim] *= 0.5 / m_FixedImageSpacing[dim];
         }
       }
       tmpIndex[dim] += 1;
     }
 
-    if ( this->m_UseGradientType == Symmetric )
+    if (this->m_UseGradientType == Symmetric)
     {
       // Compute orientation-free gradient with calculator
-      const CovariantVectorType fixedGradient = m_FixedImageGradientCalculator->EvaluateAtIndex( index );
+      const CovariantVectorType fixedGradient = m_FixedImageGradientCalculator->EvaluateAtIndex(index);
 
       usedOrientFreeGradientTimes2 = fixedGradient + warpedMovingGradient;
     }
-    else if ( this->m_UseGradientType == WarpedMoving )
+    else if (this->m_UseGradientType == WarpedMoving)
     {
       usedOrientFreeGradientTimes2 = warpedMovingGradient + warpedMovingGradient;
     }
     else
     {
-      itkExceptionMacro( << "Unknown gradient type" );
+      itkExceptionMacro(<< "Unknown gradient type");
     }
   }
-  else if ( this->m_UseGradientType == Fixed )
+  else if (this->m_UseGradientType == Fixed)
   {
     // Compute orientation-free gradient with calculator
-    const CovariantVectorType fixedGradient = m_FixedImageGradientCalculator->EvaluateAtIndex( index );
+    const CovariantVectorType fixedGradient = m_FixedImageGradientCalculator->EvaluateAtIndex(index);
 
     usedOrientFreeGradientTimes2 = fixedGradient + fixedGradient;
   }
-  else if ( this->m_UseGradientType == MappedMoving )
+  else if (this->m_UseGradientType == MappedMoving)
   {
     PointType mappedPoint;
-    this->GetFixedImage()->TransformIndexToPhysicalPoint( index, mappedPoint );
-    for ( unsigned int j = 0; j < ImageDimension; j++ )
+    this->GetFixedImage()->TransformIndexToPhysicalPoint(index, mappedPoint);
+    for (unsigned int j = 0; j < ImageDimension; j++)
     {
       mappedPoint[j] += it.GetCenterPixel()[j];
     }
 
-    const CovariantVectorType mappedMovingGradient = m_MappedMovingImageGradientCalculator->Evaluate( mappedPoint );
+    const CovariantVectorType mappedMovingGradient = m_MappedMovingImageGradientCalculator->Evaluate(mappedPoint);
 
     usedOrientFreeGradientTimes2 = mappedMovingGradient + mappedMovingGradient;
   }
   else
   {
-    itkExceptionMacro( << "Unknown gradient type" );
+    itkExceptionMacro(<< "Unknown gradient type");
   }
 
   CovariantVectorType usedGradientTimes2;
-  this->GetFixedImage()->TransformLocalVectorToPhysicalVector( usedOrientFreeGradientTimes2, usedGradientTimes2 );
+  this->GetFixedImage()->TransformLocalVectorToPhysicalVector(usedOrientFreeGradientTimes2, usedGradientTimes2);
 
   /**
    * Compute Update.
@@ -421,17 +423,17 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
   const double usedGradientTimes2SquaredMagnitude = usedGradientTimes2.GetSquaredNorm();
 
   const double speedValue = fixedValue - movingValue;
-  if ( itk::Math::abs( speedValue ) < m_IntensityDifferenceThreshold )
+  if (itk::Math::abs(speedValue) < m_IntensityDifferenceThreshold)
   {
-    update.Fill( 0.0 );
+    update.Fill(0.0);
   }
   else
   {
     double denom;
-    if ( m_Normalizer > 0.0 )
+    if (m_Normalizer > 0.0)
     {
       // "ITK-Thirion" normalization
-      denom = usedGradientTimes2SquaredMagnitude + ( itk::Math::sqr( speedValue ) / m_Normalizer );
+      denom = usedGradientTimes2SquaredMagnitude + (itk::Math::sqr(speedValue) / m_Normalizer);
     }
     else
     {
@@ -439,14 +441,14 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
       denom = usedGradientTimes2SquaredMagnitude;
     }
 
-    if ( denom < m_DenominatorThreshold )
+    if (denom < m_DenominatorThreshold)
     {
-      update.Fill( 0.0 );
+      update.Fill(0.0);
     }
     else
     {
       const double factor = 2.0 * speedValue / denom;
-      for ( unsigned int j = 0; j < ImageDimension; j++ )
+      for (unsigned int j = 0; j < ImageDimension; j++)
       {
         update[j] = factor * usedGradientTimes2[j];
       }
@@ -460,9 +462,9 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
   // is applied on the update field, we cannot compute the newMappedCenterPoint
   // here; and even
   // if we could, this would be an often unnecessary time-consuming task.
-  if ( globalData )
+  if (globalData)
   {
-    globalData->m_SumOfSquaredDifference += itk::Math::sqr( speedValue );
+    globalData->m_SumOfSquaredDifference += itk::Math::sqr(speedValue);
     globalData->m_NumberOfPixelsProcessed += 1;
     globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
   }
@@ -473,21 +475,21 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementF
 /**
  * Update the metric and release the per-thread-global data.
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 void
-ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage, TDisplacementField >::ReleaseGlobalDataPointer(
-  void * gd ) const
+ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementField>::ReleaseGlobalDataPointer(
+  void * gd) const
 {
-  GlobalDataStruct * globalData = reinterpret_cast< GlobalDataStruct * >( gd );
+  GlobalDataStruct * globalData = reinterpret_cast<GlobalDataStruct *>(gd);
 
   m_MetricCalculationLock.lock();
   m_SumOfSquaredDifference += globalData->m_SumOfSquaredDifference;
   m_NumberOfPixelsProcessed += globalData->m_NumberOfPixelsProcessed;
   m_SumOfSquaredChange += globalData->m_SumOfSquaredChange;
-  if ( m_NumberOfPixelsProcessed )
+  if (m_NumberOfPixelsProcessed)
   {
-    m_Metric = m_SumOfSquaredDifference / static_cast< double >( m_NumberOfPixelsProcessed );
-    m_RMSChange = std::sqrt( m_SumOfSquaredChange / static_cast< double >( m_NumberOfPixelsProcessed ) );
+    m_Metric = m_SumOfSquaredDifference / static_cast<double>(m_NumberOfPixelsProcessed);
+    m_RMSChange = std::sqrt(m_SumOfSquaredChange / static_cast<double>(m_NumberOfPixelsProcessed));
   }
   m_MetricCalculationLock.unlock();
 

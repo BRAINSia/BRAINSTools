@@ -37,27 +37,27 @@
 // INFO:  Need to make return types an input template type.
 namespace AssignRigid
 {
-using AffineTransformType = itk::AffineTransform< double, 3 >;
+using AffineTransformType = itk::AffineTransform<double, 3>;
 using AffineTransformPointer = AffineTransformType::Pointer;
 
-using VnlTransformMatrixType44 = vnl_matrix_fixed< double, 4, 4 >;
+using VnlTransformMatrixType44 = vnl_matrix_fixed<double, 4, 4>;
 
-using Matrix3D = itk::Matrix< double, 3, 3 >;
-using VersorType = itk::Versor< double >;
+using Matrix3D = itk::Matrix<double, 3, 3>;
+using VersorType = itk::Versor<double>;
 
 using MatrixType = AffineTransformType::MatrixType;
 using PointType = AffineTransformType::InputPointType;
 using VectorType = AffineTransformType::OutputVectorType;
 
-using VersorRigid3DTransformType = itk::VersorRigid3DTransform< double >;
+using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 typedef VersorRigid3DTransformType::Pointer        VersorRigid3DTransformPointer;
 typedef VersorRigid3DTransformType::ParametersType VersorRigid3DParametersType;
 
-using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform< double >;
+using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
 using ScaleVersor3DTransformPointer = ScaleVersor3DTransformType::Pointer;
 typedef ScaleVersor3DTransformType::ParametersType ScaleVersor3DParametersType;
 
-using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform< double >;
+using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
 typedef ScaleSkewVersor3DTransformType::Pointer        ScaleSkewVersor3DTransformPointer;
 typedef ScaleSkewVersor3DTransformType::ParametersType ScaleSkewVersor3DParametersType;
 
@@ -65,12 +65,12 @@ typedef ScaleSkewVersor3DTransformType::ParametersType ScaleSkewVersor3DParamete
  * AffineTransformPointer  :=  AffineTransformPointer
  */
 inline void
-AssignConvertedTransform( AffineTransformPointer & result, const AffineTransformType::ConstPointer affine )
+AssignConvertedTransform(AffineTransformPointer & result, const AffineTransformType::ConstPointer affine)
 {
-  if ( result.IsNotNull() )
+  if (result.IsNotNull())
   {
-    result->SetParameters( affine->GetParameters() );
-    result->SetFixedParameters( affine->GetFixedParameters() );
+    result->SetParameters(affine->GetParameters());
+    result->SetFixedParameters(affine->GetFixedParameters());
   }
   else
   {
@@ -84,24 +84,24 @@ AssignConvertedTransform( AffineTransformPointer & result, const AffineTransform
  * AffineTransformPointer  :=  VnlTransformMatrixType44
  */
 inline void
-AssignConvertedTransform( AffineTransformPointer & result, const VnlTransformMatrixType44 & matrix )
+AssignConvertedTransform(AffineTransformPointer & result, const VnlTransformMatrixType44 & matrix)
 {
-  if ( result.IsNotNull() )
+  if (result.IsNotNull())
   {
     MatrixType rotator; // can't do = conversion.
-    rotator.   operator=( matrix.extract( 3, 3, 0, 0 ) );
+    rotator.   operator=(matrix.extract(3, 3, 0, 0));
 
     VectorType offset;
-    for ( unsigned int i = 0; i < 3; ++i )
+    for (unsigned int i = 0; i < 3; ++i)
     {
-      offset[i] = matrix.get( i, 3 );
+      offset[i] = matrix.get(i, 3);
     }
-    itk::Point< double, 3 > ZeroCenter;
-    ZeroCenter.Fill( 0.0 );
+    itk::Point<double, 3> ZeroCenter;
+    ZeroCenter.Fill(0.0);
     result->SetIdentity();
-    result->SetCenter( ZeroCenter ); // Assume that rotation is about 0.0
-    result->SetMatrix( rotator );
-    result->SetOffset( offset ); // It is offset in this case, and not
+    result->SetCenter(ZeroCenter); // Assume that rotation is about 0.0
+    result->SetMatrix(rotator);
+    result->SetOffset(offset); // It is offset in this case, and not
     // Translation.
   }
   else
@@ -116,22 +116,22 @@ AssignConvertedTransform( AffineTransformPointer & result, const VnlTransformMat
  * VnlTransformMatrixType44  :=  AffineTransformPointer
  */
 inline void
-AssignConvertedTransform( VnlTransformMatrixType44 & result, const AffineTransformType::ConstPointer affine )
+AssignConvertedTransform(VnlTransformMatrixType44 & result, const AffineTransformType::ConstPointer affine)
 {
-  if ( affine.IsNotNull() )
+  if (affine.IsNotNull())
   {
     MatrixType rotator = affine->GetMatrix();
     VectorType offset = affine->GetOffset(); // This needs to be offst
                                              // in
     // this case, and not
     // Translation.
-    result.update( rotator.GetVnlMatrix(), 0, 0 );
-    for ( unsigned int i = 0; i < 3; ++i )
+    result.update(rotator.GetVnlMatrix(), 0, 0);
+    for (unsigned int i = 0; i < 3; ++i)
     {
-      result.put( i, 3, offset[i] );
-      result.put( 3, i, 0.0 );
+      result.put(i, 3, offset[i]);
+      result.put(3, i, 0.0);
     }
-    result.put( 3, 3, 1.0 );
+    result.put(3, 3, 1.0);
   }
   else
   {
@@ -145,14 +145,14 @@ AssignConvertedTransform( VnlTransformMatrixType44 & result, const AffineTransfo
  * AffineTransformPointer  :=  ScaleSkewVersor3DTransformPointer
  */
 inline void
-AssignConvertedTransform( AffineTransformPointer & result, const ScaleSkewVersor3DTransformType::ConstPointer scale )
+AssignConvertedTransform(AffineTransformPointer & result, const ScaleSkewVersor3DTransformType::ConstPointer scale)
 {
-  if ( result.IsNotNull() && scale.IsNotNull() )
+  if (result.IsNotNull() && scale.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( scale->GetCenter() );
-    result->SetMatrix( scale->GetMatrix() );
-    result->SetTranslation( scale->GetTranslation() );
+    result->SetCenter(scale->GetCenter());
+    result->SetMatrix(scale->GetMatrix());
+    result->SetTranslation(scale->GetTranslation());
   }
   else
   {
@@ -166,13 +166,13 @@ AssignConvertedTransform( AffineTransformPointer & result, const ScaleSkewVersor
  * ScaleSkewVersor3DTransformPointer  :=  ScaleSkewVersor3DTransformPointer
  */
 inline void
-AssignConvertedTransform( ScaleSkewVersor3DTransformPointer &                result,
-                          const ScaleSkewVersor3DTransformType::ConstPointer scale )
+AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &                result,
+                         const ScaleSkewVersor3DTransformType::ConstPointer scale)
 {
-  if ( result.IsNotNull() && scale.IsNotNull() )
+  if (result.IsNotNull() && scale.IsNotNull())
   {
-    result->SetParameters( scale->GetParameters() );
-    result->SetFixedParameters( scale->GetFixedParameters() );
+    result->SetParameters(scale->GetParameters());
+    result->SetFixedParameters(scale->GetFixedParameters());
   }
   else
   {
@@ -187,16 +187,16 @@ AssignConvertedTransform( ScaleSkewVersor3DTransformPointer &                res
  */
 
 inline void
-AssignConvertedTransform( AffineTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer scale )
+AssignConvertedTransform(AffineTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer scale)
 {
-  if ( result.IsNotNull() && scale.IsNotNull() )
+  if (result.IsNotNull() && scale.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( scale->GetCenter() );
-    result->SetMatrix( scale->GetMatrix() ); // NOTE:  This matrix has
-                                             // both
+    result->SetCenter(scale->GetCenter());
+    result->SetMatrix(scale->GetMatrix()); // NOTE:  This matrix has
+                                           // both
     // rotation ans scale components.
-    result->SetTranslation( scale->GetTranslation() );
+    result->SetTranslation(scale->GetTranslation());
   }
   else
   {
@@ -211,12 +211,12 @@ AssignConvertedTransform( AffineTransformPointer & result, const ScaleVersor3DTr
  */
 
 inline void
-AssignConvertedTransform( ScaleVersor3DTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer scale )
+AssignConvertedTransform(ScaleVersor3DTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer scale)
 {
-  if ( result.IsNotNull() && scale.IsNotNull() )
+  if (result.IsNotNull() && scale.IsNotNull())
   {
-    result->SetParameters( scale->GetParameters() );
-    result->SetFixedParameters( scale->GetFixedParameters() );
+    result->SetParameters(scale->GetParameters());
+    result->SetFixedParameters(scale->GetFixedParameters());
   }
   else
   {
@@ -230,19 +230,19 @@ AssignConvertedTransform( ScaleVersor3DTransformPointer & result, const ScaleVer
  * AffineTransformPointer  :=  VersorRigid3DTransformPointer
  */
 inline void
-AssignConvertedTransform( AffineTransformPointer &                       result,
-                          const VersorRigid3DTransformType::ConstPointer versorTransform )
+AssignConvertedTransform(AffineTransformPointer &                       result,
+                         const VersorRigid3DTransformType::ConstPointer versorTransform)
 {
-  if ( result.IsNotNull() && versorTransform.IsNotNull() )
+  if (result.IsNotNull() && versorTransform.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( versorTransform->GetCenter() );
-    result->SetMatrix( versorTransform->GetMatrix() ); // We MUST
-                                                       // SetMatrix
+    result->SetCenter(versorTransform->GetCenter());
+    result->SetMatrix(versorTransform->GetMatrix()); // We MUST
+                                                     // SetMatrix
     // before the
     // SetOffset -- not
     // after!
-    result->SetTranslation( versorTransform->GetTranslation() );
+    result->SetTranslation(versorTransform->GetTranslation());
   }
   else
   {
@@ -257,13 +257,13 @@ AssignConvertedTransform( AffineTransformPointer &                       result,
  */
 
 inline void
-AssignConvertedTransform( VersorRigid3DTransformPointer &                result,
-                          const VersorRigid3DTransformType::ConstPointer versorRigid )
+AssignConvertedTransform(VersorRigid3DTransformPointer &                result,
+                         const VersorRigid3DTransformType::ConstPointer versorRigid)
 {
-  if ( result.IsNotNull() && versorRigid.IsNotNull() )
+  if (result.IsNotNull() && versorRigid.IsNotNull())
   {
-    result->SetParameters( versorRigid->GetParameters() );
-    result->SetFixedParameters( versorRigid->GetFixedParameters() );
+    result->SetParameters(versorRigid->GetParameters());
+    result->SetFixedParameters(versorRigid->GetFixedParameters());
   }
   else
   {
@@ -277,16 +277,16 @@ AssignConvertedTransform( VersorRigid3DTransformPointer &                result,
  * ScaleSkewVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
  */
 inline void
-AssignConvertedTransform( ScaleSkewVersor3DTransformPointer &            result,
-                          const ScaleVersor3DTransformType::ConstPointer scale )
+AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
+                         const ScaleVersor3DTransformType::ConstPointer scale)
 {
-  if ( result.IsNotNull() && scale.IsNotNull() )
+  if (result.IsNotNull() && scale.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( scale->GetCenter() );
-    result->SetRotation( scale->GetVersor() );
-    result->SetScale( scale->GetScale() );
-    result->SetTranslation( scale->GetTranslation() );
+    result->SetCenter(scale->GetCenter());
+    result->SetRotation(scale->GetVersor());
+    result->SetScale(scale->GetScale());
+    result->SetTranslation(scale->GetTranslation());
   }
   else
   {
@@ -300,15 +300,15 @@ AssignConvertedTransform( ScaleSkewVersor3DTransformPointer &            result,
  * ScaleSkewVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
  */
 inline void
-AssignConvertedTransform( ScaleSkewVersor3DTransformPointer &            result,
-                          const VersorRigid3DTransformType::ConstPointer versorRigid )
+AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
+                         const VersorRigid3DTransformType::ConstPointer versorRigid)
 {
-  if ( result.IsNotNull() && versorRigid.IsNotNull() )
+  if (result.IsNotNull() && versorRigid.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( versorRigid->GetCenter() );
-    result->SetRotation( versorRigid->GetVersor() );
-    result->SetTranslation( versorRigid->GetTranslation() );
+    result->SetCenter(versorRigid->GetCenter());
+    result->SetRotation(versorRigid->GetVersor());
+    result->SetTranslation(versorRigid->GetTranslation());
   }
   else
   {
@@ -322,15 +322,15 @@ AssignConvertedTransform( ScaleSkewVersor3DTransformPointer &            result,
  * ScaleVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
  */
 inline void
-AssignConvertedTransform( ScaleVersor3DTransformPointer &                result,
-                          const VersorRigid3DTransformType::ConstPointer versorRigid )
+AssignConvertedTransform(ScaleVersor3DTransformPointer &                result,
+                         const VersorRigid3DTransformType::ConstPointer versorRigid)
 {
-  if ( result.IsNotNull() && versorRigid.IsNotNull() )
+  if (result.IsNotNull() && versorRigid.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( versorRigid->GetCenter() );
-    result->SetRotation( versorRigid->GetVersor() );
-    result->SetTranslation( versorRigid->GetTranslation() );
+    result->SetCenter(versorRigid->GetCenter());
+    result->SetRotation(versorRigid->GetVersor());
+    result->SetTranslation(versorRigid->GetTranslation());
   }
   else
   {
@@ -341,15 +341,15 @@ AssignConvertedTransform( ScaleVersor3DTransformPointer &                result,
 }
 
 inline void
-ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer &                result,
-                               const ScaleVersor3DTransformType::ConstPointer scaleVersorRigid )
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                result,
+                              const ScaleVersor3DTransformType::ConstPointer scaleVersorRigid)
 {
-  if ( result.IsNotNull() && scaleVersorRigid.IsNotNull() )
+  if (result.IsNotNull() && scaleVersorRigid.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( scaleVersorRigid->GetCenter() );
-    result->SetRotation( scaleVersorRigid->GetVersor() );
-    result->SetTranslation( scaleVersorRigid->GetTranslation() );
+    result->SetCenter(scaleVersorRigid->GetCenter());
+    result->SetRotation(scaleVersorRigid->GetVersor());
+    result->SetTranslation(scaleVersorRigid->GetTranslation());
   }
   else
   {
@@ -360,15 +360,15 @@ ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer &                re
 }
 
 inline void
-ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer &                    result,
-                               const ScaleSkewVersor3DTransformType::ConstPointer scaleSkewVersorRigid )
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                    result,
+                              const ScaleSkewVersor3DTransformType::ConstPointer scaleSkewVersorRigid)
 {
-  if ( result.IsNotNull() && scaleSkewVersorRigid.IsNotNull() )
+  if (result.IsNotNull() && scaleSkewVersorRigid.IsNotNull())
   {
     result->SetIdentity();
-    result->SetCenter( scaleSkewVersorRigid->GetCenter() );
-    result->SetRotation( scaleSkewVersorRigid->GetVersor() );
-    result->SetTranslation( scaleSkewVersorRigid->GetTranslation() );
+    result->SetCenter(scaleSkewVersorRigid->GetCenter());
+    result->SetRotation(scaleSkewVersorRigid->GetVersor());
+    result->SetTranslation(scaleSkewVersorRigid->GetTranslation());
   }
   else
   {
@@ -379,13 +379,13 @@ ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer &                  
 }
 
 inline void
-ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer &                result,
-                               const VersorRigid3DTransformType::ConstPointer versorRigid )
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                result,
+                              const VersorRigid3DTransformType::ConstPointer versorRigid)
 {
-  if ( result.IsNotNull() && versorRigid.IsNotNull() )
+  if (result.IsNotNull() && versorRigid.IsNotNull())
   {
-    result->SetParameters( versorRigid->GetParameters() );
-    result->SetFixedParameters( versorRigid->GetFixedParameters() );
+    result->SetParameters(versorRigid->GetParameters());
+    result->SetFixedParameters(versorRigid->GetFixedParameters());
   }
   else
   {
@@ -405,51 +405,51 @@ ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer &                re
  * must clip out the null subspace, if any.
  */
 inline Matrix3D
-orthogonalize( const Matrix3D rotator )
+orthogonalize(const Matrix3D rotator)
 {
-  vnl_svd< double >                               decomposition( rotator.GetVnlMatrix(), -1E-6 );
-  vnl_diag_matrix< vnl_svd< double >::singval_t > Winverse( decomposition.Winverse() );
+  vnl_svd<double>                             decomposition(rotator.GetVnlMatrix(), -1E-6);
+  vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse(decomposition.Winverse());
 
-  vnl_matrix< double > W( 3, 3 );
-  W.fill( double( 0 ) );
-  for ( unsigned int i = 0; i < 3; ++i )
+  vnl_matrix<double> W(3, 3);
+  W.fill(double(0));
+  for (unsigned int i = 0; i < 3; ++i)
   {
-    if ( decomposition.Winverse()( i, i ) != 0.0 )
+    if (decomposition.Winverse()(i, i) != 0.0)
     {
-      W( i, i ) = 1.0;
+      W(i, i) = 1.0;
     }
   }
 
-  vnl_matrix< double > result( decomposition.U() * W * decomposition.V().conjugate_transpose() );
+  vnl_matrix<double> result(decomposition.U() * W * decomposition.V().conjugate_transpose());
 
   //    std::cout << " svd Orthonormalized Rotation: " << std::endl
   //      << result << std::endl;
   Matrix3D Orthog;
-  Orthog.  operator=( result );
+  Orthog.  operator=(result);
 
   return Orthog;
 }
 
 inline void
-ExtractVersorRigid3DTransform( VersorRigid3DTransformPointer & result, const AffineTransformType::ConstPointer affine )
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result, const AffineTransformType::ConstPointer affine)
 {
-  if ( result.IsNotNull() && affine.IsNotNull() )
+  if (result.IsNotNull() && affine.IsNotNull())
   {
     Matrix3D   NonOrthog = affine->GetMatrix();
-    Matrix3D   Orthog( orthogonalize( NonOrthog ) );
+    Matrix3D   Orthog(orthogonalize(NonOrthog));
     MatrixType rotator;
-    rotator.   operator=( Orthog );
+    rotator.   operator=(Orthog);
 
     VersorType versor;
-    versor.Set( rotator ); //    --> controversial!  Is rotator
-                           // orthogonal as
+    versor.Set(rotator); //    --> controversial!  Is rotator
+                         // orthogonal as
     // required?
     // versor.Normalize();
 
     result->SetIdentity();
-    result->SetCenter( affine->GetCenter() );
-    result->SetRotation( versor );
-    result->SetTranslation( affine->GetTranslation() );
+    result->SetCenter(affine->GetCenter());
+    result->SetRotation(versor);
+    result->SetTranslation(affine->GetTranslation());
   }
   else
   {

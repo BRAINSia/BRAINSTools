@@ -28,7 +28,7 @@
 #include "itkNumberToString.h"
 
 RGBImageType::Pointer
-ReturnOrientedRGBImage( SImageType::Pointer inputImage )
+ReturnOrientedRGBImage(SImageType::Pointer inputImage)
 {
   RGBImageType::Pointer orientedImage;
 
@@ -39,18 +39,18 @@ ReturnOrientedRGBImage( SImageType::Pointer inputImage )
   SImageType::Pointer inputStatsImage;
   {
     LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
-    duplicator->SetInputImage( inputImage );
+    duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
   }
 
-  itk::StatisticsImageFilter< SImageType >::Pointer stats = itk::StatisticsImageFilter< SImageType >::New();
+  itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
 
-  stats->SetInput( inputStatsImage );
+  stats->SetInput(inputStatsImage);
   stats->Update();
 
-  SImageType::PixelType minPixel( stats->GetMinimum() );
-  SImageType::PixelType maxPixel( stats->GetMaximum() );
+  SImageType::PixelType minPixel(stats->GetMinimum());
+  SImageType::PixelType maxPixel(stats->GetMaximum());
 
   // std::cout << "size of inputImage: " << inputImage->GetLargestPossibleRegion().GetSize()[0] << ","
   //    << inputImage->GetLargestPossibleRegion().GetSize()[1] << "," <<
@@ -59,27 +59,27 @@ ReturnOrientedRGBImage( SImageType::Pointer inputImage )
   //  itkUtil::WriteImage<SImageType>(inputImage, "inputImage.nii.gz");
 
   RGBImageType::Pointer rgbImage = RGBImageType::New();
-  rgbImage->CopyInformation( inputImage );
-  rgbImage->SetRegions( inputImage->GetLargestPossibleRegion() );
+  rgbImage->CopyInformation(inputImage);
+  rgbImage->SetRegions(inputImage->GetLargestPossibleRegion());
   rgbImage->Allocate();
 
   // First just make RGB Image with greyscale values.
-  itk::ImageRegionIterator< RGBImageType > rgbIt( rgbImage, rgbImage->GetLargestPossibleRegion() );
-  itk::ImageRegionIterator< SImageType >   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-  for ( ; !sIt.IsAtEnd(); ++rgbIt, ++sIt )
+  itk::ImageRegionIterator<RGBImageType> rgbIt(rgbImage, rgbImage->GetLargestPossibleRegion());
+  itk::ImageRegionIterator<SImageType>   sIt(inputImage, inputImage->GetLargestPossibleRegion());
+  for (; !sIt.IsAtEnd(); ++rgbIt, ++sIt)
   {
-    unsigned char charVal( ShortToUChar( sIt.Value(), minPixel, maxPixel ) );
+    unsigned char charVal(ShortToUChar(sIt.Value(), minPixel, maxPixel));
     RGBPixelType  pixel;
-    pixel.SetRed( charVal );
-    pixel.SetGreen( charVal );
-    pixel.SetBlue( charVal );
-    rgbIt.Set( pixel );
+    pixel.SetRed(charVal);
+    pixel.SetGreen(charVal);
+    pixel.SetBlue(charVal);
+    rgbIt.Set(pixel);
   }
   return orientedImage = rgbImage;
 }
 
 RGB2DImageType::Pointer
-GenerateRGB2DImage( RGBImageType::Pointer orientedImage )
+GenerateRGB2DImage(RGBImageType::Pointer orientedImage)
 {
   // Alocate 2DImage
   RGB2DImageType::Pointer   TwoDImage = RGB2DImageType::New();
@@ -91,21 +91,21 @@ GenerateRGB2DImage( RGBImageType::Pointer orientedImage )
   TwoDSize[0] = orientedImage->GetLargestPossibleRegion().GetSize()[1];
   TwoDSize[1] = orientedImage->GetLargestPossibleRegion().GetSize()[2];
   RGB2DImageType::RegionType TwoDImageRegion;
-  TwoDImageRegion.SetIndex( TwoDIndex );
-  TwoDImageRegion.SetSize( TwoDSize );
-  TwoDImage->SetRegions( TwoDImageRegion );
+  TwoDImageRegion.SetIndex(TwoDIndex);
+  TwoDImageRegion.SetSize(TwoDSize);
+  TwoDImage->SetRegions(TwoDImageRegion);
   TwoDImage->Allocate();
 
   // Fill 2DImage
   RGBImageType::IndexType ThreeDIndex;
-  ThreeDIndex[0] = ( orientedImage->GetLargestPossibleRegion().GetSize()[0] ) / 2;
-  for ( TwoDIndex[1] = 0; TwoDIndex[1] < static_cast< signed int >( TwoDSize[1] ); ( TwoDIndex[1] )++ )
+  ThreeDIndex[0] = (orientedImage->GetLargestPossibleRegion().GetSize()[0]) / 2;
+  for (TwoDIndex[1] = 0; TwoDIndex[1] < static_cast<signed int>(TwoDSize[1]); (TwoDIndex[1])++)
   {
     ThreeDIndex[2] = TwoDSize[1] - 1 - TwoDIndex[1];
-    for ( TwoDIndex[0] = 0; TwoDIndex[0] < static_cast< signed int >( TwoDSize[0] ); ( TwoDIndex[0] )++ )
+    for (TwoDIndex[0] = 0; TwoDIndex[0] < static_cast<signed int>(TwoDSize[0]); (TwoDIndex[0])++)
     {
       ThreeDIndex[1] = TwoDIndex[0];
-      TwoDImage->SetPixel( TwoDIndex, orientedImage->GetPixel( ThreeDIndex ) );
+      TwoDImage->SetPixel(TwoDIndex, orientedImage->GetPixel(ThreeDIndex));
     }
   }
 
@@ -113,13 +113,16 @@ GenerateRGB2DImage( RGBImageType::Pointer orientedImage )
 }
 
 static bool
-IsOnCylinder( const SImageType::PointType & curr_point, const SImageType::PointType & center_point,
-              const SImageType::PointType & center_point2, const double radius, const double thickness )
+IsOnCylinder(const SImageType::PointType & curr_point,
+             const SImageType::PointType & center_point,
+             const SImageType::PointType & center_point2,
+             const double                  radius,
+             const double                  thickness)
 {
   // const double cylinder_end=std::abs(height - std::abs(curr_point[0]-center_point[0]));
   const double APdist = curr_point[1] - center_point[1];
   const double ISdist = curr_point[2] - center_point[2];
-  const double cylinder_side_squared = std::abs( radius * radius - ( APdist * APdist + ISdist * ISdist ) );
+  const double cylinder_side_squared = std::abs(radius * radius - (APdist * APdist + ISdist * ISdist));
   const SImageType::PointType::VectorType PointDist2 =
     curr_point.GetVectorFromOrigin() - center_point2.GetVectorFromOrigin();
 
@@ -127,7 +130,7 @@ IsOnCylinder( const SImageType::PointType & curr_point, const SImageType::PointT
 }
 
 static bool
-IsOnSphere( const SImageType::PointType & curr_point, const SImageType::PointType & center_point, const double radius )
+IsOnSphere(const SImageType::PointType & curr_point, const SImageType::PointType & center_point, const double radius)
 {
   const SImageType::PointType::VectorType PointDist =
     curr_point.GetVectorFromOrigin() - center_point.GetVectorFromOrigin();
@@ -136,101 +139,107 @@ IsOnSphere( const SImageType::PointType & curr_point, const SImageType::PointTyp
 }
 
 void
-MakeBrandeddebugImage( SImageType::ConstPointer in, const landmarksConstellationModelIO & mDef,
-                       const SImageType::PointType & RP, const SImageType::PointType & AC,
-                       const SImageType::PointType & PC, const SImageType::PointType & VN4, const std::string & fname,
-                       const SImageType::PointType & RP2, const SImageType::PointType & AC2,
-                       const SImageType::PointType & PC2, const SImageType::PointType & VN42 )
+MakeBrandeddebugImage(SImageType::ConstPointer              in,
+                      const landmarksConstellationModelIO & mDef,
+                      const SImageType::PointType &         RP,
+                      const SImageType::PointType &         AC,
+                      const SImageType::PointType &         PC,
+                      const SImageType::PointType &         VN4,
+                      const std::string &                   fname,
+                      const SImageType::PointType &         RP2,
+                      const SImageType::PointType &         AC2,
+                      const SImageType::PointType &         PC2,
+                      const SImageType::PointType &         VN42)
 {
   SImageType::Pointer inputImage =
-    itkUtil::OrientImage< SImageType >( in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
 
-  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage( inputImage );
+  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
-  for ( unsigned int which = 0; which < 4; which++ )
+  for (unsigned int which = 0; which < 4; which++)
   {
     SImageType::PointType pt = RP;
     SImageType::PointType pt2 = RP2;
     double                radius = 0.0;
     double                height = 0.0;
 
-    switch ( which )
+    switch (which)
     {
       case 0:
       {
-        height = mDef.GetHeight( "RP" );
-        radius = 4 * mDef.GetRadius( "RP" );
+        height = mDef.GetHeight("RP");
+        radius = 4 * mDef.GetRadius("RP");
         pt = RP;
         pt2 = RP2;
       }
       break;
       case 1:
       {
-        height = mDef.GetHeight( "VN4" );
-        radius = 1.6 * mDef.GetRadius( "VN4" );
+        height = mDef.GetHeight("VN4");
+        radius = 1.6 * mDef.GetRadius("VN4");
         pt = VN4;
         pt2 = VN42;
       }
       break;
       case 2:
       {
-        height = mDef.GetHeight( "AC" );
-        radius = 1.6 * mDef.GetRadius( "AC" );
+        height = mDef.GetHeight("AC");
+        radius = 1.6 * mDef.GetRadius("AC");
         pt = AC;
         pt2 = AC2;
       }
       break;
       case 3:
       {
-        height = mDef.GetHeight( "PC" );
-        radius = 4 * mDef.GetRadius( "PC" );
+        height = mDef.GetHeight("PC");
+        radius = 4 * mDef.GetRadius("PC");
         pt = PC;
         pt2 = PC2;
       }
       break;
     }
 
-    itk::ImageRegionIterator< RGBImageType > rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator< SImageType >   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-    for ( ; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
+    itk::ImageRegionIterator<RGBImageType> rgbIt(orientedImage, orientedImage->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<SImageType>   sIt(inputImage, inputImage->GetLargestPossibleRegion());
+    for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
-      orientedImage->TransformIndexToPhysicalPoint( index, p );
+      orientedImage->TransformIndexToPhysicalPoint(index, p);
 
-      if ( IsOnCylinder( p, pt, pt2, radius, height ) )
+      if (IsOnCylinder(p, pt, pt2, radius, height))
       {
         RGBPixelType pixel = rgbIt.Value();
 
-        switch ( which )
+        switch (which)
         {
           case 0:
           {
-            pixel.SetRed( 255 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(255);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 1:
           {
-            pixel.SetGreen( 255 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetGreen(255);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 2:
           {
-            pixel.SetBlue( 255 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetBlue(255);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 3:
           {
-            pixel.SetRed( 255 );
-            pixel.SetBlue( 255 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(255);
+            pixel.SetBlue(255);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
         }
@@ -238,69 +247,74 @@ MakeBrandeddebugImage( SImageType::ConstPointer in, const landmarksConstellation
     }
   }
 
-  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage( orientedImage );
+  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage(orientedImage);
 
-  itkUtil::WriteImage< RGB2DImageType >( TwoDImage, fname );
-  itkUtil::WriteImage< RGBImageType >( orientedImage, fname + "_ThreeDRGB.nii.gz" );
-  itkUtil::WriteImage< SImageType >( inputImage, fname + "_ThreeD.nii.gz" );
+  itkUtil::WriteImage<RGB2DImageType>(TwoDImage, fname);
+  itkUtil::WriteImage<RGBImageType>(orientedImage, fname + "_ThreeDRGB.nii.gz");
+  itkUtil::WriteImage<SImageType>(inputImage, fname + "_ThreeD.nii.gz");
 }
 
 void
-MakePointBranded3DImage( SImageType::ConstPointer in, const SImageType::PointType & CenterPoint,
-                         const std::string & fname )
+MakePointBranded3DImage(SImageType::ConstPointer      in,
+                        const SImageType::PointType & CenterPoint,
+                        const std::string &           fname)
 {
   SImageType::Pointer inputImage =
-    itkUtil::OrientImage< SImageType >( in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
   SImageType::Pointer inputStatsImage;
   {
     LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
-    duplicator->SetInputImage( inputImage );
+    duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
   }
 
-  itk::StatisticsImageFilter< SImageType >::Pointer stats = itk::StatisticsImageFilter< SImageType >::New();
+  itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
 
-  stats->SetInput( inputStatsImage );
+  stats->SetInput(inputStatsImage);
   stats->Update();
-  SImageType::PixelType maxPixel( stats->GetMaximum() );
+  SImageType::PixelType maxPixel(stats->GetMaximum());
 
   SImageType::PointType pt = CenterPoint;
   double                radius = 3.0;
 
-  itk::ImageRegionIterator< SImageType > sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-  for ( ; !sIt.IsAtEnd(); ++sIt )
+  itk::ImageRegionIterator<SImageType> sIt(inputImage, inputImage->GetLargestPossibleRegion());
+  for (; !sIt.IsAtEnd(); ++sIt)
   {
     SImageType::IndexType index = sIt.GetIndex();
     SImageType::PointType p;
-    inputImage->TransformIndexToPhysicalPoint( index, p );
-    if ( IsOnSphere( p, pt, radius ) )
+    inputImage->TransformIndexToPhysicalPoint(index, p);
+    if (IsOnSphere(p, pt, radius))
     {
-      sIt.Set( maxPixel );
+      sIt.Set(maxPixel);
     }
   }
 
-  itkUtil::WriteImage< SImageType >( inputImage, fname + "_Branded.nii.gz" );
+  itkUtil::WriteImage<SImageType>(inputImage, fname + "_Branded.nii.gz");
 }
 
 void
-MakeBranded2DImage( SImageType::ConstPointer in, landmarksConstellationDetector & myDetector,
-                    const SImageType::PointType & RP, const SImageType::PointType & AC,
-                    const SImageType::PointType & PC, const SImageType::PointType & VN4,
-                    const SImageType::PointType & CM, const std::string & fname )
+MakeBranded2DImage(SImageType::ConstPointer         in,
+                   landmarksConstellationDetector & myDetector,
+                   const SImageType::PointType &    RP,
+                   const SImageType::PointType &    AC,
+                   const SImageType::PointType &    PC,
+                   const SImageType::PointType &    VN4,
+                   const SImageType::PointType &    CM,
+                   const std::string &              fname)
 {
   SImageType::Pointer inputImage =
-    itkUtil::OrientImage< SImageType >( in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
 
-  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage( inputImage );
+  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
-  for ( unsigned int which = 0; which < 5; which++ )
+  for (unsigned int which = 0; which < 5; which++)
   {
     SImageType::PointType pt;
     double                radius = 0.0;
     double                thickness = 2.0;
 
-    switch ( which )
+    switch (which)
     {
       case 0:
       {
@@ -311,86 +325,86 @@ MakeBranded2DImage( SImageType::ConstPointer in, landmarksConstellationDetector 
       break;
       case 1:
       {
-        radius = myDetector.GetModelRadius( "AC" );
+        radius = myDetector.GetModelRadius("AC");
         pt = AC;
       }
       break;
       case 2:
       {
-        radius = myDetector.GetModelRadius( "PC" );
+        radius = myDetector.GetModelRadius("PC");
         pt = PC;
       }
       break;
       case 3:
       {
-        radius = myDetector.GetModelRadius( "RP" );
+        radius = myDetector.GetModelRadius("RP");
         pt = RP;
       }
       break;
       case 4:
       {
-        radius = myDetector.GetModelRadius( "VN4" );
+        radius = myDetector.GetModelRadius("VN4");
         pt = VN4;
       }
       break;
     }
 
-    itk::ImageRegionIterator< RGBImageType > rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator< SImageType >   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-    for ( ; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
+    itk::ImageRegionIterator<RGBImageType> rgbIt(orientedImage, orientedImage->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<SImageType>   sIt(inputImage, inputImage->GetLargestPossibleRegion());
+    for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
-      orientedImage->TransformIndexToPhysicalPoint( index, p );
-      if ( IsOnCylinder( p, pt, pt, radius, thickness ) )
+      orientedImage->TransformIndexToPhysicalPoint(index, p);
+      if (IsOnCylinder(p, pt, pt, radius, thickness))
       {
         RGBPixelType pixel = rgbIt.Value();
 
-        switch ( which )
+        switch (which)
         {
           case 0:
           {
-            pixel.SetRed( 255 );
-            pixel.SetGreen( 255 );
-            pixel.SetBlue( 0 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(255);
+            pixel.SetGreen(255);
+            pixel.SetBlue(0);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 1:
           {
-            pixel.SetRed( 0 );
-            pixel.SetGreen( 255 );
-            pixel.SetBlue( 0 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(0);
+            pixel.SetGreen(255);
+            pixel.SetBlue(0);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 2:
           {
-            pixel.SetRed( 0 );
-            pixel.SetGreen( 0 );
-            pixel.SetBlue( 255 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(0);
+            pixel.SetGreen(0);
+            pixel.SetBlue(255);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 3:
           {
-            pixel.SetRed( 255 );
-            pixel.SetGreen( 0 );
-            pixel.SetBlue( 0 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(255);
+            pixel.SetGreen(0);
+            pixel.SetBlue(0);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
           case 4:
           {
-            pixel.SetRed( 255 );
-            pixel.SetGreen( 0 );
-            pixel.SetBlue( 255 );
-            rgbIt.Set( pixel );
-            sIt.Set( 255 );
+            pixel.SetRed(255);
+            pixel.SetGreen(0);
+            pixel.SetBlue(255);
+            rgbIt.Set(pixel);
+            sIt.Set(255);
           }
           break;
         }
@@ -398,28 +412,32 @@ MakeBranded2DImage( SImageType::ConstPointer in, landmarksConstellationDetector 
     }
   }
 
-  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage( orientedImage );
+  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage(orientedImage);
 
-  itkUtil::WriteImage< RGB2DImageType >( TwoDImage, fname );
+  itkUtil::WriteImage<RGB2DImageType>(TwoDImage, fname);
 }
 
 // INFO:  Determine what the interface for WriteMRMLFile really needs to produce
 // a useful file, and then limit the interface to just that.
 extern void
-WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
-               std::string outputLandmarksInOutputSpace, std::string inputVolume, std::string outputVolume,
-               std::string outputTransform, const LandmarksMapType & outputLandmarksInInputSpaceMap,
-               const LandmarksMapType &                      outputLandmarksInOutputSpaceMap,
-               LandmarkIO::VersorTransformType::ConstPointer versorTransform )
+WriteMRMLFile(std::string                                   outputMRML,
+              std::string                                   outputLandmarksInInputSpace,
+              std::string                                   outputLandmarksInOutputSpace,
+              std::string                                   inputVolume,
+              std::string                                   outputVolume,
+              std::string                                   outputTransform,
+              const LandmarksMapType &                      outputLandmarksInInputSpaceMap,
+              const LandmarksMapType &                      outputLandmarksInOutputSpaceMap,
+              LandmarkIO::VersorTransformType::ConstPointer versorTransform)
 {
-  constexpr unsigned int        LocalImageDimension = 3;
-  itk::NumberToString< double > doubleToString;
+  constexpr unsigned int      LocalImageDimension = 3;
+  itk::NumberToString<double> doubleToString;
 
   using PixelType = short;
-  using ImageType = itk::Image< PixelType, LocalImageDimension >;
-  using ReaderType = itk::ImageFileReader< ImageType >;
+  using ImageType = itk::Image<PixelType, LocalImageDimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
 
-  std::string mrmlFullFilename = itksys::SystemTools::CollapseFullPath( outputMRML.c_str() );
+  std::string mrmlFullFilename = itksys::SystemTools::CollapseFullPath(outputMRML.c_str());
   std::string outputLandmarksInInputSpaceFullFilenameWithoutExtension = "";
   std::string outputLandmarksInOutputSpaceFullFilenameWithoutExtension = "";
   std::string inputVolumeFullFilename = "";
@@ -429,48 +447,48 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
   std::string outputTransformFullFilename = "";
   std::string outputTransformFilenameWithoutPath = "";
 
-  if ( outputLandmarksInInputSpace.compare( "" ) != 0 )
+  if (outputLandmarksInInputSpace.compare("") != 0)
   {
-    outputLandmarksInInputSpace = itksys::SystemTools::CollapseFullPath( outputLandmarksInInputSpace.c_str() );
+    outputLandmarksInInputSpace = itksys::SystemTools::CollapseFullPath(outputLandmarksInInputSpace.c_str());
     outputLandmarksInInputSpaceFullFilenameWithoutExtension =
-      itksys::SystemTools::GetFilenamePath( outputLandmarksInInputSpace ) + "/" +
-      itksys::SystemTools::GetFilenameWithoutLastExtension( outputLandmarksInInputSpace );
+      itksys::SystemTools::GetFilenamePath(outputLandmarksInInputSpace) + "/" +
+      itksys::SystemTools::GetFilenameWithoutLastExtension(outputLandmarksInInputSpace);
     outputLandmarksInInputSpaceFullFilenameWithoutExtension =
-      itksys::SystemTools::CollapseFullPath( outputLandmarksInInputSpaceFullFilenameWithoutExtension.c_str() );
+      itksys::SystemTools::CollapseFullPath(outputLandmarksInInputSpaceFullFilenameWithoutExtension.c_str());
   }
 
-  if ( outputLandmarksInOutputSpace.compare( "" ) != 0 )
+  if (outputLandmarksInOutputSpace.compare("") != 0)
   {
-    outputLandmarksInOutputSpace = itksys::SystemTools::CollapseFullPath( outputLandmarksInOutputSpace.c_str() );
+    outputLandmarksInOutputSpace = itksys::SystemTools::CollapseFullPath(outputLandmarksInOutputSpace.c_str());
     outputLandmarksInOutputSpaceFullFilenameWithoutExtension =
-      itksys::SystemTools::GetFilenamePath( outputLandmarksInOutputSpace ) + "/" +
-      itksys::SystemTools::GetFilenameWithoutLastExtension( outputLandmarksInOutputSpace );
+      itksys::SystemTools::GetFilenamePath(outputLandmarksInOutputSpace) + "/" +
+      itksys::SystemTools::GetFilenameWithoutLastExtension(outputLandmarksInOutputSpace);
     outputLandmarksInOutputSpaceFullFilenameWithoutExtension =
-      itksys::SystemTools::CollapseFullPath( outputLandmarksInOutputSpaceFullFilenameWithoutExtension.c_str() );
+      itksys::SystemTools::CollapseFullPath(outputLandmarksInOutputSpaceFullFilenameWithoutExtension.c_str());
   }
 
-  if ( inputVolume.compare( "" ) != 0 )
+  if (inputVolume.compare("") != 0)
   {
-    inputVolumeFullFilename = itksys::SystemTools::CollapseFullPath( inputVolume.c_str() );
-    inputVolumeFilenameWithoutPath = itksys::SystemTools::GetFilenameName( inputVolumeFullFilename );
+    inputVolumeFullFilename = itksys::SystemTools::CollapseFullPath(inputVolume.c_str());
+    inputVolumeFilenameWithoutPath = itksys::SystemTools::GetFilenameName(inputVolumeFullFilename);
   }
 
-  if ( outputVolume.compare( "" ) != 0 )
+  if (outputVolume.compare("") != 0)
   {
-    outputVolumeFullFilename = itksys::SystemTools::CollapseFullPath( outputVolume.c_str() );
-    outputVolumeFilenameWithoutPath = itksys::SystemTools::GetFilenameName( outputVolumeFullFilename );
+    outputVolumeFullFilename = itksys::SystemTools::CollapseFullPath(outputVolume.c_str());
+    outputVolumeFilenameWithoutPath = itksys::SystemTools::GetFilenameName(outputVolumeFullFilename);
   }
 
-  if ( outputTransform.compare( "" ) != 0 )
+  if (outputTransform.compare("") != 0)
   {
-    outputTransformFullFilename = itksys::SystemTools::CollapseFullPath( outputTransform.c_str() );
-    outputTransformFilenameWithoutPath = itksys::SystemTools::GetFilenameName( outputTransformFullFilename );
+    outputTransformFullFilename = itksys::SystemTools::CollapseFullPath(outputTransform.c_str());
+    outputTransformFilenameWithoutPath = itksys::SystemTools::GetFilenameName(outputTransformFullFilename);
   }
 
-  std::ofstream myfile( mrmlFullFilename.c_str() );
-  if ( !myfile.is_open() )
+  std::ofstream myfile(mrmlFullFilename.c_str());
+  if (!myfile.is_open())
   {
-    itkGenericExceptionMacro( << "Cannot write mrml file!" << mrmlFullFilename );
+    itkGenericExceptionMacro(<< "Cannot write mrml file!" << mrmlFullFilename);
   }
 
   // Common mrml header
@@ -540,7 +558,7 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
        " parallelScale=\"1\"  activetag=\"vtkMRMLViewNode1\" ></Camera>  \n";
 
   // For fiducial landmarks in output space
-  if ( outputLandmarksInOutputSpace.compare( "" ) != 0 )
+  if (outputLandmarksInOutputSpace.compare("") != 0)
   {
     myfile << "<FiducialList\n id=\"vtkMRMLFiducialListNode1\" name=\""
            << outputLandmarksInOutputSpaceFullFilenameWithoutExtension
@@ -551,11 +569,11 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
 
     LandmarksMapType::const_iterator it;
     unsigned int                     index = 0;
-    for ( it = outputLandmarksInOutputSpaceMap.begin(); it != outputLandmarksInOutputSpaceMap.end(); ++it )
+    for (it = outputLandmarksInOutputSpaceMap.begin(); it != outputLandmarksInOutputSpaceMap.end(); ++it)
     {
-      myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleToString( ( it->second )[0] )
-             << " " << doubleToString( ( it->second )[1] ) << " " << doubleToString( ( it->second )[2] );
-      if ( ++index < outputLandmarksInOutputSpaceMap.size() )
+      myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleToString((it->second)[0]) << " "
+             << doubleToString((it->second)[1]) << " " << doubleToString((it->second)[2]);
+      if (++index < outputLandmarksInOutputSpaceMap.size())
       {
         myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
       }
@@ -572,7 +590,7 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
   }
 
   // For fiducial landmarks in input space
-  if ( outputLandmarksInInputSpace.compare( "" ) != 0 )
+  if (outputLandmarksInInputSpace.compare("") != 0)
   {
     myfile << "<FiducialList\n id=\"vtkMRMLFiducialListNode2\" name=\""
            << outputLandmarksInInputSpaceFullFilenameWithoutExtension
@@ -583,11 +601,11 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
 
     LandmarksMapType::const_iterator it;
     unsigned int                     index = 0;
-    for ( it = outputLandmarksInInputSpaceMap.begin(); it != outputLandmarksInInputSpaceMap.end(); ++it )
+    for (it = outputLandmarksInInputSpaceMap.begin(); it != outputLandmarksInInputSpaceMap.end(); ++it)
     {
-      myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleToString( ( it->second )[0] )
-             << " " << doubleToString( ( it->second )[1] ) << " " << doubleToString( ( it->second )[2] );
-      if ( ++index < outputLandmarksInInputSpaceMap.size() )
+      myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleToString((it->second)[0]) << " "
+             << doubleToString((it->second)[1]) << " " << doubleToString((it->second)[2]);
+      if (++index < outputLandmarksInInputSpaceMap.size())
       {
         myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
       }
@@ -604,10 +622,10 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
   }
 
   // For output volume
-  if ( outputVolume.compare( "" ) != 0 )
+  if (outputVolume.compare("") != 0)
   {
     ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( outputVolumeFullFilename );
+    reader->SetFileName(outputVolumeFullFilename);
     reader->Update();
     ImageType::DirectionType direction = reader->GetOutput()->GetDirection();
     ImageType::SpacingType   spacing = reader->GetOutput()->GetSpacing();
@@ -623,16 +641,16 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
            << "\" hideFromEditors=\"false\" selectable=\"true\" selected=\"false\" "
               "storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode1\" userTags=\"\" "
               "displayNodeRef=\"vtkMRMLScalarVolumeDisplayNode1\" ijkToRASDirections=\"";
-    for ( unsigned int i = 0; i < LocalImageDimension; ++i )
+    for (unsigned int i = 0; i < LocalImageDimension; ++i)
     {
-      for ( unsigned int j = 0; j < LocalImageDimension; ++j )
+      for (unsigned int j = 0; j < LocalImageDimension; ++j)
       {
-        myfile << doubleToString( direction( i, j ) ) << " ";
+        myfile << doubleToString(direction(i, j)) << " ";
       }
     }
-    myfile << "\" spacing=\"" << doubleToString( spacing[0] ) << " " << doubleToString( spacing[1] ) << " "
-           << doubleToString( spacing[2] ) << "\" origin=\"" << doubleToString( origin[0] ) << " "
-           << doubleToString( origin[1] ) << " " << doubleToString( origin[2] )
+    myfile << "\" spacing=\"" << doubleToString(spacing[0]) << " " << doubleToString(spacing[1]) << " "
+           << doubleToString(spacing[2]) << "\" origin=\"" << doubleToString(origin[0]) << " "
+           << doubleToString(origin[1]) << " " << doubleToString(origin[2])
            << "\" labelMap=\"0\"></Volume>\n<VolumeDisplay\n id=\"vtkMRMLScalarVolumeDisplayNode1\" "
               "name=\"vtkMRMLScalarVolumeDisplayNode1\" hideFromEditors=\"true\" selectable=\"true\" "
               "selected=\"false\" color=\"0.5 0.5 0.5\" selectedColor=\"1 0 0\" selectedAmbient=\"0.4\" ambient=\"0\" "
@@ -645,10 +663,10 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
   }
 
   // For input volume
-  if ( inputVolume.compare( "" ) != 0 )
+  if (inputVolume.compare("") != 0)
   {
     ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( inputVolumeFullFilename );
+    reader->SetFileName(inputVolumeFullFilename);
     reader->Update();
     ImageType::DirectionType direction = reader->GetOutput()->GetDirection();
     ImageType::SpacingType   spacing = reader->GetOutput()->GetSpacing();
@@ -664,16 +682,16 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
            << "\" hideFromEditors=\"false\" selectable=\"true\" selected=\"false\" "
               "storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode2\" userTags=\"\" "
               "displayNodeRef=\"vtkMRMLScalarVolumeDisplayNode2\" ijkToRASDirections=\"";
-    for ( unsigned int i = 0; i < LocalImageDimension; ++i )
+    for (unsigned int i = 0; i < LocalImageDimension; ++i)
     {
-      for ( unsigned int j = 0; j < LocalImageDimension; ++j )
+      for (unsigned int j = 0; j < LocalImageDimension; ++j)
       {
-        myfile << doubleToString( direction( i, j ) ) << " ";
+        myfile << doubleToString(direction(i, j)) << " ";
       }
     }
-    myfile << "\" spacing=\"" << doubleToString( spacing[0] ) << " " << doubleToString( spacing[1] ) << " "
-           << doubleToString( spacing[2] ) << "\" origin=\"" << doubleToString( origin[0] ) << " "
-           << doubleToString( origin[1] ) << " " << doubleToString( origin[2] )
+    myfile << "\" spacing=\"" << doubleToString(spacing[0]) << " " << doubleToString(spacing[1]) << " "
+           << doubleToString(spacing[2]) << "\" origin=\"" << doubleToString(origin[0]) << " "
+           << doubleToString(origin[1]) << " " << doubleToString(origin[2])
            << "\" labelMap=\"0\"></Volume>\n<VolumeDisplay\n id=\"vtkMRMLScalarVolumeDisplayNode2\" "
               "name=\"vtkMRMLScalarVolumeDisplayNode2\" hideFromEditors=\"true\" selectable=\"true\" "
               "selected=\"false\" color=\"0.5 0.5 0.5\" selectedColor=\"1 0 0\" selectedAmbient=\"0.4\" ambient=\"0\" "
@@ -686,7 +704,7 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
   }
 
   // For output transform
-  if ( outputTransform.compare( "" ) != 0 )
+  if (outputTransform.compare("") != 0)
   {
     LandmarkIO::VersorTransformMatrixType tm = versorTransform->GetMatrix();
 
@@ -697,11 +715,11 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
            << "<LinearTransform  \n  id=\"vtkMRMLLinearTransformNode1\"  name=\"" << outputTransformFilenameWithoutPath
            << "\"  hideFromEditors=\"false\"  selectable=\"true\"  selected=\"false\"  "
               "storageNodeRef=\"vtkMRMLTransformStorageNode1\"  userTags=\"\"  matrixTransformToParent=\"";
-    for ( unsigned int i = 0; i < LocalImageDimension; ++i )
+    for (unsigned int i = 0; i < LocalImageDimension; ++i)
     {
-      for ( unsigned int j = 0; j < LocalImageDimension; ++j )
+      for (unsigned int j = 0; j < LocalImageDimension; ++j)
       {
-        myfile << doubleToString( tm( i, j ) ) << " ";
+        myfile << doubleToString(tm(i, j)) << " ";
       }
     }
     myfile << "\" ></LinearTransform>  \n";
@@ -712,97 +730,98 @@ WriteMRMLFile( std::string outputMRML, std::string outputLandmarksInInputSpace,
 }
 
 void
-loadLLSModel( std::string llsModelFilename, std::map< std::string, std::vector< double > > & llsMeans,
-              std::map< std::string, LandmarkIO::MatrixType > & llsMatrices,
-              std::map< std::string, double > &                 searchRadii )
+loadLLSModel(std::string                                     llsModelFilename,
+             std::map<std::string, std::vector<double>> &    llsMeans,
+             std::map<std::string, LandmarkIO::MatrixType> & llsMatrices,
+             std::map<std::string, double> &                 searchRadii)
 {
-  std::ifstream myfile( llsModelFilename.c_str() );
+  std::ifstream myfile(llsModelFilename.c_str());
 
-  if ( !myfile.is_open() )
+  if (!myfile.is_open())
   {
-    itkGenericExceptionMacro( << "Cannot open landmark model file!" << llsModelFilename );
+    itkGenericExceptionMacro(<< "Cannot open landmark model file!" << llsModelFilename);
   }
 
   // for each landmark
   std::string line;
-  while ( getline( myfile, line ) )
+  while (getline(myfile, line))
   {
     // skip newline or comments between landmarks
-    if ( ( line.compare( 0, 1, "#" ) != 0 ) && ( line.compare( 0, 1, "\0" ) != 0 ) )
+    if ((line.compare(0, 1, "#") != 0) && (line.compare(0, 1, "\0") != 0))
     {
       unsigned int dimension = 3; // for 3D parameters
 
       // read in the landmark name
       std::string name = line;
 
-      if ( !getline( myfile, line ) )
+      if (!getline(myfile, line))
       {
-        itkGenericExceptionMacro( << "Bad number of parameters info in llsModelFile!" );
+        itkGenericExceptionMacro(<< "Bad number of parameters info in llsModelFile!");
       }
       else
       {
         // read in mean values associated with PCA model
         unsigned int pos1 = 0;
-        unsigned int pos2 = line.find( ' ' );
+        unsigned int pos2 = line.find(' ');
         unsigned int i = 0;
-        while ( pos2 < line.size() )
+        while (pos2 < line.size())
         {
-          llsMeans[name].push_back( std::stod( line.substr( pos1, pos2 - pos1 ).c_str() ) );
+          llsMeans[name].push_back(std::stod(line.substr(pos1, pos2 - pos1).c_str()));
           ++i;
           pos1 = pos2 + 1;
-          pos2 = line.find( ' ', pos1 + 1 );
+          pos2 = line.find(' ', pos1 + 1);
         }
 
-        if ( i != dimension ) // double check
+        if (i != dimension) // double check
         {
-          itkGenericExceptionMacro( << "Bad mean values in llsModelFile!" );
+          itkGenericExceptionMacro(<< "Bad mean values in llsModelFile!");
         }
       }
 
       // read in search radius
-      if ( !getline( myfile, line ) )
+      if (!getline(myfile, line))
       {
-        itkGenericExceptionMacro( << "Bad search radius in llsModelFile!" );
+        itkGenericExceptionMacro(<< "Bad search radius in llsModelFile!");
       }
       else
       {
-        searchRadii[name] = std::stod( line.c_str() );
+        searchRadii[name] = std::stod(line.c_str());
       }
 
       // read in the number of linear model coefficients
       unsigned int numParameters = 0;
-      if ( !getline( myfile, line ) )
+      if (!getline(myfile, line))
       {
-        itkGenericExceptionMacro( << "Bad number of parameters info in llsModelFile!" );
+        itkGenericExceptionMacro(<< "Bad number of parameters info in llsModelFile!");
       }
       else
       {
-        numParameters = std::stoi( line.c_str() );
+        numParameters = std::stoi(line.c_str());
       }
 
       LandmarkIO::MatrixType coefficients; // linear model coefficients
-      coefficients.set_size( dimension, numParameters );
-      for ( unsigned int j = 0; j < dimension; ++j )
+      coefficients.set_size(dimension, numParameters);
+      for (unsigned int j = 0; j < dimension; ++j)
       {
-        if ( !getline( myfile, line ) )
+        if (!getline(myfile, line))
         {
-          itkGenericExceptionMacro( << "Bad linear model coefficients in llsModelFile!" )
+          itkGenericExceptionMacro(<< "Bad linear model coefficients in llsModelFile!")
         }
         else
         {
           unsigned int pos1 = 0;
-          unsigned int pos2 = line.find( ' ' );
+          unsigned int pos2 = line.find(' ');
           unsigned int i = 0;
-          while ( pos2 < line.size() )
+          while (pos2 < line.size())
           {
-            coefficients( j, i++ ) = std::stod( line.substr( pos1, pos2 - pos1 ).c_str() );
+            coefficients(j, i++) = std::stod(line.substr(pos1, pos2 - pos1).c_str());
             pos1 = pos2 + 1;
-            pos2 = line.find( ' ', pos1 + 1 );
+            pos2 = line.find(' ', pos1 + 1);
           }
 
-          if ( i != numParameters ) // double check
+          if (i != numParameters) // double check
           {
-            itkGenericExceptionMacro( << "Bad linear model coefficients in llsModelFile!" );
+            itkGenericExceptionMacro(<< "Bad linear model coefficients in llsModelFile!");
           }
         }
       }
@@ -814,17 +833,18 @@ loadLLSModel( std::string llsModelFilename, std::map< std::string, std::vector< 
 }
 
 void
-writeVerificationScript( std::string outputVerificationScriptFilename, std::string outputVolume,
-                         std::string saveOutputLandmarksFilename )
+writeVerificationScript(std::string outputVerificationScriptFilename,
+                        std::string outputVolume,
+                        std::string saveOutputLandmarksFilename)
 {
   std::ofstream ScriptFile;
 
-  ScriptFile.open( outputVerificationScriptFilename.c_str() ); // open setup
-                                                               // file for
-                                                               // writing
-  if ( !ScriptFile.is_open() )
+  ScriptFile.open(outputVerificationScriptFilename.c_str()); // open setup
+                                                             // file for
+                                                             // writing
+  if (!ScriptFile.is_open())
   {
-    itkGenericExceptionMacro( << "Can't write outputVerificationScript " << outputVerificationScriptFilename );
+    itkGenericExceptionMacro(<< "Can't write outputVerificationScript " << outputVerificationScriptFilename);
   }
 
   ScriptFile << "##There is a program that reads in a T1 image, determine the AC, PC, VN4, and MPJ" << std::endl;

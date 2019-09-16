@@ -26,122 +26,122 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh,
-                                             TOutputMesh >::ResampleDestinationPointsQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
+ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::
+  ResampleDestinationPointsQuadEdgeMeshFilter()
 {
-  this->SetNumberOfRequiredInputs( 3 );
-  this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfIndexedOutputs( 1 );
+  this->SetNumberOfRequiredInputs(3);
+  this->SetNumberOfRequiredOutputs(1);
+  this->SetNumberOfIndexedOutputs(1);
 
-  this->SetNthOutput( 0, OutputPointSetType::New() );
+  this->SetNthOutput(0, OutputPointSetType::New());
 
   this->m_Interpolator = InterpolatorType::New();
   // this->m_Interpolator->SetUseNearestNeighborInterpolationAsBackup(true);
 
-  this->m_Transform = itk::IdentityTransform< double >::New();
+  this->m_Transform = itk::IdentityTransform<double>::New();
 
-  this->m_SphereCenter.Fill( 0.0 );
+  this->m_SphereCenter.Fill(0.0);
   this->m_SphereRadius = 1.0;
 }
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh,
-                                             TOutputMesh >::~ResampleDestinationPointsQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
+ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::
+  ~ResampleDestinationPointsQuadEdgeMeshFilter()
 {}
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh >::SetFixedMesh(
-  const FixedMeshType * mesh )
+ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::SetFixedMesh(
+  const FixedMeshType * mesh)
 {
-  itkDebugMacro( "setting input FixedMesh to " << mesh );
-  if ( mesh != static_cast< const FixedMeshType * >( this->ProcessObject::GetInput( 1 ) ) )
+  itkDebugMacro("setting input FixedMesh to " << mesh);
+  if (mesh != static_cast<const FixedMeshType *>(this->ProcessObject::GetInput(1)))
   {
-    this->ProcessObject::SetNthInput( 1, const_cast< FixedMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(1, const_cast<FixedMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
-const typename ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh,
-                                                            TOutputMesh >::FixedMeshType *
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh >::GetFixedMesh() const
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
+const typename ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::
+  FixedMeshType *
+  ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::GetFixedMesh() const
 {
-  Self *                surrogate = const_cast< Self * >( this );
-  const FixedMeshType * referenceMesh = static_cast< const FixedMeshType * >( surrogate->ProcessObject::GetInput( 1 ) );
+  Self *                surrogate = const_cast<Self *>(this);
+  const FixedMeshType * referenceMesh = static_cast<const FixedMeshType *>(surrogate->ProcessObject::GetInput(1));
   return referenceMesh;
 }
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh >::SetReferenceMesh(
-  const ReferenceMeshType * mesh )
+ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::SetReferenceMesh(
+  const ReferenceMeshType * mesh)
 {
-  itkDebugMacro( "setting input ReferenceMesh to " << mesh );
-  if ( mesh != static_cast< const ReferenceMeshType * >( this->ProcessObject::GetInput( 2 ) ) )
+  itkDebugMacro("setting input ReferenceMesh to " << mesh);
+  if (mesh != static_cast<const ReferenceMeshType *>(this->ProcessObject::GetInput(2)))
   {
-    this->ProcessObject::SetNthInput( 2, const_cast< ReferenceMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(2, const_cast<ReferenceMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
-const typename ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh,
-                                                            TOutputMesh >::ReferenceMeshType *
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh >::GetReferenceMesh()
-  const
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
+const typename ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::
+  ReferenceMeshType *
+  ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::GetReferenceMesh()
+    const
 {
-  Self *                    surrogate = const_cast< Self * >( this );
+  Self *                    surrogate = const_cast<Self *>(this);
   const ReferenceMeshType * referenceMesh =
-    static_cast< const ReferenceMeshType * >( surrogate->ProcessObject::GetInput( 2 ) );
+    static_cast<const ReferenceMeshType *>(surrogate->ProcessObject::GetInput(2));
   return referenceMesh;
 }
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh,
-                                             TOutputMesh >::ProjectPointToSphereSurface( OutputPointType & point ) const
+ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::
+  ProjectPointToSphereSurface(OutputPointType & point) const
 {
   using VectorType = typename OutputPointType::VectorType;
 
-  VectorType vectorToCenter( point - this->m_SphereCenter );
+  VectorType vectorToCenter(point - this->m_SphereCenter);
 
   const double radialDistance = vectorToCenter.GetNorm();
   vectorToCenter *= this->m_SphereRadius / radialDistance;
   point = this->m_SphereCenter + vectorToCenter;
 }
 
-template < typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TFixedMesh, typename TReferenceMesh, typename TOutputMesh>
 void
-ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh >::GenerateData()
+ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMesh, TOutputMesh>::GenerateData()
 {
   const ReferenceMeshType * referenceMesh = this->GetReferenceMesh();
 
-  if ( !referenceMesh )
+  if (!referenceMesh)
   {
-    itkExceptionMacro( "Reference mesh is missing" );
+    itkExceptionMacro("Reference mesh is missing");
   }
 
   const FixedMeshType * fixedMesh = this->GetFixedMesh();
 
-  if ( !fixedMesh )
+  if (!fixedMesh)
   {
-    itkExceptionMacro( "Fixed mesh is missing" );
+    itkExceptionMacro("Fixed mesh is missing");
   }
 
   const InputPointSetType * inputPointSet = this->GetInput();
 
-  if ( !inputPointSet )
+  if (!inputPointSet)
   {
-    itkExceptionMacro( "Input PointSet is missing" );
+    itkExceptionMacro("Input PointSet is missing");
   }
 
   const InputPointsContainer * inputPoints = inputPointSet->GetPoints();
 
-  if ( !inputPoints )
+  if (!inputPoints)
   {
-    itkExceptionMacro( "Input PointSet has no points" );
+    itkExceptionMacro("Input PointSet has no points");
   }
 
   const unsigned int numberOfPoints = referenceMesh->GetNumberOfPoints();
@@ -150,19 +150,19 @@ ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceM
 
   OutputPointsContainerPointer points = outputPointSet->GetPoints();
 
-  if ( points.IsNull() || ( points->Size() != numberOfPoints ) )
+  if (points.IsNull() || (points->Size() != numberOfPoints))
   {
     // We need to reallocate the points container for the output.
     points = OutputPointsContainer::New();
-    points->Reserve( numberOfPoints );
-    outputPointSet->SetPoints( points );
+    points->Reserve(numberOfPoints);
+    outputPointSet->SetPoints(points);
   }
 
-  ProgressReporter progress( this, 0, numberOfPoints );
+  ProgressReporter progress(this, 0, numberOfPoints);
 
-  this->m_Interpolator->SetSphereCenter( this->m_SphereCenter );
+  this->m_Interpolator->SetSphereCenter(this->m_SphereCenter);
 
-  this->m_Interpolator->SetInputMesh( fixedMesh );
+  this->m_Interpolator->SetInputMesh(fixedMesh);
   this->m_Interpolator->Initialize();
 
   const ReferencePointsContainer * referencePoints = referenceMesh->GetPoints();
@@ -182,17 +182,17 @@ ResampleDestinationPointsQuadEdgeMeshFilter< TInputMesh, TFixedMesh, TReferenceM
 
   OutputPointType resultingPoint;
 
-  while ( referenceItr != referenceEnd )
+  while (referenceItr != referenceEnd)
   {
-    inputPoint.CastFrom( referenceItr.Value() );
+    inputPoint.CastFrom(referenceItr.Value());
 
-    pointToEvaluate.CastFrom( this->m_Transform->TransformPoint( inputPoint ) );
+    pointToEvaluate.CastFrom(this->m_Transform->TransformPoint(inputPoint));
 
-    this->m_Interpolator->Evaluate( inputPoints, pointToEvaluate, evaluatedPoint );
+    this->m_Interpolator->Evaluate(inputPoints, pointToEvaluate, evaluatedPoint);
 
-    resultingPoint.CastFrom( evaluatedPoint );
+    resultingPoint.CastFrom(evaluatedPoint);
 
-    this->ProjectPointToSphereSurface( resultingPoint );
+    this->ProjectPointToSphereSurface(resultingPoint);
 
     outputPointItr.Value() = resultingPoint;
 

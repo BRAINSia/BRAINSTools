@@ -21,15 +21,15 @@
 #include <iostream>
 
 void
-BRAINSRegisterAlternateIO( void )
+BRAINSRegisterAlternateIO(void)
 {}
 
 // If ITK was built with FFTWD and FFTWF, then use wisdom files
-#if defined( ITK_USE_FFTWF ) && defined( ITK_USE_FFTWD )
+#if defined(ITK_USE_FFTWF) && defined(ITK_USE_FFTWD)
 
 // This is intended to be called one time
 void
-FFTWInit( const std::string path_for_wisdom )
+FFTWInit(const std::string path_for_wisdom)
 {
   // Environmental variables
   // itksys::SystemTools::GetEnv("ITK_FFTW_PLAN_RIGOR", "STRING");
@@ -51,15 +51,15 @@ FFTWInit( const std::string path_for_wisdom )
   //                             file to be generated.  If this is
   //                             set, then ITK_FFTW_WISDOM_CACHE_BASE
   //                             is ignored.
-  if ( path_for_wisdom.length() > 0 ) // If empty, just use the default.
+  if (path_for_wisdom.length() > 0) // If empty, just use the default.
   {
-    itk::FFTWGlobalConfiguration::SetWisdomCacheBase( path_for_wisdom );
+    itk::FFTWGlobalConfiguration::SetWisdomCacheBase(path_for_wisdom);
   }
-  itk::FFTWGlobalConfiguration::SetReadWisdomCache( true );
-  itk::FFTWGlobalConfiguration::SetWriteWisdomCache( true );
+  itk::FFTWGlobalConfiguration::SetReadWisdomCache(true);
+  itk::FFTWGlobalConfiguration::SetWriteWisdomCache(true);
   itk::FFTWGlobalConfiguration::ImportDefaultWisdomFileDouble();
   itk::FFTWGlobalConfiguration::ImportDefaultWisdomFileFloat();
-  itk::FFTWGlobalConfiguration::SetPlanRigor( FFTW_EXHAUSTIVE );
+  itk::FFTWGlobalConfiguration::SetPlanRigor(FFTW_EXHAUSTIVE);
   // itk::FFTWGlobalConfiguration::SetPlanRigor(FFTW_MEASURE);
   // std::string temp = itk::FFTWGlobalConfiguration::GetWisdomFileDefaultBaseName();
   // FFTW_MEASURE, FFTW_PATIENT, or FFTW_EXHAUSTIVE
@@ -71,7 +71,7 @@ FFTWInit( const std::string path_for_wisdom )
 }
 #else
 void
-FFTWInit( const std::string /* Not used in the stub file : path_for_wisdom */ )
+FFTWInit(const std::string /* Not used in the stub file : path_for_wisdom */)
 {
   std::cout << "ITK was not built with ITK_USE_FFTWF:BOOL=ON && ITK_USE_FFTWD:BOOL=ON,"
             << "so performance of tools that depend on fft's (like this one) will be substantially slower" << std::endl;

@@ -50,17 +50,17 @@ namespace itk
  * \wikiexample{SimpleOperations/RandomImageSource,Produce an image of noise}
  * \endwiki
  */
-template < typename TOutputImage >
-class RandomImageSource : public ImageSource< TOutputImage >
+template <typename TOutputImage>
+class RandomImageSource : public ImageSource<TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( RandomImageSource );
+  ITK_DISALLOW_COPY_AND_ASSIGN(RandomImageSource);
 
   /** Standard class type alias. */
   using Self = RandomImageSource;
-  using Superclass = ImageSource< TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageSource<TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Typedef for the output image PixelType. */
   using OutputImagePixelType = typename TOutputImage::PixelType;
@@ -69,10 +69,10 @@ public:
   using OutputImageRegionType = typename TOutputImage::RegionType;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( RandomImageSource, ImageSource );
+  itkTypeMacro(RandomImageSource, ImageSource);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Basic types from the OutputImageType */
   using SizeType = typename TOutputImage::SizeType;
@@ -87,53 +87,57 @@ public:
   typedef PointValueType PointValueArrayType[TOutputImage::ImageDimension];
 
   /** Set/Get size of the output image */
-  itkSetMacro( Size, SizeType );
+  itkSetMacro(Size, SizeType);
   virtual void
-  SetSize( SizeValueArrayType sizeArray );
+  SetSize(SizeValueArrayType sizeArray);
 
   virtual const SizeValueType *
   GetSize() const;
 
   /** Set/Get spacing of the output image */
-  itkSetMacro( Spacing, SpacingType );
+  itkSetMacro(Spacing, SpacingType);
   virtual void
-  SetSpacing( SpacingValueArrayType spacingArray );
+  SetSpacing(SpacingValueArrayType spacingArray);
 
   virtual const SpacingValueType *
   GetSpacing() const;
 
   /** Set/Get origin of the output image */
-  itkSetMacro( Origin, PointType );
+  itkSetMacro(Origin, PointType);
   virtual void
-  SetOrigin( PointValueArrayType originArray );
+  SetOrigin(PointValueArrayType originArray);
 
   virtual const PointValueType *
   GetOrigin() const;
 
   /** Set the minimum possible pixel value. By default, it is
    * NumericTraits<TOutputImage::PixelType>::min(). */
-  itkSetClampMacro( Min, OutputImagePixelType, NumericTraits< OutputImagePixelType >::NonpositiveMin(),
-                    NumericTraits< OutputImagePixelType >::max() );
+  itkSetClampMacro(Min,
+                   OutputImagePixelType,
+                   NumericTraits<OutputImagePixelType>::NonpositiveMin(),
+                   NumericTraits<OutputImagePixelType>::max());
 
   /** Get the minimum possible pixel value. */
-  itkGetConstMacro( Min, OutputImagePixelType );
+  itkGetConstMacro(Min, OutputImagePixelType);
 
   /** Set the maximum possible pixel value. By default, it is
    * NumericTraits<TOutputImage::PixelType>::max(). */
-  itkSetClampMacro( Max, OutputImagePixelType, NumericTraits< OutputImagePixelType >::NonpositiveMin(),
-                    NumericTraits< OutputImagePixelType >::max() );
+  itkSetClampMacro(Max,
+                   OutputImagePixelType,
+                   NumericTraits<OutputImagePixelType>::NonpositiveMin(),
+                   NumericTraits<OutputImagePixelType>::max());
 
   /** Get the maximum possible pixel value. */
-  itkGetConstMacro( Max, OutputImagePixelType );
+  itkGetConstMacro(Max, OutputImagePixelType);
 
 protected:
   RandomImageSource();
   ~RandomImageSource();
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   virtual void
-  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
 
   virtual void
   GenerateOutputInformation();

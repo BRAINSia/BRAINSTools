@@ -27,18 +27,18 @@ class ImageDescription : public ElementParser
 public:
   using SuperClass = ElementParser;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== ImageDescription ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== ImageDescription ===" << std::endl;
     return indent + 2;
   }
 
   ImageDescription()
-    : ElementParser( "Image" )
+    : ElementParser("Image")
   {
-    this->Add( new StringValue( "Type", "" ), "Type" );
-    this->Add( new StringValue( "Filename", "" ), "Filename" );
+    this->Add(new StringValue("Type", ""), "Type");
+    this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
@@ -46,7 +46,7 @@ class ImageList : public ElementParser
 {
 public:
   ImageList()
-    : ElementParser( "ImageList" )
+    : ElementParser("ImageList")
   {}
 };
 

@@ -40,7 +40,7 @@
 #include "vtkVersion.h"
 #include "itkMacro.h" //Needed for override
 
-#if ( VTK_MAJOR_VERSION >= 6 )
+#if (VTK_MAJOR_VERSION >= 6)
 #  define VTK_FILTERING_EXPORT /* */
 #endif
 
@@ -50,7 +50,7 @@ public:
   static vtkTalairachGrid *
   New();
 
-  vtkTypeMacro( vtkTalairachGrid, vtkDataSet );
+  vtkTypeMacro(vtkTalairachGrid, vtkDataSet);
 
   /* Description:
    * Clear out the memory associated with both the box and grid */
@@ -69,13 +69,13 @@ public:
    * Set the AC, PC, SLA, and IRP Points. These points define the talairach
    * grid. Call EstablishGrid() to create the underlying vtkStructuredGrid */
   void
-  SetACPoint( double ac[3] );
+  SetACPoint(double ac[3]);
   void
-  SetPCPoint( double pc[3] );
+  SetPCPoint(double pc[3]);
   void
-  SetIRPPoint( double irp[3] );
+  SetIRPPoint(double irp[3]);
   void
-  SetSLAPoint( double sla[3] );
+  SetSLAPoint(double sla[3]);
 
   /* Description:
    * Get the AC, PC, SLA, and IRP Points. These points define the
@@ -105,10 +105,10 @@ public:
    * Set the underlying vtkStructuredGrid representations for the Talairach
    * coordinate system */
   void
-  SetTalairachGrid( vtkStructuredGrid * );
+  SetTalairachGrid(vtkStructuredGrid *);
 
   void
-  SetBoundingBoxGrid( vtkStructuredGrid * );
+  SetBoundingBoxGrid(vtkStructuredGrid *);
 
   /* Description:
    * Get the points list for the box and grid */
@@ -135,16 +135,16 @@ public:
   /* Description:
    * Write out the box and grid to a file */
   void
-  WriteTalairachGrid( std::string filename );
+  WriteTalairachGrid(std::string filename);
 
   void
-  WriteBoundingBoxGrid( std::string filename );
+  WriteBoundingBoxGrid(std::string filename);
 
   /* Description:
    * Write out the appropriate data when the talairachGrid object is added to
    * an IO stream */
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
 protected:
   vtkTalairachGrid();
@@ -152,11 +152,11 @@ protected:
 
 private:
   /* Convert between talairach and voxel points */
-  std::vector< double >
-  ConvertTalairachPointToPixelPoint( double * talPoint );
+  std::vector<double>
+  ConvertTalairachPointToPixelPoint(double * talPoint);
 
-  std::vector< double >
-  ConvertPixelPointToTalairachPoint( double * voxelPoint );
+  std::vector<double>
+  ConvertPixelPointToTalairachPoint(double * voxelPoint);
 
   /* Stores the 4 points used to define all other points in the box and grid */
   double ACPoint[3];
@@ -175,9 +175,9 @@ private:
   /* The data extent */
   int Extent[6];
 
-  vtkTalairachGrid( const vtkTalairachGrid & ); /* Not implemented. */
+  vtkTalairachGrid(const vtkTalairachGrid &); /* Not implemented. */
   void
-  operator=( const vtkTalairachGrid & ); /* Not implemented. */
+  operator=(const vtkTalairachGrid &); /* Not implemented. */
 };
 
 #endif

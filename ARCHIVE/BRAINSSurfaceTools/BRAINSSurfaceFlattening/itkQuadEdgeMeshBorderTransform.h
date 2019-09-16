@@ -32,15 +32,15 @@ namespace itk
  *
  * To Write.
  */
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshBorderTransform : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshBorderTransform : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
   /** Basic types. */
   using Self = QuadEdgeMeshBorderTransform;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   using InputMeshType = TInputMesh;
   using InputMeshConstPointer = typename InputMeshType::ConstPointer;
@@ -77,15 +77,15 @@ public:
   typedef typename OutputMeshType::PointsContainerConstIterator OutputPointsContainerConstIterator;
   typedef typename OutputMeshType::CellsContainerConstIterator  OutputCellsContainerConstIterator;
 
-  itkNewMacro( Self );
-  itkTypeMacro( QuadEdgeMeshBorderTransform, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkNewMacro(Self);
+  itkTypeMacro(QuadEdgeMeshBorderTransform, QuadEdgeMeshToQuadEdgeMeshFilter);
   static constexpr unsigned int PointDimension = InputTraits::PointDimension;
 
-  using InputVectorPointType = std::vector< InputPointType >;
-  using MapPointIdentifier = std::map< InputPointIdentifier, OutputPointIdentifier >;
+  using InputVectorPointType = std::vector<InputPointType>;
+  using MapPointIdentifier = std::map<InputPointIdentifier, OutputPointIdentifier>;
   using MapPointIdentifierIterator = typename MapPointIdentifier::iterator;
 
-  using BoundaryRepresentativeEdgesType = QuadEdgeMeshBoundaryEdgesMeshFunction< InputMeshType >;
+  using BoundaryRepresentativeEdgesType = QuadEdgeMeshBoundaryEdgesMeshFunction<InputMeshType>;
   using BoundaryRepresentativeEdgesPointer = typename BoundaryRepresentativeEdgesType::Pointer;
 
 public:
@@ -95,11 +95,11 @@ public:
     DISK_BORDER_TRANSFORM
   };
 
-  itkSetMacro( TransformType, BorderTransformType );
-  itkGetConstMacro( TransformType, BorderTransformType );
+  itkSetMacro(TransformType, BorderTransformType);
+  itkGetConstMacro(TransformType, BorderTransformType);
 
-  itkSetMacro( Radius, InputCoordRepType );
-  itkGetConstMacro( Radius, InputCoordRepType );
+  itkSetMacro(Radius, InputCoordRepType);
+  itkGetConstMacro(Radius, InputCoordRepType);
 
   void
   ComputeTransform();
@@ -147,11 +147,11 @@ protected:
 
 private:
   /** Not implemented */
-  QuadEdgeMeshBorderTransform( const Self & );
+  QuadEdgeMeshBorderTransform(const Self &);
 
   /** Not implemented */
   void
-  operator=( const Self & );
+  operator=(const Self &);
 };
 } // namespace itk
 #include "itkQuadEdgeMeshBorderTransform.hxx"

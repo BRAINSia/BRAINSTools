@@ -37,22 +37,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TMesh >
-class RescaleScalarsQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >
+template <typename TMesh>
+class RescaleScalarsQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( RescaleScalarsQuadEdgeMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(RescaleScalarsQuadEdgeMeshFilter);
 
   using Self = RescaleScalarsQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( RescaleScalarsQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(RescaleScalarsQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType = TMesh;
   using InputPixelType = typename InputMeshType::PixelType;
@@ -66,27 +66,27 @@ public:
 
   /** Set/Get the mesh that will be deformed. */
   void
-  SetInputMesh( const InputMeshType * mesh );
+  SetInputMesh(const InputMeshType * mesh);
 
   const InputMeshType *
-  GetInputMesh( void ) const;
+  GetInputMesh(void) const;
 
   /** Set/Get min value of the output mesh scalars. */
-  itkSetMacro( OutputMinimum, OutputPixelType );
-  itkGetMacro( OutputMinimum, OutputPixelType );
+  itkSetMacro(OutputMinimum, OutputPixelType);
+  itkGetMacro(OutputMinimum, OutputPixelType);
 
   /** Set/Get max value of the output mesh scalars. */
-  itkSetMacro( OutputMaximum, OutputPixelType );
-  itkGetMacro( OutputMaximum, OutputPixelType );
+  itkSetMacro(OutputMaximum, OutputPixelType);
+  itkGetMacro(OutputMaximum, OutputPixelType);
 
   /** Get min value of the input mesh scalars. */
-  itkGetMacro( InputMinimum, InputPixelType );
+  itkGetMacro(InputMinimum, InputPixelType);
 
   /** Get max value of the input mesh scalars. */
-  itkGetMacro( InputMaximum, InputPixelType );
+  itkGetMacro(InputMaximum, InputPixelType);
 
   /** Get scale to transform mesh scalars. */
-  itkGetMacro( Scale, double );
+  itkGetMacro(Scale, double);
 
 protected:
   RescaleScalarsQuadEdgeMeshFilter();

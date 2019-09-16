@@ -5,9 +5,9 @@
 #include <vtkImageData.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
-  if ( argc < 2 )
+  if (argc < 2)
   {
     std::cout << "ERROR: need to specify a file to try reading on the command line." << std::endl;
     return 1;
@@ -15,7 +15,7 @@ main( int argc, char * argv[] )
   std::cout << "Trying to read file '" << argv[1] << "'" << std::endl;
 
   vtkITKArchetypeImageSeriesVectorReaderFile * vectorReader = vtkITKArchetypeImageSeriesVectorReaderFile::New();
-  vectorReader->SetArchetype( argv[1] );
+  vectorReader->SetArchetype(argv[1]);
   vectorReader->SetOutputScalarTypeToNative();
   vectorReader->SetDesiredCoordinateOrientationToNative();
 
@@ -23,7 +23,7 @@ main( int argc, char * argv[] )
   {
     vectorReader->Update();
   }
-  catch ( itk::ExceptionObject err )
+  catch (itk::ExceptionObject err)
   {
     std::cout << "Unable to read file '" << argv[1] << "', err = \n" << err << std::endl;
     vectorReader->Delete();
@@ -34,7 +34,7 @@ main( int argc, char * argv[] )
   vtkImageData * imageData;
 
   imageData = vectorReader->GetOutput();
-  if ( imageData )
+  if (imageData)
   {
     std::cout << "Read file, image data has " << imageData->GetNumberOfPoints() << " points" << std::endl;
   }

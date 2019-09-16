@@ -82,23 +82,23 @@ extern bool globalverboseFlag;
 namespace // avoid 'shadows declaration' warnings.
 {
 
-using SImageType = itk::Image< short, 3 >;
-using DImageType3D = itk::Image< double, 3 >;
-using FImageType3D = itk::Image< float, 3 >;
+using SImageType = itk::Image<short, 3>;
+using DImageType3D = itk::Image<double, 3>;
+using FImageType3D = itk::Image<float, 3>;
 
-using ByteImageType = itk::Image< unsigned char, 3 >;
+using ByteImageType = itk::Image<unsigned char, 3>;
 
 using SImagePointType = SImageType::PointType;
 
-using RGBPixelType = itk::RGBPixel< unsigned char >;
-using RGBImageType = itk::Image< RGBPixelType, 3 >;
-using RGB2DImageType = itk::Image< RGBPixelType, 2 >;
+using RGBPixelType = itk::RGBPixel<unsigned char>;
+using RGBImageType = itk::Image<RGBPixelType, 3>;
+using RGB2DImageType = itk::Image<RGBPixelType, 2>;
 
-using RigidTransformType = itk::Euler3DTransform< double >;
-using VersorTransformType = itk::VersorRigid3DTransform< double >;
+using RigidTransformType = itk::Euler3DTransform<double>;
+using VersorTransformType = itk::VersorRigid3DTransform<double>;
 
-using PyramidFilterType = itk::MultiResolutionPyramidImageFilter< SImageType, SImageType >;
-using LinearInterpolatorType = itk::LinearInterpolateImageFunction< SImageType, double >;
+using PyramidFilterType = itk::MultiResolutionPyramidImageFilter<SImageType, SImageType>;
+using LinearInterpolatorType = itk::LinearInterpolateImageFunction<SImageType, double>;
 } // namespace
 
 #include "landmarksConstellationModelIO.h"
@@ -106,73 +106,88 @@ using LinearInterpolatorType = itk::LinearInterpolateImageFunction< SImageType, 
 extern std::string globalResultsDir;
 extern int         globalImagedebugLevel;
 extern PyramidFilterType::Pointer
-MakeThreeLevelPyramid( SImageType::Pointer refImage );
+MakeThreeLevelPyramid(SImageType::Pointer refImage);
 
 extern PyramidFilterType::Pointer
-MakeOneLevelPyramid( SImageType::Pointer refImage );
+MakeOneLevelPyramid(SImageType::Pointer refImage);
 
 extern SImageType::PointType
-GetImageCenterPhysicalPoint( SImageType::Pointer & image );
+GetImageCenterPhysicalPoint(SImageType::Pointer & image);
 
 extern unsigned char
-ShortToUChar( short in, short min, short max );
+ShortToUChar(short in, short min, short max);
 
 extern SImageType::Pointer
-CreateTestCenteredRotatedImage2( const RigidTransformType::Pointer ACPC_MSP_AlignedTransform,
-                                 /* const
-                                   SImageType::PointType
-                                   finalPoint, */
-                                 const SImageType::PointType         PreMSP_Point,
-                                 /*const*/ SImageType::Pointer &     image,
-                                 const RigidTransformType::Pointer & Point_Rotate );
+CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer ACPC_MSP_AlignedTransform,
+                                /* const
+                                  SImageType::PointType
+                                  finalPoint, */
+                                const SImageType::PointType         PreMSP_Point,
+                                /*const*/ SImageType::Pointer &     image,
+                                const RigidTransformType::Pointer & Point_Rotate);
 
 extern void
-decomposeRPAC( const SImageType::PointType & RP, const SImageType::PointType & PC, const SImageType::PointType & AC,
-               double * const RPPC_to_RPAC_angle, double * const RPAC_over_RPPC );
+decomposeRPAC(const SImageType::PointType & RP,
+              const SImageType::PointType & PC,
+              const SImageType::PointType & AC,
+              double * const                RPPC_to_RPAC_angle,
+              double * const                RPAC_over_RPPC);
 
 extern void
-MakeLabelImage( SImageType::Pointer in, const SImageType::PointType & RP, const SImageType::PointType & AC,
-                const SImageType::PointType & PC, const SImageType::PointType & VN4, const std::string & fname );
+MakeLabelImage(SImageType::Pointer           in,
+               const SImageType::PointType & RP,
+               const SImageType::PointType & AC,
+               const SImageType::PointType & PC,
+               const SImageType::PointType & VN4,
+               const std::string &           fname);
 
 extern void
-ComputeMSP( SImageType::Pointer image, RigidTransformType::Pointer & output_transform,
-            SImageType::Pointer & transformedImage, const SImageType::PointType & orig_lmk_CenterOfHeadMass,
-            const int qualityLevel, double & cc );
+ComputeMSP(SImageType::Pointer           image,
+           RigidTransformType::Pointer & output_transform,
+           SImageType::Pointer &         transformedImage,
+           const SImageType::PointType & orig_lmk_CenterOfHeadMass,
+           const int                     qualityLevel,
+           double &                      cc);
 
 extern void
-ComputeMSP_Easy( SImageType::Pointer image, RigidTransformType::Pointer & eyeFixed2msp_lmk_tfm,
-                 const SImageType::PointType & orig_lmk_CenterOfHeadMass, const int qualityLevel );
+ComputeMSP_Easy(SImageType::Pointer           image,
+                RigidTransformType::Pointer & eyeFixed2msp_lmk_tfm,
+                const SImageType::PointType & orig_lmk_CenterOfHeadMass,
+                const int                     qualityLevel);
 
 extern SImageType::Pointer
-CreatedebugPlaneImage( SImageType::Pointer referenceImage, const RigidTransformType::Pointer MSPTransform,
-                       const std::string & debugfilename );
+CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
+                      const RigidTransformType::Pointer MSPTransform,
+                      const std::string &               debugfilename);
 
 extern void
-CreatedebugPlaneImage( SImageType::Pointer referenceImage, const std::string & debugfilename );
+CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename);
 
 extern RigidTransformType::Pointer
-computeTmspFromPoints( SImageType::PointType RP, SImageType::PointType AC, SImageType::PointType PC,
-                       SImageType::PointType DesiredCenter );
+computeTmspFromPoints(SImageType::PointType RP,
+                      SImageType::PointType AC,
+                      SImageType::PointType PC,
+                      SImageType::PointType DesiredCenter);
 
 extern SImageType::PointType
-GetCenterOfHeadMass( SImageType::Pointer volume );
+GetCenterOfHeadMass(SImageType::Pointer volume);
 
 extern SImageType::Pointer
 MakeIsoTropicReferenceImage();
 
 /*****************************************************************************/
-template < typename ValuesType >
+template <typename ValuesType>
 ValuesType
-vectorNorm( const std::vector< ValuesType > & x )
+vectorNorm(const std::vector<ValuesType> & x)
 {
   ValuesType norm = 0.0;
 
-  for ( typename std::vector< ValuesType >::const_iterator it = x.begin(); it != x.end(); ++it )
+  for (typename std::vector<ValuesType>::const_iterator it = x.begin(); it != x.end(); ++it)
   {
     const ValuesType value = *it;
     norm += value * value;
   }
-  return std::sqrt( norm );
+  return std::sqrt(norm);
 }
 
 /*
@@ -196,18 +211,18 @@ vectorNorm( const std::vector< ValuesType > & x )
  If we run removeVectorMean(y,3) before calling normalizeVector(y,3), we
  will obtain an array which has a zero mean as well as unit norm.
  */
-template < typename ValuesType >
+template <typename ValuesType>
 void
-normalizeVector( std::vector< ValuesType > & x )
+normalizeVector(std::vector<ValuesType> & x)
 {
-  const ValuesType norm = vectorNorm( x );
+  const ValuesType norm = vectorNorm(x);
 
-  if ( norm < std::numeric_limits< ValuesType >::epsilon() )
+  if (norm < std::numeric_limits<ValuesType>::epsilon())
   {
     std::cout << "WARNING:  ZERO NORM VECTOR." << __FILE__ << __LINE__ << std::endl;
     return;
   }
-  for ( typename std::vector< ValuesType >::iterator it = x.begin(); it != x.end(); ++it )
+  for (typename std::vector<ValuesType>::iterator it = x.begin(); it != x.end(); ++it)
   {
     *it /= norm;
   }
@@ -243,13 +258,13 @@ normalizeVector( std::vector< ValuesType > & x )
  The array y is represented by: myModel.AccessRPTemplate()+j*nv_myModel.AccessRPTemplate(), and n =
  nv_myModel.AccessRPTemplate()
  */
-template < typename ValuesType >
+template <typename ValuesType>
 ValuesType
-removeVectorMean( std::vector< ValuesType > & x )
+removeVectorMean(std::vector<ValuesType> & x)
 {
   const ValuesType n = x.size();
-  const ValuesType mean = std::accumulate( x.begin(), x.end(), static_cast< ValuesType >( 0.0 ) ) / n;
-  for ( typename std::vector< ValuesType >::iterator it = x.begin(); it != x.end(); ++it )
+  const ValuesType mean = std::accumulate(x.begin(), x.end(), static_cast<ValuesType>(0.0)) / n;
+  for (typename std::vector<ValuesType>::iterator it = x.begin(); it != x.end(); ++it)
   {
     *it -= mean;
   }
@@ -276,21 +291,23 @@ removeVectorMean( std::vector< ValuesType > & x )
  * @param result_array
  */
 extern void
-extractArray( LinearInterpolatorType::Pointer imInterp, const SImageType::PointType & CenterPoint,
-              const landmarksConstellationModelIO::IndexLocationVectorType & model,
-              std::vector< float > &                                         result_array );
+extractArray(LinearInterpolatorType::Pointer                                imInterp,
+             const SImageType::PointType &                                  CenterPoint,
+             const landmarksConstellationModelIO::IndexLocationVectorType & model,
+             std::vector<float> &                                           result_array);
 
 #include <itkMinimumMaximumImageFilter.h>
 #include <itkScalarImageToHistogramGenerator.h>
 #include <itkOtsuMultipleThresholdsCalculator.h>
-template < typename SImageType >
+template <typename SImageType>
 void
-ImageMinMax( typename SImageType::Pointer image, typename SImageType::PixelType * imageMin,
-             typename SImageType::PixelType * imageMax )
+ImageMinMax(typename SImageType::Pointer     image,
+            typename SImageType::PixelType * imageMin,
+            typename SImageType::PixelType * imageMax)
 {
-  typename itk::MinimumMaximumImageFilter< SImageType >::Pointer minmaxFilter =
-    itk::MinimumMaximumImageFilter< SImageType >::New();
-  minmaxFilter->SetInput( image );
+  typename itk::MinimumMaximumImageFilter<SImageType>::Pointer minmaxFilter =
+    itk::MinimumMaximumImageFilter<SImageType>::New();
+  minmaxFilter->SetInput(image);
   minmaxFilter->Update();
   *imageMax = minmaxFilter->GetMaximum();
   *imageMin = minmaxFilter->GetMinimum();
@@ -314,36 +331,38 @@ ImageMinMax( typename SImageType::Pointer image, typename SImageType::PixelType 
  *                100.0=100%, and 1.0=.01%.
  * @return Background threshold.
  */
-template < typename SImageType >
+template <typename SImageType>
 typename SImageType::PixelType
-setLowHigh( typename SImageType::Pointer & image, typename SImageType::PixelType & low,
-            typename SImageType::PixelType & high, const float percent )
+setLowHigh(typename SImageType::Pointer &   image,
+           typename SImageType::PixelType & low,
+           typename SImageType::PixelType & high,
+           const float                      percent)
 {
   typename SImageType::PixelType imageMin;
   typename SImageType::PixelType imageMax;
-  ImageMinMax< SImageType >( image, &imageMin, &imageMax );
+  ImageMinMax<SImageType>(image, &imageMin, &imageMax);
 
-  using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator< SImageType >;
+  using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator<SImageType>;
   typename HistogramGeneratorType::Pointer histogramGenerator = HistogramGeneratorType::New();
-  histogramGenerator->SetInput( image );
-  histogramGenerator->SetNumberOfBins( imageMax - imageMin + 1 );
-  histogramGenerator->SetMarginalScale( 1.0 );
-  histogramGenerator->SetHistogramMin( imageMin );
-  histogramGenerator->SetHistogramMax( imageMax );
+  histogramGenerator->SetInput(image);
+  histogramGenerator->SetNumberOfBins(imageMax - imageMin + 1);
+  histogramGenerator->SetMarginalScale(1.0);
+  histogramGenerator->SetHistogramMin(imageMin);
+  histogramGenerator->SetHistogramMax(imageMax);
   histogramGenerator->Compute();
   using HistogramType = typename HistogramGeneratorType::HistogramType;
   const HistogramType * histogram = histogramGenerator->GetOutput();
 
-  using OtsuCalcType = itk::OtsuMultipleThresholdsCalculator< HistogramType >;
+  using OtsuCalcType = itk::OtsuMultipleThresholdsCalculator<HistogramType>;
   typename OtsuCalcType::Pointer OtsuCalc = OtsuCalcType::New();
-  OtsuCalc->SetInputHistogram( histogram );
-  OtsuCalc->SetNumberOfThresholds( 1 );
+  OtsuCalc->SetInputHistogram(histogram);
+  OtsuCalc->SetNumberOfThresholds(1);
   OtsuCalc->Compute();
   typename OtsuCalcType::OutputType otsuThresholds = OtsuCalc->GetOutput();
 
-  low = static_cast< typename SImageType::PixelType >( histogram->Quantile( 0, 0.0F + percent ) );
-  high = static_cast< typename SImageType::PixelType >( histogram->Quantile( 0, 1.0F - percent ) );
-  return static_cast< typename SImageType::PixelType >( otsuThresholds[0] );
+  low = static_cast<typename SImageType::PixelType>(histogram->Quantile(0, 0.0F + percent));
+  high = static_cast<typename SImageType::PixelType>(histogram->Quantile(0, 1.0F - percent));
+  return static_cast<typename SImageType::PixelType>(otsuThresholds[0]);
 }
 
 #endif //__landmarksConstellationCommon_h

@@ -2,7 +2,7 @@
 #include "mex.h"
 
 bool
-isGradientAxis( const unsigned int kindFlag )
+isGradientAxis(const unsigned int kindFlag)
 {
   /* kindFlag == 1 indicates a domain -> Physical space
    * kindFlag == 2 indicates a space  -> Physical space
@@ -12,11 +12,11 @@ isGradientAxis( const unsigned int kindFlag )
 }
 
 mxClassID
-typeNtoM( const int ntype )
+typeNtoM(const int ntype)
 {
   mxClassID mtype;
 
-  switch ( ntype )
+  switch (ntype)
   {
     case nrrdTypeChar:
       mtype = mxINT8_CLASS;

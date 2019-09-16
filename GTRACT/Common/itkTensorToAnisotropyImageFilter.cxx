@@ -65,11 +65,11 @@ TensorToAnisotropyImageFilter ::Update()
 
   m_Output = OutputImageType::New();
 
-  m_Output->SetRegions( ImageRegion );
-  m_Output->CopyInformation( m_Input );
+  m_Output->SetRegions(ImageRegion);
+  m_Output->CopyInformation(m_Input);
   m_Output->Allocate();
 
-  switch ( m_AnisotropyType )
+  switch (m_AnisotropyType)
   {
     case MEAN_DIFFUSIVITY:
     {
@@ -98,72 +98,72 @@ TensorToAnisotropyImageFilter ::Update()
   }
 
   // Set Meta Data Orientation Information
-  m_Output->SetMetaDataDictionary( m_Input->GetMetaDataDictionary() );
+  m_Output->SetMetaDataDictionary(m_Input->GetMetaDataDictionary());
 }
 
 void
 TensorToAnisotropyImageFilter ::computVoxelIsotropy()
 {
-  using IteratorType = itk::ImageRegionIteratorWithIndex< OutputImageType >;
-  IteratorType it( m_Output, m_Output->GetLargestPossibleRegion() );
+  using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
+  IteratorType it(m_Output, m_Output->GetLargestPossibleRegion());
 
   OutputImageIndexType index;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     index = it.GetIndex();
-    InputPixelType currentVoxel = m_Input->GetPixel( index );
+    InputPixelType currentVoxel = m_Input->GetPixel(index);
     float          adc = 0;
 
-    if ( currentVoxel.GetNorm() != 0 )
+    if (currentVoxel.GetNorm() != 0)
     {
-      adc = ( currentVoxel[0] + currentVoxel[1] + currentVoxel[2] ) / 3.0;
+      adc = (currentVoxel[0] + currentVoxel[1] + currentVoxel[2]) / 3.0;
     }
-    it.Set( adc );
+    it.Set(adc);
   }
 }
 
 void
 TensorToAnisotropyImageFilter ::computSimpleVoxelAnisotropy()
 {
-  using IteratorType = itk::ImageRegionIteratorWithIndex< OutputImageType >;
-  IteratorType it( m_Output, m_Output->GetLargestPossibleRegion() );
+  using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
+  IteratorType it(m_Output, m_Output->GetLargestPossibleRegion());
 
   OutputImageIndexType index;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     index = it.GetIndex();
-    InputPixelType currentVoxel = m_Input->GetPixel( index );
+    InputPixelType currentVoxel = m_Input->GetPixel(index);
     float          fa = 0;
 
-    if ( currentVoxel.GetNorm() != 0 )
+    if (currentVoxel.GetNorm() != 0)
     {
-      TVector eig = Eigen_Value( Tensor2Matrix( currentVoxel ) );
+      TVector eig = Eigen_Value(Tensor2Matrix(currentVoxel));
 
-      switch ( m_AnisotropyType )
+      switch (m_AnisotropyType)
       {
         case FRACTIONAL_ANISOTROPY:
         {
-          fa = FA( eig );
+          fa = FA(eig);
         }
         break;
         case RELATIVE_ANISOTROPY:
         {
-          fa = RA( eig );
+          fa = RA(eig);
         }
         break;
         case VOLUME_RATIO:
         {
-          fa = VR( eig );
+          fa = VR(eig);
         }
         break;
         case AXIAL_DIFFUSIVITY:
         {
-          fa = AxialDiffusivity( eig );
+          fa = AxialDiffusivity(eig);
         }
         break;
         case RADIAL_DIFFUSIVITY:
         {
-          fa = RadialDiffusivity( eig );
+          fa = RadialDiffusivity(eig);
         }
         break;
         default:
@@ -173,67 +173,67 @@ TensorToAnisotropyImageFilter ::computSimpleVoxelAnisotropy()
         break;
       }
     }
-    it.Set( fa );
+    it.Set(fa);
   }
 }
 
 void
 TensorToAnisotropyImageFilter ::computNeighborhoodVoxelAnisotropy()
 {
-  m_Output->FillBuffer( 0.0 );
-  using NeighborhoodIteratorType = itk::ConstNeighborhoodIterator< InputImageType >;
+  m_Output->FillBuffer(0.0);
+  using NeighborhoodIteratorType = itk::ConstNeighborhoodIterator<InputImageType>;
   NeighborhoodIteratorType it;
 
   NeighborhoodIteratorType::RadiusType radius;
-  radius.Fill( 1 );
+  radius.Fill(1);
   radius[2] = 0;
 
   // boundary condition
-  using FaceCalculatorType = itk::NeighborhoodAlgorithm::ImageBoundaryFacesCalculator< InputImageType >;
+  using FaceCalculatorType = itk::NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>;
   FaceCalculatorType               faceCalculator;
   FaceCalculatorType::FaceListType faceList;
-  faceList = faceCalculator( m_Input, m_Input->GetLargestPossibleRegion(), radius );
+  faceList = faceCalculator(m_Input, m_Input->GetLargestPossibleRegion(), radius);
   FaceCalculatorType::FaceListType::iterator fit;
-  for ( fit = faceList.begin(); fit != faceList.end(); ++fit )
+  for (fit = faceList.begin(); fit != faceList.end(); ++fit)
   { // This is temporary, further consideration on boundary condition needed
-    it = NeighborhoodIteratorType( radius, m_Input, *fit );
-    for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+    it = NeighborhoodIteratorType(radius, m_Input, *fit);
+    for (it.GoToBegin(); !it.IsAtEnd(); ++it)
     {
       TVector center = it.GetCenterPixel().GetVnlVector();
       float   ai = 0;
       // ////////////////////////////////////////////////////////////////////////
-      if ( !center.is_zero() )
+      if (!center.is_zero())
       {
         float   sum = 0;
         float   coef = 0;
         TVector neighbor;
-        for ( int i = 0; i <= 8; i++ )
+        for (int i = 0; i <= 8; i++)
         {
-          if ( i == 4 )
+          if (i == 4)
           {
             continue;
           }
 
-          neighbor = it.GetPixel( i ).GetVnlVector();
-          if ( !neighbor.is_zero() )
+          neighbor = it.GetPixel(i).GetVnlVector();
+          if (!neighbor.is_zero())
           {
             float temp;
             float a = 1;
-            if ( ( i % 2 ) == 0 )
+            if ((i % 2) == 0)
             {
               a = 0.7071;
             }
 
-            switch ( m_AnisotropyType )
+            switch (m_AnisotropyType)
             {
               case COHERENCE_INDEX:
               {
-                temp = CI( center, neighbor );
+                temp = CI(center, neighbor);
               }
               break;
               case LATTICE_INDEX:
               {
-                temp = LI( center, neighbor );
+                temp = LI(center, neighbor);
               }
               break;
               default:
@@ -249,13 +249,13 @@ TensorToAnisotropyImageFilter ::computNeighborhoodVoxelAnisotropy()
         }
 
         // Cut off the value that < 0, It's right or wrong?
-        if ( ( coef != 0 ) & ( sum > 0 ) )
+        if ((coef != 0) & (sum > 0))
         {
           ai = sum / coef;
         }
       }
       // ////////////////////////////////////////////////////////////////////////
-      m_Output->SetPixel( it.GetIndex(), ai );
+      m_Output->SetPixel(it.GetIndex(), ai);
     }
   }
 }

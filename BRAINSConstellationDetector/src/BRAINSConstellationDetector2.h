@@ -92,96 +92,97 @@ namespace itk
 //
 // Software Guide : EndLatex
 
-template < typename TInputImage, typename TOutputImage >
-class BRAINSConstellationDetector2 : public ImageToImageFilter< SImageType, SImageType >
+template <typename TInputImage, typename TOutputImage>
+class BRAINSConstellationDetector2 : public ImageToImageFilter<SImageType, SImageType>
 {
 public:
   /** Standard ITK type alias */
   using Self = BRAINSConstellationDetector2;
-  using Superclass = ImageToImageFilter< SImageType, SImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<SImageType, SImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int Dimension = SImageType::ImageDimension;
-  using MatrixType = vnl_matrix< double >;
+  using MatrixType = vnl_matrix<double>;
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( BRAINSConstellationDetector2, ImageToImageFilter );
+  itkTypeMacro(BRAINSConstellationDetector2, ImageToImageFilter);
 
   /** Method for creation through the object factory */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Display */
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   // Set Basic Inputs
   /** Set the filename of the output transform */
-  itkSetMacro( Transform, std::string );
+  itkSetMacro(Transform, std::string);
 
   /** Set the filename of the model file */
-  itkSetMacro( InputTemplateModel, std::string );
+  itkSetMacro(InputTemplateModel, std::string);
 
   /** Set MSP quality level */
-  itkSetMacro( MspQualityLevel, unsigned int );
+  itkSetMacro(MspQualityLevel, unsigned int);
 
   /** Set Otsu percentile threshold */
-  itkSetMacro( OtsuPercentileThreshold, double );
+  itkSetMacro(OtsuPercentileThreshold, double);
 
   /** Set AC lower bound */
-  itkSetMacro( AcLowerBound, double );
+  itkSetMacro(AcLowerBound, double);
 
   /** Set Cut Out Head In Output volumes */
-  itkSetMacro( CutOutHeadInOutputVolume, bool );
+  itkSetMacro(CutOutHeadInOutputVolume, bool);
 
   /** Set rescale intensities */
-  itkSetMacro( RescaleIntensities, bool );
+  itkSetMacro(RescaleIntensities, bool);
 
   /** Set trim rescaled intensities */
-  itkSetMacro( TrimRescaledIntensities, double );
+  itkSetMacro(TrimRescaledIntensities, double);
 
   /** Set rescale intensities output range */
-  VECTORitkSetMacro( RescaleIntensitiesOutputRange, std::vector< int > );
+  VECTORitkSetMacro(RescaleIntensitiesOutputRange, std::vector<int>);
 
   /** Set the background fill value string */
-  itkSetMacro( BackgroundFillValueString, std::string );
+  itkSetMacro(BackgroundFillValueString, std::string);
 
   /** Set use windowed sinc */
-  itkSetMacro( InterpolationMode, std::string );
+  itkSetMacro(InterpolationMode, std::string);
 
   /** Set Hough eye transform */
-  itkSetObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
+  itkSetObjectMacro(orig2eyeFixed_img_tfm, VersorTransformType);
 
   // TODO: Make LandmarksMapType a thin class with ostream overload
   //       so that `std::cout << _arg << std::endl;` works from itkSetMacro
   // LandmarksMapType needs ostream overloads for macro to work
   // when buildng in debug mode itkSetMacro( forced_orig_lmks, LandmarksMapType );
-  virtual void Setforced_orig_lmks (const LandmarksMapType _arg)
+  virtual void
+  Setforced_orig_lmks(const LandmarksMapType _arg)
+  {
+    if (this->m_forced_orig_lmks != _arg)
     {
-    if ( this->m_forced_orig_lmks != _arg )
-      {
       this->m_forced_orig_lmks = _arg;
       this->Modified();
-      }
     }
+  }
 
 
   /** Set the original input image before the Hough eye detector */
-  itkSetObjectMacro( OriginalInputImage, SImageType );
-  itkGetConstObjectMacro( OriginalInputImage, SImageType );
+  itkSetObjectMacro(OriginalInputImage, SImageType);
+  itkGetConstObjectMacro(OriginalInputImage, SImageType);
 
   /** GetHoughEyeAlignedImage */
   SImageType::ConstPointer
   GeteyeFixed_img() const
   {
-    SImageType::ConstPointer internalImage = this->GetInput( 0 );
+    SImageType::ConstPointer internalImage = this->GetInput(0);
     return internalImage;
   }
 
   // Get Basic Outputs
   /** Get the versor transform */
-  itkGetConstObjectMacro( OrigToACPCVersorTransform, VersorTransformType );
-  itkGetConstObjectMacro( ACPCToOrigVersorTransform, VersorTransformType );
+  itkGetConstObjectMacro(OrigToACPCVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(ACPCToOrigVersorTransform, VersorTransformType);
 
 
   /** Get the aligned named points */
@@ -192,75 +193,75 @@ public:
   }
 
   /** Get the interpolated output isotropic image */
-  itkGetConstObjectMacro( OutputResampledImage, SImageType );
+  itkGetConstObjectMacro(OutputResampledImage, SImageType);
 
   /** Get the output untransformed clipped volume */
-  itkGetConstObjectMacro( OutputUntransformedClippedVolume, SImageType );
+  itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
 
   /** Get the image to be resampled */
-  itkGetConstObjectMacro( CleanedIntensityOriginalInputImage, SImageType );
+  itkGetConstObjectMacro(CleanedIntensityOriginalInputImage, SImageType);
 
   /** Get the Hough eye transform */
-  itkGetModifiableObjectMacro( orig2eyeFixed_img_tfm, VersorTransformType );
+  itkGetModifiableObjectMacro(orig2eyeFixed_img_tfm, VersorTransformType);
 
   /** Set the Hough eye failure report */
   void
-  SetHoughEyeFailure( const bool failure )
+  SetHoughEyeFailure(const bool failure)
   {
     this->m_HoughEyeFailure = failure;
   }
 
   /** Set llsMeans **/
   void
-  SetLlsMeans( const std::map< std::string, std::vector< double > > & llsMeans )
+  SetLlsMeans(const std::map<std::string, std::vector<double>> & llsMeans)
   {
     this->m_LlsMeans = llsMeans;
   }
 
   /** Set llsMatrices **/
   void
-  SetLlsMatrices( const std::map< std::string, MatrixType > & llsMatrices )
+  SetLlsMatrices(const std::map<std::string, MatrixType> & llsMatrices)
   {
     this->m_LlsMatrices = llsMatrices;
   }
 
   /** Set search radii for corresponding landmarks **/
   void
-  SetSearchRadii( const std::map< std::string, double > & radii )
+  SetSearchRadii(const std::map<std::string, double> & radii)
   {
     this->m_SearchRadii = radii;
   }
 
   /** Set AC mean **/
-  itkSetMacro( ACMean, SImagePointType );
+  itkSetMacro(ACMean, SImagePointType);
 
   // Set Advanced Inputs
   /** Set MPJ search radius */
-  itkSetMacro( RadiusMPJ, double );
+  itkSetMacro(RadiusMPJ, double);
 
   /** Set AC search radius */
-  itkSetMacro( RadiusAC, double );
+  itkSetMacro(RadiusAC, double);
 
   /** Set PC search radius */
-  itkSetMacro( RadiusPC, double );
+  itkSetMacro(RadiusPC, double);
 
   /** Set VN4 search radius */
-  itkSetMacro( RadiusVN4, double );
+  itkSetMacro(RadiusVN4, double);
 
   /** Set use debug mode */
-  itkSetMacro( Debug, bool );
+  itkSetMacro(Debug, bool);
 
   /** Set use verbose mode */
-  itkSetMacro( Verbose, bool );
+  itkSetMacro(Verbose, bool);
 
   /** Set debugging images level */
-  itkSetMacro( WritedebuggingImagesLevel, unsigned int );
+  itkSetMacro(WritedebuggingImagesLevel, unsigned int);
 
   /** Set branded 2D image filename */
-  itkSetMacro( WriteBranded2DImage, std::string );
+  itkSetMacro(WriteBranded2DImage, std::string);
 
   /** Set results dir */
-  itkSetMacro( ResultsDir, std::string );
+  itkSetMacro(ResultsDir, std::string);
 
   //  /** Set/Get EMSP landmarks */
   //  void Setmsp_lmks(LandmarksMapType landmarks)
@@ -274,17 +275,17 @@ public:
   //    return m_msp_lmks;
   //  }
 
-  itkSetMacro( atlasVolume, std::string );
-  itkSetMacro( atlasLandmarks, std::string );
-  itkSetMacro( atlasLandmarkWeights, std::string );
+  itkSetMacro(atlasVolume, std::string);
+  itkSetMacro(atlasLandmarks, std::string);
+  itkSetMacro(atlasLandmarkWeights, std::string);
 
-  itkGetMacro( atlasVolume, std::string );
-  itkGetMacro( atlasLandmarks, std::string );
-  itkGetMacro( atlasLandmarkWeights, std::string );
+  itkGetMacro(atlasVolume, std::string);
+  itkGetMacro(atlasLandmarks, std::string);
+  itkGetMacro(atlasLandmarkWeights, std::string);
 
-  BRAINSConstellationDetector2( const Self & ) = delete;
+  BRAINSConstellationDetector2(const Self &) = delete;
   void
-  operator=( const Self & ) = delete;
+  operator=(const Self &) = delete;
   ~BRAINSConstellationDetector2() override = default;
 
 protected:
@@ -296,17 +297,17 @@ protected:
   /** Essential Parameters */
   // Inputs
 
-  std::string        m_Transform;
-  std::string        m_InputTemplateModel;
-  unsigned int       m_MspQualityLevel;               // default = 2
-  double             m_OtsuPercentileThreshold;       // default = 0.01
-  double             m_AcLowerBound;                  // default = 1000.0
-  bool               m_CutOutHeadInOutputVolume;      // default = false
-  bool               m_RescaleIntensities;            // default = false
-  double             m_TrimRescaledIntensities;       // default = 4.4172
-  std::vector< int > m_RescaleIntensitiesOutputRange; // default = [40, 4000]
-  std::string        m_BackgroundFillValueString;     // default = "0"
-  std::string        m_InterpolationMode;             // default = "Linear"
+  std::string      m_Transform;
+  std::string      m_InputTemplateModel;
+  unsigned int     m_MspQualityLevel;               // default = 2
+  double           m_OtsuPercentileThreshold;       // default = 0.01
+  double           m_AcLowerBound;                  // default = 1000.0
+  bool             m_CutOutHeadInOutputVolume;      // default = false
+  bool             m_RescaleIntensities;            // default = false
+  double           m_TrimRescaledIntensities;       // default = 4.4172
+  std::vector<int> m_RescaleIntensitiesOutputRange; // default = [40, 4000]
+  std::string      m_BackgroundFillValueString;     // default = "0"
+  std::string      m_InterpolationMode;             // default = "Linear"
 
   // a local editable copy of original input before Hough eye detector
   // Note: this->GetInput() will return a const input after Hough eye.
@@ -320,10 +321,10 @@ protected:
 
   bool m_HoughEyeFailure;
 
-  std::map< std::string, MatrixType >            m_LlsMatrices;
-  std::map< std::string, std::vector< double > > m_LlsMeans;
-  SImagePointType                                m_ACMean;
-  std::map< std::string, double >                m_SearchRadii;
+  std::map<std::string, MatrixType>          m_LlsMatrices;
+  std::map<std::string, std::vector<double>> m_LlsMeans;
+  SImagePointType                            m_ACMean;
+  std::map<std::string, double>              m_SearchRadii;
 
   // Outputs
   VersorTransformType::Pointer m_OrigToACPCVersorTransform;
@@ -339,10 +340,10 @@ protected:
   /** Advanced parameters */
   /** Manual Override */
   // Inputs
-  std::vector< float > m_force_orig_lmk_ACPointLPS;  // default = 0.
-  std::vector< float > m_force_orig_lmk_PCPointLPS;  // default = 0.
-  std::vector< float > m_force_orig_lmk_VN4PointLPS; // default = 0.
-  std::vector< float > m_force_orig_lmk_RPPointLPS;  // default = 0.
+  std::vector<float> m_force_orig_lmk_ACPointLPS;  // default = 0.
+  std::vector<float> m_force_orig_lmk_PCPointLPS;  // default = 0.
+  std::vector<float> m_force_orig_lmk_VN4PointLPS; // default = 0.
+  std::vector<float> m_force_orig_lmk_RPPointLPS;  // default = 0.
 
   /** Model Override */
   // Inputs

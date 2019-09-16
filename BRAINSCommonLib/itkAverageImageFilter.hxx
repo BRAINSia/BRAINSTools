@@ -28,20 +28,20 @@
 namespace itk
 {
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-AverageImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+AverageImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-AverageImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(
-  const OutputImageRegionType & outputRegionForThread, ThreadIdType itkNotUsed( threadId ) )
+AverageImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
+                                                                    ThreadIdType                  itkNotUsed(threadId))
 {
-  using IteratorType = ImageRegionConstIterator< TInputImage >;
-  using OutIteratorType = ImageRegionIterator< TOutputImage >;
+  using IteratorType = ImageRegionConstIterator<TInputImage>;
+  using OutIteratorType = ImageRegionIterator<TOutputImage>;
 
   typename TOutputImage::Pointer output = this->GetOutput();
 
@@ -50,28 +50,28 @@ AverageImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(
 
   //  create and initialize all input image iterators
   IteratorType * it = new IteratorType[numberOfInputFiles];
-  for ( unsigned int i = 0; i < numberOfInputFiles; ++i )
+  for (unsigned int i = 0; i < numberOfInputFiles; ++i)
   {
-    it[i] = IteratorType( this->GetInput( i ), outputRegionForThread );
+    it[i] = IteratorType(this->GetInput(i), outputRegionForThread);
   }
 
-  OutIteratorType out = OutIteratorType( output, outputRegionForThread );
-  for ( out.GoToBegin(); !out.IsAtEnd(); ++out )
+  OutIteratorType out = OutIteratorType(output, outputRegionForThread);
+  for (out.GoToBegin(); !out.IsAtEnd(); ++out)
   {
-    typename NumericTraits< OutputPixelType >::RealType sum = it[0].Get();
+    typename NumericTraits<OutputPixelType>::RealType sum = it[0].Get();
     ++it[0];
 
-    for ( unsigned int i = 1; i < numberOfInputFiles; ++i )
+    for (unsigned int i = 1; i < numberOfInputFiles; ++i)
     {
       sum += it[i].Get();
-      ++( it[i] );
+      ++(it[i]);
     }
 
-    sum *= ( 1.0 / numberOfInputFiles );
+    sum *= (1.0 / numberOfInputFiles);
     // instead of casting to output type, we should support rounding if the
     // output type is an integer type. Unfortunately, this does not seem to
     // be supported by the NumericTraits so far.
-    out.Set( (OutputPixelType)sum );
+    out.Set((OutputPixelType)sum);
   }
 
   delete[] it;

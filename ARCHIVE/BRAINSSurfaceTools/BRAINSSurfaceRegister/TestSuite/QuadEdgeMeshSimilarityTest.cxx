@@ -27,9 +27,9 @@ This is a test for quad edge mesh similarity
 #include "itkQuadEdgeMesh.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
-  if ( argc < 5 )
+  if (argc < 5)
   {
     std::cerr << "Missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -42,45 +42,45 @@ main( int argc, char * argv[] )
   using MeshPixelType = int;
   constexpr unsigned int Dimension = 3;
 
-  using InputMeshType1 = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
-  using InputMeshType2 = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
+  using InputMeshType1 = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using InputMeshType2 = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  using InputReaderType1 = itk::QuadEdgeMeshVTKPolyDataReader< InputMeshType1 >;
-  using InputReaderType2 = itk::QuadEdgeMeshVTKPolyDataReader< InputMeshType2 >;
+  using InputReaderType1 = itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType1>;
+  using InputReaderType2 = itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType2>;
 
   InputReaderType1::Pointer inputMeshReader1 = InputReaderType1::New();
-  inputMeshReader1->SetFileName( argv[1] );
+  inputMeshReader1->SetFileName(argv[1]);
 
   InputReaderType2::Pointer inputMeshReader2 = InputReaderType2::New();
-  inputMeshReader2->SetFileName( argv[2] );
+  inputMeshReader2->SetFileName(argv[2]);
 
   try
   {
     inputMeshReader1->Update();
     inputMeshReader2->Update();
   }
-  catch ( itk::ExceptionObject & exp )
+  catch (itk::ExceptionObject & exp)
   {
     std::cerr << exp << std::endl;
     return EXIT_FAILURE;
   }
 
-  using SimilarityCalculatorType = itk::QuadEdgeMeshSimilarityCalculator< InputMeshType1, InputMeshType2 >;
+  using SimilarityCalculatorType = itk::QuadEdgeMeshSimilarityCalculator<InputMeshType1, InputMeshType2>;
 
   SimilarityCalculatorType::Pointer similarityCalculator = SimilarityCalculatorType::New();
 
-  similarityCalculator->SetInputMesh1( inputMeshReader1->GetOutput() );
-  similarityCalculator->SetInputMesh2( inputMeshReader2->GetOutput() );
+  similarityCalculator->SetInputMesh1(inputMeshReader1->GetOutput());
+  similarityCalculator->SetInputMesh2(inputMeshReader2->GetOutput());
 
-  similarityCalculator->SetLabelValue( atoi( argv[3] ) );
+  similarityCalculator->SetLabelValue(atoi(argv[3]));
 
   similarityCalculator->Compute();
 
   double diceTest = similarityCalculator->GetDice();
-  double diceExp = std::stod( argv[4] );
+  double diceExp = std::stod(argv[4]);
   double tolerance = 1.0e-4;
 
-  if ( fabs( diceTest - diceExp ) > tolerance )
+  if (fabs(diceTest - diceExp) > tolerance)
   {
     std::cout << "Dice Test: " << diceTest << std::endl;
     std::cout << "Dice Expected: " << diceExp << std::endl;

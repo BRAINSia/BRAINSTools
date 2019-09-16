@@ -21,12 +21,12 @@
 #include "QDebugImageViewerWindow.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
-  QApplication            app( argc, argv );
+  QApplication            app(argc, argv);
   QDebugImageViewerWindow window;
-  QObject::connect( &app, SIGNAL( aboutToQuit() ), &window, SLOT( exiting() ) );
+  QObject::connect(&app, SIGNAL(aboutToQuit()), &window, SLOT(exiting()));
 
   window.show();
-  exit( app.exec() );
+  exit(app.exec());
 }

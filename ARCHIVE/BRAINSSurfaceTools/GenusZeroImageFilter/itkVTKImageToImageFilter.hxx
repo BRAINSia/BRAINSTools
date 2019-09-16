@@ -24,34 +24,34 @@ namespace itk
 /**
  * Constructor
  */
-template < typename TOutputImage >
-VTKImageToImageFilter< TOutputImage >::VTKImageToImageFilter()
+template <typename TOutputImage>
+VTKImageToImageFilter<TOutputImage>::VTKImageToImageFilter()
 {
   m_Exporter = vtkImageExport::New();
 
   m_Importer = ImporterFilterType::New();
 
-  m_Importer->SetUpdateInformationCallback( m_Exporter->GetUpdateInformationCallback() );
-  m_Importer->SetPipelineModifiedCallback( m_Exporter->GetPipelineModifiedCallback() );
-  m_Importer->SetWholeExtentCallback( m_Exporter->GetWholeExtentCallback() );
-  m_Importer->SetSpacingCallback( m_Exporter->GetSpacingCallback() );
-  m_Importer->SetOriginCallback( m_Exporter->GetOriginCallback() );
-  m_Importer->SetScalarTypeCallback( m_Exporter->GetScalarTypeCallback() );
-  m_Importer->SetNumberOfComponentsCallback( m_Exporter->GetNumberOfComponentsCallback() );
-  m_Importer->SetPropagateUpdateExtentCallback( m_Exporter->GetPropagateUpdateExtentCallback() );
-  m_Importer->SetUpdateDataCallback( m_Exporter->GetUpdateDataCallback() );
-  m_Importer->SetDataExtentCallback( m_Exporter->GetDataExtentCallback() );
-  m_Importer->SetBufferPointerCallback( m_Exporter->GetBufferPointerCallback() );
-  m_Importer->SetCallbackUserData( m_Exporter->GetCallbackUserData() );
+  m_Importer->SetUpdateInformationCallback(m_Exporter->GetUpdateInformationCallback());
+  m_Importer->SetPipelineModifiedCallback(m_Exporter->GetPipelineModifiedCallback());
+  m_Importer->SetWholeExtentCallback(m_Exporter->GetWholeExtentCallback());
+  m_Importer->SetSpacingCallback(m_Exporter->GetSpacingCallback());
+  m_Importer->SetOriginCallback(m_Exporter->GetOriginCallback());
+  m_Importer->SetScalarTypeCallback(m_Exporter->GetScalarTypeCallback());
+  m_Importer->SetNumberOfComponentsCallback(m_Exporter->GetNumberOfComponentsCallback());
+  m_Importer->SetPropagateUpdateExtentCallback(m_Exporter->GetPropagateUpdateExtentCallback());
+  m_Importer->SetUpdateDataCallback(m_Exporter->GetUpdateDataCallback());
+  m_Importer->SetDataExtentCallback(m_Exporter->GetDataExtentCallback());
+  m_Importer->SetBufferPointerCallback(m_Exporter->GetBufferPointerCallback());
+  m_Importer->SetCallbackUserData(m_Exporter->GetCallbackUserData());
 }
 
 /**
  * Destructor
  */
-template < typename TOutputImage >
-VTKImageToImageFilter< TOutputImage >::~VTKImageToImageFilter()
+template <typename TOutputImage>
+VTKImageToImageFilter<TOutputImage>::~VTKImageToImageFilter()
 {
-  if ( m_Exporter )
+  if (m_Exporter)
   {
     m_Exporter->Delete();
     m_Exporter = nullptr;
@@ -61,19 +61,19 @@ VTKImageToImageFilter< TOutputImage >::~VTKImageToImageFilter()
 /**
  * Set a vtkImageData as input
  */
-template < typename TOutputImage >
+template <typename TOutputImage>
 void
-VTKImageToImageFilter< TOutputImage >::SetInputData( vtkImageData * inputImage )
+VTKImageToImageFilter<TOutputImage>::SetInputData(vtkImageData * inputImage)
 {
-  m_Exporter->SetInputData( inputImage );
+  m_Exporter->SetInputData(inputImage);
 }
 
 /**
  * Get an itk::Image as output
  */
-template < typename TOutputImage >
-const typename VTKImageToImageFilter< TOutputImage >::OutputImageType *
-VTKImageToImageFilter< TOutputImage >::GetOutput() const
+template <typename TOutputImage>
+const typename VTKImageToImageFilter<TOutputImage>::OutputImageType *
+VTKImageToImageFilter<TOutputImage>::GetOutput() const
 {
   return m_Importer->GetOutput();
 }
@@ -81,9 +81,9 @@ VTKImageToImageFilter< TOutputImage >::GetOutput() const
 /**
  * Get the exporter filter
  */
-template < typename TOutputImage >
+template <typename TOutputImage>
 vtkImageExport *
-VTKImageToImageFilter< TOutputImage >::GetExporter() const
+VTKImageToImageFilter<TOutputImage>::GetExporter() const
 {
   return m_Exporter;
 }
@@ -91,9 +91,9 @@ VTKImageToImageFilter< TOutputImage >::GetExporter() const
 /**
  * Get the importer filter
  */
-template < typename TOutputImage >
-typename VTKImageToImageFilter< TOutputImage >::ImporterFilterType *
-VTKImageToImageFilter< TOutputImage >::GetImporter() const
+template <typename TOutputImage>
+typename VTKImageToImageFilter<TOutputImage>::ImporterFilterType *
+VTKImageToImageFilter<TOutputImage>::GetImporter() const
 {
   return m_Importer;
 }
@@ -101,9 +101,9 @@ VTKImageToImageFilter< TOutputImage >::GetImporter() const
 /**
  * Delegate the Update to the importer
  */
-template < typename TOutputImage >
+template <typename TOutputImage>
 void
-VTKImageToImageFilter< TOutputImage >::Update()
+VTKImageToImageFilter<TOutputImage>::Update()
 {
   m_Importer->Update();
 }

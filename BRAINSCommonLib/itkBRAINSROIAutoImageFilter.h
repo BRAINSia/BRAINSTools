@@ -57,11 +57,11 @@ namespace itk
  *
  * \ingroup IntensityImageFilters
  */
-template < typename TInputImage, typename TOutputImage >
-class BRAINSROIAutoImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class BRAINSROIAutoImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( BRAINSROIAutoImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSROIAutoImageFilter);
 
   /** Extract dimension from input and output image. */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
@@ -73,15 +73,15 @@ public:
 
   /** Standard class type alias. */
   using Self = BRAINSROIAutoImageFilter;
-  using Superclass = ImageToImageFilter< InputImageType, OutputImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( BRAINSROIAutoImageFilter, ImageToImageFilter );
+  itkTypeMacro(BRAINSROIAutoImageFilter, ImageToImageFilter);
 
   /** Image type alias support. */
   using InputPixelType = typename InputImageType::PixelType;
@@ -92,46 +92,46 @@ public:
 
   using InputSizeType = typename InputImageType::SizeType;
 
-  using UCHARIMAGE = itk::Image< unsigned char, 3 >;
-  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject< UCHARIMAGE::ImageDimension >;
+  using UCHARIMAGE = itk::Image<unsigned char, 3>;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<UCHARIMAGE::ImageDimension>;
 
   /** */
-  itkSetMacro( OtsuPercentileThreshold, double );
-  itkGetConstMacro( OtsuPercentileThreshold, double );
+  itkSetMacro(OtsuPercentileThreshold, double);
+  itkGetConstMacro(OtsuPercentileThreshold, double);
   /** */
-  itkSetMacro( ThresholdCorrectionFactor, double );
-  itkGetConstMacro( ThresholdCorrectionFactor, double );
+  itkSetMacro(ThresholdCorrectionFactor, double);
+  itkGetConstMacro(ThresholdCorrectionFactor, double);
   /** The closing size in mm, this is rounded up to the next closest number of
    * voxel by taking Spacing into account */
-  itkSetMacro( ClosingSize, double );
-  itkGetConstMacro( ClosingSize, double );
+  itkSetMacro(ClosingSize, double);
+  itkGetConstMacro(ClosingSize, double);
   /** The dilation size in mm, this is rounded up to the next closest number of
    * voxel by taking Spacing into account */
-  itkSetMacro( DilateSize, double );
-  itkGetConstMacro( DilateSize, double );
+  itkSetMacro(DilateSize, double);
+  itkGetConstMacro(DilateSize, double);
 
   // NOTE:  This will generate a new spatial object each time it is called, and
   // not return the previous spatial object
   ImageMaskPointer
-  GetSpatialObjectROI( void )
+  GetSpatialObjectROI(void)
   {
-    if ( m_ResultMaskPointer.IsNull() ) // This is a cheap way to only create
-                                        // the mask once, note that this is made
-                                        // null when GenerateData is called.
+    if (m_ResultMaskPointer.IsNull()) // This is a cheap way to only create
+                                      // the mask once, note that this is made
+                                      // null when GenerateData is called.
     {
-      using CastImageFilter = itk::CastImageFilter< OutputImageType, UCHARIMAGE >;
+      using CastImageFilter = itk::CastImageFilter<OutputImageType, UCHARIMAGE>;
       typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
-      castFilter->SetInput( this->GetOutput() );
+      castFilter->SetInput(this->GetOutput());
       castFilter->Update();
 
       // convert mask image to mask
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
-      mask->SetImage( castFilter->GetOutput() );
+      mask->SetImage(castFilter->GetOutput());
       mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
-      m_ResultMaskPointer = dynamic_cast< ImageMaskSpatialObjectType * >( mask.GetPointer() );
-      if ( m_ResultMaskPointer.IsNull() )
+      m_ResultMaskPointer = dynamic_cast<ImageMaskSpatialObjectType *>(mask.GetPointer());
+      if (m_ResultMaskPointer.IsNull())
       {
-        itkGenericExceptionMacro( << "failed conversion to MaskSpatialObject" );
+        itkGenericExceptionMacro(<< "failed conversion to MaskSpatialObject");
       }
     }
     return m_ResultMaskPointer;
@@ -143,15 +143,15 @@ public:
     ImageMaskPointer tmp = this->GetSpatialObjectROI();
 
     typename UCHARIMAGE::ConstPointer rval = nullptr;
-    if ( tmp.IsNotNull() )
+    if (tmp.IsNotNull())
     {
-      const typename itk::ImageMaskSpatialObject< 3 >::ConstPointer imso =
-        dynamic_cast< itk::ImageMaskSpatialObject< 3 > * >( tmp.GetPointer() );
-      if ( imso.IsNull() )
+      const typename itk::ImageMaskSpatialObject<3>::ConstPointer imso =
+        dynamic_cast<itk::ImageMaskSpatialObject<3> *>(tmp.GetPointer());
+      if (imso.IsNull())
       {
-        itkGenericExceptionMacro( << "failed conversion to MaskSpatialObject" );
+        itkGenericExceptionMacro(<< "failed conversion to MaskSpatialObject");
       }
-      if ( imso.IsNotNull() )
+      if (imso.IsNotNull())
       {
         rval = imso->GetImage();
       }
@@ -161,7 +161,7 @@ public:
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( SameDimensionCheck, (Concept::SameDimension< InputImageDimension, OutputImageDimension >));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
   /** End concept checking */
 #endif
 protected:
@@ -169,7 +169,7 @@ protected:
   ~BRAINSROIAutoImageFilter() override {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   GenerateData() override;

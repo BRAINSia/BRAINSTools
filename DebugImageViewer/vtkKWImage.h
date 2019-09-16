@@ -56,16 +56,16 @@ public:
   static vtkKWImage *
   New();
 
-  vtkTypeRevisionMacro( vtkKWImage, vtkObject );
+  vtkTypeRevisionMacro(vtkKWImage, vtkObject);
 
-  using ImageBaseType = itk::ImageBase< 3 >;
+  using ImageBaseType = itk::ImageBase<3>;
   using ImagePointer = ImageBaseType::Pointer;
   using ImageConstPointer = ImageBaseType::ConstPointer;
   using ITKScalarPixelType = itk::ImageIOBase::IOComponentType;
 
   // Set the untyped ITK image
   void
-  SetITKImageBase( ImageBaseType * );
+  SetITKImageBase(ImageBaseType *);
 
   // Return the pixel type using ITK enums.
   ITKScalarPixelType
@@ -87,9 +87,9 @@ protected:
   ~vtkKWImage();
 
 private:
-  vtkKWImage( const vtkKWImage & ); // Not implemented.
+  vtkKWImage(const vtkKWImage &); // Not implemented.
   void
-  operator=( const vtkKWImage & ); // Not implemented.
+  operator=(const vtkKWImage &); // Not implemented.
 
   ImagePointer ItkImage;
 

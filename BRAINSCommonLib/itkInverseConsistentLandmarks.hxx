@@ -42,8 +42,8 @@
 
 namespace itk
 {
-template < typename PointStorageType, typename PointSetType >
-InverseConsistentLandmarks< PointStorageType, PointSetType >::InverseConsistentLandmarks( void )
+template <typename PointStorageType, typename PointSetType>
+InverseConsistentLandmarks<PointStorageType, PointSetType>::InverseConsistentLandmarks(void)
 {
   ImageDims[0] = 12345;
   ImageDims[1] = 12345;
@@ -51,11 +51,11 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::InverseConsistentL
   ImageDims[3] = 12345;
 }
 
-template < typename PointStorageType, typename PointSetType >
-InverseConsistentLandmarks< PointStorageType, PointSetType >::InverseConsistentLandmarks( const int XDim,
-                                                                                          const int YDim,
-                                                                                          const int ZDim,
-                                                                                          const int TDim )
+template <typename PointStorageType, typename PointSetType>
+InverseConsistentLandmarks<PointStorageType, PointSetType>::InverseConsistentLandmarks(const int XDim,
+                                                                                       const int YDim,
+                                                                                       const int ZDim,
+                                                                                       const int TDim)
 {
   ImageDims[0] = XDim;
   ImageDims[1] = YDim;
@@ -63,11 +63,11 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::InverseConsistentL
   ImageDims[3] = TDim;
 }
 
-template < typename PointStorageType, typename PointSetType >
-InverseConsistentLandmarks< PointStorageType, PointSetType > &
-InverseConsistentLandmarks< PointStorageType, PointSetType >::operator=( const InverseConsistentLandmarks & rhs )
+template <typename PointStorageType, typename PointSetType>
+InverseConsistentLandmarks<PointStorageType, PointSetType> &
+InverseConsistentLandmarks<PointStorageType, PointSetType>::operator=(const InverseConsistentLandmarks & rhs)
 {
-  this->std::map< std::string, PointType >::operator=( rhs );
+  this->std::map<std::string, PointType>::operator=(rhs);
   ImageDims[0] = rhs.ImageDims[0];
   ImageDims[1] = rhs.ImageDims[1];
   ImageDims[2] = rhs.ImageDims[2];
@@ -75,43 +75,43 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::operator=( const I
   return *this;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadPointTypes( const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadPointTypes(const std::string lmrkfilename)
 {
-  const Landmark_File_Format lmkff = QueryLandmarkFile( lmrkfilename );
+  const Landmark_File_Format lmkff = QueryLandmarkFile(lmrkfilename);
   bool                       check = false;
 
-  switch ( lmkff )
+  switch (lmkff)
   {
     case GEC_LANDMARKS:
     {
-      check = InverseConsistentLandmarks::ReadGECPointTypes( lmrkfilename );
+      check = InverseConsistentLandmarks::ReadGECPointTypes(lmrkfilename);
     }
     break;
     case INTELLX_LANDMARKS:
     {
-      check = InverseConsistentLandmarks::ReadIntellXPointTypes( lmrkfilename );
+      check = InverseConsistentLandmarks::ReadIntellXPointTypes(lmrkfilename);
     }
     break;
     case ANALYZE_LANDMARKS:
     {
-      check = InverseConsistentLandmarks::ReadAnalyzePointTypes( lmrkfilename );
+      check = InverseConsistentLandmarks::ReadAnalyzePointTypes(lmrkfilename);
     }
     break;
     case IPL_LANDMARKS:
     {
-      check = InverseConsistentLandmarks::ReadIPLPointTypes( lmrkfilename );
+      check = InverseConsistentLandmarks::ReadIPLPointTypes(lmrkfilename);
     }
     break;
     case IPL_TALAIRACH_BOUNDS_LANDMARKS:
     {
-      check = InverseConsistentLandmarks::ReadIPLTalairachPointTypes( lmrkfilename );
+      check = InverseConsistentLandmarks::ReadIPLTalairachPointTypes(lmrkfilename);
     }
     break;
     case IPL_CEREBELLAR_BOUNDS_LANDMARKS:
     {
-      check = InverseConsistentLandmarks::ReadIPLCerebellarPointTypes( lmrkfilename );
+      check = InverseConsistentLandmarks::ReadIPLCerebellarPointTypes(lmrkfilename);
     }
     break;
     case UNKNOWN_LANDMARKS:
@@ -120,49 +120,51 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadPointTypes( co
       return false;
     }
     default:
-      itkGenericExceptionMacro( << "Error. Invalid Landmark_File_Format type!" );
+      itkGenericExceptionMacro(<< "Error. Invalid Landmark_File_Format type!");
   }
   return check;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadPointTypes( const std::string lmrkfilename,
-                                                                              const int XDim, const int YDim,
-                                                                              const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadPointTypes(const std::string lmrkfilename,
+                                                                           const int         XDim,
+                                                                           const int         YDim,
+                                                                           const int         ZDim,
+                                                                           const int         TDim)
 {
-  Landmark_File_Format lmkff = QueryLandmarkFile( lmrkfilename );
+  Landmark_File_Format lmkff = QueryLandmarkFile(lmrkfilename);
 
-  switch ( lmkff )
+  switch (lmkff)
   {
     case GEC_LANDMARKS:
     {
-      InverseConsistentLandmarks::ReadGECPointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
+      InverseConsistentLandmarks::ReadGECPointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
     }
     break;
     case INTELLX_LANDMARKS:
     {
-      InverseConsistentLandmarks::ReadIntellXPointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
+      InverseConsistentLandmarks::ReadIntellXPointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
     }
     break;
     case ANALYZE_LANDMARKS:
     {
-      InverseConsistentLandmarks::ReadAnalyzePointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
+      InverseConsistentLandmarks::ReadAnalyzePointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
     }
     break;
     case IPL_LANDMARKS:
     {
-      InverseConsistentLandmarks::ReadIPLPointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
+      InverseConsistentLandmarks::ReadIPLPointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
     }
     break;
     case IPL_TALAIRACH_BOUNDS_LANDMARKS:
     {
-      InverseConsistentLandmarks::ReadIPLTalairachPointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
+      InverseConsistentLandmarks::ReadIPLTalairachPointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
     }
     break;
     case IPL_CEREBELLAR_BOUNDS_LANDMARKS:
     {
-      InverseConsistentLandmarks::ReadIPLCerebellarPointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
+      InverseConsistentLandmarks::ReadIPLCerebellarPointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
     }
     break;
     case UNKNOWN_LANDMARKS:
@@ -171,33 +173,33 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadPointTypes( co
       return false;
     }
     default:
-      itkGenericExceptionObject( << "Error. Invalid Landmark_File_Format type!" );
+      itkGenericExceptionObject(<< "Error. Invalid Landmark_File_Format type!");
   }
   return true;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::WritePointTypes( const std::string          lmrkfilename,
-                                                                               const Landmark_File_Format lmkff )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::WritePointTypes(const std::string          lmrkfilename,
+                                                                            const Landmark_File_Format lmkff)
 {
   bool writeresult;
 
-  switch ( lmkff )
+  switch (lmkff)
   {
     case GEC_LANDMARKS:
     {
-      writeresult = InverseConsistentLandmarks::WriteGECPointTypes( lmrkfilename );
+      writeresult = InverseConsistentLandmarks::WriteGECPointTypes(lmrkfilename);
     }
     break;
     case INTELLX_LANDMARKS:
     {
-      writeresult = InverseConsistentLandmarks::WriteIntellXPointTypes( lmrkfilename );
+      writeresult = InverseConsistentLandmarks::WriteIntellXPointTypes(lmrkfilename);
     }
     break;
     case ANALYZE_LANDMARKS:
     {
-      writeresult = InverseConsistentLandmarks::WriteAnalyzePointTypes( lmrkfilename );
+      writeresult = InverseConsistentLandmarks::WriteAnalyzePointTypes(lmrkfilename);
     }
     break;
     case IPL_LANDMARKS:
@@ -216,23 +218,23 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::WritePointTypes( c
   return writeresult;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::PrintPointTypes( void ) const
+InverseConsistentLandmarks<PointStorageType, PointSetType>::PrintPointTypes(void) const
 {
-  itk::NumberToString< double > doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
-  printf( "#IMAGEDIMS %6hu %6hu %6hu %6hu\n", ImageDims[0], ImageDims[1], ImageDims[2], ImageDims[3] );
-  printf( "#%11s %12s %12s %12s %12s %12s\n", "Name", "X", "Y", "Z", "T", "Weighting" );
-  for ( typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter )
+  printf("#IMAGEDIMS %6hu %6hu %6hu %6hu\n", ImageDims[0], ImageDims[1], ImageDims[2], ImageDims[3]);
+  printf("#%11s %12s %12s %12s %12s %12s\n", "Name", "X", "Y", "Z", "T", "Weighting");
+  for (typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter)
   {
     std::cout << mapiter->first;
-    for ( int space = 0; space < 12 - mapiter->first.size(); ++space )
+    for (int space = 0; space < 12 - mapiter->first.size(); ++space)
     {
       std::cout << ' ';
     }
     std::cout << ' ';
-    std::cout << doubleConvert( mapIter[0] ) << ' ' << doubleConvert( mapIter[1] ) << ' ' << doubleConvert( mapIter[2] )
+    std::cout << doubleConvert(mapIter[0]) << ' ' << doubleConvert(mapIter[1]) << ' ' << doubleConvert(mapIter[2])
               << ' ' << mapiter->second.GetT() << ' ' << mapiter->second.GetWeighting() << std::endl;
     // printf( "%12s %12.6f %12.6f %12.6f %12.5f %12.6f\n", mapiter->first.c_str(),
     //         mapiter->second[0],
@@ -241,16 +243,16 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::PrintPointTypes( v
     //         mapiter->second.GetT(),
     //         mapiter->second.GetWeighting() );
   }
-  if ( this->size() > 0 )
+  if (this->size() > 0)
   {
     return true;
   }
   return false;
 }
 
-template < typename PointStorageType, typename PointSetType >
-typename InverseConsistentLandmarks< PointStorageType, PointSetType >::Landmark_File_Format
-InverseConsistentLandmarks< PointStorageType, PointSetType >::QueryLandmarkFile( const std::string lmrkfilename )
+template <typename PointStorageType, typename PointSetType>
+typename InverseConsistentLandmarks<PointStorageType, PointSetType>::Landmark_File_Format
+InverseConsistentLandmarks<PointStorageType, PointSetType>::QueryLandmarkFile(const std::string lmrkfilename)
 {
   /* These are the header formats for GEC, IntellX, and Analyze Landmark files
    * respectively
@@ -307,9 +309,9 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::QueryLandmarkFile(
   // will return UNKNOWN_LANDMARKS.
 
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
 
-  if ( tempfile == NULL )
+  if (tempfile == NULL)
   {
     std::cout << "ERROR: can not open " << lmrkfilename << std::endl;
     return UNKNOWN_LANDMARKS;
@@ -319,29 +321,29 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::QueryLandmarkFile(
   char                         buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return UNKNOWN_LANDMARKS;
   }
 
-  if ( strncmp( buffer, "#GECLANDMARKS-v1.0", 18 ) == 0 )
+  if (strncmp(buffer, "#GECLANDMARKS-v1.0", 18) == 0)
   {
     return GEC_LANDMARKS;
   }
 
-  if ( strncmp( buffer, "Landmarks-1.0", 13 ) == 0 )
+  if (strncmp(buffer, "Landmarks-1.0", 13) == 0)
   {
     return INTELLX_LANDMARKS;
   }
 
-  if ( strncmp( buffer, "IPL_HEADER_BEGIN", 16 ) == 0 )
+  if (strncmp(buffer, "IPL_HEADER_BEGIN", 16) == 0)
   {
-    if ( lmrkfilename.find( "Talairach.bnd" ) != std::string::npos )
+    if (lmrkfilename.find("Talairach.bnd") != std::string::npos)
     {
       return IPL_TALAIRACH_BOUNDS_LANDMARKS;
     }
-    else if ( lmrkfilename.find( "Cerebellum.bnd" ) != std::string::npos )
+    else if (lmrkfilename.find("Cerebellum.bnd") != std::string::npos)
     {
       return IPL_CEREBELLAR_BOUNDS_LANDMARKS;
     }
@@ -352,24 +354,24 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::QueryLandmarkFile(
   }
   // If it is not either of these two, try to read the next 4 lines
   // and check to see if it matches the Analyze point log file format
-  for ( int i = 0; i < 4; ++i )
+  for (int i = 0; i < 4; ++i)
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return UNKNOWN_LANDMARKS;
     }
   }
 
-  if ( strncmp( buffer, "#Point", 11 ) == 0 )
+  if (strncmp(buffer, "#Point", 11) == 0)
   {
     // Try to match next line
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return UNKNOWN_LANDMARKS;
     }
-    if ( strncmp( buffer, "#X    Y    Z     Value       Label", 37 ) == 0 )
+    if (strncmp(buffer, "#X    Y    Z     Value       Label", 37) == 0)
     {
       return ANALYZE_LANDMARKS;
     }
@@ -377,15 +379,15 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::QueryLandmarkFile(
   return UNKNOWN_LANDMARKS;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadGECPointTypes( const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadGECPointTypes(const std::string lmrkfilename)
 {
   // std::cout << "Reading GEC Landmark File " << lmrkfilename << std::endl;
 
-  this->erase( this->begin(), this->end() );
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  this->erase(this->begin(), this->end());
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -395,37 +397,37 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadGECPointTypes(
   char                         CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  if ( strncmp( buffer, "#GECLANDMARKS-v1.0", 18 ) != 0 )
+  if (strncmp(buffer, "#GECLANDMARKS-v1.0", 18) != 0)
   {
     // Only files with a header of #GECLANDMARKS-v1.0 will be accepted
     return false;
   }
   // Read dimensions of image that landmarks are associated with
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
   // Note CurrentLandmarkName is just a placeholder here!.
   // Note the hu is an indicator that this is a unsigned short int
 
-  sscanf( buffer,
-          "%s %hu %hu %hu %hu",
-          CurrentLandmarkName,
-          &( ImageDims[0] ),
-          &( ImageDims[1] ),
-          &( ImageDims[2] ),
-          &( ImageDims[3] ) );
+  sscanf(buffer,
+         "%s %hu %hu %hu %hu",
+         CurrentLandmarkName,
+         &(ImageDims[0]),
+         &(ImageDims[1]),
+         &(ImageDims[2]),
+         &(ImageDims[3]));
 
-  while ( fgets( buffer, FILE_BUFFER_SIZE, tempfile ) != NULL )
+  while (fgets(buffer, FILE_BUFFER_SIZE, tempfile) != NULL)
   {
-    if ( buffer[0] == '#' ) // This allows for comments to be added
-                            // anywhere in the file
+    if (buffer[0] == '#') // This allows for comments to be added
+                          // anywhere in the file
     {
       continue;
     }
@@ -437,27 +439,27 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadGECPointTypes(
     double       valT;
     double       valW;
     unsigned int numread =
-      sscanf( buffer, "%s %lf %lf %lf %lf %lf", CurrentLandmarkName, &val0, &val1, &val2, &valT, &valW );
-    if ( numread < 6 )
+      sscanf(buffer, "%s %lf %lf %lf %lf %lf", CurrentLandmarkName, &val0, &val1, &val2, &valT, &valW);
+    if (numread < 6)
     {
       return false;
     }
-    TempPnt[0] = static_cast< double >( val0 );
-    TempPnt[1] = static_cast< double >( val1 );
-    TempPnt[2] = static_cast< double >( val2 );
-    TempPnt.SetT( static_cast< double >( valT ) );
-    TempPnt.SetWeighting( static_cast< double >( valW ) );
+    TempPnt[0] = static_cast<double>(val0);
+    TempPnt[1] = static_cast<double>(val1);
+    TempPnt[2] = static_cast<double>(val2);
+    TempPnt.SetT(static_cast<double>(valT));
+    TempPnt.SetWeighting(static_cast<double>(valW));
 
-    if ( ImageDims[0] <= TempPnt[0] || ImageDims[1] <= TempPnt[1] || ImageDims[2] <= TempPnt[2] ||
-         ImageDims[3] <= TempPnt.GetT() )
+    if (ImageDims[0] <= TempPnt[0] || ImageDims[1] <= TempPnt[1] || ImageDims[2] <= TempPnt[2] ||
+        ImageDims[3] <= TempPnt.GetT())
     {
       return false;
     }
-    ( *this )[CurrentLandmarkName] = TempPnt;
+    (*this)[CurrentLandmarkName] = TempPnt;
   }
 
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -467,28 +469,30 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadGECPointTypes(
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadGECPointTypes( const std::string lmrkfilename,
-                                                                                 const int XDim, const int YDim,
-                                                                                 const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadGECPointTypes(const std::string lmrkfilename,
+                                                                              const int         XDim,
+                                                                              const int         YDim,
+                                                                              const int         ZDim,
+                                                                              const int         TDim)
 {
-  const bool testread = this->InverseConsistentLandmarks::ReadGECPointTypes( lmrkfilename );
+  const bool testread = this->InverseConsistentLandmarks::ReadGECPointTypes(lmrkfilename);
 
-  this->InverseConsistentLandmarks::rescale( XDim, YDim, ZDim, TDim );
+  this->InverseConsistentLandmarks::rescale(XDim, YDim, ZDim, TDim);
   return testread;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTypes( const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIntellXPointTypes(const std::string lmrkfilename)
 {
   //  std::cout << "Reading IntellX Landmark File " << lmrkfilename <<
   // std::endl;
-  this->erase( this->begin(), this->end() );
+  this->erase(this->begin(), this->end());
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -497,45 +501,45 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
   std::string                  CurrentLandmarkName;
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  if ( strncmp( buffer, "Landmarks-1.0", 13 ) != 0 )
+  if (strncmp(buffer, "Landmarks-1.0", 13) != 0)
   {
     // Only files with a header of Landmarks-1.0 will be accepted
     return false;
   }
   // Read Number of Landmark points
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  const int NumberOfPoints = std::stoi( buffer );
-  for ( int p = 0; p < NumberOfPoints; ++p )
+  const int NumberOfPoints = std::stoi(buffer);
+  for (int p = 0; p < NumberOfPoints; ++p)
   {
     // Extract Landmark Name
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
-    CurrentLandmarkName = std::string( buffer );
+    CurrentLandmarkName = std::string(buffer);
     // CurrentLandmarkName.replace(CurrentLandmarkName.find("\""),1,"");
     // CurrentLandmarkName.replace(CurrentLandmarkName.find("\""),1,"");
     std::string NewLandmarkName;
-    for ( unsigned int iter = 0; iter < CurrentLandmarkName.length(); ++iter )
+    for (unsigned int iter = 0; iter < CurrentLandmarkName.length(); ++iter)
     {
       // std::cout << "CurrentLandmarkName[" << iter << "] = " <<
       // CurrentLandmarkName[iter] << std::endl;
-      if ( CurrentLandmarkName[iter] == '\n' || CurrentLandmarkName[iter] == '\r' ||
-           CurrentLandmarkName[iter] == '\t' || CurrentLandmarkName[iter] == '\"' )
+      if (CurrentLandmarkName[iter] == '\n' || CurrentLandmarkName[iter] == '\r' || CurrentLandmarkName[iter] == '\t' ||
+          CurrentLandmarkName[iter] == '\"')
       {
         continue;
       }
-      else if ( CurrentLandmarkName[iter] == ' ' )
+      else if (CurrentLandmarkName[iter] == ' ')
       {
         NewLandmarkName += "_";
       }
@@ -547,15 +551,15 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
     }
 
     // Extract Coordinates
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
     PointType TempPnt;
     {
-      unsigned int numread = sscanf( buffer, "%lf %lf %lf", &TempPnt[0], &TempPnt[1], &TempPnt[2] );
-      if ( numread < 3 )
+      unsigned int numread = sscanf(buffer, "%lf %lf %lf", &TempPnt[0], &TempPnt[1], &TempPnt[2]);
+      if (numread < 3)
       {
         return false;
       }
@@ -565,9 +569,9 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
     // Ex. 0,0,0 in Warp = 127,127,127 in a 128x128x128 analyze image.
     // Assumes the landmark dimensions have been set before used in this
     // function
-    TempPnt[0] = static_cast< PointStorageType >( ImageDims[0] ) - TempPnt[0];
-    TempPnt[1] = static_cast< PointStorageType >( ImageDims[1] ) - TempPnt[1];
-    TempPnt[2] = static_cast< PointStorageType >( ImageDims[2] ) - TempPnt[2];
+    TempPnt[0] = static_cast<PointStorageType>(ImageDims[0]) - TempPnt[0];
+    TempPnt[1] = static_cast<PointStorageType>(ImageDims[1]) - TempPnt[1];
+    TempPnt[2] = static_cast<PointStorageType>(ImageDims[2]) - TempPnt[2];
     // DDEBUG, this is set to one when dimension is one, which goofs when you
     // write out
     // a lmk file as a ilmks and try to read the ilmks back in.  Since no t
@@ -575,14 +579,14 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
     // will be used in the short run, this will be implemented
     // TempPnt.setT() = static_cast<PointStorageType>( ImageDims[3] ) -
     // TempPnt[3];
-    TempPnt.SetT( 0.0F );
+    TempPnt.SetT(0.0F);
 
     // Set Weighting to default value of 1.0F;
-    TempPnt.SetWeighting( 1.0F );
-    ( *this )[NewLandmarkName] = TempPnt;
+    TempPnt.SetWeighting(1.0F);
+    (*this)[NewLandmarkName] = TempPnt;
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -592,42 +596,44 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTypes( const std::string lmrkfilename,
-                                                                                     const int XDim, const int YDim,
-                                                                                     const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIntellXPointTypes(const std::string lmrkfilename,
+                                                                                  const int         XDim,
+                                                                                  const int         YDim,
+                                                                                  const int         ZDim,
+                                                                                  const int         TDim)
 {
   // std::cout << "Reading IntellX Landmark File " << lmrkfilename << std::endl;
   // std::cout << "Specifying dimensions " << XDim << ", " << YDim << ", " <<
   // ZDim << ", " << TDim << "." << std::endl;
 
-  if ( XDim < 0 )
+  if (XDim < 0)
   {
     std::cout << "Error. X dimension " << XDim << " given is less than 0" << std::endl;
     return false;
   }
-  if ( YDim < 0 )
+  if (YDim < 0)
   {
     std::cout << "Error. Y dimension " << YDim << " given is less than 0" << std::endl;
     return false;
   }
-  if ( ZDim < 0 )
+  if (ZDim < 0)
   {
     std::cout << "Error. Z dimension " << ZDim << " given is less than 0" << std::endl;
     return false;
   }
-  if ( TDim < 0 )
+  if (TDim < 0)
   {
     std::cout << "Error. T dimension " << TDim << " given is less than 0" << std::endl;
     return false;
   }
 
   // Delete all old landmarks
-  this->erase( this->begin(), this->end() );
+  this->erase(this->begin(), this->end());
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -636,51 +642,51 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
   std::string                  CurrentLandmarkName;
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  if ( strncmp( buffer, "Landmarks-1.0", 13 ) != 0 )
+  if (strncmp(buffer, "Landmarks-1.0", 13) != 0)
   {
     // Only files with a header of Landmarks-1.0 will be accepted
     return false;
   }
   // Read Number of Landmark points
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  const int NumberOfPoints = std::stoi( buffer );
+  const int NumberOfPoints = std::stoi(buffer);
 
   // Assigning the dimensions from the parameters
   ImageDims[0] = XDim;
   ImageDims[1] = YDim;
   ImageDims[2] = ZDim;
   ImageDims[3] = TDim;
-  for ( int p = 0; p < NumberOfPoints; ++p )
+  for (int p = 0; p < NumberOfPoints; ++p)
   {
     // Extract Landmark Name
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
 
-    CurrentLandmarkName = std::string( buffer );
+    CurrentLandmarkName = std::string(buffer);
 
     std::string NewLandmarkName;
-    for ( unsigned int iter = 0; iter < CurrentLandmarkName.length(); ++iter )
+    for (unsigned int iter = 0; iter < CurrentLandmarkName.length(); ++iter)
     {
       // std::cout << "CurrentLandmarkName[" << iter << "] = " <<
       // CurrentLandmarkName[iter] << std::endl;
-      if ( CurrentLandmarkName[iter] == '\n' || CurrentLandmarkName[iter] == '\r' ||
-           CurrentLandmarkName[iter] == '\t' || CurrentLandmarkName[iter] == '\"' )
+      if (CurrentLandmarkName[iter] == '\n' || CurrentLandmarkName[iter] == '\r' || CurrentLandmarkName[iter] == '\t' ||
+          CurrentLandmarkName[iter] == '\"')
       {
         continue;
       }
-      else if ( CurrentLandmarkName[iter] == ' ' )
+      else if (CurrentLandmarkName[iter] == ' ')
       {
         NewLandmarkName += "_";
       }
@@ -691,8 +697,8 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
     }
 
     // Extract Coordinates
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
@@ -701,30 +707,30 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
       double       val0;
       double       val1;
       double       val2;
-      unsigned int numread = sscanf( buffer, "%lf %lf %lf", &val0, &val1, &val2 );
-      if ( numread < 3 )
+      unsigned int numread = sscanf(buffer, "%lf %lf %lf", &val0, &val1, &val2);
+      if (numread < 3)
       {
         return false;
       }
-      TempPnt[0] = static_cast< double >( val0 );
-      TempPnt[1] = static_cast< double >( val1 );
-      TempPnt[2] = static_cast< double >( val2 );
+      TempPnt[0] = static_cast<double>(val0);
+      TempPnt[1] = static_cast<double>(val1);
+      TempPnt[2] = static_cast<double>(val2);
     }
     // Convert to Analyze coordinate system...Note the -1 is needed for correct
     // coord
     // Ex. 0,0,0 in Warp = 127,127,127 in a 128x128x128 analyze image.
-    TempPnt[0] = static_cast< PointStorageType >( ImageDims[0] ) - TempPnt[0];
-    TempPnt[1] = static_cast< PointStorageType >( ImageDims[1] ) - TempPnt[1];
-    TempPnt[2] = static_cast< PointStorageType >( ImageDims[2] ) - TempPnt[2];
+    TempPnt[0] = static_cast<PointStorageType>(ImageDims[0]) - TempPnt[0];
+    TempPnt[1] = static_cast<PointStorageType>(ImageDims[1]) - TempPnt[1];
+    TempPnt[2] = static_cast<PointStorageType>(ImageDims[2]) - TempPnt[2];
 
-    TempPnt.SetT( 0.0F );
+    TempPnt.SetT(0.0F);
 
     // Set Weighting to default value of 1.0F;
-    TempPnt.SetWeighting( 1.0F );
-    ( *this )[NewLandmarkName] = TempPnt;
+    TempPnt.SetWeighting(1.0F);
+    (*this)[NewLandmarkName] = TempPnt;
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -734,18 +740,18 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIntellXPointTy
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTypes( const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadAnalyzePointTypes(const std::string lmrkfilename)
 {
   std::cout << "Reading Analyze Landmark File " << lmrkfilename << std::endl;
 
   // Delete all old landmarks
-  this->erase( this->begin(), this->end() );
+  this->erase(this->begin(), this->end());
 
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -755,24 +761,24 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   char                         CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                       status = 0;
   // Read Header Information
-  for ( int i = 0; i < 5; ++i )
+  for (int i = 0; i < 5; ++i)
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
   }
 
-  if ( strncmp( buffer, "#Point", 11 ) == 0 )
+  if (strncmp(buffer, "#Point", 11) == 0)
   {
     // Try to match next line
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
-    if ( strncmp( buffer, "#X    Y    Z     Value       Label", 37 ) != 0 )
+    if (strncmp(buffer, "#X    Y    Z     Value       Label", 37) != 0)
     {
       return false;
     }
@@ -783,14 +789,14 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   }
 
   // Reading the line with " ====  ====  ==== ..etc"
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
 
   int mycount = 1;
-  while ( fgets( buffer, FILE_BUFFER_SIZE, tempfile ) != NULL )
+  while (fgets(buffer, FILE_BUFFER_SIZE, tempfile) != NULL)
   {
     int       grayvalue;
     PointType TempPnt;
@@ -798,34 +804,34 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
       double val0;
       double val1;
       double val2;
-      int    numread = sscanf( buffer, "%lf %lf %lf %d %s", &val0, &val1, &val2, &grayvalue, CurrentLandmarkName );
-      TempPnt[0] = static_cast< double >( val0 );
-      TempPnt[1] = static_cast< double >( val1 );
-      TempPnt[2] = static_cast< double >( val2 );
-      if ( numread == -1 )
+      int    numread = sscanf(buffer, "%lf %lf %lf %d %s", &val0, &val1, &val2, &grayvalue, CurrentLandmarkName);
+      TempPnt[0] = static_cast<double>(val0);
+      TempPnt[1] = static_cast<double>(val1);
+      TempPnt[2] = static_cast<double>(val2);
+      if (numread == -1)
       {
         continue;
       }
 
-      if ( numread < 4 ) // Need at least an X,Y,Z coordinate
+      if (numread < 4) // Need at least an X,Y,Z coordinate
       {
         return false;
       }
-      if ( numread == 4 ) // No label was found
+      if (numread == 4) // No label was found
       {
-        memset( CurrentLandmarkName, 0, LANDMARK_NAME_SIZE );
+        memset(CurrentLandmarkName, 0, LANDMARK_NAME_SIZE);
       }
     }
 
-    if ( ImageDims[0] <= TempPnt[0] )
+    if (ImageDims[0] <= TempPnt[0])
     {
       return false;
     }
-    if ( ImageDims[1] <= TempPnt[1] )
+    if (ImageDims[1] <= TempPnt[1])
     {
       return false;
     }
-    if ( ImageDims[2] <= TempPnt[2] )
+    if (ImageDims[2] <= TempPnt[2])
     {
       return false;
     }
@@ -840,36 +846,36 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
     // the next label is the old label with "_2".  This continues until a
     // unique name is found for the landmark.
 
-    std::string CurrentName( CurrentLandmarkName );
+    std::string CurrentName(CurrentLandmarkName);
 
-    if ( CurrentName.size() == 0 )
+    if (CurrentName.size() == 0)
     {
       char numberbuffer[16];
-      sprintf( numberbuffer, "%d", mycount );
-      CurrentName = "Landmark_" + std::string( numberbuffer );
+      sprintf(numberbuffer, "%d", mycount);
+      CurrentName = "Landmark_" + std::string(numberbuffer);
     }
 
     // Checking to make sure no elements in the map of landmark points are
     // duplicated.
     {
       int         label = 1;
-      std::string OriginalLabel( CurrentName );
+      std::string OriginalLabel(CurrentName);
 
       char labelbuffer[16];
-      while ( ( *this ).find( CurrentName ) != ( *this ).end() )
+      while ((*this).find(CurrentName) != (*this).end())
       {
-        sprintf( labelbuffer, "%d", label );
-        CurrentName = OriginalLabel + "_" + std::string( labelbuffer );
+        sprintf(labelbuffer, "%d", label);
+        CurrentName = OriginalLabel + "_" + std::string(labelbuffer);
         ++label;
       }
     }
-    TempPnt.SetWeighting( 1.0F );
-    ( *this )[CurrentName] = TempPnt;
+    TempPnt.SetWeighting(1.0F);
+    (*this)[CurrentName] = TempPnt;
     ++mycount;
   }
 
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -879,42 +885,44 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTypes( const std::string lmrkfilename,
-                                                                                     const int XDim, const int YDim,
-                                                                                     const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadAnalyzePointTypes(const std::string lmrkfilename,
+                                                                                  const int         XDim,
+                                                                                  const int         YDim,
+                                                                                  const int         ZDim,
+                                                                                  const int         TDim)
 {
   std::cout << "Reading Analyze Landmark File " << lmrkfilename << std::endl;
   std::cout << "Specifying dimensions " << XDim << ", " << YDim << ", " << ZDim << ", " << TDim << "." << std::endl;
 
-  if ( XDim < 0 )
+  if (XDim < 0)
   {
     std::cout << "Error. X dimension " << XDim << " given is less than 0" << std::endl;
     return false;
   }
-  if ( YDim < 0 )
+  if (YDim < 0)
   {
     std::cout << "Error. Y dimension " << YDim << " given is less than 0" << std::endl;
     return false;
   }
-  if ( ZDim < 0 )
+  if (ZDim < 0)
   {
     std::cout << "Error. Z dimension " << ZDim << " given is less than 0" << std::endl;
     return false;
   }
-  if ( TDim < 0 )
+  if (TDim < 0)
   {
     std::cout << "Error. T dimension " << TDim << " given is less than 0" << std::endl;
     return false;
   }
 
   // Delete all old landmarks
-  this->erase( this->begin(), this->end() );
+  this->erase(this->begin(), this->end());
 
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -924,24 +932,24 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   char                         CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                       status = 0;
   // Read Header Information
-  for ( int i = 0; i < 5; ++i )
+  for (int i = 0; i < 5; ++i)
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
   }
 
-  if ( strncmp( buffer, "#Point", 11 ) == 0 )
+  if (strncmp(buffer, "#Point", 11) == 0)
   {
     // Try to match next line
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       return false;
     }
-    if ( strncmp( buffer, "#X    Y    Z     Value       Label", 37 ) != 0 )
+    if (strncmp(buffer, "#X    Y    Z     Value       Label", 37) != 0)
     {
       return false;
     }
@@ -952,8 +960,8 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   }
 
   // Reading the line with " ====  ====  ==== ..etc"
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
@@ -965,7 +973,7 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   ImageDims[3] = TDim;
 
   int count = 1;
-  while ( fgets( buffer, FILE_BUFFER_SIZE, tempfile ) != NULL )
+  while (fgets(buffer, FILE_BUFFER_SIZE, tempfile) != NULL)
   {
     int       grayvalue;
     PointType TempPnt;
@@ -973,25 +981,25 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
       double val0;
       double val1;
       double val2;
-      int    numread = sscanf( buffer, "%lf %lf %lf %d %s", &val0, &val1, &val2, &grayvalue, CurrentLandmarkName );
-      TempPnt[0] = static_cast< double >( val0 );
-      TempPnt[1] = static_cast< double >( val1 );
-      TempPnt[2] = static_cast< double >( val2 );
+      int    numread = sscanf(buffer, "%lf %lf %lf %d %s", &val0, &val1, &val2, &grayvalue, CurrentLandmarkName);
+      TempPnt[0] = static_cast<double>(val0);
+      TempPnt[1] = static_cast<double>(val1);
+      TempPnt[2] = static_cast<double>(val2);
 
-      if ( numread == -1 )
+      if (numread == -1)
       {
         // No values read in from sscanf so continue
         continue;
       }
 
-      if ( numread < 4 ) // Need at least an X,Y,Z coordinate
+      if (numread < 4) // Need at least an X,Y,Z coordinate
       {
         return false;
       }
 
-      if ( numread == 4 ) // No label was found
+      if (numread == 4) // No label was found
       {
-        memset( CurrentLandmarkName, 0, LANDMARK_NAME_SIZE );
+        memset(CurrentLandmarkName, 0, LANDMARK_NAME_SIZE);
       }
 
       // std::cout << "Number read = " << numread << std::endl;
@@ -999,15 +1007,15 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
       // std::endl;
     }
 
-    if ( ImageDims[0] <= TempPnt[0] )
+    if (ImageDims[0] <= TempPnt[0])
     {
       return false;
     }
-    if ( ImageDims[1] <= TempPnt[1] )
+    if (ImageDims[1] <= TempPnt[1])
     {
       return false;
     }
-    if ( ImageDims[2] <= TempPnt[2] )
+    if (ImageDims[2] <= TempPnt[2])
     {
       return false;
     }
@@ -1022,13 +1030,13 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
     // the next label is the old label with "_2".  This continues until a
     // unique name is found for the landmark.
 
-    std::string CurrentName( CurrentLandmarkName );
+    std::string CurrentName(CurrentLandmarkName);
 
-    if ( CurrentName.size() == 0 )
+    if (CurrentName.size() == 0)
     {
       char numberbuffer[16];
-      sprintf( numberbuffer, "%d", count );
-      CurrentName = "Landmark_" + std::string( numberbuffer );
+      sprintf(numberbuffer, "%d", count);
+      CurrentName = "Landmark_" + std::string(numberbuffer);
       // std::cout << "Landmark label = " << CurrentName << std::endl;
     }
 
@@ -1036,25 +1044,25 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
     // duplicated.
     {
       int         label = 1;
-      std::string OriginalLabel( CurrentName );
+      std::string OriginalLabel(CurrentName);
 
       char labelbuffer[16];
-      while ( ( *this ).find( CurrentName ) != ( *this ).end() )
+      while ((*this).find(CurrentName) != (*this).end())
       {
-        sprintf( labelbuffer, "%d", label );
-        CurrentName = OriginalLabel + "_" + std::string( labelbuffer );
+        sprintf(labelbuffer, "%d", label);
+        CurrentName = OriginalLabel + "_" + std::string(labelbuffer);
         ++label;
       }
 
       // std::cout << "CurrentName = " << CurrentName << std::endl;
     }
     TempPnt.SetWeighting() = 1.0F;
-    ( *this )[CurrentName] = TempPnt;
+    (*this)[CurrentName] = TempPnt;
     count++;
   }
 
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1064,23 +1072,23 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadAnalyzePointTy
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteGECPointTypes( const std::string lmrkfilename ) const
+InverseConsistentLandmarks<PointStorageType, PointSetType>::WriteGECPointTypes(const std::string lmrkfilename) const
 {
   // Open the files
-  FILE *                        tempfile = fopen( lmrkfilename.c_str(), "w" );
-  itk::NumberToString< double > doubleConvert;
+  FILE *                      tempfile = fopen(lmrkfilename.c_str(), "w");
+  itk::NumberToString<double> doubleConvert;
 
-  if ( tempfile == NULL )
+  if (tempfile == NULL)
   {
     return false;
   }
-  fprintf( tempfile, "#GECLANDMARKS-v1.0\n" );
-  fprintf( tempfile, "#IMAGEDIMS %6hu %6hu %6hu %6hu\n", ImageDims[0], ImageDims[1], ImageDims[2], ImageDims[3] );
+  fprintf(tempfile, "#GECLANDMARKS-v1.0\n");
+  fprintf(tempfile, "#IMAGEDIMS %6hu %6hu %6hu %6hu\n", ImageDims[0], ImageDims[1], ImageDims[2], ImageDims[3]);
   // Note: This is just a comment
-  fprintf( tempfile, "#%11s %12s %12s %12s %12s %12s\n", "Name", "X", "Y", "Z", "T", "Weighting" );
-  for ( typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter )
+  fprintf(tempfile, "#%11s %12s %12s %12s %12s %12s\n", "Name", "X", "Y", "Z", "T", "Weighting");
+  for (typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter)
   {
     //    fprintf( tempfile, "%12s %12.6f %12.6f %12.6f %12.5f %12.6f\n",
     // mapiter->first.c_str(),
@@ -1091,19 +1099,19 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteGECPointTypes
     // mapiter->second.GetWeighting() );
     std::string s = mapiter->first;
     s += ' ';
-    for ( unsigned dir = 0; dir < 3; ++dir )
+    for (unsigned dir = 0; dir < 3; ++dir)
     {
-      s += doubleConvert( mapiter->second[dir] );
+      s += doubleConvert(mapiter->second[dir]);
       s += ' ';
     }
-    s += doubleConvert( mapiter->second.GetT() );
+    s += doubleConvert(mapiter->second.GetT());
     s += ' ';
-    s += doubleConvert( mapIter->GetWeighting );
+    s += doubleConvert(mapIter->GetWeighting);
     s += '\n';
-    fputs( s.c_str(), tempFile );
+    fputs(s.c_str(), tempFile);
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1113,37 +1121,36 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteGECPointTypes
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteIntellXPointTypes(
-  const std::string lmrkfilename ) const
+InverseConsistentLandmarks<PointStorageType, PointSetType>::WriteIntellXPointTypes(const std::string lmrkfilename) const
 {
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "w" );
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "w");
 
-  if ( tempfile == NULL )
+  if (tempfile == NULL)
   {
     return false;
   }
-  fprintf( tempfile, "Landmarks-1.0\n" );
-  fprintf( tempfile, "%d\n", static_cast< int >( this->size() ) );
-  for ( typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter )
+  fprintf(tempfile, "Landmarks-1.0\n");
+  fprintf(tempfile, "%d\n", static_cast<int>(this->size()));
+  for (typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter)
   {
-    std::string temp( "\"" );
+    std::string temp("\"");
 
     temp += mapiter->first;
     temp += "\"";
     // Notice the conversion back to IntellX coordinate system.
     // Note: -1 is needed here to get correct coordinate.
-    fprintf( tempfile,
-             "%s\n%f\t%f\t%f\t1\t1\n",
-             temp.c_str(),
-             static_cast< PointStorageType >( ImageDims[0] ) - mapiter->second[0],
-             static_cast< PointStorageType >( ImageDims[1] ) - mapiter->second[1],
-             static_cast< PointStorageType >( ImageDims[2] ) - mapiter->second[2] );
+    fprintf(tempfile,
+            "%s\n%f\t%f\t%f\t1\t1\n",
+            temp.c_str(),
+            static_cast<PointStorageType>(ImageDims[0]) - mapiter->second[0],
+            static_cast<PointStorageType>(ImageDims[1]) - mapiter->second[1],
+            static_cast<PointStorageType>(ImageDims[2]) - mapiter->second[2]);
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1153,15 +1160,14 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteIntellXPointT
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteAnalyzePointTypes(
-  const std::string lmrkfilename ) const
+InverseConsistentLandmarks<PointStorageType, PointSetType>::WriteAnalyzePointTypes(const std::string lmrkfilename) const
 {
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "w" );
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "w");
 
-  if ( tempfile == NULL )
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -1169,31 +1175,31 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteAnalyzePointT
   // Getting the current time information
   time_t      curtime;
   struct tm * loctime;
-  curtime = time( NULL );
-  loctime = localtime( &curtime );
-  std::string date( asctime( loctime ) );
+  curtime = time(NULL);
+  loctime = localtime(&curtime);
+  std::string date(asctime(loctime));
 
-  date = std::string( "#" ) + date;
-  fprintf( tempfile, date.c_str() );
-  fprintf( tempfile, "#Volume=\n" );
-  fprintf( tempfile, "#\n" );
-  fprintf( tempfile, "#\n" );
-  fprintf( tempfile, "#Point\n" );
-  fprintf( tempfile, "#X    Y    Z     Value       Label\n" );
-  fprintf( tempfile, "#==== ==== ====  ==========  ==========\n" );
-  for ( typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter )
+  date = std::string("#") + date;
+  fprintf(tempfile, date.c_str());
+  fprintf(tempfile, "#Volume=\n");
+  fprintf(tempfile, "#\n");
+  fprintf(tempfile, "#\n");
+  fprintf(tempfile, "#Point\n");
+  fprintf(tempfile, "#X    Y    Z     Value       Label\n");
+  fprintf(tempfile, "#==== ==== ====  ==========  ==========\n");
+  for (typename InverseConsistentLandmarks::const_iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter)
   {
     // Graylevel value is assumed to not be necessary so it's set to 0
-    fprintf( tempfile,
-             "%5d%5d%5d%12d    %s\n",
-             static_cast< int >( mapiter->second[0] ),
-             static_cast< int >( mapiter->second[1] ),
-             static_cast< int >( mapiter->second[2] ),
-             0,
-             mapiter->first.c_str() );
+    fprintf(tempfile,
+            "%5d%5d%5d%12d    %s\n",
+            static_cast<int>(mapiter->second[0]),
+            static_cast<int>(mapiter->second[1]),
+            static_cast<int>(mapiter->second[2]),
+            0,
+            mapiter->first.c_str());
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1203,14 +1209,14 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::WriteAnalyzePointT
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ConcatLandmarks( InverseConsistentLandmarks & newlmks )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ConcatLandmarks(InverseConsistentLandmarks & newlmks)
 {
   // Copy landmarks from newlmks to the current landmark file, but
   // ensuring that the keys are not identical
 
-  if ( this == &newlmks )
+  if (this == &newlmks)
   {
     std::cout << "Error. Can not concatenate a landmark object with itself!" << std::endl;
     return false;
@@ -1218,53 +1224,53 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ConcatLandmarks( I
 
   // Check to make sure the dimensions match
   bool sizematch = true;
-  if ( this->getXDim() != newlmks.getXDim() )
+  if (this->getXDim() != newlmks.getXDim())
   {
     std::cout << "Error. X dimensions of landmark objects do not match in ConcatLandmarks!" << std::endl;
     sizematch = false;
   }
-  if ( this->getYDim() != newlmks.getYDim() )
+  if (this->getYDim() != newlmks.getYDim())
   {
     std::cout << "Error. Y dimensions of landmark objects do not match in ConcatLandmarks!" << std::endl;
     sizematch = false;
   }
-  if ( this->getZDim() != newlmks.getZDim() )
+  if (this->getZDim() != newlmks.getZDim())
   {
     std::cout << "Error. Z dimensions of landmark objects do not match in ConcatLandmarks!" << std::endl;
     sizematch = false;
   }
-  if ( this->getTDim() != newlmks.getTDim() )
+  if (this->getTDim() != newlmks.getTDim())
   {
     std::cout << "Error. T dimensions of landmark objects do not match in ConcatLandmarks!" << std::endl;
     sizematch = false;
   }
-  if ( sizematch == false )
+  if (sizematch == false)
   {
     return sizematch;
   }
 
   // This will store all the labels
-  std::map< std::string, int > labelcount;
-  std::string                  CurrentName;
-  char                         labelbuffer[16];
+  std::map<std::string, int> labelcount;
+  std::string                CurrentName;
+  char                       labelbuffer[16];
 
-  if ( newlmks.size() == 0 )
+  if (newlmks.size() == 0)
   {
     return false;
   }
   // Initialize the map with the labels found in this landmark object
-  for ( typename InverseConsistentLandmarks::iterator iter = this->begin(); iter != this->end(); ++iter )
+  for (typename InverseConsistentLandmarks::iterator iter = this->begin(); iter != this->end(); ++iter)
   {
     labelcount[iter->first] = 0;
   }
-  for ( typename InverseConsistentLandmarks::iterator iter = newlmks.begin(); iter != newlmks.end(); ++iter )
+  for (typename InverseConsistentLandmarks::iterator iter = newlmks.begin(); iter != newlmks.end(); ++iter)
   {
-    if ( labelcount.find( iter->first ) != labelcount.end() )
+    if (labelcount.find(iter->first) != labelcount.end())
     {
       // Increment the counter and apply that name with the new tag
       labelcount[iter->first] = labelcount[iter->first] + 1;
-      sprintf( labelbuffer, "%d", labelcount.find( iter->first )->second );
-      CurrentName = iter->first + "_" + std::string( labelbuffer );
+      sprintf(labelbuffer, "%d", labelcount.find(iter->first)->second);
+      CurrentName = iter->first + "_" + std::string(labelbuffer);
     }
     else
     {
@@ -1272,52 +1278,54 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ConcatLandmarks( I
       CurrentName = iter->first;
     }
     // std::cout << "CurrentName = " << CurrentName << std::endl;
-    ( *this )[CurrentName] = iter->second;
+    (*this)[CurrentName] = iter->second;
   }
 
   return true;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ConcatLandmarks( const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ConcatLandmarks(const std::string lmrkfilename)
 {
   // Copy landmarks from newlmks to the current landmark file
   InverseConsistentLandmarks temp;
 
-  temp.ReadPointTypes( lmrkfilename );
-  return this->ConcatLandmarks( temp );
+  temp.ReadPointTypes(lmrkfilename);
+  return this->ConcatLandmarks(temp);
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ConcatLandmarks( const std::string lmrkfilename,
-                                                                               const int XDim, const int YDim,
-                                                                               const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ConcatLandmarks(const std::string lmrkfilename,
+                                                                            const int         XDim,
+                                                                            const int         YDim,
+                                                                            const int         ZDim,
+                                                                            const int         TDim)
 {
   // Copy landmarks from newlmks to the current landmark file
   InverseConsistentLandmarks temp;
 
-  temp.ReadPointTypes( lmrkfilename, XDim, YDim, ZDim, TDim );
-  return this->ConcatLandmarks( temp );
+  temp.ReadPointTypes(lmrkfilename, XDim, YDim, ZDim, TDim);
+  return this->ConcatLandmarks(temp);
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::RemoveClosePoints( const PointStorageType distance )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::RemoveClosePoints(const PointStorageType distance)
 {
   bool removedpoint = false;
 
   typename InverseConsistentLandmarks::iterator iter;
   typename InverseConsistentLandmarks::iterator jter;
-  for ( iter = this->begin(); iter != this->end(); ++iter )
+  for (iter = this->begin(); iter != this->end(); ++iter)
   {
     // std::cout << "iter->first = " << iter->first << std::endl;
     typename InverseConsistentLandmarks::iterator ipp = iter;
     ++ipp;
     jter = ipp;
 
-    while ( jter != this->end() )
+    while (jter != this->end())
     {
       // std::cout << "jter->first = " << jter->first << std::endl;
       PointStorageType ix = iter->second[0];
@@ -1327,14 +1335,13 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::RemoveClosePoints(
       PointStorageType jy = jter->second[1];
       PointStorageType jz = jter->second[2];
 
-      PointStorageType value =
-        sqrt( ( jx - ix ) * ( jx - ix ) + ( jy - iy ) * ( jy - iy ) + ( jz - iz ) * ( jz - iz ) );
-      if ( value < distance )
+      PointStorageType value = sqrt((jx - ix) * (jx - ix) + (jy - iy) * (jy - iy) + (jz - iz) * (jz - iz));
+      if (value < distance)
       {
         // You lose the iterator when you issue an erase, so saving jter
         typename InverseConsistentLandmarks::iterator dter = jter;
         removedpoint = true;
-        this->erase( dter->first );
+        this->erase(dter->first);
 
         // The iterator has stayed the same, but the list has moved back one, so
         // an
@@ -1348,22 +1355,21 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::RemoveClosePoints(
   return removedpoint;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::RemoveUnmatchedPoints(
-  InverseConsistentLandmarks & tempmap1 )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::RemoveUnmatchedPoints(InverseConsistentLandmarks & tempmap1)
 {
-  for ( typename InverseConsistentLandmarks::iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter )
+  for (typename InverseConsistentLandmarks::iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter)
   {
-    typename InverseConsistentLandmarks::iterator mapiter1 = tempmap1.find( mapiter->first );
+    typename InverseConsistentLandmarks::iterator mapiter1 = tempmap1.find(mapiter->first);
     // Item NOT Found
-    if ( mapiter1 == tempmap1.end() )
+    if (mapiter1 == tempmap1.end())
     {
-      this->erase( mapiter->first );
+      this->erase(mapiter->first);
     }
   }
 
-  if ( this->size() > 0 )
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1373,53 +1379,51 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::RemoveUnmatchedPoi
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::rescale( const int newx, const int newy, const int newz,
-                                                                       const int newt )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::rescale(const int newx,
+                                                                    const int newy,
+                                                                    const int newz,
+                                                                    const int newt)
 {
-  assert( newx > 0 );
-  assert( newy > 0 );
-  assert( newz > 0 );
-  assert( newt > 0 );
+  assert(newx > 0);
+  assert(newy > 0);
+  assert(newz > 0);
+  assert(newt > 0);
 
-  const PointStorageType scalex =
-    static_cast< PointStorageType >( newx ) / static_cast< PointStorageType >( ImageDims[0] );
-  const PointStorageType scaley =
-    static_cast< PointStorageType >( newy ) / static_cast< PointStorageType >( ImageDims[1] );
-  const PointStorageType scalez =
-    static_cast< PointStorageType >( newz ) / static_cast< PointStorageType >( ImageDims[2] );
-  const PointStorageType scalet =
-    static_cast< PointStorageType >( newt ) / static_cast< PointStorageType >( ImageDims[3] );
+  const PointStorageType scalex = static_cast<PointStorageType>(newx) / static_cast<PointStorageType>(ImageDims[0]);
+  const PointStorageType scaley = static_cast<PointStorageType>(newy) / static_cast<PointStorageType>(ImageDims[1]);
+  const PointStorageType scalez = static_cast<PointStorageType>(newz) / static_cast<PointStorageType>(ImageDims[2]);
+  const PointStorageType scalet = static_cast<PointStorageType>(newt) / static_cast<PointStorageType>(ImageDims[3]);
 
-  ImageDims[0] = static_cast< unsigned short >( newx );
-  ImageDims[1] = static_cast< unsigned short >( newy );
-  ImageDims[2] = static_cast< unsigned short >( newz );
-  ImageDims[3] = static_cast< unsigned short >( newt );
+  ImageDims[0] = static_cast<unsigned short>(newx);
+  ImageDims[1] = static_cast<unsigned short>(newy);
+  ImageDims[2] = static_cast<unsigned short>(newz);
+  ImageDims[3] = static_cast<unsigned short>(newt);
   std::cout << "Dims: " << ImageDims[0] << " " << ImageDims[1] << " " << ImageDims[2] << " " << ImageDims[3] << "\n";
   std::cout << "scale: " << scalex << " " << scaley << " " << scalez << " " << scalet << "\n";
-  for ( typename InverseConsistentLandmarks::iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter )
+  for (typename InverseConsistentLandmarks::iterator mapiter = this->begin(); mapiter != this->end(); ++mapiter)
   {
     mapiter->second[0] = mapiter->second[0] * scalex;
     mapiter->second[1] = mapiter->second[1] * scaley;
     mapiter->second[2] = mapiter->second[2] * scalez;
-    mapiter->second.SetT( mapiter->second.GetT() * scalet );
+    mapiter->second.SetT(mapiter->second.GetT() * scalet);
   }
 
   return true;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes( const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIPLPointTypes(const std::string lmrkfilename)
 {
   std::cout << "Reading IPL Landmark File " << lmrkfilename << std::endl;
 
   // Delete all old landmarks
-  this->erase( this->begin(), this->end() );
+  this->erase(this->begin(), this->end());
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -1429,12 +1433,12 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes(
   char                         CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  if ( strncmp( buffer, "IPL_HEADER_BEGIN", 16 ) != 0 )
+  if (strncmp(buffer, "IPL_HEADER_BEGIN", 16) != 0)
   {
     // Only files with a header of IPL_HEADER_BEGIN will be accepted
     return false;
@@ -1442,10 +1446,10 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes(
   // Read dimensions of image that landmarks are associated with
   // skip a head to landmark definitions
   status = buffer;
-  while ( ( strncmp( buffer, "LANDMARK_HEADER_BEGIN", 21 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "LANDMARK_HEADER_BEGIN", 21) != 0) && (status != NULL))
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before LANDMARK_HEADER_BEGIN found" << std::endl;
     }
@@ -1461,67 +1465,67 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes(
 
   // process looking for dims
   status = buffer;
-  while ( ( strncmp( buffer, "LANDMARK_HEADER_END", 19 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "LANDMARK_HEADER_END", 19) != 0) && (status != NULL))
   {
     // Look for x
-    if ( strncmp( buffer, "LANDMARK_X_SIZE", 15 ) == 0 )
+    if (strncmp(buffer, "LANDMARK_X_SIZE", 15) == 0)
     {
-      sscanf( buffer, "%s %hu", CurrentLandmarkName, &( ImageDims[0] ) );
+      sscanf(buffer, "%s %hu", CurrentLandmarkName, &(ImageDims[0]));
       xisset = true;
     }
     // Look for y
-    if ( strncmp( buffer, "LANDMARK_Y_SIZE", 15 ) == 0 )
+    if (strncmp(buffer, "LANDMARK_Y_SIZE", 15) == 0)
     {
-      sscanf( buffer, "%s %hu", CurrentLandmarkName, &( ImageDims[1] ) );
+      sscanf(buffer, "%s %hu", CurrentLandmarkName, &(ImageDims[1]));
       yisset = true;
     }
     // Look for z
-    if ( strncmp( buffer, "LANDMARK_Z_SIZE", 15 ) == 0 )
+    if (strncmp(buffer, "LANDMARK_Z_SIZE", 15) == 0)
     {
-      sscanf( buffer, "%s %hu", CurrentLandmarkName, &( ImageDims[2] ) );
+      sscanf(buffer, "%s %hu", CurrentLandmarkName, &(ImageDims[2]));
       zisset = true;
     }
-    if ( strncmp( buffer, "LANDMARK_X_RESOLUTION", 20 ) == 0 )
+    if (strncmp(buffer, "LANDMARK_X_RESOLUTION", 20) == 0)
     {
-      sscanf( buffer, "%s %f", CurrentLandmarkName, &( ImageRes[0] ) );
+      sscanf(buffer, "%s %f", CurrentLandmarkName, &(ImageRes[0]));
     }
-    if ( strncmp( buffer, "LANDMARK_Y_RESOLUTION", 20 ) == 0 )
+    if (strncmp(buffer, "LANDMARK_Y_RESOLUTION", 20) == 0)
     {
-      sscanf( buffer, "%s %f", CurrentLandmarkName, &( ImageRes[1] ) );
+      sscanf(buffer, "%s %f", CurrentLandmarkName, &(ImageRes[1]));
     }
-    if ( strncmp( buffer, "LANDMARK_Z_RESOLUTION", 20 ) == 0 )
+    if (strncmp(buffer, "LANDMARK_Z_RESOLUTION", 20) == 0)
     {
-      sscanf( buffer, "%s %f", CurrentLandmarkName, &( ImageRes[2] ) );
+      sscanf(buffer, "%s %f", CurrentLandmarkName, &(ImageRes[2]));
     }
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before LANDMARK_HEADER_END found" << std::endl;
     }
   }
 
   ImageDims[3] = 1;
-  if ( !( xisset && yisset && zisset ) )
+  if (!(xisset && yisset && zisset))
   {
     std::cout << "ERROR must set all LANDMARK_[XYZ]_SIZE values" << std::endl;
   }
 
   // Skip ahead to data
   status = buffer;
-  while ( ( strncmp( buffer, "IPL_HEADER_END", 14 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "IPL_HEADER_END", 14) != 0) && (status != NULL))
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before IPL_HEADER_END found" << std::endl;
     }
   }
 
   // Actually read the data
-  while ( fgets( buffer, FILE_BUFFER_SIZE, tempfile ) != NULL )
+  while (fgets(buffer, FILE_BUFFER_SIZE, tempfile) != NULL)
   {
-    if ( buffer[0] == '#' ) // This allows for comments to be added
-                            // anywhere in the file
+    if (buffer[0] == '#') // This allows for comments to be added
+                          // anywhere in the file
     {
       continue;
     }
@@ -1530,26 +1534,26 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes(
       // DO I NEED TO INVERT Y HERE? SMP
       // const double invertY = static_cast<double> (ImageDims[1]-1);
       unsigned int numread =
-        sscanf( buffer, "%s %lf %lf %lf ", CurrentLandmarkName, &TempPnt[0], &TempPnt[1], &TempPnt[2] );
-      if ( numread != 4 )
+        sscanf(buffer, "%s %lf %lf %lf ", CurrentLandmarkName, &TempPnt[0], &TempPnt[1], &TempPnt[2]);
+      if (numread != 4)
       {
         std::cout << "ERROR invalid number of args read at landmark " << CurrentLandmarkName << std::endl;
         return false;
       }
     }
-    TempPnt.SetT( 0.0F );
-    TempPnt.SetWeighting( 1.0F );
-    if ( ( ImageDims[0] <= TempPnt[0] * ImageRes[0] ) || ( ImageDims[1] <= TempPnt[1] * ImageRes[1] ) ||
-         ( ImageDims[2] <= TempPnt[2] * ImageRes[2] ) || ( ImageDims[3] <= TempPnt.GetT() * ImageRes[3] ) )
+    TempPnt.SetT(0.0F);
+    TempPnt.SetWeighting(1.0F);
+    if ((ImageDims[0] <= TempPnt[0] * ImageRes[0]) || (ImageDims[1] <= TempPnt[1] * ImageRes[1]) ||
+        (ImageDims[2] <= TempPnt[2] * ImageRes[2]) || (ImageDims[3] <= TempPnt.GetT() * ImageRes[3]))
     {
       std::cout << "Point Set Outside of Image Dimensions." << std::endl;
       return false;
     }
-    ( *this )[CurrentLandmarkName] = TempPnt;
+    (*this)[CurrentLandmarkName] = TempPnt;
   }
 
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1559,24 +1563,28 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes(
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLPointTypes( const std::string lmrkfilename,
-                                                                                 const int XDim, const int YDim,
-                                                                                 const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIPLPointTypes(const std::string lmrkfilename,
+                                                                              const int         XDim,
+                                                                              const int         YDim,
+                                                                              const int         ZDim,
+                                                                              const int         TDim)
 {
-  const bool testread = this->InverseConsistentLandmarks::ReadIPLPointTypes( lmrkfilename );
+  const bool testread = this->InverseConsistentLandmarks::ReadIPLPointTypes(lmrkfilename);
 
-  this->InverseConsistentLandmarks::rescale( XDim, YDim, ZDim, TDim );
+  this->InverseConsistentLandmarks::rescale(XDim, YDim, ZDim, TDim);
   return testread;
 }
 
 // ==================Talairach Bounds to Landmark Points===================
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::process_bnd_point(
-  const std::string & CurrentLandmarkName, const char * buffer, const unsigned short local_ImageDims[4],
-  const float /*local_ImageRes */[4], PointType & ModifiedPoint )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::process_bnd_point(const std::string &  CurrentLandmarkName,
+                                                                              const char *         buffer,
+                                                                              const unsigned short local_ImageDims[4],
+                                                                              const float /*local_ImageRes */[4],
+                                                                              PointType & ModifiedPoint)
 {
   PointStorageType tmp[3];
 
@@ -1584,8 +1592,8 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::process_bnd_point(
     double       val0;
     double       val1;
     double       val2;
-    unsigned int numread = sscanf( buffer, "%lf %lf %lf ", &val0, &val1, &val2 );
-    if ( numread != 3 )
+    unsigned int numread = sscanf(buffer, "%lf %lf %lf ", &val0, &val1, &val2);
+    if (numread != 3)
     {
       std::cout << "ERROR invalid number of args read at landmark " << CurrentLandmarkName << std::endl;
       return false;
@@ -1595,52 +1603,51 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::process_bnd_point(
     tmp[2] = val2;
   }
 
-  for ( int i = 0; i < 3; ++i )
+  for (int i = 0; i < 3; ++i)
   {
     ModifiedPoint[i] = tmp[i];
   }
 
   // Invert Y Readings for our coordinate system.
   ModifiedPoint[1] = local_ImageDims[1] - 1 - ModifiedPoint[1];
-  ModifiedPoint.SetT( 0.0F );
-  ModifiedPoint.SetWeighting( 1.0F );
-  if ( local_ImageDims[0] <= ModifiedPoint[0] )
+  ModifiedPoint.SetT(0.0F);
+  ModifiedPoint.SetWeighting(1.0F);
+  if (local_ImageDims[0] <= ModifiedPoint[0])
   {
     return false;
   }
-  if ( local_ImageDims[1] <= ModifiedPoint[1] )
+  if (local_ImageDims[1] <= ModifiedPoint[1])
   {
     return false;
   }
-  if ( local_ImageDims[2] <= ModifiedPoint[2] )
+  if (local_ImageDims[2] <= ModifiedPoint[2])
   {
     return false;
   }
-  if ( local_ImageDims[3] <= ModifiedPoint.GetT() )
+  if (local_ImageDims[3] <= ModifiedPoint.GetT())
   {
     return false;
   }
-  for ( int i = 0; i < 3; ++i )
+  for (int i = 0; i < 3; ++i)
   {
     // ModifiedPoint[i]*=local_ImageRes[i];
   }
   return true;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPointTypes(
-  const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIPLTalairachPointTypes(const std::string lmrkfilename)
 {
   // std::cout << "Reading IPL Talairach Bounds as  Landmark File " <<
   // lmrkfilename << std::endl;
 
   // Delete all old landmarks
-  this->erase( this->begin(), this->end() );
+  this->erase(this->begin(), this->end());
   // Open the files
   std::cout << "  File: " << lmrkfilename.c_str() << std::endl;
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
-  if ( tempfile == NULL )
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -1648,12 +1655,12 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
   char                         buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  if ( strncmp( buffer, "IPL_HEADER_BEGIN", 16 ) != 0 )
+  if (strncmp(buffer, "IPL_HEADER_BEGIN", 16) != 0)
   {
     // Only files with a header of IPL_HEADER_BEGIN will be accepted
     return false;
@@ -1661,11 +1668,11 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
   // Read dimensions of image that landmarks are associated with
   // skip a head to landmark definitions
   status = buffer;
-  while ( ( strncmp( buffer, "TALAIRACH_PARAMETER_HEADER_BEGIN", 32 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "TALAIRACH_PARAMETER_HEADER_BEGIN", 32) != 0) && (status != NULL))
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
     // std::cout << "LINE: " << buffer << std::endl;
-    if ( status == NULL )
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_BEGIN found" << std::endl;
     }
@@ -1676,47 +1683,47 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
   bool zisset = false;
   // process looking for dims
   status = buffer;
-  while ( ( strncmp( buffer, "TALAIRACH_PARAMETER_HEADER_END", 30 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "TALAIRACH_PARAMETER_HEADER_END", 30) != 0) && (status != NULL))
   {
     constexpr unsigned short int TALAIRACH_PARAMETER_NAME_SIZE = 40;
     char                         Dummy[TALAIRACH_PARAMETER_NAME_SIZE];
     // Look for x
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_X_SIZE", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_X_SIZE", 26) == 0)
     {
-      sscanf( buffer, "%s %hu", Dummy, &( ImageDims[0] ) );
+      sscanf(buffer, "%s %hu", Dummy, &(ImageDims[0]));
       xisset = true;
     }
     // Look for y
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_Y_SIZE", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_Y_SIZE", 26) == 0)
     {
-      sscanf( buffer, "%s %hu", Dummy, &( ImageDims[1] ) );
+      sscanf(buffer, "%s %hu", Dummy, &(ImageDims[1]));
       yisset = true;
     }
     // Look for z
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_Z_SIZE", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_Z_SIZE", 26) == 0)
     {
-      sscanf( buffer, "%s %hu", Dummy, &( ImageDims[2] ) );
+      sscanf(buffer, "%s %hu", Dummy, &(ImageDims[2]));
       zisset = true;
     }
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_X_RESOLUTION", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_X_RESOLUTION", 26) == 0)
     {
-      sscanf( buffer, "%s %f", Dummy, &( ImageRes[0] ) );
+      sscanf(buffer, "%s %f", Dummy, &(ImageRes[0]));
     }
     // Look for y
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_Y_RESOLUTION", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_Y_RESOLUTION", 26) == 0)
     {
-      sscanf( buffer, "%s %f", Dummy, &( ImageRes[1] ) );
+      sscanf(buffer, "%s %f", Dummy, &(ImageRes[1]));
     }
     // Look for z
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_Z_RESOLUTION", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_Z_RESOLUTION", 26) == 0)
     {
-      sscanf( buffer, "%s %f", Dummy, &( ImageRes[2] ) );
+      sscanf(buffer, "%s %f", Dummy, &(ImageRes[2]));
     }
     // if(!(xisset && yisset && zisset))
     // {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
     // }
-    if ( status == NULL )
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
@@ -1724,17 +1731,17 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
 
   ImageDims[3] = 1;
   ImageRes[3] = 1.0;
-  if ( !( xisset && yisset && zisset ) )
+  if (!(xisset && yisset && zisset))
   {
     std::cout << "ERROR must set all TALAIRACH_PARAMETER_[XYZ]_SIZE values" << std::endl;
   }
 
   // Skip ahead to data
   status = buffer;
-  while ( ( strncmp( buffer, "IPL_HEADER_END", 14 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "IPL_HEADER_END", 14) != 0) && (status != NULL))
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before IPL_HEADER_END found" << std::endl;
     }
@@ -1744,45 +1751,45 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
   // First read the SLA point
   {
     PointType AC_Point; // Antieror Commisure
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "AC_Point", buffer, ImageDims, ImageRes, AC_Point ) == false )
+    if (process_bnd_point("AC_Point", buffer, ImageDims, ImageRes, AC_Point) == false)
     {
       return false;
     }
 
     PointType PC_Point; // Posterior Commisure
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "PC_Point", buffer, ImageDims, ImageRes, PC_Point ) == false )
+    if (process_bnd_point("PC_Point", buffer, ImageDims, ImageRes, PC_Point) == false)
     {
       return false;
     }
 
     PointType SLAPoint; // Superior Left Anterior
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "SLAPoint", buffer, ImageDims, ImageRes, SLAPoint ) == false )
+    if (process_bnd_point("SLAPoint", buffer, ImageDims, ImageRes, SLAPoint) == false)
     {
       return false;
     }
 
     PointType IRPPoint; // Inferior Right Posterior
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "IRPPoint", buffer, ImageDims, ImageRes, IRPPoint ) == false )
+    if (process_bnd_point("IRPPoint", buffer, ImageDims, ImageRes, IRPPoint) == false)
     {
       return false;
     }
@@ -1796,56 +1803,56 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
       TempPnt[0] = AC_Point[0];
       TempPnt[1] = AC_Point[1];
       TempPnt[2] = AC_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "PC-Point";
       TempPnt[0] = PC_Point[0];
       TempPnt[1] = PC_Point[1];
       TempPnt[2] = PC_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
 
       /* Inferior Points */
       CurrentLandmarkName = "IRP";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "IRA";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "ILP";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "ILA";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
 
       /* Superior Points */
       CurrentLandmarkName = "SLA";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "SLP";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "SRA";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "SRP";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
 
       /*
        *  CurrentLandmarkName="Tal_SLAPoint";    TempPnt[0]=SLAPoint[0];
@@ -1961,8 +1968,8 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
        */
     }
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -1972,23 +1979,25 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPo
   }
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLTalairachPointTypes(
-  const std::string lmrkfilename, const int XDim, const int YDim, const int ZDim, const int TDim )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIPLTalairachPointTypes(const std::string lmrkfilename,
+                                                                                       const int         XDim,
+                                                                                       const int         YDim,
+                                                                                       const int         ZDim,
+                                                                                       const int         TDim)
 {
-  const bool testread = this->InverseConsistentLandmarks::ReadIPLPointTypes( lmrkfilename );
+  const bool testread = this->InverseConsistentLandmarks::ReadIPLPointTypes(lmrkfilename);
 
-  this->InverseConsistentLandmarks::rescale( XDim, YDim, ZDim, TDim );
+  this->InverseConsistentLandmarks::rescale(XDim, YDim, ZDim, TDim);
   return testread;
 }
 
 //
 // ======================================Cerebellum Bounds
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarPointTypes(
-  const std::string lmrkfilename )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIPLCerebellarPointTypes(const std::string lmrkfilename)
 {
   //  std::cout << "Reading IPL Cerebellar Bounds as  Landmark File " <<
   // lmrkfilename << std::endl;
@@ -1997,9 +2006,9 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
   // DEBUG:  NOTE we can not delete after being called from Talairach.bnd!!!
   //        this->erase( this->begin(  ), this->end(  ) );
   // Open the files
-  FILE * tempfile = fopen( lmrkfilename.c_str(), "r" );
+  FILE * tempfile = fopen(lmrkfilename.c_str(), "r");
 
-  if ( tempfile == NULL )
+  if (tempfile == NULL)
   {
     return false;
   }
@@ -2007,12 +2016,12 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
   char                         buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                       status = 0;
   // Read Header Information
-  status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-  if ( status == NULL )
+  status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+  if (status == NULL)
   {
     return false;
   }
-  if ( strncmp( buffer, "IPL_HEADER_BEGIN", 16 ) != 0 )
+  if (strncmp(buffer, "IPL_HEADER_BEGIN", 16) != 0)
   {
     // Only files with a header of IPL_HEADER_BEGIN will be accepted
     return false;
@@ -2020,10 +2029,10 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
   // Read dimensions of image that landmarks are associated with
   // skip a head to landmark definitions
   status = buffer;
-  while ( ( strncmp( buffer, "TALAIRACH_PARAMETER_HEADER_BEGIN", 32 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "TALAIRACH_PARAMETER_HEADER_BEGIN", 32) != 0) && (status != NULL))
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_BEGIN found" << std::endl;
     }
@@ -2034,50 +2043,50 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
   bool zisset = false;
   // process looking for dims
   status = buffer;
-  while ( ( strncmp( buffer, "TALAIRACH_PARAMETER_HEADER_END", 30 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "TALAIRACH_PARAMETER_HEADER_END", 30) != 0) && (status != NULL))
   {
     constexpr unsigned short int TALAIRACH_PARAMETER_NAME_SIZE = 40;
     char                         Dummy[TALAIRACH_PARAMETER_NAME_SIZE];
     // Look for x
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_X_SIZE", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_X_SIZE", 26) == 0)
     {
-      sscanf( buffer, "%s %hu", Dummy, &( ImageDims[0] ) );
+      sscanf(buffer, "%s %hu", Dummy, &(ImageDims[0]));
       xisset = true;
     }
     // Look for y
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_Y_SIZE", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_Y_SIZE", 26) == 0)
     {
-      sscanf( buffer, "%s %hu", Dummy, &( ImageDims[1] ) );
+      sscanf(buffer, "%s %hu", Dummy, &(ImageDims[1]));
       yisset = true;
     }
     // Look for z
-    if ( strncmp( buffer, "TALAIRACH_PARAMETER_Z_SIZE", 26 ) == 0 )
+    if (strncmp(buffer, "TALAIRACH_PARAMETER_Z_SIZE", 26) == 0)
     {
-      sscanf( buffer, "%s %hu", Dummy, &( ImageDims[2] ) );
+      sscanf(buffer, "%s %hu", Dummy, &(ImageDims[2]));
       zisset = true;
     }
     // if(!(xisset && yisset && zisset))
     // {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
     // }
-    if ( status == NULL )
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
   }
 
   ImageDims[3] = 1;
-  if ( !( xisset && yisset && zisset ) )
+  if (!(xisset && yisset && zisset))
   {
     std::cout << "ERROR must set all TALAIRACH_PARAMETER_[XYZ]_SIZE values" << std::endl;
   }
 
   // Skip ahead to data
   status = buffer;
-  while ( ( strncmp( buffer, "IPL_HEADER_END", 14 ) != 0 ) && ( status != NULL ) )
+  while ((strncmp(buffer, "IPL_HEADER_END", 14) != 0) && (status != NULL))
   {
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before IPL_HEADER_END found" << std::endl;
     }
@@ -2087,19 +2096,19 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
   // First read the SLA point
   {
     PointType SLAPoint; // Superior Left Anterior
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "SLAPoint", buffer, ImageDims, ImageRes, SLAPoint ) == false )
+    if (process_bnd_point("SLAPoint", buffer, ImageDims, ImageRes, SLAPoint) == false)
     {
       return false;
     }
     {                     // NOTE: for Cerebellum AC_Point is meaningless
       PointType AC_Point; // Antieror Commisure
-      status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-      if ( status == NULL )
+      status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+      if (status == NULL)
       {
         std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
       }
@@ -2108,23 +2117,23 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
     }
 
     PointType FV_Point; // Posterior Commisure
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "FV_Point", buffer, ImageDims, ImageRes, FV_Point ) == false )
+    if (process_bnd_point("FV_Point", buffer, ImageDims, ImageRes, FV_Point) == false)
     {
       return false;
     }
 
     PointType IRPPoint; // Inferior Right Posterior
-    status = fgets( buffer, FILE_BUFFER_SIZE, tempfile );
-    if ( status == NULL )
+    status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
+    if (status == NULL)
     {
       std::cout << "ERROR: End of file reached before TALAIRACH_PARAMETER_HEADER_END found" << std::endl;
     }
-    if ( process_bnd_point( "IRPPoint", buffer, ImageDims, ImageRes, IRPPoint ) == false )
+    if (process_bnd_point("IRPPoint", buffer, ImageDims, ImageRes, IRPPoint) == false)
     {
       return false;
     }
@@ -2151,73 +2160,73 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_S_FV_PPoint";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_SL_FV_Point";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_SR_FV_Point";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_S_FV_Point";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = SLAPoint[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
 
       CurrentLandmarkName = "Cbl_FV_LAPoint";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_LPPoint";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_RAPoint";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_RPPoint";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_FV_APoint";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_FV_PPoint";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_L_FV_Point";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_R_FV_Point";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_FV_Point";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = FV_Point[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
 
       // Next 4 may conflict with inferior plane
       // CurrentLandmarkName="Cbl_ILAPoint";    TempPnt[0]=SLAPoint[0];
@@ -2236,31 +2245,31 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = SLAPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_I_FV_PPoint";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = IRPPoint[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_IL_FV_Point";
       TempPnt[0] = SLAPoint[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_IR_FV_Point";
       TempPnt[0] = IRPPoint[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
       CurrentLandmarkName = "Cbl_I_FV_Point";
       TempPnt[0] = FV_Point[0];
       TempPnt[1] = IRPPoint[1];
       TempPnt[2] = FV_Point[2];
-      ( *this )[CurrentLandmarkName] = TempPnt;
+      (*this)[CurrentLandmarkName] = TempPnt;
     }
   }
-  fclose( tempfile );
-  if ( this->size() > 0 )
+  fclose(tempfile);
+  if (this->size() > 0)
   {
     return true;
   }
@@ -2271,40 +2280,43 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarP
 }
 
 template typename PointStorageType,
-  typename PointSetType >
-    bool
-    InverseConsistentLandmarks< PointStorageType, PointSetType >::ReadIPLCerebellarPointTypes(
-      const std::string lmrkfilename, const int XDim, const int YDim, const int ZDim, const int TDim )
+  typename PointSetType > bool
+                          InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIPLCerebellarPointTypes(
+                            const std::string lmrkfilename,
+                            const int         XDim,
+                            const int         YDim,
+                            const int         ZDim,
+                            const int         TDim)
 {
-  const bool testread = this->InverseConsistentLandmarks::ReadIPLPointTypes( lmrkfilename );
+  const bool testread = this->InverseConsistentLandmarks::ReadIPLPointTypes(lmrkfilename);
 
-  this->InverseConsistentLandmarks::rescale( XDim, YDim, ZDim, TDim );
+  this->InverseConsistentLandmarks::rescale(XDim, YDim, ZDim, TDim);
   return testread;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 void
-InverseConsistentLandmarks< PointStorageType, PointSetType >::AddExtendedPointTypes3D_UnitCube(
-  const InverseConsistentLandmarks & input )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::AddExtendedPointTypes3D_UnitCube(
+  const InverseConsistentLandmarks & input)
 {
   // First create the center slice replicated in +-x and +-y directions
   InverseConsistentLandmarks centersliceLM = input;
 
-  ( *this ) = input; // Used to reset image Dims
+  (*this) = input; // Used to reset image Dims
   bool is3d = false;
-  for ( typename InverseConsistentLandmarks::const_iterator iter = input.begin(); iter != input.end(); ++iter )
+  for (typename InverseConsistentLandmarks::const_iterator iter = input.begin(); iter != input.end(); ++iter)
   {
     const PointStorageType xpoint = iter->second[0];
     const PointStorageType ypoint = iter->second[1];
     const PointStorageType zpoint = iter->second[2];
-    if ( zpoint > 1e-5 ) // This assumes image sizes less than 10000
-                         // slices
+    if (zpoint > 1e-5) // This assumes image sizes less than 10000
+                       // slices
     {
       is3d = true;
     }
     const PointStorageType tpoint = iter->second.GetT();
     const PointStorageType wpoint = iter->second.GetWeighting();
-    std::string            base( iter->first );
+    std::string            base(iter->first);
 
     std::string pl; // pointlable
     // Center
@@ -2312,86 +2324,89 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::AddExtendedPointTy
     pl = "Left";
     pl += base;
     // Left
-    centersliceLM[pl] = PointType( ( xpoint - 1.0F ), ( ypoint - 0.0F ), zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType((xpoint - 1.0F), (ypoint - 0.0F), zpoint, tpoint, wpoint);
     pl = "TopLeft";
     pl += base;
     // TopLeft
-    centersliceLM[pl] = PointType( xpoint - 1.0F, ypoint + 1.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - 1.0F, ypoint + 1.0F, zpoint, tpoint, wpoint);
     pl = "Top";
     pl += base;
     // Top
-    centersliceLM[pl] = PointType( xpoint - 0.0F, ypoint + 1.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - 0.0F, ypoint + 1.0F, zpoint, tpoint, wpoint);
     pl = "TopRight";
     pl += base;
     // TopRight
-    centersliceLM[pl] = PointType( xpoint + 1.0F, ypoint + 1.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint + 1.0F, ypoint + 1.0F, zpoint, tpoint, wpoint);
     pl = "Right";
     pl += base;
     // Right
-    centersliceLM[pl] = PointType( xpoint + 1.0F, ypoint - 0.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint + 1.0F, ypoint - 0.0F, zpoint, tpoint, wpoint);
     pl = "BottomRight";
     pl += base;
     // BottomRight
-    centersliceLM[pl] = PointType( xpoint + 1.0F, ypoint - 1.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint + 1.0F, ypoint - 1.0F, zpoint, tpoint, wpoint);
     pl = "Bottom";
     pl += base;
     // Bottom
-    centersliceLM[pl] = PointType( xpoint - 0.0F, ypoint - 1.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - 0.0F, ypoint - 1.0F, zpoint, tpoint, wpoint);
     pl = "BottomLeft";
     pl += base;
     // BottomLeft
-    centersliceLM[pl] = PointType( xpoint - 1.0F, ypoint - 1.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - 1.0F, ypoint - 1.0F, zpoint, tpoint, wpoint);
   }
-  for ( typename InverseConsistentLandmarks::const_iterator iter = centersliceLM.begin(); iter != centersliceLM.end();
-        ++iter )
+  for (typename InverseConsistentLandmarks::const_iterator iter = centersliceLM.begin(); iter != centersliceLM.end();
+       ++iter)
   {
     const PointStorageType xpoint = iter->second[0];
     const PointStorageType ypoint = iter->second[1];
     const PointStorageType zpoint = iter->second[2];
     const PointStorageType tpoint = iter->second.GetT();
     const PointStorageType wpoint = iter->second.GetWeighting();
-    std::string            base( iter->first );
+    std::string            base(iter->first);
 
-    std::string pl;                 // pointlable
-    ( *this )[base] = iter->second; // Center
+    std::string pl;               // pointlable
+    (*this)[base] = iter->second; // Center
 
-    if ( is3d ) // Only Do this if it is a 3D image
+    if (is3d) // Only Do this if it is a 3D image
     {
       pl = "Previous";
       pl += base;
-      ( *this )[pl] = PointType( ( xpoint ), ( ypoint ), ( zpoint - 1.0F ), tpoint, wpoint );
+      (*this)[pl] = PointType((xpoint), (ypoint), (zpoint - 1.0F), tpoint, wpoint);
 
       pl = "Next";
       pl += base;
-      ( *this )[pl] = PointType( ( xpoint ), ( ypoint ), ( zpoint + 1.0F ), tpoint, wpoint );
+      (*this)[pl] = PointType((xpoint), (ypoint), (zpoint + 1.0F), tpoint, wpoint);
     }
   }
   return;
 }
 
-template < typename PointStorageType, typename PointSetType >
+template <typename PointStorageType, typename PointSetType>
 void
-InverseConsistentLandmarks< PointStorageType, PointSetType >::AddExtendedPointTypes3D_OnN(
-  const InverseConsistentLandmarks & input, const int nx, const int ny, const int nz )
+InverseConsistentLandmarks<PointStorageType, PointSetType>::AddExtendedPointTypes3D_OnN(
+  const InverseConsistentLandmarks & input,
+  const int                          nx,
+  const int                          ny,
+  const int                          nz)
 {
   // First create the center slice replicated in +-x and +-y directions
   InverseConsistentLandmarks centersliceLM = input;
 
-  ( *this ) = input; // Used to reset image Dims
+  (*this) = input; // Used to reset image Dims
   bool is3d = false;
-  for ( typename InverseConsistentLandmarks::const_iterator iter = input.begin(); iter != input.end(); ++iter )
+  for (typename InverseConsistentLandmarks::const_iterator iter = input.begin(); iter != input.end(); ++iter)
   {
     const PointStorageType xpoint = iter->second[0];
     const PointStorageType ypoint = iter->second[1];
     const PointStorageType zpoint = iter->second[2];
-    if ( zpoint > 1e-5 ) // This assumes image sizes less than 10000
-                         // slices
+    if (zpoint > 1e-5) // This assumes image sizes less than 10000
+                       // slices
     {
       is3d = true;
     }
     const PointStorageType tpoint = iter->second.GetT();
     const PointStorageType wpoint = iter->second.GetWeighting();
-    std::string            base( iter->first );
+    std::string            base(iter->first);
 
     std::string pl; // pointlable
     // Center
@@ -2399,58 +2414,58 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >::AddExtendedPointTy
     pl = "Left";
     pl += base;
     // Left
-    centersliceLM[pl] = PointType( ( xpoint - nx ), ( ypoint - 0.0F ), zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType((xpoint - nx), (ypoint - 0.0F), zpoint, tpoint, wpoint);
     pl = "TopLeft";
     pl += base;
     // TopLeft
-    centersliceLM[pl] = PointType( xpoint - nx, ypoint + ny, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - nx, ypoint + ny, zpoint, tpoint, wpoint);
     pl = "Top";
     pl += base;
     // Top
-    centersliceLM[pl] = PointType( xpoint - 0.0F, ypoint + ny, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - 0.0F, ypoint + ny, zpoint, tpoint, wpoint);
     pl = "TopRight";
     pl += base;
     // TopRight
-    centersliceLM[pl] = PointType( xpoint + nx, ypoint + ny, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint + nx, ypoint + ny, zpoint, tpoint, wpoint);
     pl = "Right";
     pl += base;
     // Right
-    centersliceLM[pl] = PointType( xpoint + nx, ypoint - 0.0F, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint + nx, ypoint - 0.0F, zpoint, tpoint, wpoint);
     pl = "BottomRight";
     pl += base;
     // BottomRight
-    centersliceLM[pl] = PointType( xpoint + nx, ypoint - ny, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint + nx, ypoint - ny, zpoint, tpoint, wpoint);
     pl = "Bottom";
     pl += base;
     // Bottom
-    centersliceLM[pl] = PointType( xpoint - 0.0F, ypoint - ny, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - 0.0F, ypoint - ny, zpoint, tpoint, wpoint);
     pl = "BottomLeft";
     pl += base;
     // BottomLeft
-    centersliceLM[pl] = PointType( xpoint - nx, ypoint - ny, zpoint, tpoint, wpoint );
+    centersliceLM[pl] = PointType(xpoint - nx, ypoint - ny, zpoint, tpoint, wpoint);
   }
-  for ( typename InverseConsistentLandmarks::const_iterator iter = centersliceLM.begin(); iter != centersliceLM.end();
-        ++iter )
+  for (typename InverseConsistentLandmarks::const_iterator iter = centersliceLM.begin(); iter != centersliceLM.end();
+       ++iter)
   {
     const PointStorageType xpoint = iter->second[0];
     const PointStorageType ypoint = iter->second[1];
     const PointStorageType zpoint = iter->second[2];
     const PointStorageType tpoint = iter->second.GetT();
     const PointStorageType wpoint = iter->second.GetWeighting();
-    std::string            base( iter->first );
+    std::string            base(iter->first);
 
-    std::string pl;                 // pointlable
-    ( *this )[base] = iter->second; // Center
+    std::string pl;               // pointlable
+    (*this)[base] = iter->second; // Center
 
-    if ( is3d ) // Only Do this if it is a 3D image
+    if (is3d) // Only Do this if it is a 3D image
     {
       pl = "Previous";
       pl += base;
-      ( *this )[pl] = PointType( ( xpoint ), ( ypoint ), ( zpoint - nz ), tpoint, wpoint );
+      (*this)[pl] = PointType((xpoint), (ypoint), (zpoint - nz), tpoint, wpoint);
 
       pl = "Next";
       pl += base;
-      ( *this )[pl] = PointType( ( xpoint ), ( ypoint ), ( zpoint + nz ), tpoint, wpoint );
+      (*this)[pl] = PointType((xpoint), (ypoint), (zpoint + nz), tpoint, wpoint);
     }
   }
   return;

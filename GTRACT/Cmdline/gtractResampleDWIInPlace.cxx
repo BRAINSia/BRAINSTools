@@ -64,35 +64,35 @@
  * \param InputImage The image to be duplicated and modified to incorporate the rigid transform.
  * \return an image with the same voxels values as the input, but with differnt physical space representation.
  */
-template < typename IOImageType >
+template <typename IOImageType>
 typename IOImageType::Pointer
-SetVectorImageRigidTransformInPlace( typename itk::VersorRigid3DTransform< double >::ConstPointer RigidTransform,
-                                     const IOImageType *                                          InputImage )
+SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>::ConstPointer RigidTransform,
+                                    const IOImageType *                                        InputImage)
 {
-  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter< IOImageType, IOImageType >;
+  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<IOImageType, IOImageType>;
   using ResampleIPFilterPointer = typename ResampleIPFilterType::Pointer;
 
   ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
-  resampleIPFilter->SetInputImage( InputImage );
-  resampleIPFilter->SetRigidTransform( RigidTransform.GetPointer() );
+  resampleIPFilter->SetInputImage(InputImage);
+  resampleIPFilter->SetRigidTransform(RigidTransform.GetPointer());
   resampleIPFilter->Update();
   typename IOImageType::Pointer OutputAlignedImage = resampleIPFilter->GetOutput();
 
-  OutputAlignedImage->SetMetaDataDictionary( InputImage->GetMetaDataDictionary() );
+  OutputAlignedImage->SetMetaDataDictionary(InputImage->GetMetaDataDictionary());
   return OutputAlignedImage;
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
-  itk::NumberToString< double >                         doubleConvert;
-  using GenericTransformType = itk::Transform< double, 3, 3 >;
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  itk::NumberToString<double>                           doubleConvert;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
   bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "DWI Image: " << inputVolume << std::endl;
@@ -106,28 +106,28 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if ( inputTransform.size() == 0 && warpDWITransform.size() == 0 )
+  if (inputTransform.size() == 0 && warpDWITransform.size() == 0)
   {
     violated = true;
     std::cout << "  --inputTransform or --warpDWITransform Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   std::string convertedVolume;
-  if ( convertInputVolumeToNrrdOrNifti( detectOuputVolumeType( outputVolume ), inputVolume, convertedVolume ) )
+  if (convertInputVolumeToNrrdOrNifti(detectOuputVolumeType(outputVolume), inputVolume, convertedVolume))
   {
     inputVolume = convertedVolume;
   }
@@ -138,17 +138,17 @@ main( int argc, char * argv[] )
   }
 
   using PixelType = signed short;
-  using NrrdImageType = itk::VectorImage< PixelType, 3 >;
-  using RigidTransformType = itk::VersorRigid3DTransform< double >;
-  using SingleComponentImageType = itk::Image< PixelType, 3 >;
-  using FileReaderType = itk::ImageFileReader< NrrdImageType, itk::DefaultConvertPixelTraits< PixelType > >;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
+  using RigidTransformType = itk::VersorRigid3DTransform<double>;
+  using SingleComponentImageType = itk::Image<PixelType, 3>;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
   FileReaderType::Pointer imageReader = FileReaderType::New();
-  imageReader->SetFileName( inputVolume );
+  imageReader->SetFileName(inputVolume);
   try
   {
     imageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -158,7 +158,7 @@ main( int argc, char * argv[] )
   NrrdImageType::Pointer resampleImage = imageReader->GetOutput();
   // NOT USED: NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   GenericTransformType::Pointer baseTransform = nullptr;
-  if ( inputTransform == "ID" || inputTransform == "Identity" || inputTransform.size() == 0 )
+  if (inputTransform == "ID" || inputTransform == "Identity" || inputTransform.size() == 0)
   {
     RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
     LocalRigidTransform->SetIdentity();
@@ -166,11 +166,11 @@ main( int argc, char * argv[] )
   }
   else
   {
-    baseTransform = itk::ReadTransformFromDisk( inputTransform );
+    baseTransform = itk::ReadTransformFromDisk(inputTransform);
   }
-  RigidTransformType::Pointer rigidTransform = dynamic_cast< RigidTransformType * >( baseTransform.GetPointer() );
+  RigidTransformType::Pointer rigidTransform = dynamic_cast<RigidTransformType *>(baseTransform.GetPointer());
 
-  if ( rigidTransform.IsNull() )
+  if (rigidTransform.IsNull())
   {
     std::cerr << "Transform " << inputTransform << " wasn't of the expected type itk::VersorRigid3DTransform<double>"
               << std::endl;
@@ -178,36 +178,36 @@ main( int argc, char * argv[] )
   }
 
   GenericTransformType::Pointer warpDWIXFRM = nullptr;
-  if ( warpDWITransform.size() > 0 )
+  if (warpDWITransform.size() > 0)
   {
-    if ( warpDWITransform.find( ".nii" ) != std::string::npos )
+    if (warpDWITransform.find(".nii") != std::string::npos)
     {
       // Read ReferenceVolume and DeformationVolume
       using VectorComponentType = double;
-      using VectorPixelType = itk::Vector< VectorComponentType, 3 >;
-      using DisplacementFieldType = itk::Image< VectorPixelType, 3 >;
-      using DisplacementFieldTransformType = itk::DisplacementFieldTransform< VectorComponentType, 3 >;
+      using VectorPixelType = itk::Vector<VectorComponentType, 3>;
+      using DisplacementFieldType = itk::Image<VectorPixelType, 3>;
+      using DisplacementFieldTransformType = itk::DisplacementFieldTransform<VectorComponentType, 3>;
 
-      using DefFieldReaderType = itk::ImageFileReader< DisplacementFieldType >;
+      using DefFieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
       DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
-      fieldImageReader->SetFileName( warpDWITransform );
+      fieldImageReader->SetFileName(warpDWITransform);
       fieldImageReader->Update();
 
       DisplacementFieldType::Pointer DisplacementField = fieldImageReader->GetOutput();
 
       DisplacementFieldTransformType::Pointer dispTransform = DisplacementFieldTransformType::New();
-      dispTransform->SetDisplacementField( DisplacementField.GetPointer() );
+      dispTransform->SetDisplacementField(DisplacementField.GetPointer());
       warpDWIXFRM = dispTransform.GetPointer();
     }
     else
     {
-      warpDWIXFRM = itk::ReadTransformFromDisk( warpDWITransform );
+      warpDWIXFRM = itk::ReadTransformFromDisk(warpDWITransform);
     }
   }
 
   // Instantiate an object of MetaDataDictionaryValidator class, and set its MetaDataDictionary
   DWIMetaDataDictionaryValidator resampleImageValidator;
-  resampleImageValidator.SetMetaDataDictionary( resampleImage->GetMetaDataDictionary() );
+  resampleImageValidator.SetMetaDataDictionary(resampleImage->GetMetaDataDictionary());
 
   // Get measurement frame and its inverse from DWI scan
   DWIMetaDataDictionaryValidator::RotationMatrixType msrFrame = resampleImageValidator.GetMeasurementFrame();
@@ -216,7 +216,7 @@ main( int argc, char * argv[] )
   DWIInverseMeasurementFrame = DWIMeasurementFrame.GetInverse();
 
   // Resample DWI in place
-  resampleImage = SetVectorImageRigidTransformInPlace< NrrdImageType >( rigidTransform.GetPointer(), resampleImage );
+  resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);
 
   std::cout << "Rigid transform matrix: " << rigidTransform->GetMatrix().GetVnlMatrix() << std::endl;
 
@@ -227,13 +227,13 @@ main( int argc, char * argv[] )
   // Now delete the gradient table to fill with new gradient values
   resampleImageValidator.DeleteGradientTable();
 
-  DWIMetaDataDictionaryValidator::GradientTableType newGradTable( gradTable.size() );
+  DWIMetaDataDictionaryValidator::GradientTableType newGradTable(gradTable.size());
 
   // Rotate gradient vectors by rigid transform and inverse measurement frame
-  for ( unsigned int i = 0; i < gradTable.size(); i++ )
+  for (unsigned int i = 0; i < gradTable.size(); i++)
   {
     // Get Current Gradient Direction
-    DWIMetaDataDictionaryValidator::GradientTableType::value_type curGradientDirection( 3 );
+    DWIMetaDataDictionaryValidator::GradientTableType::value_type curGradientDirection(3);
     curGradientDirection[0] = gradTable[i][0];
     curGradientDirection[1] = gradTable[i][1];
     curGradientDirection[2] = gradTable[i][2];
@@ -241,9 +241,9 @@ main( int argc, char * argv[] )
     // Rotate the diffusion gradient with rigid transform and inverse measurement frame
     RigidTransformType::Pointer    inverseRigidTransform = RigidTransformType::New();
     const NrrdImageType::PointType centerPoint = rigidTransform->GetCenter();
-    inverseRigidTransform->SetCenter( centerPoint );
+    inverseRigidTransform->SetCenter(centerPoint);
     inverseRigidTransform->SetIdentity();
-    rigidTransform->GetInverse( inverseRigidTransform );
+    rigidTransform->GetInverse(inverseRigidTransform);
 
     curGradientDirection = inverseRigidTransform->GetMatrix() * DWIInverseMeasurementFrame * curGradientDirection;
 
@@ -253,14 +253,14 @@ main( int argc, char * argv[] )
 
     // This is only for writeOutputMetaData
     char tmpStr[64];
-    sprintf( tmpStr, "DWMRI_gradient_%04u", i );
-    std::string KeyString( tmpStr );
-    outputGradDirMetaDataStream << KeyString << "," << doubleConvert( curGradientDirection[0] ) << ","
-                                << doubleConvert( curGradientDirection[1] ) << ","
-                                << doubleConvert( curGradientDirection[2] ) << std::endl;
+    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
+    std::string KeyString(tmpStr);
+    outputGradDirMetaDataStream << KeyString << "," << doubleConvert(curGradientDirection[0]) << ","
+                                << doubleConvert(curGradientDirection[1]) << ","
+                                << doubleConvert(curGradientDirection[2]) << std::endl;
   }
 
-  resampleImageValidator.SetGradientTable( newGradTable );
+  resampleImageValidator.SetGradientTable(newGradTable);
 
   std::stringstream outputMFMetaDataStream; // This is only for writeOutputMetaData
   {
@@ -269,28 +269,28 @@ main( int argc, char * argv[] )
     const DWIMetaDataDictionaryValidator::RotationMatrixType newMeasurementFrame =
       DWIInverseMeasurementFrame * DWIMeasurementFrame;
     outputMFMetaDataStream << "measurement frame";
-    for ( unsigned int i = 0; i < 3; i++ )
+    for (unsigned int i = 0; i < 3; i++)
     {
-      for ( unsigned int j = 0; j < 3; j++ )
+      for (unsigned int j = 0; j < 3; j++)
       {
         outputMFMetaDataStream << "," << newMeasurementFrame[i][j];
       }
     }
     outputMFMetaDataStream << std::endl;
-    resampleImageValidator.SetMeasurementFrame( newMeasurementFrame );
+    resampleImageValidator.SetMeasurementFrame(newMeasurementFrame);
   }
 
   // Update the metaDataDictionary of resampleImage after that gradient table and measurement frame are updated.
-  resampleImage->SetMetaDataDictionary( resampleImageValidator.GetMetaDataDictionary() );
+  resampleImage->SetMetaDataDictionary(resampleImageValidator.GetMetaDataDictionary());
 
   // If --writeOutputMetaData ./metaData.csv is specified on the command line,
   // then write out the output image measurement frame and diffusion gradient directions in a simple CSV file.
   // This helps to verify the output image meta data in TestSuite.
-  if ( writeOutputMetaData != "" )
+  if (writeOutputMetaData != "")
   {
     std::ofstream outputMetaDataFile;
-    outputMetaDataFile.open( writeOutputMetaData.c_str() );
-    if ( !outputMetaDataFile.is_open() )
+    outputMetaDataFile.open(writeOutputMetaData.c_str());
+    if (!outputMetaDataFile.is_open())
     {
       std::cerr << "Can't write the output meta data CSV file " << writeOutputMetaData << std::endl;
     }
@@ -307,10 +307,10 @@ main( int argc, char * argv[] )
   const NrrdImageType::SpacingType   inputSpacing = resampleImage->GetSpacing();
 
   NrrdImageType::SizeType newSize;
-  std::vector< size_t >   imagePadding( 6, 0 );
-  for ( int qq = 0; qq < 3; ++qq )
+  std::vector<size_t>     imagePadding(6, 0);
+  for (int qq = 0; qq < 3; ++qq)
   {
-    if ( ( imageOutputSize[qq] > 0 ) && ( static_cast< itk::SizeValueType >( imageOutputSize[qq] ) > inputSize[qq] ) )
+    if ((imageOutputSize[qq] > 0) && (static_cast<itk::SizeValueType>(imageOutputSize[qq]) > inputSize[qq]))
     {
       const size_t sizeDiff = imageOutputSize[qq] - inputSize[qq];
       const size_t halfPadding = sizeDiff / 2;
@@ -321,14 +321,14 @@ main( int argc, char * argv[] )
     newSize[qq] = inputSize[qq] + imagePadding[qq] + imagePadding[qq + 3];
   }
 
-  vnl_matrix_fixed< double, 3, 3 > inputDirectionMatrix;
-  vnl_matrix_fixed< double, 3, 3 > inputSpacingMatrix;
-  for ( unsigned int i = 0; i < 3; i++ )
+  vnl_matrix_fixed<double, 3, 3> inputDirectionMatrix;
+  vnl_matrix_fixed<double, 3, 3> inputSpacingMatrix;
+  for (unsigned int i = 0; i < 3; i++)
   {
-    for ( unsigned int j = 0; j < 3; j++ )
+    for (unsigned int j = 0; j < 3; j++)
     {
       inputDirectionMatrix[i][j] = inputDirection[i][j];
-      if ( i == j )
+      if (i == j)
       {
         inputSpacingMatrix[i][j] = inputSpacing[i];
       }
@@ -339,13 +339,13 @@ main( int argc, char * argv[] )
     }
   }
 
-  vnl_matrix_fixed< double, 3, 3 > spaceDirections = inputDirectionMatrix * inputSpacingMatrix;
-  vnl_matrix_fixed< double, 3, 4 > newMatrix;
-  for ( unsigned int i = 0; i < 3; i++ )
+  vnl_matrix_fixed<double, 3, 3> spaceDirections = inputDirectionMatrix * inputSpacingMatrix;
+  vnl_matrix_fixed<double, 3, 4> newMatrix;
+  for (unsigned int i = 0; i < 3; i++)
   {
-    for ( unsigned int j = 0; j < 4; j++ )
+    for (unsigned int j = 0; j < 4; j++)
     {
-      if ( j == 3 )
+      if (j == 3)
       {
         newMatrix[i][j] = inputOrigin[i];
       }
@@ -356,16 +356,16 @@ main( int argc, char * argv[] )
     }
   }
 
-  vnl_matrix_fixed< double, 4, 1 > voxelShift;
-  voxelShift[0][0] = -1.0 * (double)( imagePadding[0] );
-  voxelShift[1][0] = -1.0 * (double)( imagePadding[1] );
-  voxelShift[2][0] = -1.0 * (double)( imagePadding[2] );
+  vnl_matrix_fixed<double, 4, 1> voxelShift;
+  voxelShift[0][0] = -1.0 * (double)(imagePadding[0]);
+  voxelShift[1][0] = -1.0 * (double)(imagePadding[1]);
+  voxelShift[2][0] = -1.0 * (double)(imagePadding[2]);
   voxelShift[3][0] = 1.0;
 
-  vnl_matrix_fixed< double, 3, 1 > newOriginMatrix = newMatrix * voxelShift;
+  vnl_matrix_fixed<double, 3, 1> newOriginMatrix = newMatrix * voxelShift;
 
   NrrdImageType::PointType newOrigin;
-  for ( unsigned int i = 0; i < 3; i++ )
+  for (unsigned int i = 0; i < 3; i++)
   {
     newOrigin[i] = newOriginMatrix[i][0];
   }
@@ -379,17 +379,17 @@ main( int argc, char * argv[] )
   std::cout << "Output DWI Image Size: " << newSize[0] << " " << newSize[1] << " " << newSize[2] << std::endl;
 
   NrrdImageType::Pointer paddedImage = NrrdImageType::New();
-  paddedImage->CopyInformation( resampleImage );
-  paddedImage->SetVectorLength( resampleImage->GetVectorLength() );
-  paddedImage->SetMetaDataDictionary( resampleImage->GetMetaDataDictionary() );
-  paddedImage->SetRegions( newSize );
-  paddedImage->SetOrigin( newOrigin );
+  paddedImage->CopyInformation(resampleImage);
+  paddedImage->SetVectorLength(resampleImage->GetVectorLength());
+  paddedImage->SetMetaDataDictionary(resampleImage->GetMetaDataDictionary());
+  paddedImage->SetRegions(newSize);
+  paddedImage->SetOrigin(newOrigin);
   paddedImage->Allocate();
 
   NrrdImageType::Pointer finalImage;
-  using IteratorType = itk::ImageRegionIterator< NrrdImageType >;
-  IteratorType InIt( resampleImage, resampleImage->GetRequestedRegion() );
-  for ( InIt.GoToBegin(); !InIt.IsAtEnd(); ++InIt )
+  using IteratorType = itk::ImageRegionIterator<NrrdImageType>;
+  IteratorType InIt(resampleImage, resampleImage->GetRequestedRegion());
+  for (InIt.GoToBegin(); !InIt.IsAtEnd(); ++InIt)
   {
     NrrdImageType::IndexType InIndex = InIt.GetIndex();
     NrrdImageType::IndexType OutIndex;
@@ -397,42 +397,42 @@ main( int argc, char * argv[] )
     OutIndex[1] = InIndex[1] + imagePadding[1];
     OutIndex[2] = InIndex[2] + imagePadding[2];
 
-    NrrdImageType::PixelType InImagePixel = resampleImage->GetPixel( InIndex );
-    paddedImage->SetPixel( OutIndex, InImagePixel );
+    NrrdImageType::PixelType InImagePixel = resampleImage->GetPixel(InIndex);
+    paddedImage->SetPixel(OutIndex, InImagePixel);
   }
   paddedImage->Update();
 
-  if ( referenceVolume != "" )
+  if (referenceVolume != "")
   {
     // For each component, extract, resample to list, and finally compose back into a vector image.
-    using ReferenceFileReaderType = itk::ImageFileReader< SingleComponentImageType >;
+    using ReferenceFileReaderType = itk::ImageFileReader<SingleComponentImageType>;
     ReferenceFileReaderType::Pointer referenceImageReader = ReferenceFileReaderType::New();
-    referenceImageReader->SetFileName( referenceVolume );
+    referenceImageReader->SetFileName(referenceVolume);
     referenceImageReader->Update();
 
     const size_t lengthOfPixelVector = paddedImage->GetVectorLength();
 
-    using ComposeCovariantVectorImageFilterType = itk::ComposeImageFilter< SingleComponentImageType, NrrdImageType >;
+    using ComposeCovariantVectorImageFilterType = itk::ComposeImageFilter<SingleComponentImageType, NrrdImageType>;
     ComposeCovariantVectorImageFilterType::Pointer composer = ComposeCovariantVectorImageFilterType::New();
 
     using VectorIndexSelectionCastImageFilterType =
-      itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >;
+      itk::VectorIndexSelectionCastImageFilter<NrrdImageType, SingleComponentImageType>;
     VectorIndexSelectionCastImageFilterType::Pointer vectorImageToImageSelector =
       VectorIndexSelectionCastImageFilterType::New();
-    vectorImageToImageSelector->SetInput( paddedImage );
-    for ( size_t componentToExtract = 0; componentToExtract < lengthOfPixelVector; ++componentToExtract )
+    vectorImageToImageSelector->SetInput(paddedImage);
+    for (size_t componentToExtract = 0; componentToExtract < lengthOfPixelVector; ++componentToExtract)
     {
-      vectorImageToImageSelector->SetIndex( componentToExtract );
+      vectorImageToImageSelector->SetIndex(componentToExtract);
       vectorImageToImageSelector->Update();
 
       // Resample to a new space with basic linear/identity transform.
-      using ComponentResamplerType = itk::ResampleImageFilter< SingleComponentImageType, SingleComponentImageType >;
+      using ComponentResamplerType = itk::ResampleImageFilter<SingleComponentImageType, SingleComponentImageType>;
       ComponentResamplerType::Pointer componentResampler = ComponentResamplerType::New();
-      componentResampler->SetOutputParametersFromImage( referenceImageReader->GetOutput() );
-      componentResampler->SetInput( vectorImageToImageSelector->GetOutput() );
-      if ( warpDWIXFRM.IsNotNull() )
+      componentResampler->SetOutputParametersFromImage(referenceImageReader->GetOutput());
+      componentResampler->SetInput(vectorImageToImageSelector->GetOutput());
+      if (warpDWIXFRM.IsNotNull())
       {
-        componentResampler->SetTransform( warpDWIXFRM );
+        componentResampler->SetTransform(warpDWIXFRM);
       }
       // default to linear
       // default to IdentityTransform
@@ -440,11 +440,11 @@ main( int argc, char * argv[] )
       // default background value of 0.
       componentResampler->Update();
       // Add to list for Compose
-      composer->SetInput( componentToExtract, componentResampler->GetOutput() );
+      composer->SetInput(componentToExtract, componentResampler->GetOutput());
     }
     composer->Update();
     finalImage = composer->GetOutput();
-    finalImage->SetMetaDataDictionary( paddedImage->GetMetaDataDictionary() );
+    finalImage->SetMetaDataDictionary(paddedImage->GetMetaDataDictionary());
   }
   else
   {
@@ -452,43 +452,43 @@ main( int argc, char * argv[] )
   }
 
   // Write out resampled in place DWI
-  using WriterType = itk::ImageFileWriter< NrrdImageType >;
+  using WriterType = itk::ImageFileWriter<NrrdImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
-  nrrdWriter->SetInput( finalImage );
-  nrrdWriter->SetFileName( outputVolume );
+  nrrdWriter->SetInput(finalImage);
+  nrrdWriter->SetFileName(outputVolume);
   try
   {
     nrrdWriter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }
-  if ( !outputResampledB0.empty() )
+  if (!outputResampledB0.empty())
   {
     constexpr size_t B0Index = 0;
 
     using VectorIndexSelectionCastImageFilterType =
-      itk::VectorIndexSelectionCastImageFilter< NrrdImageType, SingleComponentImageType >;
+      itk::VectorIndexSelectionCastImageFilter<NrrdImageType, SingleComponentImageType>;
     VectorIndexSelectionCastImageFilterType::Pointer vectorImageToImageSelector =
       VectorIndexSelectionCastImageFilterType::New();
-    vectorImageToImageSelector->SetInput( finalImage );
-    vectorImageToImageSelector->SetIndex( B0Index );
+    vectorImageToImageSelector->SetInput(finalImage);
+    vectorImageToImageSelector->SetIndex(B0Index);
     vectorImageToImageSelector->Update();
 
     // Write out resampled in place DWI
-    using B0WriterType = itk::ImageFileWriter< SingleComponentImageType >;
+    using B0WriterType = itk::ImageFileWriter<SingleComponentImageType>;
     B0WriterType::Pointer B0Writer = B0WriterType::New();
     B0Writer->UseCompressionOn();
-    B0Writer->SetInput( vectorImageToImageSelector->GetOutput() );
-    B0Writer->SetFileName( outputResampledB0 );
+    B0Writer->SetInput(vectorImageToImageSelector->GetOutput());
+    B0Writer->SetFileName(outputResampledB0);
     try
     {
       B0Writer->Update();
     }
-    catch ( itk::ExceptionObject & e )
+    catch (itk::ExceptionObject & e)
     {
       std::cout << e << std::endl;
     }

@@ -38,10 +38,10 @@ enum PixelTypes
   Crap
 };
 
-using ThreeVectorComplexPixelType = std::complex< float >;
-using RGBPixelType = itk::RGBPixel< unsigned char >;
+using ThreeVectorComplexPixelType = std::complex<float>;
+using RGBPixelType = itk::RGBPixel<unsigned char>;
 
-std::map< PixelTypes, const char * > typenames;
+std::map<PixelTypes, const char *> typenames;
 void
 typenamesInit()
 {
@@ -59,29 +59,37 @@ typenamesInit()
 }
 
 bool
-ProcessArgs( int argc, char ** argv, std::string & filename, int & x, int & y, int & z, int & t, PixelTypes & PType,
-             double & value, int & numdims )
+ProcessArgs(int           argc,
+            char **       argv,
+            std::string & filename,
+            int &         x,
+            int &         y,
+            int &         z,
+            int &         t,
+            PixelTypes &  PType,
+            double &      value,
+            int &         numdims)
 {
-  while ( --argc )
+  while (--argc)
   {
-    std::string arg( argv[1] );
+    std::string arg(argv[1]);
     ++argv;
-    if ( arg == "-2" )
+    if (arg == "-2")
     {
       numdims = 2;
     }
-    else if ( arg == "-3" )
+    else if (arg == "-3")
     {
       numdims = 3;
     }
-    else if ( arg == "-4" )
+    else if (arg == "-4")
     {
       numdims = 4;
     }
-    else if ( arg == "-f" || arg == "--filename" )
+    else if (arg == "-f" || arg == "--filename")
     {
       --argc;
-      if ( argc == 0 )
+      if (argc == 0)
       {
         std::cerr << "missing filename argument" << std::endl;
         return false;
@@ -89,35 +97,35 @@ ProcessArgs( int argc, char ** argv, std::string & filename, int & x, int & y, i
       filename = argv[1];
       ++argv;
     }
-    else if ( arg == "-v" || arg == "--value" )
+    else if (arg == "-v" || arg == "--value")
     {
-      if ( argc < 1 )
+      if (argc < 1)
       {
         std::cerr << "missing value argument" << std::endl;
         return false;
       }
       --argc;
       ++argv;
-      value = std::stod( *argv );
+      value = std::stod(*argv);
     }
-    else if ( arg == "-d" || arg == "--dim" )
+    else if (arg == "-d" || arg == "--dim")
     {
-      if ( numdims == -1 )
+      if (numdims == -1)
       {
         std::cerr << "missing Number of Dimensions" << std::endl;
         return false;
       }
-      if ( argc >= numdims )
+      if (argc >= numdims)
       {
-        x = std::stoi( argv[1] );
-        y = std::stoi( argv[2] );
-        if ( numdims > 2 )
+        x = std::stoi(argv[1]);
+        y = std::stoi(argv[2]);
+        if (numdims > 2)
         {
-          z = std::stoi( argv[3] );
+          z = std::stoi(argv[3]);
         }
-        if ( numdims > 3 )
+        if (numdims > 3)
         {
-          t = std::stoi( argv[4] );
+          t = std::stoi(argv[4]);
         }
         argv += numdims;
         argc -= numdims;
@@ -128,107 +136,111 @@ ProcessArgs( int argc, char ** argv, std::string & filename, int & x, int & y, i
         return false;
       }
     }
-    else if ( arg == "char" )
+    else if (arg == "char")
     {
       PType = Char;
     }
-    else if ( arg == "uchar" )
+    else if (arg == "uchar")
     {
       PType = UnsignedChar;
     }
-    else if ( arg == "short" )
+    else if (arg == "short")
     {
       PType = Short;
     }
-    else if ( arg == "ushort" )
+    else if (arg == "ushort")
     {
       PType = UnsignedShort;
     }
-    else if ( arg == "int" )
+    else if (arg == "int")
     {
       PType = Int;
     }
-    else if ( arg == "uint" )
+    else if (arg == "uint")
     {
       PType = UnsignedInt;
     }
-    else if ( arg == "float" )
+    else if (arg == "float")
     {
       PType = Float;
     }
-    else if ( arg == "double" )
+    else if (arg == "double")
     {
       PType = Double;
     }
-    else if ( arg == "threevectorcomplex" )
+    else if (arg == "threevectorcomplex")
     {
       PType = ThreeVectorComplex;
     }
-    else if ( arg == "rgb" )
+    else if (arg == "rgb")
     {
       PType = Rgb;
     }
   }
 
-  if ( PType == Crap )
+  if (PType == Crap)
   {
     std::cerr << "Missing or incorrect pixel type" << std::endl;
     return false;
   }
-  if ( x <= 0 || y <= 0 || ( numdims > 3 && t <= 0 ) || ( numdims > 2 && z <= 0 ) )
+  if (x <= 0 || y <= 0 || (numdims > 3 && t <= 0) || (numdims > 2 && z <= 0))
   {
     std::cerr << "Missing or incorrect dimensions:" << x << " " << y << " " << z << std::endl;
     return false;
   }
-  if ( filename == "" )
+  if (filename == "")
   {
     std::cerr << "Missing filename parameter" << std::endl;
   }
   return true;
 }
 
-template < typename PixelType, unsigned dim >
+template <typename PixelType, unsigned dim>
 int
-MakeImage( const std::string & filename, const unsigned xdim, const unsigned ydim, const unsigned zdim,
-           const unsigned tdim, const PixelType value )
+MakeImage(const std::string & filename,
+          const unsigned      xdim,
+          const unsigned      ydim,
+          const unsigned      zdim,
+          const unsigned      tdim,
+          const PixelType     value)
 {
-  using ImageType = typename itk::Image< PixelType, dim >;
+  using ImageType = typename itk::Image<PixelType, dim>;
   using ImagePointerType = typename ImageType::Pointer;
   using RegionType = typename ImageType::RegionType;
   using SizeType = typename RegionType::SizeType;
-  using IteratorType = typename itk::ImageRegionIterator< ImageType >;
-  using ImageFileWriterType = itk::ImageFileWriter< ImageType >;
+  using IteratorType = typename itk::ImageRegionIterator<ImageType>;
+  using ImageFileWriterType = itk::ImageFileWriter<ImageType>;
   using ImageFileWriterPointerType = typename ImageFileWriterType::Pointer;
   try
   {
     SizeType size;
-    size.SetElement( 0, xdim );
-    size.SetElement( 1, ydim );
-    if ( dim > 2 )
+    size.SetElement(0, xdim);
+    size.SetElement(1, ydim);
+    if (dim > 2)
     {
-      size.SetElement( 2, zdim );
+      size.SetElement(2, zdim);
     }
-    if ( dim > 3 )
+    if (dim > 3)
     {
-      size.SetElement( 3, tdim );
+      size.SetElement(3, tdim);
     }
     RegionType region;
-    region.SetSize( size );
+    region.SetSize(size);
 
     ImagePointerType image = ImageType::New();
-    image->SetRegions( region );
+    image->SetRegions(region);
     image->Allocate();
-    IteratorType it( image, region );
-    for ( it.GoToBegin(); it.IsAtEnd(); ++it )
+    IteratorType it(image, region);
+    for (it.GoToBegin(); it.IsAtEnd(); ++it)
     {
-      it.Set( value );
+      it.Set(value);
     }
     ImageFileWriterPointerType writer = ImageFileWriterType::New();
-    writer->SetFileName( filename.c_str() );
-    writer->SetInput( image );
+    writer->SetFileName(filename.c_str());
+    writer->SetInput(image);
     writer->Write();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Can't write " << filename << std::endl;
     std::cerr << excp << std::endl;
@@ -238,70 +250,70 @@ MakeImage( const std::string & filename, const unsigned xdim, const unsigned ydi
 }
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   typenamesInit();
   // INFO:  These globals should be removed!
   std::string filename;
   int         x = -1, y = -1, z = -1, t = -1;
-  PixelTypes  PType( Crap );
+  PixelTypes  PType(Crap);
   double      value = 0.0;
   int         numdims = -1;
-  if ( !ProcessArgs( argc, argv, filename, x, y, z, t, PType, value, numdims ) )
+  if (!ProcessArgs(argc, argv, filename, x, y, z, t, PType, value, numdims))
   {
     return EXIT_FAILURE;
   }
   std::cerr << "Filename: " << filename << " Dimensions: " << x << " " << y << " " << z << " "
             << " Value: " << value << " Type: " << typenames[PType] << std::endl;
-#define AllTypesSwitch( dim )                                                                                          \
-  switch ( PType )                                                                                                     \
+#define AllTypesSwitch(dim)                                                                                            \
+  switch (PType)                                                                                                       \
   {                                                                                                                    \
     case Char:                                                                                                         \
-      return ( MakeImage< char, dim >( filename, x, y, z, t, static_cast< char >( value ) ) );                         \
+      return (MakeImage<char, dim>(filename, x, y, z, t, static_cast<char>(value)));                                   \
       break;                                                                                                           \
     case UnsignedChar:                                                                                                 \
-      return ( MakeImage< unsigned char, dim >( filename, x, y, z, t, static_cast< unsigned char >( value ) ) );       \
+      return (MakeImage<unsigned char, dim>(filename, x, y, z, t, static_cast<unsigned char>(value)));                 \
       break;                                                                                                           \
     case Short:                                                                                                        \
-      return ( MakeImage< short, dim >( filename, x, y, z, t, static_cast< short >( value ) ) );                       \
+      return (MakeImage<short, dim>(filename, x, y, z, t, static_cast<short>(value)));                                 \
       break;                                                                                                           \
     case UnsignedShort:                                                                                                \
-      return ( MakeImage< unsigned short, dim >( filename, x, y, z, t, static_cast< unsigned short >( value ) ) );     \
+      return (MakeImage<unsigned short, dim>(filename, x, y, z, t, static_cast<unsigned short>(value)));               \
       break;                                                                                                           \
     case Int:                                                                                                          \
-      return ( MakeImage< int, dim >( filename, x, y, z, t, static_cast< int >( value ) ) );                           \
+      return (MakeImage<int, dim>(filename, x, y, z, t, static_cast<int>(value)));                                     \
       break;                                                                                                           \
     case UnsignedInt:                                                                                                  \
-      return ( MakeImage< unsigned int, dim >( filename, x, y, z, t, static_cast< unsigned int >( value ) ) );         \
+      return (MakeImage<unsigned int, dim>(filename, x, y, z, t, static_cast<unsigned int>(value)));                   \
       break;                                                                                                           \
     case Float:                                                                                                        \
-      return ( MakeImage< float, dim >( filename, x, y, z, t, static_cast< float >( value ) ) );                       \
+      return (MakeImage<float, dim>(filename, x, y, z, t, static_cast<float>(value)));                                 \
       break;                                                                                                           \
     case Double:                                                                                                       \
-      return ( MakeImage< double, dim >( filename, x, y, z, t, static_cast< double >( value ) ) );                     \
+      return (MakeImage<double, dim>(filename, x, y, z, t, static_cast<double>(value)));                               \
       break;                                                                                                           \
     case ThreeVectorComplex:                                                                                           \
-      return ( MakeImage< ThreeVectorComplexPixelType, dim >(                                                          \
-        filename, x, y, z, t, static_cast< ThreeVectorComplexPixelType >( value ) ) );                                 \
+      return (MakeImage<ThreeVectorComplexPixelType, dim>(                                                             \
+        filename, x, y, z, t, static_cast<ThreeVectorComplexPixelType>(value)));                                       \
       break;                                                                                                           \
     case Rgb:                                                                                                          \
-      return ( MakeImage< RGBPixelType, dim >(                                                                         \
-        filename, x, y, z, t, static_cast< RGBPixelType >( static_cast< unsigned char >( value ) ) ) );                \
+      return (MakeImage<RGBPixelType, dim>(                                                                            \
+        filename, x, y, z, t, static_cast<RGBPixelType>(static_cast<unsigned char>(value))));                          \
       break;                                                                                                           \
     default:                                                                                                           \
       return EXIT_FAILURE;                                                                                             \
   }
 
-  switch ( numdims )
+  switch (numdims)
   {
     case 4:
-      AllTypesSwitch( 4 );
+      AllTypesSwitch(4);
       break;
     case 3:
-      AllTypesSwitch( 3 );
+      AllTypesSwitch(3);
       break;
     case 2:
-      AllTypesSwitch( 2 );
+      AllTypesSwitch(2);
       break;
   }
   return EXIT_SUCCESS;

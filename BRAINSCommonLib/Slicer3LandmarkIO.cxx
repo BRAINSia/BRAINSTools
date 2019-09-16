@@ -30,24 +30,24 @@
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start (in place)
 static inline void
-ltrim( std::string & s )
+ltrim(std::string & s)
 {
-  s.erase( s.begin(), std::find_if( s.begin(), s.end(), []( int ch ) { return !std::isspace( ch ); } ) );
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) { return !std::isspace(ch); }));
 }
 
 // trim from end (in place)
 static inline void
-rtrim( std::string & s )
+rtrim(std::string & s)
 {
-  s.erase( std::find_if( s.rbegin(), s.rend(), []( int ch ) { return !std::isspace( ch ); } ).base(), s.end() );
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(), s.end());
 }
 
 // trim from both ends (in place)
 static inline void
-trim( std::string & s )
+trim(std::string & s)
 {
-  ltrim( s );
-  rtrim( s );
+  ltrim(s);
+  rtrim(s);
 }
 
 #if 0
@@ -72,32 +72,32 @@ static inline std::string trim_copy(std::string s) {
 
 
 LandmarksWeightMapType
-ReadLandmarkWeights( const std::string & weightFilename )
+ReadLandmarkWeights(const std::string & weightFilename)
 {
-  std::ifstream weightFileStream( weightFilename.c_str() );
+  std::ifstream weightFileStream(weightFilename.c_str());
 
-  if ( !weightFileStream.is_open() )
+  if (!weightFileStream.is_open())
   {
     std::cerr << "Fail to open weight file " << std::endl;
     throw itk::ImageFileReaderException(
-      __FILE__, __LINE__, "Couldn't open landmark weight file for reading", ITK_LOCATION );
+      __FILE__, __LINE__, "Couldn't open landmark weight file for reading", ITK_LOCATION);
   }
 
   std::string            line;
   LandmarksWeightMapType landmarkWeightMap;
-  while ( getline( weightFileStream, line ) )
+  while (getline(weightFileStream, line))
   {
-    trim( line );
+    trim(line);
 
-    const size_t      firstComma = line.find( ',', 0 );
-    const std::string landmark = line.substr( 0, firstComma );
-    if ( line[0] == '#' || line.empty() ||
-         landmark ==
-           "Landmark" ) // For backwards compatibility, if the landmark name is "Landmark" then it is the header row.
+    const size_t      firstComma = line.find(',', 0);
+    const std::string landmark = line.substr(0, firstComma);
+    if (line[0] == '#' || line.empty() ||
+        landmark ==
+          "Landmark") // For backwards compatibility, if the landmark name is "Landmark" then it is the header row.
     {
       continue;
     }
-    const float weight = std::stod( ( line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
+    const float weight = std::stod((line.substr(firstComma + 1, line.length() - 1)).c_str());
     landmarkWeightMap[landmark] = weight;
   }
   return landmarkWeightMap;
@@ -105,25 +105,24 @@ ReadLandmarkWeights( const std::string & weightFilename )
 
 
 static void
-WriteITKtoSlicer3LmkOldSlicer3( const std::string & landmarksFilename, const LandmarksMapType & landmarks )
+WriteITKtoSlicer3LmkOldSlicer3(const std::string & landmarksFilename, const LandmarksMapType & landmarks)
 {
-  itk::NumberToString< double > doubleConvert;
-  const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );
+  itk::NumberToString<double> doubleConvert;
+  const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
 
   std::stringstream lmkPointStream;
 
   unsigned int numNamedLandmarks = 0;
 
-  for ( LandmarksMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it )
+  for (LandmarksMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it)
   {
-    if ( ( it->first ).compare( "" ) != 0 )
+    if ((it->first).compare("") != 0)
     {
       // NOTE: Slicer3 use RAS coordinate system to represent landmarks
       // but ITK landmarks are in LPS, so we need to negate the first two
       // component of the landmark points.
-      lmkPointStream << it->first << "," << doubleConvert( -( it->second[0] ) ) << ","
-                     << doubleConvert( -( it->second[1] ) ) << "," << doubleConvert( +( it->second[2] ) )
-                     << ",1,1\n"; // Note the last two columns are
+      lmkPointStream << it->first << "," << doubleConvert(-(it->second[0])) << "," << doubleConvert(-(it->second[1]))
+                     << "," << doubleConvert(+(it->second[2])) << ",1,1\n"; // Note the last two columns are
       // ,visible,editable
       ++numNamedLandmarks;
     }
@@ -143,12 +142,12 @@ WriteITKtoSlicer3LmkOldSlicer3( const std::string & landmarksFilename, const Lan
 
   // Now write file to disk
   std::ofstream myfile;
-  myfile.open( fullPathLandmarksFileName.c_str() );
-  if ( !myfile.is_open() )
+  myfile.open(fullPathLandmarksFileName.c_str());
+  if (!myfile.is_open())
   {
     std::cerr << "Error: Can't write Slicer3 landmark file " << fullPathLandmarksFileName << std::endl;
     std::cerr.flush();
-    throw itk::ImageFileReaderException( __FILE__, __LINE__, "Couldn't open landmarks file for writing", ITK_LOCATION );
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, "Couldn't open landmarks file for writing", ITK_LOCATION);
   }
   myfile << lmksStream.str();
   myfile.close();
@@ -156,24 +155,24 @@ WriteITKtoSlicer3LmkOldSlicer3( const std::string & landmarksFilename, const Lan
 
 
 static void
-WriteITKtoSlicer3LmkSlicer4( const std::string & landmarksFilename, const LandmarksMapType & landmarks )
+WriteITKtoSlicer3LmkSlicer4(const std::string & landmarksFilename, const LandmarksMapType & landmarks)
 {
-  itk::NumberToString< double > doubleConvert;
-  const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );
+  itk::NumberToString<double> doubleConvert;
+  const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
 
   std::stringstream lmkPointStream;
   unsigned int      numNamedLandmarks = 0;
-  for ( LandmarksMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it )
+  for (LandmarksMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it)
   {
-    if ( ( it->first ).compare( "" ) != 0 )
+    if ((it->first).compare("") != 0)
     {
       // NOTE: Slicer4 Markups use RAS coordinate system to represent landmarks
       // but ITK landmarks are in LPS, so we need to negate the first two
       // component of the landmark points.
       lmkPointStream << "vtkMRMLMarkupsFiducialNode_" << numNamedLandmarks << ",";
 
-      lmkPointStream << doubleConvert( -( it->second[0] ) ) << "," << doubleConvert( -( it->second[1] ) ) << ","
-                     << doubleConvert( +( it->second[2] ) ) << ",0,0,0,1,1,1,0," << it->first << ",,"
+      lmkPointStream << doubleConvert(-(it->second[0])) << "," << doubleConvert(-(it->second[1])) << ","
+                     << doubleConvert(+(it->second[2])) << ",0,0,0,1,1,1,0," << it->first << ",,"
                      << std::endl; // Note the last two columns are
       ++numNamedLandmarks;
     }
@@ -188,12 +187,12 @@ WriteITKtoSlicer3LmkSlicer4( const std::string & landmarksFilename, const Landma
 
   // Now write file to disk
   std::ofstream myfile;
-  myfile.open( fullPathLandmarksFileName.c_str() );
-  if ( !myfile.is_open() )
+  myfile.open(fullPathLandmarksFileName.c_str());
+  if (!myfile.is_open())
   {
     std::cerr << "Error: Can't write Slicer3 landmark file " << fullPathLandmarksFileName << std::endl;
     std::cerr.flush();
-    throw itk::ImageFileReaderException( __FILE__, __LINE__, "Couldn't open landmarks file for writing", ITK_LOCATION );
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, "Couldn't open landmarks file for writing", ITK_LOCATION);
   }
   myfile << lmksStream.str();
   myfile.close();
@@ -201,33 +200,33 @@ WriteITKtoSlicer3LmkSlicer4( const std::string & landmarksFilename, const Landma
 
 
 static LandmarksMapType
-ReadSlicer3toITKLmkOldSlicer( const std::string & landmarksFilename )
+ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
 {
   LandmarksMapType landmarks;
-  std::string      landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );
-  std::ifstream    myfile( landmarksFilenameTmp.c_str() );
+  std::string      landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
+  std::ifstream    myfile(landmarksFilenameTmp.c_str());
 
-  if ( !myfile.is_open() )
+  if (!myfile.is_open())
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    std::string errorMsg = std::string( "Couldn't open landmarks file for reading: " ) + landmarksFilename;
-    throw itk::ImageFileReaderException( __FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION );
+    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
   std::string line;
-  while ( getline( myfile, line ) )
+  while (getline(myfile, line))
   {
-    if ( line.compare( 0, 1, "#" ) != 0 ) // Skip lines starting with a #
+    if (line.compare(0, 1, "#") != 0) // Skip lines starting with a #
     {
-      size_t            pos1 = line.find( ',', 0 );
-      const std::string name = line.substr( 0, pos1 );
+      size_t            pos1 = line.find(',', 0);
+      const std::string name = line.substr(0, pos1);
       LandmarkPointType labelPos;
-      for ( unsigned int i = 0; i < 3; ++i )
+      for (unsigned int i = 0; i < 3; ++i)
       {
-        const size_t pos2 = line.find( ',', pos1 + 1 );
-        labelPos[i] = std::stod( line.substr( pos1 + 1, pos2 - pos1 - 1 ).c_str() );
-        if ( i < 2 ) // Negate first two components for RAS -> LPS
+        const size_t pos2 = line.find(',', pos1 + 1);
+        labelPos[i] = std::stod(line.substr(pos1 + 1, pos2 - pos1 - 1).c_str());
+        if (i < 2) // Negate first two components for RAS -> LPS
         {
           labelPos[i] *= -1;
         }
@@ -241,48 +240,48 @@ ReadSlicer3toITKLmkOldSlicer( const std::string & landmarksFilename )
   return landmarks;
 }
 
-static std::vector< std::string >
-split( const std::string & s, char delim )
+static std::vector<std::string>
+split(const std::string & s, char delim)
 {
-  std::stringstream          ss( s );
-  std::string                item;
-  std::vector< std::string > tokens;
-  while ( getline( ss, item, delim ) )
+  std::stringstream        ss(s);
+  std::string              item;
+  std::vector<std::string> tokens;
+  while (getline(ss, item, delim))
   {
-    tokens.push_back( item );
+    tokens.push_back(item);
   }
   return tokens;
 }
 
 static LandmarksMapType
-ReadSlicer3toITKLmkSlicer4( const std::string & landmarksFilename )
+ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
 {
   LandmarksMapType landmarks;
 
-  std::string   landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );
-  std::ifstream myfile( landmarksFilenameTmp.c_str() );
+  std::string   landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
+  std::ifstream myfile(landmarksFilenameTmp.c_str());
 
-  if ( !myfile.is_open() )
+  if (!myfile.is_open())
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    std::string errorMsg = std::string( "Couldn't open landmarks file for reading: " ) + landmarksFilename;
-    throw itk::ImageFileReaderException( __FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION );
+    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
   std::string line;
-  while ( getline( myfile, line ) )
+  while (getline(myfile, line))
   {
-    if ( line.compare( 0, 1, "#" ) != 0 ) // Skip lines starting with a #
+    if (line.compare(0, 1, "#") != 0) // Skip lines starting with a #
     {
       //             0 1 2 3  4  5  6  7   8   9   10    11   12               13
       //# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
-      std::vector< std::string > asTokens = split( line, ',' );
-      const std::string          name = asTokens[11]; // 11 position is label name
-      LandmarkPointType          labelPos;
-      labelPos[0] = -atof( asTokens[1].c_str() ); // L -> R (-)
-      labelPos[1] = -atof( asTokens[2].c_str() ); // P -> A (-)
-      labelPos[2] = +atof( asTokens[3].c_str() ); // S -> S (+)
+      std::vector<std::string> asTokens = split(line, ',');
+      const std::string        name = asTokens[11]; // 11 position is label name
+      LandmarkPointType        labelPos;
+      labelPos[0] = -atof(asTokens[1].c_str()); // L -> R (-)
+      labelPos[1] = -atof(asTokens[2].c_str()); // P -> A (-)
+      labelPos[2] = +atof(asTokens[3].c_str()); // S -> S (+)
       landmarks[name] = labelPos;
     }
   }
@@ -292,63 +291,64 @@ ReadSlicer3toITKLmkSlicer4( const std::string & landmarksFilename )
 
 
 LandmarksMapType
-ReadSlicer3toITKLmk( const std::string & landmarksFilename )
+ReadSlicer3toITKLmk(const std::string & landmarksFilename)
 {
-  if ( !itksys::SystemTools::FileExists( landmarksFilename ) )
+  if (!itksys::SystemTools::FileExists(landmarksFilename))
   {
-    const std::string errorMsg = std::string( "Error: Landmarks file not found at " ) + landmarksFilename;
-    throw itk::ImageFileReaderException( __FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION );
+    const std::string errorMsg = std::string("Error: Landmarks file not found at ") + landmarksFilename;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
   }
 
-  std::ifstream myfile( landmarksFilename );
-  if ( !myfile.is_open() )
+  std::ifstream myfile(landmarksFilename);
+  if (!myfile.is_open())
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    std::string errorMsg = std::string( "Couldn't open landmarks file for reading: " ) + landmarksFilename;
-    throw itk::ImageFileReaderException( __FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION );
+    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
+    throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
   std::string firstLine;
-  std::getline( myfile, firstLine );
+  std::getline(myfile, firstLine);
   myfile.close();
-  if ( firstLine.find( "Fiducial List" ) != std::string::npos )
+  if (firstLine.find("Fiducial List") != std::string::npos)
   {
-    const LandmarksMapType landmarks = ReadSlicer3toITKLmkOldSlicer( landmarksFilename );
+    const LandmarksMapType landmarks = ReadSlicer3toITKLmkOldSlicer(landmarksFilename);
     return landmarks;
   }
-  else if ( firstLine.find( "Markups fiducial file" ) != std::string::npos )
+  else if (firstLine.find("Markups fiducial file") != std::string::npos)
   {
-    const LandmarksMapType landmarks = ReadSlicer3toITKLmkSlicer4( landmarksFilename );
+    const LandmarksMapType landmarks = ReadSlicer3toITKLmkSlicer4(landmarksFilename);
     return landmarks;
   }
   else
   {
-    itkGenericExceptionMacro( << "ERROR:  Unrecognized landmark file format for " << landmarksFilename );
+    itkGenericExceptionMacro(<< "ERROR:  Unrecognized landmark file format for " << landmarksFilename);
   }
 }
 
 void
-WriteITKtoSlicer3Lmk( const std::string & landmarksFilename, const LandmarksMapType & landmarks,
-                      const SLICER_LANDMARK_FILE_TYPE slicerLmkType )
+WriteITKtoSlicer3Lmk(const std::string &             landmarksFilename,
+                     const LandmarksMapType &        landmarks,
+                     const SLICER_LANDMARK_FILE_TYPE slicerLmkType)
 {
-  switch ( slicerLmkType )
+  switch (slicerLmkType)
   {
     case SLICER_V3_FCSV:
-      WriteITKtoSlicer3LmkOldSlicer3( landmarksFilename, landmarks );
+      WriteITKtoSlicer3LmkOldSlicer3(landmarksFilename, landmarks);
       break;
     case SLICER_V4_FCSV:
-      WriteITKtoSlicer3LmkSlicer4( landmarksFilename, landmarks );
+      WriteITKtoSlicer3LmkSlicer4(landmarksFilename, landmarks);
       break;
     case SLICER_FCSV_BEGIN:
-      itkGenericExceptionMacro( << "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (SLICER_FCSV_BEGIN)" );
+      itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (SLICER_FCSV_BEGIN)");
       ITK_FALLTHROUGH;
     case SLICER_FCSV_END:
-      itkGenericExceptionMacro( << "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (SLICER_FCSV_END)" );
+      itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (SLICER_FCSV_END)");
       ITK_FALLTHROUGH;
     default:
       /* Do Nothing */
-      itkGenericExceptionMacro( << "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (No Match): " << slicerLmkType );
+      itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (No Match): " << slicerLmkType);
       break;
   }
   return;

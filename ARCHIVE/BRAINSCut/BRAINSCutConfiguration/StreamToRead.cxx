@@ -23,37 +23,37 @@
 #include "itkMacro.h" //Needed for nullptr
 
 int
-StreamToRead ::PrintSelf( std::ostream & os, int indent ) const
+StreamToRead ::PrintSelf(std::ostream & os, int indent) const
 {
-  indent += Superclass::PrintSelf( os, indent );
-  os << this->PrintSpaces( indent ) << "=== StreamToRead ===" << std::endl;
+  indent += Superclass::PrintSelf(os, indent);
+  os << this->PrintSpaces(indent) << "=== StreamToRead ===" << std::endl;
   return indent + 2;
 }
 
-StreamToRead ::StreamToRead( const std::string & name, const std::string & filename )
-  : FileToRead< std::fstream * >( name, filename )
-  , m_F( nullptr )
+StreamToRead ::StreamToRead(const std::string & name, const std::string & filename)
+  : FileToRead<std::fstream *>(name, filename)
+  , m_F(nullptr)
 {
-  if ( this->m_Filename == "" )
+  if (this->m_Filename == "")
   {
-    std::string msg( "Missing File Name For " );
+    std::string msg("Missing File Name For ");
     msg += this->GetName();
-    throw BRAINSCutExceptionStringHandler( msg );
+    throw BRAINSCutExceptionStringHandler(msg);
   }
-  if ( this->m_F != nullptr )
+  if (this->m_F != nullptr)
   {
-    if ( this->m_F->is_open() )
+    if (this->m_F->is_open())
     {
       this->m_F->close();
     }
     delete this->m_F;
   }
-  this->m_F = new FileStreamType( this->m_Filename.c_str(), std::ifstream::in );
-  if ( m_F->fail() )
+  this->m_F = new FileStreamType(this->m_Filename.c_str(), std::ifstream::in);
+  if (m_F->fail())
   {
-    std::string msg( "Can't open " );
+    std::string msg("Can't open ");
     msg += this->m_Filename;
-    throw BRAINSCutExceptionStringHandler( msg );
+    throw BRAINSCutExceptionStringHandler(msg);
   }
 }
 
@@ -73,7 +73,7 @@ StreamToRead::~StreamToRead()
 void
 StreamToRead::Close()
 {
-  if ( m_F != nullptr )
+  if (m_F != nullptr)
   {
     m_F->close();
     delete m_F;

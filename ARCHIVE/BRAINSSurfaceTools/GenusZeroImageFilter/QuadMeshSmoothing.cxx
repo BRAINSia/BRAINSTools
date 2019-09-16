@@ -9,44 +9,44 @@ using Coord = double;
 constexpr unsigned int Dimension = 3;
 
 // Declaration of the type of Mesh
-using MeshType = itk::QuadEdgeMesh< Coord, Dimension >;
+using MeshType = itk::QuadEdgeMesh<Coord, Dimension>;
 
 #include "itkSmoothingQuadEdgeMeshFilter.h"
-using SmoothingType = itk::SmoothingQuadEdgeMeshFilter< MeshType, MeshType >;
+using SmoothingType = itk::SmoothingQuadEdgeMeshFilter<MeshType, MeshType>;
 
 #include "itkQuadEdgeMeshVTKPolyDataReader.h"
 #include "itkQuadEdgeMeshScalarDataVTKPolyDataWriter.h"
 #include "QuadMeshSmoothingCLP.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
 
   PARSE_ARGS;
 
   // Here read a mesh from a file
-  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader< MeshType >;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<MeshType>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputSurface );
+  reader->SetFileName(inputSurface);
 
   // Note that any other coefficients could have been used
-  itk::OnesMatrixCoefficients< MeshType > coeff0;
+  itk::OnesMatrixCoefficients<MeshType> coeff0;
 
   SmoothingType::Pointer filter = SmoothingType::New();
-  filter->SetInput( reader->GetOutput() );
-  filter->SetNumberOfIterations( numberOfIterations );
-  filter->SetRelaxationFactor( relaxationFactor );
-  if ( delaunayConforming )
+  filter->SetInput(reader->GetOutput());
+  filter->SetNumberOfIterations(numberOfIterations);
+  filter->SetRelaxationFactor(relaxationFactor);
+  if (delaunayConforming)
   {
-    filter->SetDelaunayConforming( true );
+    filter->SetDelaunayConforming(true);
   }
-  filter->SetCoefficientsMethod( &coeff0 );
+  filter->SetCoefficientsMethod(&coeff0);
   filter->Update();
 
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< MeshType >;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( filter->GetOutput() );
-  writer->SetFileName( outputSurface );
+  writer->SetInput(filter->GetOutput());
+  writer->SetFileName(outputSurface);
   writer->Update();
 
   return EXIT_SUCCESS;

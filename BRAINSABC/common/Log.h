@@ -61,16 +61,16 @@ public:
   }
 
   void
-  SetOutputFileName( const char * s );
+  SetOutputFileName(const char * s);
 
   void
-  SetOutputFileName( const std::string & s );
+  SetOutputFileName(const std::string & s);
 
   void
-  WriteString( const char * s );
+  WriteString(const char * s);
 
   void
-  WriteString( const std::string & s );
+  WriteString(const std::string & s);
 
   std::ofstream &
   GetFileObject()
@@ -82,7 +82,7 @@ private:
   // Restrict access to constructors
   Log();
   ~Log();
-  Log( const Log & l );
+  Log(const Log & l);
 
   bool m_EchoFlag;
 
@@ -93,11 +93,11 @@ private:
 } // namespace mu
 
 // Allows declarations such as: muLogMacro(<< "Message: " << 1.1234);
-#define muLogMacro( x )                                                                                                \
+#define muLogMacro(x)                                                                                                  \
   {                                                                                                                    \
     std::ostringstream outss;                                                                                          \
     outss << "" x << std::ends;                                                                                        \
-    ( mu::Log::GetInstance() )->WriteString( outss.str().c_str() );                                                    \
+    (mu::Log::GetInstance())->WriteString(outss.str().c_str());                                                        \
   }
 
 #endif

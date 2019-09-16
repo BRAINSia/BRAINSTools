@@ -35,22 +35,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
-class AssignScalarValuesQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
+class AssignScalarValuesQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( AssignScalarValuesQuadEdgeMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(AssignScalarValuesQuadEdgeMeshFilter);
 
   using Self = AssignScalarValuesQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( AssignScalarValuesQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(AssignScalarValuesQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using SourceMeshType = TSourceMesh;
   using SourceMeshPointer = typename SourceMeshType::Pointer;
@@ -66,17 +66,17 @@ public:
 
   // Set source mesh who has the scalar values we want.
   void
-  SetSourceMesh( const SourceMeshType * sourceMesh );
+  SetSourceMesh(const SourceMeshType * sourceMesh);
 
   const SourceMeshType *
-  GetSourceMesh( void ) const;
+  GetSourceMesh(void) const;
 
   // Set input mesh who wants to have scalar values from sourceMesh.
   void
-  SetInputMesh( const InputMeshType * inputMesh );
+  SetInputMesh(const InputMeshType * inputMesh);
 
   const InputMeshType *
-  GetInputMesh( void ) const;
+  GetInputMesh(void) const;
 
 protected:
   AssignScalarValuesQuadEdgeMeshFilter();

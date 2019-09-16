@@ -51,23 +51,23 @@ namespace itk
  *
  */
 
-template < typename TInputImage, typename TOutputImage >
-class ICCIterativeInverseDisplacementFieldImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class ICCIterativeInverseDisplacementFieldImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ICCIterativeInverseDisplacementFieldImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ICCIterativeInverseDisplacementFieldImageFilter);
 
   /** Standard class type alias. */
   using Self = ICCIterativeInverseDisplacementFieldImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( ICCIterativeInverseDisplacementFieldImageFilter, ImageToImageFilter );
+  itkTypeMacro(ICCIterativeInverseDisplacementFieldImageFilter, ImageToImageFilter);
 
   /** Some type alias. */
   using InputImageType = TInputImage;
@@ -88,25 +88,25 @@ public:
 
   using TimeType = TimeProbe;
 
-  using InputConstIterator = ImageRegionConstIterator< InputImageType >;
-  using InputIterator = ImageRegionIterator< InputImageType >;
-  using OutputIterator = ImageRegionIterator< OutputImageType >;
+  using InputConstIterator = ImageRegionConstIterator<InputImageType>;
+  using InputIterator = ImageRegionIterator<InputImageType>;
+  using OutputIterator = ImageRegionIterator<OutputImageType>;
 
-  using VectorWarperType = WarpVectorImageFilter< TOutputImage, TInputImage, TOutputImage >;
+  using VectorWarperType = WarpVectorImageFilter<TOutputImage, TInputImage, TOutputImage>;
 
-  using FieldInterpolatorType = VectorLinearInterpolateImageFunction< TInputImage, double >;
+  using FieldInterpolatorType = VectorLinearInterpolateImageFunction<TInputImage, double>;
   using FieldInterpolatorPointer = typename FieldInterpolatorType::Pointer;
   using FieldInterpolatorOutputType = typename FieldInterpolatorType::OutputType;
 
-  itkSetMacro( NumberOfIterations, unsigned int );
-  itkGetConstMacro( NumberOfIterations, unsigned int );
+  itkSetMacro(NumberOfIterations, unsigned int);
+  itkGetConstMacro(NumberOfIterations, unsigned int);
   using ThreadRegionType = typename OutputImageType::RegionType;
 
   // If the error (in mm) between forward and backward mapping is smaller than the StopValue,
   // the algorithm stops.
   // This value can be used to speed up the calculation.
-  itkSetMacro( StopValue, double );
-  itkGetConstMacro( StopValue, double );
+  itkSetMacro(StopValue, double);
+  itkGetConstMacro(StopValue, double);
 
   char *
   GetReport()
@@ -115,11 +115,11 @@ public:
   }
 
   OutputImagePixelType
-  TrilinearInterpolationFast( float & fDesiredX, float & fDesiredY, float & fDesiredZ, InputImageSizeType size );
+  TrilinearInterpolationFast(float & fDesiredX, float & fDesiredY, float & fDesiredZ, InputImageSizeType size);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( OutputHasNumericTraitsCheck, (Concept::HasNumericTraits< OutputImageValueType >));
+  itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputImageValueType>));
   /** End concept checking */
 #endif
 protected:
@@ -127,7 +127,7 @@ protected:
   ~ICCIterativeInverseDisplacementFieldImageFilter() override {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   MakeReport();
@@ -136,14 +136,13 @@ protected:
   GenerateData() override;
 
   void
-  ComputeInverse( InputImageConstPointer &, OutputImagePointer & );
+  ComputeInverse(InputImageConstPointer &, OutputImagePointer &);
 
   void
-  ThreadedComputeInverse( InputImageConstPointer &, OutputImagePointer &, const ThreadRegionType & regionToProcess,
-                          int );
+  ThreadedComputeInverse(InputImageConstPointer &, OutputImagePointer &, const ThreadRegionType & regionToProcess, int);
 
   InputImageIndexType
-  BoundaryIndexing( int, int, int, const int, const int, const int );
+  BoundaryIndexing(int, int, int, const int, const int, const int);
 
   unsigned int m_NumberOfIterations;
   double       m_StopValue;
@@ -158,7 +157,7 @@ protected:
 
 private:
   static ITK_THREAD_RETURN_TYPE
-  ComputeInverseThreaderCallback( void * arg );
+  ComputeInverseThreaderCallback(void * arg);
 };
 } // end namespace itk
 

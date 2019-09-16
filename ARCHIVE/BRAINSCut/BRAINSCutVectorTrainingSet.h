@@ -26,17 +26,17 @@ using neuralNetType = cv::ml::ANN_MLP;
 
 namespace
 {
-template < size_t LongSize >
+template <size_t LongSize>
 class findUINT64Type
 {};
 template <>
-class findUINT64Type< 4 >
+class findUINT64Type<4>
 {
 public:
   using unsigned64 = unsigned long long;
 };
 template <>
-class findUINT64Type< 8 >
+class findUINT64Type<8>
 {
 public:
   using unsigned64 = unsigned long;
@@ -49,7 +49,7 @@ public:
   /* constructor
    * :: the paried training set should be constructed with vector file name.
    */
-  BRAINSCutVectorTrainingSet( std::string vectorFilenamePrefix );
+  BRAINSCutVectorTrainingSet(std::string vectorFilenamePrefix);
   ~BRAINSCutVectorTrainingSet();
 
   static const unsigned int MAXIMUMCHAR = 100;
@@ -67,7 +67,7 @@ public:
   SetBufferRecordSize();
 
   void
-  SetShuffled( bool shuffled );
+  SetShuffled(bool shuffled);
 
   int
   GetTotalVectorSize();
@@ -79,10 +79,10 @@ public:
   GetOutputVectorSize();
 
   void
-  PrintDebuggingMessage( std::string msg );
+  PrintDebuggingMessage(std::string msg);
 
   scalarType *
-  ReadBufferFromFileStream( std::ifstream & fileStream );
+  ReadBufferFromFileStream(std::ifstream & fileStream);
 
   void
   RandomizeTrainingVector();
@@ -91,19 +91,19 @@ public:
   GetTrainingDataSet();
 
   void
-  SetTrainingSubSet( unsigned int count );
+  SetTrainingSubSet(unsigned int count);
 
   pairedTrainingSetType *
-  GetTrainingSubSet( unsigned int count );
+  GetTrainingSubSet(unsigned int count);
 
   pairedTrainingSetType *
-  DownSampleTrainingDataSet( const unsigned int subSampleSize );
+  DownSampleTrainingDataSet(const unsigned int subSampleSize);
 
   void
   WriteVectorFile();
 
   void
-  SetNumberOfSubSet( const unsigned int count = 1 );
+  SetNumberOfSubSet(const unsigned int count = 1);
 
   // INFO: REGINA  All "Get" functions should be const
   unsigned int
@@ -112,7 +112,7 @@ public:
   // TODO
   // IMPLEMEMNT THIS::
   void
-  SaveCurrentSubSet( std::string filename );
+  SaveCurrentSubSet(std::string filename);
 
 private:
   // INFO: REGINA these all need to have "m_" prefix

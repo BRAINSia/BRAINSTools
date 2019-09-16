@@ -31,7 +31,7 @@ class QImageViewerWidget : public QVTKWidget
   Q_OBJECT
 public slots:
   void
-  SetSlice( int slice );
+  SetSlice(int slice);
 
   void
   SetSliceOrientationToXY();
@@ -43,7 +43,7 @@ public slots:
   SetSliceOrientationToYZ();
 
 public:
-  QImageViewerWidget( QWidget * parent = NULL );
+  QImageViewerWidget(QWidget * parent = NULL);
   ~QImageViewerWidget();
 
   double
@@ -56,13 +56,13 @@ public:
   GetRenderer();
 
   void
-  SetColorWindow( double s );
+  SetColorWindow(double s);
 
   void
-  SetColorLevel( double s );
+  SetColorLevel(double s);
 
   void
-  SetInput( vtkImageData * in );
+  SetInput(vtkImageData * in);
 
   int *
   GetSliceRange();

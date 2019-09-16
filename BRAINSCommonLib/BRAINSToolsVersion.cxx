@@ -62,13 +62,13 @@ Version::TweakVersion()
 const std::string &
 Version::VersionString()
 {
-  static const std::string v( BRAINSTools_VERSION );
+  static const std::string v(BRAINSTools_VERSION);
   return v;
 }
 const std::string &
 Version::BuildDate()
 {
-  static const std::string v( __DATE__ " " __TIME__ );
+  static const std::string v(__DATE__ " " __TIME__);
   return v;
 }
 const std::string &

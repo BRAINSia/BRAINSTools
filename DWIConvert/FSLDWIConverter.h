@@ -25,8 +25,9 @@
 class FSLDWIConverter : public DWIConverter
 {
 public:
-  FSLDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames, const std::string inputBValues,
-                   const std::string inputBVectors );
+  FSLDWIConverter(const DWIConverter::FileNamesContainer & inputFileNames,
+                  const std::string                        inputBValues,
+                  const std::string                        inputBVectors);
 
   ~FSLDWIConverter() override {}
 

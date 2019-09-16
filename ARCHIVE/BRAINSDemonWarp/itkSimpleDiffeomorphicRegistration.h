@@ -45,19 +45,19 @@
 class itkSimpleDiffeomorphicRegistration : public itk::Object
 {
 public:
-  using TRealImage = itk::Image< float, DIM >;
-  using DemonsPreprocessorType = itk::DemonsPreprocessor< TRealImage, TRealImage >;
-  using DemonsRegistratorType = itk::DemonsRegistrator< TRealImage, TRealImage, float >;
-  using TDisplacementField = itk::Image< itk::Vector< float, DIM >, DIM >;
+  using TRealImage = itk::Image<float, DIM>;
+  using DemonsPreprocessorType = itk::DemonsPreprocessor<TRealImage, TRealImage>;
+  using DemonsRegistratorType = itk::DemonsRegistrator<TRealImage, TRealImage, float>;
+  using TDisplacementField = itk::Image<itk::Vector<float, DIM>, DIM>;
 
   itkSimpleDiffeomorphicRegistration();
-  itkSetObjectMacro( FixedImage, TRealImage );
-  itkSetObjectMacro( MovingImage, TRealImage );
+  itkSetObjectMacro(FixedImage, TRealImage);
+  itkSetObjectMacro(MovingImage, TRealImage);
 
-  itkSetStringMacro( DisplacementFieldName );
-  itkSetStringMacro( DeformedImageName );
-  itkGetStringMacro( DeformedImageName );
-  itkGetConstObjectMacro( DisplacementField, TDisplacementField );
+  itkSetStringMacro(DisplacementFieldName);
+  itkSetStringMacro(DeformedImageName);
+  itkGetStringMacro(DeformedImageName);
+  itkGetConstObjectMacro(DisplacementField, TDisplacementField);
   void
   Update();
 
@@ -70,7 +70,7 @@ protected:
   InitializePreprocessor();
 
   void
-  Initialization( void );
+  Initialization(void);
 
 private:
   DemonsPreprocessorType::Pointer m_DemonsPreprocessor;

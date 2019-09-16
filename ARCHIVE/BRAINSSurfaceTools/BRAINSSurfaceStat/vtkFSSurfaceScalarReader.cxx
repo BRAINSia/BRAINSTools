@@ -41,11 +41,11 @@ vtkFSSurfaceScalarReader *
 vtkFSSurfaceScalarReader::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject * ret = vtkObjectFactory::CreateInstance( "vtkFSSurfaceScalarReader" );
+  vtkObject * ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceScalarReader");
 
-  if ( ret )
+  if (ret)
   {
-    return dynamic_cast< vtkFSSurfaceScalarReader * > ret;
+    return dynamic_cast<vtkFSSurfaceScalarReader *> ret;
   }
   // If the factory was unable to create the object, then create it here.
   return new vtkFSSurfaceScalarReader;
@@ -72,26 +72,26 @@ vtkFSSurfaceScalarReader::ReadFSScalars()
   float *         FSscalars;
   vtkFloatArray * output = this->scalars;
 
-  if ( output == NULL )
+  if (output == NULL)
   {
     cerr << "ERROR vtkFSSurfaceScalarReader ReadFSScalars() : output is null" << endl;
     return 0;
   }
-  vtkDebugMacro( << "vtkFSSurfaceScalarReader Execute() " << endl );
+  vtkDebugMacro(<< "vtkFSSurfaceScalarReader Execute() " << endl);
 
-  if ( !this->FileName )
+  if (!this->FileName)
   {
-    vtkErrorMacro( << "vtkFSSurfaceScalarReader Execute: FileName not specified." );
+    vtkErrorMacro(<< "vtkFSSurfaceScalarReader Execute: FileName not specified.");
     return 0;
   }
 
-  vtkDebugMacro( << "Reading surface scalar data..." );
+  vtkDebugMacro(<< "Reading surface scalar data...");
 
   // Try to open the file.
-  scalarFile = fopen( this->FileName, "rb" );
-  if ( !scalarFile )
+  scalarFile = fopen(this->FileName, "rb");
+  if (!scalarFile)
   {
-    vtkErrorMacro( << "Could not open file " << this->FileName );
+    vtkErrorMacro(<< "Could not open file " << this->FileName);
     return 0;
   }
 
@@ -101,42 +101,42 @@ vtkFSSurfaceScalarReader::ReadFSScalars()
   // and assume it's a magic number, check and assign it to the number
   // of values if not. New style files also have a number of faces and
   // values per point, which aren't really used.
-  vtkFSIO::ReadInt3( scalarFile, magicNumber );
-  if ( this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber )
+  vtkFSIO::ReadInt3(scalarFile, magicNumber);
+  if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber)
   {
     size_t retval;
-    retval = fread( &numValues, sizeof( int ), 1, scalarFile );
-    if ( retval == 1 )
+    retval = fread(&numValues, sizeof(int), 1, scalarFile);
+    if (retval == 1)
     {
-      vtkByteSwap::Swap4BE( &numValues );
+      vtkByteSwap::Swap4BE(&numValues);
     }
     else
     {
-      vtkErrorMacro( "Error reading number of values from file " << this->FileName );
+      vtkErrorMacro("Error reading number of values from file " << this->FileName);
     }
-    retval = fread( &numFaces, sizeof( int ), 1, scalarFile );
-    if ( retval == 1 )
+    retval = fread(&numFaces, sizeof(int), 1, scalarFile);
+    if (retval == 1)
     {
-      vtkByteSwap::Swap4BE( &numFaces );
-    }
-    else
-    {
-      vtkErrorMacro( "Error reading number of faces from file " << this->FileName );
-    }
-    retval = fread( &numValuesPerPoint, sizeof( int ), 1, scalarFile );
-    if ( retval == 1 )
-    {
-      vtkByteSwap::Swap4BE( &numValuesPerPoint );
+      vtkByteSwap::Swap4BE(&numFaces);
     }
     else
     {
-      vtkErrorMacro( "Error reading number of values per point, should be 1, in filename " << this->FileName );
+      vtkErrorMacro("Error reading number of faces from file " << this->FileName);
+    }
+    retval = fread(&numValuesPerPoint, sizeof(int), 1, scalarFile);
+    if (retval == 1)
+    {
+      vtkByteSwap::Swap4BE(&numValuesPerPoint);
+    }
+    else
+    {
+      vtkErrorMacro("Error reading number of values per point, should be 1, in filename " << this->FileName);
     }
 
-    if ( numValuesPerPoint != 1 )
+    if (numValuesPerPoint != 1)
     {
       vtkErrorMacro(
-        << "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file." );
+        << "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file.");
       return 0;
     }
   }
@@ -145,67 +145,66 @@ vtkFSSurfaceScalarReader::ReadFSScalars()
     numValues = magicNumber;
   }
 
-  if ( numValues <= 0 )
+  if (numValues <= 0)
   {
-    vtkErrorMacro(
-      << "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file." );
+    vtkErrorMacro(<< "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
     return 0;
   }
 
   // Make our float array.
-  FSscalars = (float *)calloc( numValues, sizeof( float ) );
+  FSscalars = (float *)calloc(numValues, sizeof(float));
   // For each value, if it's a new style file read a float, otherwise
   // read a two byte int and divide it by 100. Add this value to the
   // array.
-  for ( vIndex = 0; vIndex < numValues; vIndex++ )
+  for (vIndex = 0; vIndex < numValues; vIndex++)
   {
-    if ( feof( scalarFile ) )
+    if (feof(scalarFile))
     {
-      vtkErrorMacro( << "vtkFSSurfaceScalarReader.cxx Execute: Unexpected EOF after " << vIndex << " values read." );
-      free( FSscalars );
+      vtkErrorMacro(<< "vtkFSSurfaceScalarReader.cxx Execute: Unexpected EOF after " << vIndex << " values read.");
+      free(FSscalars);
       return 0;
     }
 
-    if ( this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber )
+    if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber)
     {
-      size_t retval = fread( &fvalue, sizeof( float ), 1, scalarFile );
-      if ( retval == 1 )
+      size_t retval = fread(&fvalue, sizeof(float), 1, scalarFile);
+      if (retval == 1)
       {
-        vtkByteSwap::Swap4BE( &fvalue );
+        vtkByteSwap::Swap4BE(&fvalue);
       }
       else
       {
-        vtkErrorMacro( "Error reading fvalue from file " << this->FileName );
+        vtkErrorMacro("Error reading fvalue from file " << this->FileName);
       }
     }
     else
     {
-      vtkFSIO::ReadInt2( scalarFile, ivalue );
+      vtkFSIO::ReadInt2(scalarFile, ivalue);
       fvalue = ivalue / 100.0;
     }
 
     FSscalars[vIndex] = fvalue;
 
-    if ( numValues < 10000 || ( vIndex % 100 ) == 0 )
+    if (numValues < 10000 || (vIndex % 100) == 0)
     {
-      this->UpdateProgress( 1.0 * vIndex / numValues );
+      this->UpdateProgress(1.0 * vIndex / numValues);
     }
   }
 
-  this->SetProgressText( "" );
-  this->UpdateProgress( 0.0 );
+  this->SetProgressText("");
+  this->UpdateProgress(0.0);
 
   // Close the file.
-  fclose( scalarFile );
+  fclose(scalarFile);
 
   // Set the array in our output.
-  output->SetArray( FSscalars, numValues, 0 );
+  output->SetArray(FSscalars, numValues, 0);
 
   return 1;
 }
 
 void
-vtkFSSurfaceScalarReader::PrintSelf( ostream & os, vtkIndent indent )
+vtkFSSurfaceScalarReader::PrintSelf(ostream & os, vtkIndent indent)
 {
-  vtkDataReader::PrintSelf( os, indent );
+  vtkDataReader::PrintSelf(os, indent);
 }

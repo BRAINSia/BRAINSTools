@@ -50,7 +50,7 @@ private:
 public:
   landmarksConstellationTrainingDefinitionIO() {}
 
-  explicit landmarksConstellationTrainingDefinitionIO( const std::string & filename ) { this->ReadFile( filename ); }
+  explicit landmarksConstellationTrainingDefinitionIO(const std::string & filename) { this->ReadFile(filename); }
 
   const ValMapType &
   GetRadii() const override
@@ -58,15 +58,15 @@ public:
     return landmarksConstellationModelBase::GetRadii();
   }
 
-  template < typename type >
+  template <typename type>
   void
-  Read( std::ifstream & s, type & var )
+  Read(std::ifstream & s, type & var)
   {
-    if ( s.bad() )
+    if (s.bad())
     {
       throw landmarksConstellationTrainingDefinitionIO::bad;
     }
-    if ( s.eof() )
+    if (s.eof())
     {
       throw landmarksConstellationTrainingDefinitionIO::eof;
     }
@@ -74,73 +74,72 @@ public:
   }
 
   int
-  ReadFile( const std::string & filename )
+  ReadFile(const std::string & filename)
   {
-    std::ifstream input( filename.c_str() );
+    std::ifstream input(filename.c_str());
 
-    if ( input.bad() )
+    if (input.bad())
     {
       return -1;
     }
     try
     {
-      this->Read< unsigned int >( input, this->m_NumDataSets );
+      this->Read<unsigned int>(input, this->m_NumDataSets);
       // Note, more than 2 datasets are needed in order to get valid sample
       // means and variances.
-      if ( m_NumDataSets < 2 )
+      if (m_NumDataSets < 2)
       {
-        itkGenericExceptionMacro( << "NumberOfDatasets must be greater than 2" );
+        itkGenericExceptionMacro(<< "NumberOfDatasets must be greater than 2");
       }
-      this->Read< unsigned int >( input, this->m_SearchboxDims );
-      if ( m_SearchboxDims % 2 == 0 )
+      this->Read<unsigned int>(input, this->m_SearchboxDims);
+      if (m_SearchboxDims % 2 == 0)
       {
-        itkGenericExceptionMacro( << "SearchBoxDims must be odd" );
+        itkGenericExceptionMacro(<< "SearchBoxDims must be odd");
       }
-      this->Read< float >( input, this->m_ResolutionUnits );
-      if ( m_ResolutionUnits <= 0 )
+      this->Read<float>(input, this->m_ResolutionUnits);
+      if (m_ResolutionUnits <= 0)
       {
-        itkGenericExceptionMacro( << "m_ResolutionUnits must be greater than zero" );
+        itkGenericExceptionMacro(<< "m_ResolutionUnits must be greater than zero");
       }
-      this->Read< float >( input, this->m_InitialRotationAngle );
-      this->Read< float >( input, this->m_InitialRotationStep );
-      this->Read< unsigned int >( input, this->m_NumRotationSteps );
+      this->Read<float>(input, this->m_InitialRotationAngle);
+      this->Read<float>(input, this->m_InitialRotationStep);
+      this->Read<unsigned int>(input, this->m_NumRotationSteps);
 
       // Read in template size for each landmark
       std::string name;
       float       val = 0;
-      this->Read< std::string >( input, name );
+      this->Read<std::string>(input, name);
 
-      while ( name.compare( "END" ) != 0 )
+      while (name.compare("END") != 0)
       {
-        this->Read< float >( input, val );
+        this->Read<float>(input, val);
         this->m_Radius[name] = val;
-        this->Read< float >( input, val );
+        this->Read<float>(input, val);
         this->m_Height[name] = val;
-        this->Read< std::string >( input, name );
+        this->Read<std::string>(input, name);
       }
       // Read in landmarks
-      for ( unsigned int i = 0; i < this->m_NumDataSets; i++ )
+      for (unsigned int i = 0; i < this->m_NumDataSets; i++)
       {
         std::string TrainingImageFilename;
-        this->Read< std::string >( input, TrainingImageFilename );
+        this->Read<std::string>(input, TrainingImageFilename);
 
         std::string LandmarksFilename;
-        this->Read< std::string >( input, LandmarksFilename );
+        this->Read<std::string>(input, LandmarksFilename);
 
-        landmarksDataSet DataSet( TrainingImageFilename, LandmarksFilename );
-        this->push_back( DataSet );
+        landmarksDataSet DataSet(TrainingImageFilename, LandmarksFilename);
+        this->push_back(DataSet);
 
         std::string Finished;
-        this->Read< std::string >( input, Finished );
+        this->Read<std::string>(input, Finished);
         // This separator line says 'END'
       }
       input.close();
     }
-    catch ( err_flags f )
+    catch (err_flags f)
     {
       std::cerr << "File read error "
-                << ( f == landmarksConstellationTrainingDefinitionIO::eof ? "unexpected end of file"
-                                                                          : "file read error" )
+                << (f == landmarksConstellationTrainingDefinitionIO::eof ? "unexpected end of file" : "file read error")
                 << std::endl;
       std::cerr.flush();
       input.close();
@@ -153,20 +152,20 @@ private:
 };
 
 inline std::ostream &
-operator<<( std::ostream & os, const landmarksConstellationTrainingDefinitionIO & def )
+operator<<(std::ostream & os, const landmarksConstellationTrainingDefinitionIO & def)
 {
-  itk::NumberToString< double > doubleToString;
+  itk::NumberToString<double> doubleToString;
 
   os << def.GetNumDataSets() << std::endl;
   os << def.GetSearchboxDims() << " " << def.GetResolutionUnits() << std::endl;
-  os << doubleToString( def.GetRadius( "RP" ) ) << " " << doubleToString( def.GetHeight( "RP" ) ) << std::endl;
-  os << doubleToString( def.GetRadius( "AC" ) ) << " " << doubleToString( def.GetHeight( "AC" ) ) << std::endl;
-  os << doubleToString( def.GetRadius( "PC" ) ) << " " << doubleToString( def.GetHeight( "PC" ) ) << std::endl;
-  os << doubleToString( def.GetRadius( "VN4" ) ) << " " << doubleToString( def.GetHeight( "VN4" ) ) << std::endl;
-  os << doubleToString( def.GetInitialRotationAngle() ) << " " << def.GetInitialRotationStep() << " "
+  os << doubleToString(def.GetRadius("RP")) << " " << doubleToString(def.GetHeight("RP")) << std::endl;
+  os << doubleToString(def.GetRadius("AC")) << " " << doubleToString(def.GetHeight("AC")) << std::endl;
+  os << doubleToString(def.GetRadius("PC")) << " " << doubleToString(def.GetHeight("PC")) << std::endl;
+  os << doubleToString(def.GetRadius("VN4")) << " " << doubleToString(def.GetHeight("VN4")) << std::endl;
+  os << doubleToString(def.GetInitialRotationAngle()) << " " << def.GetInitialRotationStep() << " "
      << def.GetNumRotationSteps() << std::endl
      << std::endl;
-  for ( unsigned int i = 0; i < def.GetNumDataSets(); i++ )
+  for (unsigned int i = 0; i < def.GetNumDataSets(); i++)
   {
     os << def[i] << std::endl;
   }

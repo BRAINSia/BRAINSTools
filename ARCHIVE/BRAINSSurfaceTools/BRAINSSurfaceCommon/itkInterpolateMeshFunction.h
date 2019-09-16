@@ -40,21 +40,21 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template < typename TInputMesh >
+template <typename TInputMesh>
 class InterpolateMeshFunction
-  : public MeshFunction< TInputMesh, typename NumericTraits< typename TInputMesh::PixelType >::RealType >
+  : public MeshFunction<TInputMesh, typename NumericTraits<typename TInputMesh::PixelType>::RealType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( InterpolateMeshFunction );
+  ITK_DISALLOW_COPY_AND_ASSIGN(InterpolateMeshFunction);
 
   /** Standard class type alias. */
   using Self = InterpolateMeshFunction;
-  using Superclass = MeshFunction< TInputMesh, typename NumericTraits< typename TInputMesh::PixelType >::RealType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = MeshFunction<TInputMesh, typename NumericTraits<typename TInputMesh::PixelType>::RealType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( InterpolateMeshFunction, MeshFunction );
+  itkTypeMacro(InterpolateMeshFunction, MeshFunction);
 
   /** OutputType type alias support. */
   using OutputType = typename Superclass::OutputType;
@@ -72,8 +72,8 @@ public:
 
   /** RealType type alias support. */
   using PixelType = typename TInputMesh::PixelType;
-  using RealType = typename NumericTraits< PixelType >::RealType;
-  using DerivativeType = itk::CovariantVector< RealType, MeshDimension >;
+  using RealType = typename NumericTraits<PixelType>::RealType;
+  using DerivativeType = itk::CovariantVector<RealType, MeshDimension>;
 
   /**
    * Interpolate the mesh at a point position.
@@ -84,12 +84,12 @@ public:
    *
    */
   virtual OutputType
-  Evaluate( constexpr PointType & point ) const override = 0;
+  Evaluate(constexpr PointType & point) const override = 0;
 
   /** Evaluate the derivative of the scalar function at the
    *  specified point. */
   virtual void
-  EvaluateDerivative( constexpr PointType & point, DerivativeType & derivative ) const = 0;
+  EvaluateDerivative(constexpr PointType & point, DerivativeType & derivative) const = 0;
 
   /** Prepare internal data structures of the PointLocator. This method must be
    * called before performing any call to Evaluate. */
@@ -101,25 +101,24 @@ protected:
   ~InterpolateMeshFunction();
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
-  using PointLocatorType = PointLocator2< TInputMesh >;
+  using PointLocatorType = PointLocator2<TInputMesh>;
   using PointLocatorPointer = typename PointLocatorType::Pointer;
 
   using InstanceIdentifierVectorType = typename PointLocatorType::InstanceIdentifierVectorType;
 
   /** Searches the k-nearest neighbors */
   void
-  Search( const PointType & query, unsigned int numberOfNeighborsRequested,
-          InstanceIdentifierVectorType & result ) const;
+  Search(const PointType & query, unsigned int numberOfNeighborsRequested, InstanceIdentifierVectorType & result) const;
 
   /** Searches the neighbors fallen into a hypersphere */
   void
-  Search( const PointType & query, double radius, InstanceIdentifierVectorType & result ) const;
+  Search(const PointType & query, double radius, InstanceIdentifierVectorType & result) const;
 
   /** Return the value associated with the point identified by pointId. */
   void
-  GetPointData( PointIdentifier pointId, PixelType * value ) const;
+  GetPointData(PointIdentifier pointId, PixelType * value) const;
 
 private:
   PointLocatorPointer m_PointLocator;

@@ -34,35 +34,35 @@
 
 //
 // FFTWCommon defines proxy classes based on data types
-#if defined( ITK_USE_FFTWF ) || defined( ITK_USE_FFTWD )
+#if defined(ITK_USE_FFTWF) || defined(ITK_USE_FFTWD)
 #  include "fftw3.h"
 #endif
 
 namespace itk
 {
-template < typename TPixel, unsigned int VDimension = 3 >
+template <typename TPixel, unsigned int VDimension = 3>
 class VectorFFTWHalfHermitianToRealInverseFFTImageFilter
-  : public ImageToImageFilter< Image< Vector< std::complex< typename TPixel::ValueType >, 3 >, VDimension >,
-                               Image< TPixel, VDimension > >
+  : public ImageToImageFilter<Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension>,
+                              Image<TPixel, VDimension>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( VectorFFTWHalfHermitianToRealInverseFFTImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorFFTWHalfHermitianToRealInverseFFTImageFilter);
 
   /** Standard class type alias.*/
-  using TInputImageType = Image< Vector< std::complex< typename TPixel::ValueType >, 3 >, VDimension >;
-  using TOutputImageType = Image< TPixel, VDimension >;
+  using TInputImageType = Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension>;
+  using TOutputImageType = Image<TPixel, VDimension>;
 
   using Self = VectorFFTWHalfHermitianToRealInverseFFTImageFilter;
-  using Superclass = ImageToImageFilter< TInputImageType, TOutputImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImageType, TOutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   //
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VectorFFTWHalfHermitianToRealInverseFFTImageFilter, ImageToImageFilter );
+  itkTypeMacro(VectorFFTWHalfHermitianToRealInverseFFTImageFilter, ImageToImageFilter);
 
   /** Image type type alias support. */
   using ImageType = TInputImageType;
@@ -82,7 +82,7 @@ public:
   FullMatrix();
 
   void
-  SetActualXDimensionIsOdd( bool isodd )
+  SetActualXDimensionIsOdd(bool isodd)
   {
     m_ActualXDimensionIsOdd = isodd;
   }
@@ -90,13 +90,13 @@ public:
   void
   SetActualXDimensionIsOddOn()
   {
-    this->SetActualXDimensionIsOdd( true );
+    this->SetActualXDimensionIsOdd(true);
   }
 
   void
   SetActualXDimensionIsOddOff()
   {
-    this->SetActualXDimensionIsOdd( false );
+    this->SetActualXDimensionIsOdd(false);
   }
 
   bool
@@ -107,18 +107,18 @@ public:
 
 protected:
   VectorFFTWHalfHermitianToRealInverseFFTImageFilter()
-    : m_PlanComputed( false )
-    , m_LastImageSize( 0 )
-    , m_InputBuffer( nullptr )
-    , m_OutputBuffer( nullptr )
-    , m_ActualXDimensionIsOdd( false )
+    : m_PlanComputed(false)
+    , m_LastImageSize(0)
+    , m_InputBuffer(nullptr)
+    , m_OutputBuffer(nullptr)
+    , m_ActualXDimensionIsOdd(false)
   {}
 
   ~VectorFFTWHalfHermitianToRealInverseFFTImageFilter() override
   {
-    if ( m_PlanComputed )
+    if (m_PlanComputed)
     {
-      fftwf_destroy_plan( this->m_Plan );
+      fftwf_destroy_plan(this->m_Plan);
       delete[] m_InputBuffer;
       delete[] m_OutputBuffer;
     }

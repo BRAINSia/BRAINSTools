@@ -57,7 +57,7 @@ typedef enum
  * Output: A map of weights
  */
 LandmarksWeightMapType
-ReadLandmarkWeights( const std::string & weightFilename );
+ReadLandmarkWeights(const std::string & weightFilename);
 
 /*
  * Write ITK landmarks to a Slicer3 landmark list file (.fcsv)
@@ -69,8 +69,9 @@ ReadLandmarkWeights( const std::string & weightFilename );
  * NONE
  */
 extern void
-WriteITKtoSlicer3Lmk( const std::string & landmarksFilename, const LandmarksMapType & landmarks,
-                      const SLICER_LANDMARK_FILE_TYPE slicerLmkType = SLICER_V4_FCSV );
+WriteITKtoSlicer3Lmk(const std::string &             landmarksFilename,
+                     const LandmarksMapType &        landmarks,
+                     const SLICER_LANDMARK_FILE_TYPE slicerLmkType = SLICER_V4_FCSV);
 
 /*
  * Read Slicer3 landmark list file (.fcsv) into a map of ITK points
@@ -81,6 +82,6 @@ WriteITKtoSlicer3Lmk( const std::string & landmarksFilename, const LandmarksMapT
  * landmarks          - a map of itkPoints to save the landmarks in ITK
  */
 extern LandmarksMapType
-ReadSlicer3toITKLmk( const std::string & landmarksFilename );
+ReadSlicer3toITKLmk(const std::string & landmarksFilename);
 
 #endif

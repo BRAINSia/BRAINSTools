@@ -25,7 +25,7 @@
 class BRAINSCutCreateVector
 {
 public:
-  BRAINSCutCreateVector( BRAINSCutDataHandler dataHandler );
+  BRAINSCutCreateVector(BRAINSCutDataHandler dataHandler);
 
   void
   SetTrainingDataSet();
@@ -37,14 +37,15 @@ public:
   CreateVectors();
 
   int
-  CreateSubjectVectors( DataSet & subject, std::ofstream & outputStream );
+  CreateSubjectVectors(DataSet & subject, std::ofstream & outputStream);
 
   void
-  WriteCurrentVectors( InputVectorMapType & pairedInput, OutputVectorMapType & pairedOutput,
-                       std::ofstream & outputStream );
+  WriteCurrentVectors(InputVectorMapType &  pairedInput,
+                      OutputVectorMapType & pairedOutput,
+                      std::ofstream &       outputStream);
 
   void
-  WriteHeaderFile( std::string vectorFilename, int m_inputVectorSize, int m_outputVectorSize, int numberOfInputVector );
+  WriteHeaderFile(std::string vectorFilename, int m_inputVectorSize, int m_outputVectorSize, int numberOfInputVector);
 
 private:
   int                                          m_inputVectorSize;
@@ -53,13 +54,15 @@ private:
   BRAINSCutConfiguration::TrainDataSetListType m_trainDataSetList;
 
   OutputVectorMapType
-  GetPairedOutput( std::map< std::string, WorkingImagePointer > & deformedROIs, std::string roiName,
-                   std::string subjectROIBinaryFilename, int roiNumber );
+  GetPairedOutput(std::map<std::string, WorkingImagePointer> & deformedROIs,
+                  std::string                                  roiName,
+                  std::string                                  subjectROIBinaryFilename,
+                  int                                          roiNumber);
 
   inline std::string
-  GetROIBinaryFilename( DataSet & subject, std::string roiName );
+  GetROIBinaryFilename(DataSet & subject, std::string roiName);
 
   inline scalarType
-  GetBinaryValue( scalarType value );
+  GetBinaryValue(scalarType value);
 };
 #endif

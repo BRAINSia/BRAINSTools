@@ -65,17 +65,17 @@
 #include "itkIO.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   using PixelType = signed short;
   using TensorPixelType = double;
-  using VectorImageType = itk::VectorImage< PixelType, 3 >;
-  using IndexImageType = itk::Image< PixelType, 3 >;
-  using MaskImageType = itk::Image< unsigned char, 3 >;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
+  using IndexImageType = itk::Image<PixelType, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
   IndexImageType::SizeType MedianFilterSize;
   MedianFilterSize[0] = medianFilterSize[0];
   MedianFilterSize[1] = medianFilterSize[1];
@@ -83,7 +83,7 @@ main( int argc, char * argv[] )
 
   bool debug = true;
   // applyMeasurementFrame = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Input Image: " << inputVolume << std::endl;
@@ -98,30 +98,30 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
-  using VectorImageReaderType = itk::ImageFileReader< VectorImageType, itk::DefaultConvertPixelTraits< PixelType > >;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
-  vectorImageReader->SetFileName( inputVolume );
+  vectorImageReader->SetFileName(inputVolume);
 
   try
   {
     vectorImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -129,40 +129,40 @@ main( int argc, char * argv[] )
   // figure out mask processing
   MaskImageType::ConstPointer maskImage; // will stay NULL if no mask is used.
 
-  if ( maskProcessingMode == "ROIAUTO" )
+  if (maskProcessingMode == "ROIAUTO")
   {
-    using LocalIndexImageType = itk::Image< PixelType, 3 >;
-    using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter< VectorImageType, LocalIndexImageType >;
+    using LocalIndexImageType = itk::Image<PixelType, 3>;
+    using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, LocalIndexImageType>;
     VectorSelectFilterType::Pointer SelectIndexImageFilter = VectorSelectFilterType::New();
-    SelectIndexImageFilter->SetIndex( b0Index );
-    SelectIndexImageFilter->SetInput( vectorImageReader->GetOutput() );
+    SelectIndexImageFilter->SetIndex(b0Index);
+    SelectIndexImageFilter->SetInput(vectorImageReader->GetOutput());
     try
     {
       SelectIndexImageFilter->Update();
     }
-    catch ( itk::ExceptionObject & e )
+    catch (itk::ExceptionObject & e)
     {
       std::cerr << e << std::endl;
       return EXIT_FAILURE;
     };
-    LocalIndexImageType::Pointer b0Image( SelectIndexImageFilter->GetOutput() );
-    using ROIAutoType = itk::BRAINSROIAutoImageFilter< LocalIndexImageType, MaskImageType >;
+    LocalIndexImageType::Pointer b0Image(SelectIndexImageFilter->GetOutput());
+    using ROIAutoType = itk::BRAINSROIAutoImageFilter<LocalIndexImageType, MaskImageType>;
     ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-    ROIFilter->SetInput( b0Image );
-    ROIFilter->SetClosingSize( 9.0 ); // default TODO Make parameter
-    ROIFilter->SetDilateSize( 0.0 );
+    ROIFilter->SetInput(b0Image);
+    ROIFilter->SetClosingSize(9.0); // default TODO Make parameter
+    ROIFilter->SetDilateSize(0.0);
     ROIFilter->Update();
     maskImage = ROIFilter->GetBinaryImageROI();
   }
-  else if ( maskProcessingMode == "ROI" )
+  else if (maskProcessingMode == "ROI")
   {
-    if ( maskVolume == "" )
+    if (maskVolume == "")
     {
       std::cerr << "Error: missing mask Volume needed for ROI mask Processing" << std::endl;
       return EXIT_FAILURE;
     }
-    maskImage = itkUtil::ReadImage< MaskImageType >( maskVolume );
-    if ( maskImage.IsNull() )
+    maskImage = itkUtil::ReadImage<MaskImageType>(maskVolume);
+    if (maskImage.IsNull())
     {
       std::cerr << "Error: can't read mask volume " << maskVolume << std::endl;
       return EXIT_FAILURE;
@@ -170,19 +170,19 @@ main( int argc, char * argv[] )
   }
   /* Extract Diffusion Information from the Header */
   std::string BValue_str;
-  std::string BValue_keyStr( "DWMRI_b-value" );
-  itk::ExposeMetaData< std::string >(
-    vectorImageReader->GetOutput()->GetMetaDataDictionary(), BValue_keyStr.c_str(), BValue_str );
-  double BValue = std::stod( BValue_str.c_str() );
+  std::string BValue_keyStr("DWMRI_b-value");
+  itk::ExposeMetaData<std::string>(
+    vectorImageReader->GetOutput()->GetMetaDataDictionary(), BValue_keyStr.c_str(), BValue_str);
+  double BValue = std::stod(BValue_str.c_str());
   std::cout << "The BValue was found to be " << BValue_str << std::endl;
 
-  std::vector< std::vector< double > > msrFrame;
-  itk::ExposeMetaData< std::vector< std::vector< double > > >(
-    vectorImageReader->GetOutput()->GetMetaDataDictionary(), "NRRD_measurement frame", msrFrame );
-  TMatrix measurementFrame( 3, 3 );
-  for ( int i = 0; i < 3; i++ )
+  std::vector<std::vector<double>> msrFrame;
+  itk::ExposeMetaData<std::vector<std::vector<double>>>(
+    vectorImageReader->GetOutput()->GetMetaDataDictionary(), "NRRD_measurement frame", msrFrame);
+  TMatrix measurementFrame(3, 3);
+  for (int i = 0; i < 3; i++)
   {
-    for ( int j = 0; j < 3; j++ )
+    for (int j = 0; j < 3; j++)
     {
       measurementFrame[i][j] = msrFrame[i][j];
     }
@@ -190,38 +190,38 @@ main( int argc, char * argv[] )
 
   /* Process Invidual B-value Images and Reassemble the Vector Image */
   using TensorFilterType =
-    itk::DiffusionTensor3DReconstructionWithMaskImageFilter< PixelType, PixelType, TensorPixelType >;
+    itk::DiffusionTensor3DReconstructionWithMaskImageFilter<PixelType, PixelType, TensorPixelType>;
   typedef TensorFilterType::GradientDirectionContainerType DirectionContainerType;
   DirectionContainerType::Pointer                          gradientDirectionContainer = DirectionContainerType::New();
 
-  using VectorImageFilterType = itk::ComposeImageFilter< IndexImageType >;
+  using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
   int                            vectorIndex = 0;
-  for ( unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); i++ )
+  for (unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); i++)
   {
-    using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter< VectorImageType, IndexImageType >;
+    using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, IndexImageType>;
     using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
     VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
-    selectIndexImageFilter->SetIndex( i );
-    selectIndexImageFilter->SetInput( vectorImageReader->GetOutput() );
+    selectIndexImageFilter->SetIndex(i);
+    selectIndexImageFilter->SetInput(vectorImageReader->GetOutput());
     try
     {
       selectIndexImageFilter->Update();
     }
-    catch ( itk::ExceptionObject & e )
+    catch (itk::ExceptionObject & e)
     {
       std::cout << e << std::endl;
     }
 
     /* Median Filter */
     IndexImageType::Pointer baseImage;
-    if ( MedianFilterSize[0] > 0 || MedianFilterSize[1] > 0 || MedianFilterSize[2] > 0 )
+    if (MedianFilterSize[0] > 0 || MedianFilterSize[1] > 0 || MedianFilterSize[2] > 0)
     {
-      using MedianFilterType = itk::MedianImageFilter< IndexImageType, IndexImageType >;
+      using MedianFilterType = itk::MedianImageFilter<IndexImageType, IndexImageType>;
       MedianFilterType::Pointer filter = MedianFilterType::New();
-      filter->SetInput( selectIndexImageFilter->GetOutput() );
-      filter->SetRadius( MedianFilterSize );
+      filter->SetInput(selectIndexImageFilter->GetOutput());
+      filter->SetRadius(MedianFilterSize);
       filter->Update();
       baseImage = filter->GetOutput();
     }
@@ -232,39 +232,39 @@ main( int argc, char * argv[] )
 
     /* Resample To Isotropic Images */
     IndexImageType::Pointer bvalueImage;
-    if ( resampleIsotropic )
+    if (resampleIsotropic)
     {
-      using ResampleFilterType = itk::ResampleImageFilter< IndexImageType, IndexImageType >;
+      using ResampleFilterType = itk::ResampleImageFilter<IndexImageType, IndexImageType>;
       ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-      resampler->SetInput( baseImage );
+      resampler->SetInput(baseImage);
 
-      using InterpolatorType = itk::LinearInterpolateImageFunction< IndexImageType, double >;
+      using InterpolatorType = itk::LinearInterpolateImageFunction<IndexImageType, double>;
       InterpolatorType::Pointer interpolator = InterpolatorType::New();
-      resampler->SetInterpolator( interpolator );
-      resampler->SetDefaultPixelValue( 0 );
+      resampler->SetInterpolator(interpolator);
+      resampler->SetDefaultPixelValue(0);
 
       IndexImageType::SpacingType spacing;
       spacing[0] = voxelSize;
       spacing[1] = voxelSize;
       spacing[2] = voxelSize;
-      resampler->SetOutputSpacing( spacing );
+      resampler->SetOutputSpacing(spacing);
 
       // Use the same origin
-      resampler->SetOutputOrigin( selectIndexImageFilter->GetOutput()->GetOrigin() );
+      resampler->SetOutputOrigin(selectIndexImageFilter->GetOutput()->GetOrigin());
 
       IndexImageType::SizeType    inputSize = baseImage->GetLargestPossibleRegion().GetSize();
       IndexImageType::SpacingType inputSpacing = baseImage->GetSpacing();
       using SizeValueType = IndexImageType::SizeType::SizeValueType;
       IndexImageType::SizeType size;
-      size[0] = static_cast< SizeValueType >( inputSize[0] * inputSpacing[0] / voxelSize );
-      size[1] = static_cast< SizeValueType >( inputSize[1] * inputSpacing[1] / voxelSize );
-      size[2] = static_cast< SizeValueType >( inputSize[2] * inputSpacing[2] / voxelSize );
-      resampler->SetSize( size );
+      size[0] = static_cast<SizeValueType>(inputSize[0] * inputSpacing[0] / voxelSize);
+      size[1] = static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / voxelSize);
+      size[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / voxelSize);
+      resampler->SetSize(size);
 
-      using TransformType = itk::IdentityTransform< double, 3 >;
+      using TransformType = itk::IdentityTransform<double, 3>;
       TransformType::Pointer transform = TransformType::New();
       transform->SetIdentity();
-      resampler->SetTransform( transform );
+      resampler->SetTransform(transform);
       resampler->Update();
       bvalueImage = resampler->GetOutput();
     }
@@ -274,39 +274,39 @@ main( int argc, char * argv[] )
     }
     char        tmpStr[64];
     std::string NrrdValue;
-    sprintf( tmpStr, "DWMRI_gradient_%04u", i );
-    itk::ExposeMetaData< std::string >( vectorImageReader->GetOutput()->GetMetaDataDictionary(), tmpStr, NrrdValue );
+    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
+    itk::ExposeMetaData<std::string>(vectorImageReader->GetOutput()->GetMetaDataDictionary(), tmpStr, NrrdValue);
     char tokTmStr[64];
-    strcpy( tokTmStr, NrrdValue.c_str() );
-    TVector tmpDir( 3 );
-    tmpDir[0] = std::stod( strtok( tokTmStr, " " ) );
-    tmpDir[1] = std::stod( strtok( nullptr, " " ) );
-    tmpDir[2] = std::stod( strtok( nullptr, " " ) );
-    if ( applyMeasurementFrame )
+    strcpy(tokTmStr, NrrdValue.c_str());
+    TVector tmpDir(3);
+    tmpDir[0] = std::stod(strtok(tokTmStr, " "));
+    tmpDir[1] = std::stod(strtok(nullptr, " "));
+    tmpDir[2] = std::stod(strtok(nullptr, " "));
+    if (applyMeasurementFrame)
     {
       std::cout << "Original Direction: " << tmpDir << std::endl;
       tmpDir = measurementFrame * tmpDir;
       std::cout << "New Direction with Measurement Frame: " << tmpDir << std::endl;
     }
-    vnl_vector_fixed< double, 3 > gradientDir;
+    vnl_vector_fixed<double, 3> gradientDir;
     gradientDir[0] = tmpDir[0];
     gradientDir[1] = tmpDir[1];
     gradientDir[2] = tmpDir[2];
 
     bool useIndex = true;
-    for ( unsigned int j = 0; j < ignoreIndex.size(); j++ )
+    for (unsigned int j = 0; j < ignoreIndex.size(); j++)
     {
-      if ( ignoreIndex.at( j ) == static_cast< int >( i ) )
+      if (ignoreIndex.at(j) == static_cast<int>(i))
       {
         useIndex = false;
       }
     }
 
-    if ( useIndex )
+    if (useIndex)
     {
-      indexImageToVectorImageFilter->SetInput( vectorIndex, bvalueImage );
-      gradientDirectionContainer->CreateIndex( vectorIndex );
-      gradientDirectionContainer->SetElement( vectorIndex, gradientDir );
+      indexImageToVectorImageFilter->SetInput(vectorIndex, bvalueImage);
+      gradientDirectionContainer->CreateIndex(vectorIndex);
+      gradientDirectionContainer->SetElement(vectorIndex, gradientDir);
       std::cout << "Add Gradient Direction " << vectorIndex << ":  " << gradientDir[0] << ",  " << gradientDir[1]
                 << ",  " << gradientDir[2] << std::endl;
       vectorIndex++;
@@ -315,13 +315,13 @@ main( int argc, char * argv[] )
   indexImageToVectorImageFilter->Update();
 
   TensorFilterType::Pointer tensorFilter = TensorFilterType::New();
-  tensorFilter->SetGradientImage( gradientDirectionContainer, indexImageToVectorImageFilter->GetOutput() );
-  tensorFilter->SetThreshold( backgroundSuppressingThreshold );
-  tensorFilter->SetBValue( BValue );       /* Required */
-  tensorFilter->SetNumberOfWorkUnits( 1 ); /* Required */
-  if ( maskImage.IsNotNull() )
+  tensorFilter->SetGradientImage(gradientDirectionContainer, indexImageToVectorImageFilter->GetOutput());
+  tensorFilter->SetThreshold(backgroundSuppressingThreshold);
+  tensorFilter->SetBValue(BValue);       /* Required */
+  tensorFilter->SetNumberOfWorkUnits(1); /* Required */
+  if (maskImage.IsNotNull())
   {
-    tensorFilter->SetMaskImage( maskImage );
+    tensorFilter->SetMaskImage(maskImage);
   }
   tensorFilter->Update();
 
@@ -330,40 +330,40 @@ main( int argc, char * argv[] )
   itk::MetaDataDictionary origMeta = vectorImageReader->GetOutput()->GetMetaDataDictionary();
   std::string             NrrdValue;
 
-  itk::ExposeMetaData< std::string >( origMeta, "DWMRI_b-value", NrrdValue );
-  itk::EncapsulateMetaData< std::string >( newMeta, "DWMRI_b-value", NrrdValue );
+  itk::ExposeMetaData<std::string>(origMeta, "DWMRI_b-value", NrrdValue);
+  itk::EncapsulateMetaData<std::string>(newMeta, "DWMRI_b-value", NrrdValue);
 
   NrrdValue = "DWMRI";
-  itk::EncapsulateMetaData< std::string >( newMeta, "modality", NrrdValue );
-  for ( int i = 0; i < 4; i++ )
+  itk::EncapsulateMetaData<std::string>(newMeta, "modality", NrrdValue);
+  for (int i = 0; i < 4; i++)
   {
     char tmpStr[64];
-    sprintf( tmpStr, "NRRD_centerings[%d]", i );
-    itk::ExposeMetaData< std::string >( origMeta, tmpStr, NrrdValue );
-    itk::EncapsulateMetaData< std::string >( newMeta, tmpStr, NrrdValue );
-    sprintf( tmpStr, "NRRD_kinds[%d]", i );
-    itk::ExposeMetaData< std::string >( origMeta, tmpStr, NrrdValue );
-    itk::EncapsulateMetaData< std::string >( newMeta, tmpStr, NrrdValue );
-    sprintf( tmpStr, "NRRD_space units[%d]", i );
-    itk::ExposeMetaData< std::string >( origMeta, tmpStr, NrrdValue );
-    itk::EncapsulateMetaData< std::string >( newMeta, tmpStr, NrrdValue );
+    sprintf(tmpStr, "NRRD_centerings[%d]", i);
+    itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
+    itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
+    sprintf(tmpStr, "NRRD_kinds[%d]", i);
+    itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
+    itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
+    sprintf(tmpStr, "NRRD_space units[%d]", i);
+    itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
+    itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
   }
 
-  tensorFilter->GetOutput()->SetMetaDataDictionary( newMeta );
+  tensorFilter->GetOutput()->SetMetaDataDictionary(newMeta);
 
   using TensorImageType = TensorFilterType::TensorImageType;
   TensorImageType::Pointer tensorImage = tensorFilter->GetOutput();
 
-  using WriterType = itk::ImageFileWriter< TensorImageType >;
+  using WriterType = itk::ImageFileWriter<TensorImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
-  nrrdWriter->SetInput( tensorImage );
-  nrrdWriter->SetFileName( outputVolume );
+  nrrdWriter->SetInput(tensorImage);
+  nrrdWriter->SetFileName(outputVolume);
   try
   {
     nrrdWriter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }

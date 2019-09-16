@@ -29,21 +29,21 @@ class VTK_ITK_EXPORT vtkITKGrowCutSegmentationImageFilter : public vtkImageAlgor
 public:
   static vtkITKGrowCutSegmentationImageFilter *
   New();
-  vtkTypeMacro( vtkITKGrowCutSegmentationImageFilter, vtkImageAlgorithm );
+  vtkTypeMacro(vtkITKGrowCutSegmentationImageFilter, vtkImageAlgorithm);
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   /// Methods to set/get objectSize
-  vtkSetMacro( ObjectSize, double );
-  vtkGetMacro( ObjectSize, double );
+  vtkSetMacro(ObjectSize, double);
+  vtkGetMacro(ObjectSize, double);
 
   /// Methods to set/get contrastNoiseRatio
-  vtkSetMacro( ContrastNoiseRatio, double );
-  vtkGetMacro( ContrastNoiseRatio, double );
+  vtkSetMacro(ContrastNoiseRatio, double);
+  vtkGetMacro(ContrastNoiseRatio, double);
 
   /// Methods to set/get priorSegmentConfidence
-  vtkSetMacro( PriorSegmentConfidence, double );
-  vtkGetMacro( PriorSegmentConfidence, double );
+  vtkSetMacro(PriorSegmentConfidence, double);
+  vtkGetMacro(PriorSegmentConfidence, double);
 
 public:
   double ObjectSize;
@@ -55,20 +55,20 @@ protected:
   vtkITKGrowCutSegmentationImageFilter();
   ~vtkITKGrowCutSegmentationImageFilter() {}
 
-#if ( VTK_MAJOR_VERSION <= 5 )
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void
-  ExecuteData( vtkDataObject * outData );
+  ExecuteData(vtkDataObject * outData);
 #else
   virtual void
-  ExecuteDataWithInformation( vtkDataObject * outData, vtkInformation * outInfo ) override;
+  ExecuteDataWithInformation(vtkDataObject * outData, vtkInformation * outInfo) override;
 #endif
   virtual int
-  RequestInformation( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
+  RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
-  vtkITKGrowCutSegmentationImageFilter( const vtkITKGrowCutSegmentationImageFilter & ); // Not implemented.
+  vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter &); // Not implemented.
   void
-  operator=( const vtkITKGrowCutSegmentationImageFilter & ); // Not implemented.
+  operator=(const vtkITKGrowCutSegmentationImageFilter &); // Not implemented.
 };
 
 #endif

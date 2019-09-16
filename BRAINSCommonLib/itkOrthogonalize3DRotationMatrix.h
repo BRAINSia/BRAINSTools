@@ -30,8 +30,8 @@ namespace itk
  * to a very high precision while minimizing the
  * actual change in rotational values.
  */
-itk::Matrix< double, 3, 3 >
-Orthogonalize3DRotationMatrix( const itk::Matrix< double, 3, 3 > & rotator );
+itk::Matrix<double, 3, 3>
+Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator);
 } // namespace itk
 
 #endif // __itkOrthogonalize3DRotationMatrix_h__

@@ -31,7 +31,7 @@
 #include <vtkVersion.h>
 
 #undef itkExceptionMacro
-#define itkExceptionMacro( x )                                                                                         \
+#define itkExceptionMacro(x)                                                                                           \
   {                                                                                                                    \
     ::std::ostringstream message;                                                                                      \
     message << "itk::ERROR: " << this->GetNameOfClass() << "(" << this << "): ";                                       \
@@ -39,7 +39,7 @@
   }
 
 #undef itkGenericExceptionMacro
-#define itkGenericExceptionMacro( x )                                                                                  \
+#define itkGenericExceptionMacro(x)                                                                                    \
   {                                                                                                                    \
     ::std::ostringstream message;                                                                                      \
     message << "itk::ERROR: " x;                                                                                       \
@@ -58,14 +58,14 @@ public:
     return new vtkITKImageToImageFilter;
   };
 
-  vtkTypeMacro( vtkITKImageToImageFilter, vtkImageAlgorithm );
+  vtkTypeMacro(vtkITKImageToImageFilter, vtkImageAlgorithm);
 
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override
+  PrintSelf(ostream & os, vtkIndent indent) override
   {
-    Superclass::PrintSelf( os, indent );
-    this->vtkExporter->PrintSelf( os, indent );
-    this->vtkImporter->PrintSelf( os, indent );
+    Superclass::PrintSelf(os, indent);
+    this->vtkExporter->PrintSelf(os, indent);
+    this->vtkImporter->PrintSelf(os, indent);
   };
 
   ///
@@ -78,12 +78,12 @@ public:
 
     t1 = this->Superclass::GetMTime();
     t2 = this->vtkExporter->GetMTime();
-    if ( t2 > t1 )
+    if (t2 > t1)
     {
       t1 = t2;
     }
     t2 = this->vtkImporter->GetMTime();
-    if ( t2 > t1 )
+    if (t2 > t1)
     {
       t1 = t2;
     }
@@ -96,7 +96,7 @@ public:
   Modified() override
   {
     this->Superclass::Modified();
-    if ( this->m_Process )
+    if (this->m_Process)
     {
       m_Process->Modified();
     }
@@ -121,9 +121,9 @@ public:
   ///
   /// Pass SetNumberOfWorkUnits.
   void
-  SetNumberOfWorkUnits( int val )
+  SetNumberOfWorkUnits(int val)
   {
-    this->m_Process->SetNumberOfWorkUnits( val );
+    this->m_Process->SetNumberOfWorkUnits(val);
   };
 
   ///
@@ -138,9 +138,9 @@ public:
   /// This method returns the cache to make a connection
   /// It justs feeds the request to the sub filter.
   virtual void
-  SetOutput( vtkDataObject * d ) override
+  SetOutput(vtkDataObject * d) override
   {
-    this->vtkImporter->SetOutput( d );
+    this->vtkImporter->SetOutput(d);
   };
   virtual vtkImageData *
   GetOutput()
@@ -148,33 +148,33 @@ public:
     return this->vtkImporter->GetOutput();
   };
   virtual vtkImageData *
-  GetOutput( int idx )
+  GetOutput(int idx)
   {
-    return (vtkImageData *)this->vtkImporter->GetOutput( idx );
+    return (vtkImageData *)this->vtkImporter->GetOutput(idx);
   };
 
   ///
   /// Set the Input of the filter.
   virtual void
-  SetInput( vtkImageData * Input )
+  SetInput(vtkImageData * Input)
   {
-#if ( VTK_MAJOR_VERSION <= 5 )
-    this->vtkCast->SetInput( Input );
+#if (VTK_MAJOR_VERSION <= 5)
+    this->vtkCast->SetInput(Input);
 #else
-    this->vtkCast->SetInputData( Input );
+    this->vtkCast->SetInputData(Input);
 #endif
   };
 
   virtual void
-  SetInputConnection( vtkAlgorithmOutput * input ) override
+  SetInputConnection(vtkAlgorithmOutput * input) override
   {
-    this->vtkCast->SetInputConnection( input );
+    this->vtkCast->SetInputConnection(input);
   };
 
   virtual void
-  SetInputConnection( int port, vtkAlgorithmOutput * input ) override
+  SetInputConnection(int port, vtkAlgorithmOutput * input) override
   {
-    this->vtkCast->SetInputConnection( port, input );
+    this->vtkCast->SetInputConnection(port, input);
   };
 
   ///
@@ -182,19 +182,19 @@ public:
   virtual vtkDataObject *
   GetInput()
   {
-    return ( vtkDataObject::SafeDownCast( this->vtkCast->GetInput() ) );
+    return (vtkDataObject::SafeDownCast(this->vtkCast->GetInput()));
   };
 
     ///  Override vtkSource's Update so that we can access
     /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
-#if ( VTK_MAJOR_VERSION <= 5 )
+#if (VTK_MAJOR_VERSION <= 5)
   void
   Update()
   {
-    if ( this->GetOutput( 0 ) )
+    if (this->GetOutput(0))
     {
-      this->GetOutput( 0 )->Update();
-      if ( this->GetOutput( 0 )->GetSource() )
+      this->GetOutput(0)->Update();
+      if (this->GetOutput(0)->GetSource())
       {
         ///          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
       }
@@ -208,29 +208,29 @@ public:
     this->vtkImporter->Update();
   }
   virtual void
-  Update( int port ) override
+  Update(int port) override
   {
     this->vtkCast->Update();
-    this->vtkImporter->Update( port );
+    this->vtkImporter->Update(port);
   }
 #endif
   void
   HandleProgressEvent()
   {
-    if ( this->m_Process )
+    if (this->m_Process)
     {
-      this->UpdateProgress( m_Process->GetProgress() );
+      this->UpdateProgress(m_Process->GetProgress());
     }
   };
   void
   HandleStartEvent()
   {
-    this->InvokeEvent( vtkCommand::StartEvent, nullptr );
+    this->InvokeEvent(vtkCommand::StartEvent, nullptr);
   };
   void
   HandleEndEvent()
   {
-    this->InvokeEvent( vtkCommand::EndEvent, nullptr );
+    this->InvokeEvent(vtkCommand::EndEvent, nullptr);
   };
   /// ETX
 
@@ -238,9 +238,9 @@ protected:
   /// BTX
   /// Dummy ExecuteData
   void
-  ExecuteData( vtkDataObject * ) override
+  ExecuteData(vtkDataObject *) override
   {
-    vtkWarningMacro( << "This filter does not respond to Update(). Doing a GetOutput->Update() instead." );
+    vtkWarningMacro(<< "This filter does not respond to Update(). Doing a GetOutput->Update() instead.");
   }
   /// ETX
 
@@ -250,22 +250,22 @@ protected:
     this->vtkCast = vtkImageCast::New();
     this->vtkExporter = vtkImageExport::New();
     this->vtkImporter = vtkImageImport::New();
-#if ( VTK_MAJOR_VERSION <= 5 )
-    this->vtkExporter->SetInput( this->vtkCast->GetOutput() );
+#if (VTK_MAJOR_VERSION <= 5)
+    this->vtkExporter->SetInput(this->vtkCast->GetOutput());
 #else
-    this->vtkExporter->SetInputConnection( this->vtkCast->GetOutputPort() );
+    this->vtkExporter->SetInputConnection(this->vtkCast->GetOutputPort());
 #endif
     this->m_Process = nullptr;
     this->m_ProgressCommand = MemberCommand::New();
-    this->m_ProgressCommand->SetCallbackFunction( this, &vtkITKImageToImageFilter::HandleProgressEvent );
+    this->m_ProgressCommand->SetCallbackFunction(this, &vtkITKImageToImageFilter::HandleProgressEvent);
     this->m_StartEventCommand = MemberCommand::New();
-    this->m_StartEventCommand->SetCallbackFunction( this, &vtkITKImageToImageFilter::HandleStartEvent );
+    this->m_StartEventCommand->SetCallbackFunction(this, &vtkITKImageToImageFilter::HandleStartEvent);
     this->m_EndEventCommand = MemberCommand::New();
-    this->m_EndEventCommand->SetCallbackFunction( this, &vtkITKImageToImageFilter::HandleEndEvent );
+    this->m_EndEventCommand->SetCallbackFunction(this, &vtkITKImageToImageFilter::HandleEndEvent);
   };
   ~vtkITKImageToImageFilter()
   {
-    vtkDebugMacro( "Destructing vtkITKImageToImageFilter" );
+    vtkDebugMacro("Destructing vtkITKImageToImageFilter");
     this->vtkExporter->Delete();
     this->vtkImporter->Delete();
     this->vtkCast->Delete();
@@ -273,18 +273,18 @@ protected:
 
   /// BTX
   void
-  LinkITKProgressToVTKProgress( itk::ProcessObject * process )
+  LinkITKProgressToVTKProgress(itk::ProcessObject * process)
   {
-    if ( process )
+    if (process)
     {
       this->m_Process = process;
-      this->m_Process->AddObserver( itk::ProgressEvent(), this->m_ProgressCommand );
-      this->m_Process->AddObserver( itk::StartEvent(), this->m_StartEventCommand );
-      this->m_Process->AddObserver( itk::EndEvent(), this->m_EndEventCommand );
+      this->m_Process->AddObserver(itk::ProgressEvent(), this->m_ProgressCommand);
+      this->m_Process->AddObserver(itk::StartEvent(), this->m_StartEventCommand);
+      this->m_Process->AddObserver(itk::EndEvent(), this->m_EndEventCommand);
     }
   };
 
-  using MemberCommand = itk::SimpleMemberCommand< vtkITKImageToImageFilter >;
+  using MemberCommand = itk::SimpleMemberCommand<vtkITKImageToImageFilter>;
   using MemberCommandPointer = MemberCommand::Pointer;
 
   itk::ProcessObject::Pointer m_Process;
@@ -299,9 +299,9 @@ protected:
   vtkImageExport * vtkExporter;
 
 private:
-  vtkITKImageToImageFilter( const vtkITKImageToImageFilter & ); /// Not implemented.
+  vtkITKImageToImageFilter(const vtkITKImageToImageFilter &); /// Not implemented.
   void
-  operator=( const vtkITKImageToImageFilter & ); /// Not implemented.
+  operator=(const vtkITKImageToImageFilter &); /// Not implemented.
 };
 
 #endif

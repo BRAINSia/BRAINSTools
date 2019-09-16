@@ -38,33 +38,33 @@ FloatValue::Verify() const
 }
 
 void
-IntValue::SetValue( const std::string & stringval )
+IntValue::SetValue(const std::string & stringval)
 {
   char * test;
-  long   val = strtol( stringval.c_str(), &test, 10 );
+  long   val = strtol(stringval.c_str(), &test, 10);
 
-  if ( test == stringval.c_str() )
+  if (test == stringval.c_str())
   {
-    std::string msg( "Can't convert *" );
+    std::string msg("Can't convert *");
     msg += stringval;
     msg += ") to integer";
-    throw BRAINSCutExceptionStringHandler( msg );
+    throw BRAINSCutExceptionStringHandler(msg);
   }
   this->m_Value = val;
 }
 
 void
-FloatValue::SetValue( const std::string & stringval )
+FloatValue::SetValue(const std::string & stringval)
 {
   char * test;
-  double val = strtod( stringval.c_str(), &test );
+  double val = strtod(stringval.c_str(), &test);
 
-  if ( test == stringval.c_str() )
+  if (test == stringval.c_str())
   {
-    std::string msg( "Can't convert *" );
+    std::string msg("Can't convert *");
     msg += stringval;
     msg += ") to float";
-    throw BRAINSCutExceptionStringHandler( msg );
+    throw BRAINSCutExceptionStringHandler(msg);
   }
-  this->NumericValue< double >::SetValue( val );
+  this->NumericValue<double>::SetValue(val);
 }

@@ -22,18 +22,18 @@
 class landmarksConstellationModelBase
 {
 protected:
-  using ValMapType = std::map< std::string, float >;
+  using ValMapType = std::map<std::string, float>;
   using ValMapConstIterator = ValMapType::const_iterator;
   using ValMapIterator = ValMapType::iterator;
 
 public:
   landmarksConstellationModelBase()
-    : m_NumDataSets( 0 )
-    , m_SearchboxDims( 0 )
-    , m_ResolutionUnits( 1.0 )
-    , m_InitialRotationAngle( 0.0 )
-    , m_InitialRotationStep( 0.0 )
-    , m_NumRotationSteps( 0 )
+    : m_NumDataSets(0)
+    , m_SearchboxDims(0)
+    , m_ResolutionUnits(1.0)
+    , m_InitialRotationAngle(0.0)
+    , m_InitialRotationStep(0.0)
+    , m_NumRotationSteps(0)
   {}
 
   virtual ~landmarksConstellationModelBase() {}
@@ -63,11 +63,11 @@ public:
   }
 
   virtual float
-  GetRadius( const std::string & PointName ) const
+  GetRadius(const std::string & PointName) const
   {
-    ValMapConstIterator it( m_Radius.find( PointName ) );
+    ValMapConstIterator it(m_Radius.find(PointName));
 
-    if ( it == m_Radius.end() )
+    if (it == m_Radius.end())
     {
       throw;
     }
@@ -75,11 +75,11 @@ public:
   }
 
   virtual float
-  GetHeight( const std::string & PointName ) const
+  GetHeight(const std::string & PointName) const
   {
-    ValMapConstIterator it( m_Height.find( PointName ) );
+    ValMapConstIterator it(m_Height.find(PointName));
 
-    if ( it == m_Height.end() )
+    if (it == m_Height.end())
     {
       throw;
     }
@@ -87,13 +87,13 @@ public:
   }
 
   virtual void
-  SetRadius( const std::string & PointName, float x )
+  SetRadius(const std::string & PointName, float x)
   {
     m_Radius[PointName] = x;
   }
 
   virtual void
-  SetHeight( const std::string & PointName, float x )
+  SetHeight(const std::string & PointName, float x)
   {
     m_Height[PointName] = x;
   }
@@ -117,37 +117,37 @@ public:
   }
 
   virtual void
-  SetNumDataSets( unsigned int x )
+  SetNumDataSets(unsigned int x)
   {
     m_NumDataSets = x;
   }
 
   virtual void
-  SetSearchboxDims( unsigned int x )
+  SetSearchboxDims(unsigned int x)
   {
     m_SearchboxDims = x;
   }
 
   virtual void
-  SetResolutionUnits( float x )
+  SetResolutionUnits(float x)
   {
     m_ResolutionUnits = x;
   }
 
   virtual void
-  SetInitialRotationAngle( float x )
+  SetInitialRotationAngle(float x)
   {
     m_InitialRotationAngle = x;
   }
 
   virtual void
-  SetInitialRotationStep( float x )
+  SetInitialRotationStep(float x)
   {
     m_InitialRotationStep = x;
   }
 
   virtual void
-  SetNumRotationSteps( unsigned int x )
+  SetNumRotationSteps(unsigned int x)
   {
     m_NumRotationSteps = x;
   }

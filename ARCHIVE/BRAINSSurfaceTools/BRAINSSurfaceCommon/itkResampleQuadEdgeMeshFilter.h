@@ -33,22 +33,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh, typename TOutputMesh >
-class ResampleQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class ResampleQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ResampleQuadEdgeMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleQuadEdgeMeshFilter);
 
   using Self = ResampleQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( ResampleQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(ResampleQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType = TInputMesh;
   using InputMeshPointer = typename InputMeshType::Pointer;
@@ -87,20 +87,20 @@ public:
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   /** Transform type alias. */
-  using TransformType = Transform< double, Self::PointDimension, Self::PointDimension >;
+  using TransformType = Transform<double, Self::PointDimension, Self::PointDimension>;
   using TransformPointerType = typename TransformType::ConstPointer;
 
   /** Interpolator type alias. */
-  using InterpolatorType = InterpolateMeshFunction< InputMeshType >;
+  using InterpolatorType = InterpolateMeshFunction<InputMeshType>;
   using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set Mesh whose grid will define the geometry and topology of the output Mesh.
    *  In a registration scenario, this will typically be the Fixed mesh. */
   void
-  SetReferenceMesh( const OutputMeshType * mesh );
+  SetReferenceMesh(const OutputMeshType * mesh);
 
   const OutputMeshType *
-  GetReferenceMesh( void ) const;
+  GetReferenceMesh(void) const;
 
   /** Set the coordinate transformation.
    * Set the coordinate transform to use for resampling.  Note that this must
@@ -109,10 +109,10 @@ public:
    * the filter uses an Identity transform. You must provide a different
    * transform here, before attempting to run the filter, if you do not want to
    * use the default Identity transform. */
-  itkSetConstObjectMacro( Transform, TransformType );
+  itkSetConstObjectMacro(Transform, TransformType);
 
   /** Get a pointer to the coordinate transform. */
-  itkGetConstObjectMacro( Transform, TransformType );
+  itkGetConstObjectMacro(Transform, TransformType);
 
   /** Set the interpolator function.  The default is
    * itk::LinearInterpolateMeshFunction<InputMeshType, TInterpolatorPrecisionType>. Some
@@ -120,10 +120,10 @@ public:
    * (useful for binary masks and other images with a small number of
    * possible pixel values), and itk::BSplineInterpolateMeshFunction
    * (which provides a higher order of interpolation).  */
-  itkSetObjectMacro( Interpolator, InterpolatorType );
+  itkSetObjectMacro(Interpolator, InterpolatorType);
 
   /** Get a pointer to the interpolator function. */
-  itkGetConstObjectMacro( Interpolator, InterpolatorType );
+  itkGetConstObjectMacro(Interpolator, InterpolatorType);
 
 protected:
   ResampleQuadEdgeMeshFilter();

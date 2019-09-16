@@ -29,19 +29,19 @@ namespace itk
  * \brief This filter first computes the center of mass C of the input mesh.
  * Then it projects each vertex on a sphere centered at C.
  */
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshRayTracingFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshRayTracingFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
   using Self = QuadEdgeMeshRayTracingFilter;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( QuadEdgeMeshRayTracingFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(QuadEdgeMeshRayTracingFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -80,20 +80,20 @@ public:
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  using CoefficientsComputation = MatrixCoefficients< InputMeshType >;
+  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
 
   void
-  SetCoefficientsMethod( CoefficientsComputation * iMethod )
+  SetCoefficientsMethod(CoefficientsComputation * iMethod)
   {
     (void)iMethod;
   }
 
-  itkSetMacro( Radius, OutputCoordRepType );
+  itkSetMacro(Radius, OutputCoordRepType);
 
 protected:
   QuadEdgeMeshRayTracingFilter()
     : Superclass()
-    , m_Radius( 1. )
+    , m_Radius(1.)
   {}
 
   ~QuadEdgeMeshRayTracingFilter() {}
@@ -113,21 +113,21 @@ protected:
     OutputCoordRepType norm2;
     OutputPointType    u;
     unsigned int       dim;
-    for ( p_it = points->Begin(); p_it != points->End(); ++p_it )
+    for (p_it = points->Begin(); p_it != points->End(); ++p_it)
     {
       norm2 = 0.;
-      u.SetEdge( p_it->Value().GetEdge() );
-      for ( dim = 0; dim < PointDimension; ++dim )
+      u.SetEdge(p_it->Value().GetEdge());
+      for (dim = 0; dim < PointDimension; ++dim)
       {
         u[dim] = p_it->Value()[dim] - m_Center[dim];
         norm2 += u[dim] * u[dim];
       }
-      norm2 = m_Radius / std::sqrt( norm2 );
-      for ( dim = 0; dim < PointDimension; ++dim )
+      norm2 = m_Radius / std::sqrt(norm2);
+      for (dim = 0; dim < PointDimension; ++dim)
       {
         u[dim] *= norm2;
       }
-      points->SetElement( p_it->Index(), u );
+      points->SetElement(p_it->Index(), u);
     }
   }
 
@@ -135,7 +135,7 @@ protected:
   void
   ComputeCenterOfMass()
   {
-    m_Center.Fill( 0. );
+    m_Center.Fill(0.);
 
     OutputMeshPointer             output = this->GetOutput();
     OutputPointsContainerPointer  points = output->GetPoints();
@@ -143,25 +143,25 @@ protected:
 
     unsigned int  dim;
     unsigned long k = 0;
-    for ( ; p_it != points->End(); ++p_it, ++k )
+    for (; p_it != points->End(); ++p_it, ++k)
     {
-      for ( dim = 0; dim < PointDimension; ++dim )
+      for (dim = 0; dim < PointDimension; ++dim)
       {
         m_Center[dim] += p_it->Value()[dim];
       }
     }
 
-    OutputCoordRepType inv = 1. / static_cast< OutputCoordRepType >( k );
-    for ( dim = 0; dim < PointDimension; ++dim )
+    OutputCoordRepType inv = 1. / static_cast<OutputCoordRepType>(k);
+    for (dim = 0; dim < PointDimension; ++dim)
     {
       m_Center[dim] *= inv;
     }
   }
 
 private:
-  QuadEdgeMeshRayTracingFilter( const Self & );
+  QuadEdgeMeshRayTracingFilter(const Self &);
   void
-  operator=( const Self & );
+  operator=(const Self &);
 };
 } // namespace itk
 #endif

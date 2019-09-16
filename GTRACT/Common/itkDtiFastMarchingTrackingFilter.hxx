@@ -73,9 +73,9 @@ namespace itk
 /*
  *
  */
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType >
-DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImageType,
-                               TMaskImageType >::DtiFastMarchingTrackingFilter()
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
+DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>::
+  DtiFastMarchingTrackingFilter()
 {
   m_CostIP = CostIPType::New();
   m_CostFN = CostFunctionType::New();
@@ -90,12 +90,13 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
 /*
  *
  */
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
-DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType >::PrintSelf(
-  std::ostream & os, Indent indent ) const
+DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>::PrintSelf(
+  std::ostream & os,
+  Indent         indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Max Step Size: " << m_MaxStepSize << std::endl;
   os << indent << "Min Step Size: " << m_MinStepSize << std::endl;
@@ -103,29 +104,28 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
   os << indent << "Number of Iterations: " << m_NumberOfIterations << std::endl;
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
-DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImageType,
-                               TMaskImageType >::InitializeSeeds()
+DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>::InitializeSeeds()
 {
   // ////////////////////////////////////////////////////////////////////////
   // Initialize the seed points
   // ////////////////////////////////////////////////////////////////////////
-  using ConstMaskIteratorType = itk::ImageRegionConstIterator< TMaskImageType >;
-  ConstMaskIteratorType maskIt( this->m_StartingRegion, this->m_StartingRegion->GetLargestPossibleRegion() );
+  using ConstMaskIteratorType = itk::ImageRegionConstIterator<TMaskImageType>;
+  ConstMaskIteratorType maskIt(this->m_StartingRegion, this->m_StartingRegion->GetLargestPossibleRegion());
 
   int count = 0;
-  for ( maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt )
+  for (maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt)
   {
     typename Self::ContinuousIndexType        seed;
     typename ConstMaskIteratorType::IndexType pos = maskIt.GetIndex();
     seed[0] = pos[0];
     seed[1] = pos[1];
     seed[2] = pos[2];
-    const float ai = this->m_ScalarIP->EvaluateAtContinuousIndex( seed );
-    if ( maskIt.Get() && ai >= this->m_SeedThreshold )
+    const float ai = this->m_ScalarIP->EvaluateAtContinuousIndex(seed);
+    if (maskIt.Get() && ai >= this->m_SeedThreshold)
     {
-      m_StartPoints.push_back( seed );
+      m_StartPoints.push_back(seed);
       count++;
     }
   }
@@ -135,32 +135,32 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
 /*
  *
  */
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
-DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType >::Update()
+DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>::Update()
 {
   this->m_Output = vtkPolyData::New();
   this->m_StartPoints.clear();
-  this->m_ScalarIP->SetInputImage( this->m_AnisotropyImage );
-  this->m_VectorIP->SetInputImage( this->m_TensorImage );
-  this->m_EndIP->SetInputImage( this->m_EndingRegion );
-  this->m_CostIP->SetInputImage( this->m_CostImage );
+  this->m_ScalarIP->SetInputImage(this->m_AnisotropyImage);
+  this->m_VectorIP->SetInputImage(this->m_TensorImage);
+  this->m_EndIP->SetInputImage(this->m_EndingRegion);
+  this->m_CostIP->SetInputImage(this->m_CostImage);
 
   this->InitializeSeeds();
 
-  while ( !m_StartPoints.empty() )
+  while (!m_StartPoints.empty())
   {
     typename Self::ContinuousIndexType inputIndex = m_StartPoints.front();
     m_StartPoints.pop_front();
     // std::cout << "Tracking point: " << inputIndex << std::endl;
     // check if index is within the input image region
-    if ( !m_CostImage->GetBufferedRegion().IsInside( inputIndex ) )
+    if (!m_CostImage->GetBufferedRegion().IsInside(inputIndex))
     {
       continue;
     }
 
     // Get fiber through Gradient Descent
-    this->GradientDescent( inputIndex );
+    this->GradientDescent(inputIndex);
   }
 }
 
@@ -168,10 +168,10 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
  *
  */
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 void
-DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImageType,
-                               TMaskImageType >::GradientDescent( ContinuousIndexType & index )
+DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>::GradientDescent(
+  ContinuousIndexType & index)
 {
   typename Self::ContinuousIndexType inputIndex = index;
   typename Self::ContinuousIndexType tmpIndex = index;
@@ -184,29 +184,29 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
   vtkPoints *     fiber = vtkPoints::New();
   vtkFloatArray * fiberTensors = vtkFloatArray::New();
 
-  fiberTensors->SetName( "Tensors" );
-  fiberTensors->SetNumberOfComponents( 9 );
+  fiberTensors->SetName("Tensors");
+  fiberTensors->SetNumberOfComponents(9);
   vtkFloatArray * fiberAnisotropy = vtkFloatArray::New();
-  fiberAnisotropy->SetName( "Anisotropy" );
+  fiberAnisotropy->SetName("Anisotropy");
   vtkFloatArray * fiberAnisotropySum = vtkFloatArray::New();
-  fiberAnisotropySum->SetName( "Anisotropy-Sum" );
+  fiberAnisotropySum->SetName("Anisotropy-Sum");
   vtkFloatArray * fiberCost = vtkFloatArray::New();
-  fiberCost->SetName( "Cost" );
+  fiberCost->SetName("Cost");
 
   /*Set up the Cost function*/
-  m_CostFN->SetCostImage( m_CostImage );
+  m_CostFN->SetCostImage(m_CostImage);
 
   /*Set up the gradient descent optimizer*/
-  m_GradientOP->SetCostFunction( m_CostFN );
+  m_GradientOP->SetCostFunction(m_CostFN);
 
   unsigned int spaceDimension = m_CostFN->GetNumberOfParameters();
 
-  ParametersType initialPosition( spaceDimension );
+  ParametersType initialPosition(spaceDimension);
 
-  ScalesType parametersScale( spaceDimension );
+  ScalesType parametersScale(spaceDimension);
 
-  DerivativeType gradient( spaceDimension );
-  for ( unsigned int i = 0; i < spaceDimension; i++ )
+  DerivativeType gradient(spaceDimension);
+  for (unsigned int i = 0; i < spaceDimension; i++)
   {
     initialPosition[i] = inputIndex[i];
     parametersScale[i] = 1.0; // 1 by default
@@ -214,39 +214,39 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
 
   /* Set up rest of Optimizer parameters except intialPosition*/
   m_GradientOP->MaximizeOn();
-  m_GradientOP->SetScales( parametersScale );
-  m_GradientOP->SetMaximumStepLength( m_MaxStepSize );
-  m_GradientOP->SetGradientMagnitudeTolerance( gradientTol );
-  m_GradientOP->SetMinimumStepLength( m_MinStepSize );
-  m_GradientOP->SetNumberOfIterations( 1 );
-  m_GradientOP->SetRelaxationFactor( .8 );
+  m_GradientOP->SetScales(parametersScale);
+  m_GradientOP->SetMaximumStepLength(m_MaxStepSize);
+  m_GradientOP->SetGradientMagnitudeTolerance(gradientTol);
+  m_GradientOP->SetMinimumStepLength(m_MinStepSize);
+  m_GradientOP->SetNumberOfIterations(1);
+  m_GradientOP->SetRelaxationFactor(.8);
 
   /* Initial points are StartPoints and valid threshold has been done in InitializeStartPoints()
      Thus, we can add intitial points immediately to fiber*/
-  anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex( inputIndex );
+  anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex(inputIndex);
   anisotropySum = anisotropy;
-  fiberAnisotropy->InsertNextValue( anisotropy );
-  fiberAnisotropySum->InsertNextValue( anisotropySum );
-  fiberCost->InsertNextValue( m_CostFN->GetValue( initialPosition ) );
+  fiberAnisotropy->InsertNextValue(anisotropy);
+  fiberAnisotropySum->InsertNextValue(anisotropySum);
+  fiberCost->InsertNextValue(m_CostFN->GetValue(initialPosition));
 
   typename Self::PointType p;
-  this->ContinuousIndexToMM( inputIndex, p );
-  fiber->InsertNextPoint( p.GetDataPointer() );
+  this->ContinuousIndexToMM(inputIndex, p);
+  fiber->InsertNextPoint(p.GetDataPointer());
 
-  typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex( index );
+  typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
 
-  TMatrix fullTensorPixel( 3, 3 );
-  fullTensorPixel = Tensor2Matrix( tensorPixel );
-  fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
+  TMatrix fullTensorPixel(3, 3);
+  fullTensorPixel = Tensor2Matrix(tensorPixel);
+  fiberTensors->InsertNextTypedTuple(fullTensorPixel.data_block());
 
-  m_GradientOP->SetInitialPosition( initialPosition );
+  m_GradientOP->SetInitialPosition(initialPosition);
 
   /* Start Optimization : Must Start Optimization before Resume Operation*/
   try
   {
     m_GradientOP->StartOptimization();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << "Exception thrown ! " << std::endl;
     std::cout << "An error ocurred during Optimization" << std::endl;
@@ -254,55 +254,55 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
     std::cout << "Description = " << e.GetDescription() << std::endl;
   }
 
-  ParametersType currentPosition( spaceDimension );
+  ParametersType currentPosition(spaceDimension);
 
   unsigned int count = 0;
   /*Resume Optimization */
-  for ( unsigned int j = 0; j < ( m_NumberOfIterations - 1 ); j++ )
+  for (unsigned int j = 0; j < (m_NumberOfIterations - 1); j++)
   {
     pass = false;
     currentPosition = m_GradientOP->GetCurrentPosition();
-    for ( unsigned int k = 0; k < spaceDimension; k++ ) //
+    for (unsigned int k = 0; k < spaceDimension; k++) //
     {
-      double diff = itk::Math::abs( currentPosition[k] - tmpIndex[k] );
+      double diff = itk::Math::abs(currentPosition[k] - tmpIndex[k]);
 
       // if last point is repeated, stop Gradient Descent
-      if ( diff > gradientTol )
+      if (diff > gradientTol)
       {
         pass = true;
         tmpIndex[k] = currentPosition[k];
       }
     }
 
-    anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex( tmpIndex );
+    anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex(tmpIndex);
     anisotropySum += anisotropy;
 
-    if ( pass )
+    if (pass)
     {
-      if ( anisotropy >= this->m_AnisotropyThreshold )
+      if (anisotropy >= this->m_AnisotropyThreshold)
       {
         // Add current point (fiber point) to fiber
-        this->ContinuousIndexToMM( tmpIndex, p );
-        fiber->InsertNextPoint( p.GetDataPointer() );
-        fiberAnisotropy->InsertNextValue( anisotropy );
-        fiberAnisotropySum->InsertNextValue( anisotropySum );
-        fiberCost->InsertNextValue( m_CostFN->GetValue( currentPosition ) );
+        this->ContinuousIndexToMM(tmpIndex, p);
+        fiber->InsertNextPoint(p.GetDataPointer());
+        fiberAnisotropy->InsertNextValue(anisotropy);
+        fiberAnisotropySum->InsertNextValue(anisotropySum);
+        fiberCost->InsertNextValue(m_CostFN->GetValue(currentPosition));
 
         // Add the Tensor to the Scalar Data
-        tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex( index );
-        fullTensorPixel = Tensor2Matrix( tensorPixel );
-        fiberTensors->InsertNextTypedTuple( fullTensorPixel.data_block() );
+        tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
+        fullTensorPixel = Tensor2Matrix(tensorPixel);
+        fiberTensors->InsertNextTypedTuple(fullTensorPixel.data_block());
 
         // Reset gradient optimizer with current point as starting point
-        m_GradientOP->SetInitialPosition( currentPosition );
-        m_GradientOP->SetNumberOfIterations( count + 2 );
+        m_GradientOP->SetInitialPosition(currentPosition);
+        m_GradientOP->SetNumberOfIterations(count + 2);
 
         // Do next iteration
         try
         {
           m_GradientOP->ResumeOptimization();
         }
-        catch ( itk::ExceptionObject & e )
+        catch (itk::ExceptionObject & e)
         {
           std::cout << "Exception thrown ! " << std::endl;
           std::cout << "An error ocurred during Optimization" << std::endl;
@@ -320,9 +320,9 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
   } // end outer for loop
 
   gradient = m_GradientOP->GetGradient();
-  for ( unsigned int i = 0; i < spaceDimension; i++ )
+  for (unsigned int i = 0; i < spaceDimension; i++)
   {
-    if ( ( gradient[i] > 0.0 ) || ( gradient[i] < 0.0 ) )
+    if ((gradient[i] > 0.0) || (gradient[i] < 0.0))
     {
       completeFiber = false;
     }
@@ -330,9 +330,9 @@ DtiFastMarchingTrackingFilter< TTensorImageType, TAnisotropyImageType, TCostImag
   // std::cout << "Gradient: " << gradient[0] << " " << gradient[1] << " " <<
   // gradient[2] << std::endl;
   // std::cout << "Fiber COmplete: " << completeFiber << std::endl;
-  if ( completeFiber )
+  if (completeFiber)
   {
-    this->AddFiberToOutput( fiber, fiberTensors );
+    this->AddFiberToOutput(fiber, fiberTensors);
   }
 } // end Gradient Descent
 } // namespace itk

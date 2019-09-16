@@ -52,9 +52,9 @@ namespace itk
 //
 // Constructor
 //
-template < typename TInputImage, typename TOutputImage >
-HammerTissueAttributeVectorFromPartialVolumeImageFilter<
-  TInputImage, TOutputImage >::HammerTissueAttributeVectorFromPartialVolumeImageFilter()
+template <typename TInputImage, typename TOutputImage>
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::
+  HammerTissueAttributeVectorFromPartialVolumeImageFilter()
 {
   this->m_UseImageSpacing = true;
   this->m_Scale = 5;
@@ -67,7 +67,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<
 
   this->m_OffsetInSphericalNeighborhood.clear();
 
-#if defined( ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE )
+#if defined(ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE)
   this->m_UseImageDirection = true;
 #else
   this->m_UseImageDirection = false;
@@ -77,25 +77,25 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<
 //
 // Destructor
 //
-template < typename TInputImage, typename TOutputImage >
-HammerTissueAttributeVectorFromPartialVolumeImageFilter<
-  TInputImage, TOutputImage >::~HammerTissueAttributeVectorFromPartialVolumeImageFilter()
+template <typename TInputImage, typename TOutputImage>
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::
+  ~HammerTissueAttributeVectorFromPartialVolumeImageFilter()
 {}
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-HammerTissueAttributeVectorFromPartialVolumeImageFilter<
-  TInputImage, TOutputImage >::GenerateInputRequestedRegion() throw( InvalidRequestedRegionError )
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::
+  GenerateInputRequestedRegion() throw(InvalidRequestedRegionError)
 {
-  printf( "* GenerateInputRequestRegion() \n" );
+  printf("* GenerateInputRequestRegion() \n");
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
   // get pointers to the input and output
-  InputImagePointer  inputPtr = const_cast< InputImageType * >( this->GetInput() );
+  InputImagePointer  inputPtr = const_cast<InputImageType *>(this->GetInput());
   OutputImagePointer outputPtr = this->GetOutput();
 
-  if ( !inputPtr || !outputPtr )
+  if (!inputPtr || !outputPtr)
   {
     return;
   }
@@ -104,11 +104,11 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<
   // works on the entire image domain
   unsigned long                        radius = 1;
   typename InputImageType::SpacingType inputSpacing = this->GetInput()->GetSpacing();
-  Size< InputImageDimension >          sphereRadius;
-  for ( unsigned int i = 0; i < InputImageDimension; ++i )
+  Size<InputImageDimension>            sphereRadius;
+  for (unsigned int i = 0; i < InputImageDimension; ++i)
   {
-    sphereRadius[i] = static_cast< unsigned long >( this->m_Scale / inputSpacing[i] );
-    if ( sphereRadius[i] > radius )
+    sphereRadius[i] = static_cast<unsigned long>(this->m_Scale / inputSpacing[i]);
+    if (sphereRadius[i] > radius)
     {
       radius = sphereRadius[i];
     }
@@ -122,42 +122,42 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<
   typename InputImageType::IndexType  dummyStart;
   typename InputImageType::SizeType   dummySize;
 
-  dummyImage->SetSpacing( inputSpacing );
-  for ( unsigned int k = 0; k < InputImageDimension; k++ )
+  dummyImage->SetSpacing(inputSpacing);
+  for (unsigned int k = 0; k < InputImageDimension; k++)
   {
     dummySize[k] = sphereRadius[k] + sphereRadius[k] + 1;
     dummyStart[k] = -sphereRadius[k];
     dummyOrigin[k] = 0;
   }
-  dummyRegion.SetIndex( dummyStart );
-  dummyRegion.SetSize( dummySize );
-  dummyImage->SetRegions( dummyRegion );
-  dummyImage->SetOrigin( dummyOrigin );
+  dummyRegion.SetIndex(dummyStart);
+  dummyRegion.SetSize(dummySize);
+  dummyImage->SetRegions(dummyRegion);
+  dummyImage->SetOrigin(dummyOrigin);
 
-  float                                               radiusSqr = this->m_Scale * this->m_Scale;
-  itk::ImageRegionIteratorWithIndex< InputImageType > it( dummyImage, dummyRegion );
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  float                                             radiusSqr = this->m_Scale * this->m_Scale;
+  itk::ImageRegionIteratorWithIndex<InputImageType> it(dummyImage, dummyRegion);
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     typename InputImageType::IndexType dummyIdx = it.GetIndex();
     typename InputImageType::PointType point;
-    dummyImage->TransformIndexToPhysicalPoint( dummyIdx, point );
+    dummyImage->TransformIndexToPhysicalPoint(dummyIdx, point);
     float d = 0;
-    for ( unsigned int k = 0; k < InputImageDimension; k++ )
+    for (unsigned int k = 0; k < InputImageDimension; k++)
     {
       d += point[k] * point[k];
     }
-    if ( d > radiusSqr )
+    if (d > radiusSqr)
     {
       continue;
     }
     else
     {
       NeighborOffsetType offset;
-      for ( unsigned int k = 0; k < InputImageDimension; k++ )
+      for (unsigned int k = 0; k < InputImageDimension; k++)
       {
         offset[k] = dummyIdx[k];
       }
-      this->m_OffsetInSphericalNeighborhood.push_back( offset );
+      this->m_OffsetInSphericalNeighborhood.push_back(offset);
     }
   }
 
@@ -167,12 +167,12 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<
   inputRequestedRegion = inputPtr->GetRequestedRegion();
 
   // pad the input requested region by the operator radius
-  inputRequestedRegion.PadByRadius( radius );
+  inputRequestedRegion.PadByRadius(radius);
 
   // crop the input requested region at the input's largest possible region
-  if ( inputRequestedRegion.Crop( inputPtr->GetLargestPossibleRegion() ) )
+  if (inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion()))
   {
-    inputPtr->SetRequestedRegion( inputRequestedRegion );
+    inputPtr->SetRequestedRegion(inputRequestedRegion);
     return;
   }
   else
@@ -181,27 +181,27 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<
     // possible region).  Throw an exception.
 
     // store what we tried to request (prior to trying to crop)
-    inputPtr->SetRequestedRegion( inputRequestedRegion );
+    inputPtr->SetRequestedRegion(inputRequestedRegion);
 
     // build an exception
-    InvalidRequestedRegionError e( __FILE__, __LINE__ );
+    InvalidRequestedRegionError e(__FILE__, __LINE__);
 
-    e.SetLocation( ITK_LOCATION );
-    e.SetDescription( "Requested region is (at least partially) outside the largest possible region." );
-    e.SetDataObject( inputPtr );
+    e.SetLocation(ITK_LOCATION);
+    e.SetDescription("Requested region is (at least partially) outside the largest possible region.");
+    e.SetDataObject(inputPtr);
     throw e;
   }
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputImage >::CreateN1Neighbor()
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::CreateN1Neighbor()
 {
-  printf( "* CreateN1Neighbor() \n" );
-  m_N1Neighborhood.resize( 6 );
-  for ( int k = 0; k < 6; k++ )
+  printf("* CreateN1Neighbor() \n");
+  m_N1Neighborhood.resize(6);
+  for (int k = 0; k < 6; k++)
   {
-    for ( size_t s = 0; s < InputImageDimension; s++ )
+    for (size_t s = 0; s < InputImageDimension; s++)
     {
       m_N1Neighborhood[k][s] = 0;
     }
@@ -214,41 +214,40 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
   m_N1Neighborhood[5][2] = 1;
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputImage >::CreateFeatureNeighbor(
-  int Radius )
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::CreateFeatureNeighbor(int Radius)
 {
-  printf( "* CreateFeatureNeighbor\n" );
+  printf("* CreateFeatureNeighbor\n");
   // InputSpacingType spacing = this->GetInput()->GetSpacing();
   float              rad_sqrd = Radius * Radius;
   int                i, j, k;
   NeighborOffsetType offset;
 
   m_FeatureNeighborhood.clear();
-  for ( i = -Radius; i <= Radius; i++ )
+  for (i = -Radius; i <= Radius; i++)
   {
-    for ( j = -Radius; j <= Radius; j++ )
+    for (j = -Radius; j <= Radius; j++)
     {
-      for ( k = -Radius; k <= Radius; k++ )
+      for (k = -Radius; k <= Radius; k++)
       {
-        if ( ( i * i + j * j + k * k ) <= rad_sqrd )
+        if ((i * i + j * j + k * k) <= rad_sqrd)
         {
-          offset[0] = static_cast< long int >( i );
-          offset[1] = static_cast< long int >( j );
-          offset[2] = static_cast< long int >( float( k ) / 1.5 );
-          m_FeatureNeighborhood.push_back( offset );
+          offset[0] = static_cast<long int>(i);
+          offset[1] = static_cast<long int>(j);
+          offset[2] = static_cast<long int>(float(k) / 1.5);
+          m_FeatureNeighborhood.push_back(offset);
         }
       }
     }
   }
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputImage >::GenerateData()
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  printf( "* GenerateData() \n " );
+  printf("* GenerateData() \n ");
   this->AllocateOutputs();
 
   typename TOutputImage::PixelType attributeVector;
@@ -256,9 +255,9 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
   // Get the input and output
   OutputImageType * outputImage = this->GetOutput();
 
-  const InputImageType * inputGMVolume = this->GetInput( 0 );
-  const InputImageType * inputWMVolume = this->GetInput( 1 );
-  const InputImageType * inputCSFVolume = this->GetInput( 2 );
+  const InputImageType * inputGMVolume = this->GetInput(0);
+  const InputImageType * inputWMVolume = this->GetInput(1);
+  const InputImageType * inputCSFVolume = this->GetInput(2);
 
   // Use inputVolume as a reference volume for image information
   //
@@ -266,23 +265,22 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
   InputRegionType dummyRegion = inputWMVolume->GetLargestPossibleRegion();
   // Create the neighbor
   CreateN1Neighbor();
-  CreateFeatureNeighbor( static_cast< int >( m_Scale ) );
+  CreateFeatureNeighbor(static_cast<int>(m_Scale));
 
   // Initialize
-  outputImage->SetLargestPossibleRegion( inputWMVolume->GetLargestPossibleRegion() );
-  ImageRegionIteratorWithIndex< OutputImageType > it( outputImage, outputImage->GetLargestPossibleRegion() );
+  outputImage->SetLargestPossibleRegion(inputWMVolume->GetLargestPossibleRegion());
+  ImageRegionIteratorWithIndex<OutputImageType> it(outputImage, outputImage->GetLargestPossibleRegion());
 
-  ImageRegionConstIteratorWithIndex< InputImageType > source( inputWMVolume,
-                                                              inputWMVolume->GetLargestPossibleRegion() );
-  attributeVector.Fill( 0 );
-  for ( it.GoToBegin(), source.GoToBegin(); !it.IsAtEnd(); ++it, ++source )
+  ImageRegionConstIteratorWithIndex<InputImageType> source(inputWMVolume, inputWMVolume->GetLargestPossibleRegion());
+  attributeVector.Fill(0);
+  for (it.GoToBegin(), source.GoToBegin(); !it.IsAtEnd(); ++it, ++source)
   {
     //
     // copy the WM Posterior to the attirubuteVector[1]
     // For WHAT though??????
     //
     attributeVector[1] = source.Get();
-    it.Set( attributeVector );
+    it.Set(attributeVector);
   }
 
   // Compute the Edge Information
@@ -295,7 +293,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
   typename InputImageType::PixelType PWm, PGm, PCsf;
   std::string                        centerTissueType = ""; // WM, GM, or CSF
   InputIndexType                     centerIdx, neighborIdx;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     //
     // [WM edge]
@@ -309,13 +307,13 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
     // determin which tissue type it belongs to.
     //
 
-    PWm = inputWMVolume->GetPixel( centerIdx );
-    PGm = inputGMVolume->GetPixel( centerIdx );
-    PCsf = inputCSFVolume->GetPixel( centerIdx );
+    PWm = inputWMVolume->GetPixel(centerIdx);
+    PGm = inputGMVolume->GetPixel(centerIdx);
+    PCsf = inputCSFVolume->GetPixel(centerIdx);
 
-    if ( PWm > PGm )
+    if (PWm > PGm)
     {
-      if ( PWm > PCsf )
+      if (PWm > PCsf)
       {
         centerTissueType = "WM";
         centerPixel = PWm;
@@ -328,7 +326,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
     }
     else
     {
-      if ( PGm > PCsf )
+      if (PGm > PCsf)
       {
         centerTissueType = "GM";
         centerPixel = PGm;
@@ -340,7 +338,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
       }
     }
 
-    if ( centerPixel < 0.1 )
+    if (centerPixel < 0.1)
     {
       centerTissueType = "NONE";
       centerPixel = 0;
@@ -348,68 +346,68 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
 
     // Determin which Bondary the edge is
     //
-    if ( centerIdx[0] == 0 || centerIdx[1] == 0 || centerIdx[2] == 0 )
+    if (centerIdx[0] == 0 || centerIdx[1] == 0 || centerIdx[2] == 0)
     {
       continue;
     }
-    if ( centerIdx[0] == static_cast< signed int >( dummyRegion.GetSize()[0] - 1 ) ||
-         centerIdx[1] == static_cast< signed int >( dummyRegion.GetSize()[1] - 1 ) ||
-         centerIdx[2] == static_cast< signed int >( dummyRegion.GetSize()[2] - 1 ) )
+    if (centerIdx[0] == static_cast<signed int>(dummyRegion.GetSize()[0] - 1) ||
+        centerIdx[1] == static_cast<signed int>(dummyRegion.GetSize()[1] - 1) ||
+        centerIdx[2] == static_cast<signed int>(dummyRegion.GetSize()[2] - 1))
     {
       continue;
     }
     flag_GM = 0.0F;
     flag_CSF = 0.0F;
     flag_WM = 0.0F;
-    for ( unsigned int k = 0; k < m_N1Neighborhood.size(); k++ )
+    for (unsigned int k = 0; k < m_N1Neighborhood.size(); k++)
     {
-      for ( size_t s = 0; s < InputImageDimension; s++ )
+      for (size_t s = 0; s < InputImageDimension; s++)
       {
         neighborIdx[s] = centerIdx[s] + m_N1Neighborhood[k][s];
       }
 
       // Sum
-      flag_GM += inputGMVolume->GetPixel( neighborIdx );
-      flag_CSF += inputCSFVolume->GetPixel( neighborIdx );
-      flag_WM += inputWMVolume->GetPixel( neighborIdx );
+      flag_GM += inputGMVolume->GetPixel(neighborIdx);
+      flag_CSF += inputCSFVolume->GetPixel(neighborIdx);
+      flag_WM += inputWMVolume->GetPixel(neighborIdx);
     }
-    if ( centerTissueType == "WM" )
+    if (centerTissueType == "WM")
     {
-      if ( flag_GM > flag_CSF && flag_GM > strength )
+      if (flag_GM > flag_CSF && flag_GM > strength)
       {
         attributeVector[0] = m_WMGMEDGE;
-        it.Set( attributeVector );
+        it.Set(attributeVector);
       }
-      if ( flag_GM <= flag_CSF && flag_CSF > strength )
+      if (flag_GM <= flag_CSF && flag_CSF > strength)
       {
         attributeVector[0] = m_WMCSFEDGE;
-        it.Set( attributeVector );
+        it.Set(attributeVector);
       }
     }
-    if ( centerTissueType == "GM" )
+    if (centerTissueType == "GM")
     {
-      if ( flag_WM > flag_CSF && flag_WM > strength )
+      if (flag_WM > flag_CSF && flag_WM > strength)
       {
         attributeVector[0] = m_WMGMEDGE;
-        it.Set( attributeVector );
+        it.Set(attributeVector);
       }
-      if ( flag_WM <= flag_CSF && flag_CSF > strength )
+      if (flag_WM <= flag_CSF && flag_CSF > strength)
       {
         attributeVector[0] = m_WMCSFEDGE;
-        it.Set( attributeVector );
+        it.Set(attributeVector);
       }
     }
-    if ( centerTissueType == "CSF" )
+    if (centerTissueType == "CSF")
     {
-      if ( flag_GM > flag_WM && flag_GM > strength )
+      if (flag_GM > flag_WM && flag_GM > strength)
       {
         attributeVector[0] = m_WMCSFEDGE;
-        it.Set( attributeVector );
+        it.Set(attributeVector);
       }
-      if ( flag_GM <= flag_WM && flag_GM > strength )
+      if (flag_GM <= flag_WM && flag_GM > strength)
       {
         attributeVector[0] = m_GMCSFEDGE;
-        it.Set( attributeVector );
+        it.Set(attributeVector);
       }
     }
   } // end of Edge computation
@@ -419,8 +417,8 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
   //
   float NonWM_value, CSF_value, GM_value;
   float pixelNumInBubble = m_FeatureNeighborhood.size();
-  printf( "* Here we compute GMIs\n" );
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  printf("* Here we compute GMIs\n");
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     attributeVector = it.Get();
     centerIdx = it.GetIndex();
@@ -429,38 +427,38 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
     //            inputGMVolume->GetPixel(centerIdx) +
     //            inputCSFVolume->GetPixel(centerIdx) ;
     // if( sum < 0.1F )
-    if ( attributeVector.GetEdge() == 0 )
+    if (attributeVector.GetEdge() == 0)
     {
       continue;
     }
     NonWM_value = 0.0F;
     CSF_value = 0.0F;
     GM_value = 0.0F;
-    for ( unsigned int t = 0; t < m_FeatureNeighborhood.size(); t++ )
+    for (unsigned int t = 0; t < m_FeatureNeighborhood.size(); t++)
     {
-      for ( size_t s = 0; s < InputImageDimension; s++ )
+      for (size_t s = 0; s < InputImageDimension; s++)
       {
         neighborIdx[s] = centerIdx[s] + (int)m_FeatureNeighborhood[t][s];
       }
-      if ( neighborIdx[0] < 0 || neighborIdx[1] < 0 || neighborIdx[2] < 0 )
+      if (neighborIdx[0] < 0 || neighborIdx[1] < 0 || neighborIdx[2] < 0)
       {
         continue;
       }
 
-      if ( neighborIdx[0] >= static_cast< signed int >( dummyRegion.GetSize()[0] ) ||
-           neighborIdx[1] >= static_cast< signed int >( dummyRegion.GetSize()[1] ) ||
-           neighborIdx[2] >= static_cast< signed int >( dummyRegion.GetSize()[2] ) )
+      if (neighborIdx[0] >= static_cast<signed int>(dummyRegion.GetSize()[0]) ||
+          neighborIdx[1] >= static_cast<signed int>(dummyRegion.GetSize()[1]) ||
+          neighborIdx[2] >= static_cast<signed int>(dummyRegion.GetSize()[2]))
       {
         continue;
       }
 
       // Sum all the probaiblity in the ball
       //
-      NonWM_value += ( 1.0F - inputWMVolume->GetPixel( neighborIdx ) );
-      CSF_value += (float)( inputCSFVolume->GetPixel( neighborIdx ) );
-      GM_value += (float)( inputGMVolume->GetPixel( neighborIdx ) );
+      NonWM_value += (1.0F - inputWMVolume->GetPixel(neighborIdx));
+      CSF_value += (float)(inputCSFVolume->GetPixel(neighborIdx));
+      GM_value += (float)(inputGMVolume->GetPixel(neighborIdx));
 
-      float degree = ( NonWM_value / pixelNumInBubble );
+      float degree = (NonWM_value / pixelNumInBubble);
       attributeVector[2] = degree * 100.0F;
 
       float CSF_degree = CSF_value / pixelNumInBubble;
@@ -469,7 +467,7 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
       float GM_degree = GM_value / pixelNumInBubble;
       attributeVector[4] = GM_degree * 100.0F;
 
-      it.Set( attributeVector );
+      it.Set(attributeVector);
     }
   }
 }
@@ -477,15 +475,15 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputIma
 /**
  * Standard "PrintSelf" method
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-HammerTissueAttributeVectorFromPartialVolumeImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os,
-                                                                                                 Indent indent ) const
+HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os,
+                                                                                              Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
-  os << indent << "UseImageSpacing: " << ( this->m_UseImageSpacing ? "On" : "Off" ) << std::endl;
-  os << indent << "UseImageDirection = " << ( this->m_UseImageDirection ? "On" : "Off" ) << std::endl;
+  os << indent << "UseImageSpacing: " << (this->m_UseImageSpacing ? "On" : "Off") << std::endl;
+  os << indent << "UseImageDirection = " << (this->m_UseImageDirection ? "On" : "Off") << std::endl;
 }
 } // end namespace itk
 

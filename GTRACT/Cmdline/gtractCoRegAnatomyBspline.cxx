@@ -48,19 +48,19 @@
 #include "gtractCoRegAnatomyBsplineCLP.h"
 #include "BRAINSThreadControl.h"
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  std::vector< int > GridSize;
-  GridSize.push_back( gridSize[0] );
-  GridSize.push_back( gridSize[1] );
-  GridSize.push_back( gridSize[2] );
+  std::vector<int> GridSize;
+  GridSize.push_back(gridSize[0]);
+  GridSize.push_back(gridSize[1]);
+  GridSize.push_back(gridSize[2]);
 
   bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Input Image: " << inputVolume << std::endl;
@@ -90,92 +90,92 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if ( inputAnatomicalVolume.size() == 0 )
+  if (inputAnatomicalVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputAnatomicalVolume Required! " << std::endl;
   }
-  if ( inputRigidTransform.size() == 0 )
+  if (inputRigidTransform.size() == 0)
   {
     violated = true;
     std::cout << "  --inputRigidTransform Required! " << std::endl;
   }
-  if ( outputBsplineTransform.size() == 0 )
+  if (outputBsplineTransform.size() == 0)
   {
     violated = true;
     std::cout << "  --outputBsplineTransform Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   // using PixelType = signed short;
   using PixelType = float;
-  using VectorImageType = itk::VectorImage< PixelType, 3 >;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
 
-  using VectorImageReaderType = itk::ImageFileReader< VectorImageType, itk::DefaultConvertPixelTraits< PixelType > >;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
-  vectorImageReader->SetFileName( inputVolume );
+  vectorImageReader->SetFileName(inputVolume);
 
   try
   {
     vectorImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
-  using AnatomicalImageType = itk::Image< PixelType, 3 >;
-  using AnatomicalImageReaderType = itk::ImageFileReader< AnatomicalImageType >;
+  using AnatomicalImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<AnatomicalImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
-  anatomicalReader->SetFileName( inputAnatomicalVolume );
+  anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
   {
     anatomicalReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
   /* Extract the Vector Image Index for Registration */
-  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter< VectorImageType, AnatomicalImageType >;
+  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, AnatomicalImageType>;
   using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
   VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
-  selectIndexImageFilter->SetIndex( vectorIndex );
-  selectIndexImageFilter->SetInput( vectorImageReader->GetOutput() );
+  selectIndexImageFilter->SetIndex(vectorIndex);
+  selectIndexImageFilter->SetInput(vectorImageReader->GetOutput());
   try
   {
     selectIndexImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
   }
 
-  using OrientFilterType = itk::OrientImageFilter< AnatomicalImageType, AnatomicalImageType >;
+  using OrientFilterType = itk::OrientImageFilter<AnatomicalImageType, AnatomicalImageType>;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
   //  orientImageFilter->SetInput(brainOnlyFilter->GetOutput() );
-  orientImageFilter->SetInput( selectIndexImageFilter->GetOutput() );
-  orientImageFilter->SetDesiredCoordinateDirection( anatomicalReader->GetOutput()->GetDirection() );
+  orientImageFilter->SetInput(selectIndexImageFilter->GetOutput());
+  orientImageFilter->SetDesiredCoordinateDirection(anatomicalReader->GetOutput()->GetDirection());
   orientImageFilter->UseImageDirectionOn();
   try
   {
     orientImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
@@ -187,47 +187,47 @@ main( int argc, char * argv[] )
   // std::vector<double> minStepLength;
   // minStepLength.push_back((double)minimumStepSize);
 
-  std::vector< std::string > transformTypes;
-  transformTypes.push_back( "BSpline" );
+  std::vector<std::string> transformTypes;
+  transformTypes.push_back("BSpline");
 
-  std::vector< int > iterations;
-  iterations.push_back( numberOfIterations );
+  std::vector<int> iterations;
+  iterations.push_back(numberOfIterations);
 
   // using RegisterFilterType = itk::AnatomicalBSplineFilter;
   // RegisterFilterType::Pointer registerImageFilter =
   // RegisterFilterType::New();
 
   // registerImageFilter->SetSpatialSampleScale( spatialScale );
-  registerImageFilter->SetSamplingPercentage( 1.0 / spatialScale ); // NOTE: This seems really high
+  registerImageFilter->SetSamplingPercentage(1.0 / spatialScale); // NOTE: This seems really high
   // registerImageFilter->SetMaximumNumberOfIterations( numberOfIterations );
-  registerImageFilter->SetNumberOfIterations( iterations );
+  registerImageFilter->SetNumberOfIterations(iterations);
   // registerImageFilter->SetMaximumNumberOfEvaluations( numberOfEvaluations );
   // registerImageFilter->SetMaximumNumberOfCorrections( numberOfCorrections );
   // registerImageFilter->SetBSplineHistogramBins( numberOfHistogramBins );
-  registerImageFilter->SetNumberOfHistogramBins( numberOfHistogramBins );
-  registerImageFilter->SetSplineGridSize( gridSize );
+  registerImageFilter->SetNumberOfHistogramBins(numberOfHistogramBins);
+  registerImageFilter->SetSplineGridSize(gridSize);
   // registerImageFilter->SetGridBorderSize( borderSize );
-  registerImageFilter->SetCostFunctionConvergenceFactor( convergence );
-  registerImageFilter->SetProjectedGradientTolerance( gradientTolerance );
-  registerImageFilter->SetMaxBSplineDisplacement( maxBSplineDisplacement );
+  registerImageFilter->SetCostFunctionConvergenceFactor(convergence);
+  registerImageFilter->SetProjectedGradientTolerance(gradientTolerance);
+  registerImageFilter->SetMaxBSplineDisplacement(maxBSplineDisplacement);
 
-  if ( inputRigidTransform.size() > 0 )
+  if (inputRigidTransform.size() > 0)
   {
-    registerImageFilter->SetCurrentGenericTransform( itk::ReadTransformFromDisk( inputRigidTransform ) );
+    registerImageFilter->SetCurrentGenericTransform(itk::ReadTransformFromDisk(inputRigidTransform));
   }
-  registerImageFilter->SetFixedVolume( anatomicalReader->GetOutput() );
-  registerImageFilter->SetMovingVolume( orientImageFilter->GetOutput() );
+  registerImageFilter->SetFixedVolume(anatomicalReader->GetOutput());
+  registerImageFilter->SetMovingVolume(orientImageFilter->GetOutput());
   try
   {
     registerImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
   GenericTransformType::Pointer bsplineTransform = registerImageFilter->GetCurrentGenericTransform();
-  itk::WriteTransformToDisk< double >( bsplineTransform.GetPointer(), outputBsplineTransform );
+  itk::WriteTransformToDisk<double>(bsplineTransform.GetPointer(), outputBsplineTransform);
   return EXIT_SUCCESS;
 }

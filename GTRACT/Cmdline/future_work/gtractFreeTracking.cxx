@@ -45,17 +45,17 @@
 #include <itkSpatialOrientationAdapter.h>
 #include <itkThresholdImageFilter.h>
 
-template < typename TImageType >
+template <typename TImageType>
 void
-AdaptOriginAndDirection( typename TImageType::Pointer image )
+AdaptOriginAndDirection(typename TImageType::Pointer image)
 {
   typename TImageType::DirectionType imageDir = image->GetDirection();
   typename TImageType::PointType     origin = image->GetOrigin();
 
-  int dominantAxisRL = itk::Function::Max3( imageDir[0][0], imageDir[1][0], imageDir[2][0] );
-  int signRL = itk::Function::Sign( imageDir[dominantAxisRL][0] );
-  int dominantAxisAP = itk::Function::Max3( imageDir[0][1], imageDir[1][1], imageDir[2][1] );
-  int signAP = itk::Function::Sign( imageDir[dominantAxisAP][1] );
+  int dominantAxisRL = itk::Function::Max3(imageDir[0][0], imageDir[1][0], imageDir[2][0]);
+  int signRL = itk::Function::Sign(imageDir[dominantAxisRL][0]);
+  int dominantAxisAP = itk::Function::Max3(imageDir[0][1], imageDir[1][1], imageDir[2][1]);
+  int signAP = itk::Function::Sign(imageDir[dominantAxisAP][1]);
   // int dominantAxisSI =
   // itk::Function::Max3(imageDir[0][2],imageDir[1][2],imageDir[2][2]);
   // int signSI = itk::Function::Sign(imageDir[dominantAxisSI][2]);
@@ -73,12 +73,12 @@ AdaptOriginAndDirection( typename TImageType::Pointer image )
   */
   typename TImageType::DirectionType DirectionToRAS;
   DirectionToRAS.SetIdentity();
-  if ( signRL == 1 )
+  if (signRL == 1)
   {
     DirectionToRAS[dominantAxisRL][dominantAxisRL] = -1.0;
     origin[dominantAxisRL] *= -1.0;
   }
-  if ( signAP == 1 )
+  if (signAP == 1)
   {
     DirectionToRAS[dominantAxisAP][dominantAxisAP] = -1.0;
     origin[dominantAxisAP] *= -1.0;
@@ -92,18 +92,18 @@ AdaptOriginAndDirection( typename TImageType::Pointer image )
     }
   */
   imageDir *= DirectionToRAS;
-  image->SetDirection( imageDir );
-  image->SetOrigin( origin );
+  image->SetDirection(imageDir);
+  image->SetOrigin(origin);
 }
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   const bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
@@ -126,110 +126,110 @@ main( int argc, char ** argv )
   }
 
   using TensorElementType = double;
-  using TensorPixelType = itk::DiffusionTensor3D< TensorElementType >;
-  using TensorImageType = itk::Image< TensorPixelType, 3 >;
-  using TensorImageReaderType = itk::ImageFileReader< TensorImageType >;
+  using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
+  using TensorImageType = itk::Image<TensorPixelType, 3>;
+  using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
-  tensorImageReader->SetFileName( inputTensorVolume );
+  tensorImageReader->SetFileName(inputTensorVolume);
 
   try
   {
     tensorImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
   TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
-  AdaptOriginAndDirection< TensorImageType >( tensorImage );
+  AdaptOriginAndDirection<TensorImageType>(tensorImage);
 
   using AnisotropyPixelType = float;
-  using AnisotropyImageType = itk::Image< AnisotropyPixelType, 3 >;
-  using AnisotropyImageReaderType = itk::ImageFileReader< AnisotropyImageType >;
+  using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
+  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
-  anisotropyImageReader->SetFileName( inputAnisotropyVolume );
+  anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
   {
     anisotropyImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
   AnisotropyImageType::Pointer anisotropyImage = anisotropyImageReader->GetOutput();
-  AdaptOriginAndDirection< AnisotropyImageType >( anisotropyImage );
+  AdaptOriginAndDirection<AnisotropyImageType>(anisotropyImage);
 
   using MaskPixelType = signed short;
-  using MaskImageType = itk::Image< MaskPixelType, 3 >;
-  using MaskImageReaderType = itk::ImageFileReader< MaskImageType >;
+  using MaskImageType = itk::Image<MaskPixelType, 3>;
+  using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
   MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
-  startingSeedImageReader->SetFileName( inputStartingSeedsLabelMapVolume );
+  startingSeedImageReader->SetFileName(inputStartingSeedsLabelMapVolume);
 
   try
   {
     startingSeedImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
   /* Threshold Starting Label Map */
-  using ThresholdFilterType = itk::ThresholdImageFilter< MaskImageType >;
+  using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
   ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
-  startingThresholdFilter->SetInput( startingSeedImageReader->GetOutput() );
-  startingThresholdFilter->SetLower( static_cast< MaskPixelType >( startingSeedsLabel ) );
-  startingThresholdFilter->SetUpper( static_cast< MaskPixelType >( startingSeedsLabel ) );
+  startingThresholdFilter->SetInput(startingSeedImageReader->GetOutput());
+  startingThresholdFilter->SetLower(static_cast<MaskPixelType>(startingSeedsLabel));
+  startingThresholdFilter->SetUpper(static_cast<MaskPixelType>(startingSeedsLabel));
   startingThresholdFilter->Update();
 
   MaskImageType::Pointer startingSeedMask = startingThresholdFilter->GetOutput();
-  AdaptOriginAndDirection< MaskImageType >( startingSeedMask );
+  AdaptOriginAndDirection<MaskImageType>(startingSeedMask);
 
   /*********** Setup Fiber Tracking ******************/
   std::cerr << "Free Tracking" << std::endl;
 
-  using TrackingType = itk::DtiFreeTrackingFilter< TensorImageType, AnisotropyImageType, MaskImageType >;
+  using TrackingType = itk::DtiFreeTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
   TrackingType::Pointer fiberTrackingFilter = TrackingType::New();
-  fiberTrackingFilter->SetAnisotropyImage( anisotropyImage );
-  fiberTrackingFilter->SetTensorImage( tensorImage );
-  fiberTrackingFilter->SetStartingRegion( startingSeedMask );
-  fiberTrackingFilter->SetSeedThreshold( seedThreshold );
-  fiberTrackingFilter->SetAnisotropyThreshold( trackingThreshold );
-  fiberTrackingFilter->SetCurvatureThreshold( curvatureThreshold ); /* Convert
-                                                                      to std::cos
-                                                                      (curvature*pi/180)
-                                                                       within
-                                                                      method */
-  fiberTrackingFilter->SetMaximumLength( maximumLength );
-  fiberTrackingFilter->SetMinimumLength( minimumLength );
-  fiberTrackingFilter->SetStepSize( stepSize );
-  fiberTrackingFilter->SetUseLoopDetection( useLoopDetection );
-  fiberTrackingFilter->SetUseTend( useTend );
-  fiberTrackingFilter->SetTendG( tendG );
-  fiberTrackingFilter->SetTendF( tendF );
+  fiberTrackingFilter->SetAnisotropyImage(anisotropyImage);
+  fiberTrackingFilter->SetTensorImage(tensorImage);
+  fiberTrackingFilter->SetStartingRegion(startingSeedMask);
+  fiberTrackingFilter->SetSeedThreshold(seedThreshold);
+  fiberTrackingFilter->SetAnisotropyThreshold(trackingThreshold);
+  fiberTrackingFilter->SetCurvatureThreshold(curvatureThreshold); /* Convert
+                                                                    to std::cos
+                                                                    (curvature*pi/180)
+                                                                     within
+                                                                    method */
+  fiberTrackingFilter->SetMaximumLength(maximumLength);
+  fiberTrackingFilter->SetMinimumLength(minimumLength);
+  fiberTrackingFilter->SetStepSize(stepSize);
+  fiberTrackingFilter->SetUseLoopDetection(useLoopDetection);
+  fiberTrackingFilter->SetUseTend(useTend);
+  fiberTrackingFilter->SetTendG(tendG);
+  fiberTrackingFilter->SetTendF(tendF);
   // std::cout << fiberTrackingFilter;
   fiberTrackingFilter->Update();
 
   vtkPolyData * fibers = fiberTrackingFilter->GetOutput();
 
-  if ( writeXMLPolyDataFile )
+  if (writeXMLPolyDataFile)
   {
     vtkXMLPolyDataWriter * fiberWriter = vtkXMLPolyDataWriter::New();
-    fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( fibers );
+    fiberWriter->SetFileName(outputTract.c_str());
+    fiberWriter->SetInput(fibers);
     fiberWriter->Update();
   }
   else
   {
     vtkPolyDataWriter * fiberWriter = vtkPolyDataWriter::New();
-    fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( fibers );
+    fiberWriter->SetFileName(outputTract.c_str());
+    fiberWriter->SetInput(fibers);
     fiberWriter->Update();
   }
 }

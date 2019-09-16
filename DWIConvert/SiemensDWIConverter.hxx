@@ -5,12 +5,12 @@
 #ifndef BRAINSTOOLS_SIEMENSDWICONVERTER_HXX
 #define BRAINSTOOLS_SIEMENSDWICONVERTER_HXX
 
-template < typename T >
+template <typename T>
 T
-SiemensDWIConverter::CSAExtractFromString( const char * ptr )
+SiemensDWIConverter::CSAExtractFromString(const char * ptr)
 {
-  T rval = *( reinterpret_cast< const T * >( ptr ) );
-  itk::ByteSwapper< T >::SwapFromSystemToLittleEndian( &rval );
+  T rval = *(reinterpret_cast<const T *>(ptr));
+  itk::ByteSwapper<T>::SwapFromSystemToLittleEndian(&rval);
   return rval;
 }
 

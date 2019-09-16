@@ -23,9 +23,9 @@ main()
 {
   try
   {
-    muExceptionMacro( << "FOO" );
+    muExceptionMacro(<< "FOO");
   }
-  catch ( mu::Exception & e )
+  catch (mu::Exception & e)
   {
     std::cerr << e << std::endl;
     return -1;

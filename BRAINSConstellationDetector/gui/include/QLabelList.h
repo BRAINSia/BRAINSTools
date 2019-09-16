@@ -46,31 +46,31 @@ class QLabelList : public QListWidget
 {
   Q_OBJECT
 
-  using LandmarksMapType = std::map< QString, std::vector< double > >;
+  using LandmarksMapType = std::map<QString, std::vector<double>>;
 
 public:
-  QLabelList( QWidget * myParent = nullptr )
-    : QListWidget( myParent )
+  QLabelList(QWidget * myParent = nullptr)
+    : QListWidget(myParent)
   {
     m_color = 0;
   }
 
   void
-  SetInputVolume( std::string filename )
+  SetInputVolume(std::string filename)
   {
-    m_inputVolume = QString::fromStdString( filename );
+    m_inputVolume = QString::fromStdString(filename);
   }
 
   void
-  SetInputLandmarks( std::string filename )
+  SetInputLandmarks(std::string filename)
   {
-    m_inputLandmarks = QString::fromStdString( filename );
+    m_inputLandmarks = QString::fromStdString(filename);
   }
 
   void
-  SetOutputLandmarks( std::string filename )
+  SetOutputLandmarks(std::string filename)
   {
-    m_outputLandmarks = QString::fromStdString( filename );
+    m_outputLandmarks = QString::fromStdString(filename);
   }
 
   LandmarksMapType
@@ -80,7 +80,7 @@ public:
   }
 
   void
-  createListItem( const QString & label, const QString & name ); // UI for
+  createListItem(const QString & label, const QString & name); // UI for
 
   // creating
   // named
@@ -101,13 +101,13 @@ public slots:
 
   // respond to keyboard signal from viewer
   void
-  createListItemSlot( const QString & label );
+  createListItemSlot(const QString & label);
 
   void
   createListItemAddButtonSlot(); // a wrap for add label button
 
   void
-  editListItemSlot( const QString & );
+  editListItemSlot(const QString &);
 
   void
   switchListItemSlot();
@@ -120,12 +120,12 @@ public slots:
 
   // respond to mouse signal from itself
   void
-  cancelHighlight( QListWidgetItem * ); // haven't find a direct way of
+  cancelHighlight(QListWidgetItem *); // haven't find a direct way of
 
   // disabling highlight;(
 
   void
-  deleteListItemMouseSlot( QListWidgetItem * );
+  deleteListItemMouseSlot(QListWidgetItem *);
 
   void
   sliceChangedSlot();
@@ -135,10 +135,10 @@ public slots:
   checkVisibilitySlot();
 
   void
-  checkVisibilitySlot( double * tag ); // a wrap for slider bar
+  checkVisibilitySlot(double * tag); // a wrap for slider bar
 
   void
-  checkVisibilitySlot( QListWidgetItem * ); // a wrap for double click on
+  checkVisibilitySlot(QListWidgetItem *); // a wrap for double click on
 
   // list item
 
@@ -161,17 +161,17 @@ signals:
   // slice viewer
 
   void
-  sendLabelPosition( double * pos );
+  sendLabelPosition(double * pos);
 
   // determine which label should be displayed
   // *[0] = sagittal, *[1] = coronal, *[2] = axial
   // table = 1 means the label is visible in certain viewer
   void
-  visibilityTable( int * table );
+  visibilityTable(int * table);
 
   // send to viewer, help to find the initial position due to wheeling
   void
-  sendLabelPositions( double * pos );
+  sendLabelPositions(double * pos);
 
 protected:
   // color seed

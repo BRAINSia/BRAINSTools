@@ -104,17 +104,17 @@ namespace itk
  *         DtiGuidedTrackingFilter,
  */
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 class DtiTrackingFilterBase : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DtiTrackingFilterBase );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiTrackingFilterBase);
 
   /** Standard class type alias. */
   using Self = DtiTrackingFilterBase;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Some convenient type alias. */
   using TensorImageType = TTensorImageType;
@@ -147,18 +147,18 @@ public:
   using MaskImagePixelType = typename MaskImageType::PixelType;
   using MaskImageDirectionType = typename MaskImageType::DirectionType;
 
-  using MaskIPType = itk::LinearInterpolateImageFunction< MaskImageType, double >;
-  using ScalarIPType = itk::LinearInterpolateImageFunction< AnisotropyImageType, double >;
-  using VectorIPType = itk::TensorLinearInterpolateImageFunction< TensorImageType, double >;
+  using MaskIPType = itk::LinearInterpolateImageFunction<MaskImageType, double>;
+  using ScalarIPType = itk::LinearInterpolateImageFunction<AnisotropyImageType, double>;
+  using VectorIPType = itk::TensorLinearInterpolateImageFunction<TensorImageType, double>;
 
-  using ContinuousIndexType = typename itk::ContinuousIndex< double, 3 >;
+  using ContinuousIndexType = typename itk::ContinuousIndex<double, 3>;
 
-  using PointType = itk::Point< double, 3 >;
-  using SeedListType = std::list< ContinuousIndexType >;
-  using BranchListType = std::list< BranchPointType >;
-  using DirectionListType = std::list< TVector >;
+  using PointType = itk::Point<double, 3>;
+  using SeedListType = std::list<ContinuousIndexType>;
+  using BranchListType = std::list<BranchPointType>;
+  using DirectionListType = std::list<TVector>;
 
-  using PointSetType = itk::PointSet< double, 3 >;
+  using PointSetType = itk::PointSet<double, 3>;
   using DtiFiberType = vtkPolyData *;
 
   /** ImageDimension constants * /
@@ -175,25 +175,25 @@ public:
     (Concept::SameDimension<Self::InputImageDimension,4>));
 */
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( DtiTrackingFilterBase, itk::Object );
+  itkTypeMacro(DtiTrackingFilterBase, itk::Object);
 
-  itkSetObjectMacro( TensorImage, TensorImageType );
-  itkSetObjectMacro( AnisotropyImage, AnisotropyImageType );
-  itkSetObjectMacro( StartingRegion, MaskImageType );
-  itkSetObjectMacro( EndingRegion, MaskImageType );
+  itkSetObjectMacro(TensorImage, TensorImageType);
+  itkSetObjectMacro(AnisotropyImage, AnisotropyImageType);
+  itkSetObjectMacro(StartingRegion, MaskImageType);
+  itkSetObjectMacro(EndingRegion, MaskImageType);
 
-  itkSetMacro( SeedThreshold, float );
-  itkSetMacro( AnisotropyThreshold, float );
-  itkSetMacro( MaximumLength, float );
-  itkSetMacro( MinimumLength, float );
-  itkSetMacro( StepSize, float );
-  itkSetMacro( UseLoopDetection, bool );
-  itkSetMacro( UseTend, bool );
-  itkSetMacro( TendG, float );
-  itkSetMacro( TendF, float );
+  itkSetMacro(SeedThreshold, float);
+  itkSetMacro(AnisotropyThreshold, float);
+  itkSetMacro(MaximumLength, float);
+  itkSetMacro(MinimumLength, float);
+  itkSetMacro(StepSize, float);
+  itkSetMacro(UseLoopDetection, bool);
+  itkSetMacro(UseTend, bool);
+  itkSetMacro(TendG, float);
+  itkSetMacro(TendF, float);
 
   DtiFiberType
   GetOutput();
@@ -206,31 +206,31 @@ protected:
 private:
 protected:
   bool
-  IsLoop( vtkPoints * fiber, double tolerance = 0.001 );
+  IsLoop(vtkPoints * fiber, double tolerance = 0.001);
 
   void
   InitializeSeeds();
 
   void
-  ContinuousIndexToMM( ContinuousIndexType & index, PointType & p );
+  ContinuousIndexToMM(ContinuousIndexType & index, PointType & p);
 
   void
-  MMToContinuousIndex( PointType & p, ContinuousIndexType & index );
+  MMToContinuousIndex(PointType & p, ContinuousIndexType & index);
 
   void
-  MMToContinuousIndex( double * p, ContinuousIndexType & index );
+  MMToContinuousIndex(double * p, ContinuousIndexType & index);
 
   void
-  StepIndexInPointSpace( ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec );
+  StepIndexInPointSpace(ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec);
 
   void
-  StepIndex( ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec );
+  StepIndex(ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec);
 
   void
-  ApplyTensorDeflection( TVector & vin, TMatrix & fullTensorPixel, TVector & e2, TVector & vout );
+  ApplyTensorDeflection(TVector & vin, TMatrix & fullTensorPixel, TVector & e2, TVector & vout);
 
   void
-  AddFiberToOutput( vtkPoints * currentFiber, vtkFloatArray * fiberTensors );
+  AddFiberToOutput(vtkPoints * currentFiber, vtkFloatArray * fiberTensors);
 
   DirectionListType m_TrackingDirections;
 

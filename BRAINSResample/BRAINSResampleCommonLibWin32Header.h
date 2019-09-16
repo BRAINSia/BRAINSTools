@@ -27,11 +27,11 @@
 
 #include <BRAINSResampleCommonLib.h>
 
-#if defined( WIN32 ) && !defined( BRAINSResampleCommonLib_STATIC )
-#  if defined( BRAINSResampleCommonLib_EXPORTS )
-#    define BRAINSResampleCommonLib_EXPORT __declspec( dllexport )
+#if defined(WIN32) && !defined(BRAINSResampleCommonLib_STATIC)
+#  if defined(BRAINSResampleCommonLib_EXPORTS)
+#    define BRAINSResampleCommonLib_EXPORT __declspec(dllexport)
 #  else
-#    define BRAINSResampleCommonLib_EXPORT __declspec( dllimport )
+#    define BRAINSResampleCommonLib_EXPORT __declspec(dllimport)
 #  endif
 #else
 #  define BRAINSResampleCommonLib_EXPORT

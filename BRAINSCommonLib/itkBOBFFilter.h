@@ -26,23 +26,23 @@ namespace itk
 {
 /** \class BOBFilter
  */
-template < typename TInputImage, typename TOutputImage >
-class BOBFFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class BOBFFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( BOBFFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(BOBFFilter);
 
   /** Standard class type alias. */
   using Self = BOBFFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( BOBFFilter, ImageToImageFilter );
+  itkTypeMacro(BOBFFilter, ImageToImageFilter);
 
   /** ImageDimension enumeration. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -65,53 +65,53 @@ public:
 
   /** Set/Get the Input image. */
   void
-  SetInputImage( const InputImageType * source )
+  SetInputImage(const InputImageType * source)
   {
-    this->SetInput( source );
+    this->SetInput(source);
   }
 
   const InputImageType *
-  GetInputImage( void )
+  GetInputImage(void)
   {
     return this->GetInput();
   }
 
   /** Set the input mask */
   void
-  SetInputMask( const InputImageType * image );
+  SetInputMask(const InputImageType * image);
 
   /** Get the input mask */
   const InputImageType *
-  GetInputMask( void );
+  GetInputMask(void);
 
   /** Set seed point. */
 
   /** Set/Get the lower threshold. The default is 0. */
-  itkSetMacro( Lower, InputPixelType );
-  itkGetMacro( Lower, InputPixelType );
+  itkSetMacro(Lower, InputPixelType);
+  itkGetMacro(Lower, InputPixelType);
 
   /** Set/Get the upper threshold. The default is the largest possible
    *  value for the InputPixelType. */
-  itkSetMacro( Upper, InputPixelType );
-  itkGetMacro( Upper, InputPixelType );
+  itkSetMacro(Upper, InputPixelType);
+  itkGetMacro(Upper, InputPixelType);
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
    *  within Lower and Upper (inclusive) will be replaced with this
    *  value. The default is 1. */
-  itkSetMacro( ReplaceValue, OutputPixelType );
-  itkGetMacro( ReplaceValue, OutputPixelType );
+  itkSetMacro(ReplaceValue, OutputPixelType);
+  itkGetMacro(ReplaceValue, OutputPixelType);
 
   /** Set the radius of the neighborhood used for a mask. */
-  itkSetMacro( Radius, InputSizeType );
+  itkSetMacro(Radius, InputSizeType);
 
   /** Get the radius of the neighborhood used to compute the median */
-  itkGetConstReferenceMacro( Radius, InputSizeType );
+  itkGetConstReferenceMacro(Radius, InputSizeType);
 
   /** Set the Seed of the neighborhood used for a mask. */
-  itkSetMacro( Seed, IndexType );
+  itkSetMacro(Seed, IndexType);
 
   /** Get the radius of the neighborhood used to compute the median */
-  itkGetConstReferenceMacro( Seed, IndexType );
+  itkGetConstReferenceMacro(Seed, IndexType);
 
   /** Method to execute the Filter */
   void
@@ -132,7 +132,7 @@ protected:
 
 private:
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   // std::vector<IndexType> m_Seeds;
   IndexType       m_Seed;

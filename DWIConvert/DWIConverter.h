@@ -74,20 +74,20 @@ public:
    * If each volume is 3DSlices, and their are NumGradients, then
    * the last direction of the unwrapped direction is (3DSlices*NumGradients).
    */
-  using Volume3DUnwrappedType = itk::Image< PixelValueType, 3 >;
+  using Volume3DUnwrappedType = itk::Image<PixelValueType, 3>;
 
   using SpacingType = Volume3DUnwrappedType::SpacingType;
-  using ReaderType = itk::ImageSeriesReader< Volume3DUnwrappedType >;
+  using ReaderType = itk::ImageSeriesReader<Volume3DUnwrappedType>;
   using FileNamesContainer = ReaderType::FileNamesContainer;
-  using VectorVolumeType = itk::VectorImage< PixelValueType, 3 >;
+  using VectorVolumeType = itk::VectorImage<PixelValueType, 3>;
 
 
-  using SingleFileReaderType = itk::ImageFileReader< Volume3DUnwrappedType >;
-  using RotationMatrixType = itk::Matrix< double, 3, 3 >;
-  using PointType = itk::Vector< double, 3 >;
+  using SingleFileReaderType = itk::ImageFileReader<Volume3DUnwrappedType>;
+  using RotationMatrixType = itk::Matrix<double, 3, 3>;
+  using PointType = itk::Vector<double, 3>;
 
-  using CommonDicomFieldMapType = std::map< std::string, std::string >;
-  DWIConverter( const FileNamesContainer & inputFileNames );
+  using CommonDicomFieldMapType = std::map<std::string, std::string>;
+  DWIConverter(const FileNamesContainer & inputFileNames);
 
   virtual ~DWIConverter();
 
@@ -129,12 +129,12 @@ public:
    * @return Returns a 4D image pointer properly formatted
    */
   Volume4DType::Pointer
-  OrientForFSLConventions( const bool toFSL = true );
+  OrientForFSLConventions(const bool toFSL = true);
 
-  const std::vector< double > &
+  const std::vector<double> &
   GetBValues() const;
   void
-  SetBValues( const std::vector< double > & inBValues );
+  SetBValues(const std::vector<double> & inBValues);
   double
   GetMaxBValue() const;
 
@@ -151,7 +151,7 @@ public:
   Volume3DUnwrappedType::PointType
   GetOrigin() const;
   void
-  SetOrigin( DWIConverter::Volume3DUnwrappedType::PointType origin );
+  SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin);
 
   RotationMatrixType
   GetLPSDirCos() const;
@@ -181,8 +181,9 @@ public:
    * @param gradientVectorFile The file with gradients specified for overwriting
    */
   void
-  ReadGradientInformation( const std::string & inputBValues, const std::string & inputBVectors,
-                           const std::string & inputVolumeNameTemplate );
+  ReadGradientInformation(const std::string & inputBValues,
+                          const std::string & inputBVectors,
+                          const std::string & inputVolumeNameTemplate);
 
   /**
    * @brief ConvertBVectorsToIdentityMeasurementFrame, Convert the values of the gradients to
@@ -192,23 +193,28 @@ public:
   ConvertBVectorsToIdentityMeasurementFrame();
 
   std::string
-  MakeFileComment( const std::string & version, bool useBMatrixGradientDirections, bool useIdentityMeaseurementFrame,
-                   double smallGradientThreshold, const std::string conversionMode ) const;
+  MakeFileComment(const std::string & version,
+                  bool                useBMatrixGradientDirections,
+                  bool                useIdentityMeaseurementFrame,
+                  double              smallGradientThreshold,
+                  const std::string   conversionMode) const;
 
   void
-  ManualWriteNRRDFile( const std::string & outputVolumeHeaderName, const std::string commentstring ) const;
+  ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string commentstring) const;
   Volume4DType::Pointer
-  ThreeDToFourDImage( Volume3DUnwrappedType::Pointer img ) const;
+  ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const;
 
   Volume3DUnwrappedType::Pointer
-  FourDToThreeDImage( Volume4DType::Pointer img4D ) const;
+  FourDToThreeDImage(Volume4DType::Pointer img4D) const;
 
   /** the DICOM datasets are read as 3D volumes, but they need to be
    *  written as 4D volumes for image types other than NRRD.
    */
   void
-  WriteFSLFormattedFileSet( const std::string & outputVolumeHeaderName, const std::string outputBValues,
-                            const std::string outputBVectors, Volume4DType::Pointer img4D ) const;
+  WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderName,
+                           const std::string     outputBValues,
+                           const std::string     outputBVectors,
+                           Volume4DType::Pointer img4D) const;
 
 
   /**
@@ -217,7 +223,7 @@ public:
    * @param allowLossyConvertsion (true = automatically convert to short int)
    */
   void
-  SetAllowLossyConversion( const bool newValue );
+  SetAllowLossyConversion(const bool newValue);
 
   // add by Hui Xie
   Volume3DUnwrappedType::Pointer
@@ -228,9 +234,9 @@ public:
 
 protected:
   double
-  ComputeMaxBvalue( const std::vector< double > & bValues ) const;
+  ComputeMaxBvalue(const std::vector<double> & bValues) const;
   size_t
-  has_valid_nifti_extension( std::string outputVolumeHeaderName ) const;
+  has_valid_nifti_extension(std::string outputVolumeHeaderName) const;
 
   /** add vendor-specific flags; */
   virtual void
@@ -244,7 +250,7 @@ protected:
 
 
   /** double conversion instance, for optimal printing of numbers as  text */
-  itk::NumberToString< double > m_DoubleConvert;
+  itk::NumberToString<double> m_DoubleConvert;
 
   unsigned int m_SlicesPerVolume;
   /** number of total slices */
@@ -269,11 +275,11 @@ protected:
    */
   RotationMatrixType m_MeasurementFrame;
   /** list of B Values for each volume */
-  std::vector< double > m_BValues;
+  std::vector<double> m_BValues;
   /** list of gradient vectors */
   DWIMetaDataDictionaryValidator::GradientTableType m_DiffusionVectors;
   // A map of common dicom fields to be propagated to image
-  std::map< std::string, std::string > m_CommonDicomFieldsMap;
+  std::map<std::string, std::string> m_CommonDicomFieldsMap;
 };
 
 #endif // __DWIConverter_h

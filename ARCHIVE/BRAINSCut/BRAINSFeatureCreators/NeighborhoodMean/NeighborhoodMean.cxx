@@ -29,23 +29,23 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
@@ -54,13 +54,13 @@ main( int argc, char * argv[] )
   // using PixelType = unsigned long;
   constexpr unsigned int Dimension = 3;
 
-  using ImageType = itk::Image< PixelType, Dimension >;
-  using ReaderType = itk::ImageFileReader< ImageType >;
+  using ImageType = itk::Image<PixelType, Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer imageReader = ReaderType::New();
 
-  imageReader->SetFileName( inputVolume.c_str() );
+  imageReader->SetFileName(inputVolume.c_str());
 
-  using MeanFilterType = itk::MeanImageFilter< ImageType, ImageType >;
+  using MeanFilterType = itk::MeanImageFilter<ImageType, ImageType>;
   MeanFilterType::Pointer meanFilter = MeanFilterType::New();
 
   MeanFilterType::InputSizeType radius;
@@ -70,23 +70,23 @@ main( int argc, char * argv[] )
 
   try
   {
-    meanFilter->SetInput( imageReader->GetOutput() );
-    meanFilter->SetRadius( radius );
+    meanFilter->SetInput(imageReader->GetOutput());
+    meanFilter->SetRadius(radius);
     meanFilter->Update();
   }
 
-  catch ( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject & excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     throw;
   }
 
-  using ImageWriterType = itk::ImageFileWriter< ImageType >;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
   ImageWriterType::Pointer imageWriter = ImageWriterType::New();
   imageWriter->UseCompressionOn();
-  imageWriter->SetFileName( outputVolume );
-  imageWriter->SetInput( meanFilter->GetOutput() );
+  imageWriter->SetFileName(outputVolume);
+  imageWriter->SetInput(meanFilter->GetOutput());
   imageWriter->Update();
 
   return EXIT_SUCCESS;

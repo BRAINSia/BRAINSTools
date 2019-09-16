@@ -33,23 +33,23 @@ namespace itk
  * point, by using constructing a Kd-Tree structure for the PointSet.
  *
  */
-template < typename TPointSet >
+template <typename TPointSet>
 class PointLocator2 : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( PointLocator2 );
+  ITK_DISALLOW_COPY_AND_ASSIGN(PointLocator2);
 
   /** Standard class type alias. */
   using Self = PointLocator2;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Standard part of every itk Object. */
-  itkTypeMacro( PointLocator2, Object );
+  itkTypeMacro(PointLocator2, Object);
 
   static constexpr unsigned int PointDimension = TPointSet::PointDimension;
 
@@ -65,24 +65,24 @@ public:
   using PointsContainerConstIteratorType = typename PointSetType::PointsContainerConstIterator;
 
   /** Define the specific PointSet Type */
-  using ListSamplePointSetType = itk::PointSet< typename TPointSet::PixelType, PointDimension >;
+  using ListSamplePointSetType = itk::PointSet<typename TPointSet::PixelType, PointDimension>;
 
   /** Type of the PointSet to List Adaptor. */
   /** define the sample according to the point size */
-  using SampleAdaptorType = itk::Statistics::PointSetToListSampleAdaptor< ListSamplePointSetType >;
+  using SampleAdaptorType = itk::Statistics::PointSetToListSampleAdaptor<ListSamplePointSetType>;
 
   using SampleAdaptorPointer = typename SampleAdaptorType::Pointer;
 
   /** Types fo the KdTreeGenerator */
-  using TreeGeneratorType = itk::Statistics::KdTreeGenerator< SampleAdaptorType >;
+  using TreeGeneratorType = itk::Statistics::KdTreeGenerator<SampleAdaptorType>;
   using TreeGeneratorPointer = typename TreeGeneratorType::Pointer;
   using TreeType = typename TreeGeneratorType::KdTreeType;
   using TreeConstPointer = typename TreeType::ConstPointer;
   using InstanceIdentifierVectorType = typename TreeType::InstanceIdentifierVectorType;
 
   /** Connect the PointSet as input */
-  itkSetConstObjectMacro( PointSet, PointSetType );
-  itkGetConstObjectMacro( PointSet, PointSetType );
+  itkSetConstObjectMacro(PointSet, PointSetType);
+  itkGetConstObjectMacro(PointSet, PointSetType);
 
   /** Pre-Compute the KdTree structure that will later facilitate the search of
    * points */
@@ -91,18 +91,17 @@ public:
 
   /** Searches the k-nearest neighbors */
   void
-  Search( const PointType & query, unsigned int numberOfNeighborsRequested,
-          InstanceIdentifierVectorType & result ) const;
+  Search(const PointType & query, unsigned int numberOfNeighborsRequested, InstanceIdentifierVectorType & result) const;
 
   /** Searches the neighbors fallen into a hypersphere */
   void
-  Search( const PointType & query, double radius, InstanceIdentifierVectorType & result ) const;
+  Search(const PointType & query, double radius, InstanceIdentifierVectorType & result) const;
 
 protected:
   PointLocator2();
   ~PointLocator2();
   virtual void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
   PointSetConstPointer m_PointSet;

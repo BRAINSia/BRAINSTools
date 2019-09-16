@@ -52,23 +52,23 @@ namespace itk
  * PI: A. Pfefferbaum; and Grant No. AA13521, "INIA: Imaging Core",
  * PI: A. Pfefferbaum.
  */
-template < typename TInputImage, typename TOutputImage = TInputImage >
-class ITK_EXPORT AverageImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage = TInputImage>
+class ITK_EXPORT AverageImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( AverageImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(AverageImageFilter);
 
   /** Standard class type alias. */
   using Self = AverageImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( AverageImageFilter, ImageToImageFilter );
+  itkTypeMacro(AverageImageFilter, ImageToImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -97,10 +97,10 @@ protected:
   ~AverageImageFilter() override = default;
 
   void
-  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) override;
+  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
 
   void
-  PrintSelf( std::ostream &, Indent ) const override;
+  PrintSelf(std::ostream &, Indent) const override;
 };
 
 } // end namespace itk

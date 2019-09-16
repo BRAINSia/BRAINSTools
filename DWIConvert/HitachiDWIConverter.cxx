@@ -5,10 +5,10 @@
 #include "HitachiDWIConverter.h"
 #include "DWIDICOMConverterBase.h"
 
-HitachiDWIConverter::HitachiDWIConverter( DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                                          DWIConverter::FileNamesContainer &       inputFileNames,
-                                          const bool                               useBMatrixGradientDirections )
-  : DWIDICOMConverterBase( allHeaders, inputFileNames, useBMatrixGradientDirections )
+HitachiDWIConverter::HitachiDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
+                                         DWIConverter::FileNamesContainer &       inputFileNames,
+                                         const bool                               useBMatrixGradientDirections)
+  : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
 {}
 
 HitachiDWIConverter::~HitachiDWIConverter() {}
@@ -30,21 +30,21 @@ HitachiDWIConverter::LoadDicomDirectory()
 void
 HitachiDWIConverter::ExtractDWIData()
 {
-  for ( unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume )
+  for (unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume)
   {
     itk::DCMTKSequence SharedFunctionalGroupsSequence;
-    this->m_Headers[k]->GetElementSQ( 0x5200, 0x9229, SharedFunctionalGroupsSequence );
+    this->m_Headers[k]->GetElementSQ(0x5200, 0x9229, SharedFunctionalGroupsSequence);
     double b = 0.0;
-    SharedFunctionalGroupsSequence.GetElementFD( 0x0018, 0x9087, b );
-    this->m_BValues.push_back( b );
+    SharedFunctionalGroupsSequence.GetElementFD(0x0018, 0x9087, b);
+    this->m_BValues.push_back(b);
     double doubleArray[3];
-    SharedFunctionalGroupsSequence.GetElementFD( 0x0018, 0x9089, 3, doubleArray );
-    vnl_vector_fixed< double, 3 > vect3d;
-    for ( unsigned g = 0; g < 3; ++g )
+    SharedFunctionalGroupsSequence.GetElementFD(0x0018, 0x9089, 3, doubleArray);
+    vnl_vector_fixed<double, 3> vect3d;
+    for (unsigned g = 0; g < 3; ++g)
     {
       vect3d[g] = doubleArray[g];
     }
-    this->m_DiffusionVectors.push_back( vect3d );
+    this->m_DiffusionVectors.push_back(vect3d);
   }
 }
 

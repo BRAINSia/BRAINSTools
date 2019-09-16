@@ -34,23 +34,23 @@
 void
 RegisterRequiredFactories()
 {
-  itk::ObjectFactoryBase::RegisterFactory( itk::MetaImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::GDCMImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::JPEGImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::VTKImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::PNGImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::TIFFImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::BMPImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::NrrdImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::GiplImageIOFactory::New() );
-  itk::ObjectFactoryBase::RegisterFactory( itk::NiftiImageIOFactory::New() );
+  itk::ObjectFactoryBase::RegisterFactory(itk::MetaImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::GDCMImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::JPEGImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::VTKImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::PNGImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::TIFFImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::BMPImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::NrrdImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::GiplImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::NiftiImageIOFactory::New());
 }
 
 void
-ProcessArgumentsAndRegisterRequiredFactories( int * ac, ArgumentStringType * av )
+ProcessArgumentsAndRegisterRequiredFactories(int * ac, ArgumentStringType * av)
 {
   RegisterRequiredFactories();
-  ProcessArguments( ac, av );
+  ProcessArguments(ac, av);
 }
 
 #endif

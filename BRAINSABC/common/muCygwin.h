@@ -27,7 +27,7 @@
 
 // Cygwin exception handling work-around
 #undef itkExceptionMacro
-#define itkExceptionMacro( x )                                                                                         \
+#define itkExceptionMacro(x)                                                                                           \
   {                                                                                                                    \
     std::cerr << "Exception: " x << std::endl;                                                                         \
     std::cerr << "Possibly crashing about now..." << std::endl;                                                        \
@@ -36,24 +36,24 @@
 
 // TODO wrap main so that uncaught exception does not crash program
 #define MU_DEFINE_MAIN                                                                                                 \
-  int main( int argc, char ** argv )                                                                                   \
+  int main(int argc, char ** argv)                                                                                     \
   {                                                                                                                    \
     int r = 0;                                                                                                         \
     try                                                                                                                \
     {                                                                                                                  \
-      r = _mu_main( argc, argv );                                                                                      \
+      r = _mu_main(argc, argv);                                                                                        \
     }                                                                                                                  \
-    catch ( itk::ExceptionObject & e )                                                                                 \
+    catch (itk::ExceptionObject & e)                                                                                   \
     {                                                                                                                  \
       std::cerr << e << std::endl;                                                                                     \
       return -1;                                                                                                       \
     }                                                                                                                  \
-    catch ( std::exception & e )                                                                                       \
+    catch (std::exception & e)                                                                                         \
     {                                                                                                                  \
       std::cerr << "Exception: " << e.what() << std::endl;                                                             \
       return -1;                                                                                                       \
     }                                                                                                                  \
-    catch ( char * s )                                                                                                 \
+    catch (char * s)                                                                                                   \
     {                                                                                                                  \
       std::cerr << "Exception: " << s << std::endl;                                                                    \
       return -1;                                                                                                       \

@@ -60,29 +60,29 @@
 
 namespace itk
 {
-template < typename TLevelSet, typename TTensorImage = Image< itk::DiffusionTensor3D< float >, 3 > >
+template <typename TLevelSet, typename TTensorImage = Image<itk::DiffusionTensor3D<float>, 3>>
 // class TTensorImage=
 //
 // Image<itk::DiffusionTensor3D<float>,TLevelSet::ImageDimension>
 // >
 
-class DtiFastMarchingCostFilter : public ImageToImageFilter< TTensorImage, TLevelSet >
+class DtiFastMarchingCostFilter : public ImageToImageFilter<TTensorImage, TLevelSet>
 {
 public:
   /** Standard class typdedefs. */
   using Self = DtiFastMarchingCostFilter;
-  using Superclass = ImageSource< TLevelSet >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageSource<TLevelSet>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( DtiFastMarchingCostFilter, ImageToImageFilter );
+  itkTypeMacro(DtiFastMarchingCostFilter, ImageToImageFilter);
 
   /** Typedef support of level set method types for output image. */
-  using LevelSetType = LevelSetTypeDefault< TLevelSet >;
+  using LevelSetType = LevelSetTypeDefault<TLevelSet>;
   using LevelSetImageType = typename LevelSetType::LevelSetImageType;
   using LevelSetPointer = typename LevelSetType::LevelSetPointer;
   using PixelType = typename LevelSetType::PixelType;
@@ -105,15 +105,15 @@ public:
     }
 
     void
-    SetAxis( int axis )
+    SetAxis(int axis)
     {
       m_Axis = axis;
     }
 
     const AxisNodeType &
-    operator=( const NodeType & node )
+    operator=(const NodeType & node)
     {
-      this->NodeType::operator=( node );
+      this->NodeType::operator=(node);
       return *this;
     }
 
@@ -126,10 +126,10 @@ public:
     dimension = 3
   };
 
-  using TVector = vnl_vector_fixed< float, dimension >;
+  using TVector = vnl_vector_fixed<float, dimension>;
 
   /** Index type alias support. */
-  using IndexType = Index< dimension >;
+  using IndexType = Index<dimension>;
 
   /** Typedef support of input Tensor Image Type */
   using TensorImageType = TTensorImage;
@@ -145,7 +145,7 @@ public:
 
   /** Typedef support of input Anisotropy Image Type */
 
-  using AnisotropyImageType = itk::Image< float, dimension >;
+  using AnisotropyImageType = itk::Image<float, dimension>;
   using AnisotropyImagePointer = typename AnisotropyImageType::Pointer;
   using AnisotropyImageConstPointer = typename AnisotropyImageType::ConstPointer;
   using AnisotropyImageRegionType = typename AnisotropyImageType::RegionType;
@@ -167,26 +167,26 @@ public:
   };
 
   /** LabelImage type alias support. */
-  using LabelImageType = Image< unsigned char, dimension >;
+  using LabelImageType = Image<unsigned char, dimension>;
 
   /** LabelImagePointer type alias support. */
   using LabelImagePointer = typename LabelImageType::Pointer;
 
   /** OutputSpeedImage type alias support. */
-  using OutputSpeedImageType = itk::Image< float, dimension >;
+  using OutputSpeedImageType = itk::Image<float, dimension>;
   using OutputSpeedImagePointer = typename OutputSpeedImageType::Pointer;
   using SpeedImagePixelType = typename OutputSpeedImageType::PixelType;
 
-  using EigenvectorPixelType = itk::Vector< float, 3 >;
-  using EigenvectorImageType = itk::Image< EigenvectorPixelType, 3 >;
+  using EigenvectorPixelType = itk::Vector<float, 3>;
+  using EigenvectorImageType = itk::Image<EigenvectorPixelType, 3>;
   // using EigenvectorImageType = itk::Image<EigenvectorPixelType, dimension>;
   using EigenvectorImagePointer = typename EigenvectorImageType::Pointer;
-  using ConstNeighborhoodIteratorType = itk::ConstNeighborhoodIterator< EigenvectorImageType >;
+  using ConstNeighborhoodIteratorType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
 
   /** Set the container of Alive Points representing the initial front.
    * Alive points are represented as a VectorContainer of LevelSetNodes. */
   void
-  SetAlivePoints( NodeContainer * points )
+  SetAlivePoints(NodeContainer * points)
   {
     m_AlivePoints = points;
     this->Modified();
@@ -202,7 +202,7 @@ public:
   /** Set the container of Trial Points representing the initial front.
    * Trial points are represented as a VectorContainer of LevelSetNodes. */
   void
-  SetTrialPoints( NodeContainer * points )
+  SetTrialPoints(NodeContainer * points)
   {
     m_TrialPoints = points;
     this->Modified();
@@ -236,41 +236,41 @@ public:
     return m_OutputSpeedImage;
   }
 
-  itkSetObjectMacro( OutputImage, LevelSetImageType );
-  itkGetConstObjectMacro( OutputImage, LevelSetImageType );
-  itkSetObjectMacro( TensorImage, TensorImageType );
-  itkGetConstObjectMacro( TensorImage, TensorImageType );
-  itkSetObjectMacro( AnisotropyImage, AnisotropyImageType );
-  itkGetConstObjectMacro( AnisotropyImage, AnisotropyImageType );
+  itkSetObjectMacro(OutputImage, LevelSetImageType);
+  itkGetConstObjectMacro(OutputImage, LevelSetImageType);
+  itkSetObjectMacro(TensorImage, TensorImageType);
+  itkGetConstObjectMacro(TensorImage, TensorImageType);
+  itkSetObjectMacro(AnisotropyImage, AnisotropyImageType);
+  itkGetConstObjectMacro(AnisotropyImage, AnisotropyImageType);
 
   /** Set/Get the Normalization Factor for the Speed Image.
       The values in the Speed Image is divided by this
       factor. This allows the use of images with
       integer pixel types to represent the speed. */
 
-  itkSetMacro( NormalizationFactor, double );
-  itkGetMacro( NormalizationFactor, double );
+  itkSetMacro(NormalizationFactor, double);
+  itkGetMacro(NormalizationFactor, double);
 
   /** Set the Fast Marching algorithm Stopping Value. The Fast Marching
    * algorithm is terminated when the value of the smallest trial point
    * is greater than the stopping value. */
-  itkSetMacro( StoppingValue, double );
+  itkSetMacro(StoppingValue, double);
 
   /** Set Weight for Anisotropy Image*/
-  itkSetMacro( AnisotropyWeight, float );
+  itkSetMacro(AnisotropyWeight, float);
 
   /** Get the Fast Marching algorithm Stopping Value. */
-  itkGetConstReferenceMacro( StoppingValue, double );
+  itkGetConstReferenceMacro(StoppingValue, double);
 
   /** Set the Collect Points flag. Instrument the algorithm to collect
    * a container of all nodes which it has visited. Useful for
    * creating Narrowbands for level set algorithms that supports
    * narrow banding. */
-  itkSetMacro( CollectPoints, bool );
+  itkSetMacro(CollectPoints, bool);
 
   /** Get thConste Collect Points flag. */
-  itkGetConstReferenceMacro( CollectPoints, bool );
-  itkBooleanMacro( CollectPoints );
+  itkGetConstReferenceMacro(CollectPoints, bool);
+  itkBooleanMacro(CollectPoints);
 
   /** Get the container of Processed Points. If the CollectPoints flag
    * is set, the algorithm collects a container of all processed nodes.
@@ -291,7 +291,7 @@ public:
    * is copied from the input speed image. */
 
   virtual void
-  SetOutputSize( const OutputSizeType & size )
+  SetOutputSize(const OutputSizeType & size)
   {
     m_OutputRegion = size;
   }
@@ -302,18 +302,18 @@ public:
     return m_OutputRegion.GetSize();
   }
 
-  itkSetMacro( OutputRegion, OutputRegionType );
-  itkGetConstReferenceMacro( OutputRegion, OutputRegionType );
-  itkSetMacro( OutputSpacing, OutputSpacingType );
-  itkGetConstReferenceMacro( OutputSpacing, OutputSpacingType );
-  itkSetMacro( OutputOrigin, OutputPointType );
-  itkGetConstReferenceMacro( OutputOrigin, OutputPointType );
-  itkSetMacro( OutputDirection, OutputDirectionType );
-  itkGetConstReferenceMacro( OutputDirection, OutputDirectionType );
+  itkSetMacro(OutputRegion, OutputRegionType);
+  itkGetConstReferenceMacro(OutputRegion, OutputRegionType);
+  itkSetMacro(OutputSpacing, OutputSpacingType);
+  itkGetConstReferenceMacro(OutputSpacing, OutputSpacingType);
+  itkSetMacro(OutputOrigin, OutputPointType);
+  itkGetConstReferenceMacro(OutputOrigin, OutputPointType);
+  itkSetMacro(OutputDirection, OutputDirectionType);
+  itkGetConstReferenceMacro(OutputDirection, OutputDirectionType);
 
-  itkSetMacro( OverrideOutputInformation, bool );
-  itkGetConstReferenceMacro( OverrideOutputInformation, bool );
-  itkBooleanMacro( OverrideOutputInformation );
+  itkSetMacro(OverrideOutputInformation, bool);
+  itkGetConstReferenceMacro(OverrideOutputInformation, bool);
+  itkBooleanMacro(OverrideOutputInformation);
 
   void
   GenerateData() override;
@@ -323,33 +323,36 @@ protected:
   ~DtiFastMarchingCostFilter() override {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   virtual void
   UpdateFront( // const TensorImageType *,
-    LevelSetImageType * );
+    LevelSetImageType *);
 
   virtual double
   InitializeTrialPoints( // const TensorImageType *,
-    const IndexType & index, LevelSetImageType * );
+    const IndexType & index,
+    LevelSetImageType *);
 
   virtual void
   UpdateNeighbors( // const TensorImageType *,
-    const IndexType & index, LevelSetImageType * );
+    const IndexType & index,
+    LevelSetImageType *);
 
   virtual double
   UpdateValue( // const TensorImageType *,
-    const IndexType & index, LevelSetImageType * );
+    const IndexType & index,
+    LevelSetImageType *);
 
   virtual double
-  ModifiedUpdateValue( const TensorImageType *, const IndexType & index, LevelSetImageType * );
+  ModifiedUpdateValue(const TensorImageType *, const IndexType & index, LevelSetImageType *);
 
   /** Set Image NRRD Meta Data - Used for Image I/O */
   void
   SetMetaDataHeader();
 
   const AxisNodeType &
-  GetNodeUsedInCalculation( unsigned int idx ) const
+  GetNodeUsedInCalculation(unsigned int idx) const
   {
     return m_NodesUsed[idx];
   }
@@ -359,24 +362,24 @@ protected:
   GenerateOutputInformation() override;
 
   void
-  EnlargeOutputRequestedRegion( DataObject * output ) override;
+  EnlargeOutputRequestedRegion(DataObject * output) override;
 
   /** Get Large Value. This value is used to
       represent the concept of infinity for the time assigned to pixels that
       have not been visited. This value is set by default to half the
       max() of the pixel type used to represent the time-crossing map. */
-  itkGetConstReferenceMacro( LargeValue, PixelType );
+  itkGetConstReferenceMacro(LargeValue, PixelType);
 
   OutputRegionType m_BufferedRegion;
   using LevelSetIndexType = typename LevelSetImageType::IndexType;
   LevelSetIndexType m_StartIndex;
   LevelSetIndexType m_LastIndex;
 
-  itkGetConstReferenceMacro( StartIndex, LevelSetIndexType );
-  itkGetConstReferenceMacro( LastIndex, LevelSetIndexType );
+  itkGetConstReferenceMacro(StartIndex, LevelSetIndexType);
+  itkGetConstReferenceMacro(LastIndex, LevelSetIndexType);
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DtiFastMarchingCostFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingCostFilter);
 
   NodeContainerPointer m_AlivePoints;
   NodeContainerPointer m_TrialPoints;
@@ -407,9 +410,9 @@ private:
   /** Trial points are stored in a min-heap. This allow efficient access
    * to the trial point with minimum value which is the next grid point
    * the algorithm processes. */
-  using HeapContainer = std::vector< AxisNodeType >;
-  using NodeComparer = std::greater< AxisNodeType >;
-  using HeapType = std::priority_queue< AxisNodeType, HeapContainer, NodeComparer >;
+  using HeapContainer = std::vector<AxisNodeType>;
+  using NodeComparer = std::greater<AxisNodeType>;
+  using HeapType = std::priority_queue<AxisNodeType, HeapContainer, NodeComparer>;
 
   HeapType m_TrialHeap;
 

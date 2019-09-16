@@ -25,66 +25,65 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::AssignScalarValuesQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::AssignScalarValuesQuadEdgeMeshFilter()
 {
-  this->SetNumberOfRequiredInputs( 2 );
-  this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfIndexedOutputs( 1 );
+  this->SetNumberOfRequiredInputs(2);
+  this->SetNumberOfRequiredOutputs(1);
+  this->SetNumberOfIndexedOutputs(1);
 
-  this->SetNthOutput( 0, OutputMeshType::New() );
+  this->SetNthOutput(0, OutputMeshType::New());
 }
 
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::~AssignScalarValuesQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::~AssignScalarValuesQuadEdgeMeshFilter()
 {}
 
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 void
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::SetSourceMesh(
-  const SourceMeshType * mesh )
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::SetSourceMesh(const SourceMeshType * mesh)
 {
-  itkDebugMacro( "setting source Mesh to " << mesh );
-  if ( mesh != static_cast< const SourceMeshType * >( this->ProcessObject::GetInput( 0 ) ) )
+  itkDebugMacro("setting source Mesh to " << mesh);
+  if (mesh != static_cast<const SourceMeshType *>(this->ProcessObject::GetInput(0)))
   {
-    this->ProcessObject::SetNthInput( 1, const_cast< SourceMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(1, const_cast<SourceMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
-const typename AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::SourceMeshType *
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::GetSourceMesh() const
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
+const typename AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::SourceMeshType *
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::GetSourceMesh() const
 {
-  Self *                 surrogate = const_cast< Self * >( this );
-  const SourceMeshType * sourceMesh = static_cast< const SourceMeshType * >( surrogate->ProcessObject::GetInput( 1 ) );
+  Self *                 surrogate = const_cast<Self *>(this);
+  const SourceMeshType * sourceMesh = static_cast<const SourceMeshType *>(surrogate->ProcessObject::GetInput(1));
   return sourceMesh;
 }
 
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 void
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::SetInputMesh( const InputMeshType * mesh )
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::SetInputMesh(const InputMeshType * mesh)
 {
-  itkDebugMacro( "setting input Mesh to " << mesh );
-  if ( mesh != static_cast< const InputMeshType * >( this->ProcessObject::GetInput( 1 ) ) )
+  itkDebugMacro("setting input Mesh to " << mesh);
+  if (mesh != static_cast<const InputMeshType *>(this->ProcessObject::GetInput(1)))
   {
-    this->ProcessObject::SetNthInput( 0, const_cast< InputMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(0, const_cast<InputMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
-const typename AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::InputMeshType *
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::GetInputMesh() const
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
+const typename AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::InputMeshType *
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::GetInputMesh() const
 {
-  Self *                surrogate = const_cast< Self * >( this );
-  const InputMeshType * inputMesh = static_cast< const InputMeshType * >( surrogate->ProcessObject::GetInput( 0 ) );
+  Self *                surrogate = const_cast<Self *>(this);
+  const InputMeshType * inputMesh = static_cast<const InputMeshType *>(surrogate->ProcessObject::GetInput(0));
   return inputMesh;
 }
 
-template < typename TInputMesh, typename TSourceMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TSourceMesh, typename TOutputMesh>
 void
-AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::GenerateData()
+AssignScalarValuesQuadEdgeMeshFilter<TInputMesh, TSourceMesh, TOutputMesh>::GenerateData()
 {
   this->CopyInputMeshToOutputMesh();
 
@@ -94,19 +93,19 @@ AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::Ge
 
   OutputPointDataContainerPointer outputPointData = this->GetOutput()->GetPointData();
 
-  if ( outputPointData.IsNull() )
+  if (outputPointData.IsNull())
   {
     outputPointData = OutputPointDataContainer::New();
-    this->GetOutput()->SetPointData( outputPointData );
+    this->GetOutput()->SetPointData(outputPointData);
   }
 
   const unsigned int numberOfNodes = sourceMesh->GetNumberOfPoints();
 
-  outputPointData->Reserve( numberOfNodes );
+  outputPointData->Reserve(numberOfNodes);
 
-  if ( !sourcePointData )
+  if (!sourcePointData)
   {
-    itkExceptionMacro( "Source PointData is missing" );
+    itkExceptionMacro("Source PointData is missing");
   }
 
   OutputPointDataContainerIterator outputDataItr = outputPointData->Begin();
@@ -115,7 +114,7 @@ AssignScalarValuesQuadEdgeMeshFilter< TInputMesh, TSourceMesh, TOutputMesh >::Ge
   SourcePointDataIterator sourceDataItr = sourcePointData->Begin();
   SourcePointDataIterator sourceDataEnd = sourcePointData->End();
 
-  while ( sourceDataItr != sourceDataEnd )
+  while (sourceDataItr != sourceDataEnd)
   {
     outputDataItr.Value() = sourceDataItr.Value();
 

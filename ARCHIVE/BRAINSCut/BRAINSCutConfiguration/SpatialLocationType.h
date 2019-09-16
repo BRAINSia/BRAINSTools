@@ -26,18 +26,18 @@ class SpatialLocationType : public ElementParser
 public:
   using SuperClass = ElementParser;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== SpatialLocationType ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== SpatialLocationType ===" << std::endl;
     return indent + 2;
   }
 
   SpatialLocationType()
-    : ElementParser( "SpatialLocation" )
+    : ElementParser("SpatialLocation")
   {
-    this->Add( new StringValue( "Type", "" ), "Type" );
-    this->Add( new StringValue( "Filename", "" ), "Filename" );
+    this->Add(new StringValue("Type", ""), "Type");
+    this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
@@ -45,7 +45,7 @@ class SpatialLocationList : public ElementParser
 {
 public:
   SpatialLocationList()
-    : ElementParser( "SpatialLocationList" )
+    : ElementParser("SpatialLocationList")
   {}
 };
 

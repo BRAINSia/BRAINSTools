@@ -26,25 +26,25 @@
 
 namespace itk
 {
-template < typename TScalarType = double, // Data type for scalars
-           unsigned int NDimensions = 3 >
+template <typename TScalarType = double, // Data type for scalars
+          unsigned int NDimensions = 3>
 // Number of dimensions
-class DisplacementFieldTransform : public Transform< TScalarType, NDimensions, NDimensions >
+class DisplacementFieldTransform : public Transform<TScalarType, NDimensions, NDimensions>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DisplacementFieldTransform );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DisplacementFieldTransform);
 
   /** Standard class type alias. */
   using Self = DisplacementFieldTransform;
-  using Superclass = Transform< TScalarType, NDimensions, NDimensions >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = Transform<TScalarType, NDimensions, NDimensions>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** New macro for creation of through the object factory.*/
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( DisplacementFieldTransform, Transform );
+  itkTypeMacro(DisplacementFieldTransform, Transform);
 
   /** Dimension of the domain space. */
   static constexpr unsigned int SpaceDimension = NDimensions;
@@ -59,20 +59,20 @@ public:
   using JacobianType = typename Superclass::JacobianType;
 
   /** Standard vector type for this class. */
-  using InputVectorType = Vector< TScalarType, Self::SpaceDimension >;
-  using OutputVectorType = Vector< TScalarType, Self::SpaceDimension >;
+  using InputVectorType = Vector<TScalarType, Self::SpaceDimension>;
+  using OutputVectorType = Vector<TScalarType, Self::SpaceDimension>;
 
   /** Standard covariant vector type for this class. */
-  using InputCovariantVectorType = CovariantVector< TScalarType, Self::SpaceDimension >;
-  using OutputCovariantVectorType = CovariantVector< TScalarType, Self::SpaceDimension >;
+  using InputCovariantVectorType = CovariantVector<TScalarType, Self::SpaceDimension>;
+  using OutputCovariantVectorType = CovariantVector<TScalarType, Self::SpaceDimension>;
 
   /** Standard vnl_vector type for this class. */
-  using InputVnlVectorType = vnl_vector_fixed< TScalarType, Self::SpaceDimension >;
-  using OutputVnlVectorType = vnl_vector_fixed< TScalarType, Self::SpaceDimension >;
+  using InputVnlVectorType = vnl_vector_fixed<TScalarType, Self::SpaceDimension>;
+  using OutputVnlVectorType = vnl_vector_fixed<TScalarType, Self::SpaceDimension>;
 
   /** Standard coordinate point type for this class. */
-  using InputPointType = Point< TScalarType, Self::SpaceDimension >;
-  using OutputPointType = Point< TScalarType, Self::SpaceDimension >;
+  using InputPointType = Point<TScalarType, Self::SpaceDimension>;
+  using OutputPointType = Point<TScalarType, Self::SpaceDimension>;
 
   /** This method sets the parameters of the transform.
    *
@@ -88,7 +88,7 @@ public:
    *
    */
   void
-  SetParameters( const ParametersType & parameters );
+  SetParameters(const ParametersType & parameters);
 
   /** This method sets the fixed parameters of the transform.
    *
@@ -108,7 +108,7 @@ public:
    *
    */
   void
-  SetFixedParameters( const ParametersType & parameters );
+  SetFixedParameters(const ParametersType & parameters);
 
   /** This method sets the parameters of the transform.
    *
@@ -127,22 +127,22 @@ public:
    *
    */
   void
-  SetParametersByValue( const ParametersType & parameters );
+  SetParametersByValue(const ParametersType & parameters);
 
   void
   SetIdentity();
 
   /** Get the Transformation Parameters. */
   virtual const ParametersType &
-  GetParameters( void ) const;
+  GetParameters(void) const;
 
   /** Get the Transformation Fixed Parameters. */
   virtual const ParametersType &
-  GetFixedParameters( void ) const;
+  GetFixedParameters(void) const;
 
   /** Parameters as SpaceDimension number of images. */
   using InternalPixelType = typename ParametersType::ValueType;
-  using ImageType = VectorImage< InternalPixelType, Self::SpaceDimension >;
+  using ImageType = VectorImage<InternalPixelType, Self::SpaceDimension>;
   using ImagePointer = typename ImageType::Pointer;
   using PixelType = typename ImageType::PixelType;
 
@@ -169,47 +169,47 @@ public:
    * SetImage() also copies the parameters to m_InternalParametersBuffer.
    */
   virtual void
-  SetImage( ImagePointer images );
+  SetImage(ImagePointer images);
 
   OutputPointType
-  TransformPoint( const InputPointType & point ) const;
+  TransformPoint(const InputPointType & point) const;
 
-  using ContinuousIndexType = typename ContinuousIndex< ScalarType, Self::SpaceDimension >;
+  using ContinuousIndexType = typename ContinuousIndex<ScalarType, Self::SpaceDimension>;
 
   /** Method to transform a vector -
    *  not applicable for this type of transform. */
   virtual OutputVectorType
-  TransformVector( const InputVectorType & ) const
+  TransformVector(const InputVectorType &) const
   {
-    itkExceptionMacro( << "Method not applicable for deformable transform." );
+    itkExceptionMacro(<< "Method not applicable for deformable transform.");
     return OutputVectorType();
   }
 
   /** Method to transform a vnl_vector -
    *  not applicable for this type of transform */
   virtual OutputVnlVectorType
-  TransformVector( const InputVnlVectorType & ) const
+  TransformVector(const InputVnlVectorType &) const
   {
-    itkExceptionMacro( << "Method not applicable for deformable transform. " );
+    itkExceptionMacro(<< "Method not applicable for deformable transform. ");
     return OutputVnlVectorType();
   }
 
   /** Method to transform a CovariantVector -
    *  not applicable for this type of transform */
   virtual OutputCovariantVectorType
-  TransformCovariantVector( const InputCovariantVectorType & ) const
+  TransformCovariantVector(const InputCovariantVectorType &) const
   {
-    itkExceptionMacro( << "Method not applicable for deformable transfrom. " );
+    itkExceptionMacro(<< "Method not applicable for deformable transfrom. ");
     return OutputCovariantVectorType();
   }
 
   /** Compute the Jacobian Matrix of the transformation at one point */
   virtual const JacobianType &
-  GetJacobian( const InputPointType & point );
+  GetJacobian(const InputPointType & point);
 
   /** Return the number of parameters that completely define the Transfom */
   virtual unsigned int
-  GetNumberOfParameters( void ) const;
+  GetNumberOfParameters(void) const;
 
   /** Indicates that this transform is linear. That is, given two
    * points P and Q, and scalar coefficients a and b, then
@@ -231,7 +231,7 @@ public:
 protected:
   /** Print contents of an DisplacementFieldTransform. */
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   DisplacementFieldTransform();
   virtual ~DisplacementFieldTransform();
@@ -242,11 +242,11 @@ protected:
 
   /** Convert an input point to a continuous index inside the grid */
   void
-  TransformPointToContinuousIndex( const InputPointType & point, ContinuousIndexType & index ) const;
+  TransformPointToContinuousIndex(const InputPointType & point, ContinuousIndexType & index) const;
 
 private:
   /** Typedefs for specifying the extend to the grid. */
-  using RegionType = ImageRegion< Self::SpaceDimension >;
+  using RegionType = ImageRegion<Self::SpaceDimension>;
 
   using IndexType = typename RegionType::IndexType;
   using SizeType = typename RegionType::SizeType;
@@ -262,7 +262,7 @@ private:
 
   /** Jacobian as SpaceDimension number of images. */
   using JacobianInternalPixelType = typename JacobianType::ValueType;
-  using JacobianImageType = VectorImage< JacobianInternalPixelType, Self::SpaceDimension >;
+  using JacobianImageType = VectorImage<JacobianInternalPixelType, Self::SpaceDimension>;
   using JacobianPixelType = typename JacobianImageType::PixelType;
 
   typename JacobianImageType::Pointer m_JacobianImage[NDimensions];
@@ -274,22 +274,22 @@ private:
   ParametersType m_InternalParametersBuffer;
 
   OutputVectorType
-  LinearInterpolateAtIndex( const ContinuousIndexType & index ) const;
+  LinearInterpolateAtIndex(const ContinuousIndexType & index) const;
 
   /** Check if a continuous index is inside the valid region. */
   bool
-  InsideValidRegion( const ContinuousIndexType & index ) const;
+  InsideValidRegion(const ContinuousIndexType & index) const;
 }; // class DisplacementFieldTransform
 } // namespace itk
 
 // Define instantiation macro for this template.
-#define ITK_TEMPLATE_DisplacementFieldTransform( _, EXPORT, x, y )                                                     \
+#define ITK_TEMPLATE_DisplacementFieldTransform(_, EXPORT, x, y)                                                       \
   namespace itk                                                                                                        \
   {                                                                                                                    \
-  _( 3(class EXPORT DisplacementFieldTransform< ITK_TEMPLATE_3 x >))                                                   \
+  _(3(class EXPORT DisplacementFieldTransform<ITK_TEMPLATE_3 x>))                                                      \
   namespace Templates                                                                                                  \
   {                                                                                                                    \
-  typedef DisplacementFieldTransform< ITK_TEMPLATE_3 x > DisplacementFieldTransform##y;                                \
+  typedef DisplacementFieldTransform<ITK_TEMPLATE_3 x> DisplacementFieldTransform##y;                                  \
   }                                                                                                                    \
   }
 #if ITK_TEMPLATE_EXPLICIT

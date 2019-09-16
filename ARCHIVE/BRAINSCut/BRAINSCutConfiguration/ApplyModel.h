@@ -28,18 +28,18 @@ class ApplyModelType : public ElementParser
 public:
   using SuperClass = ElementParser;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== ApplyModelType ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== ApplyModelType ===" << std::endl;
     return indent + 2;
   }
 
   ApplyModelType()
-    : ElementParser( "ApplyModel" )
+    : ElementParser("ApplyModel")
   {
-    this->Add( new FloatValue( "MaskThresh", 0.5 ), "MaskThresh" );
-    this->Add( new FloatValue( "GaussianSmoothingSigma", 0.5 ), "GaussianSmoothingSigma" );
+    this->Add(new FloatValue("MaskThresh", 0.5), "MaskThresh");
+    this->Add(new FloatValue("GaussianSmoothingSigma", 0.5), "GaussianSmoothingSigma");
   }
 };
 

@@ -4,9 +4,9 @@
 #include <itkMultiScaleHessianBasedMeasureImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
-  if ( argc < 3 )
+  if (argc < 3)
   {
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0];
@@ -26,73 +26,73 @@ main( int argc, char * argv[] )
   double       gamma = 20.0;
   int          structure = 2;
   bool         bright = true;
-  if ( argc > 3 )
+  if (argc > 3)
   {
-    sigmaMinimum = std::stod( argv[3] );
+    sigmaMinimum = std::stod(argv[3]);
   }
-  if ( argc > 4 )
+  if (argc > 4)
   {
-    sigmaMaximum = std::stod( argv[4] );
+    sigmaMaximum = std::stod(argv[4]);
   }
-  if ( argc > 5 )
+  if (argc > 5)
   {
-    numberOfSigmaSteps = std::stod( argv[5] );
+    numberOfSigmaSteps = std::stod(argv[5]);
   }
-  if ( argc > 6 )
+  if (argc > 6)
   {
-    alpha = std::stod( argv[6] );
+    alpha = std::stod(argv[6]);
   }
-  if ( argc > 7 )
+  if (argc > 7)
   {
-    beta = std::stod( argv[7] );
+    beta = std::stod(argv[7]);
   }
-  if ( argc > 8 )
+  if (argc > 8)
   {
-    gamma = std::stod( argv[8] );
+    gamma = std::stod(argv[8]);
   }
-  if ( argc > 9 )
+  if (argc > 9)
   {
-    structure = std::stoi( argv[9] );
+    structure = std::stoi(argv[9]);
   }
-  if ( argc > 10 )
+  if (argc > 10)
   {
     bright = argv[10];
   }
 
   constexpr unsigned int Dimension = 3;
   using PixelType = float;
-  using ImageType = itk::Image< PixelType, Dimension >;
-  using HessianPixelType = itk::SymmetricSecondRankTensor< double, Dimension >;
+  using ImageType = itk::Image<PixelType, Dimension>;
+  using HessianPixelType = itk::SymmetricSecondRankTensor<double, Dimension>;
 
-  using HessianImageType = itk::Image< HessianPixelType, Dimension >;
-  using ReaderType = itk::ImageFileReader< ImageType >;
+  using HessianImageType = itk::Image<HessianPixelType, Dimension>;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFileName );
+  reader->SetFileName(inputFileName);
 
-  using ObjectnessFilterType = itk::HessianToObjectnessMeasureImageFilter< HessianImageType, ImageType >;
+  using ObjectnessFilterType = itk::HessianToObjectnessMeasureImageFilter<HessianImageType, ImageType>;
   ObjectnessFilterType::Pointer objectnessFilter = ObjectnessFilterType::New();
-  objectnessFilter->SetBrightObject( bright );
-  objectnessFilter->SetScaleObjectnessMeasure( false );
-  objectnessFilter->SetAlpha( alpha );
-  objectnessFilter->SetBeta( beta );
-  objectnessFilter->SetGamma( gamma );
-  objectnessFilter->SetObjectDimension( structure );
+  objectnessFilter->SetBrightObject(bright);
+  objectnessFilter->SetScaleObjectnessMeasure(false);
+  objectnessFilter->SetAlpha(alpha);
+  objectnessFilter->SetBeta(beta);
+  objectnessFilter->SetGamma(gamma);
+  objectnessFilter->SetObjectDimension(structure);
 
   using MultiScaleEnhancementFilterType =
-    itk::MultiScaleHessianBasedMeasureImageFilter< ImageType, HessianImageType, ImageType >;
+    itk::MultiScaleHessianBasedMeasureImageFilter<ImageType, HessianImageType, ImageType>;
   MultiScaleEnhancementFilterType::Pointer multiScaleEnhancementFilter = MultiScaleEnhancementFilterType::New();
-  multiScaleEnhancementFilter->SetInput( reader->GetOutput() );
-  multiScaleEnhancementFilter->SetHessianToMeasureFilter( objectnessFilter );
+  multiScaleEnhancementFilter->SetInput(reader->GetOutput());
+  multiScaleEnhancementFilter->SetHessianToMeasureFilter(objectnessFilter);
   multiScaleEnhancementFilter->SetSigmaStepMethodToLogarithmic();
-  multiScaleEnhancementFilter->SetSigmaMinimum( sigmaMinimum );
-  multiScaleEnhancementFilter->SetSigmaMaximum( sigmaMaximum );
-  multiScaleEnhancementFilter->SetNumberOfSigmaSteps( numberOfSigmaSteps );
+  multiScaleEnhancementFilter->SetSigmaMinimum(sigmaMinimum);
+  multiScaleEnhancementFilter->SetSigmaMaximum(sigmaMaximum);
+  multiScaleEnhancementFilter->SetNumberOfSigmaSteps(numberOfSigmaSteps);
   multiScaleEnhancementFilter->Update();
 
-  using WriterType = itk::ImageFileWriter< ImageType >;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileName );
-  writer->SetInput( multiScaleEnhancementFilter->GetOutput() );
+  writer->SetFileName(outputFileName);
+  writer->SetInput(multiScaleEnhancementFilter->GetOutput());
   std::cout << objectnessFilter->GetAlpha() << std::endl;
   std::cout << objectnessFilter->GetBeta() << std::endl;
   std::cout << objectnessFilter->GetGamma() << std::endl;
@@ -102,7 +102,7 @@ main( int argc, char * argv[] )
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & error )
+  catch (itk::ExceptionObject & error)
   {
     std::cerr << "Error: " << error << std::endl;
     return EXIT_FAILURE;

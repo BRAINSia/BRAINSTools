@@ -4,12 +4,12 @@
 
 #include "DWIConverter.h"
 #include "itkFlipImageFilter.h"
-DWIConverter::DWIConverter( const FileNamesContainer & inputFileNames )
-  : m_InputFileNames( inputFileNames )
-  , m_SlicesPerVolume( 0 )
-  , m_NSlice( 0 )
-  , m_NVolume( 0 )
-  , m_NRRDSpaceDefinition( "left-posterior-superior" )
+DWIConverter::DWIConverter(const FileNamesContainer & inputFileNames)
+  : m_InputFileNames(inputFileNames)
+  , m_SlicesPerVolume(0)
+  , m_NSlice(0)
+  , m_NVolume(0)
+  , m_NRRDSpaceDefinition("left-posterior-superior")
 {
   this->m_MeasurementFrame.SetIdentity();
   m_thickness = 0;
@@ -21,7 +21,7 @@ DWIConverter::RotationMatrixType
 DWIConverter::GetSpacingMatrix() const
 {
   RotationMatrixType SpacingMatrix;
-  SpacingMatrix.Fill( 0.0 );
+  SpacingMatrix.Fill(0.0);
   SpacingMatrix[0][0] = this->m_Volume->GetSpacing()[0];
   SpacingMatrix[1][1] = this->m_Volume->GetSpacing()[1];
   SpacingMatrix[2][2] = this->m_Volume->GetSpacing()[2];
@@ -40,19 +40,19 @@ DWIConverter::ConvertToSingleBValueScaledDiffusionVectors()
 {
   const double maxBvalue = this->GetMaxBValue();
   {
-    DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors( 0 );
-    BvalueScaledDiffusionVectors.reserve( m_DiffusionVectors.size() );
-    for ( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
+    DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors(0);
+    BvalueScaledDiffusionVectors.reserve(m_DiffusionVectors.size());
+    for (unsigned int k = 0; k < m_DiffusionVectors.size(); ++k)
     {
-      vnl_vector_fixed< double, 3 > vec( 0.0 );
-      const float                   scaleFactor = ( maxBvalue > 0 ) ? ( sqrt( this->m_BValues[k] / maxBvalue ) ) : 0.0F;
+      vnl_vector_fixed<double, 3> vec(0.0);
+      const float                 scaleFactor = (maxBvalue > 0) ? (sqrt(this->m_BValues[k] / maxBvalue)) : 0.0F;
       std::cout << "Scale Factor for Multiple BValues: " << k << " -- sqrt( " << this->m_BValues[k] << " / "
                 << maxBvalue << " ) = " << scaleFactor << std::endl;
-      for ( unsigned ind = 0; ind < 3; ++ind )
+      for (unsigned ind = 0; ind < 3; ++ind)
       {
         vec[ind] = this->m_DiffusionVectors[k][ind] * scaleFactor;
       }
-      BvalueScaledDiffusionVectors.push_back( vec );
+      BvalueScaledDiffusionVectors.push_back(vec);
       this->m_BValues[k] = maxBvalue;
     }
     this->m_DiffusionVectors = BvalueScaledDiffusionVectors;
@@ -64,47 +64,47 @@ DWIConverter::ConvertToMutipleBValuesUnitScaledBVectors()
 {
   const double maxBvalue = this->GetMaxBValue();
   {
-    for ( unsigned int k = 0; k < m_DiffusionVectors.size(); ++k )
+    for (unsigned int k = 0; k < m_DiffusionVectors.size(); ++k)
     {
       double mag = m_DiffusionVectors[k].magnitude();
       m_DiffusionVectors[k].normalize();
-      this->m_BValues[k] = itk::Math::Round< double >( maxBvalue * mag * mag );
+      this->m_BValues[k] = itk::Math::Round<double>(maxBvalue * mag * mag);
     }
   }
 }
 
 Volume4DType::Pointer
-DWIConverter::OrientForFSLConventions( const bool toFSL )
+DWIConverter::OrientForFSLConventions(const bool toFSL)
 {
   static const double FSLDesiredDirectionFlipsWRTLPS[4] = { 1, -1, 1, 1 };
   static const double DicomDesiredDirectionFlipsWRTLPS[4] = { 1, 1, 1, 1 };
   this->ConvertBVectorsToIdentityMeasurementFrame();
-  Volume4DType::Pointer       image4D = ThreeDToFourDImage( this->GetDiffusionVolume() );
+  Volume4DType::Pointer       image4D = ThreeDToFourDImage(this->GetDiffusionVolume());
   Volume4DType::DirectionType direction = image4D->GetDirection();
-  direction.GetVnlMatrix().get_row( 0 ).magnitude();
+  direction.GetVnlMatrix().get_row(0).magnitude();
   // LPS to RAI as FSL desires images to be formatted for viewing purposes.
   // This conversion makes FSLView display the images in
   // a way that is most easily interpretable.
-  using FlipperType = itk::FlipImageFilter< Volume4DType >;
+  using FlipperType = itk::FlipImageFilter<Volume4DType>;
   FlipperType::Pointer myFlipper = FlipperType::New();
-  myFlipper->SetInput( image4D );
+  myFlipper->SetInput(image4D);
   FlipperType::FlipAxesArrayType arrayAxisFlip;
-  for ( size_t i = 0; i < Volume4DType::ImageDimension; ++i )
+  for (size_t i = 0; i < Volume4DType::ImageDimension; ++i)
   {
-    if ( toFSL )
+    if (toFSL)
     {
       arrayAxisFlip[i] =
-        ( FSLDesiredDirectionFlipsWRTLPS[i] * direction( i, i ) < -0.5 ); // i.e. a negative magnitude greater than 0.5
+        (FSLDesiredDirectionFlipsWRTLPS[i] * direction(i, i) < -0.5); // i.e. a negative magnitude greater than 0.5
     }
     else
     {
-      arrayAxisFlip[i] = ( DicomDesiredDirectionFlipsWRTLPS[i] * direction( i, i ) <
-                           -0.5 ); // i.e. a negative magnitude greater than 0.5
+      arrayAxisFlip[i] =
+        (DicomDesiredDirectionFlipsWRTLPS[i] * direction(i, i) < -0.5); // i.e. a negative magnitude greater than 0.5
     }
     // This is necesssary to ensure that the BVEC file is consistent with FSL orientation assumptions
-    for ( size_t g = 0; g < this->m_DiffusionVectors.size(); ++g )
+    for (size_t g = 0; g < this->m_DiffusionVectors.size(); ++g)
     {
-      this->m_DiffusionVectors[g][i] *= ( arrayAxisFlip[i] ? -1 : 1 );
+      this->m_DiffusionVectors[g][i] *= (arrayAxisFlip[i] ? -1 : 1);
     }
   }
   /* Debugging information for identifying orientation!
@@ -119,30 +119,30 @@ DWIConverter::OrientForFSLConventions( const bool toFSL )
   //
   // FSL wants the second and third dimensions flipped with regards to LPS orientation
   // FSL wants the second and third dimeinsions flipped with regards to LPS orientation
-  myFlipper->SetFlipAxes( arrayAxisFlip );
+  myFlipper->SetFlipAxes(arrayAxisFlip);
   myFlipper->FlipAboutOriginOff(); // Flip the image and direction cosignes
   // this is similar to a transform of [1 0 0; 0 -1 0; 0 0 -1]
   myFlipper->Update();
   Volume4DType::Pointer temp = myFlipper->GetOutput();
-  temp->SetMetaDataDictionary( image4D->GetMetaDataDictionary() );
-  this->m_Volume = FourDToThreeDImage( temp );
+  temp->SetMetaDataDictionary(image4D->GetMetaDataDictionary());
+  this->m_Volume = FourDToThreeDImage(temp);
   return temp;
 }
 
-const std::vector< double > &
+const std::vector<double> &
 DWIConverter::GetBValues() const
 {
   return this->m_BValues;
 }
 void
-DWIConverter::SetBValues( const std::vector< double > & inBValues )
+DWIConverter::SetBValues(const std::vector<double> & inBValues)
 {
   this->m_BValues = inBValues;
 }
 double
 DWIConverter::GetMaxBValue() const
 {
-  return ComputeMaxBvalue( this->m_BValues );
+  return ComputeMaxBvalue(this->m_BValues);
 }
 
 DWIConverter::Volume3DUnwrappedType::Pointer
@@ -176,9 +176,9 @@ DWIConverter::GetOrigin() const
 }
 
 void
-DWIConverter::SetOrigin( DWIConverter::Volume3DUnwrappedType::PointType origin )
+DWIConverter::SetOrigin(DWIConverter::Volume3DUnwrappedType::PointType origin)
 {
-  return this->m_Volume->SetOrigin( origin );
+  return this->m_Volume->SetOrigin(origin);
 }
 
 
@@ -229,68 +229,69 @@ DWIConverter::GetCols() const
 }
 
 void
-DWIConverter::ReadGradientInformation( const std::string & inputBValues, const std::string & inputBVectors,
-                                       const std::string & inputVolumeNameTemplate )
+DWIConverter::ReadGradientInformation(const std::string & inputBValues,
+                                      const std::string & inputBVectors,
+                                      const std::string & inputVolumeNameTemplate)
 { // override gradients embedded in file with an external FSL Formatted files
   std::string _inputBValues = inputBValues;
-  std::string baseDirectory = itksys::SystemTools::GetParentDirectory( inputVolumeNameTemplate );
-  if ( CheckArg< std::string >( "B Values", inputBValues, "" ) == EXIT_FAILURE )
+  std::string baseDirectory = itksys::SystemTools::GetParentDirectory(inputVolumeNameTemplate);
+  if (CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE)
   {
-    std::vector< std::string > pathElements;
-    if ( !baseDirectory.empty() )
+    std::vector<std::string> pathElements;
+    if (!baseDirectory.empty())
     {
-      pathElements.push_back( baseDirectory );
-      pathElements.push_back( "/" );
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
     }
-    pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension( inputVolumeNameTemplate ) + ".bval" );
-    _inputBValues = itksys::SystemTools::JoinPath( pathElements );
+    pathElements.push_back(itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bval");
+    _inputBValues = itksys::SystemTools::JoinPath(pathElements);
     std::cout << "   From template " << inputVolumeNameTemplate << std::endl;
     std::cout << "   defaulting to: " << _inputBValues << std::endl;
   }
   std::string _inputBVectors = inputBVectors;
-  if ( CheckArg< std::string >( "B Vectors", inputBVectors, "" ) == EXIT_FAILURE )
+  if (CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE)
   {
-    std::vector< std::string > pathElements;
-    if ( !baseDirectory.empty() )
+    std::vector<std::string> pathElements;
+    if (!baseDirectory.empty())
     {
-      pathElements.push_back( baseDirectory );
-      pathElements.push_back( "/" );
+      pathElements.push_back(baseDirectory);
+      pathElements.push_back("/");
     }
-    pathElements.push_back( itksys::SystemTools::GetFilenameWithoutExtension( inputVolumeNameTemplate ) + ".bvec" );
-    _inputBVectors = itksys::SystemTools::JoinPath( pathElements );
+    pathElements.push_back(itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec");
+    _inputBVectors = itksys::SystemTools::JoinPath(pathElements);
     std::cout << "   From template " << inputVolumeNameTemplate << std::endl;
     std::cout << "   defaulting to: " << _inputBVectors << std::endl;
   }
 
-  unsigned int          bValCount = 0;
-  std::vector< double > BVals;
+  unsigned int        bValCount = 0;
+  std::vector<double> BVals;
 
-  if ( ReadBVals( BVals, bValCount, _inputBValues ) != EXIT_SUCCESS )
+  if (ReadBVals(BVals, bValCount, _inputBValues) != EXIT_SUCCESS)
   {
-    itkGenericExceptionMacro( << "ERROR reading BValue " << _inputBValues );
+    itkGenericExceptionMacro(<< "ERROR reading BValue " << _inputBValues);
   }
   DWIMetaDataDictionaryValidator::GradientTableType BVecs;
   unsigned int                                      bVecCount = 0;
-  if ( ReadBVecs( BVecs, bVecCount, _inputBVectors ) != EXIT_SUCCESS )
+  if (ReadBVecs(BVecs, bVecCount, _inputBVectors) != EXIT_SUCCESS)
   {
-    itkGenericExceptionMacro( << "ERROR reading BVector " << _inputBVectors );
+    itkGenericExceptionMacro(<< "ERROR reading BVector " << _inputBVectors);
   }
-  if ( bValCount != bVecCount )
+  if (bValCount != bVecCount)
   {
-    itkGenericExceptionMacro( << "Mismatch between count of B Vectors (" << bVecCount << ") and B Values (" << bValCount
-                              << ")" << std::endl );
+    itkGenericExceptionMacro(<< "Mismatch between count of B Vectors (" << bVecCount << ") and B Values (" << bValCount
+                             << ")" << std::endl);
   }
 
   size_t numGradients = BVals.size();
-  if ( numGradients != this->GetNVolume() )
+  if (numGradients != this->GetNVolume())
   {
-    itkGenericExceptionMacro( << "number of Gradients doesn't match number of volumes:" << numGradients
-                              << " != " << this->GetNVolume() << std::endl );
+    itkGenericExceptionMacro(<< "number of Gradients doesn't match number of volumes:" << numGradients
+                             << " != " << this->GetNVolume() << std::endl);
   }
   // We need to zero out BVecs for Zero BVals
-  for ( size_t i = 0; i < bValCount; ++i )
+  for (size_t i = 0; i < bValCount; ++i)
   {
-    if ( BVals[i] < 1 )
+    if (BVals[i] < 1)
     {
       BVecs[i][0] = 0;
       BVecs[i][1] = 0;
@@ -310,9 +311,9 @@ void
 DWIConverter::ConvertBVectorsToIdentityMeasurementFrame()
 {
   DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
-  const vnl_matrix_fixed< double, 3, 3 >            InverseMeasurementFrame = this->GetMeasurementFrame().GetInverse();
+  const vnl_matrix_fixed<double, 3, 3>              InverseMeasurementFrame = this->GetMeasurementFrame().GetInverse();
   // grab the diffusion vectors.
-  for ( unsigned int k = 0; k < this->m_DiffusionVectors.size(); ++k )
+  for (unsigned int k = 0; k < this->m_DiffusionVectors.size(); ++k)
   {
     DWIMetaDataDictionaryValidator::GradientDirectionType vec;
     // For scanners, the measurement frame for the gradient directions is the same as the
@@ -329,22 +330,23 @@ DWIConverter::ConvertBVectorsToIdentityMeasurementFrame()
     // In order to compare two different scans to determine if the same protocol was prosribed,
     // it is necessary to multiply each of the recorded diffusion gradient directions by
     // the inverse of the LPSDirCos.
-    vnl_vector_fixed< double, 3 > RotatedScaledDiffusionVectors =
-      InverseMeasurementFrame * ( this->m_DiffusionVectors[k] );
-    for ( unsigned ind = 0; ind < 3; ++ind )
+    vnl_vector_fixed<double, 3> RotatedScaledDiffusionVectors = InverseMeasurementFrame * (this->m_DiffusionVectors[k]);
+    for (unsigned ind = 0; ind < 3; ++ind)
     {
       vec[ind] = RotatedScaledDiffusionVectors[ind];
     }
-    gradientVectors.push_back( vec );
+    gradientVectors.push_back(vec);
   }
   this->m_DiffusionVectors = gradientVectors;
   this->m_MeasurementFrame.SetIdentity();
 }
 
 std::string
-DWIConverter::MakeFileComment( const std::string & version, bool useBMatrixGradientDirections,
-                               bool useIdentityMeaseurementFrame, double smallGradientThreshold,
-                               const std::string inputFileType ) const
+DWIConverter::MakeFileComment(const std::string & version,
+                              bool                useBMatrixGradientDirections,
+                              bool                useIdentityMeaseurementFrame,
+                              double              smallGradientThreshold,
+                              const std::string   inputFileType) const
 {
   std::stringstream commentSection;
   {
@@ -354,15 +356,15 @@ DWIConverter::MakeFileComment( const std::string & version, bool useBMatrixGradi
                    << "# part of the BRAINSTools package." << std::endl
                    << "# Command line options:" << std::endl
                    << "# --inputFileType " << inputFileType << std::endl;
-    if ( std::abs( smallGradientThreshold - 0.2 ) > 1e-4 )
+    if (std::abs(smallGradientThreshold - 0.2) > 1e-4)
     {
       commentSection << "# --smallGradientThreshold " << smallGradientThreshold << std::endl;
     }
-    if ( useIdentityMeaseurementFrame )
+    if (useIdentityMeaseurementFrame)
     {
       commentSection << "# --useIdentityMeasurementFrame" << std::endl;
     }
-    if ( useBMatrixGradientDirections )
+    if (useBMatrixGradientDirections)
     {
       commentSection << "# --useBMatrixGradientDirections" << std::endl;
     }
@@ -371,33 +373,33 @@ DWIConverter::MakeFileComment( const std::string & version, bool useBMatrixGradi
 }
 
 void
-DWIConverter::ManualWriteNRRDFile( const std::string & outputVolumeHeaderName, const std::string commentstring ) const
+DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string commentstring) const
 {
-  const size_t extensionPos = outputVolumeHeaderName.find( ".nhdr" );
-  const bool   nrrdSingleFileFormat = ( extensionPos != std::string::npos ) ? false : true;
+  const size_t extensionPos = outputVolumeHeaderName.find(".nhdr");
+  const bool   nrrdSingleFileFormat = (extensionPos != std::string::npos) ? false : true;
 
   std::string outputVolumeDataName;
-  if ( extensionPos != std::string::npos )
+  if (extensionPos != std::string::npos)
   {
-    outputVolumeDataName = outputVolumeHeaderName.substr( 0, extensionPos );
+    outputVolumeDataName = outputVolumeHeaderName.substr(0, extensionPos);
     outputVolumeDataName += ".raw";
   }
 
-  itk::NumberToString< double > DoubleConvert;
-  std::ofstream                 header;
+  itk::NumberToString<double> DoubleConvert;
+  std::ofstream               header;
   // std::string headerFileName = outputDir + "/" + outputFileName;
 
   const double maxBvalue = this->GetMaxBValue();
-  header.open( outputVolumeHeaderName.c_str(), std::ios_base::out | std::ios_base::binary );
-  header << "NRRD0005" << std::endl << std::setprecision( 17 ) << std::scientific;
+  header.open(outputVolumeHeaderName.c_str(), std::ios_base::out | std::ios_base::binary);
+  header << "NRRD0005" << std::endl << std::setprecision(17) << std::scientific;
 
   header << commentstring;
 
   // stamp with DWIConvert branding
 
-  if ( !nrrdSingleFileFormat )
+  if (!nrrdSingleFileFormat)
   {
-    header << "content: exists(" << itksys::SystemTools::GetFilenameName( outputVolumeDataName ) << ",0)" << std::endl;
+    header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)" << std::endl;
   }
   header << "type: short" << std::endl;
   header << "dimension: 4" << std::endl;
@@ -406,15 +408,15 @@ DWIConverter::ManualWriteNRRDFile( const std::string & outputVolumeHeaderName, c
   const DWIConverter::RotationMatrixType & NRRDSpaceDirection = this->GetNRRDSpaceDirection();
   header << "sizes: " << this->GetRows() << " " << this->GetCols() << " " << this->GetSlicesPerVolume() << " "
          << this->GetNVolume() << std::endl;
-  header << "thicknesses:  NaN  NaN " << DoubleConvert( GetThickness() ) << " NaN" << std::endl;
+  header << "thicknesses:  NaN  NaN " << DoubleConvert(GetThickness()) << " NaN" << std::endl;
   // need to check
   header << "space directions: "
-         << "(" << DoubleConvert( NRRDSpaceDirection[0][0] ) << "," << DoubleConvert( NRRDSpaceDirection[1][0] ) << ","
-         << DoubleConvert( NRRDSpaceDirection[2][0] ) << ") "
-         << "(" << DoubleConvert( NRRDSpaceDirection[0][1] ) << "," << DoubleConvert( NRRDSpaceDirection[1][1] ) << ","
-         << DoubleConvert( NRRDSpaceDirection[2][1] ) << ") "
-         << "(" << DoubleConvert( NRRDSpaceDirection[0][2] ) << "," << DoubleConvert( NRRDSpaceDirection[1][2] ) << ","
-         << DoubleConvert( NRRDSpaceDirection[2][2] ) << ") none" << std::endl;
+         << "(" << DoubleConvert(NRRDSpaceDirection[0][0]) << "," << DoubleConvert(NRRDSpaceDirection[1][0]) << ","
+         << DoubleConvert(NRRDSpaceDirection[2][0]) << ") "
+         << "(" << DoubleConvert(NRRDSpaceDirection[0][1]) << "," << DoubleConvert(NRRDSpaceDirection[1][1]) << ","
+         << DoubleConvert(NRRDSpaceDirection[2][1]) << ") "
+         << "(" << DoubleConvert(NRRDSpaceDirection[0][2]) << "," << DoubleConvert(NRRDSpaceDirection[1][2]) << ","
+         << DoubleConvert(NRRDSpaceDirection[2][2]) << ") none" << std::endl;
   header << "centerings: cell cell cell ???" << std::endl;
   header << "kinds: space space space list" << std::endl;
 
@@ -424,34 +426,34 @@ DWIConverter::ManualWriteNRRDFile( const std::string & outputVolumeHeaderName, c
 
   const DWIConverter::Volume3DUnwrappedType::PointType ImageOrigin = this->GetOrigin();
   header << "space origin: "
-         << "(" << DoubleConvert( ImageOrigin[0] ) << "," << DoubleConvert( ImageOrigin[1] ) << ","
-         << DoubleConvert( ImageOrigin[2] ) << ") " << std::endl;
-  if ( !nrrdSingleFileFormat )
+         << "(" << DoubleConvert(ImageOrigin[0]) << "," << DoubleConvert(ImageOrigin[1]) << ","
+         << DoubleConvert(ImageOrigin[2]) << ") " << std::endl;
+  if (!nrrdSingleFileFormat)
   {
-    header << "data file: " << itksys::SystemTools::GetFilenameName( outputVolumeDataName ) << std::endl;
+    header << "data file: " << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << std::endl;
   }
 
   {
     DWIConverter::RotationMatrixType MeasurementFrame = this->GetMeasurementFrame();
     header << "measurement frame: "
-           << "(" << DoubleConvert( MeasurementFrame[0][0] ) << "," << DoubleConvert( MeasurementFrame[1][0] ) << ","
-           << DoubleConvert( MeasurementFrame[2][0] ) << ") "
-           << "(" << DoubleConvert( MeasurementFrame[0][1] ) << "," << DoubleConvert( MeasurementFrame[1][1] ) << ","
-           << DoubleConvert( MeasurementFrame[2][1] ) << ") "
-           << "(" << DoubleConvert( MeasurementFrame[0][2] ) << "," << DoubleConvert( MeasurementFrame[1][2] ) << ","
-           << DoubleConvert( MeasurementFrame[2][2] ) << ")" << std::endl;
+           << "(" << DoubleConvert(MeasurementFrame[0][0]) << "," << DoubleConvert(MeasurementFrame[1][0]) << ","
+           << DoubleConvert(MeasurementFrame[2][0]) << ") "
+           << "(" << DoubleConvert(MeasurementFrame[0][1]) << "," << DoubleConvert(MeasurementFrame[1][1]) << ","
+           << DoubleConvert(MeasurementFrame[2][1]) << ") "
+           << "(" << DoubleConvert(MeasurementFrame[0][2]) << "," << DoubleConvert(MeasurementFrame[1][2]) << ","
+           << DoubleConvert(MeasurementFrame[2][2]) << ")" << std::endl;
   }
 
-  for ( std::map< std::string, std::string >::const_iterator it = this->m_CommonDicomFieldsMap.begin();
-        it != this->m_CommonDicomFieldsMap.end();
-        ++it )
+  for (std::map<std::string, std::string>::const_iterator it = this->m_CommonDicomFieldsMap.begin();
+       it != this->m_CommonDicomFieldsMap.end();
+       ++it)
   {
     header << it->first << ":=" << it->second << std::endl;
   }
 
   header << "modality:=DWMRI" << std::endl;
   // this is the norminal BValue, i.e. the largest one.
-  header << "DWMRI_b-value:=" << DoubleConvert( maxBvalue ) << std::endl;
+  header << "DWMRI_b-value:=" << DoubleConvert(maxBvalue) << std::endl;
 
   //  the following three lines are for older NRRD format, where
   //  baseline images are always in the begining.
@@ -461,40 +463,39 @@ DWIConverter::ManualWriteNRRDFile( const std::string & outputVolumeHeaderName, c
   {
     const DWIMetaDataDictionaryValidator::GradientTableType & gradientVectors = this->m_DiffusionVectors;
     unsigned int                                              gradientVecIndex = 0;
-    for ( unsigned int k = 0; k < gradientVectors.size(); ++k )
+    for (unsigned int k = 0; k < gradientVectors.size(); ++k)
     {
-      header << "DWMRI_gradient_" << std::setw( 4 ) << std::setfill( '0' ) << k
-             << ":=" << DoubleConvert( gradientVectors[gradientVecIndex][0] ) << "   "
-             << DoubleConvert( gradientVectors[gradientVecIndex][1] ) << "   "
-             << DoubleConvert( gradientVectors[gradientVecIndex][2] ) << std::endl;
+      header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k
+             << ":=" << DoubleConvert(gradientVectors[gradientVecIndex][0]) << "   "
+             << DoubleConvert(gradientVectors[gradientVecIndex][1]) << "   "
+             << DoubleConvert(gradientVectors[gradientVecIndex][2]) << std::endl;
       ++gradientVecIndex;
     }
   }
   // write data in the same file is .nrrd was chosen
   header << std::endl;
   ;
-  if ( nrrdSingleFileFormat )
+  if (nrrdSingleFileFormat)
   {
     unsigned long nVoxels = this->GetDiffusionVolume()->GetBufferedRegion().GetNumberOfPixels();
-    header.write( reinterpret_cast< char * >( this->GetDiffusionVolume()->GetBufferPointer() ),
-                  nVoxels * sizeof( short ) );
+    header.write(reinterpret_cast<char *>(this->GetDiffusionVolume()->GetBufferPointer()), nVoxels * sizeof(short));
   }
   else
   {
     // if we're writing out NRRD, and the split header/data NRRD
     // format is used, write out the image as a raw volume.
-    itk::ImageFileWriter< DWIConverter::Volume3DUnwrappedType >::Pointer rawWriter =
-      itk::ImageFileWriter< DWIConverter::Volume3DUnwrappedType >::New();
-    itk::RawImageIO< PixelValueType, 3 >::Pointer rawIO = itk::RawImageIO< PixelValueType, 3 >::New();
-    rawWriter->SetImageIO( rawIO );
+    itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::Pointer rawWriter =
+      itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::New();
+    itk::RawImageIO<PixelValueType, 3>::Pointer rawIO = itk::RawImageIO<PixelValueType, 3>::New();
+    rawWriter->SetImageIO(rawIO);
     rawIO->SetByteOrderToLittleEndian();
-    rawWriter->SetFileName( outputVolumeDataName.c_str() );
-    rawWriter->SetInput( this->GetDiffusionVolume() );
+    rawWriter->SetFileName(outputVolumeDataName.c_str());
+    rawWriter->SetInput(this->GetDiffusionVolume());
     try
     {
       rawWriter->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown while writing the series to" << outputVolumeDataName << " " << excp << std::endl;
       std::cerr << excp << std::endl;
@@ -505,14 +506,14 @@ DWIConverter::ManualWriteNRRDFile( const std::string & outputVolumeHeaderName, c
 }
 
 Volume4DType::Pointer
-DWIConverter::ThreeDToFourDImage( Volume3DUnwrappedType::Pointer img ) const
+DWIConverter::ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const
 {
   const int nVolumes = this->GetNVolume();
 
-  DWIConverter::Volume3DUnwrappedType::SizeType      size3D( img->GetLargestPossibleRegion().GetSize() );
-  DWIConverter::Volume3DUnwrappedType::DirectionType direction3D( img->GetDirection() );
-  DWIConverter::Volume3DUnwrappedType::SpacingType   spacing3D( img->GetSpacing() );
-  DWIConverter::Volume3DUnwrappedType::PointType     origin3D( img->GetOrigin() );
+  DWIConverter::Volume3DUnwrappedType::SizeType      size3D(img->GetLargestPossibleRegion().GetSize());
+  DWIConverter::Volume3DUnwrappedType::DirectionType direction3D(img->GetDirection());
+  DWIConverter::Volume3DUnwrappedType::SpacingType   spacing3D(img->GetSpacing());
+  DWIConverter::Volume3DUnwrappedType::PointType     origin3D(img->GetOrigin());
 
   Volume4DType::RegionType region4D;
   {
@@ -522,26 +523,26 @@ DWIConverter::ThreeDToFourDImage( Volume3DUnwrappedType::Pointer img ) const
     size4D[2] = size3D[2] / nVolumes;
     size4D[3] = nVolumes;
     Volume4DType::IndexType index4D;
-    index4D.Fill( 0 );
-    region4D.SetIndex( index4D );
-    region4D.SetSize( size4D );
+    index4D.Fill(0);
+    region4D.SetIndex(index4D);
+    region4D.SetSize(size4D);
 
-    if ( ( size4D[2] * nVolumes ) != size3D[2] )
+    if ((size4D[2] * nVolumes) != size3D[2])
     {
-      itkGenericExceptionMacro( << "#of slices in volume not evenly divisible by"
-                                << " the number of volumes: slices = " << size3D[2] << " volumes = " << nVolumes
-                                << " left-over slices = " << size3D[2] % nVolumes << std::endl );
+      itkGenericExceptionMacro(<< "#of slices in volume not evenly divisible by"
+                               << " the number of volumes: slices = " << size3D[2] << " volumes = " << nVolumes
+                               << " left-over slices = " << size3D[2] % nVolumes << std::endl);
     }
   }
   Volume4DType::DirectionType direction4D;
   direction4D.SetIdentity();
   Volume4DType::SpacingType spacing4D;
-  spacing4D.Fill( 1.0 );
+  spacing4D.Fill(1.0);
   Volume4DType::PointType origin4D;
-  origin4D.Fill( 0.0 );
-  for ( unsigned i = 0; i < 3; ++i )
+  origin4D.Fill(0.0);
+  for (unsigned i = 0; i < 3; ++i)
   {
-    for ( unsigned j = 0; j < 3; ++j )
+    for (unsigned j = 0; j < 3; ++j)
     {
       direction4D[i][j] = direction3D[i][j];
     }
@@ -551,34 +552,34 @@ DWIConverter::ThreeDToFourDImage( Volume3DUnwrappedType::Pointer img ) const
 
 
   Volume4DType::Pointer img4D = Volume4DType::New();
-  img4D->SetRegions( region4D );
-  img4D->SetDirection( direction4D );
-  img4D->SetSpacing( spacing4D );
-  img4D->SetOrigin( origin4D );
+  img4D->SetRegions(region4D);
+  img4D->SetDirection(direction4D);
+  img4D->SetSpacing(spacing4D);
+  img4D->SetOrigin(origin4D);
   img4D->Allocate();
 
   {
-    img4D->SetMetaDataDictionary( img->GetMetaDataDictionary() );
+    img4D->SetMetaDataDictionary(img->GetMetaDataDictionary());
     // Set the qform and sfrom codes for the MetaDataDictionary.
     itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
-    itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-    itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-    itk::EncapsulateMetaData< double >( thisDic, "NRRD_thicknesses", GetThickness() );
+    itk::EncapsulateMetaData<std::string>(thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
+    itk::EncapsulateMetaData<std::string>(thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
+    itk::EncapsulateMetaData<double>(thisDic, "NRRD_thicknesses", GetThickness());
   }
 
-  const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels() * sizeof( PixelValueType );
+  const size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels() * sizeof(PixelValueType);
 
-  memcpy( img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount );
+  memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
   return img4D;
 }
 
 DWIConverter::Volume3DUnwrappedType::Pointer
-DWIConverter::FourDToThreeDImage( Volume4DType::Pointer img4D ) const
+DWIConverter::FourDToThreeDImage(Volume4DType::Pointer img4D) const
 {
-  Volume4DType::SizeType      size4D( img4D->GetLargestPossibleRegion().GetSize() );
-  Volume4DType::DirectionType direction4D( img4D->GetDirection() );
-  Volume4DType::SpacingType   spacing4D( img4D->GetSpacing() );
-  Volume4DType::PointType     origin4D( img4D->GetOrigin() );
+  Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize());
+  Volume4DType::DirectionType direction4D(img4D->GetDirection());
+  Volume4DType::SpacingType   spacing4D(img4D->GetSpacing());
+  Volume4DType::PointType     origin4D(img4D->GetOrigin());
 
   Volume3DUnwrappedType::RegionType region3D;
   {
@@ -589,26 +590,26 @@ DWIConverter::FourDToThreeDImage( Volume4DType::Pointer img4D ) const
     size3D[2] = size4D[2] * nVolumes;
 
     Volume3DUnwrappedType::IndexType index3D;
-    index3D.Fill( 0 );
-    region3D.SetIndex( index3D );
-    region3D.SetSize( size3D );
+    index3D.Fill(0);
+    region3D.SetIndex(index3D);
+    region3D.SetSize(size3D);
 
-    if ( ( size4D[2] * nVolumes ) != size3D[2] )
+    if ((size4D[2] * nVolumes) != size3D[2])
     {
-      itkGenericExceptionMacro( << "#of slices in volume not evenly divisible by"
-                                << " the number of volumes: slices = " << size3D[2] << " volumes = " << nVolumes
-                                << " left-over slices = " << size3D[2] % nVolumes << std::endl );
+      itkGenericExceptionMacro(<< "#of slices in volume not evenly divisible by"
+                               << " the number of volumes: slices = " << size3D[2] << " volumes = " << nVolumes
+                               << " left-over slices = " << size3D[2] % nVolumes << std::endl);
     }
   }
   Volume3DUnwrappedType::DirectionType direction3D;
   direction3D.SetIdentity();
   Volume3DUnwrappedType::SpacingType spacing3D;
-  spacing3D.Fill( 1.0 );
+  spacing3D.Fill(1.0);
   Volume3DUnwrappedType::PointType origin3D;
-  origin3D.Fill( 0.0 );
-  for ( unsigned i = 0; i < 3; ++i )
+  origin3D.Fill(0.0);
+  for (unsigned i = 0; i < 3; ++i)
   {
-    for ( unsigned j = 0; j < 3; ++j )
+    for (unsigned j = 0; j < 3; ++j)
     {
       direction3D[i][j] = direction4D[i][j];
     }
@@ -617,52 +618,54 @@ DWIConverter::FourDToThreeDImage( Volume4DType::Pointer img4D ) const
   }
 
   Volume3DUnwrappedType::Pointer img = Volume3DUnwrappedType::New();
-  img->SetRegions( region3D );
-  img->SetDirection( direction3D );
-  img->SetSpacing( spacing3D );
-  img->SetOrigin( origin3D );
+  img->SetRegions(region3D);
+  img->SetDirection(direction3D);
+  img->SetSpacing(spacing3D);
+  img->SetOrigin(origin3D);
   img->Allocate();
 
   {
-    img->SetMetaDataDictionary( img4D->GetMetaDataDictionary() );
+    img->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
     // Set the qform and sfrom codes for the MetaDataDictionary.
     itk::MetaDataDictionary & thisDic = img->GetMetaDataDictionary();
-    itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-    itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-    itk::EncapsulateMetaData< double >( thisDic, "NRRD_thicknesses", GetThickness() );
+    itk::EncapsulateMetaData<std::string>(thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
+    itk::EncapsulateMetaData<std::string>(thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
+    itk::EncapsulateMetaData<double>(thisDic, "NRRD_thicknesses", GetThickness());
   }
 
-  const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels() * sizeof( PixelValueType );
+  const size_t bytecount = img->GetLargestPossibleRegion().GetNumberOfPixels() * sizeof(PixelValueType);
 
-  memcpy( img->GetBufferPointer(), img4D->GetBufferPointer(), bytecount );
+  memcpy(img->GetBufferPointer(), img4D->GetBufferPointer(), bytecount);
   return img;
 }
 
 void
-DWIConverter::WriteFSLFormattedFileSet( const std::string & outputVolumeHeaderName, const std::string outputBValues,
-                                        const std::string outputBVectors, Volume4DType::Pointer img4D ) const
+DWIConverter::WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderName,
+                                       const std::string     outputBValues,
+                                       const std::string     outputBVectors,
+                                       Volume4DType::Pointer img4D) const
 {
   const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] * this->m_MeasurementFrame[2][2];
-  if ( std::abs( trace - 1.0 ) > 1e-4 )
+  if (std::abs(trace - 1.0) > 1e-4)
   {
-    itkGenericExceptionMacro( << "ERROR:  Only identity measurement frame allow for writing FSL formatted files "
-                              << std::endl );
+    itkGenericExceptionMacro(<< "ERROR:  Only identity measurement frame allow for writing FSL formatted files "
+                             << std::endl);
   }
 
   {
     // Set the qform and sfrom codes for the MetaDataDictionary.
     itk::MetaDataDictionary & thisDic = img4D->GetMetaDataDictionary();
-    itk::EncapsulateMetaData< std::string >( thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
-    itk::EncapsulateMetaData< std::string >( thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT" );
+    itk::EncapsulateMetaData<std::string>(thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
+    itk::EncapsulateMetaData<std::string>(thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
   }
-  itk::ImageFileWriter< Volume4DType >::Pointer imgWriter = itk::ImageFileWriter< Volume4DType >::New();
-  imgWriter->SetInput( img4D );
-  imgWriter->SetFileName( outputVolumeHeaderName.c_str() );
+  itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
+  imgWriter->SetInput(img4D);
+  imgWriter->SetFileName(outputVolumeHeaderName.c_str());
   try
   {
     imgWriter->Update();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown while writing " << outputVolumeHeaderName << std::endl;
     std::cerr << excp << std::endl;
@@ -671,10 +674,10 @@ DWIConverter::WriteFSLFormattedFileSet( const std::string & outputVolumeHeaderNa
   // FSL output of gradients & BValues
   std::string outputFSLBValFilename;
   //
-  const size_t extensionPos = this->has_valid_nifti_extension( outputVolumeHeaderName );
-  if ( outputBValues == "" )
+  const size_t extensionPos = this->has_valid_nifti_extension(outputVolumeHeaderName);
+  if (outputBValues == "")
   {
-    outputFSLBValFilename = outputVolumeHeaderName.substr( 0, extensionPos );
+    outputFSLBValFilename = outputVolumeHeaderName.substr(0, extensionPos);
     outputFSLBValFilename += ".bval";
   }
   else
@@ -682,9 +685,9 @@ DWIConverter::WriteFSLFormattedFileSet( const std::string & outputVolumeHeaderNa
     outputFSLBValFilename = outputBValues;
   }
   std::string outputFSLBVecFilename;
-  if ( outputBVectors == "" )
+  if (outputBVectors == "")
   {
-    outputFSLBVecFilename = outputVolumeHeaderName.substr( 0, extensionPos );
+    outputFSLBVecFilename = outputVolumeHeaderName.substr(0, extensionPos);
     outputFSLBVecFilename += ".bvec";
   }
   else
@@ -693,29 +696,29 @@ DWIConverter::WriteFSLFormattedFileSet( const std::string & outputVolumeHeaderNa
   }
 
   // write out in FSL format
-  if ( WriteBValues< double >( this->m_BValues, outputFSLBValFilename ) != EXIT_SUCCESS )
+  if (WriteBValues<double>(this->m_BValues, outputFSLBValFilename) != EXIT_SUCCESS)
   {
-    itkGenericExceptionMacro( << "Failed to write FSL BVal File: " << outputFSLBValFilename << std::endl; );
+    itkGenericExceptionMacro(<< "Failed to write FSL BVal File: " << outputFSLBValFilename << std::endl;);
   }
-  if ( WriteBVectors( this->m_DiffusionVectors, outputFSLBVecFilename ) != EXIT_SUCCESS )
+  if (WriteBVectors(this->m_DiffusionVectors, outputFSLBVecFilename) != EXIT_SUCCESS)
   {
-    itkGenericExceptionMacro( << "Failed to write FSL BVec File: " << outputFSLBVecFilename << std::endl; );
+    itkGenericExceptionMacro(<< "Failed to write FSL BVec File: " << outputFSLBVecFilename << std::endl;);
   }
 }
 
 void
-DWIConverter::SetAllowLossyConversion( const bool newValue )
+DWIConverter::SetAllowLossyConversion(const bool newValue)
 {
   this->m_allowLossyConversion = newValue;
 }
 
 double
-DWIConverter::ComputeMaxBvalue( const std::vector< double > & bValues ) const
+DWIConverter::ComputeMaxBvalue(const std::vector<double> & bValues) const
 {
-  double maxBvalue( 0.0 );
-  for ( unsigned int k = 0; k < bValues.size(); ++k )
+  double maxBvalue(0.0);
+  for (unsigned int k = 0; k < bValues.size(); ++k)
   {
-    if ( bValues[k] > maxBvalue )
+    if (bValues[k] > maxBvalue)
     {
       maxBvalue = bValues[k];
     }
@@ -724,14 +727,14 @@ DWIConverter::ComputeMaxBvalue( const std::vector< double > & bValues ) const
 }
 
 size_t
-DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderName ) const
+DWIConverter::has_valid_nifti_extension(std::string outputVolumeHeaderName) const
 {
   constexpr size_t   NUMEXT = 2;
   const char * const extList[NUMEXT] = { ".nii.gz", ".nii" };
-  for ( size_t i = 0; i < NUMEXT; ++i )
+  for (size_t i = 0; i < NUMEXT; ++i)
   {
-    const size_t extensionPos = outputVolumeHeaderName.find( extList[i] );
-    if ( extensionPos != std::string::npos )
+    const size_t extensionPos = outputVolumeHeaderName.find(extList[i]);
+    if (extensionPos != std::string::npos)
     {
       return extensionPos;
     }
@@ -740,7 +743,7 @@ DWIConverter::has_valid_nifti_extension( std::string outputVolumeHeaderName ) co
     std::cerr << "FSL Format output chosen, "
               << "but output Volume not a recognized "
               << "NIfTI filename " << outputVolumeHeaderName << std::endl;
-    exit( 1 );
+    exit(1);
   }
   return std::string::npos;
 }
@@ -755,7 +758,7 @@ double
 DWIConverter::readThicknessFromDict()
 {
   DWIMetaDataDictionaryValidator myValidator;
-  myValidator.SetMetaDataDictionary( m_Volume->GetMetaDataDictionary() );
-  m_thickness = myValidator.GetThicknesses().at( 2 );
+  myValidator.SetMetaDataDictionary(m_Volume->GetMetaDataDictionary());
+  m_thickness = myValidator.GetThicknesses().at(2);
   return m_thickness;
 }

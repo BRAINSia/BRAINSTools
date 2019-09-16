@@ -63,21 +63,21 @@ namespace itk
 class GTRACT_COMMON_EXPORT GtractParameterIO : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( GtractParameterIO );
+  ITK_DISALLOW_COPY_AND_ASSIGN(GtractParameterIO);
 
   using Self = GtractParameterIO;
   using Superclass = itk::Object;
-  using Pointer = itk::SmartPointer< Self >;
-  using ConstPointer = itk::SmartPointer< const Self >;
-  itkTypeMacro( gtractParameterIO, itk::Object );
-  itkNewMacro( Self );
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
+  itkTypeMacro(gtractParameterIO, itk::Object);
+  itkNewMacro(Self);
 
   /*** Get/Set the Images for I/O Routines ***/
-  itkGetMacro( Directions, TMatrix );
-  itkGetMacro( Bvalue, float );
-  itkGetMacro( NumberOfDirections, int );
-  itkGetMacro( FileName, std::string );
-  itkSetMacro( FileName, std::string );
+  itkGetMacro(Directions, TMatrix);
+  itkGetMacro(Bvalue, float);
+  itkGetMacro(NumberOfDirections, int);
+  itkGetMacro(FileName, std::string);
+  itkSetMacro(FileName, std::string);
 
   /*** Additional API - Functions ***/
   void

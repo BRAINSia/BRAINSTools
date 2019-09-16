@@ -24,16 +24,16 @@
 //
 
 #ifdef WIN32
-#  define MODULE_IMPORT __declspec( dllimport )
+#  define MODULE_IMPORT __declspec(dllimport)
 #else
 #  define MODULE_IMPORT
 #endif
 
 extern "C" MODULE_IMPORT int
-ModuleEntryPoint( int, char *[] );
+ModuleEntryPoint(int, char *[]);
 
 extern int
-iccdefRegistration_NewTest( int argc, char * argv[] )
+iccdefRegistration_NewTest(int argc, char * argv[])
 {
-  return ModuleEntryPoint( argc, argv );
+  return ModuleEntryPoint(argc, argv);
 }

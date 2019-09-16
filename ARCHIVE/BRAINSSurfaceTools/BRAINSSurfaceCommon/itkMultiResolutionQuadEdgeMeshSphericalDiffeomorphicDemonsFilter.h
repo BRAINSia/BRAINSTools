@@ -30,22 +30,22 @@
 
 namespace itk
 {
-template < typename TMesh >
+template <typename TMesh>
 class MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter
-  : public QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >
+  : public QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>
 {
 public:
   using Self = MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TMesh, TMesh >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TMesh, TMesh>;
 
   /** Method that instantiates a new object */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Method that provides the name of the class as a string as well as the
    * name of the parent class. */
-  itkTypeMacro( MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** Using a unique mesh type. */
   using MeshType = TMesh;
@@ -53,19 +53,19 @@ public:
 
   /** Set the Fixed mesh. */
   void
-  SetFixedMesh( const MeshType * fixedMesh );
+  SetFixedMesh(const MeshType * fixedMesh);
 
   /** Set the Moving mesh. */
   void
-  SetMovingMesh( const MeshType * movingMesh );
+  SetMovingMesh(const MeshType * movingMesh);
 
   /** Set the Fixed mesh for a given resolution level. */
   void
-  SetFixedMesh( unsigned int level, const MeshType * fixedMesh );
+  SetFixedMesh(unsigned int level, const MeshType * fixedMesh);
 
   /** Set the Moving mesh for a given resolution level. */
   void
-  SetMovingMesh( unsigned int level, const MeshType * movingMesh );
+  SetMovingMesh(unsigned int level, const MeshType * movingMesh);
 
   /** Set Sphere Center.  The implementation of this filter assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -73,8 +73,8 @@ public:
    * represented by the Mesh. This will be used in the computation of parallel
    * transport for vector values associated with nodes.
    */
-  itkSetMacro( SphereCenter, PointType );
-  itkGetConstMacro( SphereCenter, PointType );
+  itkSetMacro(SphereCenter, PointType);
+  itkGetConstMacro(SphereCenter, PointType);
 
   /** Set Sphere Radius.  The implementation of this filter assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -82,107 +82,106 @@ public:
    * the computation of parallel transport for vector values associated
    * with nodes.
    */
-  itkSetMacro( SphereRadius, double );
-  itkGetConstMacro( SphereRadius, double );
+  itkSetMacro(SphereRadius, double);
+  itkGetConstMacro(SphereRadius, double);
 
   /** Set the number of resolution levels for the combination of rigid and
    * demons registration */
-  itkSetMacro( NumberOfResolutionLevels, unsigned int );
-  itkGetMacro( NumberOfResolutionLevels, unsigned int );
+  itkSetMacro(NumberOfResolutionLevels, unsigned int);
+  itkGetMacro(NumberOfResolutionLevels, unsigned int);
 
   using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
   virtual DataObject::Pointer
-  MakeOutput( size_t idx ) override;
+  MakeOutput(size_t idx) override;
 
-  using TransformType = VersorTransform< double >;
+  using TransformType = VersorTransform<double>;
 
-  itkGetConstObjectMacro( RigidTransform, TransformType );
+  itkGetConstObjectMacro(RigidTransform, TransformType);
 
   using RigidOptimizerType = VersorTransformOptimizer;
 
-  itkGetConstObjectMacro( RigidOptimizer, RigidOptimizerType );
+  itkGetConstObjectMacro(RigidOptimizer, RigidOptimizerType);
 
-  using DemonsRegistrationFilterType = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter< MeshType, MeshType, MeshType >;
+  using DemonsRegistrationFilterType = QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<MeshType, MeshType, MeshType>;
 
   using DeformationFilterType = DemonsRegistrationFilterType;
 
   using DestinationPointSetType = typename DemonsRegistrationFilterType::DestinationPointSetType;
 
-  itkGetConstObjectMacro( DemonsRegistrationFilter, DemonsRegistrationFilterType );
+  itkGetConstObjectMacro(DemonsRegistrationFilter, DemonsRegistrationFilterType);
 
-  itkGetConstObjectMacro( FinalDestinationPoints, DestinationPointSetType );
+  itkGetConstObjectMacro(FinalDestinationPoints, DestinationPointSetType);
 
   using PointsContainer = typename MeshType::PointsContainer;
   using PointsContainerPointer = typename PointsContainer::Pointer;
   using PointsContainerIterator = typename MeshType::PointsContainerIterator;
 
-  using IntegerArrayType = Array< unsigned int >;
-  using DoubleArrayType = Array< double >;
+  using IntegerArrayType = Array<unsigned int>;
+  using DoubleArrayType = Array<double>;
 
   /** Schedule of smoothing iterations to be used at every resolution level. */
-  itkSetMacro( SmoothingIterations, IntegerArrayType );
-  itkGetConstReferenceMacro( SmoothingIterations, IntegerArrayType );
+  itkSetMacro(SmoothingIterations, IntegerArrayType);
+  itkGetConstReferenceMacro(SmoothingIterations, IntegerArrayType);
 
   /** Schedule of demons iterations to be used at every resolution level. */
-  itkSetMacro( DemonsIterations, IntegerArrayType );
-  itkGetConstReferenceMacro( DemonsIterations, IntegerArrayType );
+  itkSetMacro(DemonsIterations, IntegerArrayType);
+  itkGetConstReferenceMacro(DemonsIterations, IntegerArrayType);
 
   /** Schedule of rigid registration iterations to be used at every resolution level. */
-  itkSetMacro( RigidRegistrationIterations, IntegerArrayType );
-  itkGetConstReferenceMacro( RigidRegistrationIterations, IntegerArrayType );
+  itkSetMacro(RigidRegistrationIterations, IntegerArrayType);
+  itkGetConstReferenceMacro(RigidRegistrationIterations, IntegerArrayType);
 
   /** Schedule of rigid registration initial step length to be used at every resolution level. */
-  itkSetMacro( RigidRegistrationStepLength, DoubleArrayType );
-  itkGetConstReferenceMacro( RigidRegistrationStepLength, DoubleArrayType );
+  itkSetMacro(RigidRegistrationStepLength, DoubleArrayType);
+  itkGetConstReferenceMacro(RigidRegistrationStepLength, DoubleArrayType);
 
   /** Schedule of Epsilon values to be used at every resolution level. */
-  itkSetMacro( EpsilonValues, DoubleArrayType );
-  itkGetConstReferenceMacro( EpsilonValues, DoubleArrayType );
+  itkSetMacro(EpsilonValues, DoubleArrayType);
+  itkGetConstReferenceMacro(EpsilonValues, DoubleArrayType);
 
   /** Schedule of SigmaX values to be used at every resolution level. */
-  itkSetMacro( SigmaXValues, DoubleArrayType );
-  itkGetConstReferenceMacro( SigmaXValues, DoubleArrayType );
+  itkSetMacro(SigmaXValues, DoubleArrayType);
+  itkGetConstReferenceMacro(SigmaXValues, DoubleArrayType);
 
   /** Schedule of metric changes to be used at every resolution level
    * to stop iterations when metric does not change enough*/
-  itkSetMacro( MetricSignificances, DoubleArrayType );
-  itkGetConstReferenceMacro( MetricSignificances, DoubleArrayType );
+  itkSetMacro(MetricSignificances, DoubleArrayType);
+  itkGetConstReferenceMacro(MetricSignificances, DoubleArrayType);
 
   /** Get the metric changes at every resolution level in the last
    * iterations.*/
-  itkGetConstReferenceMacro( MetricChanges, DoubleArrayType );
+  itkGetConstReferenceMacro(MetricChanges, DoubleArrayType);
 
   /** Variable that defines whether the filter will self-adjust the values of
    * SigmaX and Epsilon in order to get closer to the ratio of
    * largestVelocityMagnitude being similar to the value of the shortest edge
    * length. */
-  itkSetMacro( SelfRegulatedMode, bool );
-  itkGetConstMacro( SelfRegulatedMode, bool );
-  itkBooleanMacro( SelfRegulatedMode );
+  itkSetMacro(SelfRegulatedMode, bool);
+  itkGetConstMacro(SelfRegulatedMode, bool);
+  itkBooleanMacro(SelfRegulatedMode);
 
   /** Variable that defines whether the filter will stop the iterations
   by checking the change of metric between the previous and current
   iterations.*/
-  itkSetMacro( SelfStopMode, bool );
-  itkGetConstMacro( SelfStopMode, bool );
-  itkBooleanMacro( SelfStopMode );
+  itkSetMacro(SelfStopMode, bool);
+  itkGetConstMacro(SelfStopMode, bool);
+  itkBooleanMacro(SelfStopMode);
 
   /** Return the fixed mesh that is being used in the current resolution level.
    * This fixed mesh may have incorporated deformations resulting from previous
    * resolutions levels. */
-  itkGetConstObjectMacro( CurrentLevelFixedMesh, MeshType );
+  itkGetConstObjectMacro(CurrentLevelFixedMesh, MeshType);
 
   /** Return the fixed mesh that is being used in the current resolution level.
    * This mesh is the truly original mesh and has not been deformed at all. */
-  itkGetConstObjectMacro( CurrentLevelInitialFixedMesh, MeshType );
+  itkGetConstObjectMacro(CurrentLevelInitialFixedMesh, MeshType);
 
 #ifdef USE_VTK
-  using RegistrationMonitorType =
-    MultiResolutionDeformableAndAffineRegistrationMonitor< Self, DestinationPointSetType >;
+  using RegistrationMonitorType = MultiResolutionDeformableAndAffineRegistrationMonitor<Self, DestinationPointSetType>;
 
   void
-  SetRegistrationMonitor( RegistrationMonitorType * monitor )
+  SetRegistrationMonitor(RegistrationMonitorType * monitor)
   {
     this->m_RegistrationMonitor = monitor;
   }
@@ -206,15 +205,15 @@ protected:
   MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
   ~MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter();
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   virtual void
   GenerateData() override;
 
 private:
-  MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter( const Self & );
+  MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter(const Self &);
   void
-  operator=( const Self & );
+  operator=(const Self &);
 
   /** Perform rigid registration between two meshes at the current resolution level. */
   void

@@ -22,25 +22,25 @@
 #include <rtkForwardDifferenceGradientImageFilter.h>
 #include <rtkBackwardDifferenceDivergenceImageFilter.h>
 
-template < typename IMTYPE >
+template <typename IMTYPE>
 void
-DumpImage( IMTYPE out )
+DumpImage(IMTYPE out)
 {
   const typename IMTYPE::ObjectType::SizeType size = out->GetLargestPossibleRegion().GetSize();
   typename IMTYPE::ObjectType::IndexType      idx;
   std::cout << "==========================================" << std::endl;
-  for ( size_t k = 0; k < size[2]; ++k )
+  for (size_t k = 0; k < size[2]; ++k)
   {
     idx[2] = k;
-    for ( size_t j = 0; j < size[1]; ++j )
+    for (size_t j = 0; j < size[1]; ++j)
     {
       idx[1] = j;
-      for ( size_t i = 0; i < size[0]; ++i )
+      for (size_t i = 0; i < size[0]; ++i)
       {
         idx[0] = i;
-        std::cout.width( 16 );
-        std::cout.fill( ' ' );
-        std::cout << std::right << out->GetPixel( idx );
+        std::cout.width(16);
+        std::cout.fill(' ');
+        std::cout << std::right << out->GetPixel(idx);
       }
       std::cout << "  y=" << j << std::endl;
     }
@@ -50,62 +50,62 @@ DumpImage( IMTYPE out )
 }
 
 static void
-FillWithIndexValue( HalfHermetianImageType::Pointer img )
+FillWithIndexValue(HalfHermetianImageType::Pointer img)
 {
   const HalfHermetianImageType::SizeType size = img->GetLargestPossibleRegion().GetSize();
   HalfHermetianImageType::IndexType      idx;
 
-  for ( idx[2] = 0; static_cast< size_t >( idx[2] ) < size[2]; ++idx[2] )
+  for (idx[2] = 0; static_cast<size_t>(idx[2]) < size[2]; ++idx[2])
   {
-    for ( idx[1] = 0; static_cast< size_t >( idx[1] ) < size[1]; ++idx[1] )
+    for (idx[1] = 0; static_cast<size_t>(idx[1]) < size[1]; ++idx[1])
     {
-      for ( idx[0] = 0; static_cast< size_t >( idx[0] ) < size[0]; ++idx[0] )
+      for (idx[0] = 0; static_cast<size_t>(idx[0]) < size[0]; ++idx[0])
       {
-        img->SetPixel( idx, std::complex< float >( idx[0], idx[1] ) );
+        img->SetPixel(idx, std::complex<float>(idx[0], idx[1]));
       }
     }
   }
 }
 
 int
-main( int, char *[] )
+main(int, char *[])
 {
-  const std::complex< float >                   Zero( 0.8F, 0.8F );
+  const std::complex<float>                     Zero(0.8F, 0.8F);
   HalfHermetianImageType::RegionType::IndexType startIndex;
-  startIndex.Fill( 0 );
+  startIndex.Fill(0);
   HalfHermetianImageType::RegionType region;
-  region.SetIndex( startIndex );
+  region.SetIndex(startIndex);
   HalfHermetianImageType::RegionType::SizeType size;
   size[0] = 3;
   size[1] = 4;
   size[2] = 4;
   HalfHermetianImageType::Pointer inEvenSmall = HalfHermetianImageType::New();
-  region.SetSize( size );
-  inEvenSmall->SetRegions( region );
+  region.SetSize(size);
+  inEvenSmall->SetRegions(region);
   inEvenSmall->Allocate();
-  inEvenSmall->FillBuffer( Zero );
-  FillWithIndexValue( inEvenSmall );
+  inEvenSmall->FillBuffer(Zero);
+  FillWithIndexValue(inEvenSmall);
   // DumpImage(inEvenSmall);
 
   HalfHermetianImageType::Pointer inEvenLarge = HalfHermetianImageType::New();
   size[0] = 4;
   size[1] = 6;
   size[2] = 6;
-  region.SetSize( size );
-  inEvenLarge->SetRegions( region );
+  region.SetSize(size);
+  inEvenLarge->SetRegions(region);
   inEvenLarge->Allocate();
-  inEvenLarge->FillBuffer( Zero );
-  FillWithIndexValue( inEvenLarge );
+  inEvenLarge->FillBuffer(Zero);
+  FillWithIndexValue(inEvenLarge);
   // DumpImage(inEvenLarge);
   HalfHermetianImageType::Pointer inEven2Large = HalfHermetianImageType::New();
   size[0] = 4;
   size[1] = 6;
   size[2] = 6;
-  region.SetSize( size );
-  inEven2Large->SetRegions( region );
+  region.SetSize(size);
+  inEven2Large->SetRegions(region);
   inEven2Large->Allocate();
-  inEven2Large->FillBuffer( Zero );
-  FillWithIndexValue( inEven2Large );
+  inEven2Large->FillBuffer(Zero);
+  FillWithIndexValue(inEven2Large);
   // DumpImage(inEvenLarge);
 
   const bool evenLargeFirstIsOdd = true;
@@ -113,42 +113,42 @@ main( int, char *[] )
   const bool evenSmallFirstIsOdd = true;
 
   size_t test_num = 1;
-  switch ( test_num )
+  switch (test_num)
   {
     case 1:
     {
-      DumpImage( inEvenSmall );
-      MoveFFTCoeffs( inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd );
+      DumpImage(inEvenSmall);
+      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd);
       std::cout << "Modified Large" << std::endl;
-      DumpImage( inEvenLarge );
+      DumpImage(inEvenLarge);
 
-      MoveFFTCoeffs( inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
+      MoveFFTCoeffs(inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
       std::cout << "Modified Small" << std::endl;
-      DumpImage( inEvenSmall );
+      DumpImage(inEvenSmall);
     }
     break;
     case 2:
     {
-      DumpImage( inEvenLarge );
-      MoveFFTCoeffs( inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
+      DumpImage(inEvenLarge);
+      MoveFFTCoeffs(inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
       std::cout << "Modified Small" << std::endl;
-      DumpImage( inEvenSmall );
+      DumpImage(inEvenSmall);
 
-      MoveFFTCoeffs( inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd );
+      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd);
       std::cout << "Modified Large" << std::endl;
-      DumpImage( inEvenLarge );
+      DumpImage(inEvenLarge);
     }
     break;
     case 3:
     {
-      DumpImage( inEvenLarge );
-      MoveFFTCoeffs( inEven2Large, evenLarge2FirstIsOdd, inEvenLarge, evenLargeFirstIsOdd );
+      DumpImage(inEvenLarge);
+      MoveFFTCoeffs(inEven2Large, evenLarge2FirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
       std::cout << "Modified Small" << std::endl;
-      DumpImage( inEven2Large );
+      DumpImage(inEven2Large);
 
-      MoveFFTCoeffs( inEvenLarge, evenLargeFirstIsOdd, inEven2Large, evenLarge2FirstIsOdd );
+      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEven2Large, evenLarge2FirstIsOdd);
       std::cout << "Modified Large" << std::endl;
-      DumpImage( inEvenLarge );
+      DumpImage(inEvenLarge);
     }
     break;
     default:

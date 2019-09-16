@@ -27,20 +27,20 @@ class RegistrationConfigurationParser : public ElementParser
 public:
   using SuperClass = ElementParser;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== RegistrationConfiguration ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== RegistrationConfiguration ===" << std::endl;
     return indent + 2;
   }
 
   RegistrationConfigurationParser()
-    : ElementParser( "RegistrationConfiguration" )
+    : ElementParser("RegistrationConfiguration")
   {
-    this->Add( new StringValue( "ImageTypeToUse", "" ), "ImageTypeToUse" );
-    this->Add( new StringValue( "ID", "" ), "ID" );
-    this->Add( new IntValue( "BRAINSROIAutoDilateSize", 1 ), "BRAINSROIAutoDilateSize" );
-    this->Add( new BooleanValue( "ProbabilityMapRegistrationToSubject", true ), "ProbabilityMapRegistrationToSubject" );
+    this->Add(new StringValue("ImageTypeToUse", ""), "ImageTypeToUse");
+    this->Add(new StringValue("ID", ""), "ID");
+    this->Add(new IntValue("BRAINSROIAutoDilateSize", 1), "BRAINSROIAutoDilateSize");
+    this->Add(new BooleanValue("ProbabilityMapRegistrationToSubject", true), "ProbabilityMapRegistrationToSubject");
   }
 };
 

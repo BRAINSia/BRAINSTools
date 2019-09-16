@@ -42,22 +42,24 @@
  * Boilerplate conversion to get a safe reference to the internal Image stored in a
  * ImageMaskSpatialObjectType
  */
-extern itk::Image< unsigned char, 3 >::ConstPointer
-ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPointer inputSpatialObject );
+extern itk::Image<unsigned char, 3>::ConstPointer
+ExtractConstPointerToImageMaskFromImageSpatialObject(SpatialObjectType::ConstPointer inputSpatialObject);
 
-extern itk::ImageMaskSpatialObject< 3 >::ConstPointer
-ConvertMaskImageToSpatialMask( itk::Image< unsigned char, 3 >::ConstPointer inputImage );
+extern itk::ImageMaskSpatialObject<3>::ConstPointer
+ConvertMaskImageToSpatialMask(itk::Image<unsigned char, 3>::ConstPointer inputImage);
 
-template < typename TransformType, unsigned int VImageDimension >
+template <typename TransformType, unsigned int VImageDimension>
 void
-DoCenteredTransformMaskClipping( ImageMaskPointer & fixedMask, ImageMaskPointer & movingMask,
-                                 typename TransformType::Pointer transform, double maskInferiorCutOffFromCenter )
+DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
+                                ImageMaskPointer &              movingMask,
+                                typename TransformType::Pointer transform,
+                                double                          maskInferiorCutOffFromCenter)
 {
-  if ( fixedMask.IsNull() || movingMask.IsNull() )
+  if (fixedMask.IsNull() || movingMask.IsNull())
   {
     return;
   }
-  if ( maskInferiorCutOffFromCenter >= 1000.0 )
+  if (maskInferiorCutOffFromCenter >= 1000.0)
   {
     return;
   }
@@ -66,11 +68,11 @@ DoCenteredTransformMaskClipping( ImageMaskPointer & fixedMask, ImageMaskPointer 
   typename TransformType::InputPointType   rotationCenter = transform->GetCenter();
   typename TransformType::OutputVectorType translationVector = transform->GetTranslation();
 
-  using MaskImageType = itk::Image< unsigned char, 3 >;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
   typename MaskImageType::PointType fixedCenter;
   typename MaskImageType::PointType movingCenter;
-  for ( unsigned int i = 0; i < VImageDimension; ++i )
+  for (unsigned int i = 0; i < VImageDimension; ++i)
   {
     fixedCenter[i] = rotationCenter[i];
     movingCenter[i] = translationVector[i] - rotationCenter[i];
@@ -79,20 +81,20 @@ DoCenteredTransformMaskClipping( ImageMaskPointer & fixedMask, ImageMaskPointer 
   typename MaskImageType::Pointer fixedMaskImage = nullptr;
   {
     const typename MaskImageType::ConstPointer tempOutputFixedVolumeROI =
-      ExtractConstPointerToImageMaskFromImageSpatialObject( fixedMask.GetPointer() );
-    using DuplicatorType = itk::ImageDuplicator< MaskImageType >;
+      ExtractConstPointerToImageMaskFromImageSpatialObject(fixedMask.GetPointer());
+    using DuplicatorType = itk::ImageDuplicator<MaskImageType>;
     typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
-    duplicator->SetInputImage( tempOutputFixedVolumeROI );
+    duplicator->SetInputImage(tempOutputFixedVolumeROI);
     duplicator->Update();
     fixedMaskImage = duplicator->GetOutput();
   }
   typename MaskImageType::Pointer movingMaskImage = nullptr;
   {
     const typename MaskImageType::ConstPointer tempOutputMovingVolumeROI =
-      ExtractConstPointerToImageMaskFromImageSpatialObject( movingMask.GetPointer() );
-    using DuplicatorType = itk::ImageDuplicator< MaskImageType >;
+      ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask.GetPointer());
+    using DuplicatorType = itk::ImageDuplicator<MaskImageType>;
     typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
-    duplicator->SetInputImage( tempOutputMovingVolumeROI );
+    duplicator->SetInputImage(tempOutputMovingVolumeROI);
     duplicator->Update();
     movingMaskImage = duplicator->GetOutput();
   }
@@ -109,41 +111,41 @@ DoCenteredTransformMaskClipping( ImageMaskPointer & fixedMask, ImageMaskPointer 
   //  Here we will set the appropriate parts of the f/m MaskImages to zeros....
   typename MaskImageType::PixelType zero = 0;
   typename MaskImageType::PointType location;
-  using MaskIteratorType = itk::ImageRegionIteratorWithIndex< MaskImageType >;
+  using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
 
-  MaskIteratorType fixedIter( fixedMaskImage, fixedMaskImage->GetLargestPossibleRegion() );
+  MaskIteratorType fixedIter(fixedMaskImage, fixedMaskImage->GetLargestPossibleRegion());
   fixedIter.GoToBegin();
-  while ( !fixedIter.IsAtEnd() )
+  while (!fixedIter.IsAtEnd())
   {
-    fixedMaskImage->TransformIndexToPhysicalPoint( fixedIter.GetIndex(), location );
-    if ( location[2] < fixedInferior[2] )
+    fixedMaskImage->TransformIndexToPhysicalPoint(fixedIter.GetIndex(), location);
+    if (location[2] < fixedInferior[2])
     {
-      fixedIter.Set( zero );
+      fixedIter.Set(zero);
     }
     ++fixedIter;
   }
 
-  MaskIteratorType movingIter( movingMaskImage, movingMaskImage->GetLargestPossibleRegion() );
+  MaskIteratorType movingIter(movingMaskImage, movingMaskImage->GetLargestPossibleRegion());
   movingIter.GoToBegin();
-  while ( !movingIter.IsAtEnd() )
+  while (!movingIter.IsAtEnd())
   {
-    movingMaskImage->TransformIndexToPhysicalPoint( movingIter.GetIndex(), location );
-    if ( location[2] < movingInferior[2] )
+    movingMaskImage->TransformIndexToPhysicalPoint(movingIter.GetIndex(), location);
+    if (location[2] < movingInferior[2])
     {
-      movingIter.Set( zero );
+      movingIter.Set(zero);
     }
     ++movingIter;
   }
 
-  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject< MaskImageType::ImageDimension >;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
 
   typename ImageMaskSpatialObjectType::Pointer fixedMaskSpatialObject = ImageMaskSpatialObjectType::New();
-  fixedMaskSpatialObject->SetImage( fixedMaskImage );
+  fixedMaskSpatialObject->SetImage(fixedMaskImage);
   fixedMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   fixedMask = fixedMaskSpatialObject.GetPointer();
 
   typename ImageMaskSpatialObjectType::Pointer movingMaskSpatialObject = ImageMaskSpatialObjectType::New();
-  movingMaskSpatialObject->SetImage( movingMaskImage );
+  movingMaskSpatialObject->SetImage(movingMaskImage);
   movingMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   movingMask = movingMaskSpatialObject.GetPointer();
 }
@@ -159,48 +161,49 @@ DoCenteredTransformMaskClipping( ImageMaskPointer & fixedMask, ImageMaskPointer 
  * occupies a sufficient part of the range computed.
  *
  */
-template < typename TInputImage, typename TMaskImage >
+template <typename TInputImage, typename TMaskImage>
 void
-ComputeRobustMinMaxMean( const float Qalpha, // Remove 1% from computations by setting Qalpha=0.005
-                         typename TInputImage::ConstPointer image, typename TMaskImage::ConstPointer mask,
-                         float & minValue, // INFO:  Make this into
-                                           // itk::NumericTraits<TInputImage::PixelType>::RealType;
-                         float & maxValue, // INFO:  Make this into
-                                           // itk::NumericTraits<TInputImage::PixelType>::RealType;
-                         float & meanValue // INFO:  Make this into
-                                           // itk::NumericTraits<TInputImage::PixelType>::RealType;
+ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by setting Qalpha=0.005
+                        typename TInputImage::ConstPointer image,
+                        typename TMaskImage::ConstPointer  mask,
+                        float &                            minValue, // INFO:  Make this into
+                                          // itk::NumericTraits<TInputImage::PixelType>::RealType;
+                        float & maxValue, // INFO:  Make this into
+                                          // itk::NumericTraits<TInputImage::PixelType>::RealType;
+                        float & meanValue // INFO:  Make this into
+                                          // itk::NumericTraits<TInputImage::PixelType>::RealType;
 )
 {
   // This is a more stable way of determining the range of values that the image
   // has.
   // By eliminating possible "bright or dark" noise in the image.
-  minValue = std::numeric_limits< float >::max();
-  maxValue = std::numeric_limits< float >::min();
-  std::vector< typename TInputImage::PixelType > fixedList( image->GetBufferedRegion().GetNumberOfPixels() );
+  minValue = std::numeric_limits<float>::max();
+  maxValue = std::numeric_limits<float>::min();
+  std::vector<typename TInputImage::PixelType> fixedList(image->GetBufferedRegion().GetNumberOfPixels());
   {
-    itk::ImageRegionConstIteratorWithIndex< TInputImage > fi( image, image->GetBufferedRegion() );
-    while ( !fi.IsAtEnd() )
+    itk::ImageRegionConstIteratorWithIndex<TInputImage> fi(image, image->GetBufferedRegion());
+    while (!fi.IsAtEnd())
     {
       typename TInputImage::PointType physicalPoint;
-      image->TransformIndexToPhysicalPoint( fi.GetIndex(), physicalPoint );
+      image->TransformIndexToPhysicalPoint(fi.GetIndex(), physicalPoint);
 
       bool inCaluationRegion = true;
-      if ( mask.IsNotNull() && ( !mask->IsInsideInWorldSpace( physicalPoint ) ) )
+      if (mask.IsNotNull() && (!mask->IsInsideInWorldSpace(physicalPoint)))
       // A null mask implies entire space is to be used.
       {
         inCaluationRegion = false;
       }
-      if ( inCaluationRegion )
+      if (inCaluationRegion)
       {
         const typename TInputImage::PixelType currValue = fi.Get();
-        minValue = std::min( minValue, currValue );
-        maxValue = std::max( maxValue, currValue );
-        fixedList.push_back( currValue );
+        minValue = std::min(minValue, currValue);
+        maxValue = std::max(maxValue, currValue);
+        fixedList.push_back(currValue);
       }
       ++fi;
     }
   }
-  std::sort( fixedList.begin(), fixedList.end() );
+  std::sort(fixedList.begin(), fixedList.end());
 
   // Make sure that center 1/2 (25%-75%) of intensity values spans center 1/2 of
   // histogram
@@ -208,9 +211,9 @@ ComputeRobustMinMaxMean( const float Qalpha, // Remove 1% from computations by s
   const float LQx = Qalpha;
   const float HQx = 1.0 - Qalpha;
 
-  const float fixedLQy = fixedList[static_cast< size_t >( fixedList.size() * LQx )];
-  const float fixedHQy = fixedList[static_cast< size_t >( fixedList.size() * HQx )];
-  const float fixedQSlope = ( fixedHQy - fixedLQy ) / ( HQx - LQx );
+  const float fixedLQy = fixedList[static_cast<size_t>(fixedList.size() * LQx)];
+  const float fixedHQy = fixedList[static_cast<size_t>(fixedList.size() * HQx)];
+  const float fixedQSlope = (fixedHQy - fixedLQy) / (HQx - LQx);
   const float fixedZeroQy = fixedLQy - fixedQSlope * LQx;
   const float fixedOneQy = fixedQSlope * 1.0 + fixedZeroQy;
 
@@ -222,8 +225,8 @@ ComputeRobustMinMaxMean( const float Qalpha, // Remove 1% from computations by s
 
   // Now set to the range of values based on linear extrapolation of the
   // quantiles
-  minValue = std::max( fixedZeroQy, minValue );
-  maxValue = std::min( fixedOneQy, maxValue );
+  minValue = std::max(fixedZeroQy, minValue);
+  maxValue = std::min(fixedOneQy, maxValue);
   std::cout << "PostFix Range: " << minValue << " " << maxValue << std::endl;
 
   { // For all voxels in valid range, compute the mean.
@@ -231,50 +234,51 @@ ComputeRobustMinMaxMean( const float Qalpha, // Remove 1% from computations by s
     // have no meaning.
     float  sum = 0.0F;
     size_t counter = 0;
-    for ( typename std::vector< typename TInputImage::PixelType >::const_iterator it = fixedList.begin();
-          it != fixedList.end();
-          ++it )
+    for (typename std::vector<typename TInputImage::PixelType>::const_iterator it = fixedList.begin();
+         it != fixedList.end();
+         ++it)
     {
-      const float value = static_cast< float >( *it );
-      if ( value <= maxValue && value >= minValue )
+      const float value = static_cast<float>(*it);
+      if (value <= maxValue && value >= minValue)
       {
         sum += value;
         counter++;
       }
     }
-    meanValue = sum / static_cast< float >( counter );
+    meanValue = sum / static_cast<float>(counter);
   }
 }
 
 /**
  *This function produces an image where the very high and low tails of the image are clamped
  */
-template < typename TInputImage, typename TMaskSpatialObject >
+template <typename TInputImage, typename TMaskSpatialObject>
 typename TInputImage::Pointer
-ClampNoisyTailsOfImage( const float m_RemoveIntensityOutliers, typename TInputImage::ConstPointer InputImage,
-                        typename TMaskSpatialObject::ConstPointer mask )
+ClampNoisyTailsOfImage(const float                               m_RemoveIntensityOutliers,
+                       typename TInputImage::ConstPointer        InputImage,
+                       typename TMaskSpatialObject::ConstPointer mask)
 {
-  using DuplicatorType = itk::ImageDuplicator< TInputImage >;
+  using DuplicatorType = itk::ImageDuplicator<TInputImage>;
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
-  duplicator->SetInputImage( InputImage );
+  duplicator->SetInputImage(InputImage);
   duplicator->Update();
   typename TInputImage::Pointer image = duplicator->GetOutput();
 
   float min;
   float max;
   float mean;
-  ComputeRobustMinMaxMean< TInputImage, TMaskSpatialObject >(
-    m_RemoveIntensityOutliers, image.GetPointer(), mask.GetPointer(), min, max, mean );
-  itk::ImageRegionIterator< TInputImage > fi( image, image->GetBufferedRegion() );
-  while ( !fi.IsAtEnd() )
+  ComputeRobustMinMaxMean<TInputImage, TMaskSpatialObject>(
+    m_RemoveIntensityOutliers, image.GetPointer(), mask.GetPointer(), min, max, mean);
+  itk::ImageRegionIterator<TInputImage> fi(image, image->GetBufferedRegion());
+  while (!fi.IsAtEnd())
   {
-    if ( fi.Value() > max )
+    if (fi.Value() > max)
     {
-      fi.Set( max );
+      fi.Set(max);
     }
-    if ( fi.Value() < min )
+    if (fi.Value() < min)
     {
-      fi.Set( min );
+      fi.Set(min);
     }
     ++fi;
   }

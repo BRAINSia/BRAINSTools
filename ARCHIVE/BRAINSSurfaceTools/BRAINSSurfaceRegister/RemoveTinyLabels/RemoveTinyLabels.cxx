@@ -49,7 +49,7 @@
 #include "itkMacro.h" //Needed for nullptr
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -60,7 +60,7 @@ main( int argc, char * argv[] )
   std::cout << "Output Surface: " << std::endl;
   std::cout << outputSurfaceFile << std::endl;
   std::cout << "Remove Labels: " << std::endl;
-  for ( unsigned int i = 0; i < labelList.size(); i++ )
+  for (unsigned int i = 0; i < labelList.size(); i++)
   {
     std::cout << labelList[i] << "; ";
   }
@@ -68,11 +68,11 @@ main( int argc, char * argv[] )
   std::cout << "-----------------------------------------------" << std::endl;
 
   // Create all of the classes we will need
-  vtkSmartPointer< vtkPolyDataReader >             reader = vtkSmartPointer< vtkPolyDataReader >::New();
-  vtkSmartPointer< vtkPolyData >                   island = vtkSmartPointer< vtkPolyData >::New();
-  vtkSmartPointer< vtkMaskLabel >                  mask = vtkSmartPointer< vtkMaskLabel >::New();
-  vtkSmartPointer< vtkPolyDataConnectivityFilter > connect = vtkSmartPointer< vtkPolyDataConnectivityFilter >::New();
-  vtkSmartPointer< vtkPolyDataWriter >             writer = vtkSmartPointer< vtkPolyDataWriter >::New();
+  vtkSmartPointer<vtkPolyDataReader>             reader = vtkSmartPointer<vtkPolyDataReader>::New();
+  vtkSmartPointer<vtkPolyData>                   island = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkMaskLabel>                  mask = vtkSmartPointer<vtkMaskLabel>::New();
+  vtkSmartPointer<vtkPolyDataConnectivityFilter> connect = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  vtkSmartPointer<vtkPolyDataWriter>             writer = vtkSmartPointer<vtkPolyDataWriter>::New();
 
   // Define all of the variables
   unsigned int nAbsentLabels = labelList.size();
@@ -87,53 +87,53 @@ main( int argc, char * argv[] )
   unsigned int   label, label_jj;
 
   // read the label surface
-  reader->SetFileName( inputSurfaceFile.c_str() );
+  reader->SetFileName(inputSurfaceFile.c_str());
   reader->Update();
-  vtkSmartPointer< vtkPolyData > surface_in = reader->GetOutput();
+  vtkSmartPointer<vtkPolyData> surface_in = reader->GetOutput();
 
   vtkDataArray * labelArray = surface_in->GetPointData()->GetScalars();
 
   std::string labelName = labelArray->GetName();
 
-  if ( ( labelArray == nullptr ) || ( labelName != "LabelValue" ) )
+  if ((labelArray == nullptr) || (labelName != "LabelValue"))
   {
     std::cerr << "There is no labelarray on the input surface. ";
     std::cerr << "Quit." << std::endl;
     return 1;
   }
   // go through each label in absentLabel
-  for ( unsigned int i = 0; i < nAbsentLabels; i++ )
+  for (unsigned int i = 0; i < nAbsentLabels; i++)
   {
     label = labelList[i];
 
     // std::cout<<"remove label: "<<label<<std::endl;
 
     // analyze each label in the list
-#if ( VTK_MAJOR_VERSION < 6 )
-    mask->SetInput( reader->GetOutput() );
+#if (VTK_MAJOR_VERSION < 6)
+    mask->SetInput(reader->GetOutput());
 #else
-    mask->SetInputData( reader->GetOutput() );
+    mask->SetInputData(reader->GetOutput());
 #endif
-    mask->SetLabel( label );
+    mask->SetLabel(label);
     mask->Update();
 
     // replace the labels on mask->output if it is not null
-    if ( mask->GetOutput()->GetNumberOfCells() )
+    if (mask->GetOutput()->GetNumberOfCells())
     {
-#if ( VTK_MAJOR_VERSION < 6 )
-      connect->SetInput( mask->GetOutput() );
+#if (VTK_MAJOR_VERSION < 6)
+      connect->SetInput(mask->GetOutput());
 #else
-      connect->SetInputData( mask->GetOutput() );
+      connect->SetInputData(mask->GetOutput());
 #endif
       connect->SetExtractionModeToAllRegions();
       connect->Update();
 
       int nRegions = connect->GetNumberOfExtractedRegions();
       // look at each region
-      for ( int j = 0; j < nRegions; j++ )
+      for (int j = 0; j < nRegions; j++)
       {
         connect->InitializeSpecifiedRegionList();
-        connect->AddSpecifiedRegion( j );
+        connect->AddSpecifiedRegion(j);
         connect->SetExtractionModeToSpecifiedRegions();
 
         connect->Update();
@@ -147,20 +147,20 @@ main( int argc, char * argv[] )
         // set the non-label to all of the points on the island.
         // clean up neighborLabels first
         // assume the input surface has no more than 50 labels
-        for ( unsigned int ii = 0; ii < 50; ii++ )
+        for (unsigned int ii = 0; ii < 50; ii++)
         {
           neighborLabels[ii] = 0;
         }
-        for ( int ii = 0; ii < ncells; ii++ )
+        for (int ii = 0; ii < ncells; ii++)
         {
-          island->GetCellPoints( ii, npts, pts );
-          for ( int jj = 0; jj < npts; jj++ )
+          island->GetCellPoints(ii, npts, pts);
+          for (int jj = 0; jj < npts; jj++)
           {
             // get each point
-            pt = island->GetPoint( pts[jj] );
-            pid_orig = surface_in->FindPoint( pt[0], pt[1], pt[2] );
-            label_jj = labelArray->GetTuple1( pid_orig );
-            if ( label_jj != label )
+            pt = island->GetPoint(pts[jj]);
+            pid_orig = surface_in->FindPoint(pt[0], pt[1], pt[2]);
+            label_jj = labelArray->GetTuple1(pid_orig);
+            if (label_jj != label)
             {
               neighborLabels[label_jj] += 1;
             }
@@ -170,36 +170,36 @@ main( int argc, char * argv[] )
         // find the newLabel to be the one in neighborLabels with
         // maximum frequency
         newLabel = label;
-        for ( unsigned int ii = 0; ii < 50; ii++ )
+        for (unsigned int ii = 0; ii < 50; ii++)
         {
-          if ( neighborLabels[ii] > neighborLabels[newLabel] )
+          if (neighborLabels[ii] > neighborLabels[newLabel])
           {
             newLabel = ii;
           }
         }
         // assign newLabel to all of the points of the island
         // on surface_in
-        for ( int ii = 0; ii < ncells; ii++ )
+        for (int ii = 0; ii < ncells; ii++)
         {
-          island->GetCellPoints( ii, npts, pts );
-          for ( int jj = 0; jj < npts; jj++ )
+          island->GetCellPoints(ii, npts, pts);
+          for (int jj = 0; jj < npts; jj++)
           {
             // get each point
-            pt = island->GetPoint( pts[jj] );
-            pid_orig = surface_in->FindPoint( pt[0], pt[1], pt[2] );
-            labelArray->SetTuple1( pid_orig, newLabel );
+            pt = island->GetPoint(pts[jj]);
+            pid_orig = surface_in->FindPoint(pt[0], pt[1], pt[2]);
+            labelArray->SetTuple1(pid_orig, newLabel);
           }
         }
       }
     }
   }
 
-#if ( VTK_MAJOR_VERSION < 6 )
-  writer->SetInput( surface_in );
+#if (VTK_MAJOR_VERSION < 6)
+  writer->SetInput(surface_in);
 #else
-  writer->SetInputData( surface_in );
+  writer->SetInputData(surface_in);
 #endif
-  writer->SetFileName( outputSurfaceFile.c_str() );
+  writer->SetFileName(outputSurfaceFile.c_str());
   writer->Update();
 
   delete[] neighborLabels;

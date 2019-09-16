@@ -26,23 +26,23 @@ namespace itk
 //
 // Constructor
 //
-template < typename TOutputMesh >
-ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::ConvertVTKToQuadEdgeMeshFilter()
+template <typename TOutputMesh>
+ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>::ConvertVTKToQuadEdgeMeshFilter()
 {
   //
   // Create the output
   //
   typename TOutputMesh::Pointer output = TOutputMesh::New();
-  this->ProcessObject::SetNumberOfRequiredOutputs( 1 );
-  this->ProcessObject::SetNthOutput( 0, output.GetPointer() );
+  this->ProcessObject::SetNumberOfRequiredOutputs(1);
+  this->ProcessObject::SetNthOutput(0, output.GetPointer());
 }
 
 //
 // Set the polydata
 //
-template < typename TOutputMesh >
+template <typename TOutputMesh>
 void
-ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::SetPolyData( vtkPolyData * polyData )
+ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>::SetPolyData(vtkPolyData * polyData)
 {
   m_inputPolyData = polyData;
 }
@@ -50,36 +50,36 @@ ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::SetPolyData( vtkPolyData * polyDa
 //
 // Get the polydata
 //
-template < typename TOutputMesh >
+template <typename TOutputMesh>
 vtkPolyData *
-ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::GetPolyData()
+ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>::GetPolyData()
 {
   return m_inputPolyData;
 }
 
-template < typename TOutputMesh >
+template <typename TOutputMesh>
 void
-ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::GenerateData()
+ConvertVTKToQuadEdgeMeshFilter<TOutputMesh>::GenerateData()
 {
   typename OutputMeshType::Pointer outputMesh = this->GetOutput();
-  outputMesh->SetCellsAllocationMethod( OutputMeshType::CellsAllocatedDynamicallyCellByCell );
+  outputMesh->SetCellsAllocationMethod(OutputMeshType::CellsAllocatedDynamicallyCellByCell);
 
   //
   // Load the point coordinates into the itk::Mesh
   //
   int numberOfPoints = m_inputPolyData->GetNumberOfPoints();
-  outputMesh->GetPoints()->Reserve( numberOfPoints );
+  outputMesh->GetPoints()->Reserve(numberOfPoints);
 
   PointType point;
   double    vtkPoint[3];
-  for ( int i = 0; i < numberOfPoints; i++ )
+  for (int i = 0; i < numberOfPoints; i++)
   {
-    m_inputPolyData->GetPoint( i, vtkPoint );
+    m_inputPolyData->GetPoint(i, vtkPoint);
     point[0] = vtkPoint[0];
     point[1] = vtkPoint[1];
     point[2] = vtkPoint[2];
 
-    outputMesh->SetPoint( i, point );
+    outputMesh->SetPoint(i, point);
   }
 
   //
@@ -88,22 +88,22 @@ ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::GenerateData()
   int numberOfCells = m_inputPolyData->GetNumberOfCells();
 
   vtkIdList * pointList = vtkIdList::New();
-  for ( int i = 0; i < numberOfCells; i++ )
+  for (int i = 0; i < numberOfCells; i++)
   {
     CellAutoPointer cell;
 
     TriangleCellType * triangleCell = new TriangleCellType;
     int                numberOfCellPoints = 3;
 
-    m_inputPolyData->GetCellPoints( i, pointList );
-    for ( int k = 0; k < numberOfCellPoints; k++ )
+    m_inputPolyData->GetCellPoints(i, pointList);
+    for (int k = 0; k < numberOfCellPoints; k++)
     {
-      int pointId = pointList->GetId( k );
-      triangleCell->SetPointId( k, pointId );
+      int pointId = pointList->GetId(k);
+      triangleCell->SetPointId(k, pointId);
     }
 
-    cell.TakeOwnership( triangleCell );
-    outputMesh->SetCell( i, cell );
+    cell.TakeOwnership(triangleCell);
+    outputMesh->SetCell(i, cell);
   }
   pointList->Delete();
 
@@ -111,23 +111,23 @@ ConvertVTKToQuadEdgeMeshFilter< TOutputMesh >::GenerateData()
   // Load the PointData into the itk::Mesh
   //
   vtkPointData * inputPointData = m_inputPolyData->GetPointData();
-  if ( inputPointData != nullptr )
+  if (inputPointData != nullptr)
   {
     vtkDataArray * dataArray = m_inputPolyData->GetPointData()->GetScalars();
 
-    if ( dataArray != nullptr )
+    if (dataArray != nullptr)
     {
       using PointDataContainer = typename OutputMeshType::PointDataContainer;
 
-      outputMesh->SetPointData( PointDataContainer::New() );
-      outputMesh->GetPointData()->Reserve( numberOfPoints );
+      outputMesh->SetPointData(PointDataContainer::New());
+      outputMesh->GetPointData()->Reserve(numberOfPoints);
 
       // Read the scalar data
       typename OutputMeshType::PixelType pointData;
-      for ( int i = 0; i < numberOfPoints; i++ )
+      for (int i = 0; i < numberOfPoints; i++)
       {
-        pointData = static_cast< PixelType >( dataArray->GetTuple1( i ) );
-        outputMesh->SetPointData( i, pointData );
+        pointData = static_cast<PixelType>(dataArray->GetTuple1(i));
+        outputMesh->SetPointData(i, pointData);
       }
     }
   }

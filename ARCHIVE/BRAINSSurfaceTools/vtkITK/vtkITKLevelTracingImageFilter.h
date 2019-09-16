@@ -21,32 +21,32 @@ class VTK_ITK_EXPORT vtkITKLevelTracingImageFilter : public vtkPolyDataAlgorithm
 public:
   static vtkITKLevelTracingImageFilter *
   New();
-  vtkTypeMacro( vtkITKLevelTracingImageFilter, vtkPolyDataAlgorithm );
+  vtkTypeMacro(vtkITKLevelTracingImageFilter, vtkPolyDataAlgorithm);
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   /// Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).
-  vtkSetVector3Macro( Seed, int );
-  vtkGetVector3Macro( Seed, int );
+  vtkSetVector3Macro(Seed, int);
+  vtkGetVector3Macro(Seed, int);
 
   /// Method to set the plane (IJ=2, IK=1, JK=0)
-  vtkSetMacro( Plane, int );
-  vtkGetMacro( Plane, int );
+  vtkSetMacro(Plane, int);
+  vtkGetMacro(Plane, int);
 
   void
   SetPlaneToIJ()
   {
-    this->SetPlane( 2 );
+    this->SetPlane(2);
   }
   void
   SetPlaneToIK()
   {
-    this->SetPlane( 1 );
+    this->SetPlane(1);
   }
   void
   SetPlaneToJK()
   {
-    this->SetPlane( 0 );
+    this->SetPlane(0);
   }
 
 protected:
@@ -54,17 +54,17 @@ protected:
   ~vtkITKLevelTracingImageFilter();
 
   virtual int
-  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
+  RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   virtual int
-  FillInputPortInformation( int port, vtkInformation * info ) override;
+  FillInputPortInformation(int port, vtkInformation * info) override;
 
   int Seed[3];
   int Plane;
 
 private:
-  vtkITKLevelTracingImageFilter( const vtkITKLevelTracingImageFilter & ); /// Not implemented.
+  vtkITKLevelTracingImageFilter(const vtkITKLevelTracingImageFilter &); /// Not implemented.
   void
-  operator=( const vtkITKLevelTracingImageFilter & ); /// Not implemented.
+  operator=(const vtkITKLevelTracingImageFilter &); /// Not implemented.
 };
 
 #endif

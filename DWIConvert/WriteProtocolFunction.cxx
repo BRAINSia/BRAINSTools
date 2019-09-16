@@ -3,7 +3,7 @@
 //
 
 
-if ( writeProtocolGradientsFile == true )
+if (writeProtocolGradientsFile == true)
 {
   std::cerr << "ERROR: DEPRECATED IMPLEMENTED" << std::endl;
   return EXIT_FAILURE;

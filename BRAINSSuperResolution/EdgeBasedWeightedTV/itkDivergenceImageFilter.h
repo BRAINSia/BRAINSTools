@@ -130,24 +130,25 @@ namespace itk
  * \sa NeighborhoodIterator
  * \ingroup ITKImageGradient
  */
-template < typename TInputImage, typename TRealType = PrecisionType,
-           typename TOutputImage = Image< TRealType, TInputImage::ImageDimension > >
-class DivergenceImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage,
+          typename TRealType = PrecisionType,
+          typename TOutputImage = Image<TRealType, TInputImage::ImageDimension>>
+class DivergenceImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DivergenceImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DivergenceImageFilter);
 
   /** Standard class type alias. */
   using Self = DivergenceImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( DivergenceImageFilter, ImageToImageFilter );
+  itkTypeMacro(DivergenceImageFilter, ImageToImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -168,12 +169,12 @@ public:
 
   /** Define the data type and the vector of data type used in calculations. */
   using RealType = TRealType;
-  using RealVectorType = Vector< TRealType, InputPixelType::Dimension >;
-  using RealVectorImageType = Image< RealVectorType, TInputImage::ImageDimension >;
+  using RealVectorType = Vector<TRealType, InputPixelType::Dimension>;
+  using RealVectorImageType = Image<RealVectorType, TInputImage::ImageDimension>;
 
   /** Type of the iterator that will be used to move through the image.  Also
       the type which will be passed to the evaluate function */
-  using ConstNeighborhoodIteratorType = ConstNeighborhoodIterator< RealVectorImageType >;
+  using ConstNeighborhoodIteratorType = ConstNeighborhoodIterator<RealVectorImageType>;
   using RadiusType = typename ConstNeighborhoodIteratorType::RadiusType;
 
   /** Superclass type alias. */
@@ -197,7 +198,7 @@ public:
   void
   SetUseImageSpacingOn()
   {
-    this->SetUseImageSpacing( true );
+    this->SetUseImageSpacing(true);
   }
 
   /** Reset the derivative weights to ignore image spacing.  Use this option if
@@ -206,27 +207,27 @@ public:
   void
   SetUseImageSpacingOff()
   {
-    this->SetUseImageSpacing( false );
+    this->SetUseImageSpacing(false);
   }
 
   /** Set/Get whether or not the filter will use the spacing of the input
       image in its calculations */
   void
-  SetUseImageSpacing( const bool );
+  SetUseImageSpacing(const bool);
 
-  itkGetConstMacro( UseImageSpacing, bool );
+  itkGetConstMacro(UseImageSpacing, bool);
 
-  using WeightsType = FixedArray< TRealType, VectorDimension >;
+  using WeightsType = FixedArray<TRealType, VectorDimension>;
 
   /** Directly Set/Get the array of weights used in the gradient calculations.
       Note that calling UseImageSpacingOn will clobber these values. */
-  itkSetMacro( DerivativeWeights, WeightsType );
-  itkGetConstReferenceMacro( DerivativeWeights, WeightsType );
+  itkSetMacro(DerivativeWeights, WeightsType);
+  itkGetConstReferenceMacro(DerivativeWeights, WeightsType);
 
   /** Set/Get the array of weightings for the different components of the
       vector.  Default values are 1.0. */
-  itkSetMacro( ComponentWeights, WeightsType );
-  itkGetConstReferenceMacro( ComponentWeights, WeightsType );
+  itkSetMacro(ComponentWeights, WeightsType);
+  itkGetConstReferenceMacro(ComponentWeights, WeightsType);
 
 #ifndef ITK_LEGACY_REMOVE
   /** Get the neighborhood radius - always 1 */
@@ -234,13 +235,13 @@ public:
   GetNeighborhoodRadius() const
   {
     RadiusType r1;
-    r1.Fill( 1 );
+    r1.Fill(1);
     return r1;
   }
 
   /** Set the neighborhood radius - ignored */
   virtual void
-  SetNeighborhoodRadius( const RadiusType )
+  SetNeighborhoodRadius(const RadiusType)
   {}
 #endif
 
@@ -249,29 +250,29 @@ public:
       the partial derivatives of the color components.  When this value is set
       to FALSE/OFF, the calculation is done as a square root of weighted sum of the
       derivatives squared.  Default is UsePrincipleComponents = true. */
-  itkSetMacro( UsePrincipleComponents, bool );
-  itkGetConstMacro( UsePrincipleComponents, bool );
+  itkSetMacro(UsePrincipleComponents, bool);
+  itkGetConstMacro(UsePrincipleComponents, bool);
   void
   SetUsePrincipleComponentsOn()
   {
-    this->SetUsePrincipleComponents( true );
+    this->SetUsePrincipleComponents(true);
   }
 
   void
   SetUsePrincipleComponentsOff()
   {
-    this->SetUsePrincipleComponents( false );
+    this->SetUsePrincipleComponents(false);
   }
 
   /** A specialized solver for finding the roots of a cubic polynomial.
    *  Necessary to multi-thread the 3D case */
   static int
-  CubicSolver( double *, double * );
+  CubicSolver(double *, double *);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
-  itkConceptMacro( InputHasNumericTraitsCheck, (Concept::HasNumericTraits< typename InputPixelType::ValueType >));
-  itkConceptMacro( RealTypeHasNumericTraitsCheck, (Concept::HasNumericTraits< RealType >));
+  itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<typename InputPixelType::ValueType>));
+  itkConceptMacro(RealTypeHasNumericTraitsCheck, (Concept::HasNumericTraits<RealType>));
   // End concept checking
 #endif
 
@@ -297,38 +298,38 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   void
-  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) override;
+  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   using ImageBaseType = typename InputImageType::Superclass;
 
   /** Get access to the input image casted as real pixel values */
-  itkGetConstObjectMacro( RealValuedInputImage, ImageBaseType );
+  itkGetConstObjectMacro(RealValuedInputImage, ImageBaseType);
 
   TRealType
-  NonPCEvaluateAtNeighborhood( const ConstNeighborhoodIteratorType & it ) const
+  NonPCEvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const
   {
     unsigned  i, j;
     TRealType dx, sum, accum;
 
-    accum = NumericTraits< TRealType >::ZeroValue();
-    for ( i = 0; i < ImageDimension; ++i )
+    accum = NumericTraits<TRealType>::ZeroValue();
+    for (i = 0; i < ImageDimension; ++i)
     {
-      sum = NumericTraits< TRealType >::ZeroValue();
-      for ( j = 0; j < VectorDimension; ++j )
+      sum = NumericTraits<TRealType>::ZeroValue();
+      for (j = 0; j < VectorDimension; ++j)
       {
-        dx = m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * ( it.GetNext( i )[j] - it.GetPrevious( i )[j] );
+        dx = m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * (it.GetNext(i)[j] - it.GetPrevious(i)[j]);
         sum += dx * dx;
       }
       accum += sum;
     }
-    return std::sqrt( accum );
+    return std::sqrt(accum);
   }
 
   TRealType
-  EvaluateAtNeighborhood3D( const ConstNeighborhoodIteratorType & it ) const
+  EvaluateAtNeighborhood3D(const ConstNeighborhoodIteratorType & it) const
   {
     // WARNING:  ONLY CALL THIS METHOD WHEN PROCESSING A 3D IMAGE
     unsigned int i, j;
@@ -336,57 +337,56 @@ protected:
     double       CharEqn[3];
     double       ans;
 
-    vnl_matrix< TRealType >                        g( ImageDimension, ImageDimension );
-    vnl_vector_fixed< TRealType, VectorDimension > d_phi_du[TInputImage::ImageDimension];
+    vnl_matrix<TRealType>                        g(ImageDimension, ImageDimension);
+    vnl_vector_fixed<TRealType, VectorDimension> d_phi_du[TInputImage::ImageDimension];
 
     // Calculate the directional derivatives for each vector component using
     // central differences.
-    for ( i = 0; i < ImageDimension; i++ )
+    for (i = 0; i < ImageDimension; i++)
     {
-      for ( j = 0; j < VectorDimension; j++ )
+      for (j = 0; j < VectorDimension; j++)
       {
         d_phi_du[i][j] =
-          m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * ( it.GetNext( i )[j] - it.GetPrevious( i )[j] );
+          m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * (it.GetNext(i)[j] - it.GetPrevious(i)[j]);
       }
     }
 
     // Calculate the symmetric metric tensor g
-    for ( i = 0; i < ImageDimension; i++ )
+    for (i = 0; i < ImageDimension; i++)
     {
-      for ( j = i; j < ImageDimension; j++ )
+      for (j = i; j < ImageDimension; j++)
       {
-        g[j][i] = g[i][j] = dot_product( d_phi_du[i], d_phi_du[j] );
+        g[j][i] = g[i][j] = dot_product(d_phi_du[i], d_phi_du[j]);
       }
     }
 
     // Find the coefficients of the characteristic equation det(g - lambda I)=0
     //    CharEqn[3] = 1.0;
 
-    CharEqn[2] = -( g[0][0] + g[1][1] + g[2][2] );
+    CharEqn[2] = -(g[0][0] + g[1][1] + g[2][2]);
 
-    CharEqn[1] = ( g[0][0] * g[1][1] + g[0][0] * g[2][2] + g[1][1] * g[2][2] ) -
-                 ( g[0][1] * g[1][0] + g[0][2] * g[2][0] + g[1][2] * g[2][1] );
+    CharEqn[1] = (g[0][0] * g[1][1] + g[0][0] * g[2][2] + g[1][1] * g[2][2]) -
+                 (g[0][1] * g[1][0] + g[0][2] * g[2][0] + g[1][2] * g[2][1]);
 
-    CharEqn[0] = g[0][0] * ( g[1][2] * g[2][1] - g[1][1] * g[2][2] ) +
-                 g[1][0] * ( g[2][2] * g[0][1] - g[0][2] * g[2][1] ) +
-                 g[2][0] * ( g[1][1] * g[0][2] - g[0][1] * g[1][2] );
+    CharEqn[0] = g[0][0] * (g[1][2] * g[2][1] - g[1][1] * g[2][2]) + g[1][0] * (g[2][2] * g[0][1] - g[0][2] * g[2][1]) +
+                 g[2][0] * (g[1][1] * g[0][2] - g[0][1] * g[1][2]);
 
     // Find the eigenvalues of g
-    int numberOfDistinctRoots = this->CubicSolver( CharEqn, Lambda );
+    int numberOfDistinctRoots = this->CubicSolver(CharEqn, Lambda);
 
     // Define gradient magnitude as the difference between two largest
     // eigenvalues.  Other definitions may be appropriate here as well.
-    if ( numberOfDistinctRoots == 3 ) // By far the most common case
+    if (numberOfDistinctRoots == 3) // By far the most common case
     {
-      if ( Lambda[0] > Lambda[1] )
+      if (Lambda[0] > Lambda[1])
       {
-        if ( Lambda[1] > Lambda[2] ) // Most common, guaranteed?
+        if (Lambda[1] > Lambda[2]) // Most common, guaranteed?
         {
           ans = Lambda[0] - Lambda[1];
         }
         else
         {
-          if ( Lambda[0] > Lambda[2] )
+          if (Lambda[0] > Lambda[2])
           {
             ans = Lambda[0] - Lambda[2];
           }
@@ -398,13 +398,13 @@ protected:
       }
       else
       {
-        if ( Lambda[0] > Lambda[2] )
+        if (Lambda[0] > Lambda[2])
         {
           ans = Lambda[1] - Lambda[0];
         }
         else
         {
-          if ( Lambda[1] > Lambda[2] )
+          if (Lambda[1] > Lambda[2])
           {
             ans = Lambda[1] - Lambda[2];
           }
@@ -415,9 +415,9 @@ protected:
         }
       }
     }
-    else if ( numberOfDistinctRoots == 2 )
+    else if (numberOfDistinctRoots == 2)
     {
-      if ( Lambda[0] > Lambda[1] )
+      if (Lambda[0] > Lambda[1])
       {
         ans = Lambda[0] - Lambda[1];
       }
@@ -426,14 +426,14 @@ protected:
         ans = Lambda[1] - Lambda[0];
       }
     }
-    else if ( numberOfDistinctRoots == 1 )
+    else if (numberOfDistinctRoots == 1)
     {
       ans = 0.0;
     }
     else
     {
-      itkExceptionMacro( << "Undefined condition. Cubic root solver returned " << numberOfDistinctRoots
-                         << " distinct roots." );
+      itkExceptionMacro(<< "Undefined condition. Cubic root solver returned " << numberOfDistinctRoots
+                        << " distinct roots.");
     }
 
     return ans;
@@ -443,39 +443,39 @@ protected:
   // defined
   // in .hxx file.  jc 1/29/03
   TRealType
-  EvaluateAtNeighborhood( const ConstNeighborhoodIteratorType & it ) const
+  EvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const
   {
     unsigned int i, j;
 
-    vnl_matrix< TRealType >                        g( ImageDimension, ImageDimension );
-    vnl_vector_fixed< TRealType, VectorDimension > d_phi_du[TInputImage::ImageDimension];
+    vnl_matrix<TRealType>                        g(ImageDimension, ImageDimension);
+    vnl_vector_fixed<TRealType, VectorDimension> d_phi_du[TInputImage::ImageDimension];
 
     // Calculate the directional derivatives for each vector component using
     // central differences.
-    for ( i = 0; i < ImageDimension; i++ )
+    for (i = 0; i < ImageDimension; i++)
     {
-      for ( j = 0; j < VectorDimension; j++ )
+      for (j = 0; j < VectorDimension; j++)
       {
         d_phi_du[i][j] =
-          m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * ( it.GetNext( i )[j] - it.GetPrevious( i )[j] );
+          m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * (it.GetNext(i)[j] - it.GetPrevious(i)[j]);
       }
     }
 
     // Calculate the symmetric metric tensor g
-    for ( i = 0; i < ImageDimension; i++ )
+    for (i = 0; i < ImageDimension; i++)
     {
-      for ( j = i; j < ImageDimension; j++ )
+      for (j = i; j < ImageDimension; j++)
       {
-        g[j][i] = g[i][j] = dot_product( d_phi_du[i], d_phi_du[j] );
+        g[j][i] = g[i][j] = dot_product(d_phi_du[i], d_phi_du[j]);
       }
     }
 
     // Find the eigenvalues of g
-    vnl_symmetric_eigensystem< TRealType > E( g );
+    vnl_symmetric_eigensystem<TRealType> E(g);
 
     // Return the difference in length between the first two principle axes.
     // Note that other edge strength metrics may be appropriate here instead..
-    return ( E.get_eigenvalue( ImageDimension - 1 ) - E.get_eigenvalue( ImageDimension - 2 ) );
+    return (E.get_eigenvalue(ImageDimension - 1) - E.get_eigenvalue(ImageDimension - 2));
   }
 
   /** The weights used to scale derivatives during processing */

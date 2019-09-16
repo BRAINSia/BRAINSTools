@@ -37,13 +37,14 @@
 class DWIConverterFactory
 {
 public:
-  DWIConverterFactory( const std::string DicomDirectory, const bool UseBMatrixGradientDirections,
-                       const double smallGradientThreshold );
+  DWIConverterFactory(const std::string DicomDirectory,
+                      const bool        UseBMatrixGradientDirections,
+                      const double      smallGradientThreshold);
 
   ~DWIConverterFactory();
 
   bool
-  isNIIorNrrd( const std::string & filename );
+  isNIIorNrrd(const std::string & filename);
   DWIConverter *
   New();
   std::string

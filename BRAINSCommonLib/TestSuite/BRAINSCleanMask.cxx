@@ -20,18 +20,18 @@
 #include "itkIO.h"
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
-  if ( argc < 3 )
+  if (argc < 3)
   {
     std::cerr << "Usage: BRAINSCleanMask inputLabelMap outputLabelMap" << std::endl;
     return 1;
   }
-  using ImageType = itk::Image< unsigned char, 3 >;
+  using ImageType = itk::Image<unsigned char, 3>;
 
-  std::string inputName( argv[1] ), outputName( argv[2] );
+  std::string inputName(argv[1]), outputName(argv[2]);
 
-  ImageType::Pointer input = itkUtil::ReadImage< ImageType >( inputName );
-  ImageType::Pointer output = CleanBrainLabelMap< ImageType, ImageType >( input );
-  itkUtil::WriteImage< ImageType >( output, outputName );
+  ImageType::Pointer input = itkUtil::ReadImage<ImageType>(inputName);
+  ImageType::Pointer output = CleanBrainLabelMap<ImageType, ImageType>(input);
+  itkUtil::WriteImage<ImageType>(output, outputName);
 }

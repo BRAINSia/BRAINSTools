@@ -27,14 +27,14 @@
 #include "BRAINSCommonLib.h"
 
 int
-CreateMask( int argc, char * argv[] )
+CreateMask(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   const bool debug = true;
 
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Input Image:     " << inputVolume << std::endl;
@@ -44,46 +44,46 @@ CreateMask( int argc, char * argv[] )
     std::cout << "=====================================================" << std::endl;
   }
 
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     std::cout << "Input Volume is misses!" << std::endl;
-    exit( -1 );
+    exit(-1);
   }
 
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     std::cout << "Output Volume is missed!" << std::endl;
-    exit( -1 );
+    exit(-1);
   }
 
   constexpr unsigned int Dimension = 3;
   using PixelType = float;
-  using ImageType = itk::Image< PixelType, Dimension >;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
-  ImageType::Pointer inputImage = itkUtil::ReadImage< ImageType >( inputVolume );
+  ImageType::Pointer inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
 
-  using MaskFilterType = itk::LargestForegroundFilledMaskImageFilter< ImageType >;
+  using MaskFilterType = itk::LargestForegroundFilledMaskImageFilter<ImageType>;
   MaskFilterType::Pointer LFF = MaskFilterType::New();
-  LFF->SetInput( inputImage );
-  LFF->SetOtsuPercentileThreshold( threshold );
-  LFF->SetClosingSize( closingSize );
+  LFF->SetInput(inputImage);
+  LFF->SetOtsuPercentileThreshold(threshold);
+  LFF->SetClosingSize(closingSize);
   LFF->Update();
 
-  using ImageWriteType = itk::ImageFileWriter< ImageType >;
+  using ImageWriteType = itk::ImageFileWriter<ImageType>;
   ImageWriteType::Pointer writer = ImageWriteType::New();
-  writer->SetInput( LFF->GetOutput() );
-  writer->SetFileName( outputVolume );
+  writer->SetInput(LFF->GetOutput());
+  writer->SetFileName(outputVolume);
   writer->Update();
 
   return EXIT_SUCCESS;
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   // HACK:  BRAINS2 Masks are currently broken
   // The direction cosines are and the direction labels are not consistently being set.
   // itk::Brains2MaskImageIOFactory::RegisterOneFactory();
 
-  return CreateMask( argc, argv );
+  return CreateMask(argc, argv);
 }

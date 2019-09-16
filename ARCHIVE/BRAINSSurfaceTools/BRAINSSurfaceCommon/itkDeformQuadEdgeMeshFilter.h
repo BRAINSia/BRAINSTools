@@ -42,22 +42,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints >
-class DeformQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TInputMesh >
+template <typename TInputMesh, typename TReferenceMesh, typename TDestinationPoints>
+class DeformQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DeformQuadEdgeMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DeformQuadEdgeMeshFilter);
 
   using Self = DeformQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TInputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( DeformQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(DeformQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType = TInputMesh;
   using ReferenceMeshType = TReferenceMesh;
@@ -69,35 +69,35 @@ public:
 
   /** Interpolator type alias. */
   using InterpolatorType =
-    LinearInterpolateDeformationFieldMeshFunction< ReferenceMeshType, DestinationPointsContainerType >;
+    LinearInterpolateDeformationFieldMeshFunction<ReferenceMeshType, DestinationPointsContainerType>;
   using InterpolatorPointerType = typename InterpolatorType::Pointer;
 
   /** Set/Get the mesh that will be deformed. */
   void
-  SetInputMesh( const InputMeshType * mesh );
+  SetInputMesh(const InputMeshType * mesh);
 
   const InputMeshType *
-  GetInputMesh( void ) const;
+  GetInputMesh(void) const;
 
   /** Set/Get the mesh that carried the deformation field as pixel data. */
   void
-  SetReferenceMesh( const ReferenceMeshType * mesh );
+  SetReferenceMesh(const ReferenceMeshType * mesh);
 
   const ReferenceMeshType *
-  GetReferenceMesh( void ) const;
+  GetReferenceMesh(void) const;
 
   /** Set/Get the mesh that carried the deformation field as pixel data. */
   void
-  SetDestinationPoints( const DestinationPointsType * points );
+  SetDestinationPoints(const DestinationPointsType * points);
 
   const DestinationPointsType *
-  GetDestinationPoints( void ) const;
+  GetDestinationPoints(void) const;
 
   /** Set the interpolator function.  The default is a linear interpolator. */
-  itkSetObjectMacro( Interpolator, InterpolatorType );
+  itkSetObjectMacro(Interpolator, InterpolatorType);
 
   /** Get a pointer to the interpolator function. */
-  itkGetConstObjectMacro( Interpolator, InterpolatorType );
+  itkGetConstObjectMacro(Interpolator, InterpolatorType);
 
   /** Set Sphere Center.  The implementation of this class assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
@@ -105,16 +105,16 @@ public:
    * represented by the Mesh. This will be used to project destination points
    * on the sphere after they have been interpolated.
    */
-  itkSetMacro( SphereCenter, InputPointType );
-  itkGetConstMacro( SphereCenter, InputPointType );
+  itkSetMacro(SphereCenter, InputPointType);
+  itkGetConstMacro(SphereCenter, InputPointType);
 
   /** Set Sphere Radius.  The implementation of this class assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
    * this method you can specify the radius of the sphere. This will be used to
    * project destination points on the sphere after they have been interpolated.
    */
-  itkSetMacro( SphereRadius, double );
-  itkGetConstMacro( SphereRadius, double );
+  itkSetMacro(SphereRadius, double);
+  itkGetConstMacro(SphereRadius, double);
 
 protected:
   DeformQuadEdgeMeshFilter();

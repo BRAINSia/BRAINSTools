@@ -25,9 +25,9 @@
 #include "itkMultiThreadIterativeInverseDisplacementFieldImageFilter.h"
 
 int
-itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
+itkIterativeInverseDisplacementFieldFilterTest(int argc, char * argv[])
 {
-  if ( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "You must supply two output filenames" << std::endl;
     return EXIT_FAILURE;
@@ -35,16 +35,16 @@ itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
 
   using PixelType = float;
   constexpr unsigned int dims = 3;
-  using ImageType = itk::Image< itk::Vector< PixelType, dims >, dims >;
-  using WriterType = itk::ImageFileWriter< ImageType >;
+  using ImageType = itk::Image<itk::Vector<PixelType, dims>, dims>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   const ImageType::SizeType  imageSize = { { 64, 64, 64 } };
   const ImageType::IndexType imageIndex = { { 0, 0, 0 } };
   ImageType::RegionType      region;
-  region.SetSize( imageSize );
-  region.SetIndex( imageIndex );
+  region.SetSize(imageSize);
+  region.SetIndex(imageIndex);
   ImageType::Pointer img = ImageType::New();
-  img->SetRegions( region );
+  img->SetRegions(region);
   img->Allocate();
 
   ImageType::PixelType zeros;
@@ -52,9 +52,9 @@ itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
   zeros[1] = -109.0;
   zeros[2] = 3.0;
 
-  itk::ImageRegionIterator< ImageType > it( img, img->GetRequestedRegion() );
+  itk::ImageRegionIterator<ImageType> it(img, img->GetRequestedRegion());
   it.GoToBegin();
-  while ( !it.IsAtEnd() )
+  while (!it.IsAtEnd())
   {
     zeros[0] += 0.1;
     zeros[1] += 0.2;
@@ -63,15 +63,15 @@ itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
     ++it;
   }
 
-  using InverseDisplacementFieldImageType = itk::IterativeInverseDisplacementFieldImageFilter< ImageType, ImageType >;
+  using InverseDisplacementFieldImageType = itk::IterativeInverseDisplacementFieldImageFilter<ImageType, ImageType>;
   InverseDisplacementFieldImageType::Pointer inverse1 = InverseDisplacementFieldImageType::New();
-  inverse1->SetInput( img );
-  inverse1->SetStopValue( 1.0e-7 );
+  inverse1->SetInput(img);
+  inverse1->SetStopValue(1.0e-7);
   try
   {
     inverse1->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "Exception detected while inverse image" << argv[1];
     std::cerr << " : " << e.GetDescription();
@@ -79,13 +79,13 @@ itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
   }
 
   WriterType::Pointer writer1 = WriterType::New();
-  writer1->SetInput( inverse1->GetOutput() );
-  writer1->SetFileName( argv[1] );
+  writer1->SetInput(inverse1->GetOutput());
+  writer1->SetFileName(argv[1]);
   try
   {
     writer1->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "Exception detected while writing image" << argv[1];
     std::cerr << " : " << e.GetDescription();
@@ -93,10 +93,10 @@ itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
   }
 
   using InverseDisplacementField1ImageType =
-    itk::MultiThreadIterativeInverseDisplacementFieldImageFilter< ImageType, ImageType >;
+    itk::MultiThreadIterativeInverseDisplacementFieldImageFilter<ImageType, ImageType>;
   InverseDisplacementField1ImageType::Pointer inverse2 = InverseDisplacementField1ImageType::New();
-  inverse2->SetInput( img );
-  inverse2->SetStopValue( 1.0e-7 );
+  inverse2->SetInput(img);
+  inverse2->SetStopValue(1.0e-7);
   inverse2->Update();
   /*
     itk::ImageRegionIterator<ImageType> it1(inverse1->GetOutput(), inverse1->GetOutput()->GetRequestedRegion());
@@ -113,13 +113,13 @@ itkIterativeInverseDisplacementFieldFilterTest( int argc, char * argv[] )
     }
   */
   WriterType::Pointer writer2 = WriterType::New();
-  writer2->SetInput( inverse2->GetOutput() );
-  writer2->SetFileName( argv[2] );
+  writer2->SetInput(inverse2->GetOutput());
+  writer2->SetFileName(argv[2]);
   try
   {
     writer2->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "Exception detected while writing image" << argv[1];
     std::cerr << " : " << e.GetDescription();

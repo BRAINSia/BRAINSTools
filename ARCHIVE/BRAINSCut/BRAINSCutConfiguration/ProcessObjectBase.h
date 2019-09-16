@@ -24,9 +24,9 @@
 class ProcessObjectException
 {
 public:
-  ProcessObjectException( const char * errorString ) { this->m_ErrorString = errorString; }
+  ProcessObjectException(const char * errorString) { this->m_ErrorString = errorString; }
 
-  ProcessObjectException( const std::string & errorString ) { this->m_ErrorString = errorString; }
+  ProcessObjectException(const std::string & errorString) { this->m_ErrorString = errorString; }
 
   const std::string &
   Error() const
@@ -41,7 +41,7 @@ private:
 class ProcessObjectBase
 {
 public:
-  ProcessObjectBase( const std::string & name ) { this->SetName( name ); }
+  ProcessObjectBase(const std::string & name) { this->SetName(name); }
 
   ProcessObjectBase() {}
 
@@ -51,11 +51,11 @@ public:
   Verify() const = 0;
 
   std::string
-  PrintSpaces( const int howmany ) const
+  PrintSpaces(const int howmany) const
   {
-    std::string spaces( "" );
+    std::string spaces("");
 
-    for ( int i = 0; i < howmany; i++ )
+    for (int i = 0; i < howmany; i++)
     {
       spaces = spaces + " ";
     }
@@ -63,7 +63,7 @@ public:
   }
 
   virtual int
-  PrintSelf( std::ostream & os, int indent ) const = 0;
+  PrintSelf(std::ostream & os, int indent) const = 0;
 
   const std::string &
   GetName() const
@@ -72,7 +72,7 @@ public:
   }
 
   void
-  SetName( const std::string & s )
+  SetName(const std::string & s)
   {
     m_Name = s;
   }
@@ -81,13 +81,13 @@ private:
   std::string m_Name;
 };
 
-template < typename OutputType >
+template <typename OutputType>
 class XMLContents : public ProcessObjectBase
 {
 public:
   using SuperClass = ProcessObjectBase;
   virtual int
-  PrintSelf( std::ostream &, int indent ) const
+  PrintSelf(std::ostream &, int indent) const
   {
     // SuperClass::PrintSelf(os);
     // os << this->PrintSpaces(indent) << "=== XMLContents ===" <<
@@ -96,8 +96,8 @@ public:
     return indent;
   }
 
-  XMLContents( const std::string & s )
-    : ProcessObjectBase( s )
+  XMLContents(const std::string & s)
+    : ProcessObjectBase(s)
   {}
 
   XMLContents() {}
@@ -105,7 +105,7 @@ public:
   virtual ~XMLContents() {}
 
   virtual OutputType
-  GetValue( void ) const = 0;
+  GetValue(void) const = 0;
 };
 
 #endif // ProcessObjectBase_H

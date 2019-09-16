@@ -36,22 +36,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshClampScalarsFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshClampScalarsFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshClampScalarsFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshClampScalarsFilter);
 
   using Self = QuadEdgeMeshClampScalarsFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( QuadEdgeMeshClampScalarsFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(QuadEdgeMeshClampScalarsFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using OutputMeshType = typename Superclass::OutputMeshType;
   using OutputMeshPointer = typename OutputMeshType::Pointer;
@@ -68,22 +68,22 @@ public:
   using InputPointDataContainerConstIterator = typename InputPointDataContainer::ConstIterator;
 
   /** Set/Get ClampMin. */
-  itkSetMacro( ClampMin, bool );
-  itkGetMacro( ClampMin, bool );
-  itkBooleanMacro( ClampMin );
+  itkSetMacro(ClampMin, bool);
+  itkGetMacro(ClampMin, bool);
+  itkBooleanMacro(ClampMin);
 
   /** Set/Get ClampMax. */
-  itkSetMacro( ClampMax, bool );
-  itkGetMacro( ClampMax, bool );
-  itkBooleanMacro( ClampMax );
+  itkSetMacro(ClampMax, bool);
+  itkGetMacro(ClampMax, bool);
+  itkBooleanMacro(ClampMax);
 
   /** Set/Get OutputMinimum. */
-  itkSetMacro( OutputMinimum, OutputPixelType );
-  itkGetMacro( OutputMinimum, OutputPixelType );
+  itkSetMacro(OutputMinimum, OutputPixelType);
+  itkGetMacro(OutputMinimum, OutputPixelType);
 
   /** Set/Get OutputMaximum. */
-  itkSetMacro( OutputMaximum, OutputPixelType );
-  itkGetMacro( OutputMaximum, OutputPixelType );
+  itkSetMacro(OutputMaximum, OutputPixelType);
+  itkGetMacro(OutputMaximum, OutputPixelType);
 
 protected:
   QuadEdgeMeshClampScalarsFilter();

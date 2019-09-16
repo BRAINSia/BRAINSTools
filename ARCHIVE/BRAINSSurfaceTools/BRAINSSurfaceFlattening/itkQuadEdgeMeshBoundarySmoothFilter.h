@@ -52,14 +52,14 @@ namespace itk
  * \sa itkQuadEdgeMeshSplitFilter
  *
  */
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshBoundarySmoothFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshBoundarySmoothFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
   using Self = QuadEdgeMeshBoundarySmoothFilter;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -105,34 +105,34 @@ public:
   typedef typename OutputMeshType::CellsContainerConstIterator OutputCellsContainerConstIterator;
 
 public:
-  itkNewMacro( Self );
-  itkTypeMacro( QuadEdgeMeshBoundarySmoothFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkNewMacro(Self);
+  itkTypeMacro(QuadEdgeMeshBoundarySmoothFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** Set/Get the first input mesh */
   void
-  SetInputMesh1( const InputMeshType * mesh1 );
+  SetInputMesh1(const InputMeshType * mesh1);
 
   const InputMeshType *
-  GetInputMesh1( void ) const;
+  GetInputMesh1(void) const;
 
   /** Set/Get the second input mesh */
   void
-  SetInputMesh2( const InputMeshType * mesh2 );
+  SetInputMesh2(const InputMeshType * mesh2);
 
   const InputMeshType *
-  GetInputMesh2( void ) const;
+  GetInputMesh2(void) const;
 
   /** Get the first smoothed hemisphere */
   OutputMeshType *
-  GetOutputMesh1( void );
+  GetOutputMesh1(void);
 
   /** Get the second smoothed hemisphere */
   OutputMeshType *
-  GetOutputMesh2( void );
+  GetOutputMesh2(void);
 
   /** Set/Get the number of iterations. */
-  itkSetMacro( Iterations, int );
-  itkGetMacro( Iterations, int );
+  itkSetMacro(Iterations, int);
+  itkGetMacro(Iterations, int);
 
 protected:
   QuadEdgeMeshBoundarySmoothFilter();
@@ -142,15 +142,15 @@ protected:
   CopyInputMeshesToOutputMeshes();
 
   int
-  AdjustBoundary( OutputMeshType * deleteMesh, OutputMeshType * addMesh );
+  AdjustBoundary(OutputMeshType * deleteMesh, OutputMeshType * addMesh);
 
   virtual void
   GenerateData() override;
 
 private:
-  QuadEdgeMeshBoundarySmoothFilter( const Self & );
+  QuadEdgeMeshBoundarySmoothFilter(const Self &);
   void
-  operator=( const Self & );
+  operator=(const Self &);
 
   int m_Iterations;
 };

@@ -22,35 +22,35 @@
 #include "BRAINSThreadControl.h"
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
-  if ( inputVolume == "" )
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  if (inputVolume == "")
   {
     std::cerr << "No input volume name given" << std::endl;
     return EXIT_FAILURE;
   }
-  if ( outputVolume == "" )
+  if (outputVolume == "")
   {
     std::cerr << "No output volume name given" << std::endl;
     return EXIT_FAILURE;
   }
 
-  using ImageType = itk::Image< unsigned char, 3 >;
+  using ImageType = itk::Image<unsigned char, 3>;
 
   ImageType::Pointer input;
   try
   {
-    input = itkUtil::ReadImage< ImageType >( inputVolume );
+    input = itkUtil::ReadImage<ImageType>(inputVolume);
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "error reading " << inputVolume << std::endl << e << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Unable to open " << inputVolume << std::endl;
     return EXIT_FAILURE;
@@ -58,14 +58,14 @@ main( int argc, char ** argv )
   ImageType::Pointer output;
   try
   {
-    output = CleanBrainLabelMap< ImageType, ImageType >( input );
+    output = CleanBrainLabelMap<ImageType, ImageType>(input);
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << e << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Error during processing of " << inputVolume << std::endl;
     return EXIT_FAILURE;
@@ -73,14 +73,14 @@ main( int argc, char ** argv )
 
   try
   {
-    itkUtil::WriteImage< ImageType >( output, outputVolume );
+    itkUtil::WriteImage<ImageType>(output, outputVolume);
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "error writing " << inputVolume << std::endl << e << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Unable to write " << outputVolume << std::endl;
     return EXIT_FAILURE;

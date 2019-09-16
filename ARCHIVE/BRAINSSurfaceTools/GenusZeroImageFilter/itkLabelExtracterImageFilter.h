@@ -52,7 +52,7 @@ namespace itk
 
 namespace Functor
 {
-template < typename TInput, typename TOutput >
+template <typename TInput, typename TOutput>
 class LabelExtracter
 {
 public:
@@ -60,12 +60,12 @@ public:
 
   ~LabelExtracter() {}
 
-  using ChangeMapType = std::map< TInput, TOutput >;
+  using ChangeMapType = std::map<TInput, TOutput>;
 
   bool
-  operator!=( const LabelExtracter & other ) const
+  operator!=(const LabelExtracter & other) const
   {
-    if ( m_ChangeMap != other.m_ChangeMap )
+    if (m_ChangeMap != other.m_ChangeMap)
     {
       return true;
     }
@@ -73,25 +73,25 @@ public:
   }
 
   bool
-  operator==( const LabelExtracter & other ) const
+  operator==(const LabelExtracter & other) const
   {
-    return !( *this != other );
+    return !(*this != other);
   }
 
   TInput
-  GetChange( const TInput & original )
+  GetChange(const TInput & original)
   {
     return m_ChangeMap[original];
   }
 
   void
-  SetChange( const TInput & original, const TOutput & result )
+  SetChange(const TInput & original, const TOutput & result)
   {
     m_ChangeMap[original] = result;
   }
 
   void
-  SetChangeMap( const ChangeMapType & changeMap )
+  SetChangeMap(const ChangeMapType & changeMap)
   {
     m_ChangeMap = changeMap;
   }
@@ -103,9 +103,9 @@ public:
   }
 
   inline TOutput
-  operator()( const TInput & A )
+  operator()(const TInput & A)
   {
-    if ( m_ChangeMap.find( A ) != m_ChangeMap.end() )
+    if (m_ChangeMap.find(A) != m_ChangeMap.end())
     {
       return m_ChangeMap[A];
     }
@@ -119,43 +119,45 @@ private:
 };
 } // namespace Functor
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 class ITK_EXPORT LabelExtracterImageFilter
   : public UnaryFunctorImageFilter<
-      TInputImage, TOutputImage,
-      Functor::LabelExtracter< typename TInputImage::PixelType, typename TOutputImage::PixelType > >
+      TInputImage,
+      TOutputImage,
+      Functor::LabelExtracter<typename TInputImage::PixelType, typename TOutputImage::PixelType>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( LabelExtracterImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(LabelExtracterImageFilter);
 
   /** Standard class type alias. */
   using Self = LabelExtracterImageFilter;
-  using Superclass = UnaryFunctorImageFilter<
-    TInputImage, TOutputImage,
-    Functor::LabelExtracter< typename TInputImage::PixelType, typename TOutputImage::PixelType > >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass =
+    UnaryFunctorImageFilter<TInputImage,
+                            TOutputImage,
+                            Functor::LabelExtracter<typename TInputImage::PixelType, typename TOutputImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( LabelExtracterImageFilter, UnaryFunctorImageFilter );
+  itkTypeMacro(LabelExtracterImageFilter, UnaryFunctorImageFilter);
 
   /** Pixel types. */
   using InputPixelType = typename TInputImage::PixelType;
   using OutputPixelType = typename TOutputImage::PixelType;
 
   /** Type of the change map to use for change requests */
-  using ChangeMapType = std::map< InputPixelType, OutputPixelType >;
+  using ChangeMapType = std::map<InputPixelType, OutputPixelType>;
 
   /** Set up a change of a single label */
   void
-  SetChange( const InputPixelType & original, const OutputPixelType & result );
+  SetChange(const InputPixelType & original, const OutputPixelType & result);
 
   /** Set the entire change map */
   void
-  SetChangeMap( const ChangeMapType & changeMap );
+  SetChangeMap(const ChangeMapType & changeMap);
 
   /** Clears the entire change map */
   void
@@ -163,8 +165,8 @@ public:
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( InputConvertibleToOutputCheck, (Concept::Convertible< InputPixelType, OutputPixelType >));
-  itkConceptMacro( PixelTypeComparable, (Concept::Comparable< InputPixelType >));
+  itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<InputPixelType, OutputPixelType>));
+  itkConceptMacro(PixelTypeComparable, (Concept::Comparable<InputPixelType>));
 /** End concept checking */
 #endif
 protected:
@@ -172,7 +174,7 @@ protected:
   virtual ~LabelExtracterImageFilter() {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 };
 } // end namespace itk
 

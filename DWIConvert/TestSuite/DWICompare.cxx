@@ -47,13 +47,13 @@
 namespace
 {
 
-template < typename ImageType >
+template <typename ImageType>
 bool
-TestIfInformationIsDifferent( typename ImageType::ConstPointer first, typename ImageType::ConstPointer second )
+TestIfInformationIsDifferent(typename ImageType::ConstPointer first, typename ImageType::ConstPointer second)
 {
   bool        failureStatus = false;
   const float spacingTolerance = 1e-3;
-  if ( !first->GetSpacing().GetVnlVector().is_equal( second->GetSpacing().GetVnlVector(), spacingTolerance ) )
+  if (!first->GetSpacing().GetVnlVector().is_equal(second->GetSpacing().GetVnlVector(), spacingTolerance))
   {
     std::cout << "The first image Spacing does not match second image Information" << std::endl;
     std::cout << "First Spacing: " << first->GetSpacing() << std::endl;
@@ -61,7 +61,7 @@ TestIfInformationIsDifferent( typename ImageType::ConstPointer first, typename I
     failureStatus = true;
   }
   const float originTolerance = 1e-2;
-  if ( !first->GetOrigin().GetVnlVector().is_equal( second->GetOrigin().GetVnlVector(), originTolerance ) )
+  if (!first->GetOrigin().GetVnlVector().is_equal(second->GetOrigin().GetVnlVector(), originTolerance))
   {
     std::cout << "The first image Origin does not match second image Information" << std::endl;
     std::cout << "First Origin: " << first->GetOrigin() << std::endl;
@@ -69,15 +69,15 @@ TestIfInformationIsDifferent( typename ImageType::ConstPointer first, typename I
     failureStatus = true;
   }
   const float directionTolerance = 1e-3;
-  if ( !first->GetDirection().GetVnlMatrix().as_ref().is_equal( second->GetDirection().GetVnlMatrix(),
-                                                                directionTolerance ) )
+  if (!first->GetDirection().GetVnlMatrix().as_ref().is_equal(second->GetDirection().GetVnlMatrix(),
+                                                              directionTolerance))
   {
     std::cout << "The first image Direction does not match second image Information" << std::endl;
     std::cout << "First Direction: " << first->GetDirection() << std::endl;
     std::cout << "Second Direction: " << second->GetDirection() << std::endl;
     failureStatus = true;
   }
-  if ( first->GetLargestPossibleRegion() != second->GetLargestPossibleRegion() )
+  if (first->GetLargestPossibleRegion() != second->GetLargestPossibleRegion())
   {
     std::cout << "The first image Size does not match second image Information" << std::endl;
     std::cout << "first: " << first->GetLargestPossibleRegion() << "updated: " << second->GetLargestPossibleRegion()
@@ -85,19 +85,19 @@ TestIfInformationIsDifferent( typename ImageType::ConstPointer first, typename I
     failureStatus = true;
   }
 
-  using firstVectorImageIterator = itk::ImageRegionConstIterator< ImageType >;
-  firstVectorImageIterator itr1( first, first->GetLargestPossibleRegion() );
+  using firstVectorImageIterator = itk::ImageRegionConstIterator<ImageType>;
+  firstVectorImageIterator itr1(first, first->GetLargestPossibleRegion());
   itr1.GoToBegin();
 
-  using secondVectorImageIterator = itk::ImageRegionConstIterator< ImageType >;
-  secondVectorImageIterator itr2( second, second->GetLargestPossibleRegion() );
+  using secondVectorImageIterator = itk::ImageRegionConstIterator<ImageType>;
+  secondVectorImageIterator itr2(second, second->GetLargestPossibleRegion());
   itr2.GoToBegin();
 
-  while ( !itr1.IsAtEnd() )
+  while (!itr1.IsAtEnd())
   {
-    if ( ( itr2.IsAtEnd() ) || ( itr1.Get() != itr2.Get() ) )
+    if ((itr2.IsAtEnd()) || (itr1.Get() != itr2.Get()))
     {
-      if ( failureStatus == false )
+      if (failureStatus == false)
       {
         std::cout << "ERROR: Pixel values are different " << std::endl;
       }
@@ -110,26 +110,26 @@ TestIfInformationIsDifferent( typename ImageType::ConstPointer first, typename I
   return failureStatus;
 }
 
-template < typename PixelType >
+template <typename PixelType>
 int
-DoIt( int argc, char * argv[], PixelType )
+DoIt(int argc, char * argv[], PixelType)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  using DiffusionImageType = itk::VectorImage< PixelType, DIMENSION >;
+  using DiffusionImageType = itk::VectorImage<PixelType, DIMENSION>;
 
-  using FileReaderType = itk::ImageFileReader< DiffusionImageType >;
+  using FileReaderType = itk::ImageFileReader<DiffusionImageType>;
   typename FileReaderType::Pointer firstReader = FileReaderType::New();
   typename FileReaderType::Pointer secondReader = FileReaderType::New();
-  firstReader->SetFileName( inputVolume1.c_str() );
+  firstReader->SetFileName(inputVolume1.c_str());
   firstReader->Update();
   typename DiffusionImageType::ConstPointer firstImage = firstReader->GetOutput();
-  secondReader->SetFileName( inputVolume2.c_str() );
+  secondReader->SetFileName(inputVolume2.c_str());
   secondReader->Update();
   typename DiffusionImageType::ConstPointer secondImage = secondReader->GetOutput();
 
-  bool failure = TestIfInformationIsDifferent< DiffusionImageType >( firstImage, secondImage );
+  bool failure = TestIfInformationIsDifferent<DiffusionImageType>(firstImage, secondImage);
 
   // If the angle between two gradients differs more than this value they are
   // considered to be non-colinear
@@ -139,14 +139,14 @@ DoIt( int argc, char * argv[], PixelType )
   using DictionaryType = itk::MetaDataDictionary;
   const DictionaryType &         firstDictionary = firstReader->GetMetaDataDictionary();
   DWIMetaDataDictionaryValidator firstValidator;
-  firstValidator.SetMetaDataDictionary( firstDictionary );
+  firstValidator.SetMetaDataDictionary(firstDictionary);
   const DictionaryType &         secondDictionary = secondReader->GetMetaDataDictionary();
   DWIMetaDataDictionaryValidator secondValidator;
-  secondValidator.SetMetaDataDictionary( secondDictionary );
+  secondValidator.SetMetaDataDictionary(secondDictionary);
 
   {
-    if ( std::abs( firstValidator.GetBValue() - secondValidator.GetBValue() ) / secondValidator.GetBValue() >
-         bValueTolerance )
+    if (std::abs(firstValidator.GetBValue() - secondValidator.GetBValue()) / secondValidator.GetBValue() >
+        bValueTolerance)
     {
       std::cerr << "firstBValue String != secondBValueString! " << firstValidator.GetBValue()
                 << "!=" << secondValidator.GetBValue() << std::endl;
@@ -155,13 +155,13 @@ DoIt( int argc, char * argv[], PixelType )
   }
   DWIMetaDataDictionaryValidator::RotationMatrixType fMF = firstValidator.GetMeasurementFrame();
   DWIMetaDataDictionaryValidator::RotationMatrixType sMF = secondValidator.GetMeasurementFrame();
-  if ( !useIdentityMeasurementFrame )
+  if (!useIdentityMeasurementFrame)
   {
-    for ( size_t j = 0; j < 3; ++j )
+    for (size_t j = 0; j < 3; ++j)
     {
-      for ( size_t i = 0; i < 3; ++i )
+      for (size_t i = 0; i < 3; ++i)
       {
-        if ( std::abs( fMF[i][j] - sMF[i][j] ) > 1e-5 )
+        if (std::abs(fMF[i][j] - sMF[i][j]) > 1e-5)
         {
           std::cerr << "Measurement Frames do not match:\n" << fMF << "\n != \n" << sMF << "\n" << std::endl;
           return EXIT_FAILURE;
@@ -172,26 +172,26 @@ DoIt( int argc, char * argv[], PixelType )
 
   DWIMetaDataDictionaryValidator::GradientTableType fGD = firstValidator.GetGradientTable();
   DWIMetaDataDictionaryValidator::GradientTableType sGD = secondValidator.GetGradientTable();
-  for ( size_t idx = 0; idx < fGD.size(); ++idx )
+  for (size_t idx = 0; idx < fGD.size(); ++idx)
   {
     DWIMetaDataDictionaryValidator::GradientTableType::value_type ufVec = fGD[idx];
     DWIMetaDataDictionaryValidator::GradientTableType::value_type usVec = sGD[idx];
     DWIMetaDataDictionaryValidator::GradientTableType::value_type fVec = fGD[idx];
     DWIMetaDataDictionaryValidator::GradientTableType::value_type sVec = sGD[idx];
-    if ( useIdentityMeasurementFrame )
+    if (useIdentityMeasurementFrame)
     {
       fVec = fMF.GetInverse() * ufVec;
       sVec = sMF.GetInverse() * usVec;
     }
-    const double mag = ( sVec - fVec ).squared_magnitude();
-    if ( mag > 1e-5 )
+    const double mag = (sVec - fVec).squared_magnitude();
+    if (mag > 1e-5)
     {
       std::cerr << "Gradient Vector at index " << idx << " mismatch" << fVec << " != " << sVec << std::endl;
       return EXIT_FAILURE;
     }
   }
 
-  if ( failure )
+  if (failure)
   {
     return EXIT_FAILURE;
   }
@@ -202,12 +202,13 @@ DoIt( int argc, char * argv[], PixelType )
 }
 
 void
-GetImageType( std::string fileName, itk::ImageIOBase::IOPixelType & pixelType,
-              itk::ImageIOBase::IOComponentType & componentType )
+GetImageType(std::string                         fileName,
+             itk::ImageIOBase::IOPixelType &     pixelType,
+             itk::ImageIOBase::IOComponentType & componentType)
 {
-  using ImageType = itk::Image< short, 3 >;
-  itk::ImageFileReader< ImageType >::Pointer imageReader = itk::ImageFileReader< ImageType >::New();
-  imageReader->SetFileName( fileName.c_str() );
+  using ImageType = itk::Image<short, 3>;
+  itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
+  imageReader->SetFileName(fileName.c_str());
   imageReader->UpdateOutputInformation();
 
   pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -216,7 +217,7 @@ GetImageType( std::string fileName, itk::ImageIOBase::IOPixelType & pixelType,
 } // namespace
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -227,55 +228,55 @@ main( int argc, char * argv[] )
   try
   {
     // itk::GetImageType (inputVolume1, pixelType, componentType);
-    GetImageType( inputVolume1, pixelType, componentType );
+    GetImageType(inputVolume1, pixelType, componentType);
 
     // This filter handles all types
 
-    switch ( componentType )
+    switch (componentType)
     {
       case itk::ImageIOBase::UCHAR:
       {
-        return DoIt( argc, argv, static_cast< unsigned char >( 0 ) );
+        return DoIt(argc, argv, static_cast<unsigned char>(0));
       }
       break;
       case itk::ImageIOBase::CHAR:
       {
-        return DoIt( argc, argv, static_cast< char >( 0 ) );
+        return DoIt(argc, argv, static_cast<char>(0));
       }
       break;
       case itk::ImageIOBase::USHORT:
       {
-        return DoIt( argc, argv, static_cast< unsigned short >( 0 ) );
+        return DoIt(argc, argv, static_cast<unsigned short>(0));
       }
       break;
       case itk::ImageIOBase::SHORT:
       {
-        return DoIt( argc, argv, static_cast< short >( 0 ) );
+        return DoIt(argc, argv, static_cast<short>(0));
       }
       break;
       case itk::ImageIOBase::UINT:
       {
-        return DoIt( argc, argv, static_cast< unsigned int >( 0 ) );
+        return DoIt(argc, argv, static_cast<unsigned int>(0));
       }
       break;
       case itk::ImageIOBase::INT:
       {
-        return DoIt( argc, argv, static_cast< int >( 0 ) );
+        return DoIt(argc, argv, static_cast<int>(0));
       }
       break;
       case itk::ImageIOBase::ULONG:
       {
-        return DoIt( argc, argv, static_cast< unsigned long >( 0 ) );
+        return DoIt(argc, argv, static_cast<unsigned long>(0));
       }
       break;
       case itk::ImageIOBase::LONG:
       {
-        return DoIt( argc, argv, static_cast< long >( 0 ) );
+        return DoIt(argc, argv, static_cast<long>(0));
       }
       break;
       case itk::ImageIOBase::FLOAT:
       {
-        return DoIt( argc, argv, static_cast< float >( 0 ) );
+        return DoIt(argc, argv, static_cast<float>(0));
         // std::cout << "FLOAT type not currently supported." << std::endl;
       }
       break;
@@ -292,7 +293,7 @@ main( int argc, char * argv[] )
       break;
     }
   }
-  catch ( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject & excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

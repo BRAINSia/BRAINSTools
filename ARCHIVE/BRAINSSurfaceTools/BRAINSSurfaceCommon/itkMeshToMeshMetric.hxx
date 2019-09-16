@@ -24,8 +24,8 @@
 namespace itk
 {
 /** Constructor */
-template < typename TFixedMesh, typename TMovingMesh >
-MeshToMeshMetric< TFixedMesh, TMovingMesh >::MeshToMeshMetric()
+template <typename TFixedMesh, typename TMovingMesh>
+MeshToMeshMetric<TFixedMesh, TMovingMesh>::MeshToMeshMetric()
 {
   m_FixedMesh = nullptr;    // has to be provided by the user.
   m_MovingMesh = nullptr;   // has to be provided by the user.
@@ -34,85 +34,85 @@ MeshToMeshMetric< TFixedMesh, TMovingMesh >::MeshToMeshMetric()
 }
 
 /** Set the parameters that define a unique transform */
-template < typename TFixedMesh, typename TMovingMesh >
+template <typename TFixedMesh, typename TMovingMesh>
 void
-MeshToMeshMetric< TFixedMesh, TMovingMesh >::SetTransformParameters( const ParametersType & parameters ) const
+MeshToMeshMetric<TFixedMesh, TMovingMesh>::SetTransformParameters(const ParametersType & parameters) const
 {
-  if ( !m_Transform )
+  if (!m_Transform)
   {
-    itkExceptionMacro( << "Transform has not been assigned" );
+    itkExceptionMacro(<< "Transform has not been assigned");
   }
-  m_Transform->SetParameters( parameters );
+  m_Transform->SetParameters(parameters);
 }
 
 /** Initialize the metric */
-template < typename TFixedMesh, typename TMovingMesh >
+template <typename TFixedMesh, typename TMovingMesh>
 void
-MeshToMeshMetric< TFixedMesh, TMovingMesh >::Initialize( void ) throw( ExceptionObject )
+MeshToMeshMetric<TFixedMesh, TMovingMesh>::Initialize(void) throw(ExceptionObject)
 {
-  if ( !m_Transform )
+  if (!m_Transform)
   {
-    itkExceptionMacro( << "Transform is not present" );
+    itkExceptionMacro(<< "Transform is not present");
   }
 
-  if ( !m_Interpolator )
+  if (!m_Interpolator)
   {
-    itkExceptionMacro( << "Interpolator is not present" );
+    itkExceptionMacro(<< "Interpolator is not present");
   }
 
-  if ( !m_MovingMesh )
+  if (!m_MovingMesh)
   {
-    itkExceptionMacro( << "MovingMesh is not present" );
+    itkExceptionMacro(<< "MovingMesh is not present");
   }
 
-  if ( !( m_MovingMesh->GetPoints() ) )
+  if (!(m_MovingMesh->GetPoints()))
   {
-    itkExceptionMacro( << "MovingMesh does not have points" );
+    itkExceptionMacro(<< "MovingMesh does not have points");
   }
 
-  if ( !( m_MovingMesh->GetPointData() ) )
+  if (!(m_MovingMesh->GetPointData()))
   {
-    itkExceptionMacro( << "MovingMesh does not have point data" );
+    itkExceptionMacro(<< "MovingMesh does not have point data");
   }
 
-  if ( !m_FixedMesh )
+  if (!m_FixedMesh)
   {
-    itkExceptionMacro( << "FixedMesh is not present" );
+    itkExceptionMacro(<< "FixedMesh is not present");
   }
 
-  if ( !( m_FixedMesh->GetPoints() ) )
+  if (!(m_FixedMesh->GetPoints()))
   {
-    itkExceptionMacro( << "FixedMesh does not have points" );
+    itkExceptionMacro(<< "FixedMesh does not have points");
   }
 
-  if ( !( m_FixedMesh->GetPointData() ) )
+  if (!(m_FixedMesh->GetPointData()))
   {
-    itkExceptionMacro( << "FixedMesh does not have point data" );
+    itkExceptionMacro(<< "FixedMesh does not have point data");
   }
 
   // If the Mesh is provided by a source, update the source.
-  if ( m_MovingMesh->GetSource() )
+  if (m_MovingMesh->GetSource())
   {
     m_MovingMesh->GetSource()->Update();
   }
 
   // If the point set is provided by a source, update the source.
-  if ( m_FixedMesh->GetSource() )
+  if (m_FixedMesh->GetSource())
   {
     m_FixedMesh->GetSource()->Update();
   }
 
   // Initialize the internal point locator structure
-  this->m_Interpolator->SetInputMesh( this->m_MovingMesh );
+  this->m_Interpolator->SetInputMesh(this->m_MovingMesh);
   this->m_Interpolator->Initialize();
 }
 
 /** PrintSelf */
-template < typename TFixedMesh, typename TMovingMesh >
+template <typename TFixedMesh, typename TMovingMesh>
 void
-MeshToMeshMetric< TFixedMesh, TMovingMesh >::PrintSelf( std::ostream & os, Indent indent ) const
+MeshToMeshMetric<TFixedMesh, TMovingMesh>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Moving Mesh: " << m_MovingMesh.GetPointer() << std::endl;
   os << indent << "Fixed  Mesh: " << m_FixedMesh.GetPointer() << std::endl;

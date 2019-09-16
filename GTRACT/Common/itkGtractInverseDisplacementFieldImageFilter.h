@@ -61,15 +61,15 @@ namespace itk
  *
  * \ingroup ImageToImageFilter
  */
-template < typename TInputImage, typename TOutputImage >
-class GtractInverseDisplacementFieldImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class GtractInverseDisplacementFieldImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class type alias. */
   using Self = GtractInverseDisplacementFieldImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;
@@ -79,10 +79,10 @@ public:
   using OutputImagePointer = typename OutputImageType::Pointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( GtractInverseDisplacementFieldImageFilter, ImageToImageFilter );
+  itkTypeMacro(GtractInverseDisplacementFieldImageFilter, ImageToImageFilter);
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
@@ -91,7 +91,7 @@ public:
    *
    * \todo Check that input and output images have the same number of
    * dimensions; this is required for consistency.  */
-  using KernelTransformType = KernelTransform< double, Self::ImageDimension >;
+  using KernelTransformType = KernelTransform<double, Self::ImageDimension>;
   using KernelTransformPointerType = typename KernelTransformType::Pointer;
 
   /** Image size type alias. */
@@ -117,46 +117,46 @@ public:
   /** Set the coordinate transformation.
    * Set the KernelBase spline used for resampling the deformation grid.
    * */
-  itkSetObjectMacro( KernelTransform, KernelTransformType );
+  itkSetObjectMacro(KernelTransform, KernelTransformType);
 
   /** Get a pointer to the coordinate transform. */
-  itkGetConstObjectMacro( KernelTransform, KernelTransformType );
+  itkGetConstObjectMacro(KernelTransform, KernelTransformType);
 
   /** Set the size of the output image. */
-  itkSetMacro( Size, SizeType );
+  itkSetMacro(Size, SizeType);
 
   /** Get the size of the output image. */
-  itkGetConstReferenceMacro( Size, SizeType );
+  itkGetConstReferenceMacro(Size, SizeType);
 
   /** Set the output image spacing. */
-  itkSetMacro( OutputSpacing, SpacingType );
+  itkSetMacro(OutputSpacing, SpacingType);
   virtual void
-  SetOutputSpacing( const double * values );
+  SetOutputSpacing(const double * values);
 
   /** Get the output image spacing. */
-  itkGetConstReferenceMacro( OutputSpacing, SpacingType );
+  itkGetConstReferenceMacro(OutputSpacing, SpacingType);
 
   /** Set the output image origin. */
-  itkSetMacro( OutputOrigin, OriginPointType );
+  itkSetMacro(OutputOrigin, OriginPointType);
   virtual void
-  SetOutputOrigin( const double * values );
+  SetOutputOrigin(const double * values);
 
   /** Get the output image origin. */
-  itkGetConstReferenceMacro( OutputOrigin, OriginPointType );
+  itkGetConstReferenceMacro(OutputOrigin, OriginPointType);
 
   /** Set the output image direction. */
-  itkSetMacro( OutputDirection, DirectionType );
+  itkSetMacro(OutputDirection, DirectionType);
 
   /** Get the output image direction. */
-  itkGetConstReferenceMacro( OutputDirection, DirectionType );
+  itkGetConstReferenceMacro(OutputDirection, DirectionType);
 
   /** Set/Get the factor used for subsampling the input deformation field.  A
    * large value in this factor will produce a fast computation of the inverse
    * field but with low precision. A small value of this factor will produce a
    * precise computation of the inverse field at the price of large memory
    * consumption and long computational time. */
-  itkSetMacro( SubsamplingFactor, unsigned int );
-  itkGetConstMacro( SubsamplingFactor, unsigned int );
+  itkSetMacro(SubsamplingFactor, unsigned int);
+  itkGetConstMacro(SubsamplingFactor, unsigned int);
 
   /** GtractInverseDisplacementFieldImageFilter produces an image which is a different size
    * than its input.  As such, it needs to provide an implementation
@@ -176,11 +176,11 @@ public:
 
   /** Method Compute the Modified Time based on changed to the components. */
   unsigned long
-  GetMTime( void ) const override;
+  GetMTime(void) const override;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( OutputHasNumericTraitsCheck, (Concept::HasNumericTraits< OutputPixelComponentType >));
+  itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputPixelComponentType>));
   /** End concept checking */
 #endif
 protected:
@@ -188,7 +188,7 @@ protected:
   ~GtractInverseDisplacementFieldImageFilter() override {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /**
    * GenerateData() computes the internal KernelBase spline and resamples
@@ -204,10 +204,10 @@ protected:
   PrepareKernelBaseSpline();
 
 private:
-  GtractInverseDisplacementFieldImageFilter( const Self & ); // purposely not
-                                                             // implemented
+  GtractInverseDisplacementFieldImageFilter(const Self &); // purposely not
+                                                           // implemented
   void
-  operator=( const Self & ); // purposely not
+  operator=(const Self &); // purposely not
 
   // implemented
 

@@ -55,144 +55,147 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSROIAutoCLP.h"
 #include "BRAINSThreadControl.h"
-using VolumeImageType = itk::Image< signed int, 3 >;
-using VolumeMaskType = itk::Image< unsigned char, 3 >;
-using SOImageMaskType = itk::SpatialObject< 3 >;
+using VolumeImageType = itk::Image<signed int, 3>;
+using VolumeMaskType = itk::Image<unsigned char, 3>;
+using SOImageMaskType = itk::SpatialObject<3>;
 
 /**
  * This file contains utility functions that are common to a few of the
  *BRAINSFit Programs.
  */
 
-template < typename PixelType >
+template <typename PixelType>
 void
-BRAINSROIAUTOWriteOutputVolume( VolumeImageType::Pointer image, VolumeMaskType::Pointer mask, std::string & fileName,
-                                const bool MaskImage, const bool CropImage )
+BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
+                               VolumeMaskType::Pointer  mask,
+                               std::string &            fileName,
+                               const bool               MaskImage,
+                               const bool               CropImage)
 {
-  using WriteOutImageType = typename itk::Image< PixelType, VolumeImageType::ImageDimension >;
+  using WriteOutImageType = typename itk::Image<PixelType, VolumeImageType::ImageDimension>;
   typename WriteOutImageType::Pointer finalOutput;
   {
-    using CasterType = itk::CastImageFilter< VolumeImageType, WriteOutImageType >;
+    using CasterType = itk::CastImageFilter<VolumeImageType, WriteOutImageType>;
     typename CasterType::Pointer myCaster = CasterType::New();
-    myCaster->SetInput( image );
+    myCaster->SetInput(image);
     myCaster->Update();
     finalOutput = myCaster->GetOutput();
   }
-  if ( MaskImage )
+  if (MaskImage)
   {
-    using MultiplierType = typename itk::MultiplyImageFilter< VolumeMaskType, WriteOutImageType, WriteOutImageType >;
+    using MultiplierType = typename itk::MultiplyImageFilter<VolumeMaskType, WriteOutImageType, WriteOutImageType>;
 
     typename MultiplierType::Pointer clipper = MultiplierType::New();
-    clipper->SetInput1( mask );
-    clipper->SetInput2( finalOutput );
+    clipper->SetInput1(mask);
+    clipper->SetInput2(finalOutput);
     clipper->Update();
     finalOutput = clipper->GetOutput();
   }
-  if ( CropImage )
+  if (CropImage)
   {
     typename VolumeMaskType::IndexType minIndex;
     typename VolumeMaskType::IndexType maxIndex;
-    for ( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+    for (VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i)
     {
-      minIndex[i] = std::numeric_limits< VolumeMaskType::IndexType::IndexValueType >::max();
-      maxIndex[i] = std::numeric_limits< VolumeMaskType::IndexType::IndexValueType >::min();
+      minIndex[i] = std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::max();
+      maxIndex[i] = std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::min();
     }
-    itk::ImageRegionConstIteratorWithIndex< VolumeMaskType > maskIt( mask, mask->GetLargestPossibleRegion() );
-    while ( !maskIt.IsAtEnd() )
+    itk::ImageRegionConstIteratorWithIndex<VolumeMaskType> maskIt(mask, mask->GetLargestPossibleRegion());
+    while (!maskIt.IsAtEnd())
     {
-      if ( maskIt.Get() > 0 )
+      if (maskIt.Get() > 0)
       {
         const typename VolumeMaskType::IndexType & currIndex = maskIt.GetIndex();
-        for ( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+        for (VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i)
         {
-          minIndex[i] = std::min( minIndex[i], currIndex[i] );
-          maxIndex[i] = std::max( maxIndex[i], currIndex[i] );
+          minIndex[i] = std::min(minIndex[i], currIndex[i]);
+          maxIndex[i] = std::max(maxIndex[i], currIndex[i]);
         }
       }
       ++maskIt;
     }
 
     VolumeMaskType::SizeType desiredSize;
-    for ( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+    for (VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i)
     {
       desiredSize[i] = maxIndex[i] - minIndex[i] - 1;
     }
     // Now make the desiredSize an even number.
-    for ( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+    for (VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i)
     {
-      desiredSize[i] += ( desiredSize[i] % 2 ); // If even number, then add 0, if odd number, then add 1.
+      desiredSize[i] += (desiredSize[i] % 2); // If even number, then add 0, if odd number, then add 1.
     }
-    VolumeMaskType::RegionType desiredRegion( minIndex, desiredSize );
+    VolumeMaskType::RegionType desiredRegion(minIndex, desiredSize);
 
-    using ExtractorType = itk::ExtractImageFilter< WriteOutImageType, WriteOutImageType >;
+    using ExtractorType = itk::ExtractImageFilter<WriteOutImageType, WriteOutImageType>;
     typename ExtractorType::Pointer myExtractor = ExtractorType::New();
-    myExtractor->SetExtractionRegion( desiredRegion );
-    myExtractor->SetInput( finalOutput );
+    myExtractor->SetExtractionRegion(desiredRegion);
+    myExtractor->SetInput(finalOutput);
     myExtractor->SetDirectionCollapseToIdentity(); // This is required.
     myExtractor->Update();
     finalOutput = myExtractor->GetOutput();
   }
-  itkUtil::WriteImage< WriteOutImageType >( finalOutput, fileName );
+  itkUtil::WriteImage<WriteOutImageType>(finalOutput, fileName);
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
-  if ( inputVolume == "" )
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  if (inputVolume == "")
   {
     std::cerr << argv[0] << ": Missing required --inputVolume parameter" << std::endl;
     return EXIT_FAILURE;
   }
-  VolumeImageType::Pointer ImageInput = itkUtil::ReadImage< VolumeImageType >( inputVolume );
+  VolumeImageType::Pointer ImageInput = itkUtil::ReadImage<VolumeImageType>(inputVolume);
 
-  using ROIAutoType = itk::BRAINSROIAutoImageFilter< VolumeImageType, VolumeMaskType >;
+  using ROIAutoType = itk::BRAINSROIAutoImageFilter<VolumeImageType, VolumeMaskType>;
   ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-  ROIFilter->SetInput( ImageInput );
-  ROIFilter->SetOtsuPercentileThreshold( otsuPercentileThreshold );
-  ROIFilter->SetClosingSize( closingSize );
-  ROIFilter->SetThresholdCorrectionFactor( thresholdCorrectionFactor );
-  ROIFilter->SetDilateSize( ROIAutoDilateSize );
+  ROIFilter->SetInput(ImageInput);
+  ROIFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);
+  ROIFilter->SetClosingSize(closingSize);
+  ROIFilter->SetThresholdCorrectionFactor(thresholdCorrectionFactor);
+  ROIFilter->SetDilateSize(ROIAutoDilateSize);
   ROIFilter->Update();
   // const SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
   VolumeMaskType::Pointer MaskImage = ROIFilter->GetOutput();
 
-  if ( outputROIMaskVolume != "" )
+  if (outputROIMaskVolume != "")
   {
-    itkUtil::WriteImage< VolumeMaskType >( MaskImage, outputROIMaskVolume );
+    itkUtil::WriteImage<VolumeMaskType>(MaskImage, outputROIMaskVolume);
   }
 
-  if ( outputVolume != "" )
+  if (outputVolume != "")
   {
     //      std::cout << "=========== resampledImage :\n" <<
     // resampledImage->GetDirection() << std::endl;
     // Set in PARSEARGS const bool scaleOutputValues=false;//INFO: Make this a
     // command line parameter
-    if ( outputVolumePixelType == "float" )
+    if (outputVolumePixelType == "float")
     {
-      BRAINSROIAUTOWriteOutputVolume< float >( ImageInput, MaskImage, outputVolume, maskOutput, cropOutput );
+      BRAINSROIAUTOWriteOutputVolume<float>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
     }
-    else if ( outputVolumePixelType == "short" )
+    else if (outputVolumePixelType == "short")
     {
-      BRAINSROIAUTOWriteOutputVolume< signed short >( ImageInput, MaskImage, outputVolume, maskOutput, cropOutput );
+      BRAINSROIAUTOWriteOutputVolume<signed short>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
     }
-    else if ( outputVolumePixelType == "ushort" )
+    else if (outputVolumePixelType == "ushort")
     {
-      BRAINSROIAUTOWriteOutputVolume< unsigned short >( ImageInput, MaskImage, outputVolume, maskOutput, cropOutput );
+      BRAINSROIAUTOWriteOutputVolume<unsigned short>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
     }
-    else if ( outputVolumePixelType == "int" )
+    else if (outputVolumePixelType == "int")
     {
-      BRAINSROIAUTOWriteOutputVolume< signed int >( ImageInput, MaskImage, outputVolume, maskOutput, cropOutput );
+      BRAINSROIAUTOWriteOutputVolume<signed int>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
     }
-    else if ( outputVolumePixelType == "uint" )
+    else if (outputVolumePixelType == "uint")
     {
-      BRAINSROIAUTOWriteOutputVolume< unsigned int >( ImageInput, MaskImage, outputVolume, maskOutput, cropOutput );
+      BRAINSROIAUTOWriteOutputVolume<unsigned int>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
     }
-    else if ( outputVolumePixelType == "uchar" )
+    else if (outputVolumePixelType == "uchar")
     {
-      BRAINSROIAUTOWriteOutputVolume< unsigned char >( ImageInput, MaskImage, outputVolume, maskOutput, cropOutput );
+      BRAINSROIAUTOWriteOutputVolume<unsigned char>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
     }
   }
   return EXIT_SUCCESS;

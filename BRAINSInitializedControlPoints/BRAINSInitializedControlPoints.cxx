@@ -58,34 +58,34 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cerr << "  --inputVolume Required! " << std::endl;
   }
-  if ( splineGridSize.size() == 0 )
+  if (splineGridSize.size() == 0)
   {
     violated = true;
     std::cerr << "  --splineGridSize Required! " << std::endl;
   }
-  if ( outputLandmarksFile.size() == 0 )
+  if (outputLandmarksFile.size() == 0)
   {
     violated = true;
     std::cerr << "  --outputLandMarksFile Required! " << std::endl;
   }
-  if ( permuteOrder.size() != 3 )
+  if (permuteOrder.size() != 3)
   {
     violated = true;
     std::cerr << " --permuteOrder must have size 3! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     throw;
   }
@@ -93,17 +93,16 @@ main( int argc, char * argv[] )
   using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using FixedVolumeType = itk::Image< PixelType, Dimension >;
+  using FixedVolumeType = itk::Image<PixelType, Dimension>;
 
   // Verify that the spline grid sizes are greater than 3
   {
-    for ( unsigned int sgs = 0; sgs < splineGridSize.size(); sgs++ )
+    for (unsigned int sgs = 0; sgs < splineGridSize.size(); sgs++)
     {
-      if ( splineGridSize[sgs] < 3 )
+      if (splineGridSize[sgs] < 3)
       {
-        itkGenericExceptionMacro(
-          << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
-          << " is invalid.  There must be at lest 3 divisions in each dimension of the image." );
+        itkGenericExceptionMacro(<< "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
+                                 << " is invalid.  There must be at lest 3 divisions in each dimension of the image.");
       }
     }
   }
@@ -111,37 +110,37 @@ main( int argc, char * argv[] )
   FixedVolumeType::Pointer fixedImage = nullptr;
   try
   {
-    using FixedVolumeReaderType = itk::ImageFileReader< FixedVolumeType >;
+    using FixedVolumeReaderType = itk::ImageFileReader<FixedVolumeType>;
     FixedVolumeReaderType::Pointer fixedVolumeReader = FixedVolumeReaderType::New();
-    fixedVolumeReader->SetFileName( inputVolume );
+    fixedVolumeReader->SetFileName(inputVolume);
     fixedVolumeReader->Update();
-    using PermuterType = itk::PermuteAxesImageFilter< FixedVolumeType >;
+    using PermuterType = itk::PermuteAxesImageFilter<FixedVolumeType>;
     PermuterType::PermuteOrderArrayType myOrdering;
     myOrdering[0] = permuteOrder[0];
     myOrdering[1] = permuteOrder[1];
     myOrdering[2] = permuteOrder[2];
     PermuterType::Pointer myPermuter = PermuterType::New();
-    myPermuter->SetInput( fixedVolumeReader->GetOutput() );
-    myPermuter->SetOrder( myOrdering );
+    myPermuter->SetInput(fixedVolumeReader->GetOutput());
+    myPermuter->SetOrder(myOrdering);
     myPermuter->Update();
     fixedImage = myPermuter->GetOutput();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown " << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
   }
 
-  using BSplineTransformType = itk::BSplineTransform< float, 3, 3 >;
+  using BSplineTransformType = itk::BSplineTransform<float, 3, 3>;
   BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
   initialBSplineTransform->SetIdentity();
 
-  using InitializerType = itk::BSplineTransformInitializer< BSplineTransformType, FixedVolumeType >;
+  using InitializerType = itk::BSplineTransformInitializer<BSplineTransformType, FixedVolumeType>;
   InitializerType::Pointer transformInitializer = InitializerType::New();
 
-  transformInitializer->SetTransform( initialBSplineTransform );
-  transformInitializer->SetImage( fixedImage );
+  transformInitializer->SetTransform(initialBSplineTransform);
+  transformInitializer->SetImage(fixedImage);
   BSplineTransformType::MeshSizeType tempGridSize;
   tempGridSize[0] = splineGridSize[0];
   tempGridSize[1] = splineGridSize[1];
@@ -150,12 +149,12 @@ main( int argc, char * argv[] )
   std::cout << "splineGridSize=" << splineGridSize[0] << "," << splineGridSize[1] << "," << splineGridSize[2]
             << std::endl;
 
-  transformInitializer->SetTransformDomainMeshSize( tempGridSize );
+  transformInitializer->SetTransformDomainMeshSize(tempGridSize);
   try
   {
     transformInitializer->InitializeTransform();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown " << std::endl;
     std::cerr << excp << std::endl;
@@ -167,7 +166,7 @@ main( int argc, char * argv[] )
   //        is present in the BSplineTransformationCode between the differing
   //        representations of the parameters
   BSplineTransformType::ParametersType temp = initialBSplineTransform->GetParameters();
-  initialBSplineTransform->SetParameters( temp );
+  initialBSplineTransform->SetParameters(temp);
   // std::cout << transformInitializer << std::endl;
 
   BSplineTransformType::ImagePointer coefficientImage = initialBSplineTransform->GetCoefficientImages()[0];
@@ -175,30 +174,30 @@ main( int argc, char * argv[] )
   std::cout << "coefficientImage\n" << coefficientImage << std::endl;
   std::cout << "initialBSplineTransform\n" << initialBSplineTransform << std::endl;
 
-  using IteratorType = itk::ImageRegionIterator< BSplineTransformType::ImageType >;
+  using IteratorType = itk::ImageRegionIterator<BSplineTransformType::ImageType>;
 
-  IteratorType coefItr( coefficientImage, coefficientImage->GetLargestPossibleRegion() );
+  IteratorType coefItr(coefficientImage, coefficientImage->GetLargestPossibleRegion());
   coefItr.GoToBegin();
 
   LandmarksMapType outputLandmarks;
   unsigned int     locationCount = 0;
-  while ( !coefItr.IsAtEnd() )
+  while (!coefItr.IsAtEnd())
   {
     BSplineTransformType::ImageType::PointType currentPoint;
-    coefficientImage->TransformIndexToPhysicalPoint( coefItr.GetIndex(), currentPoint );
-    std::stringstream tmpName( "p" );
+    coefficientImage->TransformIndexToPhysicalPoint(coefItr.GetIndex(), currentPoint);
+    std::stringstream tmpName("p");
     tmpName << locationCount;
     locationCount++;
     outputLandmarks[tmpName.str()] = currentPoint;
     ++coefItr;
   }
 
-  using FixedVolumeWriterType = itk::ImageFileWriter< FixedVolumeType >;
+  using FixedVolumeWriterType = itk::ImageFileWriter<FixedVolumeType>;
   FixedVolumeWriterType::Pointer permutedWriter = FixedVolumeWriterType::New();
-  permutedWriter->SetInput( fixedImage );
-  permutedWriter->SetFileName( outputVolume );
+  permutedWriter->SetInput(fixedImage);
+  permutedWriter->SetFileName(outputVolume);
   permutedWriter->Update();
 
-  WriteITKtoSlicer3Lmk( outputLandmarksFile, outputLandmarks );
+  WriteITKtoSlicer3Lmk(outputLandmarksFile, outputLandmarks);
   return EXIT_SUCCESS;
 }

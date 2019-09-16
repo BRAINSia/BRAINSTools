@@ -66,7 +66,7 @@
 
 #include "itkMacro.h" //Needed for override
 
-#if ( VTK_MAJOR_VERSION >= 6 )
+#if (VTK_MAJOR_VERSION >= 6)
 #  define VTK_GRAPHICS_EXPORT /* */
 #endif
 
@@ -84,9 +84,9 @@ class vtkIdTypeArray;
 class VTK_GRAPHICS_EXPORT vtkPolyDataConnectivityIDFilter : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro( vtkPolyDataConnectivityIDFilter, vtkPolyDataAlgorithm );
+  vtkTypeMacro(vtkPolyDataConnectivityIDFilter, vtkPolyDataAlgorithm);
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   // Description:
   // Construct with default extraction mode to extract largest regions.
@@ -97,48 +97,48 @@ public:
   // Turn on/off connectivity based on scalar value. If on, cells are connected
   // only if they share points AND one of the cells scalar values falls in the
   // scalar range specified.
-  vtkSetMacro( ScalarConnectivity, int );
-  vtkGetMacro( ScalarConnectivity, int );
-  vtkBooleanMacro( ScalarConnectivity, int );
+  vtkSetMacro(ScalarConnectivity, int);
+  vtkGetMacro(ScalarConnectivity, int);
+  vtkBooleanMacro(ScalarConnectivity, int);
 
   // Description:
   // Set the scalar range to use to extract cells based on scalar connectivity.
-  vtkSetVector2Macro( ScalarRange, double );
-  vtkGetVector2Macro( ScalarRange, double );
+  vtkSetVector2Macro(ScalarRange, double);
+  vtkGetVector2Macro(ScalarRange, double);
 
   // Description:
   // Control the extraction of connected surfaces.
-  vtkSetClampMacro( ExtractionMode, int, VTK_EXTRACT_POINT_SEEDED_REGIONS, VTK_EXTRACT_CLOSEST_POINT_REGION );
-  vtkGetMacro( ExtractionMode, int );
+  vtkSetClampMacro(ExtractionMode, int, VTK_EXTRACT_POINT_SEEDED_REGIONS, VTK_EXTRACT_CLOSEST_POINT_REGION);
+  vtkGetMacro(ExtractionMode, int);
   void
   SetExtractionModeToPointSeededRegions()
   {
-    this->SetExtractionMode( VTK_EXTRACT_POINT_SEEDED_REGIONS );
+    this->SetExtractionMode(VTK_EXTRACT_POINT_SEEDED_REGIONS);
   };
   void
   SetExtractionModeToCellSeededRegions()
   {
-    this->SetExtractionMode( VTK_EXTRACT_CELL_SEEDED_REGIONS );
+    this->SetExtractionMode(VTK_EXTRACT_CELL_SEEDED_REGIONS);
   };
   void
   SetExtractionModeToLargestRegion()
   {
-    this->SetExtractionMode( VTK_EXTRACT_LARGEST_REGION );
+    this->SetExtractionMode(VTK_EXTRACT_LARGEST_REGION);
   };
   void
   SetExtractionModeToSpecifiedRegions()
   {
-    this->SetExtractionMode( VTK_EXTRACT_SPECIFIED_REGIONS );
+    this->SetExtractionMode(VTK_EXTRACT_SPECIFIED_REGIONS);
   };
   void
   SetExtractionModeToClosestPointRegion()
   {
-    this->SetExtractionMode( VTK_EXTRACT_CLOSEST_POINT_REGION );
+    this->SetExtractionMode(VTK_EXTRACT_CLOSEST_POINT_REGION);
   };
   void
   SetExtractionModeToAllRegions()
   {
-    this->SetExtractionMode( VTK_EXTRACT_ALL_REGIONS );
+    this->SetExtractionMode(VTK_EXTRACT_ALL_REGIONS);
   };
   const char *
   GetExtractionModeAsString();
@@ -151,12 +151,12 @@ public:
   // Description:
   // Add a seed id (point or cell id). Note: ids are 0-offset.
   void
-  AddSeed( int id );
+  AddSeed(int id);
 
   // Description:
   // Delete a seed id (point or cell id). Note: ids are 0-offset.
   void
-  DeleteSeed( int id );
+  DeleteSeed(int id);
 
   // Description:
   // Initialize list of region ids to extract.
@@ -166,18 +166,18 @@ public:
   // Description:
   // Add a region id to extract. Note: ids are 0-offset.
   void
-  AddSpecifiedRegion( int id );
+  AddSpecifiedRegion(int id);
 
   // Description:
   // Delete a region id to extract. Note: ids are 0-offset.
   void
-  DeleteSpecifiedRegion( int id );
+  DeleteSpecifiedRegion(int id);
 
   // Description:
   // Use to specify x-y-z point coordinates when extracting the region
   // closest to a specified point.
-  vtkSetVector3Macro( ClosestPoint, double );
-  vtkGetVectorMacro( ClosestPoint, double, 3 );
+  vtkSetVector3Macro(ClosestPoint, double);
+  vtkGetVectorMacro(ClosestPoint, double, 3);
 
   // Description:
   // Obtain the number of connected regions.
@@ -186,9 +186,9 @@ public:
 
   // Description:
   // Turn on/off the coloring of connected regions.
-  vtkSetMacro( ColorRegions, int );
-  vtkGetMacro( ColorRegions, int );
-  vtkBooleanMacro( ColorRegions, int );
+  vtkSetMacro(ColorRegions, int);
+  vtkGetMacro(ColorRegions, int);
+  vtkBooleanMacro(ColorRegions, int);
 
   // Description:
   // Get the largestRegionID
@@ -201,7 +201,7 @@ protected:
 
   // Usual data generation method
   int
-  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
+  RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int              ColorRegions;       // boolean turns on/off scalar gen for separate regions
   int              ExtractionMode;     // how to extract regions
@@ -236,33 +236,33 @@ private:
   vtkIdType      LargestRegionId;
 
 private:
-  vtkPolyDataConnectivityIDFilter( const vtkPolyDataConnectivityIDFilter & ); // Not implemented.
+  vtkPolyDataConnectivityIDFilter(const vtkPolyDataConnectivityIDFilter &); // Not implemented.
   void
-  operator=( const vtkPolyDataConnectivityIDFilter & ); // Not implemented.
+  operator=(const vtkPolyDataConnectivityIDFilter &); // Not implemented.
 };
 
 // Description:
 // Return the method of extraction as a string.
 inline const char *
-vtkPolyDataConnectivityIDFilter::GetExtractionModeAsString( void )
+vtkPolyDataConnectivityIDFilter::GetExtractionModeAsString(void)
 {
-  if ( this->ExtractionMode == VTK_EXTRACT_POINT_SEEDED_REGIONS )
+  if (this->ExtractionMode == VTK_EXTRACT_POINT_SEEDED_REGIONS)
   {
     return "ExtractPointSeededRegions";
   }
-  else if ( this->ExtractionMode == VTK_EXTRACT_CELL_SEEDED_REGIONS )
+  else if (this->ExtractionMode == VTK_EXTRACT_CELL_SEEDED_REGIONS)
   {
     return "ExtractCellSeededRegions";
   }
-  else if ( this->ExtractionMode == VTK_EXTRACT_SPECIFIED_REGIONS )
+  else if (this->ExtractionMode == VTK_EXTRACT_SPECIFIED_REGIONS)
   {
     return "ExtractSpecifiedRegions";
   }
-  else if ( this->ExtractionMode == VTK_EXTRACT_ALL_REGIONS )
+  else if (this->ExtractionMode == VTK_EXTRACT_ALL_REGIONS)
   {
     return "ExtractAllRegions";
   }
-  else if ( this->ExtractionMode == VTK_EXTRACT_CLOSEST_POINT_REGION )
+  else if (this->ExtractionMode == VTK_EXTRACT_CLOSEST_POINT_REGION)
   {
     return "ExtractClosestPointRegion";
   }

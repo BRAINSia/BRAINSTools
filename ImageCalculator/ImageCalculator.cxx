@@ -20,13 +20,13 @@
 #include "itkMacro.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   try
   {
-    return PrimaryImageCalculatorRoutine( argc, argv );
+    return PrimaryImageCalculatorRoutine(argc, argv);
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cout << "Exception Object caught: " << std::endl;
     std::cout << err << std::endl;

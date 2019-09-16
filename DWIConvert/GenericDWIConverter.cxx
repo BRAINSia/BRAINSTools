@@ -3,14 +3,14 @@
 //
 #include "GenericDWIConverter.h"
 
-GenericDWIConverter::GenericDWIConverter( DWIConverter::FileNamesContainer & inputFileNames )
-  : DWIConverter( inputFileNames )
+GenericDWIConverter::GenericDWIConverter(DWIConverter::FileNamesContainer & inputFileNames)
+  : DWIConverter(inputFileNames)
 {}
 
 void
 GenericDWIConverter::LoadFromDisk()
 {
-  itkGenericExceptionMacro( << " LoadFromDisk not relevant" << std::endl );
+  itkGenericExceptionMacro(<< " LoadFromDisk not relevant" << std::endl);
 }
 
 GenericDWIConverter::~GenericDWIConverter() {}
@@ -18,13 +18,13 @@ GenericDWIConverter::~GenericDWIConverter() {}
 void
 GenericDWIConverter::ExtractDWIData()
 {
-  itkGenericExceptionMacro( << " ExtractDWIData not relevant" << std::endl );
+  itkGenericExceptionMacro(<< " ExtractDWIData not relevant" << std::endl);
 }
 
 void
 GenericDWIConverter::AddFlagsToDictionary()
 {
-  itkGenericExceptionMacro( << " AddFlagsToDictionary not relevant" << std::endl );
+  itkGenericExceptionMacro(<< " AddFlagsToDictionary not relevant" << std::endl);
 }
 
 /**

@@ -40,19 +40,19 @@ public slots:
   readImage();
 
   void
-  stateChanged( QAbstractSocket::SocketState state );
+  stateChanged(QAbstractSocket::SocketState state);
 
 public:
-  QDebugImageViewerWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
+  QDebugImageViewerWindow(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 
 private:
   qint64
-  SocketRead( void * buf, qint64 objectSize, qint64 objectCount );
+  SocketRead(void * buf, qint64 objectSize, qint64 objectCount);
 
   void
   SetupSocketConnections();
 
-  using ImageDisplayListType = std::vector< QImageDisplay * >;
+  using ImageDisplayListType = std::vector<QImageDisplay *>;
   ImageDisplayListType m_ImageDisplayList;
   int                  m_ViewCount;
   QTcpServer *         m_Server;

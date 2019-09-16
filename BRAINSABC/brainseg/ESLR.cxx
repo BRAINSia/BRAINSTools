@@ -27,51 +27,51 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  using ByteImageType = itk::Image< unsigned char, 3 >;
-  using ReaderType = itk::ImageFileReader< ByteImageType >;
+  using ByteImageType = itk::Image<unsigned char, 3>;
+  using ReaderType = itk::ImageFileReader<ByteImageType>;
 
   ReaderType::Pointer myReader = ReaderType::New();
-  myReader->SetFileName( inputVolume );
+  myReader->SetFileName(inputVolume);
   myReader->Update();
   ByteImageType::Pointer myDirtyRegion = myReader->GetOutput();
 
   ByteImageType::Pointer myCleanRegion =
-    ExtractSingleLargestRegion( low, high, openingSize, closingSize, safetySize, myDirtyRegion );
+    ExtractSingleLargestRegion(low, high, openingSize, closingSize, safetySize, myDirtyRegion);
 
-  if ( static_cast< int >( preserveOutside ) == true ) // For values outside the specified range,
-                                                       // preserve those values.
+  if (static_cast<int>(preserveOutside) == true) // For values outside the specified range,
+                                                 // preserve those values.
   {
     std::cout << "PRESERVING OUTSIDE VALUES" << std::endl;
-    itk::ImageRegionConstIterator< ByteImageType > dit( myDirtyRegion, myDirtyRegion->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator< ByteImageType >      cit( myCleanRegion, myCleanRegion->GetLargestPossibleRegion() );
+    itk::ImageRegionConstIterator<ByteImageType> dit(myDirtyRegion, myDirtyRegion->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<ByteImageType>      cit(myCleanRegion, myCleanRegion->GetLargestPossibleRegion());
     dit.GoToBegin();
     cit.GoToBegin();
-    while ( ( !cit.IsAtEnd() ) && ( !dit.IsAtEnd() ) )
+    while ((!cit.IsAtEnd()) && (!dit.IsAtEnd()))
     {
-      if ( ( dit.Get() < low ) || ( dit.Get() > high ) ) // Outside of cleaning
-                                                         // range, then
-                                                         // preserve old value
+      if ((dit.Get() < low) || (dit.Get() > high)) // Outside of cleaning
+                                                   // range, then
+                                                   // preserve old value
       {
-        cit.Set( dit.Get() );
+        cit.Set(dit.Get());
       }
       ++cit;
       ++dit;
     }
   }
 
-  using OutputWriterType = itk::ImageFileWriter< ByteImageType >;
+  using OutputWriterType = itk::ImageFileWriter<ByteImageType>;
   OutputWriterType::Pointer writer = OutputWriterType::New();
 
-  writer->SetInput( myCleanRegion );
+  writer->SetInput(myCleanRegion);
   writer->UseCompressionOn();
-  const std::string fn = std::string( outputVolume );
-  writer->SetFileName( fn.c_str() );
+  const std::string fn = std::string(outputVolume);
+  writer->SetFileName(fn.c_str());
   writer->Update();
 
   return 0;

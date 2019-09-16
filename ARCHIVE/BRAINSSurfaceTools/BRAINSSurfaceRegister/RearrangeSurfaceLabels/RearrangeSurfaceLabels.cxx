@@ -55,23 +55,23 @@
 
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   // read a surface with labels
-  vtkSmartPointer< vtkPolyDataReader > reader = vtkSmartPointer< vtkPolyDataReader >::New();
-  reader->SetFileName( inputSurfaceFile.c_str() );
+  vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
+  reader->SetFileName(inputSurfaceFile.c_str());
   reader->Update();
 
-  vtkSmartPointer< vtkPolyData > surface_in = reader->GetOutput();
-  int                            nPoints = surface_in->GetNumberOfPoints();
+  vtkSmartPointer<vtkPolyData> surface_in = reader->GetOutput();
+  int                          nPoints = surface_in->GetNumberOfPoints();
 
   // check the labelArray
   vtkDataArray * labelArray = surface_in->GetPointData()->GetScalars();
   std::string    arrayName = labelArray->GetName();
-  if ( labelArray == nullptr || arrayName != "LabelValue" )
+  if (labelArray == nullptr || arrayName != "LabelValue")
   {
     std::cerr << "There is no label array exist on the surface. ";
     std::cerr << "Quit." << std::endl;
@@ -80,25 +80,25 @@ main( int argc, char * argv[] )
 
   // calculate frequencies for labels between min and max
   double labelRange[2];
-  labelArray->GetRange( labelRange );
-  int   nLabels = int( labelRange[1] - labelRange[0] + 1 );
+  labelArray->GetRange(labelRange);
+  int   nLabels = int(labelRange[1] - labelRange[0] + 1);
   int * frequency = new int[nLabels];
   int * labelTransform = new int[nLabels];
-  for ( int i = 0; i < nLabels; i++ )
+  for (int i = 0; i < nLabels; i++)
   {
     frequency[i] = 0;
   }
-  for ( int i = 0; i < nPoints; i++ )
+  for (int i = 0; i < nPoints; i++)
   {
-    int label_i = labelArray->GetTuple1( i );
+    int label_i = labelArray->GetTuple1(i);
     frequency[label_i] += 1;
   }
 
   // go through labels with non-zero frequencies
   int newLabel = 0;
-  for ( int i = 0; i < nLabels; i++ )
+  for (int i = 0; i < nLabels; i++)
   {
-    if ( frequency[i] > 0 )
+    if (frequency[i] > 0)
     {
       labelTransform[i] = newLabel;
       newLabel += 1;
@@ -106,53 +106,53 @@ main( int argc, char * argv[] )
   }
   std::cout << "there are " << newLabel << " labels" << std::endl;
   // transform labelArray
-  for ( int i = 0; i < nPoints; i++ )
+  for (int i = 0; i < nPoints; i++)
   {
-    int label_i = labelArray->GetTuple1( i );
-    labelArray->SetTuple1( i, labelTransform[label_i] );
+    int label_i = labelArray->GetTuple1(i);
+    labelArray->SetTuple1(i, labelTransform[label_i]);
   }
 
-  vtkSmartPointer< vtkStringArray > nameArray = vtkSmartPointer< vtkStringArray >::New();
-  if ( labelNameFile != "" )
+  vtkSmartPointer<vtkStringArray> nameArray = vtkSmartPointer<vtkStringArray>::New();
+  if (labelNameFile != "")
   {
     // attach label names from an external file
     // std::ifstream fin(labelNameFile);
-    ifstream fin( labelNameFile.c_str() );
+    ifstream fin(labelNameFile.c_str());
     // fin.open(labelNameFile.c_str(),std::ifstream::app);
     std::string labelName;
 
-    nameArray->SetName( "LabelName" );
-    nameArray->SetNumberOfValues( newLabel );
-    for ( int i = 0; i < newLabel; i++ )
+    nameArray->SetName("LabelName");
+    nameArray->SetNumberOfValues(newLabel);
+    for (int i = 0; i < newLabel; i++)
     {
       // fin.getline(labelName, 100);
-      getline( fin, labelName );
-      if ( labelName == "" )
+      getline(fin, labelName);
+      if (labelName == "")
       {
         std::cerr << "Number of label names does not match real number of labels." << std::endl;
       }
       else
       {
-        nameArray->SetValue( i, labelName );
+        nameArray->SetValue(i, labelName);
         std::cout << labelName << std::endl;
       }
     }
   }
 
-  vtkSmartPointer< vtkFieldData > fd = vtkSmartPointer< vtkFieldData >::New();
-  fd->AddArray( nameArray );
+  vtkSmartPointer<vtkFieldData> fd = vtkSmartPointer<vtkFieldData>::New();
+  fd->AddArray(nameArray);
 
-  surface_in->SetFieldData( fd );
+  surface_in->SetFieldData(fd);
 
   // write out the surface
-  vtkSmartPointer< vtkPolyDataWriter > writer = vtkSmartPointer< vtkPolyDataWriter >::New();
+  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
 
-#if ( VTK_MAJOR_VERSION < 6 )
-  writer->SetInput( surface_in );
+#if (VTK_MAJOR_VERSION < 6)
+  writer->SetInput(surface_in);
 #else
-  writer->SetInputData( surface_in );
+  writer->SetInputData(surface_in);
 #endif
-  writer->SetFileName( outputSurfaceFile.c_str() );
+  writer->SetFileName(outputSurfaceFile.c_str());
   writer->Update();
   delete[] frequency;
   delete[] labelTransform;

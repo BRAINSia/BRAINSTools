@@ -35,22 +35,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh, typename TOutputMesh >
-class DeformationFieldFromTransformMeshFilter : public MeshToMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class DeformationFieldFromTransformMeshFilter : public MeshToMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DeformationFieldFromTransformMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DeformationFieldFromTransformMeshFilter);
 
   using Self = DeformationFieldFromTransformMeshFilter;
-  using Superclass = MeshToMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = MeshToMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( DeformationFieldFromTransformMeshFilter, MeshToMeshFilter );
+  itkTypeMacro(DeformationFieldFromTransformMeshFilter, MeshToMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType = TInputMesh;
   using InputMeshConstPointer = typename InputMeshType::ConstPointer;
@@ -65,7 +65,7 @@ public:
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
   /** Transform type alias. */
-  using TransformType = Transform< double, Self::PointDimension, Self::PointDimension >;
+  using TransformType = Transform<double, Self::PointDimension, Self::PointDimension>;
   using TransformPointerType = typename TransformType::ConstPointer;
 
   /** Set the coordinate transformation.  Set the coordinate transform that
@@ -73,17 +73,17 @@ public:
    * The points of the output PointSet are one-to-one the result of taking
    * points from the input Mesh and mapping them through the Transform.
    */
-  itkSetConstObjectMacro( Transform, TransformType );
+  itkSetConstObjectMacro(Transform, TransformType);
 
   /** Get a pointer to the coordinate transform. */
-  itkGetConstObjectMacro( Transform, TransformType );
+  itkGetConstObjectMacro(Transform, TransformType);
 
 protected:
   DeformationFieldFromTransformMeshFilter();
   ~DeformationFieldFromTransformMeshFilter();
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   void
   GenerateOutputInformation();

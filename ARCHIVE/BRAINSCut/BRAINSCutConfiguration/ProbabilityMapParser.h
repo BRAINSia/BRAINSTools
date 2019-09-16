@@ -27,20 +27,20 @@ class ProbabilityMapParser : public ElementParser
 public:
   using SuperClass = ElementParser;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== ProbabilityMapParser ===" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== ProbabilityMapParser ===" << std::endl;
     return indent + 2;
   }
 
   ProbabilityMapParser()
-    : ElementParser( "ProbabilityMapParser" )
+    : ElementParser("ProbabilityMapParser")
   {
-    this->Add( new StringValue( "StructureID", "" ), "StructureID" );
-    this->Add( new StringValue( "GenerateVector", "" ), "GenerateVector" );
-    this->Add( new FloatValue( "Gaussian", 1.0 ), "Gaussian" );
-    this->Add( new StringValue( "Filename", "" ), "Filename" );
+    this->Add(new StringValue("StructureID", ""), "StructureID");
+    this->Add(new StringValue("GenerateVector", ""), "GenerateVector");
+    this->Add(new FloatValue("Gaussian", 1.0), "Gaussian");
+    this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
@@ -48,7 +48,7 @@ class ProbabilityMapList : public ElementParser
 {
 public:
   ProbabilityMapList()
-    : ElementParser( "ProbabilityMapList" )
+    : ElementParser("ProbabilityMapList")
   {}
 };
 

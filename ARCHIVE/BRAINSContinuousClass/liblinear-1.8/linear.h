@@ -75,52 +75,52 @@ extern "C"
   };
 
   struct model *
-  train( const struct problem * prob, const struct parameter * param );
+  train(const struct problem * prob, const struct parameter * param);
 
   void
-  cross_validation( const struct problem * prob, const struct parameter * param, int nr_fold, int * target );
+  cross_validation(const struct problem * prob, const struct parameter * param, int nr_fold, int * target);
 
   int
-  predict_values( const struct model * model_, const struct feature_node * x, double * dec_values );
+  predict_values(const struct model * model_, const struct feature_node * x, double * dec_values);
 
   int
-  predict( const struct model * model_, const struct feature_node * x );
+  predict(const struct model * model_, const struct feature_node * x);
 
   int
-  predict_probability( const struct model * model_, const struct feature_node * x, double * prob_estimates );
+  predict_probability(const struct model * model_, const struct feature_node * x, double * prob_estimates);
 
   int
-  save_model( const char * model_file_name, const struct model * model_ );
+  save_model(const char * model_file_name, const struct model * model_);
 
   struct model *
-  load_model( const char * model_file_name );
+  load_model(const char * model_file_name);
 
   int
-  get_nr_feature( const struct model * model_ );
+  get_nr_feature(const struct model * model_);
 
   int
-  get_nr_class( const struct model * model_ );
+  get_nr_class(const struct model * model_);
 
   void
-  get_labels( const struct model * model_, int * label );
+  get_labels(const struct model * model_, int * label);
 
   void
-  free_model_content( struct model * model_ptr );
+  free_model_content(struct model * model_ptr);
 
   void
-  free_and_destroy_model( struct model ** model_ptr_ptr );
+  free_and_destroy_model(struct model ** model_ptr_ptr);
 
   void
-  destroy_param( struct parameter * param );
+  destroy_param(struct parameter * param);
 
   const char *
-  check_parameter( const struct problem * prob, const struct parameter * param );
+  check_parameter(const struct problem * prob, const struct parameter * param);
 
   int
-  check_probability_model( const struct model * model );
+  check_probability_model(const struct model * model);
 
   void
-  set_print_string_function( void ( *print_func )( const char * ) );
+  set_print_string_function(void (*print_func)(const char *));
 
 #ifdef __cplusplus
 }

@@ -19,23 +19,23 @@
 #include "BRAINSCutExceptionStringHandler.h"
 
 static std::string
-LocalFormatErrorStringWrapper( const std::string & errorString )
+LocalFormatErrorStringWrapper(const std::string & errorString)
 {
-  std::string buildErrorString( "****ERROR**** [BRAINSCutExceptionStringHandler]:: " );
+  std::string buildErrorString("****ERROR**** [BRAINSCutExceptionStringHandler]:: ");
 
   buildErrorString += errorString;
   buildErrorString += "\n";
   return buildErrorString;
 }
 
-BRAINSCutExceptionStringHandler ::BRAINSCutExceptionStringHandler( const std::string & errorString )
+BRAINSCutExceptionStringHandler ::BRAINSCutExceptionStringHandler(const std::string & errorString)
 {
-  this->m_ErrorString = LocalFormatErrorStringWrapper( errorString );
+  this->m_ErrorString = LocalFormatErrorStringWrapper(errorString);
 }
 
-BRAINSCutExceptionStringHandler ::BRAINSCutExceptionStringHandler( const char * errorString )
+BRAINSCutExceptionStringHandler ::BRAINSCutExceptionStringHandler(const char * errorString)
 {
-  this->m_ErrorString = LocalFormatErrorStringWrapper( errorString );
+  this->m_ErrorString = LocalFormatErrorStringWrapper(errorString);
 }
 
 const std::string &
@@ -45,7 +45,7 @@ BRAINSCutExceptionStringHandler ::Error() const
 }
 
 std::ostream &
-operator<<( std::ostream & stream, BRAINSCutExceptionStringHandler ob )
+operator<<(std::ostream & stream, BRAINSCutExceptionStringHandler ob)
 {
   stream << ob.Error();
   return stream;

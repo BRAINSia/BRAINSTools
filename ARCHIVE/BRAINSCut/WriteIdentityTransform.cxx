@@ -21,11 +21,11 @@
 #include "itkAffineTransform.h"
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  using TransformationType = itk::AffineTransform< double, 3 >;
+  using TransformationType = itk::AffineTransform<double, 3>;
 
   TransformationType::Pointer transform = TransformationType::New();
 
@@ -34,8 +34,8 @@ main( int argc, char ** argv )
   using WriterType = itk::TransformFileWriter;
   WriterType::Pointer writer = WriterType::New();
 
-  writer->SetFileName( "./identityTransformation.mat" );
-  writer->SetInput( transform );
-        writer->SetUseCompression( true );
+  writer->SetFileName("./identityTransformation.mat");
+  writer->SetInput(transform);
+  writer->SetUseCompression(true);
   writer->Update();
 }

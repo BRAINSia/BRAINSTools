@@ -45,23 +45,23 @@ namespace itk
  *
  */
 
-template < typename TInputImage, typename TOutputImage >
-class NaryRelabelImageFilter : public InPlaceImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class NaryRelabelImageFilter : public InPlaceImageFilter<TInputImage, TOutputImage>
 
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( NaryRelabelImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(NaryRelabelImageFilter);
 
   /** Standard class type alias. */
   using Self = NaryRelabelImageFilter;
-  using Superclass = InPlaceImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = InPlaceImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( NaryRelabelImageFilter, InPlaceImageFilter );
+  itkTypeMacro(NaryRelabelImageFilter, InPlaceImageFilter);
 
   /** Some type alias. */
   using InputImageType = TInputImage;
@@ -72,7 +72,7 @@ public:
   using OutputImagePointer = typename OutputImageType::Pointer;
   using OutputImageRegionType = typename OutputImageType::RegionType;
   using OutputImagePixelType = typename OutputImageType::PixelType;
-  using NaryArrayType = std::vector< InputImagePixelType >;
+  using NaryArrayType = std::vector<InputImagePixelType>;
 
   /** ImageDimension constants */
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
@@ -80,8 +80,8 @@ public:
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( SameDimensionCheck, (Concept::SameDimension< InputImageDimension, OutputImageDimension >));
-  itkConceptMacro( OutputHasZeroCheck, (Concept::HasZero< OutputImagePixelType >));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
+  itkConceptMacro(OutputHasZeroCheck, (Concept::HasZero<OutputImagePixelType>));
   /** End concept checking */
 #endif
 
@@ -89,12 +89,12 @@ public:
    * Set/Get the value used as "background" in the images.
    * Defaults to NumericTraits<PixelType>::ZeroValue().
    */
-  itkSetMacro( BackgroundValue, InputImagePixelType );
-  itkGetConstMacro( BackgroundValue, InputImagePixelType );
+  itkSetMacro(BackgroundValue, InputImagePixelType);
+  itkGetConstMacro(BackgroundValue, InputImagePixelType);
 
-  itkSetMacro( IgnoreCollision, bool );
-  itkGetConstMacro( IgnoreCollision, bool );
-  itkBooleanMacro( IgnoreCollision );
+  itkSetMacro(IgnoreCollision, bool);
+  itkGetConstMacro(IgnoreCollision, bool);
+  itkBooleanMacro(IgnoreCollision);
 
 protected:
   NaryRelabelImageFilter();
@@ -104,7 +104,7 @@ protected:
   GenerateData() override;
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
   InputImagePixelType m_BackgroundValue;

@@ -55,40 +55,40 @@
 
 namespace itk
 {
-template < typename TImage >
-ValidationInputParser< TImage >::ValidationInputParser()
-  : m_TheMovingImageFilename( "" )
-  , m_TheFixedImageFilename( "" )
-  , m_ParameterFilename( "" )
-  , m_TheMovingImage( nullptr )
-  , m_TheFixedImage( nullptr )
-  , m_ForceCoronalZeroOrigin( false )
-  , m_OutDebug( false )
-  , m_NumberOfHistogramLevels( 1024 )
-  , m_NumberOfMatchPoints( 7 )
-  , m_NumberOfLevels( 1 )
-  , m_NumberOfIterations( IterationsArrayType( 1 ) )
+template <typename TImage>
+ValidationInputParser<TImage>::ValidationInputParser()
+  : m_TheMovingImageFilename("")
+  , m_TheFixedImageFilename("")
+  , m_ParameterFilename("")
+  , m_TheMovingImage(nullptr)
+  , m_TheFixedImage(nullptr)
+  , m_ForceCoronalZeroOrigin(false)
+  , m_OutDebug(false)
+  , m_NumberOfHistogramLevels(1024)
+  , m_NumberOfMatchPoints(7)
+  , m_NumberOfLevels(1)
+  , m_NumberOfIterations(IterationsArrayType(1))
 {
-  m_TheMovingImageShrinkFactors.Fill( 1 );
-  m_TheFixedImageShrinkFactors.Fill( 1 );
-  m_NumberOfIterations.Fill( 10 );
+  m_TheMovingImageShrinkFactors.Fill(1);
+  m_TheFixedImageShrinkFactors.Fill(1);
+  m_NumberOfIterations.Fill(10);
 }
 
-template < typename TImage >
+template <typename TImage>
 void
-ValidationInputParser< TImage >::Execute()
+ValidationInputParser<TImage>::Execute()
 {
   /*************************
    * Read in the images
    */
-  if ( this->m_ForceCoronalZeroOrigin == true )
+  if (this->m_ForceCoronalZeroOrigin == true)
   {
-    itkGenericExceptionMacro( << "---Forcing Brains2 Orientation not yet implemented" );
+    itkGenericExceptionMacro(<< "---Forcing Brains2 Orientation not yet implemented");
   }
   else
   {
-    m_TheFixedImage = itkUtil::ReadImage< TImage >( m_TheFixedImageFilename );
-    m_TheMovingImage = itkUtil::ReadImage< TImage >( m_TheMovingImageFilename );
+    m_TheFixedImage = itkUtil::ReadImage<TImage>(m_TheFixedImageFilename);
+    m_TheMovingImage = itkUtil::ReadImage<TImage>(m_TheMovingImageFilename);
   }
   // INFO:  Need to ensure that the fixed and moving images have the same
   // orientations.
@@ -100,21 +100,21 @@ ValidationInputParser< TImage >::Execute()
   // m_InitialTransformFilename << std::endl;
   // std::cerr << "About to check for Coefficient file" <<
   // m_InitialCoefficientFilename << std::endl;
-  if ( m_InitialDisplacementFieldFilename != "" )
+  if (m_InitialDisplacementFieldFilename != "")
   {
-    using FieldReaderType = itk::ImageFileReader< TDisplacementField >;
+    using FieldReaderType = itk::ImageFileReader<TDisplacementField>;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialDisplacementFieldFilename.c_str() );
+    fieldReader->SetFileName(m_InitialDisplacementFieldFilename.c_str());
     try
     {
       fieldReader->Update();
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << "Caught an ITK exception: " << err.GetDescription() << std::endl;
       throw;
     }
-    if ( this->GetOutDebug() )
+    if (this->GetOutDebug())
     {
       std::cout << "\nReading Displacement fields.\n";
     }
@@ -122,54 +122,54 @@ ValidationInputParser< TImage >::Execute()
     //  typename ImageType::DirectionType DisplacementOrientation;
     //  DisplacementOrientation=displacementField->GetDirection();
   }
-  else if ( m_InitialTransformFilename != "" )
+  else if (m_InitialTransformFilename != "")
   {
     //  #######Now use TransformToDisplacementFieldSource
-    using DisplacementFieldGeneratorType = itk::TransformToDisplacementFieldFilter< TDisplacementField, double >;
+    using DisplacementFieldGeneratorType = itk::TransformToDisplacementFieldFilter<TDisplacementField, double>;
     using TransformType = typename DisplacementFieldGeneratorType::TransformType;
     // Only a templated base class.
 
-    typename TransformType::Pointer                        trsf = ReadTransformFromDisk( m_InitialTransformFilename );
-    typename DataObjectDecorator< TransformType >::Pointer dop = DataObjectDecorator< TransformType >::New();
-    dop->Set( trsf );
+    typename TransformType::Pointer                      trsf = ReadTransformFromDisk(m_InitialTransformFilename);
+    typename DataObjectDecorator<TransformType>::Pointer dop = DataObjectDecorator<TransformType>::New();
+    dop->Set(trsf);
 
     typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
-    defGenerator->SetOutputSpacing( this->GetTheFixedImage()->GetSpacing() );
-    defGenerator->SetOutputOrigin( this->GetTheFixedImage()->GetOrigin() );
-    defGenerator->SetOutputDirection( this->GetTheFixedImage()->GetDirection() );
-    defGenerator->SetSize( this->GetTheFixedImage()->GetLargestPossibleRegion().GetSize() );
-    defGenerator->SetOutputStartIndex( this->GetTheFixedImage()->GetLargestPossibleRegion().GetIndex() );
-    defGenerator->SetInput( dop );
+    defGenerator->SetOutputSpacing(this->GetTheFixedImage()->GetSpacing());
+    defGenerator->SetOutputOrigin(this->GetTheFixedImage()->GetOrigin());
+    defGenerator->SetOutputDirection(this->GetTheFixedImage()->GetDirection());
+    defGenerator->SetSize(this->GetTheFixedImage()->GetLargestPossibleRegion().GetSize());
+    defGenerator->SetOutputStartIndex(this->GetTheFixedImage()->GetLargestPossibleRegion().GetIndex());
+    defGenerator->SetInput(dop);
     defGenerator->Update();
     m_InitialDisplacementField = defGenerator->GetOutput();
     // itkUtil::WriteImage<TDisplacementField>(m_InitialDisplacementField,
     // "initialDeformationfield.nii.gz");
   }
-  else if ( m_InitialCoefficientFilename != "" )
+  else if (m_InitialCoefficientFilename != "")
   {
 #ifdef __USE_BRAINS2_INTEGRATION
     DisplacementFieldFFTType::Pointer mu; // mu1, mu2, mu3;
-    std::string                       CoeffNameInput( m_InitialCoefficientFilename.c_str() );
+    std::string                       CoeffNameInput(m_InitialCoefficientFilename.c_str());
 
     {
-      if ( this->GetOutDebug() )
+      if (this->GetOutDebug())
       {
         std::cout << "Reading: " << CoeffNameInput << std::endl;
       }
-      HarmonicReadAll3D( mu, CoeffNameInput );
+      HarmonicReadAll3D(mu, CoeffNameInput);
     }
-    if ( this->GetOutDebug() )
+    if (this->GetOutDebug())
     {
       std::cout << "\nCreating Displacement fields from Coefficient files\n";
     }
-    m_InitialDisplacementField = CreateITKDisplacementFieldFromCoeffs( mu );
+    m_InitialDisplacementField = CreateITKDisplacementFieldFromCoeffs(mu);
 #else
-    itkGenericExceptionMacro( << "ERROR:  InitialCoefficientFilename not supported yet" );
+    itkGenericExceptionMacro(<< "ERROR:  InitialCoefficientFilename not supported yet");
 #endif
   }
 
   // Print out the parameters.
-  if ( this->GetOutDebug() )
+  if (this->GetOutDebug())
   {
     std::cout << "NumberOfHistogramLevels : " << m_NumberOfHistogramLevels << std::endl;
     std::cout << "NumberOfMatchPoints : " << m_NumberOfMatchPoints << std::endl;

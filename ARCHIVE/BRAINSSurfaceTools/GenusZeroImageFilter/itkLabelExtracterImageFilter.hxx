@@ -27,23 +27,23 @@ namespace itk
 /**
  *
  */
-template < typename TInputImage, typename TOutputImage >
-LabelExtracterImageFilter< TInputImage, TOutputImage >::LabelExtracterImageFilter()
+template <typename TInputImage, typename TOutputImage>
+LabelExtracterImageFilter<TInputImage, TOutputImage>::LabelExtracterImageFilter()
 {}
 
 /**
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LabelExtracterImageFilter< TInputImage, TOutputImage >::SetChange( const InputPixelType &  original,
-                                                                   const OutputPixelType & result )
+LabelExtracterImageFilter<TInputImage, TOutputImage>::SetChange(const InputPixelType &  original,
+                                                                const OutputPixelType & result)
 {
-  OutputPixelType current = this->GetFunctor().GetChange( original );
+  OutputPixelType current = this->GetFunctor().GetChange(original);
 
-  if ( current != result )
+  if (current != result)
   {
-    this->GetFunctor().SetChange( original, result );
+    this->GetFunctor().SetChange(original, result);
     this->Modified();
   }
 }
@@ -51,21 +51,21 @@ LabelExtracterImageFilter< TInputImage, TOutputImage >::SetChange( const InputPi
 /**
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LabelExtracterImageFilter< TInputImage, TOutputImage >::SetChangeMap( const ChangeMapType & changeMap )
+LabelExtracterImageFilter<TInputImage, TOutputImage>::SetChangeMap(const ChangeMapType & changeMap)
 {
   // If the whole map is being set then we assume that a real change is made
-  this->GetFunctor().SetChangeMap( changeMap );
+  this->GetFunctor().SetChangeMap(changeMap);
   this->Modified();
 }
 
 /**
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LabelExtracterImageFilter< TInputImage, TOutputImage >::ClearChangeMap()
+LabelExtracterImageFilter<TInputImage, TOutputImage>::ClearChangeMap()
 {
   // If the whole map is being set then we assume that a real change is made
   this->GetFunctor().ClearChangeMap();
@@ -75,11 +75,11 @@ LabelExtracterImageFilter< TInputImage, TOutputImage >::ClearChangeMap()
 /**
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LabelExtracterImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+LabelExtracterImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
   // Maybe should iterate the change map and print it here
 }
 

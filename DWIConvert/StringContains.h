@@ -22,21 +22,21 @@
 
 /** convert std::string to upper case in place */
 inline char
-myUpper( char a )
+myUpper(char a)
 {
-  return toupper( a );
+  return toupper(a);
 }
 
 inline void
-strupper( std::string & s )
+strupper(std::string & s)
 {
-  std::transform( s.begin(), s.end(), s.begin(), myUpper );
+  std::transform(s.begin(), s.end(), s.begin(), myUpper);
 }
 
 inline bool
-StringContains( const std::string & string, const std::string & pattern )
+StringContains(const std::string & string, const std::string & pattern)
 {
-  return string.find( pattern ) != std::string::npos;
+  return string.find(pattern) != std::string::npos;
 }
 
 #endif // __StringContains_h

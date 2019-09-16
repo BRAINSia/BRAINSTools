@@ -23,7 +23,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( gtractCoregBvaluesTest );
+  REGISTER_TEST(gtractCoregBvaluesTest);
 }
 
 #undef main

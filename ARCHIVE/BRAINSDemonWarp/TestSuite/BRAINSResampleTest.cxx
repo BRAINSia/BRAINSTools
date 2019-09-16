@@ -22,7 +22,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( BRAINSResampleTest );
+  REGISTER_TEST(BRAINSResampleTest);
 }
 
 #undef main

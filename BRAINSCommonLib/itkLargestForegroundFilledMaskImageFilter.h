@@ -53,8 +53,8 @@ namespace itk
  * values specified by the user (defaults to 1 and 0 respectively).
  *
  */
-template < typename TInputImage, typename TOutputImage = TInputImage >
-class LargestForegroundFilledMaskImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage = TInputImage>
+class LargestForegroundFilledMaskImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient type alias for simplifying declarations. */
@@ -69,36 +69,36 @@ public:
   using OutputPixelType = typename OutputImageType::PixelType;
 
   using Self = LargestForegroundFilledMaskImageFilter;
-  using Superclass = ImageToImageFilter< InputImageType, OutputImageType >;
-  using Pointer = SmartPointer< Self >;
-  using IntegerImageType = Image< unsigned short, OutputImageType::ImageDimension >;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using IntegerImageType = Image<unsigned short, OutputImageType::ImageDimension>;
   using IntegerPixelType = typename IntegerImageType::PixelType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( LargestForegroundFilledMaskImageFilter, ImageToImageFilter );
+  itkTypeMacro(LargestForegroundFilledMaskImageFilter, ImageToImageFilter);
 
   /** set Otsu Threshold */
-  itkSetMacro( OtsuPercentileLowerThreshold, double );
-  itkGetConstMacro( OtsuPercentileLowerThreshold, double );
-  itkSetMacro( OtsuPercentileUpperThreshold, double );
-  itkGetConstMacro( OtsuPercentileUpperThreshold, double );
+  itkSetMacro(OtsuPercentileLowerThreshold, double);
+  itkGetConstMacro(OtsuPercentileLowerThreshold, double);
+  itkSetMacro(OtsuPercentileUpperThreshold, double);
+  itkGetConstMacro(OtsuPercentileUpperThreshold, double);
 
   /** Short hand for setting both upper and lower
    * (0+OtsuPercentileThreshold) < "Intensities of Interest" <
    *(1-OtsuPercentileThreshold).
    */
   void
-  SetOtsuPercentileThreshold( const double percentile )
+  SetOtsuPercentileThreshold(const double percentile)
   {
-    this->SetOtsuPercentileLowerThreshold( percentile );
-    this->SetOtsuPercentileUpperThreshold( 1.0 - percentile );
+    this->SetOtsuPercentileLowerThreshold(percentile);
+    this->SetOtsuPercentileUpperThreshold(1.0 - percentile);
   }
 
   double
-  GetOtsuPercentileThreshold( void ) const
+  GetOtsuPercentileThreshold(void) const
   {
     return this->GetOtsuPercentileLowerThreshold();
   }
@@ -106,25 +106,25 @@ public:
   /** The closing size in mm, this is rounded up to the next closest number of
    * voxel
    * by taking Spacing into account */
-  itkSetMacro( ClosingSize, double );
-  itkGetConstMacro( ClosingSize, double );
+  itkSetMacro(ClosingSize, double);
+  itkGetConstMacro(ClosingSize, double);
   /** The dilation size in mm, this is rounded up to the next closest number of
    * voxel
    * by taking Spacing into account */
-  itkSetMacro( DilateSize, double );
-  itkGetConstMacro( DilateSize, double );
-  itkSetMacro( InsideValue, IntegerPixelType );
-  itkGetMacro( InsideValue, IntegerPixelType );
-  itkSetMacro( OutsideValue, IntegerPixelType );
-  itkGetMacro( OutsideValue, IntegerPixelType );
-  itkSetMacro( ThresholdCorrectionFactor, double );
-  itkGetConstMacro( ThresholdCorrectionFactor, double );
+  itkSetMacro(DilateSize, double);
+  itkGetConstMacro(DilateSize, double);
+  itkSetMacro(InsideValue, IntegerPixelType);
+  itkGetMacro(InsideValue, IntegerPixelType);
+  itkSetMacro(OutsideValue, IntegerPixelType);
+  itkGetMacro(OutsideValue, IntegerPixelType);
+  itkSetMacro(ThresholdCorrectionFactor, double);
+  itkGetConstMacro(ThresholdCorrectionFactor, double);
 
 protected:
   LargestForegroundFilledMaskImageFilter();
   ~LargestForegroundFilledMaskImageFilter() override;
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   GenerateData() override;
@@ -135,10 +135,10 @@ private:
    *binary image).
    * Low and High are set to the ?????? */
   unsigned int
-  SetLowHigh( InputPixelType & low, InputPixelType & high );
+  SetLowHigh(InputPixelType & low, InputPixelType & high);
 
   void
-  ImageMinMax( InputPixelType & min, InputPixelType & max ) const;
+  ImageMinMax(InputPixelType & min, InputPixelType & max) const;
 
   // No longer used  double m_OtsuPercentileThreshold;
   double           m_OtsuPercentileLowerThreshold;
